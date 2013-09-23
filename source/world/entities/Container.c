@@ -64,6 +64,8 @@ __CLASS_DEFINITION(Container);
 // pass event to children recursively
 static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args);
 
+// process removed children
+static void Container_processRemovedChildren(Container this);
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -117,6 +119,42 @@ void Container_constructor(Container this, int ID){
 // class's destructor
 void Container_destructor(Container this){
 
+	// first remove any children removed
+	Container_processRemovedChildren(this);
+	
+	// if I have children
+	if(this->children){
+		
+		// create children list
+		VirtualList childrenToDelete = __NEW(VirtualList);
+
+		VirtualNode node = VirtualList_begin(this->children);
+	
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Container child = (Container)VirtualNode_getData(node);
+			
+			VirtualList_pushBack(childrenToDelete, (void*)child);
+		}	
+		
+		// delete children list
+		__DELETE(this->children);
+		this->children = NULL;
+
+		node = VirtualList_begin(childrenToDelete);
+
+		// destroy each child
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Container child = (Container)VirtualNode_getData(node);
+			
+			__DELETE(child);
+		}	
+
+		__DELETE(childrenToDelete);
+	}
+	
 	// first remove from parent
 	if(this->parent){
 		
@@ -160,20 +198,54 @@ void Container_addChild(Container this, Container child){
 	}
 }
 
+static void Container_processRemovedChildren(Container this){
+	
+	if(this->children && this->removedChildren){
+		
+		VirtualNode node = VirtualList_begin(this->removedChildren);
+	
+		// remove each child
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Container child = (Container)VirtualNode_getData(node);
+
+			VirtualList_removeElement(this->children, child);
+		}	
+
+		__DELETE(this->removedChildren);
+		
+		this->removedChildren = NULL;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // remove child Container
 void Container_removeChild(Container this, Container child){
 	
-	// remove from list
-	VirtualList_removeElement(this->children, child);
-	
-	// set no parent
-	child->parent = NULL;
+	// check if child is valid and if I'm its parent
+	if(child && this == child->parent && this->children){
+
+		// if don't have any children to remove yet
+		if(!this->removedChildren){
+			
+			// create children list
+			this->removedChildren = __NEW(VirtualList);
+		}
+
+		// register for removing
+		VirtualList_pushBack(this->removedChildren, (void*)child);
+
+		// set no parent
+		child->parent = NULL;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update each Container's child
 void Container_update(Container this){	
+	
+	// first remove children
+	Container_processRemovedChildren(this);
 	
 	// if I have children
 	if(this->children){
@@ -185,7 +257,7 @@ void Container_update(Container this){
 			
 			__VIRTUAL_CALL(void, Container, update, (Container)VirtualNode_getData(node));
 		}
-	}
+	}	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,7 +328,6 @@ VBVec3D Container_getLocalPosition(Container this){
 //set class's local position
 void Container_setLocalPosition(Container this, VBVec3D position){
 
-	//this->transform.globalPosition = 
 	this->transform.localPosition = position;
 	
 	// force global position calculation on the next render cycle
@@ -325,6 +396,15 @@ int Container_onKeyUp(Container this, va_list args){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
+int Container_onKeyHold(Container this, va_list args){
+	
+	int pressedKey = 0;
+	pressedKey = va_arg(args, int);	
+	return __VIRTUAL_CALL(int, Container, doKeyHold, this, __ARGUMENTS(pressedKey));
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process user input
 int Container_doKeyPressed(Container this, int pressedKey){
 
 	return false;
@@ -333,6 +413,13 @@ int Container_doKeyPressed(Container this, int pressedKey){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
 int Container_doKeyUp(Container this, int pressedKey){
+	
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process user input
+int Container_doKeyHold(Container this, int pressedKey){
 	
 	return false;
 }

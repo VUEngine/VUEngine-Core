@@ -31,6 +31,7 @@
 #include <Game.h>
 #include <ClockManager.h>
 #include <CollisionManager.h>
+#include <PhysicalWorld.h>
 #include <Optics.h>
 #include <MiscStructs.h>
 #include <Globals.h>
@@ -46,6 +47,8 @@
 #include <CharSetManager.h>
 #include <SoundManager.h>
 #include <StateMachine.h>
+#include <Screen.h>
+
 #include <Printing.h>
 
 
@@ -88,10 +91,6 @@
 	/* after 15 minutes of play */ 					\
 	int restFlag: 1;								\
 													\
-	/* render delay counter to wait to */			\
-	/* achieve the __TARGETFPS */					\
-	int renderDelay;								\
-													\
 	/* managers */									\
 	FrameRate frameRate;							\
 	TextureManager bgmapManager;					\
@@ -99,7 +98,8 @@
 	SoundManager soundManager;						\
 	ParamTableManager paramTableManager;			\
 	SpriteManager spriteManager;					\
-	CollisionManager collisionManager;
+	CollisionManager collisionManager;				\
+	PhysicalWorld physicalWorld;
 	
 
 __CLASS_DEFINITION(Game);
@@ -161,18 +161,13 @@ static void Game_constructor(Game this){
 	// call get instance in singletons to make sure their constructors
 	// are called now
 	this->bgmapManager = TextureManager_getInstance();
-	
 	this->frameRate  = FrameRate_getInstance();	
-	
 	this->paramTableManager =  ParamTableManager_getInstance();
-	
 	this->charSetManager = CharSetManager_getInstance();
-	
 	this->soundManager = SoundManager_getInstance();
-	
 	this->spriteManager = SpriteManager_getInstance();
-	
 	this->collisionManager = CollisionManager_getInstance();
+	this->physicalWorld = PhysicalWorld_getInstance();
 	
 	//OPTIC VALUES
 	this->optical.distanceEyeScreen = 0;	
@@ -259,7 +254,13 @@ void Game_initialize(Game this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set game's state
-void Game_setState(Game this, State state){
+void Game_setState(Game this, State state, int fadeDelay){
+
+	// make a fade out
+	Screen_FXFadeOut(Screen_getInstance(), fadeDelay);
+	
+	// turn back the background
+	VIP_REGS[BKCOL] = 0x00;
 
 	// these shouldn't be here, but there is a bug in the engine which makes the world's table 
 	// be corrupted, so don't remove the next call
@@ -283,6 +284,9 @@ void Game_setState(Game this, State state){
 	
 	// load chars into graphic memory
 	vbjSetPrintingMemory(TextureManager_getFreeBgmap(this->bgmapManager));
+	
+	// make a fade in
+	Screen_FXFadeIn(Screen_getInstance(), fadeDelay);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,17 +313,24 @@ void Game_recoverGraphicMemory(Game this){
 // erase engine's current status
 void Game_reset(Game this){
 
-	//initialize graphic managers
-	CharSetManager_destructor(this->charSetManager);
+	//initialize managers
+//	CharSetManager_destructor(this->charSetManager);
+//	TextureManager_destructor(this->bgmapManager);
+//	ParamTableManager_destructor(this->paramTableManager);
 	
-	TextureManager_destructor(this->bgmapManager);
-	
-	ParamTableManager_destructor(this->paramTableManager);
-	
-	CollisionManager_reset(this->collisionManager);
+	//clear char and bgmap memory
+	vbClearScreen();
 
-	// make sure that the object will be rendered on next call
-	this->renderDelay = 10000;
+	CharSetManager_reset(this->charSetManager);
+	TextureManager_reset(this->bgmapManager);
+	ParamTableManager_reset(this->paramTableManager);
+	SpriteManager_reset(this->spriteManager);
+	CollisionManager_reset(this->collisionManager);
+	PhysicalWorld_reset(this->physicalWorld);
+	
+	// call get instance in singletons to make sure their constructors
+	// are called now
+	//SoundManager_getInstance();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -404,78 +415,64 @@ void Game_handleInput(Game this){
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
 	}
 	
-	
 	// save actual key pressed
 	previousKeyPressed = pressedKey;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
 // update engine's world's state
-void Game_updateOld(Game this){
+void Game_update1(Game this){
 
-	u32 currentTime = 0;
-	u32 lastTime = 0;
-	
-	enum UpdateTurn{
+	enum UpdateSubsystems{
 		
-		kUpdate = 0,
-		kSleep
+		kRender = 0,
+		kPhysics,
+		kLogic
 	};
 
-	int cycle = kUpdate;
-
+	u32 currentTime = 0;
+	u32 lastTime[kLogic + 1] = {0, 0, 0};
+	
 	while(true){
 
 		currentTime = Clock_getTime(_clock);
 
-		// update if it is the update cycle and the enough time has elpased
-		if((kUpdate == cycle) && currentTime - lastTime > 1000 / __RENDER_FPS){
+		lastTime[kLogic] = currentTime;
 		
-			// save current time
-			lastTime = currentTime;
-			
-			// process user's input 
-			Game_handleInput(this);
+		// process user's input 
+		Game_handleInput(this);
 
-			// it is the update cycle
-			ASSERT(this->stateMachine, Game: no state machine);
+		// it is the update cycle
+		ASSERT(this->stateMachine, Game: no state machine);
 
-			// update the game's logic
-			StateMachine_update(this->stateMachine);
-			
-			// draw the current game level
-			Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
+		// update the game's logic
+		StateMachine_update(this->stateMachine);
+		
+		// check sprite layers
+		SpriteManager_checkLayers(this->spriteManager);
 
-			// simulate collisions
-			CollisionManager_update(this->collisionManager);
+		// increase the frame rate
+		FrameRate_increaseFPS(this->frameRate);
 
-			// increase the frame rate
-			FrameRate_increaseFPS(this->frameRate);
-			
-			// change next cycle 
-			cycle = kSleep;			
-		}
-		else{
-			
-			if(kSleep == cycle){
-				
-				// check sprite layers
-				SpriteManager_checkLayers(this->spriteManager);
-				
-				// process removed shapes
-				CollisionManager_processRemovedShapes(this->collisionManager);
-				
-				// change next cycle 
-				cycle = kUpdate;
-			}
-		}
+		// draw the current game level
+		Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
 		
 		// render sprites as fast as possible
 		SpriteManager_render(SpriteManager_getInstance());
+
+		// simulate physics
+			PhysicalWorld_update(this->physicalWorld);
+
+			// process removed bodies
+			PhysicalWorld_processRemovedBodies(this->physicalWorld);
+
+			// simulate collisions
+			CollisionManager_update(this->collisionManager);
+			
+			// process removed shapes
+			CollisionManager_processRemovedShapes(this->collisionManager);
 	}
 }
-*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update engine's world's state
@@ -531,7 +528,13 @@ void Game_update(Game this){
 		if(currentTime - lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
 			
 			lastTime[kPhysics] = currentTime;
-			
+
+			// simulate physics
+			PhysicalWorld_update(this->physicalWorld);
+
+			// process removed bodies
+			PhysicalWorld_processRemovedBodies(this->physicalWorld);
+
 			// simulate collisions
 			CollisionManager_update(this->collisionManager);
 			

@@ -77,6 +77,9 @@ TextureManager TextureManager_getInstance();
 // class's destructor
 void TextureManager_destructor(TextureManager this);
 
+// reset
+void TextureManager_reset(TextureManager this);
+
 // deallocate texture from bgmap graphic memory
 void TextureManager_free(TextureManager this, Texture texture);
 

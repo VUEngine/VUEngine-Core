@@ -120,8 +120,11 @@ void Level_onKeyPressed(Level this, int pressedKey);
 // process user input
 void Level_onKeyUp(Level this, int pressedKey);
 
+// process user input
+void Level_onKeyHold(Level this, int pressedKey);
+
 // load a stage
-void Level_loadStage(Level this, StageDefinition* stageDefinition, int fadeDelay);
+void Level_loadStage(Level this, StageDefinition* stageDefinition);
 
 
 #endif /*LEVEL_H_*/

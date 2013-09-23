@@ -73,6 +73,9 @@ CharSetManager CharSetManager_getInstance();
 // class's destructor
 void CharSetManager_destructor(CharSetManager this);
  
+// reset
+void CharSetManager_reset(CharSetManager this);
+
 // release char graphic memory
 void CharSetManager_free(CharSetManager this, CharGroup charGroup);
  

@@ -92,6 +92,15 @@ typedef struct Acceleration{
 	
 }Acceleration;
 
+//spacial velocity variation vector
+typedef struct Force{
+	
+	fix19_13 x;
+	fix19_13 y;
+	fix19_13 z;
+	
+}Force;
+
 //spacial state vector
 typedef struct MovementState{
 	

@@ -74,6 +74,9 @@ ParamTableManager ParamTableManager_getInstance();
 // class destructor
 void ParamTableManager_destructor(ParamTableManager this);
  
+// reset
+void ParamTableManager_reset(ParamTableManager this);
+
 // allocate param table space for map
 int ParamTableManager_allocate(ParamTableManager this, Sprite sprite);
   

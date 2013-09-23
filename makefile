@@ -4,8 +4,8 @@
 TARGET = libvbjae
 
 # Default build type
-#TYPE = debug
-TYPE = release
+TYPE = debug
+#TYPE = release
 #TYPE = preprocessor
 
 VBJAENGINE = $(VBDE)/libs/vbjaengine
@@ -95,7 +95,6 @@ $(TARGET).a: dirs $(OBJECTS)
 # outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: %.c
 		@echo Creating o file for $*...
-		@echo $@
 		@$(GCC) -Wp,-MD,$(STORE)/$*.dd  $(foreach INC,$(INCPATH),-I$(INC))\
                 $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -c $< -o $@
 		@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d

@@ -31,7 +31,7 @@
  */
 
 #include <Object.h>
-#include <InGameEntity.h>
+#include <Actor.h>
 #include <Mass.h>
 
 
@@ -53,23 +53,51 @@
 		Object_SET_VTABLE(ClassName)							\
 	
 
-#define Body_ATTRIBUTES								\
-													\
-	/* super's attributes */						\
-	Object_ATTRIBUTES;								\
-													\
-	/* radious */									\
-	Mass mass;										\
-													\
-	/* radious */									\
-	InGameEntity owner;								\
-													\
-	/* direction */									\
-	Direction direction;							\
-													\
-	/* radious */									\
-	int radious;
-
+#define Body_ATTRIBUTES									\
+														\
+	/* super's attributes */							\
+	Object_ATTRIBUTES;									\
+														\
+	/* mass */											\
+	Mass mass;											\
+														\
+	/* owner */											\
+	Actor owner;										\
+														\
+	/* direction */										\
+	Force appliedForce;									\
+														\
+	/* spatial position */								\
+	VBVec3D position;									\
+														\
+	/* actor velocity on each instante */				\
+	Velocity velocity;									\
+														\
+	/* state of actor's movement over each axis */		\
+	/*MovementState movementState;*/					\
+														\
+	/* acelearion structure */							\
+	Acceleration acceleration;							\
+														\
+	Direction previousDirection;						\
+														\
+	/* time for movement over each axis	*/				\
+	unsigned long time;									\
+														\
+	/* type of movement (accelerated or not) */			\
+	int movementType;									\
+														\
+	/* a pointer to the object I'm walking on */		\
+	/* to being able to turn aroung and don't */		\
+	/* fall to dead */									\
+														\
+	/* raise flag to make the body active */			\
+	int active: 1;										\
+														\
+	/* raise flag to update body's physices */			\
+	int awake: 1;										\
+														\
+	Actor objectBelow;
 
 // A Body which represent a generic object inside a Stage
 __CLASS(Body);
@@ -84,21 +112,54 @@ __CLASS(Body);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 // class's allocator
-__CLASS_NEW_DECLARE(Body, __PARAMETERS(InGameEntity owner));
+__CLASS_NEW_DECLARE(Body, __PARAMETERS(Actor owner, Mass mass));
 
 // class's destructor
 void Body_destructor(Body this);
 
 // set game entity
-void Body_setOwner(Body this, InGameEntity owner);
+void Body_setOwner(Body this, Actor owner);
 
 // get game entity
-void Body_getOwner(Body this, InGameEntity owner);
+Actor Body_getOwner(Body this);
 
 // update
-void Body_update(Body this);
+void Body_update(Body this, const VBVec3D* gravity);
+
+// set active
+void Body_setActive(Body this, int active);
+
+// is active?
+int Body_isActive(Body this);
+
+// retrieve position
+VBVec3D Body_getPosition(Body this);
+
+// retrieve position
+void Body_setPosition(Body this, const VBVec3D* position, Actor caller);
+
+// retrieve state
+int Body_isAwake(Body body);
+
+// awake body
+void Body_awake(Body body);
+
+// go to sleep
+void Body_sleep(Body body);
+
+// add a force
+void Body_addForce(Body this, const Force* force);
+
+// where I'm moving or not
+int Body_isMoving(Body this);
+
+// retrieve velocity
+Velocity Body_getVelocity(Body this);
+
+// set movement type
+void Body_setMovementType(Body this, int movementType);
+
 
 
 #endif /*BODY_H_*/

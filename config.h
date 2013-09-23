@@ -81,17 +81,17 @@
 #define __TIMER_RESOLUTION		1
 
 //target frames per second
-#define __RENDER_FPS 	60
+#define __RENDER_FPS 	30
 
 //target frames per second
-#define __PHYSICS_FPS 	20
+#define __PHYSICS_FPS 	30
 
 //target frames per second
-#define __LOGIC_FPS 	20
+#define __LOGIC_FPS 	30
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
-#define __FPS_ANIM_FACTOR 	(__RENDER_FPS / 60)
+#define __FPS_ANIM_FACTOR 	(__RENDER_FPS / 60.0f)
 
 //you will hardly have more than ten mapcharacters in affine mode  
 //on screen at once

@@ -57,6 +57,8 @@
 
 
 //movement type
+#define	__UNIFORM_MOVEMENT		0x00
+#define	__ACCELERATED_MOVEMENT	0x01
 #define	__UNIFORMMOVE	0x00
 #define	__ACCELMOVEX	0x01
 #define	__ACCELMOVEY	0x02
@@ -272,7 +274,8 @@ enum MessagesTypes{
 	kKeyUp,
 	kKeyHold,
 	kEntityRemoved,
-	
+	kBodyStoped,
+	kBodySleep
 };
 
 

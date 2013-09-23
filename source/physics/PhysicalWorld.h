@@ -33,6 +33,7 @@
 
 #include <Object.h>
 #include <Body.h>
+#include <Actor.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -78,10 +79,10 @@ PhysicalWorld PhysicalWorld_getInstance();
 void PhysicalWorld_destructor(PhysicalWorld this);
 
 // register a game entity
-Shape PhysicalWorld_registerEntity(PhysicalWorld this, InGameEntity owner, Mass mass);
+Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, Mass mass);
 
 // remove a shape
-void PhysicalWorld_unregisterBody(PhysicalWorld this, InGameEntity owner);
+void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner);
 
 // process removed shapes
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
@@ -93,9 +94,25 @@ void PhysicalWorld_update(PhysicalWorld this);
 void PhysicalWorld_reset(PhysicalWorld this);
 
 // check if an entity has been registered
-int PhysicalWorld_isEntityRegistered(PhysicalWorld this, InGameEntity owner);
+int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner);
 
 // retrieve owner body
-Body PhysicalWorld_getBody(PhysicalWorld this, InGameEntity owner);
+Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner);
+
+// retrieve friction
+fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
+
+// set friction
+void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
+
+// a body has awaked
+void PhysicalWorld_bodyAwaked(PhysicalWorld this);
+
+// set gravity
+void PhysicalWorld_setGravity(PhysicalWorld this, VBVec3D gravity);
+
+// retrieve gravity
+const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
+
 
 #endif /*PHYSICS_WORLD_H_*/

@@ -65,6 +65,9 @@
 		__VIRTUAL_DEC(setLocalPosition);				\
 		__VIRTUAL_DEC(doKeyPressed);					\
 		__VIRTUAL_DEC(doKeyUp);							\
+		__VIRTUAL_DEC(doKeyHold);						\
+		__VIRTUAL_DEC(addChild);						\
+		
 	
 
 // define the virtual methods
@@ -75,6 +78,8 @@
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);		\
 		__VIRTUAL_SET(ClassName, Container, doKeyPressed);			\
 		__VIRTUAL_SET(ClassName, Container, doKeyUp);				\
+		__VIRTUAL_SET(ClassName, Container, doKeyHold);				\
+		__VIRTUAL_SET(ClassName, Container, addChild);				\
 	
 
 #define Container_ATTRIBUTES							\
@@ -84,6 +89,9 @@
 														\
 	/* children list */									\
 	VirtualList children;								\
+														\
+	/* removed children list */							\
+	VirtualList removedChildren;						\
 														\
 	/* parent */										\
 	Container parent;									\
@@ -151,10 +159,16 @@ int Container_onKeyPressed(Container this, va_list args);
 int Container_onKeyUp(Container this, va_list args);
 
 // process user input
+int Container_onKeyHold(Container this, va_list args);
+
+// process user input
 int Container_doKeyPressed(Container this, int pressedKey);
 
 // process user input
 int Container_doKeyUp(Container this, int pressedKey);
+
+// process user input
+int Container_doKeyHold(Container this, int pressedKey);
 
 //retrieve object's in game index
 int Container_getID(Container this);

@@ -115,7 +115,8 @@ void InGameEntity_destructor(InGameEntity this){
 // retrieve InGameEntity's friction
 fix7_9 InGameEntity_getFrictionFactor(InGameEntity this){
 
-	return this->inGameEntityDefinition->frictionFactor;
+	return 0;
+//	return this->inGameEntityDefinition->frictionFactor;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +176,7 @@ void InGameEntity_setGap(InGameEntity this){
 	// if facing to the left... swap left / right gap
 	if(__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode){
 		
-		this->gap.left = this->inGameEntityDefinition->gap.right;
+		this->gap.left 	= this->inGameEntityDefinition->gap.right;
 		this->gap.right = this->inGameEntityDefinition->gap.left;
 	}
 	
@@ -183,10 +184,10 @@ void InGameEntity_setGap(InGameEntity this){
 	if(false && WRLD_AFFINE != bgmapMode){
 	
 		// must scale the gap
-		this->gap.left = 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
+		this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
 		this->gap.right =  	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), abs(scale.x)));
-		this->gap.up = 		FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), abs(scale.y)));
-		this->gap.down = 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), abs(scale.y)));
+		this->gap.up 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), abs(scale.y)));
+		this->gap.down 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), abs(scale.y)));
 	}
 }
 
@@ -256,7 +257,7 @@ void InGameEntity_render(InGameEntity this, Transformation environmentTransform)
 		if(this->shape ){
 			
 		
-		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+		//__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}	
 #endif
 }

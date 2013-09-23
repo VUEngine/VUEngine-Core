@@ -290,6 +290,9 @@
 																		\
 		/* always set the destructor at the end */						\
 		__VIRTUAL_SET(ClassName, ClassName, destructor);				\
+																		\
+		/* always set the class name methos at the end */				\
+		__VIRTUAL_SET(ClassName, ClassName, getClassName);				\
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
@@ -301,6 +304,9 @@
 															\
 		/* all destructors are virtual */					\
 		__VIRTUAL_DEC(destructor);							\
+															\
+		/* all destructors are virtual */					\
+		__VIRTUAL_DEC(getClassName);						\
 															\
 		/* insert class's virtual methods names */			\
 		ClassName ## _METHODS;								\
@@ -321,7 +327,10 @@
 	__VTABLE(ClassName);												\
 																		\
 	/* declare getSize method */										\
-	int ClassName ## _getObjectSize()
+	int ClassName ## _getObjectSize();									\
+																		\
+	/* declare getClass name method */									\
+	char* ClassName ## _getClassName()
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // define a class
@@ -339,6 +348,12 @@
 	int ClassName ## _getObjectSize(){							\
 																\
 		return sizeof(ClassName ## _str);						\
+	}															\
+																\
+	/* define class's getSize method */							\
+	char* ClassName ## _getClassName(){							\
+																\
+		return #ClassName;										\
 	}															\
 																\
 	/* now add the function which will set the vtable */		\

@@ -96,16 +96,7 @@ static void SpriteManager_constructor(SpriteManager this){
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
-	{
-		int i = 0;
-		
-		for ( i = 0; i < __OBJECTLISTTAM; i++){
-			
-			this->sprites[i] = NULL;
-		}
-		
-		this->freeLayer = __TOTAL_LAYERS;
-	}	
+	SpriteManager_reset(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +106,20 @@ void SpriteManager_destructor(SpriteManager this){
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// reset
+void SpriteManager_reset(SpriteManager this){
+
+	int i = 0;
+	
+	for ( i = 0; i < __OBJECTLISTTAM; i++){
+		
+		this->sprites[i] = NULL;
+	}
+	
+	this->freeLayer = __TOTAL_LAYERS;
+}	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if any entity must be assigned another world layer

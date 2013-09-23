@@ -100,9 +100,6 @@ typedef struct InGameEntityDefinition{
 	// object's size over the z axis
 	int deep;
 	
-	// friction factor of the object
-	fix7_9 frictionFactor;
-
 	// gap for collision detection (to correct graphical collision with bgEntity's size)
 	// in pixels
 	Gap gap;

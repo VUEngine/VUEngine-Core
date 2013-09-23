@@ -139,34 +139,8 @@ __SINGLETON(TextureManager);
 static void TextureManager_constructor(TextureManager this){
 	
 	__CONSTRUCT_BASE(Object);
-	{
-		int i = 0;
-		int j = 0;
 	
-		// clear each bgmap segment usage
-		for(; i < NUM_BGMAPS; i++){
-			
-			this->numberOfChars[i] = 0;
-			
-			// clear the offsets
-			for(j=0;j<NUM_MAPS_PER_SEG;j++){
-				
-				this->xOffset[i][j] = 0;
-				this->yOffset[i][j] = 0;
-			}
-		}
-		
-		for(i = 0; i < NUM_BGMAPS * NUM_MAPS_PER_SEG; i++){
-			
-			this->offset[i][kXOffset] = 0;
-			this->offset[i][kYOffset] = 0;
-			this->offset[i][kBgmapSegment] = 0;
-			this->texture[i] = NULL;
-			this->textureUsageCount[i] = 0;
-		}
-		
-		this->freeBgmap = 0;
-	}
+	TextureManager_reset(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,6 +149,38 @@ void TextureManager_destructor(TextureManager this){
 
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// reset
+void TextureManager_reset(TextureManager this) {
+	
+	int i = 0;
+	int j = 0;
+
+	// clear each bgmap segment usage
+	for(; i < NUM_BGMAPS; i++){
+		
+		this->numberOfChars[i] = 0;
+		
+		// clear the offsets
+		for(j=0;j<NUM_MAPS_PER_SEG;j++){
+			
+			this->xOffset[i][j] = 0;
+			this->yOffset[i][j] = 0;
+		}
+	}
+	
+	for(i = 0; i < NUM_BGMAPS * NUM_MAPS_PER_SEG; i++){
+		
+		this->offset[i][kXOffset] = 0;
+		this->offset[i][kYOffset] = 0;
+		this->offset[i][kBgmapSegment] = 0;
+		this->texture[i] = NULL;
+		this->textureUsageCount[i] = 0;
+	}
+	
+	this->freeBgmap = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

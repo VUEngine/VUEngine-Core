@@ -84,6 +84,9 @@ SpriteManager SpriteManager_getInstance();
 // class's destructo
 void SpriteManager_destructor(SpriteManager this);
 
+// reset
+void SpriteManager_reset(SpriteManager this);
+
 // give each entity a world layer to be rendered
 void SpriteManager_assignLayers(SpriteManager this);
 

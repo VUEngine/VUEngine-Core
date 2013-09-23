@@ -91,20 +91,7 @@ static void ParamTableManager_constructor(ParamTableManager this){
 
 	__CONSTRUCT_BASE(Object);
 
-	{
-		int i = 0;
-
-		// clear the usage
-		for(;i < __TOTALPARAMOBJECTS; i++){
-
-			this->sprites[i] = NULL;
-		}
-		// set the size of the paramtable
-		this->size = __PARAMEND - __PARAMINI;
-		
-		// all the memory is free
-		this->used = 1;
-	}
+	ParamTableManager_reset(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +100,24 @@ void ParamTableManager_destructor(ParamTableManager this){
 
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// reset
+void ParamTableManager_reset(ParamTableManager this){
+
+	int i = 0;
+
+	// clear the usage
+	for(;i < __TOTALPARAMOBJECTS; i++){
+
+		this->sprites[i] = NULL;
+	}
+	// set the size of the paramtable
+	this->size = __PARAMEND - __PARAMINI;
+	
+	// all the memory is free
+	this->used = 1;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

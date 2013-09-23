@@ -31,6 +31,7 @@
 
 #include <Game.h>
 #include <Screen.h>
+#include <SpriteManager.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -144,6 +145,10 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 			Level_onKeyUp(this, *((int*)Telegram_getExtraInfo(telegram)));
 			break;
 			
+		case kKeyHold:
+			
+			Level_onKeyHold(this, *((int*)Telegram_getExtraInfo(telegram)));
+			break;
 	}
 
 	return false;
@@ -182,36 +187,41 @@ void Level_onKeyUp(Level this, int pressedKey){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process user input
+void Level_onKeyHold(Level this, int pressedKey){
+
+	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyHold, pressedKey));
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load a stage
-void Level_loadStage(Level this, StageDefinition* stageDefinition, int fadeDelay){
-	
-	_asciiChar = (const u16*)ASCII_CH;
-	
-	// make a fade out
-	Screen_FXFadeOut(Game_getInstance(), fadeDelay);
-	
-	//clear char and bgmap memory
-	vbClearScreen();
+void Level_loadStage(Level this, StageDefinition* stageDefinition){
 	
 	// reset the engine state
 	Game_reset(Game_getInstance());
 	
-	// destroy the stage
-	__DELETE(this->stage);
-
+	if (this->stage) {
+	
+		// destroy the stage
+		__DELETE(this->stage);
+	}
+	
 	// construct the stage
 	this->stage = __NEW(Stage);
 
 	//load world entities
 	Stage_load(this->stage, stageDefinition);
 
+	// check sprite layers
+	SpriteManager_checkLayers(SpriteManager_getInstance());
+
+	// render everyting
+	Level_render(this);
+
+	// render sprites as fast as possible
+	SpriteManager_render(SpriteManager_getInstance());
+	
 	// reset ingame clock and start it
 	Clock_reset(_inGameClock);
-	Clock_start(_inGameClock);
-	
-	// turn back the background
-	VIP_REGS[BKCOL] = 0x00;
-
-	// make a fade in
-	Screen_FXFadeIn(Game_getInstance(), fadeDelay);
+	Clock_start(_inGameClock);	
 }

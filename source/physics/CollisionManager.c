@@ -369,7 +369,7 @@ void CollisionManager_update(CollisionManager this){
 			if(!shapesToCheck[j] && noShapeBelow && !(__YAXIS & axisMovement)){
 						
 				// tell the owner that there is nothing below
-				MessageDispatcher_dispatchMessage(0, NULL, (Object)owner, kNoObjectBelow, (void*)NULL);
+				//MessageDispatcher_dispatchMessage(0, NULL, (Object)owner, kNoObjectBelow, (void*)NULL);
 			}
 		}
 	}

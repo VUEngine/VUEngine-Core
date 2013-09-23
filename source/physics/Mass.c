@@ -40,8 +40,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// define the Body
-__CLASS_DEFINITION(Body);
+// define the Mass
+__CLASS_DEFINITION(Mass);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -52,9 +52,6 @@ __CLASS_DEFINITION(Body);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-// class's constructor
-static void Body_constructor(Body this, InGameEntity owner, int deep);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -68,23 +65,29 @@ static void Body_constructor(Body this, InGameEntity owner, int deep);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Body, __PARAMETERS(InGameEntity owner, int deep))
-__CLASS_NEW_END(Body, __ARGUMENTS(owner, deep));
+__CLASS_NEW_DEFINITION(Mass, __PARAMETERS(fix19_13 weight))
+__CLASS_NEW_END(Mass, __ARGUMENTS(weight));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Body_constructor(Body this, InGameEntity owner, int deep){
+void Mass_constructor(Mass this, fix19_13 weight){
 
 	__CONSTRUCT_BASE(Object);
 	
-	// TODO	
-	this->radious = 1;
+	this->weight = weight;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void Body_destructor(Body this){
+void Mass_destructor(Mass this){
 
 	// destroy the super object
 	__DESTROY_BASE(Object);
 }
+
+// retrieve weight
+fix19_13 Mass_getWeight(Mass this) {
+	
+	return this->weight;
+}
+

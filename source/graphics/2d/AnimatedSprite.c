@@ -299,7 +299,7 @@ void AnimatedSprite_animate(AnimatedSprite this){
 	
 	// if the frame has changed
 	if(this->actualFrame != this->previousFrame){
-		
+
 		// write the new frame of animation
 		AnimatedSprite_writeAnimation(this);
 		
@@ -308,9 +308,8 @@ void AnimatedSprite_animate(AnimatedSprite this){
 		this->previousFrame = this->actualFrame; 
 	}
 	
-	
 	// reduce frame delay count	
-	if(!(--this->frameDelay)){
+	if(!(this->frameDelay--)){
 		
 		// incrase the frame to show
 		this->previousFrame = this->actualFrame++;

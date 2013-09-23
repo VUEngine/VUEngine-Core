@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
  
-#ifndef BODY_H_
-#define BODY_H_
+#ifndef MASS_H_
+#define MASS_H_
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -44,25 +44,39 @@
  */
 
 
-#define Body_METHODS								\
+#define Mass_METHODS								\
 		Object_METHODS								\
 
 
-#define Body_SET_VTABLE(ClassName)								\
+#define Mass_SET_VTABLE(ClassName)								\
 		Object_SET_VTABLE(ClassName)							\
 	
 
-#define Body_ATTRIBUTES								\
+#define Mass_ATTRIBUTES								\
 													\
 	/* super's attributes */						\
 	Object_ATTRIBUTES;								\
 													\
+	/* mass configuration */						\
+	MassDefinition* massDefinition;					\
+													\
 	/* radious */									\
-	int radious;
+	fix19_13 weight;
 
 
-// A Body which represent a generic object inside a Stage
-__CLASS(Body);
+// defines a Mass configuration in ROM memory
+typedef struct MassDefinition{
+
+	// the sprite
+	fix19_13 weight;
+	
+}MassDefinition;
+
+typedef const MassDefinition MassROMDef;
+
+// A Mass which represent a generic object inside a Stage
+__CLASS(Mass);
+
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -76,10 +90,15 @@ __CLASS(Body);
 
 
 // class's allocator
-__CLASS_NEW_DECLARE(Body, __PARAMETERS(InGameEntity owner, int deep));
+__CLASS_NEW_DECLARE(Mass, __PARAMETERS(fix19_13 weight));
+
+// class's constructor
+void Mass_constructor(Mass this, fix19_13 weight);
 
 // class's destructor
-void Body_destructor(Body this);
+void Mass_destructor(Mass this);
 
+// retrieve weight
+fix19_13 Mass_getWeight(Mass this);
 
-#endif /*BODY_H_*/
+#endif /*MASS_H_*/

@@ -59,7 +59,7 @@
 	void* vTable;											\
 															\
 	/* flag to know if it's a dynamic created object */ 	\
-	int dynamic;
+	int dynamic;											\
 
 // declare the virtual methods
 #define Object_METHODS								\
@@ -90,6 +90,5 @@ void Object_destructor(Object this);
 
 // on message
 int Object_handleMessage(Object this, void* owner, void* telegram);
-
 
 #endif /* OBJECT_H_ */

@@ -1,6 +1,11 @@
 #ifndef MATH_H_
 #define MATH_H_
 
+// extern declarations
+extern int abs(int);
+extern float fabsf(float);
+
+
 //Fixed Point macros
 #define fix7_9				s16
 #define fix13_3				s16
