@@ -376,5 +376,5 @@ void PhysicalWorld_setGravity(PhysicalWorld this, VBVec3D gravity) {
 // retrieve gravity
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this) {
 
-	return &this->gravity.x;
+	return (const VBVec3D*)&this->gravity.x;
 }

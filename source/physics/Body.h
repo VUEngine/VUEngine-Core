@@ -157,9 +157,11 @@ int Body_isMoving(Body this);
 // retrieve velocity
 Velocity Body_getVelocity(Body this);
 
-// set movement type
-void Body_setMovementType(Body this, int movementType);
+// set movement type to accelerated
+void Body_moveAccelerated(Body this);
 
+// set movement type to uniform
+void Body_moveUniformly(Body this, Velocity velocity);
 
 
 #endif /*BODY_H_*/

@@ -63,8 +63,14 @@ static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, const VBVec
 // udpdate movement over axis
 static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* gravity);
 
+// set movement type
+static void Body_setMovementType(Body this, int movementType);
+
 // apply force
-void Body_applyForce(Body this, int clear);
+static void Body_applyForce(Body this, int clear);
+
+// clear force
+static void Body_clearAcceleration(Body this);
 
 enum CollidingObjectIndexes{
 	eXAxis = 0,
@@ -160,10 +166,43 @@ Velocity Body_getVelocity(Body this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// apply force
-void Body_setMovementType(Body this, int movementType){
+// set movement type
+static void Body_setMovementType(Body this, int movementType){
 
 	this->movementType = movementType;
+	
+	if (__UNIFORM_MOVEMENT == movementType){
+		
+		Body_clearForce(this);
+		Body_clearAcceleration(this);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set movement type to accelerated
+void Body_moveAccelerated(Body this){
+	
+	Body_setMovementType(this, __ACCELERATED_MOVEMENT);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set movement type to uniform
+void Body_moveUniformly(Body this, Velocity velocity){
+
+	this->velocity.x = velocity.x;
+	this->velocity.y = velocity.y;
+	this->velocity.z = velocity.z;
+
+	Body_setMovementType(this, __UNIFORM_MOVEMENT);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// clear force
+static void Body_clearAcceleration(Body this){
+	
+	this->acceleration.x = 0;
+	this->acceleration.y = 0;
+	this->acceleration.z = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,7 +216,7 @@ void Body_clearForce(Body this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // apply force
-void Body_applyForce(Body this, int clear){
+static void Body_applyForce(Body this, int clear){
 	
 	fix19_13 weight = Mass_getWeight(this->mass);
 
@@ -216,6 +255,8 @@ void Body_addForce(Body this, const Force* force){
 			
 			Body_applyForce(this, true);
 		}
+		
+		Body_moveAccelerated(this);
 	}
 }
 
@@ -249,6 +290,8 @@ static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, const VBVec
 	// get friction fBody from the game world
 	fix19_13 friction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
 	fix19_13 weight = Mass_getWeight(this->mass);
+	
+	VBVec3D fictionVector = {0, 0, 0};
 
 	Direction direction = {
 			this->acceleration.x? 0 <= this->velocity.x? 1: -1: 0, 
@@ -264,10 +307,14 @@ static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, const VBVec
 		friction += Actor_getFrictionBody(this->objectBelow));
 	}
 	*/
+	
+	fictionVector.x = this->acceleration.x? friction: 0;
+	fictionVector.y = this->acceleration.y? friction: 0;
+	fictionVector.z = this->acceleration.z? friction: 0;
 
-	this->acceleration.x = this->acceleration.x - direction.x * FIX19_13_MULT(FIX19_13_DIV(friction, weight), timeElapsed) + FIX19_13_MULT(gravity->x, timeElapsed);
-	this->acceleration.y = this->acceleration.y - direction.y * FIX19_13_MULT(FIX19_13_DIV(friction, weight), timeElapsed) + FIX19_13_MULT(gravity->y, timeElapsed);
-	this->acceleration.z = this->acceleration.z - direction.z * FIX19_13_MULT(FIX19_13_DIV(friction, weight), timeElapsed) + FIX19_13_MULT(gravity->z, timeElapsed);
+	this->acceleration.x = this->acceleration.x - FIX19_13_MULT(ITOFIX19_13(direction.x), FIX19_13_MULT(FIX19_13_DIV(fictionVector.x, weight), timeElapsed)) + FIX19_13_MULT(gravity->x, timeElapsed);
+	this->acceleration.y = this->acceleration.y - FIX19_13_MULT(ITOFIX19_13(direction.y), FIX19_13_MULT(FIX19_13_DIV(fictionVector.y, weight), timeElapsed)) + FIX19_13_MULT(gravity->y, timeElapsed);
+	this->acceleration.z = this->acceleration.z - FIX19_13_MULT(ITOFIX19_13(direction.z), FIX19_13_MULT(FIX19_13_DIV(fictionVector.z, weight), timeElapsed)) + FIX19_13_MULT(gravity->z, timeElapsed);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,7 +336,7 @@ static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* 
 	// determine the movement type	
 	// calculate displacement based in velocity, time and acceleration
  	if(this->movementType){
-	
+
 		displacement.x =
 			FIX19_13_MULT(this->velocity.x, timeElapsed) 
 			+ FIX19_13_MULT(this->acceleration.x, FIX19_13_MULT(timeElapsed, timeElapsed) >> 1);
@@ -303,9 +350,9 @@ static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* 
 			+ FIX19_13_MULT(this->acceleration.z, FIX19_13_MULT(timeElapsed, timeElapsed) >> 1);
 		
 		// update the velocity
-		this->velocity.x = FIX19_13_MULT(this->acceleration.x, timeElapsed);
-		this->velocity.y = this->velocity.y + FIX19_13_MULT(this->acceleration.y, timeElapsed);
-		this->velocity.z = this->velocity.z + FIX19_13_MULT(this->acceleration.z, timeElapsed);
+		this->velocity.x += FIX19_13_MULT(this->acceleration.x, timeElapsed);
+		this->velocity.y += FIX19_13_MULT(this->acceleration.y, timeElapsed);
+		this->velocity.z += FIX19_13_MULT(this->acceleration.z, timeElapsed);
 
  		if(!gravity->x && !this->appliedForce.x && 1 > abs(FIX19_13TOI(displacement.x))){
  			
@@ -336,19 +383,13 @@ static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* 
  	}
  	else {
  		
+		// update the velocity
 		displacement.x = FIX19_13_MULT(this->velocity.x, timeElapsed);
 		displacement.y = FIX19_13_MULT(this->velocity.y, timeElapsed);
 		displacement.z = FIX19_13_MULT(this->velocity.z, timeElapsed);
-
-		// update the velocity
-		this->velocity.x = FIX19_13_MULT(this->acceleration.x, timeElapsed);
-		this->velocity.y = FIX19_13_MULT(this->acceleration.y, timeElapsed);
-		this->velocity.z = FIX19_13_MULT(this->acceleration.z, timeElapsed);
  	}
-	//displacement.x = FTOFIX19_13(0.5);
-	//vbjPrintInt(FIX19_13TOF(this->velocity.x),1, 16);
-	//vbjPrintInt(FIX19_13TOF(displacement.x),1, 17);
-	this->position.x += displacement.x;
+
+ 	this->position.x += displacement.x;
 	this->position.y += displacement.y;
 	this->position.z += displacement.z;
 }
