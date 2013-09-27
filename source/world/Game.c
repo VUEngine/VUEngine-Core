@@ -407,7 +407,7 @@ void Game_handleInput(Game this){
 	else if(!pressedKey && previousKeyPressed){
 
 		// inform the game about the key pressed		
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &pressedKey);
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &previousKeyPressed);
 	}
 	else if(pressedKey){
 

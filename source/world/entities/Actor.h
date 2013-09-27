@@ -32,6 +32,7 @@
 
 #include <InGameEntity.h>
 #include <AnimatedSprite.h>
+#include <Body.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -166,6 +167,9 @@ void Actor_setInGameType(Actor this, int inGameType);
 // change direction
 void Actor_moveOpositeDirecion(Actor this, int axis);
 
+// whether changed direction in the last cycle or not
+int Actor_changedDirection(Actor this, int axis);
+
 // true if inside the screen range 
 int Actor_isInsideGame(Actor this);
 
@@ -206,8 +210,12 @@ int Actor_updateSpritePosition(Actor this);
 int Actor_updateSpriteScale(Actor this);
 
 // retrieve body
-void* Actor_getBody(Actor this);
+const Body Actor_getBody(Actor this);
 
-void Actor_stopMovement(Actor this, int axis);
+// stop movement completelty
+void Actor_stopMovement(Actor this);
+
+// stop movement over axis
+void Actor_stopMovementOnAxis(Actor this, int axis);
 
 #endif

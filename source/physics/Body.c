@@ -55,19 +55,17 @@ __CLASS_DEFINITION(Body);
 
 
 // class's constructor
-static void Body_constructor(Body this, Actor owner, Mass mass);
+static void Body_constructor(Body this, Object owner, Mass mass);
 
 // update acceleration
-static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, const VBVec3D* gravity);
+static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity);
 
 // udpdate movement over axis
-static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* gravity);
+//static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* gravity);
+static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce);
 
 // set movement type
 static void Body_setMovementType(Body this, int movementType);
-
-// apply force
-static void Body_applyForce(Body this, int clear);
 
 // clear force
 static void Body_clearAcceleration(Body this);
@@ -90,15 +88,14 @@ enum CollidingObjectIndexes{
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Body, __PARAMETERS(Actor owner, Mass mass))
+__CLASS_NEW_DEFINITION(Body, __PARAMETERS(Object owner, Mass mass))
 __CLASS_NEW_END(Body, __ARGUMENTS(owner, mass));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Body_constructor(Body this, Actor owner, Mass mass){
+static void Body_constructor(Body this, Object owner, Mass mass){
 
 	__CONSTRUCT_BASE(Object);
-
 
 	this->owner = owner;
 	
@@ -146,14 +143,14 @@ void Body_destructor(Body this){
 }
 
 // set game entity
-void Body_setOwner(Body this, Actor owner){
+void Body_setOwner(Body this, Object owner){
 	
 	this->owner = owner;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get game entity
-Actor Body_getOwner(Body this){
+Object Body_getOwner(Body this){
 	
 	return this->owner;
 }
@@ -216,7 +213,7 @@ void Body_clearForce(Body this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // apply force
-static void Body_applyForce(Body this, int clear){
+void Body_applyForce(Body this, const Force* force, int clear){
 	
 	fix19_13 weight = Mass_getWeight(this->mass);
 
@@ -227,6 +224,11 @@ static void Body_applyForce(Body this, int clear){
 		this->acceleration.z = 0;
 	}
 
+	this->appliedForce.x = force->x;
+	this->appliedForce.y = force->y;
+	this->appliedForce.z = force->z;
+
+
 	this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, weight);
 	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, weight);
 	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, weight);
@@ -235,6 +237,8 @@ static void Body_applyForce(Body this, int clear){
 		
 		Body_awake(this);
 	}
+
+	Body_moveAccelerated(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,21 +246,8 @@ static void Body_applyForce(Body this, int clear){
 void Body_addForce(Body this, const Force* force){
 	
 	if (force) {
-		
-		this->appliedForce.x = force->x;
-		this->appliedForce.y = force->y;
-		this->appliedForce.z = force->z;
 
-		if(Body_isMoving(this)) {
-			
-			Body_applyForce(this, false);
-		}
-		else {
-			
-			Body_applyForce(this, true);
-		}
-		
-		Body_moveAccelerated(this);
+		Body_applyForce(this, force, !Body_isMoving(this));
 	}
 }
 
@@ -269,140 +260,143 @@ void Body_update(Body this, const VBVec3D* gravity){
 		// get the elapsed time
 		fix19_13 timeElapsed = FTOFIX19_13((Clock_getTime(_inGameClock) - this->time) / 100.0f);
 
-	 	if(this->movementType){
+		if (timeElapsed) {
 			
-	 		Body_updateAcceleration(this, timeElapsed, gravity);
+			int axis = (__XAXIS | __YAXIS | __ZAXIS);
+
+			if(this->velocity.x || this->acceleration.x || this->appliedForce.x) {
+
+		 	 	if(__ACCELERATED_MOVEMENT == this->movementType){
+
+		 	 		Body_updateAcceleration(this, timeElapsed, gravity->x, &this->acceleration.x, this->velocity.x);
+		 		}
+		 		
+		 	 	if(Body_updateMovement(this, timeElapsed, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x)) {
+
+		 	 		axis &= !__XAXIS;
+		 	 	}
+		 	}
+
+			if(this->velocity.y || this->acceleration.y) {
+
+		 	 	if(__ACCELERATED_MOVEMENT == this->movementType){
+
+		 	 		Body_updateAcceleration(this, timeElapsed, gravity->y, &this->acceleration.y, this->velocity.y);
+		 		}
+
+		 	 	if(Body_updateMovement(this, timeElapsed, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y)) {
+
+		 	 		axis &= !__YAXIS;
+		 	 	}
+		 	}
+
+		 	if(this->velocity.z || this->acceleration.z) {
+
+		 	 	if(__ACCELERATED_MOVEMENT == this->movementType){
+
+		 	 		Body_updateAcceleration(this, timeElapsed, gravity->z, &this->acceleration.z, this->velocity.z);
+		 		}
+		 	 	
+		 	 	if(Body_updateMovement(this, timeElapsed, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z)) {
+
+		 	 		axis &= !__ZAXIS;
+		 	 	}
+		 	}
+			vbjPrintHex(axis, 10, 16);
+
+		 	if(axis) {
+		 		
+	 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, &axis);
+		 	}
+			Body_clearForce(this);
 		}
-	
-		Body_updateMovement(this, timeElapsed, gravity);
-		
-		Body_clearForce(this);
 		
 		// record this update's time
 		this->time = Clock_getTime(_inGameClock);
 	}	
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update force
-static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, const VBVec3D* gravity){
+static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity){
 	
 	// get friction fBody from the game world
 	fix19_13 friction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
 	fix19_13 weight = Mass_getWeight(this->mass);
 	
-	VBVec3D fictionVector = {0, 0, 0};
-
-	Direction direction = {
-			this->acceleration.x? 0 <= this->velocity.x? 1: -1: 0, 
-			this->acceleration.y? 0 <= this->velocity.y? 1: -1: 0, 
-			this->acceleration.z? 0 <= this->velocity.z? 1: -1: 0, 
-			{0}, {0}, {0}
-	};
+	int direction = *acceleration? 0 <= velocity? 1: -1: 0;
+	
+	if(!direction) vbjPrintText("error", 10, 15);
 	/*
 	// if I'm over something
 	if(this->objectBelow){
 		
 		// grab it's friction fBody
-		friction += Actor_getFrictionBody(this->objectBelow));
+		friction += Object_getFrictionBody(this->objectBelow));
 	}
 	*/
 	
-	fictionVector.x = this->acceleration.x? friction: 0;
-	fictionVector.y = this->acceleration.y? friction: 0;
-	fictionVector.z = this->acceleration.z? friction: 0;
+	friction = *acceleration? friction: 0;
 
-	this->acceleration.x = this->acceleration.x - FIX19_13_MULT(ITOFIX19_13(direction.x), FIX19_13_MULT(FIX19_13_DIV(fictionVector.x, weight), timeElapsed)) + FIX19_13_MULT(gravity->x, timeElapsed);
-	this->acceleration.y = this->acceleration.y - FIX19_13_MULT(ITOFIX19_13(direction.y), FIX19_13_MULT(FIX19_13_DIV(fictionVector.y, weight), timeElapsed)) + FIX19_13_MULT(gravity->y, timeElapsed);
-	this->acceleration.z = this->acceleration.z - FIX19_13_MULT(ITOFIX19_13(direction.z), FIX19_13_MULT(FIX19_13_DIV(fictionVector.z, weight), timeElapsed)) + FIX19_13_MULT(gravity->z, timeElapsed);
+	*acceleration = *acceleration - FIX19_13_MULT(ITOFIX19_13(direction), FIX19_13_MULT(FIX19_13_DIV(friction, weight), timeElapsed)) + FIX19_13_MULT(gravity, timeElapsed);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // udpdate movement over axis
-static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* gravity){
+static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce){
 	
 	// the movement displacement
-	VBVec3D displacement = {0, 0, 0};
+	fix19_13 displacement = 0;
 	
-	// if no time has elapsed
-	if(!timeElapsed){
-
-		this->time = Clock_getTime(_inGameClock);
-
-		//stop processing 
-		return;
-	}
-
+	int moving = true;
+	
 	// determine the movement type	
 	// calculate displacement based in velocity, time and acceleration
- 	if(this->movementType){
+ 	if(__ACCELERATED_MOVEMENT == this->movementType){
 
-		displacement.x =
-			FIX19_13_MULT(this->velocity.x, timeElapsed) 
-			+ FIX19_13_MULT(this->acceleration.x, FIX19_13_MULT(timeElapsed, timeElapsed) >> 1);
+ 		float threshold = 0.1f;
+		displacement =
+			FIX19_13_MULT(*velocity, timeElapsed) 
+			+ FIX19_13_MULT(*acceleration, FIX19_13_MULT(timeElapsed, timeElapsed) >> 1);
 	
-		displacement.y =
-			FIX19_13_MULT(this->velocity.y, timeElapsed) 
-			+ FIX19_13_MULT(this->acceleration.y, FIX19_13_MULT(timeElapsed, timeElapsed) >> 1);
-	
-		displacement.z =
-			FIX19_13_MULT(this->velocity.z, timeElapsed) 
-			+ FIX19_13_MULT(this->acceleration.z, FIX19_13_MULT(timeElapsed, timeElapsed) >> 1);
-		
 		// update the velocity
-		this->velocity.x += FIX19_13_MULT(this->acceleration.x, timeElapsed);
-		this->velocity.y += FIX19_13_MULT(this->acceleration.y, timeElapsed);
-		this->velocity.z += FIX19_13_MULT(this->acceleration.z, timeElapsed);
+		*velocity += FIX19_13_MULT(*acceleration, timeElapsed);
 
- 		if(!gravity->x && !this->appliedForce.x && 1 > abs(FIX19_13TOI(displacement.x))){
+ 		if(!gravity && !appliedForce && (threshold > fabs(FIX19_13TOF(displacement)) || threshold > fabs(FIX19_13TOF(*velocity)) || threshold > fabs(FIX19_13TOF(*acceleration)))){
  			
- 			this->velocity.x = 0;
- 			this->acceleration.x = 0; 
+ 			*velocity = 0;
+ 			*acceleration = 0; 
  		}
  		
- 		if(!gravity->y && !this->appliedForce.y && 1 > abs(FIX19_13TOI(displacement.y))){
- 			
- 			this->velocity.y = 0;
- 			this->acceleration.y = 0; 
- 		}
+ 		if(!appliedForce && !*velocity){
 
- 		if(!gravity->z && !this->appliedForce.z && 1 > abs(FIX19_13TOI(displacement.z))){
- 			
- 			this->velocity.z = 0;
- 			this->acceleration.z = 0; 
+ 			moving = false;
  		}
+ 	}
+ 	else if(__UNIFORM_MOVEMENT == this->movementType){
  		
- 		if(!this->appliedForce.x && !this->appliedForce.y && !this->appliedForce.z){
-
- 	 		if(!this->velocity.x && !this->velocity.y && !this->velocity.z){
- 			
- 	 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, NULL);
- 	 		}
- 			//Body_sleep(this);
- 		}
+		// update the velocity
+		displacement = FIX19_13_MULT(*velocity, timeElapsed);
  	}
  	else {
  		
-		// update the velocity
-		displacement.x = FIX19_13_MULT(this->velocity.x, timeElapsed);
-		displacement.y = FIX19_13_MULT(this->velocity.y, timeElapsed);
-		displacement.z = FIX19_13_MULT(this->velocity.z, timeElapsed);
+ 		ASSERT(false, Body: wrong movement type);
  	}
 
- 	this->position.x += displacement.x;
-	this->position.y += displacement.y;
-	this->position.z += displacement.z;
+ 	*position += displacement;
+ 	
+ 	return moving;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Body_printPhysics(Body this, int x, int y){
 	
 	vbjPrintText("X             Y             Z",x,y++);
 	vbjPrintText("Position",x,y++);
-//	vbjPrintInt(FIX19_13TOI(this->transform.globalPosition.x ),x,y);
-//	vbjPrintInt(FIX19_13TOI(this->transform.globalPosition.y),x+14,y);
-//	vbjPrintInt(FIX19_13TOI(this->transform.globalPosition.z),x+14*2,y++);
+	vbjPrintInt(FIX19_13TOI(this->position.x ),x,y);
+	vbjPrintInt(FIX19_13TOI(this->position.y),x+14,y);
+	vbjPrintInt(FIX19_13TOI(this->position.z),x+14*2,y++);
 
 	vbjPrintText("Velocity",x,y++);
 	vbjPrintFloat(FIX19_13TOF(this->velocity.x),x,y);
@@ -422,19 +416,27 @@ void Body_stopMovement(Body this, int axis){
 	
 		// not moving anymore
 		this->velocity.x = 0;
+		this->acceleration.x = 0;
 	}
 	
 	if(__YAXIS & axis){
 	
 		// not moving anymore
 		this->velocity.y = 0;
+		this->acceleration.y = 0;
 	}	
 	
 	if(__ZAXIS & axis){
 	
 		// not moving anymore
 		this->velocity.z = 0;
-	}	
+		this->acceleration.z = 0;
+	}
+	
+	if(!Body_isMoving(this)) {
+		
+		Body_sleep(this);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -447,7 +449,7 @@ void Body_resetTimer(Body this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // the the object below me
-void Body_setObjectBelow(Body this, Actor objectBelow){
+void Body_setObjectBelow(Body this, Object objectBelow){
 	
 	//this->objectBelow = objectBelow;
 }
@@ -478,7 +480,7 @@ VBVec3D Body_getPosition(Body this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve position
-void Body_setPosition(Body this, const VBVec3D* position, Actor caller) {
+void Body_setPosition(Body this, const VBVec3D* position, Object caller) {
 	
 	if (this->owner == caller){
 
@@ -531,5 +533,36 @@ int Body_isMoving(Body this){
 	result |= (this->velocity.z)? __ZAXIS: 0;
 
 	return this->awake && this->active && result;
+}
+
+// bounce back
+void Body_bounce(Body this){
+	
+	fix19_13 weight = Mass_getWeight(this->mass);
+
+	Force force1 = {ITOFIX19_13(0), ITOFIX19_13(-30), ITOFIX19_13(0)};
+	fix19_13 friction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
+
+	
+	Force force = {
+			0*FIX19_13_MULT(ITOFIX19_13(-1), FIX19_13_MULT(weight, this->acceleration.x - friction)),
+			FIX19_13_MULT(ITOFIX19_13(-1), FIX19_13_MULT(weight, this->acceleration.y)),
+			0*FIX19_13_MULT(ITOFIX19_13(-1), FIX19_13_MULT(weight, this->acceleration.z))
+	};
+
+	{
+		s32 fix = 8192.0f * force.y;
+		vbjPrintFloat(fix, 1, 14);
+		vbjPrintFloat(fix / 8192.0f, 1, 15);
+		vbjPrintFloat(FIX19_13TOF(fix), 1, 16);
+		vbjPrintInt(FIX19_13TOI(fix), 1, 17);
+		vbjPrintFloat(FIX19_13TOF(force.y), 1, 18);
+		vbjPrintInt(FIX19_13TOI(force.y), 1, 19);
+	}
+	Body_stopMovement(this, __XAXIS);
+	Body_stopMovement(this, __YAXIS);
+	Body_stopMovement(this, __ZAXIS);
+	
+	Body_addForce(this, &force);
 }
 

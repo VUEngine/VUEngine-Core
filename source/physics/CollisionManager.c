@@ -351,7 +351,7 @@ void CollisionManager_update(CollisionManager this){
 						if(kShapeBelow != collisionResult){
 	
 							// inform the owner about the collision
-							if(MessageDispatcher_dispatchMessage(0, NULL, (Object)owner, collisionResult, (void*)Shape_getOwner(shapeToCheck))){
+							if(MessageDispatcher_dispatchMessage(0, (Object)owner, (Object)owner, collisionResult, (void*)Shape_getOwner(shapeToCheck))){
 							
 								// stop processing
 								break;

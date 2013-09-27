@@ -166,7 +166,7 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 		globalPosition.y += localPosition.y;
 		globalPosition.z += localPosition.z;
 
-		Body_setPosition(this->body, &globalPosition, this);
+		Body_setPosition(this->body, &globalPosition, (Object)this);
 	}
 }
 
@@ -269,6 +269,30 @@ void Actor_moveOpositeDirecion(Actor this, int axis){
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// whether changed direction in the last cycle or not
+int Actor_changedDirection(Actor this, int axis){
+	
+	switch(axis){
+	
+		case __XAXIS:
+			
+			return this->direction.x != this->previousDirection.x;			
+			break;
+			
+		case __YAXIS:
+			
+			return this->direction.x != this->previousDirection.x;			
+			break;
+			
+		case __ZAXIS:
+			
+			return this->direction.x != this->previousDirection.x;			
+			break;
+	}
+	
+	return false;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // allocate a write in graphic memory again
@@ -290,7 +314,53 @@ int Actor_isInsideGame(Actor this){
 // process a telegram
 int Actor_handleMessage(Actor this, Telegram telegram){
 
-	return StateMachine_handleMessage(this->stateMachine, telegram);
+	if (!StateMachine_handleMessage(this->stateMachine, telegram)) {
+		
+		// retrieve message
+		int message = Telegram_getMessage(telegram);
+
+		if (this->body) {
+			
+			Object sender = Telegram_getSender(telegram);
+			Actor otherActor = __GET_CAST(Actor, sender);
+			
+			if (sender == (Object)this){
+				
+				Velocity velocity = Body_getVelocity(this->body);
+				
+				// retrieve collision entity
+				InGameEntity inGameEntity = (InGameEntity) Telegram_getExtraInfo(telegram);
+
+				switch(message){
+
+					case kCollisionXY:
+					case kCollisionX:
+					case kCollisionY:
+					case kCollisionZ:
+
+						// test y axis
+						if(velocity.y && (kCollisionY == message || kCollisionXY == message)){
+
+							// align to the colliding object
+							Actor_alignTo(this, inGameEntity, __YAXIS, 1);
+						}						
+
+						Body_bounce(this->body);
+						return true;
+						break;
+				}
+			}
+			else if (otherActor) {
+
+				const Body otherBody = Actor_getBody(otherActor);
+				
+				//Body_takeHitFrom(this->body, otherBody);
+				
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -361,24 +431,48 @@ int Actor_updateSpritePosition(Actor this){
 // check if must update sprite's scale
 int Actor_updateSpriteScale(Actor this){
 
-	return true;
-//	return this->velocity.z | Entity_updateSpriteScale((Entity)this);
+	if (Entity_updateSpriteScale((Entity)this)) {
+
+		return true;
+	}
+	
+	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z) {
+		
+		return true;
+	}
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// stop movement over an axis
-void Actor_stopMovement(Actor this, int axis){
+// stop movement completelty
+void Actor_stopMovement(Actor this){
 	
-	
+	if(this->body) {
+		
+		Body_stopMovement(this->body, __XAXIS);
+		Body_stopMovement(this->body, __YAXIS);
+		Body_stopMovement(this->body, __ZAXIS);
+	}
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// stop movement over axis
+void Actor_stopMovementOnAxis(Actor this, int axis){
+
+	if(this->body) {
+		
+		Body_stopMovement(this->body, axis);
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // align character to other entity on collision
 void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
-/*
+
 	// retrieve the colliding entity's position and gap
-	VBVec3D otherPosition = Entity_getPosition((Entity) entity);	
-	Gap otherGap = Actor_getGap(entity);
+	VBVec3D otherPosition = Entity_getLocalPosition((Entity) entity);	
+	Gap otherGap = InGameEntity_getGap(entity);
 	
 	// pointers to the dimensions to affect
 	fix19_13 *myPositionAxis = NULL;
@@ -397,14 +491,14 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 	int screenSize = 0;
 
 	// calculate gap again (scale, etc)
-	Actor_setGap((Actor)this);
-	
+	InGameEntity_setGap((InGameEntity)this);
+
 	// select the axis to affect
 	switch(axis){
 		
 		case __XAXIS:
 			
-			myPositionAxis = &this->transform.position.x;
+			myPositionAxis = &this->transform.localPosition.x;
 			otherPositionAxis = &otherPosition.x;
 			
 			//myHalfSize = (Entity_getWidth((Entity)this) >> 1) + (FIX19_13TOI(*myPositionAxis) > __SCREENWIDTH / 2? 1: 0);
@@ -422,7 +516,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			
 		case __YAXIS:
 			
-			myPositionAxis = &this->transform.position.y;
+			myPositionAxis = &this->transform.localPosition.y;
 			otherPositionAxis = &otherPosition.y;
 			
 			myHalfSize = (Entity_getHeight((Entity)this) >> 1);
@@ -438,22 +532,20 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			
 		case __ZAXIS:
 			
-			myPositionAxis = &this->transform.position.z;
+			myPositionAxis = &this->transform.localPosition.z;
 			otherPositionAxis = &otherPosition.z;
 			
-			myHalfSize = (Actor_getDeep((Actor)this) >> 1);
-			otherHalfSize = (Actor_getDeep(entity) >> 1);
+			myHalfSize = (InGameEntity_getDeep((InGameEntity)this) >> 1);
+			otherHalfSize = (InGameEntity_getDeep(entity) >> 1);
 			
 			screenSize = __MAXVIEWDISTANCE;
 			break;			
-			
 	}
-	
 	
 	// decide to which side of the entity align myself
 	if(*myPositionAxis > *otherPositionAxis){
 
-		//pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
+//		pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
 		// align right / below
 		*myPositionAxis = *otherPositionAxis +  
 							ITOFIX19_13(otherHalfSize - otherHighGap
@@ -461,18 +553,31 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 							+ pad);
 	}
 	else{
-		//pad += (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
+//		pad += (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
 		// align left
 		*myPositionAxis = *otherPositionAxis -  
 							ITOFIX19_13(otherHalfSize - otherLowGap
 							+ myHalfSize - myHighGap
 							+ pad);
-
+		
 	}
-	*/
-}	
+
+	if (this->body) {
+
+		Body_setPosition(this->body, &this->transform.localPosition, (Object)this);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 
+void Actor_syncBodyPosition(this){
+	
+	
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve body
-void* Actor_getBody(Actor this){
+const Body Actor_getBody(Actor this){
 	
 	return this->body;
 }

@@ -31,7 +31,6 @@
  */
 
 #include <Object.h>
-#include <Actor.h>
 #include <Mass.h>
 
 
@@ -62,7 +61,7 @@
 	Mass mass;											\
 														\
 	/* owner */											\
-	Actor owner;										\
+	Object owner;										\
 														\
 	/* direction */										\
 	Force appliedForce;									\
@@ -70,11 +69,8 @@
 	/* spatial position */								\
 	VBVec3D position;									\
 														\
-	/* actor velocity on each instante */				\
+	/* velocity on each instante */						\
 	Velocity velocity;									\
-														\
-	/* state of actor's movement over each axis */		\
-	/*MovementState movementState;*/					\
 														\
 	/* acelearion structure */							\
 	Acceleration acceleration;							\
@@ -97,7 +93,7 @@
 	/* raise flag to update body's physices */			\
 	int awake: 1;										\
 														\
-	Actor objectBelow;
+	Object objectBelow;
 
 // A Body which represent a generic object inside a Stage
 __CLASS(Body);
@@ -113,16 +109,16 @@ __CLASS(Body);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Body, __PARAMETERS(Actor owner, Mass mass));
+__CLASS_NEW_DECLARE(Body, __PARAMETERS(Object owner, Mass mass));
 
 // class's destructor
 void Body_destructor(Body this);
 
 // set game entity
-void Body_setOwner(Body this, Actor owner);
+void Body_setOwner(Body this, Object owner);
 
 // get game entity
-Actor Body_getOwner(Body this);
+Object Body_getOwner(Body this);
 
 // update
 void Body_update(Body this, const VBVec3D* gravity);
@@ -137,7 +133,7 @@ int Body_isActive(Body this);
 VBVec3D Body_getPosition(Body this);
 
 // retrieve position
-void Body_setPosition(Body this, const VBVec3D* position, Actor caller);
+void Body_setPosition(Body this, const VBVec3D* position, Object caller);
 
 // retrieve state
 int Body_isAwake(Body body);
@@ -147,6 +143,12 @@ void Body_awake(Body body);
 
 // go to sleep
 void Body_sleep(Body body);
+
+// clear force
+void Body_clearForce(Body this);
+
+// apply force
+void Body_applyForce(Body this, const Force* force, int clear);
 
 // add a force
 void Body_addForce(Body this, const Force* force);
@@ -163,5 +165,10 @@ void Body_moveAccelerated(Body this);
 // set movement type to uniform
 void Body_moveUniformly(Body this, Velocity velocity);
 
+// print physical data
+void Body_printPhysics(Body this, int x, int y);
+
+// bounce back
+void Body_bounce(Body this);
 
 #endif /*BODY_H_*/

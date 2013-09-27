@@ -142,8 +142,11 @@ void Entity_render(Entity this, Transformation environmentTransform);
 //retrieve class's scale
 Scale Entity_getScale(Entity this);
 
-// retrieve position
+// retrieve global position
 VBVec3D Entity_getPosition(Entity this);
+
+// retrieve local position
+VBVec3D Entity_getLocalPosition(Entity this);
 
 //retrieve class's map's paralax
 int Entity_getMapParallax(Entity this);
