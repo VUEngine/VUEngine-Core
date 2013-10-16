@@ -202,7 +202,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner){
 		Body body = (Body)VirtualNode_getData(node);
 		
 		// check if current shape's owner is the same as the entity calling this method
-		if(owner == Body_getOwner(body) && Body_isActive(body)){
+		if((Object)owner == Body_getOwner(body) && Body_isActive(body)){
 
 			return body;
 		}
@@ -328,7 +328,7 @@ int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner){
 		Body body = (Body)VirtualNode_getData(node);
 		
 		// check if current body's owner is the same as the entity calling this method
-		if(owner == Body_getOwner(body)){
+		if((Object)owner == Body_getOwner(body)){
 			
 			// check if body is active.... maybe a body must be removed
 			// and a new entity has been loaded in the same memory location

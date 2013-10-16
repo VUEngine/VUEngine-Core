@@ -75,25 +75,18 @@
 	/* acelearion structure */							\
 	Acceleration acceleration;							\
 														\
-	Direction previousDirection;						\
+	/* movement type on each axis */					\
+	MovementType movementType;							\
 														\
 	/* time for movement over each axis	*/				\
 	unsigned long time;									\
-														\
-	/* type of movement (accelerated or not) */			\
-	int movementType;									\
-														\
-	/* a pointer to the object I'm walking on */		\
-	/* to being able to turn aroung and don't */		\
-	/* fall to dead */									\
 														\
 	/* raise flag to make the body active */			\
 	int active: 1;										\
 														\
 	/* raise flag to update body's physices */			\
 	int awake: 1;										\
-														\
-	Object objectBelow;
+
 
 // A Body which represent a generic object inside a Stage
 __CLASS(Body);
@@ -160,13 +153,16 @@ int Body_isMoving(Body this);
 Velocity Body_getVelocity(Body this);
 
 // set movement type to accelerated
-void Body_moveAccelerated(Body this);
+void Body_moveAccelerated(Body this, int axis);
 
 // set movement type to uniform
 void Body_moveUniformly(Body this, Velocity velocity);
 
 // print physical data
 void Body_printPhysics(Body this, int x, int y);
+
+// stop movement over an axis
+void Body_stopMovement(Body this, int axis);
 
 // bounce back
 void Body_bounce(Body this);

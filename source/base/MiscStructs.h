@@ -110,6 +110,15 @@ typedef struct MovementState{
 	
 }MovementState;
 
+// movement type flag vector
+typedef struct MovementType{
+	
+	int x: 2;
+	int y: 2;
+	int z: 2;
+	
+}MovementType;
+
 
 typedef struct Angle{
 	

@@ -61,14 +61,10 @@ static void Body_constructor(Body this, Object owner, Mass mass);
 static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity);
 
 // udpdate movement over axis
-//static void Body_updateMovement(Body this, fix19_13 timeElapsed, const VBVec3D* gravity);
-static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce);
+static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType);
 
 // set movement type
-static void Body_setMovementType(Body this, int movementType);
-
-// clear force
-static void Body_clearAcceleration(Body this);
+static void Body_setMovementType(Body this, int movementType, int axis);
 
 enum CollidingObjectIndexes{
 	eXAxis = 0,
@@ -115,10 +111,11 @@ static void Body_constructor(Body this, Object owner, Mass mass){
 	this->appliedForce.y = 0;
 	this->appliedForce.z = 0;
 	
-
 	// clear movement type
-	this->movementType = 0;
-	
+	this->movementType.x = __UNIFORM_MOVEMENT;
+	this->movementType.y = __UNIFORM_MOVEMENT;
+	this->movementType.z = __UNIFORM_MOVEMENT;
+		
 	this->velocity.x = 0;
 	this->velocity.y = 0;
 	this->velocity.z = 0;
@@ -164,42 +161,84 @@ Velocity Body_getVelocity(Body this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set movement type
-static void Body_setMovementType(Body this, int movementType){
+static void Body_setMovementType(Body this, int movementType, int axis){
 
-	this->movementType = movementType;
-	
-	if (__UNIFORM_MOVEMENT == movementType){
+	if (__XAXIS & axis) {
 		
-		Body_clearForce(this);
-		Body_clearAcceleration(this);
+		this->movementType.x = movementType;
+
+		if (__UNIFORM_MOVEMENT == movementType){
+
+			this->appliedForce.x = 0;
+			this->acceleration.x = 0;
+		}
+	}
+
+	if (__YAXIS & axis) {
+		
+		this->movementType.y = movementType;
+
+		if (__UNIFORM_MOVEMENT == movementType){
+
+			this->appliedForce.y = 0;
+			this->acceleration.y = 0;
+		}
+	}
+	
+	if (__ZAXIS & axis) {
+		
+		this->movementType.z = movementType;
+
+		if (__UNIFORM_MOVEMENT == movementType){
+
+			this->appliedForce.z = 0;
+			this->acceleration.z = 0;
+		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set movement type to accelerated
-void Body_moveAccelerated(Body this){
+void Body_moveAccelerated(Body this, int axis){
 	
-	Body_setMovementType(this, __ACCELERATED_MOVEMENT);
+	if (__XAXIS & axis) {
+	
+		Body_setMovementType(this, __ACCELERATED_MOVEMENT, __XAXIS);
+	}
+
+	if (__YAXIS & axis) {
+	
+		Body_setMovementType(this, __ACCELERATED_MOVEMENT, __YAXIS);
+	}
+
+	if (__ZAXIS & axis) {
+	
+		Body_setMovementType(this, __ACCELERATED_MOVEMENT, __ZAXIS);
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set movement type to uniform
 void Body_moveUniformly(Body this, Velocity velocity){
 
-	this->velocity.x = velocity.x;
-	this->velocity.y = velocity.y;
-	this->velocity.z = velocity.z;
-
-	Body_setMovementType(this, __UNIFORM_MOVEMENT);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// clear force
-static void Body_clearAcceleration(Body this){
+	if (velocity.x) {
 	
-	this->acceleration.x = 0;
-	this->acceleration.y = 0;
-	this->acceleration.z = 0;
+		Body_setMovementType(this, __UNIFORM_MOVEMENT, __XAXIS);
+		this->velocity.x = velocity.x;
+	}
+
+	if (velocity.y) {
+	
+		Body_setMovementType(this, __UNIFORM_MOVEMENT, __YAXIS);
+		this->velocity.y = velocity.y;
+	}
+
+	if (velocity.z) {
+	
+		Body_setMovementType(this, __UNIFORM_MOVEMENT, __ZAXIS);
+		this->velocity.z = velocity.z;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,6 +258,10 @@ void Body_applyForce(Body this, const Force* force, int clear){
 
 	if (clear) {
 		
+		this->velocity.x = 0;
+		this->velocity.y = 0;
+		this->velocity.z = 0;
+
 		this->acceleration.x = 0;
 		this->acceleration.y = 0;
 		this->acceleration.z = 0;
@@ -238,7 +281,20 @@ void Body_applyForce(Body this, const Force* force, int clear){
 		Body_awake(this);
 	}
 
-	Body_moveAccelerated(this);
+	if (this->appliedForce.x) {
+	
+		Body_moveAccelerated(this, __XAXIS);
+	}
+
+	if (this->appliedForce.y) {
+	
+		Body_moveAccelerated(this, __YAXIS);
+	}
+
+	if (this->appliedForce.z) {
+	
+		Body_moveAccelerated(this, __ZAXIS);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -266,12 +322,7 @@ void Body_update(Body this, const VBVec3D* gravity){
 
 			if(this->velocity.x || this->acceleration.x || this->appliedForce.x) {
 
-		 	 	if(__ACCELERATED_MOVEMENT == this->movementType){
-
-		 	 		Body_updateAcceleration(this, timeElapsed, gravity->x, &this->acceleration.x, this->velocity.x);
-		 		}
-		 		
-		 	 	if(Body_updateMovement(this, timeElapsed, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x)) {
+		 	 	if(Body_updateMovement(this, timeElapsed, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x)) {
 
 		 	 		axis &= !__XAXIS;
 		 	 	}
@@ -279,12 +330,7 @@ void Body_update(Body this, const VBVec3D* gravity){
 
 			if(this->velocity.y || this->acceleration.y) {
 
-		 	 	if(__ACCELERATED_MOVEMENT == this->movementType){
-
-		 	 		Body_updateAcceleration(this, timeElapsed, gravity->y, &this->acceleration.y, this->velocity.y);
-		 		}
-
-		 	 	if(Body_updateMovement(this, timeElapsed, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y)) {
+		 	 	if(Body_updateMovement(this, timeElapsed, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y)) {
 
 		 	 		axis &= !__YAXIS;
 		 	 	}
@@ -292,12 +338,7 @@ void Body_update(Body this, const VBVec3D* gravity){
 
 		 	if(this->velocity.z || this->acceleration.z) {
 
-		 	 	if(__ACCELERATED_MOVEMENT == this->movementType){
-
-		 	 		Body_updateAcceleration(this, timeElapsed, gravity->z, &this->acceleration.z, this->velocity.z);
-		 		}
-		 	 	
-		 	 	if(Body_updateMovement(this, timeElapsed, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z)) {
+		 	 	if(Body_updateMovement(this, timeElapsed, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z)) {
 
 		 	 		axis &= !__ZAXIS;
 		 	 	}
@@ -328,6 +369,7 @@ static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, fix19_13 gr
 	int direction = *acceleration? 0 <= velocity? 1: -1: 0;
 	
 	if(!direction) vbjPrintText("error", 10, 15);
+	
 	/*
 	// if I'm over something
 	if(this->objectBelow){
@@ -344,7 +386,7 @@ static void Body_updateAcceleration(Body this, fix19_13 timeElapsed, fix19_13 gr
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // udpdate movement over axis
-static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce){
+static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType){
 	
 	// the movement displacement
 	fix19_13 displacement = 0;
@@ -353,9 +395,12 @@ static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity
 	
 	// determine the movement type	
 	// calculate displacement based in velocity, time and acceleration
- 	if(__ACCELERATED_MOVEMENT == this->movementType){
+ 	if(__ACCELERATED_MOVEMENT == movementType){
 
- 		float threshold = 0.1f;
+ 		float threshold = FTOFIX19_13(0.1f);
+ 		
+ 		Body_updateAcceleration(this, timeElapsed, gravity, acceleration, *velocity);
+
 		displacement =
 			FIX19_13_MULT(*velocity, timeElapsed) 
 			+ FIX19_13_MULT(*acceleration, FIX19_13_MULT(timeElapsed, timeElapsed) >> 1);
@@ -363,7 +408,7 @@ static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity
 		// update the velocity
 		*velocity += FIX19_13_MULT(*acceleration, timeElapsed);
 
- 		if(!gravity && !appliedForce && (threshold > fabs(FIX19_13TOF(displacement)) || threshold > fabs(FIX19_13TOF(*velocity)) || threshold > fabs(FIX19_13TOF(*acceleration)))){
+ 		if(!gravity && !appliedForce && (threshold > fabs(displacement) || threshold > fabs(*velocity) || threshold > fabs(*acceleration))){
  			
  			*velocity = 0;
  			*acceleration = 0; 
@@ -374,7 +419,7 @@ static int Body_updateMovement(Body this, fix19_13 timeElapsed, fix19_13 gravity
  			moving = false;
  		}
  	}
- 	else if(__UNIFORM_MOVEMENT == this->movementType){
+ 	else if(__UNIFORM_MOVEMENT == movementType){
  		
 		// update the velocity
 		displacement = FIX19_13_MULT(*velocity, timeElapsed);
