@@ -75,8 +75,8 @@
 	/* it is derivated from*/						\
 	Container_ATTRIBUTES							\
 													\
-	/* a pointer to a Sprite */						\
-	Sprite sprite;
+	/* sprites' list */								\
+	VirtualList sprites;
 
 __CLASS(Entity);
 
@@ -90,6 +90,16 @@ __CLASS(Entity);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// sprites' list
+typedef struct SpritesDescription{
+	
+	// animation functions
+	SpriteDefinition spritesDefinitions[__MAX_SPRITES_PER_ENTITY];
+	
+}SpritesDescription;
+
+typedef const SpritesDescription SpritesDescriptionROMDef;
+
 // defines a Entity in ROM memory
 typedef struct EntityDefinition{
 
@@ -97,11 +107,16 @@ typedef struct EntityDefinition{
 	void* allocator;
 	
 	// the sprite
-	SpriteDefinition spriteDefinition;
+	const SpriteDefinition* spritesDefinitions;
+	
+	// number of sprites
+	int numberOfSprites;
 	
 }EntityDefinition;
 
 typedef const EntityDefinition EntityROMDef;
+
+#define __SPRITE_ARRAY(SpritesDefintionArray) SpritesDefintionArray, sizeof(SpritesDefintionArray) / sizeof(SpriteDefinition)
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -113,7 +128,7 @@ typedef const EntityDefinition EntityROMDef;
  */
 
 // class's constructor
-void Entity_constructor(Entity this, int ID);
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID);
 
 // class's destructor
 void Entity_destructor(Entity this);
@@ -135,6 +150,9 @@ void Entity_write(Entity this);
 
 // allocate a write in graphic memory again
 void Entity_resetMemoryState(Entity this, int worldLayer);
+
+// add sprite
+void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
 
 //render class
 void Entity_render(Entity this, Transformation environmentTransform);
@@ -161,7 +179,7 @@ void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, in
 int Entity_getInGameType(Entity this);
 
 // retrieve sprite
-Sprite Entity_getSprite(Entity this);
+VirtualList Entity_getSprites(Entity this);
 
 // process a telegram
 int Entity_handleMessage(Entity this, Telegram telegram);
@@ -189,5 +207,9 @@ int Entity_updateSpritePosition(Entity this);
 
 // check if must update sprite's scale
 int Entity_updateSpriteScale(Entity this);
+
+// set the direction
+void Entity_setSpritesDirection(Entity this, int axis, int direction);
+
 
 #endif /*ENTITY_H_*/

@@ -70,20 +70,17 @@ __CLASS_DEFINITION(Background);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Background, __PARAMETERS(BackgroundDefinition* backgroundDefinition, int inGameIndex))
-__CLASS_NEW_END(Background, __ARGUMENTS(backgroundDefinition, inGameIndex));
+__CLASS_NEW_DEFINITION(Background, __PARAMETERS(BackgroundDefinition* backgroundDefinition, int ID))
+__CLASS_NEW_END(Background, __ARGUMENTS(backgroundDefinition, ID));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Background_constructor(Background this, BackgroundDefinition* backgroundDefinition, int inGameIndex){
+void Background_constructor(Background this, BackgroundDefinition* backgroundDefinition, int ID){
 
 	ASSERT(backgroundDefinition, Background: NULL definition);
 	
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&backgroundDefinition->inGameEntityDefinition, inGameIndex));
-	
-	// create the sprite
-	this->sprite = __NEW(Sprite, __ARGUMENTS(&backgroundDefinition->inGameEntityDefinition.entityDefinition.spriteDefinition));
+	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&backgroundDefinition->inGameEntityDefinition, ID));
 	
 	// check if register for collision detection
 	if(backgroundDefinition->registerShape){

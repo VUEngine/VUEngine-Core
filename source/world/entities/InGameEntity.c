@@ -73,16 +73,16 @@ __CLASS_DEFINITION(InGameEntity);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, int inGameIndex))
-__CLASS_NEW_END(InGameEntity, __ARGUMENTS(inGameEntityDefinition, inGameIndex));
+__CLASS_NEW_DEFINITION(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, int ID))
+__CLASS_NEW_END(InGameEntity, __ARGUMENTS(inGameEntityDefinition, ID));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int inGameIndex){
+void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int ID){
 	
 	ASSERT(inGameEntityDefinition, InGameEntity: NULL definition);
 	
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(inGameIndex));
+	__CONSTRUCT_BASE(Entity, __ARGUMENTS(&inGameEntityDefinition->entityDefinition, ID));
 	
 	this->inGameEntityDefinition = inGameEntityDefinition;
 	
@@ -165,10 +165,10 @@ Gap InGameEntity_getGap(InGameEntity this){
 void InGameEntity_setGap(InGameEntity this){
 	
 	// retrieve the sprite's scale
-	Scale scale = Sprite_getScale(this->sprite);
+	Scale scale = Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 	
 	// retrieve rendering mode
-	int bgmapMode = Sprite_getMode((Sprite)this->sprite);
+	int bgmapMode = Sprite_getMode((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 	
 	// load original gap
 	this->gap = this->inGameEntityDefinition->gap;

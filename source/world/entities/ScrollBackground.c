@@ -70,26 +70,17 @@ __CLASS_DEFINITION(ScrollBackground);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, int inGameIndex))
-__CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, inGameIndex));
+__CLASS_NEW_DEFINITION(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, int ID))
+__CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, ID));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int inGameIndex){
+void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int ID){
 
 	ASSERT(scrollBackgroundDefinition, ScrollBackground: NULL definition);
 	
 	// construct base object
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(inGameIndex));
-	
-	// create the images
-	this->image0 = __NEW(Image, __ARGUMENTS(&scrollBackgroundDefinition->imageDefinition0, -1));
-	
-	this->image1 = __NEW(Image, __ARGUMENTS(&scrollBackgroundDefinition->imageDefinition1, -1));
-	
-	Container_addChild((Container)this, (Container)this->image0);
-
-	Container_addChild((Container)this, (Container)this->image1);
+	__CONSTRUCT_BASE(Entity, __ARGUMENTS(ID, scrollBackgroundDefinition));
 	
 	ScrollBackground_setScroll(this);
 }
@@ -106,13 +97,13 @@ void ScrollBackground_destructor(ScrollBackground this){
 // whether it is visible
 int ScrollBackground_isVisible(ScrollBackground this, int pad){
 	
-	return NULL != this->image0 || NULL != this->image1;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // positione scroll image childs
 void ScrollBackground_setScroll(ScrollBackground this){
-
+/*
 	if(this->image0 && this->image1){
 
 		VBVec3D position0 = {ITOFIX19_13(-384/2) , 0, 0};
@@ -122,4 +113,5 @@ void ScrollBackground_setScroll(ScrollBackground this){
 		
 		Image_setLocalPosition(this->image1, position1);
 	}
+	*/
 }

@@ -152,8 +152,7 @@ typedef const AnimationDescription AnimationDescriptionROMDef;
  */
 
 //class's allocator
-__CLASS_NEW_DECLARE(AnimatedSprite, __PARAMETERS(Object owner, int numberOfFrames, SpriteDefinition* spriteDefinition));
-
+__CLASS_NEW_DECLARE(AnimatedSprite, __PARAMETERS(Object owner, const SpriteDefinition* spriteDefinition));
 
  //destructor
 void AnimatedSprite_destructor(AnimatedSprite this);

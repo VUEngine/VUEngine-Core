@@ -121,10 +121,10 @@ typedef const InGameEntityDefinition InGameEntityROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, int inGameIndex));
+__CLASS_NEW_DECLARE(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, int ID));
 
 // class's constructor
-void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int inGameIndex);
+void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int ID);
 
 // class's destructor
 void InGameEntity_destructor(InGameEntity this);

@@ -92,10 +92,10 @@ typedef const BackgroundDefinition BackgroundROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Background, __PARAMETERS(BackgroundDefinition* backgroundDefinition, int inGameIndex));
+__CLASS_NEW_DECLARE(Background, __PARAMETERS(BackgroundDefinition* backgroundDefinition, int ID));
 
 // class's constructor
-void Background_constructor(Background this, BackgroundDefinition* backgroundDefinition, int inGameIndex);
+void Background_constructor(Background this, BackgroundDefinition* backgroundDefinition, int ID);
 
 // class's destructor
 void Background_destructor(Background this);

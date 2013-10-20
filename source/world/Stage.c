@@ -206,8 +206,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition){
 
 		// if entity is visible
 		if(vbjIsVisible(position, 
-				entityDefinition->spriteDefinition.textureDefinition->cols << 3, 
-				entityDefinition->spriteDefinition.textureDefinition->rows << 3,
+				entityDefinition->spritesDefinitions[0].textureDefinition->cols << 3, 
+				entityDefinition->spritesDefinitions[0].textureDefinition->rows << 3,
 				0,
 				__ENTITYLOADPAD
 				)){
@@ -322,8 +322,8 @@ void Stage_loadEntities(Stage this){
 			
 			// if entity in load range
 			if(Stage_inLoadRange(this, &position, 
-					entityDefinition->spriteDefinition.textureDefinition->cols << 2, 
-					entityDefinition->spriteDefinition.textureDefinition->rows << 2)){
+					entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
+					entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
 				
 				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
 				

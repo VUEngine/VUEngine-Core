@@ -29,6 +29,7 @@
 
 #include <Entity.h>
 #include <Optics.h>
+#include <AnimatedSprite.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -53,6 +54,8 @@ __CLASS_DEFINITION(Entity);
  */
 
 
+// add sprite
+static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -67,7 +70,7 @@ __CLASS_DEFINITION(Entity);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Entity_constructor(Entity this, int ID){
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID){
 
 	// this is an abstract class so must initialize the vtable here
 	// since this class does not have an allocator
@@ -77,17 +80,33 @@ void Entity_constructor(Entity this, int ID){
 	__CONSTRUCT_BASE(Container, __ARGUMENTS(ID));
 
 	/* the sprite must be initializated in the derivated class */
-	this->sprite = NULL;
+	this->sprites = NULL;
+	
+	// initialize sprites
+	if (entityDefinition) {
+	
+		Entity_addSprites(this, entityDefinition->spritesDefinitions, entityDefinition->numberOfSprites);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void Entity_destructor(Entity this){
 
-	if(this->sprite){
+	if(this->sprites){
 	
-		// delete the sprite
-		__DELETE(this->sprite);
+		VirtualNode node = VirtualList_begin(this->sprites);
+	
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			
+			__DELETE(sprite);
+		}	
+
+		// delete the sprites
+		__DELETE(this->sprites);
 	}
 	
 	// destroy the super Container
@@ -99,7 +118,56 @@ void Entity_destructor(Entity this){
 void Entity_setExtraInfo(Entity this, void* extraInfo){
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// add sprite
+static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites){
 
+	if (spritesDefinitions) {
+		
+		int i = 0;
+		
+		//go through n sprites in entity's definition
+		for(; i < numberOfSprites && i < __MAX_SPRITES_PER_ENTITY; i++){
+	
+			Entity_addSprite(this, &spritesDefinitions[i]);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// add sprite
+void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition){
+
+	Sprite sprite = NULL;
+	
+	switch(spriteDefinition->textureDefinition->charGroupDefinition.allocationType){
+	
+		case __ANIMATED:
+		case __ANIMATED_SHARED:	
+
+			// create the animated sprite
+			sprite = (Sprite)__NEW(AnimatedSprite, __ARGUMENTS((void*)this, spriteDefinition));	
+			
+			break;
+			
+		default:
+			
+			// create the sprite
+			sprite = __NEW(Sprite, __ARGUMENTS(spriteDefinition));
+			
+			break;
+	}
+	
+	if(sprite) {
+		
+		if (!this->sprites) {
+			
+			this->sprites = __NEW(VirtualList);
+		}
+		
+		VirtualList_pushBack(this->sprites, (void*)sprite);
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // render class
@@ -111,26 +179,34 @@ void Entity_render(Entity this, Transformation environmentTransform){
 	// call base class's render method
 	Container_render((Container)this, environmentTransform);
 
-	if(this->sprite){
-		
-		// update scale if needed
-		if(updateSpriteScale){
-	
-			// calculate the scale	
-			Sprite_calculateScale(this->sprite, this->transform.globalPosition.z);
-			
-			// scale the sprite
-			Sprite_scale(this->sprite);			
+	if(this->sprites){
 
-			// calculate sprite's parallax
-			Sprite_calculateParallax(this->sprite, this->transform.globalPosition.z);
-		}
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			// update scale if needed
+			if(updateSpriteScale){
 		
-		//if screen is moving
-		if(updateSpritePosition){
-					
-			//update sprite's 2D position 
-			Sprite_setPosition(this->sprite, &this->transform.globalPosition);
+				// calculate the scale	
+				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
+				
+				// scale the sprite
+				Sprite_scale(sprite);			
+	
+				// calculate sprite's parallax
+				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+			}
+			
+			//if screen is moving
+			if(updateSpritePosition){
+						
+				//update sprite's 2D position 
+				Sprite_setPosition(sprite, &this->transform.globalPosition);
+			}
 		}
 	}
 }
@@ -139,9 +215,9 @@ void Entity_render(Entity this, Transformation environmentTransform){
 // retrieve class's scale
 Scale Entity_getScale(Entity this){
 	
-	ASSERT(this->sprite);
+	ASSERT(this->sprites);
 	
-	return Sprite_getScale(this->sprite);
+	return Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,11 +236,11 @@ VBVec3D Entity_getLocalPosition(Entity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve sprite
-Sprite Entity_getSprite(Entity this){
+VirtualList Entity_getSprites(Entity this){
 
-	ASSERT(this->sprite);
+	ASSERT(this->sprites);
 	
-	return this->sprite;
+	return this->sprites;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,41 +254,43 @@ int Entity_handleMessage(Entity this, Telegram telegram){
 // get width
 int Entity_getWidth(Entity this){
 
-	Texture texture = Sprite_getTexture(this->sprite);
+	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+	Texture texture = Sprite_getTexture(sprite);
 	
-	ASSERT(this->sprite);
+	ASSERT(this->sprites);
 	ASSERT(texture);
 	
 	// must calculate based on the scale because not affine Container must be enlarged
-	return vbjCalculateRealSize(Texture_getCols(texture) << 3, Sprite_getMode(this->sprite), abs(Sprite_getScale(this->sprite).x));
+	return vbjCalculateRealSize(Texture_getCols(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get height
 int Entity_getHeight(Entity this){
 
-	Texture texture = Sprite_getTexture(this->sprite);
+	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+
+	Texture texture = Sprite_getTexture(sprite);
 	
-	ASSERT(this->sprite);
+	ASSERT(sprite);
 	ASSERT(texture);
 	
 	// must calculate based on the scale because not affine object must be enlarged
-	return vbjCalculateRealSize(Texture_getRows(texture) << 3, Sprite_getMode(this->sprite), abs(Sprite_getScale(this->sprite).y));
-	
+	return vbjCalculateRealSize(Texture_getRows(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // whether it is visible
 int Entity_isVisible(Entity this, int pad){
 	
-	ASSERT(this->sprite);
+	ASSERT(this->sprites);
+
+	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
 	return vbjIsVisible(this->transform.globalPosition,
 			Entity_getWidth(this),
 			Entity_getHeight(this),
-			Sprite_getDrawSpec(this->sprite).position.parallax,
+			Sprite_getDrawSpec(sprite).position.parallax,
 			pad);
 }
 
@@ -220,7 +298,7 @@ int Entity_isVisible(Entity this, int pad){
 // determine if the entity is outside the game
 int Entity_isOutsideGame(Entity this){
 	
-	ASSERT(this->sprite);
+	ASSERT(this->sprites);
 	
 	return vbjOutsideGame(this->transform.globalPosition, 
 			Entity_getWidth(this), 
@@ -276,3 +354,25 @@ int Entity_updateSpriteScale(Entity this){
 
 	return (_screenMovementState->z || this->invalidateGlobalPosition);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set the direction
+void Entity_setSpritesDirection(Entity this, int axis, int direction){
+	
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			if (sprite) {
+				
+				Sprite_setDirection(sprite, axis, direction);
+			}
+		}
+	}
+}
+

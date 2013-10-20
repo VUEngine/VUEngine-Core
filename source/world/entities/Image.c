@@ -66,17 +66,14 @@ __CLASS_DEFINITION(Image);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Image, __PARAMETERS(ImageDefinition* imageDefinition, int inGameIndex))
-__CLASS_NEW_END(Image, __ARGUMENTS(imageDefinition, inGameIndex));
+__CLASS_NEW_DEFINITION(Image, __PARAMETERS(ImageDefinition* imageDefinition, int ID))
+__CLASS_NEW_END(Image, __ARGUMENTS(imageDefinition, ID));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Image_constructor(Image this, ImageDefinition* imageDefinition, int inGameIndex){
+void Image_constructor(Image this, ImageDefinition* imageDefinition, int ID){
 
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(inGameIndex));
-
-	// create the sprite
-	this->sprite = __NEW(Sprite, __ARGUMENTS(&imageDefinition->spriteDefinition));
+	__CONSTRUCT_BASE(Entity, __ARGUMENTS(imageDefinition, ID));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -61,12 +61,7 @@
 													\
 	/* super's attributes */						\
 	Entity_ATTRIBUTES;								\
-													\
-	/* a pointer to a Sprite */						\
-	Image image0;									\
-													\
-	/* a pointer to a Sprite */						\
-	Image image1;
+
 
 __CLASS(ScrollBackground);
 
@@ -79,17 +74,9 @@ __CLASS(ScrollBackground);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// defines a ScrollBackground in ROM memory
-typedef struct ScrollBackgroundDefinition{
-		
-	// the sprite
-	ImageDefinition imageDefinition0;
-
-	// the sprite
-	ImageDefinition imageDefinition1;
-
-}ScrollBackgroundDefinition;
-
+// defines a Scrolling background 
+typedef EntityDefinition ScrollBackgroundDefinition;
+// defines a Scrolling background in ROM memory
 typedef const ScrollBackgroundDefinition ScrollBackgroundROMDef;
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -102,10 +89,10 @@ typedef const ScrollBackgroundDefinition ScrollBackgroundROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, int inGameIndex));
+__CLASS_NEW_DECLARE(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, int ID));
 
 // class's constructor
-void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int inGameIndex);
+void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int ID);
 
 // class's destructor
 void ScrollBackground_destructor(ScrollBackground this);

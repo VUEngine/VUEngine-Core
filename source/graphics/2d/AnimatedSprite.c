@@ -53,7 +53,7 @@ __CLASS_DEFINITION(AnimatedSprite);
  */
 
 // class's constructor
-static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, int numberOfFrames, SpriteDefinition* spriteDefinition);
+static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const SpriteDefinition* spriteDefinition);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -66,38 +66,16 @@ static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, int nu
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedSprite, __PARAMETERS(Object owner, int numberOfFrames, SpriteDefinition* spriteDefinition))
-__CLASS_NEW_END(AnimatedSprite, __ARGUMENTS(owner, numberOfFrames, spriteDefinition));
+__CLASS_NEW_DEFINITION(AnimatedSprite, __PARAMETERS(Object owner, const SpriteDefinition* spriteDefinition))
+__CLASS_NEW_END(AnimatedSprite, __ARGUMENTS(owner, spriteDefinition));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, int numberOfFrames, SpriteDefinition* spriteDefinition){
+static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const SpriteDefinition* spriteDefinition){
 
 	// construct base object
 	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(spriteDefinition));
 
-	/*
-	SpriteDefinition spriteDefinitionCopy = *spriteDefinition;
-	switch(spriteDefinition->textureDefinition->charGroupDefinition.allocationType){		
-		
-		case __ANIMATED_SHARED:
-			{
-				// must change the number of chars based on the number of frames for
-				// shared animations				
-				TextureDefinition textureDefinitionCopy = *spriteDefinition->textureDefinition;
-				spriteDefinitionCopy.textureDefinition = &textureDefinitionCopy;				
-				spriteDefinitionCopy.textureDefinition->charGroupDefinition.numberOfChars = spriteDefinitionCopy.textureDefinition->charGroupDefinition.numberOfChars * numberOfFrames;
-			}			
-			
-			// fall through intended
-			
-		default: 
-			
-			// construct base object
-			__CONSTRUCT_BASE(Sprite,__ARGUMENTS(&spriteDefinitionCopy));
-	}
-	*/
-	
 	// since the offset will be moved during animation, must save it
 	this->originalTextureXOffset = Texture_getXOffset(this->texture); 
 	

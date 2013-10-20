@@ -135,7 +135,7 @@ __CLASS(Actor);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, int inGameIndex));
+__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, int ID));
 
 // class's constructor
 void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID);

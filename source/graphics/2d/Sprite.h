@@ -146,10 +146,10 @@ typedef const SpriteDefinition SpriteROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Sprite, __PARAMETERS(SpriteDefinition* spriteDefinition));
+__CLASS_NEW_DECLARE(Sprite, __PARAMETERS(const SpriteDefinition* spriteDefinition));
 
 // class's constructor
-void Sprite_constructor(Sprite this, SpriteDefinition* spriteDefinition);
+void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition);
 
 //class's destructor
 void Sprite_destructor(Sprite this);

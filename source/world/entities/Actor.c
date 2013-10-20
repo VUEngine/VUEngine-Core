@@ -93,27 +93,6 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	// construct base object
 	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&actorDefinition->inGameEntityDefinition, ID));
 	
-	switch(actorDefinition->inGameEntityDefinition.entityDefinition.spriteDefinition.textureDefinition->charGroupDefinition.allocationType){
-	
-		case __ANIMATED:
-		case __ANIMATED_SHARED:	
-
-			// create the animated sprite
-			this->sprite = (Sprite)__NEW(AnimatedSprite, 
-							__ARGUMENTS((void*)this, 
-							actorDefinition->animationDescription->numberOfFrames,
-							&actorDefinition->inGameEntityDefinition.entityDefinition.spriteDefinition
-							));	
-			
-			break;
-			
-		default:
-			// create the sprite
-			this->sprite = __NEW(Sprite, __ARGUMENTS(&actorDefinition->inGameEntityDefinition.entityDefinition.spriteDefinition));
-			
-			break;
-	}
-
 	// save ROM definition
 	this->actorDefinition = actorDefinition;
 	
@@ -180,7 +159,7 @@ void Actor_render(Actor this, Transformation environmentTransform){
 	if(this->direction.x != this->previousDirection.x){
 		
 		// change sprite's direction
-		Sprite_setDirection(this->sprite, __XAXIS, this->direction.x);
+		Entity_setSpritesDirection((Entity)this, __XAXIS, this->direction.x);
 		
 		// save current direction
 		this->previousDirection = this->direction; 
@@ -235,8 +214,19 @@ void Actor_update(Actor this){
 		InGameEntity_setGap((InGameEntity)this);
 	}	
 	
-	// first animate the frame
-	AnimatedSprite_update((AnimatedSprite)this->sprite);
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			// first animate the frame
+			AnimatedSprite_update((AnimatedSprite)sprite);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -390,8 +380,10 @@ int Actor_isMoving(Actor this){
 // retrieve character's scale
 Scale Actor_getScale(Actor this){
 
+	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+
 	// get sprite's scale
-	Scale scale = Sprite_getScale(this->sprite);
+	Scale scale = Sprite_getScale(sprite);
 	
 	// change direction
 	scale.x = fabsf(scale.x) * this->direction.x;
@@ -403,14 +395,27 @@ Scale Actor_getScale(Actor this){
 // play an animation
 void Actor_playAnimation(Actor this, char* animationName){
 	
-	AnimatedSprite_play((AnimatedSprite)this->sprite, this->actorDefinition->animationDescription, animationName);
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			AnimatedSprite_play((AnimatedSprite)sprite, this->actorDefinition->animationDescription, animationName);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is play an animation
 int Actor_isPlayingAnimation(Actor this, char* functionName){
 	
-	return AnimatedSprite_isPlayingFunction((AnimatedSprite)this->sprite, this->actorDefinition->animationDescription, functionName);
+	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+
+	return AnimatedSprite_isPlayingFunction((AnimatedSprite)sprite, this->actorDefinition->animationDescription, functionName);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

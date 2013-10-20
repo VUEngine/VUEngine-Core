@@ -87,10 +87,10 @@ typedef const EntityDefinition ImageROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Image, __PARAMETERS(ImageDefinition* imageDefinition, int inGameIndex));
+__CLASS_NEW_DECLARE(Image, __PARAMETERS(ImageDefinition* imageDefinition, int ID));
 
 // class's constructor
-void Image_constructor(Image this, ImageDefinition* imageDefinition, int inGameIndex);
+void Image_constructor(Image this, ImageDefinition* imageDefinition, int ID);
 
 // class's destructor
 void Image_destructor(Image this);

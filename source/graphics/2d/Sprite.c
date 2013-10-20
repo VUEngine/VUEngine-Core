@@ -82,12 +82,12 @@ __CLASS_DEFINITION(Sprite);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Sprite, __PARAMETERS(SpriteDefinition* spriteDefinition))
+__CLASS_NEW_DEFINITION(Sprite, __PARAMETERS(const SpriteDefinition* spriteDefinition))
 __CLASS_NEW_END(Sprite, __ARGUMENTS(spriteDefinition));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's conctructor
-void Sprite_constructor(Sprite this, SpriteDefinition* spriteDefinition){
+void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 
 	__CONSTRUCT_BASE(Object);
 	
