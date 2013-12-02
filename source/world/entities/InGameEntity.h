@@ -172,5 +172,4 @@ void InGameEntity_setShapeState(InGameEntity this, int state);
 void InGameEntity_render(InGameEntity this, Transformation environmentTransform);
 
 
-
 #endif /*INGAMEENTITY_H_*/

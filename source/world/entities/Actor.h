@@ -84,7 +84,8 @@ typedef const ActorDefinition ActorROMDef;
 // declare the virtual methods
 #define Actor_METHODS								\
 		InGameEntity_METHODS						\
-		__VIRTUAL_DEC(die);
+		__VIRTUAL_DEC(die);							\
+		__VIRTUAL_DEC(takeHitFrom);
 
 
 #define Actor_SET_VTABLE(ClassName)											\
@@ -99,6 +100,7 @@ typedef const ActorDefinition ActorROMDef;
 		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);				\
 		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);					\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);					\
+		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);						\
 
 
 	
@@ -217,5 +219,8 @@ void Actor_stopMovement(Actor this);
 
 // stop movement over axis
 void Actor_stopMovementOnAxis(Actor this, int axis);
+
+// take hit
+void Actor_takeHitFrom(Actor this, Actor other);
 
 #endif

@@ -114,5 +114,8 @@ void PhysicalWorld_setGravity(PhysicalWorld this, VBVec3D gravity);
 // retrieve gravity
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
 
+// get last elapsed time
+fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this);
+
 
 #endif /*PHYSICS_WORLD_H_*/

@@ -342,10 +342,8 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 			}
 			else if (otherActor) {
 
-				const Body otherBody = Actor_getBody(otherActor);
-				
-				//Body_takeHitFrom(this->body, otherBody);
-				
+				__VIRTUAL_CALL(void, Actor, takeHitFrom, otherActor);
+
 				return true;
 			}
 		}
@@ -586,3 +584,16 @@ const Body Actor_getBody(Actor this){
 	
 	return this->body;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// take hit
+void Actor_takeHitFrom(Actor this, Actor other){
+	
+	const Body otherBody = Actor_getBody(other);
+	
+	if (otherBody){
+		
+		Body_takeHitFrom(this->body, otherBody);
+	}
+}
+

@@ -70,7 +70,13 @@
 	VBVec3D gravity;													\
 																		\
 	/* friction */														\
-	fix19_13 friction;
+	fix19_13 friction;													\
+																		\
+	/* time elapsed between updates*/									\
+	fix19_13 elapsedTime;												\
+																		\
+	/* time for movement over each axis	*/								\
+	unsigned long time;													\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld);
@@ -125,6 +131,9 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 	this->gravity.x = 0;
 	this->gravity.y = 0;
 	this->gravity.z = 0;
+	
+	// record this update's time
+	this->time = Clock_getTime(_inGameClock);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,6 +292,9 @@ void PhysicalWorld_update(PhysicalWorld this){
 	
 	int i = 0;
 	
+	// get the elapsed time
+	this->elapsedTime = FTOFIX19_13((Clock_getTime(_inGameClock) - this->time) / 100.0f);
+
 	// check if must select bodies to process
 	if(this->selectBodiesToCheck){
 		
@@ -292,8 +304,11 @@ void PhysicalWorld_update(PhysicalWorld this){
 	// check the bodies
 	for(i = 0; bodies[i] && i < __MAXSHAPESTOCHECK; i++){
 
-		Body_update(bodies[i], &this->gravity);
+		Body_update(bodies[i], &this->gravity, this->elapsedTime);
 	}
+	
+	// record this update's time
+	this->time = Clock_getTime(_inGameClock);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,3 +393,11 @@ const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this) {
 
 	return (const VBVec3D*)&this->gravity.x;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get last elapsed time
+fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this){
+	
+	return this->elapsedTime;
+}
+

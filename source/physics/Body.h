@@ -78,8 +78,8 @@
 	/* movement type on each axis */					\
 	MovementType movementType;							\
 														\
-	/* time for movement over each axis	*/				\
-	unsigned long time;									\
+	/* elasticity */									\
+	fix19_13 elasticity;								\
 														\
 	/* raise flag to make the body active */			\
 	int active: 1;										\
@@ -114,7 +114,7 @@ void Body_setOwner(Body this, Object owner);
 Object Body_getOwner(Body this);
 
 // update
-void Body_update(Body this, const VBVec3D* gravity);
+void Body_update(Body this, const VBVec3D* gravity, fix19_13 elapsedTime);
 
 // set active
 void Body_setActive(Body this, int active);
@@ -127,6 +127,9 @@ VBVec3D Body_getPosition(Body this);
 
 // retrieve position
 void Body_setPosition(Body this, const VBVec3D* position, Object caller);
+
+// set elasticity
+void Body_setElasticity(Body this, fix19_13 elasticity);
 
 // retrieve state
 int Body_isAwake(Body body);
@@ -166,5 +169,9 @@ void Body_stopMovement(Body this, int axis);
 
 // bounce back
 void Body_bounce(Body this);
+
+// take a hit
+void Body_takeHitFrom(Body this, Body other);
+
 
 #endif /*BODY_H_*/
