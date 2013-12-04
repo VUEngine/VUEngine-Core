@@ -80,7 +80,7 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 	ASSERT(scrollBackgroundDefinition, ScrollBackground: NULL definition);
 	
 	// construct base object
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(ID, scrollBackgroundDefinition));
+	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, ID));
 	
 	ScrollBackground_setScroll(this);
 }

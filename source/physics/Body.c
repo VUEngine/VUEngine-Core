@@ -53,6 +53,9 @@ __CLASS_DEFINITION(Body);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// this should be improved and calculated dynamically based on framerate
+#define THRESHOLD FTOFIX19_13(0.1f)
+
 
 // class's constructor
 static void Body_constructor(Body this, Object owner, Mass mass);
@@ -366,7 +369,7 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 	
 	int direction = *acceleration? 0 <= velocity? 1: -1: 0;
 	
-	if(!direction) vbjPrintText("error", 10, 15);
+//	if(!direction) vbjPrintText("error", 10, 15);
 	
 	/*
 	// if I'm over something
@@ -377,12 +380,19 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 	}
 	*/
 	
-	friction = *acceleration? friction: 0;
+	fix19_13 sign = ITOFIX19_13(0 <= gravity? -1: 1);
 	
-	if (FIX19_13TOI(gravity) < FIX19_13TOI(*acceleration)) {
+	if (0 > FIX19_13_MULT((*acceleration - gravity), sign)) {
 		
 		gravity = 0;
 	}
+	else if (FIX19_13_MULT((*acceleration + FIX19_13_MULT(gravity, elapsedTime) - gravity), sign)) {
+		
+		gravity = gravity - *acceleration;
+	}
+
+	friction = *acceleration? friction: 0;
+	friction =0;
 
 	*acceleration = *acceleration - FIX19_13_MULT(ITOFIX19_13(direction), FIX19_13_MULT(FIX19_13_DIV(friction, weight), elapsedTime)) + FIX19_13_MULT(gravity, elapsedTime);
 }
@@ -400,19 +410,17 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 	// calculate displacement based in velocity, time and acceleration
  	if(__ACCELERATED_MOVEMENT == movementType){
 
- 		// this should be improved and calculated dynamically based on framerate
- 		static float threshold = FTOFIX19_13(0.1f);
- 		
+		// update the velocity
+		*velocity += FIX19_13_MULT(*acceleration, elapsedTime);
+
  		Body_updateAcceleration(this, elapsedTime, gravity, acceleration, *velocity);
 
 		displacement =
 			FIX19_13_MULT(*velocity, elapsedTime) 
-			+ FIX19_13_MULT(*acceleration, FIX19_13_MULT(elapsedTime, elapsedTime) >> 1);
-	
-		// update the velocity
-		*velocity += FIX19_13_MULT(*acceleration, elapsedTime);
+			+ FIX19_13_DIV(FIX19_13_MULT(*acceleration, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
 
- 		if(!gravity && !appliedForce && (threshold > fabs(displacement) || threshold > fabs(*velocity) || threshold > fabs(*acceleration))){
+
+ 		if(!gravity && !appliedForce && (THRESHOLD > abs(displacement) || THRESHOLD > abs(*velocity) || THRESHOLD > abs(*acceleration))){
  			
  			*velocity = 0;
  			*acceleration = 0; 
@@ -596,59 +604,67 @@ int Body_isMoving(Body this){
 // bounce back
 void Body_bounce(Body this){
 	
-	fix19_13 weight = Mass_getWeight(this->mass);
+	// FIX ME: still not sure it must be divided by 2 (<< deltaFactor)
+	int deltaFactor = 1;
+	int axis = 0;
 
-//	Force force1 = {ITOFIX19_13(0), ITOFIX19_13(-30), ITOFIX19_13(0)};
-	fix19_13 friction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
-	fix19_13 bounceCoeficient = ITOFIX19_13(1) - this->elasticity;
-
-	Direction direction = {
-			0 <= FIX19_13TOI(this->velocity.x)? -1: 1,
-			0 <= FIX19_13TOI(this->velocity.y)? -1: 1,
-			0 <= FIX19_13TOI(this->velocity.z)? -1: 1,
-			{0, 0, 0}		
-	};
-	
 	// get the elapsed time
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
-	 //elapsedTime = FTOFIX19_13(0.40f);
-	Acceleration acceleration = {
-			0,
-			FIX19_13_DIV(this->acceleration.y, elapsedTime),
-			0
-	};
 
-	vbjPrintFloat(FIX19_13TOF(elapsedTime), 1, 8);
-//	this->acceleration.y = FTOFIX19_13(4);
-	Force force = {
-			0*FIX19_13_MULT(FIX19_13_MULT(bounceCoeficient, ITOFIX19_13(direction.x)), FIX19_13_MULT(weight, this->acceleration.x - friction)),
-			FIX19_13_MULT(FIX19_13_MULT(bounceCoeficient, ITOFIX19_13(direction.y)), FIX19_13_MULT(weight, acceleration.y)),
-			0*FIX19_13_MULT(FIX19_13_MULT(bounceCoeficient, ITOFIX19_13(direction.z)), FIX19_13_MULT(weight, this->acceleration.z))
-	};
-/*
-	vbjPrintText("bounce" , 1, 12);
-	{
-		s32 fix = 8192.0f * force.y;
-		vbjPrintFloat(fix, 1, 14);
-		vbjPrintFloat(fix / 8192.0f, 1, 15);
-		vbjPrintFloat(FIX19_13TOF(fix), 1, 16);
-		vbjPrintInt(FIX19_13TOI(fix), 1, 17);
-		vbjPrintFloat(FIX19_13TOF(force.y), 1, 18);
-		vbjPrintInt(FIX19_13TOI(force.y), 1, 19);
-	}
-	*/
-	Body_stopMovement(this, __XAXIS);
-	Body_stopMovement(this, __YAXIS);
-	Body_stopMovement(this, __ZAXIS);
+	fix19_13 bounceCoeficient = ITOFIX19_13(1) - this->elasticity;
 	
-	Body_addForce(this, &force);
+	Velocity velocityDelta = {
+			FIX19_13_MULT(this->acceleration.x, elapsedTime),
+			FIX19_13_MULT(this->acceleration.y, elapsedTime),
+			FIX19_13_MULT(this->acceleration.z, elapsedTime)
+	};
+	
+//	vbjPrintFloat(FIX19_13TOF(velocityDelta.y), 1, 13);
+//	vbjPrintFloat(FIX19_13TOF(this->velocity.y), 1, 19);
+
+	this->velocity.x -= velocityDelta.x << deltaFactor; 
+	this->velocity.y -= velocityDelta.y << deltaFactor; 
+	this->velocity.z -= velocityDelta.z << deltaFactor; 
+
+	this->velocity.x = -this->velocity.x;
+	this->velocity.y = -this->velocity.y;
+	this->velocity.z = -this->velocity.z;
+		
+	this->velocity.x = FIX19_13_MULT(this->velocity.x, bounceCoeficient);
+	this->velocity.y = FIX19_13_MULT(this->velocity.y, bounceCoeficient);
+	this->velocity.z = FIX19_13_MULT(this->velocity.z, bounceCoeficient);
+
+	this->acceleration.x = 0;
+	this->acceleration.y = 0;
+	this->acceleration.z = 0;
+	
+	if(THRESHOLD + (velocityDelta.x << deltaFactor) >= abs(this->velocity.x)) {
+		
+ 		axis |= __XAXIS;
+	}
+
+	if(THRESHOLD + (velocityDelta.y << deltaFactor) >= abs(this->velocity.y)) {
+		
+ 		axis |= __YAXIS;
+	}
+
+	if(THRESHOLD + (velocityDelta.z << deltaFactor) >= abs(this->velocity.z)) {
+		
+ 		axis |= __ZAXIS;
+	}
+	
+	Body_stopMovement(this, axis);
+
+	if(!Body_isMoving(this)) {
+	
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, &axis);
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // take a hit
 void Body_takeHitFrom(Body this, Body other){
-	
 	
 }
 

@@ -344,7 +344,6 @@ void Container_propagateEvent(Container this, int (*event)(Container this, va_li
     va_end(args);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // pass event to children recursively
 static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args){

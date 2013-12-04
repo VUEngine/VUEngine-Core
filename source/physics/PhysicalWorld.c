@@ -172,7 +172,7 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, Mass mass){
 		return body;
 	}	
 	
-	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __ARGUMENTS(owner, mass)));
+	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __ARGUMENTS((Object)owner, mass)));
 	
 	// must prepare bodies in the next update
 	this->selectBodiesToCheck = true;

@@ -165,12 +165,12 @@ void vbjPrintFloat(float value,int x,int y){
 	decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value * sign)) / 512.f) * 100.f);
 
 	// print integral part
-	length = vbjIntLen((int)value);
-	
+	length = vbjIntLen((int)value * sign);
+
 	vbPrint(TextureManager_getFreeBgmap(TextureManager_getInstance()), x, y, itoa(F_FLOOR(value * sign), 10, length), 0);
 	
 	// print the dot
-	vbPrint(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+length,y,".", 0);
+	vbPrint(TextureManager_getFreeBgmap(TextureManager_getInstance()), x + length, y, ".", 0);
 	
 	// print the decimal part
 	//
