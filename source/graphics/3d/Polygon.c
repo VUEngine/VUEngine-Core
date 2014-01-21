@@ -152,18 +152,18 @@ void Polygon_draw(Polygon this, int calculateParallax){
 		for(; toNode ; fromNode = VirtualNode_getNext(fromNode), toNode = VirtualNode_getNext(toNode)){
 
 			// normalize vertice to screen coordinates
-			fromVertice3D = vbjNormalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
-			toVertice3D = vbjNormalizePosition((VBVec3D*)VirtualNode_getData(toNode));
+			fromVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
+			toVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(toNode));
 			
 			// project to 2d coordinates
-			vbjProjectTo2D(&fromVertice2D, &fromVertice3D);
-			vbjProjectTo2D(&toVertice2D, &toVertice3D);
+			Optics_projectTo2D(&fromVertice2D, &fromVertice3D);
+			Optics_projectTo2D(&toVertice2D, &toVertice3D);
 			
 			// calculate parallax
 			if(calculateParallax){
 				
-				fromVertice2D.parallax = vbjCalculateParallax(fromVertice3D.x, fromVertice3D.z);
-				toVertice2D.parallax = vbjCalculateParallax(toVertice3D.x, toVertice3D.z);
+				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
+				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);
 			}
 			
 			
@@ -174,18 +174,18 @@ void Polygon_draw(Polygon this, int calculateParallax){
 		if(2 < VirtualList_getSize(this->vertices)){
 			
 			// close the polygon by drawing a line from the last node to the first one		
-			fromVertice3D = vbjNormalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
-			toVertice3D = vbjNormalizePosition((VBVec3D*)VirtualNode_getData(VirtualList_begin(this->vertices)));
+			fromVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
+			toVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(VirtualList_begin(this->vertices)));
 	
 			// project to 2d
-			vbjProjectTo2D(&fromVertice2D, &fromVertice3D);
-			vbjProjectTo2D(&toVertice2D, &toVertice3D);
+			Optics_projectTo2D(&fromVertice2D, &fromVertice3D);
+			Optics_projectTo2D(&toVertice2D, &toVertice3D);
 			
 			// calculate parallax
 			if(calculateParallax){
 				
-				fromVertice2D.parallax = vbjCalculateParallax(fromVertice3D.x, fromVertice3D.z);
-				toVertice2D.parallax = vbjCalculateParallax(toVertice3D.x, toVertice3D.z);
+				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
+				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);
 			}
 	
 			// draw the line in both buffers

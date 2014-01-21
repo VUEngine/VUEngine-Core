@@ -42,16 +42,6 @@
  */
 
 
-#define PALLET_MASK			0x0600
-#define WORLD_LAYER_MASK	0x01F0
-#define SEGMENT_MASK		0x000F
-
-
-#define PALLET_MASK_DISP		0x09 /* 6 */
-#define WORLD_LAYER_MASK_DISP	0x04 /* 1 */
-#define SEGMENT_MASK_DISP		0x00 /* 0 */
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -166,7 +156,7 @@ static void Texture_writeAnimated(Texture this){
 				this->textureDefinition->cols,
 				(pallet) | (charLocation));
 				*/
-		addmem ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1), 
+		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1), 
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)), 
 				this->textureDefinition->cols,
 				(pallet) | (charLocation));
@@ -192,7 +182,7 @@ static void Texture_writeNoAnimated(Texture this){
 	
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
-		addmem ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1), 
+		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1), 
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)), 
 				this->textureDefinition->cols,
 				(pallet) | (charLocation));
@@ -250,7 +240,7 @@ static void Texture_writeAnimatedShared(Texture this){
 					*/
 			
 			
-			addmem ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
+			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
 					(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
 					this->textureDefinition->cols,
 					(pallet) | (charLocation + area * (j - 1)));
@@ -312,7 +302,7 @@ void Texture_write(Texture this){
 		
 		default:
 			
-			ASSERT(false, Texture: no allocation type);
+			ASSERT(false, "Texture: no allocation type");
 	}
 }
 
@@ -378,7 +368,7 @@ void Texture_writeHBiasMode(Texture this){
 // get texture's number of chars
 int Texture_getNumberOfChars(Texture this){
 	
-	ASSERT(this->charGroup, Texture: null chargroup);
+	ASSERT(this->charGroup, "Texture: null chargroup");
 	
 	return CharGroup_getNumberOfChars(this->charGroup);
 }
@@ -494,8 +484,6 @@ int Texture_getRows(Texture this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve texture's cols
 int Texture_getCols(Texture this){
-	
-	ASSERT(this, Texture: 0 cols);
 	
 	return this->textureDefinition->cols;
 }

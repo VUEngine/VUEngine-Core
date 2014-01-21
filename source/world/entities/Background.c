@@ -77,7 +77,7 @@ __CLASS_NEW_END(Background, __ARGUMENTS(backgroundDefinition, ID));
 // class's constructor
 void Background_constructor(Background this, BackgroundDefinition* backgroundDefinition, int ID){
 
-	ASSERT(backgroundDefinition, Background: NULL definition);
+	ASSERT(backgroundDefinition, "Background: NULL definition");
 	
 	// construct base object
 	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&backgroundDefinition->inGameEntityDefinition, ID));

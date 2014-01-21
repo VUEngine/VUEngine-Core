@@ -29,6 +29,7 @@
  */
 
 #include <Game.h>
+#include <HardwareManager.h>
 #include <ClockManager.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
@@ -48,6 +49,8 @@
 #include <SoundManager.h>
 #include <StateMachine.h>
 #include <Screen.h>
+#include <Background.h>
+#include <Image.h>
 
 #include <Printing.h>
 
@@ -60,6 +63,14 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+enum UpdateSubsystems{
+	
+	kRender = 0,
+	kPhysics,
+	kLogic
+};
+
 
 #define Game_ATTRIBUTES								\
 													\
@@ -81,17 +92,12 @@
 	/* actual gameplay gameworld */					\
 	int actualStage;								\
 													\
-	/* time elapsed to show rest screen */			\
-	float restTimer;								\
-													\
-	/* last registered time */						\
-	float lastTime;									\
-													\
 	/* flag to autopause or not the game*/ 			\
 	/* after 15 minutes of play */ 					\
 	int restFlag: 1;								\
 													\
 	/* managers */									\
+	HardwareManager hardwareManager;				\
 	FrameRate frameRate;							\
 	TextureManager bgmapManager;					\
 	CharSetManager charSetManager;					\
@@ -99,8 +105,11 @@
 	ParamTableManager paramTableManager;			\
 	SpriteManager spriteManager;					\
 	CollisionManager collisionManager;				\
-	PhysicalWorld physicalWorld;
-	
+	PhysicalWorld physicalWorld;					\
+													\
+	/* update time registry */						\
+	u32 lastTime[kLogic + 1];						\
+
 
 __CLASS_DEFINITION(Game);
  
@@ -145,7 +154,7 @@ static void Game_constructor(Game this){
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
-
+	
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();
 	
@@ -160,6 +169,7 @@ static void Game_constructor(Game this){
 	
 	// call get instance in singletons to make sure their constructors
 	// are called now
+	this->hardwareManager = HardwareManager_getInstance();
 	this->bgmapManager = TextureManager_getInstance();
 	this->frameRate  = FrameRate_getInstance();	
 	this->paramTableManager =  ParamTableManager_getInstance();
@@ -184,15 +194,6 @@ static void Game_constructor(Game this){
 	//horizontal View point center
 	this->optical.horizontalViewPointCenter = 0;
 	
-	//initialize resttimer
-	this->restTimer=0;
-	
-	//initialize rest flag
-	this->restFlag=true;
-	
-	// reset delays
-	this->lastTime = 0;
-
 	// setup global pointers	
 	_optical = &this->optical;	
 	_clock = this->clock;
@@ -200,6 +201,12 @@ static void Game_constructor(Game this){
 	
 	// initialize this with your own first game world number
 	this->actualStage = 0;
+	
+	int i = 0; 
+	for (; i < kLogic + 1; i++) {
+		
+		this->lastTime[i] = 0;
+	}
 	
 	// setup engine paramenters
 	Game_initialize(this);
@@ -217,8 +224,7 @@ void Game_destructor(Game this){
 	Clock_destructor(this->clock);
 	Clock_destructor(this->inGameClock);
 	
-	
-	StateMachine_destructor(this->stateMachine);	
+	__DELETE(this->stateMachine);	
 
 	__SINGLETON_DESTROY(Object);
 }
@@ -227,14 +233,11 @@ void Game_destructor(Game this){
 // setup engine paramenters
 void Game_initialize(Game this){
 	
-	// set ROM wainting to 1 cycle
-	HW_REGS[WCR] |= 0x0001;	
-	
 	// setup vectorInterrupts
-	setInterruptsVectors();	
+	HardwareManager_setInterruptVectors(this->hardwareManager);
 
 	// make sure timer interrupts are enable
-	timerInitialize();
+	HardwareManager_initializeTimer(this->hardwareManager);
 	
 	//initialize optic paramenters
 	Game_setOpticalGlobals(this);
@@ -246,45 +249,39 @@ void Game_initialize(Game this){
     CollisionManager_reset(this->collisionManager);
     
 	// clear sprite memory
-	vbClearScreen();
-
-	// turn on the display
-	vbDisplayOn(); 
+    HardwareManager_clearScreen(this->hardwareManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set game's state
 void Game_setState(Game this, State state, int fadeDelay){
 
+    ASSERT(state, "Game: setting NULL state");
+
 	// make a fade out
 	Screen_FXFadeOut(Screen_getInstance(), fadeDelay);
 	
-	// turn back the background
-	VIP_REGS[BKCOL] = 0x00;
-
-	// these shouldn't be here, but there is a bug in the engine which makes the world's table 
-	// be corrupted, so don't remove the next call
+	// turn off the display
+    HardwareManager_displayOff(this->hardwareManager);
 
 	//disable hardware pad read
-	vbDisableReadPad();
+    HardwareManager_disableKeypad(this->hardwareManager);
     
 	//set waveform data
     SoundManager_setWaveForm(this->soundManager);
 
-    //flush key buffer
-    vbKeyFlush();
-    
-    ASSERT(state, Game: setting NULL state);
-    
     //setup state 
     StateMachine_swapState(this->stateMachine, state);
 
     //enable hardware pad read
-	vbEnableReadPad();
+    HardwareManager_enableKeypad(this->hardwareManager);
 	
 	// load chars into graphic memory
-	vbjSetPrintingMemory(TextureManager_getFreeBgmap(this->bgmapManager));
+	Printing_writeAscii(TextureManager_getFreeBgmap(this->bgmapManager));
 	
+	// turn on the display
+    HardwareManager_displayOn(this->hardwareManager);
+
 	// make a fade in
 	Screen_FXFadeIn(Screen_getInstance(), fadeDelay);
 }
@@ -297,7 +294,6 @@ void Game_recoverGraphicMemory(Game this){
 	CharSetManager_destructor(this->charSetManager);
 	this->charSetManager = CharSetManager_getInstance();
 	
-	
 	TextureManager_destructor(this->bgmapManager);
 	this->bgmapManager = TextureManager_getInstance();
 	
@@ -307,6 +303,7 @@ void Game_recoverGraphicMemory(Game this){
 	//allocate and write map characters
 	//Stage_writeEntities(this->stage);
 	
+	HardwareManager_setupColumnTable(this->hardwareManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -319,7 +316,7 @@ void Game_reset(Game this){
 //	ParamTableManager_destructor(this->paramTableManager);
 	
 	//clear char and bgmap memory
-	vbClearScreen();
+    HardwareManager_clearScreen(this->hardwareManager);
 
 	CharSetManager_reset(this->charSetManager);
 	TextureManager_reset(this->bgmapManager);
@@ -328,6 +325,9 @@ void Game_reset(Game this){
 	CollisionManager_reset(this->collisionManager);
 	PhysicalWorld_reset(this->physicalWorld);
 	
+	// load chars into graphic memory
+	Printing_writeAscii(TextureManager_getFreeBgmap(this->bgmapManager));
+
 	// call get instance in singletons to make sure their constructors
 	// are called now
 	//SoundManager_getInstance();
@@ -365,8 +365,6 @@ void Game_recoverState(Game this){
 	//recover engine's state
 	//this->currentLogic = this->previousLogic;
 	//this->currentState = this->previousState;
-	
-	vbSetColTable();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -390,13 +388,13 @@ static void Game_setOpticalGlobals(Game this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process input data according to the actual game status
-void Game_handleInput(Game this){
+void Game_handleInput(Game this, int currentKey){
 	
 	static int pressedKey = 0;
 	static int previousKeyPressed = 0;
 	
 	// read key pad
-	pressedKey = vbReadPad();
+	pressedKey = currentKey;
 
 	// check for a new key pressed
 	if(pressedKey && pressedKey != previousKeyPressed){
@@ -414,63 +412,31 @@ void Game_handleInput(Game this){
 		// inform the game about the key pressed		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
 	}
-	
+
+//	HardwareManager_flushKeypad(HardwareManager_getInstance());
 	// save actual key pressed
 	previousKeyPressed = pressedKey;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// update engine's world's state
-void Game_update1(Game this){
-
-	enum UpdateSubsystems{
-		
-		kRender = 0,
-		kPhysics,
-		kLogic
-	};
-
-	u32 currentTime = 0;
-	u32 lastTime[kLogic + 1] = {0, 0, 0};
+// render game
+void Game_render(Game this) {
 	
-	while(true){
+	u32 currentTime = Clock_getTime(_clock);
+	
+	if(!__CAP_FPS || currentTime - this->lastTime[kRender] > 1000 / __RENDER_FPS){
 
-		currentTime = Clock_getTime(_clock);
-
-		lastTime[kLogic] = currentTime;
-		
-		// process user's input 
-		Game_handleInput(this);
-
-		// it is the update cycle
-		ASSERT(this->stateMachine, Game: no state machine);
-
-		// update the game's logic
-		StateMachine_update(this->stateMachine);
-		
-		// check sprite layers
-		SpriteManager_checkLayers(this->spriteManager);
-
+		// save current time
+		this->lastTime[kRender] = currentTime;
+	
 		// increase the frame rate
-		FrameRate_increaseFPS(this->frameRate);
+		FrameRate_increaseRenderFPS(this->frameRate);
 
-		// draw the current game level
+		// render the level
 		Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
-		
+
 		// render sprites as fast as possible
 		SpriteManager_render(SpriteManager_getInstance());
-
-		// simulate physics
-			PhysicalWorld_update(this->physicalWorld);
-
-			// process removed bodies
-			PhysicalWorld_processRemovedBodies(this->physicalWorld);
-
-			// simulate collisions
-			CollisionManager_update(this->collisionManager);
-			
-			// process removed shapes
-			CollisionManager_processRemovedShapes(this->collisionManager);
 	}
 }
 
@@ -486,141 +452,47 @@ void Game_update(Game this){
 	};
 
 	u32 currentTime = 0;
-	u32 lastTime[kLogic + 1] = {0, 0, 0};
 	
 	while(true){
 
 		currentTime = Clock_getTime(_clock);
+			
+		FrameRate_increaseRawFPS(this->frameRate);
 
-		if(currentTime - lastTime[kLogic] > 1000 / __LOGIC_FPS){
+		if(!__CAP_FPS || currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
 
-			lastTime[kLogic] = currentTime;
+			this->lastTime[kLogic] = currentTime;
 			
 			// process user's input 
-			Game_handleInput(this);
+			Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
 
 			// it is the update cycle
-			ASSERT(this->stateMachine, Game: no state machine);
+			ASSERT(this->stateMachine, "Game: no state machine");
 
 			// update the game's logic
 			StateMachine_update(this->stateMachine);
-			
+
 			// check sprite layers
 			SpriteManager_checkLayers(this->spriteManager);
-		}
-
-		// update if it is the update cycle and the enough time has elpased
-		if(currentTime - lastTime[kRender] > 1000 / __RENDER_FPS){
-
-			// save current time
-			lastTime[kRender] = currentTime;
-
+			
 			// increase the frame rate
-			FrameRate_increaseFPS(this->frameRate);
-
-			// draw the current game level
-			Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
-			
-			// render sprites as fast as possible
-			SpriteManager_render(SpriteManager_getInstance());
+			FrameRate_increaseLogicFPS(this->frameRate);
 		}
-
-		if(currentTime - lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
+		
+		if(!__CAP_FPS || currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
 			
-			lastTime[kPhysics] = currentTime;
+			this->lastTime[kPhysics] = currentTime;
 
 			// simulate physics
 			PhysicalWorld_update(this->physicalWorld);
 
-			// process removed bodies
-			PhysicalWorld_processRemovedBodies(this->physicalWorld);
-
 			// simulate collisions
 			CollisionManager_update(this->collisionManager);
-			
-			// process removed shapes
-			CollisionManager_processRemovedShapes(this->collisionManager);
-		}
-	}
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// update engine's world's state
-void Game_updateProfile(Game this){
-/*
-	u32 currentTime = 0;
-	u32 lastTime = 0;
-	
-	int turn = 1;
-
-	u32 time[]= {0,0,0};
-	u32 profileTime = 0;
-
-	
-	
-	while(true){
-
-		currentTime = Clock_getTime(_clock);
-		
-		//wait for the frame rate to stabilizate
-		if(turn && currentTime - lastTime > 1000 / __TARGET_FPS){
-		
-			// save current time
-			lastTime = currentTime;
-			
-			// process user's input 
-			Game_handleInput(this);
-
-			// it is the update cycle
-			ASSERT(this->stateMachine, Game: no state machine);
-
-			profileTime = Clock_getTime(_clock);
-			// update the game's logic
-			StateMachine_update(this->stateMachine);
-			profileTime = Clock_getTime(_clock) -  profileTime;
-			if(profileTime >= time [0]){
-				time[0] = profileTime;
-				vbjPrintInt(profileTime, 30 , 0);
-			}
-
-
-			profileTime = Clock_getTime(_clock);
-			// simulate collisions
-			CollisionManager_update(this->collisionManager);
-			profileTime = Clock_getTime(_clock) -  profileTime;
-			if(profileTime >= time [1]){
-				time[1] = profileTime;
-				vbjPrintInt(profileTime, 30 , 1);
-			}
-
-			profileTime = Clock_getTime(_clock);
-			// render the stage and its entities
-			Stage_render(this->stage);
-			profileTime = Clock_getTime(_clock) -  profileTime;
-			if(profileTime >= time [2]){
-				time[2] = profileTime;
-				vbjPrintInt(profileTime, 30 , 2);
-			}
 			
 			// increase the frame rate
-			FrameRate_increaseFPS(this->frameRate);
-			
-			turn = 0;
-		}
-		else{
-			
-			if(!turn){
-				
-				// process removed entities				
-				Stage_processRemovedEntities(this->stage);
-	
-				// process removed shapes
-				CollisionManager_processRemovedShapes(this->collisionManager);
-				
-				turn = 1;
-			}
+			FrameRate_increasePhysicsFPS(this->frameRate);
 		}
 	}
-	*/		
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -646,43 +518,42 @@ Clock Game_getInGameClock(Game this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Game_printClassSizes(int x, int y){
-	/*
-	vbjPrintText("CLASS				SIZE (B)", x, y);
-	vbjPrintText("AnimatedSprite", x, ++y);
-	vbjPrintInt(AnimatedSprite_getObjectSize(), x + 27, y);
-	vbjPrintText("Background", x, ++y);
-	vbjPrintInt(Background_getObjectSize(), x + 27, y);
-	vbjPrintText("Character", x, ++y);
-	vbjPrintInt(Actor_getObjectSize(), x + 27, y);
-	vbjPrintText("CharGroup", x, ++y);
-	vbjPrintInt(CharGroup_getObjectSize(), x + 27, y);
-	vbjPrintText("Clock", x, ++y);
-	vbjPrintInt(Clock_getObjectSize(), x + 27, y);
-	vbjPrintText("Entity", x, ++y);
-	vbjPrintInt(Entity_getObjectSize(), x + 27, y);
-	vbjPrintText("Image", x, ++y);
-	vbjPrintInt(Image_getObjectSize(), x + 27, y);
-	vbjPrintText("InGameEntity", x, ++y);
-	vbjPrintInt(InGameEntity_getObjectSize(), x + 27, y);
-	vbjPrintText("Rect", x, ++y);
-	vbjPrintInt(Rect_getObjectSize(), x + 27, y);
-	vbjPrintText("Shape", x, ++y);
-	vbjPrintInt(Shape_getObjectSize(), x + 27, y);
-	vbjPrintText("Sprite", x, ++y);
-	vbjPrintInt(Sprite_getObjectSize(), x + 27, y);
-	vbjPrintText("State", x, ++y);
-	vbjPrintInt(State_getObjectSize(), x + 27, y);
-	vbjPrintText("StateMachine", x, ++y);
-	vbjPrintInt(StateMachine_getObjectSize(), x + 27, y);
-	vbjPrintText("Scroll", x, ++y);
+
+	Printing_text("CLASS				SIZE (B)", x, y);
+	Printing_text("AnimatedSprite", x, ++y);
+	Printing_int(AnimatedSprite_getObjectSize(), x + 27, y);
+	Printing_text("Background", x, ++y);
+	Printing_int(Background_getObjectSize(), x + 27, y);
+	Printing_text("Character", x, ++y);
+	Printing_int(Actor_getObjectSize(), x + 27, y);
+	Printing_text("CharGroup", x, ++y);
+	Printing_int(CharGroup_getObjectSize(), x + 27, y);
+	Printing_text("Clock", x, ++y);
+	Printing_int(Clock_getObjectSize(), x + 27, y);
+	Printing_text("Entity", x, ++y);
+	Printing_int(Entity_getObjectSize(), x + 27, y);
+	Printing_text("Image", x, ++y);
+	Printing_int(Image_getObjectSize(), x + 27, y);
+	Printing_text("InGameEntity", x, ++y);
+	Printing_int(InGameEntity_getObjectSize(), x + 27, y);
+	Printing_text("Rect", x, ++y);
+	Printing_int(Rect_getObjectSize(), x + 27, y);
+	Printing_text("Shape", x, ++y);
+	Printing_int(Shape_getObjectSize(), x + 27, y);
+	Printing_text("Sprite", x, ++y);
+	Printing_int(Sprite_getObjectSize(), x + 27, y);
+	Printing_text("State", x, ++y);
+	Printing_int(State_getObjectSize(), x + 27, y);
+	Printing_text("StateMachine", x, ++y);
+	Printing_int(StateMachine_getObjectSize(), x + 27, y);
+	//vbjPrintText("Scroll", x, ++y);
 	//vbjPrintInt(Scroll_getObjectSize(), x + 27, y);
-	vbjPrintText("Telegram", x, ++y);
-	vbjPrintInt(Telegram_getObjectSize(), x + 27, y);;
-	vbjPrintText("Texture", x, ++y);
-	vbjPrintInt(Texture_getObjectSize(), x + 27, y);
-	vbjPrintText("VirtualList", x, ++y);
-	vbjPrintInt(VirtualList_getObjectSize(), x + 27, y);
-	vbjPrintText("VirtualNode", x, ++y);
-	vbjPrintInt(VirtualNode_getObjectSize(), x + 27, y);
-	*/
+	Printing_text("Telegram", x, ++y);
+	Printing_int(Telegram_getObjectSize(), x + 27, y);;
+	Printing_text("Texture", x, ++y);
+	Printing_int(Texture_getObjectSize(), x + 27, y);
+	Printing_text("VirtualList", x, ++y);
+	Printing_int(VirtualList_getObjectSize(), x + 27, y);
+	Printing_text("VirtualNode", x, ++y);
+	Printing_int(VirtualNode_getObjectSize(), x + 27, y);
 }

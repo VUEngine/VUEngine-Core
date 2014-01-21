@@ -163,7 +163,8 @@ ACKNOWLEDGMENTS
 	· RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums 
 	  who always are kind enough to share their knowledge. 
 
-
+	· Libgccvb has been refactored to accomodate better to this engine, all it's code is credited to
+	  it's creators and Jorge Eremiev doesn't take any credit on it.
 
 ==================  
 

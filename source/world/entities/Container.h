@@ -33,6 +33,7 @@
 
 #include <stdarg.h>
 #include <Object.h>
+#include <HardwareManager.h>
 #include <MiscStructs.h>
 #include <VirtualList.h>
 
@@ -141,7 +142,7 @@ void Container_propagateEvent(Container this, int (*event)(Container this, va_li
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform);
 	
 //render class
-void Container_render(Container this, Transformation environmentTransform);
+void Container_render(Container this, Transformation* environmentTransform);
 
 // retrieve global position
 VBVec3D Container_getGlobalPosition(Container this);

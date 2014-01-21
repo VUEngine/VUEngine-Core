@@ -68,7 +68,7 @@ MemoryPool MemoryPool_getInstance();
 void MemoryPool_destructor(MemoryPool this);
 
 // allocate memory for data
-BYTE* MemoryPool_allocate(MemoryPool this, int numBytes);
+void* MemoryPool_allocate(MemoryPool this, int numBytes);
 
 // free memory when an object is no longer used
 // remove an object from heap

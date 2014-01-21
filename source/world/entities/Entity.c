@@ -171,7 +171,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // render class
-void Entity_render(Entity this, Transformation environmentTransform){
+void Entity_render(Entity this, Transformation* environmentTransform){
 
 	int updateSpritePosition = __VIRTUAL_CALL(int, Entity, updateSpritePosition, this);
 	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
@@ -215,8 +215,6 @@ void Entity_render(Entity this, Transformation environmentTransform){
 // retrieve class's scale
 Scale Entity_getScale(Entity this){
 	
-	ASSERT(this->sprites);
-	
 	return Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 }
 
@@ -238,8 +236,6 @@ VBVec3D Entity_getLocalPosition(Entity this){
 // retrieve sprite
 VirtualList Entity_getSprites(Entity this){
 
-	ASSERT(this->sprites);
-	
 	return this->sprites;
 }
 
@@ -257,11 +253,8 @@ int Entity_getWidth(Entity this){
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 	Texture texture = Sprite_getTexture(sprite);
 	
-	ASSERT(this->sprites);
-	ASSERT(texture);
-	
 	// must calculate based on the scale because not affine Container must be enlarged
-	return vbjCalculateRealSize(Texture_getCols(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
+	return Optics_calculateRealSize(Texture_getCols(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,22 +265,17 @@ int Entity_getHeight(Entity this){
 
 	Texture texture = Sprite_getTexture(sprite);
 	
-	ASSERT(sprite);
-	ASSERT(texture);
-	
 	// must calculate based on the scale because not affine object must be enlarged
-	return vbjCalculateRealSize(Texture_getRows(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
+	return Optics_calculateRealSize(Texture_getRows(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // whether it is visible
 int Entity_isVisible(Entity this, int pad){
 	
-	ASSERT(this->sprites);
-
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
-	return vbjIsVisible(this->transform.globalPosition,
+	return Optics_isVisible(this->transform.globalPosition,
 			Entity_getWidth(this),
 			Entity_getHeight(this),
 			Sprite_getDrawSpec(sprite).position.parallax,
@@ -298,9 +286,7 @@ int Entity_isVisible(Entity this, int pad){
 // determine if the entity is outside the game
 int Entity_isOutsideGame(Entity this){
 	
-	ASSERT(this->sprites);
-	
-	return vbjOutsideGame(this->transform.globalPosition, 
+	return Optics_isOutsidePlayableArea(this->transform.globalPosition, 
 			Entity_getWidth(this), 
 			Entity_getHeight(this));
 }
@@ -316,9 +302,8 @@ int Entity_getInGameState(Entity this){
 // create an entity in gameengine's memory
 Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID, void* extraInfo){
 	
-	ASSERT((int)entityDefinition->allocator, No allocator define);
-	
-	ASSERT(entityDefinition, Entity_load: NULL definition);
+	ASSERT(entityDefinition, "Entity_load: NULL definition");
+	ASSERT((int)entityDefinition->allocator, "Entity: no allocator defined");
 	{
 		// call the appropiate allocator to support inheritance!
 		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);

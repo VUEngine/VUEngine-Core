@@ -58,7 +58,7 @@ __CLASS_DEFINITION(Body);
 
 
 // class's constructor
-static void Body_constructor(Body this, Object owner, Mass mass);
+static void Body_constructor(Body this, Object owner, fix19_13 weight);
 
 // update acceleration
 static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity);
@@ -87,18 +87,18 @@ enum CollidingObjectIndexes{
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Body, __PARAMETERS(Object owner, Mass mass))
-__CLASS_NEW_END(Body, __ARGUMENTS(owner, mass));
+__CLASS_NEW_DEFINITION(Body, __PARAMETERS(Object owner, fix19_13 weight))
+__CLASS_NEW_END(Body, __ARGUMENTS(owner, weight));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Body_constructor(Body this, Object owner, Mass mass){
+static void Body_constructor(Body this, Object owner, fix19_13 weight){
 
 	__CONSTRUCT_BASE(Object);
 
 	this->owner = owner;
 	
-	this->mass = mass;
+	this->mass = __NEW(Mass, __ARGUMENTS(ITOFIX19_13(10)));
 	
 	this->awake = false;
 
@@ -137,6 +137,9 @@ static void Body_constructor(Body this, Object owner, Mass mass){
 // class's destructor
 void Body_destructor(Body this){
 
+	// destroy the mass
+	__DELETE(this->mass);
+	
 	// destroy the super object
 	__DESTROY_BASE(Object);
 }
@@ -438,7 +441,7 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
  	}
  	else {
  		
- 		ASSERT(false, Body: wrong movement type);
+ 		ASSERT(false, "Body: wrong movement type");
  	}
 
  	// update position
@@ -451,20 +454,20 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Body_printPhysics(Body this, int x, int y){
 	
-	vbjPrintText("X             Y             Z",x,y++);
-	vbjPrintText("Position",x,y++);
-	vbjPrintInt(FIX19_13TOI(this->position.x ),x,y);
-	vbjPrintInt(FIX19_13TOI(this->position.y),x+14,y);
-	vbjPrintInt(FIX19_13TOI(this->position.z),x+14*2,y++);
+	Printing_text("X             Y             Z",x,y++);
+	Printing_text("Position",x,y++);
+	Printing_int(FIX19_13TOI(this->position.x ),x,y);
+	Printing_int(FIX19_13TOI(this->position.y),x+14,y);
+	Printing_int(FIX19_13TOI(this->position.z),x+14*2,y++);
 
-	vbjPrintText("Velocity",x,y++);
-	vbjPrintFloat(FIX19_13TOF(this->velocity.x),x,y);
-	vbjPrintFloat(FIX19_13TOF(this->velocity.y),x+14,y);
-	vbjPrintFloat(FIX19_13TOF(this->velocity.z),x+14*2,y++);
-	vbjPrintText("Acceleration",x,y++);
-	vbjPrintFloat(FIX19_13TOF(this->acceleration.x),x,y);
-	vbjPrintFloat(FIX19_13TOF(this->acceleration.y),x+14,y);
-	vbjPrintFloat(FIX19_13TOF(this->acceleration.z),x+14*2,y++);
+	Printing_text("Velocity",x,y++);
+	Printing_float(FIX19_13TOF(this->velocity.x),x,y);
+	Printing_float(FIX19_13TOF(this->velocity.y),x+14,y);
+	Printing_float(FIX19_13TOF(this->velocity.z),x+14*2,y++);
+	Printing_text("Acceleration",x,y++);
+	Printing_float(FIX19_13TOF(this->acceleration.x),x,y);
+	Printing_float(FIX19_13TOF(this->acceleration.y),x+14,y);
+	Printing_float(FIX19_13TOF(this->acceleration.z),x+14*2,y++);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -604,7 +607,7 @@ int Body_isMoving(Body this){
 // bounce back
 void Body_bounce(Body this){
 	
-	// FIX ME: still not sure it must be divided by 2 (<< deltaFactor)
+	// TODO: still not sure it must be divided by 2 (<< deltaFactor)
 	int deltaFactor = 1;
 	int axis = 0;
 

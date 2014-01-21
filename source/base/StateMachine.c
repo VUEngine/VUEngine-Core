@@ -140,7 +140,7 @@ void StateMachine_destructor(StateMachine this){
 // update state
 void StateMachine_update(StateMachine this){
 
-	ASSERT(this->currentState, StateMachine: null state);
+	ASSERT(this->currentState, "StateMachine: null state");
 	
 	__VIRTUAL_CALL(void, State, execute, this->currentState, __ARGUMENTS(this->owner));
 }
@@ -149,7 +149,7 @@ void StateMachine_update(StateMachine this){
 // change state
 void StateMachine_swapState(StateMachine this, State newState){
 	
-	ASSERT(newState, StateMachine: swaping to NULL state); 
+	ASSERT(newState, "StateMachine: swaping to NULL state"); 
 	
 	// finalize current state
 	if (this->currentState){
@@ -203,7 +203,7 @@ void StateMachine_pushState(StateMachine this, State newState){
 // pop a state fromt the stack
 void StateMachine_popState(StateMachine this){
 
-	ASSERT(VirtualList_getSize(this->stateStack) > 1, StateMachine: stack empty);
+	ASSERT(VirtualList_getSize(this->stateStack) > 1, "StateMachine: stack empty");
 	
 	// update the stack	
 	// remove the state in the top of the stack

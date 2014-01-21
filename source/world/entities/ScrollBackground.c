@@ -77,7 +77,7 @@ __CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, ID));
 // class's constructor
 void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int ID){
 
-	ASSERT(scrollBackgroundDefinition, ScrollBackground: NULL definition);
+	ASSERT(scrollBackgroundDefinition, "ScrollBackground: NULL definition");
 	
 	// construct base object
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, ID));

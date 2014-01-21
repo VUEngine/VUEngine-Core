@@ -30,6 +30,7 @@
 #include <Error.h>
 #include <Game.h>
 #include <SpriteManager.h>
+#include <HardwareManager.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -45,9 +46,6 @@
 										\
 	/* super's attributes */			\
 	Object_ATTRIBUTES;					\
-										\
-	/* text to show in exception */		\
-	char errorMessage[48];
 
 
 // define the Error
@@ -99,27 +97,25 @@ void Error_destructor(Error this){
 int Error_triggerException(Error this, char* string){
 	
 	//clear screen
-	//vbClearScreen();
+    //HardwareManager_clearScreen(HardwareManager_getInstance());
 
 	// turn on the display
-	vbDisplayOn();
+    HardwareManager_displayOn(HardwareManager_getInstance());
 	
 	// make sure the brigtness is ok
-	vbDisplayShow();
+    HardwareManager_upBrightness(HardwareManager_getInstance());
 	
-	vbjSetPrintingMemory(TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	Printing_writeAscii(TextureManager_getFreeBgmap(TextureManager_getInstance()));
 
-	// setup the error message
-	strcpy(this->errorMessage, string);
-	
 	//print error message to screen
-	vbjPrintText("                           ", 0, 21);
-	vbjPrintText(" ", 0, 22);
-	vbjPrintText(this->errorMessage, 1, 22);
-	vbjPrintText("                           ", 0, 23);
+#define EXCEPTION_LINE	27
+	//print error message to screen
+	Printing_text("                                             ", 0, EXCEPTION_LINE);
+	Printing_text("Exception:" , 1, EXCEPTION_LINE);
+	Printing_text(string, 12, EXCEPTION_LINE);
 	
 	// error display message
-	vbjRenderOutputText(SpriteManager_getFreeLayer(SpriteManager_getInstance()), TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	Printing_render(SpriteManager_getFreeLayer(SpriteManager_getInstance()), TextureManager_getFreeBgmap(TextureManager_getInstance()));
 
 	//trap the game here	
 	while(true);

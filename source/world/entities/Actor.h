@@ -155,7 +155,7 @@ void Actor_setCollisionGap(Actor this, int upGap, int downGap, int leftGap, int 
 void Actor_write(Actor this);
 
 // graphically refresh of actors that are visible
-void Actor_render(Actor this, Transformation environmentTransform);
+void Actor_render(Actor this, Transformation* environmentTransform);
 
 // execute actor's logic
 void Actor_update(Actor this);

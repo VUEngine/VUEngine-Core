@@ -39,11 +39,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-//bgmaps to use (leave 2 bgmaps to allocate param table)
-#define NUM_BGMAPS 12
-
-//number of bgmap definitions in each bgmap segment 
-#define NUM_MAPS_PER_SEG 16
 
 /*------------------------------ERROR-MESSAGES------------------------------*/
 						   /*--------------------Max lenght-----------------*/
@@ -101,6 +96,7 @@ enum OffsetIndex{
 
 // define the TextureManager
 __CLASS_DEFINITION(TextureManager);
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -417,7 +413,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 			// load a new texture
 			texture = TextureManager_loadTexture(this, textureDefinition);
 
-			ASSERT(texture, Texture: (animated) texture no allocated);
+			ASSERT(texture, "Texture: (animated) texture no allocated");
 
 			break;
 			
@@ -442,7 +438,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 					Texture_write(texture);
 				}
 			}
-			ASSERT(texture, Texture: (shared) texture no allocated);
+			ASSERT(texture, "Texture: (shared) texture no allocated");
 
 			// increase texture usage count
 			this->textureUsageCount[Texture_getId(texture)]++;

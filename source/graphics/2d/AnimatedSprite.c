@@ -28,7 +28,7 @@
  */
 
 #include <AnimatedSprite.h>
-
+#include <string.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -51,6 +51,8 @@ __CLASS_DEFINITION(AnimatedSprite);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+extern int strcmp(const char *, const char *);
 
 // class's constructor
 static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const SpriteDefinition* spriteDefinition);
@@ -299,7 +301,7 @@ void AnimatedSprite_animate(AnimatedSprite this){
 		if(0 > this->frameDelay){	
 						 
 			// pick up a random delay
-			this->frameDelay = randNum(randSeed(), abs(this->frameDelay));
+			this->frameDelay = Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
 	}
 }
@@ -356,7 +358,7 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 	for(; animationDescription->animationFunctions[i]; i++ ){
 		
 		// compare function's names
-		if(!strcmp(functionName, animationDescription->animationFunctions[i]->name)){
+		if(!strcmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name)){
 			
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
@@ -382,7 +384,7 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 int AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName){
 	
 	// compare function's names
-	return !strcmp(functionName, this->animationFunction->name);
+	return !strcmp((const char *)functionName, (const char *)this->animationFunction->name);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

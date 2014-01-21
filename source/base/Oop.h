@@ -37,7 +37,7 @@
 													\
 	{												\
 		/* a static flag */							\
-		static int __callFlag = false;				\
+		static u8 __callFlag = false;				\
 													\
 		/* check if not called */					\
 		if(!__callFlag){							\
@@ -176,7 +176,7 @@
 #define __CONSTRUCT_BASE(ClassName, ...)								\
 																		\
 	/* make sure the this pointer is initialized */						\
-	ASSERT(this, ClassName ## _constructor);							\
+	ASSERT(this, __MAKE_STRING(ClassName ## _constructor));				\
 																		\
 	/* call super constructor */										\
 	ClassName ## _constructor((ClassName)this __VA_ARGS__);				
@@ -378,7 +378,7 @@
 	static ClassName ## _str _instance ## ClassName;				\
 																	\
 	/* a flag to know when to allow constructs */					\
-	static int _singletonConstructed = false;						\
+	static u8 _singletonConstructed  ## ClassName = false;			\
 																	\
 	/* define get instance method */								\
 	ClassName ClassName ## _getInstance(){							\
@@ -387,7 +387,7 @@
 		__SET_CLASS(ClassName);										\
 																	\
 		/* first check if not constructed yet */					\
-		if(!_singletonConstructed){									\
+		if(!_singletonConstructed ## ClassName){					\
 																	\
 			/* call constructor */									\
 			ClassName ## _constructor(&_instance ## ClassName);		\
@@ -396,7 +396,7 @@
 			_instance ## ClassName.vTable = &ClassName ## _vTable;	\
 																	\
 			/* don't allow more constructs */						\
-			_singletonConstructed = true;							\
+			_singletonConstructed ## ClassName = true;				\
 		}															\
 																	\
 		/* return the created singleton */							\
@@ -412,7 +412,7 @@
 	__DESTROY_BASE(SuperClass);										\
 																	\
 	/* allow new constructs */										\
-	_singletonConstructed = false;
+	//_singletonConstructed = false;
 
 
 
@@ -429,7 +429,7 @@
 																	\
 																	\
 	/* a flag to know when to allow constructs */					\
-	static int _singletonConstructed = false;						\
+	static u8 _singletonConstructed ## ClassName = false;			\
 																	\
 	/* define get instance method */								\
 	ClassName ClassName ## _getInstance(){							\
@@ -438,13 +438,13 @@
 		__SET_CLASS(ClassName);										\
 																	\
 		/* first check if not constructed yet */					\
-		if(!_singletonConstructed){									\
+		if(!_singletonConstructed ## ClassName){					\
 																	\
 			/* allocate */											\
 			_instance ## ClassName = ClassName ## _new(0);			\
 																	\
 			/* don't allow more constructs */						\
-			_singletonConstructed = true;							\
+			_singletonConstructed ## ClassName = true;				\
 		}															\
 																	\
 		/* return the created singleton */							\

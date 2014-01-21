@@ -196,7 +196,7 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor) {
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position){
 
-	ASSERT(&this->position == _screenPosition, Screen: screen position pointer is wrong);
+	ASSERT(&this->position == _screenPosition, "Screen: screen position pointer is wrong");
 	this->position = position;
 }
 

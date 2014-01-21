@@ -1,0 +1,33 @@
+diff -uNr binutils-2.20.org/bfd/elf32-v810.c binutils-2.20/bfd/elf32-v810.c
+--- binutils-2.20.org/bfd/elf32-v810.c	2013-09-04 21:30:27.000000000 -0700
++++ binutils-2.20/bfd/elf32-v810.c	2013-09-04 21:29:39.000000000 -0700
+@@ -667,9 +667,9 @@
+ 
+   /* A PC relative 9 bit branch.  */
+   HOWTO (R_V810_9_PCREL,		/* Type.  */
+-	 2,				/* Rightshift.  */
+-	 2,				/* Size (0 = byte, 1 = short, 2 = long).  */
+-	 26,				/* Bitsize.  */
++	 0,				/* Rightshift.  */
++	 1,				/* Size (0 = byte, 1 = short, 2 = long).  */
++	 9,				/* Bitsize.  */
+ 	 TRUE,				/* PC_relative.  */
+ 	 0,				/* Bitpos.  */
+ 	 complain_overflow_bitfield,	/* Complain_on_overflow.  */
+@@ -680,13 +680,13 @@
+ 	 0x00ffffff,			/* Dst_mask.  */
+ 	 TRUE),				/* PCrel_offset.  */
+ 
+-  /* A PC relative 22 bit branch.  */
++  /* A PC relative 26 bit branch.  */
+   HOWTO (R_V810_26_PCREL,		/* Type.  */
+-	 2,				/* Rightshift.  */
++	 0,				/* Rightshift.  */
+ 	 2,				/* Size (0 = byte, 1 = short, 2 = long).  */
+ 	 26,				/* Bitsize.  */
+ 	 TRUE,				/* PC_relative.  */
+-	 7,				/* Bitpos.  */
++	 0,				/* Bitpos.  */
+ 	 complain_overflow_signed,	/* Complain_on_overflow.  */
+ 	 v810_elf_reloc,		/* Special_function.  */
+ 	 "R_V810_26_PCREL",		/* Name.  */

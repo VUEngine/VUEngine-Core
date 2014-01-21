@@ -158,7 +158,8 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 // draw the level
 void Level_render(Level this){
 	
-	Transformation environmentTransform = {
+	// static to avoid call to _memcpy
+	static Transformation environmentTransform = {
 			// local position
 			{0, 0, 0},
 			// global position
@@ -169,8 +170,9 @@ void Level_render(Level this){
 			{0, 0, 0}			
 	};
 	
-	__VIRTUAL_CALL(void, Container, render, (Container)this->stage, __ARGUMENTS(environmentTransform));
+	__VIRTUAL_CALL(void, Container, render, (Container)this->stage, __ARGUMENTS(&environmentTransform));
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
@@ -215,7 +217,7 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition){
 	// check sprite layers
 	SpriteManager_checkLayers(SpriteManager_getInstance());
 
-	// render everyting
+	// render everything
 	Level_render(this);
 
 	// render sprites as fast as possible

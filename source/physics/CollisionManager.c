@@ -52,7 +52,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __MAXSHAPESTOCHECK		32
 
 #define CollisionManager_ATTRIBUTES										\
 																		\
@@ -88,8 +87,8 @@ static void CollisionManager_constructor(CollisionManager this);
 static void CollisionManager_selectShapesToCheck(CollisionManager this);
 
 // only process shapes which move and are active
-Shape shapes[__MAXSHAPESTOCHECK] = {NULL};
-Shape shapesToCheck[__MAXSHAPESTOCHECK] = {NULL};
+Shape shapes[__MAX_SHAPES_PER_LEVEL] = {NULL};
+Shape shapesToCheck[__MAX_SHAPES_PER_LEVEL] = {NULL};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -298,14 +297,14 @@ void CollisionManager_update(CollisionManager this){
 	}
 
 	// check the shapes
-	for(i = 0; shapes[i] && i < __MAXSHAPESTOCHECK; i++){
+	for(i = 0; shapes[i] && i < __MAX_SHAPES_PER_LEVEL; i++){
 
 		// current to check shape's rectangle 
 		__VIRTUAL_CALL(void, Shape, positione, shapes[i]);
 	}
 	
 	// check the shapes
-	for(i = 0; shapes[i] && i < __MAXSHAPESTOCHECK; i++){
+	for(i = 0; shapes[i] && i < __MAX_SHAPES_PER_LEVEL; i++){
 
 		// if shape is active to be processed
 		if(Shape_isActive(shapes[i])){
@@ -333,7 +332,7 @@ void CollisionManager_update(CollisionManager this){
 			}
 			
 			// comparing against the other shapes
-			for(j = 0; shapesToCheck[j] && j < __MAXSHAPESTOCHECK; j++){
+			for(j = 0; shapesToCheck[j] && j < __MAX_SHAPES_PER_LEVEL; j++){
 				
 				// load the current shape to check against
 				Shape shapeToCheck = shapesToCheck[j];
@@ -373,6 +372,9 @@ void CollisionManager_update(CollisionManager this){
 			}
 		}
 	}
+	
+	// process removed shapes
+	CollisionManager_processRemovedShapes(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -155,7 +155,7 @@ void Entity_resetMemoryState(Entity this, int worldLayer);
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
 
 //render class
-void Entity_render(Entity this, Transformation environmentTransform);
+void Entity_render(Entity this, Transformation* environmentTransform);
 
 //retrieve class's scale
 Scale Entity_getScale(Entity this);

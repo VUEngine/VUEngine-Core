@@ -50,8 +50,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __MAXSHAPESTOCHECK		32
-
 #define PhysicalWorld_ATTRIBUTES										\
 																		\
 	/* super's attributes */											\
@@ -97,7 +95,7 @@ static void PhysicalWorld_constructor(PhysicalWorld this);
 static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this);
 
 // only process bodies which move and are active
-Body bodies[__MAXSHAPESTOCHECK] = {NULL};
+Body bodies[__MAX_BODIES_PER_LEVEL] = {NULL};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -134,6 +132,8 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 	
 	// record this update's time
 	this->time = Clock_getTime(_inGameClock);
+	
+	bodies[0] = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,17 +162,17 @@ void PhysicalWorld_destructor(PhysicalWorld this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // register a shape
-Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, Mass mass){
+Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight){
 
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
-	
+
 	if(body){
 		
 		return body;
 	}	
 	
-	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __ARGUMENTS((Object)owner, mass)));
+	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __ARGUMENTS((Object)owner, weight)));
 	
 	// must prepare bodies in the next update
 	this->selectBodiesToCheck = true;
@@ -302,13 +302,16 @@ void PhysicalWorld_update(PhysicalWorld this){
 	}
 
 	// check the bodies
-	for(i = 0; bodies[i] && i < __MAXSHAPESTOCHECK; i++){
+	for(i = 0; bodies[i] && i < __MAX_BODIES_PER_LEVEL; i++){
 
 		Body_update(bodies[i], &this->gravity, this->elapsedTime);
 	}
-	
+
 	// record this update's time
-	this->time = Clock_getTime(_inGameClock);
+	this->time = 0;//Clock_getTime(_inGameClock);
+	
+	// process removed bodies
+	PhysicalWorld_processRemovedBodies(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -329,6 +332,8 @@ void PhysicalWorld_reset(PhysicalWorld this){
 
 	// must prepare bodies in the next update
 	this->selectBodiesToCheck = true;
+	
+	bodies[0] = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

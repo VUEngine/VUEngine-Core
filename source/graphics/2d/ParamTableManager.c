@@ -28,6 +28,7 @@
  */
 
 #include <ParamTableManager.h>
+#include <HardwareManager.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -143,7 +144,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 		this->size -= size;
 		this->used += size;
 
-		ASSERT(PARAMBase + this->used < WAMBase);
+		ASSERT(PARAMBase + this->used < WAMBase, "ParamTableManager: exceded memory area");
 		
 		return true;
 	}
@@ -226,16 +227,16 @@ void ParamTableManager_print(ParamTableManager this,int x, int y){
 	
 	int i = 0;
 	
-	vbjPrintText("Size:", x, y);
+	Printing_text("Size:", x, y);
 	
-	vbjPrintInt(this->size, x + 6,y);
+	Printing_int(this->size, x + 6,y);
 	
-	vbjPrintText("Used:", x, y + 1);
+	Printing_text("Used:", x, y + 1);
 	
-	vbjPrintInt(this->used, x + 6, y + 1);
+	Printing_int(this->used, x + 6, y + 1);
 	
 	for(i = 0; i < 10; i++){
-		vbjPrintHex((int)this->sprites[i], x, y + i + 3);
+		Printing_hex((int)this->sprites[i], x, y + i + 3);
 		//printInt((int)this->sprites[i]->param,x+10,y+i+3);
 	}
 }

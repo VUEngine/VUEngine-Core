@@ -194,7 +194,7 @@ void Container_addChild(Container this, Container child){
 	}
 	else{
 		
-		ASSERT(false, Container: adding NULL child);
+		ASSERT(false, "Container: adding NULL child");
 	}
 }
 
@@ -281,13 +281,40 @@ void Container_concatenateTransform(Transformation *environmentTransform, Transf
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //render class
-void Container_render(Container this, Transformation environmentTransform){
+void Container_render(Container this, Transformation* environmentTransform){
 
+	// static to avoid call to _memcpy
+	Transformation environmentTransformCopy = {
+		// local position
+		{
+			environmentTransform->localPosition.x, 
+			environmentTransform->localPosition.y, 
+			environmentTransform->localPosition.z
+		},
+		// global position
+		{
+			environmentTransform->globalPosition.x, 
+			environmentTransform->globalPosition.y, 
+			environmentTransform->globalPosition.z
+		},
+		// scale
+		{
+			environmentTransform->scale.x, 
+			environmentTransform->scale.y
+		},
+		// rotation
+		{
+			environmentTransform->rotation.x, 
+			environmentTransform->rotation.y, 
+			environmentTransform->rotation.z
+		}
+	};
+	
 	// concaenate environment transform
-	Container_concatenateTransform(&environmentTransform, &this->transform);
+	Container_concatenateTransform(&environmentTransformCopy, &this->transform);
 
 	// save new global position
-	this->transform.globalPosition = environmentTransform.globalPosition;
+	this->transform.globalPosition = environmentTransformCopy.globalPosition;
 	
 	// if I have children
 	if(this->children){
@@ -302,7 +329,7 @@ void Container_render(Container this, Transformation environmentTransform){
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition? child->invalidateGlobalPosition: this->invalidateGlobalPosition;
 			
 			// render each entity
-			__VIRTUAL_CALL(void, Container, render, child, __ARGUMENTS(environmentTransform));		
+			__VIRTUAL_CALL(void, Container, render, child, __ARGUMENTS(&environmentTransformCopy));		
 		}	
 	}
 	

@@ -78,8 +78,20 @@ void FrameRate_reset(FrameRate this);
 // retrieve fps
 int FrameRate_getFps(FrameRate this);
 
+// retrieve raw fps
+int FrameRate_getRawFps(FrameRate this);
+
 // increase the update fps count
-void FrameRate_increaseFPS(FrameRate this);
+void FrameRate_increaseRenderFPS(FrameRate this);
+
+// increase the update raw fps count
+void FrameRate_increaseRawFPS(FrameRate this);
+
+// increase the update raw fps count
+void FrameRate_increaseLogicFPS(FrameRate this);
+
+// increase the update raw fps count
+void FrameRate_increasePhysicsFPS(FrameRate this);
 
 // print fps
 void FrameRate_print(FrameRate this,int col,int row);

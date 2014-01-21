@@ -118,7 +118,7 @@ int MessageDispatcher_dispatchMessage(u32 delay, Object sender,
 									Object receiver, int message, void* extraInfo){
   
 	//make sure the receiver is valid
-	ASSERT(receiver);
+	ASSERT(receiver, "MessageDispatcher: NULL receiver");
   
 	{
 		//create the telegram

@@ -76,7 +76,6 @@ static void SpriteManager_constructor(SpriteManager this);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __TOTAL_LAYERS	31
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -227,10 +226,10 @@ void SpriteManager_assignLayers(SpriteManager this){
 		Sprite_setWorldLayer(this->sprites[i], this->freeLayer--);
 	}	
 
-	ASSERT(this->freeLayer > 0, SpriteManager: worldLayers depleted);
+	ASSERT(this->freeLayer > 0, "SpriteManager: worldLayers depleted");
 	
 	//update printing world layer for non textboxs (use mainly for debug)	
-	vbjRenderOutputText(this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	Printing_render(this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -248,7 +247,7 @@ void SpriteManager_render(SpriteManager this){
 	if(0 == i){
 		
 		//update printing world layer for non textboxs (use mainly for debug)	
-		vbjRenderOutputText(this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
+		Printing_render(this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
 	}
 }
 

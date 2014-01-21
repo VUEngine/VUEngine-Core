@@ -40,7 +40,7 @@
  */
 
 // class's constructor
-static void VirtualNode_constructor(VirtualNode this, const BYTE* const data);
+static void VirtualNode_constructor(VirtualNode this, const void* const data);
 
 
 // class's destructor
@@ -67,12 +67,10 @@ static void VirtualNode_destructor(VirtualNode this);
 	VirtualNode previous;					\
 											\
 	/* pointer to the data */				\
-	BYTE* data;
+	void* data;
 
 
 __CLASS_DEFINITION(VirtualNode);
-
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -83,19 +81,19 @@ __CLASS_DEFINITION(VirtualNode);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-__CLASS_NEW_DEFINITION(VirtualNode, __PARAMETERS(const BYTE* const data))
+__CLASS_NEW_DEFINITION(VirtualNode, __PARAMETERS(const void* const data))
 __CLASS_NEW_END(VirtualNode, __ARGUMENTS(data));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void VirtualNode_constructor(VirtualNode this, const BYTE* const data){
+static void VirtualNode_constructor(VirtualNode this, const void* const data){
 	
 	__CONSTRUCT_BASE(Object);
 
 	// initialize members
 	this->next = NULL;
 	this->previous = NULL;	
-	this->data = (BYTE*) data;
+	this->data = (void*)data;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,18 +106,17 @@ static void VirtualNode_destructor(VirtualNode this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set node's data pointer
-void VirtualNode_setData(VirtualNode this, BYTE* data){
+void VirtualNode_setData(VirtualNode this, const void* const data){
 	
-	this->data = data;
+	this->data = (void*)data;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve data pointer
-BYTE* VirtualNode_getData(VirtualNode this){
+void* VirtualNode_getData(VirtualNode this){
 	
 	return this->data;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get next node's address
@@ -209,7 +206,7 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node){
 	VirtualNode head;							\
 												\
 	/* a pointer to the tail of the list */		\
-	VirtualNode tail;
+	VirtualNode tail; 
 
 
 
@@ -246,7 +243,7 @@ static void VirtualList_constructor(VirtualList this){
 
 	__CONSTRUCT_BASE(Object);	
 
-	// set member's default values
+	// set members' default values
 	this->head = NULL;		
 	this->tail  = NULL;
 }
@@ -295,11 +292,10 @@ void VirtualList_clear(VirtualList this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add a new node to the begging of the list
-int VirtualList_pushFront(VirtualList this, const BYTE* const data){
+int VirtualList_pushFront(VirtualList this, const void* const data){
 	
-	// create a node
 	VirtualNode newNode = __NEW(VirtualNode, __ARGUMENTS(data));
-	
+
 	//set previous if list isn't empty
 	if(this->head){
 		
@@ -317,7 +313,7 @@ int VirtualList_pushFront(VirtualList this, const BYTE* const data){
 		
 		this->tail = this->head;
 	}
-
+	
 	return true;
 }
 
@@ -350,18 +346,12 @@ void VirtualList_popFront(VirtualList this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add a new node to the end of the list
-int VirtualList_pushBack(VirtualList this, const BYTE* const data){
+int VirtualList_pushBack(VirtualList this, const void* const data){
 
 	VirtualNode newNode = __NEW(VirtualNode, __ARGUMENTS(data));
 	
-	ASSERT(data);
-	
-	if(!newNode){
+	ASSERT(data, "VirtualList: NULL data");
 		
-		ASSERT(false);
-		return false;
-	}
-
 	// set the tail
 	if(!this->head){
 		
@@ -449,12 +439,14 @@ VirtualNode VirtualList_getNode(VirtualList this, int item){
 				
 				//if item reached
 				if(counter == item){
+					
 					//return node's data
 					return node;
 				}
 			}
 			//if item reached
 			if(counter == item){
+				
 				//return node's data
 				return node;
 			}
@@ -472,11 +464,13 @@ void* VirtualList_getObject(VirtualList this, void* const dataPointer){
 	
 	// check if data pointer is valid
 	if(!dataPointer){
+		
 		return NULL;
 	}
 	
 	//locate node
 	while(node && node->data != dataPointer){
+		
 		node = node->next;
 	}
 	
@@ -555,7 +549,7 @@ int VirtualList_removeElement(VirtualList this, const void* const dataPointer){
 		ASSERT(++counter < LISTMAXSIZE, VL_ENDLESS_REM_ERR);
 	}
 	
-	ASSERT(node, VirtualList: node not found);
+	ASSERT(node, "VirtualList: node not found");
 
 	return VirtualList_removeNode(this, node);
 }
@@ -591,7 +585,7 @@ VirtualNode VirtualList_begin(VirtualList this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve the first element
-BYTE* const VirtualList_front(VirtualList this){
+void* const VirtualList_front(VirtualList this){
 	
 	return this->head->data;
 }
@@ -605,7 +599,7 @@ VirtualNode VirtualList_end(VirtualList this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve the last element
-BYTE* const VirtualList_back(VirtualList this){
+void* const VirtualList_back(VirtualList this){
 	
 	return this->tail->data;
 }
@@ -613,7 +607,7 @@ BYTE* const VirtualList_back(VirtualList this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // insert a node after the node specified
-VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const BYTE* const data){
+VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const void* const data){
 
 	VirtualNode newNode = NULL;
 	
@@ -650,7 +644,7 @@ VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const BY
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // insert a node before the node specified
-VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const BYTE* const data){
+VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const void* const data){
 	
 	VirtualNode newNode = NULL;
 	
@@ -701,7 +695,7 @@ void VirtualList_swap(VirtualList this, VirtualList secondList){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get node's address at given position
-BYTE* VirtualList_getObjectAtPosition(VirtualList this, int position){
+void* VirtualList_getObjectAtPosition(VirtualList this, int position){
 	
 	VirtualNode node = this->head;
 	

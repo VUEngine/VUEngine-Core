@@ -46,8 +46,17 @@
 	/* super's attributes */					\
 	Object_ATTRIBUTES;							\
 												\
-	/* actuar frames per second */				\
-	int fps;
+	/* raw frames per second */					\
+	int rawFPS;									\
+												\
+	/* rendering frames per second */			\
+	int renderFPS;								\
+												\
+	/* logic frames per second */				\
+	int logicFPS;								\
+												\
+	/* physics frames per second */				\
+	int physicsFPS;								\
 
 
 // define the FrameRate
@@ -85,7 +94,7 @@ static void FrameRate_constructor(FrameRate this){
 	
 	__CONSTRUCT_BASE(Object);
 	
-	this->fps = 0;
+	FrameRate_reset(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,28 +109,79 @@ void FrameRate_destructor(FrameRate this){
 // reset internal values
 void FrameRate_reset(FrameRate this){
 	
-	this->fps = 0;
+	this->rawFPS = 0;
+	this->renderFPS = 0;
+	this->logicFPS = 0;
+	this->physicsFPS = 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve fps
-int FrameRate_getFps(FrameRate this){
+// retrieve raw FPS
+int FrameRate_getRawFPS(FrameRate this){
 	
-	return this->fps;
+	return this->rawFPS;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// increase the fps count
-void FrameRate_increaseFPS(FrameRate this){
+// retrieve render FPS
+int FrameRate_getRenderFPS(FrameRate this){
 	
-	this->fps++;
+	return this->renderFPS;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// print fps
+// retrieve raw logic FPS
+int FrameRate_getLogicFPS(FrameRate this){
+	
+	return this->logicFPS;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve raw logic FPS
+int FrameRate_getPhysicsFPS(FrameRate this){
+	
+	return this->physicsFPS;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// increase the renderFPS count
+void FrameRate_increaseRenderFPS(FrameRate this){
+	
+	this->renderFPS++;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// increase the update raw renderFPS count
+void FrameRate_increaseRawFPS(FrameRate this){
+	
+	this->rawFPS++;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// increase the update raw renderFPS count
+void FrameRate_increaseLogicFPS(FrameRate this){
+	
+	this->logicFPS++;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// increase the update raw renderFPS count
+void FrameRate_increasePhysicsFPS(FrameRate this){
+	
+	this->physicsFPS++;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print renderFPS
 void FrameRate_print(FrameRate this, int col, int row){
 	
-	vbjPrintText("FPS   ", col, row);
-	//vbjPrintText("      ", col + 5, row);
-	vbjPrintInt(this->fps, col + vbjIntLen(this->fps) + 2, row);
+	Printing_text("FPS", col, row++);
+	Printing_text("Raw                          ", col, row);
+	Printing_int(this->rawFPS, col + 8, row++);
+	Printing_text("Render                       ", col, row);
+	Printing_int(this->renderFPS, col + 8, row++);
+	Printing_text("Logic                        ", col, row);
+	Printing_int(this->logicFPS, col + 8, row++);
+	Printing_text("Physics                      ", col, row);
+	Printing_int(this->physicsFPS, col + 8, row++);
 }

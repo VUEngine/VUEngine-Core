@@ -31,6 +31,7 @@
 #include <SpriteManager.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
+#include <HardwareManager.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -94,7 +95,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 	// create the texture			 
 	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
 
-	ASSERT(this->texture, Sprite: texture no allocated);
+	ASSERT(this->texture, "Sprite: texture no allocated");
 	
 	// set texture position
 	this->texturePosition.x = Texture_getXOffset(this->texture);
@@ -223,23 +224,23 @@ void Sprite_calculateScale(Sprite this, fix19_13 z){
 void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 
 	// normalize the position to screen coordinates
-	VBVec3D position3D = vbjNormalizePosition(position);
+	VBVec3D position3D = Optics_normalizePosition(position);
 
-	ASSERT(this->texture, Sprite: null texture);
+	ASSERT(this->texture, "Sprite: null texture");
 
 	// move to the sprite's texture's center
 	position3D.x -= ITOFIX19_13(Texture_getCols(this->texture) << 2);
 	position3D.y -= ITOFIX19_13(Texture_getRows(this->texture) << 2);
 	
 	// project position to 2D space
-	vbjProjectTo2D(&this->drawSpec.position, &position3D);
+	Optics_projectTo2D(&this->drawSpec.position, &position3D);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // calculate the parallax
 void Sprite_calculateParallax(Sprite this, fix19_13 z){
 	
-	this->drawSpec.position.parallax = vbjCalculateParallax(this->drawSpec.position.x, z);
+	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,12 +286,6 @@ void Sprite_render(Sprite this){
 		DrawSpec drawSpec = this->drawSpec;
 
 		if(__UPDATEHEAD == this->renderFlag){
-			
-			//create an independant of software variable to point XPSTTS register
-			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-			
-			//wait for screen to idle	
-			while (*xpstts & XPBSYR);
 			
 			// write the head
 			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
@@ -380,14 +375,14 @@ void Sprite_renderAll(Sprite this){
 			// don't update on next render cycle
 			this->updateParamTable = false;
 		}
-		vbjPrintText("hola", 0, 11);	
+		Printing_text("hola", 0, 11);	
 				
 
 		WORLD_SIZE(this->worldLayer, 
 				FIX19_13_ROUNDTOI(FIX7_9TOFIX19_13(FIX7_9_MULT(ITOFIX7_9(Texture_getCols(this->texture)<< 3), abs(drawSpec.scale.x)))) - 1,						
 				FIX19_13_ROUNDTOI(FIX7_9TOFIX19_13(FIX7_9_MULT(ITOFIX7_9(Texture_getRows(this->texture)<< 3), abs(drawSpec.scale.y)))));
 			
-		vbjPrintInt(FIX19_13_ROUNDTOI(FIX7_9TOFIX19_13(FIX7_9_MULT(ITOFIX7_9(Texture_getCols(this->texture)<< 3), abs(drawSpec.scale.x)))), 0, 12);	
+		Printing_int(FIX19_13_ROUNDTOI(FIX7_9TOFIX19_13(FIX7_9_MULT(ITOFIX7_9(Texture_getCols(this->texture)<< 3), abs(drawSpec.scale.x)))), 0, 12);	
 		WORLD_PARAM(this->worldLayer, PARAM(this->param));				
 	}
 	else{
@@ -523,7 +518,7 @@ void Sprite_scale(Sprite this){
 		int cols = Texture_getCols(this->texture) << 2;
 		int rows = Texture_getRows(this->texture) << 2;
 
-		affineScale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y, 
+		Affine_scale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y, 
 				   (this->texturePosition.x << 3) + cols,
 				   (this->texturePosition.y << 3) + rows,
 				   cols, rows);
@@ -540,7 +535,7 @@ void Sprite_rotate(Sprite this, int angle){
 		int cols = Texture_getCols(this->texture) << 2;
 		int rows = Texture_getRows(this->texture) << 2;
 
-		affineRotateZ(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y, 
+		Affine_rotateZ(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y, 
 				   (this->texturePosition.x << 3) + cols,
 				   (this->texturePosition.y << 3) + rows,
 				   cols, rows, angle);

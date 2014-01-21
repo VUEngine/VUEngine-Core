@@ -28,7 +28,8 @@
  */
 
 #include <MemoryPool.h>
-
+#include <Utilities.h>
+#include <Types.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -69,6 +70,30 @@ enum MemoryPoolSizes{
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define __POOL_512B_SIZE_FINAL 	__POOL_512B_SIZE
+#define __POOL_256B_SIZE_FINAL 	__POOL_256B_SIZE
+#define __POOL_192B_SIZE_FINAL 	__POOL_192B_SIZE
+#define __POOL_128B_SIZE_FINAL 	__POOL_128B_SIZE
+#define __POOL_96B_SIZE_FINAL 	__POOL_96B_SIZE
+#define __POOL_64B_SIZE_FINAL 	__POOL_64B_SIZE
+#define __POOL_48B_SIZE_FINAL 	__POOL_48B_SIZE
+#define __POOL_32B_SIZE_FINAL 	__POOL_32B_SIZE
+#define __POOL_24B_SIZE_FINAL 	__POOL_24B_SIZE
+#define __POOL_16B_SIZE_FINAL 	__POOL_16B_SIZE
+
+/*
+#define __POOL_512B_SIZE_FINAL 	(__BLOCK_512B * 0)
+#define __POOL_256B_SIZE_FINAL 	(__BLOCK_256B * 0)
+#define __POOL_192B_SIZE_FINAL 	(__BLOCK_192B * 4)
+#define __POOL_128B_SIZE_FINAL 	(__BLOCK_128B * 4)
+#define __POOL_96B_SIZE_FINAL 	(__BLOCK_96B * 8)
+#define __POOL_64B_SIZE_FINAL 	(__BLOCK_64B * 8)
+#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 4)
+#define __POOL_32B_SIZE_FINAL 	(__BLOCK_32B * 24)
+#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 48)
+#define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 0)
+*/
+
 #define MemoryPool_ATTRIBUTES							\
 														\
 	/* super's attributes */							\
@@ -78,12 +103,16 @@ enum MemoryPoolSizes{
 	/* must always put together the pools! */			\
 	/* first byte is used as a usage flag */			\
 														\
-	/*BYTE pool512B[__POOL_512B_SIZE];*/				\
-	BYTE pool256B[__POOL_256B_SIZE]; 					\
-	BYTE pool128B[__POOL_128B_SIZE];					\
-	BYTE pool64B[__POOL_64B_SIZE];						\
-	BYTE pool32B[__POOL_32B_SIZE];						\
-	BYTE pool16B[__POOL_16B_SIZE];						\
+	/*BYTE pool512B[__POOL_512B_SIZE_FINAL];*/			\
+	BYTE pool256B[__POOL_256B_SIZE_FINAL]; 				\
+	BYTE pool192B[__POOL_192B_SIZE_FINAL]; 				\
+	BYTE pool128B[__POOL_128B_SIZE_FINAL];				\
+	BYTE pool96B[__POOL_96B_SIZE_FINAL];				\
+	BYTE pool64B[__POOL_64B_SIZE_FINAL];				\
+	BYTE pool48B[__POOL_48B_SIZE_FINAL];				\
+	BYTE pool32B[__POOL_32B_SIZE_FINAL];				\
+	BYTE pool24B[__POOL_24B_SIZE_FINAL];				\
+	BYTE pool16B[__POOL_16B_SIZE_FINAL];				\
 	/* here ends the pool area */						\
 														\
 	/* pointer to the beggining of each memory pool */	\
@@ -94,6 +123,7 @@ enum MemoryPoolSizes{
 	
 
 __CLASS_DEFINITION(MemoryPool);
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -139,19 +169,34 @@ static void MemoryPool_constructor(MemoryPool this){
 		this->poolLocation[pool] = this->pool256B;
 		this->poolSizes[pool][ePoolSize] = sizeof(this->pool256B);
 		this->poolSizes[pool++][eBlockSize] = __BLOCK_256B;
-	
+
+		this->poolLocation[pool] = this->pool192B;
+		this->poolSizes[pool][ePoolSize] = sizeof(this->pool192B);
+		this->poolSizes[pool++][eBlockSize] = __BLOCK_192B;
+
 		this->poolLocation[pool] = this->pool128B;
 		this->poolSizes[pool][ePoolSize] = sizeof(this->pool128B);
 		this->poolSizes[pool++][eBlockSize] = __BLOCK_128B;
 	
+		this->poolLocation[pool] = this->pool96B;
+		this->poolSizes[pool][ePoolSize] = sizeof(this->pool96B);
+		this->poolSizes[pool++][eBlockSize] = __BLOCK_96B;
+
 		this->poolLocation[pool] = this->pool64B;
 		this->poolSizes[pool][ePoolSize] = sizeof(this->pool64B);
 		this->poolSizes[pool++][eBlockSize] = __BLOCK_64B;
-	
+
+		this->poolLocation[pool] = this->pool48B;
+		this->poolSizes[pool][ePoolSize] = sizeof(this->pool48B);
+		this->poolSizes[pool++][eBlockSize] = __BLOCK_48B;
+
 		this->poolLocation[pool] = this->pool32B;
 		this->poolSizes[pool][ePoolSize] = sizeof(this->pool32B);
 		this->poolSizes[pool++][eBlockSize] = __BLOCK_32B;
 		
+		this->poolLocation[pool] = this->pool24B;
+		this->poolSizes[pool][ePoolSize] = sizeof(this->pool24B);
+		this->poolSizes[pool++][eBlockSize] = __BLOCK_24B;
 		
 		this->poolLocation[pool] = this->pool16B;
 		this->poolSizes[pool][ePoolSize] = sizeof(this->pool16B);
@@ -186,7 +231,7 @@ void MemoryPool_destructor(MemoryPool this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // allocate memory for data
-BYTE* MemoryPool_allocate(MemoryPool this, int numBytes){
+void* MemoryPool_allocate(MemoryPool this, int numBytes){
 	
 	int i = 0;
 	int blockSize = __MIN_BLOCK;	
@@ -201,7 +246,7 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes){
 	// seach for the shortest pool which can hold the data
 	for(pool = __MEMORY_POOLS; pool-- && numBytes > this->poolSizes[pool][eBlockSize];);
 
-	ASSERT(pool >= 0, MemoryPool: object size overflow);
+	ASSERT(pool >= 0, "MemoryPool: object size overflow");
 	
 	// pool found
 	blockSize = this->poolSizes[pool][eBlockSize];
@@ -217,8 +262,8 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes){
 	    i < numberOfOjects && this->poolLocation[pool][displacement]; 
 	    i++, displacement += displacementStep);	
 	
-	ASSERT(i < numberOfOjects, MemoryPool: pool exhausted);
-
+	ASSERT(i < numberOfOjects, "MemoryPool: pool exhausted");
+	
 	// assign address to allocated object
 	this->poolLocation[pool][displacement] = 0xFF;
 
@@ -295,27 +340,26 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y){
 	int pool;
 	int displacement = 0;
 	
-	vbjPrintText("MEMORY USAGE",x,y++);
-	vbjPrintText( "POOL",  x,y);
-	vbjPrintText( "FREE",   x + 7,y);
-	vbjPrintText( "USED",  x+ 14,y);
+	Printing_text("MEMORY USAGE",x,y++);
+	Printing_text( "POOL",  x,y);
+	Printing_text( "FREE",   x + 7,y);
+	Printing_text( "USED",  x+ 14,y);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++){
 		
 		for(displacement = 0, i = 0, counter = 0 ; i < this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize]; i++, displacement += this->poolSizes[pool][eBlockSize]){
 			
 			if(this->poolLocation[pool][displacement]){
-				counter++;
-				
 
+				counter++;
 			}
 		}
 		
 		total += counter * this->poolSizes[pool][eBlockSize];
 		
-		vbjPrintText(itoa(this->poolSizes[pool][eBlockSize],10,0) ,  x, ++y);
-		vbjPrintInt(this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - counter, x +7, y);
-		vbjPrintInt(counter, x +14, y);
+		Printing_text(Utilities_itoa(this->poolSizes[pool][eBlockSize],10,0) ,  x, ++y);
+		Printing_int(this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - counter, x +7, y);
+		Printing_int(counter, x +14, y);
 		counter = 0 ;
 	}
 }

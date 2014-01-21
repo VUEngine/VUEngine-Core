@@ -102,7 +102,7 @@ __CLASS(Body);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Body, __PARAMETERS(Object owner, Mass mass));
+__CLASS_NEW_DECLARE(Body, __PARAMETERS(Object owner, fix19_13 weight));
 
 // class's destructor
 void Body_destructor(Body this);

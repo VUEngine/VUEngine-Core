@@ -31,6 +31,7 @@
 #include <FrameRate.h>
 #include <Game.h>
 #include <SoundManager.h>
+#include <HardwareManager.h>
 
 
 
@@ -54,9 +55,8 @@
 	/* */									\
 	u32 ticks;
 
-// define the 
+// define the manager
 __CLASS_DEFINITION(ClockManager);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ static void ClockManager_constructor(ClockManager this){
 	__CONSTRUCT_BASE(Object);
 
 	// create the clock list
-	this->clocks = __NEW(VirtualList);
+	this->clocks = NULL;
 	
 	this->ticks = 0;
 }
@@ -125,7 +125,12 @@ void ClockManager_destructor(ClockManager this){
 // register a clock
 void ClockManager_register(ClockManager this, Clock clock){
 	
-	VirtualList_pushFront(this->clocks, (void*) clock);	
+	if(!this->clocks) {
+		
+		this->clocks = __NEW(VirtualList);
+	}
+	
+	VirtualList_pushFront(this->clocks, clock);	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,15 +144,19 @@ void ClockManager_unregister(ClockManager this, Clock clock){
 // update clocks
 void ClockManager_update(ClockManager this, u32 ticksElapsed){
 
-	VirtualNode node = VirtualList_begin(this->clocks);
-	
 	u32 previousSecond = this->ticks / 1000;
-	
-	// update all registered clocks 
-	for(; node ; node = VirtualNode_getNext(node)){
+
+	if(this->clocks) {
 		
-		Clock_update((Clock)VirtualNode_getData(node), ticksElapsed);
+		VirtualNode node = VirtualList_begin(this->clocks);
+		
+		// update all registered clocks 
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Clock_update((Clock)VirtualNode_getData(node), ticksElapsed);
+		}
 	}
+	
 	
 	// update tick count
 	this->ticks += ticksElapsed;
@@ -158,6 +167,10 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 #ifdef __DEBUG_0
     		
 	    	FrameRate_print(FrameRate_getInstance(), 0, 0);
+	    	// get stack pointer
+    		//Printing_hex(HW_REGS[SCR], 38, 4);
+    		//Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);
+	    	Clock_print(_clock, 40, 0);
 	    	//Clock_print(_inGameClock, 38, 0);
 	    	//MemoryPool_printMemUsage(MemoryPool_getInstance(),0,0);
 	    	//Game_printClassSizes(0, 0);

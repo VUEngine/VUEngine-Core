@@ -63,8 +63,10 @@ __CLASS(VirtualNode);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+__CLASS_NEW_DECLARE(VirtualNode, __PARAMETERS(const void* const data));
+
 //retrieve data pointer
-BYTE* VirtualNode_getData(VirtualNode this);
+void* VirtualNode_getData(VirtualNode this);
 
 //get next node's address
 VirtualNode VirtualNode_getNext(VirtualNode this);
@@ -132,9 +134,9 @@ void VirtualList_destructor(VirtualList this);
 void VirtualList_clear(VirtualList this);
 
 // add a new node to the begging of the list
-int VirtualList_pushFront(VirtualList this, const BYTE* const data);
+int VirtualList_pushFront(VirtualList this, const void* const data);
 
-int VirtualList_pushBack(VirtualList this, const BYTE* const data);
+int VirtualList_pushBack(VirtualList this, const void* const data);
 
 // remove the first element in the list
 void VirtualList_popFront(VirtualList this);
@@ -161,25 +163,25 @@ void VirtualList_copy(VirtualList this, VirtualList sourceList);
 VirtualNode VirtualList_begin(VirtualList this);
 
 // retrieve the first element
-BYTE* const VirtualList_front(VirtualList this);
+void* const VirtualList_front(VirtualList this);
 
 // retrieve last list's node
 VirtualNode VirtualList_end(VirtualList this);
 
 // retrieve the last element
-BYTE* const VirtualList_back(VirtualList this);
+void* const VirtualList_back(VirtualList this);
 
 
 // insert a node after the node specified
-VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const BYTE* const data);
+VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const void* const data);
 
 // insert a node before the node specified
-VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const BYTE* const data);
+VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const void* const data);
 
 // swap two lists heads and tails
 void VirtualList_swap(VirtualList this, VirtualList secondList);
 
 // get node's address at given position
-BYTE* VirtualList_getObjectAtPosition(VirtualList this, int position);
+void* VirtualList_getObjectAtPosition(VirtualList this, int position);
 
 #endif /*VIRTUALLIST_H_*/

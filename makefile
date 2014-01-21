@@ -4,8 +4,8 @@
 TARGET = libvbjae
 
 # Default build type
-TYPE = debug
-#TYPE = release
+#TYPE = debug
+TYPE = release
 #TYPE = preprocessor
 
 VBJAENGINE = $(VBDE)/libs/vbjaengine
@@ -19,31 +19,35 @@ ROMHEADER = lib/vb.hdr
 # Dynamic libraries
 DLIBS =
 
+# Binary output dir
+OUTPUT = output
+
 # Obligatory headers
-VBJAE_ESSENTIALS =  -include $(VBJAENGINE)/source/libgccvb/libgccvb.h		\
-					-include $(VBJAENGINE)/source/base/Oop.h 				\
-					-include $(VBJAENGINE)/source/base/Error.h 				\
-					-include $(VBJAENGINE)/config.h 						\
-					-include $(VBJAENGINE)/source/base/Constants.h	 		\
-					-include $(VBJAENGINE)/source/base/MemoryPool.h 		\
+VBJAE_ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
+					-include $(VBJAENGINE)/config.h 								\
+					-include $(VBJAENGINE)/source/base/Constants.h	 				\
+					-include $(VBJAENGINE)/source/hardware/HardwareManager.h		\
+					-include $(VBJAENGINE)/source/base/Oop.h 						\
+					-include $(VBJAENGINE)/source/base/Error.h 						\
+					-include $(VBJAENGINE)/source/base/MemoryPool.h 				\
 					-include $(VBJAENGINE)/source/graphics/2d/Printing.h
 
 # The next blocks change some variables depending on the build type
 ifeq ($(TYPE), debug)
-LDPARAM =  
-CCPARAM = -Wall -O -Winline $(VBJAE_ESSENTIALS)
+LDPARAM = -fno-builtin -ffreestanding  
+CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline $(VBJAE_ESSENTIALS)
 MACROS = __DEBUG
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =  
-CCPARAM = -finline-functions -Wall -O3 -Winline $(VBJAE_ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline $(VBJAE_ESSENTIALS)
 MACROS = NDEBUG
 endif
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =  
-CCPARAM = -Wall -O -E -nostdinc
+CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline $(GAME_ESSENTIALS) -E -P
 MACROS = __DEBUG
 endif
 
@@ -85,7 +89,7 @@ DFILES := $(addprefix $(STORE)/,$(SOURCE:.c=.d))
 
 all: $(TARGET).a
 
-$(TARGET).a: dirs $(OBJECTS)
+$(OUTPUT)/$(TARGET).a: dirs $(OBJECTS)
 	@echo Creating $(TARGET).
 	@$(AR) rcs $@ $(OBJECTS) 
 	@echo Done $@
@@ -94,7 +98,7 @@ $(TARGET).a: dirs $(OBJECTS)
 # the object path at the start of the file because the files gcc
 # outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: %.c
-		@echo Creating o file for $*...
+		@echo Creating o file for $(TYPE) $*...
 		@$(GCC) -Wp,-MD,$(STORE)/$*.dd  $(foreach INC,$(INCPATH),-I$(INC))\
                 $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -c $< -o $@
 		@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d

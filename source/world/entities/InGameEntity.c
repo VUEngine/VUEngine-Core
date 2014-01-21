@@ -80,7 +80,7 @@ __CLASS_NEW_END(InGameEntity, __ARGUMENTS(inGameEntityDefinition, ID));
 // class's constructor
 void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int ID){
 	
-	ASSERT(inGameEntityDefinition, InGameEntity: NULL definition);
+	ASSERT(inGameEntityDefinition, "InGameEntity: NULL definition");
 	
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(&inGameEntityDefinition->entityDefinition, ID));
 	
@@ -246,7 +246,7 @@ void InGameEntity_setShapeState(InGameEntity this, int state){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //render class
-void InGameEntity_render(InGameEntity this, Transformation environmentTransform){
+void InGameEntity_render(InGameEntity this, Transformation* environmentTransform){
 	
 	// call base
 	Entity_render((Entity)this, environmentTransform);

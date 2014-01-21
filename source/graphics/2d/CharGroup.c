@@ -213,9 +213,9 @@ void CharGroup_write(CharGroup this){
 				// ask for allocation
 				CharSetManager_allocate(CharSetManager_getInstance(), this);				
 			}	
-			
+
 			//write to char memory
-			memcpy((void*)CharSegs(this->charset) + (this->offset << 4), (int*)this->charDefinition, (int)this->numberOfChars << 4);
+			Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
 
 			break;
 			
@@ -229,16 +229,13 @@ void CharGroup_write(CharGroup this){
 				if(CharSetManager_allocateShared(CharSetManager_getInstance(), this)){
 			
 					//write to char memory
-					memcpy((void*)CharSegs(this->charset)  + ( this->offset << 4), (int*)this->charDefinition, (int)this->numberOfChars << 4);
-					//copymem ((void*)CharSegs(this->charset)  + ( this->offset << 4), (int*)this->charDefinition, (int)this->numberOfChars << 4);
-					
-					//copymem ((void*)CharSegs(this->charSet)+(this->offset<<4),this->charDefinition, (this->numberOfChars<<4));
+					Mem_copy((u8*)CharSegs(this->charset)  + ( this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
 				}
 			}	
 			break;
 			
 		default:
 
-			ASSERT(false, CharGroup with no allocation type);
+			ASSERT(false, "CharGroup with no allocation type");
 	}
 }

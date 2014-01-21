@@ -79,7 +79,7 @@ PhysicalWorld PhysicalWorld_getInstance();
 void PhysicalWorld_destructor(PhysicalWorld this);
 
 // register a game entity
-Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, Mass mass);
+Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight);
 
 // remove a shape
 void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner);

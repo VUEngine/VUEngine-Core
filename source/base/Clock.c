@@ -128,23 +128,23 @@ void Clock_print(Clock this, int col, int row){
 	//print minutes
 	if(minutes < 10){
 
-		vbjPrintText("0", minutesPosition, row);
+		Printing_text("0", minutesPosition, row);
 		minutesPosition++;
 	}
 	
-	vbjPrintInt(minutes, minutesPosition, row);
+	Printing_int(minutes, minutesPosition, row);
 	
 	// print divisor
-	vbjPrintText(":", secondsPosition - 1, row);
+	Printing_text(":", secondsPosition - 1, row);
 	
 	//print seconds
 	if(seconds < 10){
 
-		vbjPrintText("0", secondsPosition, row);
+		Printing_text("0", secondsPosition, row);
 		secondsPosition++;
 	}
 
-	vbjPrintInt(seconds, secondsPosition, row);
+	Printing_int(seconds, secondsPosition, row);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

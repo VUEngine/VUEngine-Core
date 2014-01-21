@@ -358,10 +358,10 @@ enum MessagesTypes{
 	#define ASSERT( STATEMENT, ... )
 
 #else
-	#define ASSERT( STATEMENT, ... )												\
+	#define ASSERT( STATEMENT, MESSAGE )											\
 	if(!(STATEMENT)) { 																\
 		/* thrown exception */														\
-		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__));	\
+		Error_triggerException(Error_getInstance(), MESSAGE);						\
 	}
 #endif
 

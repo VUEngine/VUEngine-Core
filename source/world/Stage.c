@@ -43,11 +43,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __STAGE_BITS_PER_ENTITY		2
-#define __ENTITIESINSTAGE (__ENTITIESPERWORLD / (sizeof(WORD) << 3) * __STAGE_BITS_PER_ENTITY)
-
-WORD entityStateRegister[__ENTITIESINSTAGE];
-int stateRegisterInUse = false;
+WORD entityStateRegister[__ENTITIES_IN_STAGE];
+static int stateRegisterInUse = false;
 
 // define the Stage
 __CLASS_DEFINITION(Stage);
@@ -135,7 +132,7 @@ static void Stage_setEntityState(int ID, int inGameState){
 	// displacement =  bitIndex % (sizeof(WORD) << 3);
 	int displacement =  bitIndex & ((sizeof(WORD) << 3) - 1);
 
-	WORD mask = entityStateRegister[arrayIndex] & vbRotate(0xFFFFFFFF << __STAGE_BITS_PER_ENTITY, displacement, __ROT_LEFT);
+	WORD mask = entityStateRegister[arrayIndex] & Utilities_rotateBits(0xFFFFFFFF << __STAGE_BITS_PER_ENTITY, displacement, __ROT_LEFT);
 	
 	// make sure we are unloading an entity loaded by 
 	// me and not but the programmer
@@ -205,7 +202,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition){
 		};
 
 		// if entity is visible
-		if(vbjIsVisible(position, 
+		if(Optics_isVisible(position, 
 				entityDefinition->spritesDefinitions[0].textureDefinition->cols << 3, 
 				entityDefinition->spritesDefinitions[0].textureDefinition->rows << 3,
 				0,
@@ -232,10 +229,12 @@ void Stage_load(Stage this, StageDefinition* stageDefinition){
 	}
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
+	SoundManager_loadBGM(SoundManager_getInstance(), (u16 (*)[6])stageDefinition->bgm);
 	
 	//setup the column table
-	vbSetColTable();
+	HardwareManager_setupColumnTable(HardwareManager_getInstance());
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine if a point is visible
@@ -249,10 +248,10 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int wid
 
 	VBVec2D position2D;
 	
-	VBVec3D position3D = vbjNormalizePosition(position);
+	VBVec3D position3D = Optics_normalizePosition(position);
 	
 	//project the position to 2d space
-	vbjProjectTo2D(&position2D, &position3D);
+	Optics_projectTo2D(&position2D, &position3D);
 
 	//(x >= min && x < max) can be transformed into (unsigned)(x-min) < (max-min)
 	// check x visibility
@@ -410,14 +409,14 @@ void Stage_unloadEntities(Stage this){
 // set save entity's states flag
 int Stage_saveEntityStates(Stage this){
 	
-	ASSERT(!stateRegisterInUse, Stage: state register already in use);
+	ASSERT(!stateRegisterInUse, "Stage: state register already in use");
 	
 	// only save states if register not in use yet
 	if(!stateRegisterInUse){
 
 		int i = 0;
 		// initialize world's actor states
-		for (i = 0; i < __ENTITIESINSTAGE; i++){
+		for (i = 0; i < __ENTITIES_IN_STAGE; i++){
 			
 			Stage_setEntityState(i, kUnloaded);
 		}

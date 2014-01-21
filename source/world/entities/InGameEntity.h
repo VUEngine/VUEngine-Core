@@ -169,7 +169,7 @@ Direction InGameEntity_getDirection(InGameEntity this);
 void InGameEntity_setShapeState(InGameEntity this, int state);
 
 //render class
-void InGameEntity_render(InGameEntity this, Transformation environmentTransform);
+void InGameEntity_render(InGameEntity this, Transformation* environmentTransform);
 
 
 #endif /*INGAMEENTITY_H_*/

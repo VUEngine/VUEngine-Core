@@ -110,7 +110,7 @@ typedef struct  StageDefinition{
 	VBVec3D screenPosition;
 	
 	// pointer to the background music
-	u16 (*bgm)[];
+	const u16 (*bgm)[];
 
 	// each of the stage's entities
 	PositionedEntity entities[__ENTITIESPERWORLD];

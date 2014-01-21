@@ -34,6 +34,7 @@
 //#include "/usr/local/v810/include/math.h"
 #include <MiscStructs.h>
 #include <GameWorld.h>
+#include <HardwareManager.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ extern VBVec3D		*_screenPosition;
 
 /* ---------------------------------------------------------------------------------------------------------*/
 //calculate the parallax
-inline extern  int vbjCalculateParallax(fix19_13 x, fix19_13 z){
+inline extern  int Optics_calculateParallax(fix19_13 x, fix19_13 z){
 	
 	fix19_13 leftEyePoint, rightEyePoint;
 	
@@ -82,7 +83,7 @@ inline extern  int vbjCalculateParallax(fix19_13 x, fix19_13 z){
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // project a 3d point to 2d space
-inline extern void vbjProjectTo2D(VBVec2D* const position2D, const VBVec3D* const position3D){
+inline extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* const position3D){
 	
 	position2D->x = FIX19_13TOI(position3D->x +
 						(
@@ -137,7 +138,7 @@ inline static void vbjProjectTo2D(VBVec2D* position2D, const VBVec3D* const posi
 
 /* ---------------------------------------------------------------------------------------------------------*/
 //normalize a point to the screen's current position
-inline extern  VBVec3D vbjNormalizePosition(const VBVec3D* const position3D){
+inline extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D){
 	
 	VBVec3D position = {
 	
@@ -153,7 +154,7 @@ inline extern  VBVec3D vbjNormalizePosition(const VBVec3D* const position3D){
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // calculate the size of a given magnitud, being it a 8 pixel multiple
-inline extern int vbjCalculateRealSize(int magnitude, int mapMode, fix7_9 scale){
+inline extern int Optics_calculateRealSize(int magnitude, int mapMode, fix7_9 scale){
 
 	if(WRLD_AFFINE != mapMode){
 		
@@ -166,27 +167,27 @@ inline extern int vbjCalculateRealSize(int magnitude, int mapMode, fix7_9 scale)
 
 
 // determine if a point is insie screen projection range
-inline extern  int vbjIsInsideGame(VBVec3D position, int cols, int rows, int mapMode, int pad){
+inline extern  int Optics_isInsidePlayableArea(VBVec3D position, int cols, int rows, int mapMode, int pad){
 
 	int xLowLimit = 0 - pad;
 	int xHighLimit = 384 + pad;
 	int yLowLimit = 0 - pad;
 	int yHighLimit = 224 + pad;
 
-	int width = (vbjCalculateRealSize(cols << 3, mapMode, 1.0f) >> 1);
-	int height = (vbjCalculateRealSize(rows << 3, mapMode, 1.0f) >> 1);
+	int width = (Optics_calculateRealSize(cols << 3, mapMode, 1.0f) >> 1);
+	int height = (Optics_calculateRealSize(rows << 3, mapMode, 1.0f) >> 1);
 
 	VBVec2D position2D;
 	
 	//normalize position
-	position = vbjNormalizePosition(&position);
+	position = Optics_normalizePosition(&position);
 	
 	if(position.z < __Z_GAME_LIMIT || position.z > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z)){
 		
 		return false;
 	}
 	
-	vbjProjectTo2D(&position2D, &position);
+	Optics_projectTo2D(&position2D, &position);
 
 	
 	if(position2D.x - width <= xHighLimit && (position2D.x + width >= xLowLimit)){
@@ -202,7 +203,7 @@ inline extern  int vbjIsInsideGame(VBVec3D position, int cols, int rows, int map
 
 /* ---------------------------------------------------------------------------------------------------------*/
 //determine if a point is visible
-inline extern  int vbjIsVisible(VBVec3D position3D, int width, int height, int parallax, int pad){
+inline extern  int Optics_isVisible(VBVec3D position3D, int width, int height, int parallax, int pad){
 	
 	int xLowLimit = 0 - (int)parallax - pad;
 	int xHighLimit = __SCREENWIDTH + (int)parallax + pad;
@@ -210,10 +211,10 @@ inline extern  int vbjIsVisible(VBVec3D position3D, int width, int height, int p
 	VBVec2D position2D;
 		
 	//normalize position
-	position3D = vbjNormalizePosition(&position3D);
+	position3D = Optics_normalizePosition(&position3D);
 		
 	//project the position to 2d space
-	vbjProjectTo2D(&position2D, &position3D);
+	Optics_projectTo2D(&position2D, &position3D);
 	
 	width >>= 1;
 	height >>= 1;
@@ -238,7 +239,7 @@ inline extern  int vbjIsVisible(VBVec3D position3D, int width, int height, int p
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // determine if a point is out of the game
-inline extern int vbjOutsideGame(VBVec3D position3D, int width, int height){
+inline extern int Optics_isOutsidePlayableArea(VBVec3D position3D, int width, int height){
 	
 	int xLowLimit = 0 - __ENTITYLOADPAD;
 	int xHighLimit = __SCREENWIDTH + __ENTITYLOADPAD;
@@ -249,10 +250,10 @@ inline extern int vbjOutsideGame(VBVec3D position3D, int width, int height){
 	VBVec2D position2D;
 	
 	//normalize position
-	position3D = vbjNormalizePosition(&position3D);
+	position3D = Optics_normalizePosition(&position3D);
 	
 	//project the position to 2d space
-	vbjProjectTo2D(&position2D, &position3D);
+	Optics_projectTo2D(&position2D, &position3D);
 
 	// check x axis
 	if(position2D.x - width / 2 > xHighLimit || position2D.x + width / 2 < xLowLimit){
@@ -295,18 +296,11 @@ inline extern int vbjInsideGame(VBVec3D position3D, int width, int height){
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // determine the squared lenght of a given vector
-inline extern int vbjLengthSquared3D(VBVec3D vect1, VBVec3D vect2){
+inline extern int Optics_lengthSquared3D(VBVec3D vect1, VBVec3D vect2){
 	
 	return  FIX19_13TOI(FIX19_13_MULT((vect1.x - vect2.x), (vect1.x - vect2.x)) +
 			FIX19_13_MULT((vect1.y - vect2.y), (vect1.y - vect2.y))+
 			FIX19_13_MULT((vect1.z - vect2.z), (vect1.z - vect2.z)));
-}
-
-/* ---------------------------------------------------------------------------------------------------------*/
-// retrun true if 2 numbers have equal sign
-inline extern int vbjEqualSign(int a, int b){
-
-	return ((a & (1 << sizeof(int))) ==  (b & (1 << sizeof(int))));
 }
 
 

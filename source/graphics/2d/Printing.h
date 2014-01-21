@@ -46,22 +46,22 @@
  */
 
 // print VIP register's state
-void vbjPrintVIP_REGS(int x,int y);
+void Printing_vipRegisters(int x,int y);
 
 // print an int
-void vbjPrintInt(int value,int x,int y);
+void Printing_int(int value,int x,int y);
 
 // print in hex
-void vbjPrintHex(WORD value,int x,int y);
+void Printing_hex(WORD value,int x,int y);
 
 // retrieve number of digits in a number 
-int vbjIntLen(int value);
+int Utilities_intLength(int value);
 
 // print text
-void vbjPrintText(char *string,int x,int y);
+void Printing_text(char *string,int x,int y);
 
 // print a float
-void vbjPrintFloat(float value,int x,int y);
+void Printing_float(float value,int x,int y);
 
 extern Optical 		*_optical;
 extern const u16 ASCII_CH[];
@@ -80,14 +80,14 @@ int vbjDigitCount(int value);
  */
 
 //render general print output layer
-void vbjRenderOutputText(int textLayer, int textBgMap);
+void Printing_render(int textLayer, int textBgMap);
 
 /* ---------------------------------------------------------------------------------------------------------*/
 //setup the bgmap and char memory with printing data
-void vbjSetPrintingMemory(int bgMapSegment);
+void Printing_writeAscii();
 
 //show debug info and hung up there
-void debug(u32 x);
+void Printing_debug(u32 x);
 
 
 #endif 

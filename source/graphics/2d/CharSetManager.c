@@ -39,11 +39,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define CHAR_SEGMENTS	4
-// number of chargroups per char segment
-#define CHAR_GRP_PER_SEG	32
-// number of chargroups per char segment
-#define CHAR_SEGMENT_SIZE 16
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -73,6 +68,7 @@
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager);
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -157,7 +153,7 @@ static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefi
 	// search where to register the char definition 
 	for(; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG && this->charDefinition[i]; i++);
 		
-	ASSERT(i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG, CharSetManager: no char definitions slots left);
+	ASSERT(i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG, "CharSetManager: no char definitions slots left");
 			
 	// save char definition
 	this->charDefinition[i] = charDefinition;
@@ -227,7 +223,7 @@ static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup ch
 	//
 	BYTE* charDef = CharGroup_getCharDefinition(charGroup);
 	
-	ASSERT(charDef, CharSetManager: null chardef in chargroup);
+	ASSERT(charDef, "CharSetManager: null chardef in chargroup");
 
 	for (; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG; i++){
 		
@@ -283,7 +279,7 @@ void CharSetManager_allocate(CharSetManager this,CharGroup charGroup){
 	int currentChar = 0;	
 	int counter;
 	
-	ASSERT(numberOfChars > 0, CharSetManager: number of chars < 0);
+	ASSERT(numberOfChars > 0, "CharSetManager: number of chars < 0");
 	
 	// if char is defined as part of an animation frame allocate 
 	// space for it
