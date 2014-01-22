@@ -56,8 +56,9 @@ __CLASS_DEFINITION(Body);
 // this should be improved and calculated dynamically based on framerate
 //#define THRESHOLD FTOFIX19_13(0.1f)
 #undef __PHYSICS_FPS
-#define __PHYSICS_FPS 60
-#define THRESHOLD FTOFIX19_13(0.5f * (60.0f / __PHYSICS_FPS))
+#define __PHYSICS_FPS 30
+
+#define THRESHOLD FTOFIX19_13(0.25f * (60.0f / __PHYSICS_FPS))
 
 // class's constructor
 static void Body_constructor(Body this, Object owner, fix19_13 weight);
