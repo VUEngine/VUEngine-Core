@@ -166,11 +166,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     	
 #ifdef __DEBUG_0
     		
-	    	FrameRate_print(FrameRate_getInstance(), 0, 0);
+	    	//FrameRate_print(FrameRate_getInstance(), 0, 0);
 	    	// get stack pointer
     		//Printing_hex(HW_REGS[SCR], 38, 4);
     		//Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);
-	    	Clock_print(_clock, 40, 0);
+	    	//Clock_print(_clock, 40, 0);
 	    	//Clock_print(_inGameClock, 38, 0);
 	    	//MemoryPool_printMemUsage(MemoryPool_getInstance(),0,0);
 	    	//Game_printClassSizes(0, 0);

@@ -155,6 +155,9 @@ int Body_isMoving(Body this);
 // retrieve velocity
 Velocity Body_getVelocity(Body this);
 
+// retrieve acceleration
+Acceleration Body_getAcceleration(Body this);
+
 // set movement type to accelerated
 void Body_moveAccelerated(Body this, int axis);
 
@@ -168,7 +171,7 @@ void Body_printPhysics(Body this, int x, int y);
 void Body_stopMovement(Body this, int axis);
 
 // bounce back
-void Body_bounce(Body this);
+void Body_bounce(Body this, int axis);
 
 // take a hit
 void Body_takeHitFrom(Body this, Body other);

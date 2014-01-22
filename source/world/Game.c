@@ -418,13 +418,19 @@ void Game_handleInput(Game this, int currentKey){
 	previousKeyPressed = pressedKey;
 }
 
+#undef __CAP_FPS
+#define __CAP_FPS 1
+
+#undef __RENDER_FPS
+#define __RENDER_FPS 60
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // render game
 void Game_render(Game this) {
 	
-	u32 currentTime = Clock_getTime(_clock);
+	u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
 	
-	if(!__CAP_FPS || currentTime - this->lastTime[kRender] > 1000 / __RENDER_FPS){
+	if(currentTime - this->lastTime[kRender] > 1000 / __RENDER_FPS){
 
 		// save current time
 		this->lastTime[kRender] = currentTime;
@@ -451,25 +457,26 @@ void Game_update(Game this){
 		kLogic
 	};
 
-	u32 currentTime = 0;
-	
 	while(true){
 
-		currentTime = Clock_getTime(_clock);
+		u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
 			
 		FrameRate_increaseRawFPS(this->frameRate);
+		
+		// process user's input 
+		Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
 
-		if(!__CAP_FPS || currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
+		if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
+
+		    //enable hardware pad read
+		    HardwareManager_disableKeypad(this->hardwareManager);
 
 			this->lastTime[kLogic] = currentTime;
-			
-			// process user's input 
-			Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
 
 			// it is the update cycle
 			ASSERT(this->stateMachine, "Game: no state machine");
 
-			// update the game's logic
+		    // update the game's logic
 			StateMachine_update(this->stateMachine);
 
 			// check sprite layers
@@ -479,7 +486,10 @@ void Game_update(Game this){
 			FrameRate_increaseLogicFPS(this->frameRate);
 		}
 		
-		if(!__CAP_FPS || currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
+#undef __PHYSICS_FPS
+#define __PHYSICS_FPS 60
+
+		if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
 			
 			this->lastTime[kPhysics] = currentTime;
 

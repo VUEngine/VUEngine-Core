@@ -307,11 +307,11 @@ void PhysicalWorld_update(PhysicalWorld this){
 		Body_update(bodies[i], &this->gravity, this->elapsedTime);
 	}
 
-	// record this update's time
-	this->time = 0;//Clock_getTime(_inGameClock);
-	
 	// process removed bodies
 	PhysicalWorld_processRemovedBodies(this);
+
+	// record this update's time
+	this->time = Clock_getTime(_inGameClock);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

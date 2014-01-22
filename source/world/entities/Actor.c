@@ -322,20 +322,35 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 				InGameEntity inGameEntity = (InGameEntity) Telegram_getExtraInfo(telegram);
 
 				switch(message){
+/*
+					case kCollisionXY:
+						
+						Printing_text("Actor: ERROR kCollisionXY", 1, 22);
+						break;
+*/						
+					case kCollisionX:
+						
+						// align to the colliding object
+						Actor_alignTo(this, inGameEntity, __XAXIS, 1);
+						Body_bounce(this->body, __XAXIS);
+						return true;
+						break;
 
 					case kCollisionXY:
-					case kCollisionX:
+
 					case kCollisionY:
+
+						// align to the colliding object
+						Actor_alignTo(this, inGameEntity, __YAXIS, 1);
+						Body_bounce(this->body, __YAXIS);
+						return true;
+						break;
+						
 					case kCollisionZ:
 
-						// test y axis
-						if(velocity.y && (kCollisionY == message || kCollisionXY == message)){
-
-							// align to the colliding object
-							Actor_alignTo(this, inGameEntity, __YAXIS, 1);
-						}						
-
-						Body_bounce(this->body);
+						// align to the colliding object
+						Actor_alignTo(this, inGameEntity, __ZAXIS, 1);
+						Body_bounce(this->body, __ZAXIS);
 						return true;
 						break;
 				}

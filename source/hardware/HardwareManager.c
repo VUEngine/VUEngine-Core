@@ -157,7 +157,7 @@ void HardwareManager_timerInterruptHandler(){
 // keypad's interrupt handler
 void HardwareManager_keypadInterruptHandler(void){
 
-	Printing_text("CALLED INTERRUP", 15, 3);
+	Printing_text("CALLED INTERRUPTION", 15, 3);
 
 	// broadcast keypad event
 	Game_handleInput(Game_getInstance(), KeypadManager_read(KeypadManager_getInstance()));
