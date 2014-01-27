@@ -183,6 +183,9 @@ void Actor_update(Actor this);
 // retrieve actor's scale
 Scale Actor_getScale(Actor this);
 
+// retrieve friction of colliding objects
+Force Actor_getSourroundingFriction(Actor this);
+
 // retrieve global position
 VBVec3D Actor_getPosition(Actor this);
 

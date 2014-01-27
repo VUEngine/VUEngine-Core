@@ -278,6 +278,7 @@ enum MessagesTypes{
 	kBodyStoped,
 	kBodyStartedMoving,
 	kBodyStartedMovingByGravity,
+	kBodyChangedDirection,
 	kBodySleep
 };
 

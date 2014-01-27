@@ -195,6 +195,20 @@ void Actor_render(Actor this, Transformation* environmentTransform){
 
 		this->previousGlobalPosition = this->transform.globalPosition;
 		this->previousLocalPosition = this->transform.localPosition;
+		
+		int movementAxis = Body_isMoving(this->body);
+		if(__XAXIS & movementAxis) {
+
+			this->lastCollidingEntityX = NULL;
+		}
+		if(__YAXIS & movementAxis) {
+
+			this->lastCollidingEntityY = NULL;
+		}
+		if(__ZAXIS & movementAxis) {
+
+			this->lastCollidingEntityZ = NULL;
+		}
 	}
 	else {
 		
@@ -630,6 +644,23 @@ Scale Actor_getScale(Actor this){
 	scale.x = fabsf(scale.x) * this->direction.x;
 
 	return scale;
+}
+
+// retrieve friction of colliding objects
+Force Actor_getSourroundingFriction(Actor this){
+	
+	Force friction = {0, 0, 0};
+	
+	friction.x = this->lastCollidingEntityY? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityY): 0;
+	friction.x += this->lastCollidingEntityZ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityZ): 0;
+
+	friction.y = this->lastCollidingEntityX? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityX): 0;
+	friction.y += this->lastCollidingEntityZ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityZ): 0;
+
+	friction.z = this->lastCollidingEntityX? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityX): 0;
+	friction.z += this->lastCollidingEntityY? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityY): 0;
+
+	return friction;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

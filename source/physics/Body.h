@@ -117,7 +117,7 @@ void Body_setOwner(Body this, Object owner);
 Object Body_getOwner(Body this);
 
 // update
-void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
+void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, Force* friction);
 
 // retrieve last displacement
 VBVec3D Body_getLastDisplacement(Body this);
