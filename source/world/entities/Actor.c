@@ -649,8 +649,7 @@ VBVec3D Actor_getPosition(Actor this){
 void Actor_playAnimation(Actor this, char* animationName){
 	
 	static int i = 0;
-	Printing_int(i++, 30, 10);
-	Printing_text(animationName, 30, 10);
+
 	if(this->sprites){
 
 		VirtualNode node = VirtualList_begin(this->sprites);

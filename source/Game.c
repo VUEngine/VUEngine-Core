@@ -447,20 +447,6 @@ void Game_handleInput(Game this, int currentKey){
 	}
 }
 
-#undef __CAP_FPS
-#define __CAP_FPS 1
-
-#undef __RENDER_FPS
-#define __RENDER_FPS 60
-
-#undef __PHYSICS_FPS
-#define __PHYSICS_FPS 60
-
-#undef __LOGIC_FPS
-#define __LOGIC_FPS 30
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // render game
 void Game_render(Game this) {

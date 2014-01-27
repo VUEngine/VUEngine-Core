@@ -54,9 +54,6 @@ __CLASS_DEFINITION(Body);
  */
 
 // this should be improved and calculated dynamically based on framerate
-//#define THRESHOLD FTOFIX19_13(0.1f)
-#undef __PHYSICS_FPS
-#define __PHYSICS_FPS 60
 
 #define THRESHOLD FTOFIX19_13(0.05f * (60.0f / __PHYSICS_FPS))
 
