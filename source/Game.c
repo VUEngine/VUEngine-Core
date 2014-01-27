@@ -418,31 +418,33 @@ void Game_handleInput(Game this, int currentKey){
 	
 	static int pressedKey = 0;
 	static int previousKeyPressed = 0;
-	int result = 0;
+	
+	int newKey = currentKey & ~previousKeyPressed;
 	
 	// read key pad
 	pressedKey = currentKey;
 
 	// check for a new key pressed
-	if(pressedKey && pressedKey != previousKeyPressed){
+	if(newKey){
 
 		// inform the game about the key pressed		
-		result = MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &pressedKey);
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &newKey);
+	
+		previousKeyPressed |= newKey;
 	}
-	else if(!pressedKey && previousKeyPressed){
+	
+	if(!(pressedKey & previousKeyPressed)){
 
 		// inform the game about the key pressed		
-		result = MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &previousKeyPressed);
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &previousKeyPressed);
+		
+		previousKeyPressed = pressedKey;
 	}
-	else if(pressedKey){
+	else if(pressedKey & previousKeyPressed){
 
 		// inform the game about the key pressed		
-		result = MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
 	}
-
-//	HardwareManager_flushKeypad(HardwareManager_getInstance());
-	// save actual key pressed
-	previousKeyPressed = pressedKey;
 }
 
 #undef __CAP_FPS
@@ -499,9 +501,6 @@ void Game_update(Game this){
 			
 		FrameRate_increaseRawFPS(this->frameRate);
 		
-		// process user's input 
-		Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
-
 		if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
 
 		    //enable hardware pad read
@@ -511,6 +510,9 @@ void Game_update(Game this){
 
 			// it is the update cycle
 			ASSERT(this->stateMachine, "Game: no state machine");
+
+			// process user's input 
+			Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
 
 		    // update the game's logic
 			StateMachine_update(this->stateMachine);

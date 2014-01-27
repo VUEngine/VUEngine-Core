@@ -312,7 +312,7 @@ void PhysicalWorld_update(PhysicalWorld this){
 	// get the elapsed time
 	this->elapsedTime = FTOFIX19_13((Clock_getTime(_inGameClock) - this->time) / 100.0f);
 
-	if(true || checkForGravity) {
+	if(checkForGravity) {
 	
 		checkForGravity = false;
 		PhysicalWorld_checkForGravity(this);

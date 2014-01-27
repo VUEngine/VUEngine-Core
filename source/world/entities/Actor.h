@@ -127,11 +127,15 @@ typedef const ActorDefinition ActorROMDef;
 	VBVec3D previousGlobalPosition;						\
 	VBVec3D previousLocalPosition;						\
 														\
-	/* previous collinding entity */					\
+	/* list of collinding entities */					\
 	VirtualList collidingEntities;						\
 														\
-	/* previous alignement for gravity handling */		\
-	Alignement alignement;								\
+	/* last collinding entity */						\
+	InGameEntity lastCollidingEntityX;					\
+	/* last collinding entity */						\
+	InGameEntity lastCollidingEntityY;					\
+	/* last collinding entity */						\
+	InGameEntity lastCollidingEntityZ;					\
 														\
 	/* gameworld's actor's state (ALIVE or DEAD)*/		\
 	int inGameState;									\
@@ -207,7 +211,7 @@ int Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 
 // align actor to other entity on collision
-int Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
+void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
 
 // does it moves?
 int Actor_moves(Actor this);
