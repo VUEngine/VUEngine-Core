@@ -70,6 +70,7 @@ enum MemoryPoolSizes{
  * ---------------------------------------------------------------------------------------------------------
  */
 
+/*
 #define __POOL_512B_SIZE_FINAL 	__POOL_512B_SIZE
 #define __POOL_256B_SIZE_FINAL 	__POOL_256B_SIZE
 #define __POOL_192B_SIZE_FINAL 	__POOL_192B_SIZE
@@ -80,19 +81,18 @@ enum MemoryPoolSizes{
 #define __POOL_32B_SIZE_FINAL 	__POOL_32B_SIZE
 #define __POOL_24B_SIZE_FINAL 	__POOL_24B_SIZE
 #define __POOL_16B_SIZE_FINAL 	__POOL_16B_SIZE
+*/
 
-/*
 #define __POOL_512B_SIZE_FINAL 	(__BLOCK_512B * 0)
 #define __POOL_256B_SIZE_FINAL 	(__BLOCK_256B * 0)
-#define __POOL_192B_SIZE_FINAL 	(__BLOCK_192B * 4)
-#define __POOL_128B_SIZE_FINAL 	(__BLOCK_128B * 4)
-#define __POOL_96B_SIZE_FINAL 	(__BLOCK_96B * 8)
-#define __POOL_64B_SIZE_FINAL 	(__BLOCK_64B * 8)
-#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 4)
-#define __POOL_32B_SIZE_FINAL 	(__BLOCK_32B * 24)
-#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 48)
+#define __POOL_192B_SIZE_FINAL 	(__BLOCK_192B * 8)
+#define __POOL_128B_SIZE_FINAL 	(__BLOCK_128B * 8)
+#define __POOL_96B_SIZE_FINAL 	(__BLOCK_96B * 64)
+#define __POOL_64B_SIZE_FINAL 	(__BLOCK_64B * 128)
+#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 64)
+#define __POOL_32B_SIZE_FINAL 	(__BLOCK_32B * 128)
+#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 128)
 #define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 0)
-*/
 
 #define MemoryPool_ATTRIBUTES							\
 														\
@@ -262,7 +262,13 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes){
 	    i < numberOfOjects && this->poolLocation[pool][displacement]; 
 	    i++, displacement += displacementStep);	
 	
-	ASSERT(i < numberOfOjects, "MemoryPool: pool exhausted");
+#ifdef __DEBUG
+	if (i >= numberOfOjects){
+	
+		MemoryPool_printMemUsage(this, 1, 1);
+		ASSERT(false, "MemoryPool: pool exhausted");
+	}
+#endif
 	
 	// assign address to allocated object
 	this->poolLocation[pool][displacement] = 0xFF;

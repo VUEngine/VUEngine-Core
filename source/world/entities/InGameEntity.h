@@ -46,7 +46,9 @@
 #define InGameEntity_METHODS							\
 		Entity_METHODS									\
 		__VIRTUAL_DEC(moves);							\
-		__VIRTUAL_DEC(isMoving);
+		__VIRTUAL_DEC(isMoving);						\
+		__VIRTUAL_DEC(getElasticity);					\
+		__VIRTUAL_DEC(getFriction);						\
 	
 	
 
@@ -55,7 +57,10 @@
 		__VIRTUAL_SET(ClassName, InGameEntity, setLocalPosition);		\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);					\
 		__VIRTUAL_SET(ClassName, InGameEntity, render);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);
+		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);				\
+		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);				\
+		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
+		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);			\
 		
 
 // A InGameEntity which represent a generic object inside a Stage
@@ -129,9 +134,6 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 // class's destructor
 void InGameEntity_destructor(InGameEntity this);
 
-// retrieve InGameEntity's friction
-fix7_9 InGameEntity_getFrictionFactor(InGameEntity this);
-
 // set graphical gap
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);
 
@@ -168,8 +170,13 @@ Direction InGameEntity_getDirection(InGameEntity this);
 // set shape state
 void InGameEntity_setShapeState(InGameEntity this, int state);
 
-//render class
+// render
 void InGameEntity_render(InGameEntity this, Transformation* environmentTransform);
 
+// get elasticiy
+fix19_13 InGameEntity_getElasticity(InGameEntity this);
+
+// get friction
+fix19_13 InGameEntity_getFriction(InGameEntity this);
 
 #endif /*INGAMEENTITY_H_*/

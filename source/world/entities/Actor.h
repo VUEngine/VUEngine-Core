@@ -101,6 +101,9 @@ typedef const ActorDefinition ActorROMDef;
 		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);					\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);					\
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);						\
+		__VIRTUAL_SET(ClassName, Actor, getElasticity);						\
+		__VIRTUAL_SET(ClassName, Actor, getFriction);						\
+		__VIRTUAL_SET(ClassName, Actor, getPosition);						\
 
 
 	
@@ -120,8 +123,21 @@ typedef const ActorDefinition ActorROMDef;
 														\
 	Direction previousDirection;						\
 														\
+	/* previous position for collision handling */		\
+	VBVec3D previousGlobalPosition;						\
+	VBVec3D previousLocalPosition;						\
+														\
+	/* previous collinding entity */					\
+	VirtualList collidingEntities;						\
+														\
+	/* previous alignement for gravity handling */		\
+	Alignement alignement;								\
+														\
 	/* gameworld's actor's state (ALIVE or DEAD)*/		\
-	int inGameState;									
+	int inGameState;									\
+														\
+	/* flag to influence with gravity */				\
+	int isAffectedBygravity: 1;							\
 
 
 __CLASS(Actor);													
@@ -163,6 +179,9 @@ void Actor_update(Actor this);
 // retrieve actor's scale
 Scale Actor_getScale(Actor this);
 
+// retrieve global position
+VBVec3D Actor_getPosition(Actor this);
+
 // set actor's in game type
 void Actor_setInGameType(Actor this, int inGameType);
 
@@ -171,6 +190,9 @@ void Actor_moveOpositeDirecion(Actor this, int axis);
 
 // whether changed direction in the last cycle or not
 int Actor_changedDirection(Actor this, int axis);
+
+// check if gravity must apply to this actor
+int Actor_isSubjectToGravity(Actor this, const Acceleration* gravity);
 
 // true if inside the screen range 
 int Actor_isInsideGame(Actor this);
@@ -185,7 +207,7 @@ int Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 
 // align actor to other entity on collision
-void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
+int Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
 
 // does it moves?
 int Actor_moves(Actor this);
@@ -222,5 +244,11 @@ void Actor_stopMovementOnAxis(Actor this, int axis);
 
 // take hit
 void Actor_takeHitFrom(Actor this, Actor other);
+
+// get elasticiy
+fix19_13 Actor_getElasticity(Actor this);
+
+// get friction
+fix19_13 Actor_getFriction(Actor this);
 
 #endif

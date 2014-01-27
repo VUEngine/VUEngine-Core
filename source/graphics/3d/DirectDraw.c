@@ -28,7 +28,7 @@
  */
 
 #include <DirectDraw.h>
-#include <Rect.h>
+#include <Cuboid.h>
 #include <Polygon.h>
 
 

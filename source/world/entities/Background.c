@@ -86,8 +86,10 @@ void Background_constructor(Background this, BackgroundDefinition* backgroundDef
 	if(backgroundDefinition->registerShape){
 
 		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (InGameEntity)this, kRect, backgroundDefinition->inGameEntityDefinition.deep);
+		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (InGameEntity)this, kCuboid, backgroundDefinition->inGameEntityDefinition.deep);
 	}
+	
+	this->backgroundDefinition = backgroundDefinition;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,4 +98,18 @@ void Background_destructor(Background this){
 	
 	// destroy the super object
 	__DESTROY_BASE(InGameEntity);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get elasticiy
+fix19_13 Background_getElasticity(Background this){
+	
+	return this->backgroundDefinition->elasticity;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get friction
+fix19_13 Background_getFriction(Background this){
+	
+	return this->backgroundDefinition->friction;
 }

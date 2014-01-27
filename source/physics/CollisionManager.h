@@ -60,6 +60,14 @@
 __CLASS(CollisionManager);
 
  
+//spacial position
+typedef struct CollisionInfo{
+	
+	//FPS increases a lot in hardware with ints
+	InGameEntity inGameEntity;
+	int axis;
+
+}CollisionInfo;
 
 
 /* ---------------------------------------------------------------------------------------------------------

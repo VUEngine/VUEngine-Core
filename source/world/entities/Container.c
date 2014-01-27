@@ -283,7 +283,6 @@ void Container_concatenateTransform(Transformation *environmentTransform, Transf
 //render class
 void Container_render(Container this, Transformation* environmentTransform){
 
-	// static to avoid call to _memcpy
 	Transformation environmentTransformCopy = {
 		// local position
 		{

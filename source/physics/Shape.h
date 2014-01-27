@@ -44,7 +44,7 @@
 
 enum ShapeTypes{
 	kCircle = 0,
-	kRect,
+	kCuboid,
 };
 
 
@@ -55,7 +55,7 @@ enum ShapeTypes{
 		__VIRTUAL_DEC(setup);						\
 		__VIRTUAL_DEC(positione);
 
-#define Shape_SET_VTABLE(ClassName)							\
+#define Shape_SET_VTABLE(ClassName)								\
 		Object_SET_VTABLE(ClassName)							\
 		
 	

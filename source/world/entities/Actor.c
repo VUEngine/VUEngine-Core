@@ -30,11 +30,13 @@
 #include <Clock.h>
 #include <AnimatedSprite.h>
 #include <MessageDispatcher.h>
+#include <CollisionManager.h>
 #include <Optics.h>
 #include <Screen.h>
 #include <Shape.h>
 #include <PhysicalWorld.h>
 #include <Body.h>
+#include <Cuboid.h>
 
 #include <Actor.h>
 
@@ -47,6 +49,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define POSITIVE_ALIGNEMENT		1
+#define NEGATIVE_ALIGNEMENT		2
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -69,8 +73,9 @@ __CLASS_DEFINITION(Actor);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// retrieve shape
+Shape InGameEntity_getShape(InGameEntity this);
 		
-//};
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -108,7 +113,11 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	//state ALIVE for initial update
 	this->inGameState = kLoaded;
 	
+	this->collidingEntities = NULL;
+	
 	this->body = NULL;
+	
+	this->isAffectedBygravity = true;
 }	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +158,6 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // updates the animation attributes
 // graphically refresh of characters that are visible
@@ -164,9 +172,9 @@ void Actor_render(Actor this, Transformation* environmentTransform){
 		// save current direction
 		this->previousDirection = this->direction; 
 	}
-	
+
 	if(this->body && Body_isAwake(this->body)) {
-		
+
 		// an Actor with a physical body is agnostic to parenting
 		Transformation environmentAgnosticTransform = {
 				// local position
@@ -183,6 +191,9 @@ void Actor_render(Actor this, Transformation* environmentTransform){
 
 		// call base
 		InGameEntity_render((InGameEntity)this, &environmentAgnosticTransform);
+
+		this->previousGlobalPosition = this->transform.globalPosition;
+		this->previousLocalPosition = this->transform.localPosition;
 	}
 	else {
 		
@@ -200,7 +211,7 @@ void Actor_setInGameState(Actor this, int inGameState){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // execute character's logic
 void Actor_update(Actor this){
-	
+
 	// call base
 	Container_update((Container)this);
 
@@ -225,6 +236,32 @@ void Actor_update(Actor this){
 
 			// first animate the frame
 			AnimatedSprite_update((AnimatedSprite)sprite);
+		}
+	}
+
+	if(this->body) {
+
+		int movingState = Body_isMoving(this->body);
+
+		if(movingState) {
+
+			if(movingState & __XAXIS) {
+				
+				this->alignement.y = 0;
+				this->alignement.z = 0;
+			}
+			
+			if(movingState & __YAXIS) {
+				
+				this->alignement.x = 0;
+				this->alignement.z = 0;
+			}
+	
+			if(movingState & __ZAXIS) {
+				
+				this->alignement.x = 0;
+				this->alignement.y = 0;
+			}
 		}
 	}
 }
@@ -301,6 +338,181 @@ int Actor_isInsideGame(Actor this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// check if gravity must apply to this actor
+int Actor_isSubjectToGravity(Actor this, const Acceleration* gravity) {
+
+	int axisSensibleToGravity = (__XAXIS | __YAXIS | __ZAXIS);
+
+	if(this->collidingEntities) {
+
+		ASSERT(this->body, "Actor::resolveCollision: NULL body");
+	
+		VirtualNode node = VirtualList_begin(this->collidingEntities);
+
+		ASSERT(node, "Actor::resolveCollision: NULL node");
+
+		// setup a cuboid representing the previous position
+		Rightcuboid positionedRightCuboid = Cuboid_getPositionedRightcuboid((Cuboid)this->shape);
+		VBVec3D displacement = {gravity->x, gravity->y, gravity->z}; 
+
+		// TODO: solve when more than one entity has been touched
+		for(; node; node = VirtualNode_getNext(node)) {
+	
+			InGameEntity collidingEntity = VirtualNode_getData(node);
+			Rightcuboid otherRightcuboid = Cuboid_getPositionedRightcuboid((Cuboid)InGameEntity_getShape(collidingEntity));
+
+			if(gravity->x){
+				
+				positionedRightCuboid.x0 += displacement.x;
+				positionedRightCuboid.x1 += displacement.x;
+
+				// test for collision
+				if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
+						positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
+						positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
+					
+					axisSensibleToGravity &= ~__XAXIS;
+					continue;
+				}
+			}
+			
+			if(gravity->y){
+				
+				positionedRightCuboid.y0 += displacement.y;
+				positionedRightCuboid.y1 += displacement.y;
+
+				// test for collision
+				if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
+						positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
+						positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
+					
+					axisSensibleToGravity &= ~__YAXIS;
+					continue;
+				}
+			}
+
+			if(gravity->z){
+				
+				positionedRightCuboid.z0 += displacement.z;
+				positionedRightCuboid.z1 += displacement.z;
+
+				// test for collision
+				if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
+						positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
+						positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
+					
+					axisSensibleToGravity &= ~__YAXIS;
+					continue;
+				}
+			}
+
+		}
+	}
+	
+	return axisSensibleToGravity;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process a telegram
+static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
+	
+	ASSERT(this->body, "Actor::resolveCollision: NULL body");
+
+	int axisOfCollision = 0;
+	int alignThreshold = 1;
+
+	Gap gap = InGameEntity_getGap((InGameEntity)this);
+
+	// setup a cuboid representing the previous position
+	Rightcuboid positionedRightCuboid = Cuboid_getRightcuboid((Cuboid)this->shape);
+	
+	positionedRightCuboid.x0 += this->previousGlobalPosition.x + ITOFIX19_13(gap.left);
+	positionedRightCuboid.x1 += this->previousGlobalPosition.x - ITOFIX19_13(gap.right);
+	positionedRightCuboid.y0 += this->previousGlobalPosition.y + ITOFIX19_13(gap.up);
+	positionedRightCuboid.y1 += this->previousGlobalPosition.y - ITOFIX19_13(gap.down);
+	positionedRightCuboid.z0 += this->previousGlobalPosition.z;
+	positionedRightCuboid.z1 += this->previousGlobalPosition.z;
+
+	// get last physical displacement
+	VBVec3D displacement = Body_getLastDisplacement(this->body); 
+
+	if(this->collidingEntities) {
+		
+		__DELETE(this->collidingEntities);
+		this->collidingEntities = NULL;
+	}
+	
+	// add object to list
+	
+	this->collidingEntities = collidingEntities;
+	VirtualNode node = VirtualList_begin(collidingEntities);
+
+	InGameEntity collidingEntity = NULL;
+	
+	// TODO: solve when more than one entity has been touched
+	for(; node; node = VirtualNode_getNext(node)) {
+
+		collidingEntity = VirtualNode_getData(node);
+
+		Rightcuboid otherRightcuboid = Cuboid_getPositionedRightcuboid((Cuboid)InGameEntity_getShape(collidingEntity));
+
+		positionedRightCuboid.x0 += displacement.x;
+		positionedRightCuboid.x1 += displacement.x;
+
+		// test for collision
+		if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
+				positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
+				positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
+			
+			this->alignement.x = Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
+			axisOfCollision |= __XAXIS;
+			break;
+		}
+		
+		positionedRightCuboid.x0 -= displacement.x;
+		positionedRightCuboid.x1 -= displacement.x;
+
+		positionedRightCuboid.y0 += displacement.y;
+		positionedRightCuboid.y1 += displacement.y;
+
+		// test for collision
+		if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
+				positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
+				positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
+			
+			this->alignement.y = Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
+			axisOfCollision |= __YAXIS;
+			break;
+			
+		}
+		
+		positionedRightCuboid.y0 -= displacement.y;
+		positionedRightCuboid.y1 -= displacement.y;
+
+		// test for collision
+		if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
+				positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
+				positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
+			
+			this->alignement.z = Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
+			axisOfCollision |= __ZAXIS;
+			break;
+		}
+	}
+
+	if(axisOfCollision) {
+
+		// bounce over axis
+		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
+			
+		if(!(axisOfCollision & Body_isMoving(this->body))){
+
+			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyStoped, &axisOfCollision);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process a telegram
 int Actor_handleMessage(Actor this, Telegram telegram){
 
@@ -312,52 +524,26 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 		if (this->body) {
 			
 			Object sender = Telegram_getSender(telegram);
-			Actor otherActor = __GET_CAST(Actor, sender);
+			Actor atherActor = __GET_CAST(Actor, sender);
 			
-			if (sender == (Object)this){
+			if (__GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender)){
 				
-				Velocity velocity = Body_getVelocity(this->body);
-				
-				// retrieve collision entity
-				InGameEntity inGameEntity = (InGameEntity) Telegram_getExtraInfo(telegram);
-
 				switch(message){
-/*
-					case kCollisionXY:
+
+					case kCollision:
 						
-						Printing_text("Actor: ERROR kCollisionXY", 1, 22);
-						break;
-*/						
-					case kCollisionX:
-						
-						// align to the colliding object
-						Actor_alignTo(this, inGameEntity, __XAXIS, 1);
-						Body_bounce(this->body, __XAXIS);
+						Actor_resolveCollision(this, (VirtualList)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
-
-					case kCollisionXY:
-
-					case kCollisionY:
-
-						// align to the colliding object
-						Actor_alignTo(this, inGameEntity, __YAXIS, 1);
-						Body_bounce(this->body, __YAXIS);
-						return true;
-						break;
-						
-					case kCollisionZ:
-
-						// align to the colliding object
-						Actor_alignTo(this, inGameEntity, __ZAXIS, 1);
-						Body_bounce(this->body, __ZAXIS);
+												
+					case kBodyStartedMoving:
 						return true;
 						break;
 				}
 			}
-			else if (otherActor) {
+			else if (atherActor) {
 
-				__VIRTUAL_CALL(void, Actor, takeHitFrom, otherActor);
+				__VIRTUAL_CALL(void, Actor, takeHitFrom, atherActor);
 
 				return true;
 			}
@@ -405,9 +591,24 @@ Scale Actor_getScale(Actor this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve global position
+VBVec3D Actor_getPosition(Actor this){
+	
+	if(this->body) {
+		
+		return Body_getPosition(this->body);
+	}
+	
+	return Entity_getPosition((Entity)this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // play an animation
 void Actor_playAnimation(Actor this, char* animationName){
 	
+	static int i = 0;
+	Printing_int(i++, 30, 10);
+	Printing_text(animationName, 30, 10);
 	if(this->sprites){
 
 		VirtualNode node = VirtualList_begin(this->sprites);
@@ -486,7 +687,7 @@ void Actor_stopMovementOnAxis(Actor this, int axis){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // align character to other entity on collision
-void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
+int Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 
 	// retrieve the colliding entity's position and gap
 	VBVec3D otherPosition = Entity_getLocalPosition((Entity) entity);	
@@ -519,7 +720,6 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			myPositionAxis = &this->transform.localPosition.x;
 			otherPositionAxis = &otherPosition.x;
 			
-			//myHalfSize = (Entity_getWidth((Entity)this) >> 1) + (FIX19_13TOI(*myPositionAxis) > __SCREENWIDTH / 2? 1: 0);
 			myHalfSize = (Entity_getWidth((Entity)this) >> 1);
 			otherHalfSize = (Entity_getWidth((Entity)entity) >> 1);
 			
@@ -533,7 +733,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			break;
 			
 		case __YAXIS:
-			
+
 			myPositionAxis = &this->transform.localPosition.y;
 			otherPositionAxis = &otherPosition.y;
 			
@@ -560,30 +760,40 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			break;			
 	}
 	
+	int alignement = 0;
+	
 	// decide to which side of the entity align myself
 	if(*myPositionAxis > *otherPositionAxis){
 
 //		pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
-		// align right / below
+		// align right / below / behind
 		*myPositionAxis = *otherPositionAxis +  
 							ITOFIX19_13(otherHalfSize - otherHighGap
 							+ myHalfSize - myLowGap
 							+ pad);
+		
+		alignement = POSITIVE_ALIGNEMENT;
 	}
 	else{
-//		pad += (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
-		// align left
+		// align left / over / in front
 		*myPositionAxis = *otherPositionAxis -  
 							ITOFIX19_13(otherHalfSize - otherLowGap
 							+ myHalfSize - myHighGap
 							+ pad);
 		
+		alignement = NEGATIVE_ALIGNEMENT;
 	}
 
 	if (this->body) {
 
+		// force position
 		Body_setPosition(this->body, &this->transform.localPosition, (Object)this);
+
+		// sync to body
+		Container_setLocalPosition((Container) this, Body_getPosition(this->body));
 	}
+	
+	return alignement;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -612,3 +822,16 @@ void Actor_takeHitFrom(Actor this, Actor other){
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get elasticiy
+fix19_13 Actor_getElasticity(Actor this){
+	
+	return this->body? Body_getElasticity(this->body): InGameEntity_getElasticity((InGameEntity)this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get friction
+fix19_13 Actor_getFriction(Actor this){
+	
+	return this->body? Body_getFriction(this->body): InGameEntity_getFriction((InGameEntity)this);
+}

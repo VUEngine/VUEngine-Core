@@ -109,7 +109,7 @@ void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
 void PhysicalWorld_bodyAwaked(PhysicalWorld this);
 
 // set gravity
-void PhysicalWorld_setGravity(PhysicalWorld this, VBVec3D gravity);
+void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
 
 // retrieve gravity
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);

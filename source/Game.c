@@ -43,7 +43,6 @@
 #include <MessageDispatcher.h>
 #include <Stage.h>
 #include <ParamTableManager.h>
-#include <Rect.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
 #include <SoundManager.h>
@@ -419,6 +418,7 @@ void Game_handleInput(Game this, int currentKey){
 	
 	static int pressedKey = 0;
 	static int previousKeyPressed = 0;
+	int result = 0;
 	
 	// read key pad
 	pressedKey = currentKey;
@@ -427,17 +427,17 @@ void Game_handleInput(Game this, int currentKey){
 	if(pressedKey && pressedKey != previousKeyPressed){
 
 		// inform the game about the key pressed		
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &pressedKey);
+		result = MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &pressedKey);
 	}
 	else if(!pressedKey && previousKeyPressed){
 
 		// inform the game about the key pressed		
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &previousKeyPressed);
+		result = MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &previousKeyPressed);
 	}
 	else if(pressedKey){
 
 		// inform the game about the key pressed		
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
+		result = MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
 	}
 
 //	HardwareManager_flushKeypad(HardwareManager_getInstance());
@@ -449,10 +449,14 @@ void Game_handleInput(Game this, int currentKey){
 #define __CAP_FPS 1
 
 #undef __RENDER_FPS
-#define __RENDER_FPS 30
+#define __RENDER_FPS 60
 
 #undef __PHYSICS_FPS
-#define __PHYSICS_FPS 30
+#define __PHYSICS_FPS 60
+
+#undef __LOGIC_FPS
+#define __LOGIC_FPS 30
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -470,7 +474,7 @@ void Game_render(Game this) {
 		FrameRate_increaseRenderFPS(this->frameRate);
 
 		// render the level
-		Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
+		//Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
 
 		// render sprites as fast as possible
 		SpriteManager_render(SpriteManager_getInstance());
@@ -490,8 +494,8 @@ void Game_update(Game this){
 
 	while(true){
 
-//		u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
-		u32 currentTime = Clock_getTime(_clock);
+		u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
+//		u32 currentTime = Clock_getTime(_clock);
 			
 		FrameRate_increaseRawFPS(this->frameRate);
 		
@@ -527,7 +531,10 @@ void Game_update(Game this){
 
 			// simulate collisions
 			CollisionManager_update(this->collisionManager);
-			
+
+			// render the level
+			Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
+
 			// increase the frame rate
 			FrameRate_increasePhysicsFPS(this->frameRate);
 		}
@@ -575,8 +582,8 @@ void Game_printClassSizes(int x, int y){
 	Printing_int(Image_getObjectSize(), x + 27, y);
 	Printing_text("InGameEntity", x, ++y);
 	Printing_int(InGameEntity_getObjectSize(), x + 27, y);
-	Printing_text("Rect", x, ++y);
-	Printing_int(Rect_getObjectSize(), x + 27, y);
+//	Printing_text("Rect", x, ++y);
+//	Printing_int(Rect_getObjectSize(), x + 27, y);
 	Printing_text("Shape", x, ++y);
 	Printing_int(Shape_getObjectSize(), x + 27, y);
 	Printing_text("Sprite", x, ++y);

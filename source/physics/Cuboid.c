@@ -27,8 +27,9 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Rect.h>
+#include <Cuboid.h>
 #include <Polygon.h>
+#include <Math.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -40,8 +41,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// define the Rect
-__CLASS_DEFINITION(Rect);
+// define the Cuboid
+__CLASS_DEFINITION(Cuboid);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -55,10 +56,10 @@ __CLASS_DEFINITION(Rect);
 
 
 // class's constructor
-static void Rect_constructor(Rect this, InGameEntity owner, int deep);
+static void Cuboid_constructor(Cuboid this, InGameEntity owner, int deep);
 
 // check if overlaps with other rect
-static int Rect_overlapsRect(Rect this, Rect other, int axisMovement);
+static int Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -72,25 +73,25 @@ static int Rect_overlapsRect(Rect this, Rect other, int axisMovement);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Rect, __PARAMETERS(InGameEntity owner, int deep))
-__CLASS_NEW_END(Rect, __ARGUMENTS(owner, deep));
+__CLASS_NEW_DEFINITION(Cuboid, __PARAMETERS(InGameEntity owner, int deep))
+__CLASS_NEW_END(Cuboid, __ARGUMENTS(owner, deep));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Rect_constructor(Rect this, InGameEntity owner, int deep){
+static void Cuboid_constructor(Cuboid this, InGameEntity owner, int deep){
 
 	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner, deep));
 	
-	//Rectangle r;
-	/*Rectangle rect = {0, 0, 0, 0};
-	this->positionedRectangle = this->rectangle = rect;
+	//Rightcuboid r;
+	/*Rightcuboid rect = {0, 0, 0, 0};
+	this->positionedRightcuboid = this->rightCuboid = rect;
 	*/ 
 	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void Rect_destructor(Rect this){
+void Cuboid_destructor(Cuboid this){
 
 	// destroy the super object
 	__DESTROY_BASE(Shape);
@@ -99,95 +100,37 @@ void Rect_destructor(Rect this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if two rects overlap
-int Rect_overlaps(Rect this, Shape shape, int axisMovement){
+int Cuboid_overlaps(Cuboid this, Shape shape){
 
-	return Rect_overlapsRect(this, (Rect)shape, axisMovement);
+	return Cuboid_overlapsCuboid(this, (Cuboid)shape);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if overlaps with other rect
-int Rect_overlapsRect(Rect this, Rect other, int axisMovement){
+int Cuboid_overlapsCuboid(Cuboid this, Cuboid other){
 	
 	// must positione the rects in the owner's positions
-	Rectangle otherRectangle = other->positionedRectangle;
-	Rectangle myRectangle = this->positionedRectangle;
+	Rightcuboid otherRightcuboid = other->positionedRightcuboid;
+	Rightcuboid myRightcuboid = this->positionedRightcuboid;
 	
-	// get owner's positions
-	VBVec3D myOwnerPosition = Entity_getPosition((Entity)this->owner);
-	VBVec3D otherOwnerPosition = Entity_getPosition((Entity)other->owner);
-
-	// compare z positions
-	if((myOwnerPosition.z  > (otherOwnerPosition.z + ITOFIX19_13(other->deep)) 
-			|| 
-		(myOwnerPosition.z + ITOFIX19_13(this->deep) < otherOwnerPosition.z))){
-		
-		return kNoCollision;
-	}
-
-	// if owner is moving
-	if(axisMovement){
-
-		// test for a collision
-		if(!(myRectangle.x0 > otherRectangle.x1 || myRectangle.x1 < otherRectangle.x0 ||
-				myRectangle.y0 > otherRectangle.y1 || myRectangle.y1 < otherRectangle.y0)){
-			
-			// this is to avoid the object being aligned in the Y axis
-			// if already hit the side of the other shape
-			fix19_13 halfWidth = (myRectangle.x1 - myRectangle.x0) >> 2;
-			
-			// now guess over which axis the collision is
-			// giving preference to collisions over the x axis
-			if((__XAXIS & axisMovement) &&
-					(myOwnerPosition.x + halfWidth <= otherRectangle.x0 
-							|| 
-						myOwnerPosition.x - halfWidth >= otherRectangle.x1)){
-
-				return kCollisionX;
-			}
-			
-			if(__ZAXIS & axisMovement){
-				
-				return kCollisionZ;
-			}
-			
-			if((__YAXIS & axisMovement) &&
-			    (myOwnerPosition.y < otherRectangle.y0 
-			    || 
-			    myOwnerPosition.y > otherRectangle.y1)){
-				
-				return kCollisionY;
-			}
-					
-			return kCollisionXY;
-		}
-	}
-	
-	// if not moving or a collision was not detected
-	// check if the shape is below
-	if(!(myRectangle.x0 > otherRectangle.x1 || myRectangle.x1 < otherRectangle.x0)){
-
-		myRectangle.y1 += ITOFIX19_13(1);
-		
-		if(myRectangle.y1 >= otherRectangle.y0 && myRectangle.y0 < otherRectangle.y0){
-			
-			return kShapeBelow;	
-		}
-	}
-	
-	return kNoCollision;
-
+	// test for collision
+	return !(myRightcuboid.x0 > otherRightcuboid.x1 || myRightcuboid.x1 < otherRightcuboid.x0 || 
+			myRightcuboid.y0 > otherRightcuboid.y1 || myRightcuboid.y1 < otherRightcuboid.y0 ||
+			myRightcuboid.z0 > otherRightcuboid.z1 || myRightcuboid.z1 < otherRightcuboid.z0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Rect_setup(Rect this){
+void Cuboid_setup(Cuboid this){
 
-	// rect's center if placed on P(0, 0)
-	this->rectangle.x1 = ITOFIX19_13(Entity_getWidth((Entity)this->owner) >> 1);
-	this->rectangle.y1 = ITOFIX19_13(Entity_getHeight((Entity)this->owner) >> 1);
+	// cuboid's center if placed on P(0, 0, 0)
+	this->rightCuboid.x1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getWidth, (Entity)this->owner) >> 1);
+	this->rightCuboid.y1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getHeight, (Entity)this->owner) >> 1);
+	this->rightCuboid.z1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getDeep, (Entity)this->owner) >> 1);
 	
-	this->rectangle.x0 = -this->rectangle.x1;
-	this->rectangle.y0 = -this->rectangle.y1;
-	
+	this->rightCuboid.x0 = -this->rightCuboid.x1;
+	this->rightCuboid.y0 = -this->rightCuboid.y1;
+	this->rightCuboid.z0 = -this->rightCuboid.z1;
+
 	// if owner does not move
 	if(!this->moves){
 		
@@ -195,14 +138,16 @@ void Rect_setup(Rect this){
 		VBVec3D ownerPosition = Entity_getPosition((Entity)this->owner);
 		Gap ownerGap = InGameEntity_getGap(this->owner);
 		
-		// calculate gap on each side of the rectangle
-		this->rectangle.x0 += ownerPosition.x + ITOFIX19_13(ownerGap.left);
-		this->rectangle.x1 += ownerPosition.x - ITOFIX19_13(ownerGap.right);
-		this->rectangle.y0 += ownerPosition.y + ITOFIX19_13(ownerGap.up);
-		this->rectangle.y1 += ownerPosition.y - ITOFIX19_13(ownerGap.down);
+		// calculate gap on each side of the rightCuboid
+		this->rightCuboid.x0 += ownerPosition.x + ITOFIX19_13(ownerGap.left);
+		this->rightCuboid.x1 += ownerPosition.x - ITOFIX19_13(ownerGap.right);
+		this->rightCuboid.y0 += ownerPosition.y + ITOFIX19_13(ownerGap.up);
+		this->rightCuboid.y1 += ownerPosition.y - ITOFIX19_13(ownerGap.down);
+		this->rightCuboid.z0 += ownerPosition.z;
+		this->rightCuboid.z1 += ownerPosition.z;
 	}
 	
-	this->positionedRectangle = this->rectangle;
+	this->positionedRightcuboid = this->rightCuboid;
 	
 	// no more setup needed
 	this->ready = true;
@@ -210,35 +155,44 @@ void Rect_setup(Rect this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // prepare the shape to be checked
-void Rect_positione(Rect this){
+void Cuboid_positione(Cuboid this){
 	
 	Gap gap = InGameEntity_getGap(this->owner);
 
 	// get owner's position
-	VBVec3D myOwnerPosition = Entity_getPosition((Entity)this->owner);
+	VBVec3D myOwnerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, Entity, getPosition, (Entity)this->owner);
 
-	// calculate positioned rectangle	
-	this->positionedRectangle = this->rectangle;
+	// calculate positioned rightCuboid	
+	this->positionedRightcuboid = this->rightCuboid;
 	
-	this->positionedRectangle.x0 += myOwnerPosition.x + ITOFIX19_13(gap.left);
-	this->positionedRectangle.x1 += myOwnerPosition.x - ITOFIX19_13(gap.right);
-	this->positionedRectangle.y0 += myOwnerPosition.y + ITOFIX19_13(gap.up);
-	this->positionedRectangle.y1 += myOwnerPosition.y - ITOFIX19_13(gap.down);
+	this->positionedRightcuboid.x0 += myOwnerPosition.x + ITOFIX19_13(gap.left);
+	this->positionedRightcuboid.x1 += myOwnerPosition.x - ITOFIX19_13(gap.right);
+	this->positionedRightcuboid.y0 += myOwnerPosition.y + ITOFIX19_13(gap.up);
+	this->positionedRightcuboid.y1 += myOwnerPosition.y - ITOFIX19_13(gap.down);
+	this->positionedRightcuboid.z0 += myOwnerPosition.z;
+	this->positionedRightcuboid.z1 += myOwnerPosition.z;
 
 	// not checked yet
 	this->checked = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve rectangle
-Rectangle Rect_getPositionedRectangle(Rect this){
+// retrieve rightCuboid
+Rightcuboid Cuboid_getRightcuboid(Cuboid this){
 	
-	return this->positionedRectangle;
+	return this->rightCuboid;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve rightCuboid
+Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this){
+	
+	return this->positionedRightcuboid;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // draw rect
-void Rect_draw(Rect this){
+void Cuboid_draw(Cuboid this){
 	
 	// create a polygon
 	Polygon polygon = __NEW(Polygon);
@@ -246,13 +200,35 @@ void Rect_draw(Rect this){
 	fix19_13 z = Container_getGlobalPosition((Container)this->owner).z;
 	
 	// add vertices
-	Polygon_addVertice(polygon, this->positionedRectangle.x0, this->positionedRectangle.y0, z);
-	Polygon_addVertice(polygon, this->positionedRectangle.x1, this->positionedRectangle.y0, z);
-	Polygon_addVertice(polygon, this->positionedRectangle.x1, this->positionedRectangle.y1, z);
-	Polygon_addVertice(polygon, this->positionedRectangle.x0, this->positionedRectangle.y1, z);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, z);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, z);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, z);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, z);
 	
 	// draw the polygon
 	Polygon_draw(polygon, false);
 	
 	__DELETE(polygon);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// draw rect
+void Cuboid_print(Cuboid this, int x, int y){
+
+	Rightcuboid rightCuboid = this->positionedRightcuboid;
+
+	Printing_text("X:" , x, y);
+	Printing_int(FIX19_13TOI(rightCuboid.x0), x + 2, y);
+	Printing_text("-" , x + 5, y);
+	Printing_int(FIX19_13TOI(rightCuboid.x1), x + 7, y++);
+
+	Printing_text("Y:" , x, y);
+	Printing_int(FIX19_13TOI(rightCuboid.y0), x + 2, y);
+	Printing_text("-" , x + 5, y);
+	Printing_int(FIX19_13TOI(rightCuboid.y1), x + 7, y++);
+
+	Printing_text("Z:" , x, y);
+	Printing_int(FIX19_13TOI(rightCuboid.z0), x + 2, y);
+	Printing_text("-" , x + 5, y);
+	Printing_int(FIX19_13TOI(rightCuboid.z1), x + 7, y++);
 }

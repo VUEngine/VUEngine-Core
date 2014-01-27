@@ -81,6 +81,9 @@
 	/* elasticity */									\
 	fix19_13 elasticity;								\
 														\
+	/* friction */										\
+	fix19_13 friction;									\
+														\
 	/* raise flag to make the body active */			\
 	int active: 1;										\
 														\
@@ -114,7 +117,10 @@ void Body_setOwner(Body this, Object owner);
 Object Body_getOwner(Body this);
 
 // update
-void Body_update(Body this, const VBVec3D* gravity, fix19_13 elapsedTime);
+void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
+
+// retrieve last displacement
+VBVec3D Body_getLastDisplacement(Body this);
 
 // set active
 void Body_setActive(Body this, int active);
@@ -128,8 +134,17 @@ VBVec3D Body_getPosition(Body this);
 // retrieve position
 void Body_setPosition(Body this, const VBVec3D* position, Object caller);
 
+// get elasticiy
+fix19_13 Body_getElasticity(Body this);
+
 // set elasticity
 void Body_setElasticity(Body this, fix19_13 elasticity);
+
+// get friction
+fix19_13 Body_getFriction(Body this);
+
+// set elasticity
+void Body_setFriction(Body this, fix19_13 friction);
 
 // retrieve state
 int Body_isAwake(Body body);
@@ -145,6 +160,9 @@ void Body_clearForce(Body this);
 
 // apply force
 void Body_applyForce(Body this, const Force* force, int clear);
+
+// apply gravity
+void Body_applyGravity(Body this, const Acceleration* gravity);
 
 // add a force
 void Body_addForce(Body this, const Force* force);
@@ -171,7 +189,7 @@ void Body_printPhysics(Body this, int x, int y);
 void Body_stopMovement(Body this, int axis);
 
 // bounce back
-void Body_bounce(Body this, int axis);
+void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity);
 
 // take a hit
 void Body_takeHitFrom(Body this, Body other);

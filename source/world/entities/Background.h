@@ -47,8 +47,10 @@
 		InGameEntity_METHODS						\
 	
 
-#define Background_SET_VTABLE(ClassName)						\
-		InGameEntity_SET_VTABLE(ClassName)						\
+#define Background_SET_VTABLE(ClassName)								\
+		InGameEntity_SET_VTABLE(ClassName)								\
+		__VIRTUAL_SET(ClassName, Background, getElasticity);			\
+		__VIRTUAL_SET(ClassName, Background, getFriction);				\
 	
 
 // A Background which represent a generic object inside a Stage
@@ -56,7 +58,10 @@
 													\
 	/* super's attributes */						\
 	InGameEntity_ATTRIBUTES							\
-
+													\
+	/* ROM definition */							\
+	BackgroundDefinition* backgroundDefinition		\
+	
 
 __CLASS(Background);
 
@@ -77,6 +82,12 @@ typedef struct BackgroundDefinition{
 	
 	// whether it must be registered with the collision detection system
 	int registerShape;
+	
+	// friction for physics
+	fix19_13 friction;
+	
+	// elasticity for physics
+	fix19_13 elasticity;
 
 }BackgroundDefinition;
 
@@ -99,6 +110,12 @@ void Background_constructor(Background this, BackgroundDefinition* backgroundDef
 
 // class's destructor
 void Background_destructor(Background this);
+
+// get elasticiy
+fix19_13 Background_getElasticity(Background this);
+
+// get friction
+fix19_13 Background_getFriction(Background this);
 
 
 #endif /*BACKGROUND_H_*/

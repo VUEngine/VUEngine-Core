@@ -30,7 +30,7 @@
 
 #include <CollisionManager.h>
 #include <Circle.h>
-#include <Rect.h>
+#include <Cuboid.h>
 #include <MessageDispatcher.h>
 
 
@@ -163,9 +163,9 @@ Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, 
 			//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, __ARGUMENTS(owner, deep)));			
 			break;
 
-		case kRect:
+		case kCuboid:
 
-			VirtualList_pushFront(this->shapes, (void*)__NEW(Rect, __ARGUMENTS(owner, deep)));
+			VirtualList_pushFront(this->shapes, (void*)__NEW(Cuboid, __ARGUMENTS(owner, deep)));
 			break;
 	}
 	
@@ -308,7 +308,9 @@ void CollisionManager_update(CollisionManager this){
 
 		// if shape is active to be processed
 		if(Shape_isActive(shapes[i])){
-			
+
+			VirtualList collidingObjects = NULL;
+
 			// load the current shape
 			Shape shape = shapes[i];
 			
@@ -317,9 +319,6 @@ void CollisionManager_update(CollisionManager this){
 
 			// the result thrown by the collision algorithm
 			int collisionResult = kNoCollision;
-
-			// initialy assume that there is nothing below
-			int noShapeBelow = true;
 
 			// determine over which axis is moving
 			int axisMovement = __VIRTUAL_CALL(int, InGameEntity, isMoving, owner);
@@ -343,33 +342,33 @@ void CollisionManager_update(CollisionManager this){
 				if(shape != shapeToCheck && !Shape_isChecked(shapeToCheck) && Shape_isActive(shapeToCheck)){
 					
 					// check if shapes overlap
-					collisionResult = __VIRTUAL_CALL(int, Shape, overlaps, shape, __ARGUMENTS(shapeToCheck, axisMovement));
-					
-					if(kNoCollision != collisionResult){
+					collisionResult = __VIRTUAL_CALL(int, Shape, overlaps, shape, __ARGUMENTS(shapeToCheck));
+
+					if(collisionResult){
 						
-						if(kShapeBelow != collisionResult){
-	
-							// inform the owner about the collision
-							if(MessageDispatcher_dispatchMessage(0, (Object)owner, (Object)owner, collisionResult, (void*)Shape_getOwner(shapeToCheck))){
+						if(!collidingObjects) {
 							
-								// stop processing
-								break;
-							}
+							collidingObjects = __NEW(VirtualList);
 						}
-						else{
-	
-							noShapeBelow = false;
-						}
+
+						// add object to list
+						VirtualList_pushFront(collidingObjects, (void*)Shape_getOwner(shapeToCheck));
 					}
 				}
 			}
-			              
-			// if algorithm determined that there is no other shape below
-			if(!shapesToCheck[j] && noShapeBelow && !(__YAXIS & axisMovement)){
-						
-				// tell the owner that there is nothing below
-				//MessageDispatcher_dispatchMessage(0, NULL, (Object)owner, kNoObjectBelow, (void*)NULL);
+			
+			if(collidingObjects){
+				
+				// inform the owner about the collision
+				if(!MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)owner, kCollision, (void*)collidingObjects)){
+
+					__DELETE(collidingObjects);
+				}
 			}
+			
+			collidingObjects = NULL;
+
+			VirtualList_clear(collidingObjects);
 		}
 	}
 	

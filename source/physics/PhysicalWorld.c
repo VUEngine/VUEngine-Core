@@ -65,7 +65,7 @@
 	int selectBodiesToCheck:1;											\
 																		\
 	/* gravity */														\
-	VBVec3D gravity;													\
+	Acceleration gravity;												\
 																		\
 	/* friction */														\
 	fix19_13 friction;													\
@@ -175,7 +175,7 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight
 	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __ARGUMENTS((Object)owner, weight)));
 	
 	// must prepare bodies in the next update
-	this->selectBodiesToCheck = true;
+	//this->selectBodiesToCheck = true;
 	
 	// return created shape
 	return (Body)VirtualList_front(this->bodies);
@@ -249,6 +249,33 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // precalculate movable shape's position before doing collision detection on them
+static void PhysicalWorld_checkForGravity(PhysicalWorld this){
+	
+	VirtualNode node = NULL;
+	
+	// prepare bodies which move 
+	// this will place the shape in the owner's position
+	for(node = VirtualList_begin(this->bodies); node; node = VirtualNode_getNext(node)){
+
+		// load the current shape
+		Body body = (Body)VirtualNode_getData(node);
+
+		// check if must apply gravity
+		int gravitySensibleAxis = Actor_isSubjectToGravity((Actor)Body_getOwner(body), &this->gravity);
+
+		Acceleration gravity = {
+			gravitySensibleAxis & __XAXIS? this->gravity.x: 0,
+			gravitySensibleAxis & __YAXIS? this->gravity.y: 0,
+			gravitySensibleAxis & __ZAXIS? this->gravity.z: 0
+		};
+		
+		// add gravity
+		Body_applyGravity(body, &gravity);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// precalculate movable shape's position before doing collision detection on them
 static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 	
 	VirtualNode node = NULL;
@@ -263,20 +290,10 @@ static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 
 		// load the current shape
 		Body body = (Body)VirtualNode_getData(node);
-		
-		// first check it body needs setup
-		/*
-		if(!Body_isReady(body)){
-			
-			// setup body
-			//__VIRTUAL_CALL(void, Body, setup, body);
-		}
 
-*/
-		
 		// only check entities which are active
 		if(Body_isAwake(body)){
-		
+
 			// feed the array of movable bodies to check for collisions
 			bodies[i++] = body;
 		}
@@ -290,16 +307,28 @@ static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 // calculate collisions
 void PhysicalWorld_update(PhysicalWorld this){
 	
-	int i = 0;
+	static int checkForGravity = false;
 	
 	// get the elapsed time
 	this->elapsedTime = FTOFIX19_13((Clock_getTime(_inGameClock) - this->time) / 100.0f);
 
+	if(true || checkForGravity) {
+	
+		checkForGravity = false;
+		PhysicalWorld_checkForGravity(this);
+	}
+	else {
+
+		checkForGravity = true;
+	}
+	
 	// check if must select bodies to process
 	if(this->selectBodiesToCheck){
 		
 		PhysicalWorld_selectBodiesToCheck(this);	
 	}
+
+	int i = 0;
 
 	// check the bodies
 	for(i = 0; bodies[i] && i < __MAX_BODIES_PER_LEVEL; i++){
@@ -331,7 +360,7 @@ void PhysicalWorld_reset(PhysicalWorld this){
 	VirtualList_clear(this->removedBodies);	
 
 	// must prepare bodies in the next update
-	this->selectBodiesToCheck = true;
+	//this->selectBodiesToCheck = true;
 	
 	bodies[0] = 0;
 }
@@ -385,7 +414,7 @@ void PhysicalWorld_bodyAwaked(PhysicalWorld this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set gravity
-void PhysicalWorld_setGravity(PhysicalWorld this, VBVec3D gravity) {
+void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity) {
 
 	this->gravity.x = gravity.x;
 	this->gravity.y = gravity.y;

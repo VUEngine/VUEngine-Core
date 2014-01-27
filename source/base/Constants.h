@@ -266,10 +266,7 @@ enum EntityStates{
 enum MessagesTypes{
 	
 	kNoCollision = 0,
-	kCollisionXY,
-	kCollisionX,
-	kCollisionY,
-	kCollisionZ,
+	kCollision,
 	kFloorReached,
 	kShapeBelow,
 	kNoObjectBelow,
@@ -279,6 +276,8 @@ enum MessagesTypes{
 	kKeyHold,
 	kEntityRemoved,
 	kBodyStoped,
+	kBodyStartedMoving,
+	kBodyStartedMovingByGravity,
 	kBodySleep
 };
 

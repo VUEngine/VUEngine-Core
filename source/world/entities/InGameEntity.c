@@ -112,14 +112,6 @@ void InGameEntity_destructor(InGameEntity this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve InGameEntity's friction
-fix7_9 InGameEntity_getFrictionFactor(InGameEntity this){
-
-	return 0;
-//	return this->inGameEntityDefinition->frictionFactor;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set class's position
 void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position){
 	
@@ -257,7 +249,28 @@ void InGameEntity_render(InGameEntity this, Transformation* environmentTransform
 		if(this->shape ){
 			
 		
-		//__VIRTUAL_CALL(void, Shape, draw, this->shape);
+			//__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}	
 #endif
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve shape
+Shape InGameEntity_getShape(InGameEntity this){
+	
+	return this->shape;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get elasticiy
+fix19_13 InGameEntity_getElasticity(InGameEntity this){
+	
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get friction
+fix19_13 InGameEntity_getFriction(InGameEntity this){
+	
+	return 0;
 }

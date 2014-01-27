@@ -56,7 +56,7 @@ __CLASS_DEFINITION(Body);
 // this should be improved and calculated dynamically based on framerate
 //#define THRESHOLD FTOFIX19_13(0.1f)
 #undef __PHYSICS_FPS
-#define __PHYSICS_FPS 30
+#define __PHYSICS_FPS 60
 
 #define THRESHOLD FTOFIX19_13(0.25f * (60.0f / __PHYSICS_FPS))
 
@@ -73,7 +73,11 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 static void Body_setMovementType(Body this, int movementType, int axis);
 
 // bounce back
-static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis);
+static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity);
+
+// is it moving?
+static int Body_isMovingInternal(Body this);
+
 
 enum CollidingObjectIndexes{
 	eXAxis = 0,
@@ -129,10 +133,6 @@ static void Body_constructor(Body this, Object owner, fix19_13 weight){
 	this->acceleration.x = 0;
 	this->acceleration.y = 0;
 	this->acceleration.z = 0;
-	
-	this->velocity.x = 0;
-	this->velocity.y = 0;
-	this->velocity.z = 0;
 	
 	this->active = true;
 	
@@ -291,10 +291,7 @@ void Body_applyForce(Body this, const Force* force, int clear){
 	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, weight);
 	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, weight);
 
-	if(!this->awake) {
-		
-		Body_awake(this);
-	}
+	Body_awake(this);
 
 	if (this->appliedForce.x) {
 	
@@ -302,7 +299,7 @@ void Body_applyForce(Body this, const Force* force, int clear){
 	}
 
 	if (this->appliedForce.y) {
-	
+
 		Body_moveAccelerated(this, __YAXIS);
 	}
 
@@ -313,54 +310,93 @@ void Body_applyForce(Body this, const Force* force, int clear){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// apply gravity
+void Body_applyGravity(Body this, const Acceleration* gravity){
+	
+	if (gravity) {
+
+		int axisStartedMovement = 0;
+
+		if(gravity->x) {
+
+			this->acceleration.x = gravity->x;
+			axisStartedMovement |= __XAXIS;
+			Body_moveAccelerated(this, __XAXIS);
+		}
+
+		if(gravity->y){
+			
+			this->acceleration.y = gravity->y;
+			axisStartedMovement |= __YAXIS;
+			Body_moveAccelerated(this, __YAXIS);
+		}
+
+		if(gravity->z) {
+
+			this->acceleration.z = gravity->z;
+			axisStartedMovement |= __ZAXIS;
+			Body_moveAccelerated(this, __YAXIS);
+		}
+
+		if(axisStartedMovement) {
+
+			Body_awake(this);
+
+			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStartedMoving, &axisStartedMovement);
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add force
 void Body_addForce(Body this, const Force* force){
 	
 	if (force) {
 
-		Body_applyForce(this, force, !Body_isMoving(this));
+		Body_applyForce(this, force, !Body_isMovingInternal(this));
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update movement
-void Body_update(Body this, const VBVec3D* gravity, fix19_13 elapsedTime){
+void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime){
 
 	if (this->awake) {
 		
 		if (elapsedTime) {
 			
-			int axis = (__XAXIS | __YAXIS | __ZAXIS);
+			int axisStopedMovement = (__XAXIS | __YAXIS | __ZAXIS);
 
 			// update each axis
-			if(this->velocity.x || this->acceleration.x || this->appliedForce.x) {
+			if(this->velocity.x || this->acceleration.x || this->appliedForce.x || (__ACCELERATED_MOVEMENT == this->movementType.x && gravity->x && this->acceleration.x)) {
 
 		 	 	if(Body_updateMovement(this, elapsedTime, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x)) {
 
-		 	 		axis &= !__XAXIS;
+		 	 		axisStopedMovement &= !__XAXIS;
 		 	 	}
 		 	}
 
-			if(this->velocity.y || this->acceleration.y) {
+			if(this->velocity.y || this->acceleration.y || this->appliedForce.y || (__ACCELERATED_MOVEMENT == this->movementType.y && gravity->y && this->acceleration.y)) {
 
 		 	 	if(Body_updateMovement(this, elapsedTime, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y)) {
 
-		 	 		axis &= !__YAXIS;
+		 	 		axisStopedMovement &= !__YAXIS;
 		 	 	}
 		 	}
 
-		 	if(this->velocity.z || this->acceleration.z) {
+		 	if(this->velocity.z || this->acceleration.z || this->appliedForce.z || (__ACCELERATED_MOVEMENT == this->movementType.z && gravity->z && this->acceleration.z)) {
 
 		 	 	if(Body_updateMovement(this, elapsedTime, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z)) {
 
-		 	 		axis &= !__ZAXIS;
+		 	 		axisStopedMovement &= !__ZAXIS;
 		 	 	}
 		 	}
 
-		 	// if stopped in any axis
-		 	if(axis) {
+		 	// if stopped on any axis
+		 	if(axisStopedMovement) {
 		 		
-	 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, &axis);
+	 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, &axisStopedMovement);
 		 	}
 		 	
 		 	// clear any force so the next update does not get influenced
@@ -400,9 +436,53 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 		
 		gravity = gravity - *acceleration;
 	}
-
+	
 	fix19_13 deltaAcceleration = FIX19_13_MULT(ITOFIX19_13(direction), FIX19_13_MULT(FIX19_13_DIV(friction, weight), elapsedTime)) - FIX19_13_MULT(gravity, elapsedTime);
 	*acceleration -= deltaAcceleration;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve last displacement
+VBVec3D Body_getLastDisplacement(Body this) {
+	
+	VBVec3D displacement = {0, 0, 0}; 
+	
+	u16 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
+	
+ 	if(__ACCELERATED_MOVEMENT == this->movementType.x){
+
+		displacement.x =
+			FIX19_13_MULT(this->velocity.x, elapsedTime) 
+			+ FIX19_13_DIV(FIX19_13_MULT(this->acceleration.x, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
+ 	}
+ 	else if(__UNIFORM_MOVEMENT == this->movementType.y){
+
+		displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
+ 	}
+ 	
+ 	if(__ACCELERATED_MOVEMENT == this->movementType.y){
+ 		
+ 		displacement.y =
+			FIX19_13_MULT(this->velocity.y, elapsedTime) 
+			+ FIX19_13_DIV(FIX19_13_MULT(this->acceleration.y, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
+ 	}
+ 	else if(__UNIFORM_MOVEMENT == this->movementType.y){
+
+		displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);
+ 	}
+ 	
+ 	if(__ACCELERATED_MOVEMENT == this->movementType.z){
+
+ 		displacement.z =
+			FIX19_13_MULT(this->velocity.z, elapsedTime) 
+			+ FIX19_13_DIV(FIX19_13_MULT(this->acceleration.z, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
+ 	}
+ 	else if(__UNIFORM_MOVEMENT == this->movementType.z){
+
+		displacement.z = FIX19_13_MULT(this->velocity.z, elapsedTime);
+ 	}
+ 	
+ 	return displacement;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -418,10 +498,10 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 	// calculate displacement based in velocity, time and acceleration
  	if(__ACCELERATED_MOVEMENT == movementType){
 
+ 		Body_updateAcceleration(this, elapsedTime, gravity, acceleration, *velocity);
+
 		// update the velocity
 		*velocity += FIX19_13_MULT(*acceleration, elapsedTime);
-
- 		Body_updateAcceleration(this, elapsedTime, gravity, acceleration, *velocity);
 
 		displacement =
 			FIX19_13_MULT(*velocity, elapsedTime) 
@@ -429,6 +509,7 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 
 
  		if(!gravity && !appliedForce && (THRESHOLD > abs(displacement) || THRESHOLD > abs(*velocity))){
+// 		if(!appliedForce && (THRESHOLD > abs(displacement) || THRESHOLD > abs(*velocity))){
  			
  			*velocity = 0;
 // 			*acceleration = 0; 
@@ -558,7 +639,14 @@ void Body_setPosition(Body this, const VBVec3D* position, Object caller) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve position
+// get elasticiy
+fix19_13 Body_getElasticity(Body this){
+
+	return this->elasticity;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set elasticiy
 void Body_setElasticity(Body this, fix19_13 elasticity) {
 
 	if(ITOFIX19_13(0) > elasticity) {
@@ -574,6 +662,20 @@ void Body_setElasticity(Body this, fix19_13 elasticity) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get friction
+fix19_13 Body_getFriction(Body this){
+
+	return this->friction;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set elasticity
+void Body_setFriction(Body this, fix19_13 friction){
+	
+	this->friction = friction;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve state
 int Body_isAwake(Body this) {
 	
@@ -583,9 +685,9 @@ int Body_isAwake(Body this) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // awake body
 void Body_awake(Body this) {
+
+	if(!this->awake) {
 	
-	if (!this->awake) {
-		
 		this->awake = true;
 		
 		PhysicalWorld_bodyAwaked(PhysicalWorld_getInstance());
@@ -608,42 +710,57 @@ void Body_sleep(Body this) {
 int Body_isMoving(Body this){
 
 	int result = 0;
+
+	result |= ((int)FIX19_13TOI(this->velocity.x))? __XAXIS: 0;
+	result |= ((int)FIX19_13TOI(this->velocity.y))? __YAXIS: 0;
+	result |= ((int)FIX19_13TOI(this->velocity.z))? __ZAXIS: 0;
+	
+	return this->awake && this->active? result: 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// is it moving?
+static int Body_isMovingInternal(Body this){
+
+	int result = 0;
+
 	result |= (this->velocity.x)? __XAXIS: 0;
 	result |= (this->velocity.y)? __YAXIS: 0;
 	result |= (this->velocity.z)? __ZAXIS: 0;
-
-	return this->awake && this->active && result;
+	
+	return this->awake && this->active? result: 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // bounce back
-void Body_bounce(Body this, int axis){
+void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity){
 
 	int axisOnWhichStoped = 0;
 	
-	if ((__XAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x , axis)){
+	if ((__XAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x , axis, otherBodyElasticity)){
 		
 		axisOnWhichStoped |= __XAXIS;
 	}
 	
-	if ((__YAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, axis)){
+	if ((__YAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, axis, otherBodyElasticity)){
 		
 		axisOnWhichStoped |= __YAXIS;
 	}
 
-	if ((__ZAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, axis)){
+	if ((__ZAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, axis, otherBodyElasticity)){
 		
 		axisOnWhichStoped |= __ZAXIS;
 	}
 
-	Body_stopMovement(this, axisOnWhichStoped);
-
-	MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, &axisOnWhichStoped);
+	if (axisOnWhichStoped) {
+	
+		Body_stopMovement(this, axisOnWhichStoped);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // bounce back
-static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis){
+static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity){
 	
 	// TODO: still not sure it must be divided by 2 (<< deltaFactor)
 	int deltaFactor = 1;
@@ -651,7 +768,14 @@ static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerati
 	// get the elapsed time
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
 
-	fix19_13 bounceCoeficient = ITOFIX19_13(1) - this->elasticity;
+	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;
+	
+	if (ITOFIX19_13(1) < totalElasticity) {
+		
+		totalElasticity = ITOFIX19_13(1);
+	}
+	
+	fix19_13 bounceCoeficient = ITOFIX19_13(1) - (ITOFIX19_13(1) - totalElasticity);
 	
 	fix19_13 velocityDelta = FIX19_13_MULT(*acceleration, elapsedTime);
 	

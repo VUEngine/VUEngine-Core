@@ -229,7 +229,7 @@
 
 #else
 #define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, Object, ...)					\
-		/* call derived implementation */												\
+		/* release implementation */												\
 		((ReturnType (*)(ClassName, ...))												\
 		(((struct ClassName ## _vTable*)((*((void**)Object))))->MethodName))			\
 			(																			\
@@ -237,6 +237,14 @@
 			)																			\
 
 #endif
+
+#define __VIRTUAL_CALL_UNSAFE(ReturnType, ClassName, MethodName, Object, ...)			\
+		/* to bypass checking on DEBUG */												\
+		((ReturnType (*)(ClassName, ...))												\
+		(((struct ClassName ## _vTable*)((*((void**)Object))))->MethodName))			\
+			(																			\
+					Object __VA_ARGS__													\
+			)																			\
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // cast macro

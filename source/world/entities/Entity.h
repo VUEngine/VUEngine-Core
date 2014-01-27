@@ -54,6 +54,10 @@
 		__VIRTUAL_DEC(setExtraInfo);				\
 		__VIRTUAL_DEC(updateSpritePosition);		\
 		__VIRTUAL_DEC(updateSpriteScale);			\
+		__VIRTUAL_DEC(getPosition);					\
+		__VIRTUAL_DEC(getWidth);					\
+		__VIRTUAL_DEC(getHeight);					\
+		__VIRTUAL_DEC(getDeep);						\
 	
 
 #define Entity_SET_VTABLE(ClassName)								\
@@ -66,6 +70,10 @@
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);				\
 		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);		\
 		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);		\
+		__VIRTUAL_SET(ClassName, Entity, getPosition);				\
+		__VIRTUAL_SET(ClassName, Entity, getWidth);					\
+		__VIRTUAL_SET(ClassName, Entity, getHeight);				\
+		__VIRTUAL_SET(ClassName, Entity, getDeep);					\
 	
 
 // A Entity which represent a generic Container inside a Stage
@@ -189,6 +197,9 @@ int Entity_getWidth(Entity this);
 
 // get height
 int Entity_getHeight(Entity this);
+
+// get deep
+int Entity_getDeep(Entity this);
 
 // whether it is visible
 int Entity_isVisible(Entity this, int pad);

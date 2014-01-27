@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef RECT_H_
-#define RECT_H_
+#ifndef CUBOID_H_
+#define CUBOID_H_
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -43,44 +43,46 @@
  */
 
 
-#define Rect_METHODS								\
+#define Cuboid_METHODS								\
 		Shape_METHODS								\
 
 
-#define Rect_SET_VTABLE(ClassName)								\
+#define Cuboid_SET_VTABLE(ClassName)							\
 		Shape_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Rect, draw);					\
-		__VIRTUAL_SET(ClassName, Rect, overlaps);				\
-		__VIRTUAL_SET(ClassName, Rect, setup);					\
-		__VIRTUAL_SET(ClassName, Rect, positione);
+		__VIRTUAL_SET(ClassName, Cuboid, draw);					\
+		__VIRTUAL_SET(ClassName, Cuboid, overlaps);				\
+		__VIRTUAL_SET(ClassName, Cuboid, setup);				\
+		__VIRTUAL_SET(ClassName, Cuboid, positione);
 
 
-typedef struct Rectangle{
+typedef struct Rightcuboid{
 
 	/* left upper corner */
 	fix19_13 x0;
 	fix19_13 y0;
+	fix19_13 z0;
 			
 	/* right down corner */
 	fix19_13 x1;					
 	fix19_13 y1;
+	fix19_13 z1;
 
-}Rectangle;
+}Rightcuboid;
 
-#define Rect_ATTRIBUTES								\
+#define Cuboid_ATTRIBUTES							\
 													\
 	/* super's attributes */						\
 	Shape_ATTRIBUTES;								\
 													\
 	/* the rectangle */								\
-	Rectangle rectangle;							\
+	Rightcuboid rightCuboid;						\
 													\
-	/* the rectangle to check */					\
-	Rectangle positionedRectangle;
+	/* the rightCuboid to check */					\
+	Rightcuboid positionedRightcuboid;
 	
 
-// A Rect which represent a generic object inside a Stage
-__CLASS(Rect);
+// A Cuboid which represent a generic object inside a Stage
+__CLASS(Cuboid);
 
 
 
@@ -94,24 +96,27 @@ __CLASS(Rect);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Rect, __PARAMETERS(InGameEntity owner, int deep));
+__CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(InGameEntity owner, int deep));
 
 // class's destructor
-void Rect_destructor(Rect this);
+void Cuboid_destructor(Cuboid this);
 
 // check if overlaps with other shape
-int Rect_overlaps(Rect this, Shape shape, int axisMovement);
+int Cuboid_overlaps(Cuboid this, Shape shape);
 
-// setup the rectangle
-void Rect_setup(Rect this);
+// setup the rightCuboid
+void Cuboid_setup(Cuboid this);
 
 // prepare the shape to be checked
-void Rect_positione(Rect this);
+void Cuboid_positione(Cuboid this);
 
-// retrieve rectangle
-Rectangle Rect_getPositionedRectangle(Rect this);
+// retrieve rightCuboid
+Rightcuboid Cuboid_getRightcuboid(Cuboid this);
+
+// retrieve positioned rightCuboid
+Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
 
 // draw rect
-void Rect_draw(Rect this);
+void Cuboid_draw(Cuboid this);
 
-#endif /*RECT_H_*/
+#endif /*CUBOID_H_*/
