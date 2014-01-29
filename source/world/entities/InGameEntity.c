@@ -274,3 +274,10 @@ fix19_13 InGameEntity_getFriction(InGameEntity this){
 	
 	return 0;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve previous position
+VBVec3D InGameEntity_getPreviousPosition(InGameEntity this){
+	
+	return this->transform.globalPosition;
+}

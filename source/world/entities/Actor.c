@@ -72,6 +72,10 @@ __CLASS_DEFINITION(Actor);
 
 // retrieve shape
 Shape InGameEntity_getShape(InGameEntity this);
+
+// resolve collision against other entities
+static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
+
 		
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -194,9 +198,9 @@ void Actor_render(Actor this, Transformation* environmentTransform){
 		InGameEntity_render((InGameEntity)this, &environmentAgnosticTransform);
 
 		this->previousGlobalPosition = this->transform.globalPosition;
-		this->previousLocalPosition = this->transform.localPosition;
 		
 		int movementAxis = Body_isMoving(this->body);
+		
 		if(__XAXIS & movementAxis) {
 
 			this->lastCollidingEntityX = NULL;
@@ -215,12 +219,6 @@ void Actor_render(Actor this, Transformation* environmentTransform){
 		// call base
 		InGameEntity_render((InGameEntity)this, environmentTransform);
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Actor_setInGameState(Actor this, int inGameState){
-	
-	this->inGameState = inGameState;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,6 +251,20 @@ void Actor_update(Actor this){
 			AnimatedSprite_update((AnimatedSprite)sprite);
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve previous position
+VBVec3D Actor_getPreviousPosition(Actor this){
+	
+	return this->previousGlobalPosition;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void Actor_setInGameState(Actor this, int inGameState){
+	
+	this->inGameState = inGameState;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,84 +345,36 @@ int Actor_isSubjectToGravity(Actor this, const Acceleration* gravity) {
 	int movingState = Body_isMoving(this->body);
 
 	int axisSensibleToGravity = ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
-	
+
+	int axisOfCollision = 0;
+
 	if(axisSensibleToGravity && this->collidingEntities) {
 
 		ASSERT(this->body, "Actor::resolveCollision: NULL body");
 	
 		VirtualNode node = VirtualList_begin(this->collidingEntities);
-
-		ASSERT(node, "Actor::resolveCollision: NULL node");
-
-		// setup a cuboid representing the previous position
-		Rightcuboid positionedRightCuboid = Cuboid_getPositionedRightcuboid((Cuboid)this->shape);
 		VBVec3D displacement = {gravity->x, gravity->y, gravity->z}; 
 
-		// TODO: solve when more than one entity has been touched
+		ASSERT(node, "Actor::resolveCollision: NULL node");
+		
+		// TODO: must still solve when there will be a collision with an object not yet in the list
 		for(; node; node = VirtualNode_getNext(node)) {
 	
-			InGameEntity collidingEntity = VirtualNode_getData(node);
-			Rightcuboid otherRightcuboid = Cuboid_getPositionedRightcuboid((Cuboid)InGameEntity_getShape(collidingEntity));
-
-			if(gravity->x){
-				
-				positionedRightCuboid.x0 += displacement.x;
-				positionedRightCuboid.x1 += displacement.x;
-
-				// test for collision
-				if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
-						positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
-						positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
-					
-					axisSensibleToGravity &= ~__XAXIS;
-					break;
-				}
-			}
-			
-			if(gravity->y){
-				
-				positionedRightCuboid.y0 += displacement.y;
-				positionedRightCuboid.y1 += displacement.y;
-
-				// test for collision
-				if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
-						positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
-						positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
-					
-					axisSensibleToGravity &= ~__YAXIS;
-					break;
-				}
-			}
-
-			if(gravity->z){
-				
-				positionedRightCuboid.z0 += displacement.z;
-				positionedRightCuboid.z1 += displacement.z;
-
-				// test for collision
-				if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
-						positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
-						positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
-					
-					axisSensibleToGravity &= ~__YAXIS;
-					break;
-				}
-			}
-
+			axisOfCollision = __VIRTUAL_CALL(int, Shape, testIfCollision, this->shape, __ARGUMENTS(VirtualNode_getData(node), displacement));
 		}
 	}
 	
-	return axisSensibleToGravity;
+	return axisSensibleToGravity & ~axisOfCollision;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 	
 	ASSERT(this->body, "Actor::resolveCollision: NULL body");
 
 	int axisOfCollision = 0;
 	int alignThreshold = 1;
-
-	Gap gap = InGameEntity_getGap((InGameEntity)this);
 
 	// get last physical displacement
 	VBVec3D displacement = Body_getLastDisplacement(this->body); 
@@ -430,92 +394,7 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 	for(; node; node = VirtualNode_getNext(node)) {
 
 		collidingEntity = VirtualNode_getData(node);
-
-		Rightcuboid otherRightcuboid = Cuboid_getPositionedRightcuboid((Cuboid)InGameEntity_getShape(collidingEntity));
-
-		// setup a cuboid representing the previous position
-		Rightcuboid positionedRightCuboid = Cuboid_getRightcuboid((Cuboid)this->shape);
-
-		positionedRightCuboid.x0 += this->previousGlobalPosition.x + ITOFIX19_13(gap.left);
-		positionedRightCuboid.x1 += this->previousGlobalPosition.x - ITOFIX19_13(gap.right);
-		positionedRightCuboid.y0 += this->previousGlobalPosition.y + ITOFIX19_13(gap.up);
-		positionedRightCuboid.y1 += this->previousGlobalPosition.y - ITOFIX19_13(gap.down);
-		positionedRightCuboid.z0 += this->previousGlobalPosition.z;
-		positionedRightCuboid.z1 += this->previousGlobalPosition.z;
-
-		int displacementFactor = 0;
-		int numberOfAxis = 0;
-
-#ifdef __DEBUG		
-			int counter = 0;
-#endif
-
-		do{
-#ifdef __DEBUG		
-			ASSERT(counter++ < 10, "Actor: cannot resolve collision");
-#endif
-			numberOfAxis = 0;
-			axisOfCollision = 0;
-
-			positionedRightCuboid.x0 += displacement.x;
-			positionedRightCuboid.x1 += displacement.x;
-	
-			// test for collision
-			if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
-					positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
-					positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
-				
-				axisOfCollision |= __XAXIS;
-				numberOfAxis++;
-			}
-			
-			positionedRightCuboid.x0 -= displacement.x;
-			positionedRightCuboid.x1 -= displacement.x;
-	
-			positionedRightCuboid.y0 += displacement.y;
-			positionedRightCuboid.y1 += displacement.y;
-	
-			// test for collision
-			if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
-					positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
-					positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
-				
-				axisOfCollision |= __YAXIS;
-				numberOfAxis++;
-			}
-			
-			positionedRightCuboid.y0 -= displacement.y;
-			positionedRightCuboid.y1 -= displacement.y;
-	
-			positionedRightCuboid.z0 += displacement.z;
-			positionedRightCuboid.z1 += displacement.z;
-
-			// test for collision
-			if(!(positionedRightCuboid.x0 > otherRightcuboid.x1 || positionedRightCuboid.x1 < otherRightcuboid.x0 || 
-					positionedRightCuboid.y0 > otherRightcuboid.y1 || positionedRightCuboid.y1 < otherRightcuboid.y0 ||
-					positionedRightCuboid.z0 > otherRightcuboid.z1 || positionedRightCuboid.z1 < otherRightcuboid.z0)) {
-				
-				axisOfCollision |= __ZAXIS;
-				numberOfAxis++;
-			}
-			
-			positionedRightCuboid.z0 -= displacement.z;
-			positionedRightCuboid.z1 -= displacement.z;
-			
-			if(1 < numberOfAxis) {
-				
-				fix19_13 displacementFactor2 = ITOFIX19_13(displacementFactor++);
-
-				positionedRightCuboid.x0 -= FIX19_13_MULT(displacement.x, displacementFactor2);
-				positionedRightCuboid.x1 -= FIX19_13_MULT(displacement.x, displacementFactor2);
-				positionedRightCuboid.y0 -= FIX19_13_MULT(displacement.y, displacementFactor2);
-				positionedRightCuboid.y1 -= FIX19_13_MULT(displacement.y, displacementFactor2);
-				positionedRightCuboid.z0 -= FIX19_13_MULT(displacement.z, displacementFactor2);
-				positionedRightCuboid.z1 -= FIX19_13_MULT(displacement.z, displacementFactor2);
-
-			}
-
-		}while(1 < numberOfAxis);
+		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, __ARGUMENTS(collidingEntity, displacement));
 
 		if(axisOfCollision) {
 			
@@ -543,7 +422,6 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 
 		// bounce over axis
 		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
-//		Body_stopMovement(this->body, axisOfCollision);
 
 		if(!(axisOfCollision & Body_isMoving(this->body))){
 
@@ -615,7 +493,6 @@ StateMachine Actor_getStateMachine(Actor this){
 	return this->stateMachine;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // does it moves?
 int Actor_moves(Actor this){
@@ -629,7 +506,6 @@ int Actor_isMoving(Actor this){
 
 	return this->body? Body_isMoving(this->body): 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve character's scale
@@ -679,8 +555,6 @@ VBVec3D Actor_getPosition(Actor this){
 // play an animation
 void Actor_playAnimation(Actor this, char* animationName){
 	
-	static int i = 0;
-
 	if(this->sprites){
 
 		VirtualNode node = VirtualList_begin(this->sprites);

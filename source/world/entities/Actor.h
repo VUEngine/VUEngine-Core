@@ -104,7 +104,8 @@ typedef const ActorDefinition ActorROMDef;
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);						\
 		__VIRTUAL_SET(ClassName, Actor, getFriction);						\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);						\
-
+		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);				\
+		
 
 	
 #define Actor_ATTRIBUTES								\
@@ -125,7 +126,6 @@ typedef const ActorDefinition ActorROMDef;
 														\
 	/* previous position for collision handling */		\
 	VBVec3D previousGlobalPosition;						\
-	VBVec3D previousLocalPosition;						\
 														\
 	/* list of collinding entities */					\
 	VirtualList collidingEntities;						\
@@ -179,6 +179,9 @@ void Actor_render(Actor this, Transformation* environmentTransform);
 
 // execute actor's logic
 void Actor_update(Actor this);
+
+// retrieve previous position
+VBVec3D Actor_getPreviousPosition(Actor this);
 
 // retrieve actor's scale
 Scale Actor_getScale(Actor this);

@@ -60,7 +60,7 @@
 	InGameEntity_ATTRIBUTES							\
 													\
 	/* ROM definition */							\
-	BackgroundDefinition* backgroundDefinition		\
+	BackgroundDefinition* backgroundDefinition;		\
 	
 
 __CLASS(Background);

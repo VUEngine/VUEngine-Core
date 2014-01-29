@@ -363,10 +363,9 @@ void Body_applyGravity(Body this, const Acceleration* gravity){
 // add force
 void Body_addForce(Body this, const Force* force){
 	
-	if (force) {
+	ASSERT(force, "Body::addForce: NULL force");
 
-		Body_applyForce(this, force, !Body_isMovingInternal(this));
-	}
+	Body_applyForce(this, force, !Body_isMovingInternal(this));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -379,6 +378,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 			
 			int axisStopedMovement = 0;
 			int axisOfMovement = 0;
+ 			int axisOfChangeOfMovement = 0;
 
 
 			if(this->velocity.x || this->acceleration.x || this->appliedForce.x || (__ACCELERATED_MOVEMENT == this->movementType.x && gravity->x && this->acceleration.x)) {
@@ -405,14 +405,14 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 
 	 	 		if(movementStatus){
 
-	 	 			axisOfMovement &= ~__XAXIS;
-	 	 			axisStopedMovement |= __XAXIS;
-	 	 			
 	 	 			if(CHANGED_DIRECTION == movementStatus) {
 	 	 			
-		 	 			int axisOfChangeOfMovement = __XAXIS;
-			 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyChangedDirection, &axisOfChangeOfMovement);
+	 	 				axisOfChangeOfMovement |= __XAXIS;
 	 	 			}
+	 	 		}
+	 	 		else {
+	 	 			
+	 	 			axisStopedMovement |= __XAXIS;
 	 	 		}
 	 	 	}
 
@@ -422,16 +422,15 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 
 	 	 		if(movementStatus){
 
-	 	 			axisOfMovement &= ~__YAXIS;
-	 	 			axisStopedMovement |= __YAXIS;
-	 	 			
 	 	 			if(CHANGED_DIRECTION == movementStatus) {
 	 	 			
-		 	 			int axisOfChangeOfMovement = __YAXIS;
-			 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyChangedDirection, &axisOfChangeOfMovement);
+	 	 				axisOfChangeOfMovement |= __YAXIS;
 	 	 			}
 	 	 		}
-
+	 	 		else {
+	 	 			
+	 	 			axisStopedMovement |= __YAXIS;
+	 	 		}
 	 	 	}
 
 	 	 		
@@ -441,25 +440,27 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 
 	 	 		if(movementStatus){
 
-	 	 			axisOfMovement &= ~__ZAXIS;
-	 	 			axisStopedMovement |= __ZAXIS;
-	 	 			
 	 	 			if(CHANGED_DIRECTION == movementStatus) {
 	 	 			
-		 	 			int axisOfChangeOfMovement = __ZAXIS;
-			 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyChangedDirection, &axisOfChangeOfMovement);
+	 	 				axisOfChangeOfMovement |= __ZAXIS;
 	 	 			}
 	 	 		}
-
+	 	 		else {
+	 	 			
+	 	 			axisStopedMovement |= __ZAXIS;
+	 	 		}
 	 	 	}
  	 	
 		 	// if stopped on any axis
-		 	if(axisOfMovement) {
+		 	if(axisStopedMovement) {
 		 		
 	 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, &axisStopedMovement);
 		 	}
 		 	
-
+		 	if(axisOfChangeOfMovement){
+		 		
+		 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyChangedDirection, &axisOfChangeOfMovement);
+		 	}
 		 	
 		 	// clear any force so the next update does not get influenced
 			Body_clearForce(this);
@@ -472,13 +473,11 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 static void Body_calculateFriction(Body this, int axisOfMovement, Force* friction){
 	
 	// get friction fBody from the game world
-	//fix19_13 weight = Mass_getWeight(this->mass);
 	fix19_13 worldFriction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
 
 	friction->x = __XAXIS & axisOfMovement? 0 < this->velocity.x? -(friction->x + worldFriction): friction->x + worldFriction : 0;
 	friction->y = __YAXIS & axisOfMovement? 0 < this->velocity.y? -(friction->y + worldFriction): friction->y +  worldFriction : 0;
 	friction->z = __ZAXIS & axisOfMovement? 0 < this->velocity.z? -(friction->z + worldFriction): friction->z +  worldFriction : 0;
-	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -578,7 +577,6 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 
 
  		if(!gravity && (!appliedForce && (THRESHOLD > abs(displacement) || THRESHOLD > abs(*velocity)))){
-// 		if((!gravity && !(*acceleration)) || (!appliedForce && (THRESHOLD > abs(displacement) || THRESHOLD > abs(*velocity)))){
  			
  			*velocity = 0;
  			*acceleration = 0; 
@@ -671,19 +669,11 @@ void Body_stopMovement(Body this, int axis){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// the the object below me
-void Body_setObjectBelow(Body this, Object objectBelow){
-	
-	//this->objectBelow = objectBelow;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set active
 void Body_setActive(Body this, int active){
 	
 	// it is active
 	this->active = active;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -692,7 +682,6 @@ int Body_isActive(Body this){
 	
 	return this->active;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve position
@@ -870,7 +859,7 @@ static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerati
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // take a hit
 void Body_takeHitFrom(Body this, Body other){
-	
+	//TODO:
 }
 
 

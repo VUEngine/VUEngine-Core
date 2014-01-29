@@ -30,6 +30,7 @@
 #include <Cuboid.h>
 #include <Polygon.h>
 #include <Math.h>
+#include <InGameEntity.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -60,6 +61,15 @@ static void Cuboid_constructor(Cuboid this, InGameEntity owner, int deep);
 
 // check if overlaps with other rect
 static int Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
+
+// determine axis of collision
+static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
+
+// test if collision with the entity give the displacement
+static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
+
+// retrieve shape
+Shape InGameEntity_getShape(InGameEntity this);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -102,21 +112,29 @@ void Cuboid_destructor(Cuboid this){
 // check if two rects overlap
 int Cuboid_overlaps(Cuboid this, Shape shape){
 
-	return Cuboid_overlapsCuboid(this, (Cuboid)shape);
+	if(__GET_CAST(Cuboid, shape)){
+		
+		return Cuboid_overlapsCuboid(this, (Cuboid)shape);
+	}
+	
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// check if overlaps with other rect
+int Cuboid_rightcuboidsOverlap(Rightcuboid* first, Rightcuboid* second){
+	
+	// test for collision
+	return !(first->x0 > second->x1 || first->x1 < second->x0 || 
+			first->y0 > second->y1 || first->y1 < second->y0 ||
+			first->z0 > second->z1 || first->z1 < second->z0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if overlaps with other rect
 int Cuboid_overlapsCuboid(Cuboid this, Cuboid other){
 	
-	// must positione the rects in the owner's positions
-	Rightcuboid otherRightcuboid = other->positionedRightcuboid;
-	Rightcuboid myRightcuboid = this->positionedRightcuboid;
-	
-	// test for collision
-	return !(myRightcuboid.x0 > otherRightcuboid.x1 || myRightcuboid.x1 < otherRightcuboid.x0 || 
-			myRightcuboid.y0 > otherRightcuboid.y1 || myRightcuboid.y1 < otherRightcuboid.y0 ||
-			myRightcuboid.z0 > otherRightcuboid.z1 || myRightcuboid.z1 < otherRightcuboid.z0);
+	return Cuboid_rightcuboidsOverlap(&this->positionedRightcuboid, &other->positionedRightcuboid);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,4 +249,173 @@ void Cuboid_print(Cuboid this, int x, int y){
 	Printing_int(FIX19_13TOI(rightCuboid.z0), x + 2, y);
 	Printing_text("-" , x + 5, y);
 	Printing_int(FIX19_13TOI(rightCuboid.z1), x + 7, y++);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// determine axis of collision
+int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement){
+	
+	Shape shape = InGameEntity_getShape(collidingEntity);
+	
+	if(__GET_CAST(Cuboid, shape)){
+		
+		return Cuboid_getAxisOfCollisionWithCuboid(this, (Cuboid)shape, InGameEntity_getGap(collidingEntity), displacement);
+	}
+	
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// determine axis of collision
+static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement){
+	
+	// setup a cuboid representing the previous position
+	Rightcuboid positionedRightCuboid = this->rightCuboid;
+	
+	// get colliding entity's rightcuboid
+	Rightcuboid otherRightcuboid = cuboid->positionedRightcuboid;
+
+	VBVec3D previousPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, InGameEntity, getPreviousPosition, (InGameEntity)this->owner);
+	positionedRightCuboid.x0 += previousPosition.x + ITOFIX19_13(gap.left);
+	positionedRightCuboid.x1 += previousPosition.x - ITOFIX19_13(gap.right);
+	positionedRightCuboid.y0 += previousPosition.y + ITOFIX19_13(gap.up);
+	positionedRightCuboid.y1 += previousPosition.y - ITOFIX19_13(gap.down);
+	positionedRightCuboid.z0 += previousPosition.z;
+	positionedRightCuboid.z1 += previousPosition.z;
+
+	int displacementFactor = 0;
+	int numberOfAxis = 0;
+	int axisOfCollision = 0;
+
+#ifdef __DEBUG		
+		int counter = 0;
+#endif
+
+	do{
+#ifdef __DEBUG		
+		ASSERT(counter++ < 10, "Cuboid: cannot resolve collision");
+#endif
+		numberOfAxis = 0;
+		axisOfCollision = 0;
+
+		positionedRightCuboid.x0 += displacement.x;
+		positionedRightCuboid.x1 += displacement.x;
+
+		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			
+			axisOfCollision |= __XAXIS;
+			numberOfAxis++;
+		}
+		
+		positionedRightCuboid.x0 -= displacement.x;
+		positionedRightCuboid.x1 -= displacement.x;
+
+		positionedRightCuboid.y0 += displacement.y;
+		positionedRightCuboid.y1 += displacement.y;
+
+		// test for collision
+		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			
+			axisOfCollision |= __YAXIS;
+			numberOfAxis++;
+		}
+		
+		positionedRightCuboid.y0 -= displacement.y;
+		positionedRightCuboid.y1 -= displacement.y;
+
+		positionedRightCuboid.z0 += displacement.z;
+		positionedRightCuboid.z1 += displacement.z;
+
+		// test for collision
+		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			
+			axisOfCollision |= __ZAXIS;
+			numberOfAxis++;
+		}
+		
+		positionedRightCuboid.z0 -= displacement.z;
+		positionedRightCuboid.z1 -= displacement.z;
+		
+		if(1 < numberOfAxis) {
+			
+			displacementFactor += ITOFIX19_13(1);
+
+			positionedRightCuboid.x0 -= FIX19_13_MULT(displacement.x, displacementFactor);
+			positionedRightCuboid.x1 -= FIX19_13_MULT(displacement.x, displacementFactor);
+			positionedRightCuboid.y0 -= FIX19_13_MULT(displacement.y, displacementFactor);
+			positionedRightCuboid.y1 -= FIX19_13_MULT(displacement.y, displacementFactor);
+			positionedRightCuboid.z0 -= FIX19_13_MULT(displacement.z, displacementFactor);
+			positionedRightCuboid.z1 -= FIX19_13_MULT(displacement.z, displacementFactor);
+
+		}
+
+	}while(1 < numberOfAxis && counter < 10);
+	
+	return axisOfCollision;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// test if collision with the entity give the displacement
+int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement){
+	
+	Shape shape = InGameEntity_getShape(collidingEntity);
+	
+	if(__GET_CAST(Cuboid, shape)){
+		
+		return Cuboid_testIfCollisionWithCuboid(this, (Cuboid)shape, InGameEntity_getGap(collidingEntity), displacement);
+	}
+	
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// test if collision with the entity give the displacement
+static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement){
+
+	// setup a cuboid representing the previous position
+	Rightcuboid positionedRightCuboid = this->positionedRightcuboid;
+
+	// get colliding entity's rightcuboid
+	Rightcuboid otherRightcuboid = cuboid->positionedRightcuboid;
+
+	int axisOfPossibleCollision = 0;
+	
+	if(displacement.x){
+		
+		positionedRightCuboid.x0 += displacement.x;
+		positionedRightCuboid.x1 += displacement.x;
+
+		// test for collision
+		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			
+			axisOfPossibleCollision |= __XAXIS;
+		}
+	}
+	
+	if(displacement.y){
+		
+		positionedRightCuboid.y0 += displacement.y;
+		positionedRightCuboid.y1 += displacement.y;
+
+		// test for collision
+		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			
+			axisOfPossibleCollision |= __YAXIS;
+		}
+	}
+
+	if(displacement.z){
+		
+		positionedRightCuboid.z0 += displacement.z;
+		positionedRightCuboid.z1 += displacement.z;
+
+		// test for collision
+		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			
+			axisOfPossibleCollision |= __ZAXIS;
+		}
+	}
+	
+	return axisOfPossibleCollision;
 }

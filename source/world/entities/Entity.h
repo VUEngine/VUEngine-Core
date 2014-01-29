@@ -177,9 +177,6 @@ VBVec3D Entity_getLocalPosition(Entity this);
 //retrieve class's map's paralax
 int Entity_getMapParallax(Entity this);
 
-// retrieve Entity's friction
-float Entity_getFrictionFactor(Entity this);
-
 // set graphical gap
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
 

@@ -52,7 +52,10 @@
 		__VIRTUAL_SET(ClassName, Cuboid, draw);					\
 		__VIRTUAL_SET(ClassName, Cuboid, overlaps);				\
 		__VIRTUAL_SET(ClassName, Cuboid, setup);				\
-		__VIRTUAL_SET(ClassName, Cuboid, positione);
+		__VIRTUAL_SET(ClassName, Cuboid, positione);			\
+		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);	\
+		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);		\
+		
 
 
 typedef struct Rightcuboid{
@@ -118,5 +121,11 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
 
 // draw rect
 void Cuboid_draw(Cuboid this);
+
+// determine axis of collision
+int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement);
+
+// test if collision with the entity give the displacement
+int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement);
 
 #endif /*CUBOID_H_*/

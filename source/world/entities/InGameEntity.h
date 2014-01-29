@@ -49,6 +49,7 @@
 		__VIRTUAL_DEC(isMoving);						\
 		__VIRTUAL_DEC(getElasticity);					\
 		__VIRTUAL_DEC(getFriction);						\
+		__VIRTUAL_DEC(getPreviousPosition);				\
 	
 	
 
@@ -61,6 +62,7 @@
 		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);			\
+		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);	\
 		
 
 // A InGameEntity which represent a generic object inside a Stage
@@ -178,5 +180,9 @@ fix19_13 InGameEntity_getElasticity(InGameEntity this);
 
 // get friction
 fix19_13 InGameEntity_getFriction(InGameEntity this);
+
+// retrieve previous position
+VBVec3D InGameEntity_getPreviousPosition(InGameEntity this);
+
 
 #endif /*INGAMEENTITY_H_*/
