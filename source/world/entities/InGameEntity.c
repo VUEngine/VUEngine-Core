@@ -246,10 +246,10 @@ void InGameEntity_render(InGameEntity this, Transformation* environmentTransform
 #ifdef __DEBUG
 	// draw shape
 //	if(this->shape && __VIRTUAL_CALL(int, Entity, updateSpritePosition, (Entity)this)){
-		if(this->shape ){
+	if(this->shape){
 			
 		
-			//__VIRTUAL_CALL(void, Shape, draw, this->shape);
+//			__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}	
 #endif
 }

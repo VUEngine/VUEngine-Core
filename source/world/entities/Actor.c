@@ -76,6 +76,13 @@ Shape InGameEntity_getShape(InGameEntity this);
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 
+enum AxisOfCollision{
+	
+	kXAxis = 0,
+	kYAxis,
+	kZAxis
+};
+
 		
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -114,11 +121,9 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	//state ALIVE for initial update
 	this->inGameState = kLoaded;
 	
-	this->collidingEntities = NULL;
-	
-	this->lastCollidingEntityX = NULL;
-	this->lastCollidingEntityY = NULL;
-	this->lastCollidingEntityZ = NULL;
+	this->lastCollidingEntity[kXAxis] = NULL;
+	this->lastCollidingEntity[kYAxis] = NULL;
+	this->lastCollidingEntity[kZAxis] = NULL;
 	
 	this->body = NULL;
 	
@@ -198,21 +203,6 @@ void Actor_render(Actor this, Transformation* environmentTransform){
 		InGameEntity_render((InGameEntity)this, &environmentAgnosticTransform);
 
 		this->previousGlobalPosition = this->transform.globalPosition;
-		
-		int movementAxis = Body_isMoving(this->body);
-		
-		if(__XAXIS & movementAxis) {
-
-			this->lastCollidingEntityX = NULL;
-		}
-		if(__YAXIS & movementAxis) {
-
-			this->lastCollidingEntityY = NULL;
-		}
-		if(__ZAXIS & movementAxis) {
-
-			this->lastCollidingEntityZ = NULL;
-		}
 	}
 	else {
 		
@@ -249,6 +239,24 @@ void Actor_update(Actor this){
 
 			// first animate the frame
 			AnimatedSprite_update((AnimatedSprite)sprite);
+		}
+	}
+	
+	if(this->body) {
+		
+		int movementAxis = Body_isMoving(this->body);
+		
+		if(__XAXIS & movementAxis) {
+	
+			this->lastCollidingEntity[kXAxis] = NULL;
+		}
+		if(__YAXIS & movementAxis) {
+	
+			this->lastCollidingEntity[kYAxis] = NULL;
+		}
+		if(__ZAXIS & movementAxis) {
+	
+			this->lastCollidingEntity[kZAxis] = NULL;
 		}
 	}
 }
@@ -340,31 +348,36 @@ int Actor_isInsideGame(Actor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if gravity must apply to this actor
-int Actor_isSubjectToGravity(Actor this, const Acceleration* gravity) {
+int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration) {
 
 	int movingState = Body_isMoving(this->body);
 
-	int axisSensibleToGravity = ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
+	int axisFreeForMovement = ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 
 	int axisOfCollision = 0;
-
-	if(axisSensibleToGravity && this->collidingEntities) {
+	
+	if(axisFreeForMovement) {
 
 		ASSERT(this->body, "Actor::resolveCollision: NULL body");
 	
-		VirtualNode node = VirtualList_begin(this->collidingEntities);
-		VBVec3D displacement = {gravity->x, gravity->y, gravity->z}; 
-
-		ASSERT(node, "Actor::resolveCollision: NULL node");
-		
+		int i = 0; 
 		// TODO: must still solve when there will be a collision with an object not yet in the list
-		for(; node; node = VirtualNode_getNext(node)) {
-	
-			axisOfCollision = __VIRTUAL_CALL(int, Shape, testIfCollision, this->shape, __ARGUMENTS(VirtualNode_getData(node), displacement));
+		for(; i <= kZAxis; i++) {
+
+			if (this->lastCollidingEntity[i]) {
+
+				VBVec3D displacement = {
+					kXAxis == i? acceleration->x: 0, 
+					kYAxis == i? acceleration->y: 0, 
+					kZAxis == i? acceleration->z: 0 
+				}; 
+				
+				axisOfCollision |= __VIRTUAL_CALL(int, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
+			}	
 		}
 	}
 	
-	return axisSensibleToGravity & ~axisOfCollision;
+	return axisFreeForMovement & ~axisOfCollision;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -379,13 +392,6 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 	// get last physical displacement
 	VBVec3D displacement = Body_getLastDisplacement(this->body); 
 
-	if(this->collidingEntities) {
-		
-		__DELETE(this->collidingEntities);
-		this->collidingEntities = NULL;
-	}
-	
-	this->collidingEntities = collidingEntities;
 	VirtualNode node = VirtualList_begin(collidingEntities);
 
 	InGameEntity collidingEntity = NULL;
@@ -407,17 +413,17 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 		if(__XAXIS & axisOfCollision) {
 
 			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
-			this->lastCollidingEntityX = collidingEntity;
+			this->lastCollidingEntity[kXAxis] = collidingEntity;
 		}
 		if(__YAXIS & axisOfCollision) {
 
 			Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
-			this->lastCollidingEntityY = collidingEntity;
+			this->lastCollidingEntity[kYAxis] = collidingEntity;
 		}
 		if(__ZAXIS & axisOfCollision) {
 
 			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
-			this->lastCollidingEntityZ = collidingEntity;
+			this->lastCollidingEntity[kZAxis] = collidingEntity;
 		}
 
 		// bounce over axis
@@ -460,15 +466,15 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 							int axis = *(int*)Telegram_getExtraInfo(telegram);
 							if(__XAXIS & axis) {
 	
-								this->lastCollidingEntityX = NULL;
+								this->lastCollidingEntity[kXAxis] = NULL;
 							}
 							if(__YAXIS & axis) {
 	
-								this->lastCollidingEntityY = NULL;
+								this->lastCollidingEntity[kYAxis] = NULL;
 							}
 							if(__ZAXIS & axis) {
 	
-								this->lastCollidingEntityZ = NULL;
+								this->lastCollidingEntity[kZAxis] = NULL;
 							}
 						}
 						return true;
@@ -527,14 +533,14 @@ Force Actor_getSourroundingFriction(Actor this){
 	
 	Force friction = {0, 0, 0};
 	
-	friction.x = this->lastCollidingEntityY? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityY): 0;
-	friction.x += this->lastCollidingEntityZ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityZ): 0;
+	friction.x = this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
+	friction.x += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
 
-	friction.y = this->lastCollidingEntityX? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityX): 0;
-	friction.y += this->lastCollidingEntityZ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityZ): 0;
+	friction.y = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
+	friction.y += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
 
-	friction.z = this->lastCollidingEntityX? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityX): 0;
-	friction.z += this->lastCollidingEntityY? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntityY): 0;
+	friction.z = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
+	friction.z += this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
 
 	return friction;
 }

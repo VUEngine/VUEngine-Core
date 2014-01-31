@@ -462,7 +462,7 @@ void Game_render(Game this) {
 		FrameRate_increaseRenderFPS(this->frameRate);
 
 		// render the level
-		//Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
+//		Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
 
 		// render sprites as fast as possible
 		SpriteManager_render(SpriteManager_getInstance());
@@ -483,7 +483,6 @@ void Game_update(Game this){
 	while(true){
 
 		u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
-//		u32 currentTime = Clock_getTime(_clock);
 			
 		FrameRate_increaseRawFPS(this->frameRate);
 		

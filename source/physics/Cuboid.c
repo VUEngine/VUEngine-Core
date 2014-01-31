@@ -218,11 +218,16 @@ void Cuboid_draw(Cuboid this){
 	fix19_13 z = Container_getGlobalPosition((Container)this->owner).z;
 	
 	// add vertices
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, z);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, z);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, z);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, z);
-	
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, this->positionedRightcuboid.z0);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, this->positionedRightcuboid.z0);
+
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, this->positionedRightcuboid.z1);
+	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, this->positionedRightcuboid.z1);
+
 	// draw the polygon
 	Polygon_draw(polygon, false);
 	
@@ -299,43 +304,52 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap g
 		numberOfAxis = 0;
 		axisOfCollision = 0;
 
-		positionedRightCuboid.x0 += displacement.x;
-		positionedRightCuboid.x1 += displacement.x;
+		if(displacement.x) {
 
-		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			positionedRightCuboid.x0 += displacement.x;
+			positionedRightCuboid.x1 += displacement.x;
+	
+			if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+				
+				axisOfCollision |= __XAXIS;
+				numberOfAxis++;
+			}
 			
-			axisOfCollision |= __XAXIS;
-			numberOfAxis++;
+			positionedRightCuboid.x0 -= displacement.x;
+			positionedRightCuboid.x1 -= displacement.x;
+		}
+
+		if(displacement.y) {
+
+			positionedRightCuboid.y0 += displacement.y;
+			positionedRightCuboid.y1 += displacement.y;
+		
+			// test for collision
+			if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+				
+				axisOfCollision |= __YAXIS;
+				numberOfAxis++;
+			}
+			
+			positionedRightCuboid.y0 -= displacement.y;
+			positionedRightCuboid.y1 -= displacement.y;
 		}
 		
-		positionedRightCuboid.x0 -= displacement.x;
-		positionedRightCuboid.x1 -= displacement.x;
+		if(displacement.z) {
 
-		positionedRightCuboid.y0 += displacement.y;
-		positionedRightCuboid.y1 += displacement.y;
-
-		// test for collision
-		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+			positionedRightCuboid.z0 += displacement.z;
+			positionedRightCuboid.z1 += displacement.z;
+	
+			// test for collision
+			if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
+				
+				axisOfCollision |= __ZAXIS;
+				numberOfAxis++;
+			}
 			
-			axisOfCollision |= __YAXIS;
-			numberOfAxis++;
+			positionedRightCuboid.z0 -= displacement.z;
+			positionedRightCuboid.z1 -= displacement.z;
 		}
-		
-		positionedRightCuboid.y0 -= displacement.y;
-		positionedRightCuboid.y1 -= displacement.y;
-
-		positionedRightCuboid.z0 += displacement.z;
-		positionedRightCuboid.z1 += displacement.z;
-
-		// test for collision
-		if(Cuboid_rightcuboidsOverlap(&positionedRightCuboid, &otherRightcuboid)){
-			
-			axisOfCollision |= __ZAXIS;
-			numberOfAxis++;
-		}
-		
-		positionedRightCuboid.z0 -= displacement.z;
-		positionedRightCuboid.z1 -= displacement.z;
 		
 		if(1 < numberOfAxis) {
 			
@@ -351,7 +365,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap g
 		}
 
 	}while(1 < numberOfAxis && counter < 10);
-	
+
 	return axisOfCollision;
 }
 

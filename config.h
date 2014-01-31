@@ -92,6 +92,8 @@
 //target frames per second
 #define __LOGIC_FPS 	60
 
+#define __MILISECODS_IN_SECOND	1000
+
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
 #define __FPS_ANIM_FACTOR 	(__RENDER_FPS / 60.0f)

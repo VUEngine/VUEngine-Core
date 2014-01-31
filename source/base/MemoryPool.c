@@ -89,10 +89,10 @@ enum MemoryPoolSizes{
 #define __POOL_128B_SIZE_FINAL 	(__BLOCK_128B * 8)
 #define __POOL_96B_SIZE_FINAL 	(__BLOCK_96B * 64)
 #define __POOL_64B_SIZE_FINAL 	(__BLOCK_64B * 128)
-#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 64)
+#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 128)
 #define __POOL_32B_SIZE_FINAL 	(__BLOCK_32B * 128)
 #define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 128)
-#define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 0)
+#define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 128)
 
 #define MemoryPool_ATTRIBUTES							\
 														\

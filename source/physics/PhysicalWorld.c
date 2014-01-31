@@ -261,7 +261,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this){
 		Body body = (Body)VirtualNode_getData(node);
 
 		// check if must apply gravity
-		int gravitySensibleAxis = Actor_isSubjectToGravity((Actor)Body_getOwner(body), &this->gravity);
+		int gravitySensibleAxis = Actor_canMoveOverAxis((Actor)Body_getOwner(body), &this->gravity);
 
 		Acceleration gravity = {
 			gravitySensibleAxis & __XAXIS? this->gravity.x: 0,
@@ -308,9 +308,9 @@ static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 void PhysicalWorld_update(PhysicalWorld this){
 	
 	static int checkForGravity = false;
-	
+
 	// get the elapsed time
-	this->elapsedTime = FTOFIX19_13((Clock_getTime(_inGameClock) - this->time) / 100.0f);
+	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(_inGameClock) - this->time), ITOFIX19_13(__MILISECODS_IN_SECOND / 10));
 
 	if(checkForGravity) {
 	
@@ -321,7 +321,7 @@ void PhysicalWorld_update(PhysicalWorld this){
 
 		checkForGravity = true;
 	}
-	
+	  
 	// check if must select bodies to process
 	if(this->selectBodiesToCheck){
 		

@@ -116,8 +116,6 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 	
 	// calculate the pixel to be draw
 	*pointer |= (pallet << ((y & 3) << 1));
-		
-	//VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] & ~XPEN;	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

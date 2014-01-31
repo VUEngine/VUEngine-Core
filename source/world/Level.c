@@ -155,7 +155,7 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// draw the level
+// render the level
 void Level_render(Level this){
 	
 	// static to avoid call to _memcpy

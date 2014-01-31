@@ -127,15 +127,8 @@ typedef const ActorDefinition ActorROMDef;
 	/* previous position for collision handling */		\
 	VBVec3D previousGlobalPosition;						\
 														\
-	/* list of collinding entities */					\
-	VirtualList collidingEntities;						\
-														\
 	/* last collinding entity */						\
-	InGameEntity lastCollidingEntityX;					\
-	/* last collinding entity */						\
-	InGameEntity lastCollidingEntityY;					\
-	/* last collinding entity */						\
-	InGameEntity lastCollidingEntityZ;					\
+	InGameEntity lastCollidingEntity[3];				\
 														\
 	/* gameworld's actor's state (ALIVE or DEAD)*/		\
 	int inGameState;									\
@@ -202,7 +195,7 @@ void Actor_moveOpositeDirecion(Actor this, int axis);
 int Actor_changedDirection(Actor this, int axis);
 
 // check if gravity must apply to this actor
-int Actor_isSubjectToGravity(Actor this, const Acceleration* gravity);
+int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration);
 
 // true if inside the screen range 
 int Actor_isInsideGame(Actor this);

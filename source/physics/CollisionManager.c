@@ -362,8 +362,9 @@ void CollisionManager_update(CollisionManager this){
 				// inform the owner about the collision
 				if(!MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)owner, kCollision, (void*)collidingObjects)){
 
-					__DELETE(collidingObjects);
 				}
+				
+				__DELETE(collidingObjects);
 			}
 			
 			collidingObjects = NULL;

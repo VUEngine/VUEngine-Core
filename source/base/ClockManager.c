@@ -144,7 +144,7 @@ void ClockManager_unregister(ClockManager this, Clock clock){
 // update clocks
 void ClockManager_update(ClockManager this, u32 ticksElapsed){
 
-	u32 previousSecond = this->ticks / 1000;
+	u32 previousSecond = this->ticks / __MILISECODS_IN_SECOND;
 
 	if(this->clocks) {
 		
@@ -162,11 +162,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	this->ticks += ticksElapsed;
 	
     //if second has changed, set frame rate 
-    if(previousSecond != (this->ticks / 1000)){
+    if(previousSecond != (this->ticks / __MILISECODS_IN_SECOND)){
     	
 #ifdef __DEBUG_0
     		
-//	    	FrameRate_print(FrameRate_getInstance(), 0, 0);
+	    	FrameRate_print(FrameRate_getInstance(), 0, 0);
 	    	// get stack pointer
     		//Printing_hex(HW_REGS[SCR], 38, 4);
     		//Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);

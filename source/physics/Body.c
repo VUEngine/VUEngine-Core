@@ -509,41 +509,8 @@ VBVec3D Body_getLastDisplacement(Body this) {
 	
 	VBVec3D displacement = {0, 0, 0}; 
 	
-	u16 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
-	/*
- 	if(__ACCELERATED_MOVEMENT == this->movementType.x){
-
-		displacement.x =
-			FIX19_13_MULT(this->velocity.x, elapsedTime) 
-			+ FIX19_13_DIV(FIX19_13_MULT(this->acceleration.x, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
- 	}
- 	else if(__UNIFORM_MOVEMENT == this->movementType.y){
-
-		displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
- 	}
- 	
- 	if(__ACCELERATED_MOVEMENT == this->movementType.y){
- 		
- 		displacement.y =
-			FIX19_13_MULT(this->velocity.y, elapsedTime) 
-			+ FIX19_13_DIV(FIX19_13_MULT(this->acceleration.y, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
- 	}
- 	else if(__UNIFORM_MOVEMENT == this->movementType.y){
-
-		displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);
- 	}
- 	
- 	if(__ACCELERATED_MOVEMENT == this->movementType.z){
-
- 		displacement.z =
-			FIX19_13_MULT(this->velocity.z, elapsedTime) 
-			+ FIX19_13_DIV(FIX19_13_MULT(this->acceleration.z, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
- 	}
- 	else if(__UNIFORM_MOVEMENT == this->movementType.z){
-
-		displacement.z = FIX19_13_MULT(this->velocity.z, elapsedTime);
- 	}*/
- 	
+	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
+	
 	displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
 	displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);
 	displacement.z = FIX19_13_MULT(this->velocity.z, elapsedTime);
