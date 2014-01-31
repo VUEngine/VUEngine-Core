@@ -104,6 +104,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 	// clear position
 	this->drawSpec.position.x = 0;
 	this->drawSpec.position.y = 0;
+	this->drawSpec.position.z = 0;
 	this->drawSpec.position.parallax = 0;
 	
 	this->drawSpec.scale.x = ITOFIX7_9(1);
@@ -240,6 +241,7 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 // calculate the parallax
 void Sprite_calculateParallax(Sprite this, fix19_13 z){
 	
+	this->drawSpec.position.z = z;
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 

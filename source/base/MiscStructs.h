@@ -228,6 +228,10 @@ typedef struct VBVec2D{
 	
 	int x;
 	int y;
+	
+	// since parallax may be the same given different z positions
+	// it's needed to have this value to being able to ordern WORLD layers
+	int z;
 	int parallax;
 	
 }VBVec2D;

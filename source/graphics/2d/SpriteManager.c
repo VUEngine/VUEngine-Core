@@ -122,6 +122,45 @@ void SpriteManager_reset(SpriteManager this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if any entity must be assigned another world layer
+void SpriteManager_sortAllLayers(SpriteManager this){
+
+	int i = 0;
+
+	DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[0]);
+
+	CACHE_ENABLE;
+	for(;i < __OBJECTLISTTAM - 1 &&  this->sprites[i + 1]; i++){
+
+		int j = i + 1;
+		for(;i < __OBJECTLISTTAM &&  this->sprites[j]; j++){
+
+			DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[j]);
+
+			// check if z positions are swaped
+			if(nextDrawSpec.position.z > drawSpec.position.z){
+				
+				// get each entity's layer
+				int worldLayer1 = Sprite_getWorldLayer(this->sprites[i]);
+				int worldLayer2 = Sprite_getWorldLayer(this->sprites[j]);
+				
+				// swap array entries
+				Sprite auxSprite = this->sprites[i];			
+				this->sprites[i] = this->sprites[j];			
+				this->sprites[j] = auxSprite;
+	
+				// swap layers
+				Sprite_setWorldLayer(this->sprites[i], worldLayer1);
+				Sprite_setWorldLayer(this->sprites[j], worldLayer2);
+			}
+			
+			drawSpec = nextDrawSpec;
+		}
+	}
+	CACHE_DISABLE;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// check if any entity must be assigned another world layer
 void SpriteManager_checkLayers(SpriteManager this){
 
 	int i = 0;
@@ -134,7 +173,7 @@ void SpriteManager_checkLayers(SpriteManager this){
 		DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[i + 1]);
 
 		// check if z positions are swaped
-		if(nextDrawSpec.position.parallax > drawSpec.position.parallax){
+		if(nextDrawSpec.position.z > drawSpec.position.z){
 			
 			// get each entity's layer
 			int worldLayer1 = Sprite_getWorldLayer(this->sprites[i]);
@@ -155,7 +194,6 @@ void SpriteManager_checkLayers(SpriteManager this){
 		drawSpec = nextDrawSpec;
 	}
 	CACHE_DISABLE;
-	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

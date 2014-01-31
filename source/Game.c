@@ -444,6 +444,8 @@ void Game_handleInput(Game this, int currentKey){
 
 		// inform the game about the key pressed		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
+		
+		previousKeyPressed = pressedKey;
 	}
 }
 
@@ -458,11 +460,13 @@ void Game_render(Game this) {
 		// save current time
 		this->lastTime[kRender] = currentTime;
 	
-		// increase the frame rate
-		FrameRate_increaseRenderFPS(this->frameRate);
-
 		// render sprites as fast as possible
 		SpriteManager_render(SpriteManager_getInstance());
+
+#ifdef __DEBUG
+		// increase the frame rate
+		FrameRate_increaseRenderFPS(this->frameRate);
+#endif
 	}
 }
 
@@ -481,8 +485,6 @@ void Game_update(Game this){
 
 		u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
 			
-		FrameRate_increaseRawFPS(this->frameRate);
-		
 		if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
 
 		    //enable hardware pad read
@@ -499,11 +501,10 @@ void Game_update(Game this){
 		    // update the game's logic
 			StateMachine_update(this->stateMachine);
 
-			// check sprite layers
-			SpriteManager_checkLayers(this->spriteManager);
-			
+#ifdef __DEBUG
 			// increase the frame rate
 			FrameRate_increaseLogicFPS(this->frameRate);
+#endif
 		}
 		
 		if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
@@ -519,9 +520,18 @@ void Game_update(Game this){
 			// update entities' position
 			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
 
+			// check sprite layers
+			SpriteManager_checkLayers(this->spriteManager);
+
+#ifdef __DEBUG
 			// increase the frame rate
 			FrameRate_increasePhysicsFPS(this->frameRate);
+#endif
 		}
+		
+#ifdef __DEBUG
+		FrameRate_increaseRawFPS(this->frameRate);
+#endif		
 	}
 }
 

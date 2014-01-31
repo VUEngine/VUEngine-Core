@@ -214,11 +214,11 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition){
 	//load world entities
 	Stage_load(this->stage, stageDefinition);
 
-	// check sprite layers
-	SpriteManager_checkLayers(SpriteManager_getInstance());
-
 	// transform everything
 	Level_transform(this);
+
+	// sort all sprites' layers
+	SpriteManager_sortAllLayers(SpriteManager_getInstance());
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());

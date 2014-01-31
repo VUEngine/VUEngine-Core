@@ -188,6 +188,9 @@ void Entity_transform(Entity this, Transformation* environmentTransform){
 			
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
+			// calculate sprite's parallax
+			Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+
 			// update scale if needed
 			if(updateSpriteScale){
 		
