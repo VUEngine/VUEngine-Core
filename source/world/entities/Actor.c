@@ -171,7 +171,7 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void Actor_render(Actor this, Transformation* environmentTransform){
+void Actor_transform(Actor this, Transformation* environmentTransform){
 
 	// set sprite direction
 	if(this->direction.x != this->previousDirection.x){
@@ -200,14 +200,14 @@ void Actor_render(Actor this, Transformation* environmentTransform){
 		Container_setLocalPosition((Container) this, Body_getPosition(this->body));
 
 		// call base
-		InGameEntity_render((InGameEntity)this, &environmentAgnosticTransform);
+		InGameEntity_transform((InGameEntity)this, &environmentAgnosticTransform);
 
 		this->previousGlobalPosition = this->transform.globalPosition;
 	}
 	else {
 		
 		// call base
-		InGameEntity_render((InGameEntity)this, environmentTransform);
+		InGameEntity_transform((InGameEntity)this, environmentTransform);
 	}
 }
 

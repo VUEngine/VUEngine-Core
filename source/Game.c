@@ -461,9 +461,6 @@ void Game_render(Game this) {
 		// increase the frame rate
 		FrameRate_increaseRenderFPS(this->frameRate);
 
-		// render the level
-//		Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
-
 		// render sprites as fast as possible
 		SpriteManager_render(SpriteManager_getInstance());
 	}
@@ -519,8 +516,8 @@ void Game_update(Game this){
 			// simulate collisions
 			CollisionManager_update(this->collisionManager);
 
-			// render the level
-			Level_render((Level)StateMachine_getCurrentState(this->stateMachine));
+			// update entities' position
+			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
 
 			// increase the frame rate
 			FrameRate_increasePhysicsFPS(this->frameRate);

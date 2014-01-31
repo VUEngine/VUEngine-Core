@@ -48,7 +48,7 @@
 // declare the virtual methods
 #define Level_METHODS								\
 		State_METHODS								\
-		__VIRTUAL_DEC(render);						\
+		__VIRTUAL_DEC(transform);					\
 
 
 // declare the virtual methods which are redefined
@@ -60,7 +60,7 @@
 		__VIRTUAL_SET(ClassName, Level, pause);					\
 		__VIRTUAL_SET(ClassName, Level, resume);				\
 		__VIRTUAL_SET(ClassName, Level, handleMessage);			\
-		__VIRTUAL_SET(ClassName, Level, render);				\
+		__VIRTUAL_SET(ClassName, Level, transform);				\
 	
 
 #define Level_ATTRIBUTES					\
@@ -111,8 +111,8 @@ void Level_resume(Level this, void* owner);
 // state's on message
 int Level_handleMessage(Level this, void* owner, Telegram telegram);
 
-// draw the level
-void Level_render(Level this);
+// update level entities' positions
+void Level_transform(Level this);
 
 // process user input
 void Level_onKeyPressed(Level this, int pressedKey);

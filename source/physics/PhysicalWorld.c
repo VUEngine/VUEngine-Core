@@ -412,7 +412,6 @@ void PhysicalWorld_bodyAwaked(PhysicalWorld this){
 	this->selectBodiesToCheck = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity) {
@@ -435,4 +434,3 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this){
 	
 	return this->elapsedTime;
 }
-

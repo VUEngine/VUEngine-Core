@@ -62,7 +62,7 @@
 
 #define Entity_SET_VTABLE(ClassName)								\
 		Container_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Entity, render);					\
+		__VIRTUAL_SET(ClassName, Entity, transform);					\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);			\
 		__VIRTUAL_SET(ClassName, Entity, getScale);					\
 		__VIRTUAL_SET(ClassName, Entity, getInGameState);			\
@@ -162,8 +162,8 @@ void Entity_resetMemoryState(Entity this, int worldLayer);
 // add sprite
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
 
-//render class
-void Entity_render(Entity this, Transformation* environmentTransform);
+//transform class
+void Entity_transform(Entity this, Transformation* environmentTransform);
 
 //retrieve class's scale
 Scale Entity_getScale(Entity this);

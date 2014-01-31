@@ -108,7 +108,7 @@ void Container_constructor(Container this, int ID){
 	this->transform.rotation.y = 0;
 	this->transform.rotation.z = 0;
 	
-	// force global position calculation on the next render cycle
+	// force global position calculation on the next transform cycle
 	this->invalidateGlobalPosition = true;
 	
 	this->parent = NULL;
@@ -280,8 +280,8 @@ void Container_concatenateTransform(Transformation *environmentTransform, Transf
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//render class
-void Container_render(Container this, Transformation* environmentTransform){
+//transform class
+void Container_transform(Container this, Transformation* environmentTransform){
 
 	Transformation environmentTransformCopy = {
 		// local position
@@ -327,12 +327,12 @@ void Container_render(Container this, Transformation* environmentTransform){
 			
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition? child->invalidateGlobalPosition: this->invalidateGlobalPosition;
 			
-			// render each entity
-			__VIRTUAL_CALL(void, Container, render, child, __ARGUMENTS(&environmentTransformCopy));		
+			// transform each entity
+			__VIRTUAL_CALL(void, Container, transform, child, __ARGUMENTS(&environmentTransformCopy));		
 		}	
 	}
 	
-	// don't update position on next render cycle
+	// don't update position on next transform cycle
 	this->invalidateGlobalPosition = false;
 }
 
@@ -356,7 +356,7 @@ void Container_setLocalPosition(Container this, VBVec3D position){
 
 	this->transform.localPosition = position;
 	
-	// force global position calculation on the next render cycle
+	// force global position calculation on the next transform cycle
 	this->invalidateGlobalPosition = true;
 }
 

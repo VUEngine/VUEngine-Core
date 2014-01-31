@@ -159,7 +159,7 @@ void InGameEntity_setGap(InGameEntity this){
 	// retrieve the sprite's scale
 	Scale scale = Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 	
-	// retrieve rendering mode
+	// retrieve transforming mode
 	int bgmapMode = Sprite_getMode((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 	
 	// load original gap
@@ -237,11 +237,11 @@ void InGameEntity_setShapeState(InGameEntity this, int state){
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//render class
-void InGameEntity_render(InGameEntity this, Transformation* environmentTransform){
+//transform class
+void InGameEntity_transform(InGameEntity this, Transformation* environmentTransform){
 	
 	// call base
-	Entity_render((Entity)this, environmentTransform);
+	Entity_transform((Entity)this, environmentTransform);
 
 #ifdef __DEBUG
 	// draw shape

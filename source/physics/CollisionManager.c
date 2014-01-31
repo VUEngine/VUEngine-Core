@@ -302,7 +302,7 @@ void CollisionManager_update(CollisionManager this){
 		// current to check shape's rectangle 
 		__VIRTUAL_CALL(void, Shape, positione, shapes[i]);
 	}
-	
+
 	// check the shapes
 	for(i = 0; shapes[i] && i < __MAX_SHAPES_PER_LEVEL; i++){
 
@@ -368,8 +368,6 @@ void CollisionManager_update(CollisionManager this){
 			}
 			
 			collidingObjects = NULL;
-
-			VirtualList_clear(collidingObjects);
 		}
 	}
 	

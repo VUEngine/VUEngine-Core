@@ -57,7 +57,7 @@
 		Entity_SET_VTABLE(ClassName)									\
 		__VIRTUAL_SET(ClassName, InGameEntity, setLocalPosition);		\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, render);					\
+		__VIRTUAL_SET(ClassName, InGameEntity, transform);					\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
@@ -172,8 +172,8 @@ Direction InGameEntity_getDirection(InGameEntity this);
 // set shape state
 void InGameEntity_setShapeState(InGameEntity this, int state);
 
-// render
-void InGameEntity_render(InGameEntity this, Transformation* environmentTransform);
+// transform
+void InGameEntity_transform(InGameEntity this, Transformation* environmentTransform);
 
 // get elasticiy
 fix19_13 InGameEntity_getElasticity(InGameEntity this);

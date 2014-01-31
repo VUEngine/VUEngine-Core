@@ -155,8 +155,8 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// render the level
-void Level_render(Level this){
+// update level entities' positions
+void Level_transform(Level this){
 	
 	// static to avoid call to _memcpy
 	static Transformation environmentTransform = {
@@ -170,7 +170,7 @@ void Level_render(Level this){
 			{0, 0, 0}			
 	};
 	
-	__VIRTUAL_CALL(void, Container, render, (Container)this->stage, __ARGUMENTS(&environmentTransform));
+	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, __ARGUMENTS(&environmentTransform));
 }
 
 
@@ -217,10 +217,10 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition){
 	// check sprite layers
 	SpriteManager_checkLayers(SpriteManager_getInstance());
 
-	// render everything
-	Level_render(this);
+	// transform everything
+	Level_transform(this);
 
-	// render sprites as fast as possible
+	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
 	
 	// reset ingame clock and start it

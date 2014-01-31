@@ -170,14 +170,14 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// render class
-void Entity_render(Entity this, Transformation* environmentTransform){
+// transform class
+void Entity_transform(Entity this, Transformation* environmentTransform){
 
 	int updateSpritePosition = __VIRTUAL_CALL(int, Entity, updateSpritePosition, this);
 	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
 
-	// call base class's render method
-	Container_render((Container)this, environmentTransform);
+	// call base class's transform method
+	Container_transform((Container)this, environmentTransform);
 
 	if(this->sprites){
 

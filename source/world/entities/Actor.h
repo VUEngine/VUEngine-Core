@@ -91,7 +91,7 @@ typedef const ActorDefinition ActorROMDef;
 #define Actor_SET_VTABLE(ClassName)											\
 		InGameEntity_SET_VTABLE(ClassName)									\
 		__VIRTUAL_SET(ClassName, Actor, update);							\
-		__VIRTUAL_SET(ClassName, Actor, render);							\
+		__VIRTUAL_SET(ClassName, Actor, transform);							\
 		__VIRTUAL_SET(ClassName, Actor, handleMessage);						\
 		__VIRTUAL_SET(ClassName, Actor, moves);								\
 		__VIRTUAL_SET(ClassName, Actor, isMoving);							\
@@ -168,7 +168,7 @@ void Actor_setCollisionGap(Actor this, int upGap, int downGap, int leftGap, int 
 void Actor_write(Actor this);
 
 // graphically refresh of actors that are visible
-void Actor_render(Actor this, Transformation* environmentTransform);
+void Actor_transform(Actor this, Transformation* environmentTransform);
 
 // execute actor's logic
 void Actor_update(Actor this);

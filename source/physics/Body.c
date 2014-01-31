@@ -59,7 +59,8 @@ __CLASS_DEFINITION(Body);
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
-#define THRESHOLD FTOFIX19_13(0.5f * (60.0f / __PHYSICS_FPS))
+//#define THRESHOLD FTOFIX19_13(0.5f * (60.0f / __PHYSICS_FPS))
+#define THRESHOLD ITOFIX19_13(1)
 
 // class's constructor
 static void Body_constructor(Body this, Object owner, fix19_13 weight);
