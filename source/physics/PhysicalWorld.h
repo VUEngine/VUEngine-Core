@@ -88,6 +88,9 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 
 // calculate collisions
+void PhysicalWorld_start(PhysicalWorld this);
+
+// calculate collisions
 void PhysicalWorld_update(PhysicalWorld this);
 
 // unregister all shapes

@@ -95,7 +95,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 	// create the texture			 
 	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
 
-	ASSERT(this->texture, "Sprite: texture no allocated");
+	ASSERT(this->texture, "Sprite::constructor: texture no allocated");
 	
 	// set texture position
 	this->texturePosition.x = Texture_getXOffset(this->texture);
@@ -227,7 +227,7 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 	// normalize the position to screen coordinates
 	VBVec3D position3D = Optics_normalizePosition(position);
 
-	ASSERT(this->texture, "Sprite: null texture");
+	ASSERT(this->texture, "Sprite::setPosition: null texture");
 
 	// move to the sprite's texture's center
 	position3D.x -= ITOFIX19_13(Texture_getCols(this->texture) << 2);

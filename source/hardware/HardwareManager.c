@@ -299,6 +299,22 @@ void HardwareManager_displayOff(HardwareManager this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// disable VPU interrupts
+void HardwareManager_disableRendering(HardwareManager this){
+
+	// wait for frame before rendering
+	VPUManager_waitForFrame(VPUManager_getInstance());
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// enable VPU interrupts
+void HardwareManager_enableRendering(HardwareManager this){
+
+	// enable interrupts
+	VPUManager_displayOn(VPUManager_getInstance());
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // make sure the brigtness is ok
 void HardwareManager_upBrightness(HardwareManager this){
 	

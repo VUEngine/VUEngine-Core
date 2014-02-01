@@ -32,8 +32,6 @@
 
 #include <Entity.h>
 
-#include <Image.h>
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -76,6 +74,7 @@ __CLASS(ScrollBackground);
 
 // defines a Scrolling background 
 typedef EntityDefinition ScrollBackgroundDefinition;
+
 // defines a Scrolling background in ROM memory
 typedef const ScrollBackgroundDefinition ScrollBackgroundROMDef;
 

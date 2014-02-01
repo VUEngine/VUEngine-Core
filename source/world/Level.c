@@ -77,7 +77,7 @@ void Level_constructor(Level this){
 	__CONSTRUCT_BASE(State);
 	
 	// construct the stage
-	this->stage = __NEW(Stage);
+	this->stage = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,13 @@ void Level_constructor(Level this){
 void Level_destructor(Level this){
 	
 	// destroy the stage
-	__DELETE(this->stage);
+	if (this->stage) {
+	
+		// destroy the stage
+		__DELETE(this->stage);
+		
+		this->stage = NULL;
+	}
 	
 	// destroy the super object
 	__DESTROY_BASE(State);	
@@ -158,6 +164,8 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 // update level entities' positions
 void Level_transform(Level this){
 	
+	ASSERT(this->stage, "Level::transform: NULL stage");
+	
 	// static to avoid call to _memcpy
 	static Transformation environmentTransform = {
 			// local position
@@ -197,22 +205,26 @@ void Level_onKeyHold(Level this, int pressedKey){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load a stage
-void Level_loadStage(Level this, StageDefinition* stageDefinition){
+void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities){
 	
-	// reset the engine state
-	Game_reset(Game_getInstance());
+	ASSERT(stageDefinition, "Level::loadStage: NULL stageDefinition");
 	
 	if (this->stage) {
 	
 		// destroy the stage
 		__DELETE(this->stage);
 	}
-	
+
+	// reset the engine state
+	Game_reset(Game_getInstance());
+
 	// construct the stage
 	this->stage = __NEW(Stage);
 
+	ASSERT(this->stage, "Level::loadStage: NULL stage");
+	
 	//load world entities
-	Stage_load(this->stage, stageDefinition);
+	Stage_load(this->stage, stageDefinition, loadOnlyInRangeEntities);
 
 	// transform everything
 	Level_transform(this);

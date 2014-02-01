@@ -55,7 +55,7 @@ __CLASS_DEFINITION(Circle);
 
 
 // class's constructor
-static void Circle_constructor(Circle this, InGameEntity owner, int deep);
+static void Circle_constructor(Circle this, InGameEntity owner);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -69,14 +69,14 @@ static void Circle_constructor(Circle this, InGameEntity owner, int deep);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Circle, __PARAMETERS(InGameEntity owner, int deep))
-__CLASS_NEW_END(Circle, __ARGUMENTS(owner, deep));
+__CLASS_NEW_DEFINITION(Circle, __PARAMETERS(InGameEntity owner))
+__CLASS_NEW_END(Circle, __ARGUMENTS(owner));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Circle_constructor(Circle this, InGameEntity owner, int deep){
+static void Circle_constructor(Circle this, InGameEntity owner){
 
-	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner, deep));
+	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
 	
 	// TODO	
 	this->radious = 1;

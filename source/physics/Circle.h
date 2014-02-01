@@ -76,7 +76,7 @@ __CLASS(Circle);
 
 
 // class's allocator
-__CLASS_NEW_DECLARE(Circle, __PARAMETERS(InGameEntity owner, int deep));
+__CLASS_NEW_DECLARE(Circle, __PARAMETERS(InGameEntity owner));
 
 // class's destructor
 void Circle_destructor(Circle this);

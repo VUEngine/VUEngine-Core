@@ -28,6 +28,7 @@
  */
 
 #include <SpriteManager.h>
+#include <VPUManager.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -66,6 +67,8 @@ __CLASS_DEFINITION(SpriteManager);
 //class's constructor
 static void SpriteManager_constructor(SpriteManager this);
 
+// give each entity a world layer to be rendered
+static void SpriteManager_assignLayers(SpriteManager this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -161,7 +164,7 @@ void SpriteManager_sortAllLayers(SpriteManager this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if any entity must be assigned another world layer
-void SpriteManager_checkLayers(SpriteManager this){
+void SpriteManager_sortLayersProgressively(SpriteManager this){
 
 	int i = 0;
 
@@ -187,6 +190,15 @@ void SpriteManager_checkLayers(SpriteManager this){
 			// swap layers
 			Sprite_setWorldLayer(this->sprites[i], worldLayer1);
 			Sprite_setWorldLayer(this->sprites[i + 1], worldLayer2);
+			
+			// wait for frame before rendering
+			VPUManager_waitForFrame(VPUManager_getInstance());
+
+			Sprite_render(this->sprites[i]);
+			Sprite_render(this->sprites[i + 1]);
+
+			// enable interrupts
+			VPUManager_displayOn(VPUManager_getInstance());
 
 			break;
 		}
@@ -205,16 +217,22 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	for(; this->sprites[i] && i < __OBJECTLISTTAM; i++);
 	
 	if(i < __OBJECTLISTTAM){
-		
+
+		// wait for frame before rendering
+		VPUManager_waitForFrame(VPUManager_getInstance());
+
 		// set entity into slot
 		this->sprites[i] = sprite;
 
 		// set layer
 		Sprite_setWorldLayer(this->sprites[i], __TOTAL_LAYERS - i);
-	}
 
-	// reasign layers
-	SpriteManager_assignLayers(this);
+		//update printing world layer for non textboxs (use mainly for debug)	
+		Printing_render(--this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
+
+		// enable interrupts
+		VPUManager_displayOn(VPUManager_getInstance());
+	}
 }
 
 
@@ -223,11 +241,14 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
 	int i = 0;
 	
+	// wait for frame before rendering
+	VPUManager_waitForFrame(VPUManager_getInstance());
+
 	CACHE_ENABLE;
 	
 	// search for the entity to remove
 	for(; this->sprites[i] != sprite && i < __OBJECTLISTTAM; i++);
-	
+
 	// if found
 	if(i < __OBJECTLISTTAM){
 		
@@ -238,21 +259,27 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 			
 			this->sprites[j] = this->sprites[j + 1];
 			
+			// set layer
 			Sprite_setWorldLayer(this->sprites[j], 1);
+
+			Sprite_render(this->sprites[j]);
 		}
 		
 		// remove object from list
 		this->sprites[j] = NULL;
 	}
-	
 	CACHE_DISABLE;
 
 	// reassign layers
 	SpriteManager_assignLayers(this);
+
+	// enable interrupts
+	VPUManager_displayOn(VPUManager_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void SpriteManager_assignLayers(SpriteManager this){
+// give each entity a world layer to be rendered
+static void SpriteManager_assignLayers(SpriteManager this){
 	
 	int i = 0;
 	
@@ -262,6 +289,8 @@ void SpriteManager_assignLayers(SpriteManager this){
 		
 		// change layers
 		Sprite_setWorldLayer(this->sprites[i], this->freeLayer--);
+		
+		Sprite_render(this->sprites[i]);
 	}	
 
 	ASSERT(this->freeLayer > 0, "SpriteManager: worldLayers depleted");

@@ -86,7 +86,7 @@ CollisionManager CollisionManager_getInstance();
 void CollisionManager_destructor(CollisionManager this);
 
 // register a shape
-Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, int shapeType, int deep);
+Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, int shapeType);
 
 // remove a shape
 void CollisionManager_unregisterShape(CollisionManager this, Shape shape);

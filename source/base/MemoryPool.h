@@ -74,9 +74,6 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes);
 // remove an object from heap
 void MemoryPool_free(MemoryPool this, BYTE* object);
 
-// clear all dynamic memory
-void MemoryPool_reset(MemoryPool this);
-
 // print dynamic memory usage
 void MemoryPool_printMemUsage(MemoryPool this, int x, int y);
 

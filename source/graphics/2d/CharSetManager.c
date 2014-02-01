@@ -132,13 +132,16 @@ void CharSetManager_reset(CharSetManager this){
 	int j = 0;
 	// clear each segment's ofssets
 	for(; i < CHAR_SEGMENTS; i++){
+		
 		for(j = 0; j < CHAR_SEGMENT_SIZE; j++){
+			
 			this->segment[i][j] = 0;			
 		}
 	}	
 	
 	// clear all definitions and usage
 	for( i = 0; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG; i++){
+		
 		this->charDefinition[i] = NULL;
 		this->charDefUsage[i] = 0;
 		this->offset[i] = 0;

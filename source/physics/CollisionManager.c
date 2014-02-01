@@ -146,7 +146,7 @@ void CollisionManager_destructor(CollisionManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // register a shape
-Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, int shapeType, int deep){
+Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, int shapeType){
 
 	// if the entity is already registered
 	Shape shape = CollisionManager_getShape(this, owner);
@@ -160,12 +160,12 @@ Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, 
 	
 		case kCircle:
 			
-			//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, __ARGUMENTS(owner, deep)));			
+			//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, __ARGUMENTS(owner)));			
 			break;
 
 		case kCuboid:
 
-			VirtualList_pushFront(this->shapes, (void*)__NEW(Cuboid, __ARGUMENTS(owner, deep)));
+			VirtualList_pushFront(this->shapes, (void*)__NEW(Cuboid, __ARGUMENTS(owner)));
 			break;
 	}
 	
@@ -360,9 +360,7 @@ void CollisionManager_update(CollisionManager this){
 			if(collidingObjects){
 				
 				// inform the owner about the collision
-				if(!MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)owner, kCollision, (void*)collidingObjects)){
-
-				}
+				MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)owner, kCollision, (void*)collidingObjects);
 				
 				__DELETE(collidingObjects);
 			}

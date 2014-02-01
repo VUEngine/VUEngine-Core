@@ -107,6 +107,8 @@ void Entity_destructor(Entity this){
 
 		// delete the sprites
 		__DELETE(this->sprites);
+		
+		this->sprites = NULL;
 	}
 	
 	// destroy the super Container
@@ -277,7 +279,7 @@ int Entity_getHeight(Entity this){
 int Entity_getDeep(Entity this){
 
 	// must calculate based on the scale because not affine object must be enlarged
-	return 0;
+	return 1;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +308,7 @@ int Entity_isOutsideGame(Entity this){
 // retrieve state when unloading the entity 
 int Entity_getInGameState(Entity this){
 
-	return kUnloaded;
+	return __UNLOADED;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +320,7 @@ Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID
 	{
 		// call the appropiate allocator to support inheritance!
 		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
-	
+
 		// setup entity if allocated and constructed
 		if(entity){
 	

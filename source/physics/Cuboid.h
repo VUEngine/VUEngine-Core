@@ -99,7 +99,7 @@ __CLASS(Cuboid);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(InGameEntity owner, int deep));
+__CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(InGameEntity owner));
 
 // class's destructor
 void Cuboid_destructor(Cuboid this);

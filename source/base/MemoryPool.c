@@ -137,6 +137,8 @@ __CLASS_DEFINITION(MemoryPool);
 // class constructor
 static void MemoryPool_constructor(MemoryPool this);
 
+// clear all dynamic memory
+static void MemoryPool_reset(MemoryPool this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -155,70 +157,8 @@ __SINGLETON(MemoryPool);
 static void MemoryPool_constructor(MemoryPool this){
 	
 	__CONSTRUCT_BASE(Object);
-	{	
-		int pool = 0;
-		int i;
-		
-		// initialize pool's sizes and pointers
-		/*
-		this->poolLocation[pool] = this->pool512B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool512B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_512B;
-		*/	
-		
-		this->poolLocation[pool] = this->pool256B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool256B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_256B;
 
-		this->poolLocation[pool] = this->pool192B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool192B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_192B;
-
-		this->poolLocation[pool] = this->pool128B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool128B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_128B;
-	
-		this->poolLocation[pool] = this->pool96B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool96B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_96B;
-
-		this->poolLocation[pool] = this->pool64B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool64B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_64B;
-
-		this->poolLocation[pool] = this->pool48B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool48B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_48B;
-
-		this->poolLocation[pool] = this->pool32B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool32B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_32B;
-		
-		this->poolLocation[pool] = this->pool24B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool24B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_24B;
-		
-		this->poolLocation[pool] = this->pool16B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool16B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_16B;
-		
-	
-		/*
-		this->poolLocation[pool] = this->pool8B;
-		this->poolSizes[pool][ePoolSize] = sizeof(this->pool8B);
-		this->poolSizes[pool++][eBlockSize] = __BLOCK_8B;
-		*/
-		
-		// clear all allocable objects usage
-		for(pool = 0; pool < __MEMORY_POOLS; pool++){
-			
-			//memset(this->poolSizes[pool], 0 , sizeof(this->poolSizes[pool]));
-			for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++){
-				
-				this->poolLocation[pool][i] = 0x00;
-			}
-		}
-	}
+	MemoryPool_reset(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -331,9 +271,70 @@ void MemoryPool_free(MemoryPool this, BYTE* object){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // clear all dynamic memory
-void MemoryPool_reset(MemoryPool this){
+static void MemoryPool_reset(MemoryPool this){
 	
-	MemoryPool_constructor(this);
+	int pool = 0;
+	int i;
+	
+	// initialize pool's sizes and pointers
+	/*
+	this->poolLocation[pool] = this->pool512B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool512B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_512B;
+	*/	
+	
+	this->poolLocation[pool] = this->pool256B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool256B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_256B;
+
+	this->poolLocation[pool] = this->pool192B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool192B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_192B;
+
+	this->poolLocation[pool] = this->pool128B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool128B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_128B;
+
+	this->poolLocation[pool] = this->pool96B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool96B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_96B;
+
+	this->poolLocation[pool] = this->pool64B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool64B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_64B;
+
+	this->poolLocation[pool] = this->pool48B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool48B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_48B;
+
+	this->poolLocation[pool] = this->pool32B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool32B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_32B;
+	
+	this->poolLocation[pool] = this->pool24B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool24B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_24B;
+	
+	this->poolLocation[pool] = this->pool16B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool16B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_16B;
+	
+
+	/*
+	this->poolLocation[pool] = this->pool8B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool8B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_8B;
+	*/
+	
+	// clear all allocable objects usage
+	for(pool = 0; pool < __MEMORY_POOLS; pool++){
+		
+		//memset(this->poolSizes[pool], 0 , sizeof(this->poolSizes[pool]));
+		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++){
+			
+			this->poolLocation[pool][i] = 0x00;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -365,6 +366,7 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y){
 		
 		Printing_text(Utilities_itoa(this->poolSizes[pool][eBlockSize],10,0) ,  x, ++y);
 		Printing_int(this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - counter, x +7, y);
+		Printing_text("      ", x +14, y);
 		Printing_int(counter, x +14, y);
 		counter = 0 ;
 	}

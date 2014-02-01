@@ -144,12 +144,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-enum EntityStates{
-	kUnloaded = 1,
-	kLoaded,
-	kDead,
-	kUsed,
-};
+#define __UNLOADED	0x00
+#define __LOADED	0x01
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -279,7 +275,11 @@ enum MessagesTypes{
 	kBodyStartedMoving,
 	kBodyStartedMovingByGravity,
 	kBodyChangedDirection,
-	kBodySleep
+	kBodySleep,
+	
+	
+	// don't place messages below this:
+	kLastEngineMessage
 };
 
 

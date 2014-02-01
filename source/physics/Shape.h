@@ -70,9 +70,6 @@ enum ShapeTypes{
 	/* the entity to which the shape belongs */		\
 	InGameEntity owner;								\
 													\
-	/* shape's deep over the z axis */				\
-	int deep;										\
-													\
 	/* raise flag to make the shape active */		\
 	int active: 1;									\
 													\
@@ -102,7 +99,7 @@ __CLASS(Shape);
  */
 
 // class's constructor
-void Shape_constructor(Shape this, InGameEntity owner, int deep);
+void Shape_constructor(Shape this, InGameEntity owner);
 
 // class's destructor
 void Shape_destructor(Shape this);

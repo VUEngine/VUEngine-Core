@@ -57,7 +57,7 @@ __CLASS_DEFINITION(Cuboid);
 
 
 // class's constructor
-static void Cuboid_constructor(Cuboid this, InGameEntity owner, int deep);
+static void Cuboid_constructor(Cuboid this, InGameEntity owner);
 
 // check if overlaps with other rect
 static int Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
@@ -83,14 +83,14 @@ Shape InGameEntity_getShape(InGameEntity this);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Cuboid, __PARAMETERS(InGameEntity owner, int deep))
-__CLASS_NEW_END(Cuboid, __ARGUMENTS(owner, deep));
+__CLASS_NEW_DEFINITION(Cuboid, __PARAMETERS(InGameEntity owner))
+__CLASS_NEW_END(Cuboid, __ARGUMENTS(owner));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Cuboid_constructor(Cuboid this, InGameEntity owner, int deep){
+static void Cuboid_constructor(Cuboid this, InGameEntity owner){
 
-	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner, deep));
+	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
 	
 	//Rightcuboid r;
 	/*Rightcuboid rect = {0, 0, 0, 0};
@@ -143,11 +143,11 @@ void Cuboid_setup(Cuboid this){
 	// cuboid's center if placed on P(0, 0, 0)
 	this->rightCuboid.x1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getWidth, (Entity)this->owner) >> 1);
 	this->rightCuboid.y1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getHeight, (Entity)this->owner) >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getDeep, (Entity)this->owner) >> 1);
+	this->rightCuboid.z1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getDeep, (Entity)this->owner) >> 0);
 	
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
-	this->rightCuboid.z0 = -this->rightCuboid.z1;
+	this->rightCuboid.z0 = 0;//-this->rightCuboid.z1;
 
 	// if owner does not move
 	if(!this->moves){
@@ -214,8 +214,6 @@ void Cuboid_draw(Cuboid this){
 	
 	// create a polygon
 	Polygon polygon = __NEW(Polygon);
-	
-	fix19_13 z = Container_getGlobalPosition((Container)this->owner).z;
 	
 	// add vertices
 	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
@@ -353,7 +351,18 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap g
 		
 		if(1 < numberOfAxis) {
 			
-			displacementFactor += ITOFIX19_13(1);
+			displacementFactor += FTOFIX19_13(0.1f);
+
+			// setup a cuboid representing the previous position
+			positionedRightCuboid = this->rightCuboid;
+			
+			positionedRightCuboid.x0 += previousPosition.x + ITOFIX19_13(gap.left);
+			positionedRightCuboid.x1 += previousPosition.x - ITOFIX19_13(gap.right);
+			positionedRightCuboid.y0 += previousPosition.y + ITOFIX19_13(gap.up);
+			positionedRightCuboid.y1 += previousPosition.y - ITOFIX19_13(gap.down);
+			positionedRightCuboid.z0 += previousPosition.z;
+			positionedRightCuboid.z1 += previousPosition.z;
+			
 
 			positionedRightCuboid.x0 -= FIX19_13_MULT(displacement.x, displacementFactor);
 			positionedRightCuboid.x1 -= FIX19_13_MULT(displacement.x, displacementFactor);

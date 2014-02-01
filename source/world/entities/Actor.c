@@ -119,11 +119,15 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	this->direction.z = __FAR;
 	
 	//state ALIVE for initial update
-	this->inGameState = kLoaded;
+	this->inGameState = __LOADED;
 	
 	this->lastCollidingEntity[kXAxis] = NULL;
 	this->lastCollidingEntity[kYAxis] = NULL;
 	this->lastCollidingEntity[kZAxis] = NULL;
+	
+	this->sensibleToFriction.x = true;
+	this->sensibleToFriction.y = true;
+	this->sensibleToFriction.z = true;
 	
 	this->body = NULL;
 	
@@ -415,12 +419,12 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
 			this->lastCollidingEntity[kXAxis] = collidingEntity;
 		}
-		if(__YAXIS & axisOfCollision) {
+		else if(__YAXIS & axisOfCollision) {
 
 			Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
 			this->lastCollidingEntity[kYAxis] = collidingEntity;
 		}
-		if(__ZAXIS & axisOfCollision) {
+		else if(__ZAXIS & axisOfCollision) {
 
 			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
 			this->lastCollidingEntity[kZAxis] = collidingEntity;
@@ -532,16 +536,25 @@ Scale Actor_getScale(Actor this){
 Force Actor_getSourroundingFriction(Actor this){
 	
 	Force friction = {0, 0, 0};
+
+	if(this->sensibleToFriction.x) {
 	
-	friction.x = this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
-	friction.x += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
+		friction.x = this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
+		friction.x += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
+	}
 
-	friction.y = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
-	friction.y += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
+	if(this->sensibleToFriction.y) {
+		
+		friction.y = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
+		friction.y += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
+	}
 
-	friction.z = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
-	friction.z += this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
-
+	if(this->sensibleToFriction.z) {
+		
+		friction.z = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
+		friction.z += this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
+	}
+		
 	return friction;
 }
 

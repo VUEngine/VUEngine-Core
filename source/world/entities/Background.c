@@ -86,7 +86,9 @@ void Background_constructor(Background this, BackgroundDefinition* backgroundDef
 	if(backgroundDefinition->registerShape){
 
 		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (InGameEntity)this, kCuboid, backgroundDefinition->inGameEntityDefinition.deep);
+		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (InGameEntity)this, kCuboid);
+		
+		ASSERT(this->shape, "Background::constructor: shape not created");
 	}
 	
 	this->backgroundDefinition = backgroundDefinition;

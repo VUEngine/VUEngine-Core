@@ -57,7 +57,7 @@
 		Entity_SET_VTABLE(ClassName)									\
 		__VIRTUAL_SET(ClassName, InGameEntity, setLocalPosition);		\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, transform);					\
+		__VIRTUAL_SET(ClassName, InGameEntity, transform);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
@@ -138,9 +138,6 @@ void InGameEntity_destructor(InGameEntity this);
 
 // set graphical gap
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);
-
-// retrieve z grossor
-int InGameEntity_getDeep(InGameEntity this);
 
 // set class's position
 void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position);

@@ -143,19 +143,7 @@ static void Texture_writeAnimated(Texture this){
 
 	//put the map into memory calculating the number of char for each reference
 	for(; i--;){
-/*
-		memcpy((void*)BGMap(bgmapSegment) + ((xOffset - 1 + (yOffset << 6 ) + (i << 6)) << 1),
-				(int)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)) | pallet, 
-						this->textureDefinition->cols << 4);
-*/
-		
-		/*
-		// write each row to graphic memory
-		addMem ((void*)BGMap(bgmapSegment) + ((xOffset - 1 + (yOffset << 6 ) + (i << 6)) << 1), 
-				(const u16*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)), 
-				this->textureDefinition->cols,
-				(pallet) | (charLocation));
-				*/
+
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1), 
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)), 
 				this->textureDefinition->cols,
@@ -180,26 +168,11 @@ static void Texture_writeNoAnimated(Texture this){
 	//put the map into memory calculating the number of char for each reference
 	for(; i--;){
 	
-		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1), 
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)), 
 				this->textureDefinition->cols,
 				(pallet) | (charLocation));
-/*
-		//memcpy((void*)CharSegs(this->charset)  + ( this->offset << 4), (int*)this->charDefinition, (int)this->numberOfChars << 4);
-		memcpy((void*)BGMap(bgmapSegment) + ((xOffset - 1 + (yOffset << 6 ) + (i << 6)) << 1),
-				(int)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)) | pallet, 
-						this->textureDefinition->cols << 4);
-		memcpy((void*)BGMap(bgmapSegment) + ((xOffset - 1 + (yOffset << 6 ) + (i << 6)) << 1),
-				(int)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)) , 
-						this->textureDefinition->cols << 4);
-		
-		addMem ((void*)BGMap(bgmapSegment) + ((xOffset +  (yOffset << 6) + (i << 6)) << 1),
-				(const u16*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
-				this->textureDefinition->cols,
-				(pallet) | (charLocation));
-				*/
 	}
 }
 
@@ -227,18 +200,6 @@ static void Texture_writeAnimatedShared(Texture this){
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
 		for(; j <= frames; j++){
-			/*
-			memcpy((void*)BGMap(bgmapSegment) + ((xOffset - 1 + (yOffset << 6 ) + (i << 6)) << 1),
-					(int)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)) | pallet, 
-							this->textureDefinition->cols << 4);
-							*/
-/*
-			addMem ((void*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
-					(const u16*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
-					this->textureDefinition->cols,
-					(pallet) | (charLocation + area * (j - 1)));
-					*/
-			
 			
 			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
 					(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),

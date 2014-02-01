@@ -69,6 +69,17 @@ typedef struct ActorDefinition{
 
 typedef const ActorDefinition ActorROMDef;
 
+
+// TODO: MOVE TO MISCSTRUCTS
+//spacial state vector
+typedef struct GeneralAxisFlag{
+	
+	int x: 2;
+	int y: 2;
+	int z: 2;
+	
+}GeneralAxisFlag;
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -132,6 +143,9 @@ typedef const ActorDefinition ActorROMDef;
 														\
 	/* gameworld's actor's state (ALIVE or DEAD)*/		\
 	int inGameState;									\
+														\
+	/* flags to apply friction on each axis */			\
+	GeneralAxisFlag sensibleToFriction;					\
 														\
 	/* flag to influence with gravity */				\
 	int isAffectedBygravity: 1;							\

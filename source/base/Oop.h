@@ -386,7 +386,7 @@
 	static ClassName ## _str _instance ## ClassName;				\
 																	\
 	/* a flag to know when to allow constructs */					\
-	static u8 _singletonConstructed  ## ClassName = false;			\
+	static u8 _singletonConstructed = false;						\
 																	\
 	/* define get instance method */								\
 	ClassName ClassName ## _getInstance(){							\
@@ -395,7 +395,7 @@
 		__SET_CLASS(ClassName);										\
 																	\
 		/* first check if not constructed yet */					\
-		if(!_singletonConstructed ## ClassName){					\
+		if(!_singletonConstructed){									\
 																	\
 			/* call constructor */									\
 			ClassName ## _constructor(&_instance ## ClassName);		\
@@ -404,7 +404,7 @@
 			_instance ## ClassName.vTable = &ClassName ## _vTable;	\
 																	\
 			/* don't allow more constructs */						\
-			_singletonConstructed ## ClassName = true;				\
+			_singletonConstructed = true;							\
 		}															\
 																	\
 		/* return the created singleton */							\
@@ -420,7 +420,7 @@
 	__DESTROY_BASE(SuperClass);										\
 																	\
 	/* allow new constructs */										\
-	//_singletonConstructed = false;
+	_singletonConstructed = false;									\
 
 
 
@@ -437,7 +437,7 @@
 																	\
 																	\
 	/* a flag to know when to allow constructs */					\
-	static u8 _singletonConstructed ## ClassName = false;			\
+	static u8 _singletonConstructed = false;						\
 																	\
 	/* define get instance method */								\
 	ClassName ClassName ## _getInstance(){							\
@@ -446,13 +446,13 @@
 		__SET_CLASS(ClassName);										\
 																	\
 		/* first check if not constructed yet */					\
-		if(!_singletonConstructed ## ClassName){					\
+		if(!_singletonConstructed){									\
 																	\
 			/* allocate */											\
 			_instance ## ClassName = ClassName ## _new(0);			\
 																	\
 			/* don't allow more constructs */						\
-			_singletonConstructed ## ClassName = true;				\
+			_singletonConstructed = true;							\
 		}															\
 																	\
 		/* return the created singleton */							\

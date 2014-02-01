@@ -130,6 +130,12 @@ void HardwareManager_displayOn(HardwareManager this);
 // display off
 void HardwareManager_displayOff(HardwareManager this);
 
+// disable VPU interrupts
+void HardwareManager_disableRendering(HardwareManager this);
+
+// enable VPU interrupts
+void HardwareManager_enableRendering(HardwareManager this);
+
 // make sure the brigtness is ok
 void HardwareManager_upBrightness(HardwareManager this);
 

@@ -111,7 +111,12 @@ enum UpdateSubsystems{
 													\
 	/* game's start state */						\
 	u8 started;										\
-
+													\
+	/* game's next state */							\
+	State nextState;								\
+													\
+	/* change state delay */						\
+	int fadeDelay;									\
 
 __CLASS_DEFINITION(Game);
  
@@ -134,6 +139,8 @@ static void Game_initialize(Game this);
 // initialize optic paramenters
 static void Game_setOpticalGlobals(Game this);
 
+// set game's state
+static void Game_setState(Game this, State state, int fadeDelay);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -170,6 +177,9 @@ static void Game_constructor(Game this){
 
 	// construct the game's state machine
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
+	
+	this->nextState = NULL;
+	this->fadeDelay = 0;
 	
 	// call get instance in singletons to make sure their constructors
 	// are called now
@@ -280,7 +290,15 @@ void Game_start(Game this, State state, int fadeDelay){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set game's state
-void Game_setState(Game this, State state, int fadeDelay){
+void Game_changeState(Game this, State state, int fadeDelay){
+
+	this->nextState = state;
+	this->fadeDelay = fadeDelay;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set game's state
+static void Game_setState(Game this, State state, int fadeDelay){
 
     ASSERT(state, "Game: setting NULL state");
 
@@ -289,10 +307,10 @@ void Game_setState(Game this, State state, int fadeDelay){
 	
 	// turn off the display
     HardwareManager_displayOff(this->hardwareManager);
-
-	//disable hardware pad read
-    HardwareManager_disableKeypad(this->hardwareManager);
     
+	// disable rendering
+	HardwareManager_disableRendering(HardwareManager_getInstance());
+
 	//set waveform data
     SoundManager_setWaveForm(this->soundManager);
 
@@ -305,11 +323,14 @@ void Game_setState(Game this, State state, int fadeDelay){
 	// load chars into graphic memory
 	Printing_writeAscii(TextureManager_getFreeBgmap(this->bgmapManager));
 	
-	// turn on the display
-    HardwareManager_displayOn(this->hardwareManager);
+	// enable rendering
+	HardwareManager_enableRendering(this->hardwareManager);
 
 	// make a fade in
 	Screen_FXFadeIn(Screen_getInstance(), fadeDelay);
+	
+	// start physical simulation again
+	PhysicalWorld_start(this->physicalWorld);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,7 +361,7 @@ void Game_reset(Game this){
 //	CharSetManager_destructor(this->charSetManager);
 //	TextureManager_destructor(this->bgmapManager);
 //	ParamTableManager_destructor(this->paramTableManager);
-	
+		
 	//clear char and bgmap memory
     HardwareManager_clearScreen(this->hardwareManager);
 
@@ -487,8 +508,11 @@ void Game_update(Game this){
 			
 		if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
 
-		    //enable hardware pad read
-		    HardwareManager_disableKeypad(this->hardwareManager);
+			if(this->nextState){
+				
+				Game_setState(this, this->nextState, this->fadeDelay);
+				this->nextState = NULL;
+			}
 
 			this->lastTime[kLogic] = currentTime;
 
@@ -521,7 +545,7 @@ void Game_update(Game this){
 			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
 
 			// check sprite layers
-			SpriteManager_checkLayers(this->spriteManager);
+			SpriteManager_sortLayersProgressively(this->spriteManager);
 
 #ifdef __DEBUG
 			// increase the frame rate
@@ -533,6 +557,15 @@ void Game_update(Game this){
 		FrameRate_increaseRawFPS(this->frameRate);
 #endif		
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process a telegram
+int Game_handleMessage(Game this, Telegram telegram){
+	
+	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
+	
+	return StateMachine_handleMessage(this->stateMachine, telegram);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

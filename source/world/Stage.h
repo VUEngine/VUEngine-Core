@@ -53,24 +53,23 @@
 // declare the virtual methods which are redefined
 #define Stage_SET_VTABLE(ClassName)							\
 		Container_SET_VTABLE(ClassName)						\
-
-
-#define Stage_ATTRIBUTES						\
-												\
-	/* super's attributes */					\
-	Container_ATTRIBUTES;						\
-												\
-	/* world's definition pointer */			\
-	StageDefinition* stageDefinition;			\
-												\
-	/* this allows to determine which */ 		\
-	/* entities to load from a */ 				\
-	/* world definition */						\
-	VirtualList entityState;					\
-												\
-	/* flag to know if the stage must */		\
-	/* track entities's load states */			\
-	int saveEntityStates:1;
+			
+#define Stage_ATTRIBUTES								\
+														\
+	/* super's attributes */							\
+	Container_ATTRIBUTES;								\
+														\
+	/* world's definition pointer */					\
+	StageDefinition* stageDefinition;					\
+														\
+	/* this allows to determine which */ 				\
+	/* entities to load from a */ 						\
+	/* world definition */								\
+	VirtualList entityState;							\
+														\
+	/* flag to know if the stage must */				\
+	/* track entities's load states */					\
+	WORD entityStateRegister[__ENTITIES_IN_STAGE];
 
 
 // declare a Stage, which holds the objects in a game world
@@ -136,19 +135,19 @@ __CLASS_NEW_DECLARE(Stage);
 void Stage_destructor(Stage this);
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition);
+void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
 
 // load objects on demand (if they aren't loaded and are visible)
-void Stage_loadEntities(Stage this);
+void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities);
 
 // add entity to the stage
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, int inGameIndex, void *extraInfo);
 
 // unload non visible entities
-void Stage_unloadEntities(Stage this);
+void Stage_unloadOutOfRangeEntities(Stage this);
 
-// set save entity's states flag
-int Stage_saveEntityStates(Stage this);
+// stream entities according to screen's position
+void Stage_stream(Stage this);
 
 #endif
 

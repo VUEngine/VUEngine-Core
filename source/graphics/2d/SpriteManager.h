@@ -87,14 +87,11 @@ void SpriteManager_destructor(SpriteManager this);
 // reset
 void SpriteManager_reset(SpriteManager this);
 
-// give each entity a world layer to be rendered
-void SpriteManager_assignLayers(SpriteManager this);
-
 // check if any entity must be assigned another world layer
 void SpriteManager_sortAllLayers(SpriteManager this);
 
 // check if any entity must be assigned another world layer
-void SpriteManager_checkLayers(SpriteManager this);
+void SpriteManager_sortLayersProgressively(SpriteManager this);
 
 // remove a sprite from rendering system
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite);

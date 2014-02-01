@@ -67,7 +67,7 @@ __CLASS_DEFINITION(Shape);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Shape_constructor(Shape this, InGameEntity owner, int deep){
+void Shape_constructor(Shape this, InGameEntity owner){
 
 	// this is an abstract class so must initialize the vtable here
 	// since this class does not have an allocator
@@ -78,9 +78,6 @@ void Shape_constructor(Shape this, InGameEntity owner, int deep){
 
 	// set the owner	
 	this->owner = owner;
-	
-	// set the deep
-	this->deep = deep;
 	
 	// it is active
 	this->active = true;

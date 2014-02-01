@@ -32,6 +32,8 @@
 #include <Optics.h>
 #include <SoundManager.h>
 #include <Screen.h>
+#include <HardwareManager.h>
+#include <SpriteManager.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -42,9 +44,6 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
-WORD entityStateRegister[__ENTITIES_IN_STAGE];
-static int stateRegisterInUse = false;
 
 // define the Stage
 __CLASS_DEFINITION(Stage);
@@ -63,10 +62,10 @@ __CLASS_DEFINITION(Stage);
 static void Stage_constructor(Stage this);
 
 // update world's entities state
-static void Stage_setEntityState(int ID, int inGameState);
+static void Stage_setEntityState(Stage this, int ID, int inGameState);
 
 // get entity's state
-static inline int Stage_getEntityState(int ID);
+static inline int Stage_getEntityState(Stage this, int ID);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -102,19 +101,17 @@ static void Stage_constructor(Stage this){
 	
 	this->stageDefinition = NULL;
 	
-	// by default, don't save entities states
-	this->saveEntityStates = false;
+	int i = 0;
+	
+	for(i = 0; i < __ENTITIES_IN_STAGE; i++){
+		
+		this->entityStateRegister[i] = 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void Stage_destructor(Stage this){
-	
-	// relieve the entity's state register
-	if(this->saveEntityStates){
-		
-		stateRegisterInUse = false;
-	}
 	
 	// destroy the super object
 	__DESTROY_BASE(Container);
@@ -122,7 +119,7 @@ void Stage_destructor(Stage this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update world's entities state
-static void Stage_setEntityState(int ID, int inGameState){
+static void Stage_setEntityState(Stage this, int ID, int inGameState){
 	
 	int bitIndex =  ID * __STAGE_BITS_PER_ENTITY;
 	
@@ -132,7 +129,7 @@ static void Stage_setEntityState(int ID, int inGameState){
 	// displacement =  bitIndex % (sizeof(WORD) << 3);
 	int displacement =  bitIndex & ((sizeof(WORD) << 3) - 1);
 
-	WORD mask = entityStateRegister[arrayIndex] & Utilities_rotateBits(0xFFFFFFFF << __STAGE_BITS_PER_ENTITY, displacement, __ROT_LEFT);
+	WORD mask = this->entityStateRegister[arrayIndex] & Utilities_rotateBits(0xFFFFFFFF << __STAGE_BITS_PER_ENTITY, displacement, __ROT_LEFT);
 	
 	// make sure we are unloading an entity loaded by 
 	// me and not but the programmer
@@ -143,12 +140,12 @@ static void Stage_setEntityState(int ID, int inGameState){
 	
 	mask |=  ((WORD)inGameState << displacement);
 
-	entityStateRegister[arrayIndex] = mask;
+	this->entityStateRegister[arrayIndex] = mask;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get entity's state
-static inline int Stage_getEntityState(int ID){
+static inline int Stage_getEntityState(Stage this, int ID){
 	
 	int bitIndex =  ID * __STAGE_BITS_PER_ENTITY;
 	
@@ -158,7 +155,7 @@ static inline int Stage_getEntityState(int ID){
 	// displacement =  bitIndex % (sizeof(WORD) << 3);
 	int displacement =  bitIndex & ((sizeof(WORD) << 3) - 1);
 
-	return (int)(entityStateRegister[arrayIndex] >> displacement) & 0x03;
+	return (int)(this->entityStateRegister[arrayIndex] >> displacement) & 0x03;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,75 +163,6 @@ static inline int Stage_getEntityState(int ID){
 void Stage_setupObjActor(int *actor,int x,int y, int z){
 
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition){
-	
-	int i = 0;
-
-	// stop all sounds
-	SoundManager_stopAllSound(SoundManager_getInstance());
-	
-	// set world's definition
-	this->stageDefinition = stageDefinition;
-		
-	// this->number = worldNumber;
-	// set world's limits
-	GameWorld_setSize(GameWorld_getInstance(), stageDefinition->size);
-	
-	// set screen's position
-	Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
-	
-	//load Stage's bgm
-	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
-	
-	// load entities
-	for(i = 0; stageDefinition->entities[i].entity; i++){
-		
-		// test if the position is inside the game
-		EntityDefinition* entityDefinition = stageDefinition->entities[i].entity;
-
-		VBVec3D position = {
-				ITOFIX19_13(stageDefinition->entities[i].position.x),
-				ITOFIX19_13(stageDefinition->entities[i].position.y),
-				ITOFIX19_13(stageDefinition->entities[i].position.z)
-		};
-
-		// if entity is visible
-		if(Optics_isVisible(position, 
-				entityDefinition->spritesDefinitions[0].textureDefinition->cols << 3, 
-				entityDefinition->spritesDefinitions[0].textureDefinition->rows << 3,
-				0,
-				__ENTITYLOADPAD
-				)){
-
-			//load actor in world			
-			Stage_addEntity(this, stageDefinition->entities[i].entity, &position, i, stageDefinition->entities[i].extraInfo);
-			
-			// save entity state if needed
-			if(this->saveEntityStates){
-				
-				Stage_setEntityState(i, kLoaded);
-			}
-		}		
-		else{
-			
-			if(this->saveEntityStates){
-				
-				//otherwise set object as alive but not loaded yet
-				Stage_setEntityState(i, kLoaded);
-			}
-		}
-	}
-	//load background music
-	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
-	SoundManager_loadBGM(SoundManager_getInstance(), (u16 (*)[6])stageDefinition->bgm);
-	
-	//setup the column table
-	HardwareManager_setupColumnTable(HardwareManager_getInstance());
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine if a point is visible
@@ -291,8 +219,39 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int wid
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// load stage's entites
+void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities){
+	
+	// stop all sounds
+	SoundManager_stopAllSound(SoundManager_getInstance());
+	
+	// set world's definition
+	this->stageDefinition = stageDefinition;
+		
+	// this->number = worldNumber;
+	// set world's limits
+	GameWorld_setSize(GameWorld_getInstance(), stageDefinition->size);
+	
+	// set screen's position
+	Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
+	
+	//load Stage's bgm
+	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
+
+	// load entities
+	Stage_loadEntities(this, loadOnlyInRangeEntities);
+
+	//load background music
+	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
+	SoundManager_loadBGM(SoundManager_getInstance(), (u16 (*)[6])stageDefinition->bgm);
+	
+	//setup the column table
+	HardwareManager_setupColumnTable(HardwareManager_getInstance());
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load entities on demand (if they aren't loaded and are visible)
-void Stage_loadEntities(Stage this){
+void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities){
 
 	StageDefinition* world = this->stageDefinition;
 	
@@ -300,14 +259,12 @@ void Stage_loadEntities(Stage this){
 
 	// TODO: don't check every entity in the stage's definition
 	// must implement an algorithm which only check a portion of it
-
-	//go through n entities in Stage	
 	for(; i < __ENTITIESPERWORLD && world->entities[i].entity; i++){
 		
 		//if entity isn't loaded and haven't been killed
-		int inGameState = Stage_getEntityState(i);
+		int inGameState = Stage_getEntityState(this, i);
 
-		if(kLoaded != inGameState){
+		if(!(__LOADED & inGameState)){
 		//if(kLoaded != inGameState && kDead != inGameState){
 			
 			// test if the position is inside the game
@@ -320,19 +277,19 @@ void Stage_loadEntities(Stage this){
 			};
 			
 			// if entity in load range
-			if(Stage_inLoadRange(this, &position, 
+			if(!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position, 
 					entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
 					entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
 				
 				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
 				
-				if(kUnloaded == inGameState){
+				if(!(__LOADED & inGameState)){
 					 
-					inGameState = kLoaded;
+					inGameState |= __LOADED;
 				}
 				
 				//set actor state as loaded
-				Stage_setEntityState(i, inGameState);
+				Stage_setEntityState(this, i, inGameState);
 			}
 		}
 	}
@@ -349,6 +306,20 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 		// create the entity and add it to the world
 		Container_addChild((Container)this, (Container)entity);
 		
+		// static to avoid call to _memcpy
+		static Transformation environmentTransform = {
+				// local position
+				{0, 0, 0},
+				// global position
+				{0, 0, 0},
+				// scale
+				{1, 1},
+				// rotation
+				{0, 0, 0}			
+		};
+		
+		__VIRTUAL_CALL(void, Container, transform, (Container)entity, __ARGUMENTS(&environmentTransform));
+
 		return entity;
 	}
 	
@@ -357,7 +328,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unload non visible entities
-void Stage_unloadEntities(Stage this){
+void Stage_unloadOutOfRangeEntities(Stage this){
 
 	// need a temporal list to remove and delete entities
 	VirtualList removedEntities = __NEW(VirtualList);
@@ -376,13 +347,13 @@ void Stage_unloadEntities(Stage this){
 			int inGameState = __VIRTUAL_CALL(int, Entity, getInGameState, entity);
 
 			// if state is loaded... just set it as unloaded
-			if(kLoaded == inGameState){
+			if(__LOADED & inGameState){
 				
-				inGameState = kUnloaded;
+				inGameState &= ~__LOADED;
 			}
 			
 			// update in game state
-			Stage_setEntityState(Container_getID((Container)entity), inGameState);
+			Stage_setEntityState(this, Container_getID((Container)entity), inGameState);
 			
 			// register entity to remove
 			VirtualList_pushBack(removedEntities, (const BYTE* const )entity);
@@ -406,26 +377,25 @@ void Stage_unloadEntities(Stage this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set save entity's states flag
-int Stage_saveEntityStates(Stage this){
+// stream entities according to screen's position
+void Stage_stream(Stage this){
 	
-	ASSERT(!stateRegisterInUse, "Stage: state register already in use");
-	
-	// only save states if register not in use yet
-	if(!stateRegisterInUse){
+	// if the screen is moving
+	if(*((u8*)_screenMovementState)){
 
-		int i = 0;
-		// initialize world's actor states
-		for (i = 0; i < __ENTITIES_IN_STAGE; i++){
+		static int turn = __RENDER_FPS >> 4;
 			
-			Stage_setEntityState(i, kUnloaded);
+		if(turn--){
+
+			// unload not visible objects
+			Stage_unloadOutOfRangeEntities(this);			
 		}
-		
-		// set flags
-		stateRegisterInUse = this->saveEntityStates = true;
-		
-		return true;
+		else{
+
+			// load visible objects	
+			Stage_loadEntities(this, true);
+
+			turn = __RENDER_FPS >> 4;
+		}			
 	}
-	
-	return false;
 }

@@ -50,8 +50,9 @@
 
 
 // declare the virtual methods which are redefined
-#define Game_SET_VTABLE(ClassName)				\
-		Object_SET_VTABLE(ClassName)			\
+#define Game_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)								\
+		__VIRTUAL_SET(ClassName, Game, handleMessage);				\
 
 
 __CLASS(Game);
@@ -76,7 +77,7 @@ void Game_destructor(Game this);
 void Game_start(Game this, State state, int fadeDelay);
 
 // set game's state
-void Game_setState(Game this, State state, int fadeDelay);
+void Game_changeState(Game this, State state, int fadeDelay);
 
 // recover graphics memory
 void Game_recoverGraphicMemory(Game this);
@@ -98,6 +99,9 @@ void Game_render(Game this);
 
 // update engine's world's state
 void Game_update(Game this);
+
+// process a telegram
+int Game_handleMessage(Game this, Telegram telegram);
 
 // set rest flag
 void Game_setRestFlag(Game this, int flag);

@@ -52,6 +52,7 @@ void Mem_copy (u8* dest, const u8* src, u16 num){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Set each byte in a block of data to a given value.
 void Mem_set (u8* dest, u16 src, u16 num){
+	
 	u16 i;
 	for (i = 0; i < num; i++,dest++) {
 		*dest += src;	
@@ -62,6 +63,7 @@ void Mem_set (u8* dest, u16 src, u16 num){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Mem_clearFast(u32* dest,  u16 num ){
+	
 	u16 i;
 	num >>= 1;
 	
@@ -90,6 +92,7 @@ void Mem_clearFast(u32* dest,  u16 num ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Mem_clear (u16* dest,  u16 num ) {
+	
 	u16 i;
 	for (i = 0; i < num; i++) *dest++ = 0x0000;
 }
@@ -101,9 +104,12 @@ void Mem_substract (u8* dest, const u8* src, u16 num, u16 offset,u8 modifier) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Mem_add (u8* dest, const u8* src, u16 num, u16 offset) {
+	
 	u16 i;
+	int carry;
 	for (i = 0; i < num; i++) {
-		*dest++ = *src++ + offset;
-		*dest++ =*src++ + (u8)(offset>>8);
-	}	
+
+		*dest++ = carry = *src++ + offset;
+		*dest++ =(*src++ + (offset>>8))|(carry>>8);
+	}
 }

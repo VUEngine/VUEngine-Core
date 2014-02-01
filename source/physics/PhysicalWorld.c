@@ -131,7 +131,7 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 	this->gravity.z = 0;
 	
 	// record this update's time
-	this->time = Clock_getTime(_inGameClock);
+	this->time = 0;
 	
 	bodies[0] = NULL;
 }
@@ -160,8 +160,7 @@ void PhysicalWorld_destructor(PhysicalWorld this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// register a shape
+// register a body
 Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight){
 
 	// if the entity is already registered
@@ -302,6 +301,12 @@ static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 	bodies[i] = NULL;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// calculate collisions
+void PhysicalWorld_start(PhysicalWorld this){
+
+	this->time = Clock_getTime(_inGameClock);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // calculate collisions
@@ -364,6 +369,8 @@ void PhysicalWorld_reset(PhysicalWorld this){
 	//this->selectBodiesToCheck = true;
 	
 	bodies[0] = 0;
+	
+	this->time = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -74,6 +74,7 @@ __CLASS(Image);
 
 // defines a Image 
 typedef EntityDefinition ImageDefinition;
+
 // defines a Image in ROM memory
 typedef const EntityDefinition ImageROMDef;
 

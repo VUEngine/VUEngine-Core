@@ -176,6 +176,9 @@ Velocity Body_getVelocity(Body this);
 // retrieve acceleration
 Acceleration Body_getAcceleration(Body this);
 
+// retrieve movement type
+MovementType Body_getMovementType(Body this);
+
 // set movement type to accelerated
 void Body_moveAccelerated(Body this, int axis);
 

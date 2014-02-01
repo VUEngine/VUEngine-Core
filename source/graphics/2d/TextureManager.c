@@ -172,6 +172,11 @@ void TextureManager_reset(TextureManager this) {
 		this->offset[i][kXOffset] = 0;
 		this->offset[i][kYOffset] = 0;
 		this->offset[i][kBgmapSegment] = 0;
+		
+		if(this->texture[i]){
+			
+			__DELETE(this->texture[i]);
+		}
 		this->texture[i] = NULL;
 		this->textureUsageCount[i] = 0;
 	}
@@ -217,11 +222,11 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 					}
 					
 					//determine if there is still mem space (columns) in the current y offset
-					if(rows < aux - this->yOffset[i][j] || (!this->yOffset[i][j+1])){
+					if(rows <= aux - this->yOffset[i][j] || (!this->yOffset[i][j+1])){
 						
-						if(rows < 64 - this->yOffset[i][j]){
+						if(rows <= 64 - this->yOffset[i][j]){
 						
-							if(cols < 64 - this->xOffset[i][j]){
+							if(cols <= 64 - this->xOffset[i][j]){
 								
 								int id = Texture_getId(texture);
 								
@@ -244,7 +249,8 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 									// there must be at least 2 columns free
 									if(this->xOffset[i][j] >= 62){
 										
-										//this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;										
+										//TODO: this was commented, don't know why
+										this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;										
 									}								
 								}
 

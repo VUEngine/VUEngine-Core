@@ -108,11 +108,10 @@ int Error_triggerException(Error this, char* string){
 	Printing_writeAscii(TextureManager_getFreeBgmap(TextureManager_getInstance()));
 
 	//print error message to screen
-#define EXCEPTION_LINE	27
-	//print error message to screen
-	Printing_text("                                             ", 0, EXCEPTION_LINE);
-	Printing_text("Exception:" , 1, EXCEPTION_LINE);
-	Printing_text(string, 12, EXCEPTION_LINE);
+	Printing_text("                                             ", __EXCEPTION_COLUMN, __EXCEPTION_LINE - 1);
+	Printing_text("Exception:" , __EXCEPTION_COLUMN, __EXCEPTION_LINE);
+	Printing_text("                                             ", __EXCEPTION_COLUMN, __EXCEPTION_LINE);
+	Printing_text(string, __EXCEPTION_COLUMN, __EXCEPTION_LINE);
 	
 	// error display message
 	Printing_render(SpriteManager_getFreeLayer(SpriteManager_getInstance()), TextureManager_getFreeBgmap(TextureManager_getInstance()));
