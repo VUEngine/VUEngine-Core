@@ -373,7 +373,11 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap g
 
 		}
 
+#ifdef __DEBUG		
 	}while(1 < numberOfAxis && counter < 10);
+#else
+	}while(1 < numberOfAxis);
+#endif
 
 	return axisOfCollision;
 }

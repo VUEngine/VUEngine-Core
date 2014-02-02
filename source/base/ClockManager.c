@@ -164,7 +164,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     //if second has changed, set frame rate 
     if(previousSecond != (this->ticks / __MILISECODS_IN_SECOND)){
     	
-#ifdef __DEBUG_0
+#ifdef __DEBUG
     		
 	    	FrameRate_print(FrameRate_getInstance(), 0, 0);
 	    	// get stack pointer
