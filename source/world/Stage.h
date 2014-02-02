@@ -137,14 +137,8 @@ void Stage_destructor(Stage this);
 // load stage's entites
 void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
 
-// load objects on demand (if they aren't loaded and are visible)
-void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities);
-
 // add entity to the stage
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, int inGameIndex, void *extraInfo);
-
-// unload non visible entities
-void Stage_unloadOutOfRangeEntities(Stage this);
 
 // stream entities according to screen's position
 void Stage_stream(Stage this);

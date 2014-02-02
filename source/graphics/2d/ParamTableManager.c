@@ -114,6 +114,7 @@ void ParamTableManager_reset(ParamTableManager this){
 
 		this->sprites[i] = NULL;
 	}
+	
 	// set the size of the paramtable
 	this->size = __PARAMEND - __PARAMINI;
 	

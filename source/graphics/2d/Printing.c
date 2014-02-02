@@ -41,7 +41,7 @@
  */
 
 #define TAB_SIZE 4 //horizontal tab size in chars
-
+#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -106,33 +106,33 @@ void Printing_hwRegisters(int x,int y){
 // print hardware register's state
 void Printing_vipRegisters(int x,int y){
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "INTPND:", 0);		
-//	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++,(const char*) Utilities_itoa((u32)VIP_REGS[INTPND],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "INTPND:", 0);		
+//	Printing_out(__PRINTING_BGMAP, x+8,y++,(const char*) Utilities_itoa((u32)VIP_REGS[INTPND],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "INTENB:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[INTENB],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "INTENB:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[INTENB],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "INTCLR:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[INTCLR],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "INTCLR:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[INTCLR],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "DPSTTS:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[DPSTTS],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "DPSTTS:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[DPSTTS],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "DPCTRL:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[DPCTRL],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "DPCTRL:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[DPCTRL],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "FRMCYC:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[FRMCYC],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "FRMCYC:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[FRMCYC],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "CTA:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[CTA],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "CTA:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[CTA],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "XPSTTS:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[XPSTTS],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "XPSTTS:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[XPSTTS],16,3), 0);
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "XPCTRL:", 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x+8,y++, Utilities_itoa((u32)VIP_REGS[XPCTRL],16,3), 0);
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, "GCLK:", 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "XPCTRL:", 0);
+	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[XPCTRL],16,3), 0);
+	Printing_out(__PRINTING_BGMAP, x,y, "GCLK:", 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,15 +156,15 @@ void Printing_int(int value,int x,int y){
 		
 		value *= -1;
 		
-		Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x++,y,"-", 0);
+		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
 		
-		Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, 
+		Printing_out(__PRINTING_BGMAP, x,y, 
 				Utilities_itoa((int)(value), 10, vbjDigitCount(value)), 0);
 	
 	}
 	else{
 
-		Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), 
+		Printing_out(__PRINTING_BGMAP, 
 				//x - vbjDigitCount(value), y, itoa((int)(value), 10, vbjDigitCount(value)) + 1, 0);				
 				x, y, Utilities_itoa((int)(value), 10, vbjDigitCount(value)), 0);
 	}
@@ -177,13 +177,13 @@ void Printing_hex(WORD value,int x,int y){
 		
 		value *= -1;
 		
-		Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x++,y,"-", 0);
-		Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, Utilities_itoa((int)(value),16,8), 0);
+		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), 0);
 	
 	}
 	else{
 		
-		Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y, Utilities_itoa((int)(value),16,8), 0);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), 0);
 	}
 }
 
@@ -206,7 +206,7 @@ void Printing_float(float value,int x,int y){
 	if(value < 0){
 		sign = -1;
 		
-		Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x++,y,"-", 0);
+		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
 	}
 	
 	decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value * sign)) / 512.f) * 100.f);
@@ -214,17 +214,17 @@ void Printing_float(float value,int x,int y){
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), 0);
+	Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), 0);
 	
 	// print the dot
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x + length, y, ".", 0);
+	Printing_out(__PRINTING_BGMAP, x + length, y, ".", 0);
 	
 	// print the decimal part
 	//
 	for(i = 0; size; i++){
 		
 		if(decimal < size){
-			Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x + length + 1 + i,y, Utilities_itoa(0, 10, 1), 0);			
+			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), 0);			
 		}		
 		else{
 			
@@ -234,21 +234,21 @@ void Printing_float(float value,int x,int y){
 		size /= 10;
 	}	
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x + length  + i ,y, Utilities_itoa(decimal, 10, 0), 0);
+	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Printing_text(char *string,int x,int y){
 	
-	Printing_out(TextureManager_getFreeBgmap(TextureManager_getInstance()), x,y,string, 3);
+	Printing_out(__PRINTING_BGMAP, x,y,string, 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //render general print output layer
-void Printing_render(int textLayer, int textBgMap){
+void Printing_render(int textLayer){
 	
 	//set the world's head
-    WORLD_HEAD((textLayer), WRLD_ON | textBgMap);
+    WORLD_HEAD((textLayer), WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP));
     
     //set the world's size
     WORLD_SIZE((textLayer), 384, 224);
@@ -258,9 +258,6 @@ void Printing_render(int textLayer, int textBgMap){
     
     //set world cuting point
     WORLD_MSET((textLayer), 0, 0, 0);
-
-    //stop rendering at next world layer (creates a flash!)
-    WORLD_HEAD((textLayer - 1), WRLD_END);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,9 +280,9 @@ void Printing_writeAscii(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Printing_debug(u32 x){
 	
-	Printing_writeAscii(TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	Printing_writeAscii(__PRINTING_BGMAP);
 	
-	Printing_render(31,TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	Printing_render(__TOTAL_LAYERS);
 		
 	Printing_text("debug: ",10,10);	
 	Printing_hex(x,17,10);

@@ -80,7 +80,7 @@ int vbjDigitCount(int value);
  */
 
 //render general print output layer
-void Printing_render(int textLayer, int textBgMap);
+void Printing_render(int textLayer);
 
 /* ---------------------------------------------------------------------------------------------------------*/
 //setup the bgmap and char memory with printing data

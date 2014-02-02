@@ -105,7 +105,7 @@ int Error_triggerException(Error this, char* string){
 	// make sure the brigtness is ok
     HardwareManager_upBrightness(HardwareManager_getInstance());
 	
-	Printing_writeAscii(TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	Printing_writeAscii();
 
 	//print error message to screen
 	Printing_text("                                             ", __EXCEPTION_COLUMN, __EXCEPTION_LINE - 1);
@@ -114,7 +114,7 @@ int Error_triggerException(Error this, char* string){
 	Printing_text(string, __EXCEPTION_COLUMN, __EXCEPTION_LINE);
 	
 	// error display message
-	Printing_render(SpriteManager_getFreeLayer(SpriteManager_getInstance()), TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	Printing_render(SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 
 	//trap the game here	
 	while(true);

@@ -184,19 +184,19 @@
  */
 
 //bgmaps to use (leave 2 bgmaps to allocate param table)
-#define NUM_BGMAPS 12
+#define __NUM_BGMAPS 10
 
 //number of bgmap definitions in each bgmap segment 
-#define NUM_MAPS_PER_SEG 16
+#define __NUM_MAPS_PER_SEG 16
 
-#define PALLET_MASK			0x0600
-#define WORLD_LAYER_MASK	0x01F0
-#define SEGMENT_MASK		0x000F
+#define __PALLET_MASK			0x0600
+#define __WORLD_LAYER_MASK	0x01F0
+#define __SEGMENT_MASK		0x000F
 
 
-#define PALLET_MASK_DISP		0x09 /* 6 */
-#define WORLD_LAYER_MASK_DISP	0x04 /* 1 */
-#define SEGMENT_MASK_DISP		0x00 /* 0 */
+#define __PALLET_MASK_DISP		0x09 /* 6 */
+#define __WORLD_LAYER_MASK_DISP	0x04 /* 1 */
+#define __SEGMENT_MASK_DISP		0x00 /* 0 */
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -215,7 +215,7 @@
  * in libgccvb/video.h
  */
 
-#define __PARAMINI (PARAMBase - 4084)
+#define __PARAMINI (PARAMBase)
 
 /* Number of the power of 2 to multiply by the number
  * of rows of a given bgmap to allocate space

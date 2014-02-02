@@ -1,4 +1,3 @@
-
 /* VbJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
  * 
  * Copyright (C) 2007 Jorge Eremiev
@@ -321,7 +320,7 @@ static void Game_setState(Game this, State state, int fadeDelay){
     HardwareManager_enableKeypad(this->hardwareManager);
 	
 	// load chars into graphic memory
-	Printing_writeAscii(TextureManager_getFreeBgmap(this->bgmapManager));
+	Printing_writeAscii();
 	
 	// enable rendering
 	HardwareManager_enableRendering(this->hardwareManager);
@@ -373,7 +372,7 @@ void Game_reset(Game this){
 	PhysicalWorld_reset(this->physicalWorld);
 	
 	// load chars into graphic memory
-	Printing_writeAscii(TextureManager_getFreeBgmap(this->bgmapManager));
+	Printing_writeAscii();
 
 	// call get instance in singletons to make sure their constructors
 	// are called now
@@ -543,9 +542,6 @@ void Game_update(Game this){
 
 			// update entities' position
 			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
-
-			// check sprite layers
-			SpriteManager_sortLayersProgressively(this->spriteManager);
 
 #ifdef __DEBUG
 			// increase the frame rate

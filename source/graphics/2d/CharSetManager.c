@@ -213,8 +213,6 @@ void CharSetManager_print(CharSetManager this, int charSet, int numberOfChars, i
 	
 	int i=0;
 	for (i=0;i<16;i++){
-		//vbPrint(TextureManager_getFreeBgmap(_bgmapManager), x,i, itoa(this->segment[charSet][i],16,8), 0);
-		//vbPrint(TextureManager_getFreeBgmap(_bgmapManager), x+10,i, itoa(this->charDefUsage[i],16,4), 0);
 	}
 }
 

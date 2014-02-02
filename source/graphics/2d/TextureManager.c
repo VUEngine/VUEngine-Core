@@ -72,25 +72,25 @@ enum OffsetIndex{
 	Object_ATTRIBUTES;													\
 																		\
 	/* number of chars ocuppied */										\
-	int numberOfChars[NUM_BGMAPS];										\
+	int numberOfChars[__NUM_BGMAPS];										\
 																		\
 	/* current x offset to set the next bgmap */						\
-	int xOffset[NUM_BGMAPS][NUM_MAPS_PER_SEG];							\
+	int xOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];							\
 																		\
 	/* current y offset to set the next bgmap */						\
-	int yOffset[NUM_BGMAPS][NUM_MAPS_PER_SEG];							\
+	int yOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];							\
 																		\
 	/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 		\
-	int offset[NUM_BGMAPS * NUM_MAPS_PER_SEG][3];						\
+	int offset[__NUM_BGMAPS * __NUM_MAPS_PER_SEG][3];						\
 																		\
 	/* next free bgmap used for text printing */						\
 	int freeBgmap;														\
 																		\
 	/* the textures allocated */										\
-	Texture texture[NUM_BGMAPS * NUM_MAPS_PER_SEG];						\
+	Texture texture[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];						\
 																		\
 	/* texture usage count */											\
-	int textureUsageCount[NUM_BGMAPS * NUM_MAPS_PER_SEG];				\
+	int textureUsageCount[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];				\
 
 	
 
@@ -155,19 +155,19 @@ void TextureManager_reset(TextureManager this) {
 	int j = 0;
 
 	// clear each bgmap segment usage
-	for(; i < NUM_BGMAPS; i++){
+	for(; i < __NUM_BGMAPS; i++){
 		
 		this->numberOfChars[i] = 0;
 		
 		// clear the offsets
-		for(j=0;j<NUM_MAPS_PER_SEG;j++){
+		for(j=0;j<__NUM_MAPS_PER_SEG;j++){
 			
 			this->xOffset[i][j] = 0;
 			this->yOffset[i][j] = 0;
 		}
 	}
 	
-	for(i = 0; i < NUM_BGMAPS * NUM_MAPS_PER_SEG; i++){
+	for(i = 0; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++){
 		
 		this->offset[i][kXOffset] = 0;
 		this->offset[i][kYOffset] = 0;
@@ -202,14 +202,14 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 	CACHE_ENABLE;	
 	if(Texture_getNumberOfChars(texture)){
 		
-		for(i = 0; i < NUM_BGMAPS; i++){
+		for(i = 0; i < __NUM_BGMAPS; i++){
 			//if there is space in the segment memory
 			// there are 4096 chars in each bgmap segment
 			if((4096 - this->numberOfChars[i]) >= area ){
 				
 				//check if there is space within the segment
 				// we check the next so don't go to the last element
-				for(j = 0; j < NUM_MAPS_PER_SEG - 1; j++){
+				for(j = 0; j < __NUM_MAPS_PER_SEG - 1; j++){
 
 					//determine the y offset inside the bgmap segment
 					if(!this->yOffset[i][j + 1]){
@@ -250,7 +250,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 									if(this->xOffset[i][j] >= 62){
 										
 										//TODO: this was commented, don't know why
-										this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;										
+										//this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;										
 									}								
 								}
 
@@ -301,7 +301,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve free bgmap segment number
 int TextureManager_getFreeBgmap(TextureManager this){
-	
+
 	return this->freeBgmap;
 }
 
@@ -363,7 +363,7 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
 	int i = 0;
 	
 	// try to find a texture with the same bgmap definition
-	for(; i < NUM_BGMAPS * NUM_MAPS_PER_SEG; i++){
+	for(; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++){
 		
 		if(this->texture[i] && Texture_getBgmapDef(this->texture[i]) == textureDefinition->bgmapDefinition){
 			
@@ -382,7 +382,7 @@ static Texture TextureManager_loadTexture(TextureManager this, TextureDefinition
 	int i = 0;
 	
 	// find and empty slot
-	for(; i < NUM_BGMAPS * NUM_MAPS_PER_SEG; i++){
+	for(; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++){
 		
 		if(!this->texture[i]){
 			
@@ -480,7 +480,7 @@ void TextureManager_debug(TextureManager this){
 	
 	int j = 0;
 	//int bgmap = 0;
-	for(j = 0; j < NUM_MAPS_PER_SEG; j++){
+	for(j = 0; j < __NUM_MAPS_PER_SEG; j++){
 		
 		//vbjPrintInt(this->yOffset[bgmap][j], 0, j);
 		//vbjPrintInt(this->xOffset[bgmap][j], 10, j);

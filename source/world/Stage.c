@@ -67,6 +67,12 @@ static void Stage_setEntityState(Stage this, int ID, int inGameState);
 // get entity's state
 static inline int Stage_getEntityState(Stage this, int ID);
 
+// load entities on demand (if they aren't loaded and are visible)
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange);
+
+// unload non visible entities
+static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively);
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -239,7 +245,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
 
 	// load entities
-	Stage_loadEntities(this, loadOnlyInRangeEntities);
+	Stage_loadEntities(this, loadOnlyInRangeEntities, true);
 
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
@@ -247,52 +253,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	
 	//setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// load entities on demand (if they aren't loaded and are visible)
-void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities){
-
-	StageDefinition* world = this->stageDefinition;
-	
-	int i = 0;
-
-	// TODO: don't check every entity in the stage's definition
-	// must implement an algorithm which only check a portion of it
-	for(; i < __ENTITIESPERWORLD && world->entities[i].entity; i++){
-		
-		//if entity isn't loaded and haven't been killed
-		int inGameState = Stage_getEntityState(this, i);
-
-		if(!(__LOADED & inGameState)){
-		//if(kLoaded != inGameState && kDead != inGameState){
-			
-			// test if the position is inside the game
-			EntityDefinition* entityDefinition = world->entities[i].entity;
-			
-			VBVec3D position = {
-					ITOFIX19_13(world->entities[i].position.x),
-					ITOFIX19_13(world->entities[i].position.y),
-					ITOFIX19_13(world->entities[i].position.z)
-			};
-			
-			// if entity in load range
-			if(!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position, 
-					entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
-					entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
-				
-				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
-				
-				if(!(__LOADED & inGameState)){
-					 
-					inGameState |= __LOADED;
-				}
-				
-				//set actor state as loaded
-				Stage_setEntityState(this, i, inGameState);
-			}
-		}
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -327,8 +287,61 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// load entities on demand (if they aren't loaded and are visible)
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange){
+
+	StageDefinition* world = this->stageDefinition;
+	
+	int i = 0;
+
+	// TODO: don't check every entity in the stage's definition
+	// must implement an algorithm which only check a portion of it
+	for(; i < __ENTITIESPERWORLD && world->entities[i].entity; i++){
+		
+		//if entity isn't loaded and haven't been killed
+		int inGameState = Stage_getEntityState(this, i);
+
+		if(!(__LOADED & inGameState)){
+		//if(kLoaded != inGameState && kDead != inGameState){
+			
+			// test if the position is inside the game
+			EntityDefinition* entityDefinition = world->entities[i].entity;
+			
+			VBVec3D position = {
+					ITOFIX19_13(world->entities[i].position.x),
+					ITOFIX19_13(world->entities[i].position.y),
+					ITOFIX19_13(world->entities[i].position.z)
+			};
+			
+			// if entity in load range
+			if(!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position, 
+					entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
+					entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
+
+				VPUManager_waitForFrame(VPUManager_getInstance());
+
+				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
+				
+				if(!(__LOADED & inGameState)){
+					 
+					inGameState |= __LOADED;
+				}
+				
+				//set actor state as loaded
+				Stage_setEntityState(this, i, inGameState);
+				
+				if(loadOnlyInRangeEntities && !loadAllEntitiesInRange) {
+
+					break;
+				}
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unload non visible entities
-void Stage_unloadOutOfRangeEntities(Stage this){
+static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
 	// need a temporal list to remove and delete entities
 	VirtualList removedEntities = __NEW(VirtualList);
@@ -357,6 +370,13 @@ void Stage_unloadOutOfRangeEntities(Stage this){
 			
 			// register entity to remove
 			VirtualList_pushBack(removedEntities, (const BYTE* const )entity);
+			
+			VPUManager_waitForFrame(VPUManager_getInstance());
+
+			if(unloadProgressively) {
+				
+				break;
+			}
 		}
 	}
 	
@@ -383,19 +403,33 @@ void Stage_stream(Stage this){
 	// if the screen is moving
 	if(*((u8*)_screenMovementState)){
 
-		static int turn = __RENDER_FPS >> 4;
+		static int turn = __RENDER_FPS >> 1;
 			
-		if(turn--){
+		if(!--turn){
+
+			// wait for frame before rendering
+			//VPUManager_waitForFrame(VPUManager_getInstance());
 
 			// unload not visible objects
-			Stage_unloadOutOfRangeEntities(this);			
+			Stage_unloadOutOfRangeEntities(this, true);	
+			
+			// enable interrupts
+			VPUManager_displayOn(VPUManager_getInstance());
+			
+			turn = __RENDER_FPS >> 1;
 		}
-		else{
+		else if (((__RENDER_FPS >> 1) >> 1) == turn) {
+
+			// wait for frame before rendering
+			//VPUManager_waitForFrame(VPUManager_getInstance());
 
 			// load visible objects	
-			Stage_loadEntities(this, true);
+			Stage_loadEntities(this, true, true);
 
-			turn = __RENDER_FPS >> 4;
-		}			
+			// enable interrupts
+			VPUManager_displayOn(VPUManager_getInstance());
+
+		}		
+		
 	}
 }

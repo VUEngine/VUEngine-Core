@@ -48,9 +48,11 @@
 	
 	
 
-#define ScrollBackground_SET_VTABLE(ClassName)							\
-		Entity_SET_VTABLE(ClassName)									\
-		__VIRTUAL_SET(ClassName, ScrollBackground, isVisible);			\
+#define ScrollBackground_SET_VTABLE(ClassName)										\
+		Entity_SET_VTABLE(ClassName)												\
+		__VIRTUAL_SET(ClassName, ScrollBackground, isVisible);						\
+		__VIRTUAL_SET(ClassName, ScrollBackground, transform);						\
+		__VIRTUAL_SET(ClassName, ScrollBackground, updateSpritePosition);			\
 
 	
 
@@ -59,6 +61,9 @@
 													\
 	/* super's attributes */						\
 	Entity_ATTRIBUTES;								\
+													\
+	/* sprites for scrolling */						\
+	Sprite scrollSprites[2];						\
 
 
 __CLASS(ScrollBackground);
@@ -96,11 +101,13 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 // class's destructor
 void ScrollBackground_destructor(ScrollBackground this);
 
+// transform
+void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform);
+
 // whether it is visible
 int ScrollBackground_isVisible(ScrollBackground this, int pad);
 
-// positione scroll image childs
-void ScrollBackground_setScroll(ScrollBackground this);
-
+// check if must update sprite's position
+int ScrollBackground_updateSpritePosition(ScrollBackground this);
 
 #endif /*SCROLL_BACKGROUND_H_*/

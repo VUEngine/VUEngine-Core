@@ -146,7 +146,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 	this->worldLayer = 0;
 	
 	// set the render flag
-	this->renderFlag = __UPDATEHEAD;
+	this->renderFlag = 0;
 		
 	// write the texture
 	//Texture_write(this);	
@@ -233,8 +233,15 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 	position3D.x -= ITOFIX19_13(Texture_getCols(this->texture) << 2);
 	position3D.y -= ITOFIX19_13(Texture_getRows(this->texture) << 2);
 	
+	fix19_13 previousZPosition = this->drawSpec.position.z;
+	
 	// project position to 2D space
 	Optics_projectTo2D(&this->drawSpec.position, &position3D);
+	
+	if(previousZPosition != this->drawSpec.position.z) {
+		
+		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

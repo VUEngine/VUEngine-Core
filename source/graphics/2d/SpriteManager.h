@@ -91,6 +91,9 @@ void SpriteManager_reset(SpriteManager this);
 void SpriteManager_sortAllLayers(SpriteManager this);
 
 // check if any entity must be assigned another world layer
+void SpriteManager_spriteChangedPosition(SpriteManager this);
+
+// check if any entity must be assigned another world layer
 void SpriteManager_sortLayersProgressively(SpriteManager this);
 
 // remove a sprite from rendering system

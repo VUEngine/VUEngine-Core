@@ -49,7 +49,13 @@
 	Sprite sprites[__OBJECTLISTTAM];			\
 												\
 	/* next world layer	*/						\
-	int freeLayer;
+	int freeLayer;								\
+												\
+	/* flag controls END layer	*/				\
+	u8 updateLastLayer;							\
+												\
+	/* flag controls END layer	*/				\
+	u8 needSorting;
 
 
 __CLASS_DEFINITION(SpriteManager);
@@ -67,8 +73,8 @@ __CLASS_DEFINITION(SpriteManager);
 //class's constructor
 static void SpriteManager_constructor(SpriteManager this);
 
-// give each entity a world layer to be rendered
-static void SpriteManager_assignLayers(SpriteManager this);
+// set free layers off
+static void SpriteManager_setLastLayer(SpriteManager this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -121,6 +127,10 @@ void SpriteManager_reset(SpriteManager this){
 	}
 	
 	this->freeLayer = __TOTAL_LAYERS;
+	this->updateLastLayer = true;
+	this->needSorting = false;
+	
+	SpriteManager_setLastLayer(this);
 }	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,13 +139,13 @@ void SpriteManager_sortAllLayers(SpriteManager this){
 
 	int i = 0;
 
-	DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[0]);
-
 	CACHE_ENABLE;
-	for(;i < __OBJECTLISTTAM - 1 &&  this->sprites[i + 1]; i++){
+	for(i = 0; i < __OBJECTLISTTAM - 1 &&  this->sprites[i + 1]; i++){
 
-		int j = i + 1;
-		for(;i < __OBJECTLISTTAM &&  this->sprites[j]; j++){
+		DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[i]);
+
+		int j = 0;
+		for(j = i + 1;j < __OBJECTLISTTAM &&  this->sprites[j]; j++){
 
 			DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[j]);
 
@@ -160,6 +170,13 @@ void SpriteManager_sortAllLayers(SpriteManager this){
 		}
 	}
 	CACHE_DISABLE;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// check if any entity must be assigned another world layer
+void SpriteManager_spriteChangedPosition(SpriteManager this){
+
+	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,13 +209,13 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 			Sprite_setWorldLayer(this->sprites[i + 1], worldLayer2);
 			
 			// wait for frame before rendering
-			VPUManager_waitForFrame(VPUManager_getInstance());
+			//VPUManager_waitForFrame(VPUManager_getInstance());
 
-			Sprite_render(this->sprites[i]);
-			Sprite_render(this->sprites[i + 1]);
+			//Sprite_render(this->sprites[i]);
+			//Sprite_render(this->sprites[i + 1]);
 
 			// enable interrupts
-			VPUManager_displayOn(VPUManager_getInstance());
+			//VPUManager_displayOn(VPUManager_getInstance());
 
 			break;
 		}
@@ -206,6 +223,11 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 		drawSpec = nextDrawSpec;
 	}
 	CACHE_DISABLE;
+	
+	if(!(i < __OBJECTLISTTAM - 1 &&  this->sprites[i + 1])){
+
+		this->needSorting = false;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,32 +240,32 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	
 	if(i < __OBJECTLISTTAM){
 
-		// wait for frame before rendering
-		VPUManager_waitForFrame(VPUManager_getInstance());
-
 		// set entity into slot
 		this->sprites[i] = sprite;
 
 		// set layer
 		Sprite_setWorldLayer(this->sprites[i], __TOTAL_LAYERS - i);
+		
+	    WORLD_SIZE((this->freeLayer), 0, 0);
+		
+		// don't allow flickering in the next render cycly
+		this->freeLayer = __TOTAL_LAYERS - i - 1;
 
-		//update printing world layer for non textboxs (use mainly for debug)	
-		Printing_render(--this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
+		SpriteManager_setLastLayer(this);
 
-		// enable interrupts
-		VPUManager_displayOn(VPUManager_getInstance());
+		ASSERT(this->freeLayer, "SpriteManager::addSprite: no more free layers" );
+
+		this->needSorting = true;
+
+		//this->updateLastLayer = true;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
 	int i = 0;
 	
-	// wait for frame before rendering
-	VPUManager_waitForFrame(VPUManager_getInstance());
-
 	CACHE_ENABLE;
 	
 	// search for the entity to remove
@@ -260,8 +282,8 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 			this->sprites[j] = this->sprites[j + 1];
 			
 			// set layer
-			Sprite_setWorldLayer(this->sprites[j], 1);
-
+			Sprite_setWorldLayer(this->sprites[j], __TOTAL_LAYERS - j);
+			
 			Sprite_render(this->sprites[j]);
 		}
 		
@@ -270,33 +292,26 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	}
 	CACHE_DISABLE;
 
-	// reassign layers
-	SpriteManager_assignLayers(this);
+	this->freeLayer++;
+	
+	ASSERT(__TOTAL_LAYERS >= this->freeLayer, "SpriteManager::removeSprite: more free layers than really available" );
 
-	// enable interrupts
-	VPUManager_displayOn(VPUManager_getInstance());
+	this->updateLastLayer = true;
+	
+	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// give each entity a world layer to be rendered
-static void SpriteManager_assignLayers(SpriteManager this){
-	
-	int i = 0;
-	
-	this->freeLayer = __TOTAL_LAYERS;
-	
-	for(i = 0; this->sprites[i] && i < __OBJECTLISTTAM; i++){
-		
-		// change layers
-		Sprite_setWorldLayer(this->sprites[i], this->freeLayer--);
-		
-		Sprite_render(this->sprites[i]);
-	}	
+// set free layers off
+static void SpriteManager_setLastLayer(SpriteManager this){
 
-	ASSERT(this->freeLayer > 0, "SpriteManager: worldLayers depleted");
+	Printing_render(this->freeLayer);
+
+	WORLD_HEAD((this->freeLayer - 1), WRLD_OFF);
+
+    WORLD_SIZE((this->freeLayer - 1), 0, 0);
 	
-	//update printing world layer for non textboxs (use mainly for debug)	
-	Printing_render(this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
+	WORLD_HEAD((this->freeLayer - 1), WRLD_END);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -305,16 +320,23 @@ void SpriteManager_render(SpriteManager this){
 
 	int i = 0;
 	
+	if(this->needSorting){
+
+		// check sprite layers
+		SpriteManager_sortLayersProgressively(this);
+	}
+	
 	for(i = 0; this->sprites[i] && i < __OBJECTLISTTAM; i++){
 		
 		//render sprite	
 		Sprite_render((Sprite)this->sprites[i]);
 	}	
 	
-	if(0 == i){
+	if(this->updateLastLayer){
+
+		SpriteManager_setLastLayer(this);
 		
-		//update printing world layer for non textboxs (use mainly for debug)	
-		Printing_render(this->freeLayer, TextureManager_getFreeBgmap(TextureManager_getInstance()));
+		this->updateLastLayer = false;
 	}
 }
 

@@ -62,7 +62,7 @@ static u16* const	CHARB =		(u16*)CHARBase;
 #define		CharSegs(b)	(CHARBase + (b*0x8000))		// Address of CharSet b (0 <= b <= 3)
 
 //#define		PARAMBase		0x00034000
-#define		PARAMBase		0x00032000
+#define		PARAMBase		(0x0003C000 - 0x00002000 * (14 - __NUM_BGMAPS - 2) - 0x00001000)
 static u16* const	PARAM =		(u16*)PARAMBase;
 #define		PARAM(b)	(PARAMBase + (b&0xFFF0))		// Address of CharSet b (0 <= b <= 3)
 //#define		PARAM(b)	(PARAMBase + (b&0xFFF0)*1)		// Address of CharSet b (0 <= b <= 3)
