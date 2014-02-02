@@ -338,8 +338,7 @@ void PhysicalWorld_update(PhysicalWorld this){
 	// check the bodies
 	for(i = 0; bodies[i] && i < __MAX_BODIES_PER_LEVEL; i++){
 
-		Force friction = Actor_getSourroundingFriction((Actor)Body_getOwner(bodies[i]));
-		Body_update(bodies[i], &this->gravity, this->elapsedTime, &friction);
+		Body_update(bodies[i], &this->gravity, this->elapsedTime);
 	}
 
 	// process removed bodies

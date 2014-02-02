@@ -66,6 +66,9 @@
 	/* direction */										\
 	Force appliedForce;									\
 														\
+	/* friction sourrounding object */					\
+	Force friction;										\
+														\
 	/* spatial position */								\
 	VBVec3D position;									\
 														\
@@ -80,9 +83,6 @@
 														\
 	/* elasticity */									\
 	fix19_13 elasticity;								\
-														\
-	/* friction */										\
-	fix19_13 friction;									\
 														\
 	/* raise flag to make the body active */			\
 	int active: 1;										\
@@ -117,7 +117,7 @@ void Body_setOwner(Body this, Object owner);
 Object Body_getOwner(Body this);
 
 // update
-void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, Force* friction);
+void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
 
 // retrieve last displacement
 VBVec3D Body_getLastDisplacement(Body this);
@@ -141,10 +141,10 @@ fix19_13 Body_getElasticity(Body this);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 
 // get friction
-fix19_13 Body_getFriction(Body this);
+Force Body_getFriction(Body this);
 
-// set elasticity
-void Body_setFriction(Body this, fix19_13 friction);
+// set friction
+void Body_setFriction(Body this, Force friction);
 
 // retrieve state
 int Body_isAwake(Body body);

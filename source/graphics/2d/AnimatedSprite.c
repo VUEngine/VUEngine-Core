@@ -90,6 +90,7 @@ static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const 
 	
 	// initialize frame head
 	this->frameDelay = 0;
+	this->frameDelayDelta = -1;
 	
 	// don't project position
 	this->calculatePositionFlag = true;
@@ -229,10 +230,24 @@ int AnimatedSprite_getAnimatedSpriteCicle(AnimatedSprite this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set frame cicle
+// set frame cicle 
 void AnimatedSprite_setAnimatedSpriteCicle(AnimatedSprite this, int frameCicle){
 
 	this->frameDelay = frameCicle;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve frame cicle delta
+int AnimatedSprite_getAnimatedSpriteCicleDelta(AnimatedSprite this){
+	
+	return this->frameDelayDelta;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set frame cicle delta
+void AnimatedSprite_setAnimatedSpriteCicleDelta(AnimatedSprite this, int frameCicleDelta){
+
+	this->frameDelayDelta = frameCicleDelta;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,6 +256,7 @@ void AnimatedSprite_animate(AnimatedSprite this){
 		
 	// first check for a valid animation function
 	if(!this->animationFunction){
+		
 		return;
 	}
 	
@@ -288,8 +304,10 @@ void AnimatedSprite_animate(AnimatedSprite this){
 		this->previousFrame = this->actualFrame; 
 	}
 	
+	this->frameDelay += this->frameDelayDelta;
+	
 	// reduce frame delay count	
-	if(!(this->frameDelay--)){
+	if(0 >= this->frameDelay){
 		
 		// incrase the frame to show
 		this->previousFrame = this->actualFrame++;

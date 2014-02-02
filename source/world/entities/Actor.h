@@ -113,7 +113,6 @@ typedef struct GeneralAxisFlag{
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);					\
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);						\
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);						\
-		__VIRTUAL_SET(ClassName, Actor, getFriction);						\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);						\
 		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);				\
 		
@@ -193,9 +192,6 @@ VBVec3D Actor_getPreviousPosition(Actor this);
 // retrieve actor's scale
 Scale Actor_getScale(Actor this);
 
-// retrieve friction of colliding objects
-Force Actor_getSourroundingFriction(Actor this);
-
 // retrieve global position
 VBVec3D Actor_getPosition(Actor this);
 
@@ -264,8 +260,5 @@ void Actor_takeHitFrom(Actor this, Actor other);
 
 // get elasticiy
 fix19_13 Actor_getElasticity(Actor this);
-
-// get friction
-fix19_13 Actor_getFriction(Actor this);
 
 #endif

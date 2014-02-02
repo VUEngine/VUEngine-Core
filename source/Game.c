@@ -436,37 +436,34 @@ static void Game_setOpticalGlobals(Game this){
 // process input data according to the actual game status
 void Game_handleInput(Game this, int currentKey){
 	
-	static int pressedKey = 0;
-	static int previousKeyPressed = 0;
+	static u32 previousKey = 0;
 	
-	int newKey = currentKey & ~previousKeyPressed;
+	u32 newKey = currentKey & ~previousKey;
 	
-	// read key pad
-	pressedKey = currentKey;
-
 	// check for a new key pressed
 	if(newKey){
 
 		// inform the game about the key pressed		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &newKey);
-	
-		previousKeyPressed |= newKey;
 	}
 	
-	if(!(pressedKey & previousKeyPressed)){
+	if(currentKey != previousKey){
+
+		u32 releasedKey = (previousKey & ~currentKey);
 
 		// inform the game about the key pressed		
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &previousKeyPressed);
-		
-		previousKeyPressed = pressedKey;
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &releasedKey);
 	}
-	else if(pressedKey & previousKeyPressed){
+	
+	if(currentKey & previousKey){
+
+		u32 holdKey = currentKey & previousKey;
 
 		// inform the game about the key pressed		
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &pressedKey);
-		
-		previousKeyPressed = pressedKey;
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
 	}
+	
+	previousKey = currentKey;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

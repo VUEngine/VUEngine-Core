@@ -76,6 +76,9 @@
 	/* actual frame cicle in a given direction (i.e. when walking) */	\
 	int frameDelay;														\
 																		\
+	/* frame delay increment update cycle */							\
+	int frameDelayDelta;												\
+																		\
 	/* orignal position of the bgmap definition in ROM */				\
 	int originalTextureXOffset;											\
 																		\
@@ -119,7 +122,7 @@ typedef struct AnimationFunction{
 	// number of cicles a frame of animation is displayed
 	int delay;
 	
-	// wheter to play it in loop or not
+	// whether to play it in loop or not
 	int loop;
 	
 	// method to call function completion
@@ -188,6 +191,12 @@ int AnimatedSprite_getAnimatedSpriteCicle(AnimatedSprite this);
 
 // set frame cicle
 void AnimatedSprite_setAnimatedSpriteCicle(AnimatedSprite this, int frameCicle);
+
+// retrieve frame cicle delta
+int AnimatedSprite_getAnimatedSpriteCicleDelta(AnimatedSprite this);
+
+// set frame cicle delta
+void AnimatedSprite_setAnimatedSpriteCicleDelta(AnimatedSprite this, int frameCicleDelta);
 
 // animate the frame
 void AnimatedSprite_animate(AnimatedSprite this);

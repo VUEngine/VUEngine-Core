@@ -81,7 +81,7 @@ static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerati
 static int Body_isMovingInternal(Body this);
 
 // update force
-static void Body_calculateFriction(Body this, int axisOfMovement, Force* friction);
+static Force Body_calculateFriction(Body this, int axisOfMovement);
 
 
 enum CollidingObjectIndexes{
@@ -378,7 +378,7 @@ void Body_addForce(Body this, const Force* force){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update movement
-void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, Force* friction){
+void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime){
 
 	if (this->awake) {
 		
@@ -404,12 +404,12 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 				axisOfMovement |= __ZAXIS;
 		 	}
 
-			Body_calculateFriction(this, axisOfMovement, friction);
+			Force friction = Body_calculateFriction(this, axisOfMovement);
 
 			// update each axis
 	 	 	if(__XAXIS & axisOfMovement){ 
 	 	 		
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, friction->x);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, friction.x);
 
 	 	 		if(movementStatus){
 
@@ -426,7 +426,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 
 	 	 	if(__YAXIS & axisOfMovement){ 
 	 	 		
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, friction->y);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, friction.y);
 
 	 	 		if(movementStatus){
 
@@ -444,7 +444,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 	 	 		
 	 	 	if(__ZAXIS & axisOfMovement){ 
 	 	 		
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, friction->z);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, friction.z);
 
 	 	 		if(movementStatus){
 
@@ -478,14 +478,18 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime, F
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update force
-static void Body_calculateFriction(Body this, int axisOfMovement, Force* friction){
+static Force Body_calculateFriction(Body this, int axisOfMovement){
 	
 	// get friction fBody from the game world
 	fix19_13 worldFriction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
 
-	friction->x = __XAXIS & axisOfMovement? 0 < this->velocity.x? -(friction->x + worldFriction): friction->x + worldFriction : 0;
-	friction->y = __YAXIS & axisOfMovement? 0 < this->velocity.y? -(friction->y + worldFriction): friction->y +  worldFriction : 0;
-	friction->z = __ZAXIS & axisOfMovement? 0 < this->velocity.z? -(friction->z + worldFriction): friction->z +  worldFriction : 0;
+	Force friction;
+
+	friction.x = __XAXIS & axisOfMovement? 0 < this->velocity.x? -(this->friction.x + worldFriction): this->friction.x + worldFriction : 0;
+	friction.y = __YAXIS & axisOfMovement? 0 < this->velocity.y? -(this->friction.y + worldFriction): this->friction.y +  worldFriction : 0;
+	friction.z = __ZAXIS & axisOfMovement? 0 < this->velocity.z? -(this->friction.z + worldFriction): this->friction.z +  worldFriction : 0;
+	
+	return friction;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -703,14 +707,13 @@ void Body_setElasticity(Body this, fix19_13 elasticity) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get friction
-fix19_13 Body_getFriction(Body this){
+Force Body_getFriction(Body this){
 
 	return this->friction;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set elasticity
-void Body_setFriction(Body this, fix19_13 friction){
+void Body_setFriction(Body this, Force friction){
 	
 	this->friction = friction;
 }
