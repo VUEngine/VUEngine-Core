@@ -126,10 +126,10 @@ static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefini
 
 	if (spritesDefinitions) {
 		
-		int i = 0;
+		int i = numberOfSprites;
 		
 		//go through n sprites in entity's definition
-		for(; i < numberOfSprites && i < __MAX_SPRITES_PER_ENTITY; i++){
+		for(; i-- && i < __MAX_SPRITES_PER_ENTITY;){
 	
 			Entity_addSprite(this, &spritesDefinitions[i]);
 		}

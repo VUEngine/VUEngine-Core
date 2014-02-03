@@ -323,7 +323,7 @@ static void Game_setState(Game this, State state, int fadeDelay){
 	Printing_writeAscii();
 	
 	// enable rendering
-	HardwareManager_enableRendering(this->hardwareManager);
+	HardwareManager_displayOn(this->hardwareManager);
 
 	// make a fade in
 	Screen_FXFadeIn(Screen_getInstance(), fadeDelay);
@@ -439,6 +439,10 @@ void Game_handleInput(Game this, int currentKey){
 	static u32 previousKey = 0;
 	
 	u32 newKey = currentKey & ~previousKey;
+	
+#ifdef __DEBUG
+	Printing_hex(currentKey, 30, 25);
+#endif
 	
 	// check for a new key pressed
 	if(newKey){
