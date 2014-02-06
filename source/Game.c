@@ -113,9 +113,6 @@ enum UpdateSubsystems{
 													\
 	/* game's next state */							\
 	State nextState;								\
-													\
-	/* change state delay */						\
-	int fadeDelay;									\
 
 __CLASS_DEFINITION(Game);
  
@@ -139,7 +136,7 @@ static void Game_initialize(Game this);
 static void Game_setOpticalGlobals(Game this);
 
 // set game's state
-static void Game_setState(Game this, State state, int fadeDelay);
+static void Game_setState(Game this, State state);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -178,7 +175,6 @@ static void Game_constructor(Game this){
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
 	
 	this->nextState = NULL;
-	this->fadeDelay = 0;
 	
 	// call get instance in singletons to make sure their constructors
 	// are called now
@@ -267,16 +263,18 @@ void Game_initialize(Game this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set game's initial state
-void Game_start(Game this, State state, int fadeDelay){
+void Game_start(Game this, State state){
 
 	ASSERT(state, "Game: initial state is NULL");
+
+	HardwareManager_displayOn(this->hardwareManager);
 
 	if(!this->started) {
 		
 		this->started = true;
 		
 		// set state
-		Game_setState(this, state, fadeDelay);
+		Game_setState(this, state);
 		
 		// start game's cycle
 		Game_update(this);
@@ -289,24 +287,17 @@ void Game_start(Game this, State state, int fadeDelay){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set game's state
-void Game_changeState(Game this, State state, int fadeDelay){
+void Game_changeState(Game this, State state){
 
 	this->nextState = state;
-	this->fadeDelay = fadeDelay;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set game's state
-static void Game_setState(Game this, State state, int fadeDelay){
+static void Game_setState(Game this, State state){
 
     ASSERT(state, "Game: setting NULL state");
 
-	// make a fade out
-	Screen_FXFadeOut(Screen_getInstance(), fadeDelay);
-	
-	// turn off the display
-    HardwareManager_displayOff(this->hardwareManager);
-    
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
@@ -318,18 +309,15 @@ static void Game_setState(Game this, State state, int fadeDelay){
 
     //enable hardware pad read
     HardwareManager_enableKeypad(this->hardwareManager);
-	
+
 	// load chars into graphic memory
 	Printing_writeAscii();
 	
-	// enable rendering
-	HardwareManager_displayOn(this->hardwareManager);
-
-	// make a fade in
-	Screen_FXFadeIn(Screen_getInstance(), fadeDelay);
-	
 	// start physical simulation again
 	PhysicalWorld_start(this->physicalWorld);
+	
+	// disable rendering
+	HardwareManager_enableRendering(this->hardwareManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,7 +429,7 @@ void Game_handleInput(Game this, int currentKey){
 	u32 newKey = currentKey & ~previousKey;
 	
 #ifdef __DEBUG
-	Printing_hex(currentKey, 30, 25);
+	//Printing_hex(currentKey, 30, 25);
 #endif
 	
 	// check for a new key pressed
@@ -474,22 +462,17 @@ void Game_handleInput(Game this, int currentKey){
 // render game
 void Game_render(Game this) {
 	
-	u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
-	
-	if(currentTime - this->lastTime[kRender] > 1000 / __RENDER_FPS){
-
-		// save current time
-		this->lastTime[kRender] = currentTime;
-	
-		// render sprites as fast as possible
-		SpriteManager_render(SpriteManager_getInstance());
+	// sort sprites
+	SpriteManager_sortLayersProgressively(this->spriteManager);
 
 #ifdef __DEBUG
-		// increase the frame rate
-		FrameRate_increaseRenderFPS(this->frameRate);
+	// increase the frame rate
+	FrameRate_increaseRenderFPS(this->frameRate);
 #endif
-	}
 }
+
+//#undef __CAP_FPS
+//#define __CAP_FPS false
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update engine's world's state
@@ -501,29 +484,31 @@ void Game_update(Game this){
 		kPhysics,
 		kLogic
 	};
+	
+	u32 currentTime = 0;
 
 	while(true){
 
-		u32 currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
-			
+		currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
+		
 		if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
 
 			if(this->nextState){
 				
-				Game_setState(this, this->nextState, this->fadeDelay);
+				Game_setState(this, this->nextState);
 				this->nextState = NULL;
 			}
-
-			this->lastTime[kLogic] = currentTime;
-
-			// it is the update cycle
-			ASSERT(this->stateMachine, "Game: no state machine");
 
 			// process user's input 
 			Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
 
 		    // update the game's logic
 			StateMachine_update(this->stateMachine);
+			
+			this->lastTime[kLogic] = currentTime;
+
+			// it is the update cycle
+			ASSERT(this->stateMachine, "Game: no state machine");
 
 #ifdef __DEBUG
 			// increase the frame rate
@@ -543,6 +528,9 @@ void Game_update(Game this){
 
 			// update entities' position
 			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
+			
+			// render sprites
+			SpriteManager_render(this->spriteManager);
 
 #ifdef __DEBUG
 			// increase the frame rate

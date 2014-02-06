@@ -190,9 +190,6 @@ void Entity_transform(Entity this, Transformation* environmentTransform){
 			
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
-			// calculate sprite's parallax
-			Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
-
 			// update scale if needed
 			if(updateSpriteScale){
 		
@@ -208,7 +205,7 @@ void Entity_transform(Entity this, Transformation* environmentTransform){
 			
 			//if screen is moving
 			if(updateSpritePosition){
-						
+				
 				//update sprite's 2D position 
 				Sprite_setPosition(sprite, &this->transform.globalPosition);
 			}
@@ -289,10 +286,10 @@ int Entity_isVisible(Entity this, int pad){
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
 	return Optics_isVisible(this->transform.globalPosition,
-			Entity_getWidth(this),
-			Entity_getHeight(this),
-			Sprite_getDrawSpec(sprite).position.parallax,
-			pad);
+			ITOFIX19_13(Entity_getWidth(this)),
+			ITOFIX19_13(Entity_getHeight(this)),
+			ITOFIX19_13(Sprite_getDrawSpec(sprite).position.parallax),
+			ITOFIX19_13(pad));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,8 +297,8 @@ int Entity_isVisible(Entity this, int pad){
 int Entity_isOutsideGame(Entity this){
 	
 	return Optics_isOutsidePlayableArea(this->transform.globalPosition, 
-			Entity_getWidth(this), 
-			Entity_getHeight(this));
+			ITOFIX19_13(Entity_getWidth(this)), 
+			ITOFIX19_13(Entity_getHeight(this)));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -343,14 +340,14 @@ Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID
 // check if must update sprite's position
 int Entity_updateSpritePosition(Entity this){
 
-	return (*((int*)_screenMovementState) || this->invalidateGlobalPosition);
+	return (*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if must update sprite's scale
 int Entity_updateSpriteScale(Entity this){
 
-	return (_screenMovementState->z || this->invalidateGlobalPosition);
+	return (_screenMovementState->z || this->invalidateGlobalPosition.z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -98,11 +98,15 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor);
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position);
 
+// retrieve last displacement
+VBVec3D Screen_getLastDisplacement(Screen this);
+
 // create a fade delay
 void Screen_FXFadeIn(Screen this, int wait);
 
 // create a fade delay
 void Screen_FXFadeOut(Screen this, int wait);
+
 
 #endif
 

@@ -201,15 +201,20 @@ void Printing_float(float value,int x,int y){
 	
 	int size = 10;
 
-	int decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value)) / 512.f) * 100.f);
+//	int decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value)) / 512.f) * 100.f);
 	
+	#define FIX19_13_FRAC(n)		((n)&0x1FFF)
+
+	int decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
+
 	if(value < 0){
 		sign = -1;
 		
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
 	}
 	
-	decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value * sign)) / 512.f) * 100.f);
+//	decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value * sign)) / 512.f) * 100.f);
+	decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 
 	// print integral part
 	length = Utilities_intLength((int)value * sign);

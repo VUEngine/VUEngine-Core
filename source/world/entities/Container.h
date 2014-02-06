@@ -104,7 +104,7 @@
 	Transformation transform;							\
 														\
 	/* flag to recalculate global position */			\
-	int invalidateGlobalPosition:1;
+	VBVec3D invalidateGlobalPosition;
 
 __CLASS(Container);
 

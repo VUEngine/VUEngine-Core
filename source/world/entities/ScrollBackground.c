@@ -118,7 +118,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 	// call base class's transform method
 	Entity_transform((Entity)this, environmentTransform);
 
-	if((*((int*)_screenMovementState) || this->invalidateGlobalPosition)){
+	if((*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y)){
 		
 		ScrollBackground_updateScrolling(this);
 	}
@@ -154,11 +154,11 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	// get the number of "screens" from the beginnig of the world
 	// to the actual screen's position
-	screens = screenPosition.x / __SCREENWIDTH;
+	screens = FIX19_13TOI(screenPosition.x) / __SCREENWIDTH;
 	
 	// check if the number of screens is divisible by 2
 	//if(!(screens & 2)1 == 0 && screens != 0){
-	displacement = screenPosition.x;
+	displacement = FIX19_13TOI(screenPosition.x);
 	
 	if(screens){
 		
@@ -175,28 +175,28 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	if((unsigned)axis <= __SCREENWIDTH){
 		
-		drawSpec0.position.x = axis - __SCREENWIDTH;
+		drawSpec0.position.x = ITOFIX19_13(axis - __SCREENWIDTH);
 		
-		drawSpec1.position.x = axis;
+		drawSpec1.position.x = ITOFIX19_13(axis);
 	}
 	else{
 		
 		if(axis < 0){
 			
-			drawSpec1.position.x = axis;
+			drawSpec1.position.x = ITOFIX19_13(axis);
 			
-			drawSpec0.position.x = drawSpec1.position.x + __SCREENWIDTH;
+			drawSpec0.position.x = drawSpec1.position.x + ITOFIX19_13(__SCREENWIDTH);
 		}
 		else{
 			
-			drawSpec0.position.x = axis - __SCREENWIDTH - 1;
+			drawSpec0.position.x = ITOFIX19_13(axis - __SCREENWIDTH - 1);
 			
-			drawSpec1.position.x = drawSpec0.position.x - __SCREENWIDTH - 1;
+			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREENWIDTH - 1);
 		}
 	}
 	
 	// now move the drawspec in order to render the texture in the center
-	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - (Texture_getRows(Sprite_getTexture(this->scrollSprites[kLeftSprite])) << 3);
+	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(this->scrollSprites[kLeftSprite])) << 3);
 	drawSpec0.position.parallax = drawSpec1.position.parallax = Sprite_getDrawSpec(this->scrollSprites[kLeftSprite]).position.parallax;
 
 	// set map's position
@@ -205,12 +205,6 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);	
 	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATEG);
-	
-	//Printing_int(drawSpec0.position.x, 1, 10); 
-	//Printing_int(drawSpec0.position.y, 10, 10);
-
-	//Printing_int(drawSpec1.position.x, 1, 11);
-	//Printing_int(drawSpec1.position.y, 10, 11);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

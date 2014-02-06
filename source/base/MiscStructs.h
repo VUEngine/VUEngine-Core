@@ -226,12 +226,12 @@ typedef struct Vec2D{
 // used to represent a screen position with parallax info
 typedef struct VBVec2D{
 	
-	int x;
-	int y;
+	fix19_13 x;
+	fix19_13 y;
 	
 	// since parallax may be the same given different z positions
 	// it's needed to have this value to being able to ordern WORLD layers
-	int z;
+	fix19_13 z;
 	int parallax;
 	
 }VBVec2D;

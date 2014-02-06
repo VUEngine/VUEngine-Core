@@ -74,10 +74,10 @@ Game Game_getInstance();
 void Game_destructor(Game this);
 
 // set game's initial state
-void Game_start(Game this, State state, int fadeDelay);
+void Game_start(Game this, State state);
 
 // set game's state
-void Game_changeState(Game this, State state, int fadeDelay);
+void Game_changeState(Game this, State state);
 
 // recover graphics memory
 void Game_recoverGraphicMemory(Game this);

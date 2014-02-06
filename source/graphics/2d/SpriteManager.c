@@ -29,7 +29,7 @@
 
 #include <SpriteManager.h>
 #include <VPUManager.h>
-
+#include <Screen.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -50,9 +50,6 @@
 												\
 	/* next world layer	*/						\
 	int freeLayer;								\
-												\
-	/* flag controls END layer	*/				\
-	u8 updateLastLayer;							\
 												\
 	/* flag controls END layer	*/				\
 	u8 needSorting;
@@ -127,7 +124,6 @@ void SpriteManager_reset(SpriteManager this){
 	}
 	
 	this->freeLayer = __TOTAL_LAYERS;
-	this->updateLastLayer = true;
 	this->needSorting = false;
 	
 	SpriteManager_setLastLayer(this);
@@ -183,6 +179,11 @@ void SpriteManager_spriteChangedPosition(SpriteManager this){
 // check if any entity must be assigned another world layer
 void SpriteManager_sortLayersProgressively(SpriteManager this){
 
+	if(!this->needSorting){
+
+		return;
+	}
+	
 	int i = 0;
 
 	DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[0]);
@@ -211,8 +212,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 			// wait for frame before rendering
 			//VPUManager_waitForFrame(VPUManager_getInstance());
 
-			//Sprite_render(this->sprites[i]);
-			//Sprite_render(this->sprites[i + 1]);
+			Sprite_render(this->sprites[i]);
+			Sprite_render(this->sprites[i + 1]);
 
 			// enable interrupts
 			//VPUManager_displayOn(VPUManager_getInstance());
@@ -239,6 +240,8 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	for(; this->sprites[i] && i < __OBJECTLISTTAM; i++);
 	
 	if(i < __OBJECTLISTTAM){
+		
+		//SpriteManager_alignSameLayerSprites(this, sprite);
 
 		// set entity into slot
 		this->sprites[i] = sprite;
@@ -256,8 +259,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 		ASSERT(this->freeLayer, "SpriteManager::addSprite: no more free layers" );
 
 		this->needSorting = true;
-
-		//this->updateLastLayer = true;
 	}
 }
 
@@ -296,14 +297,20 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
 	ASSERT(__TOTAL_LAYERS >= this->freeLayer, "SpriteManager::removeSprite: more free layers than really available" );
 
-	this->updateLastLayer = true;
-	
 	this->needSorting = true;
+	
+	SpriteManager_setLastLayer(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set free layers off
 static void SpriteManager_setLastLayer(SpriteManager this){
+
+	//create an independant of software variable to point XPSTTS register
+	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+	//wait for screen to idle	
+	while (*xpstts & XPBSYR);
 
 	Printing_render(this->freeLayer);
 
@@ -320,24 +327,11 @@ void SpriteManager_render(SpriteManager this){
 
 	int i = 0;
 	
-	if(this->needSorting){
-
-		// check sprite layers
-		SpriteManager_sortLayersProgressively(this);
-	}
-	
 	for(i = 0; this->sprites[i] && i < __OBJECTLISTTAM; i++){
 		
 		//render sprite	
 		Sprite_render((Sprite)this->sprites[i]);
 	}	
-	
-	if(this->updateLastLayer){
-
-		SpriteManager_setLastLayer(this);
-		
-		this->updateLastLayer = false;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

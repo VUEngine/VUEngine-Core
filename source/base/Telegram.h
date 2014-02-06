@@ -64,7 +64,7 @@ __CLASS(Telegram);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Telegram, __PARAMETERS(u32 dispatchTime, void* sender, void* receiver, int message, void* extraInfo));
+__CLASS_NEW_DECLARE(Telegram, __PARAMETERS(u32 delay, void* sender, void* receiver, int message, void* extraInfo));
 
 // class's destructor
 void Telegram_destructor(Telegram this);
@@ -80,5 +80,8 @@ int Telegram_getMessage(Telegram this);
 
 // retrieve extra info
 void* Telegram_getExtraInfo(Telegram this);
+
+// retrieve delay time
+u32 Telegram_getDelay(Telegram this);
 
 #endif /*TEXTBOX_H_*/

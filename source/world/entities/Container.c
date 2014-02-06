@@ -109,7 +109,9 @@ void Container_constructor(Container this, int ID){
 	this->transform.rotation.z = 0;
 	
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalPosition = true;
+	this->invalidateGlobalPosition.x = true;
+	this->invalidateGlobalPosition.y = true;
+	this->invalidateGlobalPosition.z = true;
 	
 	this->parent = NULL;
 	this->children = NULL;
@@ -325,7 +327,7 @@ void Container_transform(Container this, Transformation* environmentTransform){
 			
 			Container child = (Container)VirtualNode_getData(node);
 			
-			child->invalidateGlobalPosition = child->invalidateGlobalPosition? child->invalidateGlobalPosition: this->invalidateGlobalPosition;
+			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z? child->invalidateGlobalPosition: this->invalidateGlobalPosition;
 			
 			// transform each entity
 			__VIRTUAL_CALL(void, Container, transform, child, __ARGUMENTS(&environmentTransformCopy));		
@@ -333,7 +335,9 @@ void Container_transform(Container this, Transformation* environmentTransform){
 	}
 	
 	// don't update position on next transform cycle
-	this->invalidateGlobalPosition = false;
+	this->invalidateGlobalPosition.x = false;
+	this->invalidateGlobalPosition.y = false;
+	this->invalidateGlobalPosition.z = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,10 +358,13 @@ VBVec3D Container_getLocalPosition(Container this){
 //set class's local position
 void Container_setLocalPosition(Container this, VBVec3D position){
 
+	// force global position calculation on the next transform cycle
+	this->invalidateGlobalPosition.x = this->transform.localPosition.x != position.x;
+	this->invalidateGlobalPosition.y = this->transform.localPosition.y != position.y;
+	this->invalidateGlobalPosition.z = this->transform.localPosition.z != position.z;
+
 	this->transform.localPosition = position;
 	
-	// force global position calculation on the next transform cycle
-	this->invalidateGlobalPosition = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

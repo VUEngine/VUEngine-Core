@@ -174,11 +174,11 @@ void Stage_setupObjActor(int *actor,int x,int y, int z){
 // determine if a point is visible
 inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int width, int height){
 	
-	int xLowLimit = -(width) ;
-	int xHighLimit = __SCREENWIDTH + (width);
+	fix19_13 xLowLimit = ITOFIX19_13(-(width));
+	fix19_13 xHighLimit = ITOFIX19_13(__SCREENWIDTH + (width));
 
-	int yLowLimit = -(height) ;
-	int yHighLimit = __SCREENHEIGHT + (height);
+	fix19_13 yLowLimit = ITOFIX19_13(-(height));
+	fix19_13 yHighLimit = ITOFIX19_13(__SCREENHEIGHT + (height));
 
 	VBVec2D position2D;
 	
@@ -202,10 +202,10 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int wid
 		}	
 	}
 	
-	xLowLimit -= __ENTITYLOADPAD;
-	xHighLimit += __ENTITYLOADPAD;
-	yLowLimit -= __ENTITYLOADPAD;
-	yHighLimit += __ENTITYLOADPAD;	
+	xLowLimit -= ITOFIX19_13(__ENTITY_LOAD_PAD);
+	xHighLimit += ITOFIX19_13(__ENTITY_LOAD_PAD);
+	yLowLimit -= ITOFIX19_13(__ENTITY_LOAD_PAD);
+	yHighLimit += ITOFIX19_13(__ENTITY_LOAD_PAD);	
 	
 	// check x visibility
 	if((unsigned)(position2D.x - xLowLimit) < (position2D.x - xHighLimit)){
@@ -318,7 +318,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
 					entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
 
-				VPUManager_waitForFrame(VPUManager_getInstance());
+				//VPUManager_waitForFrame(VPUManager_getInstance());
 
 				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
 				
@@ -355,7 +355,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		Entity entity = (Entity)VirtualNode_getData(node);
 		
 		//if the entity isn't visible inside the view field, unload it
-		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITYLOADPAD))){		
+		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_LOAD_PAD))){		
 
 			int inGameState = __VIRTUAL_CALL(int, Entity, getInGameState, entity);
 
@@ -371,7 +371,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 			// register entity to remove
 			VirtualList_pushBack(removedEntities, (const BYTE* const )entity);
 			
-			VPUManager_waitForFrame(VPUManager_getInstance());
+			//VPUManager_waitForFrame(VPUManager_getInstance());
 
 			if(unloadProgressively) {
 				
@@ -403,33 +403,19 @@ void Stage_stream(Stage this){
 	// if the screen is moving
 	if(*((u8*)_screenMovementState)){
 
-		static int turn = __RENDER_FPS >> 1;
+		static int load = __LOGIC_FPS >> 1;
 			
-		if(!--turn){
-
-			// wait for frame before rendering
-			//VPUManager_waitForFrame(VPUManager_getInstance());
+		if(!--load){
 
 			// unload not visible objects
 			Stage_unloadOutOfRangeEntities(this, true);	
 			
-			// enable interrupts
-			VPUManager_displayOn(VPUManager_getInstance());
-			
-			turn = __RENDER_FPS >> 1;
+			load = __LOGIC_FPS >> 1;
 		}
-		else if (((__RENDER_FPS >> 1) >> 1) == turn) {
-
-			// wait for frame before rendering
-			//VPUManager_waitForFrame(VPUManager_getInstance());
+		else if (((__LOGIC_FPS >> 1) >> 1) == load) {
 
 			// load visible objects	
 			Stage_loadEntities(this, true, true);
-
-			// enable interrupts
-			VPUManager_displayOn(VPUManager_getInstance());
-
-		}		
-		
+		}	
 	}
 }

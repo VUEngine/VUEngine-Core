@@ -167,7 +167,7 @@ void Sprite_setDirection(Sprite this, int axis, int direction);
 void Sprite_calculateScale(Sprite this, fix19_13 z);
 
 // set sprite's position
-void Sprite_setPosition(Sprite this, const VBVec3D* const position3D);
+void Sprite_setPosition(Sprite this, const VBVec3D* const position);
 
 // calculate the parallax
 void Sprite_calculateParallax(Sprite this, fix19_13 z);

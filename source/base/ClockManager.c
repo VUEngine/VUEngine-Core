@@ -32,8 +32,7 @@
 #include <Game.h>
 #include <SoundManager.h>
 #include <HardwareManager.h>
-
-
+#include <MessageDispatcher.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -181,6 +180,9 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 			//reset frame rate counters
 			FrameRate_reset(FrameRate_getInstance());		
     }	
+    
+    // discharge delayed messages
+    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
     
     // Play background music 
     SoundManager_playBGM(SoundManager_getInstance());

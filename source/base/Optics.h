@@ -85,25 +85,23 @@ inline extern  int Optics_calculateParallax(fix19_13 x, fix19_13 z){
 // project a 3d point to 2d space
 inline extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* const position3D){
 	
-	position2D->x = FIX19_13TOI(position3D->x +
+	position2D->x = position3D->x +
 						(
 						     FIX19_13_MULT(
 						                     _optical->horizontalViewPointCenter - position3D->x, 
 						                     position3D->z
 						                  ) 
 						     >> __MAXVIEWDISTANCE_POW
-						 )
-					);
+						 );
 
-	position2D->y = FIX19_13TOI(position3D->y -
+	position2D->y = position3D->y -
 						(
 						      FIX19_13_MULT(
 						    		           position3D->y - _optical->verticalViewPointCenter, 
 						    		           position3D->z
 						    		       )
 						      >> __MAXVIEWDISTANCE_POW
-						)
-					);
+						);
 	
 }
 
@@ -169,20 +167,20 @@ inline extern int Optics_calculateRealSize(int magnitude, int mapMode, fix7_9 sc
 // determine if a point is insie screen projection range
 inline extern  int Optics_isInsidePlayableArea(VBVec3D position, int cols, int rows, int mapMode, int pad){
 
-	int xLowLimit = 0 - pad;
-	int xHighLimit = 384 + pad;
-	int yLowLimit = 0 - pad;
-	int yHighLimit = 224 + pad;
+	fix19_13 xLowLimit = ITOFIX19_13(0 - pad);
+	fix19_13 xHighLimit = ITOFIX19_13(384 + pad);
+	fix19_13 yLowLimit = ITOFIX19_13(0 - pad);
+	fix19_13 yHighLimit = ITOFIX19_13(224 + pad);
 
-	int width = (Optics_calculateRealSize(cols << 3, mapMode, 1.0f) >> 1);
-	int height = (Optics_calculateRealSize(rows << 3, mapMode, 1.0f) >> 1);
+	fix19_13 width = ITOFIX19_13(Optics_calculateRealSize(cols << 3, mapMode, 1.0f) >> 1);
+	fix19_13 height = ITOFIX19_13(Optics_calculateRealSize(rows << 3, mapMode, 1.0f) >> 1);
 
 	VBVec2D position2D;
 	
 	//normalize position
 	position = Optics_normalizePosition(&position);
 	
-	if(position.z < __Z_GAME_LIMIT || position.z > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z)){
+	if(position.z < ITOFIX19_13(__Z_GAME_LIMIT) || position.z > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z)){
 		
 		return false;
 	}
@@ -203,10 +201,10 @@ inline extern  int Optics_isInsidePlayableArea(VBVec3D position, int cols, int r
 
 /* ---------------------------------------------------------------------------------------------------------*/
 //determine if a point is visible
-inline extern  int Optics_isVisible(VBVec3D position3D, int width, int height, int parallax, int pad){
+inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13 height, fix19_13 parallax, fix19_13 pad){
 	
-	int xLowLimit = 0 - (int)parallax - pad;
-	int xHighLimit = __SCREENWIDTH + (int)parallax + pad;
+	fix19_13 xLowLimit = 0 - (fix19_13)parallax - pad;
+	fix19_13 xHighLimit = ITOFIX19_13(__SCREENWIDTH) + (fix19_13)parallax + pad;
 	
 	VBVec2D position2D;
 		
@@ -239,13 +237,13 @@ inline extern  int Optics_isVisible(VBVec3D position3D, int width, int height, i
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // determine if a point is out of the game
-inline extern int Optics_isOutsidePlayableArea(VBVec3D position3D, int width, int height){
+inline extern int Optics_isOutsidePlayableArea(VBVec3D position3D, fix19_13 width, fix19_13 height){
 	
-	int xLowLimit = 0 - __ENTITYLOADPAD;
-	int xHighLimit = __SCREENWIDTH + __ENTITYLOADPAD;
+	fix19_13 xLowLimit = ITOFIX19_13(0 - __ENTITY_LOAD_PAD);
+	fix19_13 xHighLimit = ITOFIX19_13(__SCREENWIDTH + __ENTITY_LOAD_PAD);
 
-	int yLowLimit = 0 - __ENTITYLOADPAD;
-	int yHighLimit = __SCREENHEIGHT + __ENTITYLOADPAD;
+	fix19_13 yLowLimit = 0 - __ENTITY_LOAD_PAD;
+	fix19_13 yHighLimit = ITOFIX19_13(__SCREENHEIGHT + __ENTITY_LOAD_PAD);
 
 	VBVec2D position2D;
 	

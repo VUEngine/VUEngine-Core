@@ -46,6 +46,9 @@
 	/* super's attributes */										\
 	Object_ATTRIBUTES;												\
 																	\
+	/* delay in ms */												\
+	u32 delay;														\
+																	\
 	/* the message itself. These are all enumerated in a file */	\
 	int message;													\
 																	\
@@ -90,12 +93,14 @@ __CLASS_NEW_END(Telegram, __ARGUMENTS(dispatchTime, sender, receiver, message, e
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Telegram_constructor(Telegram this, u32 dispatchTime, void* sender, void* receiver, int message, void* extraInfo){
+static void Telegram_constructor(Telegram this, u32 delay, void* sender, void* receiver, int message, void* extraInfo){
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
 	// set the attributes
+	this->delay = delay;
+		
 	this->sender = sender;
 	
 	this->receiver = receiver;
@@ -140,4 +145,11 @@ int Telegram_getMessage(Telegram this){
 void* Telegram_getExtraInfo(Telegram this){
 	
 	return this->extraInfo;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve delay time
+u32 Telegram_getDelay(Telegram this){
+
+	return this->delay;
 }

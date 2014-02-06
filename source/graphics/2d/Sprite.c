@@ -32,7 +32,7 @@
 #include <Optics.h>
 #include <ParamTableManager.h>
 #include <HardwareManager.h>
-
+#include <Screen.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -66,8 +66,7 @@ __CLASS_DEFINITION(Sprite);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-
+#define FIX19_13_05F 0x00001000
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -140,7 +139,6 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 			
 			break;
 	}
-
 
 	// set the default layer
 	this->worldLayer = 0;
@@ -220,6 +218,13 @@ void Sprite_calculateScale(Sprite this, fix19_13 z){
 	Sprite_invalidateParamTable(this);
 }
 
+void Sprite_roundDrawSpec(Sprite this){
+	
+	this->drawSpec.position.x &= 0xFFFFE000;
+	this->drawSpec.position.y &= 0xFFFFE000;
+	this->drawSpec.position.z &= 0xFFFFE000;	
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set sprite's position
 void Sprite_setPosition(Sprite this, const VBVec3D* const position){
@@ -240,8 +245,15 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 	
 	if(previousZPosition != this->drawSpec.position.z) {
 		
+		this->drawSpec.position.z = position->z;
+		
+		// calculate sprite's parallax
+		Sprite_calculateParallax(this, this->drawSpec.position.z);
+
 		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
+	
+	this->renderFlag |= __UPDATEG;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,7 +290,6 @@ void Sprite_setRenderFlag(Sprite this, int renderFlag){
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update sprite
 void Sprite_update(Sprite this){
@@ -296,6 +307,12 @@ void Sprite_render(Sprite this){
 
 		if(__UPDATEHEAD == this->renderFlag){
 			
+			//create an independant of software variable to point XPSTTS register
+			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+			//wait for screen to idle	
+			while (*xpstts & XPBSYR);
+
 			// write the head
 			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
 
@@ -305,7 +322,7 @@ void Sprite_render(Sprite this){
 		//set the world screen position
 		if(this->renderFlag & __UPDATEG ){
 
-			WORLD_GSET(this->worldLayer, drawSpec.position.x, drawSpec.position.parallax, drawSpec.position.y);
+			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
 		}
 		
 		//set the world size according to the zoom
@@ -343,7 +360,7 @@ void Sprite_render(Sprite this){
 				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
 			}
 			
-			if(this->renderFlag & __UPDATEM ){
+			if(this->renderFlag & __UPDATEM){
 				
 				//set the world cuting bgmap memory point
 				WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
@@ -355,57 +372,7 @@ void Sprite_render(Sprite this){
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// render a world layer with the map's information
-void Sprite_renderAll(Sprite this){
 
-	DrawSpec drawSpec = this->drawSpec;
-	
-	//create an independant of software variable to point XPSTTS register
-	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-	//wait for screen to idle	
-	while (*xpstts & XPBSYR);
-	
-	// write the head
-	WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
-
-	WORLD_GSET(this->worldLayer, drawSpec.position.x, drawSpec.position.parallax, drawSpec.position.y);
-	
-	//set the world size according to the zoom
-	if(WRLD_AFFINE & this->head){
-
-		// check if must update the param table
-		if(true || this->updateParamTable){
-
-			// now scale the texture
-			Sprite_scale(this);
-
-			// don't update on next render cycle
-			this->updateParamTable = false;
-		}
-		Printing_text("hola", 0, 11);	
-				
-
-		WORLD_SIZE(this->worldLayer, 
-				FIX19_13_ROUNDTOI(FIX7_9TOFIX19_13(FIX7_9_MULT(ITOFIX7_9(Texture_getCols(this->texture)<< 3), abs(drawSpec.scale.x)))) - 1,						
-				FIX19_13_ROUNDTOI(FIX7_9TOFIX19_13(FIX7_9_MULT(ITOFIX7_9(Texture_getRows(this->texture)<< 3), abs(drawSpec.scale.y)))));
-			
-		Printing_int(FIX19_13_ROUNDTOI(FIX7_9TOFIX19_13(FIX7_9_MULT(ITOFIX7_9(Texture_getCols(this->texture)<< 3), abs(drawSpec.scale.x)))), 0, 12);	
-		WORLD_PARAM(this->worldLayer, PARAM(this->param));				
-	}
-	else{
-		
-		WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
-
-		//set the world cuting bgmap memory point
-		WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
-		
-	}
-
-	this->renderFlag = __UPDATEHEAD;
-
-}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get map's param table address
 u32 Sprite_getParam(Sprite this){
@@ -442,7 +409,6 @@ int Sprite_getWorldLayer(Sprite this){
 	return this->worldLayer;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get sprite's render head
 int Sprite_getHead(Sprite this){
@@ -457,7 +423,6 @@ int Sprite_getMode(Sprite this){
 	return this->head & 0x3000;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve param table flag
 int Sprite_updateParamTable(Sprite this){
@@ -470,7 +435,7 @@ int Sprite_updateParamTable(Sprite this){
 void Sprite_invalidateParamTable(Sprite this){
 	
 	this->updateParamTable = true;
-	this->renderFlag |= __UPDATESIZE | __UPDATEPARAM | __UPDATEHEAD;
+	this->renderFlag |= __UPDATESIZE | __UPDATEPARAM;
 }
 
 
@@ -486,7 +451,7 @@ void Sprite_resetMemoryState(Sprite this){
 	}
 	
 	//allow to render
-	this->renderFlag = __UPDATEHEAD;
+	//this->renderFlag = __UPDATEHEAD;
 	
 	// write it in graphical memory
 	Texture_resetMemoryState(this->texture);

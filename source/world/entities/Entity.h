@@ -62,7 +62,7 @@
 
 #define Entity_SET_VTABLE(ClassName)								\
 		Container_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Entity, transform);					\
+		__VIRTUAL_SET(ClassName, Entity, transform);				\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);			\
 		__VIRTUAL_SET(ClassName, Entity, getScale);					\
 		__VIRTUAL_SET(ClassName, Entity, getInGameState);			\
@@ -78,13 +78,13 @@
 
 // A Entity which represent a generic Container inside a Stage
 
-#define Entity_ATTRIBUTES							\
-													\
-	/* it is derivated from*/						\
-	Container_ATTRIBUTES							\
-													\
-	/* sprites' list */								\
-	VirtualList sprites;
+#define Entity_ATTRIBUTES								\
+														\
+	/* it is derivated from*/							\
+	Container_ATTRIBUTES								\
+														\
+	/* sprites' list */									\
+	VirtualList sprites;								\
 
 __CLASS(Entity);
 
@@ -119,7 +119,7 @@ typedef struct EntityDefinition{
 	
 	// number of sprites
 	int numberOfSprites;
-	
+
 }EntityDefinition;
 
 typedef const EntityDefinition EntityROMDef;
@@ -197,6 +197,9 @@ int Entity_getHeight(Entity this);
 
 // get deep
 int Entity_getDeep(Entity this);
+
+// does move?
+int Entity_doesMove(Entity this);
 
 // whether it is visible
 int Entity_isVisible(Entity this, int pad);

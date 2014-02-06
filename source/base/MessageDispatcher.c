@@ -29,7 +29,7 @@
  */
 
 #include <MessageDispatcher.h>
-
+#include <VirtualList.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -46,7 +46,9 @@ static void MessageDispatcher_constructor(MessageDispatcher this);
 // class's destructor
 static void MessageDispatcher_destructor(MessageDispatcher this);
 
-
+// dispatch delayed messages
+static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender, 
+		Object receiver, int message, void* extraInfo);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -64,14 +66,22 @@ static void MessageDispatcher_destructor(MessageDispatcher this);
 	/* super's attributes */					\
 	Object_ATTRIBUTES;							\
 												\
-	/* a clock to point to the in game clock */	\
-	/* for delayed messages (TODO feature) */	\
-	//Clock clock;
+	/* delayed messages */						\
+	VirtualList delayedMessages;
 
 
 __CLASS_DEFINITION(MessageDispatcher);
 
 
+typedef struct DelayedMessage {
+	
+	// time of arrival
+	u32 timeOfArrival;
+	
+	// pointer to the telegram to dispatch
+	Telegram telegram;
+	
+}DelayedMessage;
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -90,14 +100,15 @@ __SINGLETON(MessageDispatcher);
 static void MessageDispatcher_constructor(MessageDispatcher this){
 	
 	__CONSTRUCT_BASE(Object);
-	{	
-		//this->clock = Game_getInGameClock(Game_getInstance());
-	}
+	
+	this->delayedMessages = __NEW(VirtualList);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void MessageDispatcher_destructor(MessageDispatcher this){
+
+	__DELETE(this->delayedMessages);
 
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
@@ -120,7 +131,8 @@ int MessageDispatcher_dispatchMessage(u32 delay, Object sender,
 	//make sure the receiver is valid
 	ASSERT(receiver, "MessageDispatcher: NULL receiver");
   
-	{
+	if(0 >= delay){
+		
 		//create the telegram
 		Telegram telegram = __NEW(Telegram, __ARGUMENTS(0, sender, receiver, message, extraInfo));
 
@@ -130,6 +142,67 @@ int MessageDispatcher_dispatchMessage(u32 delay, Object sender,
 		__DELETE(telegram);
 		return result;
 	}
+	else {
+
+		MessageDispatcher_dispatchDelayedMessage(MessageDispatcher_getInstance(), delay, sender, receiver, message, extraInfo);
+	}
 	return false;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dispatch delayed messages
+void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender, 
+		Object receiver, int message, void* extraInfo){
+
+	//create the telegram
+	Telegram telegram = __NEW(Telegram, __ARGUMENTS(delay, sender, receiver, message, extraInfo));
+
+	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
+	
+	delayMessage->telegram = telegram;
+	delayMessage->timeOfArrival = Clock_getTime(_clock); 
+
+	VirtualList_pushFront(this->delayedMessages, delayMessage);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dispatch delayed messages
+void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this){
+	
+	if(0 < VirtualList_getSize(this->delayedMessages)){
+
+		VirtualList telegramsToDispatch = __NEW(VirtualList);
+
+		VirtualNode node = VirtualList_begin(this->delayedMessages);
+
+		for(; node; node = VirtualNode_getNext(node)){
+			
+			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
+			Telegram telegram = delayedMessage->telegram;
+			
+			ASSERT(__GET_CAST(Telegram, telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
+			
+			if(Clock_getTime(_clock) > delayedMessage->timeOfArrival + Telegram_getDelay(telegram)){
+
+				VirtualList_pushFront(telegramsToDispatch, delayedMessage);
+			}
+		}
+		
+		node = VirtualList_begin(telegramsToDispatch);
+		
+		for(; node; node = VirtualNode_getNext(node)){
+			
+			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
+			Telegram telegram = delayedMessage->telegram;
+			
+			__VIRTUAL_CALL(int, Object, handleMessage, Telegram_getReceiver(telegram), __ARGUMENTS(telegram));
+
+			VirtualList_removeElement(this->delayedMessages, delayedMessage);
+			
+			__DELETE(telegram);
+			__DELETE_BASIC(delayedMessage);
+		}
+	
+		__DELETE(telegramsToDispatch);
+	}
+}

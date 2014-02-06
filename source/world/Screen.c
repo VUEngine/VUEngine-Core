@@ -54,6 +54,10 @@
 												\
 	/* world's screen's movement state */		\
 	MovementState movementState;				\
+												\
+	/* world's screen's last displacement */	\
+	VBVec3D lastDisplacement;					\
+
 
 
 // define the Screen
@@ -113,6 +117,10 @@ static void Screen_constructor(Screen this){
 	this->movementState.y = __ACTIVE;
 	this->movementState.z = __ACTIVE;
 	
+	this->lastDisplacement.x = 0;
+	this->lastDisplacement.y = 0;
+	this->lastDisplacement.z = 0;
+	
 	_screenMovementState = &this->movementState;
 	_screenPosition = &this->position;
 }
@@ -142,11 +150,14 @@ void Screen_update(Screen this){
 			this->movementState.x = __ACTIVE;
 			this->movementState.y = __ACTIVE;
 			this->movementState.z = __ACTIVE;
+
+			this->lastDisplacement = this->position;
 			
 			// if screen isn't at the left limit
 			// set it's position in function of
 			// focusInGameEntity's position
 			this->position.x = 0;
+			
 	
 			if(focusPosition.x - ITOFIX19_13(192) >= 0){
 				
@@ -157,6 +168,10 @@ void Screen_update(Screen this){
 					this->position.x = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x - 384);					
 				}
 			}
+			
+			this->lastDisplacement.x = this->position.x - this->lastDisplacement.x;
+			this->lastDisplacement.y = this->position.y - this->lastDisplacement.y;
+			this->lastDisplacement.z = this->position.z - this->lastDisplacement.z;
 		}
 		else{
 			
@@ -189,6 +204,10 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor) {
 	if(this->focusInGameEntity == actor){
 		
 		this->focusInGameEntity = NULL;
+		
+		this->lastDisplacement.x = 0;
+		this->lastDisplacement.y = 0;
+		this->lastDisplacement.z = 0;
 	}
 }
 
@@ -200,6 +219,12 @@ void Screen_setPosition(Screen this, VBVec3D position){
 	this->position = position;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve last displacement
+VBVec3D Screen_getLastDisplacement(Screen this){
+	
+	return this->lastDisplacement;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create a fade delay

@@ -613,7 +613,7 @@ int Actor_getInGameState(Actor this){
 // check if must update sprite's position
 int Actor_updateSpritePosition(Actor this){
 
-	return (this->invalidateGlobalPosition || Actor_isMoving(this) || *((int*)_screenMovementState));
+	return (this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z || Actor_isMoving(this) || *((int*)_screenMovementState));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

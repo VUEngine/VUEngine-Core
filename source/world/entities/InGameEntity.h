@@ -113,6 +113,11 @@ typedef struct InGameEntityDefinition{
 
 	/* gameworld's character's type	*/
 	int inGameType;
+	
+	// flag to precalculte displacement on screen movement
+	// to reduce flickering
+	u8 moves;
+
 
 }InGameEntityDefinition;
 
