@@ -192,7 +192,7 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 		// save current direction
 		this->previousDirection = this->direction; 
 	}
-
+	
 	if(this->body && Body_isAwake(this->body)) {
 
 		// an Actor with a physical body is agnostic to parenting
@@ -207,12 +207,13 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 				{0, 0, 0}			
 		};
 
+		// save previous position
+		this->previousGlobalPosition = this->transform.globalPosition;
+
 		Container_setLocalPosition((Container) this, Body_getPosition(this->body));
 
 		// call base
 		InGameEntity_transform((InGameEntity)this, &environmentAgnosticTransform);
-
-		this->previousGlobalPosition = this->transform.globalPosition;
 	}
 	else {
 		
@@ -398,9 +399,7 @@ int Actor_isInsideGame(Actor this){
 // check if gravity must apply to this actor
 int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration) {
 
-	int movingState = Body_isMoving(this->body);
-
-	int axisFreeForMovement = ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
+	int axisFreeForMovement = __VIRTUAL_CALL(int, Actor, getAxisFreeForMovement, this);
 
 	int axisOfCollision = 0;
 	
@@ -426,6 +425,14 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration) {
 	}
 	
 	return axisFreeForMovement & ~axisOfCollision;
+}
+
+// retrieve axis free for movement
+int Actor_getAxisFreeForMovement(Actor this){
+
+	int movingState = Body_isMoving(this->body);
+	
+	return ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -463,12 +470,14 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
 			this->lastCollidingEntity[kXAxis] = collidingEntity;
 		}
-		else if(__YAXIS & axisOfCollision) {
+		
+		if(__YAXIS & axisOfCollision) {
 
 			Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
 			this->lastCollidingEntity[kYAxis] = collidingEntity;
 		}
-		else if(__ZAXIS & axisOfCollision) {
+		
+		if(__ZAXIS & axisOfCollision) {
 
 			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
 			this->lastCollidingEntity[kZAxis] = collidingEntity;
@@ -505,13 +514,13 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 					case kCollision:
 						
 						Actor_resolveCollision(this, (VirtualList)Telegram_getExtraInfo(telegram));
+						Actor_updateCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 												
 					case kBodyStartedMoving:
 						
 						Actor_updateCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
-
 						return true;
 						break;
 				}
@@ -583,7 +592,7 @@ void Actor_playAnimation(Actor this, char* animationName){
 
 		VirtualNode node = VirtualList_begin(this->sprites);
 
-		// move each child to a temporary list
+		// play animation on each sprite
 		for(; node ; node = VirtualNode_getNext(node)){
 			
 			Sprite sprite = (Sprite)VirtualNode_getData(node);

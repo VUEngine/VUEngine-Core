@@ -293,15 +293,6 @@ int Entity_isVisible(Entity this, int pad){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// determine if the entity is outside the game
-int Entity_isOutsideGame(Entity this){
-	
-	return Optics_isOutsidePlayableArea(this->transform.globalPosition, 
-			ITOFIX19_13(Entity_getWidth(this)), 
-			ITOFIX19_13(Entity_getHeight(this)));
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve state when unloading the entity 
 int Entity_getInGameState(Entity this){
 

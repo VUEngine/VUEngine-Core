@@ -375,6 +375,12 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
+// retrieves object's class' name
+#define __GET_CLASS_NAME(object)									\
+																	\
+	__VIRTUAL_CALL(char*, Object, getClassName, (Object)object)
+
+/*--------------------------------------------------------------------------------------------------------------------------------*/
 // declare an object type
 #define __TYPE(ClassName)	ClassName ## _new
 

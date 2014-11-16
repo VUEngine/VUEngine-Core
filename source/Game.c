@@ -49,6 +49,7 @@
 #include <Screen.h>
 #include <Background.h>
 #include <Image.h>
+#include <VPUManager.h>
 
 #include <Printing.h>
 
@@ -104,6 +105,7 @@ enum UpdateSubsystems{
 	SpriteManager spriteManager;					\
 	CollisionManager collisionManager;				\
 	PhysicalWorld physicalWorld;					\
+	VPUManager vpuManager;							\
 													\
 	/* update time registry */						\
 	u32 lastTime[kLogic + 1];						\
@@ -187,6 +189,7 @@ static void Game_constructor(Game this){
 	this->spriteManager = SpriteManager_getInstance();
 	this->collisionManager = CollisionManager_getInstance();
 	this->physicalWorld = PhysicalWorld_getInstance();
+	this->vpuManager = VPUManager_getInstance();
 	
 	//OPTIC VALUES
 	this->optical.distanceEyeScreen = 0;	
@@ -526,9 +529,9 @@ void Game_update(Game this){
 			// simulate collisions
 			CollisionManager_update(this->collisionManager);
 
-			// update entities' position
+			// apply world transformations
 			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
-			
+
 			// render sprites
 			SpriteManager_render(this->spriteManager);
 

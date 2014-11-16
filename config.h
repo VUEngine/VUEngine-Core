@@ -83,19 +83,19 @@
 #define __TIMER_RESOLUTION		1
 
 //target frames per second
-#define __RENDER_FPS 	60
+#define __RENDER_FPS 	50
 
 //target frames per second
-#define __PHYSICS_FPS 	60
+#define __PHYSICS_FPS 	50
 
 //target frames per second
-#define __LOGIC_FPS 	60
+#define __LOGIC_FPS 	50
 
 #define __MILISECODS_IN_SECOND	1000
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
-#define __FPS_ANIM_FACTOR 	(__RENDER_FPS / 60.0f)
+#define __FPS_ANIM_FACTOR 	(__RENDER_FPS / 50.0f)
 
 //you will hardly have more than ten mapcharacters in affine mode  
 //on screen at once
@@ -236,7 +236,7 @@
 #define __ENTITIESPERWORLD 	128
 
 //padd to determine if a character must be loaded
-#define __ENTITY_LOAD_PAD		20
+#define __ENTITY_LOAD_PAD		40
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

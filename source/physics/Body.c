@@ -113,7 +113,7 @@ static void Body_constructor(Body this, Object owner, fix19_13 weight){
 
 	this->owner = owner;
 	
-	this->mass = __NEW(Mass, __ARGUMENTS(ITOFIX19_13(10)));
+	this->mass = __NEW(Mass, __ARGUMENTS(weight));
 	
 	this->awake = false;
 
@@ -254,18 +254,21 @@ void Body_moveUniformly(Body this, Velocity velocity){
 	
 		Body_setMovementType(this, __UNIFORM_MOVEMENT, __XAXIS);
 		this->velocity.x = velocity.x;
+		Body_awake(this);
 	}
 
 	if (velocity.y) {
 	
 		Body_setMovementType(this, __UNIFORM_MOVEMENT, __YAXIS);
 		this->velocity.y = velocity.y;
+		Body_awake(this);
 	}
 
 	if (velocity.z) {
 	
 		Body_setMovementType(this, __UNIFORM_MOVEMENT, __ZAXIS);
 		this->velocity.z = velocity.z;
+		Body_awake(this);
 	}
 }
 

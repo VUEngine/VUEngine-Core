@@ -179,14 +179,14 @@ void HardwareManager_communicationInterruptHandler(void){   // Link Port Interru
 // vpu's interrupt handler
 void HardwareManager_vpuInterruptHandler(void){   // Video Retrace Interrupt Handler
 
-	// wait for frame before rendering
-	VPUManager_waitForFrame(VPUManager_getInstance());
+	// disable interrupt
+	VPUManager_disableInterrupt(VPUManager_getInstance());
 
 	// call game's rendering routine
 	Game_render(Game_getInstance());
 	
 	// enable interrupts
-	VPUManager_displayOn(VPUManager_getInstance());
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,16 +302,19 @@ void HardwareManager_displayOff(HardwareManager this){
 // disable VPU interrupts
 void HardwareManager_disableRendering(HardwareManager this){
 
-	// wait for frame before rendering
-	VPUManager_waitForFrame(VPUManager_getInstance());
+	// disable interrupt
+	VPUManager_disableInterrupt(this->vpuManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // enable VPU interrupts
 void HardwareManager_enableRendering(HardwareManager this){
 
+	// turn on display
+	VPUManager_displayOn(this->vpuManager);
+
 	// enable interrupts
-	VPUManager_displayOn(VPUManager_getInstance());
+	VPUManager_enableInterrupt(this->vpuManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

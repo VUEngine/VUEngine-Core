@@ -191,6 +191,9 @@ void VPUManager_waitForFrame(VPUManager this);
 // disable interrupt
 void VPUManager_disableInterrupt(VPUManager this);
 
+// enable interrupt
+void VPUManager_enableInterrupt(VPUManager this);
+
 // turn display on
 void VPUManager_displayOn(VPUManager this);
 

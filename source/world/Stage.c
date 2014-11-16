@@ -318,8 +318,6 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
 					entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
 
-				//VPUManager_waitForFrame(VPUManager_getInstance());
-
 				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
 				
 				if(!(__LOADED & inGameState)){

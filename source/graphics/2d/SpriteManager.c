@@ -309,7 +309,7 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 	//create an independant of software variable to point XPSTTS register
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
-	//wait for screen to idle	
+	//wait for screen to idle
 	while (*xpstts & XPBSYR);
 
 	Printing_render(this->freeLayer);

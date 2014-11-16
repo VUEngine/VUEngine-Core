@@ -27,7 +27,6 @@ VBJAE_ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
 					-include $(VBJAENGINE)/config.h 								\
 					-include $(VBJAENGINE)/source/base/Constants.h	 				\
 					-include $(VBJAENGINE)/source/hardware/HardwareManager.h		\
-					-include $(VBJAENGINE)/source/base/Oop.h 						\
 					-include $(VBJAENGINE)/source/base/Error.h 						\
 					-include $(VBJAENGINE)/source/base/MemoryPool.h 				\
 					-include $(VBJAENGINE)/source/graphics/2d/Printing.h
@@ -41,7 +40,7 @@ endif
 
 ifeq ($(TYPE), release)
 LDPARAM =  
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline $(VBJAE_ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -Wall -O3 -Winline $(VBJAE_ESSENTIALS)
 MACROS = NDEBUG
 endif
 

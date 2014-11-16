@@ -149,6 +149,14 @@ void VPUManager_disableInterrupt(VPUManager this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// enable interrupt
+void VPUManager_enableInterrupt(VPUManager this) {
+
+	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
+	VIP_REGS[INTENB]= XPEND;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // turn display on
 void VPUManager_displayOn(VPUManager this) {
 	
@@ -156,8 +164,6 @@ void VPUManager_displayOn(VPUManager this) {
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	VIP_REGS[DPCTRL] = VIP_REGS[DPSTTS] | (SYNCE | RE | DISP);
 	VIP_REGS[FRMCYC] = 0;
-	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-	VIP_REGS[INTENB]= XPEND;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

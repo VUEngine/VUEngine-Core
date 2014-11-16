@@ -243,7 +243,7 @@ void Printing_float(float value,int x,int y){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Printing_text(char *string,int x,int y){
+void Printing_text(char *string, int x,int y){
 	
 	Printing_out(__PRINTING_BGMAP, x,y,string, 3);
 }

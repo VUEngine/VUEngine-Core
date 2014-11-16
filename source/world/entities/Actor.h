@@ -96,7 +96,8 @@ typedef struct GeneralAxisFlag{
 #define Actor_METHODS								\
 		InGameEntity_METHODS						\
 		__VIRTUAL_DEC(die);							\
-		__VIRTUAL_DEC(takeHitFrom);
+		__VIRTUAL_DEC(takeHitFrom);					\
+		__VIRTUAL_DEC(getAxisFreeForMovement);		\
 
 
 #define Actor_SET_VTABLE(ClassName)											\
@@ -112,6 +113,7 @@ typedef struct GeneralAxisFlag{
 		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);					\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);					\
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);						\
+		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);			\
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);						\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);						\
 		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);				\
@@ -206,6 +208,9 @@ int Actor_changedDirection(Actor this, int axis);
 
 // check if gravity must apply to this actor
 int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration);
+
+// retrieve axis free for movement
+int Actor_getAxisFreeForMovement(Actor this);
 
 // true if inside the screen range 
 int Actor_isInsideGame(Actor this);

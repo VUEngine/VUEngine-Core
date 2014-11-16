@@ -55,7 +55,8 @@ enum ShapeTypes{
 		__VIRTUAL_DEC(setup);						\
 		__VIRTUAL_DEC(positione);					\
 		__VIRTUAL_DEC(getAxisOfCollision);			\
-		__VIRTUAL_DEC(testIfCollision);
+		__VIRTUAL_DEC(testIfCollision);				\
+		__VIRTUAL_DEC(print);
 
 
 #define Shape_SET_VTABLE(ClassName)								\
@@ -124,5 +125,8 @@ void Shape_checked(Shape this, int checked);
 
 // has been configured?
 int Shape_isReady(Shape this);
+
+// print debug data
+void Shape_print(Shape this);
 
 #endif /*SHAPE_H_*/

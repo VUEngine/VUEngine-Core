@@ -204,9 +204,6 @@ int Entity_doesMove(Entity this);
 // whether it is visible
 int Entity_isVisible(Entity this, int pad);
 
-// determine if the entity is outside the game
-int Entity_isOutsideGame(Entity this);
-
 // retrieve state when unloading the entity 
 int Entity_getInGameState(Entity this);
 

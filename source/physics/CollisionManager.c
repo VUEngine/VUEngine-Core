@@ -358,10 +358,10 @@ void CollisionManager_update(CollisionManager this){
 			}
 			
 			if(collidingObjects){
-				
+
 				// inform the owner about the collision
 				MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)owner, kCollision, (void*)collidingObjects);
-				
+
 				__DELETE(collidingObjects);
 			}
 			

@@ -55,7 +55,7 @@
 		__VIRTUAL_SET(ClassName, Cuboid, positione);			\
 		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);	\
 		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);		\
-		
+		__VIRTUAL_SET(ClassName, Cuboid, print);				\
 
 
 typedef struct Rightcuboid{
@@ -127,5 +127,8 @@ int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D
 
 // test if collision with the entity give the displacement
 int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement);
+
+// print debug data
+void Cuboid_print(Cuboid this);
 
 #endif /*CUBOID_H_*/

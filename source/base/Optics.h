@@ -237,45 +237,6 @@ inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // determine if a point is out of the game
-inline extern int Optics_isOutsidePlayableArea(VBVec3D position3D, fix19_13 width, fix19_13 height){
-	
-	fix19_13 xLowLimit = ITOFIX19_13(0 - __ENTITY_LOAD_PAD);
-	fix19_13 xHighLimit = ITOFIX19_13(__SCREENWIDTH + __ENTITY_LOAD_PAD);
-
-	fix19_13 yLowLimit = 0 - __ENTITY_LOAD_PAD;
-	fix19_13 yHighLimit = ITOFIX19_13(__SCREENHEIGHT + __ENTITY_LOAD_PAD);
-
-	VBVec2D position2D;
-	
-	//normalize position
-	position3D = Optics_normalizePosition(&position3D);
-	
-	//project the position to 2d space
-	Optics_projectTo2D(&position2D, &position3D);
-
-	// check x axis
-	if(position2D.x - width / 2 > xHighLimit || position2D.x + width / 2 < xLowLimit){
-		
-		return true;
-	}
-	
-	// check y axis
-	if(position2D.y - height / 2 > yHighLimit || position2D.y + height / 2 < yLowLimit){
-		
-		return true;
-	}
-
-	// check z axis
-	if(position3D.z < _screenPosition->z || position3D.z > _screenPosition->z + ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z)){
-		
-		return true;
-	}
-	
-	return false;
-}
-
-/* ---------------------------------------------------------------------------------------------------------*/
-// determine if a point is out of the game
 inline extern int vbjInsideGame(VBVec3D position3D, int width, int height){
 	
 
