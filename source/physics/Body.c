@@ -374,7 +374,7 @@ void Body_applyGravity(Body this, const Acceleration* gravity){
 // add force
 void Body_addForce(Body this, const Force* force){
 	
-	ASSERT(force, "Body::addForce: NULL force");
+	ASSERT(force, "Body::addForce: null force");
 
 	Body_applyForce(this, force, !Body_isMovingInternal(this));
 }
@@ -583,7 +583,7 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
  	}
  	else {
  		
- 		ASSERT(false, "Body: wrong movement type");
+ 		ASSERT(false, "Body::updateMovement: wrong movement type");
  	}
 
  	// update position

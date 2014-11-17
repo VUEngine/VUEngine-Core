@@ -114,6 +114,8 @@ static void Telegram_constructor(Telegram this, u32 delay, void* sender, void* r
 // class's destructor
 void Telegram_destructor(Telegram this){
 	
+	ASSERT(this, "Telegram::destructor: null this");
+	
 	// free the memory
 	__DESTROY_BASE(Object);
 }
@@ -122,14 +124,17 @@ void Telegram_destructor(Telegram this){
 // retrieve sender
 void* Telegram_getSender(Telegram this){
 	
+	ASSERT(this, "Telegram::getSender: null this");
+
 	return this->sender;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve receiver
 void* Telegram_getReceiver(Telegram this){
 	
+	ASSERT(this, "Telegram::getReceiver: null this");
+
 	return this->receiver;
 }
 
@@ -137,6 +142,8 @@ void* Telegram_getReceiver(Telegram this){
 // retrieve message
 int Telegram_getMessage(Telegram this){
 	
+	ASSERT(this, "Telegram::getMessage: null this");
+
 	return this->message;
 }
 
@@ -144,12 +151,16 @@ int Telegram_getMessage(Telegram this){
 // retrieve extra info
 void* Telegram_getExtraInfo(Telegram this){
 	
+	ASSERT(this, "Telegram::getExtraInfo: null this");
+
 	return this->extraInfo;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve delay time
 u32 Telegram_getDelay(Telegram this){
+
+	ASSERT(this, "Telegram::getDelay: null this");
 
 	return this->delay;
 }

@@ -81,6 +81,8 @@ void State_constructor(State this){
 // class's destructor
 void State_destructor(State this){
 		
+	ASSERT(this, "State::destructor: null this");
+
 	// free processor's memory
 	__DESTROY_BASE(Object);	
 }
@@ -89,29 +91,34 @@ void State_destructor(State this){
 // state's enter
 void State_enter(State this, void* owner){
 	
+	ASSERT(this, "State::enter: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
 void State_execute(State this, void* owner){
 	
+	ASSERT(this, "State::execute: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's exit
 void State_exit(State this, void* owner){
 	
+	ASSERT(this, "State::exit: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's pause
 void State_pause(State this, void* owner){
 	
+	ASSERT(this, "State::pause: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's resume
 void State_resume(State this, void* owner){
 	
+	ASSERT(this, "State::resume: null this");
 }
 

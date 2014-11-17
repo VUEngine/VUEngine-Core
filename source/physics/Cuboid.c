@@ -152,6 +152,8 @@ void Cuboid_setup(Cuboid this){
 	// if owner does not move
 	if(!this->moves){
 		
+		ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
+
 		// position the shape to avoid in real time calculation
 		VBVec3D ownerPosition = Entity_getPosition((Entity)this->owner);
 		Gap ownerGap = InGameEntity_getGap(this->owner);
@@ -175,6 +177,8 @@ void Cuboid_setup(Cuboid this){
 // prepare the shape to be checked
 void Cuboid_positione(Cuboid this){
 	
+	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::positione: null sprites");
+
 	Gap gap = InGameEntity_getGap(this->owner);
 
 	// get owner's position
@@ -274,6 +278,8 @@ int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D
 // determine axis of collision
 static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement){
 	
+	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::getAxisOfCollisionWithCuboid: null sprites");
+
 	Gap gap = InGameEntity_getGap(this->owner);
 
 	VBVec3D displacementIncrement = {
@@ -305,7 +311,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	do{
 #ifdef __DEBUG		
-		ASSERT(counter++ < 100, "Cuboid: cannot resolve collision");
+		ASSERT(counter++ < 100, "Cuboid::getAxisOfCollisionWithCuboid: cannot resolve collision");
 #endif
 		numberOfAxis = 0;
 		axisOfCollision = 0;
@@ -396,6 +402,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 // test if collision with the entity give the displacement
 int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement){
 	
+	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
+
 	Shape shape = InGameEntity_getShape(collidingEntity);
 	
 	if(__GET_CAST(Cuboid, shape)){

@@ -96,6 +96,9 @@ void Error_destructor(Error this){
 // setup the error message and lock program here
 int Error_triggerException(Error this, char* string){
 	
+	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2? __EXCEPTION_COLUMN: 0;
+	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28? __EXCEPTION_LINE: 0;
+
 	//clear screen
     //HardwareManager_clearScreen(HardwareManager_getInstance());
 
@@ -108,10 +111,21 @@ int Error_triggerException(Error this, char* string){
 	Printing_writeAscii();
 
 	//print error message to screen
-	Printing_text("                                             ", __EXCEPTION_COLUMN, __EXCEPTION_LINE - 1);
-	Printing_text("Exception:" , __EXCEPTION_COLUMN, __EXCEPTION_LINE);
-	Printing_text("                                             ", __EXCEPTION_COLUMN, __EXCEPTION_LINE);
-	Printing_text(string, __EXCEPTION_COLUMN, __EXCEPTION_LINE);
+	if(0 < y){
+		
+		Printing_text("                                             ", x, y - 1);
+	}
+
+	Printing_text("Game::lastProcess:", x, y);
+	Printing_text(Game_getLastProcessName(Game_getInstance()), x + 19, y);
+	Printing_text("Exception:" , x, y + 1);
+	Printing_text(string, x + 10, y + 1);
+
+	if(y < 27){
+	
+		Printing_text("                                             ", x, y + 2);
+	}
+
 	
 	// error display message
 	Printing_render(SpriteManager_getFreeLayer(SpriteManager_getInstance()));

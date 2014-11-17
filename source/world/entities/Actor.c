@@ -147,10 +147,8 @@ void Actor_destructor(Actor this){
 	// inform the screen I'm being removed
 	Screen_focusEntityDeleted(Screen_getInstance(), (InGameEntity)this);
 	
-	if (this->body) {
-		
-		__DELETE(this->body);
-	}
+	// remove a body
+	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), this);
 	
 	// destroy state machine
 	__DELETE(this->stateMachine);
@@ -235,6 +233,8 @@ void Actor_update(Actor this){
 	// if direction changed
 	if(this->direction.x != this->previousDirection.x){
 		
+		ASSERT(this->sprites, "Actor::update: null sprites");
+
 		// calculate gap again
 		InGameEntity_setGap((InGameEntity)this);
 	}	
@@ -263,7 +263,7 @@ void Actor_update(Actor this){
 // update colliding entities
 static void Actor_updateCollisionStatus(Actor this, int movementAxis){
 
-	ASSERT(this->body, "Actor::updateCollisionStatus: NULL body");
+	ASSERT(this->body, "Actor::updateCollisionStatus: null body");
 
 	if(__XAXIS & movementAxis) {
 
@@ -285,7 +285,7 @@ static void Actor_updateCollisionStatus(Actor this, int movementAxis){
 // retrieve friction of colliding objects
 static void Actor_updateSourroundingFriction(Actor this){
 	
-	ASSERT(this->body, "Actor::updateSourroundingFriction: NULL body");
+	ASSERT(this->body, "Actor::updateSourroundingFriction: null body");
 	
 	Force friction = {0, 0, 0};
 
@@ -405,7 +405,7 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration) {
 	
 	if(axisFreeForMovement) {
 
-		ASSERT(this->body, "Actor::resolveCollision: NULL body");
+		ASSERT(this->body, "Actor::resolveCollision: null body");
 	
 		int i = 0; 
 		// TODO: must still solve when there will be a collision with an object not yet in the list
@@ -439,7 +439,8 @@ int Actor_getAxisFreeForMovement(Actor this){
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 	
-	ASSERT(this->body, "Actor::resolveCollision: NULL body");
+	ASSERT(this->body, "Actor::resolveCollision: null body");
+	ASSERT(collidingEntities, "Actor::resolveCollision: collidingEntities");
 
 	int axisOfCollision = 0;
 	int alignThreshold = 1;
@@ -561,6 +562,8 @@ int Actor_isMoving(Actor this){
 // retrieve character's scale
 Scale Actor_getScale(Actor this){
 
+	ASSERT(this->sprites, "Actor::getScale: null sprites");
+
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
 	// get sprite's scale
@@ -588,6 +591,8 @@ VBVec3D Actor_getPosition(Actor this){
 // play an animation
 void Actor_playAnimation(Actor this, char* animationName){
 	
+	ASSERT(this->sprites, "Actor::playAnimation: null sprites");
+
 	if(this->sprites){
 
 		VirtualNode node = VirtualList_begin(this->sprites);
@@ -606,6 +611,8 @@ void Actor_playAnimation(Actor this, char* animationName){
 // is play an animation
 int Actor_isPlayingAnimation(Actor this, char* functionName){
 	
+	ASSERT(this->sprites, "Actor::isPlayingAnimation: null sprites");
+
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
 	return AnimatedSprite_isPlayingFunction((AnimatedSprite)sprite, this->actorDefinition->animationDescription, functionName);
@@ -667,6 +674,8 @@ void Actor_stopMovementOnAxis(Actor this, int axis){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // align character to other entity on collision
 void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
+
+	ASSERT(this->sprites, "Actor::alignTo: null sprites");
 
 	// retrieve the colliding entity's position and gap
 	VBVec3D otherPosition = Entity_getLocalPosition((Entity) entity);	

@@ -304,49 +304,15 @@ enum MessagesTypes{
 #define __UPDATESIZE	0x04
 #define __UPDATEM		0x08
 
-/*------------------------------ERROR-MESSAGES------------------------------*/
-						   /*--------------------Max lenght-----------------*/
 
-#define CHMEM_MEM_ERR 		"CharMem: Char Mem depleted"
-#define CHMEM_0CH_ERR		"CharMem: Chargroup 0 chars"
-#define OBJMEM_MEM_ERR 		"Object: Object Mem depleted"
-
-#define INDEX_ERR 			"Index < 0"
-
-#define VL_ENDLESS_ERR		"VirtualList: Endless list"
-#define VN_EMPTY_ERR		"VirtualList: removing an empty node"
-
-#define PT_MEM_ERR			"ParamTable: memory depleted"
-#define PT_NOALLOC_ERR		"ParamTable: deallocating something null"
-#define PT_OBJDEP_ERR		"ParamTable: total param objects depleted"
-
-#define GE_NOITTXT_ERR		"GameEngine: No interactive text in gameworld"
-
-#define GW_WLDEP_ERR		"GameWorld: world layers depleted"
-#define GW_SORT_NOTYPE_ERR	"GameWorld: object has no type (sorting layers)"
-#define GW_QUAD_NOOBJ_ERR	"GameWorld: object isn't in quadrant"
-#define GW_NULL_CHARAC		"GameWorld: unloading a null Character"
-#define GW_NULL_BACKG		"GameWorld: unloading a null Background"
-#define GW_CHARAC_NOTL		"GameWorld: Character not in list"
-#define GW_BACKG_NOTL		"GameWorld: Background not in list"
-
-
-#define VL_ENDLESS_REM_ERR	"VirtualList: Endless list removing"
-#define VL_ENDLESS_GSIZE_ERR "VirtualList: Endless list getting size"
-#define VL_ENDLESS_DES_ERR	"VirtualList: Endless list destructing"
-#define VL_ENDLESS_CLR_ERR	"VirtualList: Endless list clearing"
-#define VL_ENDLESS_COPY_ERR	"VirtualList: Endless list copying"
-#define VL_ENDLESS_PRT_ERR	"VirtualList: Endless list printing"
-#define VL_NULL_DESTRUC		"VirtualList: Null destructor called"
-
-#define CH_NULL_ACTION		"Character: invalid action called"
-#define CH_NULL_COLLISION	"Character: invalid react to col called"
-#define CH_NULL_NOTIFY		"Character: invalid notify called"
-
-#define ENTITY_NULL_SPRITE	"Entity: sprite not constructed!"
-
-#define SPRITE_NULL_TEXTURE	"Sprite: texture not constructed!"
-
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 										     DEBUG
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
 
 
 #define NM_ASSERT( STATEMENT, ... )																\

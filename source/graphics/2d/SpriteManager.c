@@ -108,6 +108,8 @@ static void SpriteManager_constructor(SpriteManager this){
 // class's destructor
 void SpriteManager_destructor(SpriteManager this){
 	
+	ASSERT(this, "SpriteManager::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -115,6 +117,8 @@ void SpriteManager_destructor(SpriteManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // reset
 void SpriteManager_reset(SpriteManager this){
+
+	ASSERT(this, "SpriteManager::reset: null this");
 
 	int i = 0;
 	
@@ -132,6 +136,8 @@ void SpriteManager_reset(SpriteManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if any entity must be assigned another world layer
 void SpriteManager_sortAllLayers(SpriteManager this){
+
+	ASSERT(this, "SpriteManager::sortAllLayers: null this");
 
 	int i = 0;
 
@@ -172,12 +178,16 @@ void SpriteManager_sortAllLayers(SpriteManager this){
 // check if any entity must be assigned another world layer
 void SpriteManager_spriteChangedPosition(SpriteManager this){
 
+	ASSERT(this, "SpriteManager::spriteChangedPosition: null this");
+
 	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if any entity must be assigned another world layer
 void SpriteManager_sortLayersProgressively(SpriteManager this){
+
+	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
 
 	if(!this->needSorting){
 
@@ -234,6 +244,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	
+	ASSERT(this, "SpriteManager::addSprite: null this");
+
 	int i = 0;
 	
 	// find the last render object's index
@@ -265,6 +277,8 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
+	ASSERT(this, "SpriteManager::removeSprite: null this");
+
 	int i = 0;
 	
 	CACHE_ENABLE;
@@ -306,6 +320,8 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 // set free layers off
 static void SpriteManager_setLastLayer(SpriteManager this){
 
+	ASSERT(this, "SpriteManager::setLastLayer: null this");
+
 	//create an independant of software variable to point XPSTTS register
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
@@ -325,6 +341,8 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 // render sprites
 void SpriteManager_render(SpriteManager this){
 
+	ASSERT(this, "SpriteManager::render: null this");
+
 	int i = 0;
 	
 	for(i = 0; this->sprites[i] && i < __OBJECTLISTTAM; i++){
@@ -338,5 +356,7 @@ void SpriteManager_render(SpriteManager this){
 // retrieve free layer
 int SpriteManager_getFreeLayer(SpriteManager this){
 	
+	ASSERT(this, "SpriteManager::getFreeLayer: null this");
+
 	return this->freeLayer;
 }

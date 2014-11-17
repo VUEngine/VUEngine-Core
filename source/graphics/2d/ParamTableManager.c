@@ -99,6 +99,8 @@ static void ParamTableManager_constructor(ParamTableManager this){
 // class destructor
 void ParamTableManager_destructor(ParamTableManager this){
 
+	ASSERT(this, "ParamTableManager::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -106,6 +108,8 @@ void ParamTableManager_destructor(ParamTableManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // reset
 void ParamTableManager_reset(ParamTableManager this){
+
+	ASSERT(this, "ParamTableManager::reset: null this");
 
 	int i = 0;
 
@@ -126,6 +130,8 @@ void ParamTableManager_reset(ParamTableManager this){
 // allocate param table space for sprite
 int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 	
+	ASSERT(this, "ParamTableManager::allocate: null this");
+
 	int size = 0;
 	
 	//calculate necesary space to allocate	
@@ -145,12 +151,12 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 		this->size -= size;
 		this->used += size;
 
-		ASSERT(PARAMBase + this->used < WAMBase, "ParamTableManager: exceded memory area");
+		ASSERT(PARAMBase + this->used < WAMBase, "ParamTableManager::allocate: exceded memory area");
 		
 		return true;
 	}
 	
-	ASSERT(false, PT_MEM_ERR);
+	ASSERT(false, "ParamTableManager::allocate: memory depleted");
 
 	return false;
 }
@@ -159,12 +165,14 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 // record allocated sprite
 static void ParamTableManager_setObject(ParamTableManager this, Sprite sprite){
 	
+	ASSERT(this, "ParamTableManager::setObject: null this");
+
 	int i = 0;
 	
 	// search for and empty slot
 	for(; i < __TOTALPARAMOBJECTS && this->sprites[i]; i++);
 	
-	ASSERT(i < __TOTALPARAMOBJECTS, PT_OBJDEP_ERR);
+	ASSERT(i < __TOTALPARAMOBJECTS, "ParamTableManager::setObject: total param objects depleted");
 
 	// record sprite
 	this->sprites[i] = sprite;
@@ -174,6 +182,8 @@ static void ParamTableManager_setObject(ParamTableManager this, Sprite sprite){
 // deallocate param table space
 void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 	
+	ASSERT(this, "ParamTableManager::free: null this");
+
 	int i = 0;
 	u32 auxParam = 0;
 	u32 size = 0;
@@ -226,6 +236,8 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 // print param table's attributes state
 void ParamTableManager_print(ParamTableManager this,int x, int y){
 	
+	ASSERT(this, "ParamTableManager::print: null this");
+
 	int i = 0;
 	
 	Printing_text("Size:", x, y);

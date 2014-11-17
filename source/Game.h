@@ -115,5 +115,7 @@ Clock Game_getInGameClock(Game this);
 // print engine' class's sizes
 void Game_printClassSizes(int x, int y);
 
+// retrieve last process' name
+char* Game_getLastProcessName(Game this);
 
 #endif /*GAMEENGINE_H_*/

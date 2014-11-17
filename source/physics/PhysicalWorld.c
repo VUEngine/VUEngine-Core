@@ -140,6 +140,8 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 // class's destructor
 void PhysicalWorld_destructor(PhysicalWorld this){
 
+	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
+
 	// delete the bodies
 	VirtualNode node = VirtualList_begin(this->bodies);
 	
@@ -202,6 +204,7 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner){
 // find a body given an owner
 Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner){
 
+	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
 	VirtualNode node = VirtualList_begin(this->bodies);
 	
 	for(; node; node = VirtualNode_getNext(node)){
@@ -222,6 +225,8 @@ Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process removed bodies
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this){
+
+	ASSERT(this->removedBodies, "PhysicalWorld::processRemovedBodies: null bodies");
 
 	VirtualNode node = VirtualList_begin(this->removedBodies);
 
@@ -250,6 +255,8 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this){
 // precalculate movable shape's position before doing collision detection on them
 static void PhysicalWorld_checkForGravity(PhysicalWorld this){
 	
+	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
+
 	VirtualNode node = NULL;
 	
 	// prepare bodies which move 
@@ -277,6 +284,8 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this){
 // precalculate movable shape's position before doing collision detection on them
 static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 	
+	ASSERT(this->bodies, "PhysicalWorld::selectBodiesToCheck: null bodies");
+
 	VirtualNode node = NULL;
 	
 	int i = 0;
@@ -352,6 +361,8 @@ void PhysicalWorld_update(PhysicalWorld this){
 // unregister all bodies
 void PhysicalWorld_reset(PhysicalWorld this){
 
+	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
+
 	VirtualNode node = VirtualList_begin(this->bodies);
 
 	for(; node; node = VirtualNode_getNext(node)){
@@ -375,6 +386,8 @@ void PhysicalWorld_reset(PhysicalWorld this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if an entity has been registered
 int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner){
+
+	ASSERT(this->bodies, "PhysicalWorld::isEntityRegistered: null bodies");
 
 	VirtualNode node = VirtualList_begin(this->bodies);
 	

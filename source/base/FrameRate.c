@@ -101,6 +101,8 @@ static void FrameRate_constructor(FrameRate this){
 // class's destructor
 void FrameRate_destructor(FrameRate this){
 	
+	ASSERT(this, "FrameRate::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -109,6 +111,8 @@ void FrameRate_destructor(FrameRate this){
 // reset internal values
 void FrameRate_reset(FrameRate this){
 	
+	ASSERT(this, "FrameRate::reset: null this");
+
 	this->rawFPS = 0;
 	this->renderFPS = 0;
 	this->logicFPS = 0;
@@ -118,6 +122,8 @@ void FrameRate_reset(FrameRate this){
 // retrieve raw FPS
 int FrameRate_getRawFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::getRawFPS: null this");
+
 	return this->rawFPS;
 }
 
@@ -125,6 +131,8 @@ int FrameRate_getRawFPS(FrameRate this){
 // retrieve render FPS
 int FrameRate_getRenderFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::destructor: null this");
+
 	return this->renderFPS;
 }
 
@@ -132,6 +140,8 @@ int FrameRate_getRenderFPS(FrameRate this){
 // retrieve raw logic FPS
 int FrameRate_getLogicFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::getLogicFPS: null this");
+
 	return this->logicFPS;
 }
 
@@ -139,6 +149,8 @@ int FrameRate_getLogicFPS(FrameRate this){
 // retrieve raw logic FPS
 int FrameRate_getPhysicsFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::getPhysicsFPS: null this");
+
 	return this->physicsFPS;
 }
 
@@ -146,6 +158,8 @@ int FrameRate_getPhysicsFPS(FrameRate this){
 // increase the renderFPS count
 void FrameRate_increaseRenderFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::increaseRenderFPS: null this");
+
 	this->renderFPS++;
 }
 
@@ -153,6 +167,8 @@ void FrameRate_increaseRenderFPS(FrameRate this){
 // increase the update raw renderFPS count
 void FrameRate_increaseRawFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::increaseRawFPS: null this");
+
 	this->rawFPS++;
 }
 
@@ -160,6 +176,8 @@ void FrameRate_increaseRawFPS(FrameRate this){
 // increase the update raw renderFPS count
 void FrameRate_increaseLogicFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::increaseLogicFPS: null this");
+
 	this->logicFPS++;
 }
 
@@ -167,14 +185,17 @@ void FrameRate_increaseLogicFPS(FrameRate this){
 // increase the update raw renderFPS count
 void FrameRate_increasePhysicsFPS(FrameRate this){
 	
+	ASSERT(this, "FrameRate::increasePhysicsFPS: null this");
+
 	this->physicsFPS++;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print renderFPS
 void FrameRate_print(FrameRate this, int col, int row){
 	
+	ASSERT(this, "FrameRate::print: null this");
+
 	Printing_text("FPS", col, row++);
 	Printing_text("Raw                          ", col, row);
 	Printing_int(this->rawFPS, col + 8, row++);

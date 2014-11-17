@@ -120,6 +120,8 @@ static void CharSetManager_constructor(CharSetManager this){
 // class's destructor
 void CharSetManager_destructor(CharSetManager this){
 
+	ASSERT(this, "CharSetManager::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -128,8 +130,11 @@ void CharSetManager_destructor(CharSetManager this){
 // reset
 void CharSetManager_reset(CharSetManager this){	
 
+	ASSERT(this, "CharSetManager::reset: null this");
+
 	int i = 0;
 	int j = 0;
+
 	// clear each segment's ofssets
 	for(; i < CHAR_SEGMENTS; i++){
 		
@@ -151,12 +156,14 @@ void CharSetManager_reset(CharSetManager this){
 // record an allocated char defintion
 static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, int offset){
 	
+	ASSERT(this, "CharSetManager::setCharDefinition: null this");
+
 	int i = 0;
 	
 	// search where to register the char definition 
 	for(; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG && this->charDefinition[i]; i++);
 		
-	ASSERT(i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG, "CharSetManager: no char definitions slots left");
+	ASSERT(i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG, "CharSetManager::setCharDefinition: no char definitions slots left");
 			
 	// save char definition
 	this->charDefinition[i] = charDefinition;
@@ -172,9 +179,10 @@ static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefi
 // release char graphic memory
 void CharSetManager_free(CharSetManager this, CharGroup charGroup){
 	
+	ASSERT(this, "CharSetManager::free: null this");
+
 	// retrieve index of char's defintion
 	int i = CharSetManager_searchCharDefinition(this,charGroup);
-	
 	
 	// if char found
 	if(i >= 0){
@@ -203,6 +211,8 @@ void CharSetManager_free(CharSetManager this, CharGroup charGroup){
 // set number of chars used in a given segment
 void CharSetManager_setChars(CharSetManager this, int charSet, int numberOfChars){
 
+	ASSERT(this, "CharSetManager::setChars: null this");
+
 	// set the number of chars of the given charset
 	this->segment[charSet][0] = numberOfChars;
 }
@@ -211,7 +221,10 @@ void CharSetManager_setChars(CharSetManager this, int charSet, int numberOfChars
 // print class's attributes's states
 void CharSetManager_print(CharSetManager this, int charSet, int numberOfChars, int x){
 	
+	ASSERT(this, "CharSetManager::print: null this");
+
 	int i=0;
+	
 	for (i=0;i<16;i++){
 	}
 }
@@ -220,11 +233,13 @@ void CharSetManager_print(CharSetManager this, int charSet, int numberOfChars, i
 // look for an already writen char group
 static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup charGroup){
 	
+	ASSERT(this, "CharSetManager::searchCharDefinition: null this");
+
 	int i = 0;
 	//
 	BYTE* charDef = CharGroup_getCharDefinition(charGroup);
 	
-	ASSERT(charDef, "CharSetManager: null chardef in chargroup");
+	ASSERT(charDef, "CharSetManager::searchCharDefinition: null chardef in chargroup");
 
 	for (; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG; i++){
 		
@@ -244,6 +259,8 @@ static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup ch
 // if char if part of a background or oder object whose frame doesn't change
 int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup){
 	
+	ASSERT(this, "CharSetManager::allocateShared: null this");
+
 	// get the index if the chargroup is already defined
 	int i = CharSetManager_searchCharDefinition(this, charGroup);
 
@@ -269,6 +286,8 @@ int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup){
 // allocate a char defintion within char graphic memory
 void CharSetManager_allocate(CharSetManager this,CharGroup charGroup){
 	
+	ASSERT(this, "CharSetManager::allocate: null this");
+
 	int i = 0;
 	int j = 0;
 	int auxJ = 0;
@@ -280,7 +299,7 @@ void CharSetManager_allocate(CharSetManager this,CharGroup charGroup){
 	int currentChar = 0;	
 	int counter;
 	
-	ASSERT(numberOfChars > 0, "CharSetManager: number of chars < 0");
+	ASSERT(numberOfChars > 0, "CharSetManager::allocate: number of chars < 0");
 	
 	// if char is defined as part of an animation frame allocate 
 	// space for it
@@ -388,7 +407,7 @@ void CharSetManager_allocate(CharSetManager this,CharGroup charGroup){
 	CACHE_DISABLE;
 	
 	// if there isn't enough memory trown an exception
-	ASSERT(false, CHMEM_MEM_ERR);
+	ASSERT(false, "CharSetManager::allocate: char mem depleted");
 }
 
 
@@ -396,6 +415,8 @@ void CharSetManager_allocate(CharSetManager this,CharGroup charGroup){
 // free char graphic memory
 static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup){
 		
+	ASSERT(this, "CharSetManager::deallocate: null this");
+
 	// get chargroup's offset
 	int offset = CharGroup_getOffset(charGroup);
 	
@@ -447,4 +468,3 @@ static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup){
 	}
 	CACHE_DISABLE;
 }
-

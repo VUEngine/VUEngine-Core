@@ -39,17 +39,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-/*------------------------------ERROR-MESSAGES------------------------------*/
-						   /*--------------------Max lenght-----------------*/
-				
-#define BGMEM_MEM_ERR 		"BgmapMem: bgmap segments depleted"				
-#define BGMEM_MC_ERR 		"BgmapMem: Mem depleted (MapCharacter)"
-#define BGMEM_TX_ERR 		"BgmapMem: Mem depleted (TextBox)"
-#define BGMEM_BG_ERR 		"BgmapMem: Mem depleted (Background)"
-#define BGMEM_0CH_ERR		"BgmapMem: map has 0 chars"
-#define BGMEM_NOALLOC_ERR	"BgmapMem: bgmap definition not found"
-
 enum OffsetIndex{
 	
 	kXOffset = 0,
@@ -143,6 +132,8 @@ static void TextureManager_constructor(TextureManager this){
 // class's destructor
 void TextureManager_destructor(TextureManager this){
 
+	ASSERT(this, "TextureManager::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -151,6 +142,8 @@ void TextureManager_destructor(TextureManager this){
 // reset
 void TextureManager_reset(TextureManager this) {
 	
+	ASSERT(this, "TextureManager::reset: null this");
+
 	int i = 0;
 	int j = 0;
 
@@ -188,6 +181,8 @@ void TextureManager_reset(TextureManager this) {
 // allocate texture in bgmap graphic memory
 static int TextureManager_allocate(TextureManager this, Texture texture){
 	
+	ASSERT(this, "TextureManager::allocate: null this");
+
 	int i = 0;
 	int j = 0;	
 	int aux = 0;
@@ -286,13 +281,13 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 		}
 
 		//throw an exception if there is no enough space to allocate the bgmap definition
-		ASSERT(false, BGMEM_MEM_ERR);
+		ASSERT(false, "TextureManager::allocate: bgmap segments depleted");
 		
 	}
 	CACHE_DISABLE;
 
 	//through exception if texture has 0 chars
-	ASSERT(false, BGMEM_0CH_ERR);
+	ASSERT(false, "TextureManager::allocate: map has 0 chars");
 	
 	return false;
 }
@@ -301,6 +296,8 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve free bgmap segment number
 int TextureManager_getFreeBgmap(TextureManager this){
+
+	ASSERT(this, "TextureManager::getFreeBgmap: null this");
 
 	return this->freeBgmap;
 }
@@ -311,6 +308,8 @@ int TextureManager_getFreeBgmap(TextureManager this){
 // TextureManager.xOffset[textbgmap][0] is used
 void TextureManager_allocateText(TextureManager this, Texture texture){
 	
+	ASSERT(this, "TextureManager::allocateText: null this");
+
 	int xDisplacement = 0;
 	int yDisplacement = 0;
 	
@@ -341,13 +340,15 @@ void TextureManager_allocateText(TextureManager this, Texture texture){
 	//Texture_setBgmapSegment(texture, this->freeBgmap);
 
 	//if there are no more rows in the segment... thrown and exception
-	ASSERT(this->xOffset[this->freeBgmap][0] < 4096, BGMEM_TX_ERR);
+	ASSERT(this->xOffset[this->freeBgmap][0] < 4096, "TextureManager::allocateText: mem depleted (TextBox)");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // deallocate texture from bgmap graphic memory
 void TextureManager_free(TextureManager this, Texture texture){
 	
+	ASSERT(this, "TextureManager::free: null this");
+
 	// if no one is using the texture anymore
 	if(!(--this->textureUsageCount[Texture_getId(texture)])){
 		
@@ -359,6 +360,8 @@ void TextureManager_free(TextureManager this, Texture texture){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve a texture previuosly loaded
 static Texture TextureManager_findTexture(TextureManager this, TextureDefinition* textureDefinition){
+
+	ASSERT(this, "TextureManager::findTexture: null this");
 
 	int i = 0;
 	
@@ -379,6 +382,8 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
 // load a texture
 static Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textureDefinition){
 	
+	ASSERT(this, "TextureManager::loadTexture: null this");
+
 	int i = 0;
 	
 	// find and empty slot
@@ -409,6 +414,8 @@ static Texture TextureManager_loadTexture(TextureManager this, TextureDefinition
 // load and retrieve a texture
 Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition){
 	
+	ASSERT(this, "TextureManager::get: null this");
+
 	Texture texture = NULL;
 	
 	//determine the allocation type
@@ -419,7 +426,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 			// load a new texture
 			texture = TextureManager_loadTexture(this, textureDefinition);
 
-			ASSERT(texture, "Texture: (animated) texture no allocated");
+			ASSERT(texture, "TextureManager::get: (animated) texture no allocated");
 
 			break;
 			
@@ -444,7 +451,8 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 					Texture_write(texture);
 				}
 			}
-			ASSERT(texture, "Texture: (shared) texture no allocated");
+
+			ASSERT(texture, "TextureManager::get: (shared) texture no allocated");
 
 			// increase texture usage count
 			this->textureUsageCount[Texture_getId(texture)]++;
@@ -459,6 +467,8 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 // retrieve x offset
 int TextureManager_getXOffset(TextureManager this, int id){
 	
+	ASSERT(this, "TextureManager::getXOffset: null this");
+
 	return this->offset[id][kXOffset];
 }
 
@@ -466,6 +476,8 @@ int TextureManager_getXOffset(TextureManager this, int id){
 // retrieve y offset
 int TextureManager_getYOffset(TextureManager this, int id){
 	
+	ASSERT(this, "TextureManager::getYOffset: null this");
+
 	return this->offset[id][kYOffset];
 }
 
@@ -473,11 +485,15 @@ int TextureManager_getYOffset(TextureManager this, int id){
 // retrieve bgmap segment
 int TextureManager_getBgmapSegment(TextureManager this, int id){
 	
+	ASSERT(this, "TextureManager::getBgmapSegment: null this");
+
 	return this->offset[id][kBgmapSegment];
 }
 
 void TextureManager_debug(TextureManager this){
 	
+	ASSERT(this, "TextureManager::debug: null this");
+
 	int j = 0;
 	//int bgmap = 0;
 	for(j = 0; j < __NUM_MAPS_PER_SEG; j++){

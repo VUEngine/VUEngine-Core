@@ -158,6 +158,8 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 // class's destructor
 void Sprite_destructor(Sprite this){
 
+	ASSERT(this, "Sprite::destructor: null this");
+
 	// remove from sprite manager
 	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
 
@@ -178,6 +180,8 @@ void Sprite_destructor(Sprite this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Scale Sprite_getScale(Sprite this){
 	
+	ASSERT(this, "Sprite::getScale: null this");
+
 	//  return the scale
 	return this->drawSpec.scale;
 }
@@ -186,6 +190,8 @@ Scale Sprite_getScale(Sprite this){
 // set the direction
 void Sprite_setDirection(Sprite this, int axis, int direction){
 	
+	ASSERT(this, "Sprite::setDirection: null this");
+
 	switch(axis){
 	
 		case __XAXIS:
@@ -208,6 +214,8 @@ void Sprite_setDirection(Sprite this, int axis, int direction){
 // calculate zoom scaling factor
 void Sprite_calculateScale(Sprite this, fix19_13 z){
 	
+	ASSERT(this, "Sprite::calculateScale: null this");
+
 	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - 
 			       FIX19_13_DIV(z , _optical->maximunViewDistance));
 
@@ -220,6 +228,8 @@ void Sprite_calculateScale(Sprite this, fix19_13 z){
 
 void Sprite_roundDrawSpec(Sprite this){
 	
+	ASSERT(this, "Sprite::roundDrawSpec: null this");
+
 	this->drawSpec.position.x &= 0xFFFFE000;
 	this->drawSpec.position.y &= 0xFFFFE000;
 	this->drawSpec.position.z &= 0xFFFFE000;	
@@ -228,6 +238,8 @@ void Sprite_roundDrawSpec(Sprite this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set sprite's position
 void Sprite_setPosition(Sprite this, const VBVec3D* const position){
+
+	ASSERT(this, "Sprite::setPosition: null this");
 
 	// normalize the position to screen coordinates
 	VBVec3D position3D = Optics_normalizePosition(position);
@@ -260,6 +272,8 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 // calculate the parallax
 void Sprite_calculateParallax(Sprite this, fix19_13 z){
 	
+	ASSERT(this, "Sprite::calculateParallax: null this");
+
 	this->drawSpec.position.z = z;
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
@@ -268,6 +282,8 @@ void Sprite_calculateParallax(Sprite this, fix19_13 z){
 // retrieve the texture
 Texture Sprite_getTexture(Sprite this){
 	
+	ASSERT(this, "Sprite::getTexture: null this");
+
 	return this->texture;
 }
 
@@ -275,6 +291,8 @@ Texture Sprite_getTexture(Sprite this){
 // retrieve drawspec
 DrawSpec Sprite_getDrawSpec(Sprite this){
 	
+	ASSERT(this, "Sprite::getDrawSpec: null this");
+
 	return this->drawSpec;
 }
 
@@ -282,6 +300,8 @@ DrawSpec Sprite_getDrawSpec(Sprite this){
 // set to true to allow render
 void Sprite_setRenderFlag(Sprite this, int renderFlag){
 	
+	ASSERT(this, "Sprite::setRenderFlag: null this");
+
 	// do not override it the whole world entry must be updated in the
 	// next render
 	if(__UPDATEHEAD != this->renderFlag || !renderFlag) {
@@ -293,12 +313,15 @@ void Sprite_setRenderFlag(Sprite this, int renderFlag){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update sprite
 void Sprite_update(Sprite this){
-	
+
+	ASSERT(this, "Sprite::update: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // render a world layer with the map's information
 void Sprite_render(Sprite this){
+
+	ASSERT(this, "Sprite::render: null this");
 
 	//if render flag is set
 	if(this->renderFlag){
@@ -376,12 +399,16 @@ void Sprite_render(Sprite this){
 // get map's param table address
 u32 Sprite_getParam(Sprite this){
 	
+	ASSERT(this, "Sprite::getParam: null this");
+
 	return this->param;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set map's param table address
 void Sprite_setParam(Sprite this, u32 param){
+
+	ASSERT(this, "Sprite::setParam: null this");
 
 	this->param = param;
 	
@@ -392,6 +419,8 @@ void Sprite_setParam(Sprite this, u32 param){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set map's world layer
 void Sprite_setWorldLayer(Sprite this, int worldLayer){
+
+	ASSERT(this, "Sprite::setWorldLayer: null this");
 
 	if(this->worldLayer != worldLayer){
 	
@@ -405,6 +434,8 @@ void Sprite_setWorldLayer(Sprite this, int worldLayer){
 //get map's world layer
 int Sprite_getWorldLayer(Sprite this){
 		
+	ASSERT(this, "Sprite::getWorldLayer: null this");
+
 	return this->worldLayer;
 }
 
@@ -412,6 +443,8 @@ int Sprite_getWorldLayer(Sprite this){
 // get sprite's render head
 int Sprite_getHead(Sprite this){
 	
+	ASSERT(this, "Sprite::getHead: null this");
+
 	return this->head;
 }
 
@@ -419,6 +452,8 @@ int Sprite_getHead(Sprite this){
 // get map's render mode
 int Sprite_getMode(Sprite this){
 	
+	ASSERT(this, "Sprite::getMode: null this");
+
 	return this->head & 0x3000;
 }
 
@@ -426,6 +461,8 @@ int Sprite_getMode(Sprite this){
 // retrieve param table flag
 int Sprite_updateParamTable(Sprite this){
 	
+	ASSERT(this, "Sprite::updateParamTable: null this");
+
 	return this->updateParamTable;
 }
 
@@ -433,6 +470,8 @@ int Sprite_updateParamTable(Sprite this){
 // force refresh param table in the next render
 void Sprite_invalidateParamTable(Sprite this){
 	
+	ASSERT(this, "Sprite::invalidateParamTable: null this");
+
 	this->updateParamTable = true;
 	this->renderFlag |= __UPDATESIZE | __UPDATEPARAM;
 }
@@ -442,6 +481,8 @@ void Sprite_invalidateParamTable(Sprite this){
 // this reallocate a write the bgmap definition in graphical memory
 void Sprite_resetMemoryState(Sprite this){
 	
+	ASSERT(this, "Sprite::resetMemoryState: null this");
+
 	//if affine or hbias mode, allocate inside paramtable		
 	if(WRLD_AFFINE == Sprite_getMode(this)){
 		
@@ -459,6 +500,8 @@ void Sprite_resetMemoryState(Sprite this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set drawspec
 void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec){
+
+	ASSERT(this, "Sprite::setDrawSpec: null this");
 
 	this->drawSpec = *drawSpec;
 	
@@ -479,12 +522,14 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Sprite_noAFX(Sprite this, int direction){
 	
+	ASSERT(this, "Sprite::noAFX: null this");
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Sprite_scale(Sprite this){
 	
+	ASSERT(this, "Sprite::scale: null this");
+
 	//put the map into memory calculating the number of char for each reference
 	if(this->param){
 		
@@ -500,6 +545,9 @@ void Sprite_scale(Sprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Sprite_rotate(Sprite this, int angle){
+
+	ASSERT(this, "Sprite::rotate: null this");
+
 	// TODO
 	//put the map into memory calculating the number of char for each reference
 	//put the map into memory calculating the number of char for each reference
@@ -540,18 +588,23 @@ void Sprite_rotate(Sprite this, int angle){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Sprite_squezeXHFX(Sprite this){
+
+	ASSERT(this, "Sprite::squezeXHFX: null this");
+	
 	// TODO
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Sprite_fireHFX(Sprite this){
+
+	ASSERT(this, "Sprite::fireHFX: null this");
+
 	// TODO
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Sprite_waveHFX(Sprite this){
+	ASSERT(this, "Sprite::waveHFX: null this");
+
 	// TODO
 }
-
-
-

@@ -84,13 +84,13 @@ __CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, ID));
 // class's constructor
 void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int ID){
 
-	ASSERT(scrollBackgroundDefinition, "ScrollBackground::constructor: NULL definition");
+	ASSERT(scrollBackgroundDefinition, "ScrollBackground::constructor: null definition");
 	
 	// construct base object
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, ID));
 	
 	
-	ASSERT(this->sprites, "ScrollBackground::constructor: NULL sprite list");
+	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 	
 	VirtualNode node = VirtualList_begin(this->sprites);
 	int i = 0;

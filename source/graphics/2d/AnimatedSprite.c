@@ -106,6 +106,8 @@ static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const 
 //destructor
 void AnimatedSprite_destructor(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::destructor: null this");
+
 	// first make sure the map's bgmap definition points to the
 	// beginnig of the bgmap's definition in ROM, otherwhise
 	// the BGTextureManager will not be able to remove it from its
@@ -120,6 +122,8 @@ void AnimatedSprite_destructor(AnimatedSprite this){
 // retrieve frame allocation type
 int AnimatedSprite_getType(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::getType: null this");
+
 	return CharGroup_getAllocationType(Texture_getCharGroup(this->texture));
 }
 
@@ -127,12 +131,16 @@ int AnimatedSprite_getType(AnimatedSprite this){
 // retrieve frame's map
 Texture AnimatedSprite_getTexture(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::getTexture: null this");
+
 	return this->texture;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write char animation frame to char memory
 void AnimatedSprite_writeAnimation(AnimatedSprite this){
+
+	ASSERT(this, "AnimatedSprite::writeAnimation: null this");
 
 	// write according to the allocation type
 	switch(CharGroup_getAllocationType(Texture_getCharGroup(this->texture))){
@@ -190,12 +198,16 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this){
 // next render cicle
 void AnimatedSprite_setCalculatePositionFlag(AnimatedSprite this, int calculatePositionFlag){
 	
+	ASSERT(this, "AnimatedSprite::setCalculatePositionFlag: null this");
+
 	this->calculatePositionFlag = calculatePositionFlag;	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve actual frame index of animation
 int AnimatedSprite_getActualAnimatedSprite(AnimatedSprite this){
+
+	ASSERT(this, "AnimatedSprite::getActualAnimatedSprite: null this");
 
 	return this->actualFrame;
 }
@@ -204,6 +216,8 @@ int AnimatedSprite_getActualAnimatedSprite(AnimatedSprite this){
 // retrieve previous frame index of animation
 int AnimatedSprite_getPreviousAnimatedSprite(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::getPreviousAnimatedSprite: null this");
+
 	return this->previousFrame;
 }
 
@@ -211,6 +225,8 @@ int AnimatedSprite_getPreviousAnimatedSprite(AnimatedSprite this){
 // set actual frame of animation
 void AnimatedSprite_setActualAnimatedSprite(AnimatedSprite this, int actualFrame){
 	
+	ASSERT(this, "AnimatedSprite::setActualAnimatedSprite: null this");
+
 	this->actualFrame = actualFrame;
 }
 
@@ -218,6 +234,8 @@ void AnimatedSprite_setActualAnimatedSprite(AnimatedSprite this, int actualFrame
 // set previos frame index of animation
 void AnimatedSprite_setPreviousAnimatedSprite(AnimatedSprite this, int previousFrame){
 	
+	ASSERT(this, "AnimatedSprite::setPreviousAnimatedSprite: null this");
+
 	// TODO: this method should not exist
 	this->previousFrame = previousFrame;
 }
@@ -226,12 +244,16 @@ void AnimatedSprite_setPreviousAnimatedSprite(AnimatedSprite this, int previousF
 // retrieve frame cicle
 int AnimatedSprite_getAnimatedSpriteCicle(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::getAnimatedSpriteCicle: null this");
+
 	return this->frameDelay;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set frame cicle 
 void AnimatedSprite_setAnimatedSpriteCicle(AnimatedSprite this, int frameCicle){
+
+	ASSERT(this, "AnimatedSprite::setAnimatedSpriteCicle: null this");
 
 	this->frameDelay = frameCicle;
 }
@@ -240,12 +262,16 @@ void AnimatedSprite_setAnimatedSpriteCicle(AnimatedSprite this, int frameCicle){
 // retrieve frame cicle delta
 int AnimatedSprite_getAnimatedSpriteCicleDelta(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::getAnimatedSpriteCicleDelta: null this");
+
 	return this->frameDelayDelta;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set frame cicle delta
 void AnimatedSprite_setAnimatedSpriteCicleDelta(AnimatedSprite this, int frameCicleDelta){
+
+	ASSERT(this, "AnimatedSprite::setAnimatedSpriteCicleDelta: null this");
 
 	this->frameDelayDelta = frameCicleDelta;
 }
@@ -254,6 +280,8 @@ void AnimatedSprite_setAnimatedSpriteCicleDelta(AnimatedSprite this, int frameCi
 // animate the frame
 void AnimatedSprite_animate(AnimatedSprite this){
 		
+	ASSERT(this, "AnimatedSprite::animate: null this");
+
 	// first check for a valid animation function
 	if(!this->animationFunction){
 		
@@ -328,6 +356,8 @@ void AnimatedSprite_animate(AnimatedSprite this){
 // render frame
 void AnimatedSprite_update(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::update: null this");
+
 	if(!Clock_isPaused(_inGameClock)){
 	
 		// first animate the frame
@@ -339,6 +369,8 @@ void AnimatedSprite_update(AnimatedSprite this){
 // retrieve frame's map's height
 int AnimatedSprite_getRows(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::getRows: null this");
+
 	return Texture_getRows(this->texture);
 }
 
@@ -346,12 +378,16 @@ int AnimatedSprite_getRows(AnimatedSprite this){
 // retrieve frame's map's width
 int AnimatedSprite_getCols(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::getCols: null this");
+
 	return Texture_getCols(this->texture);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // allocate a write in graphic memory again
 void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer){
+
+	ASSERT(this, "AnimatedSprite::resetMemoryState: null this");
 
 	// make sure is is allocated and written
 	Texture_resetMemoryState(this->texture);
@@ -370,6 +406,8 @@ void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer){
 // play animation
 void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName){
 	
+	ASSERT(this, "AnimatedSprite::play: null this");
+
 	int i = 0;
 
 	// search for the animation function
@@ -401,6 +439,8 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 // is play animation
 int AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName){
 	
+	ASSERT(this, "AnimatedSprite::isPlayingFunction: null this");
+
 	// compare function's names
 	return !strcmp((const char *)functionName, (const char *)this->animationFunction->name);
 }
@@ -409,12 +449,16 @@ int AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* 
 // is playing animation
 int AnimatedSprite_isPlaying(AnimatedSprite this){
 	
+	ASSERT(this, "AnimatedSprite::isPlaying: null this");
+
 	return this->playing;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write sprite to graphic memory
 void AnimatedSprite_write(AnimatedSprite this){
+
+	ASSERT(this, "AnimatedSprite::write: null this");
 
 	// write the texture
 	Texture_write(this->texture);

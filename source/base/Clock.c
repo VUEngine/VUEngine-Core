@@ -101,6 +101,7 @@ void Clock_destructor(Clock this){
 // time delay
 void Clock_delay(Clock this, int miliSeconds){
 	
+	ASSERT(this, "Clock::delay: null this");
 	u32 time = this->miliSeconds;
 	
 	if(this->paused){
@@ -118,6 +119,8 @@ void Clock_delay(Clock this, int miliSeconds){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print formated class's attributes's states
 void Clock_print(Clock this, int col, int row){
+
+	ASSERT(this, "Clock::print: null this");
 
 	int minutes = Clock_getMinutes(this);
 	int seconds = Clock_getSeconds(this) - minutes * 60;
@@ -151,6 +154,8 @@ void Clock_print(Clock this, int col, int row){
 // called on each timer interrupt
 void Clock_update(Clock this, u32 ticks){
 	
+	ASSERT(this, "Clock::update: null this");
+	
 	// increase count
 	if(!this->paused){
 
@@ -163,12 +168,16 @@ void Clock_update(Clock this, u32 ticks){
 // reset clock's attributes
 void Clock_reset(Clock this){		
 
+	ASSERT(this, "Clock::reset: null this");
+
 	this->miliSeconds = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve clock's miliseconds
 int Clock_getMiliSeconds(Clock this){
+	
+	ASSERT(this, "Clock::getMiliSeconds: null this");
 	
 	return this->miliSeconds;
 }
@@ -177,6 +186,8 @@ int Clock_getMiliSeconds(Clock this){
 // retrieve clock's minutes
 int Clock_getMinutes(Clock this){
 	
+	ASSERT(this, "Clock::getMinutes: null this");
+
 	return this->miliSeconds / (1000 * 60);
 }
 
@@ -184,6 +195,8 @@ int Clock_getMinutes(Clock this){
 //retrieve clock's seconds
 int Clock_getSeconds(Clock this){
 	
+	ASSERT(this, "Clock::getSeconds: null this");
+
 	return this->miliSeconds / 1000 ;
 }
 
@@ -191,6 +204,8 @@ int Clock_getSeconds(Clock this){
 // retrieve clock's total elapsed time in seconds
 u32 Clock_getTime(Clock this){
 	
+	ASSERT(this, "Clock::getTime: null this");
+
 	return this->miliSeconds;
 }
 
@@ -198,6 +213,8 @@ u32 Clock_getTime(Clock this){
 // retrieve current elapsed miliseconds in the current second
 int Clock_getTimeInCurrentSecond(Clock this){
 	
+	ASSERT(this, "Clock::getTimeInCurrentSecond: null this");
+
 	return 1000 * (this->miliSeconds * 0.001f - F_FLOOR(this->miliSeconds * 0.001f));
 }
 
@@ -205,6 +222,8 @@ int Clock_getTimeInCurrentSecond(Clock this){
 // set clock's total elapsed time from seconds paramenters 
 void Clock_setTimeInSeconds(Clock this, float totalSeconds){
 	
+	ASSERT(this, "Clock::setTimeInSeconds: null this");
+
 	this->miliSeconds = totalSeconds * 1000;
 }
 
@@ -212,6 +231,7 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds){
 // start the clock
 void Clock_start(Clock this){
 	
+	ASSERT(this, "Clock::start: null this");
 	//Clock_reset(this);
 	
 	this->paused = false;
@@ -221,6 +241,8 @@ void Clock_start(Clock this){
 // stop the clock
 void Clock_stop(Clock this){
 	
+	ASSERT(this, "Clock::stop: null this");
+
 	Clock_reset(this);
 	
 	this->paused = true;
@@ -230,6 +252,8 @@ void Clock_stop(Clock this){
 // pause the clock
 void Clock_pause(Clock this, int paused){
 	
+	ASSERT(this, "Clock::pause: null this");
+
 	this->paused = paused;
 }
 
@@ -237,6 +261,8 @@ void Clock_pause(Clock this, int paused){
 // whether the clock is running or not
 int Clock_isPaused(Clock this){
 	
+	ASSERT(this, "Clock::isPaused: null this");
+
 	return this->paused;
 }
 

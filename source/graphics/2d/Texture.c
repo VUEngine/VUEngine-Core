@@ -117,6 +117,8 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 // class's destructor
 void Texture_destructor(Texture this){
 	
+	ASSERT(this, "Texture::destructor: null this");
+
 	if(this->charGroup){
 		
 		//destroy the chargroup
@@ -131,6 +133,8 @@ void Texture_destructor(Texture this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write an animated map
 static void Texture_writeAnimated(Texture this){
+
+	ASSERT(this, "Texture::writeAnimated: null this");
 
 	int bgmapSegment = Texture_getBgmapSegment(this);
 	int pallet = Texture_getPallet(this) << 14;
@@ -156,6 +160,8 @@ static void Texture_writeAnimated(Texture this){
 // write an inanimated map
 static void Texture_writeNoAnimated(Texture this){
 
+	ASSERT(this, "Texture::writeNoAnimated: null this");
+
 	int bgmapSegment = Texture_getBgmapSegment(this);
 	int pallet = Texture_getPallet(this) << 14;
 	
@@ -179,6 +185,8 @@ static void Texture_writeNoAnimated(Texture this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write an animated and shared map
 static void Texture_writeAnimatedShared(Texture this){
+
+	ASSERT(this, "Texture::writeAnimatedShared: null this");
 
 	int bgmapSegment = Texture_getBgmapSegment(this);
 	int pallet = Texture_getPallet(this) << 14;
@@ -215,6 +223,8 @@ static void Texture_writeAnimatedShared(Texture this){
 // free char memory
 void Texture_freeCharMemory(Texture this){
 	
+	ASSERT(this, "Texture::freeCharMemory: null this");
+
 	if(this->charGroup){
 		
 		//destroy the chargroup
@@ -227,6 +237,8 @@ void Texture_freeCharMemory(Texture this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write into memory the chars and this
 void Texture_write(Texture this){
+
+	ASSERT(this, "Texture::write: null this");
 
 	if(!this->charGroup){
 		
@@ -263,14 +275,15 @@ void Texture_write(Texture this){
 		
 		default:
 			
-			ASSERT(false, "Texture: no allocation type");
+			ASSERT(false, "Texture::write: no allocation type");
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write into memory the chars and this
 void Texture_rewrite(Texture this){
+
+	ASSERT(this, "Texture::rewrite: null this");
 
 	// determine the allocation type
 	switch(CharGroup_getAllocationType(this->charGroup)){
@@ -301,6 +314,8 @@ void Texture_rewrite(Texture this){
 // this reallocate a write the bgmap definition in graphical memory
 void Texture_resetMemoryState(Texture this){
 	
+	ASSERT(this, "Texture::resetMemoryState: null this");
+
 	//fake char offset so it is allocated again
 	CharGroup_setOffset(this->charGroup, 0xFF);
 	
@@ -311,6 +326,8 @@ void Texture_resetMemoryState(Texture this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write map in hbias mode
 void Texture_writeHBiasMode(Texture this){
+
+	ASSERT(this, "Texture::writeHBiasMode: null this");
 
 	// TODO
 	/*
@@ -329,7 +346,8 @@ void Texture_writeHBiasMode(Texture this){
 // get texture's number of chars
 int Texture_getNumberOfChars(Texture this){
 	
-	ASSERT(this->charGroup, "Texture: null chargroup");
+	ASSERT(this, "Texture::getNumberOfChars: null this");
+	ASSERT(this->charGroup, "Texture::getNumberOfChars: null chargroup");
 	
 	return CharGroup_getNumberOfChars(this->charGroup);
 }
@@ -338,6 +356,8 @@ int Texture_getNumberOfChars(Texture this){
 // get texture's y offset within bgmap mem
 int Texture_getYOffset(Texture this){
 	
+	ASSERT(this, "Texture::getYOffset: null this");
+
 	return TextureManager_getYOffset(TextureManager_getInstance(), this->id);
 }
 
@@ -345,6 +365,8 @@ int Texture_getYOffset(Texture this){
 // get texture's x offset within bgmap mem
 int Texture_getXOffset(Texture this){
 	
+	ASSERT(this, "Texture::getXOffset: null this");
+
 	return TextureManager_getXOffset(TextureManager_getInstance(), this->id);
 }
 
@@ -352,6 +374,7 @@ int Texture_getXOffset(Texture this){
 // get texture's cols
 int Texture_getTotalCols(Texture this){
 	
+	ASSERT(this, "Texture::getTotalCols: null this");
 	
 	// determine the allocation type
 	switch(CharGroup_getAllocationType(this->charGroup)){
@@ -382,6 +405,8 @@ int Texture_getTotalCols(Texture this){
 //get texture's rows
 int Texture_getTotalRows(Texture this){
 	
+	ASSERT(this, "Texture::getTotalRows: null this");
+
 	return this->textureDefinition->rows;
 	/*
 	switch(CharGroup_getAllocationType(&this->charGroup)){
@@ -403,6 +428,8 @@ int Texture_getTotalRows(Texture this){
 //get texture's bgmap segment
 int Texture_getBgmapSegment(Texture this){
 	
+	ASSERT(this, "Texture::getBgmapSegment: null this");
+
 	return TextureManager_getBgmapSegment(TextureManager_getInstance(), this->id);
 }
 
@@ -410,6 +437,8 @@ int Texture_getBgmapSegment(Texture this){
 //get texture's chargroup
 CharGroup Texture_getCharGroup(Texture this){
 	
+	ASSERT(this, "Texture::getCharGroup: null this");
+
 	return this->charGroup;
 }
 
@@ -417,6 +446,8 @@ CharGroup Texture_getCharGroup(Texture this){
 //get texture's bgmap definition
 BYTE* Texture_getBgmapDef(Texture this){
 	
+	ASSERT(this, "Texture::getBgmapDef: null this");
+
 	return this->textureDefinition->bgmapDefinition;
 }
 
@@ -424,12 +455,16 @@ BYTE* Texture_getBgmapDef(Texture this){
 // set the pallet
 void Texture_setPallet(Texture this, int pallet){
 	
+	ASSERT(this, "Texture::setPallet: null this");
+
 	this->pallet = pallet;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int Texture_getPallet(Texture this){
 	
+	ASSERT(this, "Texture::getPallet: null this");
+
 	return this->pallet;
 }
 
@@ -437,7 +472,8 @@ int Texture_getPallet(Texture this){
 // retrieve texture's rows
 int Texture_getRows(Texture this){
 	
-	//ASSERT(this->textureDefinition, Texture: 0 rows);
+	ASSERT(this, "Texture::getRows: null this");
+	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
 	
 	return this->textureDefinition->rows;
 }
@@ -446,6 +482,8 @@ int Texture_getRows(Texture this){
 // retrieve texture's cols
 int Texture_getCols(Texture this){
 	
+	ASSERT(this, "Texture::getCols: null this");
+
 	return this->textureDefinition->cols;
 }
 
@@ -453,5 +491,7 @@ int Texture_getCols(Texture this){
 // retrieve texture's id
 int Texture_getId(Texture this){
 	
+	ASSERT(this, "Texture::getId: null this");
+
 	return this->id;
 }

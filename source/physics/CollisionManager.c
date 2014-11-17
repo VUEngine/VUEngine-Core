@@ -124,6 +124,9 @@ static void CollisionManager_constructor(CollisionManager this){
 // class's destructor
 void CollisionManager_destructor(CollisionManager this){
 
+	ASSERT(this, "CollisionManager::destructor: null this");
+	ASSERT(this->shapes, "CollisionManager::destructor: null shapes");
+
 	// delete the shapes
 	VirtualNode node = VirtualList_begin(this->shapes);
 	
@@ -147,6 +150,8 @@ void CollisionManager_destructor(CollisionManager this){
 
 // register a shape
 Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, int shapeType){
+
+	ASSERT(this, "CollisionManager::registerShape: null this");
 
 	// if the entity is already registered
 	Shape shape = CollisionManager_getShape(this, owner);
@@ -180,6 +185,8 @@ Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, 
 // remove a shape
 void CollisionManager_unregisterShape(CollisionManager this, Shape shape){
 
+	ASSERT(this, "CollisionManager::unregisterShape: null this");
+
 	if(shape){
 		
 		// deactivate teh shape,
@@ -188,12 +195,17 @@ void CollisionManager_unregisterShape(CollisionManager this, Shape shape){
 		
 		// place in  the removed shapes list
 		VirtualList_pushFront(this->removedShapes, (BYTE*)shape);
+		
+		this->selectShapesToCheck = true;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // find a shape given an owner
 Shape CollisionManager_getShape(CollisionManager this, InGameEntity owner){
+
+	ASSERT(this, "CollisionManager::getShape: null this");
+	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
 	VirtualNode node = VirtualList_begin(this->shapes);
 	
@@ -215,6 +227,9 @@ Shape CollisionManager_getShape(CollisionManager this, InGameEntity owner){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process removed shapes
 void CollisionManager_processRemovedShapes(CollisionManager this){
+
+	ASSERT(this, "CollisionManager::processRemovedShapes: null this");
+	ASSERT(this->shapes, "CollisionManager::processRemovedShapes: null shapes");
 
 	VirtualNode node = VirtualList_begin(this->removedShapes);
 
@@ -243,6 +258,9 @@ void CollisionManager_processRemovedShapes(CollisionManager this){
 // precalculate movable shape's position before doing collision detection on them
 static void CollisionManager_selectShapesToCheck(CollisionManager this){
 	
+	ASSERT(this, "CollisionManager::selectShapesToCheck: null this");
+	ASSERT(this->shapes, "CollisionManager::selectShapesToCheck: null shapes");
+
 	VirtualNode node = NULL;
 	
 	int i = 0;
@@ -257,6 +275,8 @@ static void CollisionManager_selectShapesToCheck(CollisionManager this){
 		// load the current shape
 		Shape shape = (Shape)VirtualNode_getData(node);
 		
+		ASSERT(shape, "CollisionManager::selectShapesToCheck: null shape");
+
 		// first check it shape needs setup
 		if(!Shape_isReady(shape)){
 			
@@ -287,6 +307,8 @@ static void CollisionManager_selectShapesToCheck(CollisionManager this){
 // calculate collisions
 void CollisionManager_update(CollisionManager this){
 	
+	ASSERT(this, "CollisionManager::update: null this");
+
 	int i = 0;
 	int j = 0;
 	
@@ -377,12 +399,17 @@ void CollisionManager_update(CollisionManager this){
 // update a shape
 void CollisionManager_updateShape(CollisionManager this, Shape shape, const VBVec3D* const position){
 
+	ASSERT(this, "CollisionManager::updateShape: null this");
+
 	__VIRTUAL_CALL(void, Shape, setup, shape, __ARGUMENTS(position));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unregister all shapes
 void CollisionManager_reset(CollisionManager this){
+
+	ASSERT(this, "CollisionManager::reset: null this");
+	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
 
 	VirtualNode node = VirtualList_begin(this->shapes);
 
@@ -403,6 +430,9 @@ void CollisionManager_reset(CollisionManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if an entity has been registered
 int CollisionManager_isEntityRegistered(CollisionManager this, InGameEntity owner){
+
+	ASSERT(this, "CollisionManager::isEntityRegistered: null this");
+	ASSERT(this->shapes, "CollisionManager::isEntityRegistered: null shapes");
 
 	VirtualNode node = VirtualList_begin(this->shapes);
 	

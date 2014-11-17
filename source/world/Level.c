@@ -168,7 +168,7 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 // update level entities' positions
 void Level_transform(Level this){
 	
-	ASSERT(this->stage, "Level::transform: NULL stage");
+	ASSERT(this->stage, "Level::transform: null stage");
 	
 	// static to avoid call to _memcpy
 	static Transformation environmentTransform = {
@@ -213,7 +213,7 @@ void Level_onKeyHold(Level this, int pressedKey){
 // load a stage
 void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities){
 	
-	ASSERT(stageDefinition, "Level::loadStage: NULL stageDefinition");
+	ASSERT(stageDefinition, "Level::loadStage: null stageDefinition");
 	
 	if (this->stage) {
 	
@@ -227,7 +227,7 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 	// construct the stage
 	this->stage = __NEW(Stage);
 
-	ASSERT(this->stage, "Level::loadStage: NULL stage");
+	ASSERT(this->stage, "Level::loadStage: null stage");
 	
 	//load world entities
 	Stage_load(this->stage, stageDefinition, loadOnlyInRangeEntities);

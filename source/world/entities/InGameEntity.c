@@ -80,7 +80,7 @@ __CLASS_NEW_END(InGameEntity, __ARGUMENTS(inGameEntityDefinition, ID));
 // class's constructor
 void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int ID){
 	
-	ASSERT(inGameEntityDefinition, "InGameEntity: NULL definition");
+	ASSERT(inGameEntityDefinition, "InGameEntity::constructor: null definition");
 	
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(&inGameEntityDefinition->entityDefinition, ID));
 	
@@ -156,30 +156,39 @@ Gap InGameEntity_getGap(InGameEntity this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void InGameEntity_setGap(InGameEntity this){
 	
-	// retrieve the sprite's scale
-	Scale scale = Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
+	ASSERT(this, "InGameEntity::setGap: null this");
 	
-	// retrieve transforming mode
-	int bgmapMode = Sprite_getMode((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
-	
-	// load original gap
-	this->gap = this->inGameEntityDefinition->gap;
-	
-	// if facing to the left... swap left / right gap
-	if(__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode){
+	if(this->sprites) {
 		
-		this->gap.left 	= this->inGameEntityDefinition->gap.right;
-		this->gap.right = this->inGameEntityDefinition->gap.left;
+		// retrieve the sprite's scale
+		Scale scale = Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
+		
+		// retrieve transforming mode
+		int bgmapMode = Sprite_getMode((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
+		
+		// load original gap
+		this->gap = this->inGameEntityDefinition->gap;
+		
+		// if facing to the left... swap left / right gap
+		if(__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode){
+			
+			this->gap.left 	= this->inGameEntityDefinition->gap.right;
+			this->gap.right = this->inGameEntityDefinition->gap.left;
+		}
+		
+		// scale gap if needed
+		if(false && WRLD_AFFINE != bgmapMode){
+		
+			// must scale the gap
+			this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
+			this->gap.right =  	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), abs(scale.x)));
+			this->gap.up 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), abs(scale.y)));
+			this->gap.down 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), abs(scale.y)));
+		}
 	}
-	
-	// scale gap if needed
-	if(false && WRLD_AFFINE != bgmapMode){
-	
-		// must scale the gap
-		this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
-		this->gap.right =  	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), abs(scale.x)));
-		this->gap.up 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), abs(scale.y)));
-		this->gap.down 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), abs(scale.y)));
+	else {
+		
+		Printing_text(__GET_CLASS_NAME(this), 0, 12);
 	}
 }
 

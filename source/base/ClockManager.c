@@ -103,6 +103,8 @@ static void ClockManager_constructor(ClockManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void ClockManager_destructor(ClockManager this){
+	
+	ASSERT(this, "ClockManager::destructor: null this");
 
 	VirtualNode node = VirtualList_begin(this->clocks); 
 	
@@ -124,6 +126,8 @@ void ClockManager_destructor(ClockManager this){
 // register a clock
 void ClockManager_register(ClockManager this, Clock clock){
 	
+	ASSERT(this, "ClockManager::register: null this");
+	
 	if(!this->clocks) {
 		
 		this->clocks = __NEW(VirtualList);
@@ -135,13 +139,18 @@ void ClockManager_register(ClockManager this, Clock clock){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // remove a clock
 void ClockManager_unregister(ClockManager this, Clock clock){
-	
+
+	ASSERT(this, "ClockManager::unregister: null this");
+		
 	VirtualList_removeElement(this->clocks, clock);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update clocks
 void ClockManager_update(ClockManager this, u32 ticksElapsed){
+
+	ASSERT(this, "ClockManager::update: null this");
+	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
 	u32 previousSecond = this->ticks / __MILISECODS_IN_SECOND;
 
@@ -165,7 +174,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     	
 #ifdef __DEBUG
     		
-	    	FrameRate_print(FrameRate_getInstance(), 0, 0);
+	    	FrameRate_print(FrameRate_getInstance(), 0, 23);
 	    	// get stack pointer
     		//Printing_hex(HW_REGS[SCR], 38, 4);
     		//Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);
@@ -197,7 +206,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 // update clocks
 void ClockManager_reset(ClockManager this){
 
+	ASSERT(this, "ClockManager::reset: null this");
+	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
+	
 	VirtualNode node = VirtualList_begin(this->clocks);
+
 	// update all registered clocks 
 	for(; node ; node = VirtualNode_getNext(node)){
 		

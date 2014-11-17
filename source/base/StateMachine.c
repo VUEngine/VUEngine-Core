@@ -118,6 +118,9 @@ void StateMachine_constructor(StateMachine this, void* owner){
 // class's destructor
 void StateMachine_destructor(StateMachine this){
 
+	ASSERT(this, "StateMachine::destructor: null this");
+	ASSERT(this->stateStack, "StateMachine::destructor: null stateStack");
+
 	// delete the stack
 	VirtualNode node = VirtualList_begin(this->stateStack);
 	
@@ -140,8 +143,9 @@ void StateMachine_destructor(StateMachine this){
 // update state
 void StateMachine_update(StateMachine this){
 
-	ASSERT(this->currentState, "StateMachine: null state");
-	
+	ASSERT(this, "StateMachine::update: null this");
+	ASSERT(this->currentState, "StateMachine::update: null state");
+
 	__VIRTUAL_CALL(void, State, execute, this->currentState, __ARGUMENTS(this->owner));
 }
 
@@ -149,7 +153,8 @@ void StateMachine_update(StateMachine this){
 // change state
 void StateMachine_swapState(StateMachine this, State newState){
 	
-	ASSERT(newState, "StateMachine: swaping to NULL state"); 
+	ASSERT(this, "StateMachine::swapState: null this");
+	ASSERT(newState, "StateMachine::swapState: null newState"); 
 	
 	// finalize current state
 	if (this->currentState){
@@ -177,6 +182,8 @@ void StateMachine_swapState(StateMachine this, State newState){
 // push a state in the stack
 void StateMachine_pushState(StateMachine this, State newState){
 	
+	ASSERT(this, "StateMachine::pushState: null this");
+
 	if(!newState){
 		
 		return;
@@ -192,6 +199,8 @@ void StateMachine_pushState(StateMachine this, State newState){
 	// set new state 
 	this->currentState = newState;
 	
+	ASSERT(__GET_CAST(State, this->currentState), "StateMachine::pushState: null currentState"); 
+
 	// call enter method from new state
 	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
 	
@@ -203,7 +212,8 @@ void StateMachine_pushState(StateMachine this, State newState){
 // pop a state fromt the stack
 void StateMachine_popState(StateMachine this){
 
-	ASSERT(VirtualList_getSize(this->stateStack) > 1, "StateMachine: stack empty");
+	ASSERT(this, "StateMachine::popState: null this");
+	ASSERT(VirtualList_getSize(this->stateStack) > 1, "StateMachine::popState: stack empty");
 	
 	// update the stack	
 	// remove the state in the top of the stack
@@ -218,7 +228,9 @@ void StateMachine_popState(StateMachine this){
 
 	// update current state
 	this->currentState = (State)VirtualList_front(this->stateStack);
-	
+
+	ASSERT(this->currentState, "StateMachine::popState: null currentState"); 
+
 	// call resume method from new state
 	__VIRTUAL_CALL(void, State, resume, this->currentState, __ARGUMENTS(this->owner));
 }
@@ -226,6 +238,8 @@ void StateMachine_popState(StateMachine this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // return to previous state
 void StateMachine_returnToPreviousState(StateMachine this){
+
+	ASSERT(this, "StateMachine::returnToPreviousState: null this");
 
 	if(this->previousState){
 		
@@ -244,6 +258,8 @@ void StateMachine_returnToPreviousState(StateMachine this){
 // change to a global state 
 void StateMachine_changeToGlobal(StateMachine this, State globalState){
 	
+	ASSERT(this, "StateMachine::changeToGlobal: null this");
+
 	if(!globalState){
 		
 		return;
@@ -265,6 +281,8 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState){
 // return to previous state
 int StateMachine_handleMessage(StateMachine this, Telegram telegram){
 
+	ASSERT(this, "StateMachine::handleMessage: null this");
+
 	if(this->currentState ){
 
 		return __VIRTUAL_CALL(int, State, handleMessage, this->currentState, __ARGUMENTS(this->owner, telegram));
@@ -278,6 +296,8 @@ int StateMachine_handleMessage(StateMachine this, Telegram telegram){
 // class passed as a parameter. 
 int StateMachine_isInState(StateMachine this, const State state){
 
+	ASSERT(this, "StateMachine::isInState: null this");
+
 	return (this->currentState == state)? true: false;
 }
 
@@ -285,6 +305,8 @@ int StateMachine_isInState(StateMachine this, const State state){
 // set owner
 void StateMachine_setOwner(StateMachine this, void* owner){
 	
+	ASSERT(this, "StateMachine::setOwner: null this");
+
 	this->owner = owner;
 }
 
@@ -292,5 +314,7 @@ void StateMachine_setOwner(StateMachine this, void* owner){
 // retrieve current state
 State StateMachine_getCurrentState(StateMachine this){
 	
+	ASSERT(this, "StateMachine::getCurrentState: null this");
+
 	return this->currentState;
 }

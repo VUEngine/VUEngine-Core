@@ -216,7 +216,9 @@ void Entity_transform(Entity this, Transformation* environmentTransform){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve class's scale
 Scale Entity_getScale(Entity this){
-	
+
+	ASSERT(this->sprites, "Entity::getScale: null sprites");
+
 	return Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 }
 
@@ -252,6 +254,8 @@ int Entity_handleMessage(Entity this, Telegram telegram){
 // get width
 int Entity_getWidth(Entity this){
 
+	ASSERT(this->sprites, "Entity::getWidth: null sprites");
+	
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 	Texture texture = Sprite_getTexture(sprite);
 	
@@ -262,6 +266,8 @@ int Entity_getWidth(Entity this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get height
 int Entity_getHeight(Entity this){
+
+	ASSERT(this->sprites, "Entity::getHeight: null sprites");
 
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
@@ -282,7 +288,9 @@ int Entity_getDeep(Entity this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // whether it is visible
 int Entity_isVisible(Entity this, int pad){
-	
+
+	ASSERT(this->sprites, "Entity::isVisible: null sprites");
+
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
 	return Optics_isVisible(this->transform.globalPosition,
@@ -303,8 +311,8 @@ int Entity_getInGameState(Entity this){
 // create an entity in gameengine's memory
 Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID, void* extraInfo){
 	
-	ASSERT(entityDefinition, "Entity_load: NULL definition");
-	ASSERT((int)entityDefinition->allocator, "Entity: no allocator defined");
+	ASSERT(entityDefinition, "Entity::load: null definition");
+	ASSERT((int)entityDefinition->allocator, "Entity::load: no allocator defined");
 	{
 		// call the appropiate allocator to support inheritance!
 		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);

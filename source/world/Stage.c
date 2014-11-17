@@ -341,6 +341,8 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 // unload non visible entities
 static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
+	ASSERT(this->children, "Stage::unloadOutOfRangeEntities: null children");
+
 	// need a temporal list to remove and delete entities
 	VirtualList removedEntities = __NEW(VirtualList);
 	VirtualNode node = VirtualList_begin(this->children);

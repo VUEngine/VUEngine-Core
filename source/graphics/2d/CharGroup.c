@@ -110,6 +110,8 @@ static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroup
 // class's destructor
 void CharGroup_destructor(CharGroup this){
 	
+	ASSERT(this, "CharGroup::destructor: null this");
+
 	// first check if the chargroup's definition is valid
 	if(this->charDefinition){	
 
@@ -125,6 +127,8 @@ void CharGroup_destructor(CharGroup this){
 // retrieve chargroup's allocation type
 int CharGroup_getAllocationType(CharGroup this){
 	
+	ASSERT(this, "CharGroup::getAllocationType: null this");
+
 	return this->allocationType;	
 }
 
@@ -132,6 +136,8 @@ int CharGroup_getAllocationType(CharGroup this){
 // retrieve chargroup's offset within char segment
 int CharGroup_getOffset(CharGroup this){
 	
+	ASSERT(this, "CharGroup::getOffset: null this");
+
 	return this->offset;	
 }
 
@@ -139,6 +145,8 @@ int CharGroup_getOffset(CharGroup this){
 // set chargroup's offset within the char segment
 void CharGroup_setOffset(CharGroup this, int offset){
 	
+	ASSERT(this, "CharGroup::setOffset: null this");
+
 	this->offset = offset;
 }
 
@@ -146,6 +154,8 @@ void CharGroup_setOffset(CharGroup this, int offset){
 // get chargroup's char definition	
 BYTE* CharGroup_getCharDefinition(CharGroup this){
 	
+	ASSERT(this, "CharGroup::getCharDefinition: null this");
+
 	return this->charDefinition;
 }
 
@@ -153,6 +163,8 @@ BYTE* CharGroup_getCharDefinition(CharGroup this){
 // set chargroup's char definition
 void CharGroup_setCharDefinition(CharGroup this, void *charDefinition){
 	
+	ASSERT(this, "CharGroup::setCharDefinition: null this");
+
 	this->charDefinition = charDefinition;
 }
 
@@ -160,6 +172,8 @@ void CharGroup_setCharDefinition(CharGroup this, void *charDefinition){
 // set chargroup's number of chars
 void CharGroup_setNumberOfChars(CharGroup this, int numberOfChars){
 	
+	ASSERT(this, "CharGroup::setNumberOfChars: null this");
+
 	this->numberOfChars = numberOfChars;	
 }
 
@@ -167,6 +181,8 @@ void CharGroup_setNumberOfChars(CharGroup this, int numberOfChars){
 // retrieve chargrop's number of chars
 int CharGroup_getNumberOfChars(CharGroup this){
 	
+	ASSERT(this, "CharGroup::getNumberOfChars: null this");
+
 	return this->numberOfChars;	
 }
 
@@ -174,6 +190,8 @@ int CharGroup_getNumberOfChars(CharGroup this){
 // get chargroup's segment 
 int CharGroup_getCharSet(CharGroup this){
 	
+	ASSERT(this, "CharGroup::getCharSet: null this");
+
 	return this->charset;	
 }
 
@@ -181,6 +199,8 @@ int CharGroup_getCharSet(CharGroup this){
 // set chargroup's char segment
 void CharGroup_setCharSet(CharGroup this, int charSet){
 		
+	ASSERT(this, "CharGroup::setCharSet: null this");
+
 	this->charset = charSet;	
 }
 
@@ -188,6 +208,8 @@ void CharGroup_setCharSet(CharGroup this, int charSet){
 //copy a chargroup
 void CharGroup_copy(CharGroup this,CharGroup source){
 	
+	ASSERT(this, "CharGroup::destructor: null this");
+
 	// copy the definition
 	this->charDefinition = source->charDefinition;
 	
@@ -201,6 +223,8 @@ void CharGroup_copy(CharGroup this,CharGroup source){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // write char on memory	
 void CharGroup_write(CharGroup this){
+
+	ASSERT(this, "CharGroup::write: null this");
 
 	// determine allocation type
 	switch(this->allocationType){
@@ -236,6 +260,6 @@ void CharGroup_write(CharGroup this){
 			
 		default:
 
-			ASSERT(false, "CharGroup with no allocation type");
+			ASSERT(false, "CharGroup::copy: with no allocation type");
 	}
 }

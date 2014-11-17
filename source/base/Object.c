@@ -87,11 +87,15 @@ void Object_destructor(Object this){
 	/* an Object can not be instantiated, so there is no
 	 * memory to free 
 	 */					
+
+	ASSERT(this, "Object::destructor: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // on message
 int Object_handleMessage(Object this, void* owner, void* telegram){
+
+	ASSERT(this, "Object::handleMessage: null this");
 
 	return false;
 }

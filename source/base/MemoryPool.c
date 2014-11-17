@@ -40,18 +40,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/*------------------------------ERROR-MESSAGES------------------------------*/
-						   /*--------------------Max lenght-----------------*/
-#define HP_MC_ERR 			"Heap: Dynamic Mem depleted (BGMap Ch)"
-#define HP_OBJ_ERR 			"Heap: Dynamic Mem depleted (Object Ch)"
-#define HP_SC_ERR			"Heap: Dynamic Mem depleted (Scroll)"
-#define HP_BG_ERR			"Heap: Dynamic Mem depleted (Backgroud)"
-#define HP_TX_ERR			"Heap: Dynamic Mem depleted (TextBox)"
-#define HP_MEMDEP_ERR		"Heap: Not enought free dynamic mem"
-#define HP_OBJSIZE_ERR		"Heap: object to much big"
-#define HP_NOALLOC_ERR		"Heap: Deleting something not allocated"
-#define HP_NOBLOCK_ERR		"Heap: Index outside memory"
-
 
 enum MemoryPoolSizes{
 	ePoolSize = 0,
@@ -165,6 +153,8 @@ static void MemoryPool_constructor(MemoryPool this){
 // class's destructor
 void MemoryPool_destructor(MemoryPool this){
 	
+	ASSERT(this, "MemoryPool::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -173,6 +163,8 @@ void MemoryPool_destructor(MemoryPool this){
 // allocate memory for data
 void* MemoryPool_allocate(MemoryPool this, int numBytes){
 	
+	ASSERT(this, "MemoryPool::allocate: null this");
+
 	int i = 0;
 	int blockSize = __MIN_BLOCK;	
 	int numberOfOjects = 0;
@@ -186,7 +178,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes){
 	// seach for the shortest pool which can hold the data
 	for(pool = __MEMORY_POOLS; pool-- && numBytes > this->poolSizes[pool][eBlockSize];);
 
-	ASSERT(pool >= 0, "MemoryPool: object size overflow");
+	ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
 	
 	// pool found
 	blockSize = this->poolSizes[pool][eBlockSize];
@@ -206,7 +198,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes){
 	if (i >= numberOfOjects){
 	
 		MemoryPool_printMemUsage(this, 1, 1);
-		ASSERT(false, "MemoryPool: pool exhausted");
+		ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 #endif
 	
@@ -222,6 +214,8 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes){
 // free memory when an object is no longer used
 // remove an object from heap
 void MemoryPool_free(MemoryPool this, BYTE* object){
+
+	ASSERT(this, "MemoryPool::free: null this");
 
 #ifdef __DEBUG	
 	
@@ -240,7 +234,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object){
 	    pool++);
 	
 	// look for the registry in which the object is
-	ASSERT(pool <= __MEMORY_POOLS , HP_NOALLOC_ERR);
+	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
 	
 	// move one pool back since the above loop passed the target by one
 	pool--;
@@ -262,7 +256,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object){
 	}
 	
 	// thrown exception	
-	ASSERT(false, HP_NOALLOC_ERR);
+	ASSERT(false, "MemoryPool::free: deleting something not allocated");
 	
 #endif
 
@@ -273,6 +267,8 @@ void MemoryPool_free(MemoryPool this, BYTE* object){
 // clear all dynamic memory
 static void MemoryPool_reset(MemoryPool this){
 	
+	ASSERT(this, "MemoryPool::reset: null this");
+
 	int pool = 0;
 	int i;
 	
@@ -341,6 +337,8 @@ static void MemoryPool_reset(MemoryPool this){
 // print dynamic memory usage
 void MemoryPool_printMemUsage(MemoryPool this, int x, int y){
 	
+	ASSERT(this, "MemoryPool::printMemUsage: null this");
+
 	int i;
 	int counter = 0;
 	int total = 0;

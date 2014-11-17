@@ -108,6 +108,8 @@ static void MessageDispatcher_constructor(MessageDispatcher this){
 // class's destructor
 void MessageDispatcher_destructor(MessageDispatcher this){
 
+	ASSERT(this, "MessageDispatcher::destructor: null this");
+
 	__DELETE(this->delayedMessages);
 
 	// allow a new construct
@@ -129,7 +131,8 @@ int MessageDispatcher_dispatchMessage(u32 delay, Object sender,
 									Object receiver, int message, void* extraInfo){
   
 	//make sure the receiver is valid
-	ASSERT(receiver, "MessageDispatcher: NULL receiver");
+	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
+	ASSERT(receiver, "MessageDispatcher::dispatchMessage: null receiver");
   
 	if(0 >= delay){
 		
@@ -154,6 +157,8 @@ int MessageDispatcher_dispatchMessage(u32 delay, Object sender,
 void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender, 
 		Object receiver, int message, void* extraInfo){
 
+	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
+
 	//create the telegram
 	Telegram telegram = __NEW(Telegram, __ARGUMENTS(delay, sender, receiver, message, extraInfo));
 
@@ -169,6 +174,9 @@ void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay,
 // dispatch delayed messages
 void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this){
 	
+	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
+	ASSERT(this->delayedMessages, "MessageDispatcher::reset: null delayedMessages");
+
 	if(0 < VirtualList_getSize(this->delayedMessages)){
 
 		VirtualList telegramsToDispatch = __NEW(VirtualList);

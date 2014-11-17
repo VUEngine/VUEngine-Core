@@ -196,7 +196,7 @@ void Container_addChild(Container this, Container child){
 	}
 	else{
 		
-		ASSERT(false, "Container: adding NULL child");
+		ASSERT(false, "Container::addChild: adding null child");
 	}
 }
 

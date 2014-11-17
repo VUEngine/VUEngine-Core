@@ -336,7 +336,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 #define __EXCEPTION_COLUMN	1
-#define __EXCEPTION_LINE	1
+#define __EXCEPTION_LINE	0
 
 
 #endif /*CONFIG_H_*/

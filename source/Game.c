@@ -115,6 +115,10 @@ enum UpdateSubsystems{
 													\
 	/* game's next state */							\
 	State nextState;								\
+													\
+	/* last process' name */						\
+	char* lastProcessName;							\
+	
 
 __CLASS_DEFINITION(Game);
  
@@ -190,6 +194,8 @@ static void Game_constructor(Game this){
 	this->collisionManager = CollisionManager_getInstance();
 	this->physicalWorld = PhysicalWorld_getInstance();
 	this->vpuManager = VPUManager_getInstance();
+	
+	this->lastProcessName = "starting up";
 	
 	//OPTIC VALUES
 	this->optical.distanceEyeScreen = 0;	
@@ -268,7 +274,7 @@ void Game_initialize(Game this){
 // set game's initial state
 void Game_start(Game this, State state){
 
-	ASSERT(state, "Game: initial state is NULL");
+	ASSERT(state, "Game::start: initial state is NULL");
 
 	HardwareManager_displayOn(this->hardwareManager);
 
@@ -481,6 +487,11 @@ void Game_render(Game this) {
 // update engine's world's state
 void Game_update(Game this){
 
+#ifdef __DEBUG
+	int x = 0;
+	int y = 2;
+#endif
+
 	enum UpdateSubsystems{
 		
 		kRender = 0,
@@ -501,17 +512,23 @@ void Game_update(Game this){
 				Game_setState(this, this->nextState);
 				this->nextState = NULL;
 			}
+#ifdef __DEBUG
+			this->lastProcessName = "handle input";
+#endif
 
 			// process user's input 
 			Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
 
+#ifdef __DEBUG
+			this->lastProcessName = "update state machines";
+#endif
 		    // update the game's logic
 			StateMachine_update(this->stateMachine);
 			
 			this->lastTime[kLogic] = currentTime;
 
 			// it is the update cycle
-			ASSERT(this->stateMachine, "Game: no state machine");
+			ASSERT(this->stateMachine, "Game::update: no state machine");
 
 #ifdef __DEBUG
 			// increase the frame rate
@@ -523,15 +540,27 @@ void Game_update(Game this){
 			
 			this->lastTime[kPhysics] = currentTime;
 
+#ifdef __DEBUG
+			this->lastProcessName = "update physics";
+#endif
 			// simulate physics
 			PhysicalWorld_update(this->physicalWorld);
 
+#ifdef __DEBUG
+			this->lastProcessName = "process collisions";
+#endif
 			// simulate collisions
 			CollisionManager_update(this->collisionManager);
 
+#ifdef __DEBUG
+			this->lastProcessName = "apply transformations";
+#endif
 			// apply world transformations
 			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
 
+#ifdef __DEBUG
+			this->lastProcessName = "render";
+#endif
 			// render sprites
 			SpriteManager_render(this->spriteManager);
 
@@ -617,4 +646,10 @@ void Game_printClassSizes(int x, int y){
 	Printing_int(VirtualList_getObjectSize(), x + 27, y);
 	Printing_text("VirtualNode", x, ++y);
 	Printing_int(VirtualNode_getObjectSize(), x + 27, y);
+}
+
+// retrieve last process' name
+char* Game_getLastProcessName(Game this) {
+	
+	return this->lastProcessName;
 }
