@@ -118,4 +118,10 @@ void Game_printClassSizes(int x, int y);
 // retrieve last process' name
 char* Game_getLastProcessName(Game this);
 
+// retrieve optical config structure
+Optical Game_getOptical(Game this);
+
+// set optical config structure
+void Game_setOptical(Game this, Optical optical);
+
 #endif /*GAMEENGINE_H_*/

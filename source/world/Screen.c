@@ -215,7 +215,6 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor) {
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position){
 
-	ASSERT(&this->position == _screenPosition, "Screen::setPosition: screen position pointer is wrong");
 	this->position = position;
 }
 
@@ -237,7 +236,7 @@ void Screen_FXFadeIn(Screen this, int wait) {
 		if(wait){
 			
 			//create time delay
-			Clock_delay(Game_getClock((Game)Game_getInstance()), wait);
+			Clock_delay(Game_getClock(Game_getInstance()), wait);
 		}
 		
 		//increase bright

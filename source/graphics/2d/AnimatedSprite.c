@@ -28,6 +28,7 @@
  */
 
 #include <AnimatedSprite.h>
+#include <Game.h>
 #include <string.h>
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -358,7 +359,7 @@ void AnimatedSprite_update(AnimatedSprite this){
 	
 	ASSERT(this, "AnimatedSprite::update: null this");
 
-	if(!Clock_isPaused(_inGameClock)){
+	if(!Clock_isPaused(Game_getInGameClock(Game_getInstance()))){
 	
 		// first animate the frame
 		AnimatedSprite_animate(this);

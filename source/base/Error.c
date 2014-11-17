@@ -63,6 +63,7 @@ __CLASS_DEFINITION(Error);
 // class's constructor
 static void Error_constructor(Error this);
 
+int Game_isConstructed();
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -117,7 +118,7 @@ int Error_triggerException(Error this, char* string){
 	}
 
 	Printing_text("Game::lastProcess:", x, y);
-	Printing_text(Game_getLastProcessName(Game_getInstance()), x + 19, y);
+	Printing_text(Game_isConstructed()? Game_getLastProcessName(Game_getInstance()): "constructor", x + 19, y);
 	Printing_text("Exception:" , x, y + 1);
 	Printing_text(string, x + 10, y + 1);
 

@@ -28,6 +28,7 @@
  */
 
 #include <Sprite.h>
+#include <Game.h>
 #include <SpriteManager.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
@@ -216,8 +217,9 @@ void Sprite_calculateScale(Sprite this, fix19_13 z){
 	
 	ASSERT(this, "Sprite::calculateScale: null this");
 
+	Optical optical = Game_getOptical(Game_getInstance());
 	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - 
-			       FIX19_13_DIV(z , _optical->maximunViewDistance));
+			       FIX19_13_DIV(z , optical.maximunViewDistance));
 
 	// TODO: remove the * and the branch
 	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0? -1: 1);

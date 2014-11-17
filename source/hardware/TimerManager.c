@@ -197,6 +197,6 @@ void TimerManager_initialize(TimerManager this) {
 	TimerManager_setTime(this, TIME_MS(__TIMER_RESOLUTION));
 	TimerManager_clearStat(this);
 	TimerManager_setInterrupt(this, 1);
-	TimerManager_enable(this, 1);
+	TimerManager_enable(this, true);
 }
 

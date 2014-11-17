@@ -30,6 +30,8 @@
 
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
+#include <Game.h>
+#include <Clock.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -75,6 +77,9 @@
 																		\
 	/* time for movement over each axis	*/								\
 	unsigned long time;													\
+																		\
+	/* in game clock */													\
+	Clock clock;														\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld);
@@ -121,9 +126,9 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 
 	// create the shape list
 	this->bodies = __NEW(VirtualList);
-	
 	this->removedBodies = __NEW(VirtualList);
-
+	this->clock = NULL;
+	this->clock = Game_getInGameClock(Game_getInstance());
 	this->selectBodiesToCheck = false;
 	
 	this->gravity.x = 0;
@@ -191,7 +196,7 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner){
 
 	if(body){
 		
-		// deactivate teh shape,
+		// deactivate the shape,
 		// will be removed in the next update
 		Body_setActive(body, false);
 		
@@ -314,7 +319,12 @@ static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 // calculate collisions
 void PhysicalWorld_start(PhysicalWorld this){
 
-	this->time = Clock_getTime(_inGameClock);
+	if(!this->clock) {
+		
+		this->clock = Game_getInGameClock(Game_getInstance());
+	}
+	
+	this->time = Clock_getTime(this->clock);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -322,9 +332,16 @@ void PhysicalWorld_start(PhysicalWorld this){
 void PhysicalWorld_update(PhysicalWorld this){
 	
 	static int checkForGravity = false;
-
+	
+#ifdef __DEBUG
+	if(!this->clock) {
+		
+		return;
+	}
+#endif
+	
 	// get the elapsed time
-	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(_inGameClock) - this->time), ITOFIX19_13(__MILISECODS_IN_SECOND / 10));
+	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILISECODS_IN_SECOND / 10));
 
 	if(checkForGravity) {
 	
@@ -354,7 +371,7 @@ void PhysicalWorld_update(PhysicalWorld this){
 	PhysicalWorld_processRemovedBodies(this);
 
 	// record this update's time
-	this->time = Clock_getTime(_inGameClock);
+	this->time = Clock_getTime(this->clock);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

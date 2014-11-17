@@ -49,8 +49,6 @@
 
 extern const u16*			_asciiChar;
 extern Optical *			_optical;
-extern Clock				_clock;
-extern Clock				_inGameClock;
 extern MovementState *		_screenMovementState;
 extern VBVec3D *			_screenPosition;
 

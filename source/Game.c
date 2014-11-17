@@ -157,7 +157,12 @@ static void Game_setState(Game this, State state);
 // a singleton
 __SINGLETON(Game);
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// class's constructor
+int Game_isConstructed(){
+	
+	return 0 < _singletonConstructed;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
@@ -165,7 +170,7 @@ static void Game_constructor(Game this){
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
-	
+
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();
 	
@@ -214,8 +219,6 @@ static void Game_constructor(Game this){
 	
 	// setup global pointers	
 	_optical = &this->optical;	
-	_clock = this->clock;
-	_inGameClock = this->inGameClock;
 	
 	// initialize this with your own first game world number
 	this->actualStage = 0;
@@ -228,9 +231,6 @@ static void Game_constructor(Game this){
 	
 	// setup engine paramenters
 	Game_initialize(this);
-	
-	// start the game's general clock
-	Clock_start(this->clock);
 }
 
 
@@ -281,6 +281,9 @@ void Game_start(Game this, State state){
 	if(!this->started) {
 		
 		this->started = true;
+
+		// start the game's general clock
+		Clock_start(this->clock);
 		
 		// set state
 		Game_setState(this, state);
@@ -487,11 +490,6 @@ void Game_render(Game this) {
 // update engine's world's state
 void Game_update(Game this){
 
-#ifdef __DEBUG
-	int x = 0;
-	int y = 2;
-#endif
-
 	enum UpdateSubsystems{
 		
 		kRender = 0,
@@ -503,7 +501,7 @@ void Game_update(Game this){
 
 	while(true){
 
-		currentTime = __CAP_FPS? Clock_getTime(_clock): this->lastTime[kLogic] + 1001;
+		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;
 		
 		if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
 
@@ -522,14 +520,17 @@ void Game_update(Game this){
 #ifdef __DEBUG
 			this->lastProcessName = "update state machines";
 #endif
-		    // update the game's logic
-			StateMachine_update(this->stateMachine);
-			
-			this->lastTime[kLogic] = currentTime;
-
 			// it is the update cycle
 			ASSERT(this->stateMachine, "Game::update: no state machine");
 
+			// update the game's logic
+			StateMachine_update(this->stateMachine);
+			
+			// dispatch queued messages
+		    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+
+		    this->lastTime[kLogic] = currentTime;
+		    
 #ifdef __DEBUG
 			// increase the frame rate
 			FrameRate_increaseLogicFPS(this->frameRate);
@@ -609,47 +610,61 @@ Clock Game_getInGameClock(Game this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Game_printClassSizes(int x, int y){
 
+	int columnIncrement = 20;
+	
 	Printing_text("CLASS				SIZE (B)", x, y);
 	Printing_text("AnimatedSprite", x, ++y);
-	Printing_int(AnimatedSprite_getObjectSize(), x + 27, y);
+	Printing_int(AnimatedSprite_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Background", x, ++y);
-	Printing_int(Background_getObjectSize(), x + 27, y);
+	Printing_int(Background_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Character", x, ++y);
-	Printing_int(Actor_getObjectSize(), x + 27, y);
+	Printing_int(Actor_getObjectSize(), x + columnIncrement, y);
 	Printing_text("CharGroup", x, ++y);
-	Printing_int(CharGroup_getObjectSize(), x + 27, y);
+	Printing_int(CharGroup_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Clock", x, ++y);
-	Printing_int(Clock_getObjectSize(), x + 27, y);
+	Printing_int(Clock_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Entity", x, ++y);
-	Printing_int(Entity_getObjectSize(), x + 27, y);
+	Printing_int(Entity_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Image", x, ++y);
-	Printing_int(Image_getObjectSize(), x + 27, y);
+	Printing_int(Image_getObjectSize(), x + columnIncrement, y);
 	Printing_text("InGameEntity", x, ++y);
-	Printing_int(InGameEntity_getObjectSize(), x + 27, y);
+	Printing_int(InGameEntity_getObjectSize(), x + columnIncrement, y);
 //	Printing_text("Rect", x, ++y);
-//	Printing_int(Rect_getObjectSize(), x + 27, y);
+//	Printing_int(Rect_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Shape", x, ++y);
-	Printing_int(Shape_getObjectSize(), x + 27, y);
+	Printing_int(Shape_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Sprite", x, ++y);
-	Printing_int(Sprite_getObjectSize(), x + 27, y);
+	Printing_int(Sprite_getObjectSize(), x + columnIncrement, y);
 	Printing_text("State", x, ++y);
-	Printing_int(State_getObjectSize(), x + 27, y);
+	Printing_int(State_getObjectSize(), x + columnIncrement, y);
 	Printing_text("StateMachine", x, ++y);
-	Printing_int(StateMachine_getObjectSize(), x + 27, y);
+	Printing_int(StateMachine_getObjectSize(), x + columnIncrement, y);
 	//vbjPrintText("Scroll", x, ++y);
-	//vbjPrintInt(Scroll_getObjectSize(), x + 27, y);
+	//vbjPrintInt(Scroll_getObjectSize(), x + columnIncrement, y);
 	Printing_text("Telegram", x, ++y);
-	Printing_int(Telegram_getObjectSize(), x + 27, y);;
+	Printing_int(Telegram_getObjectSize(), x + columnIncrement, y);;
 	Printing_text("Texture", x, ++y);
-	Printing_int(Texture_getObjectSize(), x + 27, y);
+	Printing_int(Texture_getObjectSize(), x + columnIncrement, y);
 	Printing_text("VirtualList", x, ++y);
-	Printing_int(VirtualList_getObjectSize(), x + 27, y);
+	Printing_int(VirtualList_getObjectSize(), x + columnIncrement, y);
 	Printing_text("VirtualNode", x, ++y);
-	Printing_int(VirtualNode_getObjectSize(), x + 27, y);
+	Printing_int(VirtualNode_getObjectSize(), x + columnIncrement, y);
 }
 
 // retrieve last process' name
 char* Game_getLastProcessName(Game this) {
 	
 	return this->lastProcessName;
+}
+
+// retrieve optical config structure
+Optical Game_getOptical(Game this) {
+	
+	return this->optical;
+}
+
+// set optical config structure
+void Game_setOptical(Game this, Optical optical) {
+	
+	this->optical = optical;
 }

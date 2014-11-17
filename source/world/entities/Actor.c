@@ -218,6 +218,16 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 		// call base
 		InGameEntity_transform((InGameEntity)this, environmentTransform);
 	}
+	
+#ifdef __DEBUG
+	// draw shape
+//	if(this->shape && __VIRTUAL_CALL(int, Entity, updateSpritePosition, (Entity)this)){
+	if(this->shape){
+			
+		
+			__VIRTUAL_CALL(void, Shape, draw, this->shape);
+	}	
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -808,4 +818,3 @@ fix19_13 Actor_getElasticity(Actor this){
 	
 	return this->body? Body_getElasticity(this->body): InGameEntity_getElasticity((InGameEntity)this);
 }
-

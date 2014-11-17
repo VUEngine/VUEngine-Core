@@ -386,37 +386,42 @@
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // defines a singleton (unique instance of a class)
-#define __SINGLETON(ClassName)										\
-																	\
-	/* declare the static instance */								\
-	static ClassName ## _str _instance ## ClassName;				\
-																	\
-	/* a flag to know when to allow constructs */					\
-	static u8 _singletonConstructed = false;						\
-																	\
-	/* define get instance method */								\
-	ClassName ClassName ## _getInstance(){							\
-																	\
-		/* set the vtable */										\
-		__SET_CLASS(ClassName);										\
-																	\
-		/* first check if not constructed yet */					\
-		if(!_singletonConstructed){									\
-																	\
-			/* call constructor */									\
-			ClassName ## _constructor(&_instance ## ClassName);		\
-																	\
-			/* set the vtable pointer */							\
-			_instance ## ClassName.vTable = &ClassName ## _vTable;	\
-																	\
-			/* don't allow more constructs */						\
-			_singletonConstructed = true;							\
-		}															\
-																	\
-		/* return the created singleton */							\
-		return &_instance ## ClassName;								\
+#define __SINGLETON(ClassName)															\
+																						\
+	/* declare the static instance */													\
+	static ClassName ## _str _instance ## ClassName;									\
+																						\
+	/* a flag to know when to allow constructs */										\
+	static s8 _singletonConstructed = -1;												\
+																						\
+	/* define get instance method */													\
+	ClassName ClassName ## _getInstance(){												\
+																						\
+		/* set the vtable */															\
+		__SET_CLASS(ClassName);															\
+																						\
+		if(0 == _singletonConstructed){													\
+																						\
+			NM_ASSERT(false, ClassName get instance during construction);				\
+		}																				\
+		/* first check if not constructed yet */										\
+		if(0 > _singletonConstructed){													\
+																						\
+			_singletonConstructed = 0;													\
+																						\
+			/* call constructor */														\
+			ClassName ## _constructor(&_instance ## ClassName);							\
+																						\
+			/* set the vtable pointer */												\
+			_instance ## ClassName.vTable = &ClassName ## _vTable;						\
+																						\
+			/* don't allow more constructs */											\
+			_singletonConstructed = 1;													\
+		}																				\
+																						\
+		/* return the created singleton */												\
+		return &_instance ## ClassName;													\
 	}
-
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // must always call base class's destructor
@@ -429,40 +434,45 @@
 	_singletonConstructed = false;									\
 
 
-
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // defines a dynamic singleton (unique instance of a class)
-#define __SINGLETON_DYNAMIC(ClassName)								\
-																	\
-	/* declare the static pointer to instance */					\
-	static ClassName _instance ## ClassName;						\
-																	\
-	/* define allocator */											\
-	__CLASS_NEW_DEFINITION(ClassName);								\
-	__CLASS_NEW_END(ClassName);										\
-																	\
-																	\
-	/* a flag to know when to allow constructs */					\
-	static u8 _singletonConstructed = false;						\
-																	\
-	/* define get instance method */								\
-	ClassName ClassName ## _getInstance(){							\
-																	\
-		/* set the vtable */										\
-		__SET_CLASS(ClassName);										\
-																	\
-		/* first check if not constructed yet */					\
-		if(!_singletonConstructed){									\
-																	\
-			/* allocate */											\
-			_instance ## ClassName = ClassName ## _new(0);			\
-																	\
-			/* don't allow more constructs */						\
-			_singletonConstructed = true;							\
-		}															\
-																	\
-		/* return the created singleton */							\
-		return _instance ## ClassName;								\
+#define __SINGLETON_DYNAMIC(ClassName)													\
+																						\
+	/* declare the static pointer to instance */										\
+	static ClassName _instance ## ClassName;											\
+																						\
+	/* define allocator */																\
+	__CLASS_NEW_DEFINITION(ClassName);													\
+	__CLASS_NEW_END(ClassName);															\
+																						\
+	/* a flag to know when to allow constructs */										\
+	static s8 _singletonConstructed = -1;												\
+																						\
+	/* define get instance method */													\
+	ClassName ClassName ## _getInstance(){												\
+																						\
+		/* set the vtable */															\
+		__SET_CLASS(ClassName);															\
+																						\
+		if(0 == _singletonConstructed){													\
+																						\
+			NM_ASSERT(false, ClassName get instance during construction);				\
+		}																				\
+																						\
+		/* first check if not constructed yet */										\
+		if(0 > _singletonConstructed){													\
+																						\
+			_singletonConstructed = 0;													\
+																						\
+			/* allocate */																\
+			_instance ## ClassName = ClassName ## _new(0);								\
+																						\
+			/* don't allow more constructs */											\
+			_singletonConstructed = 1;													\
+		}																				\
+																						\
+		/* return the created singleton */												\
+		return _instance ## ClassName;													\
 	}
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/

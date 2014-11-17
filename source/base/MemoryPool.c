@@ -28,6 +28,7 @@
  */
 
 #include <MemoryPool.h>
+#include <Game.h>
 #include <Utilities.h>
 #include <Types.h>
 
@@ -197,7 +198,8 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes){
 #ifdef __DEBUG
 	if (i >= numberOfOjects){
 	
-		MemoryPool_printMemUsage(this, 1, 1);
+		MemoryPool_printMemUsage(this, 1, 3);
+		Game_printClassSizes(20, 3);
 		ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 #endif

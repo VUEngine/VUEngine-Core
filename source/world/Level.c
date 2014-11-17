@@ -104,8 +104,8 @@ void Level_enter(Level this, void* owner){
 	// reset the global clock
 	//Clock_reset(Game_getClock(Game_getInstance()));
 	
-	Clock_reset(_inGameClock);
-	Clock_start(_inGameClock);
+	Clock_reset(Game_getInGameClock(Game_getInstance()));
+	Clock_start(Game_getInGameClock(Game_getInstance()));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,6 +242,6 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 	SpriteManager_render(SpriteManager_getInstance());
 	
 	// reset ingame clock and start it
-	Clock_reset(_inGameClock);
-	Clock_start(_inGameClock);	
+	Clock_reset(Game_getInGameClock(Game_getInstance()));
+	Clock_start(Game_getInGameClock(Game_getInstance()));
 }

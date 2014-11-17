@@ -29,6 +29,7 @@
  */
 
 #include <MessageDispatcher.h>
+#include <Game.h>
 #include <VirtualList.h>
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -129,7 +130,7 @@ static int MessageDispatcher_discharge(StateMachine receiver, Telegram telegram)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int MessageDispatcher_dispatchMessage(u32 delay, Object sender, 
 									Object receiver, int message, void* extraInfo){
-  
+
 	//make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
 	ASSERT(receiver, "MessageDispatcher::dispatchMessage: null receiver");
@@ -165,7 +166,7 @@ void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay,
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 	
 	delayMessage->telegram = telegram;
-	delayMessage->timeOfArrival = Clock_getTime(_clock); 
+	delayMessage->timeOfArrival = Clock_getTime(Game_getClock(Game_getInstance())); 
 
 	VirtualList_pushFront(this->delayedMessages, delayMessage);
 }
@@ -190,7 +191,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this){
 			
 			ASSERT(__GET_CAST(Telegram, telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 			
-			if(Clock_getTime(_clock) > delayedMessage->timeOfArrival + Telegram_getDelay(telegram)){
+			if(Clock_getTime(Game_getClock(Game_getInstance())) > delayedMessage->timeOfArrival + Telegram_getDelay(telegram)){
 
 				VirtualList_pushFront(telegramsToDispatch, delayedMessage);
 			}
@@ -204,13 +205,21 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this){
 			Telegram telegram = delayedMessage->telegram;
 			
 			__VIRTUAL_CALL(int, Object, handleMessage, Telegram_getReceiver(telegram), __ARGUMENTS(telegram));
+		}
 
+		node = VirtualList_begin(telegramsToDispatch);
+
+		for(; node; node = VirtualNode_getNext(node)){
+			
+			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
+			Telegram telegram = delayedMessage->telegram;
+			
 			VirtualList_removeElement(this->delayedMessages, delayedMessage);
 			
 			__DELETE(telegram);
 			__DELETE_BASIC(delayedMessage);
 		}
-	
+
 		__DELETE(telegramsToDispatch);
 	}
 }

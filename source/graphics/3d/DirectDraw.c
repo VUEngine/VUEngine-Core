@@ -122,46 +122,56 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 // line draw algorithm from ....
 void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int pallet){
 	
-	int dy = toPoint.y - fromPoint.y;
+	fromPoint.x = FIX19_13TOI(fromPoint.x);
+	fromPoint.y = FIX19_13TOI(fromPoint.y);
+
+	toPoint.x = FIX19_13TOI(toPoint.x);
+	toPoint.y = FIX19_13TOI(toPoint.y);
+
 	int dx = toPoint.x - fromPoint.x;
-	int stepx = 0, stepy = 0;
-	fix19_13 parallax = ITOFIX19_13(fromPoint.parallax);
+	int dy = toPoint.y - fromPoint.y;
+	
+	int stepX = 0, stepY = 0;
+
+	int parallax = fromPoint.parallax;
 	 
-	if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
-	if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
+	if (dy < 0) { dy = -dy;  stepY = -1; } else { stepY = 1; }
+	if (dx < 0) { dx = -dx;  stepX = -1; } else { stepX = 1; }
 	
 	dy <<= 1;
 	dx <<= 1;
-	
+
 	if(((unsigned)(fromPoint.x) < __SCREENWIDTH) && ((unsigned)(fromPoint.y) < __SCREENHEIGHT)){
 	
-		DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - FIX19_13TOI(parallax), fromPoint.y, pallet);
-		DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + FIX19_13TOI(parallax), fromPoint.y, pallet);
+		DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - parallax, fromPoint.y, pallet);
+		DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + parallax, fromPoint.y, pallet);
 	}
-
+	
+	int counter = 0;
 	if (dx > dy) {
 		
 		int fraction = dy - (dx >> 1);
 		
-		fix19_13 parallaxStep = (dx >> 1)? FIX19_13_DIV(ITOFIX19_13(toPoint.parallax - fromPoint.parallax), ITOFIX19_13(abs(dx >> 1))): 0;
+		int parallaxStep = (dx >> 1)? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)): 0;
 		
 		while (fromPoint.x != toPoint.x) {
 			
+			if(++counter > 100) break;
 			if (fraction >= 0){
 				
-				fromPoint.y += stepy;
+				fromPoint.y += stepY;
 				fraction -= dx;	
 			}
 			
-			fromPoint.x += stepx;
+			fromPoint.x += stepX;
 			fraction += dy;
 			
 			parallax += parallaxStep;
 			
 			if(((unsigned)(fromPoint.x) < __SCREENWIDTH) && ((unsigned)(fromPoint.y) < __SCREENHEIGHT)){                
 				
-				DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - FIX19_13TOI(parallax), fromPoint.y, pallet);
-				DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + FIX19_13TOI(parallax), fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + parallax, fromPoint.y, pallet);
 			}
 		}
 		
@@ -170,25 +180,26 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	
 		int fraction = dx - (dy >> 1);
 		
-		fix19_13 parallaxStep = (dy >> 1)? FIX19_13_DIV(ITOFIX19_13(toPoint.parallax - fromPoint.parallax), ITOFIX19_13(abs(dy >> 1))): 0;
+		int parallaxStep = (dy >> 1)? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)): 0;
 		
 		while (fromPoint.y != toPoint.y) {
+			if(++counter > 100) break;
 		
 			if (fraction >= 0) {
 			
-				fromPoint.x += stepx;
+				fromPoint.x += stepX;
 				fraction -= dy;
 			}
 			
-			fromPoint.y += stepy;
+			fromPoint.y += stepY;
 			fraction += dx;
 			
 			parallax += parallaxStep;
 			
 			if(((unsigned)(fromPoint.x) < __SCREENWIDTH)&&((unsigned)(fromPoint.y) < __SCREENHEIGHT)){
 				
-				DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - FIX19_13TOI(parallax), fromPoint.y, pallet);
-				DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + FIX19_13TOI(parallax), fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + parallax, fromPoint.y, pallet);
 			}
 		}
 	}

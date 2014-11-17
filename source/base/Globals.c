@@ -47,7 +47,5 @@
 
 const u16 *			_asciiChar = NULL;
 Optical *			_optical = NULL;
-Clock				_clock = NULL;
-Clock				_inGameClock = NULL;
 MovementState * 	_screenMovementState = NULL;
 VBVec3D	*			_screenPosition = NULL;

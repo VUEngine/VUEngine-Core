@@ -304,15 +304,10 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	int numberOfAxis = 0;
 	int axisOfCollision = 0;
-
-#ifdef __DEBUG		
-		int counter = 0;
-#endif
+	int passes = 0;
 
 	do{
-#ifdef __DEBUG		
-		ASSERT(counter++ < 100, "Cuboid::getAxisOfCollisionWithCuboid: cannot resolve collision");
-#endif
+
 		numberOfAxis = 0;
 		axisOfCollision = 0;
 
@@ -378,12 +373,10 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			positionedRightCuboid.z0 += previousPosition.z;
 			positionedRightCuboid.z1 += previousPosition.z;		
 		}
-#ifdef __DEBUG		
-	}while(0 == numberOfAxis && counter < 10);
-#else
-	}while(0 == numberOfAxis);
-#endif
-/*
+
+	}while(0 == numberOfAxis && ++passes < 10);
+
+	/*
 #ifdef __DEBUG		
 	if(((__XAXIS & axisOfCollision) && (__YAXIS & axisOfCollision)) || 
 			((__XAXIS & axisOfCollision) && (__ZAXIS & axisOfCollision)) ||
