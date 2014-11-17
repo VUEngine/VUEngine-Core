@@ -100,7 +100,6 @@ void DirectDraw_destructor(DirectDraw this){
 	__SINGLETON_DESTROY(Object);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // draw a pixel on the screen (DirectDraw)
 static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int pallet){

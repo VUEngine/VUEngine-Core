@@ -32,6 +32,7 @@
 #include <ClockManager.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
+#include <DirectDraw.h>
 #include <Optics.h>
 #include <MiscStructs.h>
 #include <Globals.h>
@@ -106,6 +107,7 @@ enum UpdateSubsystems{
 	CollisionManager collisionManager;				\
 	PhysicalWorld physicalWorld;					\
 	VPUManager vpuManager;							\
+	DirectDraw directDraw;							\
 													\
 	/* update time registry */						\
 	u32 lastTime[kLogic + 1];						\
@@ -199,6 +201,7 @@ static void Game_constructor(Game this){
 	this->collisionManager = CollisionManager_getInstance();
 	this->physicalWorld = PhysicalWorld_getInstance();
 	this->vpuManager = VPUManager_getInstance();
+	this->directDraw = DirectDraw_getInstance();
 	
 	this->lastProcessName = "starting up";
 	
