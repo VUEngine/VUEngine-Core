@@ -111,6 +111,8 @@ __SINGLETON(HardwareManager);
 // class's constructor
 static void HardwareManager_constructor(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 	
 	// set ROM wainting to 1 cycle
@@ -125,6 +127,8 @@ static void HardwareManager_constructor(HardwareManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void HardwareManager_destructor(HardwareManager this){
+
+	ASSERT(this, "HardwareManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
@@ -156,8 +160,6 @@ void HardwareManager_timerInterruptHandler(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // keypad's interrupt handler
 void HardwareManager_keypadInterruptHandler(void){
-
-	Printing_text("CALLED INTERRUPTION", 15, 3);
 
 	// broadcast keypad event
 	Game_handleInput(Game_getInstance(), KeypadManager_read(KeypadManager_getInstance()));
@@ -205,6 +207,8 @@ void HardwareManager_setInterruptVectors(HardwareManager this){
 // set interruption level
 void HardwareManager_setInterruptLevel(HardwareManager this, u8 level) {
 	
+	ASSERT(this, "HardwareManager::setInterruptLevel: null this");
+
 	asm(" \n\
 		stsr	sr5,r5 \n\
 		movhi	0xFFF1,r0,r6 \n\
@@ -227,6 +231,8 @@ void HardwareManager_setInterruptLevel(HardwareManager this, u8 level) {
 // get interruption level
 inline int HardwareManager_geInterruptLevel(HardwareManager this) {
 
+	ASSERT(this, "HardwareManager::geInterruptLevel: null this");
+
 	int level;
 
 	asm(" \n\
@@ -246,7 +252,9 @@ inline int HardwareManager_geInterruptLevel(HardwareManager this) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get PSW
 inline int HardwareManager_getPSW(HardwareManager this) {
-	
+
+	ASSERT(this, "HardwareManager::getPSW: null this");
+
 	int psw;
 	asm(" \n\
 		stsr	psw,%0  \n\
@@ -260,6 +268,8 @@ inline int HardwareManager_getPSW(HardwareManager this) {
 // get stack pointer
 int HardwareManager_getStackPointer(HardwareManager this) {
 	
+	ASSERT(this, "HardwareManager::getStackPointer: null this");
+
 	int sp;
 	asm(" \
 		mov		sp,%0  \
@@ -273,6 +283,8 @@ int HardwareManager_getStackPointer(HardwareManager this) {
 // initialize timer
 void HardwareManager_initializeTimer(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::initializeTimer: null this");
+
 	TimerManager_initialize(this->timerManager);
 }
 
@@ -280,12 +292,16 @@ void HardwareManager_initializeTimer(HardwareManager this){
 // clear screen
 void HardwareManager_clearScreen(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::clearScreen: null this");
+
 	VPUManager_clearScreen(this->vpuManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // display on
 void HardwareManager_displayOn(HardwareManager this){
+
+	ASSERT(this, "HardwareManager::displayOn: null this");
 
 	VPUManager_displayOn(this->vpuManager);
 	VPUManager_setupPalettes(this->vpuManager);
@@ -295,12 +311,16 @@ void HardwareManager_displayOn(HardwareManager this){
 // display off
 void HardwareManager_displayOff(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::displayOff: null this");
+
 	VPUManager_displayOff(this->vpuManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // disable VPU interrupts
 void HardwareManager_disableRendering(HardwareManager this){
+
+	ASSERT(this, "HardwareManager::disableRendering: null this");
 
 	// disable interrupt
 	VPUManager_disableInterrupt(this->vpuManager);
@@ -309,6 +329,8 @@ void HardwareManager_disableRendering(HardwareManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // enable VPU interrupts
 void HardwareManager_enableRendering(HardwareManager this){
+
+	ASSERT(this, "HardwareManager::enableRendering: null this");
 
 	// turn on display
 	VPUManager_displayOn(this->vpuManager);
@@ -321,6 +343,8 @@ void HardwareManager_enableRendering(HardwareManager this){
 // make sure the brigtness is ok
 void HardwareManager_upBrightness(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::upBrightness: null this");
+
 	VPUManager_upBrightness(this->vpuManager);
 }
 
@@ -328,6 +352,8 @@ void HardwareManager_upBrightness(HardwareManager this){
 // setup default column table
 void HardwareManager_setupColumnTable(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::setupColumnTable: null this");
+
 	VPUManager_setupColumnTable(this->vpuManager);
 }
 
@@ -335,6 +361,8 @@ void HardwareManager_setupColumnTable(HardwareManager this){
 // enable key pad
 void HardwareManager_enableKeypad(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::enableKeypad: null this");
+
 	KeypadManager_enable(this->keypadManager);
 }
 
@@ -342,6 +370,8 @@ void HardwareManager_enableKeypad(HardwareManager this){
 // disable key pad
 void HardwareManager_disableKeypad(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::disableKeypad: null this");
+
 	KeypadManager_disable(this->keypadManager);
 }
 
@@ -349,5 +379,7 @@ void HardwareManager_disableKeypad(HardwareManager this){
 // read keypad
 u16 HardwareManager_readKeypad(HardwareManager this){
 	
+	ASSERT(this, "HardwareManager::readKeypad: null this");
+
 	return KeypadManager_read(this->keypadManager);
 }

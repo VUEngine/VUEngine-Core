@@ -431,7 +431,7 @@
 	__DESTROY_BASE(SuperClass);										\
 																	\
 	/* allow new constructs */										\
-	_singletonConstructed = false;									\
+	_singletonConstructed = -1;										\
 
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/

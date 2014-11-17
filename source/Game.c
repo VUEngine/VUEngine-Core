@@ -170,6 +170,8 @@ int Game_isConstructed(){
 // class's constructor
 static void Game_constructor(Game this){
 
+	ASSERT(this, "Game::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
@@ -241,6 +243,8 @@ static void Game_constructor(Game this){
 // class's destructor
 void Game_destructor(Game this){
 	
+	ASSERT(this, "Game::destructor: null this");
+
 	// destroy the clocks
 	Clock_destructor(this->clock);
 	Clock_destructor(this->inGameClock);
@@ -254,6 +258,8 @@ void Game_destructor(Game this){
 // setup engine paramenters
 void Game_initialize(Game this){
 	
+	ASSERT(this, "Game::initialize: null this");
+
 	// setup vectorInterrupts
 	HardwareManager_setInterruptVectors(this->hardwareManager);
 
@@ -277,6 +283,7 @@ void Game_initialize(Game this){
 // set game's initial state
 void Game_start(Game this, State state){
 
+	ASSERT(this, "Game::start: null this");
 	ASSERT(state, "Game::start: initial state is NULL");
 
 	HardwareManager_displayOn(this->hardwareManager);
@@ -304,6 +311,8 @@ void Game_start(Game this, State state){
 // set game's state
 void Game_changeState(Game this, State state){
 
+	ASSERT(this, "Game::changeState: null this");
+
 	this->nextState = state;
 }
 
@@ -311,7 +320,8 @@ void Game_changeState(Game this, State state){
 // set game's state
 static void Game_setState(Game this, State state){
 
-    ASSERT(state, "Game: setting NULL state");
+	ASSERT(this, "Game::setState: null this");
+    ASSERT(state, "Game::setState: setting NULL state");
 
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
@@ -336,9 +346,31 @@ static void Game_setState(Game this, State state){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// disable interrutps
+void Game_disableHardwareInterrupts(Game this) {
+
+	ASSERT(this, "Game::disableHardwareInterrupts: null this");
+
+	// disable rendering
+	HardwareManager_disableRendering(HardwareManager_getInstance());
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// enable interrupts
+void Game_enableHardwareInterrupts(Game this){
+
+	ASSERT(this, "Game::enableHardwareInterrupts: null this");
+
+	// disable rendering
+	HardwareManager_enableRendering(this->hardwareManager);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // recover graphics memory
 void Game_recoverGraphicMemory(Game this){
 	
+	ASSERT(this, "Game::recoverGraphicMemory: null this");
+
 	//initialize graphic class managers
 	CharSetManager_destructor(this->charSetManager);
 	this->charSetManager = CharSetManager_getInstance();
@@ -359,14 +391,12 @@ void Game_recoverGraphicMemory(Game this){
 // erase engine's current status
 void Game_reset(Game this){
 
-	//initialize managers
-//	CharSetManager_destructor(this->charSetManager);
-//	TextureManager_destructor(this->bgmapManager);
-//	ParamTableManager_destructor(this->paramTableManager);
-		
+	ASSERT(this, "Game::reset: null this");
+
 	//clear char and bgmap memory
     HardwareManager_clearScreen(this->hardwareManager);
 
+	// reset managers
 	CharSetManager_reset(this->charSetManager);
 	TextureManager_reset(this->bgmapManager);
 	ParamTableManager_reset(this->paramTableManager);
@@ -386,6 +416,8 @@ void Game_reset(Game this){
 // backup engine's current status 
 void Game_saveState(Game this){
 
+	ASSERT(this, "Game::saveState: null this");
+
 	//save gameworld's object's current state
 	//Stage_copy(this->auxStage, this->stage);
 	
@@ -399,6 +431,8 @@ void Game_saveState(Game this){
 // reload engine's current status
 void Game_recoverState(Game this){
 	
+	ASSERT(this, "Game::recoverState: null this");
+
 	//reload gameworld's object's current state
 	//Stage_reset(this->stage);
 	
@@ -420,6 +454,8 @@ void Game_recoverState(Game this){
 // initialize optic paramenters
 static void Game_setOpticalGlobals(Game this){
 	
+	ASSERT(this, "Game::setOpticalGlobals: null this");
+
 	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCEEYESCREEN);
 	
 	//maximun distance from the _SC to the infinite	
@@ -439,6 +475,8 @@ static void Game_setOpticalGlobals(Game this){
 // process input data according to the actual game status
 void Game_handleInput(Game this, int currentKey){
 	
+	ASSERT(this, "Game::handleInput: null this");
+
 	static u32 previousKey = 0;
 	
 	u32 newKey = currentKey & ~previousKey;
@@ -477,6 +515,8 @@ void Game_handleInput(Game this, int currentKey){
 // render game
 void Game_render(Game this) {
 	
+	ASSERT(this, "Game::render: null this");
+
 	// sort sprites
 	SpriteManager_sortLayersProgressively(this->spriteManager);
 
@@ -492,6 +532,8 @@ void Game_render(Game this) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update engine's world's state
 void Game_update(Game this){
+
+	ASSERT(this, "Game::update: null this");
 
 	enum UpdateSubsystems{
 		
@@ -584,6 +626,7 @@ void Game_update(Game this){
 // process a telegram
 int Game_handleMessage(Game this, Telegram telegram){
 	
+	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
 	
 	return StateMachine_handleMessage(this->stateMachine, telegram);
@@ -593,6 +636,7 @@ int Game_handleMessage(Game this, Telegram telegram){
 // set rest flag
 void Game_setRestFlag(Game this, int flag){
 	
+	ASSERT(this, "Game::setRestFlag: null this");
 	this->restFlag = flag;
 }
 
@@ -600,6 +644,8 @@ void Game_setRestFlag(Game this, int flag){
 // retrieve clock
 Clock Game_getClock(Game this){
 	
+	ASSERT(this, "Game::getClock: null this");
+
 	return this->clock;
 }
 
@@ -607,7 +653,33 @@ Clock Game_getClock(Game this){
 // retrieve in game clock
 Clock Game_getInGameClock(Game this){
 	
+	ASSERT(this, "Game::getInGameClock: null this");
+
 	return this->inGameClock;
+}
+
+// retrieve last process' name
+char* Game_getLastProcessName(Game this) {
+	
+	ASSERT(this, "Game::getLastProcessName: null this");
+
+	return this->lastProcessName;
+}
+
+// retrieve optical config structure
+Optical Game_getOptical(Game this) {
+	
+	ASSERT(this, "Game::getOptical: null this");
+
+	return this->optical;
+}
+
+// set optical config structure
+void Game_setOptical(Game this, Optical optical) {
+	
+	ASSERT(this, "Game::setOptical: null this");
+
+	this->optical = optical;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -652,22 +724,4 @@ void Game_printClassSizes(int x, int y){
 	Printing_int(VirtualList_getObjectSize(), x + columnIncrement, y);
 	Printing_text("VirtualNode", x, ++y);
 	Printing_int(VirtualNode_getObjectSize(), x + columnIncrement, y);
-}
-
-// retrieve last process' name
-char* Game_getLastProcessName(Game this) {
-	
-	return this->lastProcessName;
-}
-
-// retrieve optical config structure
-Optical Game_getOptical(Game this) {
-	
-	return this->optical;
-}
-
-// set optical config structure
-void Game_setOptical(Game this, Optical optical) {
-	
-	this->optical = optical;
 }

@@ -76,6 +76,8 @@ __CLASS_NEW_END(Circle, __ARGUMENTS(owner));
 // class's constructor
 static void Circle_constructor(Circle this, InGameEntity owner){
 
+	ASSERT(this, "Circle::constructor: null this");
+
 	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
 	
 	// TODO	
@@ -85,6 +87,8 @@ static void Circle_constructor(Circle this, InGameEntity owner){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void Circle_destructor(Circle this){
+
+	ASSERT(this, "Circle::destructor: null this");
 
 	// destroy the super object
 	__DESTROY_BASE(Shape);

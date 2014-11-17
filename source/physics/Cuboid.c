@@ -90,6 +90,8 @@ __CLASS_NEW_END(Cuboid, __ARGUMENTS(owner));
 // class's constructor
 static void Cuboid_constructor(Cuboid this, InGameEntity owner){
 
+	ASSERT(this, "Cuboid::constructor: null this");
+
 	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
 	
 	//Rightcuboid r;
@@ -103,6 +105,8 @@ static void Cuboid_constructor(Cuboid this, InGameEntity owner){
 // class's destructor
 void Cuboid_destructor(Cuboid this){
 
+	ASSERT(this, "Cuboid::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(Shape);
 
@@ -111,6 +115,8 @@ void Cuboid_destructor(Cuboid this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if two rects overlap
 int Cuboid_overlaps(Cuboid this, Shape shape){
+
+	ASSERT(this, "Cuboid::overlaps: null this");
 
 	if(__GET_CAST(Cuboid, shape)){
 		
@@ -124,6 +130,9 @@ int Cuboid_overlaps(Cuboid this, Shape shape){
 // check if overlaps with other rect
 int Cuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second){
 	
+	ASSERT(first, "Cuboid::overlapsWithRightcuboids: null first");
+	ASSERT(second, "Cuboid::overlapsWithRightcuboids: null second");
+
 	// test for collision
 	return !(first->x0 > second->x1 || first->x1 < second->x0 || 
 			first->y0 > second->y1 || first->y1 < second->y0 ||
@@ -134,11 +143,15 @@ int Cuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second){
 // check if overlaps with other rect
 int Cuboid_overlapsCuboid(Cuboid this, Cuboid other){
 	
+	ASSERT(this, "Cuboid::overlapsCuboid: null this");
+
 	return Cuboid_overlapsWithRightcuboids(&this->positionedRightcuboid, &other->positionedRightcuboid);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Cuboid_setup(Cuboid this){
+
+	ASSERT(this, "Cuboid::setup: null this");
 
 	// cuboid's center if placed on P(0, 0, 0)
 	this->rightCuboid.x1 = ITOFIX19_13(__VIRTUAL_CALL(int, Entity, getWidth, (Entity)this->owner) >> 1);
@@ -177,6 +190,8 @@ void Cuboid_setup(Cuboid this){
 // prepare the shape to be checked
 void Cuboid_positione(Cuboid this){
 	
+	ASSERT(this, "Cuboid::positione: null this");
+
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::positione: null sprites");
 
 	Gap gap = InGameEntity_getGap(this->owner);
@@ -202,6 +217,8 @@ void Cuboid_positione(Cuboid this){
 // retrieve rightCuboid
 Rightcuboid Cuboid_getRightcuboid(Cuboid this){
 	
+	ASSERT(this, "Cuboid::getRightcuboid: null this");
+
 	return this->rightCuboid;
 }
 
@@ -209,6 +226,8 @@ Rightcuboid Cuboid_getRightcuboid(Cuboid this){
 // retrieve rightCuboid
 Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this){
 	
+	ASSERT(this, "Cuboid::getPositionedRightcuboid: null this");
+
 	return this->positionedRightcuboid;
 }
 
@@ -216,6 +235,8 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this){
 // draw rect
 void Cuboid_draw(Cuboid this){
 	
+	ASSERT(this, "Cuboid::draw: null this");
+
 	// create a polygon
 	Polygon polygon = __NEW(Polygon);
 	
@@ -264,6 +285,8 @@ void Cuboid_print(Cuboid this, int x, int y){
 // determine axis of collision
 int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement){
 	
+	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
+
 	Shape shape = InGameEntity_getShape(collidingEntity);
 	
 	if(__GET_CAST(Cuboid, shape)){
@@ -278,6 +301,8 @@ int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D
 // determine axis of collision
 static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement){
 	
+	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
+
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::getAxisOfCollisionWithCuboid: null sprites");
 
 	Gap gap = InGameEntity_getGap(this->owner);
@@ -395,6 +420,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 // test if collision with the entity give the displacement
 int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement){
 	
+	ASSERT(this, "Cuboid::testIfCollision: null this");
+
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
 
 	Shape shape = InGameEntity_getShape(collidingEntity);
@@ -410,6 +437,8 @@ int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D di
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // test if collision with the entity give the displacement
 static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement){
+
+	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 
 	// setup a cuboid representing the previous position
 	Rightcuboid positionedRightCuboid = this->positionedRightcuboid;
@@ -461,5 +490,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 
 // print debug data
 void Cuboid_print(Cuboid this){
+
+	ASSERT(this, "Cuboid::print: null this");
 
 }

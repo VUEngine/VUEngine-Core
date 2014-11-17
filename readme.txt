@@ -74,7 +74,7 @@ Features:
 		* Scaling/rotation effects
 		* Automatic projection/parallax/scale calculation and rendering
 		* Customizable perspective/deep effects on real time
-		* Automatic memory allocation for Param tables (used in affine and h-bias modes).
+		* Automatic memory allocation for Param tables (used in affine and h-bias modes)
 	· Animation:
 		* Multiple memory allocation schemas to improve efficiency
 		* Frame based animation system with callback support

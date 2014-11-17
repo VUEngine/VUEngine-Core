@@ -72,6 +72,8 @@ static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefini
 // class's constructor
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID){
 
+	ASSERT(this, "Entity::constructor: null this");
+
 	// this is an abstract class so must initialize the vtable here
 	// since this class does not have an allocator
 	__SET_CLASS(Entity);	
@@ -92,6 +94,8 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void Entity_destructor(Entity this){
+
+	ASSERT(this, "Entity::destructor: null this");
 
 	if(this->sprites){
 	
@@ -118,11 +122,15 @@ void Entity_destructor(Entity this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process extra info in intialization
 void Entity_setExtraInfo(Entity this, void* extraInfo){
+
+	ASSERT(this, "Entity::setExtraInfo: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add sprite
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites){
+
+	ASSERT(this, "Entity::addSprites: null this");
 
 	if (spritesDefinitions) {
 		
@@ -139,6 +147,8 @@ static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefini
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add sprite
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition){
+
+	ASSERT(this, "Entity::addSprite: null this");
 
 	Sprite sprite = NULL;
 	
@@ -174,6 +184,8 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transform class
 void Entity_transform(Entity this, Transformation* environmentTransform){
+
+	ASSERT(this, "Entity::transform: null this");
 
 	int updateSpritePosition = __VIRTUAL_CALL(int, Entity, updateSpritePosition, this);
 	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
@@ -217,6 +229,7 @@ void Entity_transform(Entity this, Transformation* environmentTransform){
 // retrieve class's scale
 Scale Entity_getScale(Entity this){
 
+	ASSERT(this, "Entity::getScale: null this");
 	ASSERT(this->sprites, "Entity::getScale: null sprites");
 
 	return Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
@@ -226,12 +239,16 @@ Scale Entity_getScale(Entity this){
 // retrieve position
 VBVec3D Entity_getPosition(Entity this){
 
+	ASSERT(this, "Entity::getPosition: null this");
+
 	return this->transform.globalPosition;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve local position
 VBVec3D Entity_getLocalPosition(Entity this){
+
+	ASSERT(this, "Entity::getLocalPosition: null this");
 
 	return this->transform.localPosition;
 }
@@ -240,6 +257,8 @@ VBVec3D Entity_getLocalPosition(Entity this){
 // retrieve sprite
 VirtualList Entity_getSprites(Entity this){
 
+	ASSERT(this, "Entity::getSprites: null this");
+
 	return this->sprites;
 }
 
@@ -247,6 +266,8 @@ VirtualList Entity_getSprites(Entity this){
 // process a telegram
 int Entity_handleMessage(Entity this, Telegram telegram){
 	
+	ASSERT(this, "Entity::handleMessage: null this");
+
 	return false;
 }
 
@@ -254,6 +275,7 @@ int Entity_handleMessage(Entity this, Telegram telegram){
 // get width
 int Entity_getWidth(Entity this){
 
+	ASSERT(this, "Entity::getWidth: null this");
 	ASSERT(this->sprites, "Entity::getWidth: null sprites");
 	
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
@@ -267,6 +289,7 @@ int Entity_getWidth(Entity this){
 // get height
 int Entity_getHeight(Entity this){
 
+	ASSERT(this, "Entity::getHeight: null this");
 	ASSERT(this->sprites, "Entity::getHeight: null sprites");
 
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
@@ -281,6 +304,8 @@ int Entity_getHeight(Entity this){
 // get deep
 int Entity_getDeep(Entity this){
 
+	ASSERT(this, "Entity::getDeep: null this");
+
 	// must calculate based on the scale because not affine object must be enlarged
 	return 1;
 }
@@ -289,6 +314,7 @@ int Entity_getDeep(Entity this){
 // whether it is visible
 int Entity_isVisible(Entity this, int pad){
 
+	ASSERT(this, "Entity::isVisible: null this");
 	ASSERT(this->sprites, "Entity::isVisible: null sprites");
 
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
@@ -304,6 +330,7 @@ int Entity_isVisible(Entity this, int pad){
 // retrieve state when unloading the entity 
 int Entity_getInGameState(Entity this){
 
+	ASSERT(this, "Entity::getInGameState: null this");
 	return __UNLOADED;
 }
 
@@ -339,12 +366,15 @@ Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID
 // check if must update sprite's position
 int Entity_updateSpritePosition(Entity this){
 
+	ASSERT(this, "Entity::updateSpritePosition: null this");
 	return (*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if must update sprite's scale
 int Entity_updateSpriteScale(Entity this){
+
+	ASSERT(this, "Entity::updateSpriteScale: null this");
 
 	return (_screenMovementState->z || this->invalidateGlobalPosition.z);
 }
@@ -353,6 +383,8 @@ int Entity_updateSpriteScale(Entity this){
 // set the direction
 void Entity_setSpritesDirection(Entity this, int axis, int direction){
 	
+	ASSERT(this, "Entity::setSpritesDirection: null this");
+
 	if(this->sprites){
 
 		VirtualNode node = VirtualList_begin(this->sprites);
@@ -369,4 +401,3 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction){
 		}
 	}
 }
-

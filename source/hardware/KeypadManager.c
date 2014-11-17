@@ -95,6 +95,8 @@ __SINGLETON(KeypadManager);
 // class's constructor
 static void KeypadManager_constructor(KeypadManager this){
 	
+	ASSERT(this, "KeypadManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 	
 	this->currentKey = 0;
@@ -104,6 +106,8 @@ static void KeypadManager_constructor(KeypadManager this){
 // class's destructor
 void KeypadManager_destructor(KeypadManager this){
 
+	ASSERT(this, "KeypadManager::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -111,6 +115,8 @@ void KeypadManager_destructor(KeypadManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // enable keypad reads
 void KeypadManager_enable(KeypadManager this){
+
+	ASSERT(this, "KeypadManager::enable: null this");
 
 	HW_REGS[SCR] = 0;
 	HW_REGS[SCR] &= ~(S_HWDIS | S_INTDIS);
@@ -121,12 +127,16 @@ void KeypadManager_enable(KeypadManager this){
 // disable keypad reads
 void KeypadManager_disable(KeypadManager this){
 
+	ASSERT(this, "KeypadManager::disable: null this");
+
 	HW_REGS[SCR] = (S_INTDIS | S_HW);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // read keypad
 u16 KeypadManager_read(KeypadManager this){
+
+	ASSERT(this, "KeypadManager::read: null this");
 
 	KeypadManager_disable(this);
 	
@@ -142,5 +152,3 @@ u16 KeypadManager_read(KeypadManager this){
 
 	return this->currentKey;
 }
-
-

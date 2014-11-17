@@ -101,6 +101,8 @@ __SINGLETON(GameWorld);
 // class's constructor
 static void GameWorld_constructor(GameWorld this){
 
+	ASSERT(this, "GameWorld::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
@@ -112,6 +114,8 @@ static void GameWorld_constructor(GameWorld this){
 // class's destructor
 void GameWorld_destructor(GameWorld this){
 
+	ASSERT(this, "GameWorld::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(Object);
 }
@@ -120,6 +124,8 @@ void GameWorld_destructor(GameWorld this){
 // set GameWorld's size
 void GameWorld_setSize(GameWorld this, Size size){
 	
+	ASSERT(this, "GameWorld::constructor: null this");
+
 	this->size = size;
 	
 	// world z size must be at least 1
@@ -133,6 +139,8 @@ void GameWorld_setSize(GameWorld this, Size size){
 // retrieve GameWorld size
 Size GameWorld_getSize(GameWorld this){
 	
+	ASSERT(this, "GameWorld::getSize: null this");
+
 	return this->size;
 }
 
@@ -140,12 +148,16 @@ Size GameWorld_getSize(GameWorld this){
 // get GameWorld's friction attribure
 float GameWorld_getFriction(GameWorld this){
 	
+	ASSERT(this, "GameWorld::getFriction: null this");
+
 	return this->friction;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float GameWorld_getFloorFriction(GameWorld this){
 	
+	ASSERT(this, "GameWorld::getFloorFriction: null this");
+
 	return this->floorFriction;
 }
 
@@ -153,11 +165,15 @@ float GameWorld_getFloorFriction(GameWorld this){
 // get GameWorld's friction attribure
 void GameWorld_setFriction(GameWorld this, fix7_9 friction){
 
+	ASSERT(this, "GameWorld::setFriction: null this");
+
 	this->friction = friction;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void GameWorld_setFloorFriction(GameWorld this, fix7_9 floorFriction){
 	
+	ASSERT(this, "GameWorld::setFloorFriction: null this");
+
 	this->floorFriction = floorFriction;
 }

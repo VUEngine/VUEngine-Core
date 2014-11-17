@@ -95,6 +95,8 @@ __SINGLETON(TimerManager);
 // class's constructor
 static void TimerManager_constructor(TimerManager this){
 	
+	ASSERT(this, "TimerManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 	
 	this->tcrValue = 0;
@@ -104,6 +106,8 @@ static void TimerManager_constructor(TimerManager this){
 // class's destructor
 void TimerManager_destructor(TimerManager this){
 
+	ASSERT(this, "TimerManager::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -111,6 +115,8 @@ void TimerManager_destructor(TimerManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // enable interruptions
 void TimerManager_setInterrupt(TimerManager this, int value){
+
+	ASSERT(this, "TimerManager::setInterrupt: null this");
 
 	if (value){ 
 		
@@ -128,6 +134,8 @@ void TimerManager_setInterrupt(TimerManager this, int value){
 // enable timer
 void TimerManager_enable(TimerManager this, int value) {
 	
+	ASSERT(this, "TimerManager::enable: null this");
+
 	if (value){
 		
 		this->tcrValue |= TIMER_ENB;
@@ -140,10 +148,11 @@ void TimerManager_enable(TimerManager this, int value) {
 	HW_REGS[TCR] = this->tcrValue;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get time
 u16 TimerManager_getTime(TimerManager this) {
+
+	ASSERT(this, "TimerManager::getTime: null this");
 
 	return (HW_REGS[TLR] | (HW_REGS[THR] << 8));
 }
@@ -152,6 +161,8 @@ u16 TimerManager_getTime(TimerManager this) {
 // sest time
 void TimerManager_setTime(TimerManager this, u16 time) {
 	
+	ASSERT(this, "TimerManager::setTime: null this");
+
 	HW_REGS[TLR] = (time & 0xFF);
 	HW_REGS[THR] = (time >> 8);
 }
@@ -159,6 +170,8 @@ void TimerManager_setTime(TimerManager this, u16 time) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set frequency
 void TimerManager_setFrequency(TimerManager this, int frequency) {
+
+	ASSERT(this, "TimerManager::setFrequency: null this");
 
 	if (frequency){
 		
@@ -176,6 +189,8 @@ void TimerManager_setFrequency(TimerManager this, int frequency) {
 // get stat
 int TimerManager_getStat(TimerManager this) {
 
+	ASSERT(this, "TimerManager::getStat: null this");
+
 	return (HW_REGS[TCR] & TIMER_ZSTAT);
 }
 
@@ -183,12 +198,16 @@ int TimerManager_getStat(TimerManager this) {
 // clear stat
 void TimerManager_clearStat(TimerManager this) {
 	
+	ASSERT(this, "TimerManager::clearStat: null this");
+
 	HW_REGS[TCR] = (this->tcrValue | TIMER_ZCLR);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // initialize
 void TimerManager_initialize(TimerManager this) {
+
+	ASSERT(this, "TimerManager::initialize: null this");
 
 	//setup timer interrupts
 	HardwareManager_setInterruptLevel(HardwareManager_getInstance(), 0);

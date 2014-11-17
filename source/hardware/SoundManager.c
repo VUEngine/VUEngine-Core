@@ -202,6 +202,8 @@ __SINGLETON(SoundManager);
 // class's constructor
 static void SoundManager_constructor(SoundManager this){
 	
+	ASSERT(this, "SoundManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	{	
@@ -236,12 +238,17 @@ static void SoundManager_constructor(SoundManager this){
 // class's destructor
 void SoundManager_destructor(SoundManager this){
 	
+	ASSERT(this, "SoundManager::destructor: null this");
+
 	__SINGLETON_DESTROY(Object);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load wave form data in the VB memory
 void SoundManager_setWaveForm(SoundManager this){
+
+	ASSERT(this, "SoundManager::setWaveForm: null this");
+
 	int i;
 	for (i = 0; i < 32; i++){
 		WAVEDATA1[i*4] = organWave[i];
@@ -256,6 +263,8 @@ void SoundManager_setWaveForm(SoundManager this){
 // load a bgm
 void SoundManager_loadBGM(SoundManager this, u16 (*bgm)[]){
 	
+	ASSERT(this, "SoundManager::loadBGM: null this");
+
 	SoundManager_stopAllSound(this);
 	this->bgm = bgm;
 }
@@ -264,6 +273,8 @@ void SoundManager_loadBGM(SoundManager this, u16 (*bgm)[]){
 // play background song loaded
 void SoundManager_playBGM(SoundManager this){
 	
+	ASSERT(this, "SoundManager::playBGM: null this");
+
 	int channel=0;
 	
 	int note=0;
@@ -346,6 +357,8 @@ void SoundManager_playBGM(SoundManager this){
 // calculte sound volume according to its spatial position
 static int SoundManager_calculateSoundPosition(SoundManager this, int fxS){
 	
+	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
+
 	float zMinus = 0;
 	int maxOutputLevel = 15;
 	int output = 0x00;
@@ -395,6 +408,8 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS){
 // play sound
 void SoundManager_playFxSounds(SoundManager this){
 	
+	ASSERT(this, "SoundManager::playFxSounds: null this");
+
 	int note = 0;
 	int fxS;
 	
@@ -478,6 +493,9 @@ void SoundManager_playFxSounds(SoundManager this){
 // load a fx sound to be played
 // it is not guaranted that the sound has been loaded
 int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position){
+	
+	ASSERT(this, "SoundManager::loadFxSound: null this");
+
 	int i = 0;
 	
 	// try to find a free channel
@@ -504,6 +522,9 @@ int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // returns true if the sound is being played
 int SoundManager_playingSound(SoundManager this, u16* fxSound){
+
+	ASSERT(this, "SoundManager::playingSound: null this");
+
 	int i = 0;
 	
 	// find sound
@@ -522,8 +543,10 @@ int SoundManager_playingSound(SoundManager this, u16* fxSound){
 // stop sound
 void SoundManager_stopSound(SoundManager this, BYTE *sound){
 	
+	ASSERT(this, "SoundManager::stopSound: null this");
+
 	// TODO: complete implementation
-	//disables sound on all channels
+	// disables sound on all channels
 	/* if not explicitly done
 	 * SND_REGS 0 doesn't get off
 	 */
@@ -538,6 +561,9 @@ void SoundManager_stopSound(SoundManager this, BYTE *sound){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // continue BGM play 
 void SoundManager_continueBGM(SoundManager this,BYTE *sound){
+
+	ASSERT(this, "SoundManager::continueBGM: null this");
+
 	// TODO:
 }
 
@@ -545,6 +571,8 @@ void SoundManager_continueBGM(SoundManager this,BYTE *sound){
 // stop all playing sounds 
 void SoundManager_stopAllSound(SoundManager this){
 	
+	ASSERT(this, "SoundManager::stopAllSound: null this");
+
 	int channel = 0;
 	
 	//disables sound on all channels

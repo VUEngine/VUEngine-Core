@@ -115,12 +115,16 @@ __SINGLETON(VPUManager);
 // class's constructor
 static void VPUManager_constructor(VPUManager this){
 	
+	ASSERT(this, "VPUManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void VPUManager_destructor(VPUManager this){
+
+	ASSERT(this, "VPUManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
@@ -130,6 +134,8 @@ void VPUManager_destructor(VPUManager this){
 // wait frame
 void VPUManager_waitForFrame(VPUManager this) {
 	
+	ASSERT(this, "VPUManager::waitForFrame: null this");
+
 	// disable interrupt
 	VPUManager_disableInterrupt(this);
 
@@ -144,6 +150,8 @@ void VPUManager_waitForFrame(VPUManager this) {
 // disable interrupt
 void VPUManager_disableInterrupt(VPUManager this) {
 
+	ASSERT(this, "VPUManager::disableInterrupt: null this");
+
 	VIP_REGS[INTENB]= 0;
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 }
@@ -151,6 +159,8 @@ void VPUManager_disableInterrupt(VPUManager this) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // enable interrupt
 void VPUManager_enableInterrupt(VPUManager this) {
+
+	ASSERT(this, "VPUManager::enableInterrupt: null this");
 
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 	VIP_REGS[INTENB]= XPEND;
@@ -160,6 +170,8 @@ void VPUManager_enableInterrupt(VPUManager this) {
 // turn display on
 void VPUManager_displayOn(VPUManager this) {
 	
+	ASSERT(this, "VPUManager::displayOn: null this");
+
 	VIP_REGS[REST] = 0;
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	VIP_REGS[DPCTRL] = VIP_REGS[DPSTTS] | (SYNCE | RE | DISP);
@@ -170,6 +182,8 @@ void VPUManager_displayOn(VPUManager this) {
 // turn display off
 void VPUManager_displayOff(VPUManager this) {
 	
+	ASSERT(this, "VPUManager::displayOff: null this");
+
 	VIP_REGS[REST] = 0;
 	VIP_REGS[XPCTRL] = 0;
 	VIP_REGS[DPCTRL] = 0;
@@ -180,6 +194,8 @@ void VPUManager_displayOff(VPUManager this) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // setup palletes
 void VPUManager_setupPalettes(VPUManager this) {
+
+	ASSERT(this, "VPUManager::setupPalettes: null this");
 
 	VIP_REGS[BRTA]  = __BRTA;
 	VIP_REGS[BRTB]  = __BRTB;
@@ -199,6 +215,8 @@ void VPUManager_setupPalettes(VPUManager this) {
 // set brightness all the way up
 void VPUManager_upBrightness(VPUManager this) {
 	
+	ASSERT(this, "VPUManager::upBrightness: null this");
+
 	VIP_REGS[BRTA] = 32;
 	VIP_REGS[BRTB] = 64;
 	VIP_REGS[BRTC] = 32;
@@ -208,6 +226,8 @@ void VPUManager_upBrightness(VPUManager this) {
 // set brightness all way down
 void VPUManager_displayHide(VPUManager this) {
 	
+	ASSERT(this, "VPUManager::displayHide: null this");
+
 	VIP_REGS[BRTA] = 0;
 	VIP_REGS[BRTB] = 0;
 	VIP_REGS[BRTC] = 0;
@@ -221,6 +241,8 @@ void VPUManager_displayHide(VPUManager this) {
 // clear screen
 void VPUManager_clearScreen(VPUManager this){
 	
+	ASSERT(this, "VPUManager::clearScreen: null this");
+
 	int i;
 	//clear every bgmap segment
     for(i = 0; i < 14; i++){
@@ -238,6 +260,8 @@ void VPUManager_clearScreen(VPUManager this){
 // setup default column table
 void VPUManager_setupColumnTable(VPUManager this) {
 	
+	ASSERT(this, "VPUManager::setupColumnTable: null this");
+
 	int i;
 	for (i = 0; i < 128; i++) {
 		

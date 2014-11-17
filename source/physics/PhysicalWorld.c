@@ -122,6 +122,8 @@ __SINGLETON(PhysicalWorld);
 // class's constructor
 static void PhysicalWorld_constructor(PhysicalWorld this){
 	
+	ASSERT(this, "PhysicalWorld::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	// create the shape list
@@ -144,6 +146,7 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 // class's destructor
 void PhysicalWorld_destructor(PhysicalWorld this){
 
+	ASSERT(this, "PhysicalWorld::destructor: null this");
 	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
 
 	// delete the bodies
@@ -169,6 +172,8 @@ void PhysicalWorld_destructor(PhysicalWorld this){
 // register a body
 Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight){
 
+	ASSERT(this, "PhysicalWorld::registerBody: null this");
+
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
 
@@ -190,6 +195,8 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight
 // remove a body
 void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner){
 
+	ASSERT(this, "PhysicalWorld::unregisterBody: null this");
+
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
 
@@ -208,6 +215,7 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner){
 // find a body given an owner
 Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner){
 
+	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
 	VirtualNode node = VirtualList_begin(this->bodies);
 	
@@ -230,6 +238,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner){
 // process removed bodies
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this){
 
+	ASSERT(this, "PhysicalWorld::processRemovedBodies: null this");
 	ASSERT(this->removedBodies, "PhysicalWorld::processRemovedBodies: null bodies");
 
 	VirtualNode node = VirtualList_begin(this->removedBodies);
@@ -259,6 +268,7 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this){
 // precalculate movable shape's position before doing collision detection on them
 static void PhysicalWorld_checkForGravity(PhysicalWorld this){
 	
+	ASSERT(this, "PhysicalWorld::checkForGravity: null this");
 	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
 
 	VirtualNode node = NULL;
@@ -288,6 +298,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this){
 // precalculate movable shape's position before doing collision detection on them
 static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 	
+	ASSERT(this, "PhysicalWorld::selectBodiesToCheck: null this");
 	ASSERT(this->bodies, "PhysicalWorld::selectBodiesToCheck: null bodies");
 
 	VirtualNode node = NULL;
@@ -318,6 +329,8 @@ static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
 // calculate collisions
 void PhysicalWorld_start(PhysicalWorld this){
 
+	ASSERT(this, "PhysicalWorld::start: null this");
+
 	if(!this->clock) {
 		
 		this->clock = Game_getInGameClock(Game_getInstance());
@@ -330,6 +343,8 @@ void PhysicalWorld_start(PhysicalWorld this){
 // calculate collisions
 void PhysicalWorld_update(PhysicalWorld this){
 	
+	ASSERT(this, "PhysicalWorld::update: null this");
+
 	static int checkForGravity = false;
 	
 #ifdef __DEBUG
@@ -377,6 +392,7 @@ void PhysicalWorld_update(PhysicalWorld this){
 // unregister all bodies
 void PhysicalWorld_reset(PhysicalWorld this){
 
+	ASSERT(this, "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
 
 	VirtualNode node = VirtualList_begin(this->bodies);
@@ -403,6 +419,7 @@ void PhysicalWorld_reset(PhysicalWorld this){
 // check if an entity has been registered
 int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner){
 
+	ASSERT(this, "PhysicalWorld::isEntityRegistered: null this");
 	ASSERT(this->bodies, "PhysicalWorld::isEntityRegistered: null bodies");
 
 	VirtualNode node = VirtualList_begin(this->bodies);
@@ -429,6 +446,8 @@ int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner){
 // retrieve friction
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this){
 
+	ASSERT(this, "PhysicalWorld::getFriction: null this");
+
 	return this->friction;
 }
 
@@ -436,6 +455,8 @@ fix19_13 PhysicalWorld_getFriction(PhysicalWorld this){
 // set friction
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction){
 	
+	ASSERT(this, "PhysicalWorld::setFriction: null this");
+
 	this->friction = friction;
 }
 
@@ -443,6 +464,8 @@ void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction){
 // a body has awaked
 void PhysicalWorld_bodyAwaked(PhysicalWorld this){
 	
+	ASSERT(this, "PhysicalWorld::bodyAwaked: null this");
+
 	// must prepare bodies in the next update
 	this->selectBodiesToCheck = true;
 }

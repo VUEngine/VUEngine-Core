@@ -109,6 +109,8 @@ __CLASS_NEW_END(Body, __ARGUMENTS(owner, weight));
 // class's constructor
 static void Body_constructor(Body this, Object owner, fix19_13 weight){
 
+	ASSERT(this, "Body::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	this->owner = owner;
@@ -148,6 +150,8 @@ static void Body_constructor(Body this, Object owner, fix19_13 weight){
 // class's destructor
 void Body_destructor(Body this){
 
+	ASSERT(this, "Body::destructor: null this");
+
 	// destroy the mass
 	__DELETE(this->mass);
 	
@@ -158,6 +162,8 @@ void Body_destructor(Body this){
 // set game entity
 void Body_setOwner(Body this, Object owner){
 	
+	ASSERT(this, "Body::setOwner: null this");
+
 	this->owner = owner;
 }
 
@@ -165,6 +171,8 @@ void Body_setOwner(Body this, Object owner){
 // get game entity
 Object Body_getOwner(Body this){
 	
+	ASSERT(this, "Body::getOwner: null this");
+
 	return this->owner;
 }
 
@@ -172,12 +180,16 @@ Object Body_getOwner(Body this){
 // retrieve character's velocity
 Velocity Body_getVelocity(Body this){
 	
+	ASSERT(this, "Body::getVelocity: null this");
+
 	return this->velocity;
 }
 
 // retrieve acceleration
 Acceleration Body_getAcceleration(Body this){
 	
+	ASSERT(this, "Body::getAcceleration: null this");
+
 	return this->acceleration;
 }
 
@@ -185,12 +197,16 @@ Acceleration Body_getAcceleration(Body this){
 // retrieve movement type
 MovementType Body_getMovementType(Body this){
 	
+	ASSERT(this, "Body::getMovementType: null this");
+
 	return this->movementType;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set movement type
 static void Body_setMovementType(Body this, int movementType, int axis){
+
+	ASSERT(this, "Body::setMovementType: null this");
 
 	if (__XAXIS & axis) {
 		
@@ -230,6 +246,8 @@ static void Body_setMovementType(Body this, int movementType, int axis){
 // set movement type to accelerated
 void Body_moveAccelerated(Body this, int axis){
 	
+	ASSERT(this, "Body::moveAccelerated: null this");
+
 	if (__XAXIS & axis) {
 	
 		Body_setMovementType(this, __ACCELERATED_MOVEMENT, __XAXIS);
@@ -249,6 +267,8 @@ void Body_moveAccelerated(Body this, int axis){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set movement type to uniform
 void Body_moveUniformly(Body this, Velocity velocity){
+
+	ASSERT(this, "Body::moveUniformly: null this");
 
 	if (velocity.x) {
 	
@@ -276,6 +296,8 @@ void Body_moveUniformly(Body this, Velocity velocity){
 // clear force
 void Body_clearForce(Body this){
 	
+	ASSERT(this, "Body::clearForce: null this");
+
 	this->appliedForce.x = 0;
 	this->appliedForce.y = 0;
 	this->appliedForce.z = 0;
@@ -285,6 +307,8 @@ void Body_clearForce(Body this){
 // apply force
 void Body_applyForce(Body this, const Force* force, int clearAxis){
 	
+	ASSERT(this, "Body::applyForce: null this");
+
 	fix19_13 weight = Mass_getWeight(this->mass);
 
 	if (__XAXIS & clearAxis) {
@@ -335,6 +359,8 @@ void Body_applyForce(Body this, const Force* force, int clearAxis){
 // apply gravity
 void Body_applyGravity(Body this, const Acceleration* gravity){
 	
+	ASSERT(this, "Body::applyGravity: null this");
+
 	if (gravity) {
 
 		int axisStartedMovement = 0;
@@ -374,6 +400,7 @@ void Body_applyGravity(Body this, const Acceleration* gravity){
 // add force
 void Body_addForce(Body this, const Force* force){
 	
+	ASSERT(this, "Body::addForce: null this");
 	ASSERT(force, "Body::addForce: null force");
 
 	Body_applyForce(this, force, !Body_isMovingInternal(this));
@@ -382,6 +409,8 @@ void Body_addForce(Body this, const Force* force){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update movement
 void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime){
+
+	ASSERT(this, "Body::update: null this");
 
 	if (this->awake) {
 		
@@ -483,6 +512,8 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime){
 // update force
 static Force Body_calculateFriction(Body this, int axisOfMovement){
 	
+	ASSERT(this, "Body::calculateFriction: null this");
+
 	// get friction fBody from the game world
 	fix19_13 worldFriction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
 
@@ -499,6 +530,8 @@ static Force Body_calculateFriction(Body this, int axisOfMovement){
 // update force
 static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity, fix19_13 friction){
 	
+	ASSERT(this, "Body::updateAcceleration: null this");
+
 	fix19_13 sign = ITOFIX19_13(0 <= gravity? -1: 1);
 
 	if(gravity) {
@@ -522,6 +555,8 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 // retrieve last displacement
 VBVec3D Body_getLastDisplacement(Body this) {
 	
+	ASSERT(this, "Body::getLastDisplacement: null this");
+
 	VBVec3D displacement = {0, 0, 0}; 
 	
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
@@ -537,6 +572,8 @@ VBVec3D Body_getLastDisplacement(Body this) {
 // udpdate movement over axis
 static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 friction){
 	
+	ASSERT(this, "Body::updateMovement: null this");
+
 	// the movement displacement
 	fix19_13 displacement = 0;
 
@@ -596,6 +633,8 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Body_printPhysics(Body this, int x, int y){
 	
+	ASSERT(this, "Body::printPhysics: null this");
+
 	__ACCELERATED_MOVEMENT == this->movementType.x? Printing_text("Accelerated", x, y++): Printing_text("Uniform", x, y++);
 
 	Printing_text("X             Y             Z",x,y++);
@@ -620,6 +659,8 @@ void Body_printPhysics(Body this, int x, int y){
 // stop movement over an axis
 void Body_stopMovement(Body this, int axis){
 	
+	ASSERT(this, "Body::stopMovement: null this");
+
 	if(__XAXIS & axis){
 	
 		// not moving anymore
@@ -654,6 +695,8 @@ void Body_stopMovement(Body this, int axis){
 // set active
 void Body_setActive(Body this, int active){
 	
+	ASSERT(this, "Body::setActive: null this");
+
 	// it is active
 	this->active = active;
 }
@@ -662,6 +705,8 @@ void Body_setActive(Body this, int active){
 // is active?
 int Body_isActive(Body this){
 	
+	ASSERT(this, "Body::isActive: null this");
+
 	return this->active;
 }
 
@@ -669,6 +714,8 @@ int Body_isActive(Body this){
 // retrieve position
 VBVec3D Body_getPosition(Body this){
 	
+	ASSERT(this, "Body::getPosition: null this");
+
 	return this->position;
 }
 
@@ -676,6 +723,8 @@ VBVec3D Body_getPosition(Body this){
 // retrieve position
 void Body_setPosition(Body this, const VBVec3D* position, Object caller) {
 	
+	ASSERT(this, "Body::setPosition: null this");
+
 	if (this->owner == caller){
 
 		// set position
@@ -689,12 +738,16 @@ void Body_setPosition(Body this, const VBVec3D* position, Object caller) {
 // get elasticiy
 fix19_13 Body_getElasticity(Body this){
 
+	ASSERT(this, "Body::getElasticity: null this");
+
 	return this->elasticity;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set elasticiy
 void Body_setElasticity(Body this, fix19_13 elasticity) {
+
+	ASSERT(this, "Body::setElasticity: null this");
 
 	if(ITOFIX19_13(0) > elasticity) {
 		
@@ -712,12 +765,16 @@ void Body_setElasticity(Body this, fix19_13 elasticity) {
 // get friction
 Force Body_getFriction(Body this){
 
+	ASSERT(this, "Body::getFriction: null this");
+
 	return this->friction;
 }
 
 // set elasticity
 void Body_setFriction(Body this, Force friction){
 	
+	ASSERT(this, "Body::setFriction: null this");
+
 	this->friction = friction;
 }
 
@@ -725,12 +782,16 @@ void Body_setFriction(Body this, Force friction){
 // retrieve state
 int Body_isAwake(Body this) {
 	
+	ASSERT(this, "Body::isAwake: null this");
+
 	return this->awake && this->active;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // awake body
 void Body_awake(Body this) {
+
+	ASSERT(this, "Body::awake: null this");
 
 	if(!this->awake) {
 	
@@ -744,6 +805,8 @@ void Body_awake(Body this) {
 // go to sleep
 void Body_sleep(Body this) {
 	
+	ASSERT(this, "Body::sleep: null this");
+
 	this->awake = false;
 	
 	PhysicalWorld_bodyAwaked(PhysicalWorld_getInstance());
@@ -754,6 +817,8 @@ void Body_sleep(Body this) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is it moving?
 int Body_isMoving(Body this){
+
+	ASSERT(this, "Body::isMoving: null this");
 
 	int result = 0;
 
@@ -768,6 +833,8 @@ int Body_isMoving(Body this){
 // is it moving?
 static int Body_isMovingInternal(Body this){
 
+	ASSERT(this, "Body::isMovingInternal: null this");
+
 	int result = 0;
 
 	result |= (this->velocity.x)? __XAXIS: 0;
@@ -780,6 +847,8 @@ static int Body_isMovingInternal(Body this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // bounce back
 void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity){
+
+	ASSERT(this, "Body::bounce: null this");
 
 	int axisOnWhichStoped = 0;
 	
@@ -808,6 +877,8 @@ void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity){
 // bounce back
 static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity){
 	
+	ASSERT(this, "Body::bounceOnAxis: null this");
+
 	// TODO: still not sure it must be divided by 2 (<< deltaFactor)
 	int deltaFactor = 1;
 
@@ -840,6 +911,9 @@ static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerati
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // take a hit
 void Body_takeHitFrom(Body this, Body other){
+
+	ASSERT(this, "Body::takeHitFrom: null this");
+
 	//TODO:
 }
 

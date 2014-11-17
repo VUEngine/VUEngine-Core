@@ -79,6 +79,12 @@ void Game_start(Game this, State state);
 // set game's state
 void Game_changeState(Game this, State state);
 
+// disable interrutps
+void Game_disableHardwareInterrupts(Game this);
+
+// enable interrupts
+void Game_enableHardwareInterrupts(Game this);
+
 // recover graphics memory
 void Game_recoverGraphicMemory(Game this);
 

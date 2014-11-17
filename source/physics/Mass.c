@@ -72,6 +72,8 @@ __CLASS_NEW_END(Mass, __ARGUMENTS(weight));
 // class's constructor
 void Mass_constructor(Mass this, fix19_13 weight){
 
+	ASSERT(this, "Mass::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 	
 	this->weight = weight;
@@ -81,6 +83,8 @@ void Mass_constructor(Mass this, fix19_13 weight){
 // class's destructor
 void Mass_destructor(Mass this){
 
+	ASSERT(this, "Mass::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(Object);
 }
@@ -88,6 +92,8 @@ void Mass_destructor(Mass this){
 // retrieve weight
 fix19_13 Mass_getWeight(Mass this) {
 	
+	ASSERT(this, "Mass::getWeight: null this");
+
 	return this->weight;
 }
 

@@ -73,6 +73,8 @@ __CLASS_NEW_END(Image, __ARGUMENTS(imageDefinition, ID));
 // class's constructor
 void Image_constructor(Image this, ImageDefinition* imageDefinition, int ID){
 
+	ASSERT(this, "Image::constructor: null this");
+
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(imageDefinition, ID));
 }
 
@@ -80,6 +82,8 @@ void Image_constructor(Image this, ImageDefinition* imageDefinition, int ID){
 // class's destructor
 void Image_destructor(Image this){
 	
+	ASSERT(this, "Image::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(Entity);
 }
@@ -88,6 +92,8 @@ void Image_destructor(Image this){
 // set class's position
 void Image_setLocalPosition(Image this, VBVec3D position){
 	
+	ASSERT(this, "Image::setLocalPosition: null this");
+
 	// set the position
 	Container_setLocalPosition((Container)this, position);
 	/*

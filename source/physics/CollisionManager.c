@@ -110,6 +110,8 @@ __SINGLETON(CollisionManager);
 // class's constructor
 static void CollisionManager_constructor(CollisionManager this){
 	
+	ASSERT(this, "CollisionManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	// create the shape list

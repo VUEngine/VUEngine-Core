@@ -84,6 +84,8 @@ __CLASS_NEW_END(Container, __ARGUMENTS(ID));
 // class's conctructor
 void Container_constructor(Container this, int ID){
 	
+	ASSERT(this, "Container::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 	
@@ -120,6 +122,8 @@ void Container_constructor(Container this, int ID){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void Container_destructor(Container this){
+
+	ASSERT(this, "Container::destructor: null this");
 
 	// first remove any children removed
 	Container_processRemovedChildren(this);
@@ -171,6 +175,8 @@ void Container_destructor(Container this){
 // add a child Container
 void Container_addChild(Container this, Container child){
 
+	ASSERT(this, "Container::addChild: null this");
+
 	// check if child is valid
 	if(child){
 
@@ -202,6 +208,8 @@ void Container_addChild(Container this, Container child){
 
 static void Container_processRemovedChildren(Container this){
 	
+	ASSERT(this, "Container::processRemovedChildren: null this");
+
 	if(this->children && this->removedChildren){
 		
 		VirtualNode node = VirtualList_begin(this->removedChildren);
@@ -224,6 +232,8 @@ static void Container_processRemovedChildren(Container this){
 // remove child Container
 void Container_removeChild(Container this, Container child){
 	
+	ASSERT(this, "Container::removeChild: null this");
+
 	// check if child is valid and if I'm its parent
 	if(child && this == child->parent && this->children){
 
@@ -246,6 +256,8 @@ void Container_removeChild(Container this, Container child){
 // update each Container's child
 void Container_update(Container this){	
 	
+	ASSERT(this, "Container::update: null this");
+
 	// first remove children
 	Container_processRemovedChildren(this);
 	
@@ -266,6 +278,9 @@ void Container_update(Container this){
 // contatenate transform
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform){
 
+	ASSERT(environmentTransform, "Container::concatenateTransform: null environmentTransform");
+	ASSERT(transform, "Container::concatenateTransform: null transform");
+
 	// tranlate position
 	environmentTransform->globalPosition.x += transform->localPosition.x;
 	environmentTransform->globalPosition.y += transform->localPosition.y;
@@ -284,6 +299,8 @@ void Container_concatenateTransform(Transformation *environmentTransform, Transf
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //transform class
 void Container_transform(Container this, Transformation* environmentTransform){
+
+	ASSERT(this, "Container::transform: null this");
 
 	Transformation environmentTransformCopy = {
 		// local position
@@ -344,12 +361,16 @@ void Container_transform(Container this, Transformation* environmentTransform){
 // retrieve global position
 VBVec3D Container_getGlobalPosition(Container this){
 
+	ASSERT(this, "Container::getGlobalPosition: null this");
+
 	return this->transform.globalPosition;  
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve local position
 VBVec3D Container_getLocalPosition(Container this){
+
+	ASSERT(this, "Container::getLocalPosition: null this");
 
 	return this->transform.localPosition;
 }
@@ -358,18 +379,22 @@ VBVec3D Container_getLocalPosition(Container this){
 //set class's local position
 void Container_setLocalPosition(Container this, VBVec3D position){
 
+	ASSERT(this, "Container::setLocalPosition: null this");
+
 	// force global position calculation on the next transform cycle
 	this->invalidateGlobalPosition.x = this->transform.localPosition.x != position.x;
 	this->invalidateGlobalPosition.y = this->transform.localPosition.y != position.y;
 	this->invalidateGlobalPosition.z = this->transform.localPosition.z != position.z;
 
 	this->transform.localPosition = position;
-	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // propagate an event to the children wrapper
 void Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...){
+
+	ASSERT(this, "Container::propagateEvent: null this");
+	ASSERT(event, "Container::propagateEvent: null event");
 
 	va_list args;
     va_start(args, event);
@@ -380,7 +405,9 @@ void Container_propagateEvent(Container this, int (*event)(Container this, va_li
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // pass event to children recursively
 static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args){
-
+	
+	ASSERT(this, "Container::passEvent: null this");
+	
 	// if event is valid
 	if(event){
 		
@@ -411,6 +438,8 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 // process user input
 int Container_onKeyPressed(Container this, va_list args){
 	
+	ASSERT(this, "Container::onKeyPressed: null this");
+
 	int pressedKey = 0;
 	pressedKey = va_arg(args, int);
 	return __VIRTUAL_CALL(int, Container, doKeyPressed, this, __ARGUMENTS(pressedKey));
@@ -421,6 +450,8 @@ int Container_onKeyPressed(Container this, va_list args){
 // process user input
 int Container_onKeyUp(Container this, va_list args){
 
+	ASSERT(this, "Container::onKeyUp: null this");
+
 	int pressedKey = 0;
 	pressedKey = va_arg(args, int);	
 	return __VIRTUAL_CALL(int, Container, doKeyUp, this, __ARGUMENTS(pressedKey));
@@ -430,6 +461,8 @@ int Container_onKeyUp(Container this, va_list args){
 // process user input
 int Container_onKeyHold(Container this, va_list args){
 	
+	ASSERT(this, "Container::onKeyHold: null this");
+
 	int pressedKey = 0;
 	pressedKey = va_arg(args, int);	
 	return __VIRTUAL_CALL(int, Container, doKeyHold, this, __ARGUMENTS(pressedKey));

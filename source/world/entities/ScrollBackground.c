@@ -84,6 +84,7 @@ __CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, ID));
 // class's constructor
 void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int ID){
 
+	ASSERT(this, "ScrollBackground::constructor: null this");
 	ASSERT(scrollBackgroundDefinition, "ScrollBackground::constructor: null definition");
 	
 	// construct base object
@@ -107,6 +108,8 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 // class's destructor
 void ScrollBackground_destructor(ScrollBackground this){
 	
+	ASSERT(this, "ScrollBackground::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(Entity);
 }
@@ -114,6 +117,8 @@ void ScrollBackground_destructor(ScrollBackground this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transform class
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform){
+
+	ASSERT(this, "ScrollBackground::transform: null this");
 
 	// call base class's transform method
 	Entity_transform((Entity)this, environmentTransform);
@@ -128,6 +133,8 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 // calculate the scroll's screen position
 static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
+	ASSERT(this, "ScrollBackground::updateScrolling: null this");
+
 	// TODO: add proper comments
 
 	DrawSpec drawSpec0 = {
@@ -211,12 +218,16 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 // whether it is visible
 int ScrollBackground_isVisible(ScrollBackground this, int pad){
 	
+	ASSERT(this, "ScrollBackground::isVisible: null this");
+
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if must update sprite's position
 int ScrollBackground_updateSpritePosition(ScrollBackground this){
+
+	ASSERT(this, "ScrollBackground::updateSpritePosition: null this");
 
 	return false;
 }

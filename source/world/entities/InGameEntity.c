@@ -80,6 +80,7 @@ __CLASS_NEW_END(InGameEntity, __ARGUMENTS(inGameEntityDefinition, ID));
 // class's constructor
 void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int ID){
 	
+	ASSERT(this, "InGameEntity::constructor: null this");
 	ASSERT(inGameEntityDefinition, "InGameEntity::constructor: null definition");
 	
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(&inGameEntityDefinition->entityDefinition, ID));
@@ -101,6 +102,8 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 // class's destructor
 void InGameEntity_destructor(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::destructor: null this");
+	
 	// better to do it here than forget in other classes
 	// unregister the shape for collision detection
 	CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
@@ -114,6 +117,8 @@ void InGameEntity_destructor(InGameEntity this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set class's position
 void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position){
+	
+	ASSERT(this, "InGameEntity::setLocalPosition: null this");
 	
 	// set the position
 	Container_setLocalPosition((Container)this, position);
@@ -149,6 +154,8 @@ void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position){
 // retrieve gap
 Gap InGameEntity_getGap(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::getGap: null this");
+
 	InGameEntity_setGap(this);
 	return this->gap;
 }
@@ -158,37 +165,30 @@ void InGameEntity_setGap(InGameEntity this){
 	
 	ASSERT(this, "InGameEntity::setGap: null this");
 	
-	if(this->sprites) {
+	// retrieve the sprite's scale
+	Scale scale = Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
+	
+	// retrieve transforming mode
+	int bgmapMode = Sprite_getMode((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
+	
+	// load original gap
+	this->gap = this->inGameEntityDefinition->gap;
+	
+	// if facing to the left... swap left / right gap
+	if(__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode){
 		
-		// retrieve the sprite's scale
-		Scale scale = Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
-		
-		// retrieve transforming mode
-		int bgmapMode = Sprite_getMode((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
-		
-		// load original gap
-		this->gap = this->inGameEntityDefinition->gap;
-		
-		// if facing to the left... swap left / right gap
-		if(__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode){
-			
-			this->gap.left 	= this->inGameEntityDefinition->gap.right;
-			this->gap.right = this->inGameEntityDefinition->gap.left;
-		}
-		
-		// scale gap if needed
-		if(false && WRLD_AFFINE != bgmapMode){
-		
-			// must scale the gap
-			this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
-			this->gap.right =  	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), abs(scale.x)));
-			this->gap.up 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), abs(scale.y)));
-			this->gap.down 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), abs(scale.y)));
-		}
+		this->gap.left 	= this->inGameEntityDefinition->gap.right;
+		this->gap.right = this->inGameEntityDefinition->gap.left;
 	}
-	else {
-		
-		Printing_text(__GET_CLASS_NAME(this), 0, 12);
+	
+	// scale gap if needed
+	if(false && WRLD_AFFINE != bgmapMode){
+	
+		// must scale the gap
+		this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
+		this->gap.right =  	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), abs(scale.x)));
+		this->gap.up 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), abs(scale.y)));
+		this->gap.down 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), abs(scale.y)));
 	}
 }
 
@@ -196,12 +196,16 @@ void InGameEntity_setGap(InGameEntity this){
 // retrieve in game type
 int InGameEntity_getInGameType(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::getInGameType: null this");
+
 	return this->inGameType;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve deep
 int InGameEntity_getDeep(InGameEntity this){
+
+	ASSERT(this, "InGameEntity::getDeep: null this");
 
 	return this->inGameEntityDefinition->deep;
 }
@@ -210,6 +214,8 @@ int InGameEntity_getDeep(InGameEntity this){
 // does it moves?
 int InGameEntity_moves(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::moves: null this");
+
 	return false;
 }
 
@@ -217,6 +223,8 @@ int InGameEntity_moves(InGameEntity this){
 // is it moving?
 int InGameEntity_isMoving(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::isMoving: null this");
+
 	return false;
 }
 
@@ -224,6 +232,8 @@ int InGameEntity_isMoving(InGameEntity this){
 // set direction
 void InGameEntity_setDirection(InGameEntity this, Direction direction){
 	
+	ASSERT(this, "InGameEntity::setDirection: null this");
+
 	this->direction = direction;
 }
 
@@ -231,6 +241,8 @@ void InGameEntity_setDirection(InGameEntity this, Direction direction){
 // get direction
 Direction InGameEntity_getDirection(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::getDirection: null this");
+
 	return this->direction;
 }
 
@@ -238,6 +250,8 @@ Direction InGameEntity_getDirection(InGameEntity this){
 // set shape state
 void InGameEntity_setShapeState(InGameEntity this, int state){
 	
+	ASSERT(this, "InGameEntity::setShapeState: null this");
+
 	if(this->shape){
 		
 		Shape_setActive(this->shape, state);
@@ -249,6 +263,8 @@ void InGameEntity_setShapeState(InGameEntity this, int state){
 //transform class
 void InGameEntity_transform(InGameEntity this, Transformation* environmentTransform){
 	
+	ASSERT(this, "InGameEntity::transform: null this");
+
 	// call base
 	Entity_transform((Entity)this, environmentTransform);
 
@@ -267,6 +283,8 @@ void InGameEntity_transform(InGameEntity this, Transformation* environmentTransf
 // retrieve shape
 Shape InGameEntity_getShape(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::getShape: null this");
+
 	return this->shape;
 }
 
@@ -274,6 +292,8 @@ Shape InGameEntity_getShape(InGameEntity this){
 // get elasticiy
 fix19_13 InGameEntity_getElasticity(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::getElasticity: null this");
+
 	return 0;
 }
 
@@ -281,6 +301,8 @@ fix19_13 InGameEntity_getElasticity(InGameEntity this){
 // get friction
 fix19_13 InGameEntity_getFriction(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::getFriction: null this");
+
 	return 0;
 }
 
@@ -288,5 +310,7 @@ fix19_13 InGameEntity_getFriction(InGameEntity this){
 // retrieve previous position
 VBVec3D InGameEntity_getPreviousPosition(InGameEntity this){
 	
+	ASSERT(this, "InGameEntity::getPreviousPosition: null this");
+
 	return this->transform.globalPosition;
 }

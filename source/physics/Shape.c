@@ -69,6 +69,8 @@ __CLASS_DEFINITION(Shape);
 // class's constructor
 void Shape_constructor(Shape this, InGameEntity owner){
 
+	ASSERT(this, "Shape::constructor: null this");
+
 	// this is an abstract class so must initialize the vtable here
 	// since this class does not have an allocator
 	__SET_CLASS(Shape);	
@@ -96,6 +98,8 @@ void Shape_constructor(Shape this, InGameEntity owner){
 // class's destructor
 void Shape_destructor(Shape this){
 
+	ASSERT(this, "Shape::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(Object);
 }
@@ -104,6 +108,8 @@ void Shape_destructor(Shape this){
 // retrieve owner
 InGameEntity Shape_getOwner(Shape this){
 	
+	ASSERT(this, "Shape::getOwner: null this");
+
 	return this->owner;
 }
 
@@ -111,6 +117,8 @@ InGameEntity Shape_getOwner(Shape this){
 // set active
 void Shape_setActive(Shape this, int active){
 	
+	ASSERT(this, "Shape::setActive: null this");
+
 	// it is active
 	this->active = active;
 
@@ -120,6 +128,8 @@ void Shape_setActive(Shape this, int active){
 // is active?
 int Shape_isActive(Shape this){
 	
+	ASSERT(this, "Shape::isActive: null this");
+
 	return this->active;
 }
 

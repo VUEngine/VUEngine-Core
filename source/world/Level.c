@@ -70,6 +70,8 @@ __CLASS_DEFINITION(Level);
 // class's constructor
 void Level_constructor(Level this){
 		
+	ASSERT(this, "Level::constructor: null this");
+
 	// this is an abstract class so must initialize the vtable here
 	// since this class does not have an allocator
 	__SET_CLASS(Level);
@@ -84,6 +86,8 @@ void Level_constructor(Level this){
 // class's destructor
 void Level_destructor(Level this){
 	
+	ASSERT(this, "Level::destructor: null this");
+
 	// destroy the stage
 	if (this->stage) {
 	
@@ -101,6 +105,8 @@ void Level_destructor(Level this){
 // state's enter
 void Level_enter(Level this, void* owner){
 
+	ASSERT(this, "Level::enter: null this");
+
 	// reset the global clock
 	//Clock_reset(Game_getClock(Game_getInstance()));
 	
@@ -111,6 +117,8 @@ void Level_enter(Level this, void* owner){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
 void Level_execute(Level this, void* owner){
+
+	ASSERT(this, "Level::execute: null this");
 
 	// stream level
 	// must be called before updating the other entities
@@ -124,6 +132,8 @@ void Level_execute(Level this, void* owner){
 // state's exit 
 void Level_exit(Level this, void* owner){
 	
+	ASSERT(this, "Level::exit: null this");
+
 	// destroy the state
 	__DELETE(this);
 }
@@ -131,16 +141,22 @@ void Level_exit(Level this, void* owner){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
 void Level_pause(Level this, void* owner){
+
+	ASSERT(this, "Level::pause: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
 void Level_resume(Level this, void* owner){	
+
+	ASSERT(this, "Level::resume: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's on message
 int Level_handleMessage(Level this, void* owner, Telegram telegram){
+
+	ASSERT(this, "Level::handleMessage: null this");
 
 	// process message
 	switch(Telegram_getMessage(telegram)){
@@ -168,6 +184,7 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 // update level entities' positions
 void Level_transform(Level this){
 	
+	ASSERT(this, "Level::transform: null this");
 	ASSERT(this->stage, "Level::transform: null stage");
 	
 	// static to avoid call to _memcpy
@@ -192,12 +209,16 @@ void Level_transform(Level this){
 // process user input
 void Level_onKeyPressed(Level this, int pressedKey){
 
+	ASSERT(this, "Level::onKeyPressed: null this");
+
 	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyPressed, pressedKey));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
 void Level_onKeyUp(Level this, int pressedKey){
+
+	ASSERT(this, "Level::onKeyUp: null this");
 
 	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyUp, pressedKey));
 }
@@ -206,6 +227,8 @@ void Level_onKeyUp(Level this, int pressedKey){
 // process user input
 void Level_onKeyHold(Level this, int pressedKey){
 
+	ASSERT(this, "Level::onKeyHold: null this");
+
 	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyHold, pressedKey));
 }
 
@@ -213,8 +236,12 @@ void Level_onKeyHold(Level this, int pressedKey){
 // load a stage
 void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities){
 	
+	ASSERT(this, "Level::loadStage: null this");
 	ASSERT(stageDefinition, "Level::loadStage: null stageDefinition");
-	
+
+	// disable hardware interrupts
+	Game_disableHardwareInterrupts(Game_getInstance());
+
 	if (this->stage) {
 	
 		// destroy the stage
@@ -244,4 +271,7 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 	// reset ingame clock and start it
 	Clock_reset(Game_getInGameClock(Game_getInstance()));
 	Clock_start(Game_getInGameClock(Game_getInstance()));
+	
+	// allow hardware interrupts
+	Game_enableHardwareInterrupts(Game_getInstance());
 }

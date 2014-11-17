@@ -102,6 +102,8 @@ __CLASS_NEW_END(Stage);
 // class's constructor
 static void Stage_constructor(Stage this){
 
+	ASSERT(this, "Stage::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Container, __ARGUMENTS(-1));
 	
@@ -119,6 +121,8 @@ static void Stage_constructor(Stage this){
 // class's destructor
 void Stage_destructor(Stage this){
 	
+	ASSERT(this, "Stage::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(Container);
 }
@@ -127,6 +131,8 @@ void Stage_destructor(Stage this){
 // update world's entities state
 static void Stage_setEntityState(Stage this, int ID, int inGameState){
 	
+	ASSERT(this, "Stage::setEntityState: null this");
+
 	int bitIndex =  ID * __STAGE_BITS_PER_ENTITY;
 	
 	// arrayIndex = bitIndex / (sizeof(WORD) << 3);
@@ -153,6 +159,8 @@ static void Stage_setEntityState(Stage this, int ID, int inGameState){
 // get entity's state
 static inline int Stage_getEntityState(Stage this, int ID){
 	
+	ASSERT(this, "Stage::getEntityState: null this");
+
 	int bitIndex =  ID * __STAGE_BITS_PER_ENTITY;
 	
 	// arrayIndex = bitIndex / (sizeof(WORD) << 3);
@@ -166,14 +174,18 @@ static inline int Stage_getEntityState(Stage this, int ID){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // place holder for objects designed around OBJECTS in the VB hardware
-void Stage_setupObjActor(int *actor,int x,int y, int z){
+void Stage_setupObjActor(Stage this, int *actor,int x,int y, int z){
 
+	// TODO
+	ASSERT(this, "Stage::setupObjActor: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine if a point is visible
 inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int width, int height){
 	
+	ASSERT(this, "Stage::inLoadRange: null this");
+
 	fix19_13 xLowLimit = ITOFIX19_13(-(width));
 	fix19_13 xHighLimit = ITOFIX19_13(__SCREENWIDTH + (width));
 
@@ -228,6 +240,8 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int wid
 // load stage's entites
 void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities){
 	
+	ASSERT(this, "Stage::load: null this");
+
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());
 	
@@ -259,6 +273,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 // add entity to the stage
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* position, int inGameIndex, void *extraInfo){
 
+	ASSERT(this, "Stage::addEntity: null this");
+
 	if(entityDefinition)
 	{
 		Entity entity = Entity_load(entityDefinition, position, inGameIndex, extraInfo);
@@ -289,6 +305,8 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load entities on demand (if they aren't loaded and are visible)
 static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange){
+
+	ASSERT(this, "Stage::loadEntities: null this");
 
 	StageDefinition* world = this->stageDefinition;
 	
@@ -341,6 +359,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 // unload non visible entities
 static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
+	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
 	ASSERT(this->children, "Stage::unloadOutOfRangeEntities: null children");
 
 	// need a temporal list to remove and delete entities
@@ -400,6 +419,8 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 // stream entities according to screen's position
 void Stage_stream(Stage this){
 	
+	ASSERT(this, "Stage::stream: null this");
+
 	// if the screen is moving
 	if(*((u8*)_screenMovementState)){
 

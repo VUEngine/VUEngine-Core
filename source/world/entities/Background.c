@@ -77,6 +77,7 @@ __CLASS_NEW_END(Background, __ARGUMENTS(backgroundDefinition, ID));
 // class's constructor
 void Background_constructor(Background this, BackgroundDefinition* backgroundDefinition, int ID){
 
+	ASSERT(this, "Background::constructor: null this");
 	ASSERT(backgroundDefinition, "Background::constructor: null definition");
 	
 	// construct base object
@@ -98,6 +99,7 @@ void Background_constructor(Background this, BackgroundDefinition* backgroundDef
 // class's destructor
 void Background_destructor(Background this){
 	
+	ASSERT(this, "Background::destructor: null this");
 	// destroy the super object
 	__DESTROY_BASE(InGameEntity);
 }
@@ -106,6 +108,7 @@ void Background_destructor(Background this){
 // get elasticiy
 fix19_13 Background_getElasticity(Background this){
 	
+	ASSERT(this, "Background::getElasticity: null this");
 	return this->backgroundDefinition->elasticity;
 }
 
@@ -113,5 +116,6 @@ fix19_13 Background_getElasticity(Background this){
 // get friction
 fix19_13 Background_getFriction(Background this){
 	
+	ASSERT(this, "Background::getFriction: null this");
 	return this->backgroundDefinition->friction;
 }

@@ -101,6 +101,8 @@ __SINGLETON(Screen);
 // class's constructor
 static void Screen_constructor(Screen this){
 
+	ASSERT(this, "Screen::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
@@ -129,6 +131,8 @@ static void Screen_constructor(Screen this){
 // class's destructor
 void Screen_destructor(Screen this){
 
+	ASSERT(this, "Screen::destructor: null this");
+
 	// destroy base
 	__SINGLETON_DESTROY(Object);
 }
@@ -136,6 +140,8 @@ void Screen_destructor(Screen this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // center world's screen in function of focus actor's position
 void Screen_update(Screen this){
+
+	ASSERT(this, "Screen::update: null this");
 
 	//if focusInGameEntity is defined
 	if(this->focusInGameEntity){
@@ -187,6 +193,8 @@ void Screen_update(Screen this){
 // set the focus entity
 void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity){
 	
+	ASSERT(this, "Screen::setFocusInGameEntity: null this");
+
 	this->focusInGameEntity = focusInGameEntity;
 }
 
@@ -194,6 +202,8 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity){
 // retrieve focus entity
 InGameEntity Screen_getFocusInGameEntity(Screen this){
 	
+	ASSERT(this, "Screen::getFocusInGameEntity: null this");
+
 	return this->focusInGameEntity;
 }
 
@@ -201,6 +211,8 @@ InGameEntity Screen_getFocusInGameEntity(Screen this){
 // an actor has been deleted
 void Screen_focusEntityDeleted(Screen this, InGameEntity actor) {
 	
+	ASSERT(this, "Screen::focusEntityDeleted: null this");
+
 	if(this->focusInGameEntity == actor){
 		
 		this->focusInGameEntity = NULL;
@@ -215,6 +227,8 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor) {
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position){
 
+	ASSERT(this, "Screen::setPosition: null this");
+
 	this->position = position;
 }
 
@@ -222,12 +236,16 @@ void Screen_setPosition(Screen this, VBVec3D position){
 // retrieve last displacement
 VBVec3D Screen_getLastDisplacement(Screen this){
 	
+	ASSERT(this, "Screen::getLastDisplacement: null this");
+
 	return this->lastDisplacement;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create a fade delay
 void Screen_FXFadeIn(Screen this, int wait) {
+
+	ASSERT(this, "Screen::FXFadeIn: null this");
 
 	int i = 0;
 	//create the delay
@@ -248,6 +266,8 @@ void Screen_FXFadeIn(Screen this, int wait) {
 // create a fade delay
 void Screen_FXFadeOut(Screen this, int wait){
 	
+	ASSERT(this, "Screen::FXFadeOut: null this");
+
 	int i = 32;
 	
 	//create the delay

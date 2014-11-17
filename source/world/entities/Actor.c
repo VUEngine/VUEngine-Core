@@ -109,6 +109,8 @@ __CLASS_NEW_END(Actor, __ARGUMENTS(actorDefinition, ID));
 // class's conctructor
 void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 
+	ASSERT(this, "Actor::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&actorDefinition->inGameEntityDefinition, ID));
 	
@@ -144,6 +146,8 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 // class's destructor
 void Actor_destructor(Actor this){
 	
+	ASSERT(this, "Actor::destructor: null this");
+
 	// inform the screen I'm being removed
 	Screen_focusEntityDeleted(Screen_getInstance(), (InGameEntity)this);
 	
@@ -161,6 +165,8 @@ void Actor_destructor(Actor this){
 //set class's local position
 void Actor_setLocalPosition(Actor this, VBVec3D position){
 	
+	ASSERT(this, "Actor::setLocalPosition: null this");
+
 	Container_setLocalPosition((Container)this, position);
 
 	if(this->body) {
@@ -180,6 +186,8 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 // updates the animation attributes
 // graphically refresh of characters that are visible
 void Actor_transform(Actor this, Transformation* environmentTransform){
+
+	ASSERT(this, "Actor::transform: null this");
 
 	// set sprite direction
 	if(this->direction.x != this->previousDirection.x){
@@ -234,6 +242,8 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 // execute character's logic
 void Actor_update(Actor this){
 
+	ASSERT(this, "Actor::update: null this");
+
 	// call base
 	Container_update((Container)this);
 
@@ -273,6 +283,7 @@ void Actor_update(Actor this){
 // update colliding entities
 static void Actor_updateCollisionStatus(Actor this, int movementAxis){
 
+	ASSERT(this, "Actor::updateCollisionStatus: null this");
 	ASSERT(this->body, "Actor::updateCollisionStatus: null body");
 
 	if(__XAXIS & movementAxis) {
@@ -295,6 +306,7 @@ static void Actor_updateCollisionStatus(Actor this, int movementAxis){
 // retrieve friction of colliding objects
 static void Actor_updateSourroundingFriction(Actor this){
 	
+	ASSERT(this, "Actor::updateSourroundingFriction: null this");
 	ASSERT(this->body, "Actor::updateSourroundingFriction: null body");
 	
 	Force friction = {0, 0, 0};
@@ -324,12 +336,15 @@ static void Actor_updateSourroundingFriction(Actor this){
 // retrieve previous position
 VBVec3D Actor_getPreviousPosition(Actor this){
 	
+	ASSERT(this, "Actor::getPreviousPosition: null this");
+	
 	return this->previousGlobalPosition;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Actor_setInGameState(Actor this, int inGameState){
+	
+	ASSERT(this, "Actor::setInGameState: null this");
 	
 	this->inGameState = inGameState;
 }
@@ -338,6 +353,8 @@ void Actor_setInGameState(Actor this, int inGameState){
 // set character's in game type
 void Actor_setInGameType(Actor this, int inGameType){
 	
+	ASSERT(this, "Actor::setInGameType: null this");
+	
 	this->inGameType = inGameType;
 }
 
@@ -345,6 +362,8 @@ void Actor_setInGameType(Actor this, int inGameType){
 // change direction
 void Actor_moveOpositeDirecion(Actor this, int axis){
 	
+	ASSERT(this, "Actor::moveOpositeDirecion: null this");
+
 	switch(axis){
 	
 		case __XAXIS:
@@ -368,6 +387,8 @@ void Actor_moveOpositeDirecion(Actor this, int axis){
 // whether changed direction in the last cycle or not
 int Actor_changedDirection(Actor this, int axis){
 	
+	ASSERT(this, "Actor::changedDirection: null this");
+
 	switch(axis){
 	
 		case __XAXIS:
@@ -393,6 +414,7 @@ int Actor_changedDirection(Actor this, int axis){
 // allocate a write in graphic memory again
 void Actor_resetMemoryState(Actor this, int worldLayer){		
 
+	ASSERT(this, "Actor::resetMemoryState: null this");
 	//Frame_resetMemoryState(this->sprite, worldLayer);
 }
 
@@ -400,6 +422,7 @@ void Actor_resetMemoryState(Actor this, int worldLayer){
 // true if inside the screen range 
 int Actor_isInsideGame(Actor this){
 	
+	ASSERT(this, "Actor::isInsideGame: null this");
 	//Texture map = Sprite_getTexture(this->sprite); 
 	
 	return 0;//!outsideScreenRange(this->transform.localPosition, Texture_getCols(map), Texture_getRows(map), __CHARACTERUNLOADPAD);
@@ -408,6 +431,8 @@ int Actor_isInsideGame(Actor this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if gravity must apply to this actor
 int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration) {
+
+	ASSERT(this, "Actor::canMoveOverAxis: null this");
 
 	int axisFreeForMovement = __VIRTUAL_CALL(int, Actor, getAxisFreeForMovement, this);
 
@@ -440,6 +465,8 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration) {
 // retrieve axis free for movement
 int Actor_getAxisFreeForMovement(Actor this){
 
+	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
+
 	int movingState = Body_isMoving(this->body);
 	
 	return ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
@@ -449,6 +476,7 @@ int Actor_getAxisFreeForMovement(Actor this){
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 	
+	ASSERT(this, "Actor::resolveCollision: null this");
 	ASSERT(this->body, "Actor::resolveCollision: null body");
 	ASSERT(collidingEntities, "Actor::resolveCollision: collidingEntities");
 
@@ -508,6 +536,8 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 // process a telegram
 int Actor_handleMessage(Actor this, Telegram telegram){
 
+	ASSERT(this, "Actor::handleMessage: null this");
+
 	if (!StateMachine_handleMessage(this->stateMachine, telegram)) {
 		
 		// retrieve message
@@ -551,6 +581,8 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 // retrieve state machine
 StateMachine Actor_getStateMachine(Actor this){
 	
+	ASSERT(this, "Actor::getStateMachine: null this");
+
 	return this->stateMachine;
 }
 
@@ -558,12 +590,16 @@ StateMachine Actor_getStateMachine(Actor this){
 // does it moves?
 int Actor_moves(Actor this){
 	
+	ASSERT(this, "Actor::moves: null this");
+
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is it moving?
 int Actor_isMoving(Actor this){
+
+	ASSERT(this, "Actor::isMoving: null this");
 
 	return this->body? Body_isMoving(this->body): 0;
 }
@@ -572,6 +608,7 @@ int Actor_isMoving(Actor this){
 // retrieve character's scale
 Scale Actor_getScale(Actor this){
 
+	ASSERT(this, "Actor::getScale: null this");
 	ASSERT(this->sprites, "Actor::getScale: null sprites");
 
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
@@ -589,6 +626,8 @@ Scale Actor_getScale(Actor this){
 // retrieve global position
 VBVec3D Actor_getPosition(Actor this){
 	
+	ASSERT(this, "Actor::getPosition: null this");
+
 	if(this->body) {
 		
 		return Body_getPosition(this->body);
@@ -601,6 +640,7 @@ VBVec3D Actor_getPosition(Actor this){
 // play an animation
 void Actor_playAnimation(Actor this, char* animationName){
 	
+	ASSERT(this, "Actor::playAnimation: null this");
 	ASSERT(this->sprites, "Actor::playAnimation: null sprites");
 
 	if(this->sprites){
@@ -621,6 +661,7 @@ void Actor_playAnimation(Actor this, char* animationName){
 // is play an animation
 int Actor_isPlayingAnimation(Actor this, char* functionName){
 	
+	ASSERT(this, "Actor::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "Actor::isPlayingAnimation: null sprites");
 
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
@@ -632,6 +673,8 @@ int Actor_isPlayingAnimation(Actor this, char* functionName){
 // retrieve state when unloading the entity 
 int Actor_getInGameState(Actor this){
 
+	ASSERT(this, "Actor::getInGameState: null this");
+
 	return this->inGameState;
 }
 
@@ -639,12 +682,16 @@ int Actor_getInGameState(Actor this){
 // check if must update sprite's position
 int Actor_updateSpritePosition(Actor this){
 
+	ASSERT(this, "Actor::updateSpritePosition: null this");
+
 	return (this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z || Actor_isMoving(this) || *((int*)_screenMovementState));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if must update sprite's scale
 int Actor_updateSpriteScale(Actor this){
+
+	ASSERT(this, "Actor::updateSpriteScale: null this");
 
 	if (Entity_updateSpriteScale((Entity)this)) {
 
@@ -662,6 +709,8 @@ int Actor_updateSpriteScale(Actor this){
 // stop movement completelty
 void Actor_stopMovement(Actor this){
 	
+	ASSERT(this, "Actor::stopMovement: null this");
+
 	if(this->body) {
 		
 		Body_stopMovement(this->body, __XAXIS);
@@ -674,6 +723,8 @@ void Actor_stopMovement(Actor this){
 // stop movement over axis
 void Actor_stopMovementOnAxis(Actor this, int axis){
 
+	ASSERT(this, "Actor::stopMovementOnAxis: null this");
+
 	if(this->body) {
 		
 		Body_stopMovement(this->body, axis);
@@ -685,6 +736,7 @@ void Actor_stopMovementOnAxis(Actor this, int axis){
 // align character to other entity on collision
 void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 
+	ASSERT(this, "Actor::alignTo: null this");
 	ASSERT(this->sprites, "Actor::alignTo: null sprites");
 
 	// retrieve the colliding entity's position and gap
@@ -787,15 +839,10 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 
-void Actor_syncBodyPosition(this){
-	
-	
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve body
 const Body Actor_getBody(Actor this){
+	
+	ASSERT(this, "Actor::getBodys: null this");
 	
 	return this->body;
 }
@@ -804,6 +851,8 @@ const Body Actor_getBody(Actor this){
 // take hit
 void Actor_takeHitFrom(Actor this, Actor other){
 	
+	ASSERT(this, "Actor::takeHitFrom: null this");
+
 	const Body otherBody = Actor_getBody(other);
 	
 	if (otherBody){
@@ -816,5 +865,7 @@ void Actor_takeHitFrom(Actor this, Actor other){
 // get elasticiy
 fix19_13 Actor_getElasticity(Actor this){
 	
+	ASSERT(this, "Actor::getElasticity: null this");
+
 	return this->body? Body_getElasticity(this->body): InGameEntity_getElasticity((InGameEntity)this);
 }
