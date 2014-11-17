@@ -54,45 +54,51 @@ Description:
 
 Features:
 
-	· Automatic char memory allocation.
-	· Automatic bgmap memory allocation.
-	· Automatic world layer assignment based on the objectï¿½s z position.
-	· Automatic frame rate control.
-	· Memory Pool to allocate memory dynamically.
-	· Automatic memory allocation for Param tables (used in affine and h-bias modes).
-	· Easy to use printing functions to facilitate debug.
-	· Sound reproduction of one BGM and up to two FX sounds simultaneous.
-	· A generic container.
-	· Messaging system.
-	· Generic State Machine.
-	· Automatic Collision detection and notification.
-	· Object Oriented support  through the use of Metaprogramming (C MACROS).
-	· Inheritance
-	· Polymorphism
-	· Encapsulation
+	· General features:
+		* Automatic frame rate control
+		* Generic clocks based on hardware interrupts
+		* Memory Pool to allocate memory dynamically
+		* Easy to use printing functions to facilitate debug
+		* Generic parenting system
+		* Generic messaging system
+		* Generic state Machines
+		* Generic clocks based on hardware interrupts
+	· Object Oriented support through the use of Metaprogramming (C MACROS):
+		* Inheritance
+		* Polymorphism
+		* Encapsulation
+	· Rendering:
+		* Automatic char memory allocation
+		* Automatic bgmap memory allocation
+		* Automatic world layer assignment based on the objectï¿½s z position
+		* Scaling/rotation effects
+		* Automatic projection/parallax/scale calculation and rendering
+		* Customizable perspective/deep effects on real time
+		* Automatic memory allocation for Param tables (used in affine and h-bias modes).
+	· Animation:
+		* Multiple memory allocation schemas to improve efficiency
+		* Frame based animation system with callback support
+	· Sound:
+		* Sound reproduction of one BGM and up to two FX sounds simultaneous.
+	· Physics:
+		* Accelerated/uniform movement
+		* Gravity
+		* Friction
+		* Automatic Collision detection and notification.
+	· Stages:
+		* 3D stages
+		* Automatic object streaming
 	· Useful classes to speed up the content creation process:
-	· Image
-	· Background
-	· Character
-	· Scroll
-	· Automatic loading/unloading of objects in/outside the screen.
-	· 3D stages.
-	· Simple physics simulation:
-	· Accelerated/uniform movement.
-	· Gravity
-	· Friction
-	· Scaling/rotation effects.
-	· Clocking system.
-	· Automatic projection/parallax/scale calculation and rendering.
-	· Customizable perspective/deep effects on real time.
-	· Frame based animation system with callback support.
-	· Generic main game algorithm (game loop).
+		* Actors
+		* Images
+		* Backgrounds
+		* Scrolling
 
 
 A short summary of the file layout:
 
-libgccvb/			   	basic MACROS/functions to access the hardware.
 src/					vbJaEngine source code.
+src/base/libgccvb/		heavily modified libgccvb
 lib/					miscelaneous files needed for linking, etc.				
 lib/src/				miscelaneous files needed for linking, etc.	sources, and other utilities sources.
 utilities/				miscelaneous utitilities for padding, sound, etc.
@@ -110,7 +116,7 @@ Requirements:
 
 	· Minimal Linux environment (i.e: CygWin)
 	
-	· GCCVB 2.95 for V810 
+	· GCCVB 4.4.2 for V810 
 
 
 1. Create a CygWin environment variable called VBJAENGINE which must point to the vbJaEngine's folder.
@@ -132,7 +138,7 @@ COMPILING ON GNU/LINUX
 
 Requirements: 
 
-	· GCCVB 2.95 for V810
+	· GCCVB 4.4.2 for V810
 
 
 1. Create an environment variable called VBJAENGINE which must point to the vbJaEngine's folder.

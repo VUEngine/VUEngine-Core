@@ -128,7 +128,6 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 	this->bodies = __NEW(VirtualList);
 	this->removedBodies = __NEW(VirtualList);
 	this->clock = NULL;
-	this->clock = Game_getInGameClock(Game_getInstance());
 	this->selectBodiesToCheck = false;
 	
 	this->gravity.x = 0;
