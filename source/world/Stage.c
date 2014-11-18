@@ -34,6 +34,7 @@
 #include <Screen.h>
 #include <HardwareManager.h>
 #include <SpriteManager.h>
+#include <Texture.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -47,7 +48,6 @@
 
 // define the Stage
 __CLASS_DEFINITION(Stage);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -70,9 +70,14 @@ static inline int Stage_getEntityState(Stage this, int ID);
 // load entities on demand (if they aren't loaded and are visible)
 static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange);
 
+// preload textures
+static void Stage_loadTextures(Stage this);
+
 // unload non visible entities
 static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively);
 
+// load and retrieve a texture (for internal usage: use TextureManager_get)
+Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textureDefinition, int isPreload);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -108,6 +113,8 @@ static void Stage_constructor(Stage this){
 	__CONSTRUCT_BASE(Container, __ARGUMENTS(-1));
 	
 	this->stageDefinition = NULL;
+	
+	this->flushCharGroups = true;
 	
 	int i = 0;
 	
@@ -254,6 +261,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	
 	// set screen's position
 	Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
+
+	// preload textures
+	Stage_loadTextures(this);
 	
 	//load Stage's bgm
 	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
@@ -314,7 +324,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 	// TODO: don't check every entity in the stage's definition
 	// must implement an algorithm which only check a portion of it
-	for(; i < __ENTITIESPERWORLD && world->entities[i].entity; i++){
+	for(; i < __ENTITIES_PER_STAGE && world->entities[i].entity; i++){
 		
 		//if entity isn't loaded and haven't been killed
 		int inGameState = Stage_getEntityState(this, i);
@@ -352,6 +362,22 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 				}
 			}
 		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// preload textures
+static void Stage_loadTextures(Stage this) {
+
+	ASSERT(this, "Entity::loadTextures: null this");
+
+	StageDefinition* world = this->stageDefinition;
+	
+	int i = 0;
+
+	for(; i < __MAX_TEXTURES_PER_STAGE && world->textures[i]; i++){
+
+		TextureManager_loadTexture(TextureManager_getInstance(), world->textures[i], this->flushCharGroups);
 	}
 }
 
@@ -439,4 +465,29 @@ void Stage_stream(Stage this){
 			Stage_loadEntities(this, true, true);
 		}	
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// if set to false, the char set memory is flushed when
+// a char defintion is no longer used
+// only useful to false when preloading textures
+// otherwise it doesn't have any effect add flushing is the default 
+// behvior
+void Stage_setFlushCharGroups(Stage this, int flushCharGroups){
+	
+	this->flushCharGroups = flushCharGroups;
+
+	/*
+	if(!flushCharGroups) {
+		
+		if(this->stageDefinition->textures[0]) {
+
+			this->flushCharGroups = flushCharGroups;
+		}
+	}
+	else {
+
+		this->flushCharGroups = flushCharGroups;
+	}
+	*/
 }

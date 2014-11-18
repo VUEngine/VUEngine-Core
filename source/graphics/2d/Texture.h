@@ -32,6 +32,7 @@
 
 #include <Object.h>
 #include <CharGroup.h>
+#include <Telegram.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -47,6 +48,7 @@
 
 #define Texture_SET_VTABLE(ClassName)						\
 		Object_SET_VTABLE(ClassName)						\
+		__VIRTUAL_SET(ClassName, Texture, handleMessage);
 
 #define Texture_ATTRIBUTES										\
 																\
@@ -181,5 +183,7 @@ int Texture_getCols(Texture this);
 // retrieve texture's id
 int Texture_getId(Texture this);
 
+// process a telegram
+int Texture_handleMessage(Texture this, Telegram telegram);
 
 #endif

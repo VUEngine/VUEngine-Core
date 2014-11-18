@@ -42,6 +42,9 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+struct Shape_str;
+//typedef struct Shape_str* Shape;
+
 
 #define InGameEntity_METHODS							\
 		Entity_METHODS									\

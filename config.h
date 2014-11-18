@@ -77,21 +77,24 @@
  */
 
 // determine whether frame rate is capped or not
-#define __CAP_FPS	1
+#define __CAP_FPS						1
 
 // clock resolution
-#define __TIMER_RESOLUTION		1
+#define __TIMER_RESOLUTION				1
 
 //target frames per second
-#define __RENDER_FPS 	50
+#define __OPTIMUM_FPS_MINIMUM 			45
 
 //target frames per second
-#define __PHYSICS_FPS 	50
+#define __RENDER_FPS 					50
 
 //target frames per second
-#define __LOGIC_FPS 	50
+#define __PHYSICS_FPS 					50
 
-#define __MILISECODS_IN_SECOND	1000
+//target frames per second
+#define __LOGIC_FPS 					50
+
+#define __MILISECODS_IN_SECOND			1000
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
@@ -233,10 +236,17 @@
  */
 
 //maximun number of entities per world
-#define __ENTITIESPERWORLD 	128
+#define __ENTITIES_PER_STAGE	128
 
 //padd to determine if a character must be loaded
-#define __ENTITY_LOAD_PAD		40
+#define __ENTITY_LOAD_PAD		30
+
+// number of sprites per entity
+#define __MAX_SPRITES_PER_ENTITY 4
+
+// number of sprites per entity
+#define __MAX_TEXTURES_PER_STAGE 32
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -300,7 +310,7 @@
  */
 
 #define __STAGE_BITS_PER_ENTITY		2
-#define __ENTITIES_IN_STAGE (__ENTITIESPERWORLD / (sizeof(WORD) << 3) * __STAGE_BITS_PER_ENTITY)
+#define __ENTITIES_IN_STAGE (__ENTITIES_PER_STAGE / (sizeof(WORD) << 3) * __STAGE_BITS_PER_ENTITY)
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

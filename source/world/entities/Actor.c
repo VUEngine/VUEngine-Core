@@ -233,7 +233,7 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 	if(this->shape){
 			
 		
-			__VIRTUAL_CALL(void, Shape, draw, this->shape);
+			//__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}	
 #endif
 }
@@ -411,6 +411,52 @@ int Actor_changedDirection(Actor this, int axis){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change direction over axis
+void Actor_changeDirectionOnAxis(Actor this, int axis){
+
+	ASSERT(this, "Actor::changeDirectionOnAxis: null this");
+
+	// save current direction
+	this->previousDirection = this->direction; 
+
+	if((__XAXIS & axis)) {
+	
+		if(__RIGHT == this->direction.x){
+		
+			this->direction.x = __LEFT;
+		}
+		else {
+			
+			this->direction.x = __RIGHT;
+		}
+	}
+
+	if((__YAXIS & axis)) {
+	
+		if(__NEAR == this->direction.y){
+		
+			this->direction.y = __FAR;
+		}
+		else {
+			
+			this->direction.x = __NEAR;
+		}
+	}
+
+	if((__ZAXIS & axis)) {
+	
+		if(__RIGHT == this->direction.z){
+	
+			this->direction.x = __LEFT;
+		}
+		else {
+			
+			this->direction.x = __RIGHT;
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // allocate a write in graphic memory again
 void Actor_resetMemoryState(Actor this, int worldLayer){		
 
@@ -562,6 +608,12 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 					case kBodyStartedMoving:
 						
 						Actor_updateCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
+						return true;
+						break;
+
+					case kBodyBounced:
+						
+						Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 				}

@@ -186,10 +186,6 @@
  */
 //#define __WRITENOANIMATED		0x03
 
-/*----------------------------- sprites' definitions ----------------------*/
-// number of sprites per entity
-#define __MAX_SPRITES_PER_ENTITY 4
-
 /*------------------------------ animation sizes---------------------------*/
 //max leght of an animation function's name
 #define __MAX_ANIMATION_FUNCTION_NAME_LENGHT	20
@@ -264,7 +260,14 @@
 
 enum MessagesTypes{
 	
-	kNoCollision = 0,
+	// general porpuse messages
+	kFRSareHigh = 0,
+	
+	// graphic system's messages
+	kCharGroupRewritten,
+	
+	// physics messages
+	kNoCollision,
 	kCollision,
 	kFloorReached,
 	kShapeBelow,
@@ -275,6 +278,7 @@ enum MessagesTypes{
 	kKeyHold,
 	kEntityRemoved,
 	kBodyStoped,
+	kBodyBounced,
 	kBodyStartedMoving,
 	kBodyStartedMovingByGravity,
 	kBodyChangedDirection,

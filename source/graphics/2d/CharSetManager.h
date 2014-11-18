@@ -80,7 +80,7 @@ void CharSetManager_reset(CharSetManager this);
 void CharSetManager_free(CharSetManager this, CharGroup charGroup);
  
 // print class's attributes's states
-void CharSetManager_print(CharSetManager this, int charSet, int numberOfChars, int x);
+void CharSetManager_print(CharSetManager this, int charSet);
  
 // if char if part of a background or oder object whose frame doesn't change
 int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup);
@@ -91,5 +91,7 @@ void CharSetManager_allocate(CharSetManager this, CharGroup charGroup);
 // set number of chars used in a given segment
 void CharSetManager_setChars(CharSetManager  this, int charSet, int numberOfChars);
 
- 
+// defrag char memory
+void CharSetManager_defragmentProgressively(CharSetManager this);
+
 #endif /*CHARSETMEM_H_*/

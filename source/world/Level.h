@@ -124,7 +124,7 @@ void Level_onKeyUp(Level this, int pressedKey);
 void Level_onKeyHold(Level this, int pressedKey);
 
 // load a stage
-void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
+void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);
 
 
 #endif /*LEVEL_H_*/

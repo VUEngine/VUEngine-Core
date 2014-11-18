@@ -380,9 +380,9 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load a texture
-static Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textureDefinition){
+static Texture TextureManager_writeTexture(TextureManager this, TextureDefinition* textureDefinition, int isPreload){
 	
-	ASSERT(this, "TextureManager::loadTexture: null this");
+	ASSERT(this, "TextureManager::writeTexture: null this");
 
 	int i = 0;
 	
@@ -401,7 +401,7 @@ static Texture TextureManager_loadTexture(TextureManager this, TextureDefinition
 			Texture_write(this->texture[i]);
 			
 			// set texture usage
-			this->textureUsageCount[i] = 1;
+			this->textureUsageCount[i] = isPreload? 0: 1;
 			
 			return this->texture[i];
 		}
@@ -412,9 +412,9 @@ static Texture TextureManager_loadTexture(TextureManager this, TextureDefinition
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load and retrieve a texture
-Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition){
-	
-	ASSERT(this, "TextureManager::get: null this");
+Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textureDefinition, int isPreload){
+
+	ASSERT(this, "TextureManager::loadTexture: null this");
 
 	Texture texture = NULL;
 	
@@ -424,7 +424,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 		case __ANIMATED:
 	
 			// load a new texture
-			texture = TextureManager_loadTexture(this, textureDefinition);
+			texture = TextureManager_writeTexture(this, textureDefinition, isPreload);
 
 			ASSERT(texture, "TextureManager::get: (animated) texture no allocated");
 
@@ -440,7 +440,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 			if(!texture){
 			
 				// load it
-				texture = TextureManager_loadTexture(this, textureDefinition);
+				texture = TextureManager_writeTexture(this, textureDefinition, isPreload);
 			}
 			else{
 
@@ -450,17 +450,26 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 					// write texture to graphic memory
 					Texture_write(texture);
 				}
+
+				// increase texture usage count
+				this->textureUsageCount[Texture_getId(texture)]++;
 			}
 
 			ASSERT(texture, "TextureManager::get: (shared) texture no allocated");
-
-			// increase texture usage count
-			this->textureUsageCount[Texture_getId(texture)]++;
 
 			break;
 	}
 
 	return texture;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// load and retrieve a texture
+Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition){
+	
+	ASSERT(this, "TextureManager::get: null this");
+
+	return TextureManager_loadTexture(this, textureDefinition, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

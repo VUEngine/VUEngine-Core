@@ -234,7 +234,7 @@ void Level_onKeyHold(Level this, int pressedKey){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load a stage
-void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities){
+void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups){
 	
 	ASSERT(this, "Level::loadStage: null this");
 	ASSERT(stageDefinition, "Level::loadStage: null stageDefinition");
@@ -254,6 +254,9 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 	// construct the stage
 	this->stage = __NEW(Stage);
 
+	// set char memory flushing config
+	Stage_setFlushCharGroups(this->stage, flushCharGroups);
+	
 	ASSERT(this->stage, "Level::loadStage: null stage");
 	
 	//load world entities

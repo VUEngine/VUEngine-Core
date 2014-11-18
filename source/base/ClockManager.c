@@ -171,9 +171,10 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     //if second has changed, set frame rate 
     if(previousSecond != (this->ticks / __MILISECODS_IN_SECOND)){
     	
+    		FrameRate frameRate = FrameRate_getInstance();
 #ifdef __DEBUG
     		
-	    	FrameRate_print(FrameRate_getInstance(), 0, 23);
+	    	FrameRate_print(frameRate, 0, 23);
 	    	// get stack pointer
     		//Printing_hex(HW_REGS[SCR], 38, 4);
     		//Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);
@@ -184,9 +185,13 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	    	//ParamTableManager_print(ParamTableManager_getInstance(),0,10);
 	    	//GameWorld_printListsSize(GameEngine_getAuxGameWorld(GameEngine_getInstance()),0, 5);
 #endif
-			
+	    	if(FrameRate_areFPSHigh(frameRate)) {
+	    		
+	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
+	    	}
+	    	
 			//reset frame rate counters
-			FrameRate_reset(FrameRate_getInstance());		
+			FrameRate_reset(frameRate);		
     }	
     
     // Play background music 

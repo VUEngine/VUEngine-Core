@@ -70,7 +70,9 @@ Features:
 	· Rendering:
 		* Automatic char memory allocation
 		* Automatic bgmap memory allocation
-		* Automatic world layer assignment based on the objectï¿½s z position
+		* Automatic world layer assignment based on the objects' z position
+		* Preload textures
+		* Automatic char memory defragmentation
 		* Scaling/rotation effects
 		* Automatic projection/parallax/scale calculation and rendering
 		* Customizable perspective/deep effects on real time

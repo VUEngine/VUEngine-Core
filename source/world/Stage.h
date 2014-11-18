@@ -34,6 +34,7 @@
 #include <config.h>
 #include <Container.h>
 #include <Entity.h>
+#include <Texture.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -69,7 +70,11 @@
 														\
 	/* flag to know if the stage must */				\
 	/* track entities's load states */					\
-	WORD entityStateRegister[__ENTITIES_IN_STAGE];
+	WORD entityStateRegister[__ENTITIES_IN_STAGE];		\
+														\
+	/* flag to know if the stage must */				\
+	/* flush unused char groups */						\
+	int flushCharGroups;
 
 
 // declare a Stage, which holds the objects in a game world
@@ -112,7 +117,10 @@ typedef struct  StageDefinition{
 	const u16 (*bgm)[];
 
 	// each of the stage's entities
-	PositionedEntity entities[__ENTITIESPERWORLD];
+	TextureDefinition* textures[__MAX_TEXTURES_PER_STAGE];
+
+	// each of the stage's entities
+	PositionedEntity entities[__ENTITIES_PER_STAGE];
 
 }StageDefinition;
 
@@ -142,6 +150,13 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 
 // stream entities according to screen's position
 void Stage_stream(Stage this);
+
+// if set to true, the char set memory is flushed when
+// a char defintion is no longer used
+// only useful to false when preloading textures
+// otherwise it doesn't have any effect and flushing 
+// is the default  behvior
+void Stage_setFlushCharGroups(Stage this, int flushCharGroups);
 
 #endif
 

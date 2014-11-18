@@ -71,7 +71,10 @@
 	int numberOfChars: 10;											\
 																	\
 	/* array definition of the charSet */							\
-	BYTE* charDefinition;
+	BYTE* charDefinition;											\
+																	\
+	/* owner */														\
+	Object owner;
 
 __CLASS(CharGroup);
 
@@ -110,7 +113,7 @@ typedef const CharGroupDefinition CharGroupROMDef;
 
 
 // class's allocator
-__CLASS_NEW_DECLARE(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition));
+__CLASS_NEW_DECLARE(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition, Object owner));
 
 // class's destructor
 void CharGroup_destructor(CharGroup this);
@@ -148,6 +151,8 @@ void CharGroup_copy(CharGroup this, CharGroup source);
 // write char on memory	
 void CharGroup_write(CharGroup this);
 
+// rewrite char on memory	
+void CharGroup_rewrite(CharGroup this);
 
 #endif
 

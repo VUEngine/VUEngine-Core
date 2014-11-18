@@ -31,7 +31,6 @@
 #include <Texture.h>
 #include <Optics.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -107,7 +106,7 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 	this->textureDefinition = textureDefinition;	
 	
 	// if the char definition is NULL, it must be a text
-	this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition));
+	this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition, (Object)this));
 	
 	// set the pallet
 	this->pallet = textureDefinition->pallet;
@@ -243,7 +242,7 @@ void Texture_write(Texture this){
 	if(!this->charGroup){
 		
 		// if the char definition is NULL, it must be a text
-		this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition));
+		this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition, (Object)this));
 	}
 
 	//write char group	
@@ -316,6 +315,7 @@ void Texture_resetMemoryState(Texture this){
 	
 	ASSERT(this, "Texture::resetMemoryState: null this");
 
+	ASSERT(false, "Texture::resetMemoryState: null this");
 	//fake char offset so it is allocated again
 	CharGroup_setOffset(this->charGroup, 0xFF);
 	
@@ -494,4 +494,21 @@ int Texture_getId(Texture this){
 	ASSERT(this, "Texture::getId: null this");
 
 	return this->id;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process a telegram
+int Texture_handleMessage(Texture this, Telegram telegram){
+	
+	ASSERT(this, "Texture::handleMessage: null this");
+	switch(Telegram_getMessage(telegram)) {
+
+		case kCharGroupRewritten:
+			
+			Texture_write(this);
+			return true;
+			break;
+	}
+	
+	return false;
 }

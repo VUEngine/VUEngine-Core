@@ -29,6 +29,7 @@
 
 #include <CharGroup.h>
 #include <CharSetManager.h>
+#include <MessageDispatcher.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -71,7 +72,7 @@ __CLASS_DEFINITION(CharGroup);
  */
 
 //class's constructor
-static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroupDefinition);
+static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroupDefinition, Object owner);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -84,17 +85,18 @@ static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroup
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition))
-__CLASS_NEW_END(CharGroup, __ARGUMENTS(charGroupDefinition))
+__CLASS_NEW_DEFINITION(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition, Object owner))
+__CLASS_NEW_END(CharGroup, __ARGUMENTS(charGroupDefinition, owner))
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroupDefinition){
+static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroupDefinition, Object owner){
 	
 	__CONSTRUCT_BASE(Object);	
 
 	// save definition
 	this->charDefinition = charGroupDefinition->charDefinition;
+	this->owner = owner;
 	
 	// set number of chars
 	CharGroup_setNumberOfChars(this, charGroupDefinition->numberOfChars);	
@@ -146,6 +148,7 @@ int CharGroup_getOffset(CharGroup this){
 void CharGroup_setOffset(CharGroup this, int offset){
 	
 	ASSERT(this, "CharGroup::setOffset: null this");
+	ASSERT(0 <= offset, "CharGroup::setOffset: offset less than 0");
 
 	this->offset = offset;
 }
@@ -208,7 +211,7 @@ void CharGroup_setCharSet(CharGroup this, int charSet){
 //copy a chargroup
 void CharGroup_copy(CharGroup this,CharGroup source){
 	
-	ASSERT(this, "CharGroup::destructor: null this");
+	ASSERT(this, "CharGroup::copy: null this");
 
 	// copy the definition
 	this->charDefinition = source->charDefinition;
@@ -253,13 +256,29 @@ void CharGroup_write(CharGroup this){
 				if(CharSetManager_allocateShared(CharSetManager_getInstance(), this)){
 			
 					//write to char memory
-					Mem_copy((u8*)CharSegs(this->charset)  + ( this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
+					Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
 				}
 			}	
+			else {
+				
+				//write to char memory
+				Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
+			}
 			break;
 			
 		default:
 
 			ASSERT(false, "CharGroup::copy: with no allocation type");
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// rewrite char on memory	
+void CharGroup_rewrite(CharGroup this){
+
+	// write again
+	CharGroup_write(this);
+	
+	// inform my owner
+	MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharGroupRewritten, NULL);
 }

@@ -520,10 +520,8 @@ void Game_render(Game this) {
 	// sort sprites
 	SpriteManager_sortLayersProgressively(this->spriteManager);
 
-#ifdef __DEBUG
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
-#endif
 }
 
 //#undef __CAP_FPS
@@ -571,15 +569,16 @@ void Game_update(Game this){
 			// update the game's logic
 			StateMachine_update(this->stateMachine);
 			
+#ifdef __DEBUG
+			this->lastProcessName = "dispatch delayed messages";
+#endif
 			// dispatch queued messages
 		    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 
-		    this->lastTime[kLogic] = currentTime;
-		    
-#ifdef __DEBUG
 			// increase the frame rate
 			FrameRate_increaseLogicFPS(this->frameRate);
-#endif
+
+		    this->lastTime[kLogic] = currentTime;
 		}
 		
 		if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
@@ -610,10 +609,8 @@ void Game_update(Game this){
 			// render sprites
 			SpriteManager_render(this->spriteManager);
 
-#ifdef __DEBUG
 			// increase the frame rate
 			FrameRate_increasePhysicsFPS(this->frameRate);
-#endif
 		}
 		
 #ifdef __DEBUG
@@ -628,6 +625,14 @@ int Game_handleMessage(Game this, Telegram telegram){
 	
 	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
+	
+	switch(Telegram_getMessage(telegram)) {
+	
+		case kFRSareHigh:
+			
+			CharSetManager_defragmentProgressively(this->charSetManager);
+			break;
+	}
 	
 	return StateMachine_handleMessage(this->stateMachine, telegram);
 }

@@ -206,6 +206,9 @@ void Actor_moveOpositeDirecion(Actor this, int axis);
 // whether changed direction in the last cycle or not
 int Actor_changedDirection(Actor this, int axis);
 
+// change direction over axis
+void Actor_changeDirectionOnAxis(Actor this, int axis);
+
 // check if gravity must apply to this actor
 int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration);
 

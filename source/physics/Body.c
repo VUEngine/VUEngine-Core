@@ -851,25 +851,50 @@ void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity){
 	ASSERT(this, "Body::bounce: null this");
 
 	int axisOnWhichStoped = 0;
+	int axisOnWhichBounced = 0;
 	
-	if ((__XAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x , axis, otherBodyElasticity)){
+	if ((__XAXIS & axis)) {
 		
-		axisOnWhichStoped |= __XAXIS;
-	}
-	
-	if ((__YAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, axis, otherBodyElasticity)){
-		
-		axisOnWhichStoped |= __YAXIS;
+		if(Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x, axis, otherBodyElasticity)){
+
+			axisOnWhichBounced |= __XAXIS;
+		}		
+		else {
+			
+			axisOnWhichStoped |= __XAXIS;
+		}
 	}
 
-	if ((__ZAXIS & axis) && Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, axis, otherBodyElasticity)){
+	if ((__YAXIS & axis)) {
 		
-		axisOnWhichStoped |= __ZAXIS;
+		if(Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, axis, otherBodyElasticity)){
+
+			axisOnWhichBounced |= __YAXIS;
+		}		
+		else {
+			axisOnWhichStoped |= __YAXIS;
+		}
+	}
+
+	if ((__ZAXIS & axis)) {
+		
+		if(Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, axis, otherBodyElasticity)){
+
+			axisOnWhichBounced |= __ZAXIS;
+		}		
+		else {
+			axisOnWhichStoped |= __ZAXIS;
+		}
 	}
 
 	if (axisOnWhichStoped) {
 	
 		Body_stopMovement(this, axisOnWhichStoped);
+	}
+	
+	if(axisOnWhichBounced) {
+	
+ 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyBounced, &axisOnWhichBounced);
 	}
 }
 
@@ -904,7 +929,7 @@ static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerati
 
 	*acceleration = 0;
 	
-	return (THRESHOLD + (velocityDelta << deltaFactor) >= abs(*velocity));
+	return (THRESHOLD + (velocityDelta << deltaFactor) < abs(*velocity));
 }
 
 

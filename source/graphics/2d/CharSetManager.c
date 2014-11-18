@@ -28,6 +28,7 @@
  */
 
 #include <CharSetManager.h>
+#include <VirtualList.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -38,6 +39,8 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+#define __CHAR_ROOM		2
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -64,7 +67,12 @@
 	int charDefUsage[CHAR_SEGMENTS * CHAR_GRP_PER_SEG];		\
 															\
 	/* register every offset */								\
-	int offset[CHAR_SEGMENTS * CHAR_GRP_PER_SEG];
+	int offset[CHAR_SEGMENTS * CHAR_GRP_PER_SEG];			\
+															\
+	/* registered char groups */							\
+	VirtualList charGroups;
+
+
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager);
@@ -88,6 +96,9 @@ static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup ch
 // record an allocated char defintion
 static void CharSetManager_setCharDefinition(CharSetManager  this, BYTE *charDefinition, int offset);
  
+// find a hole long enough to fit the number of chars
+static int CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, int numberOfChars);
+
 // free char graphic memory
 static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup);
 
@@ -113,6 +124,8 @@ static void CharSetManager_constructor(CharSetManager this){
 	
 	__CONSTRUCT_BASE(Object);
 	
+	this->charGroups = NULL;
+	
 	CharSetManager_reset(this);
 }
 
@@ -122,6 +135,8 @@ void CharSetManager_destructor(CharSetManager this){
 
 	ASSERT(this, "CharSetManager::destructor: null this");
 
+	__DELETE(this->charGroups);
+	
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -151,7 +166,15 @@ void CharSetManager_reset(CharSetManager this){
 		this->charDefUsage[i] = 0;
 		this->offset[i] = 0;
 	}
+	
+	if(this->charGroups) {
+	
+		__DELETE(this->charGroups);
+	}
+	
+	this->charGroups = __NEW(VirtualList);
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // record an allocated char defintion
 static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, int offset){
@@ -182,7 +205,7 @@ void CharSetManager_free(CharSetManager this, CharGroup charGroup){
 	ASSERT(this, "CharSetManager::free: null this");
 
 	// retrieve index of char's defintion
-	int i = CharSetManager_searchCharDefinition(this,charGroup);
+	int i = CharSetManager_searchCharDefinition(this, charGroup);
 	
 	// if char found
 	if(i >= 0){
@@ -192,6 +215,7 @@ void CharSetManager_free(CharSetManager this, CharGroup charGroup){
 		
 		// just make sure it is not going in a loop
 		if(0xFE < this->charDefUsage[i]){
+			
 			this->charDefUsage[i] = 0;
 		}
 		
@@ -219,13 +243,14 @@ void CharSetManager_setChars(CharSetManager this, int charSet, int numberOfChars
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print class's attributes's states
-void CharSetManager_print(CharSetManager this, int charSet, int numberOfChars, int x){
+void CharSetManager_print(CharSetManager this, int charSet){
 	
 	ASSERT(this, "CharSetManager::print: null this");
 
 	int i=0;
-	
-	for (i=0;i<16;i++){
+	for(; i < CHAR_GRP_PER_SEG; i++){
+
+		Printing_hex(this->segment[charSet][i], 0, 1 + i);
 	}
 }
 
@@ -283,133 +308,167 @@ int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// allocate a char defintion within char graphic memory
-void CharSetManager_allocate(CharSetManager this,CharGroup charGroup){
+// find a hole long enough to fit the number of chars
+static int CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, int numberOfChars) {
 	
-	ASSERT(this, "CharSetManager::allocate: null this");
+	ASSERT(this, "CharSetManager::getNextFreeOffset: null this");
 
-	int i = 0;
+	int i = charSeg;
 	int j = 0;
-	int auxJ = 0;
-	int hole=0;
+	int hole = 0;
 	unsigned int index = 0;
 	int offset = 0;
-	int numberOfChars = CharGroup_getNumberOfChars(charGroup);
 	unsigned int block = 0;
 	int currentChar = 0;	
-	int counter;
 	
 	ASSERT(numberOfChars > 0, "CharSetManager::allocate: number of chars < 0");
 	
 	// if char is defined as part of an animation frame allocate 
 	// space for it
 	CACHE_ENABLE;
-	for(; i < CHAR_SEGMENTS ; i++){
+
+	// each segment has 512 chars slots so, 16 ints are 512 bits
+	for(j = 0; j < 16; j++){
 		
-		// each segment has 512 chars slots so, 16 ints are 512 bits
-		for( j = 0; j < 16; j++){
-			
-			// see if there is a 0 in the block
-			block = this->segment[i][j] ^ 0xFFFFFFFF;
-			
-			// if there is at least a 1 in the block			
-			if(block){		
-				
-				// set index 1000 0000 0000 0000 2b
-				index = 0x80000000;
-				
-				// while there is at least a 1 in the block
-				while(index){
-					
-					// in-block offset
-					if(block & index){
-						
-						// increase the hole
-						hole++;
-						
-						// control if the first free char is the last one from a block
-						// if hole fits numberOfChars plus one free space at the begining and end
-						if(hole >= numberOfChars + 2){
-						
-							// determine offset within the segment
-							offset = currentChar - numberOfChars;
-							
-							// determine the index to mark the offset
-							auxJ = offset>>5;
-							
-							// set chargroup's offset
-							CharGroup_setOffset(charGroup, offset);
+		// see if there is a 0 in the block
+		block = this->segment[i][j] ^ 0xFFFFFFFF;
 		
-							// record char defintion
-							CharSetManager_setCharDefinition(this, CharGroup_getCharDefinition(charGroup), offset);
-							
-							// calculate the total slots
-							counter = offset - (auxJ << 5);
-							
-							// initilize mask
-							index = 0x80000000;
-
-							while(counter--){
-								// fill the mask acording to number of slots
-								index >>= 1;
-							}
-							
-							// mark segmant mask's used slots
-							while(numberOfChars--){		
-								
-								this->segment[i][auxJ] |= index;
-								
-								index >>= 1;
-								
-								// reset the mask and increase the segment number
-								if(!index){
-									
-									index = 0x80000000;
-									
-									auxJ++;
-								}
-							}
-
-							// set chargroup's segment
-							CharGroup_setCharSet(charGroup, i);
-
-							CACHE_DISABLE;
-							
-							// stop processing
-							return;					
-						}
-					}
-					else{
-						// otherwise clear hole must be cleared
-						hole = 0;					
-					}
+		// if there is at least a 1 in the block			
+		if(block){		
+			
+			// set index 1000 0000 0000 0000 2b
+			index = 0x80000000;
+			
+			// while there is at least a 1 in the block
+			while(index){
+				
+				// in-block offset
+				if(block & index){
 					
-					// shift the block to the right
-					index >>= 1;
+					// increase the hole
+					hole++;
 					
-					// increase the in-block offset
-					currentChar++;
+					// control if the first free char is the last one from a block
+					// if hole fits numberOfChars plus one free space at the begining and end
+					if(hole >= numberOfChars + __CHAR_ROOM){
+					
+						// determine offset within the segment
+						offset = currentChar - numberOfChars;
+						
+						// stop processing
+						return currentChar - numberOfChars;					
+					}
 				}
-			}
-			else{
+				else{
+					// otherwise clear hole must be cleared
+					hole = 0;					
+				}
 				
-				// move current block, 32 slots ahead
-				currentChar += 32;
+				// shift the block to the right
+				index >>= 1;
+				
+				// increase the in-block offset
+				currentChar++;
 			}
 		}
+		else{
+			
+			// move current block, 32 slots ahead
+			currentChar += 32;
+		}
+	}
+	
+	return -1;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// register the used chars
+void CharSetManager_markUsedChars(CharSetManager this, int charSeg, int offset, int numberOfChars){
+	
+	ASSERT(this, "CharSetManager::markUsedChars: null this");
+
+	int auxJ = 0;
+	unsigned int index = 0;
+	int counter;
+
+	// determine the index to mark the offset
+	auxJ = offset >> 5;
+
+	// calculate the total slots
+	counter = offset - (auxJ << 5);
+	
+	// initilize mask
+	index = 0x80000000;
+
+	while(counter--){
+		// fill the mask acording to number of slots
+		index >>= 1;
+	}
+	
+	// mark segmant mask's used slots
+	while(numberOfChars--){		
 		
-		// reset the current char within the block
-		currentChar = 0;
+		this->segment[charSeg][auxJ] |= index;
 		
-		// reset hole
-		hole = 0;
+		index >>= 1;
+		
+		// reset the mask and increase the segment number
+		if(!index){
+			
+			index = 0x80000000;
+			
+			auxJ++;
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// allocate a char defintion within char graphic memory
+void CharSetManager_allocate(CharSetManager this, CharGroup charGroup){
+	
+	ASSERT(this, "CharSetManager::allocate: null this");
+
+	int numberOfChars = CharGroup_getNumberOfChars(charGroup);
+	
+	ASSERT(numberOfChars > 0, "CharSetManager::allocate: number of chars < 0");
+	
+	int i = 0;
+
+	// if char is defined as part of an animation frame allocate 
+	// space for it
+	CACHE_ENABLE;
+	for(; i < CHAR_SEGMENTS ; i++){
+		
+		int offset = CharSetManager_getNextFreeOffset(this, i, numberOfChars);
+
+		if(0 <= offset) {
+				
+			// set chargroup's offset
+			CharGroup_setOffset(charGroup, offset);
+
+			// record char defintion
+			CharSetManager_setCharDefinition(this, CharGroup_getCharDefinition(charGroup), offset);
+
+			// set chargroup's segment
+			CharGroup_setCharSet(charGroup, i);
+
+			// register the used chars
+			CharSetManager_markUsedChars(this, i, offset, numberOfChars);
+			
+			// register charGroup
+			VirtualList_pushBack(this->charGroups, charGroup);
+
+			CACHE_DISABLE;
+
+			// stop processing
+			return;					
+		}
 	}
 	CACHE_DISABLE;
 	
 	// if there isn't enough memory trown an exception
 	ASSERT(false, "CharSetManager::allocate: char mem depleted");
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // free char graphic memory
@@ -426,6 +485,74 @@ static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup){
 	// get chargroup's segment
 	int charSet = CharGroup_getCharSet(charGroup);
 	
+	// counter of chars
+	int counter = 0;
+	
+	// initialize mask
+	u32 index = 0x80000000;
+	
+	// calculate block index
+	int j = 0;		
+	j = offset >> 5;
+	
+	// calculate number of slots
+	counter = offset - (j << 5);
+	
+#ifdef __DEBUG
+	
+	u8 clearValue = 0x00;
+	
+	const BYTE clearCharGroup[] = {
+	
+			clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, 
+			clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue	/*Char0*/
+	};
+	int i = 0;
+	for (; i < numberOfChars; i++) {
+		
+		//clean char memory
+		Mem_copy((u8*)CharSegs(charSet) + ((offset + i) << 4), (u8*)clearCharGroup, 1 << 4);
+	}
+#endif
+	
+	// while there are chars
+	while(counter--){
+		
+		// fill mask
+		index >>= 1;
+	}
+	
+	// inverse the mask
+	index ^= 0xFFFFFFFF;
+	
+	// clear freeded slots within the segment
+	CACHE_ENABLE;
+	while(numberOfChars--){
+		
+		this->segment[charSet][j] &= index;
+		
+		index >>= 1;
+		
+		index |= 0x80000000;
+		
+		if(index == 0xFFFFFFFF){
+			
+			index = 0x7FFFFFFF;
+			
+			j++;
+		}
+	}
+	CACHE_DISABLE;
+
+	VirtualList_removeElement(this->charGroups, charGroup);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// free char graphic memory
+static void CharSetManager_markFreedChars(CharSetManager this, int charSet, int offset, int numberOfChars){
+		
+	ASSERT(this, "CharSetManager::markFreedChars: null this");
+
 	// counter of chars
 	int counter = 0;
 	
@@ -467,4 +594,74 @@ static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup){
 		}
 	}
 	CACHE_DISABLE;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// defrag char memory
+void CharSetManager_defragmentProgressively(CharSetManager this){
+
+	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
+
+	int i = 0;
+	for(; i < CHAR_SEGMENTS ; i++){
+		
+		int freeOffset = CharSetManager_getNextFreeOffset(this, i, 1);
+		
+		if(0 <= freeOffset) {
+
+			VirtualNode charGroupNode = VirtualList_begin(this->charGroups);
+		
+			int lowestOffset = 10000;
+			CharGroup charGroupToRewrite = NULL;
+		
+			for(; charGroupNode; charGroupNode = VirtualNode_getNext(charGroupNode)) {
+				
+				CharGroup charGroup = (CharGroup)VirtualNode_getData(charGroupNode);
+				
+				if(CharGroup_getCharSet(charGroup) != i) {
+					
+					continue;
+				}
+				
+				ASSERT(charGroup, "CharSetManager::defragmentProgressively: null charGroup");
+		
+				int offset = CharGroup_getOffset(charGroup);
+				
+				if(offset > freeOffset) {
+					
+					if(offset < lowestOffset) {
+					
+						lowestOffset = offset;
+						charGroupToRewrite = charGroup;
+					}
+				}
+			}
+			
+			if(charGroupToRewrite){
+	
+				int previousOffset = CharGroup_getOffset(charGroupToRewrite);
+				CharGroup_setOffset(charGroupToRewrite, freeOffset);
+	
+				// register the used chars
+				CharSetManager_markUsedChars(this, CharGroup_getCharSet(charGroupToRewrite), freeOffset, CharGroup_getNumberOfChars(charGroupToRewrite));
+				CharSetManager_markFreedChars(this, CharGroup_getCharSet(charGroupToRewrite), freeOffset + CharGroup_getNumberOfChars(charGroupToRewrite) + 1 , previousOffset - freeOffset);
+	
+				BYTE* charDefinition = CharGroup_getCharDefinition(charGroupToRewrite);
+				
+				int i = 0;
+				for(; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG; i++){
+		
+					if(charDefinition == this->charDefinition[i]) {
+						
+						this->offset[i] = CharGroup_getOffset(charGroupToRewrite);
+						ASSERT(0 <= this->offset[i], "CharSetManager::defragmentProgressively: offset less than 0")
+						break;
+					}
+				}
+	
+				CharGroup_rewrite(charGroupToRewrite);
+				return;
+			}
+		}
+	}
 }
