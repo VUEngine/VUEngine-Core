@@ -229,9 +229,9 @@ static void Debug_setupPages(Debug this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void Debug_dimmGame(Debug this){
 	
-	VIP_REGS[GPLT0] = 0b01010101;	/* Set all eight palettes to: 11100100 */
-	VIP_REGS[GPLT1] = 0b01010101;	/* (i.e. "Normal" dark to light progression.) */
-	VIP_REGS[GPLT2] = 0b01010101;
+	VIP_REGS[GPLT0] = 0b01010100;	/* Set all eight palettes to: 11100100 */
+	VIP_REGS[GPLT1] = 0b01010000;	/* (i.e. "Normal" dark to light progression.) */
+	VIP_REGS[GPLT2] = 0b01010100;
 	VIP_REGS[GPLT3] = __GPLT3VALUE;
 	VIP_REGS[JPLT0] = __JPLT0VALUE;
 	VIP_REGS[JPLT1] = __JPLT1VALUE;

@@ -58,7 +58,6 @@ struct Shape_str;
 
 #define InGameEntity_SET_VTABLE(ClassName)								\
 		Entity_SET_VTABLE(ClassName)									\
-		__VIRTUAL_SET(ClassName, InGameEntity, setLocalPosition);		\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);					\
 		__VIRTUAL_SET(ClassName, InGameEntity, transform);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);				\
@@ -146,9 +145,6 @@ void InGameEntity_destructor(InGameEntity this);
 
 // set graphical gap
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);
-
-// set class's position
-void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position);
 
 // retrieve gap
 Gap InGameEntity_getGap(InGameEntity this);

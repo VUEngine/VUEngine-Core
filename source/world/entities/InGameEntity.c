@@ -115,42 +115,6 @@ void InGameEntity_destructor(InGameEntity this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set class's position
-void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position){
-	
-	ASSERT(this, "InGameEntity::setLocalPosition: null this");
-	
-	// set the position
-	Container_setLocalPosition((Container)this, position);
-/*
-	// calculate the scale	
-	Sprite_calculateScale(this->sprite, this->position.z);
-
-	// set sprite's position
-	Sprite_setPosition(this->sprite, &this->position);
-
-	// calculate sprite's parallax
-	Sprite_calculateParallax(this->sprite, this->position.z);
-
-	//TODO: remove
-	// set sprite's position
-	Sprite_setPosition(this->sprite, &this->position);
-
-	// scale the sprite
-	Sprite_scale(this->sprite);
-
-	// update gap
-	InGameEntity_setGap(this);
-	
-	// update shape for collision detection
-	if(this->shape){
-		
-		CollisionManager_updateShape(CollisionManager_getInstance(), this->shape, &this->position);
-	}*/
-	
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve gap
 Gap InGameEntity_getGap(InGameEntity this){
 	

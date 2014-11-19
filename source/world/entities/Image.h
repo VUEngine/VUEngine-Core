@@ -49,7 +49,6 @@
 
 #define Image_SET_VTABLE(ClassName)										\
 		Entity_SET_VTABLE(ClassName)									\
-		__VIRTUAL_SET(ClassName, Image, setLocalPosition);				\
 
 
 	
@@ -95,9 +94,5 @@ void Image_constructor(Image this, ImageDefinition* imageDefinition, int ID);
 
 // class's destructor
 void Image_destructor(Image this);
-
-// set class's position
-void Image_setLocalPosition(Image this, VBVec3D position);
-
 
 #endif /*IMAGE_H_*/

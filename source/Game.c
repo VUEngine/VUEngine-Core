@@ -27,10 +27,11 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+/*
 #ifdef __DEBUG_TOOLS
 #undef __DEBUG
 #endif
-
+*/
 
 #include <Game.h>
 #include <HardwareManager.h>
@@ -649,9 +650,7 @@ void Game_update(Game this){
 			FrameRate_increasePhysicsFPS(this->frameRate);
 		}
 		
-#ifdef __DEBUG
 		FrameRate_increaseRawFPS(this->frameRate);
-#endif		
 	}
 }
 

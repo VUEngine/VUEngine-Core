@@ -51,8 +51,6 @@
 	__VIRTUAL_SET(ClassName, DebugScreen, enter);				\
 	__VIRTUAL_SET(ClassName, DebugScreen, execute);				\
 	__VIRTUAL_SET(ClassName, DebugScreen, exit);				\
-	__VIRTUAL_SET(ClassName, DebugScreen, pause);				\
-	__VIRTUAL_SET(ClassName, DebugScreen, resume);				\
 	__VIRTUAL_SET(ClassName, DebugScreen, handleMessage);		\
 
 

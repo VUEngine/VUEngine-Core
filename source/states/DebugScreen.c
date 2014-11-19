@@ -58,12 +58,6 @@ static void DebugScreen_execute(DebugScreen this, void* owner);
 // state's enter
 static void DebugScreen_exit(DebugScreen this, void* owner);
 
-// state's execute
-static void DebugScreen_pause(DebugScreen this, void* owner){}
-
-// state's execute
-static void DebugScreen_resume(DebugScreen this, void* owner){}
-
 // state's on message
 static int DebugScreen_handleMessage(DebugScreen this, void* owner, Telegram telegram);
 

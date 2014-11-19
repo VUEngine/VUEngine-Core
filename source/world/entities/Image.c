@@ -87,26 +87,3 @@ void Image_destructor(Image this){
 	// destroy the super object
 	__DESTROY_BASE(Entity);
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set class's position
-void Image_setLocalPosition(Image this, VBVec3D position){
-	
-	ASSERT(this, "Image::setLocalPosition: null this");
-
-	// set the position
-	Container_setLocalPosition((Container)this, position);
-	/*
-	// calculate the scale	
-	Sprite_calculateScale(this->sprite, this->position.z);
-
-	// set sprite's position
-	Sprite_setPosition(this->sprite, &this->position);
-
-	// calculate sprite's parallax
-	Sprite_calculateParallax(this->sprite, this->position.z);
-
-	// scale the sprite
-	Sprite_scale(this->sprite);
-	*/
-}
