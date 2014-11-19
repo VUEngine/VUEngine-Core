@@ -28,10 +28,10 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 // screen width in pixels
-#define __SCREENWIDTH		384
+#define __SCREEN_WIDTH		384
 
 // screen height in pixels
-#define __SCREENHEIGHT		224
+#define __SCREEN_HEIGHT		224
 
 // z position of the screen
 #define __ZZERO				0
@@ -43,16 +43,16 @@
 #define __ZLOWLIMIT 		-200
 
 // distance from player's eyes to the virtual screen
-#define __DISTANCEEYESCREEN		384
+#define __DISTANCE_EYE_SCREEN		384
 
 // maximun view distance (deep)
-#define __MAXVIEWDISTANCE		512
+#define __MAX_VIEW_DISTANCE		512
 // always use a power of 2 as the maximun view distance, and update
 // the number of bits to make projection faster
-#define __MAXVIEWDISTANCE_POW	9
+#define __MAX_VIEW_DISTANCE_POW	9
 
 //distance between eyes
-#define __BASEFACTOR			768
+#define __BASE_FACTOR			768
 
 // player's eyes's horizontal position
 #define __HVPC					192
@@ -61,7 +61,7 @@
 #define __VVPC					112
 
 // zoom factor to distortoine zooming
-#define __ZOOMFACTOR			0.2f
+#define __ZOOM_FACTOR			0.2f
 
 // floor's y position
 #define __FLOOR 				224-8*3
@@ -104,10 +104,10 @@
 
 //you will hardly have more than ten mapcharacters in affine mode  
 //on screen at once
-#define	__TOTALPARAMOBJECTS 32
+#define	__TOTAL_PARAM_OBJECTS 32
 
 //seconds that must elapse to call rest state... in seconds (15 minutes)
-#define __RESTDELAY 		900
+#define __REST_DELAY 		900
 
 
 
@@ -225,7 +225,7 @@
 /* Number of the power of 2 to multiply by the number
  * of rows of a given bgmap to allocate space
  */
-#define __PARAMSPACEFACTOR	1
+#define __PARAM_SPACE_FACTOR	1
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -241,7 +241,7 @@
 #define __ENTITIES_PER_STAGE	128
 
 //padd to determine if a character must be loaded
-#define __ENTITY_LOAD_PAD		30
+#define __ENTITY_LOAD_PAD		40
 
 // number of sprites per entity
 #define __MAX_SPRITES_PER_ENTITY 4
@@ -263,14 +263,11 @@
 #define __GRAVITY_WORLD
 
 //physical friction
-#define __NOFRICTION 		0.0f
-#define __FLOORFRICTION 	10.0f
-#define __AIRFRICTION 		50.0f
-#define __ICEFRICTION 		0.03f
-#define __WATERFRICTION 	1.5f
+#define __NO_FRICTION 		0.0f
+#define __FLOOR_FRICTION 	10.0f
+#define __AIR_FRICTION 		50.0f
 
 #define __GRAVITY			980
-//#define __GRAVITY			9.8f
 
 #define __MAX_SHAPES_PER_LEVEL		32
 #define __MAX_BODIES_PER_LEVEL		32
@@ -297,7 +294,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __TOTALSOUNDS	(__BGMS + __FXS)
+#define __TOTAL_SOUNDS	(__BGMS + __FXS)
 #define __LEFT_EAR_CENTER		96
 #define __RIGHT_EAR_CENTER	288
 

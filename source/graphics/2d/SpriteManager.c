@@ -46,7 +46,7 @@
 	Object_ATTRIBUTES;							\
 												\
 	/* list of sprites to render */				\
-	Sprite sprites[__OBJECTLISTTAM];			\
+	Sprite sprites[__SPRITE_LIST_SIZE];			\
 												\
 	/* next world layer	*/						\
 	int freeLayer;								\
@@ -122,7 +122,7 @@ void SpriteManager_reset(SpriteManager this){
 
 	int i = 0;
 	
-	for ( i = 0; i < __OBJECTLISTTAM; i++){
+	for ( i = 0; i < __SPRITE_LIST_SIZE; i++){
 		
 		this->sprites[i] = NULL;
 	}
@@ -142,12 +142,12 @@ void SpriteManager_sortAllLayers(SpriteManager this){
 	int i = 0;
 
 	CACHE_ENABLE;
-	for(i = 0; i < __OBJECTLISTTAM - 1 &&  this->sprites[i + 1]; i++){
+	for(i = 0; i < __SPRITE_LIST_SIZE - 1 &&  this->sprites[i + 1]; i++){
 
 		DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[i]);
 
 		int j = 0;
-		for(j = i + 1;j < __OBJECTLISTTAM &&  this->sprites[j]; j++){
+		for(j = i + 1;j < __SPRITE_LIST_SIZE &&  this->sprites[j]; j++){
 
 			DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[j]);
 
@@ -199,7 +199,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 	DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[0]);
 
 	CACHE_ENABLE;
-	for(;i < __OBJECTLISTTAM - 1 &&  this->sprites[i + 1]; i++){
+	for(;i < __SPRITE_LIST_SIZE - 1 &&  this->sprites[i + 1]; i++){
 
 		DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[i + 1]);
 
@@ -235,7 +235,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 	}
 	CACHE_DISABLE;
 	
-	if(!(i < __OBJECTLISTTAM - 1 &&  this->sprites[i + 1])){
+	if(!(i < __SPRITE_LIST_SIZE - 1 &&  this->sprites[i + 1])){
 
 		this->needSorting = false;
 	}
@@ -249,9 +249,9 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	int i = 0;
 	
 	// find the last render object's index
-	for(; this->sprites[i] && i < __OBJECTLISTTAM; i++);
+	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++);
 	
-	if(i < __OBJECTLISTTAM){
+	if(i < __SPRITE_LIST_SIZE){
 		
 		//SpriteManager_alignSameLayerSprites(this, sprite);
 
@@ -284,15 +284,15 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	CACHE_ENABLE;
 	
 	// search for the entity to remove
-	for(; this->sprites[i] != sprite && i < __OBJECTLISTTAM; i++);
+	for(; this->sprites[i] != sprite && i < __SPRITE_LIST_SIZE; i++);
 
 	// if found
-	if(i < __OBJECTLISTTAM){
+	if(i < __SPRITE_LIST_SIZE){
 		
 		int j = i;
 		// must render the whole entities after the entity to be removed twice
 		// to avoid flickering
-		for(; this->sprites[j + 1] && j < __OBJECTLISTTAM - 1; j++){
+		for(; this->sprites[j + 1] && j < __SPRITE_LIST_SIZE - 1; j++){
 			
 			this->sprites[j] = this->sprites[j + 1];
 			
@@ -345,7 +345,7 @@ void SpriteManager_render(SpriteManager this){
 
 	int i = 0;
 	
-	for(i = 0; this->sprites[i] && i < __OBJECTLISTTAM; i++){
+	for(i = 0; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++){
 		
 		//render sprite	
 		Sprite_render((Sprite)this->sprites[i]);
@@ -368,7 +368,7 @@ void SpriteManager_showLayer(SpriteManager this, int layer) {
 	ASSERT(this, "SpriteManager::showLayer: null this");
 
 	int i = 0;
-	for(; this->sprites[i] && i < __OBJECTLISTTAM; i++){
+	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++){
 		
 		if(Sprite_getWorldLayer(this->sprites[i]) != layer) {
 			
@@ -388,7 +388,7 @@ void SpriteManager_recoverLayers(SpriteManager this) {
 	ASSERT(this, "SpriteManager::recoverLayers: null this");
 
 	int i = 0;
-	for(; this->sprites[i] && i < __OBJECTLISTTAM; i++){
+	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++){
 		
 		Sprite_show(this->sprites[i]);
 	}
@@ -401,9 +401,9 @@ void SpriteManager_print(SpriteManager this, int x, int y){
 	ASSERT(this, "SpriteManager::print: null this");
 
 	int spritesCount = 0;
-	for(;this->sprites[spritesCount] && spritesCount < __OBJECTLISTTAM; spritesCount++);
+	for(;this->sprites[spritesCount] && spritesCount < __SPRITE_LIST_SIZE; spritesCount++);
 
-	Printing_text("SPRITE'S USAGE", x, y++);
+	Printing_text("SPRITES' USAGE", x, y++);
 	Printing_text("Sprites count: ", x, ++y);
 	Printing_int(spritesCount, x + 15, y);
 	Printing_text("Free layers: ", x, ++y);

@@ -170,7 +170,7 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this){
 				CharGroup_setCharDefinition(auxCharGroup, charDefinition);
 				
 				// must update the whole world layer in the next render cicle
-				this->renderFlag = __UPDATEHEAD;				
+				this->renderFlag = __UPDATE_HEAD;				
 			}
 			
 			break;

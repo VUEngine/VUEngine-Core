@@ -830,7 +830,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			myLowGap = this->gap.left;
 			myHighGap = this->gap.right;
 			
-			screenSize = __SCREENWIDTH;
+			screenSize = __SCREEN_WIDTH;
 			
 			break;
 			
@@ -847,7 +847,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			myLowGap = this->gap.up;
 			myHighGap = this->gap.down;
 			
-			screenSize = __SCREENHEIGHT * 100;
+			screenSize = __SCREEN_HEIGHT * 100;
 			break;
 			
 		case __ZAXIS:
@@ -858,7 +858,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			myHalfSize = (InGameEntity_getDeep((InGameEntity)this) >> 1);
 			otherHalfSize = (InGameEntity_getDeep(entity) >> 1);
 			
-			screenSize = __MAXVIEWDISTANCE;
+			screenSize = __MAX_VIEW_DISTANCE;
 			break;			
 	}
 	

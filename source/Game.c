@@ -464,13 +464,13 @@ static void Game_setOpticalGlobals(Game this){
 	
 	ASSERT(this, "Game::setOpticalGlobals: null this");
 
-	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCEEYESCREEN);
+	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
 	
 	//maximun distance from the _SC to the infinite	
-	this->optical.maximunViewDistance = ITOFIX19_13(__MAXVIEWDISTANCE);
+	this->optical.maximunViewDistance = ITOFIX19_13(__MAX_VIEW_DISTANCE);
 	
 	//distance from left to right eye (128) (deep sensation)	
-	this->optical.baseDistance = ITOFIX19_13(__BASEFACTOR);
+	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);
 	
 	//horizontal View point center (192)
 	this->optical.horizontalViewPointCenter = ITOFIX19_13(__HVPC);
@@ -722,4 +722,12 @@ void Game_setOptical(Game this, Optical optical) {
 
 	this->optical = optical;
 }
+
+
+#ifdef __DEBUG_TOOLS
+int Game_isInDebugMode(Game this){
+		
+	return StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance();
+}
+#endif
 

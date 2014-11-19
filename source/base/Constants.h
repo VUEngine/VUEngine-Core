@@ -62,28 +62,13 @@
 //movement type
 #define	__UNIFORM_MOVEMENT		0x00
 #define	__ACCELERATED_MOVEMENT	0x01
-#define	__UNIFORMMOVE	0x00
-#define	__ACCELMOVEX	0x01
-#define	__ACCELMOVEY	0x02
-#define	__ACCELMOVEZ	0x04
-#define	__RETARMOVEX	0x10
-#define	__RETARMOVEY	0x20
-#define	__RETARMOVEZ	0x40
 
 //state of movement
 #define __ACTIVE 		(int)0x1
 #define __PASSIVE		(int)0x0
 
-//rendering order
-#define __FORWARD		0x01
-#define __BACKWARD		0x02
-
 //number of possible colliding objects
-#define __OBJECTLISTTAM			32
-//displacement increment to align to a colliding object
-#define __COLLISIONDISP 		0.5f
-#define __COLLISIONDISPY		2
-#define __COLLISIONMULTIPLIER	2
+#define __SPRITE_LIST_SIZE			32
 
 
 /*-----------------------------posible directions--------------------------*/
@@ -93,13 +78,6 @@
 #define __DOWN		 ((int)1)
 #define __NEAR		 ((int)-1)
 #define __FAR		 ((int)1)
-
-//Collision types
-#define __NOCOLLISION		0x00
-#define __NORMALCOLLISION	0x01
-#define __INSIDEOBJECTX		0x02
-#define __INSIDEOBJECTY		0x03
-
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -112,30 +90,10 @@
  */
 
 //left buffer base addresses
-#define __LEFTBUFFER1 (u32)0x00000000
-#define __LEFTBUFFER2 (u32)0x00008000
+#define __LEFT_BUFFER_1 (u32)0x00000000
 
 //right buffer base address
-#define __RIGHTBUFFER1 (u32)0x00010000
-#define __RIGHTBUFFER2 (u32)0x00018000
-
-//maximun number of solids being rendered
-#define __MAXSOLIDS		16
-
-//maximun number of vertex per polygon
-#define __MAXVERTEXS	4
-
-//maximun number of polygons per solid
-#define __MAXPOLYS		16
-
-
-/*-------------------------Collision logic results--------------------------*/
-#define __STOPMOVEMENT		0x01
-#define __NOUPDATEXPOSITION	0x02
-#define __NOUPDATEYPOSITION	0x04
-#define __NOUPDATEZPOSITION	0x08
-#define __NOSTOPMOVEMENT	0x10
-#define __NOTALIGN			0x20
+#define __RIGHT_BUFFER_1 (u32)0x00010000
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -195,57 +153,7 @@
 
 // max number of animation functions per description
 #define __MAX_ANIMATION_FUNCTIONS				32
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 										IN GAME OBJECT TYPES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-//define an object type
-//don't override this values with another in game type
-#define __NOSOLID		1
-#define __SOLID			2
-#define __TRANSPARENT	3
-
-/*--------------------------general object's types-------------------------*/
-#define __NOTYPE	 	(int)0
-#define __CHARACTER 	(int)1
-#define __OBJCHARACTER	(int)2
-#define __SCROLL 		(int)3
-#define __TEXTBOX 		(int)4
-#define __BACKGROUND	(int)5
-
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 										GAME ENGINE'S STATES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-//masks to define the kind of state 
-#define __MASK_PAUSE_ST		(int)0x0080
-#define __MASK_RUNNING_ST	(int)0x8000
-
-//game engine's states
-#define __PRECAUTION_ST	(int)0x0000
-#define __INITFOCUS_ST	(int)0x0001
-#define __VBJAE_ST		(int)0x0002
-#define __CREDITS_ST	(int)0x0003
-#define __RESUME_ST		(int)0x0004
-#define __REST_ST		(int)0x0005
-#define __AUTOPAUSE_ST	(int)0x0006
-
-/* mask every pause state with 0x0080 in order
- * to always preserve the gameplay gameworld
- */
-#define __PAUSE_ST		((int)0x0000 | __MASK_PAUSE_ST)
-#define __OPTIONS_ST	((int)0x0001 | __MASK_PAUSE_ST)
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -302,11 +210,11 @@ enum MessagesTypes{
  */
 
 
-#define __UPDATEHEAD	0x0F
-#define __UPDATEG		0x01
-#define __UPDATEPARAM	0x02
-#define __UPDATESIZE	0x04
-#define __UPDATEM		0x08
+#define __UPDATE_HEAD	0x0F
+#define __UPDATE_G		0x01
+#define __UPDATE_PARAM	0x02
+#define __UPDATE_SIZE	0x04
+#define __UPDATE_M		0x08
 
 
 /* ---------------------------------------------------------------------------------------------------------

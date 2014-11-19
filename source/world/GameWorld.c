@@ -106,8 +106,8 @@ static void GameWorld_constructor(GameWorld this){
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
-	this->friction = __AIRFRICTION;
-	this->floorFriction = __FLOORFRICTION;
+	this->friction = __AIR_FRICTION;
+	this->floorFriction = __FLOOR_FRICTION;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

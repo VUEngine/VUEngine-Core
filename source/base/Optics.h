@@ -91,7 +91,7 @@ inline extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* 
 						                     _optical->horizontalViewPointCenter - position3D->x, 
 						                     position3D->z
 						                  ) 
-						     >> __MAXVIEWDISTANCE_POW
+						     >> __MAX_VIEW_DISTANCE_POW
 						 );
 
 	position2D->y = position3D->y -
@@ -100,7 +100,7 @@ inline extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* 
 						    		           position3D->y - _optical->verticalViewPointCenter, 
 						    		           position3D->z
 						    		       )
-						      >> __MAXVIEWDISTANCE_POW
+						      >> __MAX_VIEW_DISTANCE_POW
 						);
 	
 }
@@ -117,7 +117,7 @@ inline static void vbjProjectTo2D(VBVec2D* position2D, const VBVec3D* const posi
 						                     _optical->horizontalViewPointCenter - position3D->x, 
 						                     position3D->z
 						                 ) 
-						     >> __MAXVIEWDISTANCE_POW
+						     >> __MAX_VIEW_DISTANCE_POW
 						 )
 					);
 
@@ -127,7 +127,7 @@ inline static void vbjProjectTo2D(VBVec2D* position2D, const VBVec3D* const posi
 						    		           position3D->y - _optical->verticalViewPointCenter, 
 						    		           position3D->z
 						    		       )
-						      >> __MAXVIEWDISTANCE_POW
+						      >> __MAX_VIEW_DISTANCE_POW
 						)
 					);
 	
@@ -204,7 +204,7 @@ inline extern  int Optics_isInsidePlayableArea(VBVec3D position, int cols, int r
 inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13 height, fix19_13 parallax, fix19_13 pad){
 	
 	fix19_13 xLowLimit = 0 - (fix19_13)parallax - pad;
-	fix19_13 xHighLimit = ITOFIX19_13(__SCREENWIDTH) + (fix19_13)parallax + pad;
+	fix19_13 xHighLimit = ITOFIX19_13(__SCREEN_WIDTH) + (fix19_13)parallax + pad;
 	
 	VBVec2D position2D;
 		
@@ -222,7 +222,7 @@ inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13
 		
 		
 		// check y visibility
-		//if(position2D.y - height <= __SCREENHEIGHT + pad && (position2D.y + height >= 0 - pad)){
+		//if(position2D.y - height <= __SCREEN_HEIGHT + pad && (position2D.y + height >= 0 - pad)){
 		
 			// check z visibility
 			//if(position3D.z >= _screenPosition->z && position3D.z < _screenPosition->z + ITOFIX19_13(Stage_getSize(Game_getStage(Game_getInstance())).z)){

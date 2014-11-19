@@ -267,7 +267,7 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
 	
-	this->renderFlag |= __UPDATEG;
+	this->renderFlag |= __UPDATE_G;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +306,7 @@ void Sprite_setRenderFlag(Sprite this, int renderFlag){
 
 	// do not override it the whole world entry must be updated in the
 	// next render
-	if(__UPDATEHEAD != this->renderFlag || !renderFlag) {
+	if(__UPDATE_HEAD != this->renderFlag || !renderFlag) {
 		
 		this->renderFlag = renderFlag;
 	}
@@ -316,7 +316,7 @@ void Sprite_setRenderFlag(Sprite this, int renderFlag){
 // show
 void Sprite_show(Sprite this){
 	
-	this->renderFlag |= __UPDATEHEAD | __UPDATEG | __UPDATEM | __UPDATESIZE | __UPDATEPARAM;
+	this->renderFlag |= __UPDATE_HEAD | __UPDATE_G | __UPDATE_M | __UPDATE_SIZE | __UPDATE_PARAM;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,7 +345,7 @@ void Sprite_render(Sprite this){
 		
 		DrawSpec drawSpec = this->drawSpec;
 
-		if(__UPDATEHEAD == this->renderFlag){
+		if(__UPDATE_HEAD == this->renderFlag){
 			
 			//create an independant of software variable to point XPSTTS register
 			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
@@ -360,7 +360,7 @@ void Sprite_render(Sprite this){
 		}
 		
 		//set the world screen position
-		if(this->renderFlag & __UPDATEG ){
+		if(this->renderFlag & __UPDATE_G ){
 
 			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
 		}
@@ -378,7 +378,7 @@ void Sprite_render(Sprite this){
 				this->updateParamTable = false;
 			}
 			
-			if(this->renderFlag & __UPDATESIZE){
+			if(this->renderFlag & __UPDATE_SIZE){
 		
 				WORLD_SIZE(this->worldLayer, 
 						(Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,						
@@ -387,7 +387,7 @@ void Sprite_render(Sprite this){
 			}
 			
 			//set the world paralax
-			if(this->renderFlag & __UPDATEPARAM){
+			if(this->renderFlag & __UPDATE_PARAM){
 				
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));				
 			}
@@ -395,12 +395,12 @@ void Sprite_render(Sprite this){
 		}
 		else{
 			
-			if(this->renderFlag & __UPDATESIZE){
+			if(this->renderFlag & __UPDATE_SIZE){
 				
 				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
 			}
 			
-			if(this->renderFlag & __UPDATEM){
+			if(this->renderFlag & __UPDATE_M){
 				
 				//set the world cuting bgmap memory point
 				WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
@@ -443,7 +443,7 @@ void Sprite_setWorldLayer(Sprite this, int worldLayer){
 	
 		this->worldLayer = worldLayer;
 	
-		this->renderFlag = __UPDATEHEAD;
+		this->renderFlag = __UPDATE_HEAD;
 	}
 }
 
@@ -490,7 +490,7 @@ void Sprite_invalidateParamTable(Sprite this){
 	ASSERT(this, "Sprite::invalidateParamTable: null this");
 
 	this->updateParamTable = true;
-	this->renderFlag |= __UPDATESIZE | __UPDATEPARAM;
+	this->renderFlag |= __UPDATE_SIZE | __UPDATE_PARAM;
 }
 
 
@@ -508,7 +508,7 @@ void Sprite_resetMemoryState(Sprite this){
 	}
 	
 	//allow to render
-	//this->renderFlag = __UPDATEHEAD;
+	//this->renderFlag = __UPDATE_HEAD;
 	
 	// write it in graphical memory
 	Texture_resetMemoryState(this->texture);

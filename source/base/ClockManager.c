@@ -173,8 +173,16 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     	
     		FrameRate frameRate = FrameRate_getInstance();
 #ifdef __DEBUG
-//	    	FrameRate_print(frameRate, 0, 23);
+	    	FrameRate_print(frameRate, 0, 1);
 #endif
+#ifdef __DEBUG_TOOLS
+	    	
+	    	if(!Game_isInDebugMode(Game_getInstance())) {
+	    		
+	    		FrameRate_print(frameRate, 0, 1);
+	    	}
+#endif	    	
+	    	
 	    	if(FrameRate_areFPSHigh(frameRate)) {
 	    		
 	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);

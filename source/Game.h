@@ -130,4 +130,8 @@ Optical Game_getOptical(Game this);
 // set optical config structure
 void Game_setOptical(Game this, Optical optical);
 
+#ifdef __DEBUG_TOOLS
+int Game_isInDebugMode(Game this);
+#endif
+
 #endif /*GAMEENGINE_H_*/

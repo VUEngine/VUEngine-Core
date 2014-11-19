@@ -63,10 +63,6 @@ void Printing_text(char *string,int x,int y);
 // print a float
 void Printing_float(float value,int x,int y);
 
-extern const u16 ASCII_CH[];
-
-int vbjDigitCount(int value);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

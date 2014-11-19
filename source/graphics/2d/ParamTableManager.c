@@ -52,7 +52,7 @@
 	int used;									\
 												\
 	/* allocated objects */						\
-	Sprite sprites[__TOTALPARAMOBJECTS];
+	Sprite sprites[__TOTAL_PARAM_OBJECTS];
 	
 __CLASS_DEFINITION(ParamTableManager);
 
@@ -114,7 +114,7 @@ void ParamTableManager_reset(ParamTableManager this){
 	int i = 0;
 
 	// clear the usage
-	for(;i < __TOTALPARAMOBJECTS; i++){
+	for(;i < __TOTAL_PARAM_OBJECTS; i++){
 
 		this->sprites[i] = NULL;
 	}
@@ -136,7 +136,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 	
 	//calculate necesary space to allocate	
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row
-	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAMSPACEFACTOR));
+	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
 
 	//if there is space in the param table, allocate
 	if(PARAM((this->used + size)) < __PARAMEND){
@@ -170,9 +170,9 @@ static void ParamTableManager_setObject(ParamTableManager this, Sprite sprite){
 	int i = 0;
 	
 	// search for and empty slot
-	for(; i < __TOTALPARAMOBJECTS && this->sprites[i]; i++);
+	for(; i < __TOTAL_PARAM_OBJECTS && this->sprites[i]; i++);
 	
-	ASSERT(i < __TOTALPARAMOBJECTS, "ParamTableManager::setObject: total param objects depleted");
+	ASSERT(i < __TOTAL_PARAM_OBJECTS, "ParamTableManager::setObject: total param objects depleted");
 
 	// record sprite
 	this->sprites[i] = sprite;
@@ -191,7 +191,7 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 	
 	//calculate necesary space to allocate	
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row
-	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAMSPACEFACTOR));
+	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
 
 	//recover space
 	this->used -= size;
@@ -202,7 +202,7 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 	 * point.
 	 */
 
-	for(i = 0; i < __TOTALPARAMOBJECTS; i++){
+	for(i = 0; i < __TOTAL_PARAM_OBJECTS; i++){
 		
 		// if there is a defined sprite
 		if(this->sprites[i]){

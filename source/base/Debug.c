@@ -229,9 +229,9 @@ static void Debug_setupPages(Debug this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void Debug_dimmGame(Debug this){
 	
-	VIP_REGS[GPLT0] = 0b01010100;	/* Set all eight palettes to: 11100100 */
-	VIP_REGS[GPLT1] = 0b01010100;	/* (i.e. "Normal" dark to light progression.) */
-	VIP_REGS[GPLT2] = 0b01010100;
+	VIP_REGS[GPLT0] = 0b01010101;	/* Set all eight palettes to: 11100100 */
+	VIP_REGS[GPLT1] = 0b01010101;	/* (i.e. "Normal" dark to light progression.) */
+	VIP_REGS[GPLT2] = 0b01010101;
 	VIP_REGS[GPLT3] = __GPLT3VALUE;
 	VIP_REGS[JPLT0] = __JPLT0VALUE;
 	VIP_REGS[JPLT1] = __JPLT1VALUE;
@@ -497,8 +497,8 @@ static void Debug_charMemoryShowMemory(Debug this, int x, int y) {
 	
 		Mem_add((u8*)BGMap(__PRINTING_BGMAP) + (((yOffset << 6) + (i << 6)) << 1),
 				(const u8*)CHAR_MEMORY_MP, 
-				__SCREENWIDTH >> 3,
-				(this->charSeg << 9) + i * (__SCREENWIDTH >> 3));
+				__SCREEN_WIDTH >> 3,
+				(this->charSeg << 9) + i * (__SCREEN_WIDTH >> 3));
 	}
 }
 
@@ -532,7 +532,7 @@ static void Debug_showDebugLayer(Debug this){
 	WORLD_HEAD(__TOTAL_LAYERS, WRLD_ON | this->currentBgmap);
 	WORLD_MSET(__TOTAL_LAYERS, this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
 	WORLD_GSET(__TOTAL_LAYERS, 0, 0, 0);
-	WORLD_SIZE(__TOTAL_LAYERS, __SCREENWIDTH, __SCREENHEIGHT);
+	WORLD_SIZE(__TOTAL_LAYERS, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

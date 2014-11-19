@@ -151,10 +151,10 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 	Object_ATTRIBUTES;								\
 													\
 	/* actual note of each sound being played*/		\
-	int actualNote[__TOTALSOUNDS];					\
+	int actualNote[__TOTAL_SOUNDS];					\
 													\
 	/* note delay for each sound being played */	\
-	BYTE noteWait[__TOTALSOUNDS];					\
+	BYTE noteWait[__TOTAL_SOUNDS];					\
 													\
 	/* background music */							\
 	u16 (*bgm)[__BGM_CHANNELS];						\
@@ -210,7 +210,7 @@ static void SoundManager_constructor(SoundManager this){
 		int i = 0;
 		
 		// reset all records
-		for(i = 0; i < __TOTALSOUNDS; i++){
+		for(i = 0; i < __TOTAL_SOUNDS; i++){
 			
 			this->noteWait[i] = 0;
 			this->actualNote[i] = 0;
@@ -227,7 +227,7 @@ static void SoundManager_constructor(SoundManager this){
 		}
 		
 		//determine the step for each sound level according to the maximun view distance
-		this->zFactor = __MAXVIEWDISTANCE / 15;
+		this->zFactor = __MAX_VIEW_DISTANCE / 15;
 		
 		//divide here to multiply in runtime
 		this->zFactor = 1 / this->zFactor;

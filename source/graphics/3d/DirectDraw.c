@@ -140,10 +140,10 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	dy <<= 1;
 	dx <<= 1;
 
-	if(((unsigned)(fromPoint.x) < __SCREENWIDTH) && ((unsigned)(fromPoint.y) < __SCREENHEIGHT)){
+	if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT)){
 	
-		DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - parallax, fromPoint.y, pallet);
-		DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + parallax, fromPoint.y, pallet);
+		DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
+		DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
 	}
 	
 	int counter = 0;
@@ -167,10 +167,10 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 			
 			parallax += parallaxStep;
 			
-			if(((unsigned)(fromPoint.x) < __SCREENWIDTH) && ((unsigned)(fromPoint.y) < __SCREENHEIGHT)){                
+			if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT)){                
 				
-				DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - parallax, fromPoint.y, pallet);
-				DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
 			}
 		}
 		
@@ -195,10 +195,10 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 			
 			parallax += parallaxStep;
 			
-			if(((unsigned)(fromPoint.x) < __SCREENWIDTH)&&((unsigned)(fromPoint.y) < __SCREENHEIGHT)){
+			if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT)){
 				
-				DirectDraw_putPixel(this, __LEFTBUFFER1, fromPoint.x - parallax, fromPoint.y, pallet);
-				DirectDraw_putPixel(this, __RIGHTBUFFER1, fromPoint.x + parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
 			}
 		}
 	}

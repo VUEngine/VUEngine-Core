@@ -161,7 +161,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	// get the number of "screens" from the beginnig of the world
 	// to the actual screen's position
-	screens = FIX19_13TOI(screenPosition.x) / __SCREENWIDTH;
+	screens = FIX19_13TOI(screenPosition.x) / __SCREEN_WIDTH;
 	
 	// check if the number of screens is divisible by 2
 	//if(!(screens & 2)1 == 0 && screens != 0){
@@ -169,7 +169,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	if(screens){
 		
-		displacement -= ( screens - 1) * __SCREENWIDTH;
+		displacement -= ( screens - 1) * __SCREEN_WIDTH;
 
 		if(!(screens & 1)){	
 			
@@ -178,11 +178,11 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 		}
 	}
 	
-	axis = __SCREENWIDTH * factor - displacement;
+	axis = __SCREEN_WIDTH * factor - displacement;
 	
-	if((unsigned)axis <= __SCREENWIDTH){
+	if((unsigned)axis <= __SCREEN_WIDTH){
 		
-		drawSpec0.position.x = ITOFIX19_13(axis - __SCREENWIDTH);
+		drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH);
 		
 		drawSpec1.position.x = ITOFIX19_13(axis);
 	}
@@ -192,13 +192,13 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 			
 			drawSpec1.position.x = ITOFIX19_13(axis);
 			
-			drawSpec0.position.x = drawSpec1.position.x + ITOFIX19_13(__SCREENWIDTH);
+			drawSpec0.position.x = drawSpec1.position.x + ITOFIX19_13(__SCREEN_WIDTH);
 		}
 		else{
 			
-			drawSpec0.position.x = ITOFIX19_13(axis - __SCREENWIDTH - 1);
+			drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH - 1);
 			
-			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREENWIDTH - 1);
+			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREEN_WIDTH - 1);
 		}
 	}
 	
@@ -208,10 +208,10 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 
 	// set map's position
 	Sprite_setDrawSpec(this->scrollSprites[kRightSprite], &drawSpec0);
-	Sprite_setRenderFlag(this->scrollSprites[kRightSprite], __UPDATEG);
+	Sprite_setRenderFlag(this->scrollSprites[kRightSprite], __UPDATE_G);
 	
 	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);	
-	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATEG);
+	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATE_G);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

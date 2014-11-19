@@ -194,10 +194,10 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int wid
 	ASSERT(this, "Stage::inLoadRange: null this");
 
 	fix19_13 xLowLimit = ITOFIX19_13(-(width));
-	fix19_13 xHighLimit = ITOFIX19_13(__SCREENWIDTH + (width));
+	fix19_13 xHighLimit = ITOFIX19_13(__SCREEN_WIDTH + (width));
 
 	fix19_13 yLowLimit = ITOFIX19_13(-(height));
-	fix19_13 yHighLimit = ITOFIX19_13(__SCREENHEIGHT + (height));
+	fix19_13 yHighLimit = ITOFIX19_13(__SCREEN_HEIGHT + (height));
 
 	VBVec2D position2D;
 	
@@ -450,7 +450,8 @@ void Stage_stream(Stage this){
 	// if the screen is moving
 	if(*((u8*)_screenMovementState)){
 
-		static int load = __LOGIC_FPS >> 1;
+		static int load = 4;
+//		static int load = __LOGIC_FPS >> 1;
 			
 		if(!--load){
 
