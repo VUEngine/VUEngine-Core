@@ -234,21 +234,21 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print param table's attributes state
-void ParamTableManager_print(ParamTableManager this,int x, int y){
+void ParamTableManager_print(ParamTableManager this, int x, int y){
 	
 	ASSERT(this, "ParamTableManager::print: null this");
 
 	int i = 0;
 	
-	Printing_text("Size:", x, y);
-	
-	Printing_int(this->size, x + 6,y);
+	Printing_text("PARAM TABLE'S STATUS", x, y++);
+	Printing_text("Size:", x, ++y);
+	Printing_int(this->size, x + 6, y);
 	
 	Printing_text("Used:", x, y + 1);
-	
 	Printing_int(this->used, x + 6, y + 1);
 	
 	for(i = 0; i < 10; i++){
+
 		Printing_hex((int)this->sprites[i], x, y + i + 3);
 		//printInt((int)this->sprites[i]->param,x+10,y+i+3);
 	}

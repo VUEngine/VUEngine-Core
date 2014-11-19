@@ -199,7 +199,6 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes){
 	if (i >= numberOfOjects){
 	
 		MemoryPool_printMemUsage(this, 1, 3);
-		Game_printClassSizes(20, 3);
 		ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 #endif
@@ -347,10 +346,10 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y){
 	int pool;
 	int displacement = 0;
 	
-	Printing_text("MEMORY USAGE",x,y++);
-	Printing_text( "POOL",  x,y);
-	Printing_text( "FREE",   x + 7,y);
-	Printing_text( "USED",  x+ 14,y);
+	Printing_text("MEMORY'S STATUS",x,y++);
+	Printing_text("Pool", x, ++y);
+	Printing_text("Free", x + 7, y);
+	Printing_text("Used", x + 14, y);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++){
 		
@@ -366,8 +365,8 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y){
 		
 		Printing_text(Utilities_itoa(this->poolSizes[pool][eBlockSize],10,0) ,  x, ++y);
 		Printing_int(this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - counter, x +7, y);
-		Printing_text("      ", x +14, y);
-		Printing_int(counter, x +14, y);
+		Printing_text("      ", x + 14, y);
+		Printing_int(counter, x + 14, y);
 		counter = 0 ;
 	}
 }

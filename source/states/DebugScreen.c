@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#ifdef __DEBUG
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -27,35 +29,11 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <ClockManager.h>
-#include <FrameRate.h>
+#include <DebugScreen.h>
+#include <Debug.h>
 #include <Game.h>
-#include <SoundManager.h>
-#include <HardwareManager.h>
-#include <MessageDispatcher.h>
+#include <Telegram.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-#define ClockManager_ATTRIBUTES				\
-											\
-	/* super's attributes */				\
-	Object_ATTRIBUTES;						\
-											\
-	/* register clocks */					\
-	VirtualList clocks;						\
-											\
-	/* */									\
-	u32 ticks;
-
-// define the manager
-__CLASS_DEFINITION(ClockManager);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -66,8 +44,64 @@ __CLASS_DEFINITION(ClockManager);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-//class's constructor
-static void ClockManager_constructor(ClockManager this);
+static void DebugScreen_destructor(DebugScreen this);
+
+// class's constructor
+static void DebugScreen_constructor(DebugScreen this);
+
+// state's enter
+static void DebugScreen_enter(DebugScreen this, void* owner);
+
+// state's execute
+static void DebugScreen_execute(DebugScreen this, void* owner);
+
+// state's enter
+static void DebugScreen_exit(DebugScreen this, void* owner);
+
+// state's execute
+static void DebugScreen_pause(DebugScreen this, void* owner){}
+
+// state's execute
+static void DebugScreen_resume(DebugScreen this, void* owner){}
+
+// state's on message
+static int DebugScreen_handleMessage(DebugScreen this, void* owner, Telegram telegram);
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 											DECLARATIONS
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+extern const u16 ASCII_CH[];
+extern State __CONCAT(START_LEVEL, _getInstance)();
+
+enum Screens {
+	kPvbScreen = 0,
+	kPrecautionScreen,
+	kVbJaeScreen,
+	kDebugExitScreen
+};
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 											CLASS'S DEFINITION
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+#define DebugScreen_ATTRIBUTES			\
+										\
+	/* inherits */						\
+	State_ATTRIBUTES					\
+
+
+
+__CLASS_DEFINITION(DebugScreen);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -79,134 +113,71 @@ static void ClockManager_constructor(ClockManager this);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// ClockManager.c
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-__SINGLETON(ClockManager);
+// it's a singleton
+__SINGLETON(DebugScreen);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void ClockManager_constructor(ClockManager this){
-	
-	__CONSTRUCT_BASE(Object);
-
-	// create the clock list
-	this->clocks = NULL;
-	
-	this->ticks = 0;
+static void DebugScreen_constructor(DebugScreen this){
+		
+	__CONSTRUCT_BASE(State);
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void ClockManager_destructor(ClockManager this){
+static void DebugScreen_destructor(DebugScreen this){
 	
-	ASSERT(this, "ClockManager::destructor: null this");
-
-	VirtualNode node = VirtualList_begin(this->clocks); 
-	
-	// destroy all registered clocks 
-	for(; node ; node = VirtualNode_getNext(node)){
-		
-		Clock_destructor((Clock)VirtualNode_getData(node));		
-	}
-
-	// clear my liest
-	VirtualList_clear(this->clocks);
-
-	// allow a new construct
-	__SINGLETON_DESTROY(Object);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// register a clock
-void ClockManager_register(ClockManager this, Clock clock){
-	
-	ASSERT(this, "ClockManager::register: null this");
-	
-	if(!this->clocks) {
-		
-		this->clocks = __NEW(VirtualList);
-	}
-	
-	VirtualList_pushFront(this->clocks, clock);	
+	// destroy base
+	__SINGLETON_DESTROY(State);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// remove a clock
-void ClockManager_unregister(ClockManager this, Clock clock){
-
-	ASSERT(this, "ClockManager::unregister: null this");
-		
-	VirtualList_removeElement(this->clocks, clock);
+// state's enter
+static void DebugScreen_enter(DebugScreen this, void* owner){
+	
+	Debug_show(Debug_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// update clocks
-void ClockManager_update(ClockManager this, u32 ticksElapsed){
+// state's execute
+static void DebugScreen_execute(DebugScreen this, void* owner){
 
-	ASSERT(this, "ClockManager::update: null this");
-	ASSERT(this->clocks, "ClockManager::update: null clocks list");
+	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
+}
 
-	u32 previousSecond = this->ticks / __MILISECODS_IN_SECOND;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// state's exit 
+static void DebugScreen_exit(DebugScreen this, void* owner){
+	
+	Debug_hide(Debug_getInstance());
+	Clock_pause(Game_getInGameClock(Game_getInstance()), false);
+}
 
-	if(this->clocks) {
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// state's on message
+static int DebugScreen_handleMessage(DebugScreen this, void* owner, Telegram telegram){
+	
+	// process message
+	switch(Telegram_getMessage(telegram)){
+	
+		case kKeyPressed:	
+			{
+				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 		
-		VirtualNode node = VirtualList_begin(this->clocks);
-		
-		// update all registered clocks 
-		for(; node ; node = VirtualNode_getNext(node)){
-			
-			Clock_update((Clock)VirtualNode_getData(node), ticksElapsed);
-		}
+				if(pressedKey & K_LL){
+					
+					Debug_showPrevious(Debug_getInstance());
+				}
+				else if(pressedKey & K_LR){
+					
+					Debug_showNext(Debug_getInstance());
+				}
+			}
+			break;
 	}
-	
-	// update tick count
-	this->ticks += ticksElapsed;
-	
-    //if second has changed, set frame rate 
-    if(previousSecond != (this->ticks / __MILISECODS_IN_SECOND)){
-    	
-    		FrameRate frameRate = FrameRate_getInstance();
-#ifdef __DEBUG
-//	    	FrameRate_print(frameRate, 0, 23);
+
+	return true;
+}
+
 #endif
-	    	if(FrameRate_areFPSHigh(frameRate)) {
-	    		
-	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
-	    	}
-	    	
-			//reset frame rate counters
-			FrameRate_reset(frameRate);		
-    }	
-    
-    // Play background music 
-    SoundManager_playBGM(SoundManager_getInstance());
-    
-    // Play sound effects 
-    SoundManager_playFxSounds(SoundManager_getInstance());
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// update clocks
-void ClockManager_reset(ClockManager this){
-
-	ASSERT(this, "ClockManager::reset: null this");
-	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
-	
-	VirtualNode node = VirtualList_begin(this->clocks);
-
-	// update all registered clocks 
-	for(; node ; node = VirtualNode_getNext(node)){
-		
-		Clock_reset((Clock)VirtualNode_getData(node));
-	}
-
-	this->ticks = 0;
-}

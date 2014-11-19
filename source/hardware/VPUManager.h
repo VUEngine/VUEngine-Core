@@ -212,6 +212,9 @@ void VPUManager_displayHide(VPUManager this);
 // clear screen
 void VPUManager_clearScreen(VPUManager this);
 
+// clear bgmap
+void VPUManager_clearBgmap(VPUManager this, int bgmap);
+
 // setup default column table
 void VPUManager_setupColumnTable(VPUManager this);
 

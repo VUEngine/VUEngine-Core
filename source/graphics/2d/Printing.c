@@ -229,6 +229,7 @@ void Printing_float(float value,int x,int y){
 	for(i = 0; size; i++){
 		
 		if(decimal < size){
+			
 			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), 0);			
 		}		
 		else{
@@ -245,7 +246,7 @@ void Printing_float(float value,int x,int y){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Printing_text(char *string, int x,int y){
 	
-	Printing_out(__PRINTING_BGMAP, x,y,string, 3);
+	Printing_out(__PRINTING_BGMAP, x, y, string, 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

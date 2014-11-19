@@ -360,3 +360,19 @@ int SpriteManager_getFreeLayer(SpriteManager this){
 
 	return this->freeLayer;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print status
+int SpriteManager_print(SpriteManager this, int x, int y){
+	
+	ASSERT(this, "SpriteManager::print: null this");
+
+	int spritesCount = 0;
+	for(;this->sprites[spritesCount] && spritesCount < __OBJECTLISTTAM; spritesCount++);
+
+	Printing_text("SPRITE'S USAGE", x, y++);
+	Printing_text("Sprites count: ", x, ++y);
+	Printing_int(spritesCount, x + 15, y);
+	Printing_text("Free layers: ", x, ++y);
+	Printing_int(this->freeLayer, x + 15, y);
+}

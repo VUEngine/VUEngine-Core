@@ -115,7 +115,7 @@ static void HardwareManager_constructor(HardwareManager this){
 
 	__CONSTRUCT_BASE(Object);
 	
-	// set ROM wainting to 1 cycle
+	// set ROM waiting to 1 cycle
 	HW_REGS[WCR] |= 0x0001;	
 	
 	this->hwRegisters =	(u8*)0x02000000;
@@ -382,4 +382,92 @@ u16 HardwareManager_readKeypad(HardwareManager this){
 	ASSERT(this, "HardwareManager::readKeypad: null this");
 
 	return KeypadManager_read(this->keypadManager);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print hardware's states
+void HardwareManager_print(HardwareManager this, int x, int y){
+
+	
+	Printing_text("HARDWARE'S STATUS", x, y++);
+	
+	int auxY = y;
+	int xDisplacement = 6;
+
+	Printing_text("   HW_REGS", x, ++auxY);
+	Printing_text("WCR:", x, ++auxY);
+	Printing_hex(HW_REGS[WCR], x + xDisplacement, auxY);
+	Printing_text("CCR:", x, ++auxY);
+	Printing_hex(HW_REGS[CCR], x + xDisplacement, auxY);
+	Printing_text("CCSR:", x, ++auxY);
+	Printing_hex(HW_REGS[CCSR], x + xDisplacement, auxY);
+	Printing_text("CDTR:", x, ++auxY);
+	Printing_hex(HW_REGS[CDTR], x + xDisplacement, auxY);
+	Printing_text("CDRR:", x, ++auxY);
+	Printing_hex(HW_REGS[CDRR], x + xDisplacement, auxY);
+	Printing_text("SDLR:", x, ++auxY);
+	Printing_hex(HW_REGS[SDLR], x + xDisplacement, auxY);
+	Printing_text("SDHR:", x, ++auxY);
+	Printing_hex(HW_REGS[SDHR], x + xDisplacement, auxY);
+	Printing_text("TLR:", x, ++auxY);
+	Printing_hex(HW_REGS[TLR], x + xDisplacement, auxY);
+	Printing_text("THR:", x, ++auxY);
+	Printing_hex(HW_REGS[THR], x + xDisplacement, auxY);
+	Printing_text("TCR:", x, ++auxY);
+	Printing_hex(HW_REGS[TCR], x + xDisplacement, auxY);
+	Printing_text("WCR:", x, ++auxY);
+	Printing_hex(HW_REGS[WCR], x + xDisplacement, auxY);
+	Printing_text("SCR:", x, ++auxY);
+	Printing_hex(HW_REGS[SCR], x + xDisplacement, auxY);
+/*
+#define		0x01
+#define		0x02
+#define		0x10
+#define		0x11
+#define		0x12
+#define	BRTB	0x13
+#define	BRTC	0x14
+#define		0x15
+#define		0x17
+#define			0x18
+#define		0x20
+#define		0x21
+#define			0x22
+*/
+	auxY = y;
+	x += 17;
+	xDisplacement = 8;
+
+	Printing_text("   VIP_REGS", x, ++auxY);
+	Printing_text("INTPND:", x, ++auxY);
+	Printing_hex(VIP_REGS[INTPND], x + xDisplacement, auxY);
+	Printing_text("INTENB:", x, ++auxY);
+	Printing_hex(VIP_REGS[INTENB], x + xDisplacement, auxY);
+	Printing_text("INTCLR:", x, ++auxY);
+	Printing_hex(VIP_REGS[INTCLR], x + xDisplacement, auxY);
+	Printing_text("DPSTTS:", x, ++auxY);
+	Printing_hex(VIP_REGS[DPSTTS], x + xDisplacement, auxY);
+	Printing_text("DPCTRL:", x, ++auxY);
+	Printing_hex(VIP_REGS[DPCTRL], x + xDisplacement, auxY);
+	Printing_text("BRTA:", x, ++auxY);
+	Printing_hex(VIP_REGS[BRTA], x + xDisplacement, auxY);
+	Printing_text("BRTB:", x, ++auxY);
+	Printing_hex(VIP_REGS[BRTB], x + xDisplacement, auxY);
+	Printing_text("BRTC:", x, ++auxY);
+	Printing_hex(VIP_REGS[BRTC], x + xDisplacement, auxY);
+	Printing_text("REST:", x, ++auxY);
+	Printing_hex(VIP_REGS[REST], x + xDisplacement, auxY);
+	Printing_text("FRMCYC:", x, ++auxY);
+	Printing_hex(VIP_REGS[FRMCYC], x + xDisplacement, auxY);
+	Printing_text("CTA:", x, ++auxY);
+	Printing_hex(VIP_REGS[CTA], x + xDisplacement, auxY);
+	Printing_text("XPSTTS:", x, ++auxY);
+	Printing_hex(VIP_REGS[XPSTTS], x + xDisplacement, auxY);
+	Printing_text("XPCTRL:", x, ++auxY);
+	Printing_hex(VIP_REGS[XPCTRL], x + xDisplacement, auxY);
+	Printing_text("VER:", x, ++auxY);
+	Printing_hex(VIP_REGS[VER], x + xDisplacement, auxY);
+	
+//	Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);
+
 }

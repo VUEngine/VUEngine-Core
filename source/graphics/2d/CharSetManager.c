@@ -243,14 +243,27 @@ void CharSetManager_setChars(CharSetManager this, int charSet, int numberOfChars
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print class's attributes's states
-void CharSetManager_print(CharSetManager this, int charSet){
+void CharSetManager_print(CharSetManager this, int x, int y){
 	
 	ASSERT(this, "CharSetManager::print: null this");
 
-	int i=0;
-	for(; i < CHAR_GRP_PER_SEG; i++){
+	Printing_text("CHAR MEMORY'S USAGE", x, y++);
+	Printing_text("CharGroups: ", x, ++y);
+	Printing_int(VirtualList_getSize(this->charGroups), x + 12, y++);
+	y++;
 
-		Printing_hex(this->segment[charSet][i], 0, 1 + i);
+	int charSet = 0;
+	int i = 0;
+	for(; charSet < 4; charSet++){
+
+		Printing_text("CharSeg", x, y);
+		Printing_int(charSet, x + 8, y);
+		for(i = 0; i < CHAR_GRP_PER_SEG && (y + i + 1) < 28; i++){
+
+			Printing_hex(this->segment[charSet][i], x, y + i + 1);
+		}
+		
+		x += 12;
 	}
 }
 
@@ -602,10 +615,10 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
-	int i = 0;
-	for(; i < CHAR_SEGMENTS ; i++){
+	int charSet = 0;
+	for(; charSet < CHAR_SEGMENTS ; charSet++){
 		
-		int freeOffset = CharSetManager_getNextFreeOffset(this, i, 1);
+		int freeOffset = CharSetManager_getNextFreeOffset(this, charSet, 1);
 		
 		if(0 <= freeOffset) {
 
@@ -618,7 +631,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 				
 				CharGroup charGroup = (CharGroup)VirtualNode_getData(charGroupNode);
 				
-				if(CharGroup_getCharSet(charGroup) != i) {
+				if(CharGroup_getCharSet(charGroup) != charSet) {
 					
 					continue;
 				}
@@ -654,7 +667,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 					if(charDefinition == this->charDefinition[i]) {
 						
 						this->offset[i] = CharGroup_getOffset(charGroupToRewrite);
-						ASSERT(0 <= this->offset[i], "CharSetManager::defragmentProgressively: offset less than 0")
+						ASSERT(0 <= this->offset[charSet], "CharSetManager::defragmentProgressively: offset less than 0")
 						break;
 					}
 				}

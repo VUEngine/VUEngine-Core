@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
+#ifndef DEBUG_SCREEN_H_
+#define DEBUG_SCREEN_H_
 
-#ifndef CHARSETMEM_H_
-#define CHARSETMEM_H_
-
+#ifdef __DEBUG
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -30,8 +30,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Object.h>
-#include <CharGroup.h>
+#include <State.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -42,56 +41,37 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
 // declare the virtual methods
-#define CharSetManager_METHODS						\
-		Object_METHODS								\
+#define DebugScreen_METHODS										\
+	State_METHODS;									
 
 // declare the virtual methods which are redefined
-#define CharSetManager_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)							\
-	
+#define DebugScreen_SET_VTABLE(ClassName)						\
+	State_SET_VTABLE(ClassName)									\
+	__VIRTUAL_SET(ClassName, DebugScreen, enter);				\
+	__VIRTUAL_SET(ClassName, DebugScreen, execute);				\
+	__VIRTUAL_SET(ClassName, DebugScreen, exit);				\
+	__VIRTUAL_SET(ClassName, DebugScreen, pause);				\
+	__VIRTUAL_SET(ClassName, DebugScreen, resume);				\
+	__VIRTUAL_SET(ClassName, DebugScreen, handleMessage);		\
 
-__CLASS(CharSetManager);
 
- 
- 
- /* ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * 										PUBLIC INTERFACE
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  */
+__CLASS(DebugScreen);
 
-// it is a singleton!
-CharSetManager CharSetManager_getInstance();
 
-// class's destructor
-void CharSetManager_destructor(CharSetManager this);
- 
-// reset
-void CharSetManager_reset(CharSetManager this);
 
-// release char graphic memory
-void CharSetManager_free(CharSetManager this, CharGroup charGroup);
- 
-// print class's attributes's states
-void CharSetManager_print(CharSetManager this, int x, int y);
- 
-// if char if part of a background or oder object whose frame doesn't change
-int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup);
- 
-// allocate a char defintion within char graphic memory
-void CharSetManager_allocate(CharSetManager this, CharGroup charGroup);
- 
-// set number of chars used in a given segment
-void CharSetManager_setChars(CharSetManager  this, int charSet, int numberOfChars);
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 										PUBLIC INTERFACE
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
 
-// defrag char memory
-void CharSetManager_defragmentProgressively(CharSetManager this);
+// setup the init focus screen
+DebugScreen DebugScreen_getInstance(void);
 
-#endif /*CHARSETMEM_H_*/
+#endif
+
+#endif /*DEBUG_SCREEN_H_*/

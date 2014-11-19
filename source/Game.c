@@ -51,8 +51,11 @@
 #include <Background.h>
 #include <Image.h>
 #include <VPUManager.h>
-
 #include <Printing.h>
+
+#ifdef __DEBUG
+#include <DebugScreen.h>
+#endif
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -482,9 +485,30 @@ void Game_handleInput(Game this, int currentKey){
 	u32 newKey = currentKey & ~previousKey;
 	
 #ifdef __DEBUG
-	//Printing_hex(currentKey, 30, 25);
-#endif
 	
+	if(currentKey != previousKey){
+
+		u32 releasedKey = (previousKey & ~currentKey);
+
+		// check for a new key pressed
+		if(releasedKey & K_SEL){
+//		if((releasedKey & K_STA) && (releasedKey & K_SEL)){
+	
+			if(StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance()){
+				
+				StateMachine_popState(this->stateMachine);
+			}
+			else {
+				
+				StateMachine_pushState(this->stateMachine, (State)DebugScreen_getInstance());
+			}
+
+			previousKey = currentKey;
+			return;
+		}
+	}
+#endif
+
 	// check for a new key pressed
 	if(newKey){
 
@@ -581,6 +605,9 @@ void Game_update(Game this){
 		    this->lastTime[kLogic] = currentTime;
 		}
 		
+#ifdef __DEBUG
+		if(StateMachine_getCurrentState(this->stateMachine) != (State)DebugScreen_getInstance())
+#endif
 		if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
 			
 			this->lastTime[kPhysics] = currentTime;
@@ -687,46 +714,3 @@ void Game_setOptical(Game this, Optical optical) {
 	this->optical = optical;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Game_printClassSizes(int x, int y){
-
-	int columnIncrement = 20;
-	
-	Printing_text("CLASS				SIZE (B)", x, y);
-	Printing_text("AnimatedSprite", x, ++y);
-	Printing_int(AnimatedSprite_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Background", x, ++y);
-	Printing_int(Background_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Character", x, ++y);
-	Printing_int(Actor_getObjectSize(), x + columnIncrement, y);
-	Printing_text("CharGroup", x, ++y);
-	Printing_int(CharGroup_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Clock", x, ++y);
-	Printing_int(Clock_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Entity", x, ++y);
-	Printing_int(Entity_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Image", x, ++y);
-	Printing_int(Image_getObjectSize(), x + columnIncrement, y);
-	Printing_text("InGameEntity", x, ++y);
-	Printing_int(InGameEntity_getObjectSize(), x + columnIncrement, y);
-//	Printing_text("Rect", x, ++y);
-//	Printing_int(Rect_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Shape", x, ++y);
-	Printing_int(Shape_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Sprite", x, ++y);
-	Printing_int(Sprite_getObjectSize(), x + columnIncrement, y);
-	Printing_text("State", x, ++y);
-	Printing_int(State_getObjectSize(), x + columnIncrement, y);
-	Printing_text("StateMachine", x, ++y);
-	Printing_int(StateMachine_getObjectSize(), x + columnIncrement, y);
-	//vbjPrintText("Scroll", x, ++y);
-	//vbjPrintInt(Scroll_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Telegram", x, ++y);
-	Printing_int(Telegram_getObjectSize(), x + columnIncrement, y);;
-	Printing_text("Texture", x, ++y);
-	Printing_int(Texture_getObjectSize(), x + columnIncrement, y);
-	Printing_text("VirtualList", x, ++y);
-	Printing_int(VirtualList_getObjectSize(), x + columnIncrement, y);
-	Printing_text("VirtualNode", x, ++y);
-	Printing_int(VirtualNode_getObjectSize(), x + columnIncrement, y);
-}

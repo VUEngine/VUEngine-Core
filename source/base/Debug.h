@@ -18,8 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef CHARSETMEM_H_
-#define CHARSETMEM_H_
+#ifndef DEBUG_H_
+#define DEBUG_H_
+
+#ifdef __DEBUG
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -31,7 +33,7 @@
  */
 
 #include <Object.h>
-#include <CharGroup.h>
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -42,56 +44,46 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
 // declare the virtual methods
-#define CharSetManager_METHODS						\
+#define Debug_METHODS								\
 		Object_METHODS								\
 
+
 // declare the virtual methods which are redefined
-#define CharSetManager_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)							\
-	
+#define Debug_SET_VTABLE(ClassName)					\
+		Object_SET_VTABLE(ClassName)				\
 
-__CLASS(CharSetManager);
 
- 
- 
- /* ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * 										PUBLIC INTERFACE
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  */
+// declare a Debug
+__CLASS(Debug);
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 										PUBLIC INTERFACE
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
 
 // it is a singleton!
-CharSetManager CharSetManager_getInstance();
+Debug Debug_getInstance();
 
 // class's destructor
-void CharSetManager_destructor(CharSetManager this);
- 
-// reset
-void CharSetManager_reset(CharSetManager this);
+void Debug_destructor(Debug this);
 
-// release char graphic memory
-void CharSetManager_free(CharSetManager this, CharGroup charGroup);
- 
-// print class's attributes's states
-void CharSetManager_print(CharSetManager this, int x, int y);
- 
-// if char if part of a background or oder object whose frame doesn't change
-int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup);
- 
-// allocate a char defintion within char graphic memory
-void CharSetManager_allocate(CharSetManager this, CharGroup charGroup);
- 
-// set number of chars used in a given segment
-void CharSetManager_setChars(CharSetManager  this, int charSet, int numberOfChars);
+// show debug screens
+void Debug_show(Debug this);
 
-// defrag char memory
-void CharSetManager_defragmentProgressively(CharSetManager this);
+// hide debug screens
+void Debug_hide(Debug this);
 
-#endif /*CHARSETMEM_H_*/
+// show debug screens
+void Debug_showNext(Debug this);
+
+// show debug screens
+void Debug_showPrevious(Debug this);
+
+#endif
+
+#endif /*CLOCK_H_*/

@@ -246,7 +246,8 @@ void VPUManager_clearScreen(VPUManager this){
 	int i;
 	//clear every bgmap segment
     for(i = 0; i < 14; i++){
-		Mem_clear ((u16*)BGMap(i), 8192);		
+    	
+		Mem_clear((u16*)BGMap(i), 8192);		
     }
     
 	//clear every char segment
@@ -254,6 +255,15 @@ void VPUManager_clearScreen(VPUManager this){
 	Mem_clear ((u16*) CharSeg1, 8192);
 	Mem_clear ((u16*) CharSeg2, 8192);
 	Mem_clear ((u16*) CharSeg3, 8192);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// clear bgmap
+void VPUManager_clearBgmap(VPUManager this, int bgmap){
+	
+	ASSERT(this, "VPUManager::clearBgmap: null this");
+
+	Mem_clear((u16*)BGMap(bgmap), 8192);		
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

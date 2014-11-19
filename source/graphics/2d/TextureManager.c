@@ -499,15 +499,16 @@ int TextureManager_getBgmapSegment(TextureManager this, int id){
 	return this->offset[id][kBgmapSegment];
 }
 
-void TextureManager_debug(TextureManager this){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print status
+void TextureManager_print(TextureManager this, int x, int y){
 	
-	ASSERT(this, "TextureManager::debug: null this");
+	ASSERT(this, "TextureManager::print: null this");
 
-	int j = 0;
-	//int bgmap = 0;
-	for(j = 0; j < __NUM_MAPS_PER_SEG; j++){
-		
-		//vbjPrintInt(this->yOffset[bgmap][j], 0, j);
-		//vbjPrintInt(this->xOffset[bgmap][j], 10, j);
-	}
+	int textureCount = 0;
+	for(;this->texture[textureCount] && textureCount < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; textureCount++);
+
+	Printing_text("TEXTURES' STATUS", x, y++);
+	Printing_text("Texture count: ", x, ++y);
+	Printing_int(textureCount, x + 15, y);
 }

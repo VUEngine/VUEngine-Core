@@ -199,7 +199,7 @@ void StateMachine_pushState(StateMachine this, State newState){
 	// set new state 
 	this->currentState = newState;
 	
-	ASSERT(__GET_CAST(State, this->currentState), "StateMachine::pushState: null currentState"); 
+	ASSERT(this->currentState, "StateMachine::pushState: null currentState"); 
 
 	// call enter method from new state
 	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
