@@ -63,6 +63,13 @@ Features:
 		* Generic messaging system
 		* Generic state Machines
 		* Generic clocks based on hardware interrupts
+	· Debugging
+		* Memory usage
+		* Hardware registers' usage 
+		* Real time tools to check:
+			Char memory status
+			BgMap memory status
+			World layer status
 	· Object Oriented support through the use of Metaprogramming (C MACROS):
 		* Inheritance
 		* Polymorphism

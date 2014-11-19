@@ -27,10 +27,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#ifdef __NO_DEBUG_TOOLS
-#undef __DEBUG_TOOLS
-#endif
-
 #ifdef __DEBUG_TOOLS
 #undef __DEBUG
 #endif
@@ -500,8 +496,7 @@ void Game_handleInput(Game this, int currentKey){
 		u32 releasedKey = (previousKey & ~currentKey);
 
 		// check for a new key pressed
-		if(releasedKey & K_SEL){
-//		if((releasedKey & K_STA) && (releasedKey & K_SEL)){
+		if((releasedKey & K_STA) && (releasedKey & K_SEL)){
 	
 			if(StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance()){
 				
@@ -604,6 +599,10 @@ void Game_update(Game this){
 			
 #ifdef __DEBUG
 			this->lastProcessName = "dispatch delayed messages";
+#endif
+
+#ifdef __DEBUG_TOOLS
+		if(StateMachine_getCurrentState(this->stateMachine) != (State)DebugScreen_getInstance())
 #endif
 			// dispatch queued messages
 		    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());

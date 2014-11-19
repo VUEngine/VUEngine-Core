@@ -42,6 +42,7 @@
 
 #define TAB_SIZE 4 //horizontal tab size in chars
 #define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -95,44 +96,12 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt){
 // print hardware register's state
 void Printing_hwRegisters(int x,int y){
 
-	Printing_text("TCR:", x, y);		
-	Printing_hex(HW_REGS[TCR], x+8,y++);
-
-	Printing_text("SCR:", x, y);		
-	Printing_hex(HW_REGS[SCR], x+8,y++);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print hardware register's state
 void Printing_vipRegisters(int x,int y){
 	
-	Printing_out(__PRINTING_BGMAP, x,y, "INTPND:", 0);		
-//	Printing_out(__PRINTING_BGMAP, x+8,y++,(const char*) Utilities_itoa((u32)VIP_REGS[INTPND],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "INTENB:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[INTENB],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "INTCLR:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[INTCLR],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "DPSTTS:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[DPSTTS],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "DPCTRL:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[DPCTRL],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "FRMCYC:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[FRMCYC],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "CTA:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[CTA],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "XPSTTS:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[XPSTTS],16,3), 0);
-	
-	Printing_out(__PRINTING_BGMAP, x,y, "XPCTRL:", 0);
-	Printing_out(__PRINTING_BGMAP, x+8,y++, Utilities_itoa((u32)VIP_REGS[XPCTRL],16,3), 0);
-	Printing_out(__PRINTING_BGMAP, x,y, "GCLK:", 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,14 +128,14 @@ void Printing_int(int value,int x,int y){
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
 		
 		Printing_out(__PRINTING_BGMAP, x,y, 
-				Utilities_itoa((int)(value), 10, vbjDigitCount(value)), 0);
+				Utilities_itoa((int)(value), 10, vbjDigitCount(value)), __PRINTING_PALLETE);
 	
 	}
 	else{
 
 		Printing_out(__PRINTING_BGMAP, 
 				//x - vbjDigitCount(value), y, itoa((int)(value), 10, vbjDigitCount(value)) + 1, 0);				
-				x, y, Utilities_itoa((int)(value), 10, vbjDigitCount(value)), 0);
+				x, y, Utilities_itoa((int)(value), 10, vbjDigitCount(value)), __PRINTING_PALLETE);
 	}
 }
 
@@ -178,12 +147,12 @@ void Printing_hex(WORD value,int x,int y){
 		value *= -1;
 		
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
-		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), 0);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALLETE);
 	
 	}
 	else{
 		
-		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), 0);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALLETE);
 	}
 }
 
@@ -219,10 +188,10 @@ void Printing_float(float value,int x,int y){
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
-	Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), 0);
+	Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALLETE);
 	
 	// print the dot
-	Printing_out(__PRINTING_BGMAP, x + length, y, ".", 0);
+	Printing_out(__PRINTING_BGMAP, x + length, y, ".", __PRINTING_PALLETE);
 	
 	// print the decimal part
 	//
@@ -230,7 +199,7 @@ void Printing_float(float value,int x,int y){
 		
 		if(decimal < size){
 			
-			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), 0);			
+			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALLETE);			
 		}		
 		else{
 			
@@ -246,7 +215,7 @@ void Printing_float(float value,int x,int y){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Printing_text(char *string, int x,int y){
 	
-	Printing_out(__PRINTING_BGMAP, x, y, string, 3);
+	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALLETE);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -286,13 +255,5 @@ void Printing_writeAscii(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Printing_debug(u32 x){
 	
-	Printing_writeAscii(__PRINTING_BGMAP);
-	
-	Printing_render(__TOTAL_LAYERS);
-		
-	Printing_text("debug: ",10,10);	
-	Printing_hex(x,17,10);
-	Printing_int(x,17,11);
-	while(1);
 }
 

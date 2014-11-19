@@ -229,9 +229,9 @@ static void Debug_setupPages(Debug this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void Debug_dimmGame(Debug this){
 	
-//	VIP_REGS[GPLT0] = 0;	/* Set all eight palettes to: 11100100 */
-//	VIP_REGS[GPLT1] = 0;	/* (i.e. "Normal" dark to light progression.) */
-	VIP_REGS[GPLT2] = __GPLT2VALUE;
+	VIP_REGS[GPLT0] = 0b10100100;	/* Set all eight palettes to: 11100100 */
+	VIP_REGS[GPLT1] = 0b10100100;	/* (i.e. "Normal" dark to light progression.) */
+	VIP_REGS[GPLT2] = 0b10100100;
 	VIP_REGS[GPLT3] = __GPLT3VALUE;
 	VIP_REGS[JPLT0] = __JPLT0VALUE;
 	VIP_REGS[JPLT1] = __JPLT1VALUE;
@@ -521,6 +521,11 @@ static void Debug_showTextureStatus(Debug this, int x, int y) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void Debug_showDebugLayer(Debug this){
 
+	if(VirtualNode_getData(this->currentPage) != &Debug_showTextureStatus){
+		
+		return;
+	}
+	
 	// write the head
 	WORLD_HEAD(__TOTAL_LAYERS, WRLD_ON | this->currentBgmap);
 	WORLD_MSET(__TOTAL_LAYERS, this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
