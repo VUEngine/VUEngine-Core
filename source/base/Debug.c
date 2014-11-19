@@ -18,7 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifdef __DEBUG
+#include <debugConfig.h>
+
+#ifdef __DEBUG_TOOLS
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -78,11 +80,32 @@
 
 #define Debug_ATTRIBUTES			\
 									\
-	/* super's attributes */		\
-	Object_ATTRIBUTES;				\
-									\
-	/* current page */				\
-	int currentPage;				\
+	/* super's attributes */				\
+	Object_ATTRIBUTES;						\
+											\
+	/* pages */								\
+	VirtualList pages;						\
+											\
+	/* sub pages */							\
+	VirtualList subPages;					\
+											\
+	/* current page */						\
+	VirtualNode currentPage;				\
+											\
+	/* current subb page */					\
+	VirtualNode currentSubPage;				\
+											\
+	/* current layer */						\
+	int currentLayer;						\
+											\
+	/* current bgmap */						\
+	int currentBgmap;						\
+											\
+	/* current char segment */				\
+	int charSeg;							\
+											\
+	/* window to look into bgmap memory */	\
+	VBVec2D bgmapDisplacement;				\
 
 
 	
@@ -102,19 +125,26 @@ __CLASS_DEFINITION(Debug);
 // class's constructor
 static void Debug_constructor(Debug this);
 
+// setup pages
+static void Debug_setupPages(Debug this);
 static void Debug_showPage(Debug this);
+static void Debug_showSubPage(Debug this);
+static void Debug_removeSubPages(Debug this);
+
+static void Debug_showGeneralStaus(Debug this, int x, int y); 
+static void Debug_showMemoryStatus(Debug this, int x, int y); 
+static void Debug_showCharMemoryStatus(Debug this, int x, int y);
+static void Debug_showTextureStatus(Debug this, int x, int y);
+static void Debug_showSpritesStatus(Debug this, int x, int y);
+static void Debug_showHardwareStatus(Debug this, int x, int y);
+
+static void Debug_spritesShowStatus(Debug this, int x, int y);
+static void Debug_textutesShowStatus(Debug this, int x, int y);
+static void Debug_showDebugLayer(Debug this);
+static void Debug_charMemoryShowStatus(Debug this, int x, int y);
+static void Debug_charMemoryShowMemory(Debug this, int x, int y);
 
 static void Debug_printClassSizes(int x, int y);
-
-
-enum DebugPages{
-	kGeneralStatusPage = 0,
-	kMemoryPage,
-	kCharSetPage,
-	kGraphicsPage,
-	kHardwarePage,
-	kLastPage
-};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -126,10 +156,7 @@ enum DebugPages{
  */
 
 
-#define __DEBUG_TOTAL_PAGES		3
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 __SINGLETON(Debug);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +167,19 @@ static void Debug_constructor(Debug this){
 
 	__CONSTRUCT_BASE(Object);
 	
-	this->currentPage = 0;
+	this->pages = __NEW(VirtualList);
+	this->subPages = __NEW(VirtualList);
+	this->currentPage = NULL;
+	this->currentSubPage = NULL;
+	
+	this->currentLayer = __TOTAL_LAYERS;
+	this->currentBgmap = 0;
+	this->charSeg = 0;
+	
+	this->bgmapDisplacement.x = 0;
+	this->bgmapDisplacement.y = 0;
+	
+	Debug_setupPages(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +192,22 @@ void Debug_destructor(Debug this){
 	__SINGLETON_DESTROY(Object);
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// setup pages
+static void Debug_setupPages(Debug this){
+	
+	VirtualList_pushBack(this->pages, &Debug_showGeneralStaus);
+	VirtualList_pushBack(this->pages, &Debug_showMemoryStatus);
+	VirtualList_pushBack(this->pages, &Debug_showCharMemoryStatus);
+	VirtualList_pushBack(this->pages, &Debug_showTextureStatus);
+	VirtualList_pushBack(this->pages, &Debug_showSpritesStatus);
+	VirtualList_pushBack(this->pages, &Debug_showHardwareStatus);
+
+	this->currentPage = VirtualList_begin(this->pages);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show debug screens
 void Debug_show(Debug this){
 	
@@ -173,7 +228,8 @@ void Debug_show(Debug this){
 	Debug_showPage(this);
 }
 
-// show debug screens
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// hide debug screens
 void Debug_hide(Debug this){
 
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
@@ -186,74 +242,330 @@ void Debug_hide(Debug this){
 	VIP_REGS[JPLT1] = __JPLT1VALUE;
 	VIP_REGS[JPLT2] = __JPLT2VALUE;
 	VIP_REGS[JPLT3] = __JPLT3VALUE;
+	
+	SpriteManager_recoverLayers(SpriteManager_getInstance());
 }
 
-// show debug screens
-void Debug_showNext(Debug this){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show previous page
+void Debug_showPreviousPage(Debug this){
+
+	this->currentPage = VirtualNode_getPrevious(this->currentPage);
 	
-	if(++this->currentPage >= kLastPage) {
+	if(NULL == this->currentPage){
 		
-		this->currentPage = 0;
+		this->currentPage = VirtualList_end(this->pages);
 	}
 
 	Debug_showPage(this);
 }
 
-// show debug screens
-void Debug_showPrevious(Debug this){
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show next page
+void Debug_showNextPage(Debug this){
+
+	this->currentPage = VirtualNode_getNext(this->currentPage);
 	
-	if(0 > --this->currentPage) {
+	if(NULL == this->currentPage){
 		
-		this->currentPage = kLastPage - 1;
+		this->currentPage = VirtualList_begin(this->pages);
 	}
-	
+
 	Debug_showPage(this);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show previous sub page
+void Debug_showPreviousSubPage(Debug this){
+
+	if(!this->currentSubPage) {
+
+		return;
+	}
+	
+	this->currentSubPage = VirtualNode_getPrevious(this->currentSubPage);
+	
+	if(NULL == this->currentSubPage){
+		
+		this->currentSubPage = VirtualList_end(this->subPages);
+	}
+
+	Debug_showSubPage(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show next sub page
+void Debug_showNextSubPage(Debug this){
+	
+	if(!this->currentSubPage) {
+
+		return;
+	}
+	
+	this->currentSubPage = VirtualNode_getNext(this->currentSubPage);
+	
+	if(NULL == this->currentSubPage){
+		
+		this->currentSubPage = VirtualList_begin(this->subPages);
+	}
+
+	Debug_showSubPage(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show page 
 static void Debug_showPage(Debug this) {
 	
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
-	
-	Printing_text("DEBUG SYSTEM", 15, 0);
-	
-	int y = 3;
+	if(this->currentPage && VirtualNode_getData(this->currentPage)) {
+		
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
 
-	switch(this->currentPage) {
-	
-		case kGeneralStatusPage:
-			
-			Printing_text("GENERAL STATUS", 1, y++);
-			Printing_text("General clock's time: ", 1, ++y);
-			Clock_print(Game_getClock(Game_getInstance()), 23, y);
-			Printing_text("In game clock's time: ", 1, ++y);
-			Clock_print(Game_getInGameClock(Game_getInstance()), 23, y);
-	    	FrameRate_print(FrameRate_getInstance(), 1, y + 10);
-			break;
-			
-		case kMemoryPage:
-	    	MemoryPool_printMemUsage(MemoryPool_getInstance(), 1, y);
-			Debug_printClassSizes(22, y);
-			break;
-			
-		case kCharSetPage:
-			CharSetManager_print(CharSetManager_getInstance(), 1, y);
-			break;
+		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
+		Printing_text("DEBUG SYSTEM", 17, 0);
+		Printing_text("Use(left/right)", 33, 1);
 
-		case kGraphicsPage:
-			TextureManager_print(TextureManager_getInstance(), 1, y);
-			SpriteManager_print(SpriteManager_getInstance(), 1, y + 5);
-			ParamTableManager_print(ParamTableManager_getInstance(), 25, y);
-			break;
-
-
-		case kHardwarePage:
-			
-			HardwareManager_print(HardwareManager_getInstance(), 1, y);
-			break;
-			
+		((void (*)(Debug, int, int))VirtualNode_getData(this->currentPage))(this, 1, 3);		
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show sub page 
+static void Debug_showSubPage(Debug this) {
+	
+	if(this->currentSubPage && VirtualNode_getData(this->currentSubPage)) {
+		
+		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
+		Printing_text("DEBUG SYSTEM", 17, 0);
+		Printing_text("Use(left/right)", 33, 1);
+		Printing_text("Use(up/down)", 33, 2);
+		((void (*)(Debug, int, int))VirtualNode_getData(this->currentSubPage))(this, 1, 3);		
+	}
+}
+
+#define DISPLACEMENT_STEP_X	512 - 384
+#define DISPLACEMENT_STEP_Y	512 - 224
+
+// displace view to the left
+void Debug_diplaceLeft(Debug this){
+	
+	this->bgmapDisplacement.x = 0;
+	Debug_showDebugLayer(this);
+}
+
+// displace view to the right
+void Debug_diplaceRight(Debug this){
+	
+	this->bgmapDisplacement.x = DISPLACEMENT_STEP_X;
+	Debug_showDebugLayer(this);
+}
+
+// displace view up
+void Debug_diplaceUp(Debug this){
+
+	this->bgmapDisplacement.y = 0;
+	Debug_showDebugLayer(this);
+}
+
+// displace view down
+void Debug_diplaceDown(Debug this){
+	
+	this->bgmapDisplacement.y = DISPLACEMENT_STEP_Y;
+	Debug_showDebugLayer(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_removeSubPages(Debug this) {
+	
+	VirtualList_clear(this->subPages);
+	this->currentSubPage = NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showGeneralStaus(Debug this, int x, int y) {
+	
+	Debug_removeSubPages(this);
+	Printing_text("GENERAL STATUS", 1, y++);
+	Printing_text("General clock's time: ", 1, ++y);
+	Clock_print(Game_getClock(Game_getInstance()), 23, y);
+	Printing_text("In game clock's time: ", 1, ++y);
+	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showMemoryStatus(Debug this, int x, int y) {
+	
+	Debug_removeSubPages(this);
+
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+	Debug_printClassSizes(x + 21, y);
+}
+	
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showCharMemoryStatus(Debug this, int x, int y) {
+
+	Debug_removeSubPages(this);
+
+	VirtualList_pushBack(this->subPages, &Debug_charMemoryShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_charMemoryShowStatus);
+	this->currentSubPage = VirtualList_begin(this->subPages);
+	
+	this->charSeg = -2;
+
+	Debug_showSubPage(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_charMemoryShowStatus(Debug this, int x, int y) {
+	
+	this->charSeg++;
+
+	if(0 > this->charSeg) {
+
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		CharSetManager_print(CharSetManager_getInstance(), x, y);
+	}
+	else if(4 > this->charSeg) {
+	
+		Debug_charMemoryShowMemory(this, x, y);
+	}
+	else {
+		
+		this->charSeg = -1;
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		CharSetManager_print(CharSetManager_getInstance(), x, y);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_charMemoryShowMemory(Debug this, int x, int y) {
+
+#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
+#define __CHAR_SEGMENT_SIZE 512
+
+	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
+	Printing_text("Char segment: ", x, y - 1);
+	Printing_int(this->charSeg + 1, x + 14, y - 1);
+
+	int yOffset = y + 7;
+	
+	// each char segment has 512 slots
+	BYTE CHAR_MEMORY_MP[__CHAR_SEGMENT_SIZE]; 
+	
+	int i = 0;
+	int j = 0;
+	for (; i < __CHAR_SEGMENT_SIZE; i+= 2, j++) {
+		
+		CHAR_MEMORY_MP[i] = (BYTE)(j & 0xFF);
+		CHAR_MEMORY_MP[i + 1] = (BYTE)((j & 0xFF00) >> 8);
+	}
+
+	//put the map into memory calculating the number of char for each reference
+	for(i = 0; i < __CHAR_SEGMENT_SIZE / 64; i++){
+	
+		Mem_add((u8*)BGMap(__PRINTING_BGMAP) + (((yOffset << 6) + (i << 6)) << 1),
+				(const u8*)CHAR_MEMORY_MP, 
+				__SCREENWIDTH >> 3,
+				(this->charSeg << 9) + i * (__SCREENWIDTH >> 3));
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showTextureStatus(Debug this, int x, int y) {
+
+	Debug_removeSubPages(this);
+
+	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
+	this->currentSubPage = VirtualList_begin(this->subPages);
+	
+	this->currentBgmap = -2;
+	this->bgmapDisplacement.x = 0;
+	this->bgmapDisplacement.y = 0;
+
+	Debug_showSubPage(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showDebugLayer(Debug this){
+
+	// write the head
+	WORLD_HEAD(__TOTAL_LAYERS, WRLD_ON | this->currentBgmap);
+	WORLD_MSET(__TOTAL_LAYERS, this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
+	WORLD_GSET(__TOTAL_LAYERS, 0, 0, 0);
+	WORLD_SIZE(__TOTAL_LAYERS, __SCREENWIDTH, __SCREENHEIGHT);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_textutesShowStatus(Debug this, int x, int y) {
+
+	this->currentBgmap++;
+
+	if(0 > this->currentBgmap) {
+
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		TextureManager_print(TextureManager_getInstance(), x, y);
+		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
+	}
+	else if(__NUM_BGMAPS > this->currentBgmap) {
+	
+		Printing_text("Bgmap: ", x, y);
+		Printing_int (this->currentBgmap, x + 7, y);
+
+		SpriteManager_showLayer(SpriteManager_getInstance(), 0);
+		Debug_showDebugLayer(this);
+	}
+	else {
+		
+		this->currentBgmap = -1;
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		TextureManager_print(TextureManager_getInstance(), x, y);
+		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showSpritesStatus(Debug this, int x, int y) {
+
+	Debug_removeSubPages(this);
+
+	VirtualList_pushBack(this->subPages, &Debug_spritesShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_spritesShowStatus);
+	this->currentSubPage = VirtualList_begin(this->subPages);
+	
+	this->currentLayer = __TOTAL_LAYERS + 2;
+
+	Debug_showSubPage(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_spritesShowStatus(Debug this, int x, int y) {
+
+	if(__TOTAL_LAYERS + 2 == this->currentLayer--) {
+
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		SpriteManager_print(SpriteManager_getInstance(), x, y);
+	}
+	else if(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer) {
+	
+		Printing_text("Layer: ", x, y);
+		Printing_int (this->currentLayer, x + 7, y);
+		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
+	}
+	else {
+		
+		this->currentLayer = __TOTAL_LAYERS + 1;
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		SpriteManager_print(SpriteManager_getInstance(), x, y);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showHardwareStatus(Debug this, int x, int y) {
+	
+	Debug_removeSubPages(this);
+
+	HardwareManager_print(HardwareManager_getInstance(), 1, y);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Debug_printClassSizes(int x, int y){

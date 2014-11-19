@@ -148,4 +148,7 @@ void HardwareManager_disableKeypad(HardwareManager this);
 // read keypad
 u16 HardwareManager_readKeypad(HardwareManager this);
 
+// print hardware's states
+void HardwareManager_print(HardwareManager this, int x, int y);
+
 #endif /*HARWDARE_MANAGER_H_*/

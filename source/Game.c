@@ -26,7 +26,7 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
+#include <debugConfig.h>
 #include <Game.h>
 #include <HardwareManager.h>
 #include <ClockManager.h>
@@ -53,7 +53,7 @@
 #include <VPUManager.h>
 #include <Printing.h>
 
-#ifdef __DEBUG
+#ifdef __DEBUG_TOOLS
 #include <DebugScreen.h>
 #endif
 
@@ -484,7 +484,7 @@ void Game_handleInput(Game this, int currentKey){
 	
 	u32 newKey = currentKey & ~previousKey;
 	
-#ifdef __DEBUG
+#ifdef __DEBUG_TOOLS
 	
 	if(currentKey != previousKey){
 
@@ -605,9 +605,6 @@ void Game_update(Game this){
 		    this->lastTime[kLogic] = currentTime;
 		}
 		
-#ifdef __DEBUG
-		if(StateMachine_getCurrentState(this->stateMachine) != (State)DebugScreen_getInstance())
-#endif
 		if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
 			
 			this->lastTime[kPhysics] = currentTime;
@@ -626,6 +623,10 @@ void Game_update(Game this){
 
 #ifdef __DEBUG
 			this->lastProcessName = "apply transformations";
+#endif
+
+#ifdef __DEBUG_TOOLS
+		if(StateMachine_getCurrentState(this->stateMachine) != (State)DebugScreen_getInstance())
 #endif
 			// apply world transformations
 			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));

@@ -362,6 +362,39 @@ int SpriteManager_getFreeLayer(SpriteManager this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show a given layer
+void SpriteManager_showLayer(SpriteManager this, int layer) {
+	
+	ASSERT(this, "SpriteManager::showLayer: null this");
+
+	int i = 0;
+	for(; this->sprites[i] && i < __OBJECTLISTTAM; i++){
+		
+		if(Sprite_getWorldLayer(this->sprites[i]) != layer) {
+			
+			Sprite_hide(this->sprites[i]);
+		}
+		else {
+			
+			Sprite_show(this->sprites[i]);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show all layers
+void SpriteManager_recoverLayers(SpriteManager this) {
+	
+	ASSERT(this, "SpriteManager::recoverLayers: null this");
+
+	int i = 0;
+	for(; this->sprites[i] && i < __OBJECTLISTTAM; i++){
+		
+		Sprite_show(this->sprites[i]);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print status
 int SpriteManager_print(SpriteManager this, int x, int y){
 	

@@ -18,7 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifdef __DEBUG
+#include <debugConfig.h>
+
+#ifdef __DEBUG_TOOLS
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -167,11 +169,35 @@ static int DebugScreen_handleMessage(DebugScreen this, void* owner, Telegram tel
 		
 				if(pressedKey & K_LL){
 					
-					Debug_showPrevious(Debug_getInstance());
+					Debug_showPreviousPage(Debug_getInstance());
 				}
 				else if(pressedKey & K_LR){
 					
-					Debug_showNext(Debug_getInstance());
+					Debug_showNextPage(Debug_getInstance());
+				}
+				else if(pressedKey & K_LU){
+					
+					Debug_showPreviousSubPage(Debug_getInstance());
+				}
+				else if(pressedKey & K_LD){
+					
+					Debug_showNextSubPage(Debug_getInstance());
+				}
+				else if(pressedKey & K_RL){
+					
+					Debug_diplaceLeft(Debug_getInstance());
+				}
+				else if(pressedKey & K_RR){
+					
+					Debug_diplaceRight(Debug_getInstance());
+				}
+				else if(pressedKey & K_RU){
+					
+					Debug_diplaceUp(Debug_getInstance());
+				}
+				else if(pressedKey & K_RD){
+					
+					Debug_diplaceDown(Debug_getInstance());
 				}
 			}
 			break;

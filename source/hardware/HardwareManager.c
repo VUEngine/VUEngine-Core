@@ -469,5 +469,4 @@ void HardwareManager_print(HardwareManager this, int x, int y){
 	Printing_hex(VIP_REGS[VER], x + xDisplacement, auxY);
 	
 //	Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);
-
 }

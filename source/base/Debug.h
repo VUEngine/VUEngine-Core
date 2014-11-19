@@ -21,7 +21,9 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#ifdef __DEBUG
+#include <debugConfig.h>
+
+#ifdef __DEBUG_TOOLS
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -33,6 +35,7 @@
  */
 
 #include <Object.h>
+#include <debugConfig.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -78,11 +81,29 @@ void Debug_show(Debug this);
 // hide debug screens
 void Debug_hide(Debug this);
 
-// show debug screens
-void Debug_showNext(Debug this);
+// show previous page
+void Debug_showPreviousPage(Debug this);
 
-// show debug screens
-void Debug_showPrevious(Debug this);
+// show next page
+void Debug_showNextPage(Debug this);
+
+// show previous sub page
+void Debug_showPreviousSubPage(Debug this);
+
+// show next sub page
+void Debug_showNextSubPage(Debug this);
+
+// displace view to the left
+void Debug_diplaceLeft(Debug this);
+
+// displace view to the right
+void Debug_diplaceRight(Debug this);
+
+// displace view up
+void Debug_diplaceUp(Debug this);
+
+// displace view down
+void Debug_diplaceDown(Debug this);
 
 #endif
 

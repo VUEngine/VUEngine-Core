@@ -108,5 +108,13 @@ void SpriteManager_render(SpriteManager this);
 // retrieve free layer
 int SpriteManager_getFreeLayer(SpriteManager this);
 
+// show a given layer
+void SpriteManager_showLayer(SpriteManager this, int layer);
+
+// show all layers
+void SpriteManager_recoverLayers(SpriteManager this);
+// print status
+int SpriteManager_print(SpriteManager this, int x, int y);
+
 #endif
 
