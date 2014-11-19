@@ -316,7 +316,7 @@ void Sprite_setRenderFlag(Sprite this, int renderFlag){
 // show
 void Sprite_show(Sprite this){
 	
-	this->renderFlag |= __UPDATEHEAD | __UPDATEG | __UPDATEM | __UPDATESIZE;
+	this->renderFlag |= __UPDATEHEAD | __UPDATEG | __UPDATEM | __UPDATESIZE | __UPDATEPARAM;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

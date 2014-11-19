@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#include <debugConfig.h>
 
 #ifdef __DEBUG_TOOLS
 
@@ -78,8 +77,8 @@
  */
 
 
-#define Debug_ATTRIBUTES			\
-									\
+#define Debug_ATTRIBUTES				\
+										\
 	/* super's attributes */				\
 	Object_ATTRIBUTES;						\
 											\
@@ -113,6 +112,21 @@
 // define the Debug
 __CLASS_DEFINITION(Debug);
 
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 												  MACROS
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+//TODO
+#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
+
+#define __PRINTABLE_BGMAP_AREA 	(64 * 28)
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -131,7 +145,11 @@ static void Debug_showPage(Debug this);
 static void Debug_showSubPage(Debug this);
 static void Debug_removeSubPages(Debug this);
 
-static void Debug_showGeneralStaus(Debug this, int x, int y); 
+static void Debug_dimmGame(Debug this);
+static void Debug_lightUpGame(Debug this);
+
+
+static void Debug_showGeneralStatus(Debug this, int x, int y); 
 static void Debug_showMemoryStatus(Debug this, int x, int y); 
 static void Debug_showCharMemoryStatus(Debug this, int x, int y);
 static void Debug_showTextureStatus(Debug this, int x, int y);
@@ -197,34 +215,52 @@ void Debug_destructor(Debug this){
 // setup pages
 static void Debug_setupPages(Debug this){
 	
-	VirtualList_pushBack(this->pages, &Debug_showGeneralStaus);
+	VirtualList_pushBack(this->pages, &Debug_showGeneralStatus);
 	VirtualList_pushBack(this->pages, &Debug_showMemoryStatus);
-	VirtualList_pushBack(this->pages, &Debug_showCharMemoryStatus);
-	VirtualList_pushBack(this->pages, &Debug_showTextureStatus);
 	VirtualList_pushBack(this->pages, &Debug_showSpritesStatus);
+	VirtualList_pushBack(this->pages, &Debug_showTextureStatus);
+	VirtualList_pushBack(this->pages, &Debug_showCharMemoryStatus);
 	VirtualList_pushBack(this->pages, &Debug_showHardwareStatus);
 
 	this->currentPage = VirtualList_begin(this->pages);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_dimmGame(Debug this){
+	
+//	VIP_REGS[GPLT0] = 0;	/* Set all eight palettes to: 11100100 */
+//	VIP_REGS[GPLT1] = 0;	/* (i.e. "Normal" dark to light progression.) */
+	VIP_REGS[GPLT2] = __GPLT2VALUE;
+	VIP_REGS[GPLT3] = __GPLT3VALUE;
+	VIP_REGS[JPLT0] = __JPLT0VALUE;
+	VIP_REGS[JPLT1] = __JPLT1VALUE;
+	VIP_REGS[JPLT2] = __JPLT2VALUE;
+	VIP_REGS[JPLT3] = __JPLT3VALUE;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_lightUpGame(Debug this){
+	
+	//VPUManager_setupPalettes(VPUManager_getInstance());
+	VIP_REGS[GPLT0] = __GPLT0VALUE;
+	VIP_REGS[GPLT1] = __GPLT1VALUE;
+	VIP_REGS[GPLT2] = __GPLT2VALUE;
+	VIP_REGS[GPLT3] = __GPLT3VALUE;
+	VIP_REGS[JPLT0] = __JPLT0VALUE;
+	VIP_REGS[JPLT1] = __JPLT1VALUE;
+	VIP_REGS[JPLT2] = __JPLT2VALUE;
+	VIP_REGS[JPLT3] = __JPLT3VALUE;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show debug screens
 void Debug_show(Debug this){
 	
-	//TODO
-#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
+	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
-
-	//VIP_REGS[GPLT0] = 0;	/* Set all eight palettes to: 11100100 */
-	//VIP_REGS[GPLT1] = 0;	/* (i.e. "Normal" dark to light progression.) */
-	VIP_REGS[GPLT2] = __GPLT2VALUE;
-	VIP_REGS[GPLT3] = __GPLT3VALUE;
-	VIP_REGS[JPLT0] = 0;
-	VIP_REGS[JPLT1] = __JPLT1VALUE;
-	VIP_REGS[JPLT2] = __JPLT2VALUE;
-	VIP_REGS[JPLT3] = __JPLT3VALUE;
-	
+	Debug_dimmGame(this);
 	Debug_showPage(this);
 }
 
@@ -232,18 +268,9 @@ void Debug_show(Debug this){
 // hide debug screens
 void Debug_hide(Debug this){
 
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
-	//VPUManager_setupPalettes(VPUManager_getInstance());
-	VIP_REGS[GPLT0] = __GPLT0VALUE;	/* Set all eight palettes to: 11100100 */
-	VIP_REGS[GPLT1] = __GPLT1VALUE;	/* (i.e. "Normal" dark to light progression.) */
-	VIP_REGS[GPLT2] = __GPLT2VALUE;
-	VIP_REGS[GPLT3] = __GPLT3VALUE;
-	VIP_REGS[JPLT0] = __JPLT0VALUE;
-	VIP_REGS[JPLT1] = __JPLT1VALUE;
-	VIP_REGS[JPLT2] = __JPLT2VALUE;
-	VIP_REGS[JPLT3] = __JPLT3VALUE;
-	
+	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
+	Debug_lightUpGame(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,12 +345,11 @@ static void Debug_showPage(Debug this) {
 	
 	if(this->currentPage && VirtualNode_getData(this->currentPage)) {
 		
+		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-
-		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
 		Printing_text("DEBUG SYSTEM", 17, 0);
 		Printing_text("Use(left/right)", 33, 1);
-
+		Debug_dimmGame(this);
 		((void (*)(Debug, int, int))VirtualNode_getData(this->currentPage))(this, 1, 3);		
 	}
 }
@@ -334,7 +360,7 @@ static void Debug_showSubPage(Debug this) {
 	
 	if(this->currentSubPage && VirtualNode_getData(this->currentSubPage)) {
 		
-		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP);
+		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		Printing_text("DEBUG SYSTEM", 17, 0);
 		Printing_text("Use(left/right)", 33, 1);
 		Printing_text("Use(up/down)", 33, 2);
@@ -381,7 +407,7 @@ static void Debug_removeSubPages(Debug this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showGeneralStaus(Debug this, int x, int y) {
+static void Debug_showGeneralStatus(Debug this, int x, int y) {
 	
 	Debug_removeSubPages(this);
 	Printing_text("GENERAL STATUS", 1, y++);
@@ -389,6 +415,8 @@ static void Debug_showGeneralStaus(Debug this, int x, int y) {
 	Clock_print(Game_getClock(Game_getInstance()), 23, y);
 	Printing_text("In game clock's time: ", 1, ++y);
 	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y);
+	
+	FrameRate_print(FrameRate_getInstance(), 1, y + 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -423,16 +451,23 @@ static void Debug_charMemoryShowStatus(Debug this, int x, int y) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		CharSetManager_print(CharSetManager_getInstance(), x, y);
+		Debug_dimmGame(this);
 	}
 	else if(4 > this->charSeg) {
 	
+		Printing_text("CHAR MEMORY'S USAGE", x, y++);
+		Printing_text("Char segment: ", x, ++y);
+		Printing_int(this->charSeg + 1, x + 14, y);
+
 		Debug_charMemoryShowMemory(this, x, y);
+		Debug_lightUpGame(this);
 	}
 	else {
-		
+
 		this->charSeg = -1;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		CharSetManager_print(CharSetManager_getInstance(), x, y);
+		Debug_dimmGame(this);
 	}
 }
 
@@ -443,8 +478,6 @@ static void Debug_charMemoryShowMemory(Debug this, int x, int y) {
 #define __CHAR_SEGMENT_SIZE 512
 
 	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
-	Printing_text("Char segment: ", x, y - 1);
-	Printing_int(this->charSeg + 1, x + 14, y - 1);
 
 	int yOffset = y + 7;
 	
@@ -503,8 +536,9 @@ static void Debug_textutesShowStatus(Debug this, int x, int y) {
 	if(0 > this->currentBgmap) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		TextureManager_print(TextureManager_getInstance(), x, y);
-		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
+		TextureManager_print(TextureManager_getInstance(), x, y + 2);
+		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y + 2);
+		Debug_dimmGame(this);
 	}
 	else if(__NUM_BGMAPS > this->currentBgmap) {
 	
@@ -512,7 +546,12 @@ static void Debug_textutesShowStatus(Debug this, int x, int y) {
 		Printing_int (this->currentBgmap, x + 7, y);
 
 		SpriteManager_showLayer(SpriteManager_getInstance(), 0);
+
+		this->bgmapDisplacement.x = 0;
+		this->bgmapDisplacement.y = 0;
+
 		Debug_showDebugLayer(this);
+		Debug_lightUpGame(this);
 	}
 	else {
 		
@@ -520,6 +559,7 @@ static void Debug_textutesShowStatus(Debug this, int x, int y) {
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		TextureManager_print(TextureManager_getInstance(), x, y);
 		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
+		Debug_dimmGame(this);
 	}
 }
 
@@ -543,19 +583,21 @@ static void Debug_spritesShowStatus(Debug this, int x, int y) {
 	if(__TOTAL_LAYERS + 2 == this->currentLayer--) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		SpriteManager_print(SpriteManager_getInstance(), x, y);
+		SpriteManager_print(SpriteManager_getInstance(), x, y + 1);
 	}
 	else if(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer) {
 	
 		Printing_text("Layer: ", x, y);
 		Printing_int (this->currentLayer, x + 7, y);
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
+		Debug_lightUpGame(this);
 	}
 	else {
 		
 		this->currentLayer = __TOTAL_LAYERS + 1;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		SpriteManager_print(SpriteManager_getInstance(), x, y);
+		Debug_dimmGame(this);
 	}
 }
 

@@ -211,6 +211,12 @@ int Sprite_getHead(Sprite this);
 // set to true to allow render
 void Sprite_setRenderFlag(Sprite this, int renderFlag);
 
+// show
+void Sprite_show(Sprite this);
+
+// hide
+void Sprite_hide(Sprite this);
+
 // update sprite
 void Sprite_update(Sprite this);
 

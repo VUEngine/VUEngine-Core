@@ -396,7 +396,7 @@ void SpriteManager_recoverLayers(SpriteManager this) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print status
-int SpriteManager_print(SpriteManager this, int x, int y){
+void SpriteManager_print(SpriteManager this, int x, int y){
 	
 	ASSERT(this, "SpriteManager::print: null this");
 

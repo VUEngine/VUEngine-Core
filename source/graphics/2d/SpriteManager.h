@@ -113,8 +113,9 @@ void SpriteManager_showLayer(SpriteManager this, int layer);
 
 // show all layers
 void SpriteManager_recoverLayers(SpriteManager this);
+
 // print status
-int SpriteManager_print(SpriteManager this, int x, int y);
+void SpriteManager_print(SpriteManager this, int x, int y);
 
 #endif
 

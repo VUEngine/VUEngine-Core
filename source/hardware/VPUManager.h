@@ -32,6 +32,7 @@
  */
 
 #include <Object.h>
+#include <config.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -213,7 +214,7 @@ void VPUManager_displayHide(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 
 // clear bgmap
-void VPUManager_clearBgmap(VPUManager this, int bgmap);
+void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 
 // setup default column table
 void VPUManager_setupColumnTable(VPUManager this);

@@ -8,6 +8,9 @@ TARGET = libvbjae
 TYPE = release
 #TYPE = preprocessor
 
+# Enable debugging tools
+TOOLS =
+
 VBJAENGINE = $(VBDE)/libs/vbjaengine
 
 # Which directories contain source files
@@ -35,19 +38,20 @@ VBJAE_ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding  
 CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline $(VBJAE_ESSENTIALS)
-MACROS = __DEBUG
+MACROS = __DEBUG $(TOOLS)
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =  
 CCPARAM = -nodefaultlibs -mv810 -Wall -O3 -Winline $(VBJAE_ESSENTIALS)
-MACROS = NDEBUG
+MACROS = NDEBUG $(TOOLS)
 endif
+
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =  
 CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline $(GAME_ESSENTIALS) -E -P
-MACROS = __DEBUG
+MACROS = __DEBUG $(TOOLS)
 endif
 
 

@@ -259,11 +259,11 @@ void VPUManager_clearScreen(VPUManager this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // clear bgmap
-void VPUManager_clearBgmap(VPUManager this, int bgmap){
+void VPUManager_clearBgmap(VPUManager this, int bgmap, int size){
 	
 	ASSERT(this, "VPUManager::clearBgmap: null this");
 
-	Mem_clear((u16*)BGMap(bgmap), 8192);		
+	Mem_clear((u16*)BGMap(bgmap), size);		
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

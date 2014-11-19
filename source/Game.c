@@ -26,7 +26,16 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-#include <debugConfig.h>
+
+#ifdef __NO_DEBUG_TOOLS
+#undef __DEBUG_TOOLS
+#endif
+
+#ifdef __DEBUG_TOOLS
+#undef __DEBUG
+#endif
+
+
 #include <Game.h>
 #include <HardwareManager.h>
 #include <ClockManager.h>

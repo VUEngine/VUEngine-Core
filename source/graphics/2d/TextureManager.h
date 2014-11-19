@@ -103,4 +103,7 @@ int TextureManager_getYOffset(TextureManager this, int id);
 // retrieve bgmap segment
 int TextureManager_getBgmapSegment(TextureManager this, int id);
 
+// print status
+void TextureManager_print(TextureManager this, int x, int y);
+
 #endif /*TextureManager_H_*/
