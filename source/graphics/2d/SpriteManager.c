@@ -188,8 +188,9 @@ void SpriteManager_spriteChangedPosition(SpriteManager this){
 void SpriteManager_sortLayersProgressively(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
+	ASSERT(this->sprites[0], "SpriteManager::sortLayersProgressively: null this->sprites[0]");
 
-	if(!this->needSorting){
+	if(!this->needSorting ){
 
 		return;
 	}
@@ -199,8 +200,13 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 	DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[0]);
 
 	CACHE_ENABLE;
-	for(;i < __SPRITE_LIST_SIZE - 1 &&  this->sprites[i + 1]; i++){
+	for(;i < __SPRITE_LIST_SIZE - 1; i++){
 
+		if(!this->sprites[i] || !this->sprites[i + 1]) {
+			
+			continue;
+		}
+		
 		DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[i + 1]);
 
 		// check if z positions are swaped
@@ -247,7 +253,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	ASSERT(this, "SpriteManager::addSprite: null this");
 
 	int i = 0;
-	
 	// find the last render object's index
 	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++);
 	
@@ -401,11 +406,31 @@ void SpriteManager_print(SpriteManager this, int x, int y){
 	ASSERT(this, "SpriteManager::print: null this");
 
 	int spritesCount = 0;
-	for(;this->sprites[spritesCount] && spritesCount < __SPRITE_LIST_SIZE; spritesCount++);
-
 	Printing_text("SPRITES' USAGE", x, y++);
-	Printing_text("Sprites count: ", x, ++y);
-	Printing_int(spritesCount, x + 15, y);
 	Printing_text("Free layers: ", x, ++y);
 	Printing_int(this->freeLayer, x + 15, y);
+	Printing_text("Sprites count: ", x, ++y);
+
+	int i = 0;
+	int auxY = y + 2;
+	int auxX = x;
+	for(; i < __SPRITE_LIST_SIZE; i++){
+	
+		if(this->sprites[i]){
+			
+			spritesCount++;
+		}
+		
+		Printing_text("Sprite: ", auxX, auxY);
+		Printing_int(i, auxX + 8, auxY);
+		Printing_hex((int)this->sprites[i], auxX + 11, auxY);
+		
+		if(28 <= ++auxY) {
+			
+			auxY = y + 2;
+			auxX += 25;
+		}
+	}
+
+	Printing_int(spritesCount, x + 15, y);
 }

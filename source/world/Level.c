@@ -274,7 +274,4 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 	// reset ingame clock and start it
 	Clock_reset(Game_getInGameClock(Game_getInstance()));
 	Clock_start(Game_getInGameClock(Game_getInstance()));
-	
-	// allow hardware interrupts
-	Game_enableHardwareInterrupts(Game_getInstance());
 }

@@ -188,7 +188,8 @@ void VPUManager_displayOff(VPUManager this) {
 	VIP_REGS[XPCTRL] = 0;
 	VIP_REGS[DPCTRL] = 0;
 	VIP_REGS[FRMCYC] = 0;
-	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
+	
+	VPUManager_disableInterrupt(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -146,6 +146,7 @@ void Container_destructor(Container this){
 		
 		// delete children list
 		__DELETE(this->children);
+		
 		this->children = NULL;
 
 		node = VirtualList_begin(childrenToDelete);

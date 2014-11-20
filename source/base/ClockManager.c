@@ -172,9 +172,12 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     if(previousSecond != (this->ticks / __MILISECODS_IN_SECOND)){
     	
     		FrameRate frameRate = FrameRate_getInstance();
+#ifndef __DEBUG_TOOLS
 #ifdef __DEBUG
 	    	FrameRate_print(frameRate, 0, 1);
 #endif
+#endif
+	    	
 #ifdef __DEBUG_TOOLS
 	    	
 	    	if(!Game_isInDebugMode(Game_getInstance())) {

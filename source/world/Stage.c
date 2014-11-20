@@ -68,7 +68,7 @@ static void Stage_setEntityState(Stage this, int ID, int inGameState);
 static inline int Stage_getEntityState(Stage this, int ID);
 
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange);
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange, int disableInterrupts);
 
 // preload textures
 static void Stage_loadTextures(Stage this);
@@ -269,7 +269,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
 
 	// load entities
-	Stage_loadEntities(this, loadOnlyInRangeEntities, true);
+	Stage_loadEntities(this, loadOnlyInRangeEntities, true, false);
 
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
@@ -314,7 +314,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange){
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange, int disableInterrupts){
 
 	ASSERT(this, "Stage::loadEntities: null this");
 
@@ -346,8 +346,18 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
 					entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
 
-				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
+				if(disableInterrupts) {
+					
+					VPUManager_disableInterrupt(VPUManager_getInstance());
+				}
 				
+				Stage_addEntity(this, entityDefinition, &position, i, world->entities[i].extraInfo);
+
+				if(disableInterrupts) {
+					
+					VPUManager_enableInterrupt(VPUManager_getInstance());
+				}
+
 				if(!(__LOADED & inGameState)){
 					 
 					inGameState |= __LOADED;
@@ -400,7 +410,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		Entity entity = (Entity)VirtualNode_getData(node);
 		
 		//if the entity isn't visible inside the view field, unload it
-		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_LOAD_PAD))){		
+		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_LOAD_PAD << 1))){		
 
 			int inGameState = __VIRTUAL_CALL(int, Entity, getInGameState, entity);
 
@@ -416,8 +426,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 			// register entity to remove
 			VirtualList_pushBack(removedEntities, (const BYTE* const )entity);
 			
-			//VPUManager_waitForFrame(VPUManager_getInstance());
-
 			if(unloadProgressively) {
 				
 				break;
@@ -425,15 +433,22 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		}
 	}
 	
+	VPUManager_disableInterrupt(VPUManager_getInstance());
+
 	// now remove and delete entities
 	for(node = VirtualList_begin(removedEntities); node; node = VirtualNode_getNext(node)){
 	
 		// get next entity
 		Entity entity = (Entity)VirtualNode_getData(node);
 
+		VPUManager_disableInterrupt(VPUManager_getInstance());
+
 		// destroy it
 		__DELETE(entity);		
+		
 	}
+
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 	
 	// destroy the temporal list
 	__DELETE(removedEntities);
@@ -450,20 +465,21 @@ void Stage_stream(Stage this){
 	// if the screen is moving
 	if(*((u8*)_screenMovementState)){
 
-		static int load = 4;
-//		static int load = __LOGIC_FPS >> 1;
+		//static int load = 2;
+		static int load = __LOGIC_FPS >> 1;
 			
 		if(!--load){
 
 			// unload not visible objects
-			Stage_unloadOutOfRangeEntities(this, true);	
+			Stage_unloadOutOfRangeEntities(this, false);
 			
 			load = __LOGIC_FPS >> 1;
 		}
 		else if (((__LOGIC_FPS >> 1) >> 1) == load) {
+		//else if (1 == load) {
 
 			// load visible objects	
-			Stage_loadEntities(this, true, true);
+			Stage_loadEntities(this, true, true, true);
 		}	
 	}
 }
