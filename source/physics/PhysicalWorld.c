@@ -419,7 +419,6 @@ void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body){
 
 	if(!VirtualList_find(this->activeBodies, body)) {
 	
-		Printing_text("awake",  1, 10);
 		VirtualList_pushBack(this->activeBodies, body);
 	}
 
@@ -433,7 +432,6 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body){
 
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 
-	Printing_text("sleep",  1, 10);
 	VirtualList_removeElement(this->activeBodies, body);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -492,7 +492,6 @@ void Game_handleInput(Game this, int currentKey){
 
 #ifdef __DEBUG_TOOLS
 	
-	Printing_hex(currentKey, 40 , 5);
 	// check for a new key pressed
 	if((previousKey & K_SEL) && (newKey & K_STA)){
 

@@ -601,7 +601,10 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 						
 					case kBodyStoped:
 
-						CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
+						if(!Body_isMoving(this->body)) {
+							
+							CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
+						}
 						break;
 
 					case kBodyBounced:

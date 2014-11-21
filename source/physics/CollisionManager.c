@@ -351,8 +351,6 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape){
 	
 	if(!VirtualList_find(this->movingShapes, shape)) {
 	
-		Printing_text("move",  10, 10);
-
 		VirtualList_pushBack(this->movingShapes, shape);
 	}
 }
@@ -364,8 +362,6 @@ void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape){
 	ASSERT(this, "CollisionManager::shapeChangedState: null this");
 
 	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
-
-	Printing_text("stop",  10, 10);
 
 	VirtualList_removeElement(this->movingShapes, shape);
 }
