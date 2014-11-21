@@ -50,12 +50,13 @@ enum ShapeTypes{
 
 #define Shape_METHODS								\
 		Object_METHODS								\
-		__VIRTUAL_DEC(draw);						\
 		__VIRTUAL_DEC(overlaps);					\
 		__VIRTUAL_DEC(setup);						\
 		__VIRTUAL_DEC(positione);					\
 		__VIRTUAL_DEC(getAxisOfCollision);			\
 		__VIRTUAL_DEC(testIfCollision);				\
+		__VIRTUAL_DEC(deleteDirectDrawData);		\
+		__VIRTUAL_DEC(draw);						\
 		__VIRTUAL_DEC(print);
 
 
@@ -123,7 +124,13 @@ void Shape_checked(Shape this, int checked);
 // has been configured?
 int Shape_isReady(Shape this);
 
+// draw debug data
+void Shape_draw(Shape this);
+
+// flush direct draw data
+void Shape_deleteDirectDrawData(Shape this);
+
 // print debug data
-void Shape_print(Shape this);
+void Shape_print(Shape this, int x, int y);
 
 #endif /*SHAPE_H_*/

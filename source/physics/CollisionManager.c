@@ -308,15 +308,6 @@ void CollisionManager_update(CollisionManager this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// update a shape
-void CollisionManager_updateShape(CollisionManager this, Shape shape, const VBVec3D* const position){
-
-	ASSERT(this, "CollisionManager::updateShape: null this");
-
-	__VIRTUAL_CALL(void, Shape, setup, shape, __ARGUMENTS(position));
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unregister all shapes
 void CollisionManager_reset(CollisionManager this){
 
@@ -351,6 +342,7 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape){
 	
 	if(!VirtualList_find(this->movingShapes, shape)) {
 	
+//		Printing_text("CollisionManager::shapeStartedMoving", 10, 10);
 		VirtualList_pushBack(this->movingShapes, shape);
 	}
 }
@@ -363,6 +355,7 @@ void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape){
 
 	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
 
+//	Printing_text("CollisionManager::shapeStopedMoving", 10, 10);
 	VirtualList_removeElement(this->movingShapes, shape);
 }
 
@@ -407,6 +400,24 @@ void CollisionManager_drawShapes(CollisionManager this){
 		__VIRTUAL_CALL(void, Shape, draw, (Shape)VirtualNode_getData(node));
 	}
 }
+
+// free memory by deleting direct draw polygons
+void CollisionManager_flushShapesDirectDrawData(CollisionManager this){
+
+	ASSERT(this, "CollisionManager::drawShapes: null this");
+//	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
+
+	// comparing against the other shapes
+	VirtualNode node = VirtualList_begin(this->shapes);
+
+	// check the shapes
+	for(; node; node = VirtualNode_getNext(node)){
+
+		__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, (Shape)VirtualNode_getData(node));
+	}
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print status

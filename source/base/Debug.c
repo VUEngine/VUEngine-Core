@@ -32,31 +32,49 @@
 
 #include <Debug.h>
 #include <Game.h>
-#include <MemoryPool.h>
-#include <HardwareManager.h>
-#include <ClockManager.h>
-#include <CollisionManager.h>
-#include <PhysicalWorld.h>
-#include <DirectDraw.h>
 #include <Optics.h>
-#include <MiscStructs.h>
 #include <Globals.h>
 #include <FrameRate.h>
-#include <Clock.h>
-#include <TextureManager.h>
-#include <Level.h>
+#include <MemoryPool.h>
 #include <MessageDispatcher.h>
-#include <Stage.h>
-#include <ParamTableManager.h>
-#include <SpriteManager.h>
 #include <CharSetManager.h>
+#include <ClockManager.h>
+#include <CollisionManager.h>
+#include <HardwareManager.h>
 #include <SoundManager.h>
-#include <StateMachine.h>
-#include <Screen.h>
-#include <Background.h>
-#include <Image.h>
+#include <SpriteManager.h>
+#include <TextureManager.h>
+#include <ParamTableManager.h>
 #include <VPUManager.h>
+#include <PhysicalWorld.h>
+#include <DirectDraw.h>
 #include <Printing.h>
+#include <MiscStructs.h>
+
+#include <Clock.h> 
+#include <State.h>
+#include <StateMachine.h>
+#include <Telegram.h>
+#include <VirtualList.h>
+#include <AnimatedSprite.h>
+#include <CharGroup.h>
+#include <Sprite.h>
+#include <Texture.h>
+#include <Body.h>
+
+#include <Body.h>
+#include <Circle.h>
+#include <Cuboid.h>
+#include <Mass.h>
+#include <Shape.h>
+#include <Actor.h>
+#include <Background.h>
+#include <Container.h>
+#include <Entity.h>
+#include <InGameEntity.h>
+#include <ScrollBackground.h>
+#include <Level.h>
+#include <Stage.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -132,6 +150,8 @@ __CLASS_DEFINITION(Debug);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+extern ClassSizeData _userClassesSizeData[];
+
 // class's constructor
 static void Debug_constructor(Debug this);
 
@@ -160,8 +180,11 @@ static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y);
 static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
 
-static void Debug_printClassSizes(int x, int y);
+static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message);
 static void Debug_showCollisionShapes(Debug this);
 static void Debug_showDebugBgmap(Debug this);
 
@@ -283,6 +306,7 @@ void Debug_show(Debug this){
 // hide debug screens
 void Debug_hide(Debug this){
 
+	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_lightUpGame(this);
@@ -364,9 +388,9 @@ static void Debug_showPage(Debug this, int increment) {
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		Printing_text("DEBUG SYSTEM", 17, 0);
-		Printing_text("Use(left/right)", 33, 1);
+		Printing_text("Use(left/right)", 33, 0);
 		Debug_dimmGame(this);
-		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 3);		
+		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 2);		
 	}
 }
 
@@ -379,9 +403,9 @@ static void Debug_showSubPage(Debug this, int increment) {
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		Printing_text("DEBUG SYSTEM", 17, 0);
-		Printing_text("Use(left/right)", 33, 1);
-		Printing_text("Use(up/down)", 33, 2);
-		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 3);		
+		Printing_text("Use(left/right)", 33, 0);
+		Printing_text("Use(up/down)", 33, 1);
+		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 2);		
 	}
 }
 
@@ -432,8 +456,7 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y) {
 	Clock_print(Game_getClock(Game_getInstance()), 23, y);
 	Printing_text("In game clock's time: ", 1, ++y);
 	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y);
-	
-	FrameRate_print(FrameRate_getInstance(), 1, y + 3);
+	FrameRate_printLastRecord(FrameRate_getInstance(), 1, y + 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,10 +464,72 @@ static void Debug_showMemoryStatus(Debug this, int increment, int x, int y) {
 	
 	Debug_removeSubPages(this);
 
-	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
-	Debug_printClassSizes(x + 21, y);
-}
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFirstPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSecondPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowUserDefinedClassesSizes);
 	
+	this->currentSubPage = VirtualList_begin(this->subPages);
+
+	Debug_showSubPage(this, 0);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y) {
+
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] = {
+			
+			{"Clock", &Clock_getObjectSize},
+			{"State", &State_getObjectSize},
+			{"StateMachine", &StateMachine_getObjectSize},
+			{"Telegram", &Telegram_getObjectSize},
+			{"VirtualList", &VirtualList_getObjectSize},
+			{"VirtualNode", &VirtualNode_getObjectSize},
+			{"AnimatedSprite", &AnimatedSprite_getObjectSize},
+			{"CharGroup", &CharGroup_getObjectSize},
+			{"Sprite", &Sprite_getObjectSize},
+			{"Texture", &Texture_getObjectSize},
+
+	};
+	
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VbJAEngine classes:");
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y) {
+	
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] = {
+			
+			{"Body", &Body_getObjectSize},
+			{"Circle", &Circle_getObjectSize},
+			{"Cuboid", &Cuboid_getObjectSize},
+			{"Mass", &Mass_getObjectSize},
+			{"Shape", &Shape_getObjectSize},
+			{"Actor", &Actor_getObjectSize},
+			{"Background", &Background_getObjectSize},
+			{"Container", &Container_getObjectSize},
+			{"Entity", &Entity_getObjectSize},
+			{"InGameEntity", &InGameEntity_getObjectSize},
+			{"ScrollBackground", &ScrollBackground_getObjectSize},
+			{"Level", &Level_getObjectSize},
+			{"Stage", &Level_getObjectSize},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VbJAEngine classes:");
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y) {
+	
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+
+	Debug_printClassSizes(_userClassesSizeData, 0, x + 21, y, "User defined classes:");
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y) {
 
@@ -610,7 +695,6 @@ static void Debug_showSpritesStatus(Debug this, int increment, int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y) {
-
 	
 	this->currentLayer -= increment;
 
@@ -681,48 +765,27 @@ static void Debug_showHardwareStatus(Debug this, int increment, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Debug_printClassSizes(int x, int y){
+static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message){
 
 	int columnIncrement = 20;
 
 	Printing_text("CLASSES' MEMORY USAGE (B) ", x, y++);
+	
+	if(message) {
+	
+		Printing_text(message, x, ++y);
+		y++;
+	}
+	
 	Printing_text("Name				Size", x, ++y);
-	Printing_text("AnimatedSprite", x, ++y);
-	Printing_int(AnimatedSprite_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Background", x, ++y);
-	Printing_int(Background_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Character", x, ++y);
-	Printing_int(Actor_getObjectSize(), x + columnIncrement, y);
-	Printing_text("CharGroup", x, ++y);
-	Printing_int(CharGroup_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Clock", x, ++y);
-	Printing_int(Clock_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Entity", x, ++y);
-	Printing_int(Entity_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Image", x, ++y);
-	Printing_int(Image_getObjectSize(), x + columnIncrement, y);
-	Printing_text("InGameEntity", x, ++y);
-	Printing_int(InGameEntity_getObjectSize(), x + columnIncrement, y);
-//	Printing_text("Rect", x, ++y);
-//	Printing_int(Rect_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Shape", x, ++y);
-	Printing_int(Shape_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Sprite", x, ++y);
-	Printing_int(Sprite_getObjectSize(), x + columnIncrement, y);
-	Printing_text("State", x, ++y);
-	Printing_int(State_getObjectSize(), x + columnIncrement, y);
-	Printing_text("StateMachine", x, ++y);
-	Printing_int(StateMachine_getObjectSize(), x + columnIncrement, y);
-	//vbjPrintText("Scroll", x, ++y);
-	//vbjPrintInt(Scroll_getObjectSize(), x + columnIncrement, y);
-	Printing_text("Telegram", x, ++y);
-	Printing_int(Telegram_getObjectSize(), x + columnIncrement, y);;
-	Printing_text("Texture", x, ++y);
-	Printing_int(Texture_getObjectSize(), x + columnIncrement, y);
-	Printing_text("VirtualList", x, ++y);
-	Printing_int(VirtualList_getObjectSize(), x + columnIncrement, y);
-	Printing_text("VirtualNode", x, ++y);
-	Printing_int(VirtualNode_getObjectSize(), x + columnIncrement, y);
+	y++;
+	
+	int i = 0;
+	for(; classesSizeData[i].classSizeFunction && (0 == size || i < size); i++) {
+		
+		Printing_text(classesSizeData[i].name, x, ++y);
+		Printing_int(((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y);
+	}
 }
 
 #endif 

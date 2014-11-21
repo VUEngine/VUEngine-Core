@@ -276,6 +276,8 @@ void CharGroup_write(CharGroup this){
 // rewrite char on memory	
 void CharGroup_rewrite(CharGroup this){
 
+	VPUManager_waitForFrame(VPUManager_getInstance());
+	
 	// write again
 	CharGroup_write(this);
 	

@@ -276,22 +276,22 @@ void Body_moveUniformly(Body this, Velocity velocity){
 	if (velocity.x) {
 	
 		Body_setMovementType(this, __UNIFORM_MOVEMENT, __XAXIS);
+		Body_awake(this, __XAXIS);
 		this->velocity.x = velocity.x;
-		Body_awake(this, 0);
 	}
 
 	if (velocity.y) {
 	
 		Body_setMovementType(this, __UNIFORM_MOVEMENT, __YAXIS);
+		Body_awake(this, __YAXIS);
 		this->velocity.y = velocity.y;
-		Body_awake(this, 0);
 	}
 
 	if (velocity.z) {
 	
 		Body_setMovementType(this, __UNIFORM_MOVEMENT, __ZAXIS);
+		Body_awake(this, __ZAXIS);
 		this->velocity.z = velocity.z;
-		Body_awake(this, 0);
 	}
 }
 
@@ -694,6 +694,7 @@ void Body_stopMovement(Body this, int axis){
 	if(!Body_isMoving(this)) {
 		
 		Body_sleep(this);
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, NULL);
 	}
 }
 

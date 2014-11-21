@@ -106,12 +106,7 @@ void Cuboid_destructor(Cuboid this){
 
 	ASSERT(this, "Cuboid::destructor: null this");
 
-	if(this->polygon) {
-		
-		__DELETE(this->polygon);
-		
-		this->polygon = NULL;
-	}
+	Cuboid_deleteDirectDrawData(this);
 	
 	// destroy the super object
 	__DESTROY_BASE(Shape);
@@ -236,31 +231,6 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this){
 
 	return this->positionedRightcuboid;
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// draw rect
-/*
-void Cuboid_print(Cuboid this, int x, int y){
-
-	Rightcuboid rightCuboid = this->positionedRightcuboid;
-
-	Printing_text("X:" , x, y);
-	Printing_int(FIX19_13TOI(rightCuboid.x0), x + 2, y);
-	Printing_text("-" , x + 5, y);
-	Printing_int(FIX19_13TOI(rightCuboid.x1), x + 7, y++);
-
-	Printing_text("Y:" , x, y);
-	Printing_int(FIX19_13TOI(rightCuboid.y0), x + 2, y);
-	Printing_text("-" , x + 5, y);
-	Printing_int(FIX19_13TOI(rightCuboid.y1), x + 7, y++);
-
-	Printing_text("Z:" , x, y);
-	Printing_int(FIX19_13TOI(rightCuboid.z0), x + 2, y);
-	Printing_text("-" , x + 5, y);
-	Printing_int(FIX19_13TOI(rightCuboid.z1), x + 7, y++);
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine axis of collision
@@ -468,13 +438,6 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 	return axisOfPossibleCollision;
 }
 
-
-// print debug data
-void Cuboid_print(Cuboid this){
-
-	ASSERT(this, "Cuboid::print: null this");
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // configure polygon
 static void Cuboid_configurePolygon(Cuboid this, int renew){
@@ -483,13 +446,7 @@ static void Cuboid_configurePolygon(Cuboid this, int renew){
 
 	if(renew){
 		
-		if(this->polygon) {
-			
-			__DELETE(this->polygon);
-			
-			this->polygon = NULL;
-		}
-
+		Cuboid_deleteDirectDrawData(this);
 	}
 	else if(this->polygon) {
 		
@@ -521,4 +478,40 @@ void Cuboid_draw(Cuboid this){
 
 	// draw the polygon
 	Polygon_draw(this->polygon, true);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// flush direct draw data
+void Cuboid_deleteDirectDrawData(Cuboid this){
+
+	if(this->polygon) {
+		
+		__DELETE(this->polygon);
+		
+		this->polygon = NULL;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print debug data
+void Cuboid_print(Cuboid this, int x, int y){
+
+	ASSERT(this, "Cuboid::print: null this");
+
+	Rightcuboid rightCuboid = this->positionedRightcuboid;
+
+	Printing_text("X:" , x, y);
+	Printing_int(FIX19_13TOI(rightCuboid.x0), x + 2, y);
+	Printing_text("-" , x + 5, y);
+	Printing_int(FIX19_13TOI(rightCuboid.x1), x + 7, y++);
+
+	Printing_text("Y:" , x, y);
+	Printing_int(FIX19_13TOI(rightCuboid.y0), x + 2, y);
+	Printing_text("-" , x + 5, y);
+	Printing_int(FIX19_13TOI(rightCuboid.y1), x + 7, y++);
+
+	Printing_text("Z:" , x, y);
+	Printing_int(FIX19_13TOI(rightCuboid.z0), x + 2, y);
+	Printing_text("-" , x + 5, y);
+	Printing_int(FIX19_13TOI(rightCuboid.z1), x + 7, y++);
 }

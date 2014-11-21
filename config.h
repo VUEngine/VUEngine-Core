@@ -85,7 +85,7 @@
 #define __TIMER_RESOLUTION				1
 
 //target frames per second
-#define __MINIMUM_GOOD_FPS 				50
+#define __MINIMUM_GOOD_FPS 				55
 
 //target frames per second
 #define __RENDER_FPS 					60

@@ -100,9 +100,6 @@ void CollisionManager_processRemovedShapes(CollisionManager this);
 // calculate collisions
 void CollisionManager_update(CollisionManager this);
 
-// update a shape
-///void CollisionManager_updateShape(CollisionManager this, Shape shape, const VBVec3D* const position);
-
 // unregister all shapes
 void CollisionManager_reset(CollisionManager this);
 
@@ -121,7 +118,10 @@ void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
 // draw shapes
 void CollisionManager_drawShapes(CollisionManager this);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// free memory by deleting direct draw vectors
+void CollisionManager_flushShapesDirectDrawData(CollisionManager this);
+
+// print status
 void CollisionManager_print(CollisionManager this, int x, int y);
 
 #endif /*CollisionManager_H_*/

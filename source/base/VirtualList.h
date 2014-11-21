@@ -153,6 +153,9 @@ VirtualNode VirtualList_getNode(VirtualList this, int item);
 // get node's address of node containing datapointer
 void* VirtualList_getObject(VirtualList this, void* const dataPointer);
 
+// find a node in the list
+VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer);
+
 // remove an element from the list
 int VirtualList_removeElement(VirtualList this, const void* const dataPointer);
 

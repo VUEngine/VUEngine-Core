@@ -78,10 +78,17 @@ enum MemoryPoolSizes{
 #define __POOL_128B_SIZE_FINAL 	(__BLOCK_128B * 16)
 #define __POOL_96B_SIZE_FINAL 	(__BLOCK_96B * 64)
 #define __POOL_64B_SIZE_FINAL 	(__BLOCK_64B * 128)
-#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 128)
+#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 32)
 #define __POOL_32B_SIZE_FINAL 	(__BLOCK_32B * 128)
-#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 256)
+
+#ifdef __DEBUG_TOOLS
+#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 512)
+#define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 512)
+#else
+#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 128)
 #define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 128)
+#endif
+
 
 #define MemoryPool_ATTRIBUTES							\
 														\
@@ -336,6 +343,28 @@ static void MemoryPool_reset(MemoryPool this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve pool size
+int MemoryPool_getPoolSize(MemoryPool this){
+	
+	ASSERT(this, "MemoryPool::reset: null this");
+
+	int size = 0;
+	
+	size += sizeof(this->pool256B);
+	size += sizeof(this->pool192B);
+	size += sizeof(this->pool128B);
+	size += sizeof(this->pool96B);
+	size += sizeof(this->pool64B);
+	size += sizeof(this->pool48B);
+	size += sizeof(this->pool32B);
+	size += sizeof(this->pool24B);
+	size += sizeof(this->pool16B);
+
+	
+	return size;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print dynamic memory usage
 void MemoryPool_printMemUsage(MemoryPool this, int x, int y){
 	
@@ -347,10 +376,14 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y){
 	int pool;
 	int displacement = 0;
 	
-	Printing_text("MEMORY'S STATUS",x,y++);
+	Printing_text("MEMORY'S STATUS", x, y++);
+	
+	Printing_text("Pool's size: ", x, ++y);
+	Printing_int(MemoryPool_getPoolSize(MemoryPool_getInstance()), x + 13, y++);
+
 	Printing_text("Pool", x, ++y);
 	Printing_text("Free", x + 7, y);
-	Printing_text("Used", x + 14, y);
+	Printing_text("Used", x + 14, y++);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++){
 		

@@ -99,4 +99,7 @@ int FrameRate_areFPSHigh(FrameRate this);
 // print fps
 void FrameRate_print(FrameRate this,int col,int row);
 
+// print renderFPS
+void FrameRate_printLastRecord(FrameRate this, int col, int row);
+
 #endif /*FRAMERATE_H_*/

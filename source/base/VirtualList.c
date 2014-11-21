@@ -567,7 +567,7 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// remove a node from the list
+// find a node in the list
 VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer){
 	
 	ASSERT(this, "VirtualList::removeElement: null this");

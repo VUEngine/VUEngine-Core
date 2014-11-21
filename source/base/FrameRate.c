@@ -57,6 +57,18 @@
 												\
 	/* physics frames per second */				\
 	int physicsFPS;								\
+												\
+	/* raw frames per second */					\
+	int lastRawFPS;								\
+												\
+	/* rendering frames per second */			\
+	int lastRenderFPS;							\
+												\
+	/* logic frames per second */				\
+	int lastLogicFPS;							\
+												\
+	/* physics frames per second */				\
+	int lastPhysicsFPS;							\
 
 
 // define the FrameRate
@@ -94,7 +106,15 @@ static void FrameRate_constructor(FrameRate this){
 	
 	__CONSTRUCT_BASE(Object);
 	
-	FrameRate_reset(this);
+	this->rawFPS = 0;
+	this->renderFPS = 0;
+	this->logicFPS = 0;
+	this->physicsFPS = 0;
+
+	this->lastRawFPS = 0;
+	this->lastRenderFPS = 0;
+	this->lastLogicFPS = 0;
+	this->lastPhysicsFPS = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,6 +132,11 @@ void FrameRate_destructor(FrameRate this){
 void FrameRate_reset(FrameRate this){
 	
 	ASSERT(this, "FrameRate::reset: null this");
+
+	this->lastRawFPS = this->rawFPS;
+	this->lastRenderFPS = this->renderFPS;
+	this->lastLogicFPS = this->logicFPS;
+	this->lastPhysicsFPS = this->physicsFPS;
 
 	this->rawFPS = 0;
 	this->renderFPS = 0;
@@ -212,4 +237,21 @@ void FrameRate_print(FrameRate this, int col, int row){
 	Printing_int(this->logicFPS, col + 8, row++);
 	Printing_text("Physics                      ", col, row);
 	Printing_int(this->physicsFPS, col + 8, row++);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print renderFPS
+void FrameRate_printLastRecord(FrameRate this, int col, int row){
+	
+	ASSERT(this, "FrameRate::print: null this");
+
+	Printing_text("FPS", col, row++);
+	Printing_text("Raw                          ", col, row);
+	Printing_int(this->lastRawFPS, col + 8, row++);
+	Printing_text("Render                       ", col, row);
+	Printing_int(this->lastRenderFPS, col + 8, row++);
+	Printing_text("Logic                        ", col, row);
+	Printing_int(this->lastLogicFPS, col + 8, row++);
+	Printing_text("Physics                      ", col, row);
+	Printing_int(this->lastPhysicsFPS, col + 8, row++);
 }

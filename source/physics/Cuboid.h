@@ -56,6 +56,8 @@
 		__VIRTUAL_SET(ClassName, Cuboid, positione);			\
 		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);	\
 		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);		\
+		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);	\
+		__VIRTUAL_SET(ClassName, Cuboid, draw);					\
 		__VIRTUAL_SET(ClassName, Cuboid, print);				\
 
 
@@ -123,16 +125,19 @@ Rightcuboid Cuboid_getRightcuboid(Cuboid this);
 // retrieve positioned rightCuboid
 Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
 
-// draw rect
-void Cuboid_draw(Cuboid this);
-
 // determine axis of collision
 int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement);
 
 // test if collision with the entity give the displacement
 int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement);
 
+// draw debug data
+void Cuboid_draw(Cuboid this);
+
+// flush direct draw data
+void Cuboid_deleteDirectDrawData(Cuboid this);
+
 // print debug data
-void Cuboid_print(Cuboid this);
+void Cuboid_print(Cuboid this, int x, int y);
 
 #endif /*CUBOID_H_*/
