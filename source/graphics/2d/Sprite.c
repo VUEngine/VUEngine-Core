@@ -248,9 +248,16 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 
 	ASSERT(this->texture, "Sprite::setPosition: null texture");
 
-	// move to the sprite's texture's center
-	position3D.x -= ITOFIX19_13(Texture_getCols(this->texture) << 2);
-	position3D.y -= ITOFIX19_13(Texture_getRows(this->texture) << 2);
+	if(WRLD_AFFINE == Sprite_getMode(this)){
+
+		position3D.x -= ITOFIX19_13(Texture_getCols(this->texture) << 2);
+		position3D.y -= ITOFIX19_13(Texture_getRows(this->texture) << 2);
+	}
+	else {
+		
+		position3D.x -= FIX19_13_DIV(ITOFIX19_13(Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
+		position3D.y -= FIX19_13_DIV(ITOFIX19_13(Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
+	}
 	
 	fix19_13 previousZPosition = this->drawSpec.position.z;
 	

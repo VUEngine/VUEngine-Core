@@ -652,8 +652,8 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y) {
 	if(-1 == this->currentBgmap) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		TextureManager_print(TextureManager_getInstance(), x, y + 2);
-		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y + 2);
+		TextureManager_print(TextureManager_getInstance(), x, y);
+		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
 		Debug_dimmGame(this);
 	}
 	else if(__NUM_BGMAPS > this->currentBgmap) {
@@ -706,7 +706,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y) {
 	if(__TOTAL_LAYERS + 1 == this->currentLayer) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		SpriteManager_print(SpriteManager_getInstance(), x, y + 1);
+		SpriteManager_print(SpriteManager_getInstance(), x, y);
 	}
 	else if(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer) {
 	

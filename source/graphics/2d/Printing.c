@@ -212,7 +212,7 @@ void Printing_float(float value,int x,int y){
 		size /= 10;
 	}	
 	
-	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), 0);
+	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALLETE);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

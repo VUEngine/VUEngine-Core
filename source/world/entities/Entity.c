@@ -271,6 +271,7 @@ int Entity_handleMessage(Entity this, Telegram telegram){
 	return false;
 }
 
+#include <Math.h>
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get width
 int Entity_getWidth(Entity this){
@@ -280,7 +281,7 @@ int Entity_getWidth(Entity this){
 	
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 	Texture texture = Sprite_getTexture(sprite);
-	
+
 	// must calculate based on the scale because not affine Container must be enlarged
 	return Optics_calculateRealSize(Texture_getCols(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
 }

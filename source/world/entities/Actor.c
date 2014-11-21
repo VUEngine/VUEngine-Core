@@ -514,8 +514,15 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 	ASSERT(collidingEntities, "Actor::resolveCollision: collidingEntities");
 
 	int axisOfCollision = 0;
-	int alignThreshold = 1;
-
+	Scale scale = Entity_getScale((Entity) this);
+	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(10), scale.y));
+	
+	if (1 > alignThreshold) {
+	
+		alignThreshold = 1;
+	}
+	
+	alignThreshold = 1;
 	// get last physical displacement
 	VBVec3D displacement = Body_getLastDisplacement(this->body); 
 

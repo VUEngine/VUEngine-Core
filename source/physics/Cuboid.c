@@ -28,6 +28,7 @@
  */
 
 #include <Cuboid.h>
+#include <Optics.h>
 #include <Polygon.h>
 #include <Math.h>
 #include <InGameEntity.h>
@@ -473,7 +474,7 @@ static void Cuboid_configurePolygon(Cuboid this, int renew){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // draw rect
 void Cuboid_draw(Cuboid this){
-
+	
 	Cuboid_configurePolygon(this, this->moves);
 
 	// draw the polygon

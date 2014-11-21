@@ -229,13 +229,20 @@ void InGameEntity_initialTransform(InGameEntity this, Transformation* environmen
 	
 	ASSERT(this, "InGameEntity::transform: null this");
 
+	this->invalidateGlobalPosition.x = true;
+	this->invalidateGlobalPosition.y = true;
+	this->invalidateGlobalPosition.z = true;
+
 	// call base
 	Entity_transform((Entity)this, environmentTransform);
 
 	if(this->shape){
 				
 		// setup shape
-		__VIRTUAL_CALL(void, Shape, positione, this->shape);
+		__VIRTUAL_CALL(void, Shape, setup, this->shape);
+
+		// setup shape
+//		__VIRTUAL_CALL(void, Shape, positione, this->shape);
 	}
 }
 
@@ -282,11 +289,5 @@ void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position){
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
 	Container_setLocalPosition((Container)this, position);
-
-	if(this->shape && !Shape_isReady(this->shape)){
-				
-		// setup shape
-		__VIRTUAL_CALL(void, Shape, setup, this->shape);
-	}
 }
 
