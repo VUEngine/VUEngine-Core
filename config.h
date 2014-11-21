@@ -85,7 +85,7 @@
 #define __TIMER_RESOLUTION				1
 
 //target frames per second
-#define __OPTIMUM_FPS_MINIMUM 			50
+#define __MINIMUM_GOOD_FPS 				50
 
 //target frames per second
 #define __RENDER_FPS 					60
@@ -142,7 +142,7 @@
 #define __POOL_64B_SIZE 	(__BLOCK_64B * 64)
 #define __POOL_48B_SIZE 	(__BLOCK_48B * 128)
 #define __POOL_32B_SIZE 	(__BLOCK_32B * 128)
-#define __POOL_24B_SIZE 	(__BLOCK_24B * 128)
+#define __POOL_24B_SIZE 	(__BLOCK_24B * 256)
 #define __POOL_16B_SIZE 	(__BLOCK_16B * 128)
 
 #define __MIN_BLOCK 	__BLOCK_16B
@@ -156,14 +156,16 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-#define CHAR_SEGMENTS	4
-
-// number of chargroups per char segment
-#define CHAR_GRP_PER_SEG	32
+#define __CHAR_SEGMENTS	4
 
 // number of chargroups per char segment
-#define CHAR_SEGMENT_SIZE 16
+#define __CHAR_GRP_PER_SEG	32
+
+// number of chargroups per char segment
+#define __CHAR_SEGMENT_SIZE 16
+
+// number of chars per char segment
+#define __CHAR_SEGMENT_TOTAL_CHARS 512
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -193,6 +195,11 @@
 
 //number of bgmap definitions in each bgmap segment 
 #define __NUM_MAPS_PER_SEG 16
+
+// printing area
+#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
+#define __PRINTABLE_BGMAP_AREA 	(64 * 28)
+
 
 #define __PALLET_MASK			0x0600
 #define __WORLD_LAYER_MASK	0x01F0

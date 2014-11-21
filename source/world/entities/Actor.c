@@ -70,9 +70,6 @@ __CLASS_DEFINITION(Actor);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// retrieve shape
-Shape InGameEntity_getShape(InGameEntity this);
-
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 
@@ -167,7 +164,7 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 	
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
-	Container_setLocalPosition((Container)this, position);
+	InGameEntity_setLocalPosition((InGameEntity)this, position);
 
 	if(this->body) {
 		
@@ -219,23 +216,13 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 		Container_setLocalPosition((Container) this, Body_getPosition(this->body));
 
 		// call base
-		InGameEntity_transform((InGameEntity)this, &environmentAgnosticTransform);
+		Entity_transform((Entity)this, &environmentAgnosticTransform);
 	}
 	else {
 		
 		// call base
-		InGameEntity_transform((InGameEntity)this, environmentTransform);
+		Entity_transform((Entity)this, environmentTransform);
 	}
-	
-#ifdef __DEBUG
-	// draw shape
-//	if(this->shape && __VIRTUAL_CALL(int, Entity, updateSpritePosition, (Entity)this)){
-	if(this->shape){
-			
-		
-			//__VIRTUAL_CALL(void, Shape, draw, this->shape);
-	}	
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -594,7 +581,7 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 			Object sender = Telegram_getSender(telegram);
 			Actor atherActor = __GET_CAST(Actor, sender);
 			
-			if (__GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender)){
+			if (sender == (Object)this || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender)){
 				
 				switch(message){
 
@@ -606,9 +593,15 @@ int Actor_handleMessage(Actor this, Telegram telegram){
 						break;
 												
 					case kBodyStartedMoving:
-						
+
+						CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
 						Actor_updateCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 						return true;
+						break;
+						
+					case kBodyStoped:
+
+						CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
 						break;
 
 					case kBodyBounced:
@@ -770,19 +763,6 @@ void Actor_stopMovement(Actor this){
 		Body_stopMovement(this->body, __ZAXIS);
 	}
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// stop movement over axis
-void Actor_stopMovementOnAxis(Actor this, int axis){
-
-	ASSERT(this, "Actor::stopMovementOnAxis: null this");
-
-	if(this->body) {
-		
-		Body_stopMovement(this->body, axis);
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // align character to other entity on collision

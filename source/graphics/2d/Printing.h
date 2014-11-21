@@ -83,5 +83,7 @@ void Printing_writeAscii();
 //show debug info and hung up there
 void Printing_debug(u32 x);
 
+// clear printing area
+void Printing_clear();
 
 #endif 

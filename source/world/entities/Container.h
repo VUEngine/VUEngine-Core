@@ -62,7 +62,8 @@
 #define Container_METHODS								\
 		Object_METHODS									\
 		__VIRTUAL_DEC(update);							\
-		__VIRTUAL_DEC(transform);							\
+		__VIRTUAL_DEC(transform);						\
+		__VIRTUAL_DEC(initialTransform);				\
 		__VIRTUAL_DEC(setLocalPosition);				\
 		__VIRTUAL_DEC(doKeyPressed);					\
 		__VIRTUAL_DEC(doKeyUp);							\
@@ -76,6 +77,7 @@
 		Object_SET_VTABLE(ClassName)								\
 		__VIRTUAL_SET(ClassName, Container, update);				\
 		__VIRTUAL_SET(ClassName, Container, transform);				\
+		__VIRTUAL_SET(ClassName, Container, initialTransform);		\
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);		\
 		__VIRTUAL_SET(ClassName, Container, doKeyPressed);			\
 		__VIRTUAL_SET(ClassName, Container, doKeyUp);				\
@@ -141,8 +143,11 @@ void Container_propagateEvent(Container this, int (*event)(Container this, va_li
 // contatenate transform
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform);
 	
-//transform class
+// transform
 void Container_transform(Container this, Transformation* environmentTransform);
+
+// intinial transform
+void Container_initialTransform(Container this, Transformation* environmentTransform);
 
 // retrieve global position
 VBVec3D Container_getGlobalPosition(Container this);

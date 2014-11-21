@@ -106,7 +106,22 @@ void CollisionManager_update(CollisionManager this);
 // unregister all shapes
 void CollisionManager_reset(CollisionManager this);
 
-// check if an entity has been registered
-int CollisionManager_isEntityRegistered(CollisionManager this, InGameEntity owner);
+// inform of a change in the shape
+void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
+
+// inform of a change in the shape
+void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape);
+
+// inform of a change in the shape
+void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape);
+
+// inform of a change in the shape
+void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
+
+// draw shapes
+void CollisionManager_drawShapes(CollisionManager this);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void CollisionManager_print(CollisionManager this, int x, int y);
 
 #endif /*CollisionManager_H_*/

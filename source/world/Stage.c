@@ -304,7 +304,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 				{0, 0, 0}			
 		};
 		
-		__VIRTUAL_CALL(void, Container, transform, (Container)entity, __ARGUMENTS(&environmentTransform));
+		__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(&environmentTransform));
 
 		return entity;
 	}

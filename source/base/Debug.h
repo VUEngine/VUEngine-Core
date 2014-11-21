@@ -72,6 +72,9 @@ Debug Debug_getInstance();
 // class's destructor
 void Debug_destructor(Debug this);
 
+// update
+void Debug_update(Debug this);
+
 // show debug screens
 void Debug_show(Debug this);
 

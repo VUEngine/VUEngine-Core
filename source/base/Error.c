@@ -101,12 +101,7 @@ int Error_triggerException(Error this, char* string){
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2? __EXCEPTION_COLUMN: 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28? __EXCEPTION_LINE: 0;
 
-	//TODO
-#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
-
-#define __PRINTABLE_BGMAP_AREA 	(64 * 28)
-
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	//VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 
 	//clear screen
     //HardwareManager_clearScreen(HardwareManager_getInstance());

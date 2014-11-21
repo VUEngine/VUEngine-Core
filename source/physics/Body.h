@@ -149,9 +149,6 @@ void Body_setFriction(Body this, Force friction);
 // retrieve state
 int Body_isAwake(Body body);
 
-// awake body
-void Body_awake(Body body);
-
 // go to sleep
 void Body_sleep(Body body);
 

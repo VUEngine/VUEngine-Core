@@ -31,6 +31,7 @@
  */
 
 #include <Shape.h>
+#include <Polygon.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -81,8 +82,11 @@ typedef struct Rightcuboid{
 	Rightcuboid rightCuboid;						\
 													\
 	/* the rightCuboid to check */					\
-	Rightcuboid positionedRightcuboid;
-	
+	Rightcuboid positionedRightcuboid;				\
+													\
+	/* for debugging purposes */					\
+	Polygon polygon;
+
 
 // A Cuboid which represent a generic object inside a Stage
 __CLASS(Cuboid);

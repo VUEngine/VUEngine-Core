@@ -58,16 +58,16 @@
 	Object_ATTRIBUTES;										\
 															\
 	/* 4 segments, each one with 512 bits  of mask */		\
-	u32 segment[CHAR_SEGMENTS][CHAR_SEGMENT_SIZE];			\
+	u32 segment[__CHAR_SEGMENTS][__CHAR_SEGMENT_SIZE];			\
 															\
 	/* chargroups defined */								\
-	BYTE *charDefinition[CHAR_SEGMENTS * CHAR_GRP_PER_SEG];	\
+	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];	\
 															\
 	/* set whether a definition can be dropped or not */	\
-	int charDefUsage[CHAR_SEGMENTS * CHAR_GRP_PER_SEG];		\
+	int charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];		\
 															\
 	/* register every offset */								\
-	int offset[CHAR_SEGMENTS * CHAR_GRP_PER_SEG];			\
+	int offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];			\
 															\
 	/* registered char groups */							\
 	VirtualList charGroups;
@@ -151,16 +151,16 @@ void CharSetManager_reset(CharSetManager this){
 	int j = 0;
 
 	// clear each segment's ofssets
-	for(; i < CHAR_SEGMENTS; i++){
+	for(; i < __CHAR_SEGMENTS; i++){
 		
-		for(j = 0; j < CHAR_SEGMENT_SIZE; j++){
+		for(j = 0; j < __CHAR_SEGMENT_SIZE; j++){
 			
 			this->segment[i][j] = 0;			
 		}
 	}	
 	
 	// clear all definitions and usage
-	for( i = 0; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG; i++){
+	for( i = 0; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG; i++){
 		
 		this->charDefinition[i] = NULL;
 		this->charDefUsage[i] = 0;
@@ -184,9 +184,9 @@ static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefi
 	int i = 0;
 	
 	// search where to register the char definition 
-	for(; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG && this->charDefinition[i]; i++);
+	for(; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG && this->charDefinition[i]; i++);
 		
-	ASSERT(i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG, "CharSetManager::setCharDefinition: no char definitions slots left");
+	ASSERT(i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG, "CharSetManager::setCharDefinition: no char definitions slots left");
 			
 	// save char definition
 	this->charDefinition[i] = charDefinition;
@@ -258,7 +258,7 @@ void CharSetManager_print(CharSetManager this, int x, int y){
 
 		Printing_text("CharSeg", x, y);
 		Printing_int(charSet, x + 8, y);
-		for(i = 0; i < CHAR_GRP_PER_SEG && (y + i + 1) < 28; i++){
+		for(i = 0; i < __CHAR_GRP_PER_SEG && (y + i + 1) < 28; i++){
 
 			Printing_hex(this->segment[charSet][i], x, y + i + 1);
 		}
@@ -279,7 +279,7 @@ static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup ch
 	
 	ASSERT(charDef, "CharSetManager::searchCharDefinition: null chardef in chargroup");
 
-	for (; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG; i++){
+	for (; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG; i++){
 		
 		// if char's definition matches
 		if(this->charDefinition[i] == charDef){
@@ -450,7 +450,7 @@ void CharSetManager_allocate(CharSetManager this, CharGroup charGroup){
 	// if char is defined as part of an animation frame allocate 
 	// space for it
 	CACHE_ENABLE;
-	for(; i < CHAR_SEGMENTS ; i++){
+	for(; i < __CHAR_SEGMENTS ; i++){
 		
 		int offset = CharSetManager_getNextFreeOffset(this, i, numberOfChars);
 
@@ -616,7 +616,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
 	int charSet = 0;
-	for(; charSet < CHAR_SEGMENTS ; charSet++){
+	for(; charSet < __CHAR_SEGMENTS ; charSet++){
 		
 		int freeOffset = CharSetManager_getNextFreeOffset(this, charSet, 1);
 		
@@ -662,7 +662,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 				BYTE* charDefinition = CharGroup_getCharDefinition(charGroupToRewrite);
 				
 				int i = 0;
-				for(; i < CHAR_SEGMENTS * CHAR_GRP_PER_SEG; i++){
+				for(; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG; i++){
 		
 					if(charDefinition == this->charDefinition[i]) {
 						

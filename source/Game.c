@@ -489,28 +489,30 @@ void Game_handleInput(Game this, int currentKey){
 	static u32 previousKey = 0;
 	
 	u32 newKey = currentKey & ~previousKey;
-	
+
 #ifdef __DEBUG_TOOLS
 	
-	if(currentKey != previousKey){
+	Printing_hex(currentKey, 40 , 5);
+	// check for a new key pressed
+	if((previousKey & K_SEL) && (newKey & K_STA)){
 
-		u32 releasedKey = (previousKey & ~currentKey);
-
-		// check for a new key pressed
-		if((releasedKey & K_STA) && (releasedKey & K_SEL)){
-	
-			if(StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance()){
-				
-				StateMachine_popState(this->stateMachine);
-			}
-			else {
-				
-				StateMachine_pushState(this->stateMachine, (State)DebugScreen_getInstance());
-			}
-
-			previousKey = currentKey;
-			return;
+		if(StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance()){
+			
+			StateMachine_popState(this->stateMachine);
 		}
+		else {
+			
+			StateMachine_pushState(this->stateMachine, (State)DebugScreen_getInstance());
+		}
+
+		previousKey = currentKey;
+		return;
+	}
+	
+	if(newKey & K_SEL){
+		
+		previousKey = currentKey;
+		return;
 	}
 #endif
 
@@ -649,7 +651,7 @@ void Game_update(Game this){
 			// increase the frame rate
 			FrameRate_increasePhysicsFPS(this->frameRate);
 		}
-		
+
 		FrameRate_increaseRawFPS(this->frameRate);
 	}
 }
@@ -660,7 +662,7 @@ int Game_handleMessage(Game this, Telegram telegram){
 	
 	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
-	
+
 	switch(Telegram_getMessage(telegram)) {
 	
 		case kFRSareHigh:

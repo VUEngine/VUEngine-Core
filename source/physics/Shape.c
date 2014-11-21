@@ -52,9 +52,6 @@ __CLASS_DEFINITION(Shape);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -81,9 +78,6 @@ void Shape_constructor(Shape this, InGameEntity owner){
 	// set the owner	
 	this->owner = owner;
 	
-	// it is active
-	this->active = true;
-	
 	// do I move?
 	this->moves = __VIRTUAL_CALL(int, InGameEntity, moves, owner);
 	
@@ -92,6 +86,8 @@ void Shape_constructor(Shape this, InGameEntity owner){
 	
 	// not setup yet
 	this->ready = false;
+	
+	Shape_setActive(this, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,9 +115,13 @@ void Shape_setActive(Shape this, int active){
 	
 	ASSERT(this, "Shape::setActive: null this");
 
-	// it is active
-	this->active = active;
-
+	if(active) {
+		
+		CollisionManager_shapeBecameActive(CollisionManager_getInstance(), this);
+	}
+	else {
+		CollisionManager_shapeBecameInactive(CollisionManager_getInstance(), this);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,13 +130,17 @@ int Shape_isActive(Shape this){
 	
 	ASSERT(this, "Shape::isActive: null this");
 
-	return this->active;
+	return false;
+	//TODO 
+//	return CollisionManager_isShapeActive(CollisionManager_getInstance(), this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // do I move?
 int Shape_moves(Shape this){
 	
+	ASSERT(this, "Shape::moves: null this");
+
 	return this->moves;
 }
 
@@ -144,6 +148,8 @@ int Shape_moves(Shape this){
 // has been checked
 int Shape_isChecked(Shape this){
 	
+	ASSERT(this, "Shape::isChecked: null this");
+
 	return this->checked;
 }
 
@@ -151,6 +157,8 @@ int Shape_isChecked(Shape this){
 // set check status
 void Shape_checked(Shape this, int checked){
 	
+	ASSERT(this, "Shape::checked: null this");
+
 	this->checked = checked;
 }
 

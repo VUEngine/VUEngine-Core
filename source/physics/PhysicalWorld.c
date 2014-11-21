@@ -57,14 +57,14 @@
 	/* super's attributes */											\
 	Object_ATTRIBUTES;													\
 																		\
-	/* a list of shapes which must detect collisions */					\
+	/* registered of bodies  */											\
 	VirtualList	bodies;													\
+																		\
+	/* a list of bodies which must detect collisions */					\
+	VirtualList	activeBodies;											\
 																		\
 	/* a list of bodies which must be removed */						\
 	VirtualList	removedBodies;											\
-																		\
-	/* flag to know if bodies must be prepared */						\
-	int selectBodiesToCheck:1;											\
 																		\
 	/* gravity */														\
 	Acceleration gravity;												\
@@ -96,11 +96,8 @@ __CLASS_DEFINITION(PhysicalWorld);
 // class's constructor
 static void PhysicalWorld_constructor(PhysicalWorld this);
 
-// precalculate movable shape's position before doing collision detection on them
-static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this);
-
 // only process bodies which move and are active
-Body bodies[__MAX_BODIES_PER_LEVEL] = {NULL};
+//Body bodies[__MAX_BODIES_PER_LEVEL] = {NULL};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -128,9 +125,9 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 
 	// create the shape list
 	this->bodies = __NEW(VirtualList);
+	this->activeBodies = __NEW(VirtualList);
 	this->removedBodies = __NEW(VirtualList);
 	this->clock = NULL;
-	this->selectBodiesToCheck = false;
 	
 	this->gravity.x = 0;
 	this->gravity.y = 0;
@@ -139,7 +136,7 @@ static void PhysicalWorld_constructor(PhysicalWorld this){
 	// record this update's time
 	this->time = 0;
 	
-	bodies[0] = NULL;
+	//bodies[0] = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,10 +155,9 @@ void PhysicalWorld_destructor(PhysicalWorld this){
 		__DELETE((Body)VirtualNode_getData(node));
 	}
 	
-	// delete list
+	// delete lists
 	__DELETE(this->bodies);
-	
-	// delete the list of removed bodies
+	__DELETE(this->activeBodies);
 	__DELETE(this->removedBodies);
 	
 	// allow a new construct
@@ -183,9 +179,6 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight
 	}	
 	
 	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __ARGUMENTS((Object)owner, weight)));
-	
-	// must prepare bodies in the next update
-	//this->selectBodiesToCheck = true;
 	
 	// return created shape
 	return (Body)VirtualList_front(this->bodies);
@@ -249,18 +242,16 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this){
 	
 			Body body = (Body)VirtualNode_getData(node);
 			
-			// remove from the list
+			// remove from the lists
 			VirtualList_removeElement(this->bodies, (BYTE*) body);
-				
+			VirtualList_removeElement(this->activeBodies, (BYTE*) body);
+			
 			// delete it
 			__DELETE(body);
 		}
 	
 		// clear the list
 		VirtualList_clear(this->removedBodies);
-		
-		// must prepare bodies in the next update
-		this->selectBodiesToCheck = true;		
 	}
 }
 
@@ -292,37 +283,6 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this){
 		// add gravity
 		Body_applyGravity(body, &gravity);
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// precalculate movable shape's position before doing collision detection on them
-static void PhysicalWorld_selectBodiesToCheck(PhysicalWorld this){
-	
-	ASSERT(this, "PhysicalWorld::selectBodiesToCheck: null this");
-	ASSERT(this->bodies, "PhysicalWorld::selectBodiesToCheck: null bodies");
-
-	VirtualNode node = NULL;
-	
-	int i = 0;
-	
-	this->selectBodiesToCheck = false;
-
-	// prepare bodies which move 
-	// this will place the shape in the owner's position
-	for(node = VirtualList_begin(this->bodies); node; node = VirtualNode_getNext(node)){
-
-		// load the current shape
-		Body body = (Body)VirtualNode_getData(node);
-
-		// only check entities which are active
-		if(Body_isAwake(body)){
-
-			// feed the array of movable bodies to check for collisions
-			bodies[i++] = body;
-		}
-	}
-	
-	bodies[i] = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,18 +327,12 @@ void PhysicalWorld_update(PhysicalWorld this){
 		checkForGravity = true;
 	}
 	  
-	// check if must select bodies to process
-	if(this->selectBodiesToCheck){
-		
-		PhysicalWorld_selectBodiesToCheck(this);	
-	}
-
-	int i = 0;
+	VirtualNode node = VirtualList_begin(this->activeBodies);
 
 	// check the bodies
-	for(i = 0; bodies[i] && i < __MAX_BODIES_PER_LEVEL; i++){
+	for(; node; node = VirtualNode_getNext(node)){
 
-		Body_update(bodies[i], &this->gravity, this->elapsedTime);
+		Body_update((Body)VirtualNode_getData(node), &this->gravity, this->elapsedTime);
 	}
 
 	// process removed bodies
@@ -405,12 +359,8 @@ void PhysicalWorld_reset(PhysicalWorld this){
 	
 	// empty the lists
 	VirtualList_clear(this->bodies);	
+	VirtualList_clear(this->activeBodies);
 	VirtualList_clear(this->removedBodies);	
-
-	// must prepare bodies in the next update
-	//this->selectBodiesToCheck = true;
-	
-	bodies[0] = 0;
 	
 	this->time = 0;
 }
@@ -462,14 +412,30 @@ void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // a body has awaked
-void PhysicalWorld_bodyAwaked(PhysicalWorld this){
+void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body){
 	
 	ASSERT(this, "PhysicalWorld::bodyAwaked: null this");
+	ASSERT(body, "PhysicalWorld::bodyAwaked: null body");
 
-	// must prepare bodies in the next update
-	this->selectBodiesToCheck = true;
+	if(!VirtualList_find(this->activeBodies, body)) {
+	
+		Printing_text("awake",  1, 10);
+		VirtualList_pushBack(this->activeBodies, body);
+	}
+
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// inform of a change in the body
+void PhysicalWorld_bodySleep(PhysicalWorld this, Body body){
+
+	ASSERT(this, "PhysicalWorld::bodySleep: null this");
+
+	ASSERT(body, "PhysicalWorld::bodySleep: null body");
+
+	Printing_text("sleep",  1, 10);
+	VirtualList_removeElement(this->activeBodies, body);
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity) {
@@ -490,5 +456,20 @@ const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this) {
 // get last elapsed time
 fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this){
 	
+	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
+
 	return this->elapsedTime;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print status
+void PhysicalWorld_print(PhysicalWorld this, int x, int y){
+	
+	ASSERT(this, "PhysicalWorld::print: null this");
+
+	Printing_text("PHYSICS' STATUS", x, y++);
+	Printing_text("Registered bodies: ", x, ++y);
+	Printing_int(VirtualList_getSize(this->bodies), x + 19, y);
+	Printing_text("Active bodies: ", x, ++y);
+	Printing_int(VirtualList_getSize(this->activeBodies), x + 19, y);
 }

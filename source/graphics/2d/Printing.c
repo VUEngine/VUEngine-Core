@@ -41,7 +41,6 @@
  */
 
 #define TAB_SIZE 4 //horizontal tab size in chars
-#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -254,4 +253,11 @@ void Printing_writeAscii(){
 	
     //set third char segment's mem usage
    // CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// clear printing area
+void Printing_clear(){
+	
+	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 }

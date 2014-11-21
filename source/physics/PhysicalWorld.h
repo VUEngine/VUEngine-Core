@@ -109,7 +109,10 @@ fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
 
 // a body has awaked
-void PhysicalWorld_bodyAwaked(PhysicalWorld this);
+void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body);
+
+// inform of a change in the body
+void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
 
 // set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
@@ -120,5 +123,7 @@ const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
 // get last elapsed time
 fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this);
 
+// print status
+void PhysicalWorld_print(PhysicalWorld this, int x, int y);
 
 #endif /*PHYSICS_WORLD_H_*/

@@ -194,7 +194,7 @@ void FrameRate_increasePhysicsFPS(FrameRate this){
 // test if FPS are almost at their maximum
 int FrameRate_areFPSHigh(FrameRate this) {
 	
-	return __OPTIMUM_FPS_MINIMUM <= this->logicFPS && __OPTIMUM_FPS_MINIMUM <= this->renderFPS && __OPTIMUM_FPS_MINIMUM <= this->physicsFPS;
+	return __MINIMUM_GOOD_FPS <= this->logicFPS && __MINIMUM_GOOD_FPS <= this->renderFPS && __MINIMUM_GOOD_FPS <= this->physicsFPS;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

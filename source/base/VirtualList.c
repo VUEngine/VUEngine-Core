@@ -562,10 +562,23 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node){
 
 		return true;		
 	}
-
-	ASSERT(false, "VirtualList::removeNode: removing empty node");
 	
 	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// remove a node from the list
+VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer){
+	
+	ASSERT(this, "VirtualList::removeElement: null this");
+
+	VirtualNode node = this->head;
+	
+	CACHE_ENABLE;
+	for(; node && VirtualNode_getData(node) !=  (void*)dataPointer; node = VirtualNode_getNext(node));
+	CACHE_DISABLE;
+	
+	return node;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -574,23 +587,7 @@ int VirtualList_removeElement(VirtualList this, const void* const dataPointer){
 	
 	ASSERT(this, "VirtualList::removeElement: null this");
 
-#ifdef __DEBUG
-	int counter = 0;
-#endif
-	
-	VirtualNode node = this->head;
-	
-
-	//locate node
-	while(node && node->data != dataPointer){
-		
-		node = node->next;		
-		ASSERT(++counter < LISTMAXSIZE, "VirtualList::removeElement: endless list removing");
-	}
-	
-	ASSERT(node, "VirtualList::removeElement: node not found");
-
-	return VirtualList_removeNode(this, node);
+	return VirtualList_removeNode(this, VirtualList_find(this, dataPointer));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

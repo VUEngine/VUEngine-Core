@@ -68,6 +68,9 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 // test if collision with the entity give the displacement
 static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
 
+// configure polygon
+static void Cuboid_configurePolygon(Cuboid this, int renew);
+
 // retrieve shape
 Shape InGameEntity_getShape(InGameEntity this);
 
@@ -94,11 +97,7 @@ static void Cuboid_constructor(Cuboid this, InGameEntity owner){
 
 	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
 	
-	//Rightcuboid r;
-	/*Rightcuboid rect = {0, 0, 0, 0};
-	this->positionedRightcuboid = this->rightCuboid = rect;
-	*/ 
-	
+	this->polygon = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +106,13 @@ void Cuboid_destructor(Cuboid this){
 
 	ASSERT(this, "Cuboid::destructor: null this");
 
+	if(this->polygon) {
+		
+		__DELETE(this->polygon);
+		
+		this->polygon = NULL;
+	}
+	
 	// destroy the super object
 	__DESTROY_BASE(Shape);
 
@@ -231,31 +237,6 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this){
 	return this->positionedRightcuboid;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// draw rect
-void Cuboid_draw(Cuboid this){
-	
-	ASSERT(this, "Cuboid::draw: null this");
-
-	// create a polygon
-	Polygon polygon = __NEW(Polygon);
-	
-	// add vertices
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, this->positionedRightcuboid.z0);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, this->positionedRightcuboid.z0);
-
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, this->positionedRightcuboid.z1);
-	Polygon_addVertice(polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, this->positionedRightcuboid.z1);
-
-	// draw the polygon
-	Polygon_draw(polygon, false);
-	
-	__DELETE(polygon);
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // draw rect
@@ -492,5 +473,52 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 void Cuboid_print(Cuboid this){
 
 	ASSERT(this, "Cuboid::print: null this");
+}
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// configure polygon
+static void Cuboid_configurePolygon(Cuboid this, int renew){
+	
+	ASSERT(this, "Cuboid::draw: null this");
+
+	if(renew){
+		
+		if(this->polygon) {
+			
+			__DELETE(this->polygon);
+			
+			this->polygon = NULL;
+		}
+
+	}
+	else if(this->polygon) {
+		
+		return;
+	}
+
+	// create a polygon
+	this->polygon = __NEW(Polygon);
+	
+	// add vertices
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, this->positionedRightcuboid.z0);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, this->positionedRightcuboid.z0);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
+
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y1, this->positionedRightcuboid.z1);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y1, this->positionedRightcuboid.z1);
+	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// draw rect
+void Cuboid_draw(Cuboid this){
+
+	Cuboid_configurePolygon(this, this->moves);
+
+	// draw the polygon
+	Polygon_draw(this->polygon, true);
 }

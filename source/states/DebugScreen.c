@@ -130,6 +130,7 @@ static void DebugScreen_destructor(DebugScreen this){
 // state's enter
 static void DebugScreen_enter(DebugScreen this, void* owner){
 	
+	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
 	Debug_show(Debug_getInstance());
 }
 
@@ -137,7 +138,7 @@ static void DebugScreen_enter(DebugScreen this, void* owner){
 // state's execute
 static void DebugScreen_execute(DebugScreen this, void* owner){
 
-	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
+	Debug_update(Debug_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

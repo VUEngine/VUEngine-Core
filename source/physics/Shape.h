@@ -71,9 +71,6 @@ enum ShapeTypes{
 	/* the entity to which the shape belongs */		\
 	InGameEntity owner;								\
 													\
-	/* raise flag to make the shape active */		\
-	int active: 1;									\
-													\
 	/* flag to know if the shapes below to an */	\
 	/* entity which moves */						\
 	int moves: 1;									\

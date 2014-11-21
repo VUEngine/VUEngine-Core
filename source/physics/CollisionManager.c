@@ -58,14 +58,17 @@
 	/* super's attributes */											\
 	Object_ATTRIBUTES;													\
 																		\
-	/* a list of shapes which must detect collisions */					\
+	/* a list of shapes registeres */									\
 	VirtualList	shapes;													\
+																		\
+	/* a list of shapes which must detect collisions */					\
+	VirtualList	activeShapes;											\
+																		\
+	/* a list of moving shapes */										\
+	VirtualList	movingShapes;											\
 																		\
 	/* a list of shapes which must be removed */						\
 	VirtualList	removedShapes;											\
-																		\
-	/* flag to know if shapes must be prepared */						\
-	int selectShapesToCheck:1;
 	
 
 // define the CollisionManager
@@ -83,12 +86,8 @@ __CLASS_DEFINITION(CollisionManager);
 // class's constructor
 static void CollisionManager_constructor(CollisionManager this);
 
-// precalculate movable shape's position before doing collision detection on them
-static void CollisionManager_selectShapesToCheck(CollisionManager this);
-
-// only process shapes which move and are active
-Shape shapes[__MAX_SHAPES_PER_LEVEL] = {NULL};
-Shape shapesToCheck[__MAX_SHAPES_PER_LEVEL] = {NULL};
+// retrieve shape
+Shape InGameEntity_getShape(InGameEntity this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -116,10 +115,9 @@ static void CollisionManager_constructor(CollisionManager this){
 
 	// create the shape list
 	this->shapes = __NEW(VirtualList);
-	
+	this->activeShapes = __NEW(VirtualList);
+	this->movingShapes = __NEW(VirtualList);
 	this->removedShapes = __NEW(VirtualList);
-
-	this->selectShapesToCheck = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,10 +136,10 @@ void CollisionManager_destructor(CollisionManager this){
 		__DELETE((Shape)VirtualNode_getData(node));
 	}
 	
-	// delete list
+	// delete lists
 	__DELETE(this->shapes);
-	
-	// delete the list of removed shapes
+	__DELETE(this->activeShapes);
+	__DELETE(this->movingShapes);
 	__DELETE(this->removedShapes);
 	
 	// allow a new construct
@@ -176,9 +174,6 @@ Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, 
 			break;
 	}
 	
-	// must prepare shapes in the next update
-	this->selectShapesToCheck = true;
-	
 	// return created shape
 	return (Shape)VirtualList_front(this->shapes);
 }
@@ -191,39 +186,22 @@ void CollisionManager_unregisterShape(CollisionManager this, Shape shape){
 
 	if(shape){
 		
-		// deactivate teh shape,
+		// deactivate the shape,
 		// will be removed in the next update
 		Shape_setActive(shape, false);
 		
 		// place in  the removed shapes list
 		VirtualList_pushFront(this->removedShapes, (BYTE*)shape);
-		
-		this->selectShapesToCheck = true;
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // find a shape given an owner
 Shape CollisionManager_getShape(CollisionManager this, InGameEntity owner){
 
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
-	VirtualNode node = VirtualList_begin(this->shapes);
-	
-	for(; node; node = VirtualNode_getNext(node)){
-
-		// current shape
-		Shape shape = (Shape)VirtualNode_getData(node);
-		
-		// check if current shape's owner is the same as the entity calling this method
-		if(owner == Shape_getOwner(shape) && Shape_isActive(shape)){
-
-			return shape;
-		}
-	}
-
-	return NULL;
+	return (Shape)VirtualList_find(this->shapes, (const void* const)InGameEntity_getShape(owner));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,66 +221,16 @@ void CollisionManager_processRemovedShapes(CollisionManager this){
 			
 			// remove from the list
 			VirtualList_removeElement(this->shapes, (BYTE*) shape);
-				
+			VirtualList_removeElement(this->shapes, (BYTE*) this->activeShapes);
+			VirtualList_removeElement(this->shapes, (BYTE*) this->movingShapes);
+			
 			// delete it
 			__DELETE(shape);
 		}
 	
 		// clear the list
 		VirtualList_clear(this->removedShapes);
-		
-		// must prepare shapes in the next update
-		this->selectShapesToCheck = true;		
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// precalculate movable shape's position before doing collision detection on them
-static void CollisionManager_selectShapesToCheck(CollisionManager this){
-	
-	ASSERT(this, "CollisionManager::selectShapesToCheck: null this");
-	ASSERT(this->shapes, "CollisionManager::selectShapesToCheck: null shapes");
-
-	VirtualNode node = NULL;
-	
-	int i = 0;
-	int j = 0;
-	
-	this->selectShapesToCheck = false;
-
-	// prepare shapes which move 
-	// this will place the shape in the owner's position
-	for(node = VirtualList_begin(this->shapes); node; node = VirtualNode_getNext(node)){
-
-		// load the current shape
-		Shape shape = (Shape)VirtualNode_getData(node);
-		
-		ASSERT(shape, "CollisionManager::selectShapesToCheck: null shape");
-
-		// first check it shape needs setup
-		if(!Shape_isReady(shape)){
-			
-			// setup shape
-			__VIRTUAL_CALL(void, Shape, setup, shape);
-		}
-
-		// only check entities which are active
-		if(Shape_isActive(shape)){
-		
-			// and moves 
-			if(Shape_moves(shape)){
-				
-				// feed the array of movable shapes to check for collisions
-				shapes[i++] = shape;
-			}
-			
-			// feed the array of all shapes
-			shapesToCheck[j++] = shape;
-		}
-	}
-	
-	shapes[i] = NULL;
-	shapesToCheck[j] = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,86 +239,68 @@ void CollisionManager_update(CollisionManager this){
 	
 	ASSERT(this, "CollisionManager::update: null this");
 
-	int i = 0;
-	int j = 0;
-	
-	// check if must select shapes to process
-	if(this->selectShapesToCheck){
-		
-		CollisionManager_selectShapesToCheck(this);	
-	}
+	VirtualNode node = VirtualList_begin(this->movingShapes);
 
 	// check the shapes
-	for(i = 0; shapes[i] && i < __MAX_SHAPES_PER_LEVEL; i++){
+	for(; node; node = VirtualNode_getNext(node)){
 
 		// current to check shape's rectangle 
-		__VIRTUAL_CALL(void, Shape, positione, shapes[i]);
+		__VIRTUAL_CALL(void, Shape, positione, (Shape)VirtualNode_getData(node));
 	}
 
 	// check the shapes
-	for(i = 0; shapes[i] && i < __MAX_SHAPES_PER_LEVEL; i++){
+	node = VirtualList_begin(this->movingShapes);
+	for(; node; node = VirtualNode_getNext(node)){
 
-		// if shape is active to be processed
-		if(Shape_isActive(shapes[i])){
+		// load the current shape
+		Shape shape = (Shape)VirtualNode_getData(node);
 
-			VirtualList collidingObjects = NULL;
+		VirtualList collidingObjects = NULL;
+		
+		// the result thrown by the collision algorithm
+		int collisionResult = kNoCollision;
 
-			// load the current shape
-			Shape shape = shapes[i];
+		// dont' check again the current shape when processing other movable shapes
+		Shape_checked(shape, true);
+		
+		VirtualNode nodeForActiveShapes = VirtualList_begin(this->activeShapes);
+
+		// check the shapes
+		for(; nodeForActiveShapes; nodeForActiveShapes = VirtualNode_getNext(nodeForActiveShapes)){
+
+			// load the current shape to check against
+			Shape shapeToCheck = (Shape)VirtualNode_getData(nodeForActiveShapes);
 			
-			// get owner
-			InGameEntity owner = Shape_getOwner(shape);
-
-			// the result thrown by the collision algorithm
-			int collisionResult = kNoCollision;
-
-			// determine over which axis is moving
-			int axisMovement = __VIRTUAL_CALL(int, InGameEntity, isMoving, owner);
-	
-			// if owner is moving
-			if(axisMovement){
-			
-				// dont' check again the current shape when processing other movable shapes
-				Shape_checked(shape, true);
-			}
-			
-			// comparing against the other shapes
-			for(j = 0; shapesToCheck[j] && j < __MAX_SHAPES_PER_LEVEL; j++){
+			// don't compare with current movable shape, 
+			// when the shape already has been checked 
+			// and when it is not active
+			if(shape != shapeToCheck && !Shape_isChecked(shapeToCheck)){
 				
-				// load the current shape to check against
-				Shape shapeToCheck = shapesToCheck[j];
-				
-				// don't compare with current movable shape, 
-				// when the shape already has been checked 
-				// and when it is not active
-				if(shape != shapeToCheck && !Shape_isChecked(shapeToCheck) && Shape_isActive(shapeToCheck)){
-					
-					// check if shapes overlap
-					collisionResult = __VIRTUAL_CALL(int, Shape, overlaps, shape, __ARGUMENTS(shapeToCheck));
+				// check if shapes overlap
+				collisionResult = __VIRTUAL_CALL(int, Shape, overlaps, shape, __ARGUMENTS(shapeToCheck));
 
-					if(collisionResult){
+				if(collisionResult){
+
+					if(!collidingObjects) {
 						
-						if(!collidingObjects) {
-							
-							collidingObjects = __NEW(VirtualList);
-						}
-
-						// add object to list
-						VirtualList_pushFront(collidingObjects, (void*)Shape_getOwner(shapeToCheck));
+						collidingObjects = __NEW(VirtualList);
 					}
+
+					// add object to list
+					VirtualList_pushFront(collidingObjects, (void*)Shape_getOwner(shapeToCheck));
 				}
 			}
-			
-			if(collidingObjects){
-
-				// inform the owner about the collision
-				MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)owner, kCollision, (void*)collidingObjects);
-
-				__DELETE(collidingObjects);
-			}
-			
-			collidingObjects = NULL;
 		}
+		
+		if(collidingObjects){
+
+			// inform the owner about the collision
+			MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)Shape_getOwner(shape), kCollision, (void*)collidingObjects);
+
+			__DELETE(collidingObjects);
+		}
+		
+		collidingObjects = NULL;
 	}
 	
 	// process removed shapes
@@ -423,35 +333,96 @@ void CollisionManager_reset(CollisionManager this){
 	
 	// empty the lists
 	VirtualList_clear(this->shapes);	
+	VirtualList_clear(this->activeShapes);	
+	VirtualList_clear(this->movingShapes);	
 	VirtualList_clear(this->removedShapes);	
+}
 
-	// must prepare shapes in the next update
-	this->selectShapesToCheck = true;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// inform of a change in the shape
+void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape){
+
+	ASSERT(this, "CollisionManager::shapeChangedState: null this");
+
+	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
+
+	CollisionManager_shapeBecameActive(this, shape);
+	
+	if(!VirtualList_find(this->movingShapes, shape)) {
+	
+		Printing_text("move",  10, 10);
+
+		VirtualList_pushBack(this->movingShapes, shape);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// check if an entity has been registered
-int CollisionManager_isEntityRegistered(CollisionManager this, InGameEntity owner){
+// inform of a change in the shape
+void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape){
 
-	ASSERT(this, "CollisionManager::isEntityRegistered: null this");
-	ASSERT(this->shapes, "CollisionManager::isEntityRegistered: null shapes");
+	ASSERT(this, "CollisionManager::shapeChangedState: null this");
 
-	VirtualNode node = VirtualList_begin(this->shapes);
+	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
+
+	Printing_text("stop",  10, 10);
+
+	VirtualList_removeElement(this->movingShapes, shape);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// inform of a change in the shape
+void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape){
+
+	ASSERT(this, "CollisionManager::shapeBecameActive: null this");
+
+	ASSERT(shape, "CollisionManager::shapeBecameActive: null shape");
+
+	if(!VirtualList_find(this->activeShapes, shape)) {
 	
+		VirtualList_pushBack(this->activeShapes, shape);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// inform of a change in the shape
+void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape){
+
+	ASSERT(this, "CollisionManager::shapeChangedState: null this");
+
+	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
+
+	VirtualList_removeElement(this->activeShapes, shape);
+	VirtualList_removeElement(this->movingShapes, shape);
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// draw shapes
+void CollisionManager_drawShapes(CollisionManager this){
+
+	ASSERT(this, "CollisionManager::drawShapes: null this");
+//	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
+
+	// comparing against the other shapes
+	VirtualNode node = VirtualList_begin(this->shapes);
+
+	// check the shapes
 	for(; node; node = VirtualNode_getNext(node)){
 
-		// current shape
-		Shape shape = (Shape)VirtualNode_getData(node);
-		
-		// check if current shape's owner is the same as the entity calling this method
-		if(owner == Shape_getOwner(shape)){
-			
-			// check if shape is active.... maybe a shape must be removed
-			// and a new entity has been loaded in the same memory location
-			// as the owner of the found shape
-			return Shape_isActive(shape);
-		}
+		__VIRTUAL_CALL(void, Shape, draw, (Shape)VirtualNode_getData(node));
 	}
-	
-	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print status
+void CollisionManager_print(CollisionManager this, int x, int y){
+
+	ASSERT(this, "CollisionManager::print: null this");
+
+	Printing_text("COLLISION SHAPES", x, y++);
+	Printing_text("Registered shapes: ", x, ++y);
+	Printing_int(VirtualList_getSize(this->shapes), x + 19, y);
+	Printing_text("Active shapes: ", x, ++y);
+	Printing_int(VirtualList_getSize(this->activeShapes), x + 19, y);
+	Printing_text("Moving shapes: ", x, ++y);
+	Printing_int(VirtualList_getSize(this->movingShapes), x + 19, y);
 }

@@ -77,8 +77,8 @@
  */
 
 
-#define Debug_ATTRIBUTES				\
-										\
+#define Debug_ATTRIBUTES					\
+											\
 	/* super's attributes */				\
 	Object_ATTRIBUTES;						\
 											\
@@ -105,9 +105,10 @@
 											\
 	/* window to look into bgmap memory */	\
 	VBVec2D bgmapDisplacement;				\
+											\
+	/* update function pointer */			\
+	void (*update)(void *);
 
-
-	
 
 // define the Debug
 __CLASS_DEFINITION(Debug);
@@ -121,11 +122,6 @@ __CLASS_DEFINITION(Debug);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
-//TODO
-#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
-
-#define __PRINTABLE_BGMAP_AREA 	(64 * 28)
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -141,28 +137,33 @@ static void Debug_constructor(Debug this);
 
 // setup pages
 static void Debug_setupPages(Debug this);
-static void Debug_showPage(Debug this);
-static void Debug_showSubPage(Debug this);
+static void Debug_showPage(Debug this, int increment);
+static void Debug_showSubPage(Debug this, int increment);
 static void Debug_removeSubPages(Debug this);
 
 static void Debug_dimmGame(Debug this);
 static void Debug_lightUpGame(Debug this);
 
+// pages
+static void Debug_showGeneralStatus(Debug this, int increment, int x, int y); 
+static void Debug_showMemoryStatus(Debug this, int increment, int x, int y); 
+static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y);
+static void Debug_showTextureStatus(Debug this, int increment, int x, int y);
+static void Debug_showSpritesStatus(Debug this, int increment, int x, int y);
+static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y); 
+static void Debug_showHardwareStatus(Debug this, int increment, int x, int y);
 
-static void Debug_showGeneralStatus(Debug this, int x, int y); 
-static void Debug_showMemoryStatus(Debug this, int x, int y); 
-static void Debug_showCharMemoryStatus(Debug this, int x, int y);
-static void Debug_showTextureStatus(Debug this, int x, int y);
-static void Debug_showSpritesStatus(Debug this, int x, int y);
-static void Debug_showHardwareStatus(Debug this, int x, int y);
-
-static void Debug_spritesShowStatus(Debug this, int x, int y);
-static void Debug_textutesShowStatus(Debug this, int x, int y);
-static void Debug_showDebugLayer(Debug this);
-static void Debug_charMemoryShowStatus(Debug this, int x, int y);
-static void Debug_charMemoryShowMemory(Debug this, int x, int y);
+// sub pages
+static void Debug_spritesShowStatus(Debug this, int increment, int x, int y);
+static void Debug_textutesShowStatus(Debug this, int increment, int x, int y);
+static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y);
+static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y);
+static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y);
+static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y);
 
 static void Debug_printClassSizes(int x, int y);
+static void Debug_showCollisionShapes(Debug this);
+static void Debug_showDebugBgmap(Debug this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -194,6 +195,8 @@ static void Debug_constructor(Debug this){
 	this->currentBgmap = 0;
 	this->charSeg = 0;
 	
+	this->update = NULL;
+	
 	this->bgmapDisplacement.x = 0;
 	this->bgmapDisplacement.y = 0;
 	
@@ -220,6 +223,7 @@ static void Debug_setupPages(Debug this){
 	VirtualList_pushBack(this->pages, &Debug_showSpritesStatus);
 	VirtualList_pushBack(this->pages, &Debug_showTextureStatus);
 	VirtualList_pushBack(this->pages, &Debug_showCharMemoryStatus);
+	VirtualList_pushBack(this->pages, &Debug_showPhysicsStatus);
 	VirtualList_pushBack(this->pages, &Debug_showHardwareStatus);
 
 	this->currentPage = VirtualList_begin(this->pages);
@@ -253,6 +257,17 @@ static void Debug_lightUpGame(Debug this){
 	VIP_REGS[JPLT3] = __JPLT3VALUE;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// update
+void Debug_update(Debug this){
+	
+	if(this->update) {
+		
+		((void (*)(Debug))this->update)(this);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show debug screens
 void Debug_show(Debug this){
@@ -261,7 +276,7 @@ void Debug_show(Debug this){
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 	Debug_dimmGame(this);
-	Debug_showPage(this);
+	Debug_showPage(this, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +299,7 @@ void Debug_showPreviousPage(Debug this){
 		this->currentPage = VirtualList_end(this->pages);
 	}
 
-	Debug_showPage(this);
+	Debug_showPage(this, -1);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,7 +313,7 @@ void Debug_showNextPage(Debug this){
 		this->currentPage = VirtualList_begin(this->pages);
 	}
 
-	Debug_showPage(this);
+	Debug_showPage(this, 1);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,7 +332,7 @@ void Debug_showPreviousSubPage(Debug this){
 		this->currentSubPage = VirtualList_end(this->subPages);
 	}
 
-	Debug_showSubPage(this);
+	Debug_showSubPage(this, -1);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,35 +351,37 @@ void Debug_showNextSubPage(Debug this){
 		this->currentSubPage = VirtualList_begin(this->subPages);
 	}
 
-	Debug_showSubPage(this);
+	Debug_showSubPage(this, 1);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show page 
-static void Debug_showPage(Debug this) {
+static void Debug_showPage(Debug this, int increment) {
 	
 	if(this->currentPage && VirtualNode_getData(this->currentPage)) {
 		
+		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		Printing_text("DEBUG SYSTEM", 17, 0);
 		Printing_text("Use(left/right)", 33, 1);
 		Debug_dimmGame(this);
-		((void (*)(Debug, int, int))VirtualNode_getData(this->currentPage))(this, 1, 3);		
+		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 3);		
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show sub page 
-static void Debug_showSubPage(Debug this) {
+static void Debug_showSubPage(Debug this, int increment) {
 	
 	if(this->currentSubPage && VirtualNode_getData(this->currentSubPage)) {
 		
+		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		Printing_text("DEBUG SYSTEM", 17, 0);
 		Printing_text("Use(left/right)", 33, 1);
 		Printing_text("Use(up/down)", 33, 2);
-		((void (*)(Debug, int, int))VirtualNode_getData(this->currentSubPage))(this, 1, 3);		
+		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 3);		
 	}
 }
 
@@ -375,28 +392,28 @@ static void Debug_showSubPage(Debug this) {
 void Debug_diplaceLeft(Debug this){
 	
 	this->bgmapDisplacement.x = 0;
-	Debug_showDebugLayer(this);
+	Debug_showDebugBgmap(this);
 }
 
 // displace view to the right
 void Debug_diplaceRight(Debug this){
 	
 	this->bgmapDisplacement.x = DISPLACEMENT_STEP_X;
-	Debug_showDebugLayer(this);
+	Debug_showDebugBgmap(this);
 }
 
 // displace view up
 void Debug_diplaceUp(Debug this){
 
 	this->bgmapDisplacement.y = 0;
-	Debug_showDebugLayer(this);
+	Debug_showDebugBgmap(this);
 }
 
 // displace view down
 void Debug_diplaceDown(Debug this){
 	
 	this->bgmapDisplacement.y = DISPLACEMENT_STEP_Y;
-	Debug_showDebugLayer(this);
+	Debug_showDebugBgmap(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -407,7 +424,7 @@ static void Debug_removeSubPages(Debug this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showGeneralStatus(Debug this, int x, int y) {
+static void Debug_showGeneralStatus(Debug this, int increment, int x, int y) {
 	
 	Debug_removeSubPages(this);
 	Printing_text("GENERAL STATUS", 1, y++);
@@ -420,7 +437,7 @@ static void Debug_showGeneralStatus(Debug this, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showMemoryStatus(Debug this, int x, int y) {
+static void Debug_showMemoryStatus(Debug this, int increment, int x, int y) {
 	
 	Debug_removeSubPages(this);
 
@@ -429,7 +446,7 @@ static void Debug_showMemoryStatus(Debug this, int x, int y) {
 }
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showCharMemoryStatus(Debug this, int x, int y) {
+static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y) {
 
 	Debug_removeSubPages(this);
 
@@ -437,29 +454,34 @@ static void Debug_showCharMemoryStatus(Debug this, int x, int y) {
 	VirtualList_pushBack(this->subPages, &Debug_charMemoryShowStatus);
 	this->currentSubPage = VirtualList_begin(this->subPages);
 	
-	this->charSeg = -2;
+	this->charSeg = -1;
 
-	Debug_showSubPage(this);
+	Debug_showSubPage(this, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_charMemoryShowStatus(Debug this, int x, int y) {
+static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y) {
 	
-	this->charSeg++;
+	this->charSeg += increment;
 
-	if(0 > this->charSeg) {
+	if(-1 > this->charSeg) {
+
+		this->charSeg = __CHAR_SEGMENTS - 1;
+	}
+	
+	if(-1 == this->charSeg) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		CharSetManager_print(CharSetManager_getInstance(), x, y);
 		Debug_dimmGame(this);
 	}
-	else if(4 > this->charSeg) {
+	else if(__CHAR_SEGMENTS > this->charSeg) {
 	
 		Printing_text("CHAR MEMORY'S USAGE", x, y++);
 		Printing_text("Char segment: ", x, ++y);
 		Printing_int(this->charSeg + 1, x + 14, y);
 
-		Debug_charMemoryShowMemory(this, x, y);
+		Debug_charMemoryShowMemory(this, increment, x, y);
 		Debug_lightUpGame(this);
 	}
 	else {
@@ -472,28 +494,25 @@ static void Debug_charMemoryShowStatus(Debug this, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_charMemoryShowMemory(Debug this, int x, int y) {
-
-#define __PRINTING_BGMAP (__NUM_BGMAPS + 1)
-#define __CHAR_SEGMENT_SIZE 512
+static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y) {
 
 	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
 	int yOffset = y + 7;
 	
 	// each char segment has 512 slots
-	BYTE CHAR_MEMORY_MP[__CHAR_SEGMENT_SIZE]; 
+	BYTE CHAR_MEMORY_MP[ __CHAR_SEGMENT_TOTAL_CHARS]; 
 	
 	int i = 0;
 	int j = 0;
-	for (; i < __CHAR_SEGMENT_SIZE; i+= 2, j++) {
+	for (; i <  __CHAR_SEGMENT_TOTAL_CHARS; i+= 2, j++) {
 		
 		CHAR_MEMORY_MP[i] = (BYTE)(j & 0xFF);
 		CHAR_MEMORY_MP[i + 1] = (BYTE)((j & 0xFF00) >> 8);
 	}
 
 	//put the map into memory calculating the number of char for each reference
-	for(i = 0; i < __CHAR_SEGMENT_SIZE / 64; i++){
+	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 64; i++){
 	
 		Mem_add((u8*)BGMap(__PRINTING_BGMAP) + (((yOffset << 6) + (i << 6)) << 1),
 				(const u8*)CHAR_MEMORY_MP, 
@@ -503,7 +522,7 @@ static void Debug_charMemoryShowMemory(Debug this, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showTextureStatus(Debug this, int x, int y) {
+static void Debug_showTextureStatus(Debug this, int increment, int x, int y) {
 
 	Debug_removeSubPages(this);
 
@@ -511,15 +530,15 @@ static void Debug_showTextureStatus(Debug this, int x, int y) {
 	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
 	this->currentSubPage = VirtualList_begin(this->subPages);
 	
-	this->currentBgmap = -2;
+	this->currentBgmap = -1;
 	this->bgmapDisplacement.x = 0;
 	this->bgmapDisplacement.y = 0;
 
-	Debug_showSubPage(this);
+	Debug_showSubPage(this, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showDebugLayer(Debug this){
+static void Debug_showDebugBgmap(Debug this){
 
 	if(VirtualNode_getData(this->currentPage) != &Debug_showTextureStatus ||
 		0 > this->currentBgmap
@@ -536,11 +555,16 @@ static void Debug_showDebugLayer(Debug this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_textutesShowStatus(Debug this, int x, int y) {
+static void Debug_textutesShowStatus(Debug this, int increment, int x, int y) {
 
-	this->currentBgmap++;
+	this->currentBgmap += increment;
 
-	if(0 > this->currentBgmap) {
+	if(-1 > this->currentBgmap) {
+
+		this->currentBgmap = __NUM_BGMAPS - 1;
+	}
+	
+	if(-1 == this->currentBgmap) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		TextureManager_print(TextureManager_getInstance(), x, y + 2);
@@ -557,7 +581,7 @@ static void Debug_textutesShowStatus(Debug this, int x, int y) {
 		this->bgmapDisplacement.x = 0;
 		this->bgmapDisplacement.y = 0;
 
-		Debug_showDebugLayer(this);
+		Debug_showDebugBgmap(this);
 		Debug_lightUpGame(this);
 	}
 	else {
@@ -571,7 +595,7 @@ static void Debug_textutesShowStatus(Debug this, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showSpritesStatus(Debug this, int x, int y) {
+static void Debug_showSpritesStatus(Debug this, int increment, int x, int y) {
 
 	Debug_removeSubPages(this);
 
@@ -579,15 +603,23 @@ static void Debug_showSpritesStatus(Debug this, int x, int y) {
 	VirtualList_pushBack(this->subPages, &Debug_spritesShowStatus);
 	this->currentSubPage = VirtualList_begin(this->subPages);
 	
-	this->currentLayer = __TOTAL_LAYERS + 2;
+	this->currentLayer = __TOTAL_LAYERS + 1;
 
-	Debug_showSubPage(this);
+	Debug_showSubPage(this, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_spritesShowStatus(Debug this, int x, int y) {
+static void Debug_spritesShowStatus(Debug this, int increment, int x, int y) {
 
-	if(__TOTAL_LAYERS + 2 == this->currentLayer--) {
+	
+	this->currentLayer -= increment;
+
+	if(this->currentLayer > __TOTAL_LAYERS + 1) {
+
+		this->currentLayer = SpriteManager_getFreeLayer(SpriteManager_getInstance()) + 1;
+	}
+	
+	if(__TOTAL_LAYERS + 1 == this->currentLayer) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		SpriteManager_print(SpriteManager_getInstance(), x, y + 1);
@@ -609,7 +641,39 @@ static void Debug_spritesShowStatus(Debug this, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void Debug_showHardwareStatus(Debug this, int x, int y) {
+static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y){
+	
+	Debug_removeSubPages(this);
+
+	VirtualList_pushBack(this->subPages, &Debug_physicStatusShowStatistics);
+	VirtualList_pushBack(this->subPages, &Debug_physicStatusShowShapes);
+	this->currentSubPage = VirtualList_begin(this->subPages);
+	
+	Debug_showSubPage(this, 0);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y){
+
+	PhysicalWorld_print(PhysicalWorld_getInstance(), x, y);
+	CollisionManager_print(CollisionManager_getInstance(), x, y + 6);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y){
+
+	Printing_text("COLLISION SHAPES", x, y++);
+	this->update = (void (*)(void *))&Debug_showCollisionShapes;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showCollisionShapes(Debug this){
+	
+	CollisionManager_drawShapes(CollisionManager_getInstance());
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void Debug_showHardwareStatus(Debug this, int increment, int x, int y) {
 	
 	Debug_removeSubPages(this);
 

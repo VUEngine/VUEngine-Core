@@ -59,12 +59,13 @@ struct Shape_str;
 #define InGameEntity_SET_VTABLE(ClassName)								\
 		Entity_SET_VTABLE(ClassName)									\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, transform);				\
+		__VIRTUAL_SET(ClassName, InGameEntity, initialTransform);		\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);	\
+		__VIRTUAL_SET(ClassName, InGameEntity, setLocalPosition);		\
 		
 
 // A InGameEntity which represent a generic object inside a Stage
@@ -173,8 +174,8 @@ Direction InGameEntity_getDirection(InGameEntity this);
 // set shape state
 void InGameEntity_setShapeState(InGameEntity this, int state);
 
-// transform
-void InGameEntity_transform(InGameEntity this, Transformation* environmentTransform);
+// initial transform
+void InGameEntity_initialTransform(InGameEntity this, Transformation* environmentTransform);
 
 // get elasticiy
 fix19_13 InGameEntity_getElasticity(InGameEntity this);
@@ -185,5 +186,7 @@ fix19_13 InGameEntity_getFriction(InGameEntity this);
 // retrieve previous position
 VBVec3D InGameEntity_getPreviousPosition(InGameEntity this);
 
+//set class's local position
+void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position);
 
 #endif /*INGAMEENTITY_H_*/

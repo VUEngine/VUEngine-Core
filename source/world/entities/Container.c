@@ -358,6 +358,14 @@ void Container_transform(Container this, Transformation* environmentTransform){
 	this->invalidateGlobalPosition.z = false;
 }
 
+// intinial transform
+void Container_initialTransform(Container this, Transformation* environmentTransform){
+	
+	ASSERT(this, "Container::initialTransform: null this");
+
+	Container_transform(this, environmentTransform);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve global position
 VBVec3D Container_getGlobalPosition(Container this){

@@ -224,23 +224,19 @@ void InGameEntity_setShapeState(InGameEntity this, int state){
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//transform class
-void InGameEntity_transform(InGameEntity this, Transformation* environmentTransform){
+// draw class
+void InGameEntity_initialTransform(InGameEntity this, Transformation* environmentTransform){
 	
 	ASSERT(this, "InGameEntity::transform: null this");
 
 	// call base
 	Entity_transform((Entity)this, environmentTransform);
 
-#ifdef __DEBUG
-	// draw shape
-//	if(this->shape && __VIRTUAL_CALL(int, Entity, updateSpritePosition, (Entity)this)){
 	if(this->shape){
-			
-		
-//			__VIRTUAL_CALL(void, Shape, draw, this->shape);
-	}	
-#endif
+				
+		// setup shape
+		__VIRTUAL_CALL(void, Shape, positione, this->shape);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,3 +274,19 @@ VBVec3D InGameEntity_getPreviousPosition(InGameEntity this){
 
 	return this->transform.globalPosition;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//set class's local position
+void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position){
+	
+	ASSERT(this, "Actor::setLocalPosition: null this");
+
+	Container_setLocalPosition((Container)this, position);
+
+	if(this->shape && !Shape_isReady(this->shape)){
+				
+		// setup shape
+		__VIRTUAL_CALL(void, Shape, setup, this->shape);
+	}
+}
+
