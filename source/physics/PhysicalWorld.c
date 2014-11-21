@@ -274,14 +274,17 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this){
 		// check if must apply gravity
 		int gravitySensibleAxis = Actor_canMoveOverAxis((Actor)Body_getOwner(body), &this->gravity);
 
-		Acceleration gravity = {
-			gravitySensibleAxis & __XAXIS? this->gravity.x: 0,
-			gravitySensibleAxis & __YAXIS? this->gravity.y: 0,
-			gravitySensibleAxis & __ZAXIS? this->gravity.z: 0
-		};
-		
-		// add gravity
-		Body_applyGravity(body, &gravity);
+		if(gravitySensibleAxis) {
+			
+			Acceleration gravity = {
+				gravitySensibleAxis & __XAXIS? this->gravity.x: 0,
+				gravitySensibleAxis & __YAXIS? this->gravity.y: 0,
+				gravitySensibleAxis & __ZAXIS? this->gravity.z: 0
+			};
+			
+			// add gravity
+			Body_applyGravity(body, &gravity);
+		}
 	}
 }
 

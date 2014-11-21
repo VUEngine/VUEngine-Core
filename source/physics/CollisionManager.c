@@ -254,6 +254,11 @@ void CollisionManager_update(CollisionManager this){
 
 		// load the current shape
 		Shape shape = (Shape)VirtualNode_getData(node);
+		
+		if(!Shape_checkForCollisions(shape)){
+			
+			continue;
+		}
 
 		VirtualList collidingObjects = NULL;
 		
@@ -389,7 +394,6 @@ void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape){
 void CollisionManager_drawShapes(CollisionManager this){
 
 	ASSERT(this, "CollisionManager::drawShapes: null this");
-//	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
 
 	// comparing against the other shapes
 	VirtualNode node = VirtualList_begin(this->shapes);

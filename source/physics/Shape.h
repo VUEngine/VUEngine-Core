@@ -81,7 +81,10 @@ enum ShapeTypes{
 	int checked:1;									\
 													\
 	/* flag to know if setup is needed */			\
-	int ready:1;
+	int ready:1;									\
+													\
+	/* flag to check agains other shapes */			\
+	int checkForCollisions:1;
 
 
 // A Shape which represent a generic object inside a Stage
@@ -123,6 +126,12 @@ void Shape_checked(Shape this, int checked);
 
 // has been configured?
 int Shape_isReady(Shape this);
+
+// set flag
+void Shape_setCheckForCollisions(Shape this, int checkForCollisions);
+
+// get flag
+int Shape_checkForCollisions(Shape this);
 
 // draw debug data
 void Shape_draw(Shape this);

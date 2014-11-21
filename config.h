@@ -84,17 +84,17 @@
 // clock resolution
 #define __TIMER_RESOLUTION				1
 
-//target frames per second
-#define __MINIMUM_GOOD_FPS 				55
-
-//target frames per second
+// target frames per second
 #define __RENDER_FPS 					60
 
-//target frames per second
+// target frames per second
 #define __PHYSICS_FPS 					60
 
-//target frames per second
+// target frames per second
 #define __LOGIC_FPS 					60
+
+// target frames per second
+#define __MINIMUM_GOOD_FPS 				(__PHYSICS_FPS - 1)
 
 #define __MILISECODS_IN_SECOND			1000
 

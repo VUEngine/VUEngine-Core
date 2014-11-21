@@ -65,7 +65,6 @@ struct Shape_str;
 		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);	\
-		__VIRTUAL_SET(ClassName, InGameEntity, setLocalPosition);		\
 		
 
 // A InGameEntity which represent a generic object inside a Stage
@@ -185,8 +184,5 @@ fix19_13 InGameEntity_getFriction(InGameEntity this);
 
 // retrieve previous position
 VBVec3D InGameEntity_getPreviousPosition(InGameEntity this);
-
-//set class's local position
-void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position);
 
 #endif /*INGAMEENTITY_H_*/

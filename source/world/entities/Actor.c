@@ -163,8 +163,8 @@ void Actor_destructor(Actor this){
 void Actor_setLocalPosition(Actor this, VBVec3D position){
 	
 	ASSERT(this, "Actor::setLocalPosition: null this");
-
-	InGameEntity_setLocalPosition((InGameEntity)this, position);
+	
+	Container_setLocalPosition((Container)this, position);
 
 	if(this->body) {
 		

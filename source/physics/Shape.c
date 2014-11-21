@@ -88,6 +88,9 @@ void Shape_constructor(Shape this, InGameEntity owner){
 	// not setup yet
 	this->ready = false;
 	
+	// set flag
+	this->checkForCollisions = true;
+	
 	Shape_setActive(this, true);
 }
 
@@ -168,4 +171,18 @@ void Shape_checked(Shape this, int checked){
 int Shape_isReady(Shape this){
 	
 	return this->ready;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set flag
+void Shape_setCheckForCollisions(Shape this, int checkForCollisions){
+	
+	this->checkForCollisions = checkForCollisions;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get flag
+int Shape_checkForCollisions(Shape this){
+	
+	return this->checkForCollisions;
 }

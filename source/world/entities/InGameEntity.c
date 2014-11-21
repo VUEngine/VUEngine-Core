@@ -281,13 +281,3 @@ VBVec3D InGameEntity_getPreviousPosition(InGameEntity this){
 
 	return this->transform.globalPosition;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//set class's local position
-void InGameEntity_setLocalPosition(InGameEntity this, VBVec3D position){
-	
-	ASSERT(this, "Actor::setLocalPosition: null this");
-
-	Container_setLocalPosition((Container)this, position);
-}
-

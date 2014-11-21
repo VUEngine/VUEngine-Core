@@ -58,6 +58,10 @@ __CLASS_DEFINITION(Stage);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#undef __ENTITY_LOAD_PAD
+#define __ENTITY_LOAD_PAD 20
+#define __ENTITY_UNLOAD_PAD 30
+
 //class's constructor
 static void Stage_constructor(Stage this);
 
@@ -410,7 +414,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		Entity entity = (Entity)VirtualNode_getData(node);
 		
 		//if the entity isn't visible inside the view field, unload it
-		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_LOAD_PAD << 1))){		
+		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD))){		
 
 			int inGameState = __VIRTUAL_CALL(int, Entity, getInGameState, entity);
 

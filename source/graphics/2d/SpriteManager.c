@@ -225,15 +225,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 			Sprite_setWorldLayer(this->sprites[i], worldLayer1);
 			Sprite_setWorldLayer(this->sprites[i + 1], worldLayer2);
 			
-			// wait for frame before rendering
-			//VPUManager_waitForFrame(VPUManager_getInstance());
-
 			Sprite_render(this->sprites[i]);
 			Sprite_render(this->sprites[i + 1]);
-
-			// enable interrupts
-			//VPUManager_displayOn(VPUManager_getInstance());
-
 			break;
 		}
 		
