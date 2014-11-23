@@ -610,8 +610,8 @@ void Game_render(Game this) {
 #undef __CAP_FPS
 #define __CAP_FPS true
 
-#undef __LOGIC_FPS
-#define __LOGIC_FPS 	60
+#undef __TARGET_FPS
+#define __TARGET_FPS 	60
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update engine's world's state
@@ -636,7 +636,7 @@ void Game_update(Game this){
 		
 		if(0 == cycle) {
 			
-			if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
+			if(currentTime - this->lastTime[kLogic] > 1000 / __TARGET_FPS){
 	
 				if(this->nextState){
 					
@@ -684,7 +684,7 @@ void Game_update(Game this){
 		}
 		else if(1 == cycle) {
 
-			if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
+			if(currentTime - this->lastTime[kPhysics] > 1000 / __TARGET_FPS){
 	
 	#ifdef __DEBUG
 				this->lastProcessName = "update physics";
@@ -707,7 +707,7 @@ void Game_update(Game this){
 		}
 		else {
 			
-			if(currentTime - this->lastTime[kRender] > 1000 / __RENDER_FPS){
+			if(currentTime - this->lastTime[kRender] > 1000 / __TARGET_FPS){
 	
 	#ifdef __DEBUG
 				this->lastProcessName = "apply transformations";

@@ -232,7 +232,7 @@ int Entity_isVisible(Entity this, int pad);
 int Entity_getInGameState(Entity this);
 
 // create an entity in gameengine's memory
-Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID, void* extraInfo);
+Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo);
 
 // check if must update sprite's position
 int Entity_updateSpritePosition(Entity this);

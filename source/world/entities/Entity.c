@@ -392,7 +392,7 @@ int Entity_getInGameState(Entity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create an entity in gameengine's memory
-Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID, void* extraInfo){
+Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo){
 	
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT((int)entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -403,9 +403,6 @@ Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID
 	// setup entity if allocated and constructed
 	if(entity){
 
-		// set spatial position
-		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(*position));
-		 
 		// process extra info
 		if(extraInfo){
 			

@@ -95,16 +95,10 @@
 #define __TIMER_RESOLUTION				1
 
 // target frames per second
-#define __RENDER_FPS 					60
+#define __TARGET_FPS 					60
 
 // target frames per second
-#define __PHYSICS_FPS 					60
-
-// target frames per second
-#define __LOGIC_FPS 					30
-
-// target frames per second
-#define __MINIMUM_GOOD_FPS 				(__PHYSICS_FPS - 1)
+#define __MINIMUM_GOOD_FPS 				(__TARGET_FPS - 3)
 
 #define __MILISECONDS_IN_SECOND			1000
 

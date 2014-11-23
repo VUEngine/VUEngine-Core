@@ -293,7 +293,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 
 	if(entityDefinition)
 	{
-		Entity entity = Entity_load(entityDefinition, position, inGameIndex, extraInfo);
+		Entity entity = Entity_load(entityDefinition, inGameIndex, extraInfo);
 		
 		// create the entity and add it to the world
 		Container_addChild((Container)this, (Container)entity);
@@ -310,6 +310,10 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 				{0, 0, 0}			
 		};
 		
+		// set spatial position
+		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+
+		// apply transformations
 		__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(&environmentTransform));
 
 		return entity;
@@ -503,7 +507,10 @@ void Stage_stream(Stage this){
 	// if the screen is moving
 	if(*((u8*)_screenMovementState)){
 
-#define __STREAM_CYCLE	(__LOGIC_FPS)	
+#define __STREAM_CYCLE	(__TARGET_FPS)	
+#define __STREAM_UNLOAD_CYCLE	(0)	
+#define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
+#define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
 
 		static int load = __STREAM_CYCLE;
 
@@ -514,7 +521,7 @@ void Stage_stream(Stage this){
 			
 			load = __STREAM_CYCLE;
 		}
-		else if ((__STREAM_CYCLE >> 1) == load) {
+		else if (__STREAM_LOAD_CYCLE_1 == load || __STREAM_LOAD_CYCLE_2 == load) {
 
 			VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 			

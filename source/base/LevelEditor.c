@@ -654,8 +654,10 @@ static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
 		
 		Entity entity = Stage_addEntity(Level_getStage(this->level), _userObjects[this->userObjectIndex].entityDefinition, &position, -1, NULL);
 		SpriteManager_sortAllLayers(SpriteManager_getInstance());
-		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, __ARGUMENTS(position));
 
+		Level_transform(this->level);
+		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, __ARGUMENTS(position));
+					
 		VirtualList stageEntities = Container_getChildren((Container)Level_getStage(this->level));
 		this->currentEntityNode = stageEntities? VirtualList_end(stageEntities): NULL;
 
