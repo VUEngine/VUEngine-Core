@@ -87,7 +87,7 @@ DFILES := $(addprefix $(STORE)/,$(SOURCE:.c=.d))
 # Main target. The @ in front of a command prevents make from displaying
 # it to the standard output.
 
-all: $(TARGET).a
+all: $(OUTPUT)/$(TARGET).a
 
 $(OUTPUT)/$(TARGET).a: dirs $(OBJECTS)
 	@echo Creating $(TARGET).
