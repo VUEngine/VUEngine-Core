@@ -98,13 +98,16 @@
 #define __TARGET_FPS 					60
 
 // target frames per second
+#define __OPTIMUM_FPS 					60
+
+// target frames per second
 #define __MINIMUM_GOOD_FPS 				(__TARGET_FPS - 3)
 
 #define __MILISECONDS_IN_SECOND			1000
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
-#define __FPS_ANIM_FACTOR 	(__RENDER_FPS / 50.0f)
+#define __FPS_ANIM_FACTOR 	(__TARGET_FPS / (float)__OPTIMUM_FPS)
 
 //you will hardly have more than ten mapcharacters in affine mode  
 //on screen at once
