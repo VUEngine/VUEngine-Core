@@ -48,24 +48,23 @@ struct Shape_str;
 
 #define InGameEntity_METHODS							\
 		Entity_METHODS									\
-		__VIRTUAL_DEC(moves);							\
 		__VIRTUAL_DEC(isMoving);						\
 		__VIRTUAL_DEC(getElasticity);					\
 		__VIRTUAL_DEC(getFriction);						\
-		__VIRTUAL_DEC(getPreviousPosition);				\
 	
 	
 
 #define InGameEntity_SET_VTABLE(ClassName)								\
 		Entity_SET_VTABLE(ClassName)									\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, initialTransform);		\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);	\
+		__VIRTUAL_SET(ClassName, InGameEntity, getGap);					\
 		
+
 
 // A InGameEntity which represent a generic object inside a Stage
 #define InGameEntity_ATTRIBUTES						\
@@ -84,9 +83,7 @@ struct Shape_str;
 													\
 	/* Gap to calculate collisions */				\
 	Gap gap;										\
-													\
-	/* shape for collision detection */				\
-	Shape shape;
+
 
 __CLASS(InGameEntity);
 
@@ -172,9 +169,6 @@ Direction InGameEntity_getDirection(InGameEntity this);
 
 // set shape state
 void InGameEntity_setShapeState(InGameEntity this, int state);
-
-// initial transform
-void InGameEntity_initialTransform(InGameEntity this, Transformation* environmentTransform);
 
 // get elasticiy
 fix19_13 InGameEntity_getElasticity(InGameEntity this);

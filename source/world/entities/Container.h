@@ -181,6 +181,10 @@ int Container_getID(Container this);
 
 // retrieve child count
 int Container_getChildCount(Container this);
+
+// retrieve children
+VirtualList Container_getChildren(Container this);
+
 /*
 // remove an entity from the game
 void Container_deleteChild(Stage this, Entity entity, int inGameState);

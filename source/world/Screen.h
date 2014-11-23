@@ -95,6 +95,12 @@ InGameEntity Screen_getFocusInGameEntity(Screen this);
 // inform the screen I'm being removed
 void Screen_focusEntityDeleted(Screen this, InGameEntity actor);
 
+// translate screen
+void Screen_move(Screen this, VBVec3D translation);
+
+// get screen's position
+VBVec3D Screen_getPosition(Screen this);
+
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position);
 

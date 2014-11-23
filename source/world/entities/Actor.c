@@ -27,6 +27,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#include <Actor.h>
+
 #include <Clock.h>
 #include <AnimatedSprite.h>
 #include <MessageDispatcher.h>
@@ -37,8 +39,9 @@
 #include <PhysicalWorld.h>
 #include <Body.h>
 #include <Cuboid.h>
-
-#include <Actor.h>
+#include <Prototypes.h>
+#include <Game.h>
+#include <Level.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -167,14 +170,30 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 	Container_setLocalPosition((Container)this, position);
 
 	if(this->body) {
-		
-		VBVec3D globalPosition = Container_getGlobalPosition((Container)this);
-		VBVec3D localPosition = Container_getLocalPosition((Container)this);
-		
-		globalPosition.x += localPosition.x;
-		globalPosition.y += localPosition.y;
-		globalPosition.z += localPosition.z;
 
+		VBVec3D globalPosition = Container_getGlobalPosition((Container)this);
+
+		// TODO
+		// Must bubble petition so globalPosition is calculated in this moment
+		// Must bubble petition so globalPosition is calculated in this moment
+		// the following is a terrible inefficient and unsafe hack!!
+		if(Game_getLevel(Game_getInstance())) {
+			
+			Level_transform(Game_getLevel(Game_getInstance()));
+			
+			globalPosition = Container_getGlobalPosition((Container)this);
+		}
+		else {
+			
+			globalPosition.x += position.x;
+			globalPosition.y += position.y;
+			globalPosition.z += position.z;
+		}
+		
+		this->lastCollidingEntity[kXAxis] = NULL;
+		this->lastCollidingEntity[kYAxis] = NULL;
+		this->lastCollidingEntity[kZAxis] = NULL;
+		
 		Body_setPosition(this->body, &globalPosition, (Object)this);
 	}
 }

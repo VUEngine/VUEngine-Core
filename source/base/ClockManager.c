@@ -152,7 +152,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
-	u32 previousSecond = this->ticks / __MILISECODS_IN_SECOND;
+	u32 previousSecond = this->ticks / __MILISECONDS_IN_SECOND;
 
 	if(this->clocks) {
 		
@@ -169,7 +169,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	this->ticks += ticksElapsed;
 	
     //if second has changed, set frame rate 
-    if(previousSecond != (this->ticks / __MILISECODS_IN_SECOND)){
+    if(previousSecond != (this->ticks / __MILISECONDS_IN_SECOND)){
     	
     		FrameRate frameRate = FrameRate_getInstance();
 #ifndef __DEBUG_TOOLS
@@ -178,14 +178,31 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 #endif
 #endif
 	    	
+	    	int printFrameRate = true;
 #ifdef __DEBUG_TOOLS
-	    	
-	    	if(!Game_isInDebugMode(Game_getInstance())) {
+	    	printFrameRate &= !Game_isInDebugMode(Game_getInstance());
+#endif	    	
+
+#ifdef __LEVEL_EDITOR
+	    	printFrameRate &= !Game_isInLevelEditor(Game_getInstance());
+#endif	    	
+
+#ifdef __DEBUG_TOOLS
+
+	    	if(printFrameRate) {
 	    		
 	    		FrameRate_print(frameRate, 0, 1);
 	    	}
 #endif	    	
-	    	
+
+#ifdef __LEVEL_EDITOR
+
+	    	if(printFrameRate) {
+	    		
+	    		FrameRate_print(frameRate, 0, 1);
+	    	}
+#endif	    	
+
 	    	if(FrameRate_areFPSHigh(frameRate)) {
 	    		
 	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);

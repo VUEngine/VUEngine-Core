@@ -318,7 +318,7 @@ void PhysicalWorld_update(PhysicalWorld this){
 #endif
 	
 	// get the elapsed time
-	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILISECODS_IN_SECOND / 10));
+	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILISECONDS_IN_SECOND / 10));
 
 	if(checkForGravity) {
 	

@@ -423,8 +423,8 @@ int VirtualList_getSize(VirtualList this){
 		ASSERT(counter < LISTMAXSIZE, "VirtualList::getSize: endless list getting size");
 		
 	}
+	
 	return counter;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

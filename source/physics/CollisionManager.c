@@ -87,7 +87,7 @@ __CLASS_DEFINITION(CollisionManager);
 static void CollisionManager_constructor(CollisionManager this);
 
 // retrieve shape
-Shape InGameEntity_getShape(InGameEntity this);
+Shape Entity_getShape(Entity this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ void CollisionManager_destructor(CollisionManager this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // register a shape
-Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, int shapeType){
+Shape CollisionManager_registerShape(CollisionManager this, Entity owner, int shapeType){
 
 	ASSERT(this, "CollisionManager::registerShape: null this");
 
@@ -196,12 +196,12 @@ void CollisionManager_unregisterShape(CollisionManager this, Shape shape){
 }
 
 // find a shape given an owner
-Shape CollisionManager_getShape(CollisionManager this, InGameEntity owner){
+Shape CollisionManager_getShape(CollisionManager this, Entity owner){
 
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
-	return (Shape)VirtualList_find(this->shapes, (const void* const)InGameEntity_getShape(owner));
+	return (Shape)VirtualList_find(this->shapes, (const void* const)Entity_getShape(owner));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,9 +235,11 @@ void CollisionManager_processRemovedShapes(CollisionManager this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // calculate collisions
-void CollisionManager_update(CollisionManager this){
+int CollisionManager_update(CollisionManager this){
 	
 	ASSERT(this, "CollisionManager::update: null this");
+
+	int thereWhereCollisions = false;
 
 	VirtualNode node = VirtualList_begin(this->movingShapes);
 
@@ -299,6 +301,8 @@ void CollisionManager_update(CollisionManager this){
 		
 		if(collidingObjects){
 
+			thereWhereCollisions = true;
+			
 			// inform the owner about the collision
 			MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)Shape_getOwner(shape), kCollision, (void*)collidingObjects);
 
@@ -310,6 +314,8 @@ void CollisionManager_update(CollisionManager this){
 	
 	// process removed shapes
 	CollisionManager_processRemovedShapes(this);
+	
+	return thereWhereCollisions;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

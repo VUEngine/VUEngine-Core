@@ -28,11 +28,12 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#include <Background.h>
+
 #include <CollisionManager.h>
 #include <Optics.h>
 #include <Shape.h>
-
-#include <Background.h>
+#include <Prototypes.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -87,7 +88,7 @@ void Background_constructor(Background this, BackgroundDefinition* backgroundDef
 	if(backgroundDefinition->registerShape){
 
 		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (InGameEntity)this, kCuboid);
+		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (Entity)this, kCuboid);
 		
 		ASSERT(this->shape, "Background::constructor: shape not created");
 	}
@@ -100,6 +101,7 @@ void Background_constructor(Background this, BackgroundDefinition* backgroundDef
 void Background_destructor(Background this){
 	
 	ASSERT(this, "Background::destructor: null this");
+
 	// destroy the super object
 	__DESTROY_BASE(InGameEntity);
 }
@@ -109,6 +111,7 @@ void Background_destructor(Background this){
 fix19_13 Background_getElasticity(Background this){
 	
 	ASSERT(this, "Background::getElasticity: null this");
+
 	return this->backgroundDefinition->elasticity;
 }
 
@@ -117,5 +120,6 @@ fix19_13 Background_getElasticity(Background this){
 fix19_13 Background_getFriction(Background this){
 	
 	ASSERT(this, "Background::getFriction: null this");
+	
 	return this->backgroundDefinition->friction;
 }

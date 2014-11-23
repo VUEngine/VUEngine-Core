@@ -147,7 +147,7 @@ void SpriteManager_sortAllLayers(SpriteManager this){
 		DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[i]);
 
 		int j = 0;
-		for(j = i + 1;j < __SPRITE_LIST_SIZE &&  this->sprites[j]; j++){
+		for(j = i + 1; j < __SPRITE_LIST_SIZE && this->sprites[j]; j++){
 
 			DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[j]);
 

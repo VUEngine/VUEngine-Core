@@ -75,6 +75,8 @@ __CLASS_DEFINITION(Screen);
 //class's constructor
 static void Screen_constructor(Screen this);
 
+static void Screen_capPosition(Screen this);
+	
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -118,7 +120,7 @@ static void Screen_constructor(Screen this){
 	this->movementState.x = __ACTIVE;
 	this->movementState.y = __ACTIVE;
 	this->movementState.z = __ACTIVE;
-	
+
 	this->lastDisplacement.x = 0;
 	this->lastDisplacement.y = 0;
 	this->lastDisplacement.z = 0;
@@ -165,13 +167,13 @@ void Screen_update(Screen this){
 			this->position.x = 0;
 			
 	
-			if(focusPosition.x - ITOFIX19_13(192) >= 0){
+			if(focusPosition.x - ITOFIX19_13(__SCREEN_WIDTH / 2) >= 0){
 				
-				this->position.x = focusPosition.x - ITOFIX19_13(192);
+				this->position.x = focusPosition.x - ITOFIX19_13(__SCREEN_WIDTH / 2);
 				
-				if(focusPosition.x + ITOFIX19_13(192) > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x)){
+				if(focusPosition.x + ITOFIX19_13(__SCREEN_WIDTH / 2) > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x)){
 					
-					this->position.x = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x - 384);					
+					this->position.x = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x - __SCREEN_WIDTH);					
 				}
 			}
 			
@@ -223,6 +225,67 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor) {
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// translate screen
+void Screen_move(Screen this, VBVec3D translation){
+
+	ASSERT(this, "Screen::setPosition: null this");
+
+	this->position.x += translation.x;
+	this->position.y += translation.y;
+	this->position.z += translation.z;
+	
+	//set world's screen's movement
+	this->movementState.x = __ACTIVE;
+	this->movementState.y = __ACTIVE;
+	this->movementState.z = __ACTIVE;
+	
+	Screen_capPosition(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// translate screen
+static void Screen_capPosition(Screen this){
+	
+	if(this->position.x < 0){
+
+		this->position.x = 0;
+	}
+		
+	if(this->position.x + ITOFIX19_13(__SCREEN_WIDTH) > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x)){
+		
+		this->position.x = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x - __SCREEN_WIDTH);					
+	}
+
+	if(this->position.y < 0){
+
+		this->position.y = 0;
+	}
+		
+	if(this->position.y + ITOFIX19_13(__SCREEN_HEIGHT) > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).y)){
+		
+		this->position.y = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).y - __SCREEN_HEIGHT);					
+	}
+
+	if(this->position.z < 0){
+
+		this->position.z = 0;
+	}
+		
+	if(this->position.z > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z)){
+		
+		this->position.z = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z);					
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get screen's position
+VBVec3D Screen_getPosition(Screen this){
+	
+	return this->position;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position){
@@ -230,6 +293,8 @@ void Screen_setPosition(Screen this, VBVec3D position){
 	ASSERT(this, "Screen::setPosition: null this");
 
 	this->position = position;
+	
+	Screen_capPosition(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

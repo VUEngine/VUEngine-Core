@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
+#ifndef LEVEL_EDITOR_SCREEN_H_
+#define LEVEL_EDITOR_SCREEN_H_
 
-#ifndef CUBOID_H_
-#define CUBOID_H_
-
+#ifdef __LEVEL_EDITOR
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -30,9 +30,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Shape.h>
-#include <Polygon.h>
-
+#include <State.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -43,55 +41,20 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// declare the virtual methods
+#define LevelEditorScreen_METHODS										\
+	State_METHODS;									
 
-#define Cuboid_METHODS								\
-		Shape_METHODS								\
-
-
-#define Cuboid_SET_VTABLE(ClassName)							\
-		Shape_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);					\
-		__VIRTUAL_SET(ClassName, Cuboid, overlaps);				\
-		__VIRTUAL_SET(ClassName, Cuboid, setup);				\
-		__VIRTUAL_SET(ClassName, Cuboid, positione);			\
-		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);	\
-		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);		\
-		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);	\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);					\
-		__VIRTUAL_SET(ClassName, Cuboid, print);				\
+// declare the virtual methods which are redefined
+#define LevelEditorScreen_SET_VTABLE(ClassName)							\
+	State_SET_VTABLE(ClassName)											\
+	__VIRTUAL_SET(ClassName, LevelEditorScreen, enter);					\
+	__VIRTUAL_SET(ClassName, LevelEditorScreen, execute);				\
+	__VIRTUAL_SET(ClassName, LevelEditorScreen, exit);					\
+	__VIRTUAL_SET(ClassName, LevelEditorScreen, handleMessage);			\
 
 
-typedef struct Rightcuboid{
-
-	/* left upper corner */
-	fix19_13 x0;
-	fix19_13 y0;
-	fix19_13 z0;
-			
-	/* right down corner */
-	fix19_13 x1;					
-	fix19_13 y1;
-	fix19_13 z1;
-
-}Rightcuboid;
-
-#define Cuboid_ATTRIBUTES							\
-													\
-	/* super's attributes */						\
-	Shape_ATTRIBUTES;								\
-													\
-	/* the rectangle */								\
-	Rightcuboid rightCuboid;						\
-													\
-	/* the rightCuboid to check */					\
-	Rightcuboid positionedRightcuboid;				\
-													\
-	/* for debugging purposes */					\
-	Polygon polygon;
-
-
-// A Cuboid which represent a generic object inside a Stage
-__CLASS(Cuboid);
+__CLASS(LevelEditorScreen);
 
 
 
@@ -104,40 +67,9 @@ __CLASS(Cuboid);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// class's allocator
-__CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(Entity owner));
+// setup the init focus screen
+LevelEditorScreen LevelEditorScreen_getInstance(void);
 
-// class's destructor
-void Cuboid_destructor(Cuboid this);
+#endif
 
-// check if overlaps with other shape
-int Cuboid_overlaps(Cuboid this, Shape shape);
-
-// setup the rightCuboid
-void Cuboid_setup(Cuboid this);
-
-// prepare the shape to be checked
-void Cuboid_positione(Cuboid this);
-
-// retrieve rightCuboid
-Rightcuboid Cuboid_getRightcuboid(Cuboid this);
-
-// retrieve positioned rightCuboid
-Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
-
-// determine axis of collision
-int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
-
-// test if collision with the entity give the displacement
-int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
-
-// draw debug data
-void Cuboid_draw(Cuboid this);
-
-// flush direct draw data
-void Cuboid_deleteDirectDrawData(Cuboid this);
-
-// print debug data
-void Cuboid_print(Cuboid this, int x, int y);
-
-#endif /*CUBOID_H_*/
+#endif /*LEVEL_EDITOR_SCREEN_H_*/

@@ -60,15 +60,6 @@
 __CLASS(CollisionManager);
 
  
-//spacial position
-typedef struct CollisionInfo{
-	
-	//FPS increases a lot in hardware with ints
-	InGameEntity inGameEntity;
-	int axis;
-
-}CollisionInfo;
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -86,19 +77,19 @@ CollisionManager CollisionManager_getInstance();
 void CollisionManager_destructor(CollisionManager this);
 
 // register a shape
-Shape CollisionManager_registerShape(CollisionManager this, InGameEntity owner, int shapeType);
+Shape CollisionManager_registerShape(CollisionManager this, Entity owner, int shapeType);
 
 // remove a shape
 void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
 
 // find a shape given an owner
-Shape CollisionManager_getShape(CollisionManager this, InGameEntity owner);
+Shape CollisionManager_getShape(CollisionManager this, Entity owner);
 
 // process removed shapes
 void CollisionManager_processRemovedShapes(CollisionManager this);
 
 // calculate collisions
-void CollisionManager_update(CollisionManager this);
+int CollisionManager_update(CollisionManager this);
 
 // unregister all shapes
 void CollisionManager_reset(CollisionManager this);

@@ -74,7 +74,13 @@
 														\
 	/* flag to know if the stage must */				\
 	/* flush unused char groups */						\
-	int flushCharGroups;
+	int flushCharGroups;								\
+														\
+	/* streaming related variables */					\
+	/* flush unused char groups */						\
+	int streamingAmplitude;								\
+	int streamingHead;									\
+	int streamingHeadDisplacement;						\
 
 
 // declare a Stage, which holds the objects in a game world
@@ -149,7 +155,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, int inGameIndex, void *extraInfo);
 
 // stream entities according to screen's position
-void Stage_stream(Stage this);
+void Stage_stream(Stage this, int progressively);
 
 // if set to true, the char set memory is flushed when
 // a char defintion is no longer used

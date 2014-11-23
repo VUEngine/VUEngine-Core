@@ -511,3 +511,10 @@ int Container_getChildCount(Container this){
 
 	return VirtualList_getSize(this->children);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve children
+VirtualList Container_getChildren(Container this){
+
+	return this->children;
+}

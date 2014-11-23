@@ -27,12 +27,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/*
-#ifdef __DEBUG_TOOLS
-#undef __DEBUG
-#endif
-*/
-
 #include <Game.h>
 #include <HardwareManager.h>
 #include <ClockManager.h>
@@ -61,6 +55,11 @@
 
 #ifdef __DEBUG_TOOLS
 #include <DebugScreen.h>
+#endif
+
+
+#ifdef __LEVEL_EDITOR
+#include <LevelEditorScreen.h>
 #endif
 
 
@@ -126,6 +125,9 @@ enum UpdateSubsystems{
 													\
 	/* game's next state */							\
 	State nextState;								\
+													\
+	/* game's next state */							\
+	Level currentLevel;								\
 													\
 	/* last process' name */						\
 	char* lastProcessName;							\
@@ -199,6 +201,7 @@ static void Game_constructor(Game this){
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
 	
 	this->nextState = NULL;
+	this->currentLevel = NULL;
 	
 	// call get instance in singletons to make sure their constructors
 	// are called now
@@ -340,6 +343,9 @@ static void Game_setState(Game this, State state){
 
     //setup state 
     StateMachine_swapState(this->stateMachine, state);
+
+	// save current level
+	this->currentLevel = (Level)state;
 
     //enable hardware pad read
     HardwareManager_enableKeypad(this->hardwareManager);
@@ -491,15 +497,20 @@ void Game_handleInput(Game this, int currentKey){
 	u32 newKey = currentKey & ~previousKey;
 
 #ifdef __DEBUG_TOOLS
-	
+
 	// check for a new key pressed
 	if((previousKey & K_SEL) && (newKey & K_STA)){
 
-		if(StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance()){
+		if(Game_isInDebugMode(this)){
 			
 			StateMachine_popState(this->stateMachine);
 		}
-		else {
+		else{ 
+			
+			if(Game_isInLevelEditor(this)){
+			
+				StateMachine_popState(this->stateMachine);
+			}
 			
 			StateMachine_pushState(this->stateMachine, (State)DebugScreen_getInstance());
 		}
@@ -507,13 +518,55 @@ void Game_handleInput(Game this, int currentKey){
 		previousKey = currentKey;
 		return;
 	}
+#endif
+
+#ifdef __LEVEL_EDITOR
+
+	// check for a new key pressed
+	if((previousKey & K_STA) && (newKey & K_SEL)){
+
+		if(Game_isInLevelEditor(this)){
+			
+			StateMachine_popState(this->stateMachine);
+		}
+		else {
+			
+			if(Game_isInDebugMode(this)){
+			
+				StateMachine_popState(this->stateMachine);
+			}
+		
+			StateMachine_pushState(this->stateMachine, (State)LevelEditorScreen_getInstance());
+		}
+
+		previousKey = currentKey;
+		return;
+	}
 	
+	if(newKey & K_STA){
+		
+		previousKey = currentKey;
+		return;
+	}
+	
+#endif
+	
+#ifdef __DEBUG_TOOLS
 	if(newKey & K_SEL){
 		
 		previousKey = currentKey;
 		return;
 	}
 #endif
+
+#ifdef __LEVEL_EDITOR
+	if(newKey & K_STA){
+		
+		previousKey = currentKey;
+		return;
+	}
+#endif
+	
 
 	// check for a new key pressed
 	if(newKey){
@@ -554,8 +607,11 @@ void Game_render(Game this) {
 	FrameRate_increaseRenderFPS(this->frameRate);
 }
 
-//#undef __CAP_FPS
-//#define __CAP_FPS false
+#undef __CAP_FPS
+#define __CAP_FPS true
+
+#undef __LOGIC_FPS
+#define __LOGIC_FPS 	60
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update engine's world's state
@@ -574,83 +630,116 @@ void Game_update(Game this){
 
 	while(true){
 
+		static int cycle = 0;
+
 		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;
 		
-		if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
-
-			if(this->nextState){
-				
-				Game_setState(this, this->nextState);
-				this->nextState = NULL;
-			}
-#ifdef __DEBUG
-			this->lastProcessName = "handle input";
-#endif
-
-			// process user's input 
-			Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
-
-#ifdef __DEBUG
-			this->lastProcessName = "update state machines";
-#endif
-			// it is the update cycle
-			ASSERT(this->stateMachine, "Game::update: no state machine");
-
-			// update the game's logic
-			StateMachine_update(this->stateMachine);
+		if(0 == cycle) {
 			
+			if(currentTime - this->lastTime[kLogic] > 1000 / __LOGIC_FPS){
+	
+				if(this->nextState){
+					
+					Game_setState(this, this->nextState);
+					this->nextState = NULL;
+				}
+	#ifdef __DEBUG
+				this->lastProcessName = "handle input";
+	#endif
+	
+				// process user's input 
+				Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
+	
+	#ifdef __DEBUG
+				this->lastProcessName = "update state machines";
+	#endif
+				// it is the update cycle
+				ASSERT(this->stateMachine, "Game::update: no state machine");
+	
+				// update the game's logic
+				StateMachine_update(this->stateMachine);
+				
 #ifdef __DEBUG
 			this->lastProcessName = "dispatch delayed messages";
 #endif
 
 #ifdef __DEBUG_TOOLS
-		if(StateMachine_getCurrentState(this->stateMachine) != (State)DebugScreen_getInstance())
+			if(!Game_isInDebugMode(this))
 #endif
-			// dispatch queued messages
-		    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+#ifdef __LEVEL_EDITOR
+			if(!Game_isInLevelEditor(this))
+#endif
+				
+				// dispatch queued messages
+			    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+	
+				// increase the frame rate
+				FrameRate_increaseLogicFPS(this->frameRate);
+	
+			    this->lastTime[kLogic] = currentTime;
+			    
+				this->lastProcessName = "kLogic ended";
 
-			// increase the frame rate
-			FrameRate_increaseLogicFPS(this->frameRate);
+			}
+		}
+		else if(1 == cycle) {
 
-		    this->lastTime[kLogic] = currentTime;
+			if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
+	
+	#ifdef __DEBUG
+				this->lastProcessName = "update physics";
+	#endif
+
+				// simulate physics
+				PhysicalWorld_update(this->physicalWorld);
+	
+	#ifdef __DEBUG
+				this->lastProcessName = "process collisions";
+	#endif
+				// simulate collisions
+	//			Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), CollisionManager_update(this->collisionManager) && FrameRate_areFPSHigh(this->frameRate));
+				Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
+	//			Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), FrameRate_areFPSHigh(this->frameRate));
+				//CollisionManager_update(this->collisionManager);
+				
+				this->lastTime[kPhysics] = currentTime;
+			}
+		}
+		else {
+			
+			if(currentTime - this->lastTime[kRender] > 1000 / __RENDER_FPS){
+	
+	#ifdef __DEBUG
+				this->lastProcessName = "apply transformations";
+	#endif
+	
+	#ifdef __DEBUG_TOOLS
+			if(!Game_isInDebugMode(this))
+	#endif
+	#ifdef __LEVEL_EDITOR
+			if(!Game_isInLevelEditor(this))
+	#endif
+				// apply world transformations
+				Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
+	
+	#ifdef __DEBUG
+				this->lastProcessName = "render";
+	#endif
+				// render sprites
+				SpriteManager_render(this->spriteManager);
+	
+				// increase the frame rate
+				FrameRate_increasePhysicsFPS(this->frameRate);
+				
+				this->lastTime[kRender] = currentTime;
+			}
+		}
+
+		if(2 < ++cycle) {
+			
+			cycle = 0;
 		}
 		
-		if(currentTime - this->lastTime[kPhysics] > 1000 / __PHYSICS_FPS){
-			
-			this->lastTime[kPhysics] = currentTime;
-
-#ifdef __DEBUG
-			this->lastProcessName = "update physics";
-#endif
-			// simulate physics
-			PhysicalWorld_update(this->physicalWorld);
-
-#ifdef __DEBUG
-			this->lastProcessName = "process collisions";
-#endif
-			// simulate collisions
-			CollisionManager_update(this->collisionManager);
-
-#ifdef __DEBUG
-			this->lastProcessName = "apply transformations";
-#endif
-
-#ifdef __DEBUG_TOOLS
-		if(StateMachine_getCurrentState(this->stateMachine) != (State)DebugScreen_getInstance())
-#endif
-			// apply world transformations
-			Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
-
-#ifdef __DEBUG
-			this->lastProcessName = "render";
-#endif
-			// render sprites
-			SpriteManager_render(this->spriteManager);
-
-			// increase the frame rate
-			FrameRate_increasePhysicsFPS(this->frameRate);
-		}
-
 		FrameRate_increaseRawFPS(this->frameRate);
 	}
 }
@@ -731,3 +820,16 @@ int Game_isInDebugMode(Game this){
 }
 #endif
 
+#ifdef __LEVEL_EDITOR
+int Game_isInLevelEditor(Game this){
+		
+	return StateMachine_getCurrentState(this->stateMachine) == (State)LevelEditorScreen_getInstance();
+}
+#endif
+
+#ifdef __LEVEL_EDITOR
+Level Game_getLevel(Game this){
+		
+	return this->currentLevel;
+}
+#endif

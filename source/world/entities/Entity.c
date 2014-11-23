@@ -28,8 +28,11 @@
  */
 
 #include <Entity.h>
+#include <Prototypes.h>
+
 #include <Optics.h>
 #include <AnimatedSprite.h>
+#include <Shape.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -57,6 +60,7 @@ __CLASS_DEFINITION(Entity);
 // add sprite
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites);
 
+static void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -83,6 +87,8 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID)
 
 	/* the sprite must be initializated in the derivated class */
 	this->sprites = NULL;
+	
+	this->shape = NULL;
 	
 	// initialize sprites
 	if (entityDefinition) {
@@ -182,6 +188,67 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// transform sprites
+static void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition) {
+	
+	ASSERT(this, "Entity::transform: null this");
+	ASSERT(this->sprites, "Entity::transform: null sprites");
+
+	VirtualNode node = VirtualList_begin(this->sprites);
+
+	// move each child to a temporary list
+	for(; node ; node = VirtualNode_getNext(node)){
+		
+		Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+		// update scale if needed
+		if(updateSpriteScale){
+	
+			// calculate the scale	
+			Sprite_calculateScale(sprite, this->transform.globalPosition.z);
+			
+			// scale the sprite
+			Sprite_scale(sprite);			
+
+			// calculate sprite's parallax
+			Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+		}
+		
+		//if screen is moving
+		if(updateSpritePosition){
+			
+			//update sprite's 2D position 
+			Sprite_setPosition(sprite, &this->transform.globalPosition);
+		}
+	}	
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// draw class
+void Entity_initialTransform(Entity this, Transformation* environmentTransform){
+	
+	ASSERT(this, "InGameEntity::transform: null this");
+
+	this->invalidateGlobalPosition.x = true;
+	this->invalidateGlobalPosition.y = true;
+	this->invalidateGlobalPosition.z = true;
+
+	// call base
+	Entity_transform((Entity)this, environmentTransform);
+
+	if(this->shape){
+				
+		// setup shape
+		__VIRTUAL_CALL(void, Shape, setup, this->shape);
+
+		if(__VIRTUAL_CALL(int, Entity, moves, this)) {
+		
+			__VIRTUAL_CALL(void, Shape, positione, this->shape);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transform class
 void Entity_transform(Entity this, Transformation* environmentTransform){
 
@@ -193,36 +260,7 @@ void Entity_transform(Entity this, Transformation* environmentTransform){
 	// call base class's transform method
 	Container_transform((Container)this, environmentTransform);
 
-	if(this->sprites){
-
-		VirtualNode node = VirtualList_begin(this->sprites);
-
-		// move each child to a temporary list
-		for(; node ; node = VirtualNode_getNext(node)){
-			
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-			// update scale if needed
-			if(updateSpriteScale){
-		
-				// calculate the scale	
-				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
-				
-				// scale the sprite
-				Sprite_scale(sprite);			
-	
-				// calculate sprite's parallax
-				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
-			}
-			
-			//if screen is moving
-			if(updateSpritePosition){
-				
-				//update sprite's 2D position 
-				Sprite_setPosition(sprite, &this->transform.globalPosition);
-			}
-		}
-	}
+	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,6 +350,23 @@ int Entity_getDeep(Entity this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve gap
+Gap Entity_getGap(Entity this){
+	
+	ASSERT(this, "InGameEntity::getGap: null this");
+
+	Gap gap = {0, 0, 0, 0};
+	return gap;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get entity's shape type
+int Entity_getShapeType(Entity this){
+	
+	return kCuboid;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // whether it is visible
 int Entity_isVisible(Entity this, int pad){
 
@@ -341,32 +396,32 @@ Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID
 	
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT((int)entityDefinition->allocator, "Entity::load: no allocator defined");
-	{
-		// call the appropiate allocator to support inheritance!
-		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
-
-		// setup entity if allocated and constructed
-		if(entity){
 	
-			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(*position));
-			 
-			// process extra info
-			if(extraInfo){
-				
-				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
-			}
+	// call the appropiate allocator to support inheritance!
+	Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
+
+	// setup entity if allocated and constructed
+	if(entity){
+
+		// set spatial position
+		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(*position));
+		 
+		// process extra info
+		if(extraInfo){
 			
-			return entity;
+			__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
 		}
+		
+		return entity;
 	}
+	
 	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if must update sprite's position
 int Entity_updateSpritePosition(Entity this){
-
+	
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 	return (*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
 }
@@ -401,4 +456,28 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction){
 			}
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// does it moves?
+int Entity_moves(Entity this){
+	
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve previous position
+VBVec3D Entity_getPreviousPosition(Entity this){
+	
+	VBVec3D position = {0, 0, 0};
+	return position;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve shape
+Shape Entity_getShape(Entity this){
+	
+	ASSERT(this, "Entity::getShape: null this");
+
+	return this->shape;
 }

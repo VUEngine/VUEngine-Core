@@ -28,11 +28,12 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#include <ScrollBackground.h>
+
 #include <CollisionManager.h>
 #include <Optics.h>
 #include <Shape.h>
-
-#include <ScrollBackground.h>
+#include <Prototypes.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -123,7 +124,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 	// call base class's transform method
 	Entity_transform((Entity)this, environmentTransform);
 
-	if((*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y)){
+	if((*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)){
 		
 		ScrollBackground_updateScrolling(this);
 	}

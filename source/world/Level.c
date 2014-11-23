@@ -80,6 +80,8 @@ void Level_constructor(Level this){
 	
 	// construct the stage
 	this->stage = NULL;
+	
+	this->canStream = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,9 +122,12 @@ void Level_execute(Level this, void* owner){
 
 	ASSERT(this, "Level::execute: null this");
 
-	// stream level
-	// must be called before updating the other entities
-	Stage_stream(this->stage);
+	if(this->canStream) {
+		
+		// stream level
+		// must be called before updating the other entities
+		Stage_stream(this->stage, true);
+	}
 
 	// update the stage
 	__VIRTUAL_CALL(void, Container, update, (Container)this->stage);
@@ -275,3 +280,30 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 	Clock_reset(Game_getInGameClock(Game_getInstance()));
 	Clock_start(Game_getInGameClock(Game_getInstance()));
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set streaming flag
+void Level_setCanStream(Level this, int canStream) {
+
+	ASSERT(this, "Level::loadStage: null this");
+	
+	this->canStream = canStream;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get streaming flag
+int Level_canStream(Level this) {
+
+	ASSERT(this, "Level::canStream: null this");
+	
+	return this->canStream;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve stage
+Stage Level_getStage(Level this){
+
+	return this->stage;
+}
+

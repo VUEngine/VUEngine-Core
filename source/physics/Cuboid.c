@@ -31,7 +31,6 @@
 #include <Optics.h>
 #include <Polygon.h>
 #include <Math.h>
-#include <InGameEntity.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -58,7 +57,7 @@ __CLASS_DEFINITION(Cuboid);
 
 
 // class's constructor
-static void Cuboid_constructor(Cuboid this, InGameEntity owner);
+static void Cuboid_constructor(Cuboid this, Entity owner);
 
 // check if overlaps with other rect
 static int Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
@@ -73,7 +72,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 static void Cuboid_configurePolygon(Cuboid this, int renew);
 
 // retrieve shape
-Shape InGameEntity_getShape(InGameEntity this);
+Shape Entity_getShape(Entity this);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -87,12 +86,13 @@ Shape InGameEntity_getShape(InGameEntity this);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Cuboid, __PARAMETERS(InGameEntity owner))
+__CLASS_NEW_DEFINITION(Cuboid, __PARAMETERS(Entity owner))
 __CLASS_NEW_END(Cuboid, __ARGUMENTS(owner));
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Cuboid_constructor(Cuboid this, InGameEntity owner){
+static void Cuboid_constructor(Cuboid this, Entity owner){
 
 	ASSERT(this, "Cuboid::constructor: null this");
 
@@ -171,7 +171,7 @@ void Cuboid_setup(Cuboid this){
 
 		// position the shape to avoid in real time calculation
 		VBVec3D ownerPosition = Entity_getPosition((Entity)this->owner);
-		Gap ownerGap = InGameEntity_getGap(this->owner);
+		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
 		
 		// calculate gap on each side of the rightCuboid
 		this->rightCuboid.x0 += ownerPosition.x + ITOFIX19_13(ownerGap.left);
@@ -196,7 +196,7 @@ void Cuboid_positione(Cuboid this){
 
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::positione: null sprites");
 
-	Gap gap = InGameEntity_getGap(this->owner);
+	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
 
 	// get owner's position
 	VBVec3D myOwnerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, Entity, getPosition, (Entity)this->owner);
@@ -235,11 +235,11 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine axis of collision
-int Cuboid_getAxisOfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement){
+int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement){
 	
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
 
-	Shape shape = InGameEntity_getShape(collidingEntity);
+	Shape shape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
 	
 	if(__GET_CAST(Cuboid, shape)){
 		
@@ -257,8 +257,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::getAxisOfCollisionWithCuboid: null sprites");
 
-	Gap gap = InGameEntity_getGap(this->owner);
-
+	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
+	
 	VBVec3D displacementIncrement = {
 			FIX19_13_MULT(displacement.x, FTOFIX19_13(0.1f)),
 			FIX19_13_MULT(displacement.y, FTOFIX19_13(0.1f)),
@@ -271,7 +271,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	// get colliding entity's rightcuboid
 	Rightcuboid otherRightcuboid = cuboid->positionedRightcuboid;
 
-	VBVec3D previousPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, InGameEntity, getPreviousPosition, (InGameEntity)this->owner);
+	VBVec3D previousPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, Entity, getPreviousPosition, (Entity)this->owner);
 	positionedRightCuboid.x0 += previousPosition.x + ITOFIX19_13(gap.left);
 	positionedRightCuboid.x1 += previousPosition.x - ITOFIX19_13(gap.right);
 	positionedRightCuboid.y0 += previousPosition.y + ITOFIX19_13(gap.up);
@@ -370,17 +370,17 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // test if collision with the entity give the displacement
-int Cuboid_testIfCollision(Cuboid this, InGameEntity collidingEntity, VBVec3D displacement){
+int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement){
 	
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
 
-	Shape shape = InGameEntity_getShape(collidingEntity);
+	Shape shape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
 	
 	if(__GET_CAST(Cuboid, shape)){
 		
-		return Cuboid_testIfCollisionWithCuboid(this, (Cuboid)shape, InGameEntity_getGap(collidingEntity), displacement);
+		return Cuboid_testIfCollisionWithCuboid(this, (Cuboid)shape, __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, collidingEntity), displacement);
 	}
 	
 	return 0;
@@ -456,7 +456,8 @@ static void Cuboid_configurePolygon(Cuboid this, int renew){
 
 	// create a polygon
 	this->polygon = __NEW(Polygon);
-	
+	Printing_text("     ", 20, 12);
+
 	// add vertices
 	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
 	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x1, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
@@ -475,7 +476,7 @@ static void Cuboid_configurePolygon(Cuboid this, int renew){
 // draw rect
 void Cuboid_draw(Cuboid this){
 	
-	Cuboid_configurePolygon(this, this->moves);
+	Cuboid_configurePolygon(this, this->moves || !this->ready);
 
 	// draw the polygon
 	Polygon_draw(this->polygon, true);

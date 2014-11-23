@@ -69,7 +69,11 @@
 	State_ATTRIBUTES;						\
 											\
 	/* a pointer to the game's stage */		\
-	Stage stage;
+	Stage stage;							\
+											\
+	/* flag to allow streaming */			\
+	int canStream;
+
 
 __CLASS(Level);
 
@@ -126,5 +130,13 @@ void Level_onKeyHold(Level this, int pressedKey);
 // load a stage
 void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);
 
+// set streaming flag
+void Level_setCanStream(Level this, int canStream);
+
+// get streaming flag
+int Level_canStream(Level this);
+
+// retrieve stage 
+Stage Level_getStage(Level this);
 
 #endif /*LEVEL_H_*/

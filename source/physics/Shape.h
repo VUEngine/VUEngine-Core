@@ -31,7 +31,7 @@
  */
 
 #include <Object.h>
-#include <InGameEntity.h>
+#include <Entity.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ enum ShapeTypes{
 	Object_ATTRIBUTES;								\
 													\
 	/* the entity to which the shape belongs */		\
-	InGameEntity owner;								\
+	Entity owner;									\
 													\
 	/* flag to know if the shapes below to an */	\
 	/* entity which moves */						\
@@ -101,13 +101,13 @@ __CLASS(Shape);
  */
 
 // class's constructor
-void Shape_constructor(Shape this, InGameEntity owner);
+void Shape_constructor(Shape this, Entity owner);
 
 // class's destructor
 void Shape_destructor(Shape this);
 
 // retrieve owner
-InGameEntity Shape_getOwner(Shape this);
+Entity Shape_getOwner(Shape this);
 
 // set active
 void Shape_setActive(Shape this, int active);
@@ -126,6 +126,9 @@ void Shape_checked(Shape this, int checked);
 
 // has been configured?
 int Shape_isReady(Shape this);
+
+// set configured flag
+void Shape_setReady(Shape this, int ready);
 
 // set flag
 void Shape_setCheckForCollisions(Shape this, int checkForCollisions);

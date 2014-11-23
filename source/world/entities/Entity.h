@@ -58,10 +58,16 @@
 		__VIRTUAL_DEC(getWidth);					\
 		__VIRTUAL_DEC(getHeight);					\
 		__VIRTUAL_DEC(getDeep);						\
-	
+		__VIRTUAL_DEC(getGap);						\
+		__VIRTUAL_DEC(getShapeType);				\
+		__VIRTUAL_DEC(moves);						\
+		__VIRTUAL_DEC(getPreviousPosition);			\
+		__VIRTUAL_DEC(getShape);					\
+
 
 #define Entity_SET_VTABLE(ClassName)								\
 		Container_SET_VTABLE(ClassName)								\
+		__VIRTUAL_SET(ClassName, Entity, initialTransform);			\
 		__VIRTUAL_SET(ClassName, Entity, transform);				\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);			\
 		__VIRTUAL_SET(ClassName, Entity, getScale);					\
@@ -74,6 +80,11 @@
 		__VIRTUAL_SET(ClassName, Entity, getWidth);					\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);				\
 		__VIRTUAL_SET(ClassName, Entity, getDeep);					\
+		__VIRTUAL_SET(ClassName, Entity, getGap);					\
+		__VIRTUAL_SET(ClassName, Entity, getShapeType);				\
+		__VIRTUAL_SET(ClassName, Entity, moves);					\
+		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);		\
+		__VIRTUAL_SET(ClassName, Entity, getShape);					\
 	
 
 // A Entity which represent a generic Container inside a Stage
@@ -85,6 +96,10 @@
 														\
 	/* sprites' list */									\
 	VirtualList sprites;								\
+														\
+	/* shape for collision detection */					\
+	Shape shape;
+
 
 __CLASS(Entity);
 
@@ -162,6 +177,9 @@ void Entity_resetMemoryState(Entity this, int worldLayer);
 // add sprite
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
 
+// initial transform
+void Entity_initialTransform(Entity this, Transformation* environmentTransform);
+
 //transform class
 void Entity_transform(Entity this, Transformation* environmentTransform);
 
@@ -198,6 +216,12 @@ int Entity_getHeight(Entity this);
 // get deep
 int Entity_getDeep(Entity this);
 
+// get gap
+Gap Entity_getGap(Entity this);
+
+// get entity's shape type
+int Entity_getShapeType(Entity this);
+
 // does move?
 int Entity_doesMove(Entity this);
 
@@ -218,6 +242,12 @@ int Entity_updateSpriteScale(Entity this);
 
 // set the direction
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
+
+// does it moves?
+int Entity_moves(Entity this);
+
+// retrieve previous position
+VBVec3D Entity_getPreviousPosition(Entity this);
 
 
 #endif /*ENTITY_H_*/

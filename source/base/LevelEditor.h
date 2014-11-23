@@ -18,8 +18,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef CUBOID_H_
-#define CUBOID_H_
+#ifndef LEVEL_EDITOR_H_
+#define LEVEL_EDITOR_H_
+
+#include <Entity.h>
+
+// for debugging
+typedef struct UserObject {
+	
+	char* name;
+	EntityDefinition* entityDefinition;
+	
+}UserObject;
+
+
+#ifdef __LEVEL_EDITOR
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -30,8 +43,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Shape.h>
-#include <Polygon.h>
+#include <Object.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -43,57 +55,19 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-#define Cuboid_METHODS								\
-		Shape_METHODS								\
-
-
-#define Cuboid_SET_VTABLE(ClassName)							\
-		Shape_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);					\
-		__VIRTUAL_SET(ClassName, Cuboid, overlaps);				\
-		__VIRTUAL_SET(ClassName, Cuboid, setup);				\
-		__VIRTUAL_SET(ClassName, Cuboid, positione);			\
-		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);	\
-		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);		\
-		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);	\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);					\
-		__VIRTUAL_SET(ClassName, Cuboid, print);				\
+// declare the virtual methods
+#define LevelEditor_METHODS													\
+		Object_METHODS														\
 
 
-typedef struct Rightcuboid{
-
-	/* left upper corner */
-	fix19_13 x0;
-	fix19_13 y0;
-	fix19_13 z0;
-			
-	/* right down corner */
-	fix19_13 x1;					
-	fix19_13 y1;
-	fix19_13 z1;
-
-}Rightcuboid;
-
-#define Cuboid_ATTRIBUTES							\
-													\
-	/* super's attributes */						\
-	Shape_ATTRIBUTES;								\
-													\
-	/* the rectangle */								\
-	Rightcuboid rightCuboid;						\
-													\
-	/* the rightCuboid to check */					\
-	Rightcuboid positionedRightcuboid;				\
-													\
-	/* for debugging purposes */					\
-	Polygon polygon;
+// declare the virtual methods which are redefined
+#define LevelEditor_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)										\
+		__VIRTUAL_SET(ClassName, LevelEditor, handleMessage);				\
 
 
-// A Cuboid which represent a generic object inside a Stage
-__CLASS(Cuboid);
-
-
+// declare a LevelEditor
+__CLASS(LevelEditor);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -104,40 +78,24 @@ __CLASS(Cuboid);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// class's allocator
-__CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(Entity owner));
+// it is a singleton!
+LevelEditor LevelEditor_getInstance();
 
 // class's destructor
-void Cuboid_destructor(Cuboid this);
+void LevelEditor_destructor(LevelEditor this);
 
-// check if overlaps with other shape
-int Cuboid_overlaps(Cuboid this, Shape shape);
+// update
+void LevelEditor_update(LevelEditor this);
 
-// setup the rightCuboid
-void Cuboid_setup(Cuboid this);
+// start level editor
+void LevelEditor_start(LevelEditor this);
 
-// prepare the shape to be checked
-void Cuboid_positione(Cuboid this);
+// stop level editor
+void LevelEditor_stop(LevelEditor this);
 
-// retrieve rightCuboid
-Rightcuboid Cuboid_getRightcuboid(Cuboid this);
+// process a telegram
+int LevelEditor_handleMessage(LevelEditor this, Telegram telegram);
 
-// retrieve positioned rightCuboid
-Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
+#endif
 
-// determine axis of collision
-int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
-
-// test if collision with the entity give the displacement
-int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
-
-// draw debug data
-void Cuboid_draw(Cuboid this);
-
-// flush direct draw data
-void Cuboid_deleteDirectDrawData(Cuboid this);
-
-// print debug data
-void Cuboid_print(Cuboid this, int x, int y);
-
-#endif /*CUBOID_H_*/
+#endif /*CLOCK_H_*/

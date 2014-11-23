@@ -58,10 +58,6 @@ __CLASS_DEFINITION(Stage);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#undef __ENTITY_LOAD_PAD
-#define __ENTITY_LOAD_PAD 20
-#define __ENTITY_UNLOAD_PAD 30
-
 //class's constructor
 static void Stage_constructor(Stage this);
 
@@ -72,7 +68,7 @@ static void Stage_setEntityState(Stage this, int ID, int inGameState);
 static inline int Stage_getEntityState(Stage this, int ID);
 
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange, int disableInterrupts);
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively, int disableInterrupts);
 
 // preload textures
 static void Stage_loadTextures(Stage this);
@@ -101,6 +97,7 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
  * ---------------------------------------------------------------------------------------------------------
  */
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
 __CLASS_NEW_DEFINITION(Stage)
@@ -119,6 +116,10 @@ static void Stage_constructor(Stage this){
 	this->stageDefinition = NULL;
 	
 	this->flushCharGroups = true;
+	
+	this->streamingAmplitude = __STREAMING_AMPLITUDE;
+	this->streamingHead = 0;
+	this->streamingHeadDisplacement = 1;
 	
 	int i = 0;
 	
@@ -273,7 +274,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
 
 	// load entities
-	Stage_loadEntities(this, loadOnlyInRangeEntities, true, false);
+	Stage_loadEntities(this, loadOnlyInRangeEntities, false, false);
 
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
@@ -317,25 +318,43 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadAllEntitiesInRange, int disableInterrupts){
+// preload textures
+static void Stage_loadTextures(Stage this) {
 
-	ASSERT(this, "Stage::loadEntities: null this");
+	ASSERT(this, "Entity::loadTextures: null this");
 
 	StageDefinition* world = this->stageDefinition;
 	
 	int i = 0;
 
-	// TODO: don't check every entity in the stage's definition
-	// must implement an algorithm which only check a portion of it
-	for(; i < __ENTITIES_PER_STAGE && world->entities[i].entity; i++){
+	for(; i < __MAX_TEXTURES_PER_STAGE && world->textures[i]; i++){
+
+		TextureManager_loadTexture(TextureManager_getInstance(), world->textures[i], this->flushCharGroups);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// load entities on demand (if they aren't loaded and are visible)
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively, int disableInterrupts){
+
+	ASSERT(this, "Stage::loadEntities: null this");
+
+	StageDefinition* world = this->stageDefinition;
+	
+	int i = loadProgressively? this->streamingHead: 0;
+	int counter = 0;
+	int lastLoadedIndex = -1;
+	int skippedEntity = false;
+
+	for(; counter < this->streamingAmplitude && 0 <= i && i < __ENTITIES_PER_STAGE && world->entities[i].entity; i += loadProgressively? this->streamingHeadDisplacement: 1,  counter += loadProgressively? 1: 0 ){
 		
 		//if entity isn't loaded and haven't been killed
 		int inGameState = Stage_getEntityState(this, i);
 
 		if(!(__LOADED & inGameState)){
 		//if(kLoaded != inGameState && kDead != inGameState){
-			
+								
+
 			// test if the position is inside the game
 			EntityDefinition* entityDefinition = world->entities[i].entity;
 			
@@ -370,28 +389,26 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 				//set actor state as loaded
 				Stage_setEntityState(this, i, inGameState);
 				
-				if(loadOnlyInRangeEntities && !loadAllEntitiesInRange) {
+				if(!skippedEntity) {
+
+					lastLoadedIndex = i;
+				}
+
+				if(loadProgressively) {
 
 					break;
 				}
 			}
+			else {
+				
+				skippedEntity = true;
+			}
 		}
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// preload textures
-static void Stage_loadTextures(Stage this) {
-
-	ASSERT(this, "Entity::loadTextures: null this");
-
-	StageDefinition* world = this->stageDefinition;
 	
-	int i = 0;
+	if(loadProgressively && 0 <= lastLoadedIndex) {
 
-	for(; i < __MAX_TEXTURES_PER_STAGE && world->textures[i]; i++){
-
-		TextureManager_loadTexture(TextureManager_getInstance(), world->textures[i], this->flushCharGroups);
+		this->streamingHead = lastLoadedIndex;
 	}
 }
 
@@ -404,11 +421,13 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
 	// need a temporal list to remove and delete entities
 	VirtualList removedEntities = __NEW(VirtualList);
-	VirtualNode node = VirtualList_begin(this->children);
+	VirtualNode node = 0 <= this->streamingHeadDisplacement? VirtualList_begin(this->children): VirtualList_end(this->children);
 
+	int counter = 0;
 	CACHE_ENABLE;
 	// check which actors must be unloaded
-	for(; node; node = VirtualNode_getNext(node)){
+	for(; node; counter++){
+//	for(; node && counter < this->streamingAmplitude; counter++){
 		
 		// get next entity
 		Entity entity = (Entity)VirtualNode_getData(node);
@@ -435,21 +454,21 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 				break;
 			}
 		}
+
+		node = 0 <= this->streamingHeadDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node);
 	}
 	
-	VPUManager_disableInterrupt(VPUManager_getInstance());
-
 	// now remove and delete entities
 	for(node = VirtualList_begin(removedEntities); node; node = VirtualNode_getNext(node)){
 	
 		// get next entity
 		Entity entity = (Entity)VirtualNode_getData(node);
 
+		VirtualList_removeElement(this->children, entity);
 		VPUManager_disableInterrupt(VPUManager_getInstance());
 
 		// destroy it
-		__DELETE(entity);		
-		
+		__DELETE(entity);
 	}
 
 	VPUManager_enableInterrupt(VPUManager_getInstance());
@@ -462,28 +481,39 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // stream entities according to screen's position
-void Stage_stream(Stage this){
+void Stage_stream(Stage this, int progressively){
 	
 	ASSERT(this, "Stage::stream: null this");
 
 	// if the screen is moving
-	if(*((u8*)_screenMovementState)){
+	if(!progressively || *((u8*)_screenMovementState)){
 
-		//static int load = 2;
-		static int load = __LOGIC_FPS >> 1;
-			
-		if(!--load){
+#define __STREAM_CYCLE	(__LOGIC_FPS)	
+
+		static int load = __STREAM_CYCLE;
+
+		if(!progressively || !--load){
 
 			// unload not visible objects
 			Stage_unloadOutOfRangeEntities(this, false);
 			
-			load = __LOGIC_FPS >> 1;
+			load = __STREAM_CYCLE;
 		}
-		else if (((__LOGIC_FPS >> 1) >> 1) == load) {
-		//else if (1 == load) {
+		
+		if (!progressively || (__STREAM_CYCLE >> 1) == load) {
+
+			VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
+			
+			int previousHeadDisplacement = this->streamingHeadDisplacement;
+			this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
+			
+			if(previousHeadDisplacement != this->streamingHeadDisplacement) {
+				
+				this->streamingHead += this->streamingHeadDisplacement * this->streamingAmplitude;
+			}
 
 			// load visible objects	
-			Stage_loadEntities(this, true, true, true);
+			Stage_loadEntities(this, true, false || progressively, true);
 		}	
 	}
 }

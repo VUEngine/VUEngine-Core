@@ -65,7 +65,7 @@ __CLASS_DEFINITION(Shape);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Shape_constructor(Shape this, InGameEntity owner){
+void Shape_constructor(Shape this, Entity owner){
 
 	ASSERT(this, "Shape::constructor: null this");
 
@@ -80,7 +80,7 @@ void Shape_constructor(Shape this, InGameEntity owner){
 	this->owner = owner;
 	
 	// do I move?
-	this->moves = __VIRTUAL_CALL(int, InGameEntity, moves, owner);
+	this->moves = __VIRTUAL_CALL(int, Entity, moves, owner);
 	
 	// not checked yet
 	this->checked = false;
@@ -106,7 +106,7 @@ void Shape_destructor(Shape this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve owner
-InGameEntity Shape_getOwner(Shape this){
+Entity Shape_getOwner(Shape this){
 	
 	ASSERT(this, "Shape::getOwner: null this");
 
@@ -171,6 +171,13 @@ void Shape_checked(Shape this, int checked){
 int Shape_isReady(Shape this){
 	
 	return this->ready;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set configured flag
+void Shape_setReady(Shape this, int ready){
+	
+	this->ready = ready;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

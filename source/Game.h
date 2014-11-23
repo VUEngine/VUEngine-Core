@@ -33,6 +33,7 @@
 #include <HardwareManager.h>
 #include <Clock.h>
 #include <Stage.h>
+#include <Level.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -133,5 +134,14 @@ void Game_setOptical(Game this, Optical optical);
 #ifdef __DEBUG_TOOLS
 int Game_isInDebugMode(Game this);
 #endif
+
+#ifdef __LEVEL_EDITOR
+int Game_isInLevelEditor(Game this);
+#endif
+
+#ifdef __LEVEL_EDITOR
+Level Game_getLevel(Game this);
+#endif
+
 
 #endif /*GAMEENGINE_H_*/

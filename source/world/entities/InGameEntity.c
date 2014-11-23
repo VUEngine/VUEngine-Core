@@ -29,6 +29,7 @@
 
 #include <InGameEntity.h>
 #include <CollisionManager.h>
+#include <Prototypes.h>
 
 #ifdef __DEBUG
 #include <DirectDraw.h>	
@@ -220,39 +221,6 @@ void InGameEntity_setShapeState(InGameEntity this, int state){
 		
 		Shape_setActive(this->shape, state);
 	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// draw class
-void InGameEntity_initialTransform(InGameEntity this, Transformation* environmentTransform){
-	
-	ASSERT(this, "InGameEntity::transform: null this");
-
-	this->invalidateGlobalPosition.x = true;
-	this->invalidateGlobalPosition.y = true;
-	this->invalidateGlobalPosition.z = true;
-
-	// call base
-	Entity_transform((Entity)this, environmentTransform);
-
-	if(this->shape){
-				
-		// setup shape
-		__VIRTUAL_CALL(void, Shape, setup, this->shape);
-
-		// setup shape
-//		__VIRTUAL_CALL(void, Shape, positione, this->shape);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve shape
-Shape InGameEntity_getShape(InGameEntity this){
-	
-	ASSERT(this, "InGameEntity::getShape: null this");
-
-	return this->shape;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

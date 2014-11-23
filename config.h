@@ -18,6 +18,16 @@
 
 #define __DEBUG_TOOLS
 
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 											LEVEL EDITOR
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+#define __LEVEL_EDITOR
 		
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -91,12 +101,12 @@
 #define __PHYSICS_FPS 					60
 
 // target frames per second
-#define __LOGIC_FPS 					60
+#define __LOGIC_FPS 					30
 
 // target frames per second
 #define __MINIMUM_GOOD_FPS 				(__PHYSICS_FPS - 1)
 
-#define __MILISECODS_IN_SECOND			1000
+#define __MILISECONDS_IN_SECOND			1000
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
@@ -247,8 +257,14 @@
 //maximun number of entities per world
 #define __ENTITIES_PER_STAGE	128
 
-//padd to determine if a character must be loaded
-#define __ENTITY_LOAD_PAD		30
+// padd to determine if a character must be loaded/unloaded
+// load pad must always be lower than unload pad!
+#define __ENTITY_LOAD_PAD 			25
+#define __ENTITY_UNLOAD_PAD 		30
+
+
+// how many entities forward/backward to poll for streaming
+#define __STREAMING_AMPLITUDE	5
 
 // number of sprites per entity
 #define __MAX_SPRITES_PER_ENTITY 4
