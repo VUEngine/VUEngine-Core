@@ -112,6 +112,7 @@ clean:
 		@echo Making clean.
 		@-rm -f $(foreach DIR,$(DIRS),$(STORE)/$(DIR)/*.d $(STORE)/$(DIR)/*.o)
 		@-rm -Rf $(STORE)
+		@-rm -f $(OUTPUT)/*
 
 # Backup the source files.
 backup:
