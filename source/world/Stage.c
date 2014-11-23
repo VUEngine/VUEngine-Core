@@ -118,7 +118,8 @@ static void Stage_constructor(Stage this){
 	this->flushCharGroups = true;
 	
 	this->streamingAmplitude = __STREAMING_AMPLITUDE;
-	this->streamingHead = 0;
+	this->streamingLeftHead = 0;
+	this->streamingRightHead = 0;
 	this->streamingHeadDisplacement = 1;
 	
 	int i = 0;
@@ -341,12 +342,12 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 	StageDefinition* world = this->stageDefinition;
 	
-	int i = loadProgressively? this->streamingHead: 0;
+	int i = loadProgressively? 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead: 0;
 	int counter = 0;
 	int lastLoadedIndex = -1;
 	int skippedEntity = false;
 
-	for(; counter < this->streamingAmplitude && 0 <= i && i < __ENTITIES_PER_STAGE && world->entities[i].entity; i += loadProgressively? this->streamingHeadDisplacement: 1,  counter += loadProgressively? 1: 0 ){
+	for(; (!loadProgressively || counter < this->streamingAmplitude) && 0 <= i && i < __ENTITIES_PER_STAGE && world->entities[i].entity; i += loadProgressively? this->streamingHeadDisplacement: 1,  counter += loadProgressively? 1: 0 ){
 		
 		//if entity isn't loaded and haven't been killed
 		int inGameState = Stage_getEntityState(this, i);
@@ -406,9 +407,16 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 		}
 	}
 	
-	if(loadProgressively && 0 <= lastLoadedIndex) {
+	if(0 <= lastLoadedIndex) {
 
-		this->streamingHead = lastLoadedIndex;
+		if(0 < this->streamingHeadDisplacement) {
+			
+			this->streamingRightHead = lastLoadedIndex;
+		}
+		else {
+			
+			this->streamingLeftHead = lastLoadedIndex;
+		}
 	}
 }
 
@@ -426,7 +434,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 	int counter = 0;
 	CACHE_ENABLE;
 	// check which actors must be unloaded
-	for(; node; counter++){
+	for(; node; node = 0 <= this->streamingHeadDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node)){
 //	for(; node && counter < this->streamingAmplitude; counter++){
 		
 		// get next entity
@@ -454,8 +462,15 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 				break;
 			}
 		}
-
-		node = 0 <= this->streamingHeadDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node);
+	}
+	
+	if(0 > this->streamingHeadDisplacement) {
+		
+		this->streamingRightHead -= VirtualList_getSize(removedEntities);
+	}
+	else {
+		
+		this->streamingLeftHead += VirtualList_getSize(removedEntities);
 	}
 	
 	// now remove and delete entities
@@ -481,41 +496,46 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // stream entities according to screen's position
-void Stage_stream(Stage this, int progressively){
+void Stage_stream(Stage this){
 	
 	ASSERT(this, "Stage::stream: null this");
 
 	// if the screen is moving
-	if(!progressively || *((u8*)_screenMovementState)){
+	if(*((u8*)_screenMovementState)){
 
 #define __STREAM_CYCLE	(__LOGIC_FPS)	
 
 		static int load = __STREAM_CYCLE;
 
-		if(!progressively || !--load){
+		if(!--load){
 
 			// unload not visible objects
 			Stage_unloadOutOfRangeEntities(this, false);
 			
 			load = __STREAM_CYCLE;
 		}
-		
-		if (!progressively || (__STREAM_CYCLE >> 1) == load) {
+		else if ((__STREAM_CYCLE >> 1) == load) {
 
 			VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 			
-			int previousHeadDisplacement = this->streamingHeadDisplacement;
 			this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 			
-			if(previousHeadDisplacement != this->streamingHeadDisplacement) {
-				
-				this->streamingHead += this->streamingHeadDisplacement * this->streamingAmplitude;
-			}
-
+			/*Printing_text("                      ", 1, 10);
+			Printing_int(this->streamingLeftHead, 1, 10);
+			Printing_int(this->streamingRightHead, 10, 10);
+			*/
 			// load visible objects	
-			Stage_loadEntities(this, true, false || progressively, true);
+			Stage_loadEntities(this, true, true, true);
 		}	
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// stream entities according to screen's position
+void Stage_streamAll(Stage this) {
+	
+	Stage_unloadOutOfRangeEntities(this, false);
+	Stage_loadEntities(this, true, false, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

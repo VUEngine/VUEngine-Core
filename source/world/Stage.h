@@ -79,9 +79,9 @@
 	/* streaming related variables */					\
 	/* flush unused char groups */						\
 	int streamingAmplitude;								\
-	int streamingHead;									\
+	int streamingLeftHead;								\
+	int streamingRightHead;								\
 	int streamingHeadDisplacement;						\
-
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
@@ -155,7 +155,10 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, int inGameIndex, void *extraInfo);
 
 // stream entities according to screen's position
-void Stage_stream(Stage this, int progressively);
+void Stage_stream(Stage this);
+
+// stream entities according to screen's position
+void Stage_streamAll(Stage this);
 
 // if set to true, the char set memory is flushed when
 // a char defintion is no longer used

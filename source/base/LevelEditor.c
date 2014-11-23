@@ -654,7 +654,7 @@ static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
 		
 		Entity entity = Stage_addEntity(Level_getStage(this->level), _userObjects[this->userObjectIndex].entityDefinition, &position, -1, NULL);
 		SpriteManager_sortAllLayers(SpriteManager_getInstance());
-		__VIRTUAL_CALL(void, Container, setLocalPosition, entity, __ARGUMENTS(position));
+		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, __ARGUMENTS(position));
 
 		VirtualList stageEntities = Container_getChildren((Container)Level_getStage(this->level));
 		this->currentEntityNode = stageEntities? VirtualList_end(stageEntities): NULL;
@@ -693,9 +693,7 @@ static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D transl
 
 	LevelEditor_printScreenPosition(this);
 
-	Printing_text("BEF", 30, 5);
-	Stage_stream(Level_getStage(this->level), false);
-	Printing_text("AFT", 30, 5);
+	Stage_streamAll(Level_getStage(this->level));
 
 	SpriteManager_sortAllLayers(SpriteManager_getInstance());
 }

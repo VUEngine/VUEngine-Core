@@ -126,8 +126,9 @@ void Level_execute(Level this, void* owner){
 		
 		// stream level
 		// must be called before updating the other entities
-		Stage_stream(this->stage, true);
+		Stage_stream(this->stage);
 	}
+
 
 	// update the stage
 	__VIRTUAL_CALL(void, Container, update, (Container)this->stage);
