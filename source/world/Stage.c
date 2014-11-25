@@ -28,9 +28,13 @@
  */
 
 #undef __STREAMING_AMPLITUDE	
+#undef __ENTITY_LOAD_PAD 			
+#undef __ENTITY_UNLOAD_PAD 		
+#define __ENTITY_LOAD_PAD 			40
+#define __ENTITY_UNLOAD_PAD 		50
 
-#define __STREAMING_AMPLITUDE	7
-#define __STREAM_CYCLE	(__TARGET_FPS)	
+#define __STREAMING_AMPLITUDE	5
+#define __STREAM_CYCLE	(__TARGET_FPS >> 2)	
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
@@ -549,10 +553,10 @@ void Stage_stream(Stage this){
 			Printing_text(" ", 19, 10);
 			Printing_text("*", 19, 11);
 */
-			/*Printing_text("                      ", 1, 10);
+			Printing_text("                      ", 1, 10);
 			Printing_int(this->streamingLeftHead, 1, 10);
 			Printing_int(this->streamingRightHead, 10, 10);
-			*/
+			
 			// load visible objects	
 			Stage_loadEntities(this, true, true, true);
 		}	
