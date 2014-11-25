@@ -220,6 +220,9 @@ int AnimatedSprite_getMapType(AnimatedSprite this);
 void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer);
 
 // play animation
+void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction);
+
+// play animation
 void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
 
 // is playing a specific animation

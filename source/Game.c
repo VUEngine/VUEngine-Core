@@ -730,12 +730,13 @@ void Game_update(Game this){
 				this->lastProcessName = "update physics";
 	#endif
 
+				
 				// simulate physics
 				PhysicalWorld_update(this->physicalWorld);
 	
-	#ifdef __DEBUG
+#ifdef __DEBUG
 				this->lastProcessName = "process collisions";
-	#endif
+#endif
 				// simulate collisions
 	//			Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), CollisionManager_update(this->collisionManager) && FrameRate_areFPSHigh(this->frameRate));
 				Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));

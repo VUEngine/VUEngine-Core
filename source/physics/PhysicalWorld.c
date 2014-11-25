@@ -320,6 +320,11 @@ void PhysicalWorld_update(PhysicalWorld this){
 	// get the elapsed time
 	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILISECONDS_IN_SECOND / 10));
 
+	if(0 == this->elapsedTime) {
+
+		return;
+	}
+	
 	if(checkForGravity) {
 	
 		checkForGravity = false;

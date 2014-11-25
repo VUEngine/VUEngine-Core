@@ -220,9 +220,13 @@ void AnimationEditor_start(AnimationEditor this){
 	int i = 0;
 	for(; _userActors[i].actorDefinition; i++) {
 	
+		ASSERT(_userActors[i].name, "AnimationEditor::start: push null name");
 		VirtualList_pushBack(actorsNames, _userActors[i].name);
 	}
 	
+	ASSERT(actorsNames, "AnimationEditor::start: null actorsNames");
+	ASSERT(VirtualList_getSize(actorsNames), "AnimationEditor::start: empty actorsNames");
+
 	OptionsSelector_setOptions(this->actorsSelector, actorsNames);
 	__DELETE(actorsNames);
 
@@ -259,7 +263,7 @@ void AnimationEditor_stop(AnimationEditor this){
 static void AnimationEditor_setupMode(AnimationEditor this) {
 	
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-	Printing_text("ANIMATION EDITOR", 14, 0);
+	Printing_text("ANIMATION INSPECTOR", 14, 0);
 	Printing_text("Accept (A)", 48 - 10, 0);
 	Printing_text("Cancel (B)", 48 - 10, 1);
 
@@ -547,7 +551,7 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this){
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++){
 		
 		Printing_int(this->animationFunction.frames[i], x + 12 + j, y);
-		j += Printing_getDigitCount(this->animationFunction.frames[i]) + 1;
+		j += Utilities_getDigitCount(this->animationFunction.frames[i]) + 1;
 	}
 
 //	void* onAnimationComplete;

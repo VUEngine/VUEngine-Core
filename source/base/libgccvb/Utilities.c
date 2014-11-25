@@ -150,3 +150,16 @@ int Utilities_equalSign(int a, int b){
 	return ((a & (1 << sizeof(int))) ==  (b & (1 << sizeof(int))));
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int Utilities_getDigitCount(int value){
+
+	int size = 0;
+
+	do{
+		value /= 10;
+		size++;
+		
+	}while(value);
+
+	return (size)? size: 1;
+}

@@ -435,7 +435,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 	VirtualList removedEntities = __NEW(VirtualList);
 	VirtualNode node = 0 <= this->streamingHeadDisplacement? VirtualList_begin(this->children): VirtualList_end(this->children);
 
-	int counter = 0;
+//	int counter = 0;
 	CACHE_ENABLE;
 	// check which actors must be unloaded
 	for(; node; node = 0 <= this->streamingHeadDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node)){
@@ -507,7 +507,7 @@ void Stage_stream(Stage this){
 	// if the screen is moving
 	if(*((u8*)_screenMovementState)){
 
-#define __STREAM_CYCLE	(__TARGET_FPS)	
+#define __STREAM_CYCLE	(__TARGET_FPS >> 2)	
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	

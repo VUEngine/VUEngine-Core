@@ -65,7 +65,7 @@ __CLASS(AnimationEditor);
 // for animation
 typedef struct UserActor {
 	
-	char* name;
+	const char* name;
 	const ActorDefinition* actorDefinition;
 	
 }UserActor;

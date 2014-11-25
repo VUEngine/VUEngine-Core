@@ -30,6 +30,7 @@
 
 #include <Printing.h>
 #include <HardwareManager.h>
+#include <Utilities.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -53,7 +54,6 @@
 
 extern const u16 ASCII_CH[];
 
-int Printing_getDigitCount(int value);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -108,20 +108,6 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int Printing_getDigitCount(int value){
-
-	int size = 0;
-
-	do{
-		value /= 10;
-		size++;
-		
-	}while(value);
-
-	return (size)? size: 1;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Printing_int(int value,int x,int y){
 		
 	if(value < 0){
@@ -131,14 +117,14 @@ void Printing_int(int value,int x,int y){
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
 		
 		Printing_out(__PRINTING_BGMAP, x,y, 
-				Utilities_itoa((int)(value), 10, Printing_getDigitCount(value)), __PRINTING_PALLETE);
+				Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
 	
 	}
 	else{
 
 		Printing_out(__PRINTING_BGMAP, 
 				//x - vbjDigitCount(value), y, itoa((int)(value), 10, vbjDigitCount(value)) + 1, 0);				
-				x, y, Utilities_itoa((int)(value), 10, Printing_getDigitCount(value)), __PRINTING_PALLETE);
+				x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
 	}
 }
 
