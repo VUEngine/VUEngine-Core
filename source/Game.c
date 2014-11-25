@@ -78,9 +78,11 @@
 
 enum UpdateSubsystems{
 	
-	kRender = 0,
+	kFirst = 0,
+	kLogic,
+	kRender,
 	kPhysics,
-	kLogic
+	kLast
 };
 
 
@@ -122,7 +124,7 @@ enum UpdateSubsystems{
 	DirectDraw directDraw;							\
 													\
 	/* update time registry */						\
-	u32 lastTime[kLogic + 1];						\
+	u32 lastTime[kLast];							\
 													\
 	/* game's start state */						\
 	u8 started;										\
@@ -638,7 +640,7 @@ void Game_render(Game this) {
 	ASSERT(this, "Game::render: null this");
 
 	// sort sprites
-	//SpriteManager_sortLayersProgressively(this->spriteManager);
+	SpriteManager_sortLayersProgressively(this->spriteManager);
 
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
@@ -656,16 +658,6 @@ void Game_update(Game this){
 
 	ASSERT(this, "Game::update: null this");
 
-	enum UpdateSubsystems{
-		
-		kFirst = 0,
-		kLogic,
-		kRender,
-		kPhysics,
-		kLast
-		
-	};
-	
 	u32 currentTime = 0;
 
 	while(true){
