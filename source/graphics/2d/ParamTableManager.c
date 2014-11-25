@@ -133,7 +133,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 	ASSERT(this, "ParamTableManager::allocate: null this");
 
 	int size = 0;
-	
+
 	//calculate necesary space to allocate	
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row
 	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));

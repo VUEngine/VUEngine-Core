@@ -437,8 +437,11 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
 	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
-	ASSERT(this->children, "Stage::unloadOutOfRangeEntities: null children");
 
+	if(!this->children) {
+		
+		return;
+	}
 	// need a temporal list to remove and delete entities
 	VirtualList removedEntities = __NEW(VirtualList);
 	VirtualNode node = 0 <= this->streamingHeadDisplacement? VirtualList_begin(this->children): VirtualList_end(this->children);

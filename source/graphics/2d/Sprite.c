@@ -162,16 +162,18 @@ void Sprite_destructor(Sprite this){
 	// remove from sprite manager
 	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
 
-	// free the texture
-	TextureManager_free(TextureManager_getInstance(), this->texture);
-	
 	//if affine or bgmap
 	if(WRLD_AFFINE & this->head){
 
 		//free param table space
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
 	}	
+
+	// free the texture
+	TextureManager_free(TextureManager_getInstance(), this->texture);
 	
+	this->texture = NULL;
+
 	// destroy the super object
 	__DESTROY_BASE(Object);
 }

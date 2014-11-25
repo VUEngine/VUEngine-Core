@@ -147,6 +147,8 @@ static void AnimationEditor_removePreviousAnimatedSprite(AnimationEditor this);
 static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_loadAnimationFunction(AnimationEditor this);
+static void AnimationEditor_createAnimatedSprite(AnimationEditor this);
+static void AnimationEditor_createAnimationsSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
 
@@ -257,6 +259,7 @@ void AnimationEditor_start(AnimationEditor this){
 	OptionsSelector_setOptions(this->actorsSelector, actorsNames);
 	__DELETE(actorsNames);
 
+	this->mode = kFirstMode + 1;
 	AnimationEditor_setupMode(this);
 	SpriteManager_showLayer(SpriteManager_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 }
@@ -310,15 +313,15 @@ static void AnimationEditor_setupMode(AnimationEditor this) {
 	
 		case kSelectActor:
 
-			AnimationEditor_removePreviousAnimatedSprite(this);
 			AnimationEditor_printUserActors(this);
 			break;
 
 		case kSelectAnimation:
 
+			AnimationEditor_createAnimatedSprite(this);
+			AnimationEditor_createAnimationsSelector(this);
 			AnimatedSprite_pause(this->animatedSprite, true);
 			AnimationEditor_printActorAnimations(this);
-			SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
 			break;
 			
 		case kEditAnimation:
@@ -327,9 +330,8 @@ static void AnimationEditor_setupMode(AnimationEditor this) {
 			AnimationEditor_createAnimationEditionSelector(this);
 			AnimationEditor_createFrameEditionSelector(this);
 			AnimatedSprite_playAnimationFunction(this->animatedSprite, &this->animationFunction);			AnimatedSprite_pause(this->animatedSprite, true);
-			AnimationEditor_printAnimationConfig(this);
-			SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
 			AnimatedSprite_pause(this->animatedSprite, false);
+			AnimationEditor_printAnimationConfig(this);
 			break;
 	}
 }
@@ -398,53 +400,6 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey){
 	}
 	else if(pressedKey & K_A) {
 		
-		VBVec3D position = Screen_getPosition(Screen_getInstance());
-		
-		position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
-		position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
-		position.z += 0;
-		
-		AnimationEditor_removePreviousAnimatedSprite(this);
-		
-		this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((void*)this, (SpriteDefinition*)&_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]));	
-
-		Sprite_setPosition((Sprite)this->animatedSprite, &position);
-		SpriteManager_sortAllLayers(SpriteManager_getInstance());
-		SpriteManager_render(SpriteManager_getInstance());
-
-		SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
-
-		this->animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
-
-		if(this->animationDescription) {
-			
-			if(this->animationsSelector) {
-				
-				__DELETE(this->animationsSelector);
-			}
-			
-			this->animationsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16, __OPTION_MARK, kString));
-			
-			VirtualList animationsNames = __NEW(VirtualList);
-			
-			int i = 0;
-			for(i = 0; this->animationDescription->animationFunctions[i]; i++) {
-			
-				VirtualList_pushBack(animationsNames, this->animationDescription->animationFunctions[i]->name);
-			}
-			
-			OptionsSelector_setOptions(this->animationsSelector, animationsNames);
-			__DELETE(animationsNames);
-		}
-		else {
-			
-			//TODO
-		}
-
-
-		Level_transform(this->level);
-		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)this->animatedSprite, __ARGUMENTS(position));
-					
 		// select the added entity
 		this->mode = kSelectAnimation;
 		AnimationEditor_setupMode(this);
@@ -491,15 +446,12 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey){
 		
 		if(AnimatedSprite_isPlaying(this->animatedSprite)) {
 
-			Printing_text("Play       (A)", 48 - 14, 2);
 			AnimatedSprite_pause(this->animatedSprite, true);
 
 		}
 		else {
 			
 			AnimatedSprite_pause(this->animatedSprite, false);
-			Printing_text("Pause      (A)", 48 - 14, 2);
-			return;
 		}
 	}
 	else if((pressedKey & K_LU)) {
@@ -677,7 +629,15 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this){
 
 	Printing_text("           ", 38, 0);
 	
-	Printing_text("Play       (A)", 48 - 14, 2);
+	if(!AnimatedSprite_isPlaying(this->animatedSprite)) {
+
+		Printing_text("Play       (A)", 48 - 14, 2);
+	}
+	else {
+		
+		Printing_text("Pause      (A)", 48 - 14, 2);
+	}
+
 	Printing_text("Cancel     (B)", 48 - 14, 1);
 	Printing_text("Select (LU/LD)", 48 - 14, 3);
 	Printing_text("Modify (LL/LR)", 48 - 14, 4);
@@ -712,6 +672,60 @@ static void AnimationEditor_loadAnimationFunction(AnimationEditor this){
 	this->animationFunction.delay = animationFunction->delay;
 	this->animationFunction.loop = animationFunction->loop;
 	this->animationFunction.onAnimationComplete = &AnimationEditor_onAnimationComplete;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void AnimationEditor_createAnimatedSprite(AnimationEditor this) {
+	
+	AnimationEditor_removePreviousAnimatedSprite(this);
+
+	VBVec3D position = Screen_getPosition(Screen_getInstance());
+			
+	position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
+	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
+	position.z += 0;
+	
+	this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((void*)this, (SpriteDefinition*)&_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]));	
+
+	Sprite_setPosition((Sprite)this->animatedSprite, &position);
+	SpriteManager_sortAllLayers(SpriteManager_getInstance());
+	SpriteManager_render(SpriteManager_getInstance());
+
+	Level_transform(this->level);
+	__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)this->animatedSprite, __ARGUMENTS(position));
+
+	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void AnimationEditor_createAnimationsSelector(AnimationEditor this) {
+
+	this->animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
+
+	if(this->animationDescription) {
+		
+		if(this->animationsSelector) {
+			
+			__DELETE(this->animationsSelector);
+		}
+		
+		this->animationsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16, __OPTION_MARK, kString));
+		
+		VirtualList animationsNames = __NEW(VirtualList);
+		
+		int i = 0;
+		for(i = 0; this->animationDescription->animationFunctions[i]; i++) {
+		
+			VirtualList_pushBack(animationsNames, this->animationDescription->animationFunctions[i]->name);
+		}
+		
+		OptionsSelector_setOptions(this->animationsSelector, animationsNames);
+		__DELETE(animationsNames);
+	}
+	else {
+		
+		//TODO
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

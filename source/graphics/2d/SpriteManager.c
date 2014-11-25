@@ -326,13 +326,16 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 	//wait for screen to idle
 	while (*xpstts & XPBSYR);
 
-	Printing_render(this->freeLayer);
+	int printingLayer = __TOTAL_LAYERS == this->freeLayer? this->freeLayer - 1: this->freeLayer;
+	printingLayer = 0 > printingLayer? 1: printingLayer;
 
-	WORLD_HEAD((this->freeLayer - 1), WRLD_OFF);
+	Printing_render(printingLayer);
 
-    WORLD_SIZE((this->freeLayer - 1), 0, 0);
+	WORLD_HEAD((printingLayer - 1), WRLD_OFF);
+
+    WORLD_SIZE((printingLayer - 1), 0, 0);
 	
-	WORLD_HEAD((this->freeLayer - 1), WRLD_END);
+	WORLD_HEAD((printingLayer - 1), WRLD_END);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

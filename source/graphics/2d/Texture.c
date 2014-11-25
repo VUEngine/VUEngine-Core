@@ -118,11 +118,7 @@ void Texture_destructor(Texture this){
 	
 	ASSERT(this, "Texture::destructor: null this");
 
-	if(this->charGroup){
-		
-		//destroy the chargroup
-		__DELETE(this->charGroup);
-	}
+	Texture_freeCharMemory(this);
 	
 	// destroy the super object
 	__DESTROY_BASE(Object);

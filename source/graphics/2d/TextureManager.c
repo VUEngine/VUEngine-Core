@@ -352,8 +352,33 @@ void TextureManager_free(TextureManager this, Texture texture){
 	// if no one is using the texture anymore
 	if(!(--this->textureUsageCount[Texture_getId(texture)])){
 		
+		int allocationType = CharGroup_getAllocationType(Texture_getCharGroup(texture));
+		
 		// free char memory
 		Texture_freeCharMemory(texture);
+		
+		//determine the allocation type
+		switch(allocationType){
+
+			default:
+			case __ANIMATED:
+				{
+					int i = 0;
+
+					// try to find a texture with the same bgmap definition
+					for(; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++){
+						
+						if(this->texture[i] == texture){
+							
+							this->textureUsageCount[Texture_getId(texture)] = 0;
+							this->texture[i] = NULL;
+							__DELETE(texture);
+							break;
+						}
+					}
+				}
+				break;
+		}
 	}
 }
 
