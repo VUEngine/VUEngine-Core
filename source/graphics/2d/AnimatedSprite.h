@@ -205,7 +205,7 @@ void AnimatedSprite_animate(AnimatedSprite this);
 void AnimatedSprite_fx(AnimatedSprite this);
 
 // render frame
-void AnimatedSprite_update(AnimatedSprite this);
+void AnimatedSprite_update(AnimatedSprite this, Clock clock);
 
 // retrieve frame's map's height
 int AnimatedSprite_getRows(AnimatedSprite this);
@@ -230,5 +230,8 @@ int AnimatedSprite_isPlaying(AnimatedSprite this);
 
 // write sprite to graphic memory
 void AnimatedSprite_write(AnimatedSprite this);
+
+// pause animation
+void AnimatedSprite_pause(AnimatedSprite this, int pause);
 
 #endif

@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
+#ifndef ANIMATION_EDITOR_SCREEN_H_
+#define ANIMATION_EDITOR_SCREEN_H_
 
-#ifndef GAME_H_
-#define GAME_H_
-
+#ifdef __ANIMATION_EDITOR
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -30,11 +30,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <HardwareManager.h>
-#include <Clock.h>
-#include <Stage.h>
-#include <Level.h>
-
+#include <State.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -46,17 +42,20 @@
  */
 
 // declare the virtual methods
-#define Game_METHODS						\
-		Object_METHODS						\
-
+#define AnimationEditorScreen_METHODS										\
+	State_METHODS;									
 
 // declare the virtual methods which are redefined
-#define Game_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Game, handleMessage);				\
+#define AnimationEditorScreen_SET_VTABLE(ClassName)							\
+	State_SET_VTABLE(ClassName)											\
+	__VIRTUAL_SET(ClassName, AnimationEditorScreen, enter);					\
+	__VIRTUAL_SET(ClassName, AnimationEditorScreen, execute);				\
+	__VIRTUAL_SET(ClassName, AnimationEditorScreen, exit);					\
+	__VIRTUAL_SET(ClassName, AnimationEditorScreen, handleMessage);			\
 
 
-__CLASS(Game);
+__CLASS(AnimationEditorScreen);
+
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -68,87 +67,9 @@ __CLASS(Game);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// it is a singleton!
-Game Game_getInstance();
+// setup the init focus screen
+AnimationEditorScreen AnimationEditorScreen_getInstance(void);
 
-// class's destructor
-void Game_destructor(Game this);
-
-// set game's initial state
-void Game_start(Game this, State state);
-
-// set game's state
-void Game_changeState(Game this, State state);
-
-// disable interrutps
-void Game_disableHardwareInterrupts(Game this);
-
-// enable interrupts
-void Game_enableHardwareInterrupts(Game this);
-
-// recover graphics memory
-void Game_recoverGraphicMemory(Game this);
-
-// erase engine's current status
-void Game_reset(Game this);
-
-// backup engine's current status 
-void Game_saveState(Game this);
-
-// reload engine's current status
-void Game_recoverState(Game this);
-
-// process input data according to the actual game status
-void Game_handleInput(Game this, int currentKey);
-
-// render the game
-void Game_render(Game this);
-
-// update engine's world's state
-void Game_update(Game this);
-
-// process a telegram
-int Game_handleMessage(Game this, Telegram telegram);
-
-// set rest flag
-void Game_setRestFlag(Game this, int flag);
-
-// retrieve clock
-Clock Game_getClock(Game this);
-
-// retrieve in game clock
-Clock Game_getInGameClock(Game this);
-
-// print engine' class's sizes
-void Game_printClassSizes(int x, int y);
-
-// retrieve last process' name
-char* Game_getLastProcessName(Game this);
-
-// retrieve optical config structure
-Optical Game_getOptical(Game this);
-
-// set optical config structure
-void Game_setOptical(Game this, Optical optical);
-
-#ifdef __DEBUG_TOOLS
-int Game_isInDebugMode(Game this);
 #endif
 
-#ifdef __LEVEL_EDITOR
-int Game_isInLevelEditor(Game this);
-#endif
-
-#ifdef __ANIMATION_EDITOR
-int Game_isInAnimationEditor(Game this);
-#endif
-
-
-#ifdef __LEVEL_EDITOR
-Level Game_getLevel(Game this);
-#endif
-
-// whether an special mode is active
-int Game_isInSpecialMode(Game this);
-
-#endif /*GAMEENGINE_H_*/
+#endif /*ANIMATION_EDITOR_SCREEN_H_*/

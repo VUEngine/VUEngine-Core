@@ -18,21 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef LEVEL_EDITOR_H_
-#define LEVEL_EDITOR_H_
+#ifndef ANIMATION_EDITOR_H_
+#define ANIMATION_EDITOR_H_
 
-#include <Entity.h>
-
-// for debugging
-typedef struct UserObject {
-	
-	char* name;
-	EntityDefinition* entityDefinition;
-	
-}UserObject;
-
-
-#ifdef __LEVEL_EDITOR
+#ifdef __ANIMATION_EDITOR
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -44,6 +33,8 @@ typedef struct UserObject {
  */
 
 #include <Object.h>
+#include <Actor.h>
+
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -56,18 +47,28 @@ typedef struct UserObject {
  */
 
 // declare the virtual methods
-#define LevelEditor_METHODS													\
+#define AnimationEditor_METHODS													\
 		Object_METHODS														\
 
 
 // declare the virtual methods which are redefined
-#define LevelEditor_SET_VTABLE(ClassName)									\
+#define AnimationEditor_SET_VTABLE(ClassName)									\
 		Object_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, LevelEditor, handleMessage);				\
+		__VIRTUAL_SET(ClassName, AnimationEditor, handleMessage);				\
 
 
-// declare a LevelEditor
-__CLASS(LevelEditor);
+// declare a AnimationEditor
+__CLASS(AnimationEditor);
+
+
+
+// for animation
+typedef struct UserActor {
+	
+	char* name;
+	const ActorDefinition* actorDefinition;
+	
+}UserActor;
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -79,22 +80,22 @@ __CLASS(LevelEditor);
  */
 
 // it is a singleton!
-LevelEditor LevelEditor_getInstance();
+AnimationEditor AnimationEditor_getInstance();
 
 // class's destructor
-void LevelEditor_destructor(LevelEditor this);
+void AnimationEditor_destructor(AnimationEditor this);
 
 // update
-void LevelEditor_update(LevelEditor this);
+void AnimationEditor_update(AnimationEditor this);
 
 // start level editor
-void LevelEditor_start(LevelEditor this);
+void AnimationEditor_start(AnimationEditor this);
 
 // stop level editor
-void LevelEditor_stop(LevelEditor this);
+void AnimationEditor_stop(AnimationEditor this);
 
 // process a telegram
-int LevelEditor_handleMessage(LevelEditor this, Telegram telegram);
+int AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram);
 
 #endif
 

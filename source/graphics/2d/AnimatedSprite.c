@@ -288,7 +288,7 @@ void AnimatedSprite_animate(AnimatedSprite this){
 		
 		return;
 	}
-	
+
 	// if the actual frame was set to -1
 	// it means that a not loop animation has been completed
 	if(-1 == this->actualFrame){
@@ -355,11 +355,11 @@ void AnimatedSprite_animate(AnimatedSprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // render frame
-void AnimatedSprite_update(AnimatedSprite this){
+void AnimatedSprite_update(AnimatedSprite this, Clock clock){
 	
 	ASSERT(this, "AnimatedSprite::update: null this");
 
-	if(!Clock_isPaused(Game_getInGameClock(Game_getInstance()))){
+	if(this->playing && !Clock_isPaused(clock)){
 	
 		// first animate the frame
 		AnimatedSprite_animate(this);
@@ -403,6 +403,28 @@ void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer){
 	
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// play animation
+void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction){
+	
+	ASSERT(this, "AnimatedSprite::playAnimation: null this");
+
+	// setup animation frame
+	this->animationFunction = animationFunction;
+	
+	// force frame writing in the next update
+	this->previousFrame = -1;
+	
+	// reset frame to play
+	this->actualFrame = 0;
+
+	// set frame delay to 1 to force the writing of the first
+	// animation frame in the next update
+	this->frameDelay = 1;
+	
+	// it's playing now
+	this->playing = true;
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // play animation
 void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName){
@@ -453,6 +475,20 @@ int AnimatedSprite_isPlaying(AnimatedSprite this){
 	ASSERT(this, "AnimatedSprite::isPlaying: null this");
 
 	return this->playing;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// pause animation
+void AnimatedSprite_pause(AnimatedSprite this, int pause){
+	
+	ASSERT(this, "AnimatedSprite::pause: null this");
+	this->playing = !pause;
+	
+	if(-1 == this->actualFrame){
+	
+		this->actualFrame = 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

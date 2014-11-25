@@ -33,6 +33,7 @@
 #include <InGameEntity.h>
 #include <AnimatedSprite.h>
 #include <Body.h>
+#include <Clock.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -128,6 +129,9 @@ typedef struct GeneralAxisFlag{
 	/* Pointer to the ROM definition */					\
 	ActorDefinition* actorDefinition;					\
 														\
+	/* Pointer to the animation description */			\
+	AnimationDescription* animationDescription;			\
+														\
 	/* a state machine to handle entity's logic	*/		\
 	StateMachine stateMachine;							\
 														\
@@ -150,6 +154,9 @@ typedef struct GeneralAxisFlag{
 														\
 	/* flag to influence with gravity */				\
 	int isAffectedBygravity: 1;							\
+														\
+	/* clock to pass to the animated sprites */			\
+	Clock clock;										\
 
 
 __CLASS(Actor);													
@@ -239,11 +246,17 @@ int Actor_isMoving(Actor this);
 // retrieve scale
 Scale Actor_getScale(Actor this);
 
+// pause animation
+void Actor_pauseAnimation(Actor this, int pause);
+
 // play an animation
 void Actor_playAnimation(Actor this, char* animationName);
 
+// is animation loaded
+int Actor_isAnimationLoaded(Actor this, char* functionName);
+
 // is play an animation
-int Actor_isPlayingAnimation(Actor this, char* functionName);
+int Actor_isPlayingAnimation(Actor this);
 
 // retrieve state when unloading the entity 
 int Actor_getInGameState(Actor this);
@@ -268,5 +281,14 @@ void Actor_takeHitFrom(Actor this, Actor other);
 
 // get elasticiy
 fix19_13 Actor_getElasticity(Actor this);
+
+// get animation description
+AnimationDescription* Actor_getAnimationDescription(Actor this);
+
+// set animation description
+void Actor_setAnimationDescription(Actor this, AnimationDescription* animationDescription);
+
+// set animation clock
+void Actor_setClock(Actor this, Clock clock);
 
 #endif

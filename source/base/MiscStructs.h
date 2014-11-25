@@ -32,14 +32,6 @@
 
 #include <libgccvb.h>
 
-// for debugging
-typedef struct ClassSizeData {
-	
-	char* name;
-	int (*classSizeFunction)(void);
-	
-}ClassSizeData;
-
 //spacial size 
 typedef struct Size{
 	

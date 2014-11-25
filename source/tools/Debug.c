@@ -388,7 +388,7 @@ static void Debug_showPage(Debug this, int increment) {
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		Printing_text("DEBUG SYSTEM", 17, 0);
-		Printing_text("Use(left/right)", 33, 0);
+		Printing_text("Nav. (LL/LR)", 48 - 12, 0);
 		Debug_dimmGame(this);
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 2);		
 	}
@@ -403,8 +403,8 @@ static void Debug_showSubPage(Debug this, int increment) {
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		Printing_text("DEBUG SYSTEM", 17, 0);
-		Printing_text("Use(left/right)", 33, 0);
-		Printing_text("Use(up/down)", 33, 1);
+		Printing_text("Nav. (LL/LR)", 48 - 12, 0);
+		Printing_text("     (LU/LD)", 48 - 12, 1);
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 2);		
 	}
 }

@@ -79,8 +79,6 @@ __CLASS_DEFINITION(Sprite);
  * ---------------------------------------------------------------------------------------------------------
  */
 		
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
 __CLASS_NEW_DEFINITION(Sprite, __PARAMETERS(const SpriteDefinition* spriteDefinition))

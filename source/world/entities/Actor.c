@@ -82,6 +82,9 @@ static void Actor_updateCollisionStatus(Actor this, int movementAxis);
 // retrieve friction of colliding objects
 static void Actor_updateSourroundingFriction(Actor this);
 
+// update animations
+static void Actor_animate(Actor this);
+
 enum AxisOfCollision{
 	
 	kXAxis = 0,
@@ -116,6 +119,7 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	
 	// save ROM definition
 	this->actorDefinition = actorDefinition;
+	this->animationDescription = actorDefinition->animationDescription;
 	
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
@@ -140,6 +144,8 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	this->body = NULL;
 	
 	this->isAffectedBygravity = true;
+	
+	this->clock = Game_getInGameClock(Game_getInstance());
 }	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,21 +273,28 @@ void Actor_update(Actor this){
 	
 	if(this->sprites){
 
-		VirtualNode node = VirtualList_begin(this->sprites);
-
-		// move each child to a temporary list
-		for(; node ; node = VirtualNode_getNext(node)){
-
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-			// first animate the frame
-			AnimatedSprite_update((AnimatedSprite)sprite);
-		}
+		Actor_animate(this);
 	}
 	
 	if(this->body) {
 		
 		Actor_updateCollisionStatus(this, Body_isMoving(this->body));
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// update animations
+static void Actor_animate(Actor this) {
+	
+	VirtualNode node = VirtualList_begin(this->sprites);
+
+	// move each child to a temporary list
+	for(; node ; node = VirtualNode_getNext(node)){
+
+		Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+		// first animate the frame
+		AnimatedSprite_update((AnimatedSprite)sprite, this->clock);
 	}
 }
 
@@ -713,6 +726,26 @@ VBVec3D Actor_getPosition(Actor this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// pause animation
+void Actor_pauseAnimation(Actor this, int pause){
+	
+	ASSERT(this, "Actor::pauseAnimation: null this");
+	ASSERT(this->sprites, "Actor::pauseAnimation: null sprites");
+
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// play animation on each sprite
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			AnimatedSprite_pause((AnimatedSprite)sprite, pause);
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // play an animation
 void Actor_playAnimation(Actor this, char* animationName){
 	
@@ -728,21 +761,33 @@ void Actor_playAnimation(Actor this, char* animationName){
 			
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
-			AnimatedSprite_play((AnimatedSprite)sprite, this->actorDefinition->animationDescription, animationName);
+			AnimatedSprite_play((AnimatedSprite)sprite, this->animationDescription, animationName);
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is play an animation
-int Actor_isPlayingAnimation(Actor this, char* functionName){
+int Actor_isPlayingAnimation(Actor this){
 	
 	ASSERT(this, "Actor::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "Actor::isPlayingAnimation: null sprites");
 
+	AnimatedSprite sprite = (AnimatedSprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+
+	return AnimatedSprite_isPlaying(sprite);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// is animation selected
+int Actor_isAnimationLoaded(Actor this, char* functionName){
+	
+	ASSERT(this, "Actor::isAnimationLoaded: null this");
+	ASSERT(this->sprites, "Actor::isAnimationLoaded: null sprites");
+
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
-	return AnimatedSprite_isPlayingFunction((AnimatedSprite)sprite, this->actorDefinition->animationDescription, functionName);
+	return AnimatedSprite_isPlayingFunction((AnimatedSprite)sprite, this->animationDescription, functionName);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -932,3 +977,24 @@ fix19_13 Actor_getElasticity(Actor this){
 
 	return this->body? Body_getElasticity(this->body): InGameEntity_getElasticity((InGameEntity)this);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get animation definition
+AnimationDescription* Actor_getAnimationDescription(Actor this){
+	
+	return this->animationDescription;
+}
+
+// set animation description
+void Actor_setAnimationDescription(Actor this, AnimationDescription* animationDescription){
+
+	this->animationDescription = animationDescription;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set animation clock
+void Actor_setClock(Actor this, Clock clock){
+	
+	this->clock = clock;
+}
+

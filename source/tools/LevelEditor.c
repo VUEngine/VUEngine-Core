@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#define __LEVEL_EDITOR
-
 #ifdef __LEVEL_EDITOR
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -43,6 +41,7 @@
 #include <Shape.h>
 #include <Screen.h>
 #include <Cuboid.h>
+#include <OptionsSelector.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -83,8 +82,11 @@
 	/* mode */								\
 	int mode;								\
 											\
-	/* user object index */					\
-	int userObjectIndex;					\
+	/* actors selector */					\
+	OptionsSelector userObjectsSelector;	\
+											\
+	/* translation step size */				\
+	int translationStepSize;				\
 
 
 // define the LevelEditor
@@ -100,7 +102,7 @@ __CLASS_DEFINITION(LevelEditor);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __TRANSLATION_STEP	8
+#define __MAX_TRANSLATION_STEP	8 * 4
 #define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
@@ -143,6 +145,7 @@ static void LevelEditor_printEntityPosition(LevelEditor this);
 static void LevelEditor_printScreenPosition(LevelEditor this);
 static void LevelEditor_printUserObjects(LevelEditor this);
 static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey);
+static void LevelEditor_printTranslationStepSize(LevelEditor this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -170,7 +173,21 @@ static void LevelEditor_constructor(LevelEditor this){
 	this->level = NULL;
 	
 	this->mode = kFirstMode + 1;
-	this->userObjectIndex = 0;
+	
+	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12));
+	
+	VirtualList userObjects = __NEW(VirtualList);
+	
+	int i = 0;
+	for(;  _userObjects[i].entityDefinition; i++) {
+	
+		VirtualList_pushBack(userObjects, _userObjects[i].name);
+	}
+	
+	OptionsSelector_setOptions(this->userObjectsSelector, userObjects);
+	__DELETE(userObjects);
+	
+	this->translationStepSize = 8;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,6 +196,11 @@ void LevelEditor_destructor(LevelEditor this){
 	
 	ASSERT(this, "LevelEditor::destructor: null this");
 
+	if(this->userObjectsSelector) {
+		
+		__DELETE(this->userObjectsSelector);
+	}
+	
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -207,9 +229,6 @@ static void LevelEditor_setupMode(LevelEditor this) {
 	
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 	Printing_text("LEVEL EDITOR", 17, 0);
-	Printing_text("Navigate (B)", 33, 0);
-	Printing_text("Use (L/R pads)", 33, 1);
-	Printing_text("Position: x    y    z", 1, 3);
 
 	switch(this->mode) {
 	
@@ -231,14 +250,12 @@ static void LevelEditor_setupMode(LevelEditor this) {
 			}
 
 			LevelEditor_printEntityPosition(this);
+			LevelEditor_printTranslationStepSize(this);
 			break;
 			
 		case kAddObjects:
 
-			this->userObjectIndex = 0;
 			LevelEditor_printUserObjects(this);
-
-			//Entity Entity_load(EntityDefinition* entityDefinition, VBVec3D* position, int ID, void* extraInfo){
 			break;
 	}
 }
@@ -263,7 +280,7 @@ int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 			{
 				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-				if(pressedKey & K_B){
+				if(pressedKey & K_SEL){
 					
 					this->mode++;
 					
@@ -513,7 +530,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 		
 		VBVec3D translation = {
 				
-				ITOFIX19_13(-__TRANSLATION_STEP),
+				ITOFIX19_13(-this->translationStepSize),
 				0, 
 				0
 		};
@@ -524,7 +541,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 		
 		VBVec3D translation = {
 				
-				ITOFIX19_13(__TRANSLATION_STEP),
+				ITOFIX19_13(this->translationStepSize),
 				0, 
 				0
 		};
@@ -535,7 +552,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 		
 		VBVec3D translation = {
 				0,
-				ITOFIX19_13(-__TRANSLATION_STEP),
+				ITOFIX19_13(-this->translationStepSize),
 				0
 		};
 
@@ -545,25 +562,36 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 		
 		VBVec3D translation = {
 				0,
-				ITOFIX19_13(__TRANSLATION_STEP),
+				ITOFIX19_13(this->translationStepSize),
 				0
 		};
 
 		LevelEditor_applyTraslationToEntity(this, translation);
 	}
-	else if(pressedKey & K_RL){
-
-		// displace entity
-	}
 	else if(pressedKey & K_RR){
+
+		if(__MAX_TRANSLATION_STEP < ++this->translationStepSize) {
+			
+			this->translationStepSize = __MAX_TRANSLATION_STEP;
+		}
 		
+		LevelEditor_printTranslationStepSize(this);
+	}
+	else if(pressedKey & K_RL){
+		
+		if(1 > --this->translationStepSize) {
+			
+			this->translationStepSize = 1;
+		}
+		
+		LevelEditor_printTranslationStepSize(this);
 	}
 	else if(pressedKey & K_RU){
 		
 		VBVec3D translation = {
 				0,
 				0,
-				ITOFIX19_13(__TRANSLATION_STEP),
+				ITOFIX19_13(this->translationStepSize),
 		};
 
 		LevelEditor_applyTraslationToEntity(this, translation);
@@ -573,7 +601,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 		VBVec3D translation = {
 				0,
 				0,
-				ITOFIX19_13(-__TRANSLATION_STEP),
+				ITOFIX19_13(-this->translationStepSize),
 		};
 
 		LevelEditor_applyTraslationToEntity(this, translation);
@@ -619,30 +647,13 @@ static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D transl
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
 	
-	int userObjecstCount = 0;
-	for(; _userObjects[userObjecstCount].entityDefinition; userObjecstCount++);
-
 	if(pressedKey & K_LU){
 	
-		Printing_text(" ", 1, __USER_OBJECT_SHOW_ROW + this->userObjectIndex);
-
-		if(0 > --this->userObjectIndex) {
-			
-			this->userObjectIndex = userObjecstCount - 1;
-		}
-		
-		Printing_text("*", 1, __USER_OBJECT_SHOW_ROW + this->userObjectIndex);
+		OptionsSelector_selectPrevious(this->userObjectsSelector);
 	}
 	else if(pressedKey & K_LD){
 		
-		Printing_text(" ", 1, __USER_OBJECT_SHOW_ROW + this->userObjectIndex);
-
-		if(userObjecstCount <= ++this->userObjectIndex) {
-			
-			this->userObjectIndex = 0;
-		}
-		
-		Printing_text("*", 1, __USER_OBJECT_SHOW_ROW + this->userObjectIndex);
+		OptionsSelector_selectNext(this->userObjectsSelector);
 	}
 	else if(pressedKey & K_A) {
 		
@@ -652,7 +663,7 @@ static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
 		position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 		position.z += ITOFIX19_13(__SCREEN_WIDTH >> 2);
 		
-		Entity entity = Stage_addEntity(Level_getStage(this->level), _userObjects[this->userObjectIndex].entityDefinition, &position, -1, NULL);
+		Entity entity = Stage_addEntity(Level_getStage(this->level), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, -1, NULL);
 		SpriteManager_sortAllLayers(SpriteManager_getInstance());
 
 		Level_transform(this->level);
@@ -670,17 +681,27 @@ static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void LevelEditor_printEntityPosition(LevelEditor this){
 	
-	Printing_text("Entity's type:                       ", 1, 2);
+	int y = 2;
+	int x = 1;
+	Printing_text("MOVE OBJECT", x, y++);
+	Printing_text("Nav.     (SEL)", 48 - 14, 0);
+	Printing_text("Next   (LT/RT)", 48 - 14, 1);
+	Printing_text("Move (LU/LD/LL", 48 - 14, 2);
+	Printing_text("/LR/RU/LD)", 48 - 10, 3);
 
 	if(this->currentEntityNode){
 		
 		Container container = (Container)VirtualNode_getData(this->currentEntityNode);
-		Printing_text(__GET_CLASS_NAME(container), 16, 2);
 		VBVec3D globalPosition = Container_getGlobalPosition(container);
-		Printing_text("                   ", 11, 4);
-		Printing_int(FIX19_13TOI(globalPosition.x), 11, 4);
-		Printing_int(FIX19_13TOI(globalPosition.y), 16, 4);
-		Printing_int(FIX19_13TOI(globalPosition.z), 21, 4);
+
+		Printing_text("ID: ", x, ++y);
+		Printing_int(Container_getID(container), x + 6, y);
+		Printing_text("Type:                                  ", x, ++y);
+		Printing_text(__GET_CLASS_NAME(container), x + 6, y);
+		Printing_text("Position:                  ", x, ++y);
+		Printing_int(FIX19_13TOI(globalPosition.x), x + 10, y);
+		Printing_int(FIX19_13TOI(globalPosition.y), x + 15, y);
+		Printing_int(FIX19_13TOI(globalPosition.z), x + 20, y);
 	}
 }
 
@@ -703,37 +724,38 @@ static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D transl
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void LevelEditor_printScreenPosition(LevelEditor this){
 	
-	Printing_text("Screen's  ", 1, 2);
+	int x = 1;
+	int y = 2;
+	
 	VBVec3D position = Screen_getPosition(Screen_getInstance());
-	Printing_text("                   ", 11, 4);
-	Printing_int(FIX19_13TOI(position.x), 11, 4);
-	Printing_int(FIX19_13TOI(position.y), 16, 4);
-	Printing_int(FIX19_13TOI(position.z), 21, 4);
+
+	Printing_text("MOVE SCREEN", x, y++);
+	Printing_text("Nav.     (SEL)", 48 - 14, 0);
+	Printing_text("Move (LU/LD/LL", 48 - 14, 1);
+	Printing_text("/LR/RU/LD)", 48 - 10, 2);
+	Printing_text("Position:               ", x, ++y);
+	Printing_int(FIX19_13TOI(position.x), x + 10, y);
+	Printing_int(FIX19_13TOI(position.y), x + 15, y);
+	Printing_int(FIX19_13TOI(position.z), x + 20, y);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void LevelEditor_printUserObjects(LevelEditor this){
 
-	Printing_text("User's objects  ", 1, 2);
+	Printing_text("ADD OBJECTS", 1, 2);
 	Printing_text("                       ", 1, 3);
-	Printing_text("Add (A)", 33, 0);
+	Printing_text("Nav. (SEL)", 48 - 10, 0);
+	Printing_text("Accept (A)", 48 - 10, 1);
 
-	int y = 3;
+	OptionsSelector_showOptions(this->userObjectsSelector, 1, 4);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void LevelEditor_printTranslationStepSize(LevelEditor this) {
 	
-	Printing_text("Name", 1, ++y);
-	y++;
-	
-	int i = 0;
-	
-	y = __USER_OBJECT_SHOW_ROW;
-	
-	for(; _userObjects[i].entityDefinition; i++) {
-		
-		Printing_text(_userObjects[i].name, 2, y++);
-	}
-	
-	Printing_text("*", 1, __USER_OBJECT_SHOW_ROW + this->userObjectIndex);
-	
+	Printing_text("Step   (RL/RR)", 48 - 14, 4);
+	Printing_text("+     ", 48 - 12, 5);
+	Printing_int(this->translationStepSize, 48 - 11, 5);
 }
 
 #endif 

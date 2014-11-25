@@ -62,6 +62,10 @@
 #include <LevelEditorScreen.h>
 #endif
 
+#ifdef __ANIMATION_EDITOR
+#include <AnimationEditorScreen.h>
+#endif
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -507,7 +511,7 @@ void Game_handleInput(Game this, int currentKey){
 		}
 		else{ 
 			
-			if(Game_isInLevelEditor(this)){
+			if(Game_isInSpecialMode(this)){
 			
 				StateMachine_popState(this->stateMachine);
 			}
@@ -531,7 +535,7 @@ void Game_handleInput(Game this, int currentKey){
 		}
 		else {
 			
-			if(Game_isInDebugMode(this)){
+			if(Game_isInSpecialMode(this)){
 			
 				StateMachine_popState(this->stateMachine);
 			}
@@ -551,8 +555,33 @@ void Game_handleInput(Game this, int currentKey){
 	
 #endif
 	
+#ifdef __ANIMATION_EDITOR
+	
+	// check for a new key pressed
+	if((previousKey & K_LT) && (newKey & K_RT)){
+
+		if(Game_isInAnimationEditor(this)){
+			
+			StateMachine_popState(this->stateMachine);
+		}
+		else {
+			
+			if(Game_isInSpecialMode(this)){
+			
+				StateMachine_popState(this->stateMachine);
+			}
+		
+			StateMachine_pushState(this->stateMachine, (State)AnimationEditorScreen_getInstance());
+		}
+
+		previousKey = currentKey;
+		return;
+	}
+	
+#endif
+	
 #ifdef __DEBUG_TOOLS
-	if(newKey & K_SEL){
+	if(!Game_isInSpecialMode(this) && (newKey & K_SEL)){
 		
 		previousKey = currentKey;
 		return;
@@ -560,13 +589,21 @@ void Game_handleInput(Game this, int currentKey){
 #endif
 
 #ifdef __LEVEL_EDITOR
-	if(newKey & K_STA){
+	if(!Game_isInSpecialMode(this) && (newKey & K_STA)){
 		
 		previousKey = currentKey;
 		return;
 	}
 #endif
-	
+
+#ifdef __ANIMATION_EDITOR
+	if(Game_isInAnimationEditor(this) && (newKey & K_LT)){
+		
+		previousKey = currentKey;
+		return;
+	}	
+#endif
+
 
 	// check for a new key pressed
 	if(newKey){
@@ -664,12 +701,15 @@ void Game_update(Game this){
 #endif
 
 #ifdef __DEBUG_TOOLS
-			if(!Game_isInDebugMode(this))
+			if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __LEVEL_EDITOR
-			if(!Game_isInLevelEditor(this))
+			if(!Game_isInSpecialMode(this))
 #endif
 				
+#ifdef __ANIMATION_EDITOR
+			if(!Game_isInSpecialMode(this))
+#endif
 				// dispatch queued messages
 			    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 	
@@ -709,22 +749,27 @@ void Game_update(Game this){
 			
 			if(currentTime - this->lastTime[kRender] > 1000 / __TARGET_FPS){
 	
-	#ifdef __DEBUG
+#ifdef __DEBUG
 				this->lastProcessName = "apply transformations";
-	#endif
+#endif
 	
-	#ifdef __DEBUG_TOOLS
-			if(!Game_isInDebugMode(this))
-	#endif
-	#ifdef __LEVEL_EDITOR
-			if(!Game_isInLevelEditor(this))
-	#endif
+#ifdef __DEBUG_TOOLS
+			if(!Game_isInSpecialMode(this))
+#endif
+				
+#ifdef __LEVEL_EDITOR
+			if(!Game_isInSpecialMode(this))
+#endif
+
+#ifdef __ANIMATION_EDITOR
+			if(!Game_isInSpecialMode(this))
+#endif
 				// apply world transformations
 				Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
 	
-	#ifdef __DEBUG
+#ifdef __DEBUG
 				this->lastProcessName = "render";
-	#endif
+#endif
 				// render sprites
 				SpriteManager_render(this->spriteManager);
 	
@@ -788,6 +833,7 @@ Clock Game_getInGameClock(Game this){
 	return this->inGameClock;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve last process' name
 char* Game_getLastProcessName(Game this) {
 	
@@ -796,6 +842,7 @@ char* Game_getLastProcessName(Game this) {
 	return this->lastProcessName;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve optical config structure
 Optical Game_getOptical(Game this) {
 	
@@ -804,6 +851,7 @@ Optical Game_getOptical(Game this) {
 	return this->optical;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set optical config structure
 void Game_setOptical(Game this, Optical optical) {
 	
@@ -811,7 +859,6 @@ void Game_setOptical(Game this, Optical optical) {
 
 	this->optical = optical;
 }
-
 
 #ifdef __DEBUG_TOOLS
 int Game_isInDebugMode(Game this){
@@ -827,9 +874,37 @@ int Game_isInLevelEditor(Game this){
 }
 #endif
 
+#ifdef __ANIMATION_EDITOR
+int Game_isInAnimationEditor(Game this){
+		
+	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationEditorScreen_getInstance();
+}
+#endif
+
 #ifdef __LEVEL_EDITOR
 Level Game_getLevel(Game this){
 		
 	return this->currentLevel;
 }
 #endif
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// whether an special mode is active
+int Game_isInSpecialMode(Game this) {
+
+	int isInSpecialMode = false;
+	
+#ifdef __DEBUG_TOOLS
+	isInSpecialMode |= Game_isInDebugMode(this);
+#endif
+	
+#ifdef __LEVEL_EDITOR
+	isInSpecialMode |= Game_isInLevelEditor(this);
+#endif	
+
+#ifdef __ANIMATION_EDITOR
+	isInSpecialMode |= Game_isInAnimationEditor(this);
+#endif	
+	
+	return isInSpecialMode;
+}
