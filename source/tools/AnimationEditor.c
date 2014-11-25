@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#define __ANIMATION_EDITOR
-
 #ifdef __ANIMATION_EDITOR
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -54,6 +52,30 @@
  */
 
 #define __USER_ACTOR_SHOW_ROW 	6
+#define __OPTION_MARK	">"
+#define __FRAME_OPTION_MARK	"*"
+
+#define __TRANSLATION_STEP	8
+#define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
+#define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
+#define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
+
+
+enum Modes {
+		kFirstMode = 0,
+		kSelectActor,
+		kSelectAnimation,
+		kEditAnimation,
+		kLastMode
+};
+
+enum AnimationProperties {
+	kNumberOfFrames = 0,
+	kDelay,
+	kLoop,
+	kFrames
+};
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -77,6 +99,9 @@
 	AnimatedSprite animatedSprite;						\
 														\
 	/* current animation description */					\
+	AnimationDescription* animationDescription;			\
+														\
+	/* current animation function */					\
 	AnimationFunction animationFunction;				\
 														\
 	/* actors selector */								\
@@ -84,6 +109,12 @@
 														\
 	/* animations selector */							\
 	OptionsSelector animationsSelector;					\
+														\
+	/* animation edition selector */					\
+	OptionsSelector animationEditionSelector;			\
+														\
+	/* frame edition selector */						\
+	OptionsSelector frameEditionSelector;				\
 														\
 	/* mode */											\
 	int mode;											\
@@ -96,36 +127,13 @@ __CLASS_DEFINITION(AnimationEditor);
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 												  MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-#define __TRANSLATION_STEP	8
-#define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
-#define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
-#define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
-
-
-enum Modes {
-		kFirstMode = 0,
-		kSelectActor,
-		kSelectAnimation,
-		kEditAnimation,
-		kLastMode
-};
-
-extern UserActor _userActors[];
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
  * 												PROTOTYPES
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+extern UserActor _userActors[];
 
 static void AnimationEditor_constructor(AnimationEditor this);
 
@@ -138,8 +146,11 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_removePreviousAnimatedSprite(AnimationEditor this);
 static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey);
+static void AnimationEditor_loadAnimationFunction(AnimationEditor this);
+static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
+static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
 
-static void AnimatorEditor_onAnimationComplete();
+static void AnimationEditor_onAnimationComplete();
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -167,6 +178,9 @@ static void AnimationEditor_constructor(AnimationEditor this){
 	this->level = NULL;
 	this->actorsSelector = NULL;
 	this->animationsSelector = NULL;
+	this->animationEditionSelector = NULL;
+	this->frameEditionSelector = NULL;
+	
 	this->mode = kFirstMode + 1;
 }
 
@@ -184,6 +198,16 @@ void AnimationEditor_destructor(AnimationEditor this){
 	if(this->animationsSelector) {
 		
 		__DELETE(this->animationsSelector);
+	}
+
+	if(this->animationEditionSelector) {
+		
+		__DELETE(this->animationEditionSelector);
+	}
+	
+	if(this->frameEditionSelector) {
+		
+		__DELETE(this->frameEditionSelector);
 	}
 
 	// allow a new construct
@@ -213,7 +237,10 @@ void AnimationEditor_start(AnimationEditor this){
 	this->animatedSprite = NULL;
 	
 	this->animationsSelector = NULL;
-	this->actorsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16));
+	this->animationEditionSelector = NULL;
+	this->frameEditionSelector = NULL;
+	
+	this->actorsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16, __OPTION_MARK, kString));
 	
 	VirtualList actorsNames = __NEW(VirtualList);
 	
@@ -254,6 +281,18 @@ void AnimationEditor_stop(AnimationEditor this){
 		this->animationsSelector = NULL;
 	}
 	
+	if(this->animationEditionSelector) {
+			
+		__DELETE(this->animationEditionSelector);
+		this->animationEditionSelector = NULL;
+	}
+	
+	if(this->frameEditionSelector) {
+				
+		__DELETE(this->frameEditionSelector);
+		this->frameEditionSelector = NULL;
+	}
+	
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 }
 
@@ -284,6 +323,9 @@ static void AnimationEditor_setupMode(AnimationEditor this) {
 			
 		case kEditAnimation:
 
+			AnimationEditor_loadAnimationFunction(this);
+			AnimationEditor_createAnimationEditionSelector(this);
+			AnimationEditor_createFrameEditionSelector(this);
 			AnimatedSprite_playAnimationFunction(this->animatedSprite, &this->animationFunction);			AnimatedSprite_pause(this->animatedSprite, true);
 			AnimationEditor_printAnimationConfig(this);
 			SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
@@ -372,23 +414,23 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey){
 
 		SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
 
-		AnimationDescription* animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
+		this->animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
 
-		if(animationDescription) {
+		if(this->animationDescription) {
 			
 			if(this->animationsSelector) {
 				
 				__DELETE(this->animationsSelector);
 			}
 			
-			this->animationsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16));
+			this->animationsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16, __OPTION_MARK, kString));
 			
 			VirtualList animationsNames = __NEW(VirtualList);
 			
 			int i = 0;
-			for(i = 0; animationDescription->animationFunctions[i]; i++) {
+			for(i = 0; this->animationDescription->animationFunctions[i]; i++) {
 			
-				VirtualList_pushBack(animationsNames, animationDescription->animationFunctions[i]->name);
+				VirtualList_pushBack(animationsNames, this->animationDescription->animationFunctions[i]->name);
 			}
 			
 			OptionsSelector_setOptions(this->animationsSelector, animationsNames);
@@ -422,10 +464,10 @@ static void AnimationEditor_removePreviousAnimatedSprite(AnimationEditor this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey){
 
-	AnimationDescription* animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
+	this->animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
 
 	int actorAnimationsCount = 0;
-	for(; animationDescription->animationFunctions[actorAnimationsCount]; actorAnimationsCount++);
+	for(; this->animationDescription->animationFunctions[actorAnimationsCount]; actorAnimationsCount++);
 	
 	if(pressedKey & K_LU){
 	
@@ -437,23 +479,6 @@ static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey
 	}
 	else if(pressedKey & K_A) {
 		
-		AnimationDescription* animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
-
-		AnimationFunction* animationFunction = animationDescription->animationFunctions[OptionsSelector_getSelectedOption(this->animationsSelector)];
-
-		int i = 0;
-		for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++){
-			
-			this->animationFunction.frames[i] = animationFunction->frames[i];
-		}
-		
-		strcpy(this->animationFunction.name, animationFunction->name);
-		this->animationFunction.numberOfFrames = animationFunction->numberOfFrames;
-		this->animationFunction.delay = animationFunction->delay;
-		this->animationFunction.loop = animationFunction->loop;
-		this->animationFunction.onAnimationComplete = &AnimatorEditor_onAnimationComplete;
-
-		// select the added entity
 		this->mode = kEditAnimation;
 		AnimationEditor_setupMode(this);
 	}
@@ -466,42 +491,154 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey){
 		
 		if(AnimatedSprite_isPlaying(this->animatedSprite)) {
 
-			Printing_text("Play   (A)", 48 - 10, 2);
+			Printing_text("Play       (A)", 48 - 14, 2);
 			AnimatedSprite_pause(this->animatedSprite, true);
+
 		}
 		else {
 			
-			Printing_text("Pause  (A)", 48 - 10, 2);
 			AnimatedSprite_pause(this->animatedSprite, false);
+			Printing_text("Pause      (A)", 48 - 14, 2);
+			return;
 		}
 	}
-	else if((pressedKey & K_RT)) {
+	else if((pressedKey & K_LU)) {
+	
+		OptionsSelector_selectPrevious(this->animationEditionSelector);
+	}
+	else if((pressedKey & K_LD)) {
 
-		this->animationFunction.loop = !this->animationFunction.loop;
-		AnimationEditor_printAnimationConfig(this);
+		OptionsSelector_selectNext(this->animationEditionSelector);
+	}
+	else if((pressedKey & K_LL)) {
+
+		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
+		switch(selectedProperty) {
+		
+			case kNumberOfFrames:
+				
+				if(0 >= --this->animationFunction.numberOfFrames) {
+					
+					this->animationFunction.numberOfFrames = 1;
+				}
+				
+				AnimationEditor_createFrameEditionSelector(this);
+				break;
+				
+			case kDelay:
+				
+				this->animationFunction.delay -= 1 * __FPS_ANIM_FACTOR;
+
+				if(0 > this->animationFunction.delay) {
+					
+					this->animationFunction.delay = 0;
+				}
+				break;
+				
+			case kLoop:
+				
+				this->animationFunction.loop = false;
+				break;
+
+			case kFrames:
+				
+				break;
+		}
+	}
+	else if(pressedKey & K_LR) {
+		
+		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
+		switch(selectedProperty) {
+		
+			case kNumberOfFrames:
+				
+				if(__MAX_FRAMES_PER_ANIMATION_FUNCTION < ++this->animationFunction.numberOfFrames) {
+					
+					this->animationFunction.numberOfFrames = __MAX_FRAMES_PER_ANIMATION_FUNCTION;
+				}
+				
+				AnimationEditor_createFrameEditionSelector(this);
+
+				break;
+				
+			case kDelay:
+				
+				this->animationFunction.delay += 1 * __FPS_ANIM_FACTOR;
+
+				if(1000 < this->animationFunction.delay) {
+					
+					this->animationFunction.delay = 1000;
+				}
+				break;
+				
+			case kLoop:
+				
+				this->animationFunction.loop = true;
+				break;
+
+			case kFrames:
+				
+				break;
+		}
+	}
+	else if(pressedKey & K_RU) {
+		
+		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
+		switch(selectedProperty) {
+		
+			case kFrames:
+				
+				OptionsSelector_selectPrevious(this->frameEditionSelector);
+				break;
+		}
+	}
+	else if(pressedKey & K_RD) {
+		
+		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
+		switch(selectedProperty) {
+		
+			case kFrames:
+				
+				OptionsSelector_selectNext(this->frameEditionSelector);
+				break;
+		}
 	}
 	else if(pressedKey & K_RL) {
+		
+		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
+		int selectedFrame = OptionsSelector_getSelectedOption(this->frameEditionSelector);
+		
+		switch(selectedProperty) {
+		
+			case kFrames:
 
-		this->animationFunction.delay -= 1 * __FPS_ANIM_FACTOR;
-		if(0 == this->animationFunction.delay) {
-			
-			this->animationFunction.delay = 0;
+				if(0 > --this->animationFunction.frames[selectedFrame]) {
+					
+					this->animationFunction.frames[selectedFrame] = 0;
+				}
+		
+				break;
 		}
-
-		AnimationEditor_printAnimationConfig(this);
 	}
 	else if(pressedKey & K_RR) {
+		
+		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
+		int selectedFrame = OptionsSelector_getSelectedOption(this->frameEditionSelector);
+		
+		switch(selectedProperty) {
+		
+			case kFrames:
 
-		this->animationFunction.delay += 1 * __FPS_ANIM_FACTOR;
-		if(1000 <= this->animationFunction.delay) {
-			
-			this->animationFunction.delay = 1000;
-		}
+				if(this->animationDescription->numberOfFrames < ++this->animationFunction.frames[selectedFrame]) {
+
+					this->animationFunction.frames[selectedFrame] = this->animationDescription->numberOfFrames;
+				}
 		
-		AnimationEditor_printAnimationConfig(this);
-		
-		AnimatedSprite_playAnimationFunction(this->animatedSprite, &this->animationFunction);
+				break;
+		}	
 	}
+
+	AnimationEditor_printAnimationConfig(this);
 }
 
 
@@ -524,45 +661,113 @@ static void AnimationEditor_printActorAnimations(AnimationEditor this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void AnimationEditor_printAnimationConfig(AnimationEditor this){
 
-	Printing_text("           ", 38, 0);
-	
-	Printing_text("Play   (A)", 48 - 10, 2);
-
 	int x = 1;
 	int y = 2;
+	
+
 	Printing_text("Animation: ", x, y);
 	Printing_text(this->animationFunction.name, x + 12, y++);
+	OptionsSelector_showOptions(this->animationEditionSelector, x, ++y);
 
-	Printing_text("Frames:                    ", x, ++y);
-	Printing_int(this->animationFunction.numberOfFrames, x + 12, y);
+	Printing_int(this->animationFunction.numberOfFrames, x + 20, y++);
+	Printing_int(this->animationFunction.delay, x + 20, y++);
+	Printing_text(this->animationFunction.loop? "true": "false", x + 20, y++);
 
-	Printing_text("Delay:                     ", x, ++y);
-	Printing_int(this->animationFunction.delay, x + 12, y);
-	Printing_text("(RL/RR)", 48 - 7, y);
+	OptionsSelector_showOptions(this->frameEditionSelector, x, ++y + 1);
 
-	Printing_text("Loop:                      ", x, ++y);
-	Printing_text(this->animationFunction.loop? "true": "false", x + 12, y);
-	Printing_text("Toogle (RT)", 48 - 11, y);
+	Printing_text("           ", 38, 0);
+	
+	Printing_text("Play       (A)", 48 - 14, 2);
+	Printing_text("Cancel     (B)", 48 - 14, 1);
+	Printing_text("Select (LU/LD)", 48 - 14, 3);
+	Printing_text("Modify (LL/LR)", 48 - 14, 4);
 
-	Printing_text("Frames:                    ", x, ++y);
+	int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
+	
+	switch(selectedProperty) {
 
-	int i = 0;
-	int j = 0;
-	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++){
-		
-		Printing_int(this->animationFunction.frames[i], x + 12 + j, y);
-		j += Utilities_getDigitCount(this->animationFunction.frames[i]) + 1;
+		case kFrames:
+	
+			Printing_text("Select (RU/RD)", 48 - 14, 6);
+			Printing_text("Modify (RL/RR)", 48 - 14, 7);
+			break;
 	}
-
-//	void* onAnimationComplete;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void AnimationEditor_loadAnimationFunction(AnimationEditor this){
+	
+	this->animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
+
+	AnimationFunction* animationFunction = this->animationDescription->animationFunctions[OptionsSelector_getSelectedOption(this->animationsSelector)];
+
+	int i = 0;
+	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++){
+		
+		this->animationFunction.frames[i] = animationFunction->frames[i];
+	}
+	
+	strcpy(this->animationFunction.name, animationFunction->name);
+	this->animationFunction.numberOfFrames = animationFunction->numberOfFrames;
+	this->animationFunction.delay = animationFunction->delay;
+	this->animationFunction.loop = animationFunction->loop;
+	this->animationFunction.onAnimationComplete = &AnimationEditor_onAnimationComplete;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void AnimatorEditor_onAnimationComplete() {
+static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this) {
+
+	if(this->animationEditionSelector) {
+			
+		__DELETE(this->animationEditionSelector);
+	}
+		
+	this->animationEditionSelector = __NEW(OptionsSelector, __ARGUMENTS(1, 4, __OPTION_MARK, kString));
 	
-//	Printing_text("Animation complete", 1, 12);
-	Printing_text("Play   (A)", 48 - 10, 2);
+	VirtualList optionsNames = __NEW(VirtualList);
+	
+	VirtualList_pushBack(optionsNames, "Number of frames:");
+	VirtualList_pushBack(optionsNames, "Cycle delay:");
+	VirtualList_pushBack(optionsNames, "Loop:");
+	VirtualList_pushBack(optionsNames, "Frames:");
+		
+	OptionsSelector_setOptions(this->animationEditionSelector, optionsNames);
+	__DELETE(optionsNames);
+	
+	this->mode = kEditAnimation;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void AnimationEditor_createFrameEditionSelector(AnimationEditor this) {
+	
+	if(this->frameEditionSelector) {
+		
+		__DELETE(this->frameEditionSelector);
+	}
+	
+	this->frameEditionSelector = __NEW(OptionsSelector, __ARGUMENTS((__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION / 2, __FRAME_OPTION_MARK, kInt));
+	
+	VirtualList framesIndexes = __NEW(VirtualList);
+	
+	int i = 0;
+	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++){
+		
+		VirtualList_pushBack(framesIndexes, &this->animationFunction.frames[i]);
+	}
+
+	OptionsSelector_setOptions(this->frameEditionSelector, framesIndexes);
+	__DELETE(framesIndexes);	
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void AnimationEditor_onAnimationComplete() {
+	
+	AnimationEditor this = AnimationEditor_getInstance();
+
+	if(this->animationFunction.loop) {
+	
+		Printing_text("Play       (A)", 48 - 14, 2);
+	}
 }
 
 #endif 

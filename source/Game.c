@@ -658,20 +658,23 @@ void Game_update(Game this){
 
 	enum UpdateSubsystems{
 		
-		kRender = 0,
+		kFirst = 0,
+		kLogic,
+		kRender,
 		kPhysics,
-		kLogic
+		kLast
+		
 	};
 	
 	u32 currentTime = 0;
 
 	while(true){
 
-		static int cycle = 0;
+		static int cycle = kLogic;
 
 		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;
 		
-		if(0 == cycle) {
+		if(kLogic == cycle) {
 			
 			if(currentTime - this->lastTime[kLogic] > 1000 / __TARGET_FPS){
 	
@@ -722,7 +725,7 @@ void Game_update(Game this){
 
 			}
 		}
-		else if(1 == cycle) {
+		else if(kPhysics == cycle) {
 
 			if(currentTime - this->lastTime[kPhysics] > 1000 / __TARGET_FPS){
 	
@@ -738,15 +741,12 @@ void Game_update(Game this){
 				this->lastProcessName = "process collisions";
 #endif
 				// simulate collisions
-	//			Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), CollisionManager_update(this->collisionManager) && FrameRate_areFPSHigh(this->frameRate));
 				Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
-	//			Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), FrameRate_areFPSHigh(this->frameRate));
-				//CollisionManager_update(this->collisionManager);
 				
 				this->lastTime[kPhysics] = currentTime;
 			}
 		}
-		else {
+		else if(kRender == cycle) {
 			
 			if(currentTime - this->lastTime[kRender] > 1000 / __TARGET_FPS){
 	
@@ -781,9 +781,9 @@ void Game_update(Game this){
 			}
 		}
 
-		if(2 < ++cycle) {
+		if(kLast <= ++cycle) {
 			
-			cycle = 0;
+			cycle = kFirst + 1;
 		}
 		
 		FrameRate_increaseRawFPS(this->frameRate);

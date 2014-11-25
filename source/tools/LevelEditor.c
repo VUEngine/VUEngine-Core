@@ -174,7 +174,7 @@ static void LevelEditor_constructor(LevelEditor this){
 	
 	this->mode = kFirstMode + 1;
 	
-	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12));
+	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12, ">", kString));
 	
 	VirtualList userObjects = __NEW(VirtualList);
 	

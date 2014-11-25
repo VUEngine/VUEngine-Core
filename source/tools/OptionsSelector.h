@@ -65,6 +65,13 @@ typedef struct Option {
 	
 }ClassSizeData;
 
+enum OptionTypes {
+	
+	kString,
+	kInt,
+	kFloat
+};
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -75,10 +82,10 @@ typedef struct Option {
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(OptionsSelector, __PARAMETERS(int cols, int rows));
+__CLASS_NEW_DECLARE(OptionsSelector, __PARAMETERS(int cols, int rows, char* mark, int type));
 
 // class's constructor
-void OptionsSelector_constructor(OptionsSelector this, int cols, int rows);
+void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type);
 
 // class's destructor
 void OptionsSelector_destructor(OptionsSelector this);

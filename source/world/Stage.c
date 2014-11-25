@@ -27,6 +27,14 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#undef __STREAMING_AMPLITUDE	
+
+#define __STREAMING_AMPLITUDE	7
+#define __STREAM_CYCLE	(__TARGET_FPS)	
+#define __STREAM_UNLOAD_CYCLE	(0)	
+#define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
+#define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
+
 #include <Stage.h>
 #include <Globals.h>
 #include <Optics.h>
@@ -504,17 +512,22 @@ void Stage_stream(Stage this){
 	
 	ASSERT(this, "Stage::stream: null this");
 
-	// if the screen is moving
-	if(*((u8*)_screenMovementState)){
+	Printing_text("NS", 20, 9);
+	Printing_text("*", 19, 9);
+	Printing_text(" ", 19, 10);
+	Printing_text(" ", 19, 11);
 
-#define __STREAM_CYCLE	(__TARGET_FPS >> 2)	
-#define __STREAM_UNLOAD_CYCLE	(0)	
-#define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
-#define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
+	// if the screen is moving
+	//if(*((u8*)_screenMovementState)){
 
 		static int load = __STREAM_CYCLE;
 
 		if(!--load){
+
+			Printing_text("Ul", 20, 10);
+			Printing_text(" ", 19, 9);
+			Printing_text("*", 19, 10);
+			Printing_text(" ", 19, 11);
 
 			// unload not visible objects
 			Stage_unloadOutOfRangeEntities(this, false);
@@ -527,6 +540,11 @@ void Stage_stream(Stage this){
 			
 			this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 			
+			Printing_text("LD", 20, 11);
+			Printing_text(" ", 19, 9);
+			Printing_text(" ", 19, 10);
+			Printing_text("*", 19, 11);
+
 			/*Printing_text("                      ", 1, 10);
 			Printing_int(this->streamingLeftHead, 1, 10);
 			Printing_int(this->streamingRightHead, 10, 10);
@@ -534,7 +552,7 @@ void Stage_stream(Stage this){
 			// load visible objects	
 			Stage_loadEntities(this, true, true, true);
 		}	
-	}
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

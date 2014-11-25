@@ -128,7 +128,12 @@
 											\
 	/* total options count */				\
 	int totalOptions;						\
-
+											\
+	/* mark symbol */						\
+	char* mark;								\
+											\
+	/* output type */						\
+	int type;								\
 
 // define the OptionsSelector
 __CLASS_DEFINITION(OptionsSelector);
@@ -167,12 +172,14 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(OptionsSelector, __PARAMETERS(int cols, int rows))
-__CLASS_NEW_END(OptionsSelector, __ARGUMENTS(cols, rows));
+__CLASS_NEW_DEFINITION(OptionsSelector, __PARAMETERS(int cols, int rows, char* mark, int type
+))
+__CLASS_NEW_END(OptionsSelector, __ARGUMENTS(cols, rows, mark, type));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void OptionsSelector_constructor(OptionsSelector this, int cols, int rows){
+void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type
+){
 
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
@@ -188,6 +195,8 @@ void OptionsSelector_constructor(OptionsSelector this, int cols, int rows){
 	this->cols = 0 < cols && cols <= __SCREEN_WIDTH >> 3 / 4? cols: 1;
 	this->rows = 0 < rows && rows <= __SCREEN_WIDTH >> 3? rows: __SCREEN_HEIGHT >> 3;
 	this->totalOptions = 0;
+	this->mark = mark;
+	this->type = type;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -304,7 +313,7 @@ void OptionsSelector_selectNext(OptionsSelector this){
 			OptionsSelector_showOptions(this, this->x, this->y);
 		}
 	
-		OptionsSelector_printSelectorMark(this, "*");
+		OptionsSelector_printSelectorMark(this, this->mark);
 	}
 }
 
@@ -339,7 +348,7 @@ void OptionsSelector_selectPrevious(OptionsSelector this){
 			OptionsSelector_showOptions(this, this->x, this->y);
 		}
 	
-		OptionsSelector_printSelectorMark(this, "*");
+		OptionsSelector_printSelectorMark(this, this->mark);
 	}
 }
 
@@ -355,7 +364,7 @@ int OptionsSelector_getSelectedOption(OptionsSelector this){
 void OptionsSelector_showOptions(OptionsSelector this, int x, int y){
 	
 	ASSERT(this, "OptionsSelector::showOptions: null this");
-
+	
 	if(this->currentPage && 0 < VirtualList_getSize((VirtualList)VirtualNode_getData(this->currentPage))) {
 
 		this->x = 0 <= x && x <= __SCREEN_WIDTH >> 3? x: 0;
@@ -381,7 +390,20 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y){
 				ASSERT(node, "showOptions: push null node");
 				ASSERT(VirtualNode_getData(node), "showOptions: push null node data");
 	
-				Printing_text((char*)VirtualNode_getData(node), x + 1, y);
+				switch(this->type){
+				
+					case kString:
+						Printing_text((char*)VirtualNode_getData(node), x + 1, y);
+						break;
+						
+					case kInt:
+						Printing_int(*((int*)VirtualNode_getData(node)), x + 1, y);
+						break;
+
+					case kFloat:
+						Printing_float(*((float*)VirtualNode_getData(node)), x + 1, y);
+						break;
+				}
 			}
 			
 			if(++y >= this->rows + this->y || y > (__SCREEN_HEIGHT >> 3)) {
@@ -391,7 +413,7 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y){
 			}
 		}
 		
-		OptionsSelector_printSelectorMark(this, "*");
+		OptionsSelector_printSelectorMark(this, this->mark);
 	}
 }
 

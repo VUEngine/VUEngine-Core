@@ -124,11 +124,20 @@ void Level_execute(Level this, void* owner){
 
 	if(this->canStream) {
 		
+		Printing_text("St", 1, 9);
+		Printing_text("*", 0, 9);
+		Printing_text(" ", 0, 10);
+
 		// stream level
 		// must be called before updating the other entities
 		Stage_stream(this->stage);
 	}
-
+	else {
+		
+		Printing_text("Ns", 1, 10);
+		Printing_text(" ", 0, 9);
+		Printing_text("*", 0, 10);
+	}
 
 	// update the stage
 	__VIRTUAL_CALL(void, Container, update, (Container)this->stage);
