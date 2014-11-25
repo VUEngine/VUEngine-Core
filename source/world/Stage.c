@@ -511,12 +511,12 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 void Stage_stream(Stage this){
 	
 	ASSERT(this, "Stage::stream: null this");
-
+/*
 	Printing_text("NS", 20, 9);
 	Printing_text("*", 19, 9);
 	Printing_text(" ", 19, 10);
 	Printing_text(" ", 19, 11);
-
+*/
 	// if the screen is moving
 	//if(*((u8*)_screenMovementState)){
 
@@ -524,11 +524,12 @@ void Stage_stream(Stage this){
 
 		if(!--load){
 
+			/*
 			Printing_text("Ul", 20, 10);
 			Printing_text(" ", 19, 9);
 			Printing_text("*", 19, 10);
 			Printing_text(" ", 19, 11);
-
+*/
 			// unload not visible objects
 			Stage_unloadOutOfRangeEntities(this, false);
 			
@@ -539,12 +540,12 @@ void Stage_stream(Stage this){
 			VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 			
 			this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
-			
+			/*
 			Printing_text("LD", 20, 11);
 			Printing_text(" ", 19, 9);
 			Printing_text(" ", 19, 10);
 			Printing_text("*", 19, 11);
-
+*/
 			/*Printing_text("                      ", 1, 10);
 			Printing_int(this->streamingLeftHead, 1, 10);
 			Printing_int(this->streamingRightHead, 10, 10);

@@ -764,7 +764,7 @@ static void AnimationEditor_onAnimationComplete() {
 	
 	AnimationEditor this = AnimationEditor_getInstance();
 
-	if(this->animationFunction.loop) {
+	if(!this->animationFunction.loop) {
 	
 		Printing_text("Play       (A)", 48 - 14, 2);
 	}
