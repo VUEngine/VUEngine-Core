@@ -21,10 +21,9 @@
 #ifndef LEVEL_EDITOR_H_
 #define LEVEL_EDITOR_H_
 
-#include <Entity.h>
-
 
 #ifdef __LEVEL_EDITOR
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -36,6 +35,8 @@
  */
 
 #include <Object.h>
+#include <Entity.h>
+#include <Level.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -90,7 +91,7 @@ void LevelEditor_destructor(LevelEditor this);
 void LevelEditor_update(LevelEditor this);
 
 // start level editor
-void LevelEditor_start(LevelEditor this);
+void LevelEditor_start(LevelEditor this, Level level);
 
 // stop level editor
 void LevelEditor_stop(LevelEditor this);

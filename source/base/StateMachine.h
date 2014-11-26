@@ -97,4 +97,7 @@ void StateMachine_setOwner(StateMachine this, void* owner);
 // retrieve current state
 State StateMachine_getCurrentState(StateMachine this);
 
+// retrieve previous state in the stack
+State StateMachine_getPreviousState(StateMachine this);
+
 #endif /*SCROLL_H_*/

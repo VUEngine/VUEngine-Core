@@ -132,9 +132,6 @@ enum UpdateSubsystems{
 	/* game's next state */							\
 	State nextState;								\
 													\
-	/* game's next state */							\
-	Level currentLevel;								\
-													\
 	/* last process' name */						\
 	char* lastProcessName;							\
 	
@@ -207,7 +204,6 @@ static void Game_constructor(Game this){
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
 	
 	this->nextState = NULL;
-	this->currentLevel = NULL;
 	
 	// call get instance in singletons to make sure their constructors
 	// are called now
@@ -347,14 +343,8 @@ static void Game_setState(Game this, State state){
 	//set waveform data
     SoundManager_setWaveForm(this->soundManager);
 
-    // must make sure that no entity use it while setting up the level
-    this->currentLevel = NULL;
-    
     //setup state 
     StateMachine_swapState(this->stateMachine, state);
-
-	// save current level
-	this->currentLevel = (Level)state;
 
     //enable hardware pad read
     HardwareManager_enableKeypad(this->hardwareManager);
@@ -879,13 +869,6 @@ int Game_isInAnimationEditor(Game this){
 }
 #endif
 
-#ifdef __LEVEL_EDITOR
-Level Game_getLevel(Game this){
-		
-	return this->currentLevel;
-}
-#endif
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // whether an special mode is active
 int Game_isInSpecialMode(Game this) {
@@ -905,4 +888,11 @@ int Game_isInSpecialMode(Game this) {
 #endif	
 	
 	return isInSpecialMode;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve state machine, use with caution!!!
+StateMachine Game_getStateMachine(Game this) {
+
+	return this->stateMachine;
 }

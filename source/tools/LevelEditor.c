@@ -209,7 +209,9 @@ void LevelEditor_destructor(LevelEditor this){
 // update
 void LevelEditor_update(LevelEditor this){
 	
-	if(this->shape) {
+	ASSERT(this, "LevelEditor::update: null this");
+
+	if(this->level && this->shape) {
 		
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
@@ -217,52 +219,20 @@ void LevelEditor_update(LevelEditor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show debug screens
-void LevelEditor_start(LevelEditor this){
+void LevelEditor_start(LevelEditor this, Level level){
 	
+	ASSERT(this, "LevelEditor::start: null this");
+	ASSERT(level, "LevelEditor::start: level this");
+
+	this->level = level;
 	LevelEditor_setupMode(this);
-	this->level = Game_getLevel(Game_getInstance());
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// print title
-static void LevelEditor_setupMode(LevelEditor this) {
-	
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-	Printing_text("LEVEL EDITOR", 17, 0);
-
-	switch(this->mode) {
-	
-		case kMoveScreen:
-
-			LevelEditor_printScreenPosition(this);
-			break;
-
-		case kTranslateEntities:
-
-			if(!this->currentEntityNode) {
-
-				LevelEditor_selectNextEntity(this);
-			}
-			else{
-
-				LevelEditor_getShape(this);
-				LevelEditor_highLightEntity(this);
-			}
-
-			LevelEditor_printEntityPosition(this);
-			LevelEditor_printTranslationStepSize(this);
-			break;
-			
-		case kAddObjects:
-
-			LevelEditor_printUserObjects(this);
-			break;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // hide debug screens
 void LevelEditor_stop(LevelEditor this){
+
+	ASSERT(this, "LevelEditor::stop: null this");
 
 	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
@@ -274,6 +244,13 @@ void LevelEditor_stop(LevelEditor this){
 // process a telegram
 int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 	
+	ASSERT(this, "LevelEditor::handleMessage: null this");
+
+	if(!this->level) {
+		
+		return false;
+	}
+
 	switch(Telegram_getMessage(telegram)){
 	
 		case kKeyPressed:	
@@ -315,6 +292,43 @@ int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 			break;
 	}
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// print title
+static void LevelEditor_setupMode(LevelEditor this) {
+	
+	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	Printing_text("LEVEL EDITOR", 17, 0);
+
+	switch(this->mode) {
+	
+		case kMoveScreen:
+
+			LevelEditor_printScreenPosition(this);
+			break;
+
+		case kTranslateEntities:
+
+			if(!this->currentEntityNode) {
+
+				LevelEditor_selectNextEntity(this);
+			}
+			else{
+
+				LevelEditor_getShape(this);
+				LevelEditor_highLightEntity(this);
+			}
+
+			LevelEditor_printEntityPosition(this);
+			LevelEditor_printTranslationStepSize(this);
+			break;
+			
+		case kAddObjects:
+
+			LevelEditor_printUserObjects(this);
+			break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

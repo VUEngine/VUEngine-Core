@@ -220,7 +220,9 @@ void AnimationEditor_destructor(AnimationEditor this){
 // update
 void AnimationEditor_update(AnimationEditor this){
 
-	if(this->animatedSprite) {
+	ASSERT(this, "AnimationEditor::update: null this");
+
+	if(this->level && this->animatedSprite) {
 
 		AnimatedSprite_update(this->animatedSprite, Game_getClock(Game_getInstance()));
 		
@@ -233,9 +235,12 @@ void AnimationEditor_update(AnimationEditor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // start editor 
-void AnimationEditor_start(AnimationEditor this){
+void AnimationEditor_start(AnimationEditor this, Level level){
 	
-	this->level = Game_getLevel(Game_getInstance());
+	ASSERT(this, "AnimationEditor::start: null this");
+	ASSERT(level, "AnimationEditor::start: null level");
+
+	this->level = level;
 	this->animatedSprite = NULL;
 	
 	this->animationsSelector = NULL;
@@ -268,6 +273,8 @@ void AnimationEditor_start(AnimationEditor this){
 // hide editor screens
 void AnimationEditor_stop(AnimationEditor this){
 
+	ASSERT(this, "AnimationEditor::stop: null this");
+	
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 	
 	AnimationEditor_removePreviousAnimatedSprite(this);
@@ -339,6 +346,13 @@ static void AnimationEditor_setupMode(AnimationEditor this) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process a telegram
 int AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram){
+	
+	ASSERT(this, "AnimationEditor::handleMessage: null this");
+
+	if(!this->level) {
+		
+		return false;
+	}
 	
 	switch(Telegram_getMessage(telegram)){
 	

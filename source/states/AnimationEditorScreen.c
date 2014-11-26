@@ -133,7 +133,8 @@ static void AnimationEditorScreen_destructor(AnimationEditorScreen this){
 static void AnimationEditorScreen_enter(AnimationEditorScreen this, void* owner){
 	
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
-	AnimationEditor_start(AnimationEditor_getInstance());
+
+	AnimationEditor_start(AnimationEditor_getInstance(), (Level)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

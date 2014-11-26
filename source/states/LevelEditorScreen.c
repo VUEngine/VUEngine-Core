@@ -133,7 +133,7 @@ static void LevelEditorScreen_destructor(LevelEditorScreen this){
 static void LevelEditorScreen_enter(LevelEditorScreen this, void* owner){
 	
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
-	LevelEditor_start(LevelEditor_getInstance());
+	LevelEditor_start(LevelEditor_getInstance(), (Level)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

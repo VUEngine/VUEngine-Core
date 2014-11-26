@@ -156,6 +156,10 @@ void StateMachine_swapState(StateMachine this, State newState){
 	ASSERT(this, "StateMachine::swapState: null this");
 	ASSERT(newState, "StateMachine::swapState: null newState"); 
 	
+	// update the stack
+	// remove current state
+	VirtualList_popFront(this->stateStack);
+
 	// finalize current state
 	if (this->currentState){
 
@@ -166,16 +170,12 @@ void StateMachine_swapState(StateMachine this, State newState){
 	}
 
 	this->currentState = newState;
-	
-	// call enter method from new state
-	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
-	
-	// update the stack
-	// remove current state
-	VirtualList_popFront(this->stateStack);
-	
+
 	// push new state in the top of the stack
 	VirtualList_pushFront(this->stateStack, (BYTE*)this->currentState);
+
+	// call enter method from new state
+	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,11 +201,11 @@ void StateMachine_pushState(StateMachine this, State newState){
 	
 	ASSERT(this->currentState, "StateMachine::pushState: null currentState"); 
 
-	// call enter method from new state
-	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
-	
 	// push new state in the top of the stack
 	VirtualList_pushFront(this->stateStack, (BYTE*)this->currentState);
+
+	// call enter method from new state
+	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,4 +317,19 @@ State StateMachine_getCurrentState(StateMachine this){
 	ASSERT(this, "StateMachine::getCurrentState: null this");
 
 	return this->currentState;
+}
+
+// retrieve previous state in the stack
+State StateMachine_getPreviousState(StateMachine this){
+	
+	VirtualNode node = VirtualList_begin(this->stateStack);
+
+	if(node) {
+
+		node = VirtualNode_getNext(node);
+		
+		return (State)VirtualNode_getData(node);
+	}
+	
+	return NULL;
 }

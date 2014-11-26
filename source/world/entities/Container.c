@@ -207,6 +207,8 @@ void Container_addChild(Container this, Container child){
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// add a child Container
 static void Container_processRemovedChildren(Container this){
 	
 	ASSERT(this, "Container::processRemovedChildren: null this");
@@ -276,6 +278,38 @@ void Container_update(Container this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve environment transformation
+Transformation Container_getEnvironmentTransform(Container this){
+
+	ASSERT(this, "Container::getEnvironmentTransform: null this");
+	
+	if(this->parent){
+		
+		Transformation transformation = Container_getEnvironmentTransform(this->parent);
+		
+		Container_concatenateTransform(&transformation, &this->transform);
+
+		return transformation;
+	}
+	
+	// static to avoid call to _memcpy
+	static Transformation environmentTransform = {
+			// local position
+			{0, 0, 0},
+			// global position
+			{0, 0, 0},
+			// scale
+			{1, 1},
+			// rotation
+			{0, 0, 0}			
+	};
+	
+	Container_concatenateTransform(&environmentTransform, &this->transform);
+
+	return environmentTransform;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // contatenate transform
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform){
 
@@ -329,7 +363,7 @@ void Container_transform(Container this, Transformation* environmentTransform){
 		}
 	};
 	
-	// concaenate environment transform
+	// concatenate environment transform
 	Container_concatenateTransform(&environmentTransformCopy, &this->transform);
 
 	// save new global position

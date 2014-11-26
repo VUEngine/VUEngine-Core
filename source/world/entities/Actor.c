@@ -183,18 +183,29 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 		// Must bubble petition so globalPosition is calculated in this moment
 		// Must bubble petition so globalPosition is calculated in this moment
 		// the following is a terrible inefficient and unsafe hack!!
-		if(Game_getLevel(Game_getInstance())) {
+		
+		Transformation environmentTransform = {
+				// local position
+				{0, 0, 0},
+				// global position
+				{0, 0, 0},
+				// scale
+				{1, 1},
+				// rotation
+				{0, 0, 0}			
+		};
+		
+		if(this->parent) {
 			
-			Level_transform(Game_getLevel(Game_getInstance()));
-			
-			globalPosition = Container_getGlobalPosition((Container)this);
+			environmentTransform = Container_getEnvironmentTransform(this->parent);
+			globalPosition.x = environmentTransform.globalPosition.x;
+			globalPosition.y = environmentTransform.globalPosition.y;
+			globalPosition.z = environmentTransform.globalPosition.z;
 		}
-		else {
 			
-			globalPosition.x += position.x;
-			globalPosition.y += position.y;
-			globalPosition.z += position.z;
-		}
+		globalPosition.x += position.x;
+		globalPosition.y += position.y;
+		globalPosition.z += position.z;
 		
 		this->lastCollidingEntity[kXAxis] = NULL;
 		this->lastCollidingEntity[kYAxis] = NULL;

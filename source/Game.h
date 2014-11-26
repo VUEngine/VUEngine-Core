@@ -143,12 +143,11 @@ int Game_isInLevelEditor(Game this);
 int Game_isInAnimationEditor(Game this);
 #endif
 
-
-#ifdef __LEVEL_EDITOR
-Level Game_getLevel(Game this);
-#endif
-
 // whether an special mode is active
 int Game_isInSpecialMode(Game this);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve state machine, use with caution!!!
+StateMachine Game_getStateMachine(Game this);
 
 #endif /*GAMEENGINE_H_*/

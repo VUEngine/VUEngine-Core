@@ -140,6 +140,9 @@ void Container_update(Container this);
 // propagate an event to the children wrapper
 void Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...);
 
+// retrieve environment transformation
+Transformation Container_getEnvironmentTransform(Container this);
+
 // contatenate transform
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform);
 	
