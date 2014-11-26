@@ -356,7 +356,7 @@ void TextureManager_free(TextureManager this, Texture texture){
 		
 		// free char memory
 		Texture_freeCharMemory(texture);
-		
+
 		//determine the allocation type
 		switch(allocationType){
 

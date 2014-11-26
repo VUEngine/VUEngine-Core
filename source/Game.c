@@ -347,6 +347,9 @@ static void Game_setState(Game this, State state){
 	//set waveform data
     SoundManager_setWaveForm(this->soundManager);
 
+    // must make sure that no entity use it while setting up the level
+    this->currentLevel = NULL;
+    
     //setup state 
     StateMachine_swapState(this->stateMachine, state);
 
@@ -670,11 +673,6 @@ void Game_update(Game this){
 			
 			if(currentTime - this->lastTime[kLogic] > 1000 / __TARGET_FPS){
 	
-				if(this->nextState){
-					
-					Game_setState(this, this->nextState);
-					this->nextState = NULL;
-				}
 	#ifdef __DEBUG
 				this->lastProcessName = "handle input";
 	#endif
@@ -690,6 +688,7 @@ void Game_update(Game this){
 	
 				// update the game's logic
 				StateMachine_update(this->stateMachine);
+				
 				
 #ifdef __DEBUG
 			this->lastProcessName = "dispatch delayed messages";
@@ -778,6 +777,12 @@ void Game_update(Game this){
 			cycle = kFirst + 1;
 		}
 		
+		if(this->nextState){
+			
+			Game_setState(this, this->nextState);
+			this->nextState = NULL;
+		}
+
 		FrameRate_increaseRawFPS(this->frameRate);
 	}
 }
