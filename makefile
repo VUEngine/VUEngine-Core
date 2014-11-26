@@ -19,9 +19,6 @@ ROMHEADER = lib/vb.hdr
 # Dynamic libraries
 DLIBS =
 
-# Binary output dir
-OUTPUT = output
-
 # Obligatory headers
 VBJAE_ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
 					-include $(VBJAENGINE)/config.h 								\
@@ -87,9 +84,9 @@ DFILES := $(addprefix $(STORE)/,$(SOURCE:.c=.d))
 # Main target. The @ in front of a command prevents make from displaying
 # it to the standard output.
 
-all: $(OUTPUT)/$(TARGET).a
+all: $(TARGET).a
 
-$(OUTPUT)/$(TARGET).a: dirs $(OBJECTS)
+$(TARGET).a: dirs $(OBJECTS)
 	@echo Creating $(TARGET).
 	@$(AR) rcs $@ $(OBJECTS) 
 	@echo Done $@
@@ -112,7 +109,6 @@ clean:
 		@echo Making clean.
 		@-rm -f $(foreach DIR,$(DIRS),$(STORE)/$(DIR)/*.d $(STORE)/$(DIR)/*.o)
 		@-rm -Rf $(STORE)
-		@-rm -f $(OUTPUT)/*
 
 # Backup the source files.
 backup:
