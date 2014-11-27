@@ -67,11 +67,14 @@
 #include <Cuboid.h>
 #include <Mass.h>
 #include <Shape.h>
-#include <Actor.h>
-#include <Background.h>
+
 #include <Container.h>
 #include <Entity.h>
 #include <InGameEntity.h>
+#include <AnimatedInGameEntity.h>
+#include <InanimatedInGameEntity.h>
+#include <Actor.h>
+#include <Image.h>
 #include <ScrollBackground.h>
 #include <Level.h>
 #include <Stage.h>
@@ -506,12 +509,14 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 			{"Cuboid", &Cuboid_getObjectSize},
 			{"Mass", &Mass_getObjectSize},
 			{"Shape", &Shape_getObjectSize},
-			{"Actor", &Actor_getObjectSize},
-			{"Background", &Background_getObjectSize},
 			{"Container", &Container_getObjectSize},
 			{"Entity", &Entity_getObjectSize},
 			{"InGameEntity", &InGameEntity_getObjectSize},
-			{"ScrollBackground", &ScrollBackground_getObjectSize},
+			{"Anim. InGameEntity", &AnimatedInGameEntity_getObjectSize},
+			{"Inanim. InGameEntity", &InanimatedInGameEntity_getObjectSize},
+			{"Actor", &Actor_getObjectSize},
+			{"Image", &Image_getObjectSize},
+			{"ScrollBackg.", &ScrollBackground_getObjectSize},
 			{"Level", &Level_getObjectSize},
 			{"Stage", &Level_getObjectSize},
 	};

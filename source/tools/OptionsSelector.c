@@ -67,7 +67,7 @@
 #include <Mass.h>
 #include <Shape.h>
 #include <Actor.h>
-#include <Background.h>
+#include <InanimatedInGameEntity.h>
 #include <Container.h>
 #include <Entity.h>
 #include <InGameEntity.h>

@@ -30,7 +30,6 @@
 #include <Actor.h>
 
 #include <Clock.h>
-#include <AnimatedSprite.h>
 #include <MessageDispatcher.h>
 #include <CollisionManager.h>
 #include <Optics.h>
@@ -41,7 +40,6 @@
 #include <Cuboid.h>
 #include <Prototypes.h>
 #include <Game.h>
-#include <Level.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -82,9 +80,6 @@ static void Actor_updateCollisionStatus(Actor this, int movementAxis);
 // retrieve friction of colliding objects
 static void Actor_updateSourroundingFriction(Actor this);
 
-// update animations
-static void Actor_animate(Actor this);
-
 enum AxisOfCollision{
 	
 	kXAxis = 0,
@@ -115,20 +110,10 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&actorDefinition->inGameEntityDefinition, ID));
-	
-	// save ROM definition
-	this->actorDefinition = actorDefinition;
-	this->animationDescription = actorDefinition->animationDescription;
+	__CONSTRUCT_BASE(AnimatedInGameEntity, __ARGUMENTS(&actorDefinition->inGameEntityDefinition, ID));
 	
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
-	
-	//set the direction
-	this->direction.x = __RIGHT;
-	this->previousDirection.x = __LEFT;
-	this->direction.y = __DOWN;
-	this->direction.z = __FAR;
 	
 	//state ALIVE for initial update
 	this->inGameState = __LOADED;
@@ -144,8 +129,6 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	this->body = NULL;
 	
 	this->isAffectedBygravity = true;
-	
-	this->clock = Game_getInGameClock(Game_getInstance());
 }	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,16 +205,6 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 
 	ASSERT(this, "Actor::transform: null this");
 
-	// set sprite direction
-	if(this->direction.x != this->previousDirection.x){
-		
-		// change sprite's direction
-		Entity_setSpritesDirection((Entity)this, __XAXIS, this->direction.x);
-		
-		// save current direction
-		this->previousDirection = this->direction; 
-	}
-	
 	if(this->body && Body_isAwake(this->body)) {
 
 		// an Actor with a physical body is agnostic to parenting
@@ -252,12 +225,12 @@ void Actor_transform(Actor this, Transformation* environmentTransform){
 		Container_setLocalPosition((Container) this, Body_getPosition(this->body));
 
 		// call base
-		Entity_transform((Entity)this, &environmentAgnosticTransform);
+		AnimatedInGameEntity_transform((AnimatedInGameEntity)this, &environmentAgnosticTransform);
 	}
 	else {
 		
 		// call base
-		Entity_transform((Entity)this, environmentTransform);
+		AnimatedInGameEntity_transform((AnimatedInGameEntity)this, environmentTransform);
 	}
 }
 
@@ -268,44 +241,11 @@ void Actor_update(Actor this){
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	Container_update((Container)this);
+	AnimatedInGameEntity_update((AnimatedInGameEntity)this);
 
-	// update state machine
-	StateMachine_update(this->stateMachine);
-	
-	// if direction changed
-	if(this->direction.x != this->previousDirection.x){
-		
-		ASSERT(this->sprites, "Actor::update: null sprites");
-
-		// calculate gap again
-		InGameEntity_setGap((InGameEntity)this);
-	}	
-	
-	if(this->sprites){
-
-		Actor_animate(this);
-	}
-	
 	if(this->body) {
 		
 		Actor_updateCollisionStatus(this, Body_isMoving(this->body));
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// update animations
-static void Actor_animate(Actor this) {
-	
-	VirtualNode node = VirtualList_begin(this->sprites);
-
-	// move each child to a temporary list
-	for(; node ; node = VirtualNode_getNext(node)){
-
-		Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-		// first animate the frame
-		AnimatedSprite_update((AnimatedSprite)sprite, this->clock);
 	}
 }
 
@@ -487,14 +427,6 @@ void Actor_changeDirectionOnAxis(Actor this, int axis){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// allocate a write in graphic memory again
-void Actor_resetMemoryState(Actor this, int worldLayer){		
-
-	ASSERT(this, "Actor::resetMemoryState: null this");
-	//Frame_resetMemoryState(this->sprite, worldLayer);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // true if inside the screen range 
 int Actor_isInsideGame(Actor this){
 	
@@ -538,6 +470,7 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration) {
 	return axisFreeForMovement & ~axisOfCollision;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve axis free for movement
 int Actor_getAxisFreeForMovement(Actor this){
 
@@ -705,24 +638,6 @@ int Actor_isMoving(Actor this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve character's scale
-Scale Actor_getScale(Actor this){
-
-	ASSERT(this, "Actor::getScale: null this");
-	ASSERT(this->sprites, "Actor::getScale: null sprites");
-
-	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
-
-	// get sprite's scale
-	Scale scale = Sprite_getScale(sprite);
-	
-	// change direction
-	scale.x = fabsf(scale.x) * this->direction.x;
-
-	return scale;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve global position
 VBVec3D Actor_getPosition(Actor this){
 	
@@ -734,71 +649,6 @@ VBVec3D Actor_getPosition(Actor this){
 	}
 	
 	return Entity_getPosition((Entity)this);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// pause animation
-void Actor_pauseAnimation(Actor this, int pause){
-	
-	ASSERT(this, "Actor::pauseAnimation: null this");
-	ASSERT(this->sprites, "Actor::pauseAnimation: null sprites");
-
-	if(this->sprites){
-
-		VirtualNode node = VirtualList_begin(this->sprites);
-
-		// play animation on each sprite
-		for(; node ; node = VirtualNode_getNext(node)){
-			
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-			AnimatedSprite_pause((AnimatedSprite)sprite, pause);
-		}
-	}
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// play an animation
-void Actor_playAnimation(Actor this, char* animationName){
-	
-	ASSERT(this, "Actor::playAnimation: null this");
-	ASSERT(this->sprites, "Actor::playAnimation: null sprites");
-
-	if(this->sprites){
-
-		VirtualNode node = VirtualList_begin(this->sprites);
-
-		// play animation on each sprite
-		for(; node ; node = VirtualNode_getNext(node)){
-			
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-			AnimatedSprite_play((AnimatedSprite)sprite, this->animationDescription, animationName);
-		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// is play an animation
-int Actor_isPlayingAnimation(Actor this){
-	
-	ASSERT(this, "Actor::isPlayingAnimation: null this");
-	ASSERT(this->sprites, "Actor::isPlayingAnimation: null sprites");
-
-	AnimatedSprite sprite = (AnimatedSprite)VirtualNode_getData(VirtualList_begin(this->sprites));
-
-	return AnimatedSprite_isPlaying(sprite);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// is animation selected
-int Actor_isAnimationLoaded(Actor this, char* functionName){
-	
-	ASSERT(this, "Actor::isAnimationLoaded: null this");
-	ASSERT(this->sprites, "Actor::isAnimationLoaded: null sprites");
-
-	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
-
-	return AnimatedSprite_isPlayingFunction((AnimatedSprite)sprite, this->animationDescription, functionName);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -987,25 +837,5 @@ fix19_13 Actor_getElasticity(Actor this){
 	ASSERT(this, "Actor::getElasticity: null this");
 
 	return this->body? Body_getElasticity(this->body): InGameEntity_getElasticity((InGameEntity)this);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// get animation definition
-AnimationDescription* Actor_getAnimationDescription(Actor this){
-	
-	return this->animationDescription;
-}
-
-// set animation description
-void Actor_setAnimationDescription(Actor this, AnimationDescription* animationDescription){
-
-	this->animationDescription = animationDescription;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set animation clock
-void Actor_setClock(Actor this, Clock clock){
-	
-	this->clock = clock;
 }
 

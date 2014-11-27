@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef ACTOR_H_
-#define ACTOR_H_
+#ifndef ANIMATED_IN_GAME_ENTITY_H_
+#define ANIMATED_IN_GAME_ENTITY_H_
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -30,10 +30,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <AnimatedInGameEntity.h>
+#include <InGameEntity.h>
 #include <AnimatedSprite.h>
-#include <Body.h>
-#include <Clock.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -56,16 +54,21 @@
  */
 
 
+// defines an AnimatedInGameEntity
+typedef struct AnimatedInGameEntityDefinition{
 
-// TODO: MOVE TO MISCSTRUCTS
-//spacial state vector
-typedef struct GeneralAxisFlag{
+	// It has an InGameEntity at the beggining
+	InGameEntityDefinition inGameEntityDefinition;
 	
-	int x: 2;
-	int y: 2;
-	int z: 2;
+	// the animation
+	AnimationDescription* animationDescription;
 	
-}GeneralAxisFlag;
+}AnimatedInGameEntityDefinition;
+
+
+typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
+
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -77,66 +80,40 @@ typedef struct GeneralAxisFlag{
  */
 
 
+
+
 // declare the virtual methods
-#define Actor_METHODS														\
-		AnimatedInGameEntity_METHODS										\
-		__VIRTUAL_DEC(die);													\
-		__VIRTUAL_DEC(takeHitFrom);											\
-		__VIRTUAL_DEC(getAxisFreeForMovement);								\
+#define AnimatedInGameEntity_METHODS													\
+		InGameEntity_METHODS															\
 
 
-#define Actor_SET_VTABLE(ClassName)											\
-		AnimatedInGameEntity_SET_VTABLE(ClassName)							\
-		__VIRTUAL_SET(ClassName, Actor, update);							\
-		__VIRTUAL_SET(ClassName, Actor, transform);							\
-		__VIRTUAL_SET(ClassName, Actor, handleMessage);						\
-		__VIRTUAL_SET(ClassName, Actor, moves);								\
-		__VIRTUAL_SET(ClassName, Actor, isMoving);							\
-		__VIRTUAL_SET(ClassName, Actor, getInGameState);					\
-		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);				\
-		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);					\
-		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);					\
-		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);						\
-		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);			\
-		__VIRTUAL_SET(ClassName, Actor, getElasticity);						\
-		__VIRTUAL_SET(ClassName, Actor, getPosition);						\
-		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);				\
+#define AnimatedInGameEntity_SET_VTABLE(ClassName)										\
+		InGameEntity_SET_VTABLE(ClassName)												\
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, update);							\
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);						\
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, getScale);						\
 		
 
 	
-#define Actor_ATTRIBUTES								\
-														\
-	/* super's attributes */							\
-	AnimatedInGameEntity_ATTRIBUTES;					\
-														\
-	/* a state machine to handle entity's logic	*/		\
-	StateMachine stateMachine;							\
-														\
-	/* a state machine to handle entity's logic	*/		\
-	Body body;											\
-														\
-	/* previous position for collision handling */		\
-	VBVec3D previousGlobalPosition;						\
-														\
-	/* last collinding entity */						\
-	InGameEntity lastCollidingEntity[3];				\
-														\
-	/* gameworld's actor's state (ALIVE or DEAD)*/		\
-	int inGameState;									\
-														\
-	/* flags to apply friction on each axis */			\
-	GeneralAxisFlag sensibleToFriction;					\
-														\
-	/* flag to influence with gravity */				\
-	int isAffectedBygravity: 1;							\
+#define AnimatedInGameEntity_ATTRIBUTES													\
+																						\
+	/* super's attributes */															\
+	InGameEntity_ATTRIBUTES;															\
+																						\
+	/* Pointer to the ROM definition */													\
+	AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;						\
+																						\
+	/* Pointer to the animation description */											\
+	AnimationDescription* animationDescription;											\
+																						\
+	Direction previousDirection;														\
+																						\
+	/* clock to pass to the animated sprites */											\
+	Clock clock;																		\
 
 
-__CLASS(Actor);													
+__CLASS(AnimatedInGameEntity);													
 
-
-
-typedef AnimatedInGameEntityDefinition ActorDefinition;
-typedef const ActorDefinition ActorROMDef;
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -148,86 +125,49 @@ typedef const ActorDefinition ActorROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, int ID));
+__CLASS_NEW_DECLARE(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, int ID));
 
 // class's constructor
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID);
+void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, int ID);
 
 // class's destructor
-void Actor_destructor(Actor this);
-
-//set class's local position
-void Actor_setLocalPosition(Actor this, VBVec3D position);
+void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
 
 // graphically refresh of characters that are visible
-void Actor_transform(Actor this, Transformation* environmentTransform);
+void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* environmentTransform);
 
 // execute character's logic
-void Actor_update(Actor this);
+void AnimatedInGameEntity_update(AnimatedInGameEntity this);
 
-// retrieve previous position
-VBVec3D Actor_getPreviousPosition(Actor this);
+// allocate a write in graphic memory again
+void AnimatedInGameEntity_resetMemoryState(AnimatedInGameEntity this, int worldLayer);		
 
-void Actor_setInGameState(Actor this, int inGameState);
+// retrieve character's scale
+Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this);
 
-// set character's in game type
-void Actor_setInGameType(Actor this, int inGameType);
+// pause animation
+void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause);
 
-// change direction
-void Actor_moveOpositeDirecion(Actor this, int axis);
+// play an animation
+void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName);
 
-// whether changed direction in the last cycle or not
-int Actor_changedDirection(Actor this, int axis);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// is play an animation
+int AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);
 
-// change direction over axis
-void Actor_changeDirectionOnAxis(Actor this, int axis);
-
-// true if inside the screen range 
-int Actor_isInsideGame(Actor this);
-
-// check if gravity must apply to this actor
-int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration);
-
-// retrieve axis free for movement
-int Actor_getAxisFreeForMovement(Actor this);
-
-// process a telegram
-int Actor_handleMessage(Actor this, Telegram telegram);
-
-// retrieve state machine
-StateMachine Actor_getStateMachine(Actor this);
-
-// does it moves?
-int Actor_moves(Actor this);
-
-// is it moving?
-int Actor_isMoving(Actor this);
-
-// retrieve global position
-VBVec3D Actor_getPosition(Actor this);
-
-// retrieve state when unloading the entity 
-int Actor_getInGameState(Actor this);
+// is animation selected
+int AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName);
 
 // check if must update sprite's position
-int Actor_updateSpritePosition(Actor this);
+int AnimatedInGameEntity_updateSpritePosition(AnimatedInGameEntity this);
 
-// check if must update sprite's scale
-int Actor_updateSpriteScale(Actor this);
+// get animation definition
+AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this);
 
-// stop movement completelty
-void Actor_stopMovement(Actor this);
+// set animation description
+void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
 
-// align character to other entity on collision
-void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
-
-// retrieve body
-const Body Actor_getBody(Actor this);
-
-// take hit
-void Actor_takeHitFrom(Actor this, Actor other);
-
-// get elasticiy
-fix19_13 Actor_getElasticity(Actor this);
+// set animation clock
+void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock);
 
 #endif

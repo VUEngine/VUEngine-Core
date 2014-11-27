@@ -18,7 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
- 
+#ifndef INANIMATED_IN_GAME_ENTITY_H_
+#define INANIMATED_IN_GAME_ENTITY_H_
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -28,98 +30,92 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Background.h>
-
-#include <CollisionManager.h>
-#include <Optics.h>
-#include <Shape.h>
-#include <Prototypes.h>
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-// define the Background
-__CLASS_DEFINITION(Background);
+#include <InGameEntity.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 												PROTOTYPES
+ * 											CLASS'S DECLARATION
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
 
 
+#define InanimatedInGameEntity_METHODS												\
+		InGameEntity_METHODS														\
+	
 
+#define InanimatedInGameEntity_SET_VTABLE(ClassName)								\
+		InGameEntity_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getElasticity);			\
+		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getFriction);				\
+	
+
+// A InanimatedInGameEntity which represent a generic object inside a Stage
+#define InanimatedInGameEntity_ATTRIBUTES											\
+																					\
+	/* super's attributes */														\
+	InGameEntity_ATTRIBUTES															\
+																					\
+	/* ROM definition */															\
+	InanimatedInGameEntityDefinition* backgroundDefinition;							\
+
+
+__CLASS(InanimatedInGameEntity);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 												CLASS'S METHODS
+ * 											CLASS'S ROM DECLARATION
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Background, __PARAMETERS(BackgroundDefinition* backgroundDefinition, int ID))
-__CLASS_NEW_END(Background, __ARGUMENTS(backgroundDefinition, ID));
+// defines a InanimatedInGameEntity in ROM memory
+typedef struct InanimatedInGameEntityDefinition{
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// It has an InGameEntity at the beggining
+	InGameEntityDefinition inGameEntityDefinition;
+	
+	// whether it must be registered with the collision detection system
+	int registerShape;
+	
+	// friction for physics
+	fix19_13 friction;
+	
+	// elasticity for physics
+	fix19_13 elasticity;
+
+}InanimatedInGameEntityDefinition;
+
+typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 										PUBLIC INTERFACE
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+// class's allocator
+__CLASS_NEW_DECLARE(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* backgroundDefinition, int ID));
+
 // class's constructor
-void Background_constructor(Background this, BackgroundDefinition* backgroundDefinition, int ID){
+void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* backgroundDefinition, int ID);
 
-	ASSERT(this, "Background::constructor: null this");
-	ASSERT(backgroundDefinition, "Background::constructor: null definition");
-	
-	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&backgroundDefinition->inGameEntityDefinition, ID));
-	
-	// check if register for collision detection
-	if(backgroundDefinition->registerShape){
-
-		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (Entity)this, kCuboid);
-		
-		ASSERT(this->shape, "Background::constructor: shape not created");
-	}
-	
-	this->backgroundDefinition = backgroundDefinition;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void Background_destructor(Background this){
-	
-	ASSERT(this, "Background::destructor: null this");
+void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);
 
-	// destroy the super object
-	__DESTROY_BASE(InGameEntity);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get elasticiy
-fix19_13 Background_getElasticity(Background this){
-	
-	ASSERT(this, "Background::getElasticity: null this");
+fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this);
 
-	return this->backgroundDefinition->elasticity;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get friction
-fix19_13 Background_getFriction(Background this){
-	
-	ASSERT(this, "Background::getFriction: null this");
-	
-	return this->backgroundDefinition->friction;
-}
+fix19_13 InanimatedInGameEntity_getFriction(InanimatedInGameEntity this);
+
+
+#endif /*INANIMATED_IN_GAME_ENTITY_H_*/

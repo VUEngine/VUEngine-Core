@@ -48,8 +48,6 @@
 #include <SoundManager.h>
 #include <StateMachine.h>
 #include <Screen.h>
-#include <Background.h>
-#include <Image.h>
 #include <VPUManager.h>
 #include <Printing.h>
 
