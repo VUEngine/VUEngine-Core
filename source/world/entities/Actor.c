@@ -110,7 +110,7 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedInGameEntity, __ARGUMENTS(&actorDefinition->inGameEntityDefinition, ID));
+	__CONSTRUCT_BASE(AnimatedInGameEntity, __ARGUMENTS((AnimatedInGameEntityDefinition*)&actorDefinition->inGameEntityDefinition, ID));
 	
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
