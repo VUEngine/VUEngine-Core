@@ -61,8 +61,7 @@ Features:
 		* Easy to use printing functions to facilitate debug
 		* Generic parenting system
 		* Generic messaging system
-		* Generic state Machines
-		* Generic clocks based on hardware interrupts
+		* Generic state machines
 	· Debugging
 		* Memory usage
 		* Hardware registers' usage 
@@ -70,20 +69,22 @@ Features:
 			Char memory status
 			BgMap memory status
 			World layer status
+			Collision boxes
 	· Object Oriented support through the use of Metaprogramming (C MACROS):
-		* Inheritance
+		* Inheritance (and experimental Multiple inheritance)
 		* Polymorphism
 		* Encapsulation
 	· Rendering:
 		* Automatic char memory allocation
+		* Real time char memory defragmentation
 		* Automatic bgmap memory allocation
 		* Automatic world layer assignment based on the objects' z position
 		* Preload textures
 		* Automatic char memory defragmentation
 		* Scaling/rotation effects
-		* Automatic projection/parallax/scale calculation and rendering
+		* Automatic projection/parallax/scale calculations and rendering
 		* Customizable perspective/deep effects on real time
-		* Automatic memory allocation for Param tables (used in affine and h-bias modes)
+		* Automatic memory allocation for param tables (used in affine and h-bias modes)
 	· Animation:
 		* Multiple memory allocation schemas to improve efficiency
 		* Frame based animation system with callback support
