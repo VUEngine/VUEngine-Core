@@ -94,16 +94,20 @@ Features:
 		* Accelerated/uniform movement
 		* Gravity
 		* Friction
-		* Automatic Collision detection and notification.
+		* Bouncing
+		* Automatic collision detection and notification
 	· Stages:
 		* 3D stages
-		* Automatic object streaming
+		* Level streaming
 	· Useful classes to speed up the content creation process:
-		* Actors
-		* Images
-		* Backgrounds
-		* Scrolling
-
+		* Container: for transformation propagation (translation/rotation/scaling)
+		* Entity: a container with a list of sprites (a "visual object")
+		* InGameEntity: interactive entities in the levels (collision detection)
+		* AnimatedInGameEntity: an entity with animated sprites.
+		* InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.) 
+		* Actor: animated in game entity which coordinates a physical body with a collision shape
+		* Image: handy entity to display non interactive images
+		* ScrollBackground: infinite loop image (currently only supports looping over the x axe)
 
 A short summary of the file layout:
 
