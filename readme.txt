@@ -111,8 +111,8 @@ Features:
 
 A short summary of the file layout:
 
-src/					vbJaEngine source code.
-src/base/libgccvb/		heavily modified libgccvb
+source/					vbJaEngine source code.
+source/base/libgccvb/		heavily modified libgccvb
 lib/					miscelaneous files needed for linking, etc.				
 lib/src/				miscelaneous files needed for linking, etc.	sources, and other utilities sources.
 utilities/				miscelaneous utitilities for padding, sound, etc.
