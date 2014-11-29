@@ -211,10 +211,13 @@ void LevelEditor_update(LevelEditor this){
 	
 	ASSERT(this, "LevelEditor::update: null this");
 
+	Printing_text("NO SHAPE", 10, 10 );
 	Stage_stream(Level_getStage(this->level));
 	if(this->level && this->shape) {
 		
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+		Printing_text("   SHAPE", 10, 10 );
+
 	}
 }
 
@@ -226,6 +229,8 @@ void LevelEditor_start(LevelEditor this, Level level){
 	ASSERT(level, "LevelEditor::start: level this");
 
 	this->level = level;
+	this->mode = kFirstMode + 1;
+	LevelEditor_releaseShape(this);
 	LevelEditor_setupMode(this);
 }
 
@@ -268,7 +273,6 @@ int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 					}
 					
 					LevelEditor_setupMode(this);
-										
 					break;
 				}
 				
@@ -306,6 +310,7 @@ static void LevelEditor_setupMode(LevelEditor this) {
 	
 		case kMoveScreen:
 
+			LevelEditor_releaseShape(this);
 			LevelEditor_printScreenPosition(this);
 			break;
 
@@ -327,6 +332,7 @@ static void LevelEditor_setupMode(LevelEditor this) {
 			
 		case kAddObjects:
 
+			LevelEditor_releaseShape(this);
 			LevelEditor_printUserObjects(this);
 			break;
 	}
@@ -342,9 +348,9 @@ static void LevelEditor_releaseShape(LevelEditor this) {
 		if(this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, (Entity)entity)) {
 			
 			__DELETE(this->shape);
-			
-			this->shape = NULL;
 		}
+
+		this->shape = NULL;
 	}
 }
 
@@ -724,8 +730,6 @@ static void LevelEditor_printEntityPosition(LevelEditor this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D translation){
 	
-	this->currentEntityNode = NULL;
-
 	Screen_move(Screen_getInstance(), translation);
 	Level_transform(this->level);
 

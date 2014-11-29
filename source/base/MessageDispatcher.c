@@ -204,7 +204,11 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this){
 			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 			Telegram telegram = delayedMessage->telegram;
 			
-			__VIRTUAL_CALL(int, Object, handleMessage, Telegram_getReceiver(telegram), __ARGUMENTS(telegram));
+			// check if sender and receiver are still alive
+			if(Telegram_getSender(telegram) && Telegram_getReceiver(telegram)){
+			
+				__VIRTUAL_CALL(int, Object, handleMessage, Telegram_getReceiver(telegram), __ARGUMENTS(telegram));
+			}
 		}
 
 		node = VirtualList_begin(telegramsToDispatch);
