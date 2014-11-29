@@ -34,6 +34,7 @@
 #include <Clock.h>
 #include <Stage.h>
 #include <Level.h>
+#include <Stage.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -146,8 +147,10 @@ int Game_isInAnimationEditor(Game this);
 // whether an special mode is active
 int Game_isInSpecialMode(Game this);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve state machine, use with caution!!!
 StateMachine Game_getStateMachine(Game this);
+
+// retrieve the current level's stage
+Stage Game_getStage(Game this);
 
 #endif /*GAMEENGINE_H_*/

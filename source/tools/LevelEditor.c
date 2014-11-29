@@ -211,6 +211,7 @@ void LevelEditor_update(LevelEditor this){
 	
 	ASSERT(this, "LevelEditor::update: null this");
 
+	Stage_stream(Level_getStage(this->level));
 	if(this->level && this->shape) {
 		
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
@@ -677,7 +678,7 @@ static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
 		position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 		position.z += ITOFIX19_13(__SCREEN_WIDTH >> 2);
 		
-		Entity entity = Stage_addEntity(Level_getStage(this->level), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, -1, NULL);
+		Entity entity = Stage_addEntity(Level_getStage(this->level), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
 		SpriteManager_sortAllLayers(SpriteManager_getInstance());
 
 		Level_transform(this->level);
@@ -730,7 +731,7 @@ static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D transl
 
 	LevelEditor_printScreenPosition(this);
 
-	Stage_streamAll(Level_getStage(this->level));
+//	Stage_streamAll(Level_getStage(this->level));
 
 	SpriteManager_sortAllLayers(SpriteManager_getInstance());
 }

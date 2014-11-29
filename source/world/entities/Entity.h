@@ -98,7 +98,11 @@
 	VirtualList sprites;								\
 														\
 	/* shape for collision detection */					\
-	Shape shape;
+	Shape shape;										\
+														\
+	/* entity's definition */							\
+	EntityDefinition *entityDefinition;
+
 
 
 __CLASS(Entity);
@@ -182,6 +186,9 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 
 //transform class
 void Entity_transform(Entity this, Transformation* environmentTransform);
+
+// retrieve EntityDefinition
+EntityDefinition* Entity_getEntityDefinition(Entity this);
 
 //retrieve class's scale
 Scale Entity_getScale(Entity this);

@@ -85,6 +85,9 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID)
 	// construct base Container
 	__CONSTRUCT_BASE(Container, __ARGUMENTS(ID));
 
+	// save definition
+	this->entityDefinition = entityDefinition;
+	
 	/* the sprite must be initializated in the derivated class */
 	this->sprites = NULL;
 	
@@ -262,6 +265,16 @@ void Entity_transform(Entity this, Transformation* environmentTransform){
 
 	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve EntityDefinition
+EntityDefinition* Entity_getEntityDefinition(Entity this){
+
+	ASSERT(this, "Entity::getEntityDefinition: null this");
+
+	return this->entityDefinition;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve class's scale

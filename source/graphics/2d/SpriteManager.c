@@ -188,9 +188,9 @@ void SpriteManager_spriteChangedPosition(SpriteManager this){
 void SpriteManager_sortLayersProgressively(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
-	ASSERT(this->sprites[0], "SpriteManager::sortLayersProgressively: null this->sprites[0]");
+	//ASSERT(this->sprites[0], "SpriteManager::sortLayersProgressively: null this->sprites[0]");
 
-	if(!this->needSorting ){
+	if(!this->needSorting || !this->sprites[0]){
 
 		return;
 	}

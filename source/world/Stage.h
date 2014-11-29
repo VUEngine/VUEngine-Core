@@ -54,6 +54,8 @@
 // declare the virtual methods which are redefined
 #define Stage_SET_VTABLE(ClassName)							\
 		Container_SET_VTABLE(ClassName)						\
+		__VIRTUAL_SET(ClassName, Stage, update);			\
+		
 			
 #define Stage_ATTRIBUTES								\
 														\
@@ -63,14 +65,11 @@
 	/* world's definition pointer */					\
 	StageDefinition* stageDefinition;					\
 														\
-	/* this allows to determine which */ 				\
-	/* entities to load from a */ 						\
-	/* world definition */								\
-	VirtualList entityState;							\
+	/* the stage entities */ 							\
+	VirtualList stageEntities;							\
 														\
-	/* flag to know if the stage must */				\
-	/* track entities's load states */					\
-	WORD entityStateRegister[__ENTITIES_IN_STAGE];		\
+	/* the removed entities */ 							\
+	VirtualList removedEntities;						\
 														\
 	/* flag to know if the stage must */				\
 	/* flush unused char groups */						\
@@ -79,8 +78,8 @@
 	/* streaming related variables */					\
 	/* flush unused char groups */						\
 	int streamingAmplitude;								\
-	int streamingLeftHead;								\
-	int streamingRightHead;								\
+	VirtualNode streamingLeftHead;						\
+	VirtualNode streamingRightHead;						\
 	int streamingHeadDisplacement;						\
 
 // declare a Stage, which holds the objects in a game world
@@ -99,7 +98,7 @@ __CLASS(Stage);
 typedef const struct PositionedEntity{
 	
 	// pointer to the entity definition in ROM
-	EntityDefinition* entity;
+	EntityDefinition* entityDefinition;
 	
 	// position in the world
 	VBVec3DReal position;
@@ -152,7 +151,13 @@ void Stage_destructor(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
 
 // add entity to the stage
-Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, int inGameIndex, void *extraInfo);
+Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, int permanent);
+
+// add entity to the stage
+void Stage_removeEntity(Stage this, Entity entity, int permanent);
+
+// execute stage's logic
+void Stage_update(Stage this);
 
 // stream entities according to screen's position
 void Stage_stream(Stage this);

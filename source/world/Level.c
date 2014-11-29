@@ -304,6 +304,9 @@ int Level_canStream(Level this) {
 // retrieve stage
 Stage Level_getStage(Level this){
 
+	ASSERT(this, "Level::getStage: null this");
+	ASSERT(this->stage, "Level::getStage: null stage");
+
 	return this->stage;
 }
 

@@ -242,6 +242,8 @@ void Screen_move(Screen this, VBVec3D translation){
 
 	ASSERT(this, "Screen::setPosition: null this");
 
+	this->lastDisplacement = translation;
+
 	this->position.x += translation.x;
 	this->position.y += translation.y;
 	this->position.z += translation.z;

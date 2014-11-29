@@ -894,3 +894,10 @@ StateMachine Game_getStateMachine(Game this) {
 
 	return this->stateMachine;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve the current level's stage
+Stage Game_getStage(Game this){
+
+	return Level_getStage((Level)StateMachine_getCurrentState(this->stateMachine));
+}

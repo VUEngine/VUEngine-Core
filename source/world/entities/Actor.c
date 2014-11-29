@@ -243,6 +243,11 @@ void Actor_update(Actor this){
 	// call base
 	AnimatedInGameEntity_update((AnimatedInGameEntity)this);
 
+	if(this->stateMachine) {
+		
+		StateMachine_update(this->stateMachine);
+	}
+
 	if(this->body) {
 		
 		Actor_updateCollisionStatus(this, Body_isMoving(this->body));
