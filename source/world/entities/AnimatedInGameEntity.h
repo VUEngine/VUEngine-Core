@@ -62,6 +62,9 @@ typedef struct AnimatedInGameEntityDefinition{
 	
 	// the animation
 	AnimationDescription* animationDescription;
+
+	// animation to play automatically
+	char* initialAnimation;
 	
 }AnimatedInGameEntityDefinition;
 
@@ -151,7 +154,6 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause);
 // play an animation
 void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is play an animation
 int AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);
 

@@ -140,7 +140,7 @@ typedef struct AnimationDescription{
 	
 	// animation functions
 	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
-	
+
 }AnimationDescription;
 
 typedef const AnimationDescription AnimationDescriptionROMDef;

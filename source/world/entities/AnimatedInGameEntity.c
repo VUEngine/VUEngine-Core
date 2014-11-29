@@ -112,6 +112,8 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	this->direction.z = __FAR;
 	
 	this->clock = Game_getInGameClock(Game_getInstance());
+	
+	AnimatedInGameEntity_playAnimation(this, animatedInGameEntityDefinition->initialAnimation);
 }	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +241,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 	ASSERT(this, "AnimatedInGameEntity::playAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::playAnimation: null sprites");
 
-	if(this->sprites){
+	if(this->sprites && animationName){
 
 		VirtualNode node = VirtualList_begin(this->sprites);
 
