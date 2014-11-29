@@ -211,13 +211,10 @@ void LevelEditor_update(LevelEditor this){
 	
 	ASSERT(this, "LevelEditor::update: null this");
 
-	Printing_text("NO SHAPE", 10, 10 );
 	Stage_stream(Level_getStage(this->level));
 	if(this->level && this->shape) {
 		
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
-		Printing_text("   SHAPE", 10, 10 );
-
 	}
 }
 
