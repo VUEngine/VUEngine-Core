@@ -79,6 +79,9 @@ typedef struct StageEntityDescription {
 //class's constructor
 static void Stage_constructor(Stage this);
 
+// setup ui
+static void Stage_setupUI(Stage this);
+
 // register an entity in the streaming list
 static void Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
 
@@ -137,6 +140,7 @@ static void Stage_constructor(Stage this){
 	this->stageEntities = NULL;
 	this->removedEntities = __NEW(VirtualList);
 
+	this->ui = NULL;
 	this->stageDefinition = NULL;
 	
 	this->flushCharGroups = true;
@@ -179,6 +183,11 @@ void Stage_destructor(Stage this){
 		__DELETE(this->removedEntities);
 		
 		this->removedEntities = NULL;
+	}
+	
+	if(this->ui){
+		
+		__DELETE(this->ui);
 	}
 	
 	// destroy the super object
@@ -279,6 +288,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	// load entities
 	Stage_loadEntities(this, loadOnlyInRangeEntities, false, false);
 
+	// setup ui
+	Stage_setupUI(this);
+	
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
 	SoundManager_loadBGM(SoundManager_getInstance(), (u16 (*)[6])stageDefinition->bgm);
@@ -289,11 +301,65 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// setup ui
+static void Stage_setupUI(Stage this){
+
+	ASSERT(this, "Stage::setupUI: null this");
+
+	if(this->ui){
+		
+		__DELETE(this->ui);
+	}
+	
+	this->ui = __NEW(UI);
+	
+	static int ID = 0;
+	int i = 0;
+	for(;i < __ENTITIES_PER_STAGE && this->stageDefinition->uiEntities[i].entityDefinition; i++){
+		
+		Entity entity = Entity_load(this->stageDefinition->uiEntities[i].entityDefinition, ID++, this->stageDefinition->uiEntities[i].extraInfo);
+
+		Container_addChild((Container)this->ui, (Container)entity);
+
+		VBVec3D position = {
+				ITOFIX19_13(this->stageDefinition->uiEntities[i].position.x),
+				ITOFIX19_13(this->stageDefinition->uiEntities[i].position.y),
+				ITOFIX19_13(this->stageDefinition->uiEntities[i].position.z)
+		};
+
+		// set spatial position
+		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+	}
+
+	VBVec3D position = {
+			
+			ITOFIX19_13(0),
+			ITOFIX19_13(0),
+			ITOFIX19_13(0)
+	};
+
+	Transformation environmentTransform = {
+			// local position
+			{0, 0, 0},
+			// global position
+			{0, 0, 0},
+			// scale
+			{1, 1},
+			// rotation
+			{0, 0, 0}			
+	};
+
+	Container_setLocalPosition((Container)this->ui, position);
+	__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add entity to the stage
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* position, void *extraInfo, int permanent){
 
-	static int ID = 0;
 	ASSERT(this, "Stage::addEntity: null this");
+
+	static int ID = 0;
 
 	if(entityDefinition)
 	{
@@ -649,6 +715,8 @@ void Stage_update(Stage this){
 	Stage_processRemovedEntities(this);
 	
 	Container_update((Container)this);
+	
+	Container_update((Container)this->ui);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
