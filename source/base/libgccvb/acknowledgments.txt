@@ -1,6 +1,6 @@
 /*
  * All the files there are libgccvb created in a collaborative effort by
- * refactored to work better with VbJaEngine
+ * refactored to work better with VBJaEngine
 
     Amos >RunnerPack> Bieler		Slapped it together and inserted most of the errors ;)
     Alberto >Virtual-E> Covarrubias	Made veCC (and the library upon which this one is based) and a TON of other VB tools.

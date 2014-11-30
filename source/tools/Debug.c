@@ -1,4 +1,4 @@
-/* VbJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
  * 
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
@@ -494,7 +494,7 @@ static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, in
 
 	};
 	
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VbJAEngine classes:");
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -521,7 +521,7 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 			{"Stage", &Level_getObjectSize},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VbJAEngine classes:");
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

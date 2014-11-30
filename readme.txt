@@ -1,4 +1,4 @@
-VbJaEngine GPL source release				24 October 2008
+VBJaEngine GPL source release				24 October 2008
 ==================================
 
 This file contains the following sections:
@@ -46,7 +46,7 @@ GENERAL NOTES
 
 Description: 
 	
-	vbJaEngine is an attempt to provide other indie programmers the base 
+	VBJaEngine is an attempt to provide other indie programmers the base 
 	functionality to facilitate the creation of content for the Nintendo 
 	Virtual Boy by taking care of most hardware management task to create 
 	3D games with 2D graphics or "sprites".
@@ -111,7 +111,7 @@ Features:
 
 A short summary of the file layout:
 
-source/					vbJaEngine source code.
+source/					VBJaEngine source code.
 source/base/libgccvb/		heavily modified libgccvb
 lib/					miscelaneous files needed for linking, etc.				
 lib/src/				miscelaneous files needed for linking, etc.	sources, and other utilities sources.
@@ -133,7 +133,7 @@ Requirements:
 	· GCCVB 4.4.2 for V810 
 
 
-1. Create a CygWin environment variable called VBJAENGINE which must point to the vbJaEngine's folder.
+1. Create a CygWin environment variable called VBJAENGINE which must point to the VBJaEngine's folder.
 
 2. Replace the crt0.o file created by gccvb with the one provided with this source code:
 
@@ -155,7 +155,7 @@ Requirements:
 	· GCCVB 4.4.2 for V810
 
 
-1. Create an environment variable called VBJAENGINE which must point to the vbJaEngine's folder.
+1. Create an environment variable called VBJAENGINE which must point to the VBJaEngine's folder.
 
 2. As root replace the crt0.o file created by gccvb with the one provided with this source code:
 
