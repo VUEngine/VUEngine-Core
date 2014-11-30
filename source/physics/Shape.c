@@ -135,8 +135,6 @@ int Shape_isActive(Shape this){
 	ASSERT(this, "Shape::isActive: null this");
 
 	return false;
-	//TODO 
-//	return CollisionManager_isShapeActive(CollisionManager_getInstance(), this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

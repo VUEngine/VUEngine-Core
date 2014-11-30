@@ -162,11 +162,6 @@ void Actor_setLocalPosition(Actor this, VBVec3D position){
 
 		VBVec3D globalPosition = Container_getGlobalPosition((Container)this);
 
-		// TODO
-		// Must bubble petition so globalPosition is calculated in this moment
-		// Must bubble petition so globalPosition is calculated in this moment
-		// the following is a terrible inefficient and unsafe hack!!
-		
 		Transformation environmentTransform = {
 				// local position
 				{0, 0, 0},

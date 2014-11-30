@@ -157,6 +157,8 @@ typedef const struct PositionedEntity{
 	
 }PositionedEntity;
 
+typedef const PositionedEntity PositionedEntityROMDef;
+
 #define __SPRITE_ARRAY(SpritesDefintionArray) SpritesDefintionArray, sizeof(SpritesDefintionArray) / sizeof(SpriteDefinition)
 
 /* ---------------------------------------------------------------------------------------------------------

@@ -573,8 +573,6 @@ void Sprite_rotate(Sprite this, int angle){
 	ASSERT(this, "Sprite::rotate: null this");
 
 	// TODO
-	//put the map into memory calculating the number of char for each reference
-	//put the map into memory calculating the number of char for each reference
 	if(this->param){
 		
 		int cols = Texture_getCols(this->texture) << 2;

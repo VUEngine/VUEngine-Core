@@ -396,7 +396,7 @@ void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer){
 	this->worldLayer= worldLayer;
 	
 	// recover frame's current frame animation
-	AnimatedSprite_setPreviousAnimatedSprite(this, 255);
+	AnimatedSprite_setPreviousAnimatedSprite(this, __MAX_FRAMES_PER_ANIMATION_FUNCTION);
 	
 	// write the animation
 	AnimatedSprite_writeAnimation(this);				
