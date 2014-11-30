@@ -32,6 +32,7 @@
  */
 
 #include <Container.h>
+#include <Entity.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -46,11 +47,13 @@
 // declare the virtual methods
 #define UI_METHODS												\
 		Container_METHODS										\
+		__VIRTUAL_DEC(addEntities);								\
 
 
 // declare the virtual methods which are redefined
 #define UI_SET_VTABLE(ClassName)								\
 		Container_SET_VTABLE(ClassName)							\
+		__VIRTUAL_SET(ClassName, UI, addEntities);				\
 	
 
 // declare a UI, which holds the objects in a game world
@@ -81,6 +84,8 @@ __CLASS_NEW_DECLARE(UI);
 // class's destructo
 void UI_destructor(UI this);
 
+// add entities
+void UI_addEntities(UI this, PositionedEntity entities[]);
 
 #endif
 

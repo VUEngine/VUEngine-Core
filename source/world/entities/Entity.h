@@ -143,6 +143,20 @@ typedef struct EntityDefinition{
 
 typedef const EntityDefinition EntityROMDef;
 
+// a actor asociated with a position
+typedef const struct PositionedEntity{
+	
+	// pointer to the entity definition in ROM
+	EntityDefinition* entityDefinition;
+	
+	// position in the world
+	VBVec3DReal position;
+
+	// extra info
+	void* extraInfo;
+	
+}PositionedEntity;
+
 #define __SPRITE_ARRAY(SpritesDefintionArray) SpritesDefintionArray, sizeof(SpritesDefintionArray) / sizeof(SpriteDefinition)
 
 /* ---------------------------------------------------------------------------------------------------------

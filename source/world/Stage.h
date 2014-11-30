@@ -98,19 +98,6 @@ __CLASS(Stage);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// a actor asociated with a position
-typedef const struct PositionedEntity{
-	
-	// pointer to the entity definition in ROM
-	EntityDefinition* entityDefinition;
-	
-	// position in the world
-	VBVec3DReal position;
-
-	// extra info
-	void* extraInfo;
-	
-}PositionedEntity;
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // defines a game world in ROM memory

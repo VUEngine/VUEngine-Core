@@ -66,6 +66,10 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 
 // process removed children
 static void Container_processRemovedChildren(Container this);
+
+// apply transformations
+static void Container_applyTransform(Container this, Transformation* environmentTransform, int isInitialTransform);
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -332,8 +336,8 @@ void Container_concatenateTransform(Transformation *environmentTransform, Transf
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//transform class
-void Container_transform(Container this, Transformation* environmentTransform){
+// apply transformations
+static void Container_applyTransform(Container this, Transformation* environmentTransform, int isInitialTransform){
 
 	ASSERT(this, "Container::transform: null this");
 
@@ -380,9 +384,15 @@ void Container_transform(Container this, Transformation* environmentTransform){
 			Container child = (Container)VirtualNode_getData(node);
 			
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z? child->invalidateGlobalPosition: this->invalidateGlobalPosition;
-			
-			// transform each entity
-			__VIRTUAL_CALL(void, Container, transform, child, __ARGUMENTS(&environmentTransformCopy));		
+
+			if(isInitialTransform){
+
+				__VIRTUAL_CALL(void, Container, initialTransform, child, __ARGUMENTS(&environmentTransformCopy));		
+			}
+			else {
+
+				__VIRTUAL_CALL(void, Container, transform, child, __ARGUMENTS(&environmentTransformCopy));		
+			}
 		}	
 	}
 	
@@ -392,12 +402,22 @@ void Container_transform(Container this, Transformation* environmentTransform){
 	this->invalidateGlobalPosition.z = false;
 }
 
-// intinial transform
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// initial transform
 void Container_initialTransform(Container this, Transformation* environmentTransform){
 	
 	ASSERT(this, "Container::initialTransform: null this");
 
-	Container_transform(this, environmentTransform);
+	Container_applyTransform(this, environmentTransform, true);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// initial transform
+void Container_transform(Container this, Transformation* environmentTransform){
+	
+	ASSERT(this, "Container::initialTransform: null this");
+
+	Container_applyTransform(this, environmentTransform, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

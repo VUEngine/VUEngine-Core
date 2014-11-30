@@ -237,10 +237,16 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform){
 	this->invalidateGlobalPosition.z = true;
 
 	// call base
-	Entity_transform((Entity)this, environmentTransform);
+	int updateSpritePosition = __VIRTUAL_CALL(int, Entity, updateSpritePosition, this);
+	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
+
+	// call base class's transform method
+	Container_initialTransform((Container)this, environmentTransform);
+
+	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
 
 	if(this->shape){
-				
+
 		// setup shape
 		__VIRTUAL_CALL(void, Shape, setup, this->shape);
 

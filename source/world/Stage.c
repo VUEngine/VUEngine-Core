@@ -313,24 +313,6 @@ static void Stage_setupUI(Stage this){
 	
 	this->ui = __NEW(UI);
 	
-	static int ID = 0;
-	int i = 0;
-	for(;i < __ENTITIES_PER_STAGE && this->stageDefinition->uiEntities[i].entityDefinition; i++){
-		
-		Entity entity = Entity_load(this->stageDefinition->uiEntities[i].entityDefinition, ID++, this->stageDefinition->uiEntities[i].extraInfo);
-
-		Container_addChild((Container)this->ui, (Container)entity);
-
-		VBVec3D position = {
-				ITOFIX19_13(this->stageDefinition->uiEntities[i].position.x),
-				ITOFIX19_13(this->stageDefinition->uiEntities[i].position.y),
-				ITOFIX19_13(this->stageDefinition->uiEntities[i].position.z)
-		};
-
-		// set spatial position
-		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
-	}
-
 	VBVec3D position = {
 			
 			ITOFIX19_13(0),
@@ -346,10 +328,14 @@ static void Stage_setupUI(Stage this){
 			// scale
 			{1, 1},
 			// rotation
-			{0, 0, 0}			
+			{0, 0, 0}	
 	};
 
+	
+	__VIRTUAL_CALL(void, UI, addEntities, this->ui, __ARGUMENTS(this->stageDefinition->uiEntities));
+
 	Container_setLocalPosition((Container)this->ui, position);
+
 	__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
 }
 

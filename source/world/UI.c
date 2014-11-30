@@ -107,3 +107,38 @@ void UI_destructor(UI this){
 }
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// add entities
+void UI_addEntities(UI this, PositionedEntity entities[]){
+	
+	Transformation environmentTransform = {
+			// local position
+			{0, 0, 0},
+			// global position
+			{0, 0, 0},
+			// scale
+			{1, 1},
+			// rotation
+			{0, 0, 0}	
+	};
+
+	static int ID = 0;
+	int i = 0;
+	for(;i < __ENTITIES_PER_STAGE && entities[i].entityDefinition; i++){
+		
+		Entity entity = Entity_load(entities[i].entityDefinition, ID++, entities[i].extraInfo);
+
+		Container_addChild((Container)this, (Container)entity);
+
+		VBVec3D position = {
+				ITOFIX19_13(entities[i].position.x),
+				ITOFIX19_13(entities[i].position.y),
+				ITOFIX19_13(entities[i].position.z)
+		};
+
+		// set spatial position
+		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+		
+		//__VIRTUAL_CALL(void, Container, transform, (Container)entity, __ARGUMENTS(&environmentTransform));
+	}
+}
