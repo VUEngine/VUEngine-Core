@@ -650,7 +650,6 @@ static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D transl
 		
 		Level_transform(this->level);
 
-		// synchronize container's shape
 		LevelEditor_positioneShape(this);
 
 		LevelEditor_printEntityPosition(this);

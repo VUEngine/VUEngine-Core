@@ -654,9 +654,9 @@ void Game_update(Game this){
 				// process user's input 
 				Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
 	
-	#ifdef __DEBUG
+#ifdef __DEBUG
 				this->lastProcessName = "update state machines";
-	#endif
+#endif
 				// it is the update cycle
 				ASSERT(this->stateMachine, "Game::update: no state machine");
 	
@@ -674,7 +674,6 @@ void Game_update(Game this){
 #ifdef __LEVEL_EDITOR
 			if(!Game_isInSpecialMode(this))
 #endif
-				
 #ifdef __ANIMATION_EDITOR
 			if(!Game_isInSpecialMode(this))
 #endif

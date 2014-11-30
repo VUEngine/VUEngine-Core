@@ -113,13 +113,13 @@ typedef struct  StageDefinition{
 	const u16 (*bgm)[];
 
 	// each of the stage's entities
-	TextureDefinition* textures[__MAX_TEXTURES_PER_STAGE];
+	TextureDefinition** textures;
 
-	// ui's entities
-	PositionedEntity uiEntities[__ENTITIES_PER_STAGE];
-
+	// UI's definition
+	UIDefinition uiDefinition;
+	
 	// each of the stage's entities
-	PositionedEntity entities[__ENTITIES_PER_STAGE];
+	PositionedEntity* entities;
 
 }StageDefinition;
 

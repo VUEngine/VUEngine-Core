@@ -61,7 +61,7 @@ __CLASS_DEFINITION(UI);
  */
 
 //class's constructor
-static void UI_constructor(UI this);
+static void UI_constructor(UI this, UIDefinition* uiDefinition);
 	
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -83,17 +83,21 @@ static void UI_constructor(UI this);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(UI)
-__CLASS_NEW_END(UI);
+__CLASS_NEW_DEFINITION(UI, __PARAMETERS(UIDefinition* uiDefinition))
+__CLASS_NEW_END(UI, __ARGUMENTS(uiDefinition));
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void UI_constructor(UI this){
+static void UI_constructor(UI this, UIDefinition* uiDefinition){
 
 	ASSERT(this, "UI::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Container, __ARGUMENTS(-1));
+	
+	// add entities in the definition
+	__VIRTUAL_CALL(void, UI, addEntities, this, __ARGUMENTS(uiDefinition->entities));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,25 +110,16 @@ void UI_destructor(UI this){
 	__DESTROY_BASE(Container);
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add entities
-void UI_addEntities(UI this, PositionedEntity entities[]){
+void UI_addEntities(UI this, PositionedEntity* entities){
 	
-	Transformation environmentTransform = {
-			// local position
-			{0, 0, 0},
-			// global position
-			{0, 0, 0},
-			// scale
-			{1, 1},
-			// rotation
-			{0, 0, 0}	
-	};
+	ASSERT(this, "UI::addEntities: null this");
+	ASSERT(entities, "UI::addEntities: null entities");
 
 	static int ID = 0;
 	int i = 0;
-	for(;i < __ENTITIES_PER_STAGE && entities[i].entityDefinition; i++){
+	for(;entities[i].entityDefinition; i++){
 		
 		Entity entity = Entity_load(entities[i].entityDefinition, ID++, entities[i].extraInfo);
 
@@ -139,6 +134,5 @@ void UI_addEntities(UI this, PositionedEntity entities[]){
 		// set spatial position
 		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
 		
-		//__VIRTUAL_CALL(void, Container, transform, (Container)entity, __ARGUMENTS(&environmentTransform));
 	}
 }

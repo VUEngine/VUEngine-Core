@@ -69,6 +69,18 @@ __CLASS(UI);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// defines a UI for ROM memory
+typedef struct UIDefinition{
+
+	// the class type
+	void* allocator;
+	
+	// ui's entities
+	PositionedEntity* entities;
+
+}UIDefinition;
+
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -79,13 +91,15 @@ __CLASS(UI);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(UI);
+__CLASS_NEW_DECLARE(UI, __PARAMETERS(UIDefinition* uiDefinition));
 
-// class's destructo
+// class's destructor
 void UI_destructor(UI this);
 
-// add entities
-void UI_addEntities(UI this, PositionedEntity entities[]);
+// add entities in the definition
+// if you need to have pointers to specific entities
+// override this method and add them manually there
+void UI_addEntities(UI this, PositionedEntity* entities);
 
 #endif
 

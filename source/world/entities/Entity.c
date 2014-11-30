@@ -414,21 +414,24 @@ int Entity_getInGameState(Entity this){
 Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo){
 	
 	ASSERT(entityDefinition, "Entity::load: null definition");
-	ASSERT((int)entityDefinition->allocator, "Entity::load: no allocator defined");
+	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
 	
-	// call the appropiate allocator to support inheritance!
-	Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
+	if(entityDefinition->allocator) {
 
-	// setup entity if allocated and constructed
-	if(entity){
-
-		// process extra info
-		if(extraInfo){
+		// call the appropiate allocator to support inheritance!
+		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
+	
+		// setup entity if allocated and constructed
+		if(entity){
+	
+			// process extra info
+			if(extraInfo){
+				
+				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
+			}
 			
-			__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
+			return entity;
 		}
-		
-		return entity;
 	}
 	
 	return NULL;

@@ -309,34 +309,41 @@ static void Stage_setupUI(Stage this){
 	if(this->ui){
 		
 		__DELETE(this->ui);
+		this->ui = NULL;
 	}
 	
-	this->ui = __NEW(UI);
-	
-	VBVec3D position = {
+	if(this->stageDefinition->uiDefinition.allocator) {
+		
+		// call the appropiate allocator to support inheritance!
+		this->ui = (UI)((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(0, &this->stageDefinition->uiDefinition);
+		ASSERT(this->ui, "Stage::setupUI: null ui");
+		
+		// setup ui if allocated and constructed
+		if(this->ui){
 			
-			ITOFIX19_13(0),
-			ITOFIX19_13(0),
-			ITOFIX19_13(0)
-	};
-
-	Transformation environmentTransform = {
-			// local position
-			{0, 0, 0},
-			// global position
-			{0, 0, 0},
-			// scale
-			{1, 1},
-			// rotation
-			{0, 0, 0}	
-	};
-
-	
-	__VIRTUAL_CALL(void, UI, addEntities, this->ui, __ARGUMENTS(this->stageDefinition->uiEntities));
-
-	Container_setLocalPosition((Container)this->ui, position);
-
-	__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
+			VBVec3D position = {
+					
+					ITOFIX19_13(0),
+					ITOFIX19_13(0),
+					ITOFIX19_13(0)
+			};
+		
+			Transformation environmentTransform = {
+					// local position
+					{0, 0, 0},
+					// global position
+					{0, 0, 0},
+					// scale
+					{1, 1},
+					// rotation
+					{0, 0, 0}	
+			};
+		
+			Container_setLocalPosition((Container)this->ui, position);
+		
+			__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,8 +354,8 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 
 	static int ID = 0;
 
-	if(entityDefinition)
-	{
+	if(entityDefinition){
+		
 		Entity entity = Entity_load(entityDefinition, ID++, extraInfo);
 		
 		// create the entity and add it to the world
@@ -464,7 +471,7 @@ static void Stage_loadTextures(Stage this) {
 
 	int i = 0;
 
-	for(; i < __MAX_TEXTURES_PER_STAGE && this->stageDefinition->textures[i]; i++){
+	for(; this->stageDefinition->textures[i]; i++){
 
 		TextureManager_loadTexture(TextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharGroups);
 	}
@@ -500,7 +507,7 @@ static void Stage_registerEntities(Stage this) {
 	}
 	
 	int i = 0;
-	for(;i < __ENTITIES_PER_STAGE && this->stageDefinition->entities[i].entityDefinition; i++){
+	for(;this->stageDefinition->entities[i].entityDefinition; i++){
 		
 		Stage_registerEntity(this, &this->stageDefinition->entities[i]);
 	}
@@ -702,7 +709,10 @@ void Stage_update(Stage this){
 	
 	Container_update((Container)this);
 	
-	Container_update((Container)this->ui);
+	if(this->ui) {
+
+		Container_update((Container)this->ui);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
