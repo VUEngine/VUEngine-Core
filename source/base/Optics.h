@@ -33,7 +33,6 @@
 
 //#include "/usr/local/v810/include/math.h"
 #include <MiscStructs.h>
-#include <GameWorld.h>
 #include <HardwareManager.h>
 
 
@@ -61,7 +60,7 @@ extern VBVec3D		*_screenPosition;
  */
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //calculate the parallax
 inline extern  int Optics_calculateParallax(fix19_13 x, fix19_13 z){
 	
@@ -81,7 +80,7 @@ inline extern  int Optics_calculateParallax(fix19_13 x, fix19_13 z){
 	return FIX19_13TOI(rightEjeGx - leftEjeGx) / __PARALLAX_CORRECTION_FACTOR; 	
 }
 
-/* ---------------------------------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // project a 3d point to 2d space
 inline extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* const position3D){
 	
@@ -105,36 +104,7 @@ inline extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* 
 	
 }
 
-
-/* ---------------------------------------------------------------------------------------------------------*/
-// project a 3d point to 2d space
-/*
-inline static void vbjProjectTo2D(VBVec2D* position2D, const VBVec3D* const position3D){
-	
-	position2D->x = FIX19_13TOI(position3D->x +
-						(
-						     FIX19_13_MULT(
-						                     _optical->horizontalViewPointCenter - position3D->x, 
-						                     position3D->z
-						                 ) 
-						     >> __MAX_VIEW_DISTANCE_POW
-						 )
-					);
-
-	position2D->y = FIX19_13TOI(position3D->y -
-						(
-						      FIX19_13_MULT(
-						    		           position3D->y - _optical->verticalViewPointCenter, 
-						    		           position3D->z
-						    		       )
-						      >> __MAX_VIEW_DISTANCE_POW
-						)
-					);
-	
-}
-*/
-
-/* ---------------------------------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //normalize a point to the screen's current position
 inline extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D){
 	
@@ -150,7 +120,7 @@ inline extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D)
 	return position;
 }
 
-/* ---------------------------------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // calculate the size of a given magnitud, being it a 8 pixel multiple
 inline extern int Optics_calculateRealSize(int magnitude, int mapMode, fix7_9 scale){
 
@@ -162,44 +132,7 @@ inline extern int Optics_calculateRealSize(int magnitude, int mapMode, fix7_9 sc
 	return magnitude;
 }
 
-
-
-// determine if a point is insie screen projection range
-inline extern  int Optics_isInsidePlayableArea(VBVec3D position, int cols, int rows, int mapMode, int pad){
-
-	fix19_13 xLowLimit = ITOFIX19_13(0 - pad);
-	fix19_13 xHighLimit = ITOFIX19_13(384 + pad);
-	fix19_13 yLowLimit = ITOFIX19_13(0 - pad);
-	fix19_13 yHighLimit = ITOFIX19_13(224 + pad);
-
-	fix19_13 width = ITOFIX19_13(Optics_calculateRealSize(cols << 3, mapMode, 1.0f) >> 1);
-	fix19_13 height = ITOFIX19_13(Optics_calculateRealSize(rows << 3, mapMode, 1.0f) >> 1);
-
-	VBVec2D position2D;
-	
-	//normalize position
-	position = Optics_normalizePosition(&position);
-	
-	if(position.z < ITOFIX19_13(__Z_GAME_LIMIT) || position.z > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z)){
-		
-		return false;
-	}
-	
-	Optics_projectTo2D(&position2D, &position);
-
-	
-	if(position2D.x - width <= xHighLimit && (position2D.x + width >= xLowLimit)){
-		
-		if(position2D.y - height <= yHighLimit && (position2D.y + height >= yLowLimit)){
-			
-			return true;
-		}	
-	}
-
-	return false;
-}
-
-/* ---------------------------------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //determine if a point is visible
 inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13 height, fix19_13 parallax, fix19_13 pad){
 	
@@ -235,7 +168,7 @@ inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13
 
 }
 
-/* ---------------------------------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine if a point is out of the game
 inline extern int vbjInsideGame(VBVec3D position3D, int width, int height){
 	
@@ -253,7 +186,7 @@ inline extern int vbjInsideGame(VBVec3D position3D, int width, int height){
 	return false;
 }
 
-/* ---------------------------------------------------------------------------------------------------------*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine the squared lenght of a given vector
 inline extern int Optics_lengthSquared3D(VBVec3D vect1, VBVec3D vect2){
 	
@@ -261,6 +194,5 @@ inline extern int Optics_lengthSquared3D(VBVec3D vect1, VBVec3D vect2){
 			FIX19_13_MULT((vect1.y - vect2.y), (vect1.y - vect2.y))+
 			FIX19_13_MULT((vect1.z - vect2.z), (vect1.z - vect2.z)));
 }
-
 
 #endif 

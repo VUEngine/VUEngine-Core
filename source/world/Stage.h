@@ -150,6 +150,9 @@ void Stage_destructor(Stage this);
 // load stage's entites
 void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
 
+// retrieve size
+Size Stage_getSize(Stage this);
+
 // add entity to the stage
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, int permanent);
 

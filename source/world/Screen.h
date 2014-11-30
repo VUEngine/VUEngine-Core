@@ -107,6 +107,9 @@ void Screen_setPosition(Screen this, VBVec3D position);
 // retrieve last displacement
 VBVec3D Screen_getLastDisplacement(Screen this);
 
+// set current stage's size
+void Screen_setStageSize(Screen this, Size size);
+
 // create a fade delay
 void Screen_FXFadeIn(Screen this, int wait);
 

@@ -261,9 +261,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	// set world's definition
 	this->stageDefinition = stageDefinition;
 		
-	// this->number = worldNumber;
 	// set world's limits
-	GameWorld_setSize(GameWorld_getInstance(), stageDefinition->size);
+	Screen_setStageSize(Screen_getInstance(), stageDefinition->size);
 	
 	// set screen's position
 	Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
@@ -287,6 +286,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	//setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add entity to the stage

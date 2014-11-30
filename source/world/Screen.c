@@ -57,6 +57,9 @@
 												\
 	/* world's screen's last displacement */	\
 	VBVec3D lastDisplacement;					\
+												\
+	/* stage's size in pixels */				\
+	Size stageSize;								\
 
 
 
@@ -181,9 +184,9 @@ void Screen_update(Screen this){
 				
 				this->position.x = focusPosition.x - ITOFIX19_13(__SCREEN_WIDTH / 2);
 				
-				if(focusPosition.x + ITOFIX19_13(__SCREEN_WIDTH / 2) > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x)){
+				if(focusPosition.x + ITOFIX19_13(__SCREEN_WIDTH / 2) > ITOFIX19_13(this->stageSize.x)){
 					
-					this->position.x = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x - __SCREEN_WIDTH);					
+					this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);					
 				}
 			}
 			
@@ -265,9 +268,9 @@ static void Screen_capPosition(Screen this){
 		this->position.x = 0;
 	}
 		
-	if(this->position.x + ITOFIX19_13(__SCREEN_WIDTH) > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x)){
+	if(this->position.x + ITOFIX19_13(__SCREEN_WIDTH) > ITOFIX19_13(this->stageSize.x)){
 		
-		this->position.x = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).x - __SCREEN_WIDTH);					
+		this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);					
 	}
 
 	if(this->position.y < 0){
@@ -275,9 +278,9 @@ static void Screen_capPosition(Screen this){
 		this->position.y = 0;
 	}
 		
-	if(this->position.y + ITOFIX19_13(__SCREEN_HEIGHT) > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).y)){
+	if(this->position.y + ITOFIX19_13(__SCREEN_HEIGHT) > ITOFIX19_13(this->stageSize.y)){
 		
-		this->position.y = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).y - __SCREEN_HEIGHT);					
+		this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);					
 	}
 
 	if(this->position.z < 0){
@@ -285,9 +288,9 @@ static void Screen_capPosition(Screen this){
 		this->position.z = 0;
 	}
 		
-	if(this->position.z > ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z)){
+	if(this->position.z > ITOFIX19_13(this->stageSize.z)){
 		
-		this->position.z = ITOFIX19_13(GameWorld_getSize(GameWorld_getInstance()).z);					
+		this->position.z = ITOFIX19_13(this->stageSize.z);					
 	}
 }
 
@@ -316,6 +319,15 @@ VBVec3D Screen_getLastDisplacement(Screen this){
 	ASSERT(this, "Screen::getLastDisplacement: null this");
 
 	return this->lastDisplacement;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set current stage's size
+void Screen_setStageSize(Screen this, Size size){
+	
+	ASSERT(this, "Screen::setStageSize: null this");
+
+	this->stageSize = size;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,3 +371,4 @@ void Screen_FXFadeOut(Screen this, int wait){
 		SET_BRIGHT(i, i*2, i);
 	}
 }
+

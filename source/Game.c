@@ -101,9 +101,6 @@ enum UpdateSubsystems{
 	/* optic values used in projection values */	\
 	Optical optical;								\
 													\
-	/* actual gameplay gameworld */					\
-	int actualStage;								\
-													\
 	/* flag to autopause or not the game*/ 			\
 	/* after 15 minutes of play */ 					\
 	int restFlag: 1;								\
@@ -123,9 +120,6 @@ enum UpdateSubsystems{
 													\
 	/* update time registry */						\
 	u32 lastTime[kLast];							\
-													\
-	/* game's start state */						\
-	u8 started;										\
 													\
 	/* game's next state */							\
 	State nextState;								\
@@ -190,8 +184,6 @@ static void Game_constructor(Game this){
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();
 	
-	this->started = false;
-
 	// construct the general clock
 	this->clock = __NEW(Clock);
 	
@@ -236,10 +228,7 @@ static void Game_constructor(Game this){
 	
 	// setup global pointers	
 	_optical = &this->optical;	
-	
-	// initialize this with your own first game world number
-	this->actualStage = 0;
-	
+
 	int i = 0; 
 	for (; i < kLogic + 1; i++) {
 		
@@ -249,7 +238,6 @@ static void Game_constructor(Game this){
 	// setup engine paramenters
 	Game_initialize(this);
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
@@ -300,10 +288,8 @@ void Game_start(Game this, State state){
 
 	HardwareManager_displayOn(this->hardwareManager);
 
-	if(!this->started) {
+	if(!StateMachine_getCurrentState(this->stateMachine)) {
 		
-		this->started = true;
-
 		// start the game's general clock
 		Clock_start(this->clock);
 		
