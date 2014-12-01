@@ -107,10 +107,16 @@ __CLASS_DEFINITION(LevelEditor);
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 
+#define __HVPC_STEP						ITOFIX19_13(8)
+#define __VVPC_STEP						ITOFIX19_13(8)
+#define __DISTANCE_EYE_SCREEN_STEP		ITOFIX19_13(8)
+#define __MAXIMUM_VIEW_DISTACE_STEP		ITOFIX19_13(8)
+#define __BASE_DISTACE_STEP				ITOFIX19_13(8)
 
 enum Modes {
 		kFirstMode = 0,
 		kMoveScreen,
+		kChangeProjection,
 		kTranslateEntities,
 		kAddObjects,
 		
@@ -139,10 +145,12 @@ static void LevelEditor_selectPreviousEntity(LevelEditor this);
 static void LevelEditor_selectNextEntity(LevelEditor this);
 static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey);
 static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey);
+static void LevelEditor_changeProjection(LevelEditor this, u16 pressedKey);
 static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D translation);
 static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D translation);
 static void LevelEditor_printEntityPosition(LevelEditor this);
 static void LevelEditor_printScreenPosition(LevelEditor this);
+static void LevelEditor_printProjectionValues(LevelEditor this);
 static void LevelEditor_printUserObjects(LevelEditor this);
 static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey);
 static void LevelEditor_printTranslationStepSize(LevelEditor this);
@@ -280,6 +288,11 @@ int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 						LevelEditor_moveScreen(this, pressedKey);
 						break;
 
+					case kChangeProjection:
+
+						LevelEditor_changeProjection(this, pressedKey);
+						break;
+						
 					case kTranslateEntities:
 
 						LevelEditor_traslateEntity(this, pressedKey);
@@ -309,6 +322,12 @@ static void LevelEditor_setupMode(LevelEditor this) {
 
 			LevelEditor_releaseShape(this);
 			LevelEditor_printScreenPosition(this);
+			break;
+			
+		case kChangeProjection:
+
+			LevelEditor_releaseShape(this);
+			LevelEditor_printProjectionValues(this);
 			break;
 
 		case kTranslateEntities:
@@ -540,6 +559,69 @@ static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// modify projection values
+static void LevelEditor_changeProjection(LevelEditor this, u16 pressedKey){
+	
+	if(pressedKey & K_LL){
+		
+		_optical->horizontalViewPointCenter -= __HVPC_STEP;
+	}
+	else if(pressedKey & K_LR){
+		
+		_optical->horizontalViewPointCenter += __HVPC_STEP;
+	}
+	else if(pressedKey & K_LU){
+		
+		_optical->verticalViewPointCenter -= __VVPC_STEP;
+	}
+	else if(pressedKey & K_LD){
+		
+		_optical->verticalViewPointCenter += __VVPC_STEP;
+	}
+	else if(pressedKey & K_RL){
+		
+		_optical->distanceEyeScreen -= __DISTANCE_EYE_SCREEN_STEP;
+	}
+	else if(pressedKey & K_RR){
+		
+		_optical->distanceEyeScreen += __DISTANCE_EYE_SCREEN_STEP;
+	}
+	else if(pressedKey & K_RU){
+		
+		_optical->maximunViewDistance += __MAXIMUM_VIEW_DISTACE_STEP;
+	}
+	else if(pressedKey & K_RD){
+		
+		_optical->maximunViewDistance -= __MAXIMUM_VIEW_DISTACE_STEP;
+	}
+	else if(pressedKey & K_LT){
+		
+		_optical->baseDistance -= __BASE_DISTACE_STEP;
+	}
+	else if(pressedKey & K_RT){
+		
+		_optical->baseDistance += __BASE_DISTACE_STEP;
+	}
+
+	// must hack this global, otherwise will need
+	// another variable which most likely will only
+	// take up the previous RAM
+	_screenMovementState->x = __ACTIVE;
+	_screenMovementState->y = __ACTIVE;
+	_screenMovementState->z = __ACTIVE;
+
+	Level_transform(this->level);
+	LevelEditor_printProjectionValues(this);
+
+	// prevent any side effect
+	_screenMovementState->x = __PASSIVE;
+	_screenMovementState->y = __PASSIVE;
+	_screenMovementState->z = __PASSIVE;
+
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // translate entity
 static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
@@ -752,6 +834,32 @@ static void LevelEditor_printScreenPosition(LevelEditor this){
 	Printing_int(FIX19_13TOI(position.x), x + 10, y);
 	Printing_int(FIX19_13TOI(position.y), x + 15, y);
 	Printing_int(FIX19_13TOI(position.z), x + 20, y);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static void LevelEditor_printProjectionValues(LevelEditor this){
+	
+	int x = 1;
+	int y = 2;
+	
+	Printing_text("PROJECTION VALUES", x, y++);
+	Printing_text("Nav.   (SEL)", 48 - 12, 0);
+	Printing_text("HVPC (LD/LL)", 48 - 12, 1);
+	Printing_text("VVPC (LU/LD)", 48 - 12, 2);
+	Printing_text("DES  (RL/RR)", 48 - 12, 3);
+	Printing_text("MVD  (RU/RD)", 48 - 12, 4);
+	Printing_text("BD   (LT/RT)", 48 - 12, 5);
+	
+	Printing_text("H. view point center:            ", x, ++y);
+	Printing_int(FIX19_13TOI(_optical->horizontalViewPointCenter), x + 22, y);
+	Printing_text("V. view point center:            ", x, ++y);
+	Printing_int(FIX19_13TOI(_optical->verticalViewPointCenter), x + 22, y);
+	Printing_text("Distance Eye Screen:            ", x, ++y);
+	Printing_int(FIX19_13TOI(_optical->distanceEyeScreen), x + 22, y);
+	Printing_text("Maximum View Screen:            ", x, ++y);
+	Printing_int(FIX19_13TOI(_optical->maximunViewDistance), x + 22, y);
+	Printing_text("Base Distance:                  ", x, ++y);
+	Printing_int(FIX19_13TOI(_optical->baseDistance), x + 22, y);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

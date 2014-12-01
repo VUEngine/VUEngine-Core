@@ -637,7 +637,7 @@ static void Debug_showDebugBgmap(Debug this){
 	// write the head
 	WORLD_HEAD(__TOTAL_LAYERS, WRLD_ON | this->currentBgmap);
 	WORLD_MSET(__TOTAL_LAYERS, this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
-	WORLD_GSET(__TOTAL_LAYERS, 0, 0, 0);
+	WORLD_GSET(__TOTAL_LAYERS, 0, 3, 0);
 	WORLD_SIZE(__TOTAL_LAYERS, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
 
@@ -655,6 +655,9 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		TextureManager_print(TextureManager_getInstance(), x, y);
+		Printing_text("Dips. (RL/RR)", 48 - 13, 2);
+		Printing_text("      (RU/RD)", 48 - 13, 3);
+
 		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
 		Debug_dimmGame(this);
 	}
