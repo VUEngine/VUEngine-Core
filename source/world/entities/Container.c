@@ -265,12 +265,12 @@ void Container_update(Container this){
 	
 	ASSERT(this, "Container::update: null this");
 
-	// first remove children
-	Container_processRemovedChildren(this);
-	
 	// if I have children
 	if(this->children){
-	
+
+		// first remove children
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = VirtualList_begin(this->children);
 	
 		// update each child
@@ -376,6 +376,9 @@ static void Container_applyTransform(Container this, Transformation* environment
 	// if I have children
 	if(this->children){
 		
+		// first remove children
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = VirtualList_begin(this->children);
 	
 		// update each child
@@ -477,6 +480,9 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 		// propagate if I have children
 		if(this->children){
 			
+			// first remove children
+			Container_processRemovedChildren(this);
+
 			VirtualNode node = VirtualList_begin(this->children);
 			
 			// update each child

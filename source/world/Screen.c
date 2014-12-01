@@ -241,7 +241,7 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // translate screen
-void Screen_move(Screen this, VBVec3D translation){
+void Screen_move(Screen this, VBVec3D translation, int cap){
 
 	ASSERT(this, "Screen::setPosition: null this");
 
@@ -256,7 +256,10 @@ void Screen_move(Screen this, VBVec3D translation){
 	this->movementState.y = __ACTIVE;
 	this->movementState.z = __ACTIVE;
 	
-	Screen_capPosition(this);
+	if(cap){
+	
+		Screen_capPosition(this);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

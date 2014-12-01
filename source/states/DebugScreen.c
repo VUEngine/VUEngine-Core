@@ -131,7 +131,8 @@ static void DebugScreen_destructor(DebugScreen this){
 static void DebugScreen_enter(DebugScreen this, void* owner){
 	
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
-	Debug_show(Debug_getInstance());
+
+	Debug_show(Debug_getInstance(), (Level)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

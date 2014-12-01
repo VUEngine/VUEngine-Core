@@ -103,6 +103,9 @@
 	/* super's attributes */				\
 	Object_ATTRIBUTES;						\
 											\
+	/* current in game level */				\
+	Level level;							\
+											\
 	/* pages */								\
 	VirtualList pages;						\
 											\
@@ -217,6 +220,8 @@ static void Debug_constructor(Debug this){
 	this->currentPage = NULL;
 	this->currentSubPage = NULL;
 	
+	this->level = NULL;
+
 	this->currentLayer = __TOTAL_LAYERS;
 	this->currentBgmap = 0;
 	this->charSeg = 0;
@@ -293,10 +298,12 @@ void Debug_update(Debug this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show debug screens
-void Debug_show(Debug this){
+void Debug_show(Debug this, Level level){
 	
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
+
+	this->level = level;
 
 	Debug_dimmGame(this);
 	Debug_showPage(this, 0);
@@ -457,6 +464,10 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y) {
 	Printing_text("In game clock's time: ", 1, ++y);
 	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y);
 	FrameRate_printLastRecord(FrameRate_getInstance(), 1, y + 3);
+	
+	Printing_text("Stage's status", 20, y + 3);
+	Printing_text("Entities: ", 20, ++y + 3);
+	Printing_int(Container_getChildCount((Container)Level_getStage(this->level)), 30, y + 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
