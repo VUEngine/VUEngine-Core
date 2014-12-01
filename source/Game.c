@@ -50,6 +50,7 @@
 #include <Screen.h>
 #include <VPUManager.h>
 #include <Printing.h>
+#include <I18n.h>
 
 #ifdef __DEBUG_TOOLS
 #include <DebugScreen.h>
@@ -208,6 +209,7 @@ static void Game_constructor(Game this){
 	this->physicalWorld = PhysicalWorld_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
+	this->i18n = I18n_getInstance();
 	
 	this->lastProcessName = "starting up";
 	
