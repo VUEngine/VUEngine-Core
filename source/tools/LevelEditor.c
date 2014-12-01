@@ -829,7 +829,7 @@ static void LevelEditor_printEntityPosition(LevelEditor this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D translation){
 	
-	Screen_move(Screen_getInstance(), translation);
+	Screen_move(Screen_getInstance(), translation, true);
 	Level_transform(this->level);
 
 	LevelEditor_printScreenPosition(this);

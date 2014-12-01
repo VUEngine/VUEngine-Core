@@ -204,7 +204,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	}
 	
 	// now move the drawspec in order to render the texture in the center
-	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(this->scrollSprites[kLeftSprite])) << 3);
+	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(this->scrollSprites[kLeftSprite])) << 2);
 	drawSpec0.position.parallax = drawSpec1.position.parallax = Sprite_getDrawSpec(this->scrollSprites[kLeftSprite]).position.parallax;
 
 	// set map's position

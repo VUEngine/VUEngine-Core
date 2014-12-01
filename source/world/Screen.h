@@ -96,7 +96,7 @@ InGameEntity Screen_getFocusInGameEntity(Screen this);
 void Screen_focusEntityDeleted(Screen this, InGameEntity actor);
 
 // translate screen
-void Screen_move(Screen this, VBVec3D translation);
+void Screen_move(Screen this, VBVec3D translation, int cap);
 
 // get screen's position
 VBVec3D Screen_getPosition(Screen this);
