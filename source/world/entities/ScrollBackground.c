@@ -124,7 +124,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 	// call base class's transform method
 	Entity_transform((Entity)this, environmentTransform);
 
-	if((*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)){
+	if(_screenMovementState->x || _screenMovementState->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z){
 		
 		ScrollBackground_updateScrolling(this);
 	}

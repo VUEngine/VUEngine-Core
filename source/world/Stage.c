@@ -403,7 +403,6 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 	
 	VirtualList_pushBack(this->removedEntities, entity);
 
-		
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 	
 	int ID = Container_getID((Container)entity);
@@ -435,32 +434,6 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 		
 		VirtualList_removeElement(this->stageEntities, VirtualNode_getData(node));
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// delete removed entities
-static void Stage_processRemovedEntities(Stage this) {
-	
-	ASSERT(this, "Stage::processRemovedEntities: null this");
-
-	VirtualNode node = VirtualList_begin(this->removedEntities);
-	
-	// now remove and delete entities
-	for(; node; node = VirtualNode_getNext(node)){
-
-		// get next entity
-		Entity entity = (Entity)VirtualNode_getData(node);
-
-		VirtualList_removeElement(this->children, entity);
-		VPUManager_disableInterrupt(VPUManager_getInstance());
-
-		// destroy it
-		__DELETE(entity);
-	}
-	
-	VirtualList_clear(this->removedEntities);
-	
-	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -627,13 +600,18 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		// if the entity isn't visible inside the view field, unload it
 		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD))){		
 
-//			VirtualNode auxNode = 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead;
-			VirtualNode auxNode = VirtualList_begin(this->stageEntities);
-			
 			int ID = Container_getID((Container)entity);
+			
+			int traverseNormally = ID < ((StageEntityDescription*)VirtualNode_getData(this->streamingLeftHead))->ID ||
+				ID > ((StageEntityDescription*)VirtualNode_getData(this->streamingRightHead))->ID;
+			
 
-//			for(; auxNode; auxNode = 0 < this->streamingHeadDisplacement? VirtualNode_getPrevious(auxNode): VirtualNode_getNext(auxNode)){
-			for(; auxNode; auxNode = VirtualNode_getNext(auxNode)){
+			VirtualNode auxNode = traverseNormally? VirtualList_begin(this->stageEntities): 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead;
+//			VirtualNode auxNode = VirtualList_begin(this->stageEntities);
+			
+
+			for(; auxNode; auxNode = traverseNormally? VirtualNode_getNext(auxNode): 0 < this->streamingHeadDisplacement? VirtualNode_getPrevious(auxNode): VirtualNode_getNext(auxNode)){
+//			for(; auxNode; auxNode = VirtualNode_getNext(auxNode)){
 
 				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
 
@@ -662,7 +640,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		// get next entity
 		Entity entity = (Entity)VirtualNode_getData(node);
 
-		VirtualList_removeElement(this->children, entity);
+		//VirtualList_removeElement(this->children, entity);
 		VPUManager_disableInterrupt(VPUManager_getInstance());
 
 		// destroy it
@@ -703,8 +681,26 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // execute stage's logic
+static void Stage_processRemovedEntities(Stage this){
+	
+	ASSERT(this, "Stage::processRemovedEntities: null this");
+
+	VirtualNode node = VirtualList_begin(this->removedEntities);
+	
+	for(; node; node = VirtualNode_getNext(node)){
+		
+		__DELETE(VirtualNode_getData(node));
+	}
+	
+	VirtualList_clear(this->removedEntities);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// execute stage's logic
 void Stage_update(Stage this){
 	
+	ASSERT(this, "Stage::update: null this");
+
 	Stage_processRemovedEntities(this);
 	
 	Container_update((Container)this);
@@ -721,7 +717,7 @@ void Stage_stream(Stage this){
 	
 	ASSERT(this, "Stage::stream: null this");
 	// if the screen is moving
-	//if(*((u8*)_screenMovementState)){
+	//if(_screenMovementState->x || _screenMovementState->y || _screenMovementState->z){
 	static int load = __STREAM_CYCLE;
 	if(!--load){
 
@@ -749,7 +745,7 @@ void Stage_streamAll(Stage this) {
 	this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
 	Stage_unloadOutOfRangeEntities(this, false);
-	Stage_loadEntities(this, true, true, true);
+	Stage_loadEntities(this, true, false, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

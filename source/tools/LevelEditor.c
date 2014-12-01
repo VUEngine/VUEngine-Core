@@ -35,6 +35,7 @@
 #include <Globals.h>
 #include <Entity.h>
 #include <CollisionManager.h>
+#include <PhysicalWorld.h>
 #include <SpriteManager.h>
 #include <Level.h>
 #include <Stage.h>
@@ -219,7 +220,7 @@ void LevelEditor_update(LevelEditor this){
 	
 	ASSERT(this, "LevelEditor::update: null this");
 
-	Stage_stream(Level_getStage(this->level));
+	//Stage_stream(Level_getStage(this->level));
 	if(this->level && this->shape) {
 		
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
@@ -605,15 +606,18 @@ static void LevelEditor_changeProjection(LevelEditor this, u16 pressedKey){
 		_optical->baseDistance += __BASE_DISTACE_STEP;
 	}
 
+	// this hack forces the Entity to recalculate
+	// its sprites' value
 	// must hack this global, otherwise will need
 	// another variable which most likely will only
-	// take up the previous RAM
+	// take up the previous RAM, or another branching
+	// computation in the Entity's render method
 	_screenMovementState->x = __ACTIVE;
 	_screenMovementState->y = __ACTIVE;
 	_screenMovementState->z = __ACTIVE;
 
-	Level_transform(this->level);
 	LevelEditor_printProjectionValues(this);
+	Level_transform(this->level);
 
 	// prevent any side effect
 	_screenMovementState->x = __PASSIVE;
@@ -730,7 +734,22 @@ static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D transl
 
 		__VIRTUAL_CALL(void, Container, setLocalPosition, container, __ARGUMENTS(localPosition));
 		
+		// this hack forces the Entity to recalculate
+		// its sprites' value
+		// must hack this global, otherwise will need
+		// another variable which most likely will only
+		// take up the previous RAM, or another branching
+		// computation in the Entity's render method
+		_screenMovementState->x = __ACTIVE;
+		_screenMovementState->y = __ACTIVE;
+		_screenMovementState->z = __ACTIVE;
+		
 		Level_transform(this->level);
+
+		// prevent any side effect
+		_screenMovementState->x = __PASSIVE;
+		_screenMovementState->y = __PASSIVE;
+		_screenMovementState->z = __PASSIVE;
 
 		LevelEditor_positioneShape(this);
 
@@ -738,6 +757,8 @@ static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D transl
 		
 		SpriteManager_sortAllLayers(SpriteManager_getInstance());
 		
+		LevelEditor_printTranslationStepSize(this);
+
 		// should work
 		//__VIRTUAL_CALL(void, Shape, positione, this->shape);
 	}
@@ -813,8 +834,10 @@ static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D transl
 
 	LevelEditor_printScreenPosition(this);
 
-//	Stage_streamAll(Level_getStage(this->level));
+	Stage_streamAll(Level_getStage(this->level));
 
+	CollisionManager_processRemovedShapes(CollisionManager_getInstance());
+	PhysicalWorld_processRemovedBodies(PhysicalWorld_getInstance());
 	SpriteManager_sortAllLayers(SpriteManager_getInstance());
 }
 

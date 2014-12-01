@@ -666,7 +666,7 @@ int Actor_updateSpritePosition(Actor this){
 
 	ASSERT(this, "Actor::updateSpritePosition: null this");
 
-	return (this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z || Actor_isMoving(this) || *((int*)_screenMovementState));
+	return (this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z || Actor_isMoving(this) || _screenMovementState->x || _screenMovementState->y || _screenMovementState->z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
