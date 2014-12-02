@@ -157,6 +157,12 @@ void Stage_destructor(Stage this){
 	
 	ASSERT(this, "Stage::destructor: null this");
 
+	if(this->ui){
+		
+		__DELETE(this->ui);
+		this->ui = NULL;
+	}
+
 	if(this->stageEntities){
 		
 		VirtualNode node = VirtualList_begin(this->stageEntities);
@@ -183,11 +189,6 @@ void Stage_destructor(Stage this){
 		__DELETE(this->removedEntities);
 		
 		this->removedEntities = NULL;
-	}
-	
-	if(this->ui){
-		
-		__DELETE(this->ui);
 	}
 	
 	// destroy the super object
@@ -305,6 +306,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 static void Stage_setupUI(Stage this){
 
 	ASSERT(this, "Stage::setupUI: null this");
+	ASSERT(!this->ui, "Stage::setupUI: UI already exists");
 
 	if(this->ui){
 		
@@ -313,7 +315,7 @@ static void Stage_setupUI(Stage this){
 	}
 	
 	if(this->stageDefinition->uiDefinition.allocator) {
-		
+
 		// call the appropiate allocator to support inheritance!
 		this->ui = (UI)((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(0, &this->stageDefinition->uiDefinition);
 		ASSERT(this->ui, "Stage::setupUI: null ui");
@@ -338,9 +340,9 @@ static void Stage_setupUI(Stage this){
 					// rotation
 					{0, 0, 0}	
 			};
-		
+
 			Container_setLocalPosition((Container)this->ui, position);
-		
+
 			__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
 		}
 	}
@@ -605,14 +607,10 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 			
 			int traverseNormally = ID < ((StageEntityDescription*)VirtualNode_getData(this->streamingLeftHead))->ID ||
 				ID > ((StageEntityDescription*)VirtualNode_getData(this->streamingRightHead))->ID;
-			
 
 			VirtualNode auxNode = traverseNormally? VirtualList_begin(this->stageEntities): 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead;
-//			VirtualNode auxNode = VirtualList_begin(this->stageEntities);
-			
 
 			for(; auxNode; auxNode = traverseNormally? VirtualNode_getNext(auxNode): 0 < this->streamingHeadDisplacement? VirtualNode_getPrevious(auxNode): VirtualNode_getNext(auxNode)){
-//			for(; auxNode; auxNode = VirtualNode_getNext(auxNode)){
 
 				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
 
@@ -653,6 +651,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 	
 	CACHE_DISABLE;
 	
+	// repositione stream headers
 	if(0 < VirtualList_getSize(removedEntities)){
 		
 		VirtualNode* modifierNode = 0 < this->streamingHeadDisplacement? &this->streamingLeftHead: &this->streamingRightHead;
@@ -715,7 +714,7 @@ void Stage_update(Stage this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // stream entities according to screen's position
 void Stage_stream(Stage this){
-	
+
 	ASSERT(this, "Stage::stream: null this");
 	// if the screen is moving
 	//if(_screenMovementState->x || _screenMovementState->y || _screenMovementState->z){

@@ -121,6 +121,7 @@ void Container_constructor(Container this, int ID){
 	
 	this->parent = NULL;
 	this->children = NULL;
+	this->removedChildren = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,8 +201,7 @@ void Container_addChild(Container this, Container child){
 		
 		// add to the children list
 		VirtualList_pushBack(this->children, (void*)child);
-		//VirtualList_pushFront(this->children, (void*)child);
-		
+
 		// set new parent
 		child->parent = this;
 	}
