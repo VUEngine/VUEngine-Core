@@ -211,7 +211,7 @@ void Level_transform(Level this){
 	
 	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, __ARGUMENTS(&environmentTransform));
 
-	Screen_update(Screen_getInstance());
+	Screen_positione(Screen_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -144,7 +144,7 @@ void Screen_destructor(Screen this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // center world's screen in function of focus actor's position
-void Screen_update(Screen this){
+void Screen_positione(Screen this){
 
 	ASSERT(this, "Screen::update: null this");
 

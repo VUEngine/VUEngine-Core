@@ -94,8 +94,8 @@ Screen Screen_getInstance();
 // class's destructo
 void Screen_destructor(Screen this);
 
-// center the screen
-void Screen_update(Screen this);
+// positione the screen
+void Screen_positione(Screen this);
 
 // set the focus entity
 // set the focus entity

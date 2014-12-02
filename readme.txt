@@ -62,6 +62,7 @@ Features:
 		* Generic parenting system
 		* Generic messaging system
 		* Generic state machines
+		* Generic event listening/firing system
 	· Debugging
 		* Memory usage
 		* Hardware registers' usage 
