@@ -118,6 +118,9 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram);
 // update level entities' positions
 void Level_transform(Level this);
 
+// propagate message to all entities in the level
+int Level_propagateMessage(Level this, int message);
+			
 // process user input
 void Level_onKeyPressed(Level this, int pressedKey);
 
@@ -126,6 +129,9 @@ void Level_onKeyUp(Level this, int pressedKey);
 
 // process user input
 void Level_onKeyHold(Level this, int pressedKey);
+
+// process user input
+void Level_onMessage(Level this, int message);
 
 // load a stage
 void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);

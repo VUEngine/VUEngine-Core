@@ -49,7 +49,6 @@
 #define Entity_METHODS								\
 		Container_METHODS							\
 		__VIRTUAL_DEC(getScale);					\
-		__VIRTUAL_DEC(getInGameState);				\
 		__VIRTUAL_DEC(isVisible);					\
 		__VIRTUAL_DEC(setExtraInfo);				\
 		__VIRTUAL_DEC(updateSpritePosition);		\
@@ -71,7 +70,6 @@
 		__VIRTUAL_SET(ClassName, Entity, transform);				\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);			\
 		__VIRTUAL_SET(ClassName, Entity, getScale);					\
-		__VIRTUAL_SET(ClassName, Entity, getInGameState);			\
 		__VIRTUAL_SET(ClassName, Entity, isVisible);				\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);				\
 		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);		\
@@ -250,9 +248,6 @@ int Entity_doesMove(Entity this);
 
 // whether it is visible
 int Entity_isVisible(Entity this, int pad);
-
-// retrieve state when unloading the entity 
-int Entity_getInGameState(Entity this);
 
 // create an entity in gameengine's memory
 Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo);

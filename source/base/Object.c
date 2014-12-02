@@ -28,6 +28,7 @@
  */
 
 #include <Object.h>
+#include <string.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -51,6 +52,14 @@
 // it is the base class for everything.. so it does derivates from nothing but itself
 __CLASS_DEFINITION(Object); 
 
+typedef struct Event {
+	
+	char name[__MAX_EVENT_NAME_LENGTH];
+	Object listener;
+	void (*method)(Object);
+}Event;
+
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -59,6 +68,7 @@ __CLASS_DEFINITION(Object);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -78,12 +88,25 @@ void Object_constructor(Object this){
 	__SET_CLASS(Object);
 	
 	this->dynamic = false;
+	this->events = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
 void Object_destructor(Object this){
 
+	if(this->events) {
+		
+		VirtualNode node = VirtualList_begin(this->events);
+		
+		for(; node; node = VirtualNode_getNext(node)){
+			
+			__DELETE_BASIC(VirtualNode_getData(node));
+		}
+		
+		__DELETE(this->events);
+	}
+	
 	/* an Object can not be instantiated, so there is no
 	 * memory to free 
 	 */					
@@ -98,4 +121,80 @@ int Object_handleMessage(Object this, void* owner, void* telegram){
 	ASSERT(this, "Object::handleMessage: null this");
 
 	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// register an event listener
+void Object_addEventListener(Object this, Object listener, void (*method)(Object),  char* eventName){
+	
+	ASSERT(this, "Object::addEventListener: null this");
+
+	if(!listener || !method || !eventName) {
+		
+		return;
+	}
+	
+	if(NULL == this->events) {
+		
+		this->events = __NEW(VirtualList);
+	}
+	else {
+
+		Object_removeEventListener(this, listener, method, eventName);
+	}
+	
+	Event* event = __NEW_BASIC(Event);
+	event->listener = listener;
+	event->method = method;
+	// don't relay on the user, make it safe
+	strncpy(event->name, eventName, __MAX_EVENT_NAME_LENGTH);
+	
+	VirtualList_pushBack(this->events, event);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// remove an event listener
+void Object_removeEventListener(Object this, Object listener, void (*method)(Object),  char* eventName){
+
+	ASSERT(this, "Object::addEventListener: null this");
+
+	if(this->events) {
+
+		VirtualNode node = VirtualList_begin(this->events);
+	
+		for(; node; node = VirtualNode_getNext(node)){
+			
+			Event* event = (Event*)VirtualNode_getData(node);
+			
+			if(listener == event->listener && method == event->method && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH)){
+				
+				VirtualList_removeElement(this->events, event);
+				
+				__DELETE_BASIC(event);
+				break;
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// fire event
+void Object_fireEvent(Object this,  char* eventName){
+
+	ASSERT(this, "Object::fireEvent: null this");
+
+	if(this->events) {
+
+		VirtualNode node = VirtualList_begin(this->events);
+	
+		for(; node; node = VirtualNode_getNext(node)){
+			
+			Event* event = (Event*)VirtualNode_getData(node);
+
+			if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH)){
+				
+				event->method(event->listener);
+			}
+		}
+	}
 }

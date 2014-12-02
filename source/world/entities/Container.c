@@ -537,6 +537,17 @@ int Container_onKeyHold(Container this, va_list args){
 	return __VIRTUAL_CALL(int, Container, doKeyHold, this, __ARGUMENTS(pressedKey));
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process user input
+int Container_onMessage(Container this, va_list args){
+	
+	ASSERT(this, "Container::onKeyHold: null this");
+
+	int message = va_arg(args, int);	
+	return __VIRTUAL_CALL(int, Container, doMessage, this, __ARGUMENTS(message));
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
 int Container_doKeyPressed(Container this, int pressedKey){
@@ -554,6 +565,13 @@ int Container_doKeyUp(Container this, int pressedKey){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
 int Container_doKeyHold(Container this, int pressedKey){
+	
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process message
+int Container_doMessage(Container this, int message){
 	
 	return false;
 }

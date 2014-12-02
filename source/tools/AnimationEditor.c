@@ -152,7 +152,7 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
 
-static void AnimationEditor_onAnimationComplete();
+static void AnimationEditor_onAnimationComplete(AnimationEditor this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -705,9 +705,6 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this) {
 	SpriteManager_sortAllLayers(SpriteManager_getInstance());
 	SpriteManager_render(SpriteManager_getInstance());
 
-	Level_transform(this->level);
-	__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)this->animatedSprite, __ARGUMENTS(position));
-
 	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
 }
 
@@ -788,9 +785,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void AnimationEditor_onAnimationComplete() {
-	
-	AnimationEditor this = AnimationEditor_getInstance();
+static void AnimationEditor_onAnimationComplete(AnimationEditor this) {
 
 	if(!this->animationFunction.loop) {
 	

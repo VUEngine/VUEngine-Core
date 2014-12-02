@@ -203,7 +203,9 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	    		
 	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
 	    	}
-	    	
+
+    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
+
 			//reset frame rate counters
 			FrameRate_reset(frameRate);		
     }	

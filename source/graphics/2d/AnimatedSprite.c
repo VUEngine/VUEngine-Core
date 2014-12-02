@@ -302,8 +302,9 @@ void AnimatedSprite_animate(AnimatedSprite this){
 		// the last frame has been reached
 		if(this->animationFunction->onAnimationComplete){
 		
+			Object_fireEvent((Object)this, __EVENT_ANIMATION_COMPLETE);
 			// call notifying
-			((void (*)(void* owner))this->animationFunction->onAnimationComplete)(this->owner);
+//			((void (*)(void* owner))this->animationFunction->onAnimationComplete)(this->owner);
 		}
 
 		// rewind to first frame
@@ -412,6 +413,9 @@ void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction
 	// setup animation frame
 	this->animationFunction = animationFunction;
 	
+	// register event callback
+	Object_addEventListener((Object)this, this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE); 
+
 	// force frame writing in the next update
 	this->previousFrame = -1;
 	
@@ -441,7 +445,10 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 			
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
-			
+
+			// register event callback
+			Object_addEventListener((Object)this, this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE); 
+
 			// force frame writing in the next update
 			this->previousFrame = -1;
 			

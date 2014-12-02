@@ -55,27 +55,27 @@
 <targetPlatform id="converted.config.135728394..1794484357" name=""/>
 <builder appendEnvironment="true" arguments="" autoBuildTarget="all" buildPath="" cleanBuildTarget="clean" command="make" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" environment="" errorParsers="org.eclipse.cdt.core.MakeErrorParser" id="org.eclipse.cdt.make.core.makeBuilder.1340698437" ignoreErrCmd="" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildCmd="" parallelizationNumber="1" stopOnErr="false" superClass="org.eclipse.cdt.build.core.settings.default.builder">
 <outputEntries>
-<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="output"/>
+<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name=""/>
 </outputEntries>
 </builder>
 <tool errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser" id="org.eclipse.cdt.build.core.settings.holder.libs.1894808275" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
 <tool errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser" id="org.eclipse.cdt.build.core.settings.holder.128046116" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
-<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1691801519" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-<listOptionValue builtIn="false" value="C:/vbde/libs/vbjaengine/source"/>
-</option>
+<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1691801519" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths"/>
+<option id="org.eclipse.cdt.build.core.settings.holder.undef.incpaths.1728771425" name="Undefined Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.undef.incpaths" valueType="undefIncludePath"/>
 <inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1929860373" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 </tool>
 <tool errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser" id="org.eclipse.cdt.build.core.settings.holder.1833402945" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
 <inputType id="org.eclipse.cdt.build.core.settings.holder.inType.321271070" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 </tool>
 <tool errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser" id="org.eclipse.cdt.build.core.settings.holder.1463420576" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
+<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1060764625" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths"/>
+<option id="org.eclipse.cdt.build.core.settings.holder.undef.incpaths.2127691900" name="Undefined Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.undef.incpaths" valueType="undefIncludePath"/>
 <inputType id="org.eclipse.cdt.build.core.settings.holder.inType.956464402" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 </tool>
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="source/" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
+<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>

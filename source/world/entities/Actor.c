@@ -115,9 +115,6 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
 	
-	//state ALIVE for initial update
-	this->inGameState = __LOADED;
-	
 	this->lastCollidingEntity[kXAxis] = NULL;
 	this->lastCollidingEntity[kYAxis] = NULL;
 	this->lastCollidingEntity[kZAxis] = NULL;
@@ -309,14 +306,6 @@ VBVec3D Actor_getPreviousPosition(Actor this){
 	ASSERT(this, "Actor::getPreviousPosition: null this");
 	
 	return this->previousGlobalPosition;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Actor_setInGameState(Actor this, int inGameState){
-	
-	ASSERT(this, "Actor::setInGameState: null this");
-	
-	this->inGameState = inGameState;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -649,15 +638,6 @@ VBVec3D Actor_getPosition(Actor this){
 	}
 	
 	return Entity_getPosition((Entity)this);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve state when unloading the entity 
-int Actor_getInGameState(Actor this){
-
-	ASSERT(this, "Actor::getInGameState: null this");
-
-	return this->inGameState;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -68,6 +68,7 @@
 		__VIRTUAL_DEC(doKeyPressed);					\
 		__VIRTUAL_DEC(doKeyUp);							\
 		__VIRTUAL_DEC(doKeyHold);						\
+		__VIRTUAL_DEC(doMessage);						\
 		__VIRTUAL_DEC(addChild);						\
 		
 	
@@ -82,6 +83,7 @@
 		__VIRTUAL_SET(ClassName, Container, doKeyPressed);			\
 		__VIRTUAL_SET(ClassName, Container, doKeyUp);				\
 		__VIRTUAL_SET(ClassName, Container, doKeyHold);				\
+		__VIRTUAL_SET(ClassName, Container, doMessage);				\
 		__VIRTUAL_SET(ClassName, Container, addChild);				\
 	
 
@@ -171,6 +173,9 @@ int Container_onKeyUp(Container this, va_list args);
 int Container_onKeyHold(Container this, va_list args);
 
 // process user input
+int Container_onMessage(Container this, va_list args);
+
+// process user input
 int Container_doKeyPressed(Container this, int pressedKey);
 
 // process user input
@@ -178,6 +183,9 @@ int Container_doKeyUp(Container this, int pressedKey);
 
 // process user input
 int Container_doKeyHold(Container this, int pressedKey);
+
+// process message
+int Container_doMessage(Container this, int message);
 
 //retrieve object's in game index
 int Container_getID(Container this);

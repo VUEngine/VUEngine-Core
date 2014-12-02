@@ -456,11 +456,6 @@ static void Stage_registerEntity(Stage this, PositionedEntity* positionedEntity)
 	
 	ASSERT(this, "Stage::registerEntities: null this");
 
-	if(!this->stageEntities) {
-		
-		this->stageEntities = __NEW(VirtualList);
-	}
-
 	StageEntityDescription* stageEntityDescription = __NEW_BASIC(StageEntityDescription);
 
 	stageEntityDescription->ID = -1;
@@ -477,6 +472,12 @@ static void Stage_registerEntities(Stage this) {
 	if(this->stageEntities) {
 		
 		__DELETE(this->stageEntities);
+		this->stageEntities = NULL;
+	}
+	
+	if(!this->stageEntities) {
+		
+		this->stageEntities = __NEW(VirtualList);
 	}
 	
 	int i = 0;

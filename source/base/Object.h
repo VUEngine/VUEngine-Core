@@ -45,6 +45,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define __MAX_EVENT_NAME_LENGTH	15
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -62,13 +64,16 @@
 															\
 	/* flag to know if it's a dynamic created object */ 	\
 	int dynamic;											\
+															\
+	/* events */											\
+	VirtualList events;										\
 
 // declare the virtual methods
-#define Object_METHODS								\
-	__VIRTUAL_DEC(handleMessage);					\
+#define Object_METHODS										\
+	__VIRTUAL_DEC(handleMessage);							\
 	
 // define the virtual methods
-#define Object_SET_VTABLE(ClassName)							\
+#define Object_SET_VTABLE(ClassName)						\
 	__VIRTUAL_SET(ClassName, Object, handleMessage);
 
 // the root class for everything else!!
@@ -92,5 +97,14 @@ void Object_destructor(Object this);
 
 // on message
 int Object_handleMessage(Object this, void* owner, void* telegram);
+
+// register an event listener
+void Object_addEventListener(Object this, Object listener, void (*method)(Object), char* eventName);
+
+// remove an event listener
+void Object_removeEventListener(Object this, Object listener, void (*method)(Object), char* eventName);
+
+// fire event
+void Object_fireEvent(Object this, char* eventName);
 
 #endif /* OBJECT_H_ */

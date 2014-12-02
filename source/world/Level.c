@@ -180,6 +180,11 @@ int Level_handleMessage(Level this, void* owner, Telegram telegram){
 			
 			Level_onKeyHold(this, *((int*)Telegram_getExtraInfo(telegram)));
 			break;
+		
+		default:
+			
+			Level_onMessage(this, Telegram_getMessage(telegram));
+			break;
 	}
 
 	return false;
@@ -209,6 +214,18 @@ void Level_transform(Level this){
 	Screen_update(Screen_getInstance());
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// propagate message to all entities in the level
+int Level_propagateMessage(Level this, int message){
+
+	//create the telegram
+	Telegram telegram = __NEW(Telegram, __ARGUMENTS(0, this, this, message, NULL));
+
+	int result = Level_handleMessage((Level)this, this, telegram);
+	__DELETE(telegram);
+	
+	return result;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
@@ -237,6 +254,16 @@ void Level_onKeyHold(Level this, int pressedKey){
 	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyHold, pressedKey));
 }
 
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// process user input
+void Level_onMessage(Level this, int message){
+
+	ASSERT(this, "Level::onMessage: null this");
+
+	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, message));
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load a stage
 void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups){

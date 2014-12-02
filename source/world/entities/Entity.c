@@ -402,14 +402,6 @@ int Entity_isVisible(Entity this, int pad){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve state when unloading the entity 
-int Entity_getInGameState(Entity this){
-
-	ASSERT(this, "Entity::getInGameState: null this");
-	return __UNLOADED;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create an entity in gameengine's memory
 Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo){
 	

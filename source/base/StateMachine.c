@@ -144,9 +144,11 @@ void StateMachine_destructor(StateMachine this){
 void StateMachine_update(StateMachine this){
 
 	ASSERT(this, "StateMachine::update: null this");
-	ASSERT(this->currentState, "StateMachine::update: null state");
 
-	__VIRTUAL_CALL(void, State, execute, this->currentState, __ARGUMENTS(this->owner));
+	if(this->currentState){
+	
+		__VIRTUAL_CALL(void, State, execute, this->currentState, __ARGUMENTS(this->owner));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
