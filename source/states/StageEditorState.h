@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
-#ifndef LEVEL_EDITOR_SCREEN_H_
-#define LEVEL_EDITOR_SCREEN_H_
+#ifndef STAGE_EDITOR_STATE_H_
+#define STAGE_EDITOR_STATE_H_
 
-#ifdef __LEVEL_EDITOR
+#ifdef __STAGE_EDITOR
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -42,19 +42,19 @@
  */
 
 // declare the virtual methods
-#define LevelEditorScreen_METHODS										\
+#define StageEditorState_METHODS										\
 	State_METHODS;									
 
 // declare the virtual methods which are redefined
-#define LevelEditorScreen_SET_VTABLE(ClassName)							\
+#define StageEditorState_SET_VTABLE(ClassName)							\
 	State_SET_VTABLE(ClassName)											\
-	__VIRTUAL_SET(ClassName, LevelEditorScreen, enter);					\
-	__VIRTUAL_SET(ClassName, LevelEditorScreen, execute);				\
-	__VIRTUAL_SET(ClassName, LevelEditorScreen, exit);					\
-	__VIRTUAL_SET(ClassName, LevelEditorScreen, handleMessage);			\
+	__VIRTUAL_SET(ClassName, StageEditorState, enter);					\
+	__VIRTUAL_SET(ClassName, StageEditorState, execute);				\
+	__VIRTUAL_SET(ClassName, StageEditorState, exit);					\
+	__VIRTUAL_SET(ClassName, StageEditorState, handleMessage);			\
 
 
-__CLASS(LevelEditorScreen);
+__CLASS(StageEditorState);
 
 
 
@@ -68,8 +68,8 @@ __CLASS(LevelEditorScreen);
  */
 
 // setup the init focus screen
-LevelEditorScreen LevelEditorScreen_getInstance(void);
+StageEditorState StageEditorState_getInstance(void);
 
 #endif
 
-#endif /*LEVEL_EDITOR_SCREEN_H_*/
+#endif /*STAGE_EDITOR_STATE_H_*/

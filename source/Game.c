@@ -38,7 +38,7 @@
 #include <FrameRate.h>
 #include <Clock.h>
 #include <TextureManager.h>
-#include <Level.h>
+#include <GameState.h>
 #include <MessageDispatcher.h>
 #include <Stage.h>
 #include <ParamTableManager.h>
@@ -51,16 +51,16 @@
 #include <Printing.h>
 
 #ifdef __DEBUG_TOOLS
-#include <DebugScreen.h>
+#include <DebugState.h>
 #endif
 
 
-#ifdef __LEVEL_EDITOR
-#include <LevelEditorScreen.h>
+#ifdef __STAGE_EDITOR
+#include <StageEditorState.h>
 #endif
 
 #ifdef __ANIMATION_EDITOR
-#include <AnimationEditorScreen.h>
+#include <AnimationEditorState.h>
 #endif
 
 
@@ -495,7 +495,7 @@ void Game_handleInput(Game this, int currentKey){
 				StateMachine_popState(this->stateMachine);
 			}
 			
-			StateMachine_pushState(this->stateMachine, (State)DebugScreen_getInstance());
+			StateMachine_pushState(this->stateMachine, (State)DebugState_getInstance());
 		}
 
 		previousKey = currentKey;
@@ -503,12 +503,12 @@ void Game_handleInput(Game this, int currentKey){
 	}
 #endif
 
-#ifdef __LEVEL_EDITOR
+#ifdef __STAGE_EDITOR
 
 	// check code to access special feature
 	if((previousKey & K_STA) && (newKey & K_SEL)){
 
-		if(Game_isInLevelEditor(this)){
+		if(Game_isInStageEditor(this)){
 			
 			StateMachine_popState(this->stateMachine);
 		}
@@ -519,7 +519,7 @@ void Game_handleInput(Game this, int currentKey){
 				StateMachine_popState(this->stateMachine);
 			}
 		
-			StateMachine_pushState(this->stateMachine, (State)LevelEditorScreen_getInstance());
+			StateMachine_pushState(this->stateMachine, (State)StageEditorState_getInstance());
 		}
 
 		previousKey = currentKey;
@@ -550,7 +550,7 @@ void Game_handleInput(Game this, int currentKey){
 				StateMachine_popState(this->stateMachine);
 			}
 		
-			StateMachine_pushState(this->stateMachine, (State)AnimationEditorScreen_getInstance());
+			StateMachine_pushState(this->stateMachine, (State)AnimationEditorState_getInstance());
 		}
 
 		previousKey = currentKey;
@@ -567,7 +567,7 @@ void Game_handleInput(Game this, int currentKey){
 	}
 #endif
 
-#ifdef __LEVEL_EDITOR
+#ifdef __STAGE_EDITOR
 	if(!Game_isInSpecialMode(this) && (newKey & K_STA)){
 		
 		previousKey = currentKey;
@@ -662,7 +662,7 @@ void Game_update(Game this){
 #ifdef __DEBUG_TOOLS
 				if(!Game_isInSpecialMode(this))
 #endif
-#ifdef __LEVEL_EDITOR
+#ifdef __STAGE_EDITOR
 				if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
@@ -694,7 +694,7 @@ void Game_update(Game this){
 				this->lastProcessName = "process collisions";
 #endif
 				// simulate collisions and set streaming flag
-				Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
+				GameState_setCanStream((GameState)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
 
 				// save time
 				this->lastTime[kPhysics] = currentTime;
@@ -710,14 +710,14 @@ void Game_update(Game this){
 #ifdef __DEBUG_TOOLS
 				if(!Game_isInSpecialMode(this))
 #endif
-#ifdef __LEVEL_EDITOR
+#ifdef __STAGE_EDITOR
 				if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
 				if(!Game_isInSpecialMode(this))
 #endif
 				// apply world transformations
-				Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
+				GameState_transform((GameState)StateMachine_getCurrentState(this->stateMachine));
 #ifdef __DEBUG
 				this->lastProcessName = "render";
 #endif
@@ -829,16 +829,16 @@ int Game_isInDebugMode(Game this){
 		
 	ASSERT(this, "Game::isInDebugMode: null this");
 
-	return StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance();
+	return StateMachine_getCurrentState(this->stateMachine) == (State)DebugState_getInstance();
 }
 #endif
 
-#ifdef __LEVEL_EDITOR
-int Game_isInLevelEditor(Game this){
+#ifdef __STAGE_EDITOR
+int Game_isInStageEditor(Game this){
 		
-	ASSERT(this, "Game::isInLevelEditor: null this");
+	ASSERT(this, "Game::isInGameStateEditor: null this");
 
-	return StateMachine_getCurrentState(this->stateMachine) == (State)LevelEditorScreen_getInstance();
+	return StateMachine_getCurrentState(this->stateMachine) == (State)StageEditorState_getInstance();
 }
 #endif
 
@@ -847,7 +847,7 @@ int Game_isInAnimationEditor(Game this){
 		
 	ASSERT(this, "Game::isInAnimationEditor: null this");
 	
-	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationEditorScreen_getInstance();
+	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationEditorState_getInstance();
 }
 #endif
 
@@ -862,8 +862,8 @@ int Game_isInSpecialMode(Game this) {
 #ifdef __DEBUG_TOOLS
 	isInSpecialMode |= Game_isInDebugMode(this);
 #endif
-#ifdef __LEVEL_EDITOR
-	isInSpecialMode |= Game_isInLevelEditor(this);
+#ifdef __STAGE_EDITOR
+	isInSpecialMode |= Game_isInStageEditor(this);
 #endif	
 #ifdef __ANIMATION_EDITOR
 	isInSpecialMode |= Game_isInAnimationEditor(this);
@@ -887,5 +887,5 @@ Stage Game_getStage(Game this){
 
 	ASSERT(this, "Game::getStage: null this");
 
-	return Level_getStage((Level)StateMachine_getCurrentState(this->stateMachine));
+	return GameState_getStage((GameState)StateMachine_getCurrentState(this->stateMachine));
 }

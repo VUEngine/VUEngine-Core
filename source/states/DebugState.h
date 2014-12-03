@@ -17,14 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
+#ifndef DEBUG_STATE_H_
+#define DEBUG_STATE_H_
 
-#ifndef LEVEL_EDITOR_H_
-#define LEVEL_EDITOR_H_
-
-
-#ifdef __LEVEL_EDITOR
-
-
+#ifdef __DEBUG_TOOLS
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -34,10 +30,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Object.h>
-#include <Entity.h>
-#include <Level.h>
-
+#include <State.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -49,27 +42,20 @@
  */
 
 // declare the virtual methods
-#define LevelEditor_METHODS													\
-		Object_METHODS														\
-
+#define DebugState_METHODS										\
+	State_METHODS;									
 
 // declare the virtual methods which are redefined
-#define LevelEditor_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, LevelEditor, handleMessage);				\
+#define DebugState_SET_VTABLE(ClassName)						\
+	State_SET_VTABLE(ClassName)									\
+	__VIRTUAL_SET(ClassName, DebugState, enter);				\
+	__VIRTUAL_SET(ClassName, DebugState, execute);				\
+	__VIRTUAL_SET(ClassName, DebugState, exit);				\
+	__VIRTUAL_SET(ClassName, DebugState, handleMessage);		\
 
 
-// declare a LevelEditor
-__CLASS(LevelEditor);
+__CLASS(DebugState);
 
-
-// for level editing
-typedef struct UserObject {
-	
-	char* name;
-	EntityDefinition* entityDefinition;
-	
-}UserObject;
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -81,24 +67,9 @@ typedef struct UserObject {
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// it is a singleton!
-LevelEditor LevelEditor_getInstance();
-
-// class's destructor
-void LevelEditor_destructor(LevelEditor this);
-
-// update
-void LevelEditor_update(LevelEditor this);
-
-// start level editor
-void LevelEditor_start(LevelEditor this, Level level);
-
-// stop level editor
-void LevelEditor_stop(LevelEditor this);
-
-// process a telegram
-int LevelEditor_handleMessage(LevelEditor this, Telegram telegram);
+// setup the init focus screen
+DebugState DebugState_getInstance(void);
 
 #endif
 
-#endif /*CLOCK_H_*/
+#endif /*DEBUG_STATE_H_*/

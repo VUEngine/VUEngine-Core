@@ -157,7 +157,7 @@ void Screen_positione(Screen this){
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
-#ifdef __LEVEL_EDITOR
+#ifdef __STAGE_EDITOR
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 #ifdef __ANIMATION_EDITOR

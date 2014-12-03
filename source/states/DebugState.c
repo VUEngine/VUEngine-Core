@@ -29,7 +29,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <DebugScreen.h>
+#include <DebugState.h>
 #include <Debug.h>
 #include <Game.h>
 #include <Telegram.h>
@@ -44,22 +44,22 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-static void DebugScreen_destructor(DebugScreen this);
+static void DebugState_destructor(DebugState this);
 
 // class's constructor
-static void DebugScreen_constructor(DebugScreen this);
+static void DebugState_constructor(DebugState this);
 
 // state's enter
-static void DebugScreen_enter(DebugScreen this, void* owner);
+static void DebugState_enter(DebugState this, void* owner);
 
 // state's execute
-static void DebugScreen_execute(DebugScreen this, void* owner);
+static void DebugState_execute(DebugState this, void* owner);
 
 // state's enter
-static void DebugScreen_exit(DebugScreen this, void* owner);
+static void DebugState_exit(DebugState this, void* owner);
 
 // state's on message
-static int DebugScreen_handleMessage(DebugScreen this, void* owner, Telegram telegram);
+static int DebugState_handleMessage(DebugState this, void* owner, Telegram telegram);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -88,14 +88,14 @@ enum Screens {
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define DebugScreen_ATTRIBUTES			\
+#define DebugState_ATTRIBUTES			\
 										\
 	/* inherits */						\
 	State_ATTRIBUTES					\
 
 
 
-__CLASS_DEFINITION(DebugScreen);
+__CLASS_DEFINITION(DebugState);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -109,18 +109,18 @@ __CLASS_DEFINITION(DebugScreen);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // it's a singleton
-__SINGLETON(DebugScreen);
+__SINGLETON(DebugState);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void DebugScreen_constructor(DebugScreen this){
+static void DebugState_constructor(DebugState this){
 		
 	__CONSTRUCT_BASE(State);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-static void DebugScreen_destructor(DebugScreen this){
+static void DebugState_destructor(DebugState this){
 	
 	// destroy base
 	__SINGLETON_DESTROY(State);
@@ -128,23 +128,23 @@ static void DebugScreen_destructor(DebugScreen this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's enter
-static void DebugScreen_enter(DebugScreen this, void* owner){
+static void DebugState_enter(DebugState this, void* owner){
 	
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
 
-	Debug_show(Debug_getInstance(), (Level)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
+	Debug_show(Debug_getInstance(), (GameState)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
-static void DebugScreen_execute(DebugScreen this, void* owner){
+static void DebugState_execute(DebugState this, void* owner){
 
 	Debug_update(Debug_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's exit 
-static void DebugScreen_exit(DebugScreen this, void* owner){
+static void DebugState_exit(DebugState this, void* owner){
 	
 	Debug_hide(Debug_getInstance());
 	Clock_pause(Game_getInGameClock(Game_getInstance()), false);
@@ -152,7 +152,7 @@ static void DebugScreen_exit(DebugScreen this, void* owner){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's on message
-static int DebugScreen_handleMessage(DebugScreen this, void* owner, Telegram telegram){
+static int DebugState_handleMessage(DebugState this, void* owner, Telegram telegram){
 	
 	// process message
 	switch(Telegram_getMessage(telegram)){

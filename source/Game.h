@@ -33,7 +33,7 @@
 #include <HardwareManager.h>
 #include <Clock.h>
 #include <Stage.h>
-#include <Level.h>
+#include <GameState.h>
 #include <Stage.h>
 
 
@@ -136,8 +136,8 @@ void Game_setOptical(Game this, Optical optical);
 int Game_isInDebugMode(Game this);
 #endif
 
-#ifdef __LEVEL_EDITOR
-int Game_isInLevelEditor(Game this);
+#ifdef __STAGE_EDITOR
+int Game_isInStageEditor(Game this);
 #endif
 
 #ifdef __ANIMATION_EDITOR

@@ -18,8 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef LEVEL_H_
-#define LEVEL_H_
+#ifndef STAGE_EDITOR_H_
+#define STAGE_EDITOR_H_
+
+
+#ifdef __STAGE_EDITOR
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -31,9 +34,9 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <State.h>
-#include <Telegram.h>
-#include <Stage.h>
+#include <Object.h>
+#include <Entity.h>
+#include <GameState.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -46,37 +49,27 @@
  */
 
 // declare the virtual methods
-#define Level_METHODS								\
-		State_METHODS								\
-		__VIRTUAL_DEC(transform);					\
+#define StageEditor_METHODS													\
+		Object_METHODS														\
 
 
 // declare the virtual methods which are redefined
-#define Level_SET_VTABLE(ClassName)								\
-		State_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Level, enter);					\
-		__VIRTUAL_SET(ClassName, Level, execute);				\
-		__VIRTUAL_SET(ClassName, Level, exit);					\
-		__VIRTUAL_SET(ClassName, Level, pause);					\
-		__VIRTUAL_SET(ClassName, Level, resume);				\
-		__VIRTUAL_SET(ClassName, Level, handleMessage);			\
-		__VIRTUAL_SET(ClassName, Level, transform);				\
+#define StageEditor_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)										\
+		__VIRTUAL_SET(ClassName, StageEditor, handleMessage);				\
+
+
+// declare a StageEditor
+__CLASS(StageEditor);
+
+
+// for level editing
+typedef struct UserObject {
 	
-
-#define Level_ATTRIBUTES					\
-											\
-	/* super's attributes */				\
-	State_ATTRIBUTES;						\
-											\
-	/* a pointer to the game's stage */		\
-	Stage stage;							\
-											\
-	/* flag to allow streaming */			\
-	int canStream;
-
-
-__CLASS(Level);
-
+	char* name;
+	EntityDefinition* entityDefinition;
+	
+}UserObject;
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -88,61 +81,24 @@ __CLASS(Level);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// setup the init focus screen
-Level Level_getInstance(void);
-
-// class's constructor
-void Level_constructor(Level this);
+// it is a singleton!
+StageEditor StageEditor_getInstance();
 
 // class's destructor
-void Level_destructor(Level this);
+void StageEditor_destructor(StageEditor this);
 
-// state's enter
-void Level_enter(Level this, void* owner);
+// update
+void StageEditor_update(StageEditor this);
 
-// state's execute
-void Level_execute(Level this, void* owner);
+// start level editor
+void StageEditor_start(StageEditor this, GameState gameState);
 
-// state's enter
-void Level_exit(Level this, void* owner);
+// stop level editor
+void StageEditor_stop(StageEditor this);
 
-// state's execute
-void Level_pause(Level this, void* owner);
+// process a telegram
+int StageEditor_handleMessage(StageEditor this, Telegram telegram);
 
-// state's execute
-void Level_resume(Level this, void* owner);
+#endif
 
-// state's on message
-int Level_handleMessage(Level this, void* owner, Telegram telegram);
-
-// update level entities' positions
-void Level_transform(Level this);
-
-// propagate message to all entities in the level
-int Level_propagateMessage(Level this, int message);
-			
-// process user input
-void Level_onKeyPressed(Level this, int pressedKey);
-
-// process user input
-void Level_onKeyUp(Level this, int pressedKey);
-
-// process user input
-void Level_onKeyHold(Level this, int pressedKey);
-
-// process user input
-void Level_onMessage(Level this, int message);
-
-// load a stage
-void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);
-
-// set streaming flag
-void Level_setCanStream(Level this, int canStream);
-
-// get streaming flag
-int Level_canStream(Level this);
-
-// retrieve stage 
-Stage Level_getStage(Level this);
-
-#endif /*LEVEL_H_*/
+#endif /*CLOCK_H_*/

@@ -33,7 +33,7 @@
  */
 
 #include <Object.h>
-#include <Level.h>
+#include <GameState.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void Debug_destructor(Debug this);
 void Debug_update(Debug this);
 
 // show debug screens
-void Debug_show(Debug this, Level level);
+void Debug_show(Debug this, GameState gameState);
 
 // hide debug screens
 void Debug_hide(Debug this);
