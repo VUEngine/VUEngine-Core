@@ -72,7 +72,7 @@ Features:
 			World layer status
 			Collision boxes
 	· Object Oriented support through the use of Metaprogramming (C MACROS):
-		* Inheritance (and experimental Multiple inheritance)
+		* Simple inheritance
 		* Polymorphism
 		* Encapsulation
 	· Rendering:
