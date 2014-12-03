@@ -157,6 +157,7 @@ ACKNOWLEDGMENTS
 	· Christian Radke (KR155E):
 		* Debugging and testing
 		* Documentation
+		* Engine's features and structure advisor
 	  
 	· RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums 
 	  who always are kind enough to share their knowledge. 
