@@ -97,39 +97,39 @@
  */
 
 
-#define Debug_ATTRIBUTES					\
-											\
-	/* super's attributes */				\
-	Object_ATTRIBUTES;						\
-											\
-	/* current in game state */				\
-	GameState gameState;						\
-											\
-	/* pages */								\
-	VirtualList pages;						\
-											\
-	/* sub pages */							\
-	VirtualList subPages;					\
-											\
-	/* current page */						\
-	VirtualNode currentPage;				\
-											\
-	/* current subb page */					\
-	VirtualNode currentSubPage;				\
-											\
-	/* current layer */						\
-	int currentLayer;						\
-											\
-	/* current bgmap */						\
-	int currentBgmap;						\
-											\
-	/* current char segment */				\
-	int charSeg;							\
-											\
-	/* window to look into bgmap memory */	\
-	VBVec2D bgmapDisplacement;				\
-											\
-	/* update function pointer */			\
+#define Debug_ATTRIBUTES									\
+															\
+	/* super's attributes */								\
+	Object_ATTRIBUTES;										\
+															\
+	/* current in game state */								\
+	GameState gameState;									\
+															\
+	/* pages */												\
+	VirtualList pages;										\
+															\
+	/* sub pages */											\
+	VirtualList subPages;									\
+															\
+	/* current page */										\
+	VirtualNode currentPage;								\
+															\
+	/* current subb page */									\
+	VirtualNode currentSubPage;								\
+															\
+	/* current layer */										\
+	int currentLayer;										\
+															\
+	/* current bgmap */										\
+	int currentBgmap;										\
+															\
+	/* current char segment */								\
+	int charSeg;											\
+															\
+	/* window to look into bgmap memory */					\
+	VBVec2D bgmapDisplacement;								\
+															\
+	/* update function pointer */							\
 	void (*update)(void *);
 
 

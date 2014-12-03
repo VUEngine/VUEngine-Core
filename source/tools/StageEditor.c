@@ -781,6 +781,13 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey) {
 	}
 	else if(pressedKey & K_A) {
 		
+		if(1 >= SpriteManager_getFreeLayer(SpriteManager_getInstance())){
+		
+			Printing_text("No more WORLDs", 48 - 15, 4);
+			Printing_text("available     ", 48 - 15, 5);
+			return;
+		}
+		
 		VBVec3D position = Screen_getPosition(Screen_getInstance());
 		
 		position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
