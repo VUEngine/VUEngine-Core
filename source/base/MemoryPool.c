@@ -59,18 +59,6 @@ enum MemoryPoolSizes{
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/*
-#define __POOL_512B_SIZE 	__POOL_512B_SIZE
-#define __POOL_256B_SIZE 	__POOL_256B_SIZE
-#define __POOL_192B_SIZE 	__POOL_192B_SIZE
-#define __POOL_128B_SIZE 	__POOL_128B_SIZE
-#define __POOL_96B_SIZE 	__POOL_96B_SIZE
-#define __POOL_64B_SIZE 	__POOL_64B_SIZE
-#define __POOL_48B_SIZE 	__POOL_48B_SIZE
-#define __POOL_32B_SIZE 	__POOL_32B_SIZE
-#define __POOL_24B_SIZE 	__POOL_24B_SIZE
-#define __POOL_16B_SIZE 	__POOL_16B_SIZE
-*/
 
 #define MemoryPool_ATTRIBUTES							\
 														\
