@@ -57,6 +57,9 @@ __CLASS_DEFINITION(ScrollBackground);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// global
+extern VBVec3D * _screenPosition;
+extern MovementState* _screenMovementState;
 
 // calculate the scroll's screen position
 static void ScrollBackground_updateScrolling(ScrollBackground this);

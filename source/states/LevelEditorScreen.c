@@ -70,7 +70,7 @@ static int LevelEditorScreen_handleMessage(LevelEditorScreen this, void* owner, 
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-extern const u16 ASCII_CH[];
+
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens {

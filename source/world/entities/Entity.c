@@ -56,6 +56,8 @@ __CLASS_DEFINITION(Entity);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// global
+extern MovementState* _screenMovementState;
 
 // add sprite
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites);

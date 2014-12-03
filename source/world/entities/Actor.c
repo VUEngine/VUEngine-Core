@@ -71,6 +71,9 @@ __CLASS_DEFINITION(Actor);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// global
+extern MovementState* _screenMovementState;
+
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 

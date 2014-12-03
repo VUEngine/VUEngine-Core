@@ -33,7 +33,6 @@
 #include <AnimationEditor.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Globals.h>
 #include <SpriteManager.h>
 #include <Level.h>
 #include <Stage.h>

@@ -32,7 +32,6 @@
 #include <LevelEditor.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Globals.h>
 #include <Entity.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
@@ -124,7 +123,6 @@ enum Modes {
 		kLastMode
 };
 
-extern UserObject _userObjects[];
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -134,6 +132,12 @@ extern UserObject _userObjects[];
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+// globals
+extern Optical* _optical;
+extern UserObject _userObjects[];
+extern MovementState* _screenMovementState;
+
 
 static void LevelEditor_constructor(LevelEditor this);
 

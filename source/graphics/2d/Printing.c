@@ -52,8 +52,11 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-extern const u16 ASCII_CH[];
+// global to change 
+static const u16* _asciiCharDefinition = NULL;
 
+// fall back measure
+extern const u16 ASCII_CH[];
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -64,6 +67,54 @@ extern const u16 ASCII_CH[];
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// setup the bgmap and char memory with printing data
+void Printing_setAscii(const u16* asciiCharDefinition){
+	
+	_asciiCharDefinition = asciiCharDefinition;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//setup the bgmap and char memory with printing data
+void Printing_writeAscii(){
+	
+	// check that character definitions is not null
+	if(!_asciiCharDefinition){
+		
+		_asciiCharDefinition = (const u16*)ASCII_CH;
+	}
+	
+	//copy ascii char definition to charsegment 3
+	Mem_copy((u8*)(CharSeg3 + (254 * 16)), (u8*)_asciiCharDefinition, 258 << 4);
+	
+    //set third char segment's mem usage
+   // CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//render general print output layer
+void Printing_render(int textLayer){
+	
+	//set the world's head
+    WORLD_HEAD((textLayer), WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP));
+    
+    //set the world's size
+    WORLD_SIZE((textLayer), 384, 224);
+    
+    //set the world's ...
+    WORLD_GSET((textLayer), 0, __ZZERO, 0);
+    
+    //set world cuting point
+    WORLD_MSET((textLayer), 0, 0, 0);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// clear printing area
+void Printing_clear(){
+	
+	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // direct printing out method
@@ -145,9 +196,6 @@ void Printing_hex(WORD value,int x,int y){
 	}
 }
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Printing_float(float value,int x,int y){
 	
@@ -205,45 +253,4 @@ void Printing_float(float value,int x,int y){
 void Printing_text(char *string, int x,int y){
 	
 	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALLETE);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//render general print output layer
-void Printing_render(int textLayer){
-	
-	//set the world's head
-    WORLD_HEAD((textLayer), WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP));
-    
-    //set the world's size
-    WORLD_SIZE((textLayer), 384, 224);
-    
-    //set the world's ...
-    WORLD_GSET((textLayer), 0, __ZZERO, 0);
-    
-    //set world cuting point
-    WORLD_MSET((textLayer), 0, 0, 0);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//setup the bgmap and char memory with printing data
-void Printing_writeAscii(){
-	
-	// check that character definitions is not null
-	if(!_asciiChar){
-		
-		_asciiChar = (const u16*)ASCII_CH;
-	}
-	
-	//copy ascii char definition to charsegment 3
-	Mem_copy((u8*)(CharSeg3 + (254 * 16)), (u8*)_asciiChar, 258 << 4);
-	
-    //set third char segment's mem usage
-   // CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// clear printing area
-void Printing_clear(){
-	
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 }

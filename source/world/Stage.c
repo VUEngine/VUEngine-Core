@@ -40,7 +40,6 @@
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
 
 #include <Stage.h>
-#include <Globals.h>
 #include <Optics.h>
 #include <SoundManager.h>
 #include <Screen.h>
@@ -75,6 +74,10 @@ typedef struct StageEntityDescription {
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+// global
+extern VBVec3D * _screenPosition;
+extern MovementState* _screenMovementState;
 
 //class's constructor
 static void Stage_constructor(Stage this);

@@ -33,7 +33,6 @@
 #include <Debug.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Globals.h>
 #include <FrameRate.h>
 #include <MemoryPool.h>
 #include <MessageDispatcher.h>

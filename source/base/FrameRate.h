@@ -43,16 +43,14 @@
  */
 
 
-
-
 // declare the virtual methods
-#define FrameRate_METHODS						\
-		Object_METHODS							\
+#define FrameRate_METHODS											\
+		Object_METHODS												\
 
 
 // declare the virtual methods which are redefined
-#define FrameRate_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)					\
+#define FrameRate_SET_VTABLE(ClassName)								\
+		Object_SET_VTABLE(ClassName)								\
 		
 	
 __CLASS(FrameRate);

@@ -35,7 +35,6 @@
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <MiscStructs.h>
-#include <Globals.h>
 #include <FrameRate.h>
 #include <Clock.h>
 #include <TextureManager.h>
@@ -139,6 +138,9 @@ __CLASS_DEFINITION(Game);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+// global
+Optical* _optical = NULL;
 
 // class's constructor
 static void Game_constructor(Game this);
@@ -581,7 +583,6 @@ void Game_handleInput(Game this, int currentKey){
 	}	
 #endif
 
-
 	// check for a new key pressed
 	if(newKey){
 
@@ -629,9 +630,9 @@ void Game_update(Game this){
 
 	u32 currentTime = 0;
 
-	// don't allow all game's functions to be updated on the same cycle
+	// don't allow all game's systems to be updated on the same cycle,
 	// this makes obligatory to have a unified target frame rate for all
-	// game's subsystems
+	// of them
 	while(true){
 
 		static int cycle = kLogic;
@@ -707,13 +708,13 @@ void Game_update(Game this){
 				this->lastProcessName = "apply transformations";
 #endif
 #ifdef __DEBUG_TOOLS
-			if(!Game_isInSpecialMode(this))
+				if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __LEVEL_EDITOR
-			if(!Game_isInSpecialMode(this))
+				if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
-			if(!Game_isInSpecialMode(this))
+				if(!Game_isInSpecialMode(this))
 #endif
 				// apply world transformations
 				Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
