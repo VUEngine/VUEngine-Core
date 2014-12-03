@@ -187,7 +187,7 @@ static void Game_constructor(Game this){
 	// construct the general clock
 	this->clock = __NEW(Clock);
 	
-	// construc the in game clock
+	// construct the in game clock
 	this->inGameClock = __NEW(Clock);
 
 	// construct the game's state machine
@@ -195,8 +195,7 @@ static void Game_constructor(Game this){
 	
 	this->nextState = NULL;
 	
-	// call get instance in singletons to make sure their constructors
-	// are called now
+	// make sure all managers are initialized now
 	this->hardwareManager = HardwareManager_getInstance();
 	this->bgmapManager = TextureManager_getInstance();
 	this->frameRate  = FrameRate_getInstance();	
@@ -209,24 +208,26 @@ static void Game_constructor(Game this){
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
 	
+	// to make debugging easier
 	this->lastProcessName = "starting up";
 	
-	//OPTIC VALUES
+	// set optical value
 	this->optical.distanceEyeScreen = 0;	
 	
-	//maximun distance from the _SC to the infinite
+	// maximun distance from the screen's position to the horizon
 	this->optical.maximunViewDistance = 0;
 	
-	//distance from left to right eye (deep sensation)
+	// distance from left to right eye (deep sensation)
 	this->optical.baseDistance = 0;
 	
-	//vertical View point center
+	// screen's vertical view point center
 	this->optical.verticalViewPointCenter = 0;
 	
-	//horizontal View point center
+	// screen's horizontal view point center
 	this->optical.horizontalViewPointCenter = 0;
 	
-	// setup global pointers	
+	// setup global pointers
+	// need them to speed up critical processes
 	_optical = &this->optical;	
 
 	int i = 0; 
@@ -266,10 +267,10 @@ void Game_initialize(Game this){
 	// make sure timer interrupts are enable
 	HardwareManager_initializeTimer(this->hardwareManager);
 	
-	//initialize optic paramenters
+	// initialize optical paramenters
 	Game_setOpticalGlobals(this);
 	
-    //set waveform data
+    // set waveform data
     SoundManager_setWaveForm(this->soundManager);
     
     // reset collision manager
@@ -311,6 +312,8 @@ void Game_changeState(Game this, State state){
 
 	ASSERT(this, "Game::changeState: null this");
 
+	// state changing must be done when no other process
+	// may be affecting the game's general state
 	this->nextState = state;
 }
 
@@ -324,13 +327,13 @@ static void Game_setState(Game this, State state){
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
-	//set waveform data
+	// set waveform data
     SoundManager_setWaveForm(this->soundManager);
 
-    //setup state 
+    // setup new state 
     StateMachine_swapState(this->stateMachine, state);
 
-    //enable hardware pad read
+    // enable hardware pad read
     HardwareManager_enableKeypad(this->hardwareManager);
 
 	// load chars into graphic memory
@@ -359,7 +362,7 @@ void Game_enableHardwareInterrupts(Game this){
 
 	ASSERT(this, "Game::enableHardwareInterrupts: null this");
 
-	// disable rendering
+	// enable rendering
 	HardwareManager_enableRendering(this->hardwareManager);
 }
 
@@ -378,9 +381,6 @@ void Game_recoverGraphicMemory(Game this){
 	
 	ParamTableManager_destructor(this->paramTableManager);
 	this->paramTableManager = ParamTableManager_getInstance();
-	
-	//allocate and write map characters
-	//Stage_writeEntities(this->stage);
 	
 	HardwareManager_setupColumnTable(this->hardwareManager);
 }
@@ -405,8 +405,7 @@ void Game_reset(Game this){
 	// load chars into graphic memory
 	Printing_writeAscii();
 
-	// call get instance in singletons to make sure their constructors
-	// are called now
+	// TODO
 	//SoundManager_getInstance();
 }
 
@@ -416,11 +415,12 @@ void Game_saveState(Game this){
 
 	ASSERT(this, "Game::saveState: null this");
 
-	//save gameworld's object's current state
+	// TODO
+	// save gameworld's object's current state
 	//Stage_copy(this->auxStage, this->stage);
 	
-	//save engine's state
-	//this->previousLogic = this->currentLogic;
+	// save engine's state
+	// this->previousLogic = this->currentLogic;
 	//his->previousState=this->currentState;
 	
 }
@@ -431,11 +431,7 @@ void Game_recoverState(Game this){
 	
 	ASSERT(this, "Game::recoverState: null this");
 
-	//reload gameworld's object's current state
-	//Stage_reset(this->stage);
-	
-	//Stage_copy(this->stage, this->auxStage);
-	
+	// TODO
 	
 	//reload graphics
 	Game_recoverGraphicMemory(this);	
@@ -454,18 +450,20 @@ static void Game_setOpticalGlobals(Game this){
 	
 	ASSERT(this, "Game::setOpticalGlobals: null this");
 
+	// accounts for the phisical (real) space between the eyes and
+	// the VB's screens, whose virtual representation is the Screen instance
 	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
 	
-	//maximun distance from the _SC to the infinite	
+	// maximun distance from the _SC to the infinite	
 	this->optical.maximunViewDistance = ITOFIX19_13(__MAX_VIEW_DISTANCE);
 	
-	//distance from left to right eye (128) (deep sensation)	
+	// distance from left to right eye (deep sensation)	
 	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);
 	
-	//horizontal View point center (192)
+	// horizontal view point center
 	this->optical.horizontalViewPointCenter = ITOFIX19_13(__HVPC);
 	
-	//vertical View point center (112)  
+	// vertical view point center  
 	this->optical.verticalViewPointCenter = ITOFIX19_13(__VVPC);
 }
 
@@ -481,7 +479,7 @@ void Game_handleInput(Game this, int currentKey){
 
 #ifdef __DEBUG_TOOLS
 
-	// check for a new key pressed
+	// check code to access special feature
 	if((previousKey & K_SEL) && (newKey & K_STA)){
 
 		if(Game_isInDebugMode(this)){
@@ -505,7 +503,7 @@ void Game_handleInput(Game this, int currentKey){
 
 #ifdef __LEVEL_EDITOR
 
-	// check for a new key pressed
+	// check code to access special feature
 	if((previousKey & K_STA) && (newKey & K_SEL)){
 
 		if(Game_isInLevelEditor(this)){
@@ -536,7 +534,7 @@ void Game_handleInput(Game this, int currentKey){
 	
 #ifdef __ANIMATION_EDITOR
 	
-	// check for a new key pressed
+	// check code to access special feature
 	if((previousKey & K_LT) && (newKey & K_RT)){
 
 		if(Game_isInAnimationEditor(this)){
@@ -587,7 +585,7 @@ void Game_handleInput(Game this, int currentKey){
 	// check for a new key pressed
 	if(newKey){
 
-		// inform the game about the key pressed		
+		// inform the game about the pressed key 		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &newKey);
 	}
 	
@@ -595,7 +593,7 @@ void Game_handleInput(Game this, int currentKey){
 
 		u32 releasedKey = (previousKey & ~currentKey);
 
-		// inform the game about the key pressed		
+		// inform the game about the released key 		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &releasedKey);
 	}
 	
@@ -603,7 +601,7 @@ void Game_handleInput(Game this, int currentKey){
 
 		u32 holdKey = currentKey & previousKey;
 
-		// inform the game about the key pressed		
+		// inform the game about the hold key 		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
 	}
 	
@@ -623,12 +621,6 @@ void Game_render(Game this) {
 	FrameRate_increaseRenderFPS(this->frameRate);
 }
 
-#undef __CAP_FPS
-#define __CAP_FPS true
-
-#undef __TARGET_FPS
-#define __TARGET_FPS 	60
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update engine's world's state
 void Game_update(Game this){
@@ -637,6 +629,9 @@ void Game_update(Game this){
 
 	u32 currentTime = 0;
 
+	// don't allow all game's functions to be updated on the same cycle
+	// this makes obligatory to have a unified target frame rate for all
+	// game's subsystems
 	while(true){
 
 		static int cycle = kLogic;
@@ -647,13 +642,11 @@ void Game_update(Game this){
 			
 			if(currentTime - this->lastTime[kLogic] > 1000 / __TARGET_FPS){
 	
-	#ifdef __DEBUG
+#ifdef __DEBUG
 				this->lastProcessName = "handle input";
-	#endif
-	
+#endif
 				// process user's input 
 				Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
-	
 #ifdef __DEBUG
 				this->lastProcessName = "update state machines";
 #endif
@@ -662,20 +655,17 @@ void Game_update(Game this){
 	
 				// update the game's logic
 				StateMachine_update(this->stateMachine);
-				
-				
 #ifdef __DEBUG
-			this->lastProcessName = "dispatch delayed messages";
+				this->lastProcessName = "dispatch delayed messages";
 #endif
-
 #ifdef __DEBUG_TOOLS
-			if(!Game_isInSpecialMode(this))
+				if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __LEVEL_EDITOR
-			if(!Game_isInSpecialMode(this))
+				if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
-			if(!Game_isInSpecialMode(this))
+				if(!Game_isInSpecialMode(this))
 #endif
 				// dispatch queued messages
 			    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
@@ -683,31 +673,30 @@ void Game_update(Game this){
 				// increase the frame rate
 				FrameRate_increaseLogicFPS(this->frameRate);
 	
+				// record time
 			    this->lastTime[kLogic] = currentTime;
-			    
+#ifdef __DEBUG
 				this->lastProcessName = "kLogic ended";
-
+#endif
 			}
 		}
 		else if(kPhysics == cycle) {
 
 			if(currentTime - this->lastTime[kPhysics] > 1000 / __TARGET_FPS){
 	
-	#ifdef __DEBUG
+#ifdef __DEBUG
 				this->lastProcessName = "update physics";
-	#endif
-
-				
+#endif
 				// simulate physics
 				PhysicalWorld_update(this->physicalWorld);
-	
 #ifdef __DEBUG
 				this->lastProcessName = "process collisions";
 #endif
-				// simulate collisions
+				// simulate collisions and set streaming flag
 				Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
-				
+#ifdef __DEBUG
 				this->lastTime[kPhysics] = currentTime;
+#endif
 			}
 		}
 		else if(kRender == cycle) {
@@ -717,21 +706,17 @@ void Game_update(Game this){
 #ifdef __DEBUG
 				this->lastProcessName = "apply transformations";
 #endif
-	
 #ifdef __DEBUG_TOOLS
 			if(!Game_isInSpecialMode(this))
 #endif
-				
 #ifdef __LEVEL_EDITOR
 			if(!Game_isInSpecialMode(this))
 #endif
-
 #ifdef __ANIMATION_EDITOR
 			if(!Game_isInSpecialMode(this))
 #endif
 				// apply world transformations
 				Level_transform((Level)StateMachine_getCurrentState(this->stateMachine));
-	
 #ifdef __DEBUG
 				this->lastProcessName = "render";
 #endif
@@ -741,15 +726,18 @@ void Game_update(Game this){
 				// increase the frame rate
 				FrameRate_increasePhysicsFPS(this->frameRate);
 				
+				// save time
 				this->lastTime[kRender] = currentTime;
 			}
 		}
 
+		// increase cycle
 		if(kLast <= ++cycle) {
 			
 			cycle = kFirst + 1;
 		}
 		
+		// check if new state available
 		if(this->nextState){
 			
 			Game_setState(this, this->nextState);
@@ -771,8 +759,12 @@ int Game_handleMessage(Game this, Telegram telegram){
 	
 		case kFRSareHigh:
 			
+			// since performance is good, do some cleaning up to 
+			// char memory
 			CharSetManager_defragmentProgressively(this->charSetManager);
 			break;
+			
+			// TODO: bgmap memory defragmentation
 	}
 	
 	return StateMachine_handleMessage(this->stateMachine, telegram);
@@ -834,6 +826,8 @@ void Game_setOptical(Game this, Optical optical) {
 #ifdef __DEBUG_TOOLS
 int Game_isInDebugMode(Game this){
 		
+	ASSERT(this, "Game::isInDebugMode: null this");
+
 	return StateMachine_getCurrentState(this->stateMachine) == (State)DebugScreen_getInstance();
 }
 #endif
@@ -841,6 +835,8 @@ int Game_isInDebugMode(Game this){
 #ifdef __LEVEL_EDITOR
 int Game_isInLevelEditor(Game this){
 		
+	ASSERT(this, "Game::isInLevelEditor: null this");
+
 	return StateMachine_getCurrentState(this->stateMachine) == (State)LevelEditorScreen_getInstance();
 }
 #endif
@@ -848,24 +844,26 @@ int Game_isInLevelEditor(Game this){
 #ifdef __ANIMATION_EDITOR
 int Game_isInAnimationEditor(Game this){
 		
+	ASSERT(this, "Game::isInAnimationEditor: null this");
+	
 	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationEditorScreen_getInstance();
 }
 #endif
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// whether an special mode is active
+// whether if a special mode is active
 int Game_isInSpecialMode(Game this) {
+
+	ASSERT(this, "Game::isInSpecialMode: null this");
 
 	int isInSpecialMode = false;
 	
 #ifdef __DEBUG_TOOLS
 	isInSpecialMode |= Game_isInDebugMode(this);
 #endif
-	
 #ifdef __LEVEL_EDITOR
 	isInSpecialMode |= Game_isInLevelEditor(this);
 #endif	
-
 #ifdef __ANIMATION_EDITOR
 	isInSpecialMode |= Game_isInAnimationEditor(this);
 #endif	
@@ -877,12 +875,16 @@ int Game_isInSpecialMode(Game this) {
 // retrieve state machine, use with caution!!!
 StateMachine Game_getStateMachine(Game this) {
 
+	ASSERT(this, "Game::getStateMachine: null this");
+
 	return this->stateMachine;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve the current level's stage
 Stage Game_getStage(Game this){
+
+	ASSERT(this, "Game::getStage: null this");
 
 	return Level_getStage((Level)StateMachine_getCurrentState(this->stateMachine));
 }
