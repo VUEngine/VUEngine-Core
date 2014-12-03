@@ -60,35 +60,17 @@ enum MemoryPoolSizes{
  */
 
 /*
-#define __POOL_512B_SIZE_FINAL 	__POOL_512B_SIZE
-#define __POOL_256B_SIZE_FINAL 	__POOL_256B_SIZE
-#define __POOL_192B_SIZE_FINAL 	__POOL_192B_SIZE
-#define __POOL_128B_SIZE_FINAL 	__POOL_128B_SIZE
-#define __POOL_96B_SIZE_FINAL 	__POOL_96B_SIZE
-#define __POOL_64B_SIZE_FINAL 	__POOL_64B_SIZE
-#define __POOL_48B_SIZE_FINAL 	__POOL_48B_SIZE
-#define __POOL_32B_SIZE_FINAL 	__POOL_32B_SIZE
-#define __POOL_24B_SIZE_FINAL 	__POOL_24B_SIZE
-#define __POOL_16B_SIZE_FINAL 	__POOL_16B_SIZE
+#define __POOL_512B_SIZE 	__POOL_512B_SIZE
+#define __POOL_256B_SIZE 	__POOL_256B_SIZE
+#define __POOL_192B_SIZE 	__POOL_192B_SIZE
+#define __POOL_128B_SIZE 	__POOL_128B_SIZE
+#define __POOL_96B_SIZE 	__POOL_96B_SIZE
+#define __POOL_64B_SIZE 	__POOL_64B_SIZE
+#define __POOL_48B_SIZE 	__POOL_48B_SIZE
+#define __POOL_32B_SIZE 	__POOL_32B_SIZE
+#define __POOL_24B_SIZE 	__POOL_24B_SIZE
+#define __POOL_16B_SIZE 	__POOL_16B_SIZE
 */
-
-#define __POOL_512B_SIZE_FINAL 	(__BLOCK_512B * 0)
-#define __POOL_256B_SIZE_FINAL 	(__BLOCK_256B * 0)
-#define __POOL_192B_SIZE_FINAL 	(__BLOCK_192B * 8)
-#define __POOL_128B_SIZE_FINAL 	(__BLOCK_128B * 16)
-#define __POOL_96B_SIZE_FINAL 	(__BLOCK_96B * 64)
-#define __POOL_64B_SIZE_FINAL 	(__BLOCK_64B * 128)
-#define __POOL_48B_SIZE_FINAL 	(__BLOCK_48B * 32)
-#define __POOL_32B_SIZE_FINAL 	(__BLOCK_32B * 256)
-
-#ifdef __DEBUG_TOOLS
-#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 512)
-#define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 512)
-#else
-#define __POOL_24B_SIZE_FINAL 	(__BLOCK_24B * 128)
-#define __POOL_16B_SIZE_FINAL 	(__BLOCK_16B * 128)
-#endif
-
 
 #define MemoryPool_ATTRIBUTES							\
 														\
@@ -99,16 +81,16 @@ enum MemoryPoolSizes{
 	/* must always put together the pools! */			\
 	/* first byte is used as a usage flag */			\
 														\
-	/*BYTE pool512B[__POOL_512B_SIZE_FINAL];*/			\
-	BYTE pool256B[__POOL_256B_SIZE_FINAL]; 				\
-	BYTE pool192B[__POOL_192B_SIZE_FINAL]; 				\
-	BYTE pool128B[__POOL_128B_SIZE_FINAL];				\
-	BYTE pool96B[__POOL_96B_SIZE_FINAL];				\
-	BYTE pool64B[__POOL_64B_SIZE_FINAL];				\
-	BYTE pool48B[__POOL_48B_SIZE_FINAL];				\
-	BYTE pool32B[__POOL_32B_SIZE_FINAL];				\
-	BYTE pool24B[__POOL_24B_SIZE_FINAL];				\
-	BYTE pool16B[__POOL_16B_SIZE_FINAL];				\
+	/*BYTE pool512B[__POOL_512B_SIZE];*/				\
+	BYTE pool256B[__POOL_256B_SIZE]; 					\
+	BYTE pool192B[__POOL_192B_SIZE]; 					\
+	BYTE pool128B[__POOL_128B_SIZE];					\
+	BYTE pool96B[__POOL_96B_SIZE];						\
+	BYTE pool64B[__POOL_64B_SIZE];						\
+	BYTE pool48B[__POOL_48B_SIZE];						\
+	BYTE pool32B[__POOL_32B_SIZE];						\
+	BYTE pool24B[__POOL_24B_SIZE];						\
+	BYTE pool16B[__POOL_16B_SIZE];						\
 	/* here ends the pool area */						\
 														\
 	/* pointer to the beggining of each memory pool */	\

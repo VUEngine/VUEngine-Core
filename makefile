@@ -20,8 +20,9 @@ ROMHEADER = lib/vb.hdr
 DLIBS =
 
 # Obligatory headers
-VBJAE_ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
-					-include $(VBJAENGINE)/config.h 								\
+CONFIG_FILE = $(VBJAENGINE)/config.h
+
+ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
 					-include $(VBJAENGINE)/source/base/Constants.h	 				\
 					-include $(VBJAENGINE)/source/base/VirtualList.h	 				\
 					-include $(VBJAENGINE)/source/hardware/HardwareManager.h		\
@@ -32,20 +33,20 @@ VBJAE_ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
 # The next blocks change some variables depending on the build type
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding  
-CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline $(VBJAE_ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -include $(CONFIG_FILE) $(ESSENTIALS) 
 MACROS = __DEBUG
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =  
-CCPARAM = -nodefaultlibs -mv810 -Wall -O3 -Winline $(VBJAE_ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS = NDEBUG
 endif
 
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =  
-CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline $(GAME_ESSENTIALS) -E -P
+CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
 MACROS = __DEBUG
 endif
 
@@ -88,7 +89,8 @@ DFILES := $(addprefix $(STORE)/,$(SOURCE:.c=.d))
 all: $(TARGET).a
 
 $(TARGET).a: dirs $(OBJECTS)
-	@echo Creating $(TARGET).
+	@echo Config file: $(CONFIG_FILE)
+	@echo Creating $(TARGET).a
 	@$(AR) rcs $@ $(OBJECTS) 
 	@echo Done $@
 
@@ -96,11 +98,11 @@ $(TARGET).a: dirs $(OBJECTS)
 # the object path at the start of the file because the files gcc
 # outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: %.c
-		@echo Creating o file for $(TYPE) $*...
-		@$(GCC) -Wp,-MD,$(STORE)/$*.dd  $(foreach INC,$(INCPATH),-I$(INC))\
-                $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -c $< -o $@
-		@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
-		@rm -f $(STORE)/$*.dd
+	@echo Creating o file for $(TYPE) $*...
+	@$(GCC) -Wp,-MD,$(STORE)/$*.dd  $(foreach INC,$(INCPATH),-I$(INC))\
+            $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -c $< -o $@
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
+	@rm -f $(STORE)/$*.dd
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
