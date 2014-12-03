@@ -695,9 +695,9 @@ void Game_update(Game this){
 #endif
 				// simulate collisions and set streaming flag
 				Level_setCanStream((Level)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
-#ifdef __DEBUG
+
+				// save time
 				this->lastTime[kPhysics] = currentTime;
-#endif
 			}
 		}
 		else if(kRender == cycle) {
