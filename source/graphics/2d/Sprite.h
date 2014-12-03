@@ -105,6 +105,10 @@
 	/* int hbiasAmplitude; */							\
 	int renderFlag;										\
 														\
+	/* parallax modifier to achieve better */			\
+	/* control over display */							\
+	s8 parallaxDisplacement;							\
+														\
 	/* location of texture in graphic memory */			\
 	Point texturePosition;								\
 														
@@ -134,6 +138,9 @@ typedef struct SpriteDefinition{
 	
 	// flag to indicate in which display to show the bgtexture
 	int display;
+	
+	// parallax modifier to achieve better */			
+	s8 parallaxDisplacement;
 	
 }SpriteDefinition;
 

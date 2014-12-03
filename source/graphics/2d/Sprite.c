@@ -107,6 +107,8 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 	
 	this->drawSpec.scale.x = ITOFIX7_9(1);
 	this->drawSpec.scale.y = ITOFIX7_9(1);
+	
+	this->parallaxDisplacement = spriteDefinition->parallaxDisplacement;
 
 	this->param = 0;
 		
@@ -369,7 +371,7 @@ void Sprite_render(Sprite this){
 		//set the world screen position
 		if(this->renderFlag & __UPDATE_G ){
 
-			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
+			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
 		}
 		
 		//set the world size according to the zoom
