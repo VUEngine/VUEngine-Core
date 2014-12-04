@@ -407,9 +407,9 @@ __inthnd_end:
     /* Rom info table (07FFFDE0h) */
 
 _rom_title:
-	.ascii "Snowball Wars       "	/* Game Title          */
+	.ascii "change this title   "	/* Game Title          */
 	.byte  0x00,0x00,0x00,0x00,0x00 /* Reserved            */
-	.ascii "JAESWG"			/* Manufacture/Game ID */
+	.ascii "MFGMID"			/* Manufacture/Game ID */
 	.byte  0x01			/* Rom Version         */
 
     /* Hardware Interupt Vectors */

@@ -339,7 +339,7 @@ static void Game_setState(Game this, State state){
     HardwareManager_enableKeypad(this->hardwareManager);
 
 	// load chars into graphic memory
-	Printing_writeAscii();
+	Printing_loadFont();
 	
 	// start physical simulation again
 	PhysicalWorld_start(this->physicalWorld);
@@ -405,7 +405,7 @@ void Game_reset(Game this){
 	PhysicalWorld_reset(this->physicalWorld);
 	
 	// load chars into graphic memory
-	Printing_writeAscii();
+	Printing_loadFont();
 
 	// TODO
 	//SoundManager_getInstance();

@@ -47,10 +47,10 @@
 void Printing_render(int textLayer);
 
 // setup the bgmap and char memory with printing data
-void Printing_setAscii(const u16* asciiCharDefinition);
+void Printing_setFontDefinition(const u16* fontCharDefinition);
 
 // setup the bgmap and char memory with printing data
-void Printing_writeAscii();
+void Printing_loadFont();
 
 // clear printing area
 void Printing_clear();

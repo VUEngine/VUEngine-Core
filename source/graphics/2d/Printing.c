@@ -53,10 +53,10 @@
  */
 
 // global to change 
-static const u16* _asciiCharDefinition = NULL;
+static const u16* _fontCharDefinition = NULL;
 
 // fall back measure
-extern const u16 ASCII_CH[];
+extern const u16 FontTiles[];
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -70,23 +70,23 @@ extern const u16 ASCII_CH[];
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // setup the bgmap and char memory with printing data
-void Printing_setAscii(const u16* asciiCharDefinition){
+void Printing_setFontDefinition(const u16* fontCharDefinition){
 	
-	_asciiCharDefinition = asciiCharDefinition;
+	_fontCharDefinition = fontCharDefinition;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //setup the bgmap and char memory with printing data
-void Printing_writeAscii(){
+void Printing_loadFont(){
 	
 	// check that character definitions is not null
-	if(!_asciiCharDefinition){
+	if(!_fontCharDefinition){
 		
-		_asciiCharDefinition = (const u16*)ASCII_CH;
+		_fontCharDefinition = (const u16*)FontTiles;
 	}
 	
-	//copy ascii char definition to charsegment 3
-	Mem_copy((u8*)(CharSeg3 + (254 * 16)), (u8*)_asciiCharDefinition, 258 << 4);
+	//copy font char definition to char segment 3
+	Mem_copy((u8*)(CharSeg3 + ((128 - 1) * 16)), (u8*)_fontCharDefinition, 257 << 4);
 	
     //set third char segment's mem usage
    // CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
@@ -146,7 +146,7 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt){
 				// x = col;
 				break;
 			default:
-				BGMM[(0x1000 * bgmap) + pos] = ((u16)string[i] + 0x700) | (bplt << 14);
+				BGMM[(0x1000 * bgmap) + pos] = ((u16)string[i] + 0x680) | (bplt << 14);
 				if (x++ > 63)
 				{
 					x = col;

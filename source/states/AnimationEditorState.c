@@ -70,7 +70,7 @@ static int AnimationEditorState_handleMessage(AnimationEditorState this, void* o
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-extern const u16 ASCII_CH[];
+extern const u16 FontTiles[];
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens {

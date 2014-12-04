@@ -69,7 +69,7 @@ static int DebugState_handleMessage(DebugState this, void* owner, Telegram teleg
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-extern const u16 ASCII_CH[];
+extern const u16 FontTiles[];
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens {
