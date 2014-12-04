@@ -194,13 +194,7 @@ void GameState_transform(GameState this){
 // propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message){
 
-	//create the telegram
-	Telegram telegram = __NEW(Telegram, __ARGUMENTS(0, this, this, message, NULL));
-
-	int result = GameState_handleMessage((GameState)this, this, telegram);
-	__DELETE(telegram);
-	
-	return result;
+	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, message));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
