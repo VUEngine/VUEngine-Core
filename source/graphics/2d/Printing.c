@@ -123,12 +123,10 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt){
 	/* Font consists of the last 256 chars (1792-2047) */
 	u16 i=0,pos=0,col=x;
 	
-	while(string[i])
-	{
+	while(string[i]) {
 		pos = (y << 6) + x;
 
-		switch(string[i])
-		{
+		switch(string[i]) {
 			case 7:
 				// Bell (!)
 				break;
@@ -146,9 +144,8 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt){
 				// x = col;
 				break;
 			default:
-				BGMM[(0x1000 * bgmap) + pos] = ((u16)string[i] + 0x680) | (bplt << 14);
-				if (x++ > 63)
-				{
+				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + 0x680) | (bplt << 14);
+				if (x++ > 63) {
 					x = col;
 					y++;
 				}
