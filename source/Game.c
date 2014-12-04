@@ -154,6 +154,9 @@ static void Game_setOpticalGlobals(Game this);
 // set game's state
 static void Game_setState(Game this, State state);
 
+// process input data according to the actual game status
+static void Game_handleInput(Game this);
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -185,6 +188,9 @@ static void Game_constructor(Game this){
 
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();
+	
+	// force construction now
+	ClockManager_getInstance();
 	
 	// construct the general clock
 	this->clock = __NEW(Clock);
@@ -471,18 +477,21 @@ static void Game_setOpticalGlobals(Game this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process input data according to the actual game status
-void Game_handleInput(Game this, int currentKey){
+static void Game_handleInput(Game this){
 	
 	ASSERT(this, "Game::handleInput: null this");
 
-	static u32 previousKey = 0;
-	
-	u32 newKey = currentKey & ~previousKey;
+	KeypadManager keypadManager = KeypadManager_getInstance();
+	KeypadManager_read(keypadManager);
+	u16 pressedKey = KeypadManager_getPressedKey(keypadManager);
+	u16 releasedKey = KeypadManager_getReleasedKey(keypadManager);
+	u16 holdKey = KeypadManager_getHoldKey(keypadManager);
+	u16 previousKey = KeypadManager_getPreviousKey(keypadManager);
 
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
-	if((previousKey & K_SEL) && (newKey & K_STA)){
+	if((previousKey & K_SEL) && (pressedKey & K_STA)){
 
 		if(Game_isInDebugMode(this)){
 			
@@ -498,7 +507,6 @@ void Game_handleInput(Game this, int currentKey){
 			StateMachine_pushState(this->stateMachine, (State)DebugState_getInstance());
 		}
 
-		previousKey = currentKey;
 		return;
 	}
 #endif
@@ -506,7 +514,7 @@ void Game_handleInput(Game this, int currentKey){
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if((previousKey & K_STA) && (newKey & K_SEL)){
+	if((previousKey & K_STA) && (pressedKey & K_SEL)){
 
 		if(Game_isInStageEditor(this)){
 			
@@ -522,13 +530,11 @@ void Game_handleInput(Game this, int currentKey){
 			StateMachine_pushState(this->stateMachine, (State)StageEditorState_getInstance());
 		}
 
-		previousKey = currentKey;
 		return;
 	}
 	
-	if(newKey & K_STA){
+	if(pressedKey & K_STA){
 		
-		previousKey = currentKey;
 		return;
 	}
 	
@@ -537,7 +543,7 @@ void Game_handleInput(Game this, int currentKey){
 #ifdef __ANIMATION_EDITOR
 	
 	// check code to access special feature
-	if((previousKey & K_LT) && (newKey & K_RT)){
+	if((previousKey & K_LT) && (pressedKey & K_RT)){
 
 		if(Game_isInAnimationEditor(this)){
 			
@@ -553,62 +559,51 @@ void Game_handleInput(Game this, int currentKey){
 			StateMachine_pushState(this->stateMachine, (State)AnimationEditorState_getInstance());
 		}
 
-		previousKey = currentKey;
 		return;
 	}
 	
 #endif
 	
 #ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this) && (newKey & K_SEL)){
+	if(!Game_isInSpecialMode(this) && (pressedKey & K_SEL)){
 		
-		previousKey = currentKey;
 		return;
 	}
 #endif
 
 #ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this) && (newKey & K_STA)){
+	if(!Game_isInSpecialMode(this) && (pressedKey & K_STA)){
 		
-		previousKey = currentKey;
 		return;
 	}
 #endif
 
 #ifdef __ANIMATION_EDITOR
-	if(Game_isInAnimationEditor(this) && (newKey & K_LT)){
+	if(Game_isInAnimationEditor(this) && (pressedKey & K_LT)){
 		
-		previousKey = currentKey;
 		return;
 	}	
 #endif
 
 	// check for a new key pressed
-	if(newKey){
+	if(pressedKey){
 
 		// inform the game about the pressed key 		
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &newKey);
+		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &pressedKey);
 	}
 	
-	if(currentKey != previousKey){
-
-		u32 releasedKey = (previousKey & ~currentKey);
+	if(releasedKey){
 
 		// inform the game about the released key 		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &releasedKey);
 	}
 	
-	if(currentKey & previousKey){
-
-		u32 holdKey = currentKey & previousKey;
+	if(holdKey){
 
 		// inform the game about the hold key 		
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
 	}
-	
-	previousKey = currentKey;
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // render game
 void Game_render(Game this) {
@@ -647,7 +642,7 @@ void Game_update(Game this){
 				this->lastProcessName = "handle input";
 #endif
 				// process user's input 
-				Game_handleInput(this, HardwareManager_readKeypad(this->hardwareManager));
+				Game_handleInput(this);
 #ifdef __DEBUG
 				this->lastProcessName = "update state machines";
 #endif

@@ -58,8 +58,6 @@ __CLASS_DEFINITION(InanimatedInGameEntity);
  */
 
 
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -71,12 +69,12 @@ __CLASS_DEFINITION(InanimatedInGameEntity);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* backgroundDefinition, int ID))
+__CLASS_NEW_DEFINITION(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* backgroundDefinition, s16 ID))
 __CLASS_NEW_END(InanimatedInGameEntity, __ARGUMENTS(backgroundDefinition, ID));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* backgroundDefinition, int ID){
+void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* backgroundDefinition, s16 ID){
 
 	ASSERT(this, "InanimatedInGameEntity::constructor: null this");
 	ASSERT(backgroundDefinition, "InanimatedInGameEntity::constructor: null definition");

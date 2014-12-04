@@ -76,7 +76,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID){
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID){
 
 	ASSERT(this, "Entity::constructor: null this");
 

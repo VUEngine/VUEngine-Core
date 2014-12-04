@@ -99,9 +99,6 @@ void Game_saveState(Game this);
 // reload engine's current status
 void Game_recoverState(Game this);
 
-// process input data according to the actual game status
-void Game_handleInput(Game this, int currentKey);
-
 // render the game
 void Game_render(Game this);
 

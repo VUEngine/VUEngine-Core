@@ -162,7 +162,6 @@ void HardwareManager_timerInterruptHandler(){
 void HardwareManager_keypadInterruptHandler(void){
 
 	// broadcast keypad event
-	Game_handleInput(Game_getInstance(), KeypadManager_read(KeypadManager_getInstance()));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

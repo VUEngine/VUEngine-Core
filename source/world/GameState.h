@@ -121,18 +121,6 @@ void GameState_transform(GameState this);
 // propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message);
 			
-// process user input
-void GameState_onKeyPressed(GameState this, int pressedKey);
-
-// process user input
-void GameState_onKeyUp(GameState this, int pressedKey);
-
-// process user input
-void GameState_onKeyHold(GameState this, int pressedKey);
-
-// process user input
-void GameState_onMessage(GameState this, int message);
-
 // load a stage
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);
 

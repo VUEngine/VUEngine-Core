@@ -89,12 +89,12 @@
  * is not defined here and so is not accessible to the outside world
  */
 // declare the virtual methods
-#define KeypadManager_METHODS							\
-		Object_METHODS									\
+#define KeypadManager_METHODS										\
+		Object_METHODS												\
 
 
 // declare the virtual methods which are redefined
-#define KeypadManager_SET_VTABLE(ClassName)						\
+#define KeypadManager_SET_VTABLE(ClassName)							\
 		Object_SET_VTABLE(ClassName)								\
 
 
@@ -126,5 +126,17 @@ void KeypadManager_disable(KeypadManager this);
 
 // read keypad
 u16 KeypadManager_read(KeypadManager this);
+
+// get pressed key
+u16 KeypadManager_getPressedKey(KeypadManager this);
+
+// get released key
+u16 KeypadManager_getReleasedKey(KeypadManager this);
+
+// get hold key
+u16 KeypadManager_getHoldKey(KeypadManager this);
+
+// get previous key
+u16 KeypadManager_getPreviousKey(KeypadManager this);
 
 #endif /*KEY_PAD_MANAGER_H_*/

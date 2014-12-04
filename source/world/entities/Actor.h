@@ -145,10 +145,10 @@ typedef const ActorDefinition ActorROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, int ID));
+__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID));
 
 // class's constructor
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID);
+void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID);
 
 // class's destructor
 void Actor_destructor(Actor this);

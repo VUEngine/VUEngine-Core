@@ -103,10 +103,10 @@ typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* backgroundDefinition, int ID));
+__CLASS_NEW_DECLARE(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* backgroundDefinition, s16 ID));
 
 // class's constructor
-void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* backgroundDefinition, int ID);
+void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* backgroundDefinition, s16 ID);
 
 // class's destructor
 void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);

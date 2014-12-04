@@ -128,10 +128,10 @@ __CLASS(AnimatedInGameEntity);
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, int ID));
+__CLASS_NEW_DECLARE(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 ID));
 
 // class's constructor
-void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, int ID);
+void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 ID);
 
 // class's destructor
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);

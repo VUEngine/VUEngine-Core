@@ -87,13 +87,13 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, int ID))
+__CLASS_NEW_DEFINITION(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 ID))
 __CLASS_NEW_END(AnimatedInGameEntity, __ARGUMENTS(animatedInGameEntityDefinition, ID));
 
 // AnimatedInGameEntity.c 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's conctructor
-void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, int ID){
+void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 ID){
 
 	ASSERT(this, "AnimatedInGameEntity::constructor: null this");
 

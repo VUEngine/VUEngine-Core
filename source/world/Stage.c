@@ -63,7 +63,8 @@ __CLASS_DEFINITION(Stage);
 typedef struct StageEntityDescription {
 	
 	PositionedEntity* positionedEntity;
-	int ID;
+	s16 ID;
+	
 }StageEntityDescription;
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -357,7 +358,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 
 	ASSERT(this, "Stage::addEntity: null this");
 
-	static int ID = 0;
+	static s16 ID = 0;
 
 	if(entityDefinition){
 		
@@ -410,7 +411,7 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 	
-	int ID = Container_getID((Container)entity);
+	s16 ID = Container_getID((Container)entity);
 
 	for(; node; node = VirtualNode_getNext(node)){
 
@@ -606,7 +607,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		// if the entity isn't visible inside the view field, unload it
 		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD))){		
 
-			int ID = Container_getID((Container)entity);
+			s16 ID = Container_getID((Container)entity);
 			
 			int traverseNormally = ID < ((StageEntityDescription*)VirtualNode_getData(this->streamingLeftHead))->ID ||
 				ID > ((StageEntityDescription*)VirtualNode_getData(this->streamingRightHead))->ID;

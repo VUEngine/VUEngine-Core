@@ -102,13 +102,12 @@ enum AxisOfCollision{
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, int ID))
+__CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID))
 __CLASS_NEW_END(Actor, __ARGUMENTS(actorDefinition, ID));
 
-// Actor.c 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's conctructor
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
+void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID){
 
 	ASSERT(this, "Actor::constructor: null this");
 

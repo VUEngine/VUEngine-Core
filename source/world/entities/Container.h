@@ -65,9 +65,6 @@
 		__VIRTUAL_DEC(transform);						\
 		__VIRTUAL_DEC(initialTransform);				\
 		__VIRTUAL_DEC(setLocalPosition);				\
-		__VIRTUAL_DEC(doKeyPressed);					\
-		__VIRTUAL_DEC(doKeyUp);							\
-		__VIRTUAL_DEC(doKeyHold);						\
 		__VIRTUAL_DEC(doMessage);						\
 		__VIRTUAL_DEC(addChild);						\
 		
@@ -80,9 +77,6 @@
 		__VIRTUAL_SET(ClassName, Container, transform);				\
 		__VIRTUAL_SET(ClassName, Container, initialTransform);		\
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);		\
-		__VIRTUAL_SET(ClassName, Container, doKeyPressed);			\
-		__VIRTUAL_SET(ClassName, Container, doKeyUp);				\
-		__VIRTUAL_SET(ClassName, Container, doKeyHold);				\
 		__VIRTUAL_SET(ClassName, Container, doMessage);				\
 		__VIRTUAL_SET(ClassName, Container, addChild);				\
 	
@@ -102,7 +96,7 @@
 	Container parent;									\
 														\
 	/* entity's id */									\
-	int ID;												\
+	u16 ID;												\
 														\
 	/* 3d transformation */								\
 	Transformation transform;							\
@@ -122,10 +116,10 @@ __CLASS(Container);
  */
 
 //class's allocator
-__CLASS_NEW_DECLARE(Container, __PARAMETERS(int ID));
+__CLASS_NEW_DECLARE(Container, __PARAMETERS(s16 ID));
 
 // class's constructor
-void Container_constructor(Container this, int ID);
+void Container_constructor(Container this, s16 ID);
 
 // class's destructor
 void Container_destructor(Container this);
@@ -140,7 +134,7 @@ void Container_removeChild(Container this, Container child);
 void Container_update(Container this);
 
 // propagate an event to the children wrapper
-void Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...);
+int Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...);
 
 // retrieve environment transformation
 Transformation Container_getEnvironmentTransform(Container this);
@@ -164,15 +158,6 @@ VBVec3D Container_getLocalPosition(Container this);
 void Container_setLocalPosition(Container this, VBVec3D position);
 
 // process user input
-int Container_onKeyPressed(Container this, va_list args);
-
-// process user input
-int Container_onKeyUp(Container this, va_list args);
-
-// process user input
-int Container_onKeyHold(Container this, va_list args);
-
-// process user input
 int Container_onMessage(Container this, va_list args);
 
 // process user input
@@ -188,20 +173,12 @@ int Container_doKeyHold(Container this, int pressedKey);
 int Container_doMessage(Container this, int message);
 
 //retrieve object's in game index
-int Container_getID(Container this);
+s16 Container_getID(Container this);
 
 // retrieve child count
 int Container_getChildCount(Container this);
 
 // retrieve children
 VirtualList Container_getChildren(Container this);
-
-/*
-// remove an entity from the game
-void Container_deleteChild(Stage this, Entity entity, int inGameState);
-
-// delete from memory the removed entities
-void Stage_processRemovedEntities(Stage this);
-*/
 
 #endif /* CONTAINER_H_ */

@@ -68,12 +68,12 @@ __CLASS_DEFINITION(Image);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Image, __PARAMETERS(ImageDefinition* imageDefinition, int ID))
+__CLASS_NEW_DEFINITION(Image, __PARAMETERS(ImageDefinition* imageDefinition, s16 ID))
 __CLASS_NEW_END(Image, __ARGUMENTS(imageDefinition, ID));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Image_constructor(Image this, ImageDefinition* imageDefinition, int ID){
+void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 ID){
 
 	ASSERT(this, "Image::constructor: null this");
 

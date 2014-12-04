@@ -169,7 +169,7 @@ typedef const PositionedEntity PositionedEntityROMDef;
  */
 
 // class's constructor
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID);
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID);
 
 // class's destructor
 void Entity_destructor(Entity this);

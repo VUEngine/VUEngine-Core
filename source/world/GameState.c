@@ -163,31 +163,7 @@ int GameState_handleMessage(GameState this, void* owner, Telegram telegram){
 
 	ASSERT(this, "GameState::handleMessage: null this");
 
-	// process message
-	switch(Telegram_getMessage(telegram)){
-	
-		case kKeyPressed:
-			
-			GameState_onKeyPressed(this, *((int*)Telegram_getExtraInfo(telegram)));
-			break;
-			
-		case kKeyUp:
-			
-			GameState_onKeyUp(this, *((int*)Telegram_getExtraInfo(telegram)));
-			break;
-			
-		case kKeyHold:
-			
-			GameState_onKeyHold(this, *((int*)Telegram_getExtraInfo(telegram)));
-			break;
-		
-		default:
-			
-			GameState_onMessage(this, Telegram_getMessage(telegram));
-			break;
-	}
-
-	return false;
+	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, Telegram_getMessage(this)));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,40 +205,10 @@ int GameState_propagateMessage(GameState this, int message){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
-void GameState_onKeyPressed(GameState this, int pressedKey){
-
-	ASSERT(this, "GameState::onKeyPressed: null this");
-
-	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyPressed, pressedKey));
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-void GameState_onKeyUp(GameState this, int pressedKey){
-
-	ASSERT(this, "GameState::onKeyUp: null this");
-
-	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyUp, pressedKey));
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-void GameState_onKeyHold(GameState this, int pressedKey){
-
-	ASSERT(this, "GameState::onKeyHold: null this");
-
-	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyHold, pressedKey));
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
 void GameState_onMessage(GameState this, int message){
 
 	ASSERT(this, "GameState::onMessage: null this");
 
-	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, message));
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load a stage

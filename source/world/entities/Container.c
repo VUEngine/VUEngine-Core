@@ -81,12 +81,12 @@ static void Container_applyTransform(Container this, Transformation* environment
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Container, __PARAMETERS(int ID))
+__CLASS_NEW_DEFINITION(Container, __PARAMETERS(s16 ID))
 __CLASS_NEW_END(Container, __ARGUMENTS(ID));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's conctructor
-void Container_constructor(Container this, int ID){
+void Container_constructor(Container this, s16 ID){
 	
 	ASSERT(this, "Container::constructor: null this");
 
@@ -457,15 +457,17 @@ void Container_setLocalPosition(Container this, VBVec3D position){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // propagate an event to the children wrapper
-void Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...){
+int Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...){
 
 	ASSERT(this, "Container::propagateEvent: null this");
 	ASSERT(event, "Container::propagateEvent: null event");
 
 	va_list args;
     va_start(args, event);
-    Container_passEvent(this, event, args);
+    int result = Container_passEvent(this, event, args);
     va_end(args);
+    
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -505,68 +507,12 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
-int Container_onKeyPressed(Container this, va_list args){
-	
-	ASSERT(this, "Container::onKeyPressed: null this");
-
-	int pressedKey = 0;
-	pressedKey = va_arg(args, int);
-	return __VIRTUAL_CALL(int, Container, doKeyPressed, this, __ARGUMENTS(pressedKey));
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-int Container_onKeyUp(Container this, va_list args){
-
-	ASSERT(this, "Container::onKeyUp: null this");
-
-	int pressedKey = 0;
-	pressedKey = va_arg(args, int);	
-	return __VIRTUAL_CALL(int, Container, doKeyUp, this, __ARGUMENTS(pressedKey));
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-int Container_onKeyHold(Container this, va_list args){
-	
-	ASSERT(this, "Container::onKeyHold: null this");
-
-	int pressedKey = 0;
-	pressedKey = va_arg(args, int);	
-	return __VIRTUAL_CALL(int, Container, doKeyHold, this, __ARGUMENTS(pressedKey));
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
 int Container_onMessage(Container this, va_list args){
 	
 	ASSERT(this, "Container::onKeyHold: null this");
 
 	int message = va_arg(args, int);	
 	return __VIRTUAL_CALL(int, Container, doMessage, this, __ARGUMENTS(message));
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-int Container_doKeyPressed(Container this, int pressedKey){
-
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-int Container_doKeyUp(Container this, int pressedKey){
-	
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-int Container_doKeyHold(Container this, int pressedKey){
-	
-	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -578,7 +524,7 @@ int Container_doMessage(Container this, int message){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //retrieve class's in game index
-int Container_getID(Container this){
+s16 Container_getID(Container this){
 	
 	return this->ID;
 }
