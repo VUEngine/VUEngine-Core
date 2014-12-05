@@ -161,15 +161,17 @@ void Sprite_destructor(Sprite this){
 
 	ASSERT(this, "Sprite::destructor: null this");
 
-	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
-
+	Sprite_hide(this);
+	
 	//if affine or bgmap
 	if(WRLD_AFFINE & this->head){
 
 		//free param table space
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
 	}	
+
+	// remove from sprite manager
+	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
 
 	// free the texture
 	TextureManager_free(TextureManager_getInstance(), this->texture);

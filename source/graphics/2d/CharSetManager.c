@@ -40,7 +40,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __CHAR_ROOM		2
+#define __CHAR_ROOM		0
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -102,7 +102,8 @@ static int CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, in
 // free char graphic memory
 static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup);
 
- 
+// free char graphic memory
+static void CharSetManager_markFreedChars(CharSetManager this, int charSet, int offset, int numberOfChars);
  
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -330,9 +331,8 @@ static int CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, in
 	int j = 0;
 	int hole = 0;
 	unsigned int index = 0;
-	int offset = 0;
 	unsigned int block = 0;
-	int currentChar = 0;	
+	int currentChar = 1;	
 	
 	ASSERT(numberOfChars > 0, "CharSetManager::allocate: number of chars < 0");
 	
@@ -363,11 +363,8 @@ static int CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, in
 					
 					// control if the first free char is the last one from a block
 					// if hole fits numberOfChars plus one free space at the begining and end
-					if(hole >= numberOfChars + __CHAR_ROOM){
+					if(hole >= numberOfChars + 1){
 					
-						// determine offset within the segment
-						offset = currentChar - numberOfChars;
-						
 						// stop processing
 						return currentChar - numberOfChars;					
 					}
@@ -489,73 +486,7 @@ static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup){
 		
 	ASSERT(this, "CharSetManager::deallocate: null this");
 
-	// get chargroup's offset
-	int offset = CharGroup_getOffset(charGroup);
-	
-	// get chargroup's number of chars
-	int numberOfChars = CharGroup_getNumberOfChars(charGroup);
-	
-	// get chargroup's segment
-	int charSet = CharGroup_getCharSet(charGroup);
-	
-	// counter of chars
-	int counter = 0;
-	
-	// initialize mask
-	u32 index = 0x80000000;
-	
-	// calculate block index
-	int j = 0;		
-	j = offset >> 5;
-	
-	// calculate number of slots
-	counter = offset - (j << 5);
-	
-#ifdef __DEBUG
-	
-	u8 clearValue = 0x00;
-	
-	const BYTE clearCharGroup[] = {
-	
-			clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, 
-			clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue, clearValue	/*Char0*/
-	};
-	int i = 0;
-	for (; i < numberOfChars; i++) {
-		
-		//clean char memory
-		Mem_copy((u8*)CharSegs(charSet) + ((offset + i) << 4), (u8*)clearCharGroup, 1 << 4);
-	}
-#endif
-	
-	// while there are chars
-	while(counter--){
-		
-		// fill mask
-		index >>= 1;
-	}
-	
-	// inverse the mask
-	index ^= 0xFFFFFFFF;
-	
-	// clear freeded slots within the segment
-	CACHE_ENABLE;
-	while(numberOfChars--){
-		
-		this->segment[charSet][j] &= index;
-		
-		index >>= 1;
-		
-		index |= 0x80000000;
-		
-		if(index == 0xFFFFFFFF){
-			
-			index = 0x7FFFFFFF;
-			
-			j++;
-		}
-	}
-	CACHE_DISABLE;
+	CharSetManager_markFreedChars(this, CharGroup_getCharSet(charGroup), CharGroup_getOffset(charGroup), CharGroup_getNumberOfChars(charGroup) + 1);
 
 	VirtualList_removeElement(this->charGroups, charGroup);
 }
@@ -620,7 +551,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 		
 		int freeOffset = CharSetManager_getNextFreeOffset(this, charSet, 1);
 		
-		if(0 <= freeOffset) {
+		if(0 < freeOffset) {
 
 			VirtualNode charGroupNode = VirtualList_begin(this->charGroups);
 		
@@ -657,7 +588,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 	
 				// register the used chars
 				CharSetManager_markUsedChars(this, CharGroup_getCharSet(charGroupToRewrite), freeOffset, CharGroup_getNumberOfChars(charGroupToRewrite));
-				CharSetManager_markFreedChars(this, CharGroup_getCharSet(charGroupToRewrite), freeOffset + CharGroup_getNumberOfChars(charGroupToRewrite) + 1 , previousOffset - freeOffset);
+				CharSetManager_markFreedChars(this, CharGroup_getCharSet(charGroupToRewrite), freeOffset + CharGroup_getNumberOfChars(charGroupToRewrite), previousOffset - freeOffset);
 	
 				BYTE* charDefinition = CharGroup_getCharDefinition(charGroupToRewrite);
 				

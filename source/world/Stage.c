@@ -637,14 +637,13 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		// get next entity
 		Entity entity = (Entity)VirtualNode_getData(node);
 
-		//VirtualList_removeElement(this->children, entity);
-
+		// don't need to remove manually from children list
+		// since the entity will do it by itself on its 
+		// destructor
 		// destroy it
 		__DELETE(entity);
 	}
 
-	
-	
 	CACHE_DISABLE;
 	
 	// repositione stream headers
@@ -681,14 +680,14 @@ static void Stage_processRemovedEntities(Stage this){
 	
 	ASSERT(this, "Stage::processRemovedEntities: null this");
 
-	if(VirtualList_getSize(this->removedEntities)){
-	static ii = 5;
-	Printing_int(VirtualList_getSize(this->removedEntities), 20, ii++);
-	}
 	VirtualNode node = VirtualList_begin(this->removedEntities);
 	
 	for(; node; node = VirtualNode_getNext(node)){
 		
+		// don't need to remove manually from children list
+		// since the entity will do it by itself on its 
+		// destructor
+		// destroy it
 		__DELETE(VirtualNode_getData(node));
 	}
 	

@@ -224,9 +224,6 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 			
 				//move back paramSize bytes
 				Sprite_setParam(this->sprites[i], auxParam - size);
-				
-				// render the sprite inmediately to update the WORLD
-				Sprite_render(this->sprites[i]);
 			}
 		}	
 	}

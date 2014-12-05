@@ -125,6 +125,11 @@ enum UpdateSubsystems{
 													\
 	/* last process' name */						\
 	char* lastProcessName;							\
+													\
+	/* high fps flag */								\
+	u8 highFPS;										\
+	
+
 	
 
 __CLASS_DEFINITION(Game);
@@ -233,6 +238,8 @@ static void Game_constructor(Game this){
 	
 	// screen's horizontal view point center
 	this->optical.horizontalViewPointCenter = 0;
+	
+	this->highFPS = false;
 	
 	// setup global pointers
 	// need them to speed up critical processes
@@ -611,7 +618,7 @@ void Game_render(Game this) {
 	ASSERT(this, "Game::render: null this");
 
 	// sort sprites
-	SpriteManager_sortLayersProgressively(this->spriteManager);
+//	SpriteManager_sortLayers(this->spriteManager, true);
 
 //	SpriteManager_print(this->spriteManager, 1, 5);
 	// increase the frame rate
@@ -719,7 +726,8 @@ void Game_update(Game this){
 #endif
 				// render sprites
 				SpriteManager_render(this->spriteManager);
-	
+				SpriteManager_sortLayers(this->spriteManager, true);
+
 				// increase the frame rate
 				FrameRate_increasePhysicsFPS(this->frameRate);
 				
@@ -740,6 +748,14 @@ void Game_update(Game this){
 			Game_setState(this, this->nextState);
 			this->nextState = NULL;
 		}
+		
+		// do some intensive tasks whenever fps are high
+		if(this->highFPS) {
+			
+			CharSetManager_defragmentProgressively(this->charSetManager);
+
+			this->highFPS = false;
+		}
 
 		FrameRate_increaseRawFPS(this->frameRate);
 	}
@@ -758,7 +774,7 @@ int Game_handleMessage(Game this, Telegram telegram){
 			
 			// since performance is good, do some cleaning up to 
 			// char memory
-			CharSetManager_defragmentProgressively(this->charSetManager);
+			this->highFPS = true;
 			break;
 			
 			// TODO: bgmap memory defragmentation
