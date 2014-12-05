@@ -681,6 +681,10 @@ static void Stage_processRemovedEntities(Stage this){
 	
 	ASSERT(this, "Stage::processRemovedEntities: null this");
 
+	if(VirtualList_getSize(this->removedEntities)){
+	static ii = 5;
+	Printing_int(VirtualList_getSize(this->removedEntities), 20, ii++);
+	}
 	VirtualNode node = VirtualList_begin(this->removedEntities);
 	
 	for(; node; node = VirtualNode_getNext(node)){

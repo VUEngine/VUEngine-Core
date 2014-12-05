@@ -613,6 +613,7 @@ void Game_render(Game this) {
 	// sort sprites
 	SpriteManager_sortLayersProgressively(this->spriteManager);
 
+//	SpriteManager_print(this->spriteManager, 1, 5);
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
 }

@@ -46,7 +46,10 @@
 	Object_ATTRIBUTES;							\
 												\
 	/* list of sprites to render */				\
-	Sprite sprites[__SPRITE_LIST_SIZE];			\
+	VirtualList sprites;						\
+												\
+	/* list of sprites to render */				\
+	VirtualList removedSprites;					\
 												\
 	/* next world layer	*/						\
 	int freeLayer;								\
@@ -66,6 +69,9 @@ __CLASS_DEFINITION(SpriteManager);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+#undef __SPRITE_LIST_SIZE			
+#define __SPRITE_LIST_SIZE			31
 
 //class's constructor
 static void SpriteManager_constructor(SpriteManager this);
@@ -133,21 +139,31 @@ void SpriteManager_reset(SpriteManager this){
 	SpriteManager_setLastLayer(this);
 }	
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// check if any entity must be assigned another world layer
+void SpriteManager_spriteChangedPosition(SpriteManager this){
+
+	ASSERT(this, "SpriteManager::spriteChangedPosition: null this");
+
+	this->needSorting = true;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if any entity must be assigned another world layer
 void SpriteManager_sortAllLayers(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::sortAllLayers: null this");
 
-	int i = 0;
+	int i = __SPRITE_LIST_SIZE;
 
-	CACHE_ENABLE;
-	for(i = 0; i < __SPRITE_LIST_SIZE - 1 &&  this->sprites[i + 1]; i++){
+	for(; --i && i > this->freeLayer;){
 
 		DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[i]);
 
-		int j = 0;
-		for(j = i + 1; j < __SPRITE_LIST_SIZE && this->sprites[j]; j++){
+		int j = i;
+		for(; --j && j > this->freeLayer;){
 
 			DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[j]);
 
@@ -171,16 +187,6 @@ void SpriteManager_sortAllLayers(SpriteManager this){
 			drawSpec = nextDrawSpec;
 		}
 	}
-	CACHE_DISABLE;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// check if any entity must be assigned another world layer
-void SpriteManager_spriteChangedPosition(SpriteManager this){
-
-	ASSERT(this, "SpriteManager::spriteChangedPosition: null this");
-
-	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,56 +195,69 @@ void SpriteManager_sortLayersProgressively(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
 	//ASSERT(this->sprites[0], "SpriteManager::sortLayersProgressively: null this->sprites[0]");
-
-	if(!this->needSorting || !this->sprites[0]){
+/*
+	this->needSorting = true;
+	if(!this->needSorting || !this->sprites[__SPRITE_LIST_SIZE - 1]){
 
 		return;
 	}
-	
-	int i = 0;
+	*/
+	static int i = __SPRITE_LIST_SIZE;
 
-	DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[0]);
 
-	CACHE_ENABLE;
-	for(;i < __SPRITE_LIST_SIZE - 1; i++){
+	for(; --i - 1 && i - 1 > this->freeLayer;){
 
-		if(!this->sprites[i] || !this->sprites[i + 1]) {
+		if(!this->sprites[i] && this->sprites[i - 1]) {
 			
-			continue;
-		}
-		
-		DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[i + 1]);
-
-		// check if z positions are swaped
-		if(nextDrawSpec.position.z > drawSpec.position.z){
-			
-			// get each entity's layer
-			int worldLayer1 = Sprite_getWorldLayer(this->sprites[i]);
-			int worldLayer2 = Sprite_getWorldLayer(this->sprites[i + 1]);
-			
-			// swap array entries
-			Sprite auxSprite = this->sprites[i];			
-			this->sprites[i] = this->sprites[i + 1];			
-			this->sprites[i + 1] = auxSprite;
-
-			// swap layers
-			Sprite_setWorldLayer(this->sprites[i], worldLayer1);
-			Sprite_setWorldLayer(this->sprites[i + 1], worldLayer2);
-			
+			//Sprite_hide(this->sprites[i - 1]);
+			int layer = Sprite_getWorldLayer(this->sprites[i - 1]);
+			this->sprites[i] = this->sprites[i - 1];
+			Sprite_setWorldLayer(this->sprites[i], i + 1);
 			Sprite_render(this->sprites[i]);
-			Sprite_render(this->sprites[i + 1]);
+			this->sprites[i - 1] = NULL;
+		    WORLD_SIZE(layer, 0, 0);
+
 			break;
 		}
-		
-		drawSpec = nextDrawSpec;
-	}
-	CACHE_DISABLE;
-	
-	if(!(i < __SPRITE_LIST_SIZE - 1 &&  this->sprites[i + 1])){
+		else if(this->sprites[i] && this->sprites[i - 1]) {
 
-		this->needSorting = false;
+			DrawSpec drawSpec = Sprite_getDrawSpec(this->sprites[i]);
+			DrawSpec nextDrawSpec = Sprite_getDrawSpec(this->sprites[i - 1]);
+	
+			// check if z positions are swaped
+			if(nextDrawSpec.position.z > drawSpec.position.z){
+				
+				// get each entity's layer
+				int worldLayer1 = Sprite_getWorldLayer(this->sprites[i]);
+				int worldLayer2 = Sprite_getWorldLayer(this->sprites[i - 1]);
+	
+				// swap layers
+				Sprite_setWorldLayer(this->sprites[i], worldLayer2);
+				Sprite_setWorldLayer(this->sprites[i - 1], worldLayer1);
+	
+				// swap array entries
+				Sprite auxSprite = this->sprites[i];
+				this->sprites[i] = this->sprites[i - 1];
+				this->sprites[i - 1] = auxSprite;
+	
+				Sprite_render(this->sprites[i]);
+				Sprite_render(this->sprites[i - 1]);
+				break;
+			}
+			
+			drawSpec = nextDrawSpec;
+		}
 	}
+	
+	if(this->freeLayer >= i){
+		
+		i = __SPRITE_LIST_SIZE;
+	}
+	
+	this->freeLayer = 0;
+	for(; !this->sprites[this->freeLayer + 1]; this->freeLayer++);
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
@@ -247,11 +266,11 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
-	int i = 0;
+	int i = __SPRITE_LIST_SIZE;
 	// find the last render object's index
-	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++);
+	for(; --i && this->sprites[i];);
 	
-	if(i < __SPRITE_LIST_SIZE){
+	if(i){
 		
 		//SpriteManager_alignSameLayerSprites(this, sprite);
 
@@ -259,13 +278,13 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 		this->sprites[i] = sprite;
 
 		// set layer
-		Sprite_setWorldLayer(this->sprites[i], __TOTAL_LAYERS - i);
+		Sprite_setWorldLayer(this->sprites[i], i + 1);
 		
+		this->freeLayer = 0;
+		for(; !this->sprites[this->freeLayer + 1]; this->freeLayer++);
+
 	    WORLD_SIZE((this->freeLayer), 0, 0);
 		
-		// don't allow flickering in the next render cycly
-		this->freeLayer = __TOTAL_LAYERS - i - 1;
-
 		SpriteManager_setLastLayer(this);
 
 		ASSERT(this->freeLayer, "SpriteManager::addSprite: no more free layers" );
@@ -279,41 +298,12 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
 	ASSERT(this, "SpriteManager::removeSprite: null this");
 
-	int i = 0;
+	ASSERT(sprite == this->sprites[Sprite_getWorldLayer(sprite) - 1], "SpriteManager::removeSprite: sprite not found");
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
-	// search for the entity to remove
-	for(; this->sprites[i] != sprite && i < __SPRITE_LIST_SIZE; i++);
-
-	// if found
-	if(i < __SPRITE_LIST_SIZE){
-		
-		int j = i;
-		
-		// must render the whole entities after the entity to be removed twice
-		// to avoid flickering
-		for(; this->sprites[j + 1] && j < __SPRITE_LIST_SIZE - 1; j++){
-			
-			this->sprites[j] = this->sprites[j + 1];
-
-			// set layer
-			Sprite_setWorldLayer(this->sprites[j], __TOTAL_LAYERS - j);
-			
-			Sprite_render(this->sprites[j]);
-		}
-		
-		// remove object from list
-		this->sprites[j] = NULL;
-	}
-
-	this->freeLayer++;
-	
-	ASSERT(__TOTAL_LAYERS >= this->freeLayer, "SpriteManager::removeSprite: more free layers than really available" );
-
-	this->needSorting = true;
-	
-	SpriteManager_setLastLayer(this);
+	Sprite_hide(sprite);
+	this->sprites[Sprite_getWorldLayer(sprite) - 1] = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -346,17 +336,21 @@ void SpriteManager_render(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::render: null this");
 
-	int i = 0;
+	int i = __SPRITE_LIST_SIZE;
 	
 	VPUManager_disableInterrupt(VPUManager_getInstance());
-	
-	for(i = 0; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++){
+
+	for(; --i != this->freeLayer;){
+
+		if(this->sprites[i]){
 		
-		//render sprite	
-		Sprite_render((Sprite)this->sprites[i]);
+			//render sprite	
+			Sprite_render((Sprite)this->sprites[i]);
+		}
 	}	
 	
 	VPUManager_enableInterrupt(VPUManager_getInstance());
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -374,17 +368,21 @@ void SpriteManager_showLayer(SpriteManager this, int layer) {
 	
 	ASSERT(this, "SpriteManager::showLayer: null this");
 
-	int i = 0;
-	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++){
+	//SpriteManager_sortAllLayers(this);
+	
+	int i = __SPRITE_LIST_SIZE;
+	for(; --i ;){
 		
-		if(Sprite_getWorldLayer(this->sprites[i]) != layer) {
+		if(this->sprites[i] && i + 1 != layer){
 			
 			Sprite_hide(this->sprites[i]);
 		}
-		else {
-			
-			Sprite_show(this->sprites[i]);
-		}
+	}
+	
+	if(this->sprites[layer - 1]){
+		
+		Sprite_show(this->sprites[layer - 1]);
+		Sprite_render(this->sprites[layer - 1]);
 	}
 }
 
@@ -394,10 +392,13 @@ void SpriteManager_recoverLayers(SpriteManager this) {
 	
 	ASSERT(this, "SpriteManager::recoverLayers: null this");
 
-	int i = 0;
-	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++){
+	int i = __SPRITE_LIST_SIZE;
+	for(; --i && this->freeLayer != i;){
 		
-		Sprite_show(this->sprites[i]);
+		if(this->sprites[i]){
+		
+			Sprite_show(this->sprites[i]);
+		}
 	}
 }
 
