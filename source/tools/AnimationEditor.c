@@ -33,9 +33,8 @@
 #include <AnimationEditor.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Globals.h>
 #include <SpriteManager.h>
-#include <Level.h>
+#include <GameState.h>
 #include <Stage.h>
 #include <Screen.h>
 #include <string.h>
@@ -92,8 +91,8 @@ enum AnimationProperties {
 	/* super's attributes */							\
 	Object_ATTRIBUTES;									\
 														\
-	/* current in game level */							\
-	Level level;										\
+	/* current in game gameState */						\
+	GameState gameState;								\
 														\
 	/* current animated sprite */						\
 	AnimatedSprite animatedSprite;						\
@@ -152,7 +151,7 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
 
-static void AnimationEditor_onAnimationComplete();
+static void AnimationEditor_onAnimationComplete(AnimationEditor this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -177,7 +176,7 @@ static void AnimationEditor_constructor(AnimationEditor this){
 	
 	
 	this->animatedSprite = NULL;
-	this->level = NULL;
+	this->gameState = NULL;
 	this->actorsSelector = NULL;
 	this->animationsSelector = NULL;
 	this->animationEditionSelector = NULL;
@@ -222,7 +221,7 @@ void AnimationEditor_update(AnimationEditor this){
 
 	ASSERT(this, "AnimationEditor::update: null this");
 
-	if(this->level && this->animatedSprite) {
+	if(this->gameState && this->animatedSprite) {
 
 		AnimatedSprite_update(this->animatedSprite, Game_getClock(Game_getInstance()));
 		
@@ -235,12 +234,12 @@ void AnimationEditor_update(AnimationEditor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // start editor 
-void AnimationEditor_start(AnimationEditor this, Level level){
+void AnimationEditor_start(AnimationEditor this, GameState gameState){
 	
 	ASSERT(this, "AnimationEditor::start: null this");
-	ASSERT(level, "AnimationEditor::start: null level");
+	ASSERT(gameState, "AnimationEditor::start: null gameState");
 
-	this->level = level;
+	this->gameState = gameState;
 	this->animatedSprite = NULL;
 	
 	this->animationsSelector = NULL;
@@ -349,7 +348,7 @@ int AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram){
 	
 	ASSERT(this, "AnimationEditor::handleMessage: null this");
 
-	if(!this->level) {
+	if(!this->gameState) {
 		
 		return false;
 	}
@@ -705,9 +704,6 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this) {
 	SpriteManager_sortAllLayers(SpriteManager_getInstance());
 	SpriteManager_render(SpriteManager_getInstance());
 
-	Level_transform(this->level);
-	__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)this->animatedSprite, __ARGUMENTS(position));
-
 	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
 }
 
@@ -788,9 +784,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void AnimationEditor_onAnimationComplete() {
-	
-	AnimationEditor this = AnimationEditor_getInstance();
+static void AnimationEditor_onAnimationComplete(AnimationEditor this) {
 
 	if(!this->animationFunction.loop) {
 	

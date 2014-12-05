@@ -172,7 +172,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     if(previousSecond != (this->ticks / __MILISECONDS_IN_SECOND)){
     	
     		FrameRate frameRate = FrameRate_getInstance();
-#undef __PRINT_FRAMERATE
     		
 #ifdef __PRINT_FRAMERATE
 	    	if(!Game_isInSpecialMode(Game_getInstance())) {
@@ -203,7 +202,9 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	    		
 	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
 	    	}
-	    	
+
+    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
+
 			//reset frame rate counters
 			FrameRate_reset(frameRate);		
     }	

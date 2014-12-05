@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
+#ifndef STAGE_EDITOR_STATE_H_
+#define STAGE_EDITOR_STATE_H_
 
-#ifndef GLOBALS_H_
-#define GLOBALS_H_
-
+#ifdef __STAGE_EDITOR
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -30,27 +30,46 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Clock.h>
-#include <MiscStructs.h>
+#include <State.h>
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 											CLASS'S DECLARATION
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+// declare the virtual methods
+#define StageEditorState_METHODS										\
+	State_METHODS;									
+
+// declare the virtual methods which are redefined
+#define StageEditorState_SET_VTABLE(ClassName)							\
+	State_SET_VTABLE(ClassName)											\
+	__VIRTUAL_SET(ClassName, StageEditorState, enter);					\
+	__VIRTUAL_SET(ClassName, StageEditorState, execute);				\
+	__VIRTUAL_SET(ClassName, StageEditorState, exit);					\
+	__VIRTUAL_SET(ClassName, StageEditorState, handleMessage);			\
+
+
+__CLASS(StageEditorState);
+
 
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 												GLOBALS
+ * 										PUBLIC INTERFACE
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/* global pointers to various gameengine's attributes 
- * to access them from each class of the engine
- */
+// setup the init focus screen
+StageEditorState StageEditorState_getInstance(void);
 
-extern const u16*			_asciiChar;
-extern Optical *			_optical;
-extern MovementState *		_screenMovementState;
-extern VBVec3D *			_screenPosition;
-
-extern float _timeElapsed;
 #endif
+
+#endif /*STAGE_EDITOR_STATE_H_*/

@@ -95,7 +95,7 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition){
 
 	// construct base object
 	__CONSTRUCT_BASE(Container, __ARGUMENTS(-1));
-	
+
 	// add entities in the definition
 	__VIRTUAL_CALL(void, UI, addEntities, this, __ARGUMENTS(uiDefinition->entities));
 }
@@ -133,6 +133,5 @@ void UI_addEntities(UI this, PositionedEntity* entities){
 
 		// set spatial position
 		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
-		
 	}
 }

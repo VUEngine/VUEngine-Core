@@ -33,8 +33,6 @@
 
 #include <CharSetManager.h>
 #include <TextureManager.h>
-#include <Globals.h>
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -45,8 +43,17 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// print VIP register's state
-void Printing_vipRegisters(int x,int y);
+// render general print output layer
+void Printing_render(int textLayer);
+
+// setup the bgmap and char memory with printing data
+void Printing_setFontDefinition(const u16* fontCharDefinition);
+
+// setup the bgmap and char memory with printing data
+void Printing_loadFont();
+
+// clear printing area
+void Printing_clear();
 
 // print an int
 void Printing_int(int value,int x,int y);
@@ -62,28 +69,5 @@ void Printing_text(char *string,int x,int y);
 
 // print a float
 void Printing_float(float value,int x,int y);
-
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											PRINTING HELPER FUNCTIONS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-//render general print output layer
-void Printing_render(int textLayer);
-
-/* ---------------------------------------------------------------------------------------------------------*/
-//setup the bgmap and char memory with printing data
-void Printing_writeAscii();
-
-//show debug info and hung up there
-void Printing_debug(u32 x);
-
-// clear printing area
-void Printing_clear();
 
 #endif 

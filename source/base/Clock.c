@@ -29,6 +29,7 @@
 
 #include <Clock.h>
 #include <ClockManager.h>
+#include <MessageDispatcher.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -55,7 +56,6 @@ __CLASS_DEFINITION(Clock);
 // class's constructor
 static void Clock_constructor(Clock this);
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -81,6 +81,9 @@ static void Clock_constructor(Clock this){
 	
 	// initialize state
 	this->paused = true;
+	
+	this->previousSecond = 0;
+	this->previousMinute = 0;
 	
 	// register clock
 	ClockManager_register(ClockManager_getInstance(), this);
@@ -161,8 +164,27 @@ void Clock_update(Clock this, u32 ticks){
 
 		//calculate miliseconds
 		this->miliSeconds += ticks;
+		
+		int currentSecond = Clock_getSeconds(this);
+		
+		if(currentSecond != this->previousSecond){
+			
+			this->previousSecond = currentSecond;
+
+			Object_fireEvent((Object)this, __EVENT_SECOND_CHANGED);
+			
+			int currentMinute = Clock_getMinutes(this);
+			
+			if(currentMinute != this->previousMinute){
+				
+				this->previousMinute = currentMinute;
+				
+				Object_fireEvent((Object)this, __EVENT_MINUTE_CHANGED);
+			}
+		}
 	}
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // reset clock's attributes
@@ -171,6 +193,9 @@ void Clock_reset(Clock this){
 	ASSERT(this, "Clock::reset: null this");
 
 	this->miliSeconds = 0;
+
+	this->previousSecond = 0;
+	this->previousMinute = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

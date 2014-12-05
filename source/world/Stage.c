@@ -30,17 +30,16 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			20
-#define __ENTITY_UNLOAD_PAD 		30
+#define __ENTITY_LOAD_PAD 			40
+#define __ENTITY_UNLOAD_PAD 		60
 
 #define __STREAMING_AMPLITUDE	5
-#define __STREAM_CYCLE	(__TARGET_FPS >> 2)	
+#define __STREAM_CYCLE	(__TARGET_FPS)	
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
 
 #include <Stage.h>
-#include <Globals.h>
 #include <Optics.h>
 #include <SoundManager.h>
 #include <Screen.h>
@@ -64,7 +63,8 @@ __CLASS_DEFINITION(Stage);
 typedef struct StageEntityDescription {
 	
 	PositionedEntity* positionedEntity;
-	int ID;
+	s16 ID;
+	
 }StageEntityDescription;
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -75,6 +75,10 @@ typedef struct StageEntityDescription {
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+// global
+extern VBVec3D * _screenPosition;
+extern MovementState* _screenMovementState;
 
 //class's constructor
 static void Stage_constructor(Stage this);
@@ -92,7 +96,7 @@ static void Stage_registerEntities(Stage this);
 static void Stage_processRemovedEntities(Stage this);
 
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively, int disableInterrupts);
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
 
 // preload textures
 static void Stage_loadTextures(Stage this);
@@ -157,6 +161,12 @@ void Stage_destructor(Stage this){
 	
 	ASSERT(this, "Stage::destructor: null this");
 
+	if(this->ui){
+		
+		__DELETE(this->ui);
+		this->ui = NULL;
+	}
+
 	if(this->stageEntities){
 		
 		VirtualNode node = VirtualList_begin(this->stageEntities);
@@ -183,11 +193,6 @@ void Stage_destructor(Stage this){
 		__DELETE(this->removedEntities);
 		
 		this->removedEntities = NULL;
-	}
-	
-	if(this->ui){
-		
-		__DELETE(this->ui);
 	}
 	
 	// destroy the super object
@@ -286,7 +291,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	Stage_registerEntities(this);
 	
 	// load entities
-	Stage_loadEntities(this, loadOnlyInRangeEntities, false, false);
+	Stage_loadEntities(this, loadOnlyInRangeEntities, false);
 
 	// setup ui
 	Stage_setupUI(this);
@@ -305,6 +310,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 static void Stage_setupUI(Stage this){
 
 	ASSERT(this, "Stage::setupUI: null this");
+	ASSERT(!this->ui, "Stage::setupUI: UI already exists");
 
 	if(this->ui){
 		
@@ -313,7 +319,7 @@ static void Stage_setupUI(Stage this){
 	}
 	
 	if(this->stageDefinition->uiDefinition.allocator) {
-		
+
 		// call the appropiate allocator to support inheritance!
 		this->ui = (UI)((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(0, &this->stageDefinition->uiDefinition);
 		ASSERT(this->ui, "Stage::setupUI: null ui");
@@ -338,9 +344,9 @@ static void Stage_setupUI(Stage this){
 					// rotation
 					{0, 0, 0}	
 			};
-		
+
 			Container_setLocalPosition((Container)this->ui, position);
-		
+
 			__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
 		}
 	}
@@ -352,7 +358,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 
 	ASSERT(this, "Stage::addEntity: null this");
 
-	static int ID = 0;
+	static s16 ID = 0;
 
 	if(entityDefinition){
 		
@@ -401,11 +407,14 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 		return;
 	}
 	
+	// hide until effectively deleted
+	Entity_hide(entity);
+
 	VirtualList_pushBack(this->removedEntities, entity);
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 	
-	int ID = Container_getID((Container)entity);
+	s16 ID = Container_getID((Container)entity);
 
 	for(; node; node = VirtualNode_getNext(node)){
 
@@ -456,11 +465,6 @@ static void Stage_registerEntity(Stage this, PositionedEntity* positionedEntity)
 	
 	ASSERT(this, "Stage::registerEntities: null this");
 
-	if(!this->stageEntities) {
-		
-		this->stageEntities = __NEW(VirtualList);
-	}
-
 	StageEntityDescription* stageEntityDescription = __NEW_BASIC(StageEntityDescription);
 
 	stageEntityDescription->ID = -1;
@@ -477,6 +481,12 @@ static void Stage_registerEntities(Stage this) {
 	if(this->stageEntities) {
 		
 		__DELETE(this->stageEntities);
+		this->stageEntities = NULL;
+	}
+	
+	if(!this->stageEntities) {
+		
+		this->stageEntities = __NEW(VirtualList);
 	}
 	
 	int i = 0;
@@ -488,7 +498,7 @@ static void Stage_registerEntities(Stage this) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively, int disableInterrupts){
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively){
 
 	ASSERT(this, "Stage::loadEntities: null this");
 
@@ -526,19 +536,10 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
 
-				if(disableInterrupts) {
-					
-					VPUManager_disableInterrupt(VPUManager_getInstance());
-				}
 				
 				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position, stageEntityDescription->positionedEntity->extraInfo, false);
 				stageEntityDescription->ID = Container_getID((Container)entity);
 
-				if(disableInterrupts) {
-					
-					VPUManager_enableInterrupt(VPUManager_getInstance());
-				}
-				
 				if(!skippedEntity) {
 
 					lastLoadedNode = node;
@@ -600,18 +601,14 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		// if the entity isn't visible inside the view field, unload it
 		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD))){		
 
-			int ID = Container_getID((Container)entity);
+			s16 ID = Container_getID((Container)entity);
 			
 			int traverseNormally = ID < ((StageEntityDescription*)VirtualNode_getData(this->streamingLeftHead))->ID ||
 				ID > ((StageEntityDescription*)VirtualNode_getData(this->streamingRightHead))->ID;
-			
 
 			VirtualNode auxNode = traverseNormally? VirtualList_begin(this->stageEntities): 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead;
-//			VirtualNode auxNode = VirtualList_begin(this->stageEntities);
-			
 
 			for(; auxNode; auxNode = traverseNormally? VirtualNode_getNext(auxNode): 0 < this->streamingHeadDisplacement? VirtualNode_getPrevious(auxNode): VirtualNode_getNext(auxNode)){
-//			for(; auxNode; auxNode = VirtualNode_getNext(auxNode)){
 
 				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
 
@@ -641,17 +638,16 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		Entity entity = (Entity)VirtualNode_getData(node);
 
 		//VirtualList_removeElement(this->children, entity);
-		VPUManager_disableInterrupt(VPUManager_getInstance());
 
 		// destroy it
 		__DELETE(entity);
 	}
 
-	VPUManager_enableInterrupt(VPUManager_getInstance());
 	
 	
 	CACHE_DISABLE;
 	
+	// repositione stream headers
 	if(0 < VirtualList_getSize(removedEntities)){
 		
 		VirtualNode* modifierNode = 0 < this->streamingHeadDisplacement? &this->streamingLeftHead: &this->streamingRightHead;
@@ -714,7 +710,7 @@ void Stage_update(Stage this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // stream entities according to screen's position
 void Stage_stream(Stage this){
-	
+
 	ASSERT(this, "Stage::stream: null this");
 	// if the screen is moving
 	//if(_screenMovementState->x || _screenMovementState->y || _screenMovementState->z){
@@ -733,7 +729,7 @@ void Stage_stream(Stage this){
 		this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
 		// load visible objects	
-		Stage_loadEntities(this, true, true, true);
+		Stage_loadEntities(this, true, true);
 	}	
 }
 
@@ -745,7 +741,7 @@ void Stage_streamAll(Stage this) {
 	this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
 	Stage_unloadOutOfRangeEntities(this, false);
-	Stage_loadEntities(this, true, false, true);
+	Stage_loadEntities(this, true, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

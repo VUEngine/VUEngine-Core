@@ -93,10 +93,10 @@ typedef const ScrollBackgroundDefinition ScrollBackgroundROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, int ID));
+__CLASS_NEW_DECLARE(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 ID));
 
 // class's constructor
-void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, int ID);
+void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 ID);
 
 // class's destructor
 void ScrollBackground_destructor(ScrollBackground this);

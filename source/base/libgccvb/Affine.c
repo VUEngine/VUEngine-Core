@@ -118,8 +118,8 @@ void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY,
 				pdx.pc
 		};
 
-		//int i = FIX7_9TOI(FIX7_9_MULT(ITOFIX7_9(fg_y << 1), zoomY)) + 2;
-		int i = FIX7_9TOF(zoomY) * (fg_y << 1) + 2;
+		int i = FIX7_9TOI(FIX7_9_MULT(ITOFIX7_9(fg_y << 1), zoomY)) + 2;
+		//int i = FIX7_9TOF(zoomY) * (fg_y << 1) + 2;
 		
 		if(0 > i){
 		

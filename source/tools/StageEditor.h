@@ -18,6 +18,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#ifndef STAGE_EDITOR_H_
+#define STAGE_EDITOR_H_
+
+
+#ifdef __STAGE_EDITOR
+
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -27,25 +34,71 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-#include <Globals.h>
-
+#include <Object.h>
+#include <Entity.h>
+#include <GameState.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 												DEFINITIONS
+ * 											CLASS'S DECLARATION
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/* global pointers to various gameengine's attributes 
- * to access them from each class of the engine
+// declare the virtual methods
+#define StageEditor_METHODS													\
+		Object_METHODS														\
+
+
+// declare the virtual methods which are redefined
+#define StageEditor_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)										\
+		__VIRTUAL_SET(ClassName, StageEditor, handleMessage);				\
+
+
+// declare a StageEditor
+__CLASS(StageEditor);
+
+
+// for level editing
+typedef struct UserObject {
+	
+	char* name;
+	EntityDefinition* entityDefinition;
+	
+}UserObject;
+
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 										PUBLIC INTERFACE
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
  */
 
-const u16 *			_asciiChar = NULL;
-Optical *			_optical = NULL;
-MovementState * 	_screenMovementState = NULL;
-VBVec3D	*			_screenPosition = NULL;
+// it is a singleton!
+StageEditor StageEditor_getInstance();
+
+// class's destructor
+void StageEditor_destructor(StageEditor this);
+
+// update
+void StageEditor_update(StageEditor this);
+
+// start level editor
+void StageEditor_start(StageEditor this, GameState gameState);
+
+// stop level editor
+void StageEditor_stop(StageEditor this);
+
+// process a telegram
+int StageEditor_handleMessage(StageEditor this, Telegram telegram);
+
+#endif
+
+#endif /*CLOCK_H_*/

@@ -70,7 +70,7 @@ __CLASS_DEFINITION(ParamTableManager);
 static void ParamTableManager_constructor(ParamTableManager this);
 
 // register a sprite
-static void ParamTableManager_setObject(ParamTableManager this, Sprite sprite);
+static void ParamTableManager_registerSprite(ParamTableManager this, Sprite sprite);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 		Sprite_setParam(sprite, this->used);
 		
 		//record sprite
-		ParamTableManager_setObject(this, sprite);
+		ParamTableManager_registerSprite(this, sprite);
 		
 		//update the param bytes ocupied
 		this->size -= size;
@@ -163,7 +163,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // record allocated sprite
-static void ParamTableManager_setObject(ParamTableManager this, Sprite sprite){
+static void ParamTableManager_registerSprite(ParamTableManager this, Sprite sprite){
 	
 	ASSERT(this, "ParamTableManager::setObject: null this");
 

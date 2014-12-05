@@ -58,6 +58,9 @@
 																		\
 	/*  */																\
 	u16 currentKey;														\
+																		\
+	/*  */																\
+	u16 previousKey;													\
 	
 
 // define the KeypadManager
@@ -146,9 +149,36 @@ u16 KeypadManager_read(KeypadManager this){
 	while (*readingStatus & S_STAT);
 	
 	// now read the key
+	this->previousKey = this->currentKey;
 	this->currentKey = (((HW_REGS[SDHR] << 8)) | HW_REGS[SDLR]) & 0xFFFC;
-	 
-	//KeypadManager_enable(this);
 
 	return this->currentKey;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get pressed key
+u16 KeypadManager_getPressedKey(KeypadManager this){
+	
+	return this->currentKey & ~this->previousKey;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get released key
+u16 KeypadManager_getReleasedKey(KeypadManager this){
+	
+	return this->currentKey != this->previousKey? this->previousKey & ~this->currentKey: 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get hold key
+u16 KeypadManager_getHoldKey(KeypadManager this){
+	
+	return this->currentKey & this->previousKey? this->currentKey & this->previousKey: 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get previous key
+u16 KeypadManager_getPreviousKey(KeypadManager this){
+	
+	return this->currentKey & this->previousKey? this->currentKey & this->previousKey: 0;
 }

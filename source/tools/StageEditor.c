@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifdef __LEVEL_EDITOR
+#ifdef __STAGE_EDITOR
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -29,15 +29,14 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <LevelEditor.h>
+#include <StageEditor.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Globals.h>
 #include <Entity.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
 #include <SpriteManager.h>
-#include <Level.h>
+#include <GameState.h>
 #include <Stage.h>
 #include <Shape.h>
 #include <Screen.h>
@@ -66,13 +65,13 @@
  */
 
 
-#define LevelEditor_ATTRIBUTES				\
+#define StageEditor_ATTRIBUTES				\
 											\
 	/* super's attributes */				\
 	Object_ATTRIBUTES;						\
 											\
 	/* current in game entity */			\
-	Level level;							\
+	GameState gameState;							\
 											\
 	/* current in game entity */			\
 	VirtualNode currentEntityNode;			\
@@ -90,8 +89,8 @@
 	int translationStepSize;				\
 
 
-// define the LevelEditor
-__CLASS_DEFINITION(LevelEditor);
+// define the StageEditor
+__CLASS_DEFINITION(StageEditor);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -124,7 +123,6 @@ enum Modes {
 		kLastMode
 };
 
-extern UserObject _userObjects[];
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -135,26 +133,32 @@ extern UserObject _userObjects[];
  * ---------------------------------------------------------------------------------------------------------
  */
 
-static void LevelEditor_constructor(LevelEditor this);
+// globals
+extern Optical* _optical;
+extern UserObject _userObjects[];
+extern MovementState* _screenMovementState;
 
-static void LevelEditor_setupMode(LevelEditor this);
-static void LevelEditor_releaseShape(LevelEditor this);
-static void LevelEditor_getShape(LevelEditor this);
-static void LevelEditor_positioneShape(LevelEditor this);
-static void LevelEditor_highLightEntity(LevelEditor this);
-static void LevelEditor_selectPreviousEntity(LevelEditor this);
-static void LevelEditor_selectNextEntity(LevelEditor this);
-static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey);
-static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey);
-static void LevelEditor_changeProjection(LevelEditor this, u16 pressedKey);
-static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D translation);
-static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D translation);
-static void LevelEditor_printEntityPosition(LevelEditor this);
-static void LevelEditor_printScreenPosition(LevelEditor this);
-static void LevelEditor_printProjectionValues(LevelEditor this);
-static void LevelEditor_printUserObjects(LevelEditor this);
-static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey);
-static void LevelEditor_printTranslationStepSize(LevelEditor this);
+
+static void StageEditor_constructor(StageEditor this);
+
+static void StageEditor_setupMode(StageEditor this);
+static void StageEditor_releaseShape(StageEditor this);
+static void StageEditor_getShape(StageEditor this);
+static void StageEditor_positioneShape(StageEditor this);
+static void StageEditor_highLightEntity(StageEditor this);
+static void StageEditor_selectPreviousEntity(StageEditor this);
+static void StageEditor_selectNextEntity(StageEditor this);
+static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey);
+static void StageEditor_moveScreen(StageEditor this, u16 pressedKey);
+static void StageEditor_changeProjection(StageEditor this, u16 pressedKey);
+static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D translation);
+static void StageEditor_applyTraslationToScreen(StageEditor this, VBVec3D translation);
+static void StageEditor_printEntityPosition(StageEditor this);
+static void StageEditor_printScreenPosition(StageEditor this);
+static void StageEditor_printProjectionValues(StageEditor this);
+static void StageEditor_printUserObjects(StageEditor this);
+static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey);
+static void StageEditor_printTranslationStepSize(StageEditor this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -167,19 +171,19 @@ static void LevelEditor_printTranslationStepSize(LevelEditor this);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-__SINGLETON(LevelEditor);
+__SINGLETON(StageEditor);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void LevelEditor_constructor(LevelEditor this){
+static void StageEditor_constructor(StageEditor this){
 
-	ASSERT(this, "LevelEditor::constructor: null this");
+	ASSERT(this, "StageEditor::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 	
 	this->currentEntityNode = NULL;
 
-	this->level = NULL;
+	this->gameState = NULL;
 	
 	this->mode = kFirstMode + 1;
 	
@@ -201,9 +205,9 @@ static void LevelEditor_constructor(LevelEditor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void LevelEditor_destructor(LevelEditor this){
+void StageEditor_destructor(StageEditor this){
 	
-	ASSERT(this, "LevelEditor::destructor: null this");
+	ASSERT(this, "StageEditor::destructor: null this");
 
 	if(this->userObjectsSelector) {
 		
@@ -216,12 +220,12 @@ void LevelEditor_destructor(LevelEditor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update
-void LevelEditor_update(LevelEditor this){
+void StageEditor_update(StageEditor this){
 	
-	ASSERT(this, "LevelEditor::update: null this");
+	ASSERT(this, "StageEditor::update: null this");
 
-	//Stage_stream(Level_getStage(this->level));
-	if(this->level && this->shape) {
+	//Stage_stream(GameState_getStage(this->gameState));
+	if(this->gameState && this->shape) {
 		
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
@@ -229,36 +233,36 @@ void LevelEditor_update(LevelEditor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show debug screens
-void LevelEditor_start(LevelEditor this, Level level){
+void StageEditor_start(StageEditor this, GameState gameState){
 	
-	ASSERT(this, "LevelEditor::start: null this");
-	ASSERT(level, "LevelEditor::start: level this");
+	ASSERT(this, "StageEditor::start: null this");
+	ASSERT(gameState, "StageEditor::start: gameState this");
 
-	this->level = level;
+	this->gameState = gameState;
 	this->mode = kFirstMode + 1;
-	LevelEditor_releaseShape(this);
-	LevelEditor_setupMode(this);
+	StageEditor_releaseShape(this);
+	StageEditor_setupMode(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // hide debug screens
-void LevelEditor_stop(LevelEditor this){
+void StageEditor_stop(StageEditor this){
 
-	ASSERT(this, "LevelEditor::stop: null this");
+	ASSERT(this, "StageEditor::stop: null this");
 
 	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-	LevelEditor_releaseShape(this);
+	StageEditor_releaseShape(this);
 	this->currentEntityNode = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process a telegram
-int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
+int StageEditor_handleMessage(StageEditor this, Telegram telegram){
 	
-	ASSERT(this, "LevelEditor::handleMessage: null this");
+	ASSERT(this, "StageEditor::handleMessage: null this");
 
-	if(!this->level) {
+	if(!this->gameState) {
 		
 		return false;
 	}
@@ -278,7 +282,7 @@ int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 						this->mode = kFirstMode + 1;
 					}
 					
-					LevelEditor_setupMode(this);
+					StageEditor_setupMode(this);
 					break;
 				}
 				
@@ -286,22 +290,22 @@ int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 				
 					case kMoveScreen:
 
-						LevelEditor_moveScreen(this, pressedKey);
+						StageEditor_moveScreen(this, pressedKey);
 						break;
 
 					case kChangeProjection:
 
-						LevelEditor_changeProjection(this, pressedKey);
+						StageEditor_changeProjection(this, pressedKey);
 						break;
 						
 					case kTranslateEntities:
 
-						LevelEditor_traslateEntity(this, pressedKey);
+						StageEditor_traslateEntity(this, pressedKey);
 						break;
 					
 					case kAddObjects:
 						
-						LevelEditor_selectUserObject(this, pressedKey);
+						StageEditor_selectUserObject(this, pressedKey);
 						break;
 				}
 			}
@@ -312,7 +316,7 @@ int LevelEditor_handleMessage(LevelEditor this, Telegram telegram){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print title
-static void LevelEditor_setupMode(LevelEditor this) {
+static void StageEditor_setupMode(StageEditor this) {
 	
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 	Printing_text("LEVEL EDITOR", 17, 0);
@@ -321,42 +325,42 @@ static void LevelEditor_setupMode(LevelEditor this) {
 	
 		case kMoveScreen:
 
-			LevelEditor_releaseShape(this);
-			LevelEditor_printScreenPosition(this);
+			StageEditor_releaseShape(this);
+			StageEditor_printScreenPosition(this);
 			break;
 			
 		case kChangeProjection:
 
-			LevelEditor_releaseShape(this);
-			LevelEditor_printProjectionValues(this);
+			StageEditor_releaseShape(this);
+			StageEditor_printProjectionValues(this);
 			break;
 
 		case kTranslateEntities:
 
 			if(!this->currentEntityNode) {
 
-				LevelEditor_selectNextEntity(this);
+				StageEditor_selectNextEntity(this);
 			}
 			else{
 
-				LevelEditor_getShape(this);
-				LevelEditor_highLightEntity(this);
+				StageEditor_getShape(this);
+				StageEditor_highLightEntity(this);
 			}
 
-			LevelEditor_printEntityPosition(this);
-			LevelEditor_printTranslationStepSize(this);
+			StageEditor_printEntityPosition(this);
+			StageEditor_printTranslationStepSize(this);
 			break;
 			
 		case kAddObjects:
 
-			LevelEditor_releaseShape(this);
-			LevelEditor_printUserObjects(this);
+			StageEditor_releaseShape(this);
+			StageEditor_printUserObjects(this);
 			break;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_releaseShape(LevelEditor this) {
+static void StageEditor_releaseShape(StageEditor this) {
 
 	if(this->currentEntityNode) {
 		
@@ -372,7 +376,7 @@ static void LevelEditor_releaseShape(LevelEditor this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_getShape(LevelEditor this) {
+static void StageEditor_getShape(StageEditor this) {
 	
 	if(!this->currentEntityNode){
 	
@@ -401,7 +405,7 @@ static void LevelEditor_getShape(LevelEditor this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_positioneShape(LevelEditor this) {
+static void StageEditor_positioneShape(StageEditor this) {
 	
 	if(!this->currentEntityNode || !this->shape){
 	
@@ -421,12 +425,12 @@ static void LevelEditor_positioneShape(LevelEditor this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_highLightEntity(LevelEditor this){
+static void StageEditor_highLightEntity(StageEditor this){
 	
 	if(this->currentEntityNode){
 		
-		LevelEditor_printEntityPosition(this);
-		LevelEditor_positioneShape(this);
+		StageEditor_printEntityPosition(this);
+		StageEditor_positioneShape(this);
 	}
 	else {
 		
@@ -436,11 +440,11 @@ static void LevelEditor_highLightEntity(LevelEditor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select the next entity
-static void LevelEditor_selectPreviousEntity(LevelEditor this){
+static void StageEditor_selectPreviousEntity(StageEditor this){
 	
-	LevelEditor_releaseShape(this);
+	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren((Container)Level_getStage(this->level));
+	VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
 
 	if(!this->currentEntityNode) {
 		
@@ -458,18 +462,18 @@ static void LevelEditor_selectPreviousEntity(LevelEditor this){
 	
 	if(this->currentEntityNode) {
 		
-		LevelEditor_getShape(this);
-		LevelEditor_highLightEntity(this);
+		StageEditor_getShape(this);
+		StageEditor_highLightEntity(this);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select the next entity
-static void LevelEditor_selectNextEntity(LevelEditor this){
+static void StageEditor_selectNextEntity(StageEditor this){
 	
-	LevelEditor_releaseShape(this);
+	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren((Container)Level_getStage(this->level));
+	VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
 
 	if(!this->currentEntityNode) {
 		
@@ -487,14 +491,14 @@ static void LevelEditor_selectNextEntity(LevelEditor this){
 
 	if(this->currentEntityNode) {
 		
-		LevelEditor_getShape(this);
-		LevelEditor_highLightEntity(this);
+		StageEditor_getShape(this);
+		StageEditor_highLightEntity(this);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // move screen
-static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
+static void StageEditor_moveScreen(StageEditor this, u16 pressedKey){
 	
 	if(pressedKey & K_LL){
 		
@@ -505,7 +509,7 @@ static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTraslationToScreen(this, translation);
 	}
 	else if(pressedKey & K_LR){
 		
@@ -516,7 +520,7 @@ static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTraslationToScreen(this, translation);
 	}
 	else if(pressedKey & K_LU){
 		
@@ -526,7 +530,7 @@ static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTraslationToScreen(this, translation);
 	}
 	else if(pressedKey & K_LD){
 		
@@ -536,7 +540,7 @@ static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTraslationToScreen(this, translation);
 	}
 	else if(pressedKey & K_RU){
 		
@@ -546,7 +550,7 @@ static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
 				ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
 		};
 
-		LevelEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTraslationToScreen(this, translation);
 	}
 	else if(pressedKey & K_RD){
 		
@@ -556,14 +560,14 @@ static void LevelEditor_moveScreen(LevelEditor this, u16 pressedKey){
 				ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
 		};
 
-		LevelEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTraslationToScreen(this, translation);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // modify projection values
-static void LevelEditor_changeProjection(LevelEditor this, u16 pressedKey){
+static void StageEditor_changeProjection(StageEditor this, u16 pressedKey){
 	
 	if(pressedKey & K_LL){
 		
@@ -616,8 +620,8 @@ static void LevelEditor_changeProjection(LevelEditor this, u16 pressedKey){
 	_screenMovementState->y = __ACTIVE;
 	_screenMovementState->z = __ACTIVE;
 
-	LevelEditor_printProjectionValues(this);
-	Level_transform(this->level);
+	StageEditor_printProjectionValues(this);
+	GameState_transform(this->gameState);
 
 	// prevent any side effect
 	_screenMovementState->x = __PASSIVE;
@@ -628,7 +632,7 @@ static void LevelEditor_changeProjection(LevelEditor this, u16 pressedKey){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // translate entity
-static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
+static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey){
 	
 	if(pressedKey & K_LL){
 		
@@ -639,7 +643,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTraslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LR){
 		
@@ -650,7 +654,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTraslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LU){
 		
@@ -660,7 +664,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTraslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LD){
 		
@@ -670,7 +674,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 				0
 		};
 
-		LevelEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTraslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_RR){
 
@@ -679,7 +683,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 		
-		LevelEditor_printTranslationStepSize(this);
+		StageEditor_printTranslationStepSize(this);
 	}
 	else if(pressedKey & K_RL){
 		
@@ -688,7 +692,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 			this->translationStepSize = 1;
 		}
 		
-		LevelEditor_printTranslationStepSize(this);
+		StageEditor_printTranslationStepSize(this);
 	}
 	else if(pressedKey & K_RU){
 		
@@ -698,7 +702,7 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 				ITOFIX19_13(this->translationStepSize),
 		};
 
-		LevelEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTraslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_RD){
 		
@@ -708,20 +712,20 @@ static void LevelEditor_traslateEntity(LevelEditor this, u16 pressedKey){
 				ITOFIX19_13(-this->translationStepSize),
 		};
 
-		LevelEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTraslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LT) {
 		
-		LevelEditor_selectPreviousEntity(this);
+		StageEditor_selectPreviousEntity(this);
 	}
 	else if(pressedKey & K_RT) {
 
-		LevelEditor_selectNextEntity(this);
+		StageEditor_selectNextEntity(this);
 	}	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D translation){
+static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D translation){
 	
 	if(this->currentEntityNode && this->shape){
 		
@@ -744,20 +748,20 @@ static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D transl
 		_screenMovementState->y = __ACTIVE;
 		_screenMovementState->z = __ACTIVE;
 		
-		Level_transform(this->level);
+		GameState_transform(this->gameState);
 
 		// prevent any side effect
 		_screenMovementState->x = __PASSIVE;
 		_screenMovementState->y = __PASSIVE;
 		_screenMovementState->z = __PASSIVE;
 
-		LevelEditor_positioneShape(this);
+		StageEditor_positioneShape(this);
 
-		LevelEditor_printEntityPosition(this);
+		StageEditor_printEntityPosition(this);
 		
 		SpriteManager_sortAllLayers(SpriteManager_getInstance());
 		
-		LevelEditor_printTranslationStepSize(this);
+		StageEditor_printTranslationStepSize(this);
 
 		// should work
 		//__VIRTUAL_CALL(void, Shape, positione, this->shape);
@@ -765,7 +769,7 @@ static void LevelEditor_applyTraslationToEntity(LevelEditor this, VBVec3D transl
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
+static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey) {
 	
 	if(pressedKey & K_LU){
 	
@@ -777,29 +781,36 @@ static void LevelEditor_selectUserObject(LevelEditor this, u16 pressedKey) {
 	}
 	else if(pressedKey & K_A) {
 		
+		if(1 >= SpriteManager_getFreeLayer(SpriteManager_getInstance())){
+		
+			Printing_text("No more WORLDs", 48 - 15, 4);
+			Printing_text("available     ", 48 - 15, 5);
+			return;
+		}
+		
 		VBVec3D position = Screen_getPosition(Screen_getInstance());
 		
 		position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
 		position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 		position.z += ITOFIX19_13(__SCREEN_WIDTH >> 2);
 		
-		Entity entity = Stage_addEntity(Level_getStage(this->level), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
+		Entity entity = Stage_addEntity(GameState_getStage(this->gameState), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
 		SpriteManager_sortAllLayers(SpriteManager_getInstance());
 
-		Level_transform(this->level);
+		GameState_transform(this->gameState);
 		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, __ARGUMENTS(position));
 					
-		VirtualList stageEntities = Container_getChildren((Container)Level_getStage(this->level));
+		VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
 		this->currentEntityNode = stageEntities? VirtualList_end(stageEntities): NULL;
 
 		// select the added entity
 		this->mode = kTranslateEntities;
-		LevelEditor_setupMode(this);
+		StageEditor_setupMode(this);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_printEntityPosition(LevelEditor this){
+static void StageEditor_printEntityPosition(StageEditor this){
 	
 	int y = 2;
 	int x = 1;
@@ -827,14 +838,14 @@ static void LevelEditor_printEntityPosition(LevelEditor this){
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D translation){
+static void StageEditor_applyTraslationToScreen(StageEditor this, VBVec3D translation){
 	
 	Screen_move(Screen_getInstance(), translation, true);
-	Level_transform(this->level);
+	GameState_transform(this->gameState);
 
-	LevelEditor_printScreenPosition(this);
+	StageEditor_printScreenPosition(this);
 
-	Stage_streamAll(Level_getStage(this->level));
+	Stage_streamAll(GameState_getStage(this->gameState));
 
 	CollisionManager_processRemovedShapes(CollisionManager_getInstance());
 	PhysicalWorld_processRemovedBodies(PhysicalWorld_getInstance());
@@ -842,7 +853,7 @@ static void LevelEditor_applyTraslationToScreen(LevelEditor this, VBVec3D transl
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_printScreenPosition(LevelEditor this){
+static void StageEditor_printScreenPosition(StageEditor this){
 	
 	int x = 1;
 	int y = 2;
@@ -860,7 +871,7 @@ static void LevelEditor_printScreenPosition(LevelEditor this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_printProjectionValues(LevelEditor this){
+static void StageEditor_printProjectionValues(StageEditor this){
 	
 	int x = 1;
 	int y = 2;
@@ -886,7 +897,7 @@ static void LevelEditor_printProjectionValues(LevelEditor this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_printUserObjects(LevelEditor this){
+static void StageEditor_printUserObjects(StageEditor this){
 
 	Printing_text("ADD OBJECTS", 1, 2);
 	Printing_text("                       ", 1, 3);
@@ -897,7 +908,7 @@ static void LevelEditor_printUserObjects(LevelEditor this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static void LevelEditor_printTranslationStepSize(LevelEditor this) {
+static void StageEditor_printTranslationStepSize(StageEditor this) {
 	
 	Printing_text("Step   (RL/RR)", 48 - 14, 4);
 	Printing_text("+     ", 48 - 12, 5);

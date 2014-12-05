@@ -29,7 +29,6 @@
  */
 
 #include <PhysicalWorld.h>
-#include <MessageDispatcher.h>
 #include <Game.h>
 #include <Clock.h>
 
@@ -429,7 +428,6 @@ void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body){
 	
 		VirtualList_pushBack(this->activeBodies, body);
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

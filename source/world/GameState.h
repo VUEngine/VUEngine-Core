@@ -18,11 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef LEVEL_EDITOR_H_
-#define LEVEL_EDITOR_H_
-
-
-#ifdef __LEVEL_EDITOR
+#ifndef GAME_STATE_H_
+#define GAME_STATE_H_
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -34,9 +31,9 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Object.h>
-#include <Entity.h>
-#include <Level.h>
+#include <State.h>
+#include <Telegram.h>
+#include <Stage.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -49,27 +46,37 @@
  */
 
 // declare the virtual methods
-#define LevelEditor_METHODS													\
-		Object_METHODS														\
+#define GameState_METHODS											\
+		State_METHODS												\
+		__VIRTUAL_DEC(transform);									\
 
 
 // declare the virtual methods which are redefined
-#define LevelEditor_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, LevelEditor, handleMessage);				\
-
-
-// declare a LevelEditor
-__CLASS(LevelEditor);
-
-
-// for level editing
-typedef struct UserObject {
+#define GameState_SET_VTABLE(ClassName)								\
+		State_SET_VTABLE(ClassName)									\
+		__VIRTUAL_SET(ClassName, GameState, enter);					\
+		__VIRTUAL_SET(ClassName, GameState, execute);				\
+		__VIRTUAL_SET(ClassName, GameState, exit);					\
+		__VIRTUAL_SET(ClassName, GameState, pause);					\
+		__VIRTUAL_SET(ClassName, GameState, resume);				\
+		__VIRTUAL_SET(ClassName, GameState, handleMessage);			\
+		__VIRTUAL_SET(ClassName, GameState, transform);				\
 	
-	char* name;
-	EntityDefinition* entityDefinition;
-	
-}UserObject;
+
+#define GameState_ATTRIBUTES										\
+																	\
+	/* super's attributes */										\
+	State_ATTRIBUTES;												\
+																	\
+	/* a pointer to the game's stage */								\
+	Stage stage;													\
+																	\
+	/* flag to allow streaming */									\
+	int canStream;
+
+
+__CLASS(GameState);
+
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -81,24 +88,49 @@ typedef struct UserObject {
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// it is a singleton!
-LevelEditor LevelEditor_getInstance();
+// setup the init focus screen
+GameState GameState_getInstance(void);
+
+// class's constructor
+void GameState_constructor(GameState this);
 
 // class's destructor
-void LevelEditor_destructor(LevelEditor this);
+void GameState_destructor(GameState this);
 
-// update
-void LevelEditor_update(LevelEditor this);
+// state's enter
+void GameState_enter(GameState this, void* owner);
 
-// start level editor
-void LevelEditor_start(LevelEditor this, Level level);
+// state's execute
+void GameState_execute(GameState this, void* owner);
 
-// stop level editor
-void LevelEditor_stop(LevelEditor this);
+// state's enter
+void GameState_exit(GameState this, void* owner);
 
-// process a telegram
-int LevelEditor_handleMessage(LevelEditor this, Telegram telegram);
+// state's execute
+void GameState_pause(GameState this, void* owner);
 
-#endif
+// state's execute
+void GameState_resume(GameState this, void* owner);
 
-#endif /*CLOCK_H_*/
+// state's on message
+int GameState_handleMessage(GameState this, void* owner, Telegram telegram);
+
+// update level entities' positions
+void GameState_transform(GameState this);
+
+// propagate message to all entities in the level
+int GameState_propagateMessage(GameState this, int message);
+			
+// load a stage
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);
+
+// set streaming flag
+void GameState_setCanStream(GameState this, int canStream);
+
+// get streaming flag
+int GameState_canStream(GameState this);
+
+// retrieve stage 
+Stage GameState_getStage(GameState this);
+
+#endif /*GAME_STATE_H_*/

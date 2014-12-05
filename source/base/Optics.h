@@ -45,9 +45,9 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-extern Optical 		*_optical;
-
-extern VBVec3D		*_screenPosition;
+// declare global pointers
+extern Optical *_optical;
+extern VBVec3D*_screenPosition;
 
 
 /* ---------------------------------------------------------------------------------------------------------

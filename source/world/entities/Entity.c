@@ -56,6 +56,8 @@ __CLASS_DEFINITION(Entity);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// global
+extern MovementState* _screenMovementState;
 
 // add sprite
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites);
@@ -74,7 +76,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, int ID){
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID){
 
 	ASSERT(this, "Entity::constructor: null this");
 
@@ -402,14 +404,6 @@ int Entity_isVisible(Entity this, int pad){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve state when unloading the entity 
-int Entity_getInGameState(Entity this){
-
-	ASSERT(this, "Entity::getInGameState: null this");
-	return __UNLOADED;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create an entity in gameengine's memory
 Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo){
 	
@@ -499,4 +493,50 @@ Shape Entity_getShape(Entity this){
 	ASSERT(this, "Entity::getShape: null this");
 
 	return this->shape;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// make it visible
+void Entity_show(Entity this){
+	
+	ASSERT(this, "Entity::hide: null this");
+
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			if (sprite) {
+				
+				Sprite_show(sprite);
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// make it invisible
+void Entity_hide(Entity this){
+	
+	ASSERT(this, "Entity::hide: null this");
+
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			if (sprite) {
+				
+				Sprite_hide(sprite);
+			}
+		}
+	}
 }

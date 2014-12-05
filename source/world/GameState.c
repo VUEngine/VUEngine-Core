@@ -27,7 +27,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <Level.h>
+#include <GameState.h>
 
 #include <Game.h>
 #include <Screen.h>
@@ -55,7 +55,7 @@
 
 
 	
-__CLASS_DEFINITION(Level);
+__CLASS_DEFINITION(GameState);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -68,13 +68,13 @@ __CLASS_DEFINITION(Level);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void Level_constructor(Level this){
+void GameState_constructor(GameState this){
 		
-	ASSERT(this, "Level::constructor: null this");
+	ASSERT(this, "GameState::constructor: null this");
 
 	// this is an abstract class so must initialize the vtable here
 	// since this class does not have an allocator
-	__SET_CLASS(Level);
+	__SET_CLASS(GameState);
 	
 	__CONSTRUCT_BASE(State);
 	
@@ -86,9 +86,9 @@ void Level_constructor(Level this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void Level_destructor(Level this){
+void GameState_destructor(GameState this){
 	
-	ASSERT(this, "Level::destructor: null this");
+	ASSERT(this, "GameState::destructor: null this");
 
 	// destroy the stage
 	if (this->stage) {
@@ -105,9 +105,9 @@ void Level_destructor(Level this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's enter
-void Level_enter(Level this, void* owner){
+void GameState_enter(GameState this, void* owner){
 
-	ASSERT(this, "Level::enter: null this");
+	ASSERT(this, "GameState::enter: null this");
 
 	// reset the global clock
 	//Clock_reset(Game_getClock(Game_getInstance()));
@@ -118,9 +118,9 @@ void Level_enter(Level this, void* owner){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
-void Level_execute(Level this, void* owner){
+void GameState_execute(GameState this, void* owner){
 
-	ASSERT(this, "Level::execute: null this");
+	ASSERT(this, "GameState::execute: null this");
 
 	if(this->canStream) {
 		
@@ -135,9 +135,9 @@ void Level_execute(Level this, void* owner){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's exit 
-void Level_exit(Level this, void* owner){
+void GameState_exit(GameState this, void* owner){
 	
-	ASSERT(this, "Level::exit: null this");
+	ASSERT(this, "GameState::exit: null this");
 
 	// destroy the state
 	__DELETE(this);
@@ -145,52 +145,33 @@ void Level_exit(Level this, void* owner){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
-void Level_pause(Level this, void* owner){
+void GameState_pause(GameState this, void* owner){
 
-	ASSERT(this, "Level::pause: null this");
+	ASSERT(this, "GameState::pause: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
-void Level_resume(Level this, void* owner){	
+void GameState_resume(GameState this, void* owner){	
 
-	ASSERT(this, "Level::resume: null this");
+	ASSERT(this, "GameState::resume: null this");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's on message
-int Level_handleMessage(Level this, void* owner, Telegram telegram){
+int GameState_handleMessage(GameState this, void* owner, Telegram telegram){
 
-	ASSERT(this, "Level::handleMessage: null this");
+	ASSERT(this, "GameState::handleMessage: null this");
 
-	// process message
-	switch(Telegram_getMessage(telegram)){
-	
-		case kKeyPressed:
-			
-			Level_onKeyPressed(this, *((int*)Telegram_getExtraInfo(telegram)));
-			break;
-			
-		case kKeyUp:
-			
-			Level_onKeyUp(this, *((int*)Telegram_getExtraInfo(telegram)));
-			break;
-			
-		case kKeyHold:
-			
-			Level_onKeyHold(this, *((int*)Telegram_getExtraInfo(telegram)));
-			break;
-	}
-
-	return false;
+	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, Telegram_getMessage(telegram)));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update level entities' positions
-void Level_transform(Level this){
+void GameState_transform(GameState this){
 	
-	ASSERT(this, "Level::transform: null this");
-	ASSERT(this->stage, "Level::transform: null stage");
+	ASSERT(this, "GameState::transform: null this");
+	ASSERT(this->stage, "GameState::transform: null stage");
 	
 	// static to avoid call to _memcpy
 	static Transformation environmentTransform = {
@@ -206,43 +187,29 @@ void Level_transform(Level this){
 	
 	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, __ARGUMENTS(&environmentTransform));
 
-	Screen_update(Screen_getInstance());
+	Screen_positione(Screen_getInstance());
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-void Level_onKeyPressed(Level this, int pressedKey){
+// propagate message to all entities in the level
+int GameState_propagateMessage(GameState this, int message){
 
-	ASSERT(this, "Level::onKeyPressed: null this");
-
-	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyPressed, pressedKey));
+	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, message));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // process user input
-void Level_onKeyUp(Level this, int pressedKey){
+void GameState_onMessage(GameState this, int message){
 
-	ASSERT(this, "Level::onKeyUp: null this");
+	ASSERT(this, "GameState::onMessage: null this");
 
-	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyUp, pressedKey));
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// process user input
-void Level_onKeyHold(Level this, int pressedKey){
-
-	ASSERT(this, "Level::onKeyHold: null this");
-
-	__CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onKeyHold, pressedKey));
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load a stage
-void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups){
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups){
 	
-	ASSERT(this, "Level::loadStage: null this");
-	ASSERT(stageDefinition, "Level::loadStage: null stageDefinition");
+	ASSERT(this, "GameState::loadStage: null this");
+	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
 
 	// disable hardware interrupts
 	Game_disableHardwareInterrupts(Game_getInstance());
@@ -262,13 +229,13 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 	// set char memory flushing config
 	Stage_setFlushCharGroups(this->stage, flushCharGroups);
 	
-	ASSERT(this->stage, "Level::loadStage: null stage");
+	ASSERT(this->stage, "GameState::loadStage: null stage");
 	
 	//load world entities
 	Stage_load(this->stage, stageDefinition, loadOnlyInRangeEntities);
 
 	// transform everything
-	Level_transform(this);
+	GameState_transform(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortAllLayers(SpriteManager_getInstance());
@@ -283,9 +250,9 @@ void Level_loadStage(Level this, StageDefinition* stageDefinition, int loadOnlyI
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set streaming flag
-void Level_setCanStream(Level this, int canStream) {
+void GameState_setCanStream(GameState this, int canStream) {
 
-	ASSERT(this, "Level::loadStage: null this");
+	ASSERT(this, "GameState::loadStage: null this");
 	
 	this->canStream = canStream;
 }
@@ -293,20 +260,19 @@ void Level_setCanStream(Level this, int canStream) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get streaming flag
-int Level_canStream(Level this) {
+int GameState_canStream(GameState this) {
 
-	ASSERT(this, "Level::canStream: null this");
+	ASSERT(this, "GameState::canStream: null this");
 	
 	return this->canStream;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve stage
-Stage Level_getStage(Level this){
+Stage GameState_getStage(GameState this){
 
-	ASSERT(this, "Level::getStage: null this");
-	ASSERT(this->stage, "Level::getStage: null stage");
+	ASSERT(this, "GameState::getStage: null this");
+	ASSERT(this->stage, "GameState::getStage: null stage");
 
 	return this->stage;
 }
-

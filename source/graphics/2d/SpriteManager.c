@@ -245,6 +245,8 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	
 	ASSERT(this, "SpriteManager::addSprite: null this");
 
+	VPUManager_disableInterrupt(VPUManager_getInstance());
+
 	int i = 0;
 	// find the last render object's index
 	for(; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++);
@@ -278,9 +280,9 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	ASSERT(this, "SpriteManager::removeSprite: null this");
 
 	int i = 0;
-	
-	CACHE_ENABLE;
-	
+
+	VPUManager_disableInterrupt(VPUManager_getInstance());
+
 	// search for the entity to remove
 	for(; this->sprites[i] != sprite && i < __SPRITE_LIST_SIZE; i++);
 
@@ -288,12 +290,13 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	if(i < __SPRITE_LIST_SIZE){
 		
 		int j = i;
+		
 		// must render the whole entities after the entity to be removed twice
 		// to avoid flickering
 		for(; this->sprites[j + 1] && j < __SPRITE_LIST_SIZE - 1; j++){
 			
 			this->sprites[j] = this->sprites[j + 1];
-			
+
 			// set layer
 			Sprite_setWorldLayer(this->sprites[j], __TOTAL_LAYERS - j);
 			
@@ -303,7 +306,6 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 		// remove object from list
 		this->sprites[j] = NULL;
 	}
-	CACHE_DISABLE;
 
 	this->freeLayer++;
 	
@@ -346,11 +348,15 @@ void SpriteManager_render(SpriteManager this){
 
 	int i = 0;
 	
+	VPUManager_disableInterrupt(VPUManager_getInstance());
+	
 	for(i = 0; this->sprites[i] && i < __SPRITE_LIST_SIZE; i++){
 		
 		//render sprite	
 		Sprite_render((Sprite)this->sprites[i]);
 	}	
+	
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

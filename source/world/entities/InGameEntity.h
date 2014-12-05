@@ -32,6 +32,22 @@
 
 #include <Entity.h>
 
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 												MACROS
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+/*-----------------------------posible directions--------------------------*/
+#define __LEFT		 ((int)-1)
+#define __RIGHT		 ((int)1)
+#define __UP		 ((int)-1)
+#define __DOWN		 ((int)1)
+#define __NEAR		 ((int)-1)
+#define __FAR		 ((int)1)
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -132,10 +148,10 @@ typedef const InGameEntityDefinition InGameEntityROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, int ID));
+__CLASS_NEW_DECLARE(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, s16 ID));
 
 // class's constructor
-void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, int ID);
+void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 ID);
 
 // class's destructor
 void InGameEntity_destructor(InGameEntity this);

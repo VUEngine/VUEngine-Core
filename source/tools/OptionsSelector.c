@@ -32,7 +32,6 @@
 #include <OptionsSelector.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Globals.h>
 #include <FrameRate.h>
 #include <MemoryPool.h>
 #include <MessageDispatcher.h>
@@ -72,7 +71,7 @@
 #include <Entity.h>
 #include <InGameEntity.h>
 #include <ScrollBackground.h>
-#include <Level.h>
+#include <GameState.h>
 #include <Stage.h>
 
 /* ---------------------------------------------------------------------------------------------------------

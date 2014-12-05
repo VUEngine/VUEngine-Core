@@ -71,6 +71,9 @@ __CLASS_DEFINITION(Actor);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+// global
+extern MovementState* _screenMovementState;
+
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 
@@ -99,13 +102,12 @@ enum AxisOfCollision{
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, int ID))
+__CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID))
 __CLASS_NEW_END(Actor, __ARGUMENTS(actorDefinition, ID));
 
-// Actor.c 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's conctructor
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
+void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID){
 
 	ASSERT(this, "Actor::constructor: null this");
 
@@ -114,9 +116,6 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID){
 	
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
-	
-	//state ALIVE for initial update
-	this->inGameState = __LOADED;
 	
 	this->lastCollidingEntity[kXAxis] = NULL;
 	this->lastCollidingEntity[kYAxis] = NULL;
@@ -309,14 +308,6 @@ VBVec3D Actor_getPreviousPosition(Actor this){
 	ASSERT(this, "Actor::getPreviousPosition: null this");
 	
 	return this->previousGlobalPosition;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Actor_setInGameState(Actor this, int inGameState){
-	
-	ASSERT(this, "Actor::setInGameState: null this");
-	
-	this->inGameState = inGameState;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -649,15 +640,6 @@ VBVec3D Actor_getPosition(Actor this){
 	}
 	
 	return Entity_getPosition((Entity)this);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve state when unloading the entity 
-int Actor_getInGameState(Actor this){
-
-	ASSERT(this, "Actor::getInGameState: null this");
-
-	return this->inGameState;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

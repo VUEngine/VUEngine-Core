@@ -6,7 +6,6 @@ This file contains the following sections:
 LICENSE
 GENERAL NOTES
 COMPILING ON WIN32
-COMPILING ON GNU/LINUX
 
 
 LICENSE
@@ -40,7 +39,6 @@ Some source code in this release that may not be covered by the GPL:
   3. This notice may not be removed or altered from any source distribution.
 
 
-
 GENERAL NOTES
 =============
 
@@ -62,6 +60,7 @@ Features:
 		* Generic parenting system
 		* Generic messaging system
 		* Generic state machines
+		* Generic event listening/firing system
 	· Debugging
 		* Memory usage
 		* Hardware registers' usage 
@@ -71,7 +70,7 @@ Features:
 			World layer status
 			Collision boxes
 	· Object Oriented support through the use of Metaprogramming (C MACROS):
-		* Inheritance (and experimental Multiple inheritance)
+		* Simple inheritance
 		* Polymorphism
 		* Encapsulation
 	· Rendering:
@@ -128,39 +127,17 @@ COMPILING ON WIN32
 
 Requirements: 
 
-	· Minimal Linux environment (i.e: CygWin)
+	· Minimal Linux environment (i.e: CygWin) that includes make and git
 	
 	· GCCVB 4.4.2 for V810 
 
 
-1. Create a CygWin environment variable called VBJAENGINE which must point to the VBJaEngine's folder.
+1. Create a CygWin environment variable called VBDE which must point to the VBJaEngine's parent folder.
 
 2. Replace the crt0.o file created by gccvb with the one provided with this source code:
 
 	$ cp -f /usr/local/v810/lib/crt0.o /usr/local/v810/lib/crt0.o.bak
-	$ cp -f $VBJAENGINE/lib/crt0.o /usr/local/v810/lib/crt0.o
- 
-3. To compile the execute the following command inside the engine's folder:
-
-	$ make
-
-	This will produce the file libvbjae.a which must be linked agains the game's code.
-
-
-COMPILING ON GNU/LINUX
-==================
-
-Requirements: 
-
-	· GCCVB 4.4.2 for V810
-
-
-1. Create an environment variable called VBJAENGINE which must point to the VBJaEngine's folder.
-
-2. As root replace the crt0.o file created by gccvb with the one provided with this source code:
-
-	# cp -f /usr/local/v810/lib/crt0.o /usr/local/v810/lib/crt0.o.bak
-	# cp -f $VBJAENGINE/lib/crt0.o /usr/local/v810/lib/crt0.o
+	$ cp -f ../vbjaengine/lib/crt0.o /usr/local/v810/lib/crt0.o
  
 3. To compile the execute the following command inside the engine's folder:
 
@@ -177,8 +154,10 @@ ACKNOWLEDGMENTS
 	· DogP, for all the performace tips which really helped this project to be feasible, and
 	  for providing the code necessary to make sound support possible in the engine. 
 	
-	· Christian Radke (KR155E), for helping me with the documentation, debbuging, and all the other little 
-	  tasks that I can't remeber.
+	· Christian Radke (KR155E):
+		* Debugging and testing
+		* Documentation
+		* Engine's features and structure advisor
 	  
 	· RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums 
 	  who always are kind enough to share their knowledge. 

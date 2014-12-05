@@ -242,7 +242,7 @@ void CharGroup_write(CharGroup this){
 			}	
 
 			//write to char memory
-			Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
+			Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 
 			break;
 			
@@ -256,13 +256,13 @@ void CharGroup_write(CharGroup this){
 				if(CharSetManager_allocateShared(CharSetManager_getInstance(), this)){
 			
 					//write to char memory
-					Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
+					Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 				}
 			}	
 			else {
 				
 				//write to char memory
-				Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)this->numberOfChars << 4);
+				Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 			}
 			break;
 			

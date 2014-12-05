@@ -29,7 +29,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#include <AnimationEditorScreen.h>
+#include <AnimationEditorState.h>
 #include <AnimationEditor.h>
 #include <Game.h>
 #include <MessageDispatcher.h>
@@ -45,22 +45,22 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-static void AnimationEditorScreen_destructor(AnimationEditorScreen this);
+static void AnimationEditorState_destructor(AnimationEditorState this);
 
 // class's constructor
-static void AnimationEditorScreen_constructor(AnimationEditorScreen this);
+static void AnimationEditorState_constructor(AnimationEditorState this);
 
 // state's enter
-static void AnimationEditorScreen_enter(AnimationEditorScreen this, void* owner);
+static void AnimationEditorState_enter(AnimationEditorState this, void* owner);
 
 // state's execute
-static void AnimationEditorScreen_execute(AnimationEditorScreen this, void* owner);
+static void AnimationEditorState_execute(AnimationEditorState this, void* owner);
 
 // state's enter
-static void AnimationEditorScreen_exit(AnimationEditorScreen this, void* owner);
+static void AnimationEditorState_exit(AnimationEditorState this, void* owner);
 
 // state's on message
-static int AnimationEditorScreen_handleMessage(AnimationEditorScreen this, void* owner, Telegram telegram);
+static int AnimationEditorState_handleMessage(AnimationEditorState this, void* owner, Telegram telegram);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ static int AnimationEditorScreen_handleMessage(AnimationEditorScreen this, void*
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-extern const u16 ASCII_CH[];
+extern const u16 FontTiles[];
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens {
@@ -89,14 +89,14 @@ enum Screens {
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define AnimationEditorScreen_ATTRIBUTES			\
+#define AnimationEditorState_ATTRIBUTES			\
 													\
 	/* inherits */									\
 	State_ATTRIBUTES								\
 
 
 
-__CLASS_DEFINITION(AnimationEditorScreen);
+__CLASS_DEFINITION(AnimationEditorState);
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -110,19 +110,19 @@ __CLASS_DEFINITION(AnimationEditorScreen);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // it's a singleton
-__SINGLETON(AnimationEditorScreen);
+__SINGLETON(AnimationEditorState);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void AnimationEditorScreen_constructor(AnimationEditorScreen this){
+static void AnimationEditorState_constructor(AnimationEditorState this){
 		
 	__CONSTRUCT_BASE(State);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-static void AnimationEditorScreen_destructor(AnimationEditorScreen this){
+static void AnimationEditorState_destructor(AnimationEditorState this){
 	
 	// destroy base
 	__SINGLETON_DESTROY(State);
@@ -130,23 +130,23 @@ static void AnimationEditorScreen_destructor(AnimationEditorScreen this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's enter
-static void AnimationEditorScreen_enter(AnimationEditorScreen this, void* owner){
+static void AnimationEditorState_enter(AnimationEditorState this, void* owner){
 	
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
 
-	AnimationEditor_start(AnimationEditor_getInstance(), (Level)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
+	AnimationEditor_start(AnimationEditor_getInstance(), (GameState)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's execute
-static void AnimationEditorScreen_execute(AnimationEditorScreen this, void* owner){
+static void AnimationEditorState_execute(AnimationEditorState this, void* owner){
 
 	AnimationEditor_update(AnimationEditor_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's exit 
-static void AnimationEditorScreen_exit(AnimationEditorScreen this, void* owner){
+static void AnimationEditorState_exit(AnimationEditorState this, void* owner){
 	
 	AnimationEditor_stop(AnimationEditor_getInstance());
 	Clock_pause(Game_getInGameClock(Game_getInstance()), false);
@@ -154,7 +154,7 @@ static void AnimationEditorScreen_exit(AnimationEditorScreen this, void* owner){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // state's on message
-static int AnimationEditorScreen_handleMessage(AnimationEditorScreen this, void* owner, Telegram telegram){
+static int AnimationEditorState_handleMessage(AnimationEditorState this, void* owner, Telegram telegram){
 	
 	// process message
 	switch(Telegram_getMessage(telegram)){

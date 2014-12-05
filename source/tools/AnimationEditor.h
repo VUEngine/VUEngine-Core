@@ -34,7 +34,7 @@
 
 #include <Object.h>
 #include <Actor.h>
-#include <Level.h>
+#include <GameState.h>
 
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void AnimationEditor_destructor(AnimationEditor this);
 void AnimationEditor_update(AnimationEditor this);
 
 // start level editor
-void AnimationEditor_start(AnimationEditor this, Level level);
+void AnimationEditor_start(AnimationEditor this, GameState gameState);
 
 // stop level editor
 void AnimationEditor_stop(AnimationEditor this);

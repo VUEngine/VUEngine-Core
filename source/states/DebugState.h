@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
-#ifndef DEBUG_SCREEN_H_
-#define DEBUG_SCREEN_H_
+#ifndef DEBUG_STATE_H_
+#define DEBUG_STATE_H_
 
 #ifdef __DEBUG_TOOLS
 /* ---------------------------------------------------------------------------------------------------------
@@ -42,19 +42,19 @@
  */
 
 // declare the virtual methods
-#define DebugScreen_METHODS										\
+#define DebugState_METHODS										\
 	State_METHODS;									
 
 // declare the virtual methods which are redefined
-#define DebugScreen_SET_VTABLE(ClassName)						\
+#define DebugState_SET_VTABLE(ClassName)						\
 	State_SET_VTABLE(ClassName)									\
-	__VIRTUAL_SET(ClassName, DebugScreen, enter);				\
-	__VIRTUAL_SET(ClassName, DebugScreen, execute);				\
-	__VIRTUAL_SET(ClassName, DebugScreen, exit);				\
-	__VIRTUAL_SET(ClassName, DebugScreen, handleMessage);		\
+	__VIRTUAL_SET(ClassName, DebugState, enter);				\
+	__VIRTUAL_SET(ClassName, DebugState, execute);				\
+	__VIRTUAL_SET(ClassName, DebugState, exit);				\
+	__VIRTUAL_SET(ClassName, DebugState, handleMessage);		\
 
 
-__CLASS(DebugScreen);
+__CLASS(DebugState);
 
 
 
@@ -68,8 +68,8 @@ __CLASS(DebugScreen);
  */
 
 // setup the init focus screen
-DebugScreen DebugScreen_getInstance(void);
+DebugState DebugState_getInstance(void);
 
 #endif
 
-#endif /*DEBUG_SCREEN_H_*/
+#endif /*DEBUG_STATE_H_*/

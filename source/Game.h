@@ -33,7 +33,7 @@
 #include <HardwareManager.h>
 #include <Clock.h>
 #include <Stage.h>
-#include <Level.h>
+#include <GameState.h>
 #include <Stage.h>
 
 
@@ -99,9 +99,6 @@ void Game_saveState(Game this);
 // reload engine's current status
 void Game_recoverState(Game this);
 
-// process input data according to the actual game status
-void Game_handleInput(Game this, int currentKey);
-
 // render the game
 void Game_render(Game this);
 
@@ -136,8 +133,8 @@ void Game_setOptical(Game this, Optical optical);
 int Game_isInDebugMode(Game this);
 #endif
 
-#ifdef __LEVEL_EDITOR
-int Game_isInLevelEditor(Game this);
+#ifdef __STAGE_EDITOR
+int Game_isInStageEditor(Game this);
 #endif
 
 #ifdef __ANIMATION_EDITOR

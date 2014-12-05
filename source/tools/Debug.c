@@ -33,7 +33,6 @@
 #include <Debug.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Globals.h>
 #include <FrameRate.h>
 #include <MemoryPool.h>
 #include <MessageDispatcher.h>
@@ -76,7 +75,7 @@
 #include <Actor.h>
 #include <Image.h>
 #include <ScrollBackground.h>
-#include <Level.h>
+#include <GameState.h>
 #include <Stage.h>
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -98,39 +97,39 @@
  */
 
 
-#define Debug_ATTRIBUTES					\
-											\
-	/* super's attributes */				\
-	Object_ATTRIBUTES;						\
-											\
-	/* current in game level */				\
-	Level level;							\
-											\
-	/* pages */								\
-	VirtualList pages;						\
-											\
-	/* sub pages */							\
-	VirtualList subPages;					\
-											\
-	/* current page */						\
-	VirtualNode currentPage;				\
-											\
-	/* current subb page */					\
-	VirtualNode currentSubPage;				\
-											\
-	/* current layer */						\
-	int currentLayer;						\
-											\
-	/* current bgmap */						\
-	int currentBgmap;						\
-											\
-	/* current char segment */				\
-	int charSeg;							\
-											\
-	/* window to look into bgmap memory */	\
-	VBVec2D bgmapDisplacement;				\
-											\
-	/* update function pointer */			\
+#define Debug_ATTRIBUTES									\
+															\
+	/* super's attributes */								\
+	Object_ATTRIBUTES;										\
+															\
+	/* current in game state */								\
+	GameState gameState;									\
+															\
+	/* pages */												\
+	VirtualList pages;										\
+															\
+	/* sub pages */											\
+	VirtualList subPages;									\
+															\
+	/* current page */										\
+	VirtualNode currentPage;								\
+															\
+	/* current subb page */									\
+	VirtualNode currentSubPage;								\
+															\
+	/* current layer */										\
+	int currentLayer;										\
+															\
+	/* current bgmap */										\
+	int currentBgmap;										\
+															\
+	/* current char segment */								\
+	int charSeg;											\
+															\
+	/* window to look into bgmap memory */					\
+	VBVec2D bgmapDisplacement;								\
+															\
+	/* update function pointer */							\
 	void (*update)(void *);
 
 
@@ -220,7 +219,7 @@ static void Debug_constructor(Debug this){
 	this->currentPage = NULL;
 	this->currentSubPage = NULL;
 	
-	this->level = NULL;
+	this->gameState = NULL;
 
 	this->currentLayer = __TOTAL_LAYERS;
 	this->currentBgmap = 0;
@@ -298,12 +297,12 @@ void Debug_update(Debug this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show debug screens
-void Debug_show(Debug this, Level level){
+void Debug_show(Debug this, GameState gameState){
 	
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
-	this->level = level;
+	this->gameState = gameState;
 
 	Debug_dimmGame(this);
 	Debug_showPage(this, 0);
@@ -467,7 +466,7 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y) {
 	
 	Printing_text("Stage's status", 20, y + 3);
 	Printing_text("Entities: ", 20, ++y + 3);
-	Printing_int(Container_getChildCount((Container)Level_getStage(this->level)), 30, y + 3);
+	Printing_int(Container_getChildCount((Container)GameState_getStage(this->gameState)), 30, y + 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -528,8 +527,8 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 			{"Actor", &Actor_getObjectSize},
 			{"Image", &Image_getObjectSize},
 			{"ScrollBackg.", &ScrollBackground_getObjectSize},
-			{"Level", &Level_getObjectSize},
-			{"Stage", &Level_getObjectSize},
+			{"GameState", &GameState_getObjectSize},
+			{"Stage", &GameState_getObjectSize},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");

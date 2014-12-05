@@ -38,13 +38,17 @@
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 											 CLASS'S MACROS
+ * 											 MACROS
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
+#define __UPDATE_HEAD	0x0F
+#define __UPDATE_G		0x01
+#define __UPDATE_PARAM	0x02
+#define __UPDATE_SIZE	0x04
+#define __UPDATE_M		0x08
 
 
 
@@ -101,6 +105,10 @@
 	/* int hbiasAmplitude; */							\
 	int renderFlag;										\
 														\
+	/* parallax modifier to achieve better */			\
+	/* control over display */							\
+	s8 parallaxDisplacement;							\
+														\
 	/* location of texture in graphic memory */			\
 	Point texturePosition;								\
 														
@@ -130,6 +138,9 @@ typedef struct SpriteDefinition{
 	
 	// flag to indicate in which display to show the bgtexture
 	int display;
+	
+	// parallax modifier to achieve better */			
+	s8 parallaxDisplacement;
 	
 }SpriteDefinition;
 

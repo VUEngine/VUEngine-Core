@@ -92,7 +92,6 @@ typedef struct GeneralAxisFlag{
 		__VIRTUAL_SET(ClassName, Actor, handleMessage);						\
 		__VIRTUAL_SET(ClassName, Actor, moves);								\
 		__VIRTUAL_SET(ClassName, Actor, isMoving);							\
-		__VIRTUAL_SET(ClassName, Actor, getInGameState);					\
 		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);				\
 		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);					\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);					\
@@ -120,8 +119,6 @@ typedef struct GeneralAxisFlag{
 														\
 	/* last collinding entity */						\
 	InGameEntity lastCollidingEntity[3];				\
-														\
-	/* gameworld's actor's state (ALIVE or DEAD)*/		\
 	int inGameState;									\
 														\
 	/* flags to apply friction on each axis */			\
@@ -148,10 +145,10 @@ typedef const ActorDefinition ActorROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, int ID));
+__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID));
 
 // class's constructor
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, int ID);
+void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID);
 
 // class's destructor
 void Actor_destructor(Actor this);
@@ -167,8 +164,6 @@ void Actor_update(Actor this);
 
 // retrieve previous position
 VBVec3D Actor_getPreviousPosition(Actor this);
-
-void Actor_setInGameState(Actor this, int inGameState);
 
 // set character's in game type
 void Actor_setInGameType(Actor this, int inGameType);
@@ -205,9 +200,6 @@ int Actor_isMoving(Actor this);
 
 // retrieve global position
 VBVec3D Actor_getPosition(Actor this);
-
-// retrieve state when unloading the entity 
-int Actor_getInGameState(Actor this);
 
 // check if must update sprite's position
 int Actor_updateSpritePosition(Actor this);
