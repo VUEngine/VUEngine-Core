@@ -74,9 +74,6 @@ __CLASS_DEFINITION(SpriteManager);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#undef __SPRITE_LIST_SIZE			
-#define __SPRITE_LIST_SIZE			31
-
 //class's constructor
 static void SpriteManager_constructor(SpriteManager this);
 
@@ -344,8 +341,6 @@ int SpriteManager_getFreeLayer(SpriteManager this){
 void SpriteManager_showLayer(SpriteManager this, int layer) {
 	
 	ASSERT(this, "SpriteManager::showLayer: null this");
-
-	//SpriteManager_sortAllLayers(this);
 	
 	VirtualNode node = VirtualList_end(this->sprites);
 	for(; node; node = VirtualNode_getPrevious(node)){
@@ -380,13 +375,11 @@ void SpriteManager_print(SpriteManager this, int x, int y){
 	
 	ASSERT(this, "SpriteManager::print: null this");
 
-	int spritesCount = 0;
 	Printing_text("SPRITES' USAGE", x, y++);
 	Printing_text("Free layers: ", x, ++y);
 	Printing_int(this->freeLayer, x + 15, y);
 	Printing_text("Sprites count: ", x, ++y);
 
-	int i = 0;
 	int auxY = y + 2;
 	int auxX = x;
 	

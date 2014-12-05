@@ -44,8 +44,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define __SPRITE_LIST_SIZE			32
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -99,13 +97,10 @@ void SpriteManager_destructor(SpriteManager this);
 void SpriteManager_reset(SpriteManager this);
 
 // check if any entity must be assigned another world layer
-void SpriteManager_sortAllLayers(SpriteManager this);
+void SpriteManager_sortLayers(SpriteManager this, int progressively);
 
 // check if any entity must be assigned another world layer
 void SpriteManager_spriteChangedPosition(SpriteManager this);
-
-// check if any entity must be assigned another world layer
-void SpriteManager_sortLayersProgressively(SpriteManager this);
 
 // remove a sprite from rendering system
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite);
