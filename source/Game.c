@@ -618,9 +618,8 @@ void Game_render(Game this) {
 	ASSERT(this, "Game::render: null this");
 
 	// sort sprites
-//	SpriteManager_sortLayers(this->spriteManager, true);
+	SpriteManager_sortLayers(this->spriteManager, true);
 
-//	SpriteManager_print(this->spriteManager, 1, 5);
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
 }
@@ -726,7 +725,6 @@ void Game_update(Game this){
 #endif
 				// render sprites
 				SpriteManager_render(this->spriteManager);
-				SpriteManager_sortLayers(this->spriteManager, true);
 
 				// increase the frame rate
 				FrameRate_increasePhysicsFPS(this->frameRate);

@@ -231,7 +231,10 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 		}
 	}
 	
-	this->needSorting = this->node || this->otherNode? true: false;
+	this->needSorting = this->node || this->otherNode;
+	
+	// TODO: remove
+	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
