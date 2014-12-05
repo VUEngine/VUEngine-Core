@@ -96,7 +96,7 @@ static void Stage_registerEntities(Stage this);
 static void Stage_processRemovedEntities(Stage this);
 
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively, int disableInterrupts);
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
 
 // preload textures
 static void Stage_loadTextures(Stage this);
@@ -291,7 +291,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	Stage_registerEntities(this);
 	
 	// load entities
-	Stage_loadEntities(this, loadOnlyInRangeEntities, false, false);
+	Stage_loadEntities(this, loadOnlyInRangeEntities, false);
 
 	// setup ui
 	Stage_setupUI(this);
@@ -498,7 +498,7 @@ static void Stage_registerEntities(Stage this) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively, int disableInterrupts){
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively){
 
 	ASSERT(this, "Stage::loadEntities: null this");
 
@@ -536,19 +536,10 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
 
-				if(disableInterrupts) {
-					
-					VPUManager_disableInterrupt(VPUManager_getInstance());
-				}
 				
 				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position, stageEntityDescription->positionedEntity->extraInfo, false);
 				stageEntityDescription->ID = Container_getID((Container)entity);
 
-				if(disableInterrupts) {
-					
-					VPUManager_enableInterrupt(VPUManager_getInstance());
-				}
-				
 				if(!skippedEntity) {
 
 					lastLoadedNode = node;
@@ -647,13 +638,11 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		Entity entity = (Entity)VirtualNode_getData(node);
 
 		//VirtualList_removeElement(this->children, entity);
-		VPUManager_disableInterrupt(VPUManager_getInstance());
 
 		// destroy it
 		__DELETE(entity);
 	}
 
-	VPUManager_enableInterrupt(VPUManager_getInstance());
 	
 	
 	CACHE_DISABLE;
@@ -694,14 +683,10 @@ static void Stage_processRemovedEntities(Stage this){
 
 	VirtualNode node = VirtualList_begin(this->removedEntities);
 	
-	VPUManager_disableInterrupt(VPUManager_getInstance());
-
 	for(; node; node = VirtualNode_getNext(node)){
 		
 		__DELETE(VirtualNode_getData(node));
 	}
-	
-	VPUManager_enableInterrupt(VPUManager_getInstance());
 	
 	VirtualList_clear(this->removedEntities);
 }
@@ -744,7 +729,7 @@ void Stage_stream(Stage this){
 		this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
 		// load visible objects	
-		Stage_loadEntities(this, true, true, true);
+		Stage_loadEntities(this, true, true);
 	}	
 }
 
@@ -756,7 +741,7 @@ void Stage_streamAll(Stage this) {
 	this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
 	Stage_unloadOutOfRangeEntities(this, false);
-	Stage_loadEntities(this, true, false, true);
+	Stage_loadEntities(this, true, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
