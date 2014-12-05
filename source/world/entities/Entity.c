@@ -494,3 +494,49 @@ Shape Entity_getShape(Entity this){
 
 	return this->shape;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// make it visible
+void Entity_show(Entity this){
+	
+	ASSERT(this, "Entity::hide: null this");
+
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			if (sprite) {
+				
+				Sprite_show(sprite);
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// make it invisible
+void Entity_hide(Entity this){
+	
+	ASSERT(this, "Entity::hide: null this");
+
+	if(this->sprites){
+
+		VirtualNode node = VirtualList_begin(this->sprites);
+
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node)){
+			
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+			if (sprite) {
+				
+				Sprite_hide(sprite);
+			}
+		}
+	}
+}

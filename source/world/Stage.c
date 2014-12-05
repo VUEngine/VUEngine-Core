@@ -30,11 +30,11 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			20
-#define __ENTITY_UNLOAD_PAD 		30
+#define __ENTITY_LOAD_PAD 			40
+#define __ENTITY_UNLOAD_PAD 		60
 
 #define __STREAMING_AMPLITUDE	5
-#define __STREAM_CYCLE	(__TARGET_FPS >> 2)	
+#define __STREAM_CYCLE	(__TARGET_FPS)	
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
@@ -407,6 +407,9 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 		return;
 	}
 	
+	// hide until effectively deleted
+	Entity_hide(entity);
+
 	VirtualList_pushBack(this->removedEntities, entity);
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
@@ -691,10 +694,14 @@ static void Stage_processRemovedEntities(Stage this){
 
 	VirtualNode node = VirtualList_begin(this->removedEntities);
 	
+	VPUManager_disableInterrupt(VPUManager_getInstance());
+
 	for(; node; node = VirtualNode_getNext(node)){
 		
 		__DELETE(VirtualNode_getData(node));
 	}
+	
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 	
 	VirtualList_clear(this->removedEntities);
 }

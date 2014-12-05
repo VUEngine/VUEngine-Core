@@ -333,7 +333,7 @@ void Sprite_show(Sprite this){
 void Sprite_hide(Sprite this){
 	
     WORLD_SIZE(this->worldLayer, 0, 0);
-//	WORLD_HEAD(this->worldLayer, WRLD_OFF);
+//	WORLD_GSET(this->worldLayer, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +452,7 @@ void Sprite_setWorldLayer(Sprite this, int worldLayer){
 	
 		this->worldLayer = worldLayer;
 	
-		this->renderFlag = __UPDATE_HEAD;
+		Sprite_show(this);
 	}
 }
 
