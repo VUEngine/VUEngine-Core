@@ -163,7 +163,7 @@ int GameState_handleMessage(GameState this, void* owner, Telegram telegram){
 
 	ASSERT(this, "GameState::handleMessage: null this");
 
-	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, Telegram_getMessage(this)));
+	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, Telegram_getMessage(telegram)));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
