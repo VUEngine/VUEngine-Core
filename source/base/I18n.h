@@ -71,8 +71,10 @@ I18n I18n_getInstance();
 void I18n_destructor(I18n this);
 
 // class's methods
-void I18n_register(I18n this, char* lang[]);
 char* I18n_getText(I18n this, int string);
 void I18n_setLanguage(I18n this, int lang);
+void I18n_registerLanguage(I18n this, char* language[]);
+void I18n_registerLanguages(I18n this, char** languages[]);
+
 
 #endif /*I18N_H_*/

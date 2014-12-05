@@ -104,14 +104,6 @@ void I18n_destructor(I18n this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// register language
-void I18n_register(I18n this, char* lang[]){
-
-	this->languages[this->languageCount] = lang;
-	this->languageCount++;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get localized string
 char* I18n_getText(I18n this, int string){
 
@@ -123,4 +115,21 @@ char* I18n_getText(I18n this, int string){
 void I18n_setLanguage(I18n this, int lang){
 
 	this->language = lang;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// register a languages
+void I18n_registerLanguage(I18n this, char* language[]){
+
+	this->languages[this->languageCount++] = language;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// register several languages at once
+void I18n_registerLanguages(I18n this, char** languages[]){
+
+	u8 i;
+    for(i = 0; i < sizeof(languages); i++) {
+		this->languages[this->languageCount++] = languages[i];
+	}
 }

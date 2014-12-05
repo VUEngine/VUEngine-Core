@@ -217,7 +217,7 @@ static void Game_constructor(Game this){
 	this->physicalWorld = PhysicalWorld_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
-	//this->i18n = I18n_getInstance();
+	this->i18n = I18n_getInstance();
 	
 	// to make debugging easier
 	this->lastProcessName = "starting up";
