@@ -501,18 +501,8 @@ int Texture_handleMessage(Texture this, Telegram telegram){
 
 		case kCharGroupRewritten:
 			
-			//determine the allocation type
-			switch(CharGroup_getAllocationType(this->charGroup)){
-				
-				// don't allow overriting of __ANIMATED textures
-				// since write char memory be themselves
-				case __ANIMATED_SHARED:
-				case __NO_ANIMATED:
-
-					Texture_write(this);
-					return true;
-					break;
-			}
+			Texture_write(this);
+			return true;
 			break;
 	}
 	

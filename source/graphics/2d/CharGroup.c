@@ -276,11 +276,21 @@ void CharGroup_write(CharGroup this){
 // rewrite char on memory	
 void CharGroup_rewrite(CharGroup this){
 
-	VPUManager_waitForFrame(VPUManager_getInstance());
-	
-	// write again
-	CharGroup_write(this);
-	
-	// inform my owner
-	MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharGroupRewritten, NULL);
+	//determine the allocation type
+	switch(this->allocationType){
+		
+		// don't allow overriting of __ANIMATED textures
+		// since write char memory be themselves
+		case __ANIMATED_SHARED:
+		case __NO_ANIMATED:
+
+			VPUManager_waitForFrame(VPUManager_getInstance());
+			
+			// write again
+			CharGroup_write(this);
+			
+			// inform my owner
+			MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharGroupRewritten, NULL);
+			break;
+	}
 }
