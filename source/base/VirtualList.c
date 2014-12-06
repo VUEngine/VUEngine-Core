@@ -166,35 +166,11 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node){
 	
 	ASSERT(this, "VirtualNode::swapData: null this");
 
-	VirtualNode_str auxNode;
-	
 	// check that both nodes are valid and are not the same
 	if(!(this && node && (this != node))){
 		
 		return;
 	}
-	/*
-	// save this's attributes
-	auxNode.next = this->next;
-	auxNode.previous = this->previous;
-	
-	// swap next and previous pointers
-	if(this->previous){
-		
-		this->previous->next = node;
-	}
-	
-	if(node->next){
-		
-		node->next->previous = this;
-	}
-
-	this->next = node->next;
-	this->previous = node;
-	
-	node->next = this;
-	node->previous = auxNode.previous;
-	*/
 	
 	void* auxData = this->data;
 	this->data = node->data;
