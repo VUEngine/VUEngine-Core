@@ -49,6 +49,7 @@
 #include <Screen.h>
 #include <VPUManager.h>
 #include <Printing.h>
+#include <I18n.h>
 
 #ifdef __DEBUG_TOOLS
 #include <DebugState.h>
@@ -116,6 +117,7 @@ enum UpdateSubsystems{
 	PhysicalWorld physicalWorld;					\
 	VPUManager vpuManager;							\
 	DirectDraw directDraw;							\
+	I18n i18n;										\
 													\
 	/* update time registry */						\
 	u32 lastTime[kLast];							\
@@ -220,6 +222,7 @@ static void Game_constructor(Game this){
 	this->physicalWorld = PhysicalWorld_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
+	this->i18n = I18n_getInstance();
 	
 	// to make debugging easier
 	this->lastProcessName = "starting up";
