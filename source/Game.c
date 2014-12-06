@@ -629,7 +629,6 @@ void Game_update(Game this){
 	// of them
 	while(true){
 
-		Printing_int(sizeof(int), 1, 10);
 		static int cycle = kLogic;
 
 		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;
