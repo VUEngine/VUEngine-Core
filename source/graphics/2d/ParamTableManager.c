@@ -30,7 +30,6 @@
 #include <ParamTableManager.h>
 #include <HardwareManager.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -40,22 +39,21 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define ParamTableManager_ATTRIBUTES			\
-												\
-	/* super's attributes */					\
-	Object_ATTRIBUTES;							\
-												\
-	/* total size of param table */				\
-	int size;									\
-												\
-	/* number of used bytes */					\
-	int used;									\
-												\
-	/* allocated objects */						\
-	Sprite sprites[__TOTAL_PARAM_OBJECTS];
-	
-__CLASS_DEFINITION(ParamTableManager);
+#define ParamTableManager_ATTRIBUTES											\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* total size of param table */												\
+	int size;																	\
+																				\
+	/* number of used bytes */													\
+	int used;																	\
+																				\
+	/* allocated objects */														\
+	Sprite sprites[__TOTAL_PARAM_OBJECTS];										\
 
+__CLASS_DEFINITION(ParamTableManager);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -71,7 +69,6 @@ static void ParamTableManager_constructor(ParamTableManager this);
 
 // register a sprite
 static void ParamTableManager_registerSprite(ParamTableManager this, Sprite sprite);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

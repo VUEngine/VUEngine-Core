@@ -45,15 +45,14 @@
  */
 
 // declare the virtual methods
-#define MessageDispatcher_METHODS						\
-		Object_METHODS									\
+#define MessageDispatcher_METHODS												\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define MessageDispatcher_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)							\
+#define MessageDispatcher_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)											\
 	
 __CLASS(MessageDispatcher);
-
  
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

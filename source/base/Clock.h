@@ -55,38 +55,32 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define Clock_ATTRIBUTES			\
-									\
-	/* super's attributes */		\
-	Object_ATTRIBUTES;				\
-									\
-	/* time elapsed */				\
-	u32 miliSeconds;				\
-									\
-	/* flag to pause the clock */	\
-	int paused;						\
-									\
-	/* register */					\
-	int previousSecond;				\
-									\
-	/* register */					\
-	int previousMinute;				\
-	
-
-
+#define Clock_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* time elapsed */															\
+	u32 miliSeconds;															\
+																				\
+	/* flag to pause the clock */												\
+	u8 paused;																	\
+																				\
+	/* register */																\
+	int previousSecond;															\
+																				\
+	/* register */																\
+	int previousMinute;															\
 
 // declare the virtual methods
-#define Clock_METHODS								\
-		Object_METHODS								\
+#define Clock_METHODS															\
+		Object_METHODS															\
 		__VIRTUAL_DEC(update);
-	
-
 
 // declare the virtual methods which are redefined
-#define Clock_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)				\
+#define Clock_SET_VTABLE(ClassName)												\
+		Object_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, Clock, update);
-
 
 // declare a Clock
 __CLASS(Clock);
@@ -149,9 +143,9 @@ void Clock_start(Clock this);
 void Clock_stop(Clock this);
 
 // pause the clock
-void Clock_pause(Clock this, int paused);
+void Clock_pause(Clock this, u8 paused);
 
 // whether the clock is running or not
-int Clock_isPaused(Clock this);
+u8 Clock_isPaused(Clock this);
 
 #endif /*CLOCK_H_*/

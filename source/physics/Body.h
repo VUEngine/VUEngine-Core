@@ -46,7 +46,6 @@
 #define	__UNIFORM_MOVEMENT		0x00
 #define	__ACCELERATED_MOVEMENT	0x01
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -56,57 +55,52 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define Body_METHODS															\
+		Object_METHODS															\
 
-#define Body_METHODS								\
-		Object_METHODS								\
+#define Body_SET_VTABLE(ClassName)												\
+		Object_SET_VTABLE(ClassName)											\
 
-
-#define Body_SET_VTABLE(ClassName)								\
-		Object_SET_VTABLE(ClassName)							\
-	
-
-#define Body_ATTRIBUTES									\
-														\
-	/* super's attributes */							\
-	Object_ATTRIBUTES;									\
-														\
-	/* mass */											\
-	Mass mass;											\
-														\
-	/* owner */											\
-	Object owner;										\
-														\
-	/* direction */										\
-	Force appliedForce;									\
-														\
-	/* friction sourrounding object */					\
-	Force friction;										\
-														\
-	/* spatial position */								\
-	VBVec3D position;									\
-														\
-	/* velocity on each instante */						\
-	Velocity velocity;									\
-														\
-	/* acelearion structure */							\
-	Acceleration acceleration;							\
-														\
-	/* movement type on each axis */					\
-	MovementType movementType;							\
-														\
-	/* elasticity */									\
-	fix19_13 elasticity;								\
-														\
-	/* raise flag to make the body active */			\
-	int active: 1;										\
-														\
-	/* raise flag to update body's physices */			\
-	int awake: 1;										\
-
+#define Body_ATTRIBUTES															\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* mass */																	\
+	Mass mass;																	\
+																				\
+	/* owner */																	\
+	Object owner;																\
+																				\
+	/* direction */																\
+	Force appliedForce;															\
+																				\
+	/* friction sourrounding object */											\
+	Force friction;																\
+																				\
+	/* spatial position */														\
+	VBVec3D position;															\
+																				\
+	/* velocity on each instante */												\
+	Velocity velocity;															\
+																				\
+	/* acelearion structure */													\
+	Acceleration acceleration;													\
+																				\
+	/* movement type on each axis */											\
+	MovementType movementType;													\
+																				\
+	/* elasticity */															\
+	fix19_13 elasticity;														\
+																				\
+	/* raise flag to make the body active */									\
+	int active: 1;																\
+																				\
+	/* raise flag to update body's physices */									\
+	int awake: 1;																\
 
 // A Body which represent a generic object inside a Stage
 __CLASS(Body);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

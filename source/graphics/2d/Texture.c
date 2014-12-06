@@ -34,24 +34,11 @@
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 											 CLASS'S MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
  * 											CLASS'S DEFINITION
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
-
-
 
 __CLASS_DEFINITION(Texture);
 
@@ -65,7 +52,7 @@ __CLASS_DEFINITION(Texture);
  */
 
 // class's constructor
-static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, int id);
+static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id);
 
 // write an animated map
 static void Texture_writeAnimated(Texture this);
@@ -75,7 +62,6 @@ static void Texture_writeNoAnimated(Texture this);
 
 // write an animated and shared map
 static void Texture_writeAnimatedShared(Texture this);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -88,13 +74,12 @@ static void Texture_writeAnimatedShared(Texture this);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Texture, __PARAMETERS(TextureDefinition* textureDefinition, int id))
+__CLASS_NEW_DEFINITION(Texture, __PARAMETERS(TextureDefinition* textureDefinition, u16 id))
 __CLASS_NEW_END(Texture, __ARGUMENTS(textureDefinition, id));
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, int id){
+static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id){
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -485,7 +470,7 @@ int Texture_getCols(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve texture's id
-int Texture_getId(Texture this){
+u16 Texture_getId(Texture this){
 	
 	ASSERT(this, "Texture::getId: null this");
 

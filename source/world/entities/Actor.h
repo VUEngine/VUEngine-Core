@@ -76,61 +76,56 @@ typedef struct GeneralAxisFlag{
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 // declare the virtual methods
-#define Actor_METHODS														\
-		AnimatedInGameEntity_METHODS										\
-		__VIRTUAL_DEC(die);													\
-		__VIRTUAL_DEC(takeHitFrom);											\
-		__VIRTUAL_DEC(getAxisFreeForMovement);								\
+#define Actor_METHODS															\
+		AnimatedInGameEntity_METHODS											\
+		__VIRTUAL_DEC(die);														\
+		__VIRTUAL_DEC(takeHitFrom);												\
+		__VIRTUAL_DEC(getAxisFreeForMovement);									\
 
-
-#define Actor_SET_VTABLE(ClassName)											\
-		AnimatedInGameEntity_SET_VTABLE(ClassName)							\
-		__VIRTUAL_SET(ClassName, Actor, update);							\
-		__VIRTUAL_SET(ClassName, Actor, transform);							\
-		__VIRTUAL_SET(ClassName, Actor, handleMessage);						\
-		__VIRTUAL_SET(ClassName, Actor, moves);								\
-		__VIRTUAL_SET(ClassName, Actor, isMoving);							\
-		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);				\
-		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);					\
-		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);					\
-		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);						\
-		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);			\
-		__VIRTUAL_SET(ClassName, Actor, getElasticity);						\
-		__VIRTUAL_SET(ClassName, Actor, getPosition);						\
-		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);				\
-		
+#define Actor_SET_VTABLE(ClassName)												\
+		AnimatedInGameEntity_SET_VTABLE(ClassName)								\
+		__VIRTUAL_SET(ClassName, Actor, update);								\
+		__VIRTUAL_SET(ClassName, Actor, transform);								\
+		__VIRTUAL_SET(ClassName, Actor, handleMessage);							\
+		__VIRTUAL_SET(ClassName, Actor, moves);									\
+		__VIRTUAL_SET(ClassName, Actor, isMoving);								\
+		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);					\
+		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);						\
+		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);						\
+		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);							\
+		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);				\
+		__VIRTUAL_SET(ClassName, Actor, getElasticity);							\
+		__VIRTUAL_SET(ClassName, Actor, getPosition);							\
+		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);					\
 
 	
-#define Actor_ATTRIBUTES								\
-														\
-	/* super's attributes */							\
-	AnimatedInGameEntity_ATTRIBUTES;					\
-														\
-	/* a state machine to handle entity's logic	*/		\
-	StateMachine stateMachine;							\
-														\
-	/* a state machine to handle entity's logic	*/		\
-	Body body;											\
-														\
-	/* previous position for collision handling */		\
-	VBVec3D previousGlobalPosition;						\
-														\
-	/* last collinding entity */						\
-	InGameEntity lastCollidingEntity[3];				\
-	int inGameState;									\
-														\
-	/* flags to apply friction on each axis */			\
-	GeneralAxisFlag sensibleToFriction;					\
-														\
-	/* flag to influence with gravity */				\
-	int isAffectedBygravity: 1;							\
+#define Actor_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	AnimatedInGameEntity_ATTRIBUTES;											\
+																				\
+	/* a state machine to handle entity's logic	*/								\
+	StateMachine stateMachine;													\
+																				\
+	/* a state machine to handle entity's logic	*/								\
+	Body body;																	\
+																				\
+	/* previous position for collision handling */								\
+	VBVec3D previousGlobalPosition;												\
+																				\
+	/* last collinding entity */												\
+	InGameEntity lastCollidingEntity[3];										\
+	int inGameState;															\
+																				\
+	/* flags to apply friction on each axis */									\
+	GeneralAxisFlag sensibleToFriction;											\
+																				\
+	/* flag to influence with gravity */										\
+	int isAffectedBygravity: 1;													\
 
 
 __CLASS(Actor);													
-
-
 
 typedef AnimatedInGameEntityDefinition ActorDefinition;
 typedef const ActorDefinition ActorROMDef;

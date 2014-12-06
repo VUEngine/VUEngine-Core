@@ -42,14 +42,12 @@
  */
 
 // declare the virtual methods
-#define Telegram_METHODS							\
-		Object_METHODS								\
+#define Telegram_METHODS														\
+		Object_METHODS															\
 	
 // declare the virtual methods which are redefined
-#define Telegram_SET_VTABLE(ClassName)						\
-		Object_SET_VTABLE(ClassName)						\
-				
-	
+#define Telegram_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
 
 // declare a Telegram
 __CLASS(Telegram);

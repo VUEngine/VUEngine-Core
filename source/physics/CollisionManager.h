@@ -34,7 +34,6 @@
 #include <Object.h>
 #include <Shape.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -44,22 +43,15 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
 // declare the virtual methods
-#define CollisionManager_METHODS						\
-		Object_METHODS									\
-
+#define CollisionManager_METHODS												\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define CollisionManager_SET_VTABLE(ClassName)						\
-		Object_SET_VTABLE(ClassName)								\
-
+#define CollisionManager_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)											\
 
 __CLASS(CollisionManager);
-
- 
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

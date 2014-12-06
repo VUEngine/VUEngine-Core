@@ -30,7 +30,6 @@
 #include <CharSetManager.h>
 #include <VirtualList.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -42,7 +41,6 @@
 
 #define __CHAR_ROOM		0
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -52,31 +50,28 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define CharSetManager_ATTRIBUTES											\
-																			\
-	/* super's attributes */												\
-	Object_ATTRIBUTES;														\
-																			\
-	/* 4 segments, each one with 512 bits  of mask */						\
-	u32 segment[__CHAR_SEGMENTS][__CHAR_SEGMENT_SIZE];						\
-																			\
-	/* chargroups defined */												\
-	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];				\
-																			\
-	/* set whether a definition can be dropped or not */					\
-	int charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];					\
-																			\
-	/* register every offset */												\
-	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
-																			\
-	/* registered char groups */											\
-	VirtualList charGroups;
-
-
+#define CharSetManager_ATTRIBUTES												\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* 4 segments, each one with 512 bits  of mask */							\
+	u32 segment[__CHAR_SEGMENTS][__CHAR_SEGMENT_SIZE];							\
+																				\
+	/* chargroups defined */													\
+	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];					\
+																				\
+	/* set whether a definition can be dropped or not */						\
+	int charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
+																				\
+	/* register every offset */													\
+	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];							\
+																				\
+	/* registered char groups */												\
+	VirtualList charGroups	;													\
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -113,7 +108,6 @@ static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 __SINGLETON(CharSetManager);
@@ -332,7 +326,8 @@ static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u1
 	int hole = 0;
 	unsigned int index = 0;
 	unsigned int block = 0;
-	int currentChar = 1;	
+	// the 0 char is always used to represent black
+	int currentChar = 1;
 	
 	ASSERT(numberOfChars > 0, "CharSetManager::allocate: number of chars < 0");
 	

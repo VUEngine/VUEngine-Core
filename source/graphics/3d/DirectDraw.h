@@ -33,7 +33,6 @@
 #include <Object.h>
 #include <Shape.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -43,17 +42,13 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-
-
 // declare the virtual methods
-#define DirectDraw_METHODS						\
-		Object_METHODS							\
-
+#define DirectDraw_METHODS														\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define DirectDraw_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)						\
+#define DirectDraw_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
 	
 __CLASS(DirectDraw);
 

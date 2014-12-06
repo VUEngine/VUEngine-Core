@@ -29,7 +29,6 @@
 
 #include <FrameRate.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -39,34 +38,34 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define FrameRate_ATTRIBUTES					\
-												\
-	/* super's attributes */					\
-	Object_ATTRIBUTES;							\
-												\
-	/* raw frames per second */					\
-	int rawFPS;									\
-												\
-	/* rendering frames per second */			\
-	int renderFPS;								\
-												\
-	/* logic frames per second */				\
-	int logicFPS;								\
-												\
-	/* physics frames per second */				\
-	int physicsFPS;								\
-												\
-	/* raw frames per second */					\
-	int lastRawFPS;								\
-												\
-	/* rendering frames per second */			\
-	int lastRenderFPS;							\
-												\
-	/* logic frames per second */				\
-	int lastLogicFPS;							\
-												\
-	/* physics frames per second */				\
-	int lastPhysicsFPS;							\
+#define FrameRate_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* raw frames per second */													\
+	u32 rawFPS;																	\
+																				\
+	/* rendering frames per second */											\
+	u16 renderFPS;																\
+																				\
+	/* logic frames per second */												\
+	u16 logicFPS;																\
+																				\
+	/* physics frames per second */												\
+	u16 physicsFPS;																\
+																				\
+	/* raw frames per second */													\
+	u16 lastRawFPS;																\
+																				\
+	/* rendering frames per second */											\
+	u16 lastRenderFPS;															\
+																				\
+	/* logic frames per second */												\
+	u16 lastLogicFPS;															\
+																				\
+	/* physics frames per second */												\
+	u16 lastPhysicsFPS;															\
 
 
 // define the FrameRate
@@ -143,7 +142,7 @@ void FrameRate_reset(FrameRate this){
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve raw FPS
-int FrameRate_getRawFPS(FrameRate this){
+u32 FrameRate_getRawFPS(FrameRate this){
 	
 	ASSERT(this, "FrameRate::getRawFPS: null this");
 
@@ -152,7 +151,7 @@ int FrameRate_getRawFPS(FrameRate this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve render FPS
-int FrameRate_getRenderFPS(FrameRate this){
+u16 FrameRate_getRenderFPS(FrameRate this){
 	
 	ASSERT(this, "FrameRate::destructor: null this");
 
@@ -161,7 +160,7 @@ int FrameRate_getRenderFPS(FrameRate this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve raw logic FPS
-int FrameRate_getLogicFPS(FrameRate this){
+u16 FrameRate_getLogicFPS(FrameRate this){
 	
 	ASSERT(this, "FrameRate::getLogicFPS: null this");
 
@@ -170,7 +169,7 @@ int FrameRate_getLogicFPS(FrameRate this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve raw logic FPS
-int FrameRate_getPhysicsFPS(FrameRate this){
+u16 FrameRate_getPhysicsFPS(FrameRate this){
 	
 	ASSERT(this, "FrameRate::getPhysicsFPS: null this");
 

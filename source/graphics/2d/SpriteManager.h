@@ -54,29 +54,17 @@
  */
 
 // declare the virtual methods
-#define SpriteManager_METHODS							\
-		Object_METHODS									\
+#define SpriteManager_METHODS													\
+		Object_METHODS															\
 		__VIRTUAL_DEC(render);
 
 // declare the virtual methods which are redefined
-#define SpriteManager_SET_VTABLE(ClassName)						\
-		Object_SET_VTABLE(ClassName)							\
-		__VIRTUAL_SET(ClassName, SpriteManager, render);			
-	
+#define SpriteManager_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, SpriteManager, render);						\
 
 // declare a SpriteManager
 __CLASS(SpriteManager);
-
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S ROM DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

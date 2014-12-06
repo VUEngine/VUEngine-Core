@@ -29,7 +29,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 #include <AnimationEditor.h>
 #include <Game.h>
 #include <Optics.h>
@@ -39,7 +38,6 @@
 #include <Screen.h>
 #include <string.h>
 #include <OptionsSelector.h>
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -59,6 +57,49 @@
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 											CLASS'S DEFINITION
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+#define AnimationEditor_ATTRIBUTES												\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* current in game gameState */												\
+	GameState gameState;														\
+																				\
+	/* current animated sprite */												\
+	AnimatedSprite animatedSprite;												\
+																				\
+	/* current animation description */											\
+	AnimationDescription* animationDescription;									\
+																				\
+	/* current animation function */											\
+	AnimationFunction animationFunction;										\
+																				\
+	/* actors selector */														\
+	OptionsSelector actorsSelector;												\
+																				\
+	/* animations selector */													\
+	OptionsSelector animationsSelector;											\
+																				\
+	/* animation edition selector */											\
+	OptionsSelector animationEditionSelector;									\
+																				\
+	/* frame edition selector */												\
+	OptionsSelector frameEditionSelector;										\
+																				\
+	/* mode */																	\
+	int mode;																	\
+
+// define the AnimationEditor
+__CLASS_DEFINITION(AnimationEditor);
 
 enum Modes {
 		kFirstMode = 0,
@@ -75,54 +116,6 @@ enum AnimationProperties {
 	kFrames
 };
 
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-
-#define AnimationEditor_ATTRIBUTES						\
-														\
-	/* super's attributes */							\
-	Object_ATTRIBUTES;									\
-														\
-	/* current in game gameState */						\
-	GameState gameState;								\
-														\
-	/* current animated sprite */						\
-	AnimatedSprite animatedSprite;						\
-														\
-	/* current animation description */					\
-	AnimationDescription* animationDescription;			\
-														\
-	/* current animation function */					\
-	AnimationFunction animationFunction;				\
-														\
-	/* actors selector */								\
-	OptionsSelector actorsSelector;						\
-														\
-	/* animations selector */							\
-	OptionsSelector animationsSelector;					\
-														\
-	/* animation edition selector */					\
-	OptionsSelector animationEditionSelector;			\
-														\
-	/* frame edition selector */						\
-	OptionsSelector frameEditionSelector;				\
-														\
-	/* mode */											\
-	int mode;											\
-
-
-// define the AnimationEditor
-__CLASS_DEFINITION(AnimationEditor);
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -135,12 +128,10 @@ __CLASS_DEFINITION(AnimationEditor);
 extern UserActor _userActors[];
 
 static void AnimationEditor_constructor(AnimationEditor this);
-
 static void AnimationEditor_setupMode(AnimationEditor this);
 static void AnimationEditor_printUserActors(AnimationEditor this);
 static void AnimationEditor_printActorAnimations(AnimationEditor this);
 static void AnimationEditor_printAnimationConfig(AnimationEditor this);
-
 static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_removePreviousAnimatedSprite(AnimationEditor this);
 static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey);
@@ -150,7 +141,6 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this);
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
-
 static void AnimationEditor_onAnimationComplete(AnimationEditor this);
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -161,7 +151,6 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 __SINGLETON(AnimationEditor);

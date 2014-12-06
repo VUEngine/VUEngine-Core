@@ -43,15 +43,15 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define ClockManager_ATTRIBUTES				\
-											\
-	/* super's attributes */				\
-	Object_ATTRIBUTES;						\
-											\
-	/* register clocks */					\
-	VirtualList clocks;						\
-											\
-	/* */									\
+#define ClockManager_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* register clocks */														\
+	VirtualList clocks;															\
+																				\
+	/* */																		\
 	u32 ticks;
 
 // define the manager

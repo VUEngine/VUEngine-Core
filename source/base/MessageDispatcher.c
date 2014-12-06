@@ -62,17 +62,15 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
  */
 
 // text box based on bgmaps
-#define MessageDispatcher_ATTRIBUTES			\
-												\
-	/* super's attributes */					\
-	Object_ATTRIBUTES;							\
-												\
-	/* delayed messages */						\
-	VirtualList delayedMessages;
-
+#define MessageDispatcher_ATTRIBUTES											\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* delayed messages */														\
+	VirtualList delayedMessages;												\
 
 __CLASS_DEFINITION(MessageDispatcher);
-
 
 typedef struct DelayedMessage {
 	
@@ -83,6 +81,7 @@ typedef struct DelayedMessage {
 	Telegram telegram;
 	
 }DelayedMessage;
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

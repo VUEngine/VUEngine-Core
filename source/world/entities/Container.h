@@ -40,69 +40,55 @@
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 											 CLASS'S MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
  * 											CLASS'S DECLARATION
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
 
-// the root class for everything else!!
-
 // declare the virtual methods
-#define Container_METHODS								\
-		Object_METHODS									\
-		__VIRTUAL_DEC(update);							\
-		__VIRTUAL_DEC(transform);						\
-		__VIRTUAL_DEC(initialTransform);				\
-		__VIRTUAL_DEC(setLocalPosition);				\
-		__VIRTUAL_DEC(doMessage);						\
-		__VIRTUAL_DEC(addChild);						\
+#define Container_METHODS														\
+		Object_METHODS															\
+		__VIRTUAL_DEC(update);													\
+		__VIRTUAL_DEC(transform);												\
+		__VIRTUAL_DEC(initialTransform);										\
+		__VIRTUAL_DEC(setLocalPosition);										\
+		__VIRTUAL_DEC(doMessage);												\
+		__VIRTUAL_DEC(addChild);												\
 		
-	
-
 // define the virtual methods
-#define Container_SET_VTABLE(ClassName)								\
-		Object_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Container, update);				\
-		__VIRTUAL_SET(ClassName, Container, transform);				\
-		__VIRTUAL_SET(ClassName, Container, initialTransform);		\
-		__VIRTUAL_SET(ClassName, Container, setLocalPosition);		\
-		__VIRTUAL_SET(ClassName, Container, doMessage);				\
-		__VIRTUAL_SET(ClassName, Container, addChild);				\
+#define Container_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, Container, update);							\
+		__VIRTUAL_SET(ClassName, Container, transform);							\
+		__VIRTUAL_SET(ClassName, Container, initialTransform);					\
+		__VIRTUAL_SET(ClassName, Container, setLocalPosition);					\
+		__VIRTUAL_SET(ClassName, Container, doMessage);							\
+		__VIRTUAL_SET(ClassName, Container, addChild);							\
 	
 
-#define Container_ATTRIBUTES							\
-														\
-	/* super's attributes */							\
-	Object_ATTRIBUTES;									\
-														\
-	/* children list */									\
-	VirtualList children;								\
-														\
-	/* removed children list */							\
-	VirtualList removedChildren;						\
-														\
-	/* parent */										\
-	Container parent;									\
-														\
-	/* entity's id */									\
-	u16 ID;												\
-														\
-	/* 3d transformation */								\
-	Transformation transform;							\
-														\
-	/* flag to recalculate global position */			\
-	VBVec3D invalidateGlobalPosition;
+#define Container_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* children list */															\
+	VirtualList children;														\
+																				\
+	/* removed children list */													\
+	VirtualList removedChildren;												\
+																				\
+	/* parent */																\
+	Container parent;															\
+																				\
+	/* entity's id */															\
+	u16 id;																		\
+																				\
+	/* 3d transformation */														\
+	Transformation transform;													\
+																				\
+	/* flag to recalculate global position */									\
+	VBVec3D invalidateGlobalPosition;											\
 
 __CLASS(Container);
 
@@ -116,10 +102,10 @@ __CLASS(Container);
  */
 
 //class's allocator
-__CLASS_NEW_DECLARE(Container, __PARAMETERS(s16 ID));
+__CLASS_NEW_DECLARE(Container, __PARAMETERS(s16 id));
 
 // class's constructor
-void Container_constructor(Container this, s16 ID);
+void Container_constructor(Container this, s16 id);
 
 // class's destructor
 void Container_destructor(Container this);
@@ -173,7 +159,7 @@ int Container_doKeyHold(Container this, int pressedKey);
 int Container_doMessage(Container this, int message);
 
 //retrieve object's in game index
-s16 Container_getID(Container this);
+s16 Container_getId(Container this);
 
 // retrieve child count
 int Container_getChildCount(Container this);

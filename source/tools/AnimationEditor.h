@@ -36,7 +36,6 @@
 #include <Actor.h>
 #include <GameState.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -48,19 +47,16 @@
 
 // declare the virtual methods
 #define AnimationEditor_METHODS													\
-		Object_METHODS														\
+		Object_METHODS															\
 
 
 // declare the virtual methods which are redefined
 #define AnimationEditor_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, AnimationEditor, handleMessage);				\
-
 
 // declare a AnimationEditor
 __CLASS(AnimationEditor);
-
-
 
 // for animation
 typedef struct UserActor {

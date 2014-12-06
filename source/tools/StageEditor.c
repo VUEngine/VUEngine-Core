@@ -43,7 +43,6 @@
 #include <Cuboid.h>
 #include <OptionsSelector.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -54,54 +53,6 @@
  */
 
 #define __USER_OBJECT_SHOW_ROW 	6
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-
-#define StageEditor_ATTRIBUTES				\
-											\
-	/* super's attributes */				\
-	Object_ATTRIBUTES;						\
-											\
-	/* current in game entity */			\
-	GameState gameState;							\
-											\
-	/* current in game entity */			\
-	VirtualNode currentEntityNode;			\
-											\
-	/* current entity's shape */			\
-	Shape shape;							\
-											\
-	/* mode */								\
-	int mode;								\
-											\
-	/* actors selector */					\
-	OptionsSelector userObjectsSelector;	\
-											\
-	/* translation step size */				\
-	int translationStepSize;				\
-
-
-// define the StageEditor
-__CLASS_DEFINITION(StageEditor);
-
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												  MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
 #define __MAX_TRANSLATION_STEP	8 * 4
 #define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
@@ -112,6 +63,41 @@ __CLASS_DEFINITION(StageEditor);
 #define __DISTANCE_EYE_SCREEN_STEP		ITOFIX19_13(8)
 #define __MAXIMUM_VIEW_DISTACE_STEP		ITOFIX19_13(8)
 #define __BASE_DISTACE_STEP				ITOFIX19_13(8)
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 											CLASS'S DEFINITION
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+#define StageEditor_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* current in game entity */												\
+	GameState gameState;														\
+																				\
+	/* current in game entity */												\
+	VirtualNode currentEntityNode;												\
+																				\
+	/* current entity's shape */												\
+	Shape shape;																\
+																				\
+	/* mode */																	\
+	int mode;																	\
+																				\
+	/* actors selector */														\
+	OptionsSelector userObjectsSelector;										\
+																				\
+	/* translation step size */													\
+	int translationStepSize;													\
+
+// define the StageEditor
+__CLASS_DEFINITION(StageEditor);
 
 enum Modes {
 		kFirstMode = 0,
@@ -138,9 +124,7 @@ extern Optical* _optical;
 extern UserObject _userObjects[];
 extern MovementState* _screenMovementState;
 
-
 static void StageEditor_constructor(StageEditor this);
-
 static void StageEditor_setupMode(StageEditor this);
 static void StageEditor_releaseShape(StageEditor this);
 static void StageEditor_getShape(StageEditor this);
@@ -168,7 +152,6 @@ static void StageEditor_printTranslationStepSize(StageEditor this);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 __SINGLETON(StageEditor);
@@ -826,7 +809,7 @@ static void StageEditor_printEntityPosition(StageEditor this){
 		VBVec3D globalPosition = Container_getGlobalPosition(container);
 
 		Printing_text("ID: ", x, ++y);
-		Printing_int(Container_getID(container), x + 6, y);
+		Printing_int(Container_getId(container), x + 6, y);
 		Printing_text("Type:                                  ", x, ++y);
 		Printing_text(__GET_CLASS_NAME(container), x + 6, y);
 		Printing_text("Position:                  ", x, ++y);

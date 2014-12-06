@@ -22,9 +22,9 @@ DLIBS =
 # Obligatory headers
 CONFIG_FILE = $(VBJAENGINE)/config.h
 
-ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h			\
+ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h				\
 					-include $(VBJAENGINE)/source/base/Constants.h	 				\
-					-include $(VBJAENGINE)/source/base/VirtualList.h	 				\
+					-include $(VBJAENGINE)/source/base/VirtualList.h	 			\
 					-include $(VBJAENGINE)/source/hardware/HardwareManager.h		\
 					-include $(VBJAENGINE)/source/base/Error.h 						\
 					-include $(VBJAENGINE)/source/base/MemoryPool.h 				\

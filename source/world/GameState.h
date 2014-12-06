@@ -35,7 +35,6 @@
 #include <Telegram.h>
 #include <Stage.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -46,38 +45,33 @@
  */
 
 // declare the virtual methods
-#define GameState_METHODS											\
-		State_METHODS												\
-		__VIRTUAL_DEC(transform);									\
-
+#define GameState_METHODS														\
+		State_METHODS															\
+		__VIRTUAL_DEC(transform);												\
 
 // declare the virtual methods which are redefined
-#define GameState_SET_VTABLE(ClassName)								\
-		State_SET_VTABLE(ClassName)									\
-		__VIRTUAL_SET(ClassName, GameState, enter);					\
-		__VIRTUAL_SET(ClassName, GameState, execute);				\
-		__VIRTUAL_SET(ClassName, GameState, exit);					\
-		__VIRTUAL_SET(ClassName, GameState, pause);					\
-		__VIRTUAL_SET(ClassName, GameState, resume);				\
-		__VIRTUAL_SET(ClassName, GameState, handleMessage);			\
-		__VIRTUAL_SET(ClassName, GameState, transform);				\
-	
+#define GameState_SET_VTABLE(ClassName)											\
+		State_SET_VTABLE(ClassName)												\
+		__VIRTUAL_SET(ClassName, GameState, enter);								\
+		__VIRTUAL_SET(ClassName, GameState, execute);							\
+		__VIRTUAL_SET(ClassName, GameState, exit);								\
+		__VIRTUAL_SET(ClassName, GameState, pause);								\
+		__VIRTUAL_SET(ClassName, GameState, resume);							\
+		__VIRTUAL_SET(ClassName, GameState, handleMessage);						\
+		__VIRTUAL_SET(ClassName, GameState, transform);							\
 
-#define GameState_ATTRIBUTES										\
-																	\
-	/* super's attributes */										\
-	State_ATTRIBUTES;												\
-																	\
-	/* a pointer to the game's stage */								\
-	Stage stage;													\
-																	\
-	/* flag to allow streaming */									\
-	int canStream;
-
+#define GameState_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	State_ATTRIBUTES;															\
+																				\
+	/* a pointer to the game's stage */											\
+	Stage stage;																\
+																				\
+	/* flag to allow streaming */												\
+	int canStream;																\
 
 __CLASS(GameState);
-
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

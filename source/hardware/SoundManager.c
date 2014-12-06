@@ -30,7 +30,6 @@
 #include <SoundManager.h>
 #include <Optics.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -40,9 +39,7 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 // some wave forms data
-
 const static unsigned char sawSquareWave[32] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Saw + Square */
 	0x00, 0x00, 0x00, 0x00, 0x08, 0x10, 0x18, 0x20,
@@ -145,28 +142,28 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define SoundManager_ATTRIBUTES						\
-													\
-	/* super's attributes */						\
-	Object_ATTRIBUTES;								\
-													\
-	/* actual note of each sound being played*/		\
-	int actualNote[__TOTAL_SOUNDS];					\
-													\
-	/* note delay for each sound being played */	\
-	BYTE noteWait[__TOTAL_SOUNDS];					\
-													\
-	/* background music */							\
-	u16 (*bgm)[__BGM_CHANNELS];						\
-													\
-	/* fx sound */									\
-	u16* fxSound[__FXS];							\
-													\
-	/* space position of each fx */					\
-	VBVec2D fxPosition[__FXS];						\
-													\
-	/* factor of scale for 3d sound */				\
-	float zFactor;
+#define SoundManager_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* actual note of each sound being played*/									\
+	int actualNote[__TOTAL_SOUNDS];												\
+																				\
+	/* note delay for each sound being played */								\
+	BYTE noteWait[__TOTAL_SOUNDS];												\
+																				\
+	/* background music */														\
+	u16 (*bgm)[__BGM_CHANNELS];													\
+																				\
+	/* fx sound */																\
+	u16* fxSound[__FXS];														\
+																				\
+	/* space position of each fx */												\
+	VBVec2D fxPosition[__FXS];													\
+																				\
+	/* factor of scale for 3d sound */											\
+	float zFactor;																\
 
 
 __CLASS_DEFINITION(SoundManager);
@@ -182,8 +179,6 @@ __CLASS_DEFINITION(SoundManager);
 
 // class constructor 
 static void SoundManager_constructor(SoundManager this);
-
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

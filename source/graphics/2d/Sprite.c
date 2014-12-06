@@ -57,18 +57,16 @@
 // define the Sprite
 __CLASS_DEFINITION(Sprite);
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 												PROTOTYPES
+ * 												MACROS
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
 
 #define FIX19_13_05F 0x00001000
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -311,7 +309,7 @@ DrawSpec Sprite_getDrawSpec(Sprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set to true to allow render
-void Sprite_setRenderFlag(Sprite this, int renderFlag){
+void Sprite_setRenderFlag(Sprite this, u8 renderFlag){
 	
 	ASSERT(this, "Sprite::setRenderFlag: null this");
 
@@ -446,7 +444,7 @@ void Sprite_setParam(Sprite this, u32 param){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set map's world layer
-void Sprite_setWorldLayer(Sprite this, int worldLayer){
+void Sprite_setWorldLayer(Sprite this, u8 worldLayer){
 
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
@@ -460,7 +458,7 @@ void Sprite_setWorldLayer(Sprite this, int worldLayer){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //get map's world layer
-int Sprite_getWorldLayer(Sprite this){
+u8 Sprite_getWorldLayer(Sprite this){
 		
 	ASSERT(this, "Sprite::getWorldLayer: null this");
 
@@ -469,7 +467,7 @@ int Sprite_getWorldLayer(Sprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get sprite's render head
-int Sprite_getHead(Sprite this){
+u16 Sprite_getHead(Sprite this){
 	
 	ASSERT(this, "Sprite::getHead: null this");
 
@@ -478,7 +476,7 @@ int Sprite_getHead(Sprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get map's render mode
-int Sprite_getMode(Sprite this){
+u16 Sprite_getMode(Sprite this){
 	
 	ASSERT(this, "Sprite::getMode: null this");
 
@@ -487,7 +485,7 @@ int Sprite_getMode(Sprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve param table flag
-int Sprite_updateParamTable(Sprite this){
+u8 Sprite_updateParamTable(Sprite this){
 	
 	ASSERT(this, "Sprite::updateParamTable: null this");
 

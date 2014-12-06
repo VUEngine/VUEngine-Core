@@ -63,58 +63,48 @@
  */
 
 // declare the virtual methods
-#define AnimatedSprite_METHODS								\
-		Sprite_METHODS										\
-
-
+#define AnimatedSprite_METHODS													\
+		Sprite_METHODS															\
 
 // declare the virtual methods which are redefined
-#define AnimatedSprite_SET_VTABLE(ClassName)							\
-		Sprite_SET_VTABLE(ClassName)									\
-		__VIRTUAL_SET(ClassName, AnimatedSprite, update);				\
+#define AnimatedSprite_SET_VTABLE(ClassName)									\
+		Sprite_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, AnimatedSprite, update);						\
 
-
-//	__VIRTUAL_SET(ClassName, AnimatedSprite, write);
-	
-
-
-#define AnimatedSprite_ATTRIBUTES										\
-																		\
-	/* super's attributes */											\
-	Sprite_ATTRIBUTES;													\
-																		\
-	/* who owns the animated sprite */									\
-	Object owner;														\
-																		\
-	/* actual animation's frame to show */								\
-	int actualFrame;													\
-																		\
-	/* previous animation's frame shown */								\
-	int previousFrame;													\
-																		\
-	/* actual frame cicle in a given direction (i.e. when walking) */	\
-	int frameDelay;														\
-																		\
-	/* frame delay increment update cycle */							\
-	int frameDelayDelta;												\
-																		\
-	/* orignal position of the bgmap definition in ROM */				\
-	int originalTextureXOffset;											\
-																		\
-	/* a pointer to the animation function being played */				\
-	AnimationFunction* animationFunction;								\
-																		\
-	/* flag to project 3d to 2d position if needed */					\
-	int calculatePositionFlag: 1;										\
-																		\
-	/* flag to know if playing an animation */							\
-	int playing: 1;
-
+#define AnimatedSprite_ATTRIBUTES												\
+																				\
+	/* super's attributes */													\
+	Sprite_ATTRIBUTES;															\
+																				\
+	/* who owns the animated sprite */											\
+	Object owner;																\
+																				\
+	/* actual animation's frame to show */										\
+	int actualFrame;															\
+																				\
+	/* previous animation's frame shown */										\
+	int previousFrame;															\
+																				\
+	/* actual frame cicle in a given direction (i.e. when walking) */			\
+	int frameDelay;																\
+																				\
+	/* frame delay increment update cycle */									\
+	int frameDelayDelta;														\
+																				\
+	/* orignal position of the bgmap definition in ROM */						\
+	int originalTextureXOffset;													\
+																				\
+	/* a pointer to the animation function being played */						\
+	AnimationFunction* animationFunction;										\
+																				\
+	/* flag to project 3d to 2d position if needed */							\
+	int calculatePositionFlag: 1;												\
+																				\
+	/* flag to know if playing an animation */									\
+	int playing: 1;																\
 
 // declare a Sprite, which holds a texture and a drawing specification
 __CLASS(AnimatedSprite);
-
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -124,7 +114,6 @@ __CLASS(AnimatedSprite);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 // a function which defines the frames to play
 typedef struct AnimationFunction{
@@ -191,7 +180,6 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this);
 // if true, the frame's screen position will be calculated in the
 // next render cicle
 void AnimatedSprite_setCalculatePositionFlag(AnimatedSprite this, int calculatePositionFlag);
-
 
 // retrieve actual frame index of animation
 int AnimatedSprite_getActualAnimatedSprite(AnimatedSprite this);

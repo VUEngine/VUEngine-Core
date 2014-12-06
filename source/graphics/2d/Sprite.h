@@ -62,61 +62,52 @@
  */
 
 // declare the virtual methods
-#define Sprite_METHODS								\
-	Object_METHODS									\
-	__VIRTUAL_DEC(update);							\
-	
-//	__VIRTUAL_DEC(write);
+#define Sprite_METHODS															\
+	Object_METHODS																\
+	__VIRTUAL_DEC(update);														\
 
 // declare the virtual methods which are redefined
-#define Sprite_SET_VTABLE(ClassName)							\
-		Object_SET_VTABLE(ClassName)							\
-		__VIRTUAL_SET(ClassName, Sprite, update);				\
-	
+#define Sprite_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, Sprite, update);								\
 
-//	__VIRTUAL_SET(ClassName, Sprite, write);
-	
-
-
-#define Sprite_ATTRIBUTES								\
-														\
-	/* super's attributes */							\
-	Object_ATTRIBUTES;									\
-														\
-	/* this is our texture */							\
-	Texture texture;									\
-														\
-	/* 3d world position */								\
-	DrawSpec drawSpec;									\
-														\
-	/* head definition for world entry setup */			\
-	int head;											\
-														\
-	/* param table offset */							\
-	u32 param;											\
-														\
-	/* world layer where to render the texture */		\
-	int worldLayer;										\
-														\
-	/* raise to update the param table */				\
-	int updateParamTable;								\
-														\
-	/* h-bias max amplitude */							\
-	/* int hbiasAmplitude; */							\
-	int renderFlag;										\
-														\
-	/* parallax modifier to achieve better */			\
-	/* control over display */							\
-	s8 parallaxDisplacement;							\
-														\
-	/* location of texture in graphic memory */			\
-	Point texturePosition;								\
+#define Sprite_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* this is our texture */													\
+	Texture texture;															\
+																				\
+	/* 3d world position */														\
+	DrawSpec drawSpec;															\
+																				\
+	/* head definition for world entry setup */									\
+	u16 head;																	\
+																				\
+	/* param table offset */													\
+	u32 param;																	\
+																				\
+	/* world layer where to render the texture */								\
+	u8 worldLayer;																\
+																				\
+	/* raise to update the param table */										\
+	u8 updateParamTable;														\
+																				\
+	/* h-bias max amplitude */													\
+	/* int hbiasAmplitude; */													\
+	u16 renderFlag;																\
+																				\
+	/* parallax modifier to achieve better */									\
+	/* control over display */													\
+	s8 parallaxDisplacement;													\
+																				\
+	/* location of texture in graphic memory */									\
+	Point texturePosition;														\
 														
-	
 // declare a Sprite, which holds a texture and a drawing specification
 __CLASS(Sprite);
 							
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -134,10 +125,10 @@ typedef struct SpriteDefinition{
 	TextureDefinition* textureDefinition;
 	
 	// the display mode ( BGMAP, AFFINE, H-BIAS)
-	int bgmapMode;
+	u16 bgmapMode;
 	
 	// flag to indicate in which display to show the bgtexture
-	int display;
+	u16 display;
 	
 	// parallax modifier to achieve better */			
 	s8 parallaxDisplacement;
@@ -190,10 +181,10 @@ Texture Sprite_getTexture(Sprite this);
 DrawSpec Sprite_getDrawSpec(Sprite this);
 
 //get map's render mode
-int Sprite_getMode(Sprite this);
+u16 Sprite_getMode(Sprite this);
 
 // retrieve param table flag
-int Sprite_updateParamTable(Sprite this);
+u8 Sprite_updateParamTable(Sprite this);
 
 // force refresh param table in the next render
 void Sprite_invalidateParamTable(Sprite this);
@@ -211,16 +202,16 @@ u32 Sprite_getParam(Sprite this);
 void Sprite_setParam(Sprite this, u32 param);
 
 // set map's world layer
-void Sprite_setWorldLayer(Sprite this, int worldLayer);
+void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 
 // get map's world layer
-int Sprite_getWorldLayer(Sprite this);
+u8 Sprite_getWorldLayer(Sprite this);
 
 // get sprite's render head
-int Sprite_getHead(Sprite this);
+u16 Sprite_getHead(Sprite this);
 
 // set to true to allow render
-void Sprite_setRenderFlag(Sprite this, int renderFlag);
+void Sprite_setRenderFlag(Sprite this, u8 renderFlag);
 
 // show
 void Sprite_show(Sprite this);

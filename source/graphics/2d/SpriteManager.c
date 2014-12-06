@@ -40,30 +40,28 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define SpriteManager_ATTRIBUTES				\
-												\
-	/* super's attributes */					\
-	Object_ATTRIBUTES;							\
-												\
-	/* list of sprites to render */				\
-	VirtualList sprites;						\
-												\
-	/* list of sprites to render */				\
-	VirtualList removedSprites;					\
-												\
-	/* next world layer	*/						\
-	int freeLayer;								\
-												\
-	/* flag controls END layer	*/				\
-	u8 needSorting;								\
-												\
-	/* sorting nodes	*/						\
-	VirtualNode node;							\
-	VirtualNode otherNode;
-
+#define SpriteManager_ATTRIBUTES												\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* list of sprites to render */												\
+	VirtualList sprites;														\
+																				\
+	/* list of sprites to render */												\
+	VirtualList removedSprites;													\
+																				\
+	/* next world layer	*/														\
+	int freeLayer;																\
+																				\
+	/* flag controls END layer	*/												\
+	u8 needSorting;																\
+																				\
+	/* sorting nodes	*/														\
+	VirtualNode node;															\
+	VirtualNode otherNode;														\
 
 __CLASS_DEFINITION(SpriteManager);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -230,7 +228,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 	
 	this->needSorting = this->node? true: false;
 	
-	// TODO: removex
+	// TODO: remove
 	//this->needSorting = true;
 }
 

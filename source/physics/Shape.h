@@ -42,54 +42,51 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-enum ShapeTypes{
-	kCircle = 0,
-	kCuboid,
-};
-
-
-#define Shape_METHODS								\
-		Object_METHODS								\
-		__VIRTUAL_DEC(overlaps);					\
-		__VIRTUAL_DEC(setup);						\
-		__VIRTUAL_DEC(positione);					\
-		__VIRTUAL_DEC(getAxisOfCollision);			\
-		__VIRTUAL_DEC(testIfCollision);				\
-		__VIRTUAL_DEC(deleteDirectDrawData);		\
-		__VIRTUAL_DEC(draw);						\
+#define Shape_METHODS															\
+		Object_METHODS															\
+		__VIRTUAL_DEC(overlaps);												\
+		__VIRTUAL_DEC(setup);													\
+		__VIRTUAL_DEC(positione);												\
+		__VIRTUAL_DEC(getAxisOfCollision);										\
+		__VIRTUAL_DEC(testIfCollision);											\
+		__VIRTUAL_DEC(deleteDirectDrawData);									\
+		__VIRTUAL_DEC(draw);													\
 		__VIRTUAL_DEC(print);
 
 
-#define Shape_SET_VTABLE(ClassName)								\
-		Object_SET_VTABLE(ClassName)							\
+#define Shape_SET_VTABLE(ClassName)												\
+		Object_SET_VTABLE(ClassName)											\
 		
 	
-#define Shape_ATTRIBUTES							\
-													\
-	/* super's attributes */						\
-	Object_ATTRIBUTES;								\
-													\
-	/* the entity to which the shape belongs */		\
-	Entity owner;									\
-													\
-	/* flag to know if the shapes below to an */	\
-	/* entity which moves */						\
-	int moves: 1;									\
-													\
-	/* whether it has been checked */				\
-	/* for collision in current update */			\
-	int checked:1;									\
-													\
-	/* flag to know if setup is needed */			\
-	int ready:1;									\
-													\
-	/* flag to check agains other shapes */			\
-	int checkForCollisions:1;
-
+#define Shape_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* the entity to which the shape belongs */									\
+	Entity owner;																\
+																				\
+	/* flag to know if the shapes below to an */								\
+	/* entity which moves */													\
+	int moves: 1;																\
+																				\
+	/* whether it has been checked */											\
+	/* for collision in current update */										\
+	int checked :1;																\
+																				\
+	/* flag to know if setup is needed */										\
+	int ready :1;																\
+																				\
+	/* flag to check agains other shapes */										\
+	int checkForCollisions :1;
 
 // A Shape which represent a generic object inside a Stage
 __CLASS(Shape);
 
+enum ShapeTypes{
+	kCircle = 0,
+	kCuboid,
+};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

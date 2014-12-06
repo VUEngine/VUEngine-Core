@@ -38,7 +38,6 @@
 #include <Entity.h>
 #include <GameState.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -49,19 +48,16 @@
  */
 
 // declare the virtual methods
-#define StageEditor_METHODS													\
-		Object_METHODS														\
-
+#define StageEditor_METHODS														\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define StageEditor_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, StageEditor, handleMessage);				\
-
+#define StageEditor_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, StageEditor, handleMessage);					\
 
 // declare a StageEditor
 __CLASS(StageEditor);
-
 
 // for level editing
 typedef struct UserObject {
@@ -70,7 +66,6 @@ typedef struct UserObject {
 	EntityDefinition* entityDefinition;
 	
 }UserObject;
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

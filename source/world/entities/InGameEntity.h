@@ -59,50 +59,41 @@
  */
 
 struct Shape_str;
-//typedef struct Shape_str* Shape;
 
-
-#define InGameEntity_METHODS							\
-		Entity_METHODS									\
-		__VIRTUAL_DEC(isMoving);						\
-		__VIRTUAL_DEC(getElasticity);					\
-		__VIRTUAL_DEC(getFriction);						\
+#define InGameEntity_METHODS													\
+		Entity_METHODS															\
+		__VIRTUAL_DEC(isMoving);												\
+		__VIRTUAL_DEC(getElasticity);											\
+		__VIRTUAL_DEC(getFriction);												\
 	
-	
+#define InGameEntity_SET_VTABLE(ClassName)										\
+		Entity_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, InGameEntity, moves);							\
+		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);						\
+		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);						\
+		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);					\
+		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);					\
+		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);			\
+		__VIRTUAL_SET(ClassName, InGameEntity, getGap);							\
 
-#define InGameEntity_SET_VTABLE(ClassName)								\
-		Entity_SET_VTABLE(ClassName)									\
-		__VIRTUAL_SET(ClassName, InGameEntity, moves);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);				\
-		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);				\
-		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);			\
-		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);			\
-		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);	\
-		__VIRTUAL_SET(ClassName, InGameEntity, getGap);					\
-		
-
-
-// A InGameEntity which represent a generic object inside a Stage
-#define InGameEntity_ATTRIBUTES						\
-													\
-	/* it is derivated from*/						\
-	Entity_ATTRIBUTES								\
-													\
-	/* pointer to the ROM definition */				\
-	InGameEntityDefinition* inGameEntityDefinition;	\
-													\
-	/* direction */									\
-	Direction direction;							\
-													\
-	/* gameworld's character's type	*/				\
-	int inGameType;									\
-													\
-	/* Gap to calculate collisions */				\
-	Gap gap;										\
-
+#define InGameEntity_ATTRIBUTES													\
+																				\
+	/* it is derivated from*/													\
+	Entity_ATTRIBUTES															\
+																				\
+	/* pointer to the ROM definition */											\
+	InGameEntityDefinition* inGameEntityDefinition;								\
+																				\
+	/* direction */																\
+	Direction direction;														\
+																				\
+	/* gameworld's character's type	*/											\
+	int inGameType;																\
+																				\
+	/* Gap to calculate collisions */											\
+	Gap gap;																	\
 
 __CLASS(InGameEntity);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -132,7 +123,6 @@ typedef struct InGameEntityDefinition{
 	// flag to precalculte displacement on screen movement
 	// to reduce flickering
 	u8 moves;
-
 
 }InGameEntityDefinition;
 

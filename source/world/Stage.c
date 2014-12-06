@@ -27,6 +27,23 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#include <Stage.h>
+#include <Optics.h>
+#include <SoundManager.h>
+#include <Screen.h>
+#include <HardwareManager.h>
+#include <SpriteManager.h>
+#include <Texture.h>
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 												MACROS
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
@@ -38,15 +55,6 @@
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
-
-#include <Stage.h>
-#include <Optics.h>
-#include <SoundManager.h>
-#include <Screen.h>
-#include <HardwareManager.h>
-#include <SpriteManager.h>
-#include <Texture.h>
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -110,21 +118,11 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 												CLASS'S ATTRIBUTES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
  * 												CLASS'S METHODS
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // always call these to macros next to each other
@@ -414,7 +412,7 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 	
-	s16 ID = Container_getID((Container)entity);
+	s16 ID = Container_getId((Container)entity);
 
 	for(; node; node = VirtualNode_getNext(node)){
 
@@ -538,7 +536,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 				
 				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position, stageEntityDescription->positionedEntity->extraInfo, false);
-				stageEntityDescription->ID = Container_getID((Container)entity);
+				stageEntityDescription->ID = Container_getId((Container)entity);
 
 				if(!skippedEntity) {
 
@@ -601,7 +599,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		// if the entity isn't visible inside the view field, unload it
 		if(!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD))){		
 
-			s16 ID = Container_getID((Container)entity);
+			s16 ID = Container_getId((Container)entity);
 			
 			int traverseNormally = ID < ((StageEntityDescription*)VirtualNode_getData(this->streamingLeftHead))->ID ||
 				ID > ((StageEntityDescription*)VirtualNode_getData(this->streamingRightHead))->ID;

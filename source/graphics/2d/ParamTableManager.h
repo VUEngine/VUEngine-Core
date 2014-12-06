@@ -42,19 +42,13 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-
 // declare the virtual methods
-#define ParamTableManager_METHODS								\
-		Object_METHODS											\
-	
+#define ParamTableManager_METHODS												\
+		Object_METHODS															\
 	
 // declare the virtual methods which are redefined
-#define ParamTableManager_SET_VTABLE(ClassName)						\
-		Object_SET_VTABLE(ClassName)								\
-
-				
-
+#define ParamTableManager_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)											\
 
 // declare a Sprite, which holds a texture and a drawing specification
 __CLASS(ParamTableManager);

@@ -32,7 +32,6 @@
 
 #include <Entity.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -42,29 +41,23 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define ScrollBackground_METHODS												\
+		Entity_METHODS															\
 
-#define ScrollBackground_METHODS							\
-		Entity_METHODS										\
-	
-	
-
-#define ScrollBackground_SET_VTABLE(ClassName)										\
-		Entity_SET_VTABLE(ClassName)												\
-		__VIRTUAL_SET(ClassName, ScrollBackground, isVisible);						\
-		__VIRTUAL_SET(ClassName, ScrollBackground, transform);						\
-		__VIRTUAL_SET(ClassName, ScrollBackground, updateSpritePosition);			\
-
-	
+#define ScrollBackground_SET_VTABLE(ClassName)									\
+		Entity_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, ScrollBackground, isVisible);					\
+		__VIRTUAL_SET(ClassName, ScrollBackground, transform);					\
+		__VIRTUAL_SET(ClassName, ScrollBackground, updateSpritePosition);		\
 
 // A ScrollBackground which represent a generic object inside a Stage
-#define ScrollBackground_ATTRIBUTES					\
-													\
-	/* super's attributes */						\
-	Entity_ATTRIBUTES;								\
-													\
-	/* sprites for scrolling */						\
-	Sprite scrollSprites[2];						\
-
+#define ScrollBackground_ATTRIBUTES												\
+																				\
+	/* super's attributes */													\
+	Entity_ATTRIBUTES;															\
+																				\
+	/* sprites for scrolling */													\
+	Sprite scrollSprites[2];													\
 
 __CLASS(ScrollBackground);
 

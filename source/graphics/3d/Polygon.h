@@ -32,7 +32,6 @@
 
 #include <Object.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -42,25 +41,24 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define Polygon_METHODS									\
-		Object_METHODS									\
+#define Polygon_METHODS															\
+		Object_METHODS															\
 
 
-#define Polygon_SET_VTABLE(ClassName)								\
-		Object_SET_VTABLE(ClassName)								\
+#define Polygon_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
 	
 	
-#define Polygon_ATTRIBUTES							\
-													\
-	/* super's attributes */						\
-	Object_ATTRIBUTES;								\
-													\
-	/* vertices */									\
-	VirtualList vertices;							\
+#define Polygon_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* vertices */																\
+	VirtualList vertices;														\
 
 // A Polygon which represent a generic object inside a Stage
 __CLASS(Polygon);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

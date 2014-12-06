@@ -33,11 +33,40 @@
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
- * 											 CLASS'S MACROS
+ * 											CLASS'S DEFINITION
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+#define TextureManager_ATTRIBUTES												\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* number of chars ocuppied */												\
+	int numberOfChars[__NUM_BGMAPS];											\
+																				\
+	/* current x offset to set the next bgmap */								\
+	int xOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
+																				\
+	/* current y offset to set the next bgmap */								\
+	int yOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
+																				\
+	/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 				\
+	int offset[__NUM_BGMAPS * __NUM_MAPS_PER_SEG][3];							\
+																				\
+	/* next free bgmap used for text printing */								\
+	int freeBgmap;																\
+																				\
+	/* the textures allocated */												\
+	Texture texture[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];							\
+																				\
+	/* texture usage count */													\
+	int textureUsageCount[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];					\
+
+// define the TextureManager
+__CLASS_DEFINITION(TextureManager);
 
 enum OffsetIndex{
 	
@@ -45,47 +74,6 @@ enum OffsetIndex{
 	kYOffset,
 	kBgmapSegment
 };
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-#define TextureManager_ATTRIBUTES										\
-																		\
-	/* super's attributes */											\
-	Object_ATTRIBUTES;													\
-																		\
-	/* number of chars ocuppied */										\
-	int numberOfChars[__NUM_BGMAPS];										\
-																		\
-	/* current x offset to set the next bgmap */						\
-	int xOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];							\
-																		\
-	/* current y offset to set the next bgmap */						\
-	int yOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];							\
-																		\
-	/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 		\
-	int offset[__NUM_BGMAPS * __NUM_MAPS_PER_SEG][3];						\
-																		\
-	/* next free bgmap used for text printing */						\
-	int freeBgmap;														\
-																		\
-	/* the textures allocated */										\
-	Texture texture[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];						\
-																		\
-	/* texture usage count */											\
-	int textureUsageCount[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];				\
-
-	
-
-// define the TextureManager
-__CLASS_DEFINITION(TextureManager);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -113,7 +101,6 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -223,7 +210,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 						
 							if(cols <= 64 - this->xOffset[i][j]){
 								
-								int id = Texture_getId(texture);
+								u16 id = Texture_getId(texture);
 								
 								//registry bgmap definition
 								this->offset[id][kXOffset] = this->xOffset[i][j];

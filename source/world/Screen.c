@@ -31,7 +31,6 @@
 #include <Optics.h>
 #include <Game.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -41,27 +40,25 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define Screen_ATTRIBUTES						\
-												\
-	/* super's attributes */					\
-	Object_ATTRIBUTES;							\
-												\
-	/* screen position */						\
-	VBVec3D position;							\
-												\
-	/* actor to center the screen around */		\
-	InGameEntity focusInGameEntity;				\
-												\
-	/* world's screen's movement state */		\
-	MovementState movementState;				\
-												\
-	/* world's screen's last displacement */	\
-	VBVec3D lastDisplacement;					\
-												\
-	/* stage's size in pixels */				\
-	Size stageSize;								\
-
-
+#define Screen_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* screen position */														\
+	VBVec3D position;															\
+																				\
+	/* actor to center the screen around */										\
+	InGameEntity focusInGameEntity;												\
+																				\
+	/* world's screen's movement state */										\
+	MovementState movementState;												\
+																				\
+	/* world's screen's last displacement */									\
+	VBVec3D lastDisplacement;													\
+																				\
+	/* stage's size in pixels */												\
+	Size stageSize;																\
 
 // define the Screen
 __CLASS_DEFINITION(Screen);
@@ -94,7 +91,6 @@ static void Screen_capPosition(Screen this);
 
 VBVec3D* _screenPosition = NULL;
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -104,9 +100,9 @@ VBVec3D* _screenPosition = NULL;
  * ---------------------------------------------------------------------------------------------------------
  */
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // it's a singleton
 __SINGLETON(Screen);
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor

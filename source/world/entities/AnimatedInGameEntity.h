@@ -33,17 +33,6 @@
 #include <InGameEntity.h>
 #include <AnimatedSprite.h>
 
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											 CLASS'S MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -52,7 +41,6 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 // defines an AnimatedInGameEntity
 typedef struct AnimatedInGameEntityDefinition{
@@ -68,10 +56,7 @@ typedef struct AnimatedInGameEntityDefinition{
 	
 }AnimatedInGameEntityDefinition;
 
-
 typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
-
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -82,41 +67,36 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-
-
 // declare the virtual methods
-#define AnimatedInGameEntity_METHODS													\
-		InGameEntity_METHODS															\
+#define AnimatedInGameEntity_METHODS											\
+		InGameEntity_METHODS													\
 
 
-#define AnimatedInGameEntity_SET_VTABLE(ClassName)										\
-		InGameEntity_SET_VTABLE(ClassName)												\
-		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, update);							\
-		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);						\
-		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, getScale);						\
+#define AnimatedInGameEntity_SET_VTABLE(ClassName)								\
+		InGameEntity_SET_VTABLE(ClassName)										\
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, update);					\
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);				\
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, getScale);				\
 		
 
 	
-#define AnimatedInGameEntity_ATTRIBUTES													\
-																						\
-	/* super's attributes */															\
-	InGameEntity_ATTRIBUTES;															\
-																						\
-	/* Pointer to the ROM definition */													\
-	AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;						\
-																						\
-	/* Pointer to the animation description */											\
-	AnimationDescription* animationDescription;											\
-																						\
-	Direction previousDirection;														\
-																						\
-	/* clock to pass to the animated sprites */											\
-	Clock clock;																		\
-
+#define AnimatedInGameEntity_ATTRIBUTES											\
+																				\
+	/* super's attributes */													\
+	InGameEntity_ATTRIBUTES;													\
+																				\
+	/* Pointer to the ROM definition */											\
+	AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;				\
+																				\
+	/* Pointer to the animation description */									\
+	AnimationDescription* animationDescription;									\
+																				\
+	Direction previousDirection;												\
+																				\
+	/* clock to pass to the animated sprites */									\
+	Clock clock;																\
 
 __CLASS(AnimatedInGameEntity);													
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

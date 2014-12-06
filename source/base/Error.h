@@ -21,8 +21,6 @@
 #ifndef ERROR_H_
 #define ERROR_H_
 
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -45,17 +43,14 @@
 
 // error handling class
 // declare the virtual methods
-#define Error_METHODS						\
-		Object_METHODS						\
+#define Error_METHODS															\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define Error_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)				\
-
+#define Error_SET_VTABLE(ClassName)												\
+		Object_SET_VTABLE(ClassName)											\
 	
 __CLASS(Error);
-
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

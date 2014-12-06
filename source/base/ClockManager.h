@@ -33,7 +33,6 @@
 #include <Object.h>
 #include <Clock.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -44,17 +43,14 @@
  */
 
 // declare the virtual methods
-#define ClockManager_METHODS						\
-		Object_METHODS								\
-
+#define ClockManager_METHODS													\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define ClockManager_SET_VTABLE(ClassName)						\
-		Object_SET_VTABLE(ClassName)							\
-	
+#define ClockManager_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
 
 __CLASS(ClockManager);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

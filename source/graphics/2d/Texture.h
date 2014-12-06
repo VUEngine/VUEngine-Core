@@ -43,37 +43,35 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define Texture_METHODS							\
-		Object_METHODS							\
+#define Texture_METHODS															\
+		Object_METHODS															\
 
-#define Texture_SET_VTABLE(ClassName)						\
-		Object_SET_VTABLE(ClassName)						\
+#define Texture_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, Texture, handleMessage);
 
-#define Texture_ATTRIBUTES										\
-																\
-	/* super's attributes */									\
-	Object_ATTRIBUTES;											\
-																\
-	/* texture's id */											\
-	int id;														\
-																\
-	/* char group to use int this texture */					\
-	CharGroup charGroup;										\
-																\
-	/* pointer to ROM definition */								\
-	TextureROMDef* textureDefinition;							\
-																\
-	/* color pallet */											\
-	int pallet:2;												\
+#define Texture_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* texture's id */															\
+	u16 id;																		\
+																				\
+	/* char group to use int this texture */									\
+	CharGroup charGroup;														\
+																				\
+	/* pointer to ROM definition */												\
+	TextureROMDef* textureDefinition;											\
+																				\
+	/* color pallet */															\
+	int pallet:2;																\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(Texture);
 
-
 //use a Texture when you want to show a static background or a character that must be scaled according
 //its deep on the screen so there exists consistency between the deep and the size of the character
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -84,9 +82,6 @@ __CLASS(Texture);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-
-/* ---------------------------------------------------------------------------------------------------------*/
 // defines a background in ROM memory
 typedef struct TextureDefinition{
 
@@ -97,13 +92,13 @@ typedef struct TextureDefinition{
 	BYTE* bgmapDefinition;
 
 	// x size, 1 column represents 8 pixeles 
-	int cols;
+	u8 cols;
 	
 	// y size, 1 row represents 8 pixeles
-	int rows;
+	u8 rows;
 	
 	// pallet index to use
-	int pallet;
+	u8 pallet;
 	
 
 }TextureDefinition;
@@ -120,7 +115,7 @@ typedef const TextureDefinition TextureROMDef;
  */
 
 // class's allocator
-__CLASS_NEW_DECLARE(Texture, __PARAMETERS(TextureDefinition* textureDefinition, int id));
+__CLASS_NEW_DECLARE(Texture, __PARAMETERS(TextureDefinition* textureDefinition, u16 id));
 
 // class's destructor
 void Texture_destructor(Texture this);
@@ -152,7 +147,6 @@ int Texture_getXOffset(Texture this);
 // set texture's x offset within bgmap mem
 int Texture_setXOffset(Texture this, int xOffset);
 
-
 // get texture's cols
 int Texture_getTotalCols(Texture this);
 
@@ -181,7 +175,7 @@ int Texture_getRows(Texture this);
 int Texture_getCols(Texture this);
 
 // retrieve texture's id
-int Texture_getId(Texture this);
+u16 Texture_getId(Texture this);
 
 // process a telegram
 int Texture_handleMessage(Texture this, Telegram telegram);

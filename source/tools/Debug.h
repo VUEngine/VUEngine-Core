@@ -45,18 +45,16 @@
  */
 
 // declare the virtual methods
-#define Debug_METHODS								\
-		Object_METHODS								\
+#define Debug_METHODS															\
+		Object_METHODS															\
 
 
 // declare the virtual methods which are redefined
-#define Debug_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)				\
-
+#define Debug_SET_VTABLE(ClassName)												\
+		Object_SET_VTABLE(ClassName)											\
 
 // declare a Debug
 __CLASS(Debug);
-
 
 // for debugging
 typedef struct ClassSizeData {

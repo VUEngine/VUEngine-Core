@@ -33,7 +33,6 @@
 #include <Object.h>
 #include <InGameEntity.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -43,26 +42,25 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define Mass_METHODS															\
+		Object_METHODS															\
 
-#define Mass_METHODS								\
-		Object_METHODS								\
+#define Mass_SET_VTABLE(ClassName)												\
+		Object_SET_VTABLE(ClassName)											\
 
+#define Mass_ATTRIBUTES															\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* mass configuration */													\
+	MassDefinition* massDefinition;												\
+																				\
+	/* radious */																\
+	fix19_13 weight;															\
 
-#define Mass_SET_VTABLE(ClassName)								\
-		Object_SET_VTABLE(ClassName)							\
-	
-
-#define Mass_ATTRIBUTES								\
-													\
-	/* super's attributes */						\
-	Object_ATTRIBUTES;								\
-													\
-	/* mass configuration */						\
-	MassDefinition* massDefinition;					\
-													\
-	/* radious */									\
-	fix19_13 weight;
-
+// A Mass which represent a generic object inside a Stage
+__CLASS(Mass);
 
 // defines a Mass configuration in ROM memory
 typedef struct MassDefinition{
@@ -74,11 +72,6 @@ typedef struct MassDefinition{
 
 typedef const MassDefinition MassROMDef;
 
-// A Mass which represent a generic object inside a Stage
-__CLASS(Mass);
-
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -87,7 +80,6 @@ __CLASS(Mass);
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 // class's allocator
 __CLASS_NEW_DECLARE(Mass, __PARAMETERS(fix19_13 weight));

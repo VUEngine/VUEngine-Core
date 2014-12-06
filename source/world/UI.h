@@ -21,7 +21,6 @@
 #ifndef UI_H_
 #define UI_H_
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -34,7 +33,6 @@
 #include <Container.h>
 #include <Entity.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -45,20 +43,17 @@
  */
 
 // declare the virtual methods
-#define UI_METHODS												\
-		Container_METHODS										\
-		__VIRTUAL_DEC(addEntities);								\
-
+#define UI_METHODS																\
+		Container_METHODS														\
+		__VIRTUAL_DEC(addEntities);												\
 
 // declare the virtual methods which are redefined
-#define UI_SET_VTABLE(ClassName)								\
-		Container_SET_VTABLE(ClassName)							\
-		__VIRTUAL_SET(ClassName, UI, addEntities);				\
-	
+#define UI_SET_VTABLE(ClassName)												\
+		Container_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, UI, addEntities);								\
 
 // declare a UI, which holds the objects in a game world
 __CLASS(UI);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -79,7 +74,6 @@ typedef struct UIDefinition{
 	PositionedEntity* entities;
 
 }UIDefinition;
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -102,4 +96,3 @@ void UI_destructor(UI this);
 void UI_addEntities(UI this, PositionedEntity* entities);
 
 #endif
-

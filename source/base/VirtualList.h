@@ -41,19 +41,15 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define VirtualNode_METHODS														\
+		Object_METHODS															\
 
-#define VirtualNode_METHODS							\
-		Object_METHODS								\
 
-
-#define VirtualNode_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)						\
-
+#define VirtualNode_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
 
 __CLASS(VirtualNode);
 	
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -70,11 +66,13 @@ void* VirtualNode_getData(VirtualNode this);
 
 //get next node's address
 VirtualNode VirtualNode_getNext(VirtualNode this);
-//get next node's address
+//TODO
 /*
-inline extern  VirtualNode VirtualNode_getNext(VirtualNode this){
-	VirtualNode* pointer = this; 
-	return pointer[0];
+inline VirtualNode VirtualNode_getNext(VirtualNode this){
+	
+	ASSERT(this, "VirtualNode::getNext: null this");
+
+	return this->next;
 }
 */
 
@@ -84,12 +82,16 @@ VirtualNode VirtualNode_getPrevious(VirtualNode this);
 // swap the data between two nodes
 void VirtualNode_swapData(VirtualNode this, VirtualNode node);
 
-
 #endif /*VIRTUALNODE_H_*/
 
-
-
-
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 											VIRTUAL LIST
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
 
 #ifndef VIRTUALLIST_H_
 #define VIRTUALLIST_H_
@@ -103,17 +105,14 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node);
  * ---------------------------------------------------------------------------------------------------------
  */
 
+#define VirtualList_METHODS														\
+	Object_METHODS;																\
 
-#define VirtualList_METHODS					\
-	Object_METHODS;						
-
-#define VirtualList_SET_VTABLE(ClassName)				\
-	Object_SET_VTABLE(ClassName);						
+#define VirtualList_SET_VTABLE(ClassName)										\
+	Object_SET_VTABLE(ClassName);												\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(VirtualList);
-
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -133,9 +132,10 @@ void VirtualList_destructor(VirtualList this);
 // remove all nodes from the list
 void VirtualList_clear(VirtualList this);
 
-// add a new node to the begging of the list
+// add a new node to the beginig of the list
 int VirtualList_pushFront(VirtualList this, const void* const data);
 
+// add a new node to the end of the list
 int VirtualList_pushBack(VirtualList this, const void* const data);
 
 // remove the first element in the list
@@ -173,7 +173,6 @@ VirtualNode VirtualList_end(VirtualList this);
 
 // retrieve the last element
 void* const VirtualList_back(VirtualList this);
-
 
 // insert a node after the node specified
 VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const void* const data);

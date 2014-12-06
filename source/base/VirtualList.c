@@ -29,7 +29,6 @@
 
 #include <VirtualList.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -41,7 +40,6 @@
 
 // class's constructor
 static void VirtualNode_constructor(VirtualNode this, const void* const data);
-
 
 // class's destructor
 static void VirtualNode_destructor(VirtualNode this);
@@ -55,20 +53,19 @@ static void VirtualNode_destructor(VirtualNode this);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define VirtualNode_ATTRIBUTES				\
-											\
-	/* super's attributes */				\
-	Object_ATTRIBUTES;						\
-											\
-	/* pointer to next node */				\
-	VirtualNode next;						\
-											\
-	/* pointer to previos node */			\
-	VirtualNode previous;					\
-											\
-	/* pointer to the data */				\
-	void* data;
-
+#define VirtualNode_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* pointer to next node */													\
+	VirtualNode next;															\
+																				\
+	/* pointer to previos node */												\
+	VirtualNode previous;														\
+																				\
+	/* pointer to the data */													\
+	void* data;																	\
 
 __CLASS_DEFINITION(VirtualNode);
 
@@ -189,7 +186,6 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node){
 // define a limit to prevent, and detect looped lists
 #define LISTMAXSIZE 1000
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -198,18 +194,17 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node){
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-#define VirtualList_ATTRIBUTES					\
-												\
-	/* it is derivated from*/					\
-	Object_ATTRIBUTES							\
-												\
-	/* a pointer to the head of the list */ 	\
-	VirtualNode head;							\
-												\
-	/* a pointer to the tail of the list */		\
-	VirtualNode tail; 
 
-
+#define VirtualList_ATTRIBUTES													\
+																				\
+	/* it is derivated from*/													\
+	Object_ATTRIBUTES															\
+																				\
+	/* a pointer to the head of the list */ 									\
+	VirtualNode head;															\
+																				\
+	/* a pointer to the tail of the list */										\
+	VirtualNode tail;															\
 
 __CLASS_DEFINITION(VirtualList);
 
@@ -224,7 +219,6 @@ __CLASS_DEFINITION(VirtualList);
 
 // class's constructor
 static void VirtualList_constructor(VirtualList this);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

@@ -32,7 +32,6 @@
 
 #include <Object.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -43,12 +42,12 @@
  */
 
 // declare the virtual methods
-#define MemoryPool_METHODS						\
-		Object_METHODS							\
+#define MemoryPool_METHODS														\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define MemoryPool_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)						\
+#define MemoryPool_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
 
 __CLASS(MemoryPool);
 

@@ -28,7 +28,7 @@
  */
 
 #include <I18n.h>
-
+#include <Game.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -39,22 +39,19 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define I18n_ATTRIBUTES																					\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* registered languages */																			\
-	char** languages[16];																				\
-																										\
-	/* total number of registered languages */															\
-	u8 languageCount;																					\
-																										\
-	/* currently active language */																		\
-	u8 language;																						\
-
-	
-#include <Game.h>
+#define I18n_ATTRIBUTES															\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* registered languages */													\
+	char** languages[16];														\
+																				\
+	/* total number of registered languages */									\
+	u8 languageCount;															\
+																				\
+	/* currently active language */												\
+	u8 language;																\
 	
 // define the I18n
 __CLASS_DEFINITION(I18n);
@@ -71,7 +68,6 @@ __CLASS_DEFINITION(I18n);
 // class's constructor
 static void I18n_constructor(I18n this);
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -82,7 +78,6 @@ static void I18n_constructor(I18n this);
  */
  
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 __SINGLETON(I18n);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

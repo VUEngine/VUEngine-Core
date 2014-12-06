@@ -275,7 +275,7 @@ void Clock_stop(Clock this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // pause the clock
-void Clock_pause(Clock this, int paused){
+void Clock_pause(Clock this, u8 paused){
 	
 	ASSERT(this, "Clock::pause: null this");
 
@@ -284,7 +284,7 @@ void Clock_pause(Clock this, int paused){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // whether the clock is running or not
-int Clock_isPaused(Clock this){
+u8 Clock_isPaused(Clock this){
 	
 	ASSERT(this, "Clock::isPaused: null this");
 

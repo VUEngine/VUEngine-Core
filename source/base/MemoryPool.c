@@ -41,12 +41,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-enum MemoryPoolSizes{
-	ePoolSize = 0,
-	eBlockSize
-};
-
 // it is neccesary for the object to be aligned to 2 multiples
 #define __MEMORY_ALIGNEMENT	4
 
@@ -59,37 +53,39 @@ enum MemoryPoolSizes{
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-#define MemoryPool_ATTRIBUTES							\
-														\
-	/* super's attributes */							\
-	Object_ATTRIBUTES;									\
-														\
-	/* dynamic memory area */							\
-	/* must always put together the pools! */			\
-	/* first byte is used as a usage flag */			\
-														\
-	/*BYTE pool512B[__POOL_512B_SIZE];*/				\
-	BYTE pool256B[__POOL_256B_SIZE]; 					\
-	BYTE pool192B[__POOL_192B_SIZE]; 					\
-	BYTE pool128B[__POOL_128B_SIZE];					\
-	BYTE pool96B[__POOL_96B_SIZE];						\
-	BYTE pool64B[__POOL_64B_SIZE];						\
-	BYTE pool48B[__POOL_48B_SIZE];						\
-	BYTE pool32B[__POOL_32B_SIZE];						\
-	BYTE pool24B[__POOL_24B_SIZE];						\
-	BYTE pool16B[__POOL_16B_SIZE];						\
-	/* here ends the pool area */						\
-														\
-	/* pointer to the beggining of each memory pool */	\
-	BYTE* poolLocation[__MEMORY_POOLS];					\
-														\
-	/* pool's size and pool's block size */				\
-	int poolSizes[__MEMORY_POOLS][2];
+#define MemoryPool_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* dynamic memory area */													\
+	/* must always put together the pools! */									\
+	/* first byte is used as a usage flag */									\
+																				\
+	/*BYTE pool512B[__POOL_512B_SIZE];*/										\
+	BYTE pool256B[__POOL_256B_SIZE]; 											\
+	BYTE pool192B[__POOL_192B_SIZE]; 											\
+	BYTE pool128B[__POOL_128B_SIZE];											\
+	BYTE pool96B[__POOL_96B_SIZE];												\
+	BYTE pool64B[__POOL_64B_SIZE];												\
+	BYTE pool48B[__POOL_48B_SIZE];												\
+	BYTE pool32B[__POOL_32B_SIZE];												\
+	BYTE pool24B[__POOL_24B_SIZE];												\
+	BYTE pool16B[__POOL_16B_SIZE];												\
+	/* here ends the pool area */												\
+																				\
+	/* pointer to the beggining of each memory pool */							\
+	BYTE* poolLocation[__MEMORY_POOLS];											\
+																				\
+	/* pool's size and pool's block size */										\
+	int poolSizes[__MEMORY_POOLS][2];											\
 	
-
 __CLASS_DEFINITION(MemoryPool);
 
+enum MemoryPoolSizes{
+	ePoolSize = 0,
+	eBlockSize
+};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

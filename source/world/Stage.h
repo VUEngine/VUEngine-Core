@@ -36,7 +36,6 @@
 #include <Texture.h>
 #include <UI.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -47,43 +46,42 @@
  */
 	
 // declare the virtual methods
-#define Stage_METHODS										\
-		Container_METHODS									\
+#define Stage_METHODS															\
+		Container_METHODS														\
 
 
 // declare the virtual methods which are redefined
-#define Stage_SET_VTABLE(ClassName)							\
-		Container_SET_VTABLE(ClassName)						\
-		__VIRTUAL_SET(ClassName, Stage, update);			\
-		
+#define Stage_SET_VTABLE(ClassName)												\
+		Container_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, Stage, update);								\
 			
-#define Stage_ATTRIBUTES								\
-														\
-	/* super's attributes */							\
-	Container_ATTRIBUTES;								\
-														\
-	/* world's definition pointer */					\
-	StageDefinition* stageDefinition;					\
-														\
-	/* the stage entities */ 							\
-	VirtualList stageEntities;							\
-														\
-	/* the removed entities */ 							\
-	VirtualList removedEntities;						\
-														\
-	/* the UI */ 										\
-	UI ui;												\
-														\
-	/* flag to know if the stage must */				\
-	/* flush unused char groups */						\
-	int flushCharGroups;								\
-														\
-	/* streaming related variables */					\
-	/* flush unused char groups */						\
-	int streamingAmplitude;								\
-	VirtualNode streamingLeftHead;						\
-	VirtualNode streamingRightHead;						\
-	int streamingHeadDisplacement;						\
+#define Stage_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Container_ATTRIBUTES;														\
+																				\
+	/* world's definition pointer */											\
+	StageDefinition* stageDefinition;											\
+																				\
+	/* the stage entities */ 													\
+	VirtualList stageEntities;													\
+																				\
+	/* the removed entities */ 													\
+	VirtualList removedEntities;												\
+																				\
+	/* the UI */ 																\
+	UI ui;																		\
+																				\
+	/* flag to know if the stage must */										\
+	/* flush unused char groups */												\
+	int flushCharGroups;														\
+																				\
+	/* streaming related variables */											\
+	/* flush unused char groups */												\
+	int streamingAmplitude;														\
+	VirtualNode streamingLeftHead;												\
+	VirtualNode streamingRightHead;												\
+	int streamingHeadDisplacement;												\
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
@@ -97,8 +95,6 @@ __CLASS(Stage);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-/* ---------------------------------------------------------------------------------------------------------*/
 // defines a game world in ROM memory
 typedef struct  StageDefinition{
 	
@@ -123,7 +119,6 @@ typedef struct  StageDefinition{
 }StageDefinition;
 
 typedef const StageDefinition StageROMDef;
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

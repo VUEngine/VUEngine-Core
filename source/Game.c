@@ -50,20 +50,15 @@
 #include <VPUManager.h>
 #include <Printing.h>
 #include <I18n.h>
-
 #ifdef __DEBUG_TOOLS
 #include <DebugState.h>
 #endif
-
-
 #ifdef __STAGE_EDITOR
 #include <StageEditorState.h>
 #endif
-
 #ifdef __ANIMATION_EDITOR
 #include <AnimationEditorState.h>
 #endif
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -73,9 +68,8 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
+ 
 enum UpdateSubsystems{
-	
 	kFirst = 0,
 	kLogic,
 	kRender,
@@ -83,59 +77,54 @@ enum UpdateSubsystems{
 	kLast
 };
 
-
-#define Game_ATTRIBUTES								\
-													\
-	/* super's attributes */						\
-	Object_ATTRIBUTES;								\
-													\
-	/* game's state machine */						\
-	StateMachine stateMachine;						\
-													\
-	/* engine's global timer */						\
-	Clock clock;									\
-													\
-	/* timer to use in game */						\
-	Clock inGameClock;								\
-													\
-	/* optic values used in projection values */	\
-	Optical optical;								\
-													\
-	/* flag to autopause or not the game*/ 			\
-	/* after 15 minutes of play */ 					\
-	int restFlag: 1;								\
-													\
-	/* managers */									\
-	HardwareManager hardwareManager;				\
-	FrameRate frameRate;							\
-	TextureManager bgmapManager;					\
-	CharSetManager charSetManager;					\
-	SoundManager soundManager;						\
-	ParamTableManager paramTableManager;			\
-	SpriteManager spriteManager;					\
-	CollisionManager collisionManager;				\
-	PhysicalWorld physicalWorld;					\
-	VPUManager vpuManager;							\
-	DirectDraw directDraw;							\
-	I18n i18n;										\
-													\
-	/* update time registry */						\
-	u32 lastTime[kLast];							\
-													\
-	/* game's next state */							\
-	State nextState;								\
-													\
-	/* last process' name */						\
-	char* lastProcessName;							\
-													\
-	/* high fps flag */								\
-	u8 highFPS;										\
-	
-
-	
+#define Game_ATTRIBUTES															\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* game's state machine */													\
+	StateMachine stateMachine;													\
+																				\
+	/* engine's global timer */													\
+	Clock clock;																\
+																				\
+	/* timer to use in game */													\
+	Clock inGameClock;															\
+																				\
+	/* optic values used in projection values */								\
+	Optical optical;															\
+																				\
+	/* flag to autopause or not the game*/ 										\
+	/* after 15 minutes of play */ 												\
+	int restFlag: 1;															\
+																				\
+	/* managers */																\
+	HardwareManager hardwareManager;											\
+	FrameRate frameRate;														\
+	TextureManager bgmapManager;												\
+	CharSetManager charSetManager;												\
+	SoundManager soundManager;													\
+	ParamTableManager paramTableManager;										\
+	SpriteManager spriteManager;												\
+	CollisionManager collisionManager;											\
+	PhysicalWorld physicalWorld;												\
+	VPUManager vpuManager;														\
+	DirectDraw directDraw;														\
+	I18n i18n;																	\
+																				\
+	/* update time registry */													\
+	u32 lastTime[kLast];														\
+																				\
+	/* game's next state */														\
+	State nextState;															\
+																				\
+	/* last process' name */													\
+	char* lastProcessName;														\
+																				\
+	/* high fps flag */															\
+	u8 highFPS;																	\
 
 __CLASS_DEFINITION(Game);
- 
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -640,6 +629,7 @@ void Game_update(Game this){
 	// of them
 	while(true){
 
+		Printing_int(sizeof(int), 1, 10);
 		static int cycle = kLogic;
 
 		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;

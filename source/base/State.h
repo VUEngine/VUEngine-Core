@@ -42,36 +42,29 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 // declare the virtual methods
-#define State_METHODS							\
-		Object_METHODS							\
-		__VIRTUAL_DEC(enter);					\
-		__VIRTUAL_DEC(execute);					\
-		__VIRTUAL_DEC(exit);					\
-		__VIRTUAL_DEC(pause);					\
-		__VIRTUAL_DEC(resume);					\
-	
+#define State_METHODS															\
+		Object_METHODS															\
+		__VIRTUAL_DEC(enter);													\
+		__VIRTUAL_DEC(execute);													\
+		__VIRTUAL_DEC(exit);													\
+		__VIRTUAL_DEC(pause);													\
+		__VIRTUAL_DEC(resume);													\
 
 // declare the virtual methods which are redefined
-#define State_SET_VTABLE(ClassName)						\
-		Object_SET_VTABLE(ClassName)					\
-		/*__VIRTUAL_SET(ClassName, State, enter);	*/	\
-		__VIRTUAL_SET(ClassName, State, execute);		\
-		__VIRTUAL_SET(ClassName, State, exit);			\
-		__VIRTUAL_SET(ClassName, State, pause);			\
-		__VIRTUAL_SET(ClassName, State, resume);		\
-	
-	
-	
-
-// declare a Sprite, which holds a texture and a drawing specification
-__CLASS(State);
+#define State_SET_VTABLE(ClassName)												\
+		Object_SET_VTABLE(ClassName)											\
+		/*__VIRTUAL_SET(ClassName, State, enter);	*/							\
+		__VIRTUAL_SET(ClassName, State, execute);								\
+		__VIRTUAL_SET(ClassName, State, exit);									\
+		__VIRTUAL_SET(ClassName, State, pause);									\
+		__VIRTUAL_SET(ClassName, State, resume);								\
 
 // a generic state
-#define State_ATTRIBUTES								\
-		Object_ATTRIBUTES								\
-		
+#define State_ATTRIBUTES														\
+		Object_ATTRIBUTES														\
+
+__CLASS(State);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

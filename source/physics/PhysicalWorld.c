@@ -32,16 +32,6 @@
 #include <Game.h>
 #include <Clock.h>
 
-
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											 CLASS'S MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -51,34 +41,34 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define PhysicalWorld_ATTRIBUTES										\
-																		\
-	/* super's attributes */											\
-	Object_ATTRIBUTES;													\
-																		\
-	/* registered of bodies  */											\
-	VirtualList	bodies;													\
-																		\
-	/* a list of bodies which must detect collisions */					\
-	VirtualList	activeBodies;											\
-																		\
-	/* a list of bodies which must be removed */						\
-	VirtualList	removedBodies;											\
-																		\
-	/* gravity */														\
-	Acceleration gravity;												\
-																		\
-	/* friction */														\
-	fix19_13 friction;													\
-																		\
-	/* time elapsed between updates*/									\
-	fix19_13 elapsedTime;												\
-																		\
-	/* time for movement over each axis	*/								\
-	unsigned long time;													\
-																		\
-	/* in game clock */													\
-	Clock clock;														\
+#define PhysicalWorld_ATTRIBUTES												\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* registered of bodies  */													\
+	VirtualList	bodies;															\
+																				\
+	/* a list of bodies which must detect collisions */							\
+	VirtualList	activeBodies;													\
+																				\
+	/* a list of bodies which must be removed */								\
+	VirtualList	removedBodies;													\
+																				\
+	/* gravity */																\
+	Acceleration gravity;														\
+																				\
+	/* friction */																\
+	fix19_13 friction;															\
+																				\
+	/* time elapsed between updates*/											\
+	fix19_13 elapsedTime;														\
+																				\
+	/* time for movement over each axis	*/										\
+	unsigned long time;															\
+																				\
+	/* in game clock */															\
+	Clock clock;																\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld);
@@ -107,11 +97,7 @@ static void PhysicalWorld_constructor(PhysicalWorld this);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 __SINGLETON(PhysicalWorld);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

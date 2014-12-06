@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
- 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -29,7 +28,6 @@
  */
 
 #include <ScrollBackground.h>
-
 #include <CollisionManager.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -47,6 +45,10 @@
 // define the ScrollBackground
 __CLASS_DEFINITION(ScrollBackground);
 
+enum ScrollSprites {
+	kLeftSprite = 0,
+	kRightSprite
+};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -63,12 +65,6 @@ extern MovementState* _screenMovementState;
 
 // calculate the scroll's screen position
 static void ScrollBackground_updateScrolling(ScrollBackground this);
-
-
-enum ScrollSprites {
-	kLeftSprite = 0,
-	kRightSprite
-};
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

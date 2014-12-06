@@ -35,8 +35,6 @@
 #include <StateMachine.h>
 #include <Telegram.h>
 
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -46,65 +44,58 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define Entity_METHODS								\
-		Container_METHODS							\
-		__VIRTUAL_DEC(getScale);					\
-		__VIRTUAL_DEC(isVisible);					\
-		__VIRTUAL_DEC(setExtraInfo);				\
-		__VIRTUAL_DEC(updateSpritePosition);		\
-		__VIRTUAL_DEC(updateSpriteScale);			\
-		__VIRTUAL_DEC(getPosition);					\
-		__VIRTUAL_DEC(getWidth);					\
-		__VIRTUAL_DEC(getHeight);					\
-		__VIRTUAL_DEC(getDeep);						\
-		__VIRTUAL_DEC(getGap);						\
-		__VIRTUAL_DEC(getShapeType);				\
-		__VIRTUAL_DEC(moves);						\
-		__VIRTUAL_DEC(getPreviousPosition);			\
-		__VIRTUAL_DEC(getShape);					\
+#define Entity_METHODS															\
+		Container_METHODS														\
+		__VIRTUAL_DEC(getScale);												\
+		__VIRTUAL_DEC(isVisible);												\
+		__VIRTUAL_DEC(setExtraInfo);											\
+		__VIRTUAL_DEC(updateSpritePosition);									\
+		__VIRTUAL_DEC(updateSpriteScale);										\
+		__VIRTUAL_DEC(getPosition);												\
+		__VIRTUAL_DEC(getWidth);												\
+		__VIRTUAL_DEC(getHeight);												\
+		__VIRTUAL_DEC(getDeep);													\
+		__VIRTUAL_DEC(getGap);													\
+		__VIRTUAL_DEC(getShapeType);											\
+		__VIRTUAL_DEC(moves);													\
+		__VIRTUAL_DEC(getPreviousPosition);										\
+		__VIRTUAL_DEC(getShape);												\
 
-
-#define Entity_SET_VTABLE(ClassName)								\
-		Container_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Entity, initialTransform);			\
-		__VIRTUAL_SET(ClassName, Entity, transform);				\
-		__VIRTUAL_SET(ClassName, Entity, handleMessage);			\
-		__VIRTUAL_SET(ClassName, Entity, getScale);					\
-		__VIRTUAL_SET(ClassName, Entity, isVisible);				\
-		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);				\
-		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);		\
-		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);		\
-		__VIRTUAL_SET(ClassName, Entity, getPosition);				\
-		__VIRTUAL_SET(ClassName, Entity, getWidth);					\
-		__VIRTUAL_SET(ClassName, Entity, getHeight);				\
-		__VIRTUAL_SET(ClassName, Entity, getDeep);					\
-		__VIRTUAL_SET(ClassName, Entity, getGap);					\
-		__VIRTUAL_SET(ClassName, Entity, getShapeType);				\
-		__VIRTUAL_SET(ClassName, Entity, moves);					\
-		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);		\
-		__VIRTUAL_SET(ClassName, Entity, getShape);					\
+#define Entity_SET_VTABLE(ClassName)											\
+		Container_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, Entity, initialTransform);						\
+		__VIRTUAL_SET(ClassName, Entity, transform);							\
+		__VIRTUAL_SET(ClassName, Entity, handleMessage);						\
+		__VIRTUAL_SET(ClassName, Entity, getScale);								\
+		__VIRTUAL_SET(ClassName, Entity, isVisible);							\
+		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);							\
+		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);					\
+		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);					\
+		__VIRTUAL_SET(ClassName, Entity, getPosition);							\
+		__VIRTUAL_SET(ClassName, Entity, getWidth);								\
+		__VIRTUAL_SET(ClassName, Entity, getHeight);							\
+		__VIRTUAL_SET(ClassName, Entity, getDeep);								\
+		__VIRTUAL_SET(ClassName, Entity, getGap);								\
+		__VIRTUAL_SET(ClassName, Entity, getShapeType);							\
+		__VIRTUAL_SET(ClassName, Entity, moves);								\
+		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);					\
+		__VIRTUAL_SET(ClassName, Entity, getShape);								\
 	
-
-// A Entity which represent a generic Container inside a Stage
-
-#define Entity_ATTRIBUTES								\
-														\
-	/* it is derivated from*/							\
-	Container_ATTRIBUTES								\
-														\
-	/* sprites' list */									\
-	VirtualList sprites;								\
-														\
-	/* shape for collision detection */					\
-	Shape shape;										\
-														\
-	/* entity's definition */							\
-	EntityDefinition *entityDefinition;
-
-
+#define Entity_ATTRIBUTES														\
+																				\
+	/* it is derivated from*/													\
+	Container_ATTRIBUTES														\
+																				\
+	/* sprites' list */															\
+	VirtualList sprites;														\
+																				\
+	/* shape for collision detection */											\
+	Shape shape;																\
+																				\
+	/* entity's definition */													\
+	EntityDefinition *entityDefinition;											\
 
 __CLASS(Entity);
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

@@ -44,15 +44,13 @@
 
 
 // declare the virtual methods
-#define FrameRate_METHODS											\
-		Object_METHODS												\
-
+#define FrameRate_METHODS														\
+		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define FrameRate_SET_VTABLE(ClassName)								\
-		Object_SET_VTABLE(ClassName)								\
+#define FrameRate_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
 		
-	
 __CLASS(FrameRate);
 
 /* ---------------------------------------------------------------------------------------------------------
@@ -73,11 +71,17 @@ void FrameRate_destructor(FrameRate this);
 // reset internal values
 void FrameRate_reset(FrameRate this);
 
-// retrieve fps
-int FrameRate_getFps(FrameRate this);
+// retrieve raw FPS
+u32 FrameRate_getRawFPS(FrameRate this);
 
-// retrieve raw fps
-int FrameRate_getRawFps(FrameRate this);
+// retrieve render FPS
+u16 FrameRate_getRenderFPS(FrameRate this);
+
+// retrieve raw logic FPS
+u16 FrameRate_getLogicFPS(FrameRate this);
+
+// retrieve raw logic FPS
+u16 FrameRate_getPhysicsFPS(FrameRate this);
 
 // increase the update fps count
 void FrameRate_increaseRenderFPS(FrameRate this);

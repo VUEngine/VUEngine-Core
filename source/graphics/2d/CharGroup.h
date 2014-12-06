@@ -67,39 +67,39 @@
  * is not defined here and so is not accessible to the outside world
  */
  
-#define CharGroup_METHODS					\
-		Object_METHODS						\
+#define CharGroup_METHODS														\
+		Object_METHODS															\
 
 
-#define CharGroup_SET_VTABLE(ClassName)				\
-		Object_SET_VTABLE(ClassName)				\
+#define CharGroup_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
 
 
-#define CharGroup_ATTRIBUTES										\
-																	\
-	/* super's attributes */										\
-	Object_ATTRIBUTES;												\
-																	\
-	/* memory displacement */										\
-	u16 offset;														\
-																	\
-	/* memory segment */											\
-	u8 charset: 2;													\
-																	\
-	/* allocation type */											\
-	u8 allocationType: 3;											\
-																	\
-	/* number of chars */											\
-	u16 numberOfChars: 10;											\
-																	\
-	/* array definition of the charSet */							\
-	BYTE* charDefinition;											\
-																	\
-	/* array definition of the charSet */							\
-	u16 charDefinitionDisplacement;									\
-																	\
-	/* owner */														\
-	Object owner;
+#define CharGroup_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* memory displacement */													\
+	u16 offset;																	\
+																				\
+	/* memory segment */														\
+	u8 charset: 2;																\
+																				\
+	/* allocation type */														\
+	u8 allocationType: 3;														\
+																				\
+	/* number of chars */														\
+	u16 numberOfChars: 10;														\
+																				\
+	/* array definition of the charSet */										\
+	BYTE* charDefinition;														\
+																				\
+	/* array definition of the charSet */										\
+	u16 charDefinitionDisplacement;												\
+																				\
+	/* owner */																	\
+	Object owner;																\
 
 __CLASS(CharGroup);
 
