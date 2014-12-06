@@ -610,7 +610,7 @@ void Game_render(Game this) {
 	ASSERT(this, "Game::render: null this");
 
 	// sort sprites
-	SpriteManager_sortLayers(this->spriteManager, true);
+	SpriteManager_sortLayersProgressively(this->spriteManager);
 
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);

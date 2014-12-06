@@ -163,5 +163,8 @@ void Stage_streamAll(Stage this);
 // is the default  behvior
 void Stage_setFlushCharGroups(Stage this, int flushCharGroups);
 
+// retrieve ui
+UI Stage_getUI(Stage this);
+
 #endif
 

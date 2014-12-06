@@ -208,13 +208,13 @@ VirtualList Entity_getSprites(Entity this);
 int Entity_handleMessage(Entity this, Telegram telegram);
 
 // get width
-int Entity_getWidth(Entity this);
+u8 Entity_getWidth(Entity this);
 
 // get height
-int Entity_getHeight(Entity this);
+u8 Entity_getHeight(Entity this);
 
 // get deep
-int Entity_getDeep(Entity this);
+u8 Entity_getDeep(Entity this);
 
 // get gap
 Gap Entity_getGap(Entity this);

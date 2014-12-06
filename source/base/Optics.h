@@ -118,11 +118,11 @@ inline extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // calculate the size of a given magnitud, being it a 8 pixel multiple
-inline extern int Optics_calculateRealSize(int magnitude, int mapMode, fix7_9 scale){
+inline extern int Optics_calculateRealSize(u8 magnitude, u16 mapMode, fix7_9 scale){
 
 	if(WRLD_AFFINE != mapMode){
 		
-		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13(magnitude), FIX7_9TOFIX19_13(scale)));
+		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13((int)magnitude), FIX7_9TOFIX19_13(scale)));
 	}
 	
 	return magnitude;

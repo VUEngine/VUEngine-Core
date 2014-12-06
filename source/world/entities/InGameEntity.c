@@ -151,7 +151,7 @@ u16 InGameEntity_getInGameType(InGameEntity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve deep
-int InGameEntity_getDeep(InGameEntity this){
+u8 InGameEntity_getDeep(InGameEntity this){
 
 	ASSERT(this, "InGameEntity::getDeep: null this");
 

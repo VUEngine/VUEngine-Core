@@ -330,7 +330,7 @@ int Entity_handleMessage(Entity this, Telegram telegram){
 #include <Math.h>
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get width
-int Entity_getWidth(Entity this){
+u8 Entity_getWidth(Entity this){
 
 	ASSERT(this, "Entity::getWidth: null this");
 	ASSERT(this->sprites, "Entity::getWidth: null sprites");
@@ -344,7 +344,7 @@ int Entity_getWidth(Entity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get height
-int Entity_getHeight(Entity this){
+u8 Entity_getHeight(Entity this){
 
 	ASSERT(this, "Entity::getHeight: null this");
 	ASSERT(this->sprites, "Entity::getHeight: null sprites");
@@ -359,7 +359,7 @@ int Entity_getHeight(Entity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get deep
-int Entity_getDeep(Entity this){
+u8 Entity_getDeep(Entity this){
 
 	ASSERT(this, "Entity::getDeep: null this");
 

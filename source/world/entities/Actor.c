@@ -676,8 +676,8 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 	fix19_13 *otherPositionAxis = NULL;
 	
 	// used to the width, height or deep
-	int myHalfSize = 0;
-	int otherHalfSize = 0;
+	u8 myHalfSize = 0;
+	u8 otherHalfSize = 0;
 	
 	// gap to use based on the axis
 	int otherLowGap = 0;

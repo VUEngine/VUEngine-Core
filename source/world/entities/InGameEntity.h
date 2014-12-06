@@ -110,7 +110,7 @@ typedef struct InGameEntityDefinition{
 	EntityDefinition entityDefinition;
 	
 	// object's size over the z axis
-	int deep;
+	u8 deep;
 	
 	// gap for collision detection (to correct graphical collision with bgEntity's size)
 	// in pixels
@@ -158,7 +158,7 @@ void InGameEntity_setGap(InGameEntity this);
 u16 InGameEntity_getInGameType(InGameEntity this);
 
 // retrieve deep
-int InGameEntity_getDeep(InGameEntity this);
+u8 InGameEntity_getDeep(InGameEntity this);
 
 // does it moves?
 u8 InGameEntity_moves(InGameEntity this);

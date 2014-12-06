@@ -66,6 +66,7 @@
 #include <Cuboid.h>
 #include <Mass.h>
 #include <Shape.h>
+#include <Polygon.h>
 
 #include <Container.h>
 #include <Entity.h>
@@ -77,6 +78,7 @@
 #include <ScrollBackground.h>
 #include <GameState.h>
 #include <Stage.h>
+#include <UI.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -442,9 +444,13 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y) {
 	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y);
 	FrameRate_printLastRecord(FrameRate_getInstance(), 1, y + 3);
 	
-	Printing_text("Stage's status", 20, y + 3);
+	Printing_text("STAGE'S STATUS", 20, y + 3);
 	Printing_text("Entities: ", 20, ++y + 3);
-	Printing_int(Container_getChildCount((Container)GameState_getStage(this->gameState)), 30, y + 3);
+	Printing_int(Container_getChildCount((Container)GameState_getStage(this->gameState)), 34, y + 3);
+	Printing_text("UI Entities: ", 20, ++y + 3);
+	
+	UI ui = Stage_getUI(GameState_getStage(this->gameState));
+	Printing_int(ui? Container_getChildCount((Container)ui): 0, 34, y + 3);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -497,6 +503,7 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 			{"Cuboid", &Cuboid_getObjectSize},
 			{"Mass", &Mass_getObjectSize},
 			{"Shape", &Shape_getObjectSize},
+			{"Polygon", &Polygon_getObjectSize},
 			{"Container", &Container_getObjectSize},
 			{"Entity", &Entity_getObjectSize},
 			{"InGameEntity", &InGameEntity_getObjectSize},

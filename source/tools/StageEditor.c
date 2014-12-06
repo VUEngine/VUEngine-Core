@@ -742,7 +742,7 @@ static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D transl
 
 		StageEditor_printEntityPosition(this);
 		
-		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+		SpriteManager_sortAllLayers(SpriteManager_getInstance());
 		
 		StageEditor_printTranslationStepSize(this);
 
@@ -778,7 +778,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey) {
 		position.z += ITOFIX19_13(__SCREEN_WIDTH >> 2);
 		
 		Entity entity = Stage_addEntity(GameState_getStage(this->gameState), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
-		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+		SpriteManager_sortAllLayers(SpriteManager_getInstance());
 		
 		GameState_transform(this->gameState);
 		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, __ARGUMENTS(position));
@@ -832,7 +832,7 @@ static void StageEditor_applyTraslationToScreen(StageEditor this, VBVec3D transl
 
 	CollisionManager_processRemovedShapes(CollisionManager_getInstance());
 	PhysicalWorld_processRemovedBodies(PhysicalWorld_getInstance());
-	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+	SpriteManager_sortAllLayers(SpriteManager_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

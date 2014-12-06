@@ -24,10 +24,10 @@ CONFIG_FILE = $(VBJAENGINE)/config.h
 
 ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h				\
 					-include $(VBJAENGINE)/source/base/Constants.h	 				\
-					-include $(VBJAENGINE)/source/base/VirtualList.h	 			\
 					-include $(VBJAENGINE)/source/hardware/HardwareManager.h		\
 					-include $(VBJAENGINE)/source/base/Error.h 						\
 					-include $(VBJAENGINE)/source/base/MemoryPool.h 				\
+					-include $(VBJAENGINE)/source/base/VirtualList.h	 			\
 					-include $(VBJAENGINE)/source/graphics/2d/Printing.h
 
 # The next blocks change some variables depending on the build type

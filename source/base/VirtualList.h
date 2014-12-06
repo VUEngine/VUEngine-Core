@@ -66,15 +66,6 @@ void* VirtualNode_getData(VirtualNode this);
 
 //get next node's address
 VirtualNode VirtualNode_getNext(VirtualNode this);
-//TODO
-/*
-inline VirtualNode VirtualNode_getNext(VirtualNode this){
-	
-	ASSERT(this, "VirtualNode::getNext: null this");
-
-	return this->next;
-}
-*/
 
 //set node's previous node's address
 VirtualNode VirtualNode_getPrevious(VirtualNode this);

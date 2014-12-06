@@ -47,11 +47,11 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			30
-#define __ENTITY_UNLOAD_PAD 		40
+#define __ENTITY_LOAD_PAD 			40
+#define __ENTITY_UNLOAD_PAD 		50
 
 #define __STREAMING_AMPLITUDE	5
-#define __STREAM_CYCLE	(__TARGET_FPS)	
+#define __STREAM_CYCLE	(__TARGET_FPS >> 1)	
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
@@ -617,8 +617,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 				}
 			}
 			
-			ASSERT(auxNode, "Stage::unloadOutOfRangeEntities: entity definition not found");
-			
 			// register entity to remove
 			VirtualList_pushBack(removedEntities, (const BYTE* const )entity);
 			
@@ -665,7 +663,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 			}
 		}
 	
-		*modifierNode = auxNode;
+		*modifierNode = auxNode? auxNode: *modifierNode;
 	}
 	
 	// destroy the temporal list
@@ -768,4 +766,11 @@ void Stage_setFlushCharGroups(Stage this, int flushCharGroups){
 		this->flushCharGroups = flushCharGroups;
 	}
 	*/
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// retrieve ui
+UI Stage_getUI(Stage this){
+	
+	return this->ui;
 }
