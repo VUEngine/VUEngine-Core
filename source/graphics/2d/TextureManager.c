@@ -45,25 +45,25 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* number of chars ocuppied */												\
-	int numberOfChars[__NUM_BGMAPS];											\
+	u16 numberOfChars[__NUM_BGMAPS];											\
 																				\
 	/* current x offset to set the next bgmap */								\
-	int xOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
+	u8 xOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
 																				\
 	/* current y offset to set the next bgmap */								\
-	int yOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
+	u8 yOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
 																				\
 	/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 				\
-	int offset[__NUM_BGMAPS * __NUM_MAPS_PER_SEG][3];							\
+	u8 offset[__NUM_BGMAPS * __NUM_MAPS_PER_SEG][3];							\
 																				\
 	/* next free bgmap used for text printing */								\
-	int freeBgmap;																\
+	u8 freeBgmap;																\
 																				\
 	/* the textures allocated */												\
 	Texture texture[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];							\
 																				\
 	/* texture usage count */													\
-	int textureUsageCount[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];					\
+	u8 textureUsageCount[__NUM_BGMAPS * __NUM_MAPS_PER_SEG];					\
 
 // define the TextureManager
 __CLASS_DEFINITION(TextureManager);
@@ -175,10 +175,10 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 	int aux = 0;
 	//int bgmapMask = 0x0001;
 	
-	int rows = Texture_getRows(texture) + 1;
-	int cols = Texture_getTotalCols(texture) + 1;
+	u8 rows = Texture_getRows(texture) + 1;
+	u8 cols = Texture_getTotalCols(texture) + 1;
 	
-	int area = rows * cols;
+	u16 area = rows * cols;
 	
 	//if texture already defined, don't allocate
 	CACHE_ENABLE;	
@@ -282,7 +282,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve free bgmap segment number
-int TextureManager_getFreeBgmap(TextureManager this){
+u8 TextureManager_getFreeBgmap(TextureManager this){
 
 	ASSERT(this, "TextureManager::getFreeBgmap: null this");
 
@@ -300,7 +300,7 @@ void TextureManager_allocateText(TextureManager this, Texture texture){
 	int xDisplacement = 0;
 	int yDisplacement = 0;
 	
-	int length = Texture_getCols(texture);
+	u8 length = Texture_getCols(texture);
 	
 	//if there is space in the first row
 	//calculate y displacement
@@ -309,6 +309,7 @@ void TextureManager_allocateText(TextureManager this, Texture texture){
 	
 	//move to the next row
 	if(this->xOffset[this->freeBgmap][0] < 64 * yDisplacement){
+		
 		this->xOffset[this->freeBgmap][0] = 64 * yDisplacement;
 	}
 	
@@ -486,7 +487,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve x offset
-int TextureManager_getXOffset(TextureManager this, int id){
+u8 TextureManager_getXOffset(TextureManager this, int id){
 	
 	ASSERT(this, "TextureManager::getXOffset: null this");
 
@@ -495,7 +496,7 @@ int TextureManager_getXOffset(TextureManager this, int id){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve y offset
-int TextureManager_getYOffset(TextureManager this, int id){
+u8 TextureManager_getYOffset(TextureManager this, int id){
 	
 	ASSERT(this, "TextureManager::getYOffset: null this");
 
@@ -504,7 +505,7 @@ int TextureManager_getYOffset(TextureManager this, int id){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve bgmap segment
-int TextureManager_getBgmapSegment(TextureManager this, int id){
+u8 TextureManager_getBgmapSegment(TextureManager this, int id){
 	
 	ASSERT(this, "TextureManager::getBgmapSegment: null this");
 

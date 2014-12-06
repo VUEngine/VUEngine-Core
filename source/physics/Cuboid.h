@@ -33,7 +33,6 @@
 #include <Shape.h>
 #include <Polygon.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -43,10 +42,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 #define Cuboid_METHODS															\
 		Shape_METHODS															\
-
 
 #define Cuboid_SET_VTABLE(ClassName)											\
 		Shape_SET_VTABLE(ClassName)												\
@@ -59,7 +56,6 @@
 		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);					\
 		__VIRTUAL_SET(ClassName, Cuboid, draw);									\
 		__VIRTUAL_SET(ClassName, Cuboid, print);								\
-
 
 typedef struct Rightcuboid{
 

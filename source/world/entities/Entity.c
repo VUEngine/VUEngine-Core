@@ -470,7 +470,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // does it moves?
-int Entity_moves(Entity this){
+u8 Entity_moves(Entity this){
 	
 	return false;
 }

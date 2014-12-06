@@ -175,14 +175,6 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// allocate a write in graphic memory again
-void AnimatedInGameEntity_resetMemoryState(AnimatedInGameEntity this, int worldLayer){		
-
-	ASSERT(this, "AnimatedInGameEntity::resetMemoryState: null this");
-	//Frame_resetMemoryState(this->sprite, worldLayer);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve character's scale
 Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this){
 

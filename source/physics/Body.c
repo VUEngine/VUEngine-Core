@@ -708,7 +708,7 @@ void Body_stopMovement(Body this, int axis){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set active
-void Body_setActive(Body this, int active){
+void Body_setActive(Body this, u8 active){
 	
 	ASSERT(this, "Body::setActive: null this");
 
@@ -718,7 +718,7 @@ void Body_setActive(Body this, int active){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is active?
-int Body_isActive(Body this){
+u8 Body_isActive(Body this){
 	
 	ASSERT(this, "Body::isActive: null this");
 
@@ -795,7 +795,7 @@ void Body_setFriction(Body this, Force friction){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve state
-int Body_isAwake(Body this) {
+u8 Body_isAwake(Body this) {
 	
 	ASSERT(this, "Body::isAwake: null this");
 
@@ -849,7 +849,7 @@ void Body_sleep(Body this) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is it moving?
-int Body_isMoving(Body this){
+u8 Body_isMoving(Body this){
 
 	ASSERT(this, "Body::isMoving: null this");
 

@@ -116,14 +116,9 @@ typedef struct GeneralAxisFlag{
 																				\
 	/* last collinding entity */												\
 	InGameEntity lastCollidingEntity[3];										\
-	int inGameState;															\
 																				\
 	/* flags to apply friction on each axis */									\
 	GeneralAxisFlag sensibleToFriction;											\
-																				\
-	/* flag to influence with gravity */										\
-	int isAffectedBygravity: 1;													\
-
 
 __CLASS(Actor);													
 
@@ -160,9 +155,6 @@ void Actor_update(Actor this);
 // retrieve previous position
 VBVec3D Actor_getPreviousPosition(Actor this);
 
-// set character's in game type
-void Actor_setInGameType(Actor this, int inGameType);
-
 // change direction
 void Actor_moveOpositeDirecion(Actor this, int axis);
 
@@ -188,10 +180,10 @@ int Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 
 // does it moves?
-int Actor_moves(Actor this);
+u8 Actor_moves(Actor this);
 
 // is it moving?
-int Actor_isMoving(Actor this);
+u8 Actor_isMoving(Actor this);
 
 // retrieve global position
 VBVec3D Actor_getPosition(Actor this);

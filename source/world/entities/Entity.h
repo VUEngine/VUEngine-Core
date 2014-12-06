@@ -171,18 +171,6 @@ void Entity_setExtraInfo(Entity this, void* extraInfo);
 //set class's animation
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 
-//get map's type
-int Entity_getMapType(Entity this);
-
-//retrieve class's map's mode
-int Entity_getMapMode(Entity this);
-
-//grite Entity to graphic memory
-void Entity_write(Entity this);
-
-// allocate a write in graphic memory again
-void Entity_resetMemoryState(Entity this, int worldLayer);
-
 // add sprite
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
 
@@ -253,7 +241,7 @@ int Entity_updateSpriteScale(Entity this);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
 
 // does it moves?
-int Entity_moves(Entity this);
+u8 Entity_moves(Entity this);
 
 // retrieve previous position
 VBVec3D Entity_getPreviousPosition(Entity this);

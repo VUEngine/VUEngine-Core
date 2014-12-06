@@ -32,7 +32,6 @@
 
 #include <InGameEntity.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -42,10 +41,8 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 #define InanimatedInGameEntity_METHODS											\
 		InGameEntity_METHODS													\
-	
 
 #define InanimatedInGameEntity_SET_VTABLE(ClassName)							\
 		InGameEntity_SET_VTABLE(ClassName)										\
@@ -79,7 +76,7 @@ typedef struct InanimatedInGameEntityDefinition{
 	InGameEntityDefinition inGameEntityDefinition;
 	
 	// whether it must be registered with the collision detection system
-	int registerShape;
+	u8 registerShape;
 	
 	// friction for physics
 	fix19_13 friction;

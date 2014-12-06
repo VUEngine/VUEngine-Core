@@ -142,7 +142,7 @@ void InGameEntity_setGap(InGameEntity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve in game type
-int InGameEntity_getInGameType(InGameEntity this){
+u16 InGameEntity_getInGameType(InGameEntity this){
 	
 	ASSERT(this, "InGameEntity::getInGameType: null this");
 
@@ -160,7 +160,7 @@ int InGameEntity_getDeep(InGameEntity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // does it moves?
-int InGameEntity_moves(InGameEntity this){
+u8 InGameEntity_moves(InGameEntity this){
 	
 	ASSERT(this, "InGameEntity::moves: null this");
 
@@ -169,7 +169,7 @@ int InGameEntity_moves(InGameEntity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is it moving?
-int InGameEntity_isMoving(InGameEntity this){
+u8 InGameEntity_isMoving(InGameEntity this){
 	
 	ASSERT(this, "InGameEntity::isMoving: null this");
 
@@ -196,7 +196,7 @@ Direction InGameEntity_getDirection(InGameEntity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set shape state
-void InGameEntity_setShapeState(InGameEntity this, int state){
+void InGameEntity_setShapeState(InGameEntity this, u8 state){
 	
 	ASSERT(this, "InGameEntity::setShapeState: null this");
 

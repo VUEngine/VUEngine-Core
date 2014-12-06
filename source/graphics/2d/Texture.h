@@ -65,7 +65,7 @@
 	TextureROMDef* textureDefinition;											\
 																				\
 	/* color pallet */															\
-	int pallet:2;																\
+	u8 pallet: 2;																\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(Texture);
@@ -99,7 +99,6 @@ typedef struct TextureDefinition{
 	
 	// pallet index to use
 	u8 pallet;
-	
 
 }TextureDefinition;
 
@@ -148,13 +147,13 @@ int Texture_getXOffset(Texture this);
 int Texture_setXOffset(Texture this, int xOffset);
 
 // get texture's cols
-int Texture_getTotalCols(Texture this);
+u8 Texture_getTotalCols(Texture this);
 
 // get texture's rows
-int Texture_getTotalRows(Texture this);
+u8 Texture_getTotalRows(Texture this);
 
 // get texture's bgmap segment
-int Texture_getBgmapSegment(Texture this);
+u8 Texture_getBgmapSegment(Texture this);
 
 // get texture's chargroup
 CharGroup Texture_getCharGroup(Texture this);
@@ -163,16 +162,16 @@ CharGroup Texture_getCharGroup(Texture this);
 BYTE* Texture_getBgmapDef(Texture this);
 
 // set the pallet
-void Texture_setPallet(Texture this, int pallet);
+void Texture_setPallet(Texture this, u8 pallet);
 
 // retrieve texture's pallet
-int Texture_getPallet(Texture this);
+u8 Texture_getPallet(Texture this);
 
 // retrieve texture's rows
-int Texture_getRows(Texture this);
+u8 Texture_getRows(Texture this);
 
 // retrieve texture's cols
-int Texture_getCols(Texture this);
+u8 Texture_getCols(Texture this);
 
 // retrieve texture's id
 u16 Texture_getId(Texture this);

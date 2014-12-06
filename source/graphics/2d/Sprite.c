@@ -252,13 +252,13 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 
 	if(WRLD_AFFINE == Sprite_getMode(this)){
 
-		position3D.x -= ITOFIX19_13(Texture_getCols(this->texture) << 2);
-		position3D.y -= ITOFIX19_13(Texture_getRows(this->texture) << 2);
+		position3D.x -= ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+		position3D.y -= ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 	else {
 		
-		position3D.x -= FIX19_13_DIV(ITOFIX19_13(Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
-		position3D.y -= FIX19_13_DIV(ITOFIX19_13(Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
+		position3D.x -= FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
+		position3D.y -= FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
 	}
 	
 	fix19_13 previousZPosition = this->drawSpec.position.z;
@@ -390,8 +390,8 @@ void Sprite_render(Sprite this){
 			if(this->renderFlag & __UPDATE_SIZE){
 		
 				WORLD_SIZE(this->worldLayer, 
-						(Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,						
-						(Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));)	
+						((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,						
+						((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));)	
 
 			}
 			
@@ -513,7 +513,6 @@ void Sprite_resetMemoryState(Sprite this){
 	if(WRLD_AFFINE == Sprite_getMode(this)){
 		
 		ParamTableManager_allocate(ParamTableManager_getInstance(), this);
-		
 	}
 	
 	//allow to render

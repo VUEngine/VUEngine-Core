@@ -71,15 +71,12 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 #define AnimatedInGameEntity_METHODS											\
 		InGameEntity_METHODS													\
 
-
 #define AnimatedInGameEntity_SET_VTABLE(ClassName)								\
 		InGameEntity_SET_VTABLE(ClassName)										\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, update);					\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);				\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, getScale);				\
 		
-
-	
 #define AnimatedInGameEntity_ATTRIBUTES											\
 																				\
 	/* super's attributes */													\
@@ -91,6 +88,7 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 	/* Pointer to the animation description */									\
 	AnimationDescription* animationDescription;									\
 																				\
+	/* used to know if gap must be changed */									\
 	Direction previousDirection;												\
 																				\
 	/* clock to pass to the animated sprites */									\
@@ -121,9 +119,6 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* e
 
 // execute character's logic
 void AnimatedInGameEntity_update(AnimatedInGameEntity this);
-
-// allocate a write in graphic memory again
-void AnimatedInGameEntity_resetMemoryState(AnimatedInGameEntity this, int worldLayer);		
 
 // retrieve character's scale
 Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this);

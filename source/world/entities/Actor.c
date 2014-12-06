@@ -114,8 +114,6 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID){
 	this->sensibleToFriction.z = true;
 	
 	this->body = NULL;
-	
-	this->isAffectedBygravity = true;
 }	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -296,15 +294,6 @@ VBVec3D Actor_getPreviousPosition(Actor this){
 	ASSERT(this, "Actor::getPreviousPosition: null this");
 	
 	return this->previousGlobalPosition;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set character's in game type
-void Actor_setInGameType(Actor this, int inGameType){
-	
-	ASSERT(this, "Actor::setInGameType: null this");
-	
-	this->inGameType = inGameType;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -600,7 +589,7 @@ StateMachine Actor_getStateMachine(Actor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // does it moves?
-int Actor_moves(Actor this){
+u8 Actor_moves(Actor this){
 	
 	ASSERT(this, "Actor::moves: null this");
 
@@ -609,7 +598,7 @@ int Actor_moves(Actor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is it moving?
-int Actor_isMoving(Actor this){
+u8 Actor_isMoving(Actor this){
 
 	ASSERT(this, "Actor::isMoving: null this");
 

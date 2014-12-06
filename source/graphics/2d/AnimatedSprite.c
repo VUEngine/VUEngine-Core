@@ -193,7 +193,7 @@ void AnimatedSprite_setCalculatePositionFlag(AnimatedSprite this, int calculateP
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve actual frame index of animation
-int AnimatedSprite_getActualAnimatedSprite(AnimatedSprite this){
+s8 AnimatedSprite_getActualFrame(AnimatedSprite this){
 
 	ASSERT(this, "AnimatedSprite::getActualAnimatedSprite: null this");
 
@@ -202,7 +202,7 @@ int AnimatedSprite_getActualAnimatedSprite(AnimatedSprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve previous frame index of animation
-int AnimatedSprite_getPreviousAnimatedSprite(AnimatedSprite this){
+s8 AnimatedSprite_getPreviousFrame(AnimatedSprite this){
 	
 	ASSERT(this, "AnimatedSprite::getPreviousAnimatedSprite: null this");
 
@@ -211,7 +211,7 @@ int AnimatedSprite_getPreviousAnimatedSprite(AnimatedSprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set actual frame of animation
-void AnimatedSprite_setActualAnimatedSprite(AnimatedSprite this, int actualFrame){
+void AnimatedSprite_setActualFrame(AnimatedSprite this, s8 actualFrame){
 	
 	ASSERT(this, "AnimatedSprite::setActualAnimatedSprite: null this");
 
@@ -219,36 +219,36 @@ void AnimatedSprite_setActualAnimatedSprite(AnimatedSprite this, int actualFrame
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set previos frame index of animation
-void AnimatedSprite_setPreviousAnimatedSprite(AnimatedSprite this, int previousFrame){
+// set previous frame index of animation
+void AnimatedSprite_setPreviousFrame(AnimatedSprite this, s8 previousFrame){
 	
-	ASSERT(this, "AnimatedSprite::setPreviousAnimatedSprite: null this");
+	ASSERT(this, "AnimatedSprite::setPreviousFrame: null this");
 
 	// TODO: this method should not exist
 	this->previousFrame = previousFrame;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve frame cicle
-int AnimatedSprite_getAnimatedSpriteCicle(AnimatedSprite this){
+// retrieve frame delay
+s8 AnimatedSprite_getFrameDelay(AnimatedSprite this){
 	
-	ASSERT(this, "AnimatedSprite::getAnimatedSpriteCicle: null this");
+	ASSERT(this, "AnimatedSprite::getFrameDelay: null this");
 
 	return this->frameDelay;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set frame cicle 
-void AnimatedSprite_setAnimatedSpriteCicle(AnimatedSprite this, int frameCicle){
+void AnimatedSprite_setFrameDelay(AnimatedSprite this, u8 frameDelay){
 
-	ASSERT(this, "AnimatedSprite::setAnimatedSpriteCicle: null this");
+	ASSERT(this, "AnimatedSprite::setFrameDelay: null this");
 
-	this->frameDelay = frameCicle;
+	this->frameDelay = frameDelay;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve frame cicle delta
-int AnimatedSprite_getAnimatedSpriteCicleDelta(AnimatedSprite this){
+// retrieve frame delay delta
+u8 AnimatedSprite_geFrameDelayDelta(AnimatedSprite this){
 	
 	ASSERT(this, "AnimatedSprite::getAnimatedSpriteCicleDelta: null this");
 
@@ -256,12 +256,12 @@ int AnimatedSprite_getAnimatedSpriteCicleDelta(AnimatedSprite this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set frame cicle delta
-void AnimatedSprite_setAnimatedSpriteCicleDelta(AnimatedSprite this, int frameCicleDelta){
+// set frame delay delta
+void AnimatedSprite_setFrameDelayDelta(AnimatedSprite this, u8 frameDelayDelta){
 
 	ASSERT(this, "AnimatedSprite::setAnimatedSpriteCicleDelta: null this");
 
-	this->frameDelayDelta = frameCicleDelta;
+	this->frameDelayDelta = frameDelayDelta;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ void AnimatedSprite_update(AnimatedSprite this, Clock clock){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve frame's map's height
-int AnimatedSprite_getRows(AnimatedSprite this){
+u8 AnimatedSprite_getRows(AnimatedSprite this){
 	
 	ASSERT(this, "AnimatedSprite::getRows: null this");
 
@@ -365,7 +365,7 @@ int AnimatedSprite_getRows(AnimatedSprite this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve frame's map's width
-int AnimatedSprite_getCols(AnimatedSprite this){
+u8 AnimatedSprite_getCols(AnimatedSprite this){
 	
 	ASSERT(this, "AnimatedSprite::getCols: null this");
 
@@ -384,7 +384,7 @@ void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer){
 	this->worldLayer= worldLayer;
 	
 	// recover frame's current frame animation
-	AnimatedSprite_setPreviousAnimatedSprite(this, __MAX_FRAMES_PER_ANIMATION_FUNCTION);
+	AnimatedSprite_setPreviousFrame(this, __MAX_FRAMES_PER_ANIMATION_FUNCTION);
 	
 	// write the animation
 	AnimatedSprite_writeAnimation(this);				

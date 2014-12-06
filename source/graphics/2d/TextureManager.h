@@ -84,7 +84,7 @@ void TextureManager_reset(TextureManager this);
 void TextureManager_free(TextureManager this, Texture texture);
 
 // retrieve free bgmap segment number
-int TextureManager_getFreeBgmap(TextureManager this);
+u8 TextureManager_getFreeBgmap(TextureManager this);
 
 // allocate bgmap text boxes
 // this bgmap segment is handled as one only bgmap defined inside so, only
@@ -95,13 +95,13 @@ void TextureManager_allocateText(TextureManager this, Texture texture);
 Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition);
 
 // retrieve x offset
-int TextureManager_getXOffset(TextureManager this, int id);
+u8 TextureManager_getXOffset(TextureManager this, int id);
 
 // retrieve y offset
-int TextureManager_getYOffset(TextureManager this, int id);
+u8 TextureManager_getYOffset(TextureManager this, int id);
 
 // retrieve bgmap segment
-int TextureManager_getBgmapSegment(TextureManager this, int id);
+u8 TextureManager_getBgmapSegment(TextureManager this, int id);
 
 // print status
 void TextureManager_print(TextureManager this, int x, int y);

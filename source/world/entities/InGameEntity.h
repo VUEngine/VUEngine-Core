@@ -41,7 +41,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-/*-----------------------------posible directions--------------------------*/
 #define __LEFT		 ((int)-1)
 #define __RIGHT		 ((int)1)
 #define __UP		 ((int)-1)
@@ -88,7 +87,7 @@ struct Shape_str;
 	Direction direction;														\
 																				\
 	/* gameworld's character's type	*/											\
-	int inGameType;																\
+	u16 inGameType;																\
 																				\
 	/* Gap to calculate collisions */											\
 	Gap gap;																	\
@@ -118,7 +117,7 @@ typedef struct InGameEntityDefinition{
 	Gap gap;
 
 	/* gameworld's character's type	*/
-	int inGameType;
+	u16 inGameType;
 	
 	// flag to precalculte displacement on screen movement
 	// to reduce flickering
@@ -156,16 +155,16 @@ Gap InGameEntity_getGap(InGameEntity this);
 void InGameEntity_setGap(InGameEntity this);
 
 // retrieve in game type
-int InGameEntity_getInGameType(InGameEntity this);
+u16 InGameEntity_getInGameType(InGameEntity this);
 
 // retrieve deep
 int InGameEntity_getDeep(InGameEntity this);
 
 // does it moves?
-int InGameEntity_moves(InGameEntity this);
+u8 InGameEntity_moves(InGameEntity this);
 
 // is it moving?
-int InGameEntity_isMoving(InGameEntity this);
+u8 InGameEntity_isMoving(InGameEntity this);
 
 // set direction
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
@@ -174,7 +173,7 @@ void InGameEntity_setDirection(InGameEntity this, Direction direction);
 Direction InGameEntity_getDirection(InGameEntity this);
 
 // set shape state
-void InGameEntity_setShapeState(InGameEntity this, int state);
+void InGameEntity_setShapeState(InGameEntity this, u8 state);
 
 // get elasticiy
 fix19_13 InGameEntity_getElasticity(InGameEntity this);

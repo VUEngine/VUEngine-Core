@@ -65,7 +65,6 @@
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);					\
 		__VIRTUAL_SET(ClassName, Container, doMessage);							\
 		__VIRTUAL_SET(ClassName, Container, addChild);							\
-	
 
 #define Container_ATTRIBUTES													\
 																				\

@@ -353,7 +353,7 @@ int Texture_getXOffset(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get texture's cols
-int Texture_getTotalCols(Texture this){
+u8 Texture_getTotalCols(Texture this){
 	
 	ASSERT(this, "Texture::getTotalCols: null this");
 	
@@ -384,7 +384,7 @@ int Texture_getTotalCols(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //get texture's rows
-int Texture_getTotalRows(Texture this){
+u8 Texture_getTotalRows(Texture this){
 	
 	ASSERT(this, "Texture::getTotalRows: null this");
 
@@ -407,7 +407,7 @@ int Texture_getTotalRows(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //get texture's bgmap segment
-int Texture_getBgmapSegment(Texture this){
+u8 Texture_getBgmapSegment(Texture this){
 	
 	ASSERT(this, "Texture::getBgmapSegment: null this");
 
@@ -434,7 +434,7 @@ BYTE* Texture_getBgmapDef(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set the pallet
-void Texture_setPallet(Texture this, int pallet){
+void Texture_setPallet(Texture this, u8 pallet){
 	
 	ASSERT(this, "Texture::setPallet: null this");
 
@@ -442,7 +442,7 @@ void Texture_setPallet(Texture this, int pallet){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int Texture_getPallet(Texture this){
+u8 Texture_getPallet(Texture this){
 	
 	ASSERT(this, "Texture::getPallet: null this");
 
@@ -451,7 +451,7 @@ int Texture_getPallet(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve texture's rows
-int Texture_getRows(Texture this){
+u8 Texture_getRows(Texture this){
 	
 	ASSERT(this, "Texture::getRows: null this");
 	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
@@ -461,7 +461,7 @@ int Texture_getRows(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve texture's cols
-int Texture_getCols(Texture this){
+u8 Texture_getCols(Texture this){
 	
 	ASSERT(this, "Texture::getCols: null this");
 

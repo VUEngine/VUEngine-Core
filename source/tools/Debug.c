@@ -108,7 +108,7 @@
 	VirtualNode currentSubPage;													\
 																				\
 	/* current layer */															\
-	int currentLayer;															\
+	u8 currentLayer;															\
 																				\
 	/* current bgmap */															\
 	int currentBgmap;															\

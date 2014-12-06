@@ -80,16 +80,16 @@
 	Object owner;																\
 																				\
 	/* actual animation's frame to show */										\
-	int actualFrame;															\
+	s8 actualFrame;																\
 																				\
 	/* previous animation's frame shown */										\
-	int previousFrame;															\
+	s8 previousFrame;															\
 																				\
 	/* actual frame cicle in a given direction (i.e. when walking) */			\
-	int frameDelay;																\
+	s8 frameDelay;																\
 																				\
 	/* frame delay increment update cycle */									\
-	int frameDelayDelta;														\
+	s8 frameDelayDelta;															\
 																				\
 	/* orignal position of the bgmap definition in ROM */						\
 	int originalTextureXOffset;													\
@@ -182,28 +182,28 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this);
 void AnimatedSprite_setCalculatePositionFlag(AnimatedSprite this, int calculatePositionFlag);
 
 // retrieve actual frame index of animation
-int AnimatedSprite_getActualAnimatedSprite(AnimatedSprite this);
+s8 AnimatedSprite_getActualFrame(AnimatedSprite this);
 
 // retrieve previous frame index of animation
-int AnimatedSprite_getPreviousAnimatedSprite(AnimatedSprite this);
+s8 AnimatedSprite_getPreviousFrame(AnimatedSprite this);
 
 // set actual frame of animation
-void AnimatedSprite_setActualAnimatedSprite(AnimatedSprite this, int actualAnimatedSprite);
+void AnimatedSprite_setActualFrame(AnimatedSprite this, s8 actualFrame);
 
-// set previos frame index of animation
-void AnimatedSprite_setPreviousAnimatedSprite(AnimatedSprite this, int previousAnimatedSprite);
+// set previous frame index of animation
+void AnimatedSprite_setPreviousFrame(AnimatedSprite this, s8 previousFrame);
 
-// retrieve frame cicle
-int AnimatedSprite_getAnimatedSpriteCicle(AnimatedSprite this);
+// retrieve frame delay
+s8 AnimatedSprite_getFrameDelay(AnimatedSprite this);
 
-// set frame cicle
-void AnimatedSprite_setAnimatedSpriteCicle(AnimatedSprite this, int frameCicle);
+// set frame delay
+void AnimatedSprite_setFrameDelay(AnimatedSprite this, u8 frameDelay);
 
-// retrieve frame cicle delta
-int AnimatedSprite_getAnimatedSpriteCicleDelta(AnimatedSprite this);
+// retrieve frame delay delta
+u8 AnimatedSprite_geFrameDelayDelta(AnimatedSprite this);
 
-// set frame cicle delta
-void AnimatedSprite_setAnimatedSpriteCicleDelta(AnimatedSprite this, int frameCicleDelta);
+// set frame delay delta
+void AnimatedSprite_setFrameDelayDelta(AnimatedSprite this, u8 frameDelayDelta);
 
 // animate the frame
 void AnimatedSprite_animate(AnimatedSprite this);
@@ -215,10 +215,10 @@ void AnimatedSprite_fx(AnimatedSprite this);
 void AnimatedSprite_update(AnimatedSprite this, Clock clock);
 
 // retrieve frame's map's height
-int AnimatedSprite_getRows(AnimatedSprite this);
+u8 AnimatedSprite_getRows(AnimatedSprite this);
 
 // retrieve frame's map's width
-int AnimatedSprite_getCols(AnimatedSprite this);
+u8 AnimatedSprite_getCols(AnimatedSprite this);
 
 // retrieve frame's map's render mode
 int AnimatedSprite_getMapType(AnimatedSprite this);

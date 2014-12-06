@@ -42,7 +42,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 #define Circle_METHODS															\
 		Shape_METHODS															\
 
@@ -55,7 +54,7 @@
 	Shape_ATTRIBUTES;															\
 																				\
 	/* radious */																\
-	int radious;																\
+	u8 radious;																	\
 
 // A Circle which represent a generic object inside a Stage
 __CLASS(Circle);
@@ -69,12 +68,10 @@ __CLASS(Circle);
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
 // class's allocator
 __CLASS_NEW_DECLARE(Circle, __PARAMETERS(Entity owner));
 
 // class's destructor
 void Circle_destructor(Circle this);
-
 
 #endif /*CIRCLE_H_*/

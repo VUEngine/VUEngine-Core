@@ -20,6 +20,7 @@
 
 #ifndef CHARGROUP_H_
 #define CHARGROUP_H_
+
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -31,7 +32,6 @@
 
 #include <Object.h>
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -40,6 +40,7 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
 //definition of a chargroup of an animated character or background
 #define __ANIMATED			0x01
 
@@ -52,7 +53,6 @@
 
 // future expansion
 #define __ANIMATED_SHARED_2	0x04
-
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -70,10 +70,8 @@
 #define CharGroup_METHODS														\
 		Object_METHODS															\
 
-
 #define CharGroup_SET_VTABLE(ClassName)											\
 		Object_SET_VTABLE(ClassName)											\
-
 
 #define CharGroup_ATTRIBUTES													\
 																				\
@@ -118,10 +116,10 @@ typedef struct CharGroupDefinition{
 	BYTE* charDefinition;
 	
 	// number of chars
-	int numberOfChars;
+	u16 numberOfChars;
 	
 	// the way its chars and bgtexture will be allocated in graphic memory
-	int allocationType;
+	u16 allocationType;
 	
 }CharGroupDefinition;
 
@@ -135,7 +133,6 @@ typedef const CharGroupDefinition CharGroupROMDef;
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
-
 
 // class's allocator
 __CLASS_NEW_DECLARE(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition, Object owner));
@@ -183,10 +180,3 @@ void CharGroup_rewrite(CharGroup this);
 void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement);
 
 #endif
-
-
-
-
-
-
-

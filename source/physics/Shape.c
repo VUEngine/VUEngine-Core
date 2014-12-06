@@ -68,7 +68,7 @@ void Shape_constructor(Shape this, Entity owner){
 	this->owner = owner;
 	
 	// do I move?
-	this->moves = __VIRTUAL_CALL(int, Entity, moves, owner);
+	this->moves = __VIRTUAL_CALL(u8, Entity, moves, owner);
 	
 	// not checked yet
 	this->checked = false;
@@ -103,7 +103,7 @@ Entity Shape_getOwner(Shape this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set active
-void Shape_setActive(Shape this, int active){
+void Shape_setActive(Shape this, u8 active){
 	
 	ASSERT(this, "Shape::setActive: null this");
 
@@ -112,13 +112,14 @@ void Shape_setActive(Shape this, int active){
 		CollisionManager_shapeBecameActive(CollisionManager_getInstance(), this);
 	}
 	else {
+		
 		CollisionManager_shapeBecameInactive(CollisionManager_getInstance(), this);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // is active?
-int Shape_isActive(Shape this){
+u8 Shape_isActive(Shape this){
 	
 	ASSERT(this, "Shape::isActive: null this");
 
@@ -127,7 +128,7 @@ int Shape_isActive(Shape this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // do I move?
-int Shape_moves(Shape this){
+u8 Shape_moves(Shape this){
 	
 	ASSERT(this, "Shape::moves: null this");
 
@@ -136,7 +137,7 @@ int Shape_moves(Shape this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // has been checked
-int Shape_isChecked(Shape this){
+u8 Shape_isChecked(Shape this){
 	
 	ASSERT(this, "Shape::isChecked: null this");
 
@@ -145,7 +146,7 @@ int Shape_isChecked(Shape this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set check status
-void Shape_checked(Shape this, int checked){
+void Shape_checked(Shape this, u8 checked){
 	
 	ASSERT(this, "Shape::checked: null this");
 
@@ -154,28 +155,28 @@ void Shape_checked(Shape this, int checked){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // has been configured?
-int Shape_isReady(Shape this){
+u8 Shape_isReady(Shape this){
 	
 	return this->ready;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set configured flag
-void Shape_setReady(Shape this, int ready){
+void Shape_setReady(Shape this, u8 ready){
 	
 	this->ready = ready;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set flag
-void Shape_setCheckForCollisions(Shape this, int checkForCollisions){
+void Shape_setCheckForCollisions(Shape this, u8 checkForCollisions){
 	
 	this->checkForCollisions = checkForCollisions;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get flag
-int Shape_checkForCollisions(Shape this){
+u8 Shape_checkForCollisions(Shape this){
 	
 	return this->checkForCollisions;
 }

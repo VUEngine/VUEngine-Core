@@ -89,6 +89,3 @@ void Circle_destructor(Circle this){
 	// destroy the super object
 	__DESTROY_BASE(Shape);
 }
-
-
-

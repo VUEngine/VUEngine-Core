@@ -53,10 +53,8 @@
 		__VIRTUAL_DEC(draw);													\
 		__VIRTUAL_DEC(print);
 
-
 #define Shape_SET_VTABLE(ClassName)												\
 		Object_SET_VTABLE(ClassName)											\
-		
 	
 #define Shape_ATTRIBUTES														\
 																				\
@@ -68,17 +66,17 @@
 																				\
 	/* flag to know if the shapes below to an */								\
 	/* entity which moves */													\
-	int moves: 1;																\
+	u8 moves: 1;																\
 																				\
 	/* whether it has been checked */											\
 	/* for collision in current update */										\
-	int checked :1;																\
+	u8 checked :1;																\
 																				\
 	/* flag to know if setup is needed */										\
-	int ready :1;																\
+	u8 ready :1;																\
 																				\
 	/* flag to check agains other shapes */										\
-	int checkForCollisions :1;
+	u8 checkForCollisions :1;
 
 // A Shape which represent a generic object inside a Stage
 __CLASS(Shape);
@@ -107,31 +105,31 @@ void Shape_destructor(Shape this);
 Entity Shape_getOwner(Shape this);
 
 // set active
-void Shape_setActive(Shape this, int active);
+void Shape_setActive(Shape this, u8 active);
 
 // is active?
-int Shape_isActive(Shape this);
+u8 Shape_isActive(Shape this);
 
 // do I move?
-int Shape_moves(Shape this);
+u8 Shape_moves(Shape this);
 
 // has been checked
-int Shape_isChecked(Shape this);
+u8 Shape_isChecked(Shape this);
 
 // set check status
-void Shape_checked(Shape this, int checked);
+void Shape_checked(Shape this, u8 checked);
 
 // has been configured?
-int Shape_isReady(Shape this);
+u8 Shape_isReady(Shape this);
 
 // set configured flag
-void Shape_setReady(Shape this, int ready);
+void Shape_setReady(Shape this, u8 ready);
 
 // set flag
-void Shape_setCheckForCollisions(Shape this, int checkForCollisions);
+void Shape_setCheckForCollisions(Shape this, u8 checkForCollisions);
 
 // get flag
-int Shape_checkForCollisions(Shape this);
+u8 Shape_checkForCollisions(Shape this);
 
 // draw debug data
 void Shape_draw(Shape this);

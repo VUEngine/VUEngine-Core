@@ -94,10 +94,10 @@
 	fix19_13 elasticity;														\
 																				\
 	/* raise flag to make the body active */									\
-	int active: 1;																\
+	u8 active: 1;																\
 																				\
 	/* raise flag to update body's physices */									\
-	int awake: 1;																\
+	u8 awake: 1;																\
 
 // A Body which represent a generic object inside a Stage
 __CLASS(Body);
@@ -130,10 +130,10 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
 VBVec3D Body_getLastDisplacement(Body this);
 
 // set active
-void Body_setActive(Body this, int active);
+void Body_setActive(Body this, u8 active);
 
 // is active?
-int Body_isActive(Body this);
+u8 Body_isActive(Body this);
 
 // retrieve position
 VBVec3D Body_getPosition(Body this);
@@ -154,7 +154,7 @@ Force Body_getFriction(Body this);
 void Body_setFriction(Body this, Force friction);
 
 // retrieve state
-int Body_isAwake(Body body);
+u8 Body_isAwake(Body body);
 
 // go to sleep
 void Body_sleep(Body body);
@@ -172,7 +172,7 @@ void Body_applyGravity(Body this, const Acceleration* gravity);
 void Body_addForce(Body this, const Force* force);
 
 // where I'm moving or not
-int Body_isMoving(Body this);
+u8 Body_isMoving(Body this);
 
 // retrieve velocity
 Velocity Body_getVelocity(Body this);

@@ -203,8 +203,8 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 			if(otherDrawSpec.position.z < drawSpec.position.z){
 				
 				// get each entity's layer
-				int worldLayer1 = Sprite_getWorldLayer(sprite);
-				int worldLayer2 = Sprite_getWorldLayer(otherSprite);
+				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
+				u8 worldLayer2 = Sprite_getWorldLayer(otherSprite);
 	
 				// swap layers
 				Sprite_setWorldLayer(sprite, worldLayer2);
@@ -239,7 +239,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
-	int layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
+	u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
 	Sprite_setWorldLayer(sprite, layer);
 	VirtualList_pushFront(this->sprites, sprite);
 	SpriteManager_setLastLayer(this);
@@ -268,15 +268,10 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 		for(;node; node = VirtualNode_getPrevious(node)){
 			
 			Sprite previousSprite = (Sprite)VirtualNode_getData(node);
-			int layer = Sprite_getWorldLayer(previousSprite);
+			u8 layer = Sprite_getWorldLayer(previousSprite);
 			Sprite_setWorldLayer(previousSprite, layer + 1);
 			Sprite_render(previousSprite);
 		}
-	}
-	else {
-		
-		Printing_text("ERROR", 1 , 10);
-		while(1);
 	}
 	
 	//SpriteManager_setLastLayer(this);
@@ -336,7 +331,7 @@ int SpriteManager_getFreeLayer(SpriteManager this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show a given layer
-void SpriteManager_showLayer(SpriteManager this, int layer) {
+void SpriteManager_showLayer(SpriteManager this, u8 layer) {
 	
 	ASSERT(this, "SpriteManager::showLayer: null this");
 	

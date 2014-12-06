@@ -62,7 +62,7 @@
 	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];					\
 																				\
 	/* set whether a definition can be dropped or not */						\
-	int charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
+	u8 charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
 																				\
 	/* register every offset */													\
 	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];							\
