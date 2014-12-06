@@ -106,6 +106,8 @@ static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroup
 
 	// set the allocation type
 	this->allocationType = charGroupDefinition->allocationType;
+	
+	this->charDefinitionDisplacement = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +138,7 @@ int CharGroup_getAllocationType(CharGroup this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve chargroup's offset within char segment
-int CharGroup_getOffset(CharGroup this){
+u16 CharGroup_getOffset(CharGroup this){
 	
 	ASSERT(this, "CharGroup::getOffset: null this");
 
@@ -145,7 +147,7 @@ int CharGroup_getOffset(CharGroup this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set chargroup's offset within the char segment
-void CharGroup_setOffset(CharGroup this, int offset){
+void CharGroup_setOffset(CharGroup this, u16 offset){
 	
 	ASSERT(this, "CharGroup::setOffset: null this");
 	ASSERT(0 <= offset, "CharGroup::setOffset: offset less than 0");
@@ -242,7 +244,7 @@ void CharGroup_write(CharGroup this){
 			}	
 
 			//write to char memory
-			Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
+			Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4), (u8*)(this->charDefinition + this->charDefinitionDisplacement), (int)(this->numberOfChars + 1) << 4);
 
 			break;
 			
@@ -276,21 +278,18 @@ void CharGroup_write(CharGroup this){
 // rewrite char on memory	
 void CharGroup_rewrite(CharGroup this){
 
-	//determine the allocation type
-	switch(this->allocationType){
-		
-		// don't allow overriting of __ANIMATED textures
-		// since write char memory be themselves
-		case __ANIMATED_SHARED:
-		case __NO_ANIMATED:
+	VPUManager_waitForFrame(VPUManager_getInstance());
+	
+	// write again
+	CharGroup_write(this);
+	
+	// inform my owner
+	MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharGroupRewritten, NULL);
+}
 
-			VPUManager_waitForFrame(VPUManager_getInstance());
-			
-			// write again
-			CharGroup_write(this);
-			
-			// inform my owner
-			MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharGroupRewritten, NULL);
-			break;
-	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set charDefinitionDisplacement
+void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement){
+	
+	this->charDefinitionDisplacement = charDefinitionDisplacement;
 }

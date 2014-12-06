@@ -81,19 +81,22 @@
 	Object_ATTRIBUTES;												\
 																	\
 	/* memory displacement */										\
-	int offset;														\
+	u16 offset;														\
 																	\
 	/* memory segment */											\
-	int charset: 2;													\
+	u8 charset: 2;													\
 																	\
 	/* allocation type */											\
-	int allocationType: 3;											\
+	u8 allocationType: 3;											\
 																	\
 	/* number of chars */											\
-	int numberOfChars: 10;											\
+	u16 numberOfChars: 10;											\
 																	\
 	/* array definition of the charSet */							\
 	BYTE* charDefinition;											\
+																	\
+	/* array definition of the charSet */							\
+	u16 charDefinitionDisplacement;									\
 																	\
 	/* owner */														\
 	Object owner;
@@ -144,10 +147,10 @@ void CharGroup_destructor(CharGroup this);
 int CharGroup_getAllocationType(CharGroup this);
 
 // retrieve chargroup's offset within char segment
-int CharGroup_getOffset(CharGroup this);
+u16 CharGroup_getOffset(CharGroup this);
 
 // set chargroup's offset within the char segment
-void CharGroup_setOffset(CharGroup this, int offset);
+void CharGroup_setOffset(CharGroup this, u16 offset);
 
 // get chargroup's char definition	
 BYTE* CharGroup_getCharDefinition(CharGroup this);
@@ -175,6 +178,9 @@ void CharGroup_write(CharGroup this);
 
 // rewrite char on memory	
 void CharGroup_rewrite(CharGroup this);
+
+// set charDefinitionDisplacement
+void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement);
 
 #endif
 

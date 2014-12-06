@@ -267,5 +267,10 @@ int Entity_moves(Entity this);
 // retrieve previous position
 VBVec3D Entity_getPreviousPosition(Entity this);
 
+// make it visible
+void Entity_show(Entity this);
+
+// make it invisible
+void Entity_hide(Entity this);
 
 #endif /*ENTITY_H_*/

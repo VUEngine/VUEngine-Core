@@ -52,24 +52,24 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-#define CharSetManager_ATTRIBUTES							\
-															\
-	/* super's attributes */								\
-	Object_ATTRIBUTES;										\
-															\
-	/* 4 segments, each one with 512 bits  of mask */		\
-	u32 segment[__CHAR_SEGMENTS][__CHAR_SEGMENT_SIZE];			\
-															\
-	/* chargroups defined */								\
-	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];	\
-															\
-	/* set whether a definition can be dropped or not */	\
-	int charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];		\
-															\
-	/* register every offset */								\
-	int offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];			\
-															\
-	/* registered char groups */							\
+#define CharSetManager_ATTRIBUTES											\
+																			\
+	/* super's attributes */												\
+	Object_ATTRIBUTES;														\
+																			\
+	/* 4 segments, each one with 512 bits  of mask */						\
+	u32 segment[__CHAR_SEGMENTS][__CHAR_SEGMENT_SIZE];						\
+																			\
+	/* chargroups defined */												\
+	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];				\
+																			\
+	/* set whether a definition can be dropped or not */					\
+	int charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];					\
+																			\
+	/* register every offset */												\
+	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
+																			\
+	/* registered char groups */											\
 	VirtualList charGroups;
 
 
@@ -94,16 +94,16 @@ static void CharSetManager_constructor(CharSetManager this);
 static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup charGroup);
 
 // record an allocated char defintion
-static void CharSetManager_setCharDefinition(CharSetManager  this, BYTE *charDefinition, int offset);
+static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, u16 offset);
  
 // find a hole long enough to fit the number of chars
-static int CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, int numberOfChars);
+static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u16 numberOfChars);
 
 // free char graphic memory
 static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup);
 
 // free char graphic memory
-static void CharSetManager_markFreedChars(CharSetManager this, int charSet, int offset, int numberOfChars);
+static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 offset, u16 numberOfChars);
  
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ void CharSetManager_reset(CharSetManager this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // record an allocated char defintion
-static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, int offset){
+static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, u16 offset){
 	
 	ASSERT(this, "CharSetManager::setCharDefinition: null this");
 
@@ -323,7 +323,7 @@ int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // find a hole long enough to fit the number of chars
-static int CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, int numberOfChars) {
+static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u16 numberOfChars) {
 	
 	ASSERT(this, "CharSetManager::getNextFreeOffset: null this");
 
@@ -449,7 +449,7 @@ void CharSetManager_allocate(CharSetManager this, CharGroup charGroup){
 	CACHE_ENABLE;
 	for(; i < __CHAR_SEGMENTS ; i++){
 		
-		int offset = CharSetManager_getNextFreeOffset(this, i, numberOfChars);
+		u16 offset = CharSetManager_getNextFreeOffset(this, i, numberOfChars);
 
 		if(0 <= offset) {
 				
@@ -493,7 +493,7 @@ static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // free char graphic memory
-static void CharSetManager_markFreedChars(CharSetManager this, int charSet, int offset, int numberOfChars){
+static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 offset, u16 numberOfChars){
 		
 	ASSERT(this, "CharSetManager::markFreedChars: null this");
 
@@ -549,7 +549,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 	int charSet = 0;
 	for(; charSet < __CHAR_SEGMENTS ; charSet++){
 		
-		int freeOffset = CharSetManager_getNextFreeOffset(this, charSet, 1);
+		u16 freeOffset = CharSetManager_getNextFreeOffset(this, charSet, 1);
 		
 		if(0 < freeOffset) {
 

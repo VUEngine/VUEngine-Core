@@ -148,26 +148,14 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this){
 	
 		case __ANIMATED:
 			{
-				CharGroup auxCharGroup = NULL;
-				
-				BYTE* charDefinition = NULL;
-
-				// get chargroup address
-				auxCharGroup = Texture_getCharGroup(this->texture);
-				
-				// get chargroup's charset's definition
-				charDefinition = CharGroup_getCharDefinition(auxCharGroup);
+				CharGroup charGroup = Texture_getCharGroup(this->texture);
 				
 				// move chargroup's charset's definition to the next frame chars
-				CharGroup_setCharDefinition(auxCharGroup, 
-						charDefinition + Texture_getNumberOfChars(this->texture) * 
+				CharGroup_setCharDefinitionDisplacement(charGroup, Texture_getNumberOfChars(this->texture) * 
 						(this->animationFunction->frames[this->actualFrame] << 4));
 				
 				//write charset
-				CharGroup_write(Texture_getCharGroup(this->texture));
-				
-				//move back to base chargroup's charset's definition
-				CharGroup_setCharDefinition(auxCharGroup, charDefinition);
+				CharGroup_write(charGroup);
 				
 				// must update the whole world layer in the next render cicle
 				this->renderFlag = __UPDATE_HEAD;				
