@@ -388,7 +388,7 @@ static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u1
 		}
 	}
 	
-	return -1;
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -451,7 +451,7 @@ void CharSetManager_allocate(CharSetManager this, CharGroup charGroup){
 		
 		u16 offset = CharSetManager_getNextFreeOffset(this, i, numberOfChars);
 
-		if(0 <= offset) {
+		if(0 < offset) {
 				
 			// set chargroup's offset
 			CharGroup_setOffset(charGroup, offset);
