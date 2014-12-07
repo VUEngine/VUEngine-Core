@@ -109,6 +109,12 @@ void Entity_destructor(Entity this){
 
 	ASSERT(this, "Entity::destructor: null this");
 
+	// better to do it here than forget in other classes
+	// unregister the shape for collision detection
+	CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
+	
+	this->shape = NULL;
+
 	if(this->sprites){
 	
 		VirtualNode node = VirtualList_begin(this->sprites);

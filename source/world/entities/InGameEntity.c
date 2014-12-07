@@ -88,12 +88,6 @@ void InGameEntity_destructor(InGameEntity this){
 	
 	ASSERT(this, "InGameEntity::destructor: null this");
 	
-	// better to do it here than forget in other classes
-	// unregister the shape for collision detection
-	CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
-	
-	this->shape = NULL;
-
 	// destroy the super objectdirection
 	__DESTROY_BASE(Entity);	
 }
