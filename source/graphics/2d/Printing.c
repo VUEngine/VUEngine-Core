@@ -101,7 +101,7 @@ void Printing_render(int textLayer){
     WORLD_SIZE((textLayer), 384, 224);
     
     //set the world's ...
-    WORLD_GSET((textLayer), 0, __ZZERO, 0);
+    WORLD_GSET((textLayer), __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Z_OFFSET, __PRINTING_BGMAP_Y_OFFSET);
     
     //set world cuting point
     WORLD_MSET((textLayer), 0, 0, 0);

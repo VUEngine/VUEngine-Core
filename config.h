@@ -210,6 +210,9 @@
 
 // printing area
 #define __PRINTING_BGMAP 				(__NUM_BGMAPS + 1)
+#define __PRINTING_BGMAP_X_OFFSET		0
+#define __PRINTING_BGMAP_Y_OFFSET		0
+#define __PRINTING_BGMAP_Z_OFFSET		__ZZERO
 #define __PRINTABLE_BGMAP_AREA 			(64 * 28)
 
 
