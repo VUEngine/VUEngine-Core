@@ -47,11 +47,11 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			40
-#define __ENTITY_UNLOAD_PAD 		50
+#define __ENTITY_LOAD_PAD 			15
+#define __ENTITY_UNLOAD_PAD 		30
 
 #define __STREAMING_AMPLITUDE	5
-#define __STREAM_CYCLE	(__TARGET_FPS >> 1)	
+#define __STREAM_CYCLE	(__TARGET_FPS >> 2)
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	
@@ -207,58 +207,20 @@ void Stage_setupObjActor(Stage this, int *actor,int x,int y, int z){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine if a point is visible
-inline static int Stage_inLoadRange(Stage this, VBVec3D* const position, int width, int height){
+inline static int Stage_inLoadRange(Stage this, VBVec3D* position3D, u8 width, u8 height){
 	
 	ASSERT(this, "Stage::inLoadRange: null this");
 
-	fix19_13 xLowLimit = ITOFIX19_13(-(width));
-	fix19_13 xHighLimit = ITOFIX19_13(__SCREEN_WIDTH + (width));
+	Scale scale;
 
-	fix19_13 yLowLimit = ITOFIX19_13(-(height));
-	fix19_13 yHighLimit = ITOFIX19_13(__SCREEN_HEIGHT + (height));
+	scale.x = scale.y = FIX19_13TOFIX7_9(ITOFIX19_13(1) - 
+		       FIX19_13_DIV(position3D->z , _optical->maximunViewDistance));
 
-	VBVec2D position2D;
-	
-	VBVec3D position3D = Optics_normalizePosition(position);
-	
-	//project the position to 2d space
-	Optics_projectTo2D(&position2D, &position3D);
-
-	//(x >= min && x < max) can be transformed into (unsigned)(x-min) < (max-min)
-	// check x visibility
-	if(!((unsigned)(position2D.x - xLowLimit) < (position2D.x - xHighLimit))){		
-		
-		// check y visibility
-		if(!((unsigned)(position2D.y - yLowLimit) < (position2D.y - yHighLimit))){
-		
-			// check z visibility
-			//if(position3D.z >= _screenPosition->z && position3D.z < _screenPosition->z + ITOFIX19_13(this->size.z)){
-				
-				return false;
-			//}
-		}	
-	}
-	
-	xLowLimit -= ITOFIX19_13(__ENTITY_LOAD_PAD);
-	xHighLimit += ITOFIX19_13(__ENTITY_LOAD_PAD);
-	yLowLimit -= ITOFIX19_13(__ENTITY_LOAD_PAD);
-	yHighLimit += ITOFIX19_13(__ENTITY_LOAD_PAD);	
-	
-	// check x visibility
-	if((unsigned)(position2D.x - xLowLimit) < (position2D.x - xHighLimit)){
-		
-		// check y visibility
-		if((unsigned)(position2D.y - yLowLimit) < (position2D.y - yHighLimit)){
-		
-			// check z visibility
-			//if(position3D.z >= _screenPosition->z && position3D.z < _screenPosition->z + ITOFIX19_13(this->size.z)){
-				
-				return true;
-			//}
-		}	
-	}	
-	
-	return false;
+	return Optics_isVisible(*position3D,
+			Optics_calculateRealSize(((u16)width) << 3, WRLD_BGMAP, scale.x),
+			Optics_calculateRealSize(((u16)height) << 3, WRLD_BGMAP, scale.y),
+			Optics_calculateParallax(position3D->x, position3D->z),
+			__ENTITY_LOAD_PAD);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -523,19 +485,19 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 		if(-1 == stageEntityDescription->ID) {
 						
-			VBVec3D position = {
+			VBVec3D position3D = {
 					ITOFIX19_13(stageEntityDescription->positionedEntity->position.x),
 					ITOFIX19_13(stageEntityDescription->positionedEntity->position.y),
 					ITOFIX19_13(stageEntityDescription->positionedEntity->position.z)
 			};
 
 			// if entity in load range
-			if(!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position, 
-					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols << 2, 
-					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows << 2)){
+			if(!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position3D, 
+					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols, 
+					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows)){
 
 				
-				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position, stageEntityDescription->positionedEntity->extraInfo, false);
+				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position3D, stageEntityDescription->positionedEntity->extraInfo, false);
 				stageEntityDescription->ID = Container_getId((Container)entity);
 
 				if(!skippedEntity) {

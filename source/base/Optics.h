@@ -118,7 +118,7 @@ inline extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // calculate the size of a given magnitud, being it a 8 pixel multiple
-inline extern int Optics_calculateRealSize(u8 magnitude, u16 mapMode, fix7_9 scale){
+inline extern u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale){
 
 	if(WRLD_AFFINE != mapMode){
 		
@@ -130,10 +130,10 @@ inline extern int Optics_calculateRealSize(u8 magnitude, u16 mapMode, fix7_9 sca
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //determine if a point is visible
-inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13 height, fix19_13 parallax, fix19_13 pad){
+inline extern int Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad){
 	
-	fix19_13 xLowLimit = 0 - (fix19_13)parallax - pad;
-	fix19_13 xHighLimit = ITOFIX19_13(__SCREEN_WIDTH) + (fix19_13)parallax + pad;
+	int lowLimit = 0 - parallax - pad;
+	int highLimit = __SCREEN_WIDTH + parallax + pad;
 	
 	VBVec2D position2D;
 		
@@ -142,26 +142,26 @@ inline extern  int Optics_isVisible(VBVec3D position3D, fix19_13 width, fix19_13
 		
 	//project the position to 2d space
 	Optics_projectTo2D(&position2D, &position3D);
-	
+
 	width >>= 1;
 	height >>= 1;
 	
 	// check x visibility
-	if(position2D.x - width <= xHighLimit && (position2D.x + width >= xLowLimit)){
-		
-		
-		// check y visibility
-		//if(position2D.y - height <= __SCREEN_HEIGHT + pad && (position2D.y + height >= 0 - pad)){
-		
-			// check z visibility
-			//if(position3D.z >= _screenPosition->z && position3D.z < _screenPosition->z + ITOFIX19_13(Stage_getSize(Game_getStage(Game_getInstance())).z)){
-				
-				return true;
-			//}
-		//}	
-	}
-	return false;
+	if(FIX19_13TOI(position2D.x) + width < lowLimit || FIX19_13TOI(position2D.x) - width > highLimit){
 
+		return false;
+	}
+
+	lowLimit = - pad;
+	highLimit = __SCREEN_HEIGHT + pad;
+
+	// check y visibility
+	if(FIX19_13TOI(position2D.y) + height < lowLimit || FIX19_13TOI(position2D.y) - height > highLimit){
+		
+		return false;
+	}
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

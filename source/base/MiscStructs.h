@@ -35,9 +35,9 @@
 //spacial size 
 typedef struct Size{
 	
-	int x;
-	int y;
-	int z;
+	u16 x;
+	u16 y;
+	u16 z;
 	
 }Size;
 

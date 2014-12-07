@@ -400,7 +400,6 @@ void Sprite_render(Sprite this){
 				
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));				
 			}
-
 		}
 		else{
 			
@@ -558,8 +557,8 @@ void Sprite_scale(Sprite this){
 	//put the map into memory calculating the number of char for each reference
 	if(this->param){
 		
-		int cols = Texture_getCols(this->texture) << 2;
-		int rows = Texture_getRows(this->texture) << 2;
+		int cols = (int)Texture_getCols(this->texture) << 2;
+		int rows = (int)Texture_getRows(this->texture) << 2;
 
 		Affine_scale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y, 
 				   (this->texturePosition.x << 3) + cols,

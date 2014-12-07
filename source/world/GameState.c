@@ -224,7 +224,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int l
 	GameState_transform(this);
 
 	// sort all sprites' layers
-	SpriteManager_sortAllLayers(SpriteManager_getInstance());
+	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());

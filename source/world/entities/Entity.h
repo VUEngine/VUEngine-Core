@@ -92,6 +92,9 @@
 	/* shape for collision detection */											\
 	Shape shape;																\
 																				\
+	/* shape for collision detection */											\
+	Size size;																	\
+																				\
 	/* entity's definition */													\
 	EntityDefinition *entityDefinition;											\
 
@@ -208,13 +211,13 @@ VirtualList Entity_getSprites(Entity this);
 int Entity_handleMessage(Entity this, Telegram telegram);
 
 // get width
-u8 Entity_getWidth(Entity this);
+u16 Entity_getWidth(Entity this);
 
 // get height
-u8 Entity_getHeight(Entity this);
+u16 Entity_getHeight(Entity this);
 
 // get deep
-u8 Entity_getDeep(Entity this);
+u16 Entity_getDeep(Entity this);
 
 // get gap
 Gap Entity_getGap(Entity this);

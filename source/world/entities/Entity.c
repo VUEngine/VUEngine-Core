@@ -92,6 +92,10 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID)
 	
 	this->shape = NULL;
 	
+	this->size.x = 0;
+	this->size.y = 0;
+	this->size.z = 0;
+	
 	// initialize sprites
 	if (entityDefinition) {
 	
@@ -214,6 +218,9 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 
 			// calculate sprite's parallax
 			Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+			
+			// reset size so it is recalculated
+			this->size.x = this->size.y = this->size.z = 0;
 		}
 		
 		//if screen is moving
@@ -327,44 +334,56 @@ int Entity_handleMessage(Entity this, Telegram telegram){
 	return false;
 }
 
-#include <Math.h>
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get width
-u8 Entity_getWidth(Entity this){
+u16 Entity_getWidth(Entity this){
 
 	ASSERT(this, "Entity::getWidth: null this");
 	ASSERT(this->sprites, "Entity::getWidth: null sprites");
 	
-	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
-	Texture texture = Sprite_getTexture(sprite);
+	if(!this->size.x){
 
+		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+		Texture texture = Sprite_getTexture(sprite);
+
+		this->size.x = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
+	}
+	
 	// must calculate based on the scale because not affine Container must be enlarged
-	return Optics_calculateRealSize(Texture_getCols(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
+	return this->size.x;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get height
-u8 Entity_getHeight(Entity this){
+u16 Entity_getHeight(Entity this){
 
 	ASSERT(this, "Entity::getHeight: null this");
 	ASSERT(this->sprites, "Entity::getHeight: null sprites");
 
-	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+	if(!this->size.y){
 
-	Texture texture = Sprite_getTexture(sprite);
+		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+		Texture texture = Sprite_getTexture(sprite);
+
+		this->size.y = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
+	}
 	
-	// must calculate based on the scale because not affine object must be enlarged
-	return Optics_calculateRealSize(Texture_getRows(texture) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
+	return this->size.y;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get deep
-u8 Entity_getDeep(Entity this){
+u16 Entity_getDeep(Entity this){
 
 	ASSERT(this, "Entity::getDeep: null this");
 
+	if(!this->size.z) {
+		
+		this->size.z = 1;
+	}
+	
 	// must calculate based on the scale because not affine object must be enlarged
-	return 1;
+	return this->size.z;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -391,13 +410,18 @@ int Entity_isVisible(Entity this, int pad){
 	ASSERT(this, "Entity::isVisible: null this");
 	ASSERT(this->sprites, "Entity::isVisible: null sprites");
 
+	if(!this->sprites) {
+		
+		return true;
+	}
+	
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
-	return Optics_isVisible(this->transform.globalPosition,
-			ITOFIX19_13(Entity_getWidth(this)),
-			ITOFIX19_13(Entity_getHeight(this)),
-			ITOFIX19_13(Sprite_getDrawSpec(sprite).position.parallax),
-			ITOFIX19_13(pad));
+	return sprite? Optics_isVisible(this->transform.globalPosition,
+			Entity_getWidth(this),
+			Entity_getHeight(this),
+			Sprite_getDrawSpec(sprite).position.parallax,
+			pad): true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
