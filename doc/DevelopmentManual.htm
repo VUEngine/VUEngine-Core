@@ -35,9 +35,15 @@
     <div class="row">
         <div class="col-md-9 documentation" role="main">
 
-            <!-- DOCUMENTATION START -->
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
 
             <h2>Overview</h2>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Features</h3>
 
@@ -98,12 +104,15 @@
                 <li>Tile based collision detection</li>
             </ul>
 
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
 
             <h2>Object Oriented Programming</h2>
 
             <p>
-                Since the nature of games is better and more easily represented by the OOP paradigm than an
-                structured one, because the former allows for better code re usage and flexibility, and since the
+                Since the nature of games is better and more easily represented by the OOP paradigm than a
+                structured one, because the former allows for better code re-usage and flexibility, and since the
                 available compiler for the VB only supports C, for this engine a set of C MACROS have been created
                 to simulate some of the most visible features provided by C++:
             </p>
@@ -117,6 +126,9 @@
                 explained next.
             </p>
 
+
+            <!--------------------------------------------------------------------------------------------------------->
+
             <h3>Creating a Class</h3>
 
             <p>
@@ -125,59 +137,57 @@
             </p>
 
             <p>
-                Let's create a Mario class which inherits from the Character class provided with the engine. In the
-                header file Mario.h the following macros must be placed. This will make Mario class to inherit the
+                Let's create a Hero class which inherits from the Character class provided with the engine. In the
+                header file Hero.h the following macros must be placed. This will allow the Hero class to inherit the
                 virtual methods from the Character class.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">#define Mario_METHODS								\
+            <pre class="line-numbers"><code class="language-c">#define Hero_METHODS								        \
 Character_METHODS;</code></pre>
 
             <p>
-                Next, it is necessary to inherit and/or redefine those method's definitions:
+                Next, it is necessary to inherit and/or redefine those method's definitions.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">#define Mario_SET_VTABLE(ClassName)						\
+            <pre class="line-numbers"><code class="language-c">#define Hero_SET_VTABLE(ClassName)						\
 Character_SET_VTABLE(ClassName);						\
-__VIRTUAL_SET(ClassName, Mario, die);</code></pre>
+__VIRTUAL_SET(ClassName, Hero, die);</code></pre>
 
             <p>
-                This tells the engine that Character has a virtual method called die (Character_die indeed) and we want to redefine that method with our own version of die, thus allowing Polymorphism.
+                This tells the engine that Character has a virtual method called <code>die</code>
+                (<code>Character_die</code> actually) and we want to redefine that method with our own version of
+                <code>die</code>, thus allowing <i>Polymorphism</i>.
             </p>
 
             <p>
                 Then you must declare the class with the following line:
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// A Mario!
-__CLASS(Mario);</code></pre>
+            <pre class="line-numbers"><code class="language-c">__CLASS(Hero);</code></pre>
 
             <p>
-                This will define a pointer Mario to a struct, this way the Mario class's implementation is hidden from client code, making it impossible to access private members, which provides Encapsulation.
+                This will define a pointer Hero to a struct, this way the Hero class's implementation is hidden from
+                client code, making it impossible to access private members, which provides <i>Encapsulation</i>.
             </p>
 
             <p>
-                Then you must declare Mario class's specific attributes, to do so, declare the following MACRO:
+                Then you must declare Hero class's specific attributes, to do so, declare the following MACRO:
             </p>
 
-            <pre class="line-numbers"><code class="language-c">#define Mario_ATTRIBUTES							\
-                                                    \
-/* it is derivated from */							\
-Character_ATTRIBUTES								\
-                                                    \
-/* mario has energy	*/							    \
-u8 energy;									        \
-                                                    \
-/* time when an event ocurred*/						\
-u32 actionTime;									    \
-                                                    \
-/* hold object */								    \
-Character holdObject;</code></pre>
+            <pre class="line-numbers"><code class="language-c">#define Hero_ATTRIBUTES						        	\
+                                                        \
+/* it is derivated from */					    		\
+Character_ATTRIBUTES							    	\
+                                                        \
+/* hero has energy	*/							        \
+u8 energy;</code></pre>
 
             <p>
-                Notice that all these macros have a ?\? at the end of each line, you must be careful and always be sure that there are not blank or tab spaces after them.
-                The reason to declare the class's attributes this way is because this allows to inherit methods/attributes, and at the same time allows to make the attributes private.
-                Notice that in order for Mario to inherit Character's attributes it includes in Mario_ATTRIBUTES the Character_ATTRIBUTES.
+                Notice that all of these macros have a backslash ("\") at the end of each line, you must be careful and
+                always be sure that there are not blank or tab spaces after them. The reason to declare the class's
+                attributes this way is because this allows to inherit methods/attributes, and at the same time allows to
+                make the attributes private. Notice that in order for Hero to inherit Character's attributes it includes
+                in <code>Hero_ATTRIBUTES</code> the <code>Character_ATTRIBUTES</code>.
             </p>
 
             <p>
@@ -187,46 +197,46 @@ Character holdObject;</code></pre>
             <p>
                 <strong>Allocator:</strong> all classes must follow the following format (the arguments are optional).
             </p>
-            <pre><code class="language-c">Mario Mario_new(CharacterDefinition* animatedEntityDefinition, int ID);</code></pre>
+            <pre class="line-numbers"><code class="language-c">Hero Hero_new(CharacterDefinition* animatedEntityDefinition, int ID);</code></pre>
 
             <p>
                 <strong>Constructor:</strong> the first argument is mandatory.
             </p>
-            <pre><code class="language-c">void Mario_constructor(Mario this, CharacterDefinition* definition, int ID);</code></pre>
+            <pre class="line-numbers"><code class="language-c">void Hero_constructor(Hero this, CharacterDefinition* definition, int ID);</code></pre>
 
             <p>
                 <strong>Destructor:</strong> the argument is mandatory and must only be one in all cases.
             </p>
-            <pre><code class="language-c">void Mario_destructor(Mario this);</code></pre>
+            <pre class="line-numbers"><code class="language-c">void Hero_destructor(Hero this);</code></pre>
 
             <p>
-                Now it is time to define the class. In the source file Mario.c do as follows.
+                Now it is time to define the class. In the source file Hero.c do as follows.
                 Include the header file which holds the class's declaration:
             </p>
 
-            <pre><code class="language-c">#include "Mario.h"</code></pre>
+            <pre class="line-numbers"><code class="language-c">#include "Hero.h"</code></pre>
 
             <p>
                 Define the class:
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// A Mario! Which inherits from Character
-__CLASS_DEFINITION(Mario, Character);</code></pre>
+            <pre class="line-numbers"><code class="language-c">// A Hero! Which inherits from Character
+__CLASS_DEFINITION(Hero, Character);</code></pre>
 
             <p>
                 Define the allocator:
             </p>
 
             <pre class="line-numbers"><code class="language-c">// always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Mario, __PARAMETERS(CharacterDefinition* characterDefinition, int ID))
-__CLASS_NEW_END(Mario, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
+__CLASS_NEW_DEFINITION(Hero, __PARAMETERS(CharacterDefinition* characterDefinition, int ID))
+__CLASS_NEW_END(Hero, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
 
             <p>
                 Define the constructor: must always call the parent class's constructor to properly initialize the object.
             </p>
 
             <pre class="line-numbers"><code class="language-c">// class's constructor
-    void Mario_constructor(Mario this, CharacterDefinition* characterDefinition, int ID){
+    void Hero_constructor(Hero this, CharacterDefinition* characterDefinition, int ID){
 
     __CONSTRUCT_BASE(Character, __ARGUMENTS(this, characterDefinition, ID));
 
@@ -241,7 +251,7 @@ __CLASS_NEW_END(Mario, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
             </p>
 
             <pre class="line-numbers"><code class="language-c">// class's destructor
-    void Mario_destructor(Mario this){
+    void Hero_destructor(Hero this){
 
     // free space allocated here
 
@@ -249,6 +259,8 @@ __CLASS_NEW_END(Mario, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
     __DEALLOCATE(Character);
 } </code></pre>
 
+
+            <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Virtual Calls</h3>
 
@@ -271,15 +283,12 @@ __CLASS_NEW_END(Mario, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
             </ol>
 
             <pre class="line-numbers"><code class="language-c">// update each entity's internal state
-    void Stage_update(Stage this)
-    {
+void Stage_update(Stage this)
+{
     VirtualNode node = VirtualList_begin(this->entities);
 
-    // update each entity
-    for(; node ; node = VirtualNode_getNext(node))
-    {
-    // update each entity
-    __VIRTUAL_CALL(void, Entity, update,(Entity)VirtualNode_getData(node));
+    for(; node ; node = VirtualNode_getNext(node)) {
+        __VIRTUAL_CALL(void, Entity, update,(Entity)VirtualNode_getData(node));
     }
 } </code></pre>
 
@@ -288,34 +297,22 @@ __CLASS_NEW_END(Mario, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
             </p>
 
 
-            <h3>Adding objects to the Stage</h3>
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Abstract classes</h3>
 
             <p>
-                To add objects to the Stage call the following method:
+                To define an abstract class, simply omit the <code>__VIRTUAL_SET</code> definition.
             </p>
-
-            <pre class="line-numbers"><code class="language-c">// create an entity in the game's and load it into the Stage
-Mario mario = Stage_addEntity(Game_getStage(Game_getInstance(),marioDefinition, position, -1); </code></pre>
 
             <p>
-                Notice the -1, that is the Entity's ID, the Stage will assign valid IDs to Entities loaded from a GameWorld definition, when you want to create a dynamic Entity (i.e: a Mario's fireball) provide the -1 index.
-                This method will do the necessary calls to allocate the object in CPU and graphic memory, add it to the stage and assign a world layer to be displayed.
+                Trying to instantiate an abstract Entity will result in an exception in <code>__DEBUG</code> mode.
             </p>
 
 
-            <h3>Removing objects from the Stage</h3>
-
-            <p>
-                Let say our Mario character has been killed and must now to be removed from the Stage, to do so call the following method:
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">// inform the game that I'm dead
-                Stage_removeEntity(Game_getStage(Game_getInstance()), (Entity)mario, kDead); </code></pre>
-
-            <p>
-                Notice the kDead enum, which tells the engine to not load the Entity again if it is within the screen range.
-            </p>
-
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
 
             <h2>The Game's StateMachine</h2>
 
@@ -440,7 +437,7 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
                 The following line tells the Stage which kind of Entity is currently being loaded so the proper constructor is called.
             </p>
 
-            <pre><code class="language-c">__TYPE(Image)</code></pre>
+            <pre class="line-numbers"><code class="language-c">__TYPE(Image)</code></pre>
 
             <p>
                 Then comes the Sprite definition, PVBCC_LEFT_TX is the address of the Texture to use with the Sprite. The Sprite definition dictates the texture display mode (affine, bgmap, h-bias) and the displays on which the image will be shown.
@@ -480,22 +477,23 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
                 Notice that the total cols and rows which represent the image's size, are 8's divisors since each char is 8 pixels wide and 8 pixels height.
             </p>
 
+            <!--------------------------------------------------------------------------------------------------------->
 
             <h2>Creating Animations</h2>
 
             <p>
                 Characters are used to represent Entities which have certain animations and which can move inside the Stage. In order to provide a Character with an animation it must be defined as follow:
             </p>
-            <pre class="line-numbers"><code class="language-c">CharacterDefinition MARIO_MC = {
+            <pre class="line-numbers"><code class="language-c">CharacterDefinition HERO_MC = {
     {
         {
             // object's class
-            __TYPE(Mario),
+            __TYPE(Hero),
 
             // Sprite
             {
                 // the texture
-                &MARIO_TX,
+                &HERO_TX,
 
                 // bgmap mode ( BGMAP, AFFINE, H-BIAS)
                 WRLD_AFFINE,
@@ -516,15 +514,15 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
         {5,		0,		8,		6,},
 
         // in game type
-        kMario,
+        kHero,
     },
 
     // pointer to the animation definition for the character
-    &MARIO_ANIM,
+    &HERO_ANIM,
 };
 
 // a function which defines the frames to play
-AnimationFunction MARIO_BLINKING_ANIM = {
+AnimationFunction HERO_BLINKING_ANIM = {
 
     // function's name
     "Blink",
@@ -542,36 +540,36 @@ AnimationFunction MARIO_BLINKING_ANIM = {
     false,
 
     // method to call function completion
-    Mario_blinkDone,
+    Hero_blinkDone,
 };
 
 // an animation definition
-AnimationDescription MARIO_ANIM = {
+AnimationDescription HERO_ANIM = {
 
     // number of animation frames
     28,
 
     // animation functions
     {
-        &MARIO_IDLE_ANIM,
-        &MARIO_WALKING_ANIM,
-        &MARIO_JUMPING_ANIM,
-        &MARIO_FALLING_ANIM,
-        &MARIO_SLIDING_ANIM,
-        &MARIO_HIT_FRONT_ANIM,
-        &MARIO_HIT_BEHIND_ANIM,
-        &MARIO_JUMP_BACK_ANIM,
-        &MARIO_JUMP_FRONT_ANIM,
-        &MARIO_FRONT_ANIM,
-        &MARIO_BACK_ANIM,
-        &MARIO_BLINKING_ANIM,
-        &MARIO_WALKING_HOLD_ANIM,
-        &MARIO_BLINKING_HOLD_ANIM,
-        &MARIO_IDLE_HOLD_ANIM,
-        &MARIO_JUMPING_HOLD_ANIM,
-        &MARIO_FALLING_HOLD_ANIM,
-        &MARIO_WALKING_FRONT_ANIM,
-        &MARIO_WALKING_BACK_ANIM,
+        &HERO_IDLE_ANIM,
+        &HERO_WALKING_ANIM,
+        &HERO_JUMPING_ANIM,
+        &HERO_FALLING_ANIM,
+        &HERO_SLIDING_ANIM,
+        &HERO_HIT_FRONT_ANIM,
+        &HERO_HIT_BEHIND_ANIM,
+        &HERO_JUMP_BACK_ANIM,
+        &HERO_JUMP_FRONT_ANIM,
+        &HERO_FRONT_ANIM,
+        &HERO_BACK_ANIM,
+        &HERO_BLINKING_ANIM,
+        &HERO_WALKING_HOLD_ANIM,
+        &HERO_BLINKING_HOLD_ANIM,
+        &HERO_IDLE_HOLD_ANIM,
+        &HERO_JUMPING_HOLD_ANIM,
+        &HERO_FALLING_HOLD_ANIM,
+        &HERO_WALKING_FRONT_ANIM,
+        &HERO_WALKING_BACK_ANIM,
         NULL,
     }
 
@@ -581,10 +579,13 @@ AnimationDescription MARIO_ANIM = {
                 The AnimationDescription defines how many animation frames comprise the animation, and holds the address of each AnimationFunction. An AnimationFunction must provide a name, the number of frames to be played, the sequence of frames, each frame duration based on the target frame rate, whether the frames must be played in a loop, and a function pointer to be called when the last frame of animation has been displayed.
             </p>
 
+
+            <!--------------------------------------------------------------------------------------------------------->
+
             <h3>Animation allocation types</h3>
 
             <p>
-                Since there can be Characters with many frames of animations like Mario, and Characters with simple animations like Koopas, there is a need to allocate each kind in different ways.
+                Since there can be Characters with many frames of animations like Hero, and Characters with simple animations like Koopas, there is a need to allocate each kind in different ways.
             </p>
             <p>
                 There are three ways to allocate animations in memory:
@@ -611,7 +612,159 @@ AnimationDescription MARIO_ANIM = {
             <pre><code class="language-c">AnimatedSprite_play((AnimatedSprite)this->sprite, this->characterDefinition->animationDescription, animationName); </code></pre>
 
 
-            <!-- DOCUMENTATION END -->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>The Stage</h2>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Adding objects to the Stage</h3>
+
+            <p>
+                To add objects to the Stage call the following method:
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">// create an entity in the game's and load it into the Stage
+                Hero hero = Stage_addEntity(Game_getStage(Game_getInstance(),heroDefinition, position, -1); </code></pre>
+
+            <p>
+                Notice the -1, that is the Entity's ID, the Stage will assign valid IDs to Entities loaded from a
+                GameWorld definition, when you want to create a dynamic Entity (i.e: a Hero's fireball) provide the -1
+                index. This method will do the necessary calls to allocate the object in CPU and graphic memory, add it
+                to the stage and assign a world layer to be displayed.
+            </p>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Removing objects from the Stage</h3>
+
+            <p>
+                Let say our Hero character has been killed and must now to be removed from the Stage, to do so call the
+                following method:
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">// inform the game that I'm dead
+                Stage_removeEntity(Game_getStage(Game_getInstance()), (Entity)hero, kDead); </code></pre>
+
+            <p>
+                Notice the kDead enum, which tells the engine to not load the Entity again if it is within the screen range.
+            </p>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Internationalization</h2>
+
+            The Internationalization ("I18n") module allows you to add multiple selectable languages to your project.
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Defining strings</h3>
+
+            <p>
+                Create an enum that defines all translatable strings that are in the game.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">enum {
+    STR_HELLO,
+    STR_VBJAENGINE_ROCKS
+};</code></pre>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Languages files</h3>
+
+            <p>
+                For each language, define an array of strings. Make sure to keep the string order as defined in the enum
+                above. You'll want to create one file per language definition.
+                Ensure these files are encoded in ANSI for special characters ("umlauts") to work.
+            </p>
+
+            <p>
+                The following gives an example for an English language definition file.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">static char* Lang_EN[] = {
+
+    // STR_HELLO
+    "Hello",
+
+    // STR_VBJAENGINE_ROCKS
+    "The VBJaEngine rocks!",
+
+};</code></pre>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Registering languages</h3>
+
+            <p>
+                During the initialization phase of your game, inform the engine about available languages by registering
+                each one using the <code>I18n_registerLanguage</code> method.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">I18n_registerLanguage(I18n_getInstance(), Lang_EN);</code></pre>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Setting active language</h3>
+
+            <p>
+                You can set the active language using the <code>I18n_setLanguage</code> method. Each registered language
+                is identified by an integer in the order they were registered, starting with 0. By default, the first
+                registered language is used.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">I18n_setLanguage(I18n_getInstance(), 0);</code></pre>
+
+            <p>
+                For easier identification of your registered languages, you'll want to creating an enum with string
+                identificators in the same order you register the languages with the engine. For example:
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">enum {
+    LANGUAGE_EN,
+    LANGUAGE_DE
+};</code></pre>
+
+            <p>
+                If you made languages accessible through these, a call to change the language to German would look like
+                the following.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">I18n_setLanguage(I18n_getInstance(), LANGUAGE_DE);</code></pre>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Getting a translated string</h3>
+
+            <p>
+                The <code>I18n_getText</code> method retrieves a string by a given identifier in the currently active
+                language.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">I18n_getText(I18n_getInstance(), STR_HELLO)</code></pre>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
 
         </div>
 
