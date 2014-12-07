@@ -287,12 +287,7 @@ static void Stage_setupUI(Stage this){
 		// setup ui if allocated and constructed
 		if(this->ui){
 			
-			VBVec3D position = {
-					
-					ITOFIX19_13(0),
-					ITOFIX19_13(0),
-					ITOFIX19_13(0)
-			};
+			VBVec3D position = Screen_getPosition(Screen_getInstance());
 		
 			Transformation environmentTransform = {
 					// local position

@@ -104,8 +104,14 @@ VBVec3D Screen_getPosition(Screen this);
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position);
 
+// set screen's position displacement
+void Screen_setFocuesEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement);
+
 // retrieve last displacement
 VBVec3D Screen_getLastDisplacement(Screen this);
+
+// get current stage's size
+Size Screen_getStageSize(Screen this);
 
 // set current stage's size
 void Screen_setStageSize(Screen this, Size size);

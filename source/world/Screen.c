@@ -48,6 +48,9 @@
 	/* screen position */														\
 	VBVec3D position;															\
 																				\
+	/* screen position displacement */											\
+	VBVec3D focusEntityPositionDisplacement;									\
+																				\
 	/* actor to center the screen around */										\
 	InGameEntity focusInGameEntity;												\
 																				\
@@ -114,9 +117,13 @@ static void Screen_constructor(Screen this){
 	__CONSTRUCT_BASE(Object);
 
 	// initialize world's screen's position	
-	this->position.x = 1000;
+	this->position.x = 0;
 	this->position.y = 0;
-	this->position.z = __ZZERO;
+	this->position.z = 0;
+	
+	this->focusEntityPositionDisplacement.x = 0;
+	this->focusEntityPositionDisplacement.y = 0;
+	this->focusEntityPositionDisplacement.z = 0;
 			
 	// clear focus actor pointer
 	this->focusInGameEntity = NULL;
@@ -165,33 +172,39 @@ void Screen_positione(Screen this){
 		
 		//get focusInGameEntity's movement state
 		if(__VIRTUAL_CALL(int, InGameEntity, isMoving, this->focusInGameEntity)){
-			
+
+			// save last position
+			this->lastDisplacement = this->position;
+
 			//get focusInGameEntity's position
-			VBVec3D focusPosition = Entity_getPosition((Entity)this->focusInGameEntity);
-			
+			this->position = Entity_getPosition((Entity)this->focusInGameEntity);
+			this->position.x += this->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
+			this->position.y += this->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
+			this->position.z += this->focusEntityPositionDisplacement.z;
+						
 			//set world's screen's movement
 			this->movementState.x = __ACTIVE;
 			this->movementState.y = __ACTIVE;
 			this->movementState.z = __ACTIVE;
-
-			this->lastDisplacement = this->position;
 			
-			// if screen isn't at the left limit
-			// set it's position in function of
-			// focusInGameEntity's position
-			this->position.x = 0;
-			
-	
-			if(focusPosition.x - ITOFIX19_13(__SCREEN_WIDTH / 2) >= 0){
+			if(0 > this->position.x){
 				
-				this->position.x = focusPosition.x - ITOFIX19_13(__SCREEN_WIDTH / 2);
+				this->position.x = 0;
+			}
+			else if(ITOFIX19_13(this->stageSize.x) < this->position.x + ITOFIX19_13(__SCREEN_WIDTH)){
 				
-				if(focusPosition.x + ITOFIX19_13(__SCREEN_WIDTH / 2) > ITOFIX19_13(this->stageSize.x)){
-					
-					this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);					
-				}
+				this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
 			}
 			
+			if(0 > this->position.y){
+				
+				this->position.y = 0;
+			}
+			else if(ITOFIX19_13(this->stageSize.y) < this->position.y + ITOFIX19_13(__SCREEN_HEIGHT)){
+				
+				this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
+			}
+
 			this->lastDisplacement.x = this->position.x - this->lastDisplacement.x;
 			this->lastDisplacement.y = this->position.y - this->lastDisplacement.y;
 			this->lastDisplacement.z = this->position.z - this->lastDisplacement.z;
@@ -318,12 +331,32 @@ void Screen_setPosition(Screen this, VBVec3D position){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set screen's position displacement
+void Screen_setFocuesEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement){
+
+	ASSERT(this, "Screen::setPosition: null this");
+
+	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
+	
+	Screen_capPosition(this);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve last displacement
 VBVec3D Screen_getLastDisplacement(Screen this){
 	
 	ASSERT(this, "Screen::getLastDisplacement: null this");
 
 	return this->lastDisplacement;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get current stage's size
+Size Screen_getStageSize(Screen this){
+	
+	ASSERT(this, "Screen::getStageSize: null this");
+
+	return this->stageSize;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

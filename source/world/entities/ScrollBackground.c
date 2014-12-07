@@ -144,7 +144,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	DrawSpec drawSpec1 = drawSpec0;
 
-	VBVec3D position3D = {_screenPosition->x, this->transform.globalPosition.y, this->transform.globalPosition.z};
+	VBVec3D position3D = {_screenPosition->x, -_screenPosition->y + this->transform.globalPosition.y, this->transform.globalPosition.z};
 	
 	// get the screen's position
 	VBVec2D screenPosition; 
