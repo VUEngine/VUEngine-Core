@@ -44,11 +44,25 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
+enum Axes {
 	
+	kXAxis = 0,
+	kYAxis,
+	kZAxis,
+	kLastAxis
+};
+	
+enum Head {
+	
+	kStartHead = 0,
+	kEndHead,
+	kLastHead
+};
+
 // declare the virtual methods
 #define Stage_METHODS															\
 		Container_METHODS														\
-
 
 // declare the virtual methods which are redefined
 #define Stage_SET_VTABLE(ClassName)												\
@@ -66,6 +80,9 @@
 	/* the stage entities */ 													\
 	VirtualList stageEntities;													\
 																				\
+	/* the stage entities */ 													\
+	VirtualList sortedStageEntities[kLastAxis];									\
+																				\
 	/* the removed entities */ 													\
 	VirtualList removedEntities;												\
 																				\
@@ -79,9 +96,8 @@
 	/* streaming related variables */											\
 	/* flush unused char groups */												\
 	int streamingAmplitude;														\
-	VirtualNode streamingLeftHead;												\
-	VirtualNode streamingRightHead;												\
-	int streamingHeadDisplacement;												\
+	VirtualNode streamingHeads[kLastAxis][kLastHead];							\
+	int streamingDisplacements[kLastAxis];										\
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);

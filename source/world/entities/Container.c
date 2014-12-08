@@ -521,7 +521,7 @@ s16 Container_getId(Container this){
 // retrieve child count
 int Container_getChildCount(Container this){
 
-	return VirtualList_getSize(this->children);
+	return this->children? VirtualList_getSize(this->children): 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
