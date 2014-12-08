@@ -72,6 +72,7 @@ typedef struct StageEntityDescription {
 	
 	PositionedEntity* positionedEntity;
 	s16 ID;
+	u8 tested;
 	
 }StageEntityDescription;
 
@@ -114,6 +115,9 @@ static void Stage_loadTextures(Stage this);
 
 // load and retrieve a texture (for internal usage: use TextureManager_get)
 Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textureDefinition, int isPreload);
+
+// put down flag so entities are being tested in the next streaming cycle
+static void Stage_prepareStageEntitiesForTesting(Stage this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -455,6 +459,8 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 
 	stageEntityDescription->ID = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
+	stageEntityDescription->tested = false;
+	
 	VirtualList_pushBack(this->stageEntities, stageEntityDescription);
 	
 	return stageEntityDescription;
@@ -573,8 +579,10 @@ static void Stage_loadEntities(Stage this, VirtualList sortedStageEntities, Virt
 		
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
 
-		if(-1 == stageEntityDescription->ID) {
-						
+		if(-1 == stageEntityDescription->ID && !stageEntityDescription->tested) {
+
+			stageEntityDescription->tested = true;
+
 			VBVec3D position3D = {
 					ITOFIX19_13(stageEntityDescription->positionedEntity->position.x),
 					ITOFIX19_13(stageEntityDescription->positionedEntity->position.y),
@@ -762,8 +770,7 @@ void Stage_update(Stage this){
 void Stage_stream(Stage this){
 
 	ASSERT(this, "Stage::stream: null this");
-	// if the screen is moving
-	//if(_screenMovementState->x || _screenMovementState->y || _screenMovementState->z){
+
 	static int load = __STREAM_CYCLE;
 	if(!--load){
 
@@ -794,12 +801,40 @@ void Stage_stream(Stage this){
 				Stage_loadEntities(this, this->sortedStageEntities[i], this->streamingHeads[i], this->streamingDisplacements[i],  true, true);
 			}
 		}
-	}	
+	}
+	else {
+		
+		Stage_prepareStageEntitiesForTesting(this);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// put down flag so entities are being tested in the next streaming cycle
+static void Stage_prepareStageEntitiesForTesting(Stage this){
+	
+	ASSERT(this, "Stage::prepareStageEntitiesForTesting: null this");
+
+	int i = 0;
+	
+	for(; i < kLastAxis; i++){
+
+		VirtualNode node = this->streamingHeads[i][kStartHead];
+	
+		for(; node && (!this->streamingHeads[i][kEndHead] || node !=  VirtualNode_getNext(this->streamingHeads[i][kEndHead])); node = VirtualNode_getNext(node)){
+			
+			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+	
+			stageEntityDescription->tested = false;
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // stream entities according to screen's position
 void Stage_streamAll(Stage this) {
+
+	ASSERT(this, "Stage::streamAll: null this");
+
+	Stage_prepareStageEntitiesForTesting(this);
 
 	VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 	this->streamingDisplacements[kXAxis] = 0 <= lastScreenDisplacement.x? 1: -1;
