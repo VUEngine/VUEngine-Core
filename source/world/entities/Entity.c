@@ -416,7 +416,7 @@ int Entity_isVisible(Entity this, int pad){
 
 	ASSERT(this, "Entity::isVisible: null this");
 	
-//	ASSERT(this->sprites, "Entity::isVisible: null sprites");
+	ASSERT(this->sprites, "Entity::isVisible: null sprites");
 
 	if(!this->sprites) {
 		

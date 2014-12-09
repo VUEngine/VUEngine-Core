@@ -108,15 +108,15 @@ void GameState_execute(GameState this, void* owner){
 
 	ASSERT(this, "GameState::execute: null this");
 
+	// update the stage
+	__VIRTUAL_CALL(void, Container, update, (Container)this->stage);
+
 	if(this->canStream) {
 		
 		// stream level
 		// must be called before updating the other entities
 		Stage_stream(this->stage);
 	}
-
-	// update the stage
-	__VIRTUAL_CALL(void, Container, update, (Container)this->stage);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

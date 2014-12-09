@@ -251,6 +251,8 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
 	ASSERT(this, "SpriteManager::removeSprite: null this");
 
+	VPUManager_disableInterrupt(VPUManager_getInstance());
+	
 	VirtualNode node = VirtualList_find(this->sprites, sprite);
 
 	ASSERT(node, "SpriteManager::removeSprite: sprite not found");
@@ -305,7 +307,8 @@ void SpriteManager_render(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::render: null this");
 
-	VPUManager_disableInterrupt(VPUManager_getInstance());
+	// sort sprites
+	SpriteManager_sortLayers(this, true);
 
 	VirtualNode node = VirtualList_end(this->sprites);
 	for(; node; node = VirtualNode_getPrevious(node)){
@@ -313,8 +316,6 @@ void SpriteManager_render(SpriteManager this){
 		//render sprite	
 		Sprite_render((Sprite)VirtualNode_getData(node));
 	}	
-	
-	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

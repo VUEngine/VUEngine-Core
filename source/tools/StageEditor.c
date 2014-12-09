@@ -207,6 +207,8 @@ void StageEditor_update(StageEditor this){
 	
 	ASSERT(this, "StageEditor::update: null this");
 
+	Printing_text("StageEditor_update", 1, 10);
+
 	//Stage_stream(GameState_getStage(this->gameState));
 	if(this->gameState && this->shape) {
 		
@@ -464,6 +466,7 @@ static void StageEditor_selectNextEntity(StageEditor this){
 	}
 	else {
 		
+		Printing_text("StageEditor", 1, 10);
 		this->currentEntityNode = VirtualNode_getNext(this->currentEntityNode);
 		
 		if(!this->currentEntityNode) {
@@ -823,16 +826,13 @@ static void StageEditor_printEntityPosition(StageEditor this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void StageEditor_applyTraslationToScreen(StageEditor this, VBVec3D translation){
 	
+	VPUManager_disableInterrupt(VPUManager_getInstance());
 	Screen_move(Screen_getInstance(), translation, true);
 	GameState_transform(this->gameState);
-
 	StageEditor_printScreenPosition(this);
-
 	Stage_streamAll(GameState_getStage(this->gameState));
-
 	CollisionManager_processRemovedShapes(CollisionManager_getInstance());
 	PhysicalWorld_processRemovedBodies(PhysicalWorld_getInstance());
-	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

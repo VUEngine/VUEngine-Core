@@ -583,6 +583,9 @@ static void Stage_loadInRangeEntities(Stage this){
 	// need a temporal list to remove and delete entities
 	VirtualNode node = VirtualList_begin(this->stageEntities);;
 
+	this->streamingLeftHead = NULL;
+	this->streamingRightHead = NULL;
+
 	for(; node; node = VirtualNode_getNext(node)){
 
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
@@ -604,8 +607,15 @@ static void Stage_loadInRangeEntities(Stage this){
 				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position3D, stageEntityDescription->positionedEntity->extraInfo, false);
 				stageEntityDescription->ID = Container_getId((Container)entity);
 			}
+			
+			if(!this->streamingLeftHead) {
+				
+				this->streamingLeftHead = node;
+			}
 		}
 	}
+	
+	this->streamingRightHead = node? node: this->streamingLeftHead;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -712,7 +722,7 @@ static void Stage_processRemovedEntities(Stage this){
 	ASSERT(this, "Stage::processRemovedEntities: null this");
 
 	VirtualNode node = VirtualList_begin(this->removedEntities);
-	
+
 	for(; node; node = VirtualNode_getNext(node)){
 		
 		// don't need to remove manually from children list
@@ -746,8 +756,8 @@ void Stage_update(Stage this){
 void Stage_stream(Stage this){
 
 	ASSERT(this, "Stage::stream: null this");
+	
 	// if the screen is moving
-	//if(_screenMovementState->x || _screenMovementState->y || _screenMovementState->z){
 	static int load = __STREAM_CYCLE;
 	if(!--load){
 
@@ -760,7 +770,11 @@ void Stage_stream(Stage this){
 
 		VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 		
-		this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
+		// give preference to x displacement, but fallback to other axis if no movement
+		this->streamingHeadDisplacement = _screenMovementState->x? 0 <= lastScreenDisplacement.x? 1: -1: 0;
+		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: _screenMovementState->y? 0 <= lastScreenDisplacement.y? 1: -1: 0;
+		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: _screenMovementState->z? 0 <= lastScreenDisplacement.z? 1: -1: 0;
+		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 1;
 
 		// load visible objects	
 		Stage_loadEntities(this, true, true);
@@ -771,11 +785,19 @@ void Stage_stream(Stage this){
 // stream entities according to screen's position
 void Stage_streamAll(Stage this) {
 
+	Printing_text("processRemovedEntities", 1, 10);
+
+	// must make sure there are not pending entities for removal
+	Stage_processRemovedEntities(this);
+
 	VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 	this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
+	Printing_text("unloadOutOfRangeEntities", 1, 10);
 	Stage_unloadOutOfRangeEntities(this, false);
+	Printing_text("loadInRangeEntities", 1, 10);
 	Stage_loadInRangeEntities(this);
+	Printing_text("                       ", 1, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

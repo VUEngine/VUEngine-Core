@@ -608,12 +608,6 @@ static void Game_handleInput(Game this){
 void Game_render(Game this) {
 	
 	ASSERT(this, "Game::render: null this");
-
-	// sort sprites
-	SpriteManager_sortLayers(this->spriteManager, true);
-
-	// increase the frame rate
-	FrameRate_increaseRenderFPS(this->frameRate);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -647,7 +641,7 @@ void Game_update(Game this){
 #endif
 				// it is the update cycle
 				ASSERT(this->stateMachine, "Game::update: no state machine");
-	
+				
 				// update the game's logic
 				StateMachine_update(this->stateMachine);
 #ifdef __DEBUG
@@ -689,6 +683,9 @@ void Game_update(Game this){
 #endif
 				// simulate collisions and set streaming flag
 				GameState_setCanStream((GameState)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
+				
+				// increase the frame rate
+				FrameRate_increasePhysicsFPS(this->frameRate);
 
 				// save time
 				this->lastTime[kPhysics] = currentTime;
@@ -718,11 +715,11 @@ void Game_update(Game this){
 				// render sprites
 				SpriteManager_render(this->spriteManager);
 
-				// increase the frame rate
-				FrameRate_increasePhysicsFPS(this->frameRate);
-				
 				// save time
 				this->lastTime[kRender] = currentTime;
+				
+				// increase the frame rate
+				FrameRate_increaseRenderFPS(this->frameRate);
 			}
 		}
 
