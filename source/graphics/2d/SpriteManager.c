@@ -172,12 +172,11 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 
 	ASSERT(this, "SpriteManager::sortLayers: null this");
 
-	/*
 	if(!this->needSorting && progressively){
 
 		return;
 	}
-*/
+
 	this->node = progressively && this->node? this->otherNode? this->node: VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
 
 	for(; this->node; this->node = VirtualNode_getNext(this->node)) {
@@ -210,11 +209,11 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 				Sprite_render(otherSprite);
 
 				this->node = this->otherNode;
-			}
-			
-			if(progressively){
-				
-				break;
+
+				if(progressively){
+					
+					break;
+				}
 			}
 		}	
 
@@ -224,10 +223,10 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 		}
 	}
 	
-	//this->needSorting = this->node? true: false;
+	this->needSorting = this->node? true: false;
 	
 	// TODO: remove
-	//this->needSorting = true;
+	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,22 +282,25 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
+	this->freeLayer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
+	this->freeLayer = 0 < this->freeLayer? this->freeLayer: 1;
+	
 	//create an independant of software variable to point XPSTTS register
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 	//wait for screen to idle
 	while (*xpstts & XPBSYR);
 
-	this->freeLayer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
-	int printingLayer = 0 > this->freeLayer? 1: this->freeLayer;
+	Printing_render(this->freeLayer);
 
-	Printing_render(printingLayer);
-
-	WORLD_HEAD((printingLayer - 1), WRLD_OFF);
-
-    WORLD_SIZE((printingLayer - 1), 0, 0);
+	if(1 < this->freeLayer) {
+		
+		WORLD_HEAD((this->freeLayer - 1), WRLD_OFF);
 	
-	WORLD_HEAD((printingLayer - 1), WRLD_END);
+	    WORLD_SIZE((this->freeLayer - 1), 0, 0);
+		
+		WORLD_HEAD((this->freeLayer - 1), WRLD_END);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -47,8 +47,8 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			15
-#define __ENTITY_UNLOAD_PAD 		30
+#define __ENTITY_LOAD_PAD 			25
+#define __ENTITY_UNLOAD_PAD 		50
 
 #define __STREAMING_AMPLITUDE	5
 #define __STREAM_CYCLE	(__TARGET_FPS >> 2)
@@ -633,11 +633,8 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 	VirtualList removedEntities = __NEW(VirtualList);
 	VirtualNode node = 0 < this->streamingHeadDisplacement? VirtualList_begin(this->children): VirtualList_end(this->children);
 
-//	int counter = 0;
-	CACHE_ENABLE;
 	// check which actors must be unloaded
 	for(; node; node = 0 < this->streamingHeadDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node)){
-//	for(; node && counter < this->streamingAmplitude; counter++){
 
 		// get next entity
 		Entity entity = (Entity)VirtualNode_getData(node);
@@ -685,8 +682,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 		// destroy it
 		__DELETE(entity);
 	}
-
-	CACHE_DISABLE;
 	
 	// repositione stream headers
 	if(0 < VirtualList_getSize(removedEntities)){
@@ -762,7 +757,7 @@ void Stage_stream(Stage this){
 	if(!--load){
 
 		// unload not visible objects
-		Stage_unloadOutOfRangeEntities(this, false);
+		Stage_unloadOutOfRangeEntities(this, true);
 		
 		load = __STREAM_CYCLE;
 	}

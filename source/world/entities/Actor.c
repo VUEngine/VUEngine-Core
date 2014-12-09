@@ -507,6 +507,10 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 
 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyStoped, &axisOfCollision);
 		}
+		else {
+			
+			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyBounced, &axisOfCollision);
+		}
 	}
 }
 
