@@ -785,19 +785,12 @@ void Stage_stream(Stage this){
 // stream entities according to screen's position
 void Stage_streamAll(Stage this) {
 
-	Printing_text("processRemovedEntities", 1, 10);
-
 	// must make sure there are not pending entities for removal
 	Stage_processRemovedEntities(this);
-
 	VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 	this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
-
-	Printing_text("unloadOutOfRangeEntities", 1, 10);
 	Stage_unloadOutOfRangeEntities(this, false);
-	Printing_text("loadInRangeEntities", 1, 10);
 	Stage_loadInRangeEntities(this);
-	Printing_text("                       ", 1, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
