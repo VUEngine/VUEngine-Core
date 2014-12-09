@@ -72,4 +72,7 @@ int MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver,
 // dispatch delayed messages
 void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
 
+// discard delayed messages
+void MessageDispatcher_discardDelayedMessages(MessageDispatcher this);
+
 #endif /*TEXTBOX_H_*/

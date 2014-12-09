@@ -47,11 +47,11 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			25
-#define __ENTITY_UNLOAD_PAD 		50
+#define __ENTITY_LOAD_PAD 			40
+#define __ENTITY_UNLOAD_PAD 		60
 
 #define __STREAMING_AMPLITUDE	5
-#define __STREAM_CYCLE	(__TARGET_FPS >> 2)
+#define __STREAM_CYCLE	(__TARGET_FPS >> 1)
 #define __STREAM_UNLOAD_CYCLE	(0)	
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3	
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2	

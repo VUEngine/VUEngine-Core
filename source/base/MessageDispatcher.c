@@ -226,3 +226,23 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this){
 		__DELETE(telegramsToDispatch);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// discard delayed messages
+void MessageDispatcher_discardDelayedMessages(MessageDispatcher this){
+	
+	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
+
+	VirtualNode node = VirtualList_begin(this->delayedMessages);
+
+	for(; node; node = VirtualNode_getNext(node)){
+		
+		DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
+		Telegram telegram = delayedMessage->telegram;
+		
+		__DELETE(telegram);
+		__DELETE_BASIC(delayedMessage);
+	}
+
+	VirtualList_clear(this->delayedMessages);
+}

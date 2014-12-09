@@ -331,6 +331,9 @@ static void Game_setState(Game this, State state){
 	ASSERT(this, "Game::setState: null this");
     ASSERT(state, "Game::setState: setting NULL state");
 
+    // discard delayed messages
+    MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance());
+    
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
