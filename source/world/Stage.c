@@ -105,19 +105,19 @@ static void Stage_registerEntities(Stage this);
 static void Stage_processRemovedEntities(Stage this);
 
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, VirtualList sortedStageEntities, VirtualNode streamingHeads[], int streamingDisplacement, int loadOnlyInRangeEntities, int loadProgressively);
-
-// unload non visible entities
-static void Stage_unloadOutOfRangeEntities(Stage this, VirtualList sortedStageEntities, VirtualNode streamingHeads[], int streamingDisplacement, int unloadProgressively);
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
 
 // preload textures
 static void Stage_loadTextures(Stage this);
 
+// load all visible entities
+static void Stage_loadInRangeEntities(Stage this);
+
+// unload non visible entities
+static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively);
+
 // load and retrieve a texture (for internal usage: use TextureManager_get)
 Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textureDefinition, int isPreload);
-
-// put down flag so entities are being tested in the next streaming cycle
-static void Stage_prepareStageEntitiesForTesting(Stage this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -143,29 +143,18 @@ static void Stage_constructor(Stage this){
 	// construct base object
 	__CONSTRUCT_BASE(Container, __ARGUMENTS(-1));
 	
+	this->stageEntities = NULL;
+	this->removedEntities = __NEW(VirtualList);
+
 	this->ui = NULL;
 	this->stageDefinition = NULL;
 	
 	this->flushCharGroups = true;
 	
 	this->streamingAmplitude = __STREAMING_AMPLITUDE;
-
-
-	this->stageEntities = NULL;
-	this->removedEntities = __NEW(VirtualList);
-
-	int i = 0;
-	for(; i < kLastAxis; i++){
-		
-		this->sortedStageEntities[i] = NULL;
-		this->streamingDisplacements[i] = 1;
-		
-		int j = 0;
-		for(; j < kLastHead; j++){
-			
-			this->streamingHeads[i][j] = NULL;
-		}
-	}
+	this->streamingLeftHead = NULL;
+	this->streamingRightHead = NULL;
+	this->streamingHeadDisplacement = 1;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,13 +181,6 @@ void Stage_destructor(Stage this){
 		__DELETE(this->stageEntities);
 		
 		this->stageEntities = NULL;
-	}
-	
-	int i = 0;
-	for(; i < kLastAxis; i++){
-		
-		__DELETE(this->sortedStageEntities[i]);
-		this->sortedStageEntities[i] = NULL;
 	}
 	
 	if(this->removedEntities){
@@ -273,13 +255,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	Stage_registerEntities(this);
 	
 	// load entities
-	int i = 0;
-	for(; i < kLastAxis; i++){
-
-		// load visible objects	
-		Stage_loadEntities(this, this->sortedStageEntities[i], this->streamingHeads[i], this->streamingDisplacements[i],  true, false);
-	}
-
+	Stage_loadInRangeEntities(this);
+	
 	// setup ui
 	Stage_setupUI(this);
 	
@@ -398,9 +375,9 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 	
 	s16 ID = Container_getId((Container)entity);
 
-	StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
-
 	for(; node; node = VirtualNode_getNext(node)){
+
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
 
 		if(stageEntityDescription->ID == ID) {
 			
@@ -413,24 +390,16 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent){
 
 		ASSERT(entity, "Stage::removeEntity: null node");
 
-		int i = 0;
-		for(; i < kLastAxis; i++){
-		
-			VirtualNode nodeToRemove = VirtualList_find(this->sortedStageEntities[i], stageEntityDescription);
-
-			if(this->streamingHeads[i][kStartHead] == nodeToRemove) {
-				
-				this->streamingHeads[i][kStartHead] = VirtualNode_getNext(this->streamingHeads[i][kStartHead]);
-			}
-
-			if(this->streamingHeads[i][kEndHead] == nodeToRemove) {
-				
-				this->streamingHeads[i][kEndHead] = VirtualNode_getPrevious(this->streamingHeads[i][kStartHead]);
-			}
-
-			VirtualList_removeElement(this->sortedStageEntities[i], VirtualNode_getData(node));
+		if(this->streamingLeftHead == node) {
+			
+			this->streamingLeftHead = VirtualNode_getNext(this->streamingLeftHead);
 		}
 
+		if(this->streamingRightHead == node) {
+			
+			this->streamingRightHead = VirtualNode_getPrevious(this->streamingRightHead);
+		}
+		
 		VirtualList_removeElement(this->stageEntities, VirtualNode_getData(node));
 	}
 }
@@ -459,9 +428,6 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 
 	stageEntityDescription->ID = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
-	stageEntityDescription->tested = false;
-	
-	VirtualList_pushBack(this->stageEntities, stageEntityDescription);
 	
 	return stageEntityDescription;
 }
@@ -482,79 +448,57 @@ static void Stage_registerEntities(Stage this) {
 		
 		this->stageEntities = __NEW(VirtualList);
 	}
+
+	VirtualList stageEntities = __NEW(VirtualList);
 	
 	int i = 0;
-	for(; i < kLastAxis; i++){
+	for(;this->stageDefinition->entities[i].entityDefinition; i++){
 		
-		if(this->sortedStageEntities[i]) {
+		VirtualList_pushBack(stageEntities, Stage_registerEntity(this, &this->stageDefinition->entities[i]));
+	}
+	
+	VirtualNode node = VirtualList_begin(stageEntities);
+	
+	for(; node; node = VirtualNode_getNext(node)){
+
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+		
+		ASSERT(stageEntityDescription, "Stage::registerEntities: null entity description");
+
+		VirtualNode auxNode = VirtualList_begin(this->stageEntities);
+		
+		for(; auxNode; auxNode = VirtualNode_getNext(auxNode)){
+
+			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
+
+			int stageEntityDistance = stageEntityDescription->positionedEntity->position.x * stageEntityDescription->positionedEntity->position.x + 
+			stageEntityDescription->positionedEntity->position.y * stageEntityDescription->positionedEntity->position.y +
+			stageEntityDescription->positionedEntity->position.z * stageEntityDescription->positionedEntity->position.z;
 			
-			__DELETE(this->sortedStageEntities[i]);
-			this->sortedStageEntities[i] = NULL;
+			int auxStageEntityDistance = auxStageEntityDescription->positionedEntity->position.x * auxStageEntityDescription->positionedEntity->position.x + 
+			auxStageEntityDescription->positionedEntity->position.y * auxStageEntityDescription->positionedEntity->position.y +
+			auxStageEntityDescription->positionedEntity->position.z * auxStageEntityDescription->positionedEntity->position.z;
+
+			if(stageEntityDistance > auxStageEntityDistance) {
+			
+				continue;
+			}
+					
+			VirtualList_insertBefore(this->stageEntities, node, stageEntityDescription);
 		}
 		
-		this->sortedStageEntities[i] = __NEW(VirtualList);
-	}
-
-	for(i = 0; this->stageDefinition->entities[i].entityDefinition; i++){
+		if(!auxNode) {
 		
-		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities[i]);
-		
-		int j = 0;
-		for(; j < kLastAxis; j++){
-
-			VirtualNode node = VirtualList_begin(this->sortedStageEntities[j]);
-			
-			for(; node; node = VirtualNode_getNext(node)) {
-				
-				StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
-				
-				ASSERT(auxStageEntityDescription, "Stage::registerEntities: null entity description");
-				
-				if(auxStageEntityDescription) {
-					
-					switch(j){
-					
-						case kXAxis:
-							
-							if(stageEntityDescription->positionedEntity->position.x > auxStageEntityDescription->positionedEntity->position.x) {
-							
-								continue;
-							}
-							break;
-							
-						case kYAxis:
-							
-							if(stageEntityDescription->positionedEntity->position.y > auxStageEntityDescription->positionedEntity->position.y) {
-							
-								continue;
-							}
-							break;
-							
-						case kZAxis:
-							
-							if(stageEntityDescription->positionedEntity->position.z > auxStageEntityDescription->positionedEntity->position.z) {
-							
-								continue;
-							}
-							break;
-					}
-
-					VirtualList_insertBefore(this->sortedStageEntities[j], node, stageEntityDescription);
-					break;
-				}
-			}
-				
-			if(!node) {
-				
-				VirtualList_pushBack(this->sortedStageEntities[j], stageEntityDescription);
-			}
+			VirtualList_pushBack(this->stageEntities, stageEntityDescription);
 		}
 	}
+
+	__DELETE(stageEntities);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, VirtualList sortedStageEntities, VirtualNode streamingHeads[], int streamingDisplacement, int loadOnlyInRangeEntities, int loadProgressively){
+static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively){
 
 	ASSERT(this, "Stage::loadEntities: null this");
 
@@ -562,27 +506,25 @@ static void Stage_loadEntities(Stage this, VirtualList sortedStageEntities, Virt
 	VirtualNode lastLoadedNode = NULL;
 	int skippedEntity = false;
 	
-	if(!streamingHeads[kStartHead]) {
+	if(!this->streamingLeftHead) {
 		
-		streamingHeads[kStartHead] = VirtualList_begin(sortedStageEntities); 
+		this->streamingLeftHead = VirtualList_begin(this->stageEntities); 
 	}
 
-	if(!streamingHeads[kEndHead]) {
+	if(!this->streamingRightHead) {
 		
-		streamingHeads[kEndHead] = streamingHeads[kStartHead]; 
+		this->streamingRightHead = this->streamingLeftHead; 
 	}
 	
-	VirtualNode node = 0 < streamingDisplacement? streamingHeads[kEndHead]: streamingHeads[kStartHead];
+	VirtualNode node = 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead;
 
 	for(; (!loadProgressively || counter < this->streamingAmplitude) && node; 
-	node = 0 < streamingDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node),  counter += loadProgressively? 1: 0){
+	node = 0 < this->streamingHeadDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node),  counter += loadProgressively? 1: 0){
 		
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
 
-		if(-1 == stageEntityDescription->ID && !stageEntityDescription->tested) {
-
-			stageEntityDescription->tested = true;
-
+		if(-1 == stageEntityDescription->ID) {
+						
 			VBVec3D position3D = {
 					ITOFIX19_13(stageEntityDescription->positionedEntity->position.x),
 					ITOFIX19_13(stageEntityDescription->positionedEntity->position.y),
@@ -594,6 +536,7 @@ static void Stage_loadEntities(Stage this, VirtualList sortedStageEntities, Virt
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols, 
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows)){
 
+				
 				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position3D, stageEntityDescription->positionedEntity->extraInfo, false);
 				stageEntityDescription->ID = Container_getId((Container)entity);
 
@@ -620,20 +563,54 @@ static void Stage_loadEntities(Stage this, VirtualList sortedStageEntities, Virt
 	
 	if(lastLoadedNode) {
 
-		if(0 < streamingDisplacement) {
+		if(0 < this->streamingHeadDisplacement) {
 
-			streamingHeads[kEndHead] = lastLoadedNode;
+			this->streamingRightHead = lastLoadedNode;
 		}
 		else {
 			
-			streamingHeads[kStartHead] = lastLoadedNode;
+			this->streamingLeftHead = lastLoadedNode;
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// load all visible entities
+static void Stage_loadInRangeEntities(Stage this){
+
+	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
+
+	// need a temporal list to remove and delete entities
+	VirtualNode node = VirtualList_begin(this->stageEntities);;
+
+	for(; node; node = VirtualNode_getNext(node)){
+
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+
+		if(-1 == stageEntityDescription->ID) {
+						
+			VBVec3D position3D = {
+					ITOFIX19_13(stageEntityDescription->positionedEntity->position.x),
+					ITOFIX19_13(stageEntityDescription->positionedEntity->position.y),
+					ITOFIX19_13(stageEntityDescription->positionedEntity->position.z)
+			};
+
+			// if entity in load range
+			if(Stage_inLoadRange(this, &position3D, 
+					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols, 
+					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows)){
+
+				
+				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position3D, stageEntityDescription->positionedEntity->extraInfo, false);
+				stageEntityDescription->ID = Container_getId((Container)entity);
+			}
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unload non visible entities
-static void Stage_unloadOutOfRangeEntities(Stage this, VirtualList sortedStageEntities, VirtualNode streamingHeads[], int streamingDisplacement, int unloadProgressively){
+static void Stage_unloadOutOfRangeEntities(Stage this, int unloadProgressively){
 
 	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
 
@@ -644,12 +621,12 @@ static void Stage_unloadOutOfRangeEntities(Stage this, VirtualList sortedStageEn
 	
 	// need a temporal list to remove and delete entities
 	VirtualList removedEntities = __NEW(VirtualList);
-	VirtualNode node = 0 < streamingDisplacement? VirtualList_begin(this->children): VirtualList_end(this->children);
+	VirtualNode node = 0 < this->streamingHeadDisplacement? VirtualList_begin(this->children): VirtualList_end(this->children);
 
 //	int counter = 0;
 	CACHE_ENABLE;
 	// check which actors must be unloaded
-	for(; node; node = 0 < streamingDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node)){
+	for(; node; node = 0 < this->streamingHeadDisplacement? VirtualNode_getNext(node): VirtualNode_getPrevious(node)){
 //	for(; node && counter < this->streamingAmplitude; counter++){
 
 		// get next entity
@@ -660,12 +637,12 @@ static void Stage_unloadOutOfRangeEntities(Stage this, VirtualList sortedStageEn
 
 			s16 ID = Container_getId((Container)entity);
 			
-			int traverseNormally = ID < ((StageEntityDescription*)VirtualNode_getData(streamingHeads[kStartHead]))->ID ||
-				ID > ((StageEntityDescription*)VirtualNode_getData(streamingHeads[kEndHead]))->ID;
+			int traverseNormally = ID < ((StageEntityDescription*)VirtualNode_getData(this->streamingLeftHead))->ID ||
+				ID > ((StageEntityDescription*)VirtualNode_getData(this->streamingRightHead))->ID;
 
-			VirtualNode auxNode = traverseNormally? VirtualList_begin(sortedStageEntities): 0 < streamingDisplacement? streamingHeads[kEndHead]: streamingHeads[kStartHead];
+			VirtualNode auxNode = traverseNormally? VirtualList_begin(this->stageEntities): 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead;
 
-			for(; auxNode; auxNode = traverseNormally? VirtualNode_getNext(auxNode): 0 < streamingDisplacement? VirtualNode_getPrevious(auxNode): VirtualNode_getNext(auxNode)){
+			for(; auxNode; auxNode = traverseNormally? VirtualNode_getNext(auxNode): 0 < this->streamingHeadDisplacement? VirtualNode_getPrevious(auxNode): VirtualNode_getNext(auxNode)){
 
 				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
 
@@ -704,9 +681,9 @@ static void Stage_unloadOutOfRangeEntities(Stage this, VirtualList sortedStageEn
 	// repositione stream headers
 	if(0 < VirtualList_getSize(removedEntities)){
 		
-		VirtualNode* modifierNode = 0 < streamingDisplacement? &streamingHeads[kStartHead]: &streamingHeads[kEndHead];
-		VirtualNode node = 0 < streamingDisplacement? streamingHeads[kEndHead]: streamingHeads[kStartHead];
-		VirtualNode (*nodeTraverseMethod)(VirtualNode) = 0 < streamingDisplacement? &VirtualNode_getPrevious: &VirtualNode_getNext;
+		VirtualNode* modifierNode = 0 < this->streamingHeadDisplacement? &this->streamingLeftHead: &this->streamingRightHead;
+		VirtualNode node = 0 < this->streamingHeadDisplacement? this->streamingRightHead: this->streamingLeftHead;
+		VirtualNode (*nodeTraverseMethod)(VirtualNode) = 0 < this->streamingHeadDisplacement? &VirtualNode_getPrevious: &VirtualNode_getNext;
 		
 		ASSERT(node, "Stage::unloadOutOfRangeEntities: null node");
 		
@@ -728,7 +705,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this, VirtualList sortedStageEn
 	// destroy the temporal list
 	__DELETE(removedEntities);
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // execute stage's logic
 static void Stage_processRemovedEntities(Stage this){
@@ -770,16 +746,13 @@ void Stage_update(Stage this){
 void Stage_stream(Stage this){
 
 	ASSERT(this, "Stage::stream: null this");
-
+	// if the screen is moving
+	//if(_screenMovementState->x || _screenMovementState->y || _screenMovementState->z){
 	static int load = __STREAM_CYCLE;
 	if(!--load){
 
-		int i = 0;
-		for(; i < kLastAxis; i++){
-		
-			// unload not visible objects
-			Stage_unloadOutOfRangeEntities(this, this->sortedStageEntities[i], this->streamingHeads[i], this->streamingDisplacements[i], false);
-		}
+		// unload not visible objects
+		Stage_unloadOutOfRangeEntities(this, false);
 		
 		load = __STREAM_CYCLE;
 	}
@@ -787,72 +760,22 @@ void Stage_stream(Stage this){
 
 		VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
 		
-		this->streamingDisplacements[kXAxis] = _screenMovementState->x? 0 <= lastScreenDisplacement.x? 1: -1: 0;
-		this->streamingDisplacements[kYAxis] = _screenMovementState->x? 0 <= lastScreenDisplacement.y? 1: -1: 0;
-		this->streamingDisplacements[kZAxis] = _screenMovementState->x? 0 <= lastScreenDisplacement.z? 1: -1: 0;
+		this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
-		int i = 0;
-		
-		for(; i < kLastAxis; i++){
-
-			if(this->streamingDisplacements[i]) {
-			
-				// load visible objects	
-				Stage_loadEntities(this, this->sortedStageEntities[i], this->streamingHeads[i], this->streamingDisplacements[i],  true, true);
-			}
-		}
-	}
-	else {
-		
-		Stage_prepareStageEntitiesForTesting(this);
-	}
+		// load visible objects	
+		Stage_loadEntities(this, true, true);
+	}	
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// put down flag so entities are being tested in the next streaming cycle
-static void Stage_prepareStageEntitiesForTesting(Stage this){
-	
-	ASSERT(this, "Stage::prepareStageEntitiesForTesting: null this");
-
-	int i = 0;
-	
-	for(; i < kLastAxis; i++){
-
-		VirtualNode node = this->streamingHeads[i][kStartHead];
-	
-		for(; node && (!this->streamingHeads[i][kEndHead] || node !=  VirtualNode_getNext(this->streamingHeads[i][kEndHead])); node = VirtualNode_getNext(node)){
-			
-			StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
-	
-			stageEntityDescription->tested = false;
-		}
-	}
-}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // stream entities according to screen's position
 void Stage_streamAll(Stage this) {
 
-	ASSERT(this, "Stage::streamAll: null this");
-
-	Stage_prepareStageEntitiesForTesting(this);
-
 	VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
-	this->streamingDisplacements[kXAxis] = 0 <= lastScreenDisplacement.x? 1: -1;
-	this->streamingDisplacements[kYAxis] = 0 <= lastScreenDisplacement.y? 1: -1;
-	this->streamingDisplacements[kZAxis] = 0 <= lastScreenDisplacement.z? 1: -1;
+	this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 
-	int i = 0;
-	for(; i < kLastAxis; i++){
-	
-		// unload not visible objects
-		Stage_unloadOutOfRangeEntities(this, this->sortedStageEntities[i], this->streamingHeads[i], this->streamingDisplacements[i], false);
-	}
-
-	for(i = 0; i < kLastAxis; i++){
-
-		// load visible objects	
-		Stage_loadEntities(this, this->sortedStageEntities[i], this->streamingHeads[i], this->streamingDisplacements[i],  true, false);
-	}
+	Stage_unloadOutOfRangeEntities(this, false);
+	Stage_loadInRangeEntities(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

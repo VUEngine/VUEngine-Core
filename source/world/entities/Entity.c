@@ -32,6 +32,7 @@
 #include <Optics.h>
 #include <AnimatedSprite.h>
 #include <Shape.h>
+#include <CollisionManager.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -414,7 +415,8 @@ int Entity_getShapeType(Entity this){
 int Entity_isVisible(Entity this, int pad){
 
 	ASSERT(this, "Entity::isVisible: null this");
-	ASSERT(this->sprites, "Entity::isVisible: null sprites");
+	
+//	ASSERT(this->sprites, "Entity::isVisible: null sprites");
 
 	if(!this->sprites) {
 		

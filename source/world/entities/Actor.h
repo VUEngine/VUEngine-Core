@@ -55,7 +55,13 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-
+enum Axes {
+	
+	kXAxis = 0,
+	kYAxis,
+	kZAxis,
+	kLastAxis
+};
 
 // TODO: MOVE TO MISCSTRUCTS
 //spacial state vector
@@ -115,7 +121,7 @@ typedef struct GeneralAxisFlag{
 	VBVec3D previousGlobalPosition;												\
 																				\
 	/* last collinding entity */												\
-	InGameEntity lastCollidingEntity[3];										\
+	InGameEntity lastCollidingEntity[kLastAxis];								\
 																				\
 	/* flags to apply friction on each axis */									\
 	GeneralAxisFlag sensibleToFriction;											\

@@ -263,7 +263,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 		node = VirtualNode_getPrevious(node);
 		VirtualList_removeElement(this->sprites, sprite);
 		
-		for(;node; node = VirtualNode_getPrevious(node)){
+		for(node = node? node: VirtualList_begin(this->sprites); node; node = VirtualNode_getPrevious(node)){
 			
 			Sprite previousSprite = (Sprite)VirtualNode_getData(node);
 			u8 layer = Sprite_getWorldLayer(previousSprite);
@@ -272,7 +272,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 		}
 	}
 	
-	//SpriteManager_setLastLayer(this);
+	SpriteManager_setLastLayer(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
