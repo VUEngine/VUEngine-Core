@@ -56,7 +56,7 @@ __CLASS_DEFINITION(Entity);
  */
 
 // global
-extern MovementState* _screenMovementState;
+extern VBVec3D* _screenDisplacement;
 
 // add sprite
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites);
@@ -229,7 +229,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 			// reset size so it is recalculated
 			this->size.x = this->size.y = this->size.z = 0;
 		}
-		
+
 		//if screen is moving
 		if(updateSpritePosition){
 			
@@ -465,7 +465,7 @@ Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo){
 int Entity_updateSpritePosition(Entity this){
 	
 	ASSERT(this, "Entity::updateSpritePosition: null this");
-	return (*((int*)_screenMovementState) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
+	return ((_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -474,7 +474,7 @@ int Entity_updateSpriteScale(Entity this){
 
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 
-	return (_screenMovementState->z || this->invalidateGlobalPosition.z);
+	return (_screenDisplacement->z || this->invalidateGlobalPosition.z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

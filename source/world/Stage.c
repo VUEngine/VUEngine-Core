@@ -47,8 +47,8 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			40
-#define __ENTITY_UNLOAD_PAD 		60
+#define __ENTITY_LOAD_PAD 			30
+#define __ENTITY_UNLOAD_PAD 		45
 
 #define __STREAMING_AMPLITUDE	5
 #define __STREAM_CYCLE	(__TARGET_FPS >> 1)
@@ -87,7 +87,7 @@ typedef struct StageEntityDescription {
 
 // global
 extern VBVec3D * _screenPosition;
-extern MovementState* _screenMovementState;
+extern VBVec3D * _screenDisplacement;
 
 //class's constructor
 static void Stage_constructor(Stage this);
@@ -757,20 +757,18 @@ void Stage_stream(Stage this){
 	if(!--load){
 
 		// unload not visible objects
-		Stage_unloadOutOfRangeEntities(this, true);
+		Stage_unloadOutOfRangeEntities(this, false);
 		
 		load = __STREAM_CYCLE;
 	}
 	else if (__STREAM_LOAD_CYCLE_1 == load || __STREAM_LOAD_CYCLE_2 == load) {
 
-		VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
-		
 		// give preference to x displacement, but fallback to other axis if no movement
-		this->streamingHeadDisplacement = _screenMovementState->x? 0 <= lastScreenDisplacement.x? 1: -1: 0;
-		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: _screenMovementState->y? 0 <= lastScreenDisplacement.y? 1: -1: 0;
-		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: _screenMovementState->z? 0 <= lastScreenDisplacement.z? 1: -1: 0;
+		this->streamingHeadDisplacement = 0 < _screenDisplacement->x? 1: 0 > _screenDisplacement->x? -1: 0;
+		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 0 < _screenDisplacement->y? 1: 0 > _screenDisplacement->y? -1: 0;
+		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 0 < _screenDisplacement->z? 1: 0 > _screenDisplacement->z? -1: 0;
 		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 1;
-
+		
 		// load visible objects	
 		Stage_loadEntities(this, true, true);
 	}	

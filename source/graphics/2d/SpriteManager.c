@@ -171,13 +171,14 @@ void SpriteManager_spriteChangedPosition(SpriteManager this){
 void SpriteManager_sortLayers(SpriteManager this, int progressively){
 
 	ASSERT(this, "SpriteManager::sortLayers: null this");
-
+/*
 	if(!this->needSorting && progressively){
 
 		return;
 	}
-
+*/
 	this->node = progressively && this->node? this->otherNode? this->node: VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
+//	this->node = VirtualList_begin(this->sprites);
 
 	for(; this->node; this->node = VirtualNode_getNext(this->node)) {
 		
@@ -185,6 +186,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
 
 		this->otherNode = progressively && this->otherNode? VirtualNode_getNext(this->otherNode): VirtualNode_getNext(this->node);
+//		this->otherNode = VirtualNode_getNext(this->node);
 
 		for(; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode)) {
 
@@ -216,17 +218,14 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 				}
 			}
 		}	
-
-		if(progressively && this->node == this->otherNode){
+		if(progressively){
 
 			break;
 		}
 	}
 	
-	this->needSorting = this->node? true: false;
-	
-	// TODO: remove
-	this->needSorting = true;
+//	this->needSorting = this->node? true: false;
+//	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

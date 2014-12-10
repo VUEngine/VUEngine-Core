@@ -227,6 +227,17 @@ void Sprite_calculateScale(Sprite this, fix19_13 z){
 	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0? -1: 1);
 	this->drawSpec.scale.y = ratio;
 	
+	if(WRLD_AFFINE == Sprite_getMode(this)){
+
+		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+	}
+	else {
+		
+		this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
+		this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
+	}
+
 	Sprite_invalidateParamTable(this);
 }
 
@@ -250,17 +261,9 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 
 	ASSERT(this->texture, "Sprite::setPosition: null texture");
 
-	if(WRLD_AFFINE == Sprite_getMode(this)){
+	position3D.x -= this->halfWidth;
+	position3D.y -= this->halfHeight;
 
-		position3D.x -= ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-		position3D.y -= ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
-	}
-	else {
-		
-		position3D.x -= FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
-		position3D.y -= FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
-	}
-	
 	fix19_13 previousZPosition = this->drawSpec.position.z;
 	
 	// project position to 2D space
@@ -275,7 +278,7 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 
 		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
-	
+
 	this->renderFlag |= __UPDATE_G;
 }
 
@@ -354,6 +357,20 @@ void Sprite_render(Sprite this){
 		
 		DrawSpec drawSpec = this->drawSpec;
 
+		if(__UPDATE_HEAD == this->renderFlag){
+			
+			//create an independant of software variable to point XPSTTS register
+			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+			//wait for screen to idle	
+			while (*xpstts & XPBSYR);
+
+			// write the head
+			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
+
+			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
+		}
+		
 		//set the world screen position
 		if(this->renderFlag & __UPDATE_G ){
 
@@ -400,21 +417,6 @@ void Sprite_render(Sprite this){
 				WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
 			}
 		}
-		
-		if(__UPDATE_HEAD == this->renderFlag){
-			
-			//create an independant of software variable to point XPSTTS register
-			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-			//wait for screen to idle	
-			while (*xpstts & XPBSYR);
-
-			// write the head
-			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
-
-			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
-		}
-
 
 		// make sure to not render again
 		this->renderFlag = false;

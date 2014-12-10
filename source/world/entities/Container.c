@@ -354,7 +354,7 @@ static void Container_applyTransform(Container this, Transformation* environment
 			environmentTransform->rotation.z
 		}
 	};
-	
+
 	// concatenate environment transform
 	Container_concatenateTransform(&environmentTransformCopy, &this->transform);
 
@@ -380,8 +380,7 @@ static void Container_applyTransform(Container this, Transformation* environment
 
 				__VIRTUAL_CALL(void, Container, initialTransform, child, __ARGUMENTS(&environmentTransformCopy));		
 			}
-			else {
-
+			else{
 				__VIRTUAL_CALL(void, Container, transform, child, __ARGUMENTS(&environmentTransformCopy));		
 			}
 		}	

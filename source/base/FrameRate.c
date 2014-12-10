@@ -226,13 +226,13 @@ void FrameRate_print(FrameRate this, int col, int row){
 	ASSERT(this, "FrameRate::print: null this");
 
 	Printing_text("FPS", col, row++);
-	Printing_text("Raw                          ", col, row);
+	Printing_text("Raw             ", col, row);
 	Printing_int(this->rawFPS, col + 8, row++);
-	Printing_text("Render                       ", col, row);
+	Printing_text("Render          ", col, row);
 	Printing_int(this->renderFPS, col + 8, row++);
-	Printing_text("Logic                        ", col, row);
+	Printing_text("Logic           ", col, row);
 	Printing_int(this->logicFPS, col + 8, row++);
-	Printing_text("Physics                      ", col, row);
+	Printing_text("Physics         ", col, row);
 	Printing_int(this->physicsFPS, col + 8, row++);
 }
 

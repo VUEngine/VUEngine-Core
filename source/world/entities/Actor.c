@@ -62,7 +62,7 @@ __CLASS_DEFINITION(Actor);
  */
 
 // global
-extern MovementState* _screenMovementState;
+extern VBVec3D* _screenDisplacement;
 
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
@@ -623,7 +623,7 @@ int Actor_updateSpritePosition(Actor this){
 
 	ASSERT(this, "Actor::updateSpritePosition: null this");
 
-	return (this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z || Actor_isMoving(this) || _screenMovementState->x || _screenMovementState->y || _screenMovementState->z);
+	return (this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z || Actor_isMoving(this) || _screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

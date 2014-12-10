@@ -76,7 +76,7 @@ __CLASS_DEFINITION(Screen);
  */
 
 // global
-MovementState* _screenMovementState = NULL;
+VBVec3D* _screenDisplacement = NULL;
 
 //class's constructor
 static void Screen_constructor(Screen this);
@@ -137,7 +137,7 @@ static void Screen_constructor(Screen this){
 	this->lastDisplacement.y = 0;
 	this->lastDisplacement.z = 0;
 	
-	_screenMovementState = &this->movementState;
+	_screenDisplacement = &this->lastDisplacement;
 	_screenPosition = &this->position;
 }
 
@@ -182,11 +182,6 @@ void Screen_positione(Screen this){
 			this->position.y += this->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 			this->position.z += this->focusEntityPositionDisplacement.z;
 						
-			//set world's screen's movement
-			this->movementState.x = __ACTIVE;
-			this->movementState.y = __ACTIVE;
-			this->movementState.z = __ACTIVE;
-			
 			if(0 > this->position.x){
 				
 				this->position.x = 0;
@@ -212,9 +207,9 @@ void Screen_positione(Screen this){
 		else{
 			
 			//stop world's screen's movement
-			this->movementState.x = __PASSIVE;
-			this->movementState.y = __PASSIVE;
-			this->movementState.z = __PASSIVE;
+			this->lastDisplacement.x = 0;
+			this->lastDisplacement.y = 0;
+			this->lastDisplacement.z = 0;
 		}
 	}
 }

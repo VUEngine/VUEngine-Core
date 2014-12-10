@@ -101,7 +101,14 @@
 																				\
 	/* location of texture in graphic memory */									\
 	Point texturePosition;														\
-														
+																				\
+	/* texture's half width */													\
+	fix19_13 halfWidth;															\
+																				\
+	/* texture's half height */													\
+	fix19_13 halfHeight;															\
+								
+
 // declare a Sprite, which holds a texture and a drawing specification
 __CLASS(Sprite);
 							

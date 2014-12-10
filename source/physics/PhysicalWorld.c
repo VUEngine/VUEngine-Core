@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -31,6 +30,18 @@
 #include <PhysicalWorld.h>
 #include <Game.h>
 #include <Clock.h>
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 												MACROS
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+#define __CHECK_GRAVITY_CYCLE	(__TARGET_FPS >> 3)
+
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -293,7 +304,10 @@ void PhysicalWorld_update(PhysicalWorld this){
 	
 	ASSERT(this, "PhysicalWorld::update: null this");
 
-	static int checkForGravity = false;
+	// process removed bodies
+	PhysicalWorld_processRemovedBodies(this);
+
+	static int checkForGravity = __CHECK_GRAVITY_CYCLE;
 	
 #ifdef __DEBUG
 	if(!this->clock) {
@@ -310,14 +324,10 @@ void PhysicalWorld_update(PhysicalWorld this){
 		return;
 	}
 	
-	if(checkForGravity) {
+	if(!checkForGravity--) {
 	
-		checkForGravity = false;
+		checkForGravity = __CHECK_GRAVITY_CYCLE;
 		PhysicalWorld_checkForGravity(this);
-	}
-	else {
-
-		checkForGravity = true;
 	}
 	  
 	VirtualNode node = VirtualList_begin(this->activeBodies);
@@ -327,9 +337,6 @@ void PhysicalWorld_update(PhysicalWorld this){
 
 		Body_update((Body)VirtualNode_getData(node), &this->gravity, this->elapsedTime);
 	}
-
-	// process removed bodies
-	PhysicalWorld_processRemovedBodies(this);
 
 	// record this update's time
 	this->time = Clock_getTime(this->clock);

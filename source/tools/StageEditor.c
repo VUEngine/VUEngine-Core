@@ -122,7 +122,7 @@ enum Modes {
 // globals
 extern Optical* _optical;
 extern UserObject _userObjects[];
-extern MovementState* _screenMovementState;
+extern VBVec3D* _screenDisplacement;
 
 static void StageEditor_constructor(StageEditor this);
 static void StageEditor_setupMode(StageEditor this);
@@ -207,9 +207,6 @@ void StageEditor_update(StageEditor this){
 	
 	ASSERT(this, "StageEditor::update: null this");
 
-	Printing_text("StageEditor_update", 1, 10);
-
-	//Stage_stream(GameState_getStage(this->gameState));
 	if(this->gameState && this->shape) {
 		
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
@@ -602,17 +599,17 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey){
 	// another variable which most likely will only
 	// take up the previous RAM, or another branching
 	// computation in the Entity's render method
-	_screenMovementState->x = __ACTIVE;
-	_screenMovementState->y = __ACTIVE;
-	_screenMovementState->z = __ACTIVE;
+	_screenDisplacement->x = 1;
+	_screenDisplacement->y = 1;
+	_screenDisplacement->z = 1;
 
 	StageEditor_printProjectionValues(this);
 	GameState_transform(this->gameState);
 
 	// prevent any side effect
-	_screenMovementState->x = __PASSIVE;
-	_screenMovementState->y = __PASSIVE;
-	_screenMovementState->z = __PASSIVE;
+	_screenDisplacement->x = 0;
+	_screenDisplacement->y = 0;
+	_screenDisplacement->z = 0;
 
 }
 
@@ -730,16 +727,16 @@ static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D transl
 		// another variable which most likely will only
 		// take up the previous RAM, or another branching
 		// computation in the Entity's render method
-		_screenMovementState->x = __ACTIVE;
-		_screenMovementState->y = __ACTIVE;
-		_screenMovementState->z = __ACTIVE;
+		_screenDisplacement->x = __ACTIVE;
+		_screenDisplacement->y = __ACTIVE;
+		_screenDisplacement->z = __ACTIVE;
 		
 		GameState_transform(this->gameState);
 
 		// prevent any side effect
-		_screenMovementState->x = __PASSIVE;
-		_screenMovementState->y = __PASSIVE;
-		_screenMovementState->z = __PASSIVE;
+		_screenDisplacement->x = __PASSIVE;
+		_screenDisplacement->y = __PASSIVE;
+		_screenDisplacement->z = __PASSIVE;
 
 		StageEditor_positioneShape(this);
 

@@ -171,9 +171,9 @@ void GameState_transform(GameState this){
 			{0, 0, 0}			
 	};
 	
-	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, __ARGUMENTS(&environmentTransform));
-
 	Screen_positione(Screen_getInstance());
+
+	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, __ARGUMENTS(&environmentTransform));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

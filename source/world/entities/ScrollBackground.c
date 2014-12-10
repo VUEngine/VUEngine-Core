@@ -61,7 +61,7 @@ enum ScrollSprites {
 
 // global
 extern VBVec3D * _screenPosition;
-extern MovementState* _screenMovementState;
+extern VBVec3D* _screenDisplacement;
 
 // calculate the scroll's screen position
 static void ScrollBackground_updateScrolling(ScrollBackground this);
@@ -123,7 +123,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 	// call base class's transform method
 	Entity_transform((Entity)this, environmentTransform);
 
-	if(_screenMovementState->x || _screenMovementState->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z){
+	if(_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z){
 		
 		ScrollBackground_updateScrolling(this);
 	}

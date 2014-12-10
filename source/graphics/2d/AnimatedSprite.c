@@ -290,8 +290,6 @@ void AnimatedSprite_animate(AnimatedSprite this){
 		if(this->animationFunction->onAnimationComplete){
 		
 			Object_fireEvent((Object)this, __EVENT_ANIMATION_COMPLETE);
-			// call notifying
-//			((void (*)(void* owner))this->animationFunction->onAnimationComplete)(this->owner);
 		}
 
 		// rewind to first frame

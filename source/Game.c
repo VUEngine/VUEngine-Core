@@ -686,7 +686,7 @@ void Game_update(Game this){
 #endif
 				// simulate collisions and set streaming flag
 				GameState_setCanStream((GameState)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
-				
+
 				// increase the frame rate
 				FrameRate_increasePhysicsFPS(this->frameRate);
 
@@ -748,6 +748,11 @@ void Game_update(Game this){
 		}
 
 		FrameRate_increaseRawFPS(this->frameRate);
+		
+#ifdef __DEBUG
+		Printing_text("                               ", 20, 0);
+		Printing_text(this->lastProcessName, 20, 0);
+#endif 
 	}
 }
 
