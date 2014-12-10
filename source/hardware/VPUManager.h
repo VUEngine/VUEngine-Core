@@ -89,6 +89,7 @@ static u16* const	OAM =		(u16*)OAMBase;					// Pointer to OAM
 #define __ROT_RIGHT !__ROT_LEFT
 
 typedef struct WORLD {
+
 	u16 head;
 	u16 gx;
 	s16 gp;
@@ -101,6 +102,7 @@ typedef struct WORLD {
 	u16 param;
 	u16 ovr;
 	u16 spacer[5];
+
 } WORLD;
 
 static WORLD* const WA = (WORLD*)0x0003D800;

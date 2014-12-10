@@ -103,9 +103,6 @@ typedef struct  StageDefinition{
 	
 	// initial screen's position inside the game world
 	VBVec3D screenPosition;
-	
-	// pointer to the background music
-	const u16 (*bgm)[];
 
 	// each of the stage's entities
 	TextureDefinition** textures;
@@ -115,6 +112,9 @@ typedef struct  StageDefinition{
 	
 	// each of the stage's entities
 	PositionedEntity* entities;
+	
+	// pointer to the background music
+	const u16 (*bgm)[];
 
 }StageDefinition;
 

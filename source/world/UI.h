@@ -66,12 +66,12 @@ __CLASS(UI);
 
 // defines a UI for ROM memory
 typedef struct UIDefinition{
-
-	// the class type
-	void* allocator;
 	
 	// ui's entities
 	PositionedEntity* entities;
+
+	// the class type
+	void* allocator;
 
 }UIDefinition;
 

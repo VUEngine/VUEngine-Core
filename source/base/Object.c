@@ -45,9 +45,10 @@ __CLASS_DEFINITION(Object);
 
 typedef struct Event {
 	
-	char name[__MAX_EVENT_NAME_LENGTH];
 	Object listener;
 	void (*method)(Object);
+	char name[__MAX_EVENT_NAME_LENGTH];
+	
 }Event;
 
 /* ---------------------------------------------------------------------------------------------------------

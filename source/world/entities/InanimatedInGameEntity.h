@@ -75,14 +75,14 @@ typedef struct InanimatedInGameEntityDefinition{
 	// It has an InGameEntity at the beggining
 	InGameEntityDefinition inGameEntityDefinition;
 	
-	// whether it must be registered with the collision detection system
-	u8 registerShape;
-	
 	// friction for physics
 	fix19_13 friction;
 	
 	// elasticity for physics
 	fix19_13 elasticity;
+	
+	// whether it must be registered with the collision detection system
+	u8 registerShape;
 
 }InanimatedInGameEntityDefinition;
 

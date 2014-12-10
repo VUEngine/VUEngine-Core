@@ -32,36 +32,45 @@ Type definitions used in
 the game functions
 **********************/
 typedef struct{
+
 	s32 x; //fixed point
 	s32 y; //fixed point
 	s32 z; //fixed point
 	s32 sx; //screen x
 	s32 sy; //screen y
+
 } vector3d;//represents a vector or coordinate. 20 bytes size
 
 typedef struct{
+
 	s32 vertexSize;//Size of vertex array portion
 	s32 lineSize;//Size of line data portion
 	s32 faceSize;//Number of points per "face". Since we use only lines for wireframe this should always be 2
 	const s32 data[];//Distinct vertices and line point index data
+
 } objectData;
 
 typedef struct{
+
 	s32 width;
 	s32 height;
 	s32 depth;
+
 }collisionCube; //This can be used for collision detection 12 bytes size
 
 typedef struct{
+
 	u32 visible; //Is this object visible
 	u32 clip;//This is whether the object is clipped or not
 	u32 detectCollision; //Do we perform collision detection
 	u32 lineColor;
 	u32 state;//State byte to be used for anything
 	collisionCube hitCube; //Cube data for collision detection
+
 } objectProperties;//32 bytes size
 
 typedef struct object{
+
 	vector3d worldPosition;//Actual position inside the world //20 bytes
 	vector3d moveTo;//worldPosition to move the object to //20 bytes
 	vector3d worldRotation;//Not Fixed Point (x,y,z) rotation in degrees //20 bytes
@@ -73,9 +82,11 @@ typedef struct object{
 	objectProperties properties; //45 bytes
 	objectData* objData; //4 bytes
 	struct object* parent;//Used to chain objects together //4bytes
+
 } object;
 
 typedef struct{
+
 	vector3d worldPosition; //20 bytes
 	vector3d worldSpeed; //20 bytes
 	vector3d speed; //20 bytes
@@ -84,6 +95,7 @@ typedef struct{
 	vector3d worldRotation;//Not Fixed Point //20 bytes
 	vector3d rotation;//Not Fixed Point // 20 bytes
 	s32 d; // 4
+
 } camera;
 
 

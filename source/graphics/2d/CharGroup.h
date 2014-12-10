@@ -112,14 +112,14 @@ __CLASS(CharGroup);
 
 typedef struct CharGroupDefinition{
 	
-	// pointer to the char definition in ROM
-	BYTE* charDefinition;
-	
 	// number of chars
 	u16 numberOfChars;
 	
 	// the way its chars and bgtexture will be allocated in graphic memory
 	u16 allocationType;
+	
+	// pointer to the char definition in ROM
+	BYTE* charDefinition;
 	
 }CharGroupDefinition;
 

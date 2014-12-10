@@ -118,9 +118,6 @@ __CLASS(AnimatedSprite);
 // a function which defines the frames to play
 typedef struct AnimationFunction{
 	
-	// function's name
-	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGHT];
-	
 	// number of frames of this animation function
 	int numberOfFrames;
 	
@@ -135,6 +132,9 @@ typedef struct AnimationFunction{
 	
 	// method to call function completion
 	void* onAnimationComplete;
+	
+	// function's name
+	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGHT];
 	
 }AnimationFunction;
 

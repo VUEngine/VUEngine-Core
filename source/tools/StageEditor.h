@@ -62,8 +62,8 @@ __CLASS(StageEditor);
 // for level editing
 typedef struct UserObject {
 	
-	char* name;
 	EntityDefinition* entityDefinition;
+	char* name;
 	
 }UserObject;
 

@@ -56,8 +56,8 @@ __CLASS(OptionsSelector);
 // for debugging
 typedef struct Option {
 	
-	char* name;
 	int (*classSizeFunction)(void);
+	char* name;
 	
 }ClassSizeData;
 

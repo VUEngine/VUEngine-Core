@@ -475,16 +475,16 @@ static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, in
 
 	ClassSizeData classesSizeData[] = {
 			
-			{"Clock", &Clock_getObjectSize},
-			{"State", &State_getObjectSize},
-			{"StateMachine", &StateMachine_getObjectSize},
-			{"Telegram", &Telegram_getObjectSize},
-			{"VirtualList", &VirtualList_getObjectSize},
-			{"VirtualNode", &VirtualNode_getObjectSize},
-			{"AnimatedSprite", &AnimatedSprite_getObjectSize},
-			{"CharGroup", &CharGroup_getObjectSize},
-			{"Sprite", &Sprite_getObjectSize},
-			{"Texture", &Texture_getObjectSize},
+			{&Clock_getObjectSize, "Clock"},
+			{&State_getObjectSize, "State"},
+			{&StateMachine_getObjectSize, "StateMachine"},
+			{&Telegram_getObjectSize, "Telegram"},
+			{&VirtualList_getObjectSize, "VirtualList"},
+			{&VirtualNode_getObjectSize, "VirtualNode"},
+			{&AnimatedSprite_getObjectSize, "AnimatedSprite"},
+			{&CharGroup_getObjectSize, "CharGroup"},
+			{&Sprite_getObjectSize, "Sprite"},
+			{&Texture_getObjectSize, "Texture"},
 
 	};
 	
@@ -498,22 +498,22 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 
 	ClassSizeData classesSizeData[] = {
 			
-			{"Body", &Body_getObjectSize},
-			{"Circle", &Circle_getObjectSize},
-			{"Cuboid", &Cuboid_getObjectSize},
-			{"Mass", &Mass_getObjectSize},
-			{"Shape", &Shape_getObjectSize},
-			{"Polygon", &Polygon_getObjectSize},
-			{"Container", &Container_getObjectSize},
-			{"Entity", &Entity_getObjectSize},
-			{"InGameEntity", &InGameEntity_getObjectSize},
-			{"Anim. InGameEntity", &AnimatedInGameEntity_getObjectSize},
-			{"Inanim. InGameEntity", &InanimatedInGameEntity_getObjectSize},
-			{"Actor", &Actor_getObjectSize},
-			{"Image", &Image_getObjectSize},
-			{"ScrollBackg.", &ScrollBackground_getObjectSize},
-			{"GameState", &GameState_getObjectSize},
-			{"Stage", &GameState_getObjectSize},
+			{&Body_getObjectSize, "Body"},
+			{&Circle_getObjectSize, "Circle"},
+			{&Cuboid_getObjectSize, "Cuboid"},
+			{&Mass_getObjectSize, "Mass"},
+			{&Shape_getObjectSize, "Shape"},
+			{&Polygon_getObjectSize, "Polygon"},
+			{&Container_getObjectSize, "Container"},
+			{&Entity_getObjectSize, "Entity"},
+			{&InGameEntity_getObjectSize, "InGameEntity"},
+			{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
+			{&InanimatedInGameEntity_getObjectSize, "Inanim. InGameEntity"},
+			{&Actor_getObjectSize, "Actor"},
+			{&Image_getObjectSize, "Image"},
+			{&ScrollBackground_getObjectSize, "ScrollBackg."},
+			{&GameState_getObjectSize, "GameState"},
+			{&GameState_getObjectSize, "Stage"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");

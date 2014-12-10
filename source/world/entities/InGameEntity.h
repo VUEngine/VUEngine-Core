@@ -109,15 +109,15 @@ typedef struct InGameEntityDefinition{
 	// It has an Entity at the beggining
 	EntityDefinition entityDefinition;
 	
-	// object's size over the z axis
-	u8 deep;
-	
 	// gap for collision detection (to correct graphical collision with bgEntity's size)
 	// in pixels
 	Gap gap;
 
 	/* gameworld's character's type	*/
 	u16 inGameType;
+	
+	// object's size over the z axis
+	u8 deep;
 	
 	// flag to precalculte displacement on screen movement
 	// to reduce flickering
