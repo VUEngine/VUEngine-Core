@@ -266,7 +266,7 @@ void CharGroup_write(CharGroup this){
 			
 		default:
 
-			ASSERT(false, "CharGroup::copy: with no allocation type");
+			ASSERT(false, "CharGroup::write: with no allocation type");
 	}
 }
 

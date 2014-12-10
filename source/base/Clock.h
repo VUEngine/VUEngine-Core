@@ -63,14 +63,15 @@
 	/* time elapsed */															\
 	u32 miliSeconds;															\
 																				\
+	/* register */																\
+	u8 previousSecond;															\
+																				\
+	/* register */																\
+	u8 previousMinute;															\
+																				\
 	/* flag to pause the clock */												\
 	u8 paused;																	\
 																				\
-	/* register */																\
-	int previousSecond;															\
-																				\
-	/* register */																\
-	int previousMinute;															\
 
 // declare the virtual methods
 #define Clock_METHODS															\
@@ -116,13 +117,13 @@ void Clock_interrupt();
 void Clock_reset(Clock this);
 
 // retrieve clock's miliseconds
-int Clock_getMiliSeconds(Clock this);
+u32 Clock_getMiliSeconds(Clock this);
 
 // retrieve clock's minutes
-int Clock_getMinutes(Clock this);
+u8 Clock_getMinutes(Clock this);
 
 // retrieve clock's seconds
-int Clock_getSeconds(Clock this);
+u8 Clock_getSeconds(Clock this);
 
 // retrieve clock's total elapsed time in seconds
 u32 Clock_getTime(Clock this);

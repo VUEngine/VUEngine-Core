@@ -165,7 +165,7 @@ void Clock_update(Clock this, u32 ticks){
 		//calculate miliseconds
 		this->miliSeconds += ticks;
 		
-		int currentSecond = Clock_getSeconds(this);
+		u8 currentSecond = Clock_getSeconds(this);
 		
 		if(currentSecond != this->previousSecond){
 			
@@ -173,7 +173,7 @@ void Clock_update(Clock this, u32 ticks){
 
 			Object_fireEvent((Object)this, __EVENT_SECOND_CHANGED);
 			
-			int currentMinute = Clock_getMinutes(this);
+			u8 currentMinute = Clock_getMinutes(this);
 			
 			if(currentMinute != this->previousMinute){
 				
@@ -200,7 +200,7 @@ void Clock_reset(Clock this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve clock's miliseconds
-int Clock_getMiliSeconds(Clock this){
+u32 Clock_getMiliSeconds(Clock this){
 	
 	ASSERT(this, "Clock::getMiliSeconds: null this");
 	
@@ -209,20 +209,20 @@ int Clock_getMiliSeconds(Clock this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve clock's minutes
-int Clock_getMinutes(Clock this){
+u8 Clock_getMinutes(Clock this){
 	
 	ASSERT(this, "Clock::getMinutes: null this");
 
-	return this->miliSeconds / (1000 * 60);
+	return (u8)(this->miliSeconds / (1000 * 60));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //retrieve clock's seconds
-int Clock_getSeconds(Clock this){
+u8 Clock_getSeconds(Clock this){
 	
 	ASSERT(this, "Clock::getSeconds: null this");
 
-	return this->miliSeconds / 1000 ;
+	return (u8)(this->miliSeconds / 1000);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

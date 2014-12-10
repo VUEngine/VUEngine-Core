@@ -625,7 +625,7 @@ void Game_update(Game this){
 	// this makes obligatory to have a unified target frame rate for all
 	// of them
 	while(true){
-
+		
 		static int cycle = kLogic;
 
 		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;
