@@ -1,6 +1,14 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * 							  VBJAENGINE'S CONFIGURATION
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -115,8 +123,6 @@
 //seconds that must elapse to call rest state... in seconds (15 minutes)
 #define __REST_DELAY 		900
 
-
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -133,27 +139,26 @@
 #define __BLOCK_256B 		256
 #define __BLOCK_192B 		192
 #define __BLOCK_128B 		128
-#define __BLOCK_96B 		96
-#define __BLOCK_64B 		64
-#define __BLOCK_48B 		48
-#define __BLOCK_32B 		32
-#define __BLOCK_24B 		24		// Virtual nodes are 20 bytes long so a 32b block is too much
+#define __BLOCK_100B 		100		// Used by images
+#define __BLOCK_64B 		64		// Used mainly by Sprites
+#define __BLOCK_48B 		48		// Used mainly by Telegrams
+#define __BLOCK_32B 		32		// Used mainly by CharGroups
+#define __BLOCK_28B 		28		// Virtual nodes are 24 bytes long so a 32b block is too much
 #define __BLOCK_16B 		16
-
 #define __POOL_512B_SIZE 	(__BLOCK_512B * 0)
 #define __POOL_256B_SIZE 	(__BLOCK_256B * 0)
-#define __POOL_192B_SIZE 	(__BLOCK_192B * 8)
-#define __POOL_128B_SIZE 	(__BLOCK_128B * 16)
-#define __POOL_96B_SIZE 	(__BLOCK_96B * 64)
-#define __POOL_64B_SIZE 	(__BLOCK_64B * 128)
+#define __POOL_192B_SIZE 	(__BLOCK_192B * 10)
+#define __POOL_128B_SIZE 	(__BLOCK_128B * 24)
+#define __POOL_100B_SIZE 	(__BLOCK_100B * 64)
+#define __POOL_64B_SIZE 	(__BLOCK_64B * 32)
 #define __POOL_48B_SIZE 	(__BLOCK_48B * 16)
-#define __POOL_32B_SIZE 	(__BLOCK_32B * 128)
+#define __POOL_32B_SIZE 	(__BLOCK_32B * 64)
 
 #ifdef __DEBUG_TOOLS
-#define __POOL_24B_SIZE 	(__BLOCK_24B * 512)
+#define __POOL_28B_SIZE 	(__BLOCK_28B * 512)
 #define __POOL_16B_SIZE 	(__BLOCK_16B * 512)
 #else
-#define __POOL_24B_SIZE 	(__BLOCK_24B * 128)
+#define __POOL_28B_SIZE 	(__BLOCK_28B * 256)
 #define __POOL_16B_SIZE 	(__BLOCK_16B * 128)
 #endif
 
@@ -192,7 +197,6 @@
 // basically the number of WORLDS
 #define __TOTAL_LAYERS			31
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -211,15 +215,13 @@
 // printing area
 #define __PRINTING_BGMAP 				(__NUM_BGMAPS + 1)
 #define __PRINTING_BGMAP_X_OFFSET		0
-#define __PRINTING_BGMAP_Y_OFFSET		0
+#define __PRINTING_BGMAP_Y_OFFSET		5
 #define __PRINTING_BGMAP_Z_OFFSET		__ZZERO
 #define __PRINTABLE_BGMAP_AREA 			(64 * 28)
-
 
 #define __PALLET_MASK					0x0600
 #define __WORLD_LAYER_MASK				0x01F0
 #define __SEGMENT_MASK					0x000F
-
 
 #define __PALLET_MASK_DISP				0x09 /* 6 */
 #define __WORLD_LAYER_MASK_DISP			0x04 /* 1 */
@@ -249,7 +251,6 @@
  */
 #define __PARAM_SPACE_FACTOR		1
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -263,7 +264,6 @@
 // load pad must always be lower than unload pad!
 #define __ENTITY_LOAD_PAD 			25
 #define __ENTITY_UNLOAD_PAD 		30
-
 
 // how many entities forward/backward to poll for streaming
 #define __STREAMING_AMPLITUDE		5
@@ -344,7 +344,6 @@
 #define __BRTB					0x00
 #define __BRTC					0x00
 
-
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -353,8 +352,8 @@
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
+
 #define __EXCEPTION_COLUMN	1
 #define __EXCEPTION_LINE	0
-
 
 #endif /*CONFIG_H_*/

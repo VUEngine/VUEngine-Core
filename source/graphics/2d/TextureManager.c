@@ -316,12 +316,6 @@ void TextureManager_allocateText(TextureManager this, Texture texture){
 	//offset%/64->chars per row inside a bgmap
 	xDisplacement = (this->xOffset[this->freeBgmap][0]) % 64;
 	
-	//let free the upper chars to debug and quick text printing
-	//Texture_setYOffset(texture, 28 + yDisplacement);
-	
-	//calculate x displacement
-	//Texture_setXOffset(texture, xDisplacement);
-	
 	//set next ofsset entry to modify within the free bgmap segment
 	this->xOffset[this->freeBgmap][0] += length;
 

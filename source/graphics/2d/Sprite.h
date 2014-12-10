@@ -79,17 +79,26 @@
 	/* 3d world position */														\
 	DrawSpec drawSpec;															\
 																				\
-	/* head definition for world entry setup */									\
-	u16 head;																	\
+	/* location of texture in graphic memory */									\
+	Point texturePosition;														\
+																				\
+	/* texture's half width */													\
+	fix19_13 halfWidth;															\
+																				\
+	/* texture's half height */													\
+	fix19_13 halfHeight;														\
 																				\
 	/* param table offset */													\
 	u32 param;																	\
 																				\
+	/* head definition for world entry setup */									\
+	u16 head;																	\
+																				\
 	/* world layer where to render the texture */								\
-	u8 worldLayer;																\
+	u8 worldLayer: 5;															\
 																				\
 	/* raise to update the param table */										\
-	u8 updateParamTable;														\
+	u8 updateParamTable: 3;														\
 																				\
 	/* h-bias max amplitude */													\
 	/* int hbiasAmplitude; */													\
@@ -98,15 +107,6 @@
 	/* parallax modifier to achieve better */									\
 	/* control over display */													\
 	s8 parallaxDisplacement;													\
-																				\
-	/* location of texture in graphic memory */									\
-	Point texturePosition;														\
-																				\
-	/* texture's half width */													\
-	fix19_13 halfWidth;															\
-																				\
-	/* texture's half height */													\
-	fix19_13 halfHeight;															\
 								
 
 // declare a Sprite, which holds a texture and a drawing specification

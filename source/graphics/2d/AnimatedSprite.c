@@ -108,12 +108,6 @@ void AnimatedSprite_destructor(AnimatedSprite this){
 	
 	ASSERT(this, "AnimatedSprite::destructor: null this");
 
-	// first make sure the map's bgmap definition points to the
-	// beginnig of the bgmap's definition in ROM, otherwhise
-	// the BGTextureManager will not be able to remove it from its
-	// records
-	//Texture_setXOffset(this->texture, this->originalTextureXOffset);
-
 	// destroy the super object
 	__DESTROY_BASE(Sprite);	
 }

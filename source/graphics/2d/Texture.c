@@ -335,7 +335,7 @@ int Texture_getNumberOfChars(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get texture's y offset within bgmap mem
-int Texture_getYOffset(Texture this){
+u8 Texture_getYOffset(Texture this){
 	
 	ASSERT(this, "Texture::getYOffset: null this");
 
@@ -344,7 +344,7 @@ int Texture_getYOffset(Texture this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get texture's x offset within bgmap mem
-int Texture_getXOffset(Texture this){
+u8 Texture_getXOffset(Texture this){
 	
 	ASSERT(this, "Texture::getXOffset: null this");
 

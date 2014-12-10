@@ -181,8 +181,8 @@ typedef struct Optical{
 //define a 2d point
 typedef struct Point{
 	
-	int x;
-	int y;
+	s16 x;
+	s16 y;
 	
 }Point;
 /*

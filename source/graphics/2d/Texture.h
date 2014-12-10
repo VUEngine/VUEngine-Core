@@ -55,14 +55,14 @@
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
 																				\
-	/* texture's id */															\
-	u16 id;																		\
-																				\
 	/* char group to use int this texture */									\
 	CharGroup charGroup;														\
 																				\
 	/* pointer to ROM definition */												\
 	TextureROMDef* textureDefinition;											\
+																				\
+	/* texture's id */															\
+	u16 id;																		\
 																				\
 	/* color pallet */															\
 	u8 pallet: 2;																\
@@ -138,13 +138,10 @@ void Texture_writeHBiasMode(Texture this);
 int Texture_getNumberOfChars(Texture this);
 
 // get texture's y offset within bgmap mem
-int Texture_getYOffset(Texture this);
+u8 Texture_getYOffset(Texture this);
 
 // get texture's x offset within bgmap mem
-int Texture_getXOffset(Texture this);
-
-// set texture's x offset within bgmap mem
-int Texture_setXOffset(Texture this, int xOffset);
+u8 Texture_getXOffset(Texture this);
 
 // get texture's cols
 u8 Texture_getTotalCols(Texture this);
