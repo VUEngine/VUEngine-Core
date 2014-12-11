@@ -70,11 +70,10 @@
  */
  
 enum UpdateSubsystems{
-	kFirst = 0,
-	kLogic,
+	kLogic = 0,
 	kRender,
 	kPhysics,
-	kLast
+	kLastSubsystem
 };
 
 #define Game_ATTRIBUTES															\
@@ -113,7 +112,7 @@ enum UpdateSubsystems{
 	I18n i18n;																	\
 																				\
 	/* update time registry */													\
-	u32 lastTime[kLast];														\
+	u32 lastTime[kLastSubsystem];												\
 																				\
 	/* game's next state */														\
 	State nextState;															\
@@ -152,6 +151,15 @@ static void Game_setState(Game this, State state);
 
 // process input data according to the actual game status
 static void Game_handleInput(Game this);
+
+// update game's logic subsystem
+static void Game_updateLogic(Game this);
+
+// update game's physics subsystem
+static void Game_updatePhysics(Game this);
+
+// update game's rendering subsystem
+static void Game_updateRendering(Game this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -238,7 +246,7 @@ static void Game_constructor(Game this){
 	_optical = &this->optical;	
 
 	int i = 0; 
-	for (; i < kLogic + 1; i++) {
+	for (; i < kLastSubsystem; i++) {
 		
 		this->lastTime[i] = 0;
 	}
@@ -606,15 +614,106 @@ static void Game_handleInput(Game this){
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
 	}
 }
+
+#define __FPS_BASED_SECONDS		1000 / __TARGET_FPS
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// render game
-void Game_render(Game this) {
+// update game's logic subsystem
+static void Game_updateLogic(Game this){
 	
-	ASSERT(this, "Game::render: null this");
+#ifdef __DEBUG
+	this->lastProcessName = "handle input";
+#endif
+	// process user's input 
+	Game_handleInput(this);
+#ifdef __DEBUG
+	this->lastProcessName = "update state machines";
+#endif
+	// it is the update cycle
+	ASSERT(this->stateMachine, "Game::update: no state machine");
+	
+	// update the game's logic
+	StateMachine_update(this->stateMachine);
+#ifdef __DEBUG
+	this->lastProcessName = "dispatch delayed messages";
+#endif
+#ifdef __DEBUG_TOOLS
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __STAGE_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+	// dispatch queued messages
+    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+
+	// increase the frame rate
+	FrameRate_increaseLogicFPS(this->frameRate);
+
+#ifdef __DEBUG
+	this->lastProcessName = "kLogic ended";
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// update engine's world's state
+// update game's physics subsystem
+static void Game_updatePhysics(Game this){
+	
+#ifdef __DEBUG
+	this->lastProcessName = "update physics";
+#endif
+	// simulate physics
+	PhysicalWorld_update(this->physicalWorld);
+#ifdef __DEBUG
+	this->lastProcessName = "process collisions";
+#endif
+	// process collisions
+	CollisionManager_update(this->collisionManager);
+
+	// increase the frame rate
+	FrameRate_increasePhysicsFPS(this->frameRate);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// update game's rendering subsystem
+static void Game_updateRendering(Game this){
+
+#ifdef __DEBUG
+	this->lastProcessName = "apply transformations";
+#endif
+#ifdef __DEBUG_TOOLS
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __STAGE_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+	// apply world transformations
+	GameState_transform((GameState)StateMachine_getCurrentState(this->stateMachine));
+#ifdef __DEBUG
+	this->lastProcessName = "defragmenting";
+#endif
+	if(this->highFPS){
+		
+		CharSetManager_defragmentProgressively(this->charSetManager);
+	}
+#ifdef __DEBUG
+	this->lastProcessName = "render";
+#endif
+	
+	// render sprites
+	SpriteManager_render(this->spriteManager);
+	
+	// increase the frame rate
+	FrameRate_increaseRenderFPS(this->frameRate);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// update game's subsystems
 void Game_update(Game this){
 
 	ASSERT(this, "Game::update: null this");
@@ -624,134 +723,51 @@ void Game_update(Game this){
 	// don't allow all game's systems to be updated on the same cycle,
 	// this makes obligatory to have a unified target frame rate for all
 	// of them
+	typedef void(*SubSystems)(Game);
+	
+	SubSystems subSystems[] = {
+		
+			Game_updateLogic,
+			Game_updatePhysics,
+			Game_updateRendering
+	};
+	
+	u32 subSystem = kLogic;
+
 	while(true){
-		
-		static int cycle = kLogic;
 
+#ifdef __DEBUG
 		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;
-		
-		if(kLogic == cycle) {
-			
-			if(currentTime - this->lastTime[kLogic] > 1000 / __TARGET_FPS){
-	
-#ifdef __DEBUG
-				this->lastProcessName = "handle input";
-#endif
-				// process user's input 
-				Game_handleInput(this);
-#ifdef __DEBUG
-				this->lastProcessName = "update state machines";
-#endif
-				// it is the update cycle
-				ASSERT(this->stateMachine, "Game::update: no state machine");
+#else
+		currentTime = Clock_getTime(this->clock);
+#endif		
+		if(currentTime - this->lastTime[subSystem] > __FPS_BASED_SECONDS){
+
+			// check if new state available
+			if(this->nextState){
 				
-				// update the game's logic
-				StateMachine_update(this->stateMachine);
-#ifdef __DEBUG
-				this->lastProcessName = "dispatch delayed messages";
-#endif
-#ifdef __DEBUG_TOOLS
-				if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-				if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-				if(!Game_isInSpecialMode(this))
-#endif
-				// dispatch queued messages
-			    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
-	
-				// do some intensive tasks whenever fps are high
-				if(this->highFPS) {
-					
-					CharSetManager_defragmentProgressively(this->charSetManager);
-
-					this->highFPS = false;
-				}
-
-				// increase the frame rate
-				FrameRate_increaseLogicFPS(this->frameRate);
-	
-				// record time
-			    this->lastTime[kLogic] = currentTime;
-#ifdef __DEBUG
-				this->lastProcessName = "kLogic ended";
-#endif
+				Game_setState(this, this->nextState);
+				this->nextState = NULL;
 			}
-		}
-		else if(kPhysics == cycle) {
 
-			if(currentTime - this->lastTime[kPhysics] > 1000 / __TARGET_FPS){
-	
-#ifdef __DEBUG
-				this->lastProcessName = "update physics";
-#endif
-				// simulate physics
-				PhysicalWorld_update(this->physicalWorld);
-#ifdef __DEBUG
-				this->lastProcessName = "process collisions";
-#endif
-				// process collisions
-				CollisionManager_update(this->collisionManager);
-
-				// increase the frame rate
-				FrameRate_increasePhysicsFPS(this->frameRate);
-
-				// save time
-				this->lastTime[kPhysics] = currentTime;
-			}
-		}
-		else if(kRender == cycle) {
+			// update current sub system
+			subSystems[subSystem](this);
 			
-			if(currentTime - this->lastTime[kRender] > 1000 / __TARGET_FPS){
-	
-#ifdef __DEBUG
-				this->lastProcessName = "apply transformations";
-#endif
-#ifdef __DEBUG_TOOLS
-				if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-				if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-				if(!Game_isInSpecialMode(this))
-#endif
-				// apply world transformations
-				GameState_transform((GameState)StateMachine_getCurrentState(this->stateMachine));
-#ifdef __DEBUG
-				this->lastProcessName = "render";
-#endif
-				// render sprites
-				SpriteManager_render(this->spriteManager);
-
-				// save time
-				this->lastTime[kRender] = currentTime;
-				
-				// increase the frame rate
-				FrameRate_increaseRenderFPS(this->frameRate);
-			}
+			// record time
+		    this->lastTime[subSystem] = currentTime;
 		}
 
 		// increase cycle
-		if(kLast <= ++cycle) {
+		if(kLastSubsystem <= ++subSystem) {
 			
-			cycle = kFirst + 1;
+			subSystem = kLogic;
 		}
-		
-		// check if new state available
-		if(this->nextState){
-			
-			Game_setState(this, this->nextState);
-			this->nextState = NULL;
-		}
-		
+
 		FrameRate_increaseRawFPS(this->frameRate);
 		
 #ifdef __DEBUG
-		Printing_text("                               ", 20, 0);
-		Printing_text(this->lastProcessName, 20, 0);
+		Printing_text("                               ", 20, 1);
+		Printing_text(this->lastProcessName, 20, 1);
 #endif 
 	}
 }
@@ -765,11 +781,12 @@ int Game_handleMessage(Game this, Telegram telegram){
 
 	switch(Telegram_getMessage(telegram)) {
 	
-		case kFRSareHigh:
+		case kHighFPS:
 			
 			// since performance is good, do some cleaning up to 
 			// char memory
 			this->highFPS = true;
+			return true;
 			break;
 			
 			// TODO: bgmap memory defragmentation

@@ -198,14 +198,12 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	    	}
 #endif	    	
 
-	    	if(FrameRate_areFPSHigh(frameRate)) {
+	    	if(FrameRate_isFPSHigh(frameRate)) {
 	    		
-	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
+	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kHighFPS, NULL);
 	    	}
 
-    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kFRSareHigh, NULL);
-
-			//reset frame rate counters
+	    	//reset frame rate counters
 			FrameRate_reset(frameRate);		
     }	
     
@@ -215,8 +213,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     // Play sound effects 
     SoundManager_playFxSounds(SoundManager_getInstance());
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update clocks

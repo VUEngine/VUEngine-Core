@@ -48,6 +48,9 @@
 	/* Timer manager */															\
 	TimerManager timerManager;													\
 																				\
+	/* Clock manager */															\
+	ClockManager clockManager;													\
+																				\
 	/* VPU manager */															\
 	VPUManager vpuManager;														\
 																				\
@@ -74,6 +77,9 @@ extern u32 tim_vector;
 extern u32 cro_vector;
 extern u32 com_vector;
 extern u32 vpu_vector;
+
+static HardwareManager _hardwareManager = NULL;
+
 
 // class's constructor
 static void HardwareManager_constructor(HardwareManager this);
@@ -106,6 +112,9 @@ static void HardwareManager_constructor(HardwareManager this){
 	this->timerManager = TimerManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
+	this->clockManager = ClockManager_getInstance();
+	
+	_hardwareManager = this;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,23 +131,27 @@ void HardwareManager_destructor(HardwareManager this){
 // timer's interrupt handler
 void HardwareManager_timerInterruptHandler(){
 
+	ASSERT(_hardwareManager, "HardwareManager::timerInterruptHandler: null _hardwareManager");
+	TimerManager timerManager = _hardwareManager->timerManager;
+	ClockManager clockManager = _hardwareManager->clockManager;
+	
 	//disable interrupts
-	TimerManager_setInterrupt(TimerManager_getInstance(), false);
+	TimerManager_setInterrupt(timerManager, false);
 	
 	//disable timer
-	TimerManager_enable(TimerManager_getInstance(), false);
+//	TimerManager_enable(timerManager, false);
 	
 	// update clocks
-	ClockManager_update(ClockManager_getInstance(), __TIMER_RESOLUTION);
+	ClockManager_update(clockManager, __TIMER_RESOLUTION);
 	
     //clear timer state
-	TimerManager_clearStat(TimerManager_getInstance());
+	TimerManager_clearStat(timerManager);
 	
 	//enable timer
-	TimerManager_enable(TimerManager_getInstance(), true);
+//	TimerManager_enable(timerManager, true);
 	
 	// enable interrupts
-	TimerManager_setInterrupt(TimerManager_getInstance(), true);
+	TimerManager_setInterrupt(timerManager, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,32 +159,33 @@ void HardwareManager_timerInterruptHandler(){
 void HardwareManager_keypadInterruptHandler(void){
 
 	// broadcast keypad event
+	Printing_text("KYP interrupt", 48 - 13, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // cro's interrupt handler
 void HardwareManager_croInterruptHandler(void){   // Expantion Port Interupt Handler
 
+	Printing_text("EXP interrupt", 48 - 13, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // com's interrupt handler
 void HardwareManager_communicationInterruptHandler(void){   // Link Port Interrupt Handler
 
+	Printing_text("COM interrupt", 48 - 13, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // vpu's interrupt handler
-void HardwareManager_vpuInterruptHandler(void){   // Video Retrace Interrupt Handler
+void HardwareManager_vpuInterruptHandler(void){   
 
-	// disable interrupt
+	// don't use these interrupt, they introduce a strage
+	// behavior in the machine
 	VPUManager_disableInterrupt(VPUManager_getInstance());
-
-	// call game's rendering routine
-	Game_render(Game_getInstance());
 	
-	// enable interrupts
-	VPUManager_enableInterrupt(VPUManager_getInstance());
+	Printing_text("VPU interrupt", 48 - 13, 0);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +198,6 @@ void HardwareManager_setInterruptVectors(HardwareManager this){
 	com_vector = (u32)HardwareManager_communicationInterruptHandler;
 	vpu_vector = (u32)HardwareManager_vpuInterruptHandler;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set interruption level
@@ -317,9 +330,6 @@ void HardwareManager_enableRendering(HardwareManager this){
 
 	// turn on display
 	VPUManager_displayOn(this->vpuManager);
-
-	// enable interrupts
-	VPUManager_enableInterrupt(this->vpuManager);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

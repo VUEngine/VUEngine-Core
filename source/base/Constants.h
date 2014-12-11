@@ -68,7 +68,7 @@
 enum MessagesTypes{
 	
 	// general porpuse messages
-	kFRSareHigh = 0,
+	kHighFPS = 0,
 	
 	// graphic system's messages
 	kCharGroupRewritten,

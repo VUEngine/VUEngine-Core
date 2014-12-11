@@ -201,7 +201,7 @@ static void Debug_constructor(Debug this){
 	
 	this->gameState = NULL;
 
-	this->currentLayer = __TOTAL_LAYERS;
+	this->currentLayer = __TOTAL_LAYERS - 1;
 	this->currentBgmap = 0;
 	this->charSeg = 0;
 	
@@ -630,10 +630,10 @@ static void Debug_showDebugBgmap(Debug this){
 	}
 	
 	// write the head
-	WORLD_HEAD(__TOTAL_LAYERS, WRLD_ON | this->currentBgmap);
-	WORLD_MSET(__TOTAL_LAYERS, this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
-	WORLD_GSET(__TOTAL_LAYERS, 0, 3, 0);
-	WORLD_SIZE(__TOTAL_LAYERS, __SCREEN_WIDTH, __SCREEN_HEIGHT);
+	WORLD_HEAD(__TOTAL_LAYERS - 1, WRLD_ON | this->currentBgmap);
+	WORLD_MSET(__TOTAL_LAYERS - 1, this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
+	WORLD_GSET(__TOTAL_LAYERS - 1, 0, 3, 0);
+	WORLD_SIZE(__TOTAL_LAYERS - 1, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -688,7 +688,7 @@ static void Debug_showSpritesStatus(Debug this, int increment, int x, int y) {
 	VirtualList_pushBack(this->subPages, &Debug_spritesShowStatus);
 	this->currentSubPage = VirtualList_begin(this->subPages);
 	
-	this->currentLayer = __TOTAL_LAYERS + 1;
+	this->currentLayer = __TOTAL_LAYERS;
 
 	Debug_showSubPage(this, 0);
 }
@@ -698,12 +698,12 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y) {
 	
 	this->currentLayer -= increment;
 
-	if(this->currentLayer > __TOTAL_LAYERS + 1) {
+	if(this->currentLayer > __TOTAL_LAYERS) {
 
 		this->currentLayer = SpriteManager_getFreeLayer(SpriteManager_getInstance()) + 1;
 	}
 	
-	if(__TOTAL_LAYERS + 1 == this->currentLayer) {
+	if(__TOTAL_LAYERS == this->currentLayer) {
 
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		SpriteManager_print(SpriteManager_getInstance(), x, y);
@@ -717,7 +717,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y) {
 	}
 	else {
 		
-		this->currentLayer = __TOTAL_LAYERS + 1;
+		this->currentLayer = __TOTAL_LAYERS;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		SpriteManager_print(SpriteManager_getInstance(), x, y);
 		Debug_dimmGame(this);

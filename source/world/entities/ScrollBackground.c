@@ -32,6 +32,7 @@
 #include <Optics.h>
 #include <Shape.h>
 #include <Prototypes.h>
+#include <Game.h>
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -132,6 +133,15 @@ void ScrollBackground_initialTransform(ScrollBackground this, Transformation* en
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform){
 
 	ASSERT(this, "ScrollBackground::transform: null this");
+
+	// don't calling base class's transform method
+	// will improve performance 
+#ifdef __STAGE_EDITOR
+	if(Game_isInSpecialMode(Game_getInstance())){
+		
+		Entity_transform((Entity)this, environmentTransform);
+	}
+#endif
 
 	if(_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z){
 		

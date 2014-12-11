@@ -96,7 +96,7 @@ void FrameRate_increaseLogicFPS(FrameRate this);
 void FrameRate_increasePhysicsFPS(FrameRate this);
 
 // test if FPS are almost at their maximum
-int FrameRate_areFPSHigh(FrameRate this);
+int FrameRate_isFPSHigh(FrameRate this);
 
 // print fps
 void FrameRate_print(FrameRate this,int col,int row);
