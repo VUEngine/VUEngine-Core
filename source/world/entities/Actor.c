@@ -468,8 +468,6 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 
 	InGameEntity collidingEntity = NULL;
 	
-	const VBVec3D* gravity = PhysicalWorld_getGravity(PhysicalWorld_getInstance());
-	
 	// TODO: solve when more than one entity has been touched
 	for(; node; node = VirtualNode_getNext(node)) {
 
@@ -478,16 +476,13 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 
 		if(__XAXIS & axisOfCollision) {
 
-			if(!(gravity->x && ((__YAXIS & axisOfCollision) || (__ZAXIS & axisOfCollision)))){
-				
-				Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
-				this->lastCollidingEntity[kXAxis] = collidingEntity;
-			}
+			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
+			this->lastCollidingEntity[kXAxis] = collidingEntity;
 		}
 		
 		if(__YAXIS & axisOfCollision) {
 
-			if(!(gravity->y && ((__XAXIS & axisOfCollision) || (__ZAXIS & axisOfCollision)))){
+			if(!(__XAXIS & axisOfCollision)){
 			
 				Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
 				this->lastCollidingEntity[kYAxis] = collidingEntity;
@@ -496,11 +491,8 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 		
 		if(__ZAXIS & axisOfCollision) {
 
-			if(!(gravity->z && ((__XAXIS & axisOfCollision) || (__YAXIS & axisOfCollision)))){
-
-				Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
-				this->lastCollidingEntity[kZAxis] = collidingEntity;
-			}
+			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
+			this->lastCollidingEntity[kZAxis] = collidingEntity;
 		}
 	}
 

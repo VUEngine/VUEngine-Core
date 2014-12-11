@@ -284,7 +284,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		numberOfAxis = 0;
 		axisOfCollision = 0;
 
-		if(displacement.x && (abs(displacement.x) > abs(displacement.y) && abs(displacement.x) > abs(displacement.z))){
+		if(displacement.x) {
 
 			positionedRightCuboid.x0 += displacement.x;
 			positionedRightCuboid.x1 += displacement.x;
@@ -299,7 +299,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			positionedRightCuboid.x1 -= displacement.x;
 		}
 
-		if(displacement.y && (abs(displacement.y) > abs(displacement.x) && abs(displacement.y) > abs(displacement.z))){
+		if(displacement.y) {
 
 			positionedRightCuboid.y0 += displacement.y;
 			positionedRightCuboid.y1 += displacement.y;
@@ -315,7 +315,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			positionedRightCuboid.y1 -= displacement.y;
 		}
 		
-		if(displacement.z && (abs(displacement.z) > abs(displacement.x) && abs(displacement.z) > abs(displacement.y))){
+		if(displacement.z) {
 
 			positionedRightCuboid.z0 += displacement.z;
 			positionedRightCuboid.z1 += displacement.z;
@@ -349,18 +349,60 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	}while(0 == numberOfAxis && ++passes < 10);
 
-	/*
-#ifdef __DEBUG		
-	if(((__XAXIS & axisOfCollision) && (__YAXIS & axisOfCollision)) || 
-			((__XAXIS & axisOfCollision) && (__ZAXIS & axisOfCollision)) ||
-			((__YAXIS & axisOfCollision) && (__ZAXIS & axisOfCollision))
-	){
+	if(__XAXIS & axisOfCollision){
 
-		Printing_text("Cuboid: more than one axis for collision", 1, 5);
-		Printing_hex(axisOfCollision, 1, 6);
+		if(__YAXIS & axisOfCollision){
+
+			if(abs(displacement.x) > abs(displacement.y)) {
+			
+				axisOfCollision &= ~__XAXIS;
+			}
+		}
+		if(__ZAXIS & axisOfCollision){
+
+			if(abs(displacement.x) > abs(displacement.z)) {
+			
+				axisOfCollision &= ~__XAXIS;
+			}
+		}
 	}
-#endif
-*/
+	
+	if(__YAXIS & axisOfCollision){
+
+		if(__XAXIS & axisOfCollision){
+
+			if(abs(displacement.y) > abs(displacement.x)) {
+			
+				axisOfCollision &= ~__YAXIS;
+			}
+		}
+		if(__ZAXIS & axisOfCollision){
+
+			if(abs(displacement.y) > abs(displacement.z)) {
+			
+				axisOfCollision &= ~__YAXIS;
+			}
+		}
+	}
+	
+	if(__ZAXIS & axisOfCollision){
+
+		if(__XAXIS & axisOfCollision){
+
+			if(abs(displacement.z) > abs(displacement.x)) {
+			
+				axisOfCollision &= ~__ZAXIS;
+			}
+		}
+		if(__YAXIS & axisOfCollision){
+
+			if(abs(displacement.z) > abs(displacement.y)) {
+			
+				axisOfCollision &= ~__ZAXIS;
+			}
+		}
+	}	
+	
 	return axisOfCollision;
 }
 
