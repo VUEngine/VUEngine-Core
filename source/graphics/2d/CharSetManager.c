@@ -64,11 +64,14 @@
 	/* set whether a definition can be dropped or not */						\
 	u8 charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
 																				\
+	/* registered char groups */												\
+	VirtualList charGroups	;													\
+																				\
 	/* register every offset */													\
 	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];							\
 																				\
-	/* registered char groups */												\
-	VirtualList charGroups	;													\
+	/* defragmentation flag */													\
+	u8 needsDefrag;																\
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager);
@@ -120,6 +123,7 @@ static void CharSetManager_constructor(CharSetManager this){
 	__CONSTRUCT_BASE(Object);
 	
 	this->charGroups = NULL;
+	this->needsDefrag = false;
 	
 	CharSetManager_reset(this);
 }
@@ -168,6 +172,7 @@ void CharSetManager_reset(CharSetManager this){
 	}
 	
 	this->charGroups = __NEW(VirtualList);
+	this->needsDefrag = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,6 +227,8 @@ void CharSetManager_free(CharSetManager this, CharGroup charGroup){
 			
 			// free char definition record
 			this->charDefinition[i] = NULL;
+			
+			this->needsDefrag = true;
 		}
 	}
 }
@@ -540,7 +547,12 @@ static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 
 void CharSetManager_defragmentProgressively(CharSetManager this){
 
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
-
+	
+	if(!this->needsDefrag){
+		
+		return;
+	}
+	
 	int charSet = 0;
 	for(; charSet < __CHAR_SEGMENTS ; charSet++){
 		
@@ -603,4 +615,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this){
 			}
 		}
 	}
+	
+	this->needsDefrag = false;
+
 }

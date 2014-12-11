@@ -55,7 +55,7 @@
 	int freeLayer;																\
 																				\
 	/* flag controls END layer	*/												\
-	u8 needSorting;																\
+	u8 reverseRendering;																\
 																				\
 	/* sorting nodes	*/														\
 	VirtualNode node;															\
@@ -149,7 +149,7 @@ void SpriteManager_reset(SpriteManager this){
 	this->removedSprites = __NEW(VirtualList);
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
-	this->needSorting = false;
+	this->reverseRendering = false;
 	
 	this->node = NULL;
 	this->otherNode = NULL;
@@ -162,8 +162,6 @@ void SpriteManager_reset(SpriteManager this){
 void SpriteManager_spriteChangedPosition(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::spriteChangedPosition: null this");
-
-	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,14 +169,8 @@ void SpriteManager_spriteChangedPosition(SpriteManager this){
 void SpriteManager_sortLayers(SpriteManager this, int progressively){
 
 	ASSERT(this, "SpriteManager::sortLayers: null this");
-/*
-	if(!this->needSorting && progressively){
 
-		return;
-	}
-*/
 	this->node = progressively && this->node? this->otherNode? this->node: VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
-//	this->node = VirtualList_begin(this->sprites);
 
 	for(; this->node; this->node = VirtualNode_getNext(this->node)) {
 		
@@ -186,7 +178,6 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
 
 		this->otherNode = progressively && this->otherNode? VirtualNode_getNext(this->otherNode): VirtualNode_getNext(this->node);
-//		this->otherNode = VirtualNode_getNext(this->node);
 
 		for(; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode)) {
 
@@ -226,9 +217,6 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 			break;
 		}
 	}
-	
-//	this->needSorting = this->node? true: false;
-//	this->needSorting = true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +230,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
 	Sprite_setWorldLayer(sprite, layer);
 	SpriteManager_setLastLayer(this);
-	this->needSorting = true;
+	this->reverseRendering = true;
 	this->node = NULL;
 	this->otherNode = NULL;
 }
@@ -287,16 +275,17 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 	this->freeLayer = (__TOTAL_LAYERS - 1) - VirtualList_getSize(this->sprites);
 	this->freeLayer = 0 <= this->freeLayer? this->freeLayer: 1;
 	
-	//create an independant of software variable to point XPSTTS register
-	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-	//wait for screen to idle
-	while (*xpstts & XPBSYR);
 
 	Printing_render(this->freeLayer);
 
 	if(0 < this->freeLayer) {
 		
+		//create an independant of software variable to point XPSTTS register
+		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+		//wait for screen to idle
+		while (*xpstts & XPBSYR);
+
 		WORLD_HEAD((this->freeLayer - 1), WRLD_OFF);
 	
 	    WORLD_SIZE((this->freeLayer - 1), 0, 0);
@@ -314,12 +303,28 @@ void SpriteManager_render(SpriteManager this){
 	// sort sprites
 	SpriteManager_sortLayers(this, true);
 
-	VirtualNode node = VirtualList_end(this->sprites);
-	for(; node; node = VirtualNode_getPrevious(node)){
+	if(this->reverseRendering) {
+		
+		this->reverseRendering = false;
+		
+		VirtualNode node = VirtualList_begin(this->sprites);
+		
+		for(; node; node = VirtualNode_getNext(node)){
+	
+			//render sprite	
+			Sprite_render((Sprite)VirtualNode_getData(node));
+		}
+	}
+	else {
+		
+		VirtualNode node = VirtualList_end(this->sprites);
+		
+		for(; node; node = VirtualNode_getPrevious(node)){
 
-		//render sprite	
-		Sprite_render((Sprite)VirtualNode_getData(node));
-	}	
+			//render sprite	
+			Sprite_render((Sprite)VirtualNode_getData(node));
+		}	
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

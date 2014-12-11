@@ -133,9 +133,6 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 
 	ASSERT(this, "ScrollBackground::transform: null this");
 
-	// call base class's transform method
-	Entity_transform((Entity)this, environmentTransform);
-
 	if(_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z){
 		
 		ScrollBackground_updateScrolling(this);
@@ -149,7 +146,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	ASSERT(this, "ScrollBackground::updateScrolling: null this");
 
 	// TODO: add proper comments
-
+	// TODO: this needs serious improvements
 	DrawSpec drawSpec0 = {
 			{0, 0, this->transform.globalPosition.z},
 			{1, 1}

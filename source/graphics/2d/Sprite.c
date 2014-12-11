@@ -316,7 +316,7 @@ void Sprite_setRenderFlag(Sprite this, u8 renderFlag){
 	
 	ASSERT(this, "Sprite::setRenderFlag: null this");
 
-	// do not override it the whole world entry must be updated in the
+	// do not override the whole world entry, or will be updated in the
 	// next render
 	if(__UPDATE_HEAD != this->renderFlag || !renderFlag) {
 		

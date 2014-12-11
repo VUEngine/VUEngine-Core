@@ -662,6 +662,14 @@ void Game_update(Game this){
 				// dispatch queued messages
 			    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 	
+				// do some intensive tasks whenever fps are high
+				if(this->highFPS) {
+					
+					CharSetManager_defragmentProgressively(this->charSetManager);
+
+					this->highFPS = false;
+				}
+
 				// increase the frame rate
 				FrameRate_increaseLogicFPS(this->frameRate);
 	
@@ -684,8 +692,8 @@ void Game_update(Game this){
 #ifdef __DEBUG
 				this->lastProcessName = "process collisions";
 #endif
-				// simulate collisions and set streaming flag
-				GameState_setCanStream((GameState)StateMachine_getCurrentState(this->stateMachine), !CollisionManager_update(this->collisionManager));
+				// process collisions
+				CollisionManager_update(this->collisionManager);
 
 				// increase the frame rate
 				FrameRate_increasePhysicsFPS(this->frameRate);
@@ -739,14 +747,6 @@ void Game_update(Game this){
 			this->nextState = NULL;
 		}
 		
-		// do some intensive tasks whenever fps are high
-		if(this->highFPS) {
-			
-			CharSetManager_defragmentProgressively(this->charSetManager);
-
-			this->highFPS = false;
-		}
-
 		FrameRate_increaseRawFPS(this->frameRate);
 		
 #ifdef __DEBUG

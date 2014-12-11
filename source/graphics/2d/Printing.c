@@ -94,6 +94,12 @@ void Printing_loadFont(){
 //render general print output layer
 void Printing_render(int textLayer){
 	
+	//create an independant of software variable to point XPSTTS register
+	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+	//wait for screen to idle
+	while (*xpstts & XPBSYR);
+
 	//set the world's head
     WORLD_HEAD((textLayer), WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP));
     
