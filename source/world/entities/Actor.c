@@ -468,37 +468,43 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities){
 
 	InGameEntity collidingEntity = NULL;
 	
+	const VBVec3D* gravity = PhysicalWorld_getGravity(PhysicalWorld_getInstance());
+	
 	// TODO: solve when more than one entity has been touched
 	for(; node; node = VirtualNode_getNext(node)) {
 
 		collidingEntity = VirtualNode_getData(node);
 		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, __ARGUMENTS(collidingEntity, displacement));
 
-		if(axisOfCollision) {
-			
-			break;
-		}
-	}
-
-	if(axisOfCollision) {
-
 		if(__XAXIS & axisOfCollision) {
 
-			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
-			this->lastCollidingEntity[kXAxis] = collidingEntity;
+			if(!(gravity->x && ((__YAXIS & axisOfCollision) || (__ZAXIS & axisOfCollision)))){
+				
+				Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
+				this->lastCollidingEntity[kXAxis] = collidingEntity;
+			}
 		}
 		
 		if(__YAXIS & axisOfCollision) {
 
-			Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
-			this->lastCollidingEntity[kYAxis] = collidingEntity;
+			if(!(gravity->y && ((__XAXIS & axisOfCollision) || (__ZAXIS & axisOfCollision)))){
+			
+				Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
+				this->lastCollidingEntity[kYAxis] = collidingEntity;
+			}
 		}
 		
 		if(__ZAXIS & axisOfCollision) {
 
-			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
-			this->lastCollidingEntity[kZAxis] = collidingEntity;
+			if(!(gravity->z && ((__XAXIS & axisOfCollision) || (__YAXIS & axisOfCollision)))){
+
+				Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
+				this->lastCollidingEntity[kZAxis] = collidingEntity;
+			}
 		}
+	}
+
+	if(axisOfCollision) {
 
 		// bounce over axis
 		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
@@ -735,7 +741,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 			screenSize = __MAX_VIEW_DISTANCE;
 			break;			
 	}
-	
+
 	// decide to which side of the entity align myself
 	if(*myPositionAxis > *otherPositionAxis){
 
@@ -758,10 +764,13 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad){
 
 		// force position
 		Body_setPosition(this->body, &this->transform.localPosition, (Object)this);
-
-		// sync to body
-		Container_setLocalPosition((Container) this, Body_getPosition(this->body));
 	}
+	
+	Transformation transform = Container_getEnvironmentTransform((Container)this);
+	Actor_transform(this, &transform);
+	
+	__VIRTUAL_CALL(int, Shape, positione, this->shape);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -188,10 +188,8 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 	
 	ASSERT(this, "ParamTableManager::free: null this");
 
-	int i = 0;
 	u32 auxParam = 0;
 	u32 size = 0;
-	u32 param = Sprite_getParam(sprite);
 	
 	//calculate necesary space to allocate	
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row

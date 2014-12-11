@@ -114,6 +114,19 @@ void ScrollBackground_destructor(ScrollBackground this){
 	__DESTROY_BASE(Entity);
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// initial transform
+void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform){
+
+	ASSERT(this, "ScrollBackground::transform: null this");
+
+	// call base class's transform method
+	Entity_transform((Entity)this, environmentTransform);
+
+	ScrollBackground_updateScrolling(this);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transform class
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform){

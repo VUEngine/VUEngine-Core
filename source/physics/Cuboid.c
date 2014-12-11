@@ -284,7 +284,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		numberOfAxis = 0;
 		axisOfCollision = 0;
 
-		if(displacement.x) {
+		if(displacement.x && (abs(displacement.x) > abs(displacement.y) && abs(displacement.x) > abs(displacement.z))){
 
 			positionedRightCuboid.x0 += displacement.x;
 			positionedRightCuboid.x1 += displacement.x;
@@ -299,7 +299,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			positionedRightCuboid.x1 -= displacement.x;
 		}
 
-		if(displacement.y) {
+		if(displacement.y && (abs(displacement.y) > abs(displacement.x) && abs(displacement.y) > abs(displacement.z))){
 
 			positionedRightCuboid.y0 += displacement.y;
 			positionedRightCuboid.y1 += displacement.y;
@@ -315,7 +315,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			positionedRightCuboid.y1 -= displacement.y;
 		}
 		
-		if(displacement.z) {
+		if(displacement.z && (abs(displacement.z) > abs(displacement.x) && abs(displacement.z) > abs(displacement.y))){
 
 			positionedRightCuboid.z0 += displacement.z;
 			positionedRightCuboid.z1 += displacement.z;

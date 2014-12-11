@@ -450,7 +450,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer){
 
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
-	if(this->worldLayer != worldLayer){
+	if(this->worldLayer != worldLayer && 0 <= worldLayer){
 	
 		this->worldLayer = worldLayer;
 	

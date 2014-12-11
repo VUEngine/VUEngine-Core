@@ -124,7 +124,7 @@ void InGameEntity_setGap(InGameEntity this){
 	}
 	
 	// scale gap if needed
-	if(false && WRLD_AFFINE != bgmapMode){
+	if(WRLD_AFFINE != bgmapMode){
 	
 		// must scale the gap
 		this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));

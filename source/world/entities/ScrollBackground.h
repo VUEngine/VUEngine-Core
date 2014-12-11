@@ -48,6 +48,7 @@
 		Entity_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, ScrollBackground, isVisible);					\
 		__VIRTUAL_SET(ClassName, ScrollBackground, transform);					\
+		__VIRTUAL_SET(ClassName, ScrollBackground, initialTransform);			\
 		__VIRTUAL_SET(ClassName, ScrollBackground, updateSpritePosition);		\
 
 // A ScrollBackground which represent a generic object inside a Stage
@@ -93,6 +94,9 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 
 // class's destructor
 void ScrollBackground_destructor(ScrollBackground this);
+
+// initial transform
+void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform);
 
 // transform
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform);

@@ -47,8 +47,8 @@
 #undef __STREAMING_AMPLITUDE	
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
-#define __ENTITY_LOAD_PAD 			30
-#define __ENTITY_UNLOAD_PAD 		45
+#define __ENTITY_LOAD_PAD 			20
+#define __ENTITY_UNLOAD_PAD 		30
 
 #define __STREAMING_AMPLITUDE	5
 #define __STREAM_CYCLE	(__TARGET_FPS >> 1)
@@ -763,12 +763,15 @@ void Stage_stream(Stage this){
 	}
 	else if (__STREAM_LOAD_CYCLE_1 == load || __STREAM_LOAD_CYCLE_2 == load) {
 
+		int lastStreamingHeadDisplacement = this->streamingHeadDisplacement;
 		// give preference to x displacement, but fallback to other axis if no movement
 		this->streamingHeadDisplacement = 0 < _screenDisplacement->x? 1: 0 > _screenDisplacement->x? -1: 0;
 		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 0 < _screenDisplacement->y? 1: 0 > _screenDisplacement->y? -1: 0;
 		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 0 < _screenDisplacement->z? 1: 0 > _screenDisplacement->z? -1: 0;
-		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 1;
+		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: 0;
 		
+		this->streamingHeadDisplacement = this->streamingHeadDisplacement? this->streamingHeadDisplacement: lastStreamingHeadDisplacement;
+
 		// load visible objects	
 		Stage_loadEntities(this, true, true);
 	}	
@@ -780,8 +783,6 @@ void Stage_streamAll(Stage this) {
 
 	// must make sure there are not pending entities for removal
 	Stage_processRemovedEntities(this);
-	VBVec3D lastScreenDisplacement = Screen_getLastDisplacement(Screen_getInstance());
-	this->streamingHeadDisplacement = 0 <= lastScreenDisplacement.x? 1: -1;
 	Stage_unloadOutOfRangeEntities(this, false);
 	Stage_loadInRangeEntities(this);
 }

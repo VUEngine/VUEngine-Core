@@ -148,7 +148,7 @@ void SpriteManager_reset(SpriteManager this){
 	this->sprites = __NEW(VirtualList);
 	this->removedSprites = __NEW(VirtualList);
 
-	this->freeLayer = __TOTAL_LAYERS;
+	this->freeLayer = __TOTAL_LAYERS - 1;
 	this->needSorting = false;
 	
 	this->node = NULL;
@@ -212,13 +212,16 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 
 				this->node = this->otherNode;
 
-				if(progressively){
+				if(!progressively){
 					
+					// make sure sort is complete
+					this->node = VirtualList_begin(this->sprites);
 					break;
 				}
 			}
 		}	
-		if(progressively){
+		
+		if(progressively && !this->otherNode){
 
 			break;
 		}
@@ -235,9 +238,9 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
+	VirtualList_pushFront(this->sprites, sprite);
 	u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
 	Sprite_setWorldLayer(sprite, layer);
-	VirtualList_pushFront(this->sprites, sprite);
 	SpriteManager_setLastLayer(this);
 	this->needSorting = true;
 	this->node = NULL;
@@ -281,8 +284,8 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
-	this->freeLayer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
-	this->freeLayer = 0 < this->freeLayer? this->freeLayer: 1;
+	this->freeLayer = (__TOTAL_LAYERS - 1) - VirtualList_getSize(this->sprites);
+	this->freeLayer = 0 <= this->freeLayer? this->freeLayer: 1;
 	
 	//create an independant of software variable to point XPSTTS register
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
@@ -292,7 +295,7 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 
 	Printing_render(this->freeLayer);
 
-	if(1 < this->freeLayer) {
+	if(0 < this->freeLayer) {
 		
 		WORLD_HEAD((this->freeLayer - 1), WRLD_OFF);
 	
