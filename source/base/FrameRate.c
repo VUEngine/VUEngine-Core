@@ -46,6 +46,9 @@
 	/* raw frames per second */													\
 	u32 rawFPS;																	\
 																				\
+	/* raw frames per second */													\
+	u32 lastRawFPS;																\
+																				\
 	/* rendering frames per second */											\
 	u16 renderFPS;																\
 																				\
@@ -55,9 +58,6 @@
 	/* physics frames per second */												\
 	u16 physicsFPS;																\
 																				\
-	/* raw frames per second */													\
-	u32 lastRawFPS;																\
-																				\
 	/* rendering frames per second */											\
 	u16 lastRenderFPS;															\
 																				\
@@ -66,7 +66,6 @@
 																				\
 	/* physics frames per second */												\
 	u16 lastPhysicsFPS;															\
-
 
 // define the FrameRate
 __CLASS_DEFINITION(FrameRate);
@@ -190,7 +189,6 @@ void FrameRate_increaseRawFPS(FrameRate this){
 	
 	ASSERT(this, "FrameRate::increaseRawFPS: null this");
 
-	//Printing_int(this->rawFPS++, 30, 9);
 	this->rawFPS++;
 }
 
@@ -217,7 +215,7 @@ void FrameRate_increasePhysicsFPS(FrameRate this){
 int FrameRate_isFPSHigh(FrameRate this) {
 	
 	// TODO: change magic number
-	return 29000 < this->rawFPS && __MINIMUM_GOOD_FPS <= this->lastLogicFPS && __MINIMUM_GOOD_FPS <= this->lastPhysicsFPS;
+	return __MINIMUM_GOOD_FPS * 3 <= this->lastLogicFPS + this->lastPhysicsFPS + this->lastRenderFPS;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,14 +233,6 @@ void FrameRate_print(FrameRate this, int col, int row){
 	Printing_int(this->logicFPS, col + 8, row++);
 	Printing_text("Physics         ", col, row);
 	Printing_int(this->physicsFPS, col + 8, row++);
-	
-	
-	if(this->rawFPS >= this->lastRawFPS * 3/2) {
-		
-		Printing_text("Raw               ", 30, 10);
-		Printing_int(this->rawFPS, 34, 10);
-	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

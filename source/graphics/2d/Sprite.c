@@ -145,10 +145,6 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition){
 	// set the render flag
 	this->renderFlag = 0;
 		
-	// write the texture
-	//Texture_write(this);	
-	this->updateParamTable = true;
-	
 	// register with sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), this);
 }
@@ -328,7 +324,7 @@ void Sprite_setRenderFlag(Sprite this, u8 renderFlag){
 // show
 void Sprite_show(Sprite this){
 	
-	this->renderFlag |= __UPDATE_HEAD | __UPDATE_G | __UPDATE_M | __UPDATE_SIZE | __UPDATE_PARAM;
+	this->renderFlag = __UPDATE_HEAD;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -357,6 +353,32 @@ void Sprite_render(Sprite this){
 		
 		DrawSpec drawSpec = this->drawSpec;
 
+		//set the world screen position
+		if(this->renderFlag & __UPDATE_G ){
+
+			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
+		}
+		
+		if(this->renderFlag & __UPDATE_SIZE){
+
+			//set the world size according to the zoom
+			if(WRLD_AFFINE & this->head){
+
+				// now scale the texture
+				Sprite_scale(this);
+				
+				WORLD_SIZE(this->worldLayer, 
+						((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,						
+						((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));)	
+				
+				WORLD_PARAM(this->worldLayer, PARAM(this->param));				
+			}
+			else{
+				
+				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
+			}
+		}
+		
 		if(__UPDATE_HEAD == this->renderFlag){
 			
 			//create an independant of software variable to point XPSTTS register
@@ -371,53 +393,6 @@ void Sprite_render(Sprite this){
 			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
 		}
 		
-		//set the world screen position
-		if(this->renderFlag & __UPDATE_G ){
-
-			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
-		}
-		
-		//set the world size according to the zoom
-		if(WRLD_AFFINE & this->head){
-
-			// check if must update the param table
-			if(this->updateParamTable){
-
-				// now scale the texture
-				Sprite_scale(this);
-
-				// don't update on next render cycle
-				this->updateParamTable = false;
-			}
-			
-			if(this->renderFlag & __UPDATE_SIZE){
-		
-				WORLD_SIZE(this->worldLayer, 
-						((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,						
-						((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));)	
-
-			}
-			
-			//set the world paralax
-			if(this->renderFlag & __UPDATE_PARAM){
-				
-				WORLD_PARAM(this->worldLayer, PARAM(this->param));				
-			}
-		}
-		else{
-			
-			if(this->renderFlag & __UPDATE_SIZE){
-				
-				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
-			}
-			
-			if(this->renderFlag & __UPDATE_M){
-				
-				//set the world cuting bgmap memory point
-				WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
-			}
-		}
-
 		// make sure to not render again
 		this->renderFlag = false;
 	}
@@ -486,22 +461,12 @@ u16 Sprite_getMode(Sprite this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// retrieve param table flag
-u8 Sprite_updateParamTable(Sprite this){
-	
-	ASSERT(this, "Sprite::updateParamTable: null this");
-
-	return this->updateParamTable;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // force refresh param table in the next render
 void Sprite_invalidateParamTable(Sprite this){
 	
 	ASSERT(this, "Sprite::invalidateParamTable: null this");
 
-	this->updateParamTable = true;
-	this->renderFlag |= __UPDATE_SIZE | __UPDATE_PARAM;
+	this->renderFlag |= __UPDATE_SIZE;
 }
 
 

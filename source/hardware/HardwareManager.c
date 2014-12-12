@@ -48,9 +48,6 @@
 	/* Timer manager */															\
 	TimerManager timerManager;													\
 																				\
-	/* Clock manager */															\
-	ClockManager clockManager;													\
-																				\
 	/* VPU manager */															\
 	VPUManager vpuManager;														\
 																				\
@@ -79,6 +76,8 @@ extern u32 com_vector;
 extern u32 vpu_vector;
 
 static HardwareManager _hardwareManager = NULL;
+static TimerManager _timerManager;
+static ClockManager _clockManager;
 
 
 // class's constructor
@@ -112,9 +111,10 @@ static void HardwareManager_constructor(HardwareManager this){
 	this->timerManager = TimerManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
-	this->clockManager = ClockManager_getInstance();
-	
+
 	_hardwareManager = this;
+	_timerManager = TimerManager_getInstance();
+	_clockManager = ClockManager_getInstance();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,26 +132,15 @@ void HardwareManager_destructor(HardwareManager this){
 void HardwareManager_timerInterruptHandler(){
 
 	ASSERT(_hardwareManager, "HardwareManager::timerInterruptHandler: null _hardwareManager");
-	TimerManager timerManager = _hardwareManager->timerManager;
-	ClockManager clockManager = _hardwareManager->clockManager;
 	
 	//disable interrupts
-	TimerManager_setInterrupt(timerManager, false);
-	
-	//disable timer
-//	TimerManager_enable(timerManager, false);
+	TimerManager_setInterrupt(_timerManager, false);
 	
 	// update clocks
-	ClockManager_update(clockManager, __TIMER_RESOLUTION);
-	
-    //clear timer state
-	TimerManager_clearStat(timerManager);
-	
-	//enable timer
-//	TimerManager_enable(timerManager, true);
+	ClockManager_update(_clockManager, __TIMER_RESOLUTION);
 	
 	// enable interrupts
-	TimerManager_setInterrupt(timerManager, true);
+	TimerManager_setInterrupt(_timerManager, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

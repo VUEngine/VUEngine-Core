@@ -204,9 +204,12 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	    	}
 
 	    	//reset frame rate counters
-			FrameRate_reset(frameRate);		
+			FrameRate_reset(frameRate);
+			
+			// no need to track this, so prevent a very unlikely overflow
+	    	this->ticks = 0;
     }	
-    
+
     // Play background music 
     SoundManager_playBGM(SoundManager_getInstance());
     

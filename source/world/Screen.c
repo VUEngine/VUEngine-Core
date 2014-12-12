@@ -54,9 +54,6 @@
 	/* actor to center the screen around */										\
 	InGameEntity focusInGameEntity;												\
 																				\
-	/* world's screen's movement state */										\
-	MovementState movementState;												\
-																				\
 	/* world's screen's last displacement */									\
 	VBVec3D lastDisplacement;													\
 																				\
@@ -127,11 +124,6 @@ static void Screen_constructor(Screen this){
 			
 	// clear focus actor pointer
 	this->focusInGameEntity = NULL;
-	
-	//set world's screen's movement
-	this->movementState.x = __ACTIVE;
-	this->movementState.y = __ACTIVE;
-	this->movementState.z = __ACTIVE;
 
 	this->lastDisplacement.x = 0;
 	this->lastDisplacement.y = 0;
@@ -260,11 +252,6 @@ void Screen_move(Screen this, VBVec3D translation, int cap){
 	this->position.x += translation.x;
 	this->position.y += translation.y;
 	this->position.z += translation.z;
-	
-	//set world's screen's movement
-	this->movementState.x = __ACTIVE;
-	this->movementState.y = __ACTIVE;
-	this->movementState.z = __ACTIVE;
 	
 	if(cap){
 	

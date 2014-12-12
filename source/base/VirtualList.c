@@ -497,6 +497,8 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node){
 
 	ASSERT(this, "VirtualList::removeNode: null this");
 
+	CACHE_ENABLE;
+
 	//if node isn't null
 	if(node){
 
@@ -539,9 +541,13 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node){
 		//free dynamic memory
 		__DELETE(node);		
 
+		CACHE_DISABLE;
+
 		return true;		
 	}
-	
+
+	CACHE_DISABLE;
+
 	return false;
 }
 

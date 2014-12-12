@@ -19,11 +19,6 @@
  * ---------------------------------------------------------------------------------------------------------
  */
 
-//define some debug levels
-#define __DEBUG_0
-#undef __DEBUG_1
-#undef __DEBUG_2
-
 #define __DEBUG_TOOLS
 #define __PRINT_FRAMERATE
 

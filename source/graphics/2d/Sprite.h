@@ -95,10 +95,7 @@
 	u16 head;																	\
 																				\
 	/* world layer where to render the texture */								\
-	u8 worldLayer: 5;															\
-																				\
-	/* raise to update the param table */										\
-	u8 updateParamTable: 3;														\
+	u8 worldLayer;																\
 																				\
 	/* h-bias max amplitude */													\
 	/* int hbiasAmplitude; */													\
@@ -183,9 +180,6 @@ DrawSpec Sprite_getDrawSpec(Sprite this);
 
 //get map's render mode
 u16 Sprite_getMode(Sprite this);
-
-// retrieve param table flag
-u8 Sprite_updateParamTable(Sprite this);
 
 // force refresh param table in the next render
 void Sprite_invalidateParamTable(Sprite this);

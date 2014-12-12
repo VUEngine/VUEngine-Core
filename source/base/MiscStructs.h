@@ -101,21 +101,12 @@ typedef struct Force{
 	
 }Force;
 
-//spacial state vector
-typedef struct MovementState{
-	
-	int x: 2;
-	int y: 2;
-	int z: 2;
-	
-}MovementState;
-
 // movement type flag vector
 typedef struct MovementType{
 	
-	int x: 2;
-	int y: 2;
-	int z: 2;
+	s8 x: 2;
+	s8 y: 2;
+	s8 z: 2;
 	
 }MovementType;
 
@@ -156,12 +147,14 @@ typedef struct Direction{
 	int y: 2;
 	int z: 2;
 	
+	/*
 	//angle between vector and X axis
 	Angle alpha;
 	//angle between vector and Y axis
 	Angle betha;
 	//angle between vector and Z axis
 	Angle tetha;	
+	*/
 	
 }Direction;
 

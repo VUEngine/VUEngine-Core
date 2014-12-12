@@ -51,15 +51,15 @@
 	/* list of sprites to render */												\
 	VirtualList removedSprites;													\
 																				\
-	/* next world layer	*/														\
-	int freeLayer;																\
-																				\
-	/* flag controls END layer	*/												\
-	u8 reverseRendering;																\
-																				\
 	/* sorting nodes	*/														\
 	VirtualNode node;															\
 	VirtualNode otherNode;														\
+																				\
+	/* next world layer	*/														\
+	s8 freeLayer;																\
+																				\
+	/* flag controls END layer	*/												\
+	u8 reverseRendering;																\
 
 __CLASS_DEFINITION(SpriteManager);
 
@@ -170,6 +170,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 
 	ASSERT(this, "SpriteManager::sortLayers: null this");
 
+	CACHE_ENABLE;
 	this->node = progressively && this->node? this->otherNode? this->node: VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
 
 	for(; this->node; this->node = VirtualNode_getNext(this->node)) {
@@ -198,9 +199,6 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 				// swap array entries
 				VirtualNode_swapData(this->node, this->otherNode);
 				
-				Sprite_render(sprite);
-				Sprite_render(otherSprite);
-
 				this->node = this->otherNode;
 
 				if(!progressively){
@@ -217,6 +215,8 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively){
 			break;
 		}
 	}
+	
+	CACHE_DISABLE;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -224,13 +224,18 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite){
 	
 	ASSERT(this, "SpriteManager::addSprite: null this");
 
-	VPUManager_disableInterrupt(VPUManager_getInstance());
-
+	// add to the front: last element corresponde to the 31 WORLD
 	VirtualList_pushFront(this->sprites, sprite);
 	u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
 	Sprite_setWorldLayer(sprite, layer);
 	SpriteManager_setLastLayer(this);
+	
+	// render from the front of the list so the
+	// first object to be updated is the new one
 	this->reverseRendering = true;
+	
+	// this will force the sorting algoritm to take care
+	// first of the new sprite
 	this->node = NULL;
 	this->otherNode = NULL;
 }
@@ -240,8 +245,6 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
 	ASSERT(this, "SpriteManager::removeSprite: null this");
 
-	VPUManager_disableInterrupt(VPUManager_getInstance());
-	
 	VirtualNode node = VirtualList_find(this->sprites, sprite);
 
 	ASSERT(node, "SpriteManager::removeSprite: sprite not found");
@@ -250,20 +253,24 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 	
 		Sprite_hide(sprite);
 
-		VPUManager_disableInterrupt(VPUManager_getInstance());
 		node = VirtualNode_getPrevious(node);
 		VirtualList_removeElement(this->sprites, sprite);
 		
-		for(node = node? node: VirtualList_begin(this->sprites); node; node = VirtualNode_getPrevious(node)){
+		CACHE_ENABLE;
+		for(; node; node = VirtualNode_getPrevious(node)){
 			
 			Sprite previousSprite = (Sprite)VirtualNode_getData(node);
 			u8 layer = Sprite_getWorldLayer(previousSprite);
 			Sprite_setWorldLayer(previousSprite, layer + 1);
-			Sprite_render(previousSprite);
+			//Sprite_render(previousSprite);
+			this->reverseRendering = false;
 		}
+		CACHE_DISABLE;
+		
+		// force printing WORLD to be
+		// setup in the next rendering cycle
+		this->freeLayer = -1;
 	}
-	
-	SpriteManager_setLastLayer(this);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,7 +282,6 @@ static void SpriteManager_setLastLayer(SpriteManager this){
 	this->freeLayer = (__TOTAL_LAYERS - 1) - VirtualList_getSize(this->sprites);
 	this->freeLayer = 0 <= this->freeLayer? this->freeLayer: 1;
 	
-
 	Printing_render(this->freeLayer);
 
 	if(0 < this->freeLayer) {
@@ -303,6 +309,10 @@ void SpriteManager_render(SpriteManager this){
 	// sort sprites
 	SpriteManager_sortLayers(this, true);
 
+	// render from WORLD 31 to the lowes active one
+	// reverse this order when a new sprite was added
+	// to make effective its visual properties as quick as 
+	// possible
 	if(this->reverseRendering) {
 		
 		this->reverseRendering = false;
@@ -311,7 +321,6 @@ void SpriteManager_render(SpriteManager this){
 		
 		for(; node; node = VirtualNode_getNext(node)){
 	
-			//render sprite	
 			Sprite_render((Sprite)VirtualNode_getData(node));
 		}
 	}
@@ -321,9 +330,13 @@ void SpriteManager_render(SpriteManager this){
 		
 		for(; node; node = VirtualNode_getPrevious(node)){
 
-			//render sprite	
 			Sprite_render((Sprite)VirtualNode_getData(node));
 		}	
+	}
+	
+	if(0 > this->freeLayer){
+	
+		SpriteManager_setLastLayer(this);
 	}
 }
 
@@ -343,6 +356,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer) {
 	ASSERT(this, "SpriteManager::showLayer: null this");
 	
 	VirtualNode node = VirtualList_end(this->sprites);
+	
 	for(; node; node = VirtualNode_getPrevious(node)){
 
 		if(Sprite_getWorldLayer((Sprite)VirtualNode_getData(node)) != layer){

@@ -222,7 +222,7 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 		Sprite_setParam(auxSprite, auxParam - size);
 							
 		// and force render
-		Sprite_render(auxSprite);
+		//Sprite_render(auxSprite);
 	}
 }
 

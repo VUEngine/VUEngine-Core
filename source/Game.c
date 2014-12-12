@@ -63,19 +63,23 @@
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
+ * 											MACROS
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ */
+
+#define __NUMBER_OF_SUB_SYSTEMS		3
+
+/* ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
+ * ---------------------------------------------------------------------------------------------------------
  * 											CLASS'S DEFINITION
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
  */
  
-enum UpdateSubsystems{
-	kLogic = 0,
-	kRender,
-	kPhysics,
-	kLastSubsystem
-};
-
 #define Game_ATTRIBUTES															\
 																				\
 	/* super's attributes */													\
@@ -93,10 +97,6 @@ enum UpdateSubsystems{
 	/* optic values used in projection values */								\
 	Optical optical;															\
 																				\
-	/* flag to autopause or not the game*/ 										\
-	/* after 15 minutes of play */ 												\
-	int restFlag: 1;															\
-																				\
 	/* managers */																\
 	HardwareManager hardwareManager;											\
 	FrameRate frameRate;														\
@@ -111,14 +111,15 @@ enum UpdateSubsystems{
 	DirectDraw directDraw;														\
 	I18n i18n;																	\
 																				\
-	/* update time registry */													\
-	u32 lastTime[kLastSubsystem];												\
-																				\
 	/* game's next state */														\
 	State nextState;															\
 																				\
 	/* last process' name */													\
 	char* lastProcessName;														\
+																				\
+	/* flag to autopause or not the game*/ 										\
+	/* after 15 minutes of play */ 												\
+	u8 restFlag;																\
 																				\
 	/* high fps flag */															\
 	u8 highFPS;																	\
@@ -208,9 +209,9 @@ static void Game_constructor(Game this){
 	this->nextState = NULL;
 	
 	// make sure all managers are initialized now
+	this->frameRate  = FrameRate_getInstance();	
 	this->hardwareManager = HardwareManager_getInstance();
 	this->bgmapManager = TextureManager_getInstance();
-	this->frameRate  = FrameRate_getInstance();	
 	this->paramTableManager =  ParamTableManager_getInstance();
 	this->charSetManager = CharSetManager_getInstance();
 	this->soundManager = SoundManager_getInstance();
@@ -242,15 +243,9 @@ static void Game_constructor(Game this){
 	this->highFPS = false;
 	
 	// setup global pointers
-	// need them to speed up critical processes
+	// need globals to speed up critical processes
 	_optical = &this->optical;	
 
-	int i = 0; 
-	for (; i < kLastSubsystem; i++) {
-		
-		this->lastTime[i] = 0;
-	}
-	
 	// setup engine paramenters
 	Game_initialize(this);
 }
@@ -725,23 +720,32 @@ void Game_update(Game this){
 	// of them
 	typedef void(*SubSystems)(Game);
 	
+	// order is important: gives preference to physical simulations
 	SubSystems subSystems[] = {
 		
-			Game_updateLogic,
 			Game_updatePhysics,
-			Game_updateRendering
+			Game_updateRendering,
+			Game_updateLogic
 	};
 	
-	u32 subSystem = kLogic;
+	u32 lastSubSystemTime[] = {
+			
+			0,
+			0,
+			0
+	};
+	
+	u32 subSystem = 0;
 
 	while(true){
 
 #ifdef __DEBUG
-		currentTime = __CAP_FPS? Clock_getTime(this->clock): this->lastTime[kLogic] + 1001;
+		currentTime = __CAP_FPS? Clock_getTime(this->clock): lastSubSystemTime[kLogic] + 1001;
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
-		if(currentTime - this->lastTime[subSystem] > __FPS_BASED_SECONDS){
+
+		if(currentTime - lastSubSystemTime[subSystem] > __FPS_BASED_SECONDS){
 
 			// check if new state available
 			if(this->nextState){
@@ -752,15 +756,15 @@ void Game_update(Game this){
 
 			// update current sub system
 			subSystems[subSystem](this);
-			
+
 			// record time
-		    this->lastTime[subSystem] = currentTime;
+			lastSubSystemTime[subSystem] = currentTime;
 		}
 
 		// increase cycle
-		if(kLastSubsystem <= ++subSystem) {
+		if(__NUMBER_OF_SUB_SYSTEMS <= ++subSystem) {
 			
-			subSystem = kLogic;
+			subSystem = 0;
 		}
 
 		FrameRate_increaseRawFPS(this->frameRate);

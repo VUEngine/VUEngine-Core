@@ -617,6 +617,8 @@ static void Stage_unloadOutOfRangeEntities(Stage this){
 		return;
 	}
 	
+	CACHE_ENABLE;
+
 	// need a temporal list to remove and delete entities
 	VirtualNode node = 0 < this->streamingHeadDisplacement? VirtualList_begin(this->children): VirtualList_end(this->children);
 
@@ -675,7 +677,10 @@ static void Stage_unloadOutOfRangeEntities(Stage this){
 	
 		*modifierNode = auxNode? auxNode: *modifierNode;
 	}
+	
+	CACHE_DISABLE;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // execute stage's logic
 static void Stage_processRemovedEntities(Stage this){

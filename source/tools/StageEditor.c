@@ -823,7 +823,6 @@ static void StageEditor_printEntityPosition(StageEditor this){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static void StageEditor_applyTraslationToScreen(StageEditor this, VBVec3D translation){
 	
-	VPUManager_disableInterrupt(VPUManager_getInstance());
 	Screen_move(Screen_getInstance(), translation, true);
 	GameState_transform(this->gameState);
 	StageEditor_printScreenPosition(this);

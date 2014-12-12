@@ -46,7 +46,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/*  */																		\
-	u8 tcrValue;														\
+	u8 tcrValue;																\
 
 // define the TimerManager
 __CLASS_DEFINITION(TimerManager);

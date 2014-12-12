@@ -288,8 +288,8 @@ void SoundManager_playBGM(SoundManager this){
 			//initialize this->noteWait[0]
 			this->noteWait[0] = 0;
 			
-			//if note if greater than song's length
-			if(this->actualNote[0] > this->bgm[0][0]){
+			//if note is greater than song's length
+			if(this->actualNote[0] >= this->bgm[0][0]){
 				
 				//rewind song
 				this->actualNote[0] = 0;
@@ -297,7 +297,8 @@ void SoundManager_playBGM(SoundManager this){
 		}
 		
 		//if note has changed
-		if(!this->noteWait[0]){			
+		if(!this->noteWait[0]){	
+			
 			for(channel = 0, i = 0; channel < 2; channel++){
 				//stop sound on the current channel
 				/* There is a bug which makes the sound of 
