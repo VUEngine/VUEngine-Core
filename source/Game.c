@@ -719,37 +719,16 @@ void Game_update(Game this){
 	ASSERT(this, "Game::update: null this");
 
 	u32 currentTime = 0;
-
-	// don't allow all game's systems to be updated on the same cycle,
-	// this makes obligatory to have a unified target frame rate for all
-	// of them
-	typedef void(*SubSystems)(Game);
-	
-	// order is important: gives preference to physical simulations
-	SubSystems subSystems[] = {
-		
-			Game_updatePhysics,
-			Game_updateRendering,
-			Game_updateLogic
-	};
-	
-	u32 lastSubSystemTime[] = {
-			
-			0,
-			0,
-			0
-	};
-	
-	u32 subSystem = 0;
+	u32 lastSubSystemTime;
 
 	while(true){
 
 #ifdef __DEBUG
-		currentTime = __CAP_FPS? Clock_getTime(this->clock): lastSubSystemTime[kLogic] + 1001;
+		currentTime = __CAP_FPS? Clock_getTime(this->clock): lastSubSystemTime + 1001;
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
-		if(currentTime - lastSubSystemTime[subSystem] > __FPS_BASED_SECONDS){
+		if(currentTime - lastSubSystemTime > __FPS_BASED_SECONDS){
 
 			// check if new state available
 			if(this->nextState){
@@ -758,17 +737,12 @@ void Game_update(Game this){
 				this->nextState = NULL;
 			}
 
-			// update current sub system
-			subSystems[subSystem](this);
+			Game_updatePhysics(this);
+			Game_updateRendering(this);
+			Game_updateLogic(this);
 
 			// record time
-			lastSubSystemTime[subSystem] = currentTime;
-		}
-
-		// increase cycle
-		if(__NUMBER_OF_SUB_SYSTEMS <= ++subSystem) {
-			
-			subSystem = 0;
+			lastSubSystemTime = currentTime;
 		}
 
 		FrameRate_increaseRawFPS(this->frameRate);
