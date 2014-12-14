@@ -650,7 +650,7 @@ static void Game_updateLogic(Game this){
 	FrameRate_increaseLogicFPS(this->frameRate);
 
 #ifdef __DEBUG
-	this->lastProcessName = "kLogic ended";
+	this->lastProcessName = "logic ended";
 #endif
 }
 
@@ -671,12 +671,21 @@ static void Game_updatePhysics(Game this){
 
 	// increase the frame rate
 	FrameRate_increasePhysicsFPS(this->frameRate);
+#ifdef __DEBUG
+	this->lastProcessName = "physics ended";
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update game's rendering subsystem
 static void Game_updateRendering(Game this){
 
+#ifdef __DEBUG
+	this->lastProcessName = "move screen";
+#endif
+	// position the screen
+	Screen_positione(this->screen, true);
+	
 #ifdef __DEBUG
 	this->lastProcessName = "apply transformations";
 #endif
@@ -689,27 +698,27 @@ static void Game_updateRendering(Game this){
 #ifdef __ANIMATION_EDITOR
 	if(!Game_isInSpecialMode(this))
 #endif
-	// position the screen
-	Screen_positione(this->screen, true);
-
 	// apply world transformations
 	GameState_transform((GameState)StateMachine_getCurrentState(this->stateMachine));
-#ifdef __DEBUG
-	this->lastProcessName = "defragmenting";
-#endif
+
 	if(this->highFPS){
-		
+#ifdef __DEBUG
+		this->lastProcessName = "defragmenting";
+#endif
+		this->highFPS = false;
 		CharSetManager_defragmentProgressively(this->charSetManager);
 	}
 #ifdef __DEBUG
 	this->lastProcessName = "render";
 #endif
-	
 	// render sprites
 	SpriteManager_render(this->spriteManager);
 	
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
+#ifdef __DEBUG
+	this->lastProcessName = "render done";
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -719,7 +728,7 @@ void Game_update(Game this){
 	ASSERT(this, "Game::update: null this");
 
 	u32 currentTime = 0;
-	u32 lastSubSystemTime;
+	u32 lastSubSystemTime = 0;
 
 	while(true){
 
@@ -737,6 +746,7 @@ void Game_update(Game this){
 				this->nextState = NULL;
 			}
 
+			// update each subsystem
 			Game_updatePhysics(this);
 			Game_updateRendering(this);
 			Game_updateLogic(this);
