@@ -630,10 +630,10 @@ static void Debug_showDebugBgmap(Debug this){
 	}
 	
 	// write the head
-	WORLD_HEAD(__TOTAL_LAYERS - 1, WRLD_ON | this->currentBgmap);
-	WORLD_MSET(__TOTAL_LAYERS - 1, this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
-	WORLD_GSET(__TOTAL_LAYERS - 1, 0, 3, 0);
-	WORLD_SIZE(__TOTAL_LAYERS - 1, __SCREEN_WIDTH, __SCREEN_HEIGHT);
+	WORLD_HEAD((__TOTAL_LAYERS - 1), WRLD_ON | this->currentBgmap);
+	WORLD_MSET((__TOTAL_LAYERS - 1), this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
+	WORLD_GSET((__TOTAL_LAYERS - 1), 0, 3, 0);
+	WORLD_SIZE((__TOTAL_LAYERS - 1), __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

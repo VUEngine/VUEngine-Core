@@ -644,7 +644,7 @@ VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const vo
 
 	VirtualNode newNode = NULL;
 	
-	if(node == this->head){
+	if(node == this->tail){
 		
 		VirtualList_pushBack(this, data);
 		
@@ -685,9 +685,9 @@ VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const v
 	
 	if(node == this->head){
 		
-		VirtualList_pushBack(this, data);
+		VirtualList_pushFront(this, data);
 	
-		newNode = VirtualList_end(this);		
+		newNode = VirtualList_begin(this);		
 	}
 	else{
 		

@@ -75,7 +75,7 @@ __CLASS(ScrollBackground);
 typedef EntityDefinition ScrollBackgroundDefinition;
 
 // defines a Scrolling background in ROM memory
-typedef const ScrollBackgroundDefinition ScrollBackgroundROMDef;
+typedef const EntityDefinition ScrollBackgroundROMDef;
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------

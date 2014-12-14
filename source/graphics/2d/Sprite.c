@@ -272,7 +272,7 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 		// calculate sprite's parallax
 		Sprite_calculateParallax(this, this->drawSpec.position.z);
 
-		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
+		//SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
 
 	this->renderFlag |= __UPDATE_G;
@@ -353,6 +353,20 @@ void Sprite_render(Sprite this){
 		
 		DrawSpec drawSpec = this->drawSpec;
 
+		if(__UPDATE_HEAD == this->renderFlag){
+			
+			//create an independant of software variable to point XPSTTS register
+			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+			//wait for screen to idle	
+			while (*xpstts & XPBSYR);
+
+			// write the head
+			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
+
+			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
+		}
+
 		//set the world screen position
 		if(this->renderFlag & __UPDATE_G ){
 
@@ -377,20 +391,6 @@ void Sprite_render(Sprite this){
 				
 				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
 			}
-		}
-		
-		if(__UPDATE_HEAD == this->renderFlag){
-			
-			//create an independant of software variable to point XPSTTS register
-			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-			//wait for screen to idle	
-			while (*xpstts & XPBSYR);
-
-			// write the head
-			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
-
-			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
 		}
 		
 		// make sure to not render again

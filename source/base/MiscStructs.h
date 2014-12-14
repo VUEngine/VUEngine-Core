@@ -46,9 +46,9 @@ typedef struct Size{
 typedef struct VBVec3DReal{
 	
 	//FPS increases a lot in hardware with ints
-	int x;
-	int y;
-	int z;
+	float x;
+	float y;
+	float z;
 
 }VBVec3DReal;
 

@@ -113,9 +113,9 @@ void UI_addEntities(UI this, PositionedEntity* entities){
 		Container_addChild((Container)this, (Container)entity);
 
 		VBVec3D position = {
-				ITOFIX19_13(entities[i].position.x),
-				ITOFIX19_13(entities[i].position.y),
-				ITOFIX19_13(entities[i].position.z)
+				FTOFIX19_13(entities[i].position.x),
+				FTOFIX19_13(entities[i].position.y),
+				FTOFIX19_13(entities[i].position.z)
 		};
 
 		// set spatial position

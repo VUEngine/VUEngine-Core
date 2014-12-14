@@ -257,11 +257,12 @@
 
 // padd to determine if a character must be loaded/unloaded
 // load pad must always be lower than unload pad!
-#define __ENTITY_LOAD_PAD 			25
+#define __ENTITY_LOAD_PAD 			20
 #define __ENTITY_UNLOAD_PAD 		30
 
-// how many entities forward/backward to poll for streaming
-#define __STREAMING_AMPLITUDE		5
+// since there are 32 layers, that's the theoretical limit 
+// of entities to display
+#define __STREAMING_AMPLITUDE		32
 
 // number of sprites per entity
 #define __MAX_SPRITES_PER_ENTITY 	4

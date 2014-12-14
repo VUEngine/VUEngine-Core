@@ -66,6 +66,12 @@
 	/* the stage entities */ 													\
 	VirtualList stageEntities;													\
 																				\
+	/* the stage entities to test for streaming */ 								\
+	VirtualList stageEntitiesToTest;											\
+																				\
+	/* the stage entities to test for streaming */ 								\
+	VirtualList loadedStageEntities;											\
+																				\
 	/* the removed entities */ 													\
 	VirtualList removedEntities;												\
 																				\
@@ -75,13 +81,6 @@
 	/* flag to know if the stage must */										\
 	/* flush unused char groups */												\
 	int flushCharGroups;														\
-																				\
-	/* streaming related variables */											\
-	/* flush unused char groups */												\
-	int streamingAmplitude;														\
-	VirtualNode streamingLeftHead;												\
-	VirtualNode streamingRightHead;												\
-	int streamingHeadDisplacement;												\
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
