@@ -81,6 +81,9 @@
 	/* flag to know if the stage must */										\
 	/* flush unused char groups */												\
 	int flushCharGroups;														\
+																				\
+	/* focus entity: needed for streaming */									\
+	Entity focusEntity;															\
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);

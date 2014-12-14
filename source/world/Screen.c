@@ -145,7 +145,7 @@ void Screen_destructor(Screen this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // center world's screen in function of focus actor's position
-void Screen_positione(Screen this){
+void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving){
 
 	ASSERT(this, "Screen::update: null this");
 
@@ -162,8 +162,8 @@ void Screen_positione(Screen this){
 	//if focusInGameEntity is defined
 	if(this->focusInGameEntity){
 		
-		//get focusInGameEntity's movement state
-		if(__VIRTUAL_CALL(int, InGameEntity, isMoving, this->focusInGameEntity)){
+		//get focusInGameEntity is moving
+		if(__VIRTUAL_CALL(int, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving){
 
 			// save last position
 			this->lastDisplacement = this->position;
@@ -198,7 +198,7 @@ void Screen_positione(Screen this){
 		}
 		else{
 			
-			//stop world's screen's movement
+			// not moving
 			this->lastDisplacement.x = 0;
 			this->lastDisplacement.y = 0;
 			this->lastDisplacement.z = 0;
@@ -213,6 +213,9 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity){
 	ASSERT(this, "Screen::setFocusInGameEntity: null this");
 
 	this->focusInGameEntity = focusInGameEntity;
+	
+	// center around the focus entity now
+	Screen_positione(this, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -314,7 +317,7 @@ void Screen_setPosition(Screen this, VBVec3D position){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set screen's position displacement
-void Screen_setFocuesEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement){
+void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement){
 
 	ASSERT(this, "Screen::setPosition: null this");
 

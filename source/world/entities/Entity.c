@@ -61,6 +61,7 @@ extern VBVec3D* _screenDisplacement;
 // add sprite
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites);
 
+// set sprites' visual properties
 static void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition);
 
 /* ---------------------------------------------------------------------------------------------------------

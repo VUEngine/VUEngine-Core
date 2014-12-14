@@ -110,6 +110,7 @@
 	VPUManager vpuManager;														\
 	DirectDraw directDraw;														\
 	I18n i18n;																	\
+	Screen screen;																\
 																				\
 	/* game's next state */														\
 	State nextState;															\
@@ -221,6 +222,7 @@ static void Game_constructor(Game this){
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
+	this->screen = Screen_getInstance();
 	
 	// to make debugging easier
 	this->lastProcessName = "starting up";
@@ -687,6 +689,9 @@ static void Game_updateRendering(Game this){
 #ifdef __ANIMATION_EDITOR
 	if(!Game_isInSpecialMode(this))
 #endif
+	// position the screen
+	Screen_positione(this->screen, true);
+
 	// apply world transformations
 	GameState_transform((GameState)StateMachine_getCurrentState(this->stateMachine));
 #ifdef __DEBUG
@@ -744,7 +749,6 @@ void Game_update(Game this){
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
-
 		if(currentTime - lastSubSystemTime[subSystem] > __FPS_BASED_SECONDS){
 
 			// check if new state available

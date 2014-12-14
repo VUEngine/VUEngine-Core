@@ -140,11 +140,12 @@ static void Stage_constructor(Stage this){
 	this->stageEntitiesToTest = NULL;
 	this->loadedStageEntities = NULL;
 	this->removedEntities = __NEW(VirtualList);
-
+	
 	this->ui = NULL;
 	this->stageDefinition = NULL;
 	
 	this->flushCharGroups = true;
+	this->focusEntity = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,6 +259,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	
 	// load entities
 	Stage_loadInRangeEntities(this);
+	
+	// retrieve focus entity for streaming
+	this->focusEntity = (Entity)Screen_getFocusInGameEntity(Screen_getInstance());
 	
 	// setup ui
 	Stage_setupUI(this);
@@ -472,7 +476,6 @@ static void Stage_registerEntities(Stage this) {
 		u8 width = 0;
 		u8 height = 0;
 		
-		/*
 		int i = 0; 
 		for(; i < stageEntityDescription->positionedEntity->entityDefinition->numberOfSprites; i++) {
 			
@@ -494,7 +497,7 @@ static void Stage_registerEntities(Stage this) {
 				}
 			}
 		}
-*/
+
 		stageEntityDescription->distance = (stageEntityDescription->positionedEntity->position.x - (width >> 1)) * (stageEntityDescription->positionedEntity->position.x - (width >> 1)) + 
 		(stageEntityDescription->positionedEntity->position.y - (height >> 1)) * (stageEntityDescription->positionedEntity->position.y - (height >> 1)) +
 		stageEntityDescription->positionedEntity->position.z * stageEntityDescription->positionedEntity->position.z;
@@ -527,14 +530,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 	ASSERT(this, "Stage::loadEntities: null this");
 
-	Entity focusEntity = (Entity)Screen_getFocusInGameEntity(Screen_getInstance());
-	
-	if(!focusEntity) {
-		
-		return;
-	}
-	
-	VBVec3D focusEntityPosition = Container_getGlobalPosition((Container)focusEntity);
+	VBVec3D focusEntityPosition = Container_getGlobalPosition((Container)this->focusEntity);
 	focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
 	focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
 	focusEntityPosition.z = FIX19_13TOI(focusEntityPosition.z);
@@ -760,10 +756,14 @@ void Stage_stream(Stage this){
 			
 			Stage_processRemovedEntities(this);
 		}
-		else {
+		else if(this->focusEntity){
 			
 			// load visible objects	
 			Stage_loadEntities(this, true, true);
+		}
+		else {
+			
+			this->focusEntity = (Entity)Screen_getFocusInGameEntity(Screen_getInstance());
 		}
 	}	
 }

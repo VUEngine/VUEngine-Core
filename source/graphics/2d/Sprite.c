@@ -272,7 +272,7 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position){
 		// calculate sprite's parallax
 		Sprite_calculateParallax(this, this->drawSpec.position.z);
 
-		//SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
+		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
 
 	this->renderFlag |= __UPDATE_G;
@@ -353,20 +353,57 @@ void Sprite_render(Sprite this){
 		
 		DrawSpec drawSpec = this->drawSpec;
 
+		// if head is modified, render everything
 		if(__UPDATE_HEAD == this->renderFlag){
 			
+			// write param table before any other thing
+			if(WRLD_AFFINE & this->head){
+
+				// scale the sprite now
+				Sprite_scale(this);
+			}
+
+			// make sure it is not visible until everything is setup 
+			WORLD_SIZE(this->worldLayer, 0, 0);
+
 			//create an independant of software variable to point XPSTTS register
 			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 			//wait for screen to idle	
 			while (*xpstts & XPBSYR);
 
-			// write the head
+			// finally write the head
 			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
 
+			// set displacement in bgmap memory
 			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
-		}
 
+			// set the position
+			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
+
+			//set the world size according to the zoom
+			if(WRLD_AFFINE & this->head){
+
+				// first point to param table
+				WORLD_PARAM(this->worldLayer, PARAM(this->param));				
+
+				// set size
+				WORLD_SIZE(this->worldLayer, 
+						((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,						
+						((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));)	
+				
+			}
+			else{
+				
+				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
+			}
+
+
+			this->renderFlag = false;
+			
+			return;
+		}
+		
 		//set the world screen position
 		if(this->renderFlag & __UPDATE_G ){
 

@@ -83,7 +83,7 @@ Screen Screen_getInstance();
 void Screen_destructor(Screen this);
 
 // positione the screen
-void Screen_positione(Screen this);
+void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving);
 
 // set the focus entity
 // set the focus entity
@@ -105,7 +105,7 @@ VBVec3D Screen_getPosition(Screen this);
 void Screen_setPosition(Screen this, VBVec3D position);
 
 // set screen's position displacement
-void Screen_setFocuesEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement);
+void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement);
 
 // retrieve last displacement
 VBVec3D Screen_getLastDisplacement(Screen this);
