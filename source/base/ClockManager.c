@@ -174,34 +174,17 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
     		FrameRate frameRate = FrameRate_getInstance();
     		
 #ifdef __PRINT_FRAMERATE
-	    	if(!Game_isInSpecialMode(Game_getInstance())) {
-
-	    		int printFrameRate = false;
-	    		int y = 0;
+    		int printFrameRate = !Game_isInSpecialMode(Game_getInstance());
+    		int y = 0;
 #ifdef __DEBUG
-	    		Printing_text("DEBUG MODE", 0, 0);
-	    		y = 1;
+    		Printing_text("DEBUG MODE", 0, 0);
+    		y = 1;
 #endif 	    		
-#ifdef __DEBUG_TOOLS
-	    		printFrameRate = true;
-#endif	    		
-#ifdef __LEVEL_EDITOR
-	    		printFrameRate = true;
-#endif	    		
-#ifdef __ANIMATION_EDITOR
-	    		printFrameRate = true;
-#endif	    		
-		    	if(printFrameRate){
-		    		
-		    		FrameRate_print(frameRate, 0, y);
-		    	}
+	    	if(printFrameRate){
+	    		
+	    		FrameRate_print(frameRate, 0, y);
 	    	}
 #endif	    	
-
-	    	if(FrameRate_isFPSHigh(frameRate)) {
-	    		
-	    		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)Game_getInstance(), kHighFPS, NULL);
-	    	}
 
 	    	//reset frame rate counters
 			FrameRate_reset(frameRate);

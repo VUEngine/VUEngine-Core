@@ -202,7 +202,7 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // relocate sprites
-void ParamTableManager_processRemovedSprites(ParamTableManager this){
+int ParamTableManager_processRemovedSprites(ParamTableManager this){
 	
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 	/* for each sprite using param table space
@@ -246,9 +246,11 @@ void ParamTableManager_processRemovedSprites(ParamTableManager this){
 			VirtualList_removeElement(this->removedSpritesSizes, paramTableFreeData);
 
 			__DELETE_BASIC(paramTableFreeData);
-			break;
+			return true;
 		}
 	}
+	
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

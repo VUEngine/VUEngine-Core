@@ -121,9 +121,6 @@
 	/* flag to autopause or not the game*/ 										\
 	/* after 15 minutes of play */ 												\
 	u8 restFlag;																\
-																				\
-	/* high fps flag */															\
-	u8 highFPS;																	\
 
 __CLASS_DEFINITION(Game);
 
@@ -162,6 +159,9 @@ static void Game_updatePhysics(Game this);
 
 // update game's rendering subsystem
 static void Game_updateRendering(Game this);
+
+// do defragmentation, memory recovy, etc
+static void Game_cleanUp(Game this);
 
 /* ---------------------------------------------------------------------------------------------------------
  * ---------------------------------------------------------------------------------------------------------
@@ -241,8 +241,6 @@ static void Game_constructor(Game this){
 	
 	// screen's horizontal view point center
 	this->optical.horizontalViewPointCenter = 0;
-	
-	this->highFPS = false;
 	
 	// setup global pointers
 	// need globals to speed up critical processes
@@ -700,21 +698,6 @@ static void Game_updateRendering(Game this){
 #endif
 	// apply world transformations
 	GameState_transform((GameState)StateMachine_getCurrentState(this->stateMachine));
-
-	if(this->highFPS){
-#ifdef __DEBUG
-		this->lastProcessName = "defragmenting";
-#endif
-		this->highFPS = false;
-		CharSetManager_defragmentProgressively(this->charSetManager);
-	}
-#ifdef __DEBUG
-	this->lastProcessName = "update param table";
-#endif
-	if(FrameRate_isFPSHigh(this->frameRate)){
-	
-		ParamTableManager_processRemovedSprites(this->paramTableManager);
-	}
 #ifdef __DEBUG
 	this->lastProcessName = "render";
 #endif
@@ -729,6 +712,26 @@ static void Game_updateRendering(Game this){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// do defragmentation, memory recovy, etc
+static void Game_cleanUp(Game this) {
+	
+#ifdef __DEBUG
+	this->lastProcessName = "update param table";
+#endif
+
+	if(!ParamTableManager_processRemovedSprites(this->paramTableManager)){
+
+		#ifdef __DEBUG
+		this->lastProcessName = "defragmenting";
+#endif
+		CharSetManager_defragmentProgressively(this->charSetManager);
+		
+		// TODO: bgmap memory defragmentation
+	}
+	
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update game's subsystems
 void Game_update(Game this){
 
@@ -736,7 +739,8 @@ void Game_update(Game this){
 
 	u32 currentTime = 0;
 	u32 lastSubSystemTime = 0;
-
+	u32 cleanUpTime = 0;
+	
 	while(true){
 
 #ifdef __DEBUG
@@ -761,6 +765,15 @@ void Game_update(Game this){
 			// record time
 			lastSubSystemTime = currentTime;
 		}
+		// do some clean up at the half of the second, to don't interfere
+		// with the game' normal flow
+		else if(currentTime - cleanUpTime > __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate)) {
+
+			Game_cleanUp(this);
+
+			// record time
+			cleanUpTime = currentTime;
+		}
 
 		FrameRate_increaseRawFPS(this->frameRate);
 		
@@ -778,19 +791,6 @@ int Game_handleMessage(Game this, Telegram telegram){
 	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
 
-	switch(Telegram_getMessage(telegram)) {
-	
-		case kHighFPS:
-			
-			// since performance is good, do some cleaning up to 
-			// char memory
-			this->highFPS = true;
-			return true;
-			break;
-			
-			// TODO: bgmap memory defragmentation
-	}
-	
 	return StateMachine_handleMessage(this->stateMachine, telegram);
 }
 
