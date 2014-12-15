@@ -41,7 +41,7 @@ typedef struct Event
 	void (*method)(Object);
 	char name[__MAX_EVENT_NAME_LENGTH];
 
-}Event;
+} Event;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ void Object_destructor(Object this)
 		VirtualNode node = VirtualList_begin(this->events);
 
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
 
@@ -94,18 +94,16 @@ void Object_addEventListener(Object this, Object listener, void (*method)(Object
 	ASSERT(this, "Object::addEventListener: null this");
 
 	if (!listener || !method || !eventName)
-
-{
+	{
 		return;
 	}
 
 	if (NULL == this->events)
-
-{
+	{
 		this->events = __NEW(VirtualList);
 	}
 	else
-{
+	{
 		Object_removeEventListener(this, listener, method, eventName);
 	}
 
@@ -124,15 +122,15 @@ void Object_removeEventListener(Object this, Object listener, void (*method)(Obj
 	ASSERT(this, "Object::addEventListener: null this");
 
 	if (this->events)
-{
+	{
 		VirtualNode node = VirtualList_begin(this->events);
 
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			Event* event = (Event*)VirtualNode_getData(node);
 
 			if (listener == event->listener && method == event->method && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
-{
+			{
 				VirtualList_removeElement(this->events, event);
 
 				__DELETE_BASIC(event);
@@ -148,15 +146,15 @@ void Object_fireEvent(Object this,  char* eventName)
 	ASSERT(this, "Object::fireEvent: null this");
 
 	if (this->events)
-{
+	{
 		VirtualNode node = VirtualList_begin(this->events);
 
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			Event* event = (Event*)VirtualNode_getData(node);
 
 			if (!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
-{
+			{
 				event->method(event->listener);
 			}
 		}

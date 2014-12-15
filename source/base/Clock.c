@@ -145,7 +145,7 @@ void Clock_update(Clock this, u32 ticks)
 		u8 currentSecond = Clock_getSeconds(this);
 
 		if (currentSecond != this->previousSecond)
-{
+		{
 			this->previousSecond = currentSecond;
 
 			Object_fireEvent((Object)this, __EVENT_SECOND_CHANGED);
@@ -153,7 +153,7 @@ void Clock_update(Clock this, u32 ticks)
 			u8 currentMinute = Clock_getMinutes(this);
 
 			if (currentMinute != this->previousMinute)
-{
+			{
 				this->previousMinute = currentMinute;
 
 				Object_fireEvent((Object)this, __EVENT_MINUTE_CHANGED);
@@ -256,4 +256,3 @@ u8 Clock_isPaused(Clock this)
 
 	return this->paused;
 }
-

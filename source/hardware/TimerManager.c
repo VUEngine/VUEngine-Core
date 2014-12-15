@@ -54,7 +54,6 @@ static void TimerManager_constructor(TimerManager this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 __SINGLETON(TimerManager);
 
 // class's constructor

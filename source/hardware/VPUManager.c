@@ -78,7 +78,6 @@ static void VPUManager_constructor(VPUManager this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 __SINGLETON(VPUManager);
 
 // class's constructor

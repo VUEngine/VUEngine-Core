@@ -51,47 +51,21 @@ __CLASS(StateMachine);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(StateMachine, __PARAMETERS(void* owner));
 
-// allocate memory and call the constructor
 void StateMachine_constructor(StateMachine this, void* owner);
-
-// class's destructor
 void StateMachine_destructor(StateMachine this);
-
-// update state
 void StateMachine_update(StateMachine this);
-
-// change state
 void StateMachine_swapState(StateMachine this, State newState);
-
-// push a state in the stack
 void StateMachine_pushState(StateMachine this, State newState);
-
-// pop a state fromt the stack
 void StateMachine_popState(StateMachine this);
-
-// return to previous state
 void StateMachine_returnToPreviousState(StateMachine this);
-
-// change to a global state
 void StateMachine_changeToGlobal(StateMachine this, State globalState);
-
-// return to previous state
 int StateMachine_handleMessage(StateMachine this, Telegram telegram);
-
-// returns true if the current state's type is equal to the type of the
-// class passed as a parameter.
 int StateMachine_isInState(StateMachine this, State state);
-
-// set owner
 void StateMachine_setOwner(StateMachine this, void* owner);
-
-// retrieve current state
 State StateMachine_getCurrentState(StateMachine this);
-
-// retrieve previous state in the stack
 State StateMachine_getPreviousState(StateMachine this);
 
-#endif /*SCROLL_H_*/
+
+#endif

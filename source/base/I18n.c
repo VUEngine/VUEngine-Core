@@ -102,7 +102,7 @@ void I18n_registerLanguages(I18n this, char** languages[])
 {
 	u8 i;
     for (i = 0; i < sizeof(languages); i++)
-{
+	{
 		this->languages[this->languageCount++] = languages[i];
 	}
 }

@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // it is neccesary for the object to be aligned to 2 multiples
-#define __MEMORY_ALIGNEMENT	4
+#define __MEMORY_ALIGNMENT	4
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -68,7 +68,8 @@
 
 __CLASS_DEFINITION(MemoryPool);
 
-enum MemoryPoolSizes{
+enum MemoryPoolSizes
+{
 	ePoolSize = 0,
 	eBlockSize
 };
@@ -122,7 +123,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 	int displacementStep = 0;
 
 	// the first 4 bytes are for memory block usage flag
-	numBytes += __MEMORY_ALIGNEMENT;
+	numBytes += __MEMORY_ALIGNMENT;
 
 	// seach for the shortest pool which can hold the data
 	for (pool = __MEMORY_POOLS; pool-- && numBytes > this->poolSizes[pool][eBlockSize];);
@@ -145,7 +146,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 
 #ifdef __DEBUG
 	if (i >= numberOfOjects)
-{
+	{
 		Printing_clear();
 		MemoryPool_printMemUsage(this, 1, 4);
 		ASSERT(false, "MemoryPool::allocate: pool exhausted");
@@ -156,7 +157,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 	this->poolLocation[pool][displacement] = 0xFF;
 
 	// return designed address
-	return &this->poolLocation[pool][displacement + __MEMORY_ALIGNEMENT];
+	return &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT];
 };
 
 
@@ -173,14 +174,13 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	int displacement = 0;
 	int numberOfOjects = 0;
 
-	if (!object){
+	if (!object)
+	{
 		return;
 	}
 
 	// look for the pool containing the object
-	for (pool = 0;
-	    object >= &this->poolLocation[pool][0 + __MEMORY_ALIGNEMENT] && pool < __MEMORY_POOLS;
-	    pool++);
+	for (pool = 0; object >= &this->poolLocation[pool][0 + __MEMORY_ALIGNMENT] && pool < __MEMORY_POOLS; pool++);
 
 	// look for the registry in which the object is
 	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
@@ -193,10 +193,10 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 
 	// search for the pool in which it is allocated
 	for (i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
-{
+	{
 		// if the object has been found
-		if (object == &this->poolLocation[pool][displacement + __MEMORY_ALIGNEMENT])
-{
+		if (object == &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT])
+		{
 			// free the block
 			this->poolLocation[pool][displacement] = 0x00;
 
@@ -209,7 +209,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 
 #endif
 
-	object[-__MEMORY_ALIGNEMENT] = 0x00;
+	object[-__MEMORY_ALIGNMENT] = 0x00;
 }
 
 // clear all dynamic memory
@@ -272,10 +272,10 @@ static void MemoryPool_reset(MemoryPool this)
 
 	// clear all allocable objects usage
 	for (pool = 0; pool < __MEMORY_POOLS; pool++)
-{
+	{
 		//memset(this->poolSizes[pool], 0 , sizeof(this->poolSizes[pool]));
 		for (i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
-{
+		{
 			this->poolLocation[pool][i] = 0x00;
 		}
 	}
@@ -323,11 +323,11 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y)
 	Printing_text("Used", x + 14, y++);
 
 	for (pool = 0; pool < __MEMORY_POOLS; pool++)
-{
+	{
 		for (displacement = 0, i = 0, counter = 0 ; i < this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize]; i++, displacement += this->poolSizes[pool][eBlockSize])
-{
+		{
 			if (this->poolLocation[pool][displacement])
-{
+			{
 				counter++;
 			}
 		}

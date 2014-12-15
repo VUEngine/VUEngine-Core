@@ -76,7 +76,6 @@ static void HardwareManager_constructor(HardwareManager this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 __SINGLETON(HardwareManager);
 
 // class's constructor

@@ -49,16 +49,10 @@ __CLASS(MessageDispatcher);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 MessageDispatcher MessageDispatcher_getInstance();
-
-// dispatch a message between entities
 int MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
-
-// dispatch delayed messages
 void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
-
-// discard delayed messages
 void MessageDispatcher_discardDelayedMessages(MessageDispatcher this);
 
-#endif /*TEXTBOX_H_*/
+
+#endif

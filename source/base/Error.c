@@ -99,7 +99,7 @@ int Error_triggerException(Error this, char* string)
 
 	//print error message to screen
 	if (0 < y)
-{
+	{
 		Printing_text("                                             ", x, y - 1);
 	}
 
@@ -109,10 +109,9 @@ int Error_triggerException(Error this, char* string)
 	Printing_text(string, x, y + 2);
 
 	if (y < 26)
-{
+	{
 		Printing_text("                                             ", x, y + 3);
 	}
-
 
 	// error display message
 	Printing_render(SpriteManager_getFreeLayer(SpriteManager_getInstance()));
@@ -122,4 +121,3 @@ int Error_triggerException(Error this, char* string)
 
 	return false;
 }
-

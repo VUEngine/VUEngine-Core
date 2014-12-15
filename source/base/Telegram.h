@@ -44,29 +44,18 @@
 // declare a Telegram
 __CLASS(Telegram);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Telegram, __PARAMETERS(u32 delay, void* sender, void* receiver, int message, void* extraInfo));
 
-// class's destructor
 void Telegram_destructor(Telegram this);
-
-// retrieve sender
 void* Telegram_getSender(Telegram this);
-
-// retrieve receiver
 void* Telegram_getReceiver(Telegram this);
-
-// retrieve message
 int Telegram_getMessage(Telegram this);
-
-// retrieve extra info
 void* Telegram_getExtraInfo(Telegram this);
-
-// retrieve delay time
 u32 Telegram_getDelay(Telegram this);
 
-#endif /*TEXTBOX_H_*/
+#endif

@@ -66,7 +66,7 @@ typedef struct DelayedMessage
 	// pointer to the telegram to dispatch
 	Telegram telegram;
 
-}DelayedMessage;
+} DelayedMessage;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -103,16 +103,14 @@ static int MessageDispatcher_discharge(StateMachine receiver, Telegram telegram)
 }
 */
 
-
-int MessageDispatcher_dispatchMessage(u32 delay, Object sender,
-									Object receiver, int message, void* extraInfo)
+int MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
 {
 	//make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
 	ASSERT(receiver, "MessageDispatcher::dispatchMessage: null receiver");
 
 	if (0 >= delay)
-{
+	{
 		//create the telegram
 		Telegram telegram = __NEW(Telegram, __ARGUMENTS(0, sender, receiver, message, extraInfo));
 
@@ -123,7 +121,7 @@ int MessageDispatcher_dispatchMessage(u32 delay, Object sender,
 		return result;
 	}
 	else
-{
+	{
 		MessageDispatcher_dispatchDelayedMessage(MessageDispatcher_getInstance(), delay, sender, receiver, message, extraInfo);
 	}
 	return false;
@@ -153,20 +151,20 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 	ASSERT(this->delayedMessages, "MessageDispatcher::reset: null delayedMessages");
 
 	if (0 < VirtualList_getSize(this->delayedMessages))
-{
+	{
 		VirtualList telegramsToDispatch = __NEW(VirtualList);
 
 		VirtualNode node = VirtualList_begin(this->delayedMessages);
 
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 			Telegram telegram = delayedMessage->telegram;
 
 			ASSERT(__GET_CAST(Telegram, telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
 			if (Clock_getTime(Game_getClock(Game_getInstance())) > delayedMessage->timeOfArrival + Telegram_getDelay(telegram))
-{
+			{
 				VirtualList_pushFront(telegramsToDispatch, delayedMessage);
 			}
 		}
@@ -174,13 +172,13 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 		node = VirtualList_begin(telegramsToDispatch);
 
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 			Telegram telegram = delayedMessage->telegram;
 
 			// check if sender and receiver are still alive
 			if (Telegram_getSender(telegram) && Telegram_getReceiver(telegram))
-{
+			{
 				__VIRTUAL_CALL(int, Object, handleMessage, Telegram_getReceiver(telegram), __ARGUMENTS(telegram));
 			}
 		}
@@ -188,7 +186,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 		node = VirtualList_begin(telegramsToDispatch);
 
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 			Telegram telegram = delayedMessage->telegram;
 
@@ -210,7 +208,7 @@ void MessageDispatcher_discardDelayedMessages(MessageDispatcher this)
 	VirtualNode node = VirtualList_begin(this->delayedMessages);
 
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 		Telegram telegram = delayedMessage->telegram;
 

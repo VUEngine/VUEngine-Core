@@ -48,23 +48,12 @@ __CLASS(MemoryPool);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 MemoryPool MemoryPool_getInstance();
-
-// class's destructor
 void MemoryPool_destructor(MemoryPool this);
-
-// allocate memory for data
 void* MemoryPool_allocate(MemoryPool this, int numBytes);
-
-// free memory when an object is no longer used
-// remove an object from heap
 void MemoryPool_free(MemoryPool this, BYTE* object);
-
-// print dynamic memory usage
 void MemoryPool_printMemUsage(MemoryPool this, int x, int y);
-
-// print dynamic memory's block addresses
 void MemoryPool_printAddress(MemoryPool this, int x, int y);
 
-#endif /*MEMORY_POOL_H_*/
+
+#endif

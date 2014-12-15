@@ -35,7 +35,7 @@ typedef struct Size
 	u16 y;
 	u16 z;
 
-}Size;
+} Size;
 
 
 //spacial position
@@ -46,7 +46,7 @@ typedef struct VBVec3DReal
 	float y;
 	float z;
 
-}VBVec3DReal;
+} VBVec3DReal;
 
 //spacial position
 typedef struct VBVec3D
@@ -56,7 +56,7 @@ typedef struct VBVec3D
 	fix19_13 y;
 	fix19_13 z;
 
-}VBVec3D;
+} VBVec3D;
 
 typedef struct IntegralPosition
 {
@@ -65,7 +65,7 @@ typedef struct IntegralPosition
 	int y;
 	int z;
 
-}IntegralPosition;
+} IntegralPosition;
 
 //spacial movement vector
 typedef struct Velocity
@@ -76,7 +76,7 @@ typedef struct Velocity
 	fix19_13 z;
 	fix19_13 V;
 
-}Velocity;
+} Velocity;
 
 
 //spacial velocity variation vector
@@ -86,7 +86,7 @@ typedef struct Acceleration
 	fix19_13 y;
 	fix19_13 z;
 
-}Acceleration;
+} Acceleration;
 
 //spacial velocity variation vector
 typedef struct Force
@@ -95,7 +95,7 @@ typedef struct Force
 	fix19_13 y;
 	fix19_13 z;
 
-}Force;
+} Force;
 
 // movement type flag vector
 typedef struct MovementType
@@ -104,7 +104,7 @@ typedef struct MovementType
 	s8 y: 2;
 	s8 z: 2;
 
-}MovementType;
+} MovementType;
 
 // alignement flag vector
 typedef struct Alignement
@@ -113,7 +113,7 @@ typedef struct Alignement
 	u8 y;
 	u8 z;
 
-}Alignement;
+} Alignement;
 
 // alignement flag vector
 typedef struct GravitySensibleAxis
@@ -122,7 +122,7 @@ typedef struct GravitySensibleAxis
 	u8 y;
 	u8 z;
 
-}GravitySensibleAxis;
+} GravitySensibleAxis;
 
 typedef struct Angle
 {
@@ -133,10 +133,9 @@ typedef struct Angle
 	//fix7_9 sin;
 	//fix7_9 tan;
 
-}Angle;
+} Angle;
 
-
-//spacial direction vector
+// spacial direction vector
 typedef struct Direction
 {
 	int x: 2;
@@ -152,11 +151,9 @@ typedef struct Direction
 	Angle tetha;
 	*/
 
-}Direction;
+} Direction;
 
-
-
-//engine's optical values structure
+// engine's optical values structure
 typedef struct Optical
 {
 	fix19_13 distanceEyeScreen;
@@ -165,17 +162,17 @@ typedef struct Optical
 	fix19_13 verticalViewPointCenter;//vertical View point center
 	fix19_13 horizontalViewPointCenter;//horizontal View point center
 
-}Optical;
+} Optical;
 
-//define a 2d point
+// define a 2d point
 typedef struct Point
 {
 	s16 x;
 	s16 y;
 
-}Point;
+} Point;
 /*
-//define a vector
+// define a vector
 typedef struct Vector
 {
 	//vector's components
@@ -185,15 +182,15 @@ typedef struct Vector
 
 }Vector;
 */
-//scaling factor
+// scaling factor
 typedef struct Scale
 {
 	fix7_9 x;
 	fix7_9 y;
 
-}Scale;
+} Scale;
 
-//collision detection gap space
+// collision detection gap space
 typedef struct Gap
 {
 	int up:8;
@@ -201,7 +198,7 @@ typedef struct Gap
 	int left:8;
 	int right:8;
 
-}Gap;
+} Gap;
 
 /*
 // used to represent a screen position
@@ -210,7 +207,7 @@ typedef struct Vec2D
 	int x;
 	int y;
 
-}Vec2D;
+} Vec2D;
 */
 
 // used to represent a screen position with parallax info
@@ -224,7 +221,7 @@ typedef struct VBVec2D
 	fix19_13 z;
 	int parallax;
 
-}VBVec2D;
+} VBVec2D;
 
 // a spatial description
 typedef struct DrawSpec
@@ -235,7 +232,7 @@ typedef struct DrawSpec
 	// scale
 	Scale scale;
 
-}DrawSpec;
+} DrawSpec;
 
 // a spatial description
 typedef struct Transformation
@@ -251,7 +248,7 @@ typedef struct Transformation
 
 	// rotation
 	struct rotation
-{
+	{
 		// arount x axis
 		fix7_9 x;
 
@@ -261,8 +258,8 @@ typedef struct Transformation
 		// arount z axis
 		fix7_9 z;
 
-	}rotation;
+	} rotation;
 
-}Transformation;
+} Transformation;
 
-#endif /*MISCSTRUCTS_H_*/
+#endif

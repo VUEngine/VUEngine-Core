@@ -62,25 +62,13 @@ __CLASS(State);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-//class's constructor
 void State_constructor(State this);
-
-//class's destructor
 void State_destructor(State this);
-
-// state's enter
 void State_enter(State this, void* owner);
-
-// state's execute
 void State_execute(State this, void* owner);
-
-// state's exit
 void State_exit(State this, void* owner);
-
-// state's pause
 void State_pause(State this, void* owner);
-
-// state's resume
 void State_resume(State this, void* owner);
 
-#endif /*STATE_H_*/
+
+#endif

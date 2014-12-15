@@ -57,7 +57,6 @@ static void KeypadManager_constructor(KeypadManager this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 __SINGLETON(KeypadManager);
 
 // class's constructor

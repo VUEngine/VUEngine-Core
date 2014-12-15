@@ -33,7 +33,6 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-
 // declare the virtual methods
 #define FrameRate_METHODS														\
 		Object_METHODS															\
@@ -49,46 +48,20 @@ __CLASS(FrameRate);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 FrameRate FrameRate_getInstance();
-
-// class's destructor
 void FrameRate_destructor(FrameRate this);
-
-// reset internal values
 void FrameRate_reset(FrameRate this);
-
-// retrieve raw FPS
 u32 FrameRate_getRawFPS(FrameRate this);
-
-// retrieve render FPS
 u16 FrameRate_getRenderFPS(FrameRate this);
-
-// retrieve raw logic FPS
 u16 FrameRate_getLogicFPS(FrameRate this);
-
-// retrieve raw logic FPS
 u16 FrameRate_getPhysicsFPS(FrameRate this);
-
-// increase the update fps count
 void FrameRate_increaseRenderFPS(FrameRate this);
-
-// increase the update raw fps count
 void FrameRate_increaseRawFPS(FrameRate this);
-
-// increase the update raw fps count
 void FrameRate_increaseLogicFPS(FrameRate this);
-
-// increase the update raw fps count
 void FrameRate_increasePhysicsFPS(FrameRate this);
-
-// test if FPS are almost at their maximum
 int FrameRate_isFPSHigh(FrameRate this);
-
-// print fps
 void FrameRate_print(FrameRate this,int col,int row);
-
-// print renderFPS
 void FrameRate_printLastRecord(FrameRate this, int col, int row);
 
-#endif /*FRAMERATE_H_*/
+
+#endif

@@ -69,7 +69,6 @@ Shape Entity_getShape(Entity this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 __SINGLETON(CollisionManager);
 
 // class's constructor

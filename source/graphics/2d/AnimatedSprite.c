@@ -116,8 +116,9 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this)
 
 	// write according to the allocation type
 	switch (CharGroup_getAllocationType(Texture_getCharGroup(this->texture)))
-{
+	{
 		case __ANIMATED:
+
 			{
 				CharGroup charGroup = Texture_getCharGroup(this->texture);
 

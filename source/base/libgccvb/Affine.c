@@ -56,7 +56,6 @@ typedef struct PDx_ST
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-
 void Affine_setAll(u16 param, PDx_ST * pdx, s16 max)
 {
 	s16 i;

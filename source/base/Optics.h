@@ -50,7 +50,6 @@ inline extern  int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 
 	fix19_13 leftEjeGx, rightEjeGx;
 
-
 	//set map position and parallax
 	leftEyePoint = _optical->horizontalViewPointCenter - (_optical->baseDistance >> 1);
 
@@ -65,35 +64,17 @@ inline extern  int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 // project a 3d point to 2d space
 inline extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* const position3D)
 {
-	position2D->x = position3D->x +
-						(
-						     FIX19_13_MULT(
-						                     _optical->horizontalViewPointCenter - position3D->x,
-						                     position3D->z
-						                  )
-						     >> __MAX_VIEW_DISTANCE_POW
-						 );
-
-	position2D->y = position3D->y -
-						(
-						      FIX19_13_MULT(
-						    		           position3D->y - _optical->verticalViewPointCenter,
-						    		           position3D->z
-						    		       )
-						      >> __MAX_VIEW_DISTANCE_POW
-						);
-
+	position2D->x = position3D->x + (FIX19_13_MULT(_optical->horizontalViewPointCenter - position3D->x, position3D->z) >> __MAX_VIEW_DISTANCE_POW);
+	position2D->y = position3D->y - (FIX19_13_MULT(position3D->y - _optical->verticalViewPointCenter, position3D->z) >> __MAX_VIEW_DISTANCE_POW);
 }
 
 //normalize a point to the screen's current position
 inline extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D)
 {
 	VBVec3D position =
-{
+	{
 		position3D->x - _screenPosition->x,
-
 		position3D->y - _screenPosition->y,
-
 		position3D->z - (_screenPosition->z - __ZZERO)
 	};
 
@@ -104,7 +85,7 @@ inline extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D)
 inline extern u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
 {
 	if (WRLD_AFFINE != mapMode)
-{
+	{
 		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13((int)magnitude), FIX7_9TOFIX19_13(scale)));
 	}
 
@@ -130,7 +111,7 @@ inline extern int Optics_isVisible(VBVec3D position3D, u16 width, u16 height, in
 
 	// check x visibility
 	if (FIX19_13TOI(position2D.x) + width < lowLimit || FIX19_13TOI(position2D.x) - width > highLimit)
-{
+	{
 		return false;
 	}
 
@@ -139,7 +120,7 @@ inline extern int Optics_isVisible(VBVec3D position3D, u16 width, u16 height, in
 
 	// check y visibility
 	if (FIX19_13TOI(position2D.y) + height < lowLimit || FIX19_13TOI(position2D.y) - height > highLimit)
-{
+	{
 		return false;
 	}
 
@@ -152,9 +133,9 @@ inline extern int vbjInsideGame(VBVec3D position3D, int width, int height)
 {
 	/*
 	if (!vbjOutsideGame(position3D, width, height))
-{
+	{
 		if (!vbjIsVisible(position3D, width, height, 50))
-{
+		{
 			return true;
 		}
 
@@ -171,4 +152,4 @@ inline extern int Optics_lengthSquared3D(VBVec3D vect1, VBVec3D vect2)
 			FIX19_13_MULT((vect1.z - vect2.z), (vect1.z - vect2.z)));
 }
 
-#endif 
+#endif

@@ -14,4 +14,4 @@
 #include <Prototypes.h>
 
 
-#endif /*LIBVBJAE_H_*/
+#endif

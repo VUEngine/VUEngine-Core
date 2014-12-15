@@ -65,26 +65,17 @@
 // the root class for everything else!!
 __CLASS(Object);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 void Object_constructor(Object this);
-
-// class's destructor
 void Object_destructor(Object this);
-
-// on message
 int Object_handleMessage(Object this, void* owner, void* telegram);
-
-// register an event listener
 void Object_addEventListener(Object this, Object listener, void (*method)(Object), char* eventName);
-
-// remove an event listener
 void Object_removeEventListener(Object this, Object listener, void (*method)(Object), char* eventName);
-
-// fire event
 void Object_fireEvent(Object this, char* eventName);
 
-#endif /* OBJECT_H_ */
+
+#endif

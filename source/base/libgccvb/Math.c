@@ -30,7 +30,6 @@
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-
 // retrieve the square root
 // this code was taken from the Doom's engine
 float Math_squareRoot(float number)

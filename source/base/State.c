@@ -86,4 +86,3 @@ void State_resume(State this, void* owner)
 {
 	ASSERT(this, "State::resume: null this");
 }
-

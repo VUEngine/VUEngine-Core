@@ -22,7 +22,6 @@
 #define I18N_H_
 
 
-
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -35,7 +34,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define I18n_METHODS																					\
+#define I18n_METHODS															\
 		Object_METHODS															\
 
 // declare the virtual methods which are redefined
@@ -50,17 +49,13 @@ __CLASS(I18n);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 I18n I18n_getInstance();
 
-// class's destructor
 void I18n_destructor(I18n this);
-
-// class's methods
 char* I18n_getText(I18n this, int string);
 void I18n_setLanguage(I18n this, int lang);
 void I18n_registerLanguage(I18n this, char* language[]);
 void I18n_registerLanguages(I18n this, char** languages[]);
 
 
-#endif /*I18N_H_*/
+#endif

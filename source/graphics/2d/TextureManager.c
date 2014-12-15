@@ -84,7 +84,6 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 __SINGLETON(TextureManager);
 
 // class's constructor
