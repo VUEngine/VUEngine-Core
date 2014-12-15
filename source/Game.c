@@ -611,7 +611,7 @@ static void Game_handleInput(Game this){
 	}
 }
 
-#define __FPS_BASED_SECONDS		(int)(__TIMER_RESOLUTION * 1000 / __TARGET_FPS) 
+#define __FPS_BASED_SECONDS		(int)(1000 / __TARGET_FPS) 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update game's logic subsystem
@@ -749,7 +749,7 @@ void Game_update(Game this){
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
-		if(currentTime - lastSubSystemTime > __FPS_BASED_SECONDS){
+		if(currentTime - lastSubSystemTime >= __FPS_BASED_SECONDS){
 
 			// check if new state available
 			if(this->nextState){
@@ -768,7 +768,7 @@ void Game_update(Game this){
 		}
 		// do some clean up at the half of the second, to don't interfere
 		// with the game' normal flow
-		else if(currentTime - cleanUpTime > __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate)) {
+		else if(currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate)) {
 
 			Game_cleanUp(this);
 
