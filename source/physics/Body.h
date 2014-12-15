@@ -94,95 +94,37 @@ __CLASS(Body);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Body, __PARAMETERS(Object owner, fix19_13 weight));
 
-// class's destructor
 void Body_destructor(Body this);
-
-// set game entity
 void Body_setOwner(Body this, Object owner);
-
-// get game entity
 Object Body_getOwner(Body this);
-
-// update
 void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
-
-// retrieve last displacement
 VBVec3D Body_getLastDisplacement(Body this);
-
-// set active
 void Body_setActive(Body this, u8 active);
-
-// is active?
 u8 Body_isActive(Body this);
-
-// retrieve position
 VBVec3D Body_getPosition(Body this);
-
-// retrieve position
 void Body_setPosition(Body this, const VBVec3D* position, Object caller);
-
-// get elasticiy
 fix19_13 Body_getElasticity(Body this);
-
-// set elasticity
 void Body_setElasticity(Body this, fix19_13 elasticity);
-
-// get friction
 Force Body_getFriction(Body this);
-
-// set friction
 void Body_setFriction(Body this, Force friction);
-
-// retrieve state
 u8 Body_isAwake(Body body);
-
-// go to sleep
 void Body_sleep(Body body);
-
-// clear force
 void Body_clearForce(Body this);
-
-// apply force
 void Body_applyForce(Body this, const Force* force, int clear);
-
-// apply gravity
 void Body_applyGravity(Body this, const Acceleration* gravity);
-
-// add a force
 void Body_addForce(Body this, const Force* force);
-
-// where I'm moving or not
 u8 Body_isMoving(Body this);
-
-// retrieve velocity
 Velocity Body_getVelocity(Body this);
-
-// retrieve acceleration
 Acceleration Body_getAcceleration(Body this);
-
-// retrieve movement type
 MovementType Body_getMovementType(Body this);
-
-// set movement type to accelerated
 void Body_moveAccelerated(Body this, int axis);
-
-// set movement type to uniform
 void Body_moveUniformly(Body this, Velocity velocity);
-
-// print physical data
 void Body_printPhysics(Body this, int x, int y);
-
-// stop movement over an axis
 void Body_stopMovement(Body this, int axis);
-
-// bounce back
 void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity);
-
-// take a hit
 void Body_takeHitFrom(Body this, Body other);
 
 
-#endif /*BODY_H_*/
+#endif

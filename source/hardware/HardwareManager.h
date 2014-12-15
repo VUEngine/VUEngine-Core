@@ -57,6 +57,7 @@ static u8* const HW_REGS =			(u8*)0x02000000;
 #define CACHE_ENABLE    asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 #define CACHE_DISABLE    asm("ldsr r0,sr24")
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -79,52 +80,23 @@ __CLASS(HardwareManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 HardwareManager HardwareManager_getInstance();
 
-// class's destructor
 void HardwareManager_destructor(HardwareManager this);
-
-// setup interrupt vectors
 void HardwareManager_setInterruptVectors(HardwareManager this);
-
-// set interruption level
 void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
-
-// initialize timer
 void HardwareManager_initializeTimer(HardwareManager this);
-
-// clear screen
 void HardwareManager_clearScreen(HardwareManager this);
-
-// display on
 void HardwareManager_displayOn(HardwareManager this);
-
-// display off
 void HardwareManager_displayOff(HardwareManager this);
-
-// disable VPU interrupts
 void HardwareManager_disableRendering(HardwareManager this);
-
-// enable VPU interrupts
 void HardwareManager_enableRendering(HardwareManager this);
-
-// make sure the brigtness is ok
 void HardwareManager_upBrightness(HardwareManager this);
-
-// setup default column table
 void HardwareManager_setupColumnTable(HardwareManager this);
-
-// enable key pad
 void HardwareManager_enableKeypad(HardwareManager this);
-
-// disable key pad
 void HardwareManager_disableKeypad(HardwareManager this);
-
-// read keypad
 u16 HardwareManager_readKeypad(HardwareManager this);
-
-// print hardware's states
 void HardwareManager_print(HardwareManager this, int x, int y);
 
-#endif /*HARWDARE_MANAGER_H_*/
+
+#endif

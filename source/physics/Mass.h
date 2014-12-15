@@ -69,16 +69,11 @@ typedef const MassDefinition MassROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Mass, __PARAMETERS(fix19_13 weight));
 
-// class's constructor
 void Mass_constructor(Mass this, fix19_13 weight);
-
-// class's destructor
 void Mass_destructor(Mass this);
-
-// retrieve weight
 fix19_13 Mass_getWeight(Mass this);
 
-#endif /*MASS_H_*/
+
+#endif

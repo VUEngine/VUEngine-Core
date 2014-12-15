@@ -85,31 +85,16 @@ __CLASS(KeypadManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 KeypadManager KeypadManager_getInstance();
 
-// class's destructor
 void KeypadManager_destructor(KeypadManager this);
-
-// enable keypad reads
 void KeypadManager_enable(KeypadManager this);
-
-// disable keypad reads
 void KeypadManager_disable(KeypadManager this);
-
-// read keypad
 u16 KeypadManager_read(KeypadManager this);
-
-// get pressed key
 u16 KeypadManager_getPressedKey(KeypadManager this);
-
-// get released key
 u16 KeypadManager_getReleasedKey(KeypadManager this);
-
-// get hold key
 u16 KeypadManager_getHoldKey(KeypadManager this);
-
-// get previous key
 u16 KeypadManager_getPreviousKey(KeypadManager this);
 
-#endif /*KEY_PAD_MANAGER_H_*/
+
+#endif

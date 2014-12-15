@@ -135,7 +135,8 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
-	DrawSpec drawSpec0 = {
+	DrawSpec drawSpec0 =
+{
 			{0, 0, this->transform.globalPosition.z},
 			{1, 1}
 	};

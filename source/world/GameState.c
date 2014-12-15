@@ -136,7 +136,8 @@ void GameState_transform(GameState this)
 	ASSERT(this->stage, "GameState::transform: null stage");
 
 	// static to avoid call to memcpy
-	static Transformation environmentTransform = {
+	static Transformation environmentTransform =
+{
 			// local position
 			{0, 0, 0},
 			// global position

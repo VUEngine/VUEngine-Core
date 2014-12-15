@@ -483,7 +483,8 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_LU)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				ITOFIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
 				0
@@ -493,7 +494,8 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_LD)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				ITOFIX19_13(__SCREEN_Y_TRANSLATION_STEP),
 				0
@@ -503,7 +505,8 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_RU)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				0,
 				ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
@@ -513,7 +516,8 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_RD)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				0,
 				ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
@@ -615,7 +619,8 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_LU)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				ITOFIX19_13(-this->translationStepSize),
 				0
@@ -625,7 +630,8 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_LD)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				ITOFIX19_13(this->translationStepSize),
 				0
@@ -655,7 +661,8 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_RU)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				0,
 				ITOFIX19_13(this->translationStepSize),
@@ -665,7 +672,8 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_RD)
 {
-		VBVec3D translation = {
+		VBVec3D translation =
+{
 				0,
 				0,
 				ITOFIX19_13(-this->translationStepSize),

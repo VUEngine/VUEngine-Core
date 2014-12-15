@@ -70,13 +70,8 @@ enum OffsetIndex
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void TextureManager_constructor(TextureManager this);
-
-// allocate texture in bgmpa graphic memory
 static int TextureManager_allocate(TextureManager this, Texture texture);
-
-// retrieve a texture previuosly loaded
 static Texture TextureManager_findTexture(TextureManager this, TextureDefinition* textureDefinition);
 
 
@@ -113,25 +108,25 @@ void TextureManager_reset(TextureManager this)
 
 	// clear each bgmap segment usage
 	for (; i < __NUM_BGMAPS; i++)
-{
+	{
 		this->numberOfChars[i] = 0;
 
 		// clear the offsets
 		for (j=0;j<__NUM_MAPS_PER_SEG;j++)
-{
+		{
 			this->xOffset[i][j] = 0;
 			this->yOffset[i][j] = 0;
 		}
 	}
 
 	for (i = 0; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++)
-{
+	{
 		this->offset[i][kXOffset] = 0;
 		this->offset[i][kYOffset] = 0;
 		this->offset[i][kBgmapSegment] = 0;
 
 		if (this->texture[i])
-{
+		{
 			__DELETE(this->texture[i]);
 		}
 		this->texture[i] = NULL;
@@ -164,28 +159,28 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 			//if there is space in the segment memory
 			// there are 4096 chars in each bgmap segment
 			if ((4096 - this->numberOfChars[i]) >= area )
-{
+			{
 				//check if there is space within the segment
 				// we check the next so don't go to the last element
 				for (j = 0; j < __NUM_MAPS_PER_SEG - 1; j++)
-{
+				{
 					//determine the y offset inside the bgmap segment
 					if (!this->yOffset[i][j + 1])
-{
+					{
 						aux = 64;
 					}
 					else
-{
+					{
 						aux = this->yOffset[i][j + 1];
 					}
 
 					//determine if there is still mem space (columns) in the current y offset
 					if (rows <= aux - this->yOffset[i][j] || (!this->yOffset[i][j+1]))
-{
+					{
 						if (rows <= 64 - this->yOffset[i][j])
-{
+						{
 							if (cols <= 64 - this->xOffset[i][j])
-{
+							{
 								u16 id = Texture_getId(texture);
 
 								//registry bgmap definition
@@ -199,25 +194,24 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 								//if the number of rows of the bgmap definition is greater than the
 								//next y offset defined, increase the next y offset
 								if (this->yOffset[i][j+1] - this->yOffset[i][j] < rows)
-{
+								{
 									this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;
 								}
 								else
-{
+								{
 									// there must be at least 2 columns free
 									if (this->xOffset[i][j] >= 62)
-{
+									{
 										//TODO: this was commented, don't know why
 										//this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;
 									}
 								}
 
-
 								//update the number of chars defined inside the bgmap segment
 								this->numberOfChars[i] += area;
 
 								if (i + 1 > this->freeBgmap)
-{
+								{
 									this->freeBgmap = i + 1;
 								}
 
@@ -228,14 +222,14 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 							}
 						}
 						else
-{
+						{
 							break;
 						}
 					}
 					else
-{
+					{
 						if (rows > 64 - this->yOffset[i][j])
-{
+						{
 							break;
 						}
 					}
@@ -283,7 +277,7 @@ void TextureManager_allocateText(TextureManager this, Texture texture)
 
 	//move to the next row
 	if (this->xOffset[this->freeBgmap][0] < 64 * yDisplacement)
-{
+	{
 		this->xOffset[this->freeBgmap][0] = 64 * yDisplacement;
 	}
 
@@ -306,7 +300,7 @@ void TextureManager_free(TextureManager this, Texture texture)
 
 	// if no one is using the texture anymore
 	if (!(--this->textureUsageCount[Texture_getId(texture)]))
-{
+	{
 		int allocationType = CharGroup_getAllocationType(Texture_getCharGroup(texture));
 
 		// free char memory
@@ -314,17 +308,18 @@ void TextureManager_free(TextureManager this, Texture texture)
 
 		//determine the allocation type
 		switch (allocationType)
-{
+		{
 			default:
 			case __ANIMATED:
+
 				{
 					int i = 0;
 
 					// try to find a texture with the same bgmap definition
 					for (; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++)
-{
+					{
 						if (this->texture[i] == texture)
-{
+						{
 							this->textureUsageCount[Texture_getId(texture)] = 0;
 							this->texture[i] = NULL;
 							__DELETE(texture);
@@ -346,9 +341,9 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
 
 	// try to find a texture with the same bgmap definition
 	for (; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++)
-{
+	{
 		if (this->texture[i] && Texture_getBgmapDef(this->texture[i]) == textureDefinition->bgmapDefinition)
-{
+		{
 			// return if found
 			return this->texture[i];
 		}
@@ -366,9 +361,9 @@ static Texture TextureManager_writeTexture(TextureManager this, TextureDefinitio
 
 	// find and empty slot
 	for (; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++)
-{
+	{
 		if (!this->texture[i])
-{
+		{
 			// create new texture and register it
 			this->texture[i] = __NEW(Texture, __ARGUMENTS(textureDefinition, i));
 
@@ -397,7 +392,7 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 
 	//determine the allocation type
 	switch (textureDefinition->charGroupDefinition.allocationType)
-{
+	{
 		case __ANIMATED:
 
 			// load a new texture
@@ -415,15 +410,15 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 
 			// if coudn't find the texture
 			if (!texture)
-{
+			{
 				// load it
 				texture = TextureManager_writeTexture(this, textureDefinition, isPreload);
 			}
 			else
-{
+			{
 				// if no using texture yet
 				if (!this->textureUsageCount[Texture_getId(texture)])
-{
+				{
 					// write texture to graphic memory
 					Texture_write(texture);
 				}

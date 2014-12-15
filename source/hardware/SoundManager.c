@@ -30,56 +30,64 @@
 //---------------------------------------------------------------------------------------------------------
 
 // some wave forms data
-const static unsigned char sawSquareWave[32] = {
+const static unsigned char sawSquareWave[32] =
+{
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Saw + Square */
 	0x00, 0x00, 0x00, 0x00, 0x08, 0x10, 0x18, 0x20,
 	0x28, 0x30, 0x38, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-const static unsigned char glockenWave[32] = {
+const static unsigned char glockenWave[32] =
+{
 	0x20, 0x35, 0x26, 0x2d, 0x32, 0x19, 0x1d, 0x2a,	/* Glocken */
 	0x24, 0x30, 0x3e, 0x2e, 0x25, 0x21, 0x17, 0x18,
 	0x20, 0x28, 0x29, 0x1f, 0x1c, 0x12, 0x02, 0x10,
 	0x1c, 0x16, 0x23, 0x27, 0x0f, 0x13, 0x1a, 0x0b,
 };
 
-const static unsigned char square0Wave[32] = {
+const static unsigned char square0Wave[32] =
+{
 	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x1b, 0x2a, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-const static unsigned char square1Wave[32] = {
+const static unsigned char square1Wave[32] =
+{
 	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave (Duty 75%) */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x1b, 0x2a, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-const static unsigned char organWave[32] = {
+const static unsigned char organWave[32] =
+{
 	0x20, 0x3f, 0x38, 0x38, 0x27, 0x23, 0x27, 0x11,	/* Organ (2+3)*/
 	0x13, 0x26, 0x0c, 0x26, 0x23, 0x22, 0x1e, 0x00,
 	0x20, 0x3f, 0x23, 0x1e, 0x1e, 0x1a, 0x35, 0x1a,
 	0x2c, 0x2f, 0x1a, 0x1d, 0x1a, 0x08, 0x09, 0x00,
 };
 
-const static unsigned char sinAlphaWave[32] = {
+const static unsigned char sinAlphaWave[32] =
+{
 	0x20, 0x29, 0x30, 0x33, 0x33, 0x31, 0x31, 0x35,	/* Sin Wave + alpha */
 	0x39, 0x3e, 0x3e, 0x3a, 0x33, 0x2a, 0x23, 0x20,
 	0x20, 0x20, 0x1d, 0x16, 0x0e, 0x06, 0x02, 0x02,
 	0x06, 0x0b, 0x0f, 0x0f, 0x0e, 0x0d, 0x10, 0x17,
 };
 
-const static unsigned char sawWave[32] = {
+const static unsigned char sawWave[32] =
+{
 	0x01, 0x03, 0x05, 0x07, 0x09, 0x0b, 0x0d, 0x0f,	/* Saw Wave */
 	0x31, 0x13, 0x15, 0x17, 0x19, 0x1b, 0x1d, 0x1f,
 	0x21, 0x23, 0x25, 0x27, 0x29, 0x2b, 0x2d, 0x2f,
 	0x11, 0x33, 0x35, 0x37, 0x39, 0x3b, 0x3d, 0x3f,
 };
 
-const static unsigned char sinWave[32] = {
+const static unsigned char sinWave[32] =
+{
 	0x00, 0x06, 0x0C, 0x11, 0x16, 0x1A, 0x1D, 0x1E,
 	0x1F, 0x1E, 0x29, 0x1D, 0x16, 0x11, 0x0C, 0x06,
 	0x00, 0x39, 0x33, 0x2E, 0x29, 0x25, 0x22, 0x21,
@@ -100,7 +108,7 @@ typedef struct SOUNDREG
 	u8 spacer4[3];
 	u8 SxEV0; //       [---------------------Initial Envelope Value-------------------][------U/D-----][-----------------Envelope Step----------------]
 	u8 spacer5[3];
-		 //Ch. 1-4 [--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+		 	 //Ch. 1-4 [--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
 	         //Ch. 5   [--XXXXXXXXXX--][------E/D-----][----?/Short---][--Mod./Sweep--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
 	u8 SxEV1; //Ch. 6  [--XXXXXXXXXX--][----------------------E/D---------------------][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
 	u8 spacer6[3];
@@ -121,7 +129,8 @@ static u8* const WAVEDATA4 =		(u8*)0x01000180;
 static u8* const WAVEDATA5 =		(u8*)0x01000200;
 static u8* const MODDATA =			(u8*)0x01000280;
 static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0;
-#define SSTOP				*(u8*)0x01000580
+#define SSTOP					   *(u8*)0x01000580
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -181,16 +190,15 @@ static void SoundManager_constructor(SoundManager this)
 
 		// reset all records
 		for (i = 0; i < __TOTAL_SOUNDS; i++)
-{
+		{
 			this->noteWait[i] = 0;
 			this->actualNote[i] = 0;
 		}
 
-
 		this->bgm = NULL;
 
 		for ( i = 0; i < __FXS; i++)
-{
+		{
 			this->fxSound[i] = NULL;
 
 			this->fxPosition[i].parallax = -10000;
@@ -218,7 +226,8 @@ void SoundManager_setWaveForm(SoundManager this)
 	ASSERT(this, "SoundManager::setWaveForm: null this");
 
 	int i;
-	for (i = 0; i < 32; i++){
+	for (i = 0; i < 32; i++)
+	{
 		WAVEDATA1[i*4] = organWave[i];
 		WAVEDATA2[i*4] = sinWave[i];
 		WAVEDATA3[i*4] = glockenWave[i];
@@ -249,10 +258,10 @@ void SoundManager_playBGM(SoundManager this)
 
 	//only if bgm loaded
 	if (this->bgm != NULL)
-{
+	{
 		//check if note's lenght have been played
 		if (this->noteWait[0] > this->bgm[0][1])
-{
+		{
 			//move to the next note
 			this->actualNote[0]++;
 
@@ -261,7 +270,7 @@ void SoundManager_playBGM(SoundManager this)
 
 			//if note is greater than song's length
 			if (this->actualNote[0] >= this->bgm[0][0])
-{
+			{
 				//rewind song
 				this->actualNote[0] = 0;
 			}
@@ -269,8 +278,9 @@ void SoundManager_playBGM(SoundManager this)
 
 		//if note has changed
 		if (!this->noteWait[0])
-{
-			for (channel = 0, i = 0; channel < 2; channel++){
+		{
+			for (channel = 0, i = 0; channel < 2; channel++)
+			{
 				//stop sound on the current channel
 				/* There is a bug which makes the sound of
 				 * SND_REGS 0 to not stop if not explicitly
@@ -282,13 +292,14 @@ void SoundManager_playBGM(SoundManager this)
 				//grab note
 				for (;i<2 && !this->bgm[this->actualNote[0]+3][i];i++);
 
-				if (i<2){
+				if (i<2)
+				{
 					note = this->bgm[this->actualNote[0] + 3][i];
 				}
 
 				//if note is not off
 				if (note != 0)
-{
+				{
 					//set note's output level
 					SND_REGS[channel].SxLRV = this->bgm[0][2];
 
@@ -310,7 +321,8 @@ void SoundManager_playBGM(SoundManager this)
 				}
 
 				//not sure about this
-				if (channel == 4){
+				if (channel == 4)
+				{
 					SND_REGS[channel].S5SWP = this->bgm[0][5];
 				}
 			}
@@ -320,7 +332,7 @@ void SoundManager_playBGM(SoundManager this)
 }
 
 
-// calculte sound volume according to its spatial position
+// calculate sound volume according to its spatial position
 static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 {
 	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
@@ -333,13 +345,13 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 	 * In the center position the output level is the one
 	 * defined in the sound's definition */
 	if (-10000 != this->fxPosition[fxS].parallax )
-{
+	{
 		zMinus = this->fxPosition[fxS].parallax ;//* this->zFactor;
 
 		maxOutputLevel -= zMinus;
 
 		if (maxOutputLevel > 0)
-{
+		{
 			int leftDistance = abs(this->fxPosition[fxS].x - __LEFT_EAR_CENTER);
 			int rightDistance = abs(this->fxPosition[fxS].x- __RIGHT_EAR_CENTER);
 			int leftMinus = 0, rightMinus = 0;
@@ -353,15 +365,17 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 			leftOutput = maxOutputLevel - leftMinus;
 			rightOutput = maxOutputLevel - rightMinus;
 
-			if (leftOutput > 0){
+			if (leftOutput > 0)
+			{
 				output |= (((int)leftOutput) << 4);
-
 			}
 
-			if (rightOutput > 0){
+			if (rightOutput > 0)
+			{
 				output|=(((int)rightOutput));
 			}
-			else{
+			else
+			{
 				output &= 0xF0;
 			}
 		}
@@ -378,13 +392,14 @@ void SoundManager_playFxSounds(SoundManager this)
 	int note = 0;
 	int fxS;
 
-	for (fxS = 0; fxS < __FXS; fxS++){
+	for (fxS = 0; fxS < __FXS; fxS++)
+	{
 		//only if fx defined
 		if (this->fxSound[fxS])
-{
+		{
 			//check if note's lenght have been played
 			if (this->noteWait[fxS+1] > this->fxSound[fxS][1])
-{
+			{
 				//move to the next note
 				this->actualNote[fxS+1]++;
 
@@ -393,7 +408,7 @@ void SoundManager_playFxSounds(SoundManager this)
 
 				//if note if greater than song's length
 				if (this->actualNote[fxS+1] > this->fxSound[fxS][0])
-{
+				{
 					//stop sound
 					this->fxSound[fxS] = NULL;
 					this->fxPosition[fxS].parallax = -10000;
@@ -407,7 +422,7 @@ void SoundManager_playFxSounds(SoundManager this)
 			}
 			//if note has changed
 			if (!this->noteWait[fxS + 1])
-{
+			{
 				//stop sound on the current channel
 				/* There is a bug which makes the sound of
 				 * SND_REGS 0 to not stop if not explicitly
@@ -420,7 +435,7 @@ void SoundManager_playFxSounds(SoundManager this)
 
 				//if note is not off
 				if (note != 0)
-{
+				{
 					//if sound is positioned
 					SND_REGS[fxS+2].SxLRV = SoundManager_calculateSoundPosition(this, fxS);
 
@@ -445,7 +460,7 @@ void SoundManager_playFxSounds(SoundManager this)
 			this->noteWait[fxS+1]++;
 		}
 		else
-{
+		{
 			SND_REGS[fxS+2].SxLRV = 0x00;
 
 			SND_REGS[fxS+2].SxINT = 0x00;
@@ -467,7 +482,7 @@ int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position)
 
 	// if a channel was available
 	if (i < __FXS)
-{
+	{
 		// record the fx definition's address
 		this->fxSound[i] = fxSound;
 
@@ -495,7 +510,7 @@ int SoundManager_playingSound(SoundManager this, u16* fxSound)
 
 	// if sound found
 	if (i<__FXS)
-{
+	{
 		return true;
 	}
 
@@ -536,7 +551,8 @@ void SoundManager_stopAllSound(SoundManager this)
 	int channel = 0;
 
 	//disables sound on all channels
-	for (channel = 0; channel < 6; channel++){
+	for (channel = 0; channel < 6; channel++)
+	{
 		SND_REGS[channel].SxINT = 0x00;
 	}
 	SSTOP=0x01;

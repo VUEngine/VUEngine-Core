@@ -85,40 +85,19 @@ __CLASS(Cuboid);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(Entity owner));
 
-// class's destructor
 void Cuboid_destructor(Cuboid this);
-
-// check if overlaps with other shape
 int Cuboid_overlaps(Cuboid this, Shape shape);
-
-// setup the rightCuboid
 void Cuboid_setup(Cuboid this);
-
-// prepare the shape to be checked
 void Cuboid_positione(Cuboid this);
-
-// retrieve rightCuboid
 Rightcuboid Cuboid_getRightcuboid(Cuboid this);
-
-// retrieve positioned rightCuboid
 Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
-
-// determine axis of collision
 int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
-
-// test if collision with the entity give the displacement
 int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
-
-// draw debug data
 void Cuboid_draw(Cuboid this);
-
-// flush direct draw data
 void Cuboid_deleteDirectDrawData(Cuboid this);
-
-// print debug data
 void Cuboid_print(Cuboid this, int x, int y);
 
-#endif /*CUBOID_H_*/
+
+#endif

@@ -50,58 +50,25 @@ __CLASS(PhysicalWorld);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 PhysicalWorld PhysicalWorld_getInstance();
 
-// class's destructor
 void PhysicalWorld_destructor(PhysicalWorld this);
-
-// register a game entity
 Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight);
-
-// remove a shape
 void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner);
-
-// process removed shapes
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
-
-// calculate collisions
 void PhysicalWorld_start(PhysicalWorld this);
-
-// calculate collisions
 void PhysicalWorld_update(PhysicalWorld this);
-
-// unregister all shapes
 void PhysicalWorld_reset(PhysicalWorld this);
-
-// check if an entity has been registered
 int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner);
-
-// retrieve owner body
 Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner);
-
-// retrieve friction
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
-
-// set friction
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
-
-// a body has awaked
 void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body);
-
-// inform of a change in the body
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
-
-// set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
-
-// retrieve gravity
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
-
-// get last elapsed time
 fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this);
-
-// print status
 void PhysicalWorld_print(PhysicalWorld this, int x, int y);
 
-#endif /*PHYSICS_WORLD_H_*/
+
+#endif

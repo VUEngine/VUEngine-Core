@@ -22,7 +22,9 @@
 #define FX_H_
 
 float disp111;
-void initialiceGeneralWave(u32 param,int rows,int totalDisplacement){
+
+void initialiceGeneralWave(u32 param,int rows,int totalDisplacement)
+{
 	int amplitude=totalDisplacement;
 	float displacement=0;
 	int i=0;
@@ -32,20 +34,24 @@ void initialiceGeneralWave(u32 param,int rows,int totalDisplacement){
 	var=rows/(period*4);
 	var=(totalDisplacement)/var;
 	disp111=var;
-	for (;i<rows;i++){
+	for (;i<rows;i++)
+	{
 		PARAM[(int)param++]=(int)FIX7_9TOI(FTOFIX7_9(displacement));
 		PARAM[(int)param++]=(int)FIX7_9TOI(FTOFIX7_9(displacement));
 
 		displacement-=var*sign;
-		if (displacement<totalDisplacement*(-1)){
+		if (displacement<totalDisplacement*(-1))
+		{
 			sign=-1;
 		}
-		if (displacement>totalDisplacement){
+		if (displacement>totalDisplacement)
+		{
 			sign=1;
 		}
 	}
 
 }
+
 void generalWave(u32 param,int rows){
 	int paramPointer=(int)param;
 	int i;
@@ -54,17 +60,18 @@ void generalWave(u32 param,int rows){
 	PARAM[paramPointer+(int)rows*2-2]=PARAM[paramPointer];//-(PARAM[paramPointer+(int)rows*2-2]-PARAM[paramPointer]);
 	PARAM[paramPointer+(int)rows*2-1]=PARAM[paramPointer+1];//-(PARAM[paramPointer+(int)rows*2-1]-PARAM[paramPointer+1]);
 
-	for (i=0;i<rows-1;i++){
+	for (i=0;i<rows-1;i++)
+	{
 		PARAM[paramPointer]=PARAM[paramPointer+2];
 		PARAM[paramPointer+1]=PARAM[paramPointer+3];
 
 		paramPointer+=2;
 	}
 	//delay(50);
-
 }
 
-void generalWave2(u32 param1,int rows){
+void generalWave2(u32 param1,int rows)
+{
 	static int initial=0;
 	int displacement=10;
 	int i=0;
@@ -76,15 +83,19 @@ void generalWave2(u32 param1,int rows){
 	int prevLeftDisp;
 	int prevRightDisp;
 	int limit=7;
-	if (!initial){
-		for (;i<rows;i++){
+	if (!initial)
+	{
+		for (;i<rows;i++)
+		{
 			PARAM[param++]=displacement;
 			PARAM[param++]=displacement;
 			displacement-=sign;
-			if (displacement<limit*(-1)){
+			if (displacement<limit*(-1))
+			{
 				sign=-1;
 			}
-			if (displacement>limit){
+			if (displacement>limit)
+			{
 				sign=1;
 			}
 		}
@@ -93,29 +104,32 @@ void generalWave2(u32 param1,int rows){
 		sign=1;
 	}
 	else
-{
+	{
 		i=0;
-		do{
-			if (i<rows-2){
+		do
+		{
+			if (i<rows-2)
+			{
 				PARAM[param]=PARAM[param+2];
 				PARAM[param+1]=PARAM[param+3];
 			}
-			else{
+			else
+			{
 				PARAM[param]=PARAM[(int) param1];
 				PARAM[param+1]=PARAM[(int) param1+1];
 			}
 			param++;
 			param++;
 			i++;
-		}while (i<rows-1);
-
+		}
+		while (i<rows-1);
 	}
 	//vbPrint(_textBgMap, 44,27, itoa((int)prevDisp,10,4), 0);
 	delay(50);
 }
 
-
-void generalWave1(u32 param1,int rows){
+void generalWave1(u32 param1,int rows)
+{
 	int i=0;
 	int param=(int) param1;
 	int displacement;
@@ -124,35 +138,43 @@ void generalWave1(u32 param1,int rows){
 	int sign2=1;
 	int disp2;
 	disp2=displacement=prevDisp;
-	for (;i<rows;i++){
+	for (;i<rows;i++)
+	{
 		PARAM[param]=(int)displacement;
 		PARAM[param+1]=(int)displacement;
 		param++;
 		param++;
 		displacement+=sign2;
 		if (displacement>10)
-		sign2=-1;
-		if (displacement<-10)
-		sign2=1;
+		{
+			sign2=-1;
+		}
+		else if (displacement<-10)
+		{
+			sign2=1;
+		}
 	}
 	prevDisp=disp2+sign;
-	if (prevDisp<(-10)){
+	if (prevDisp<(-10))
+	{
 		//prevDisp=-10;
 		sign=1;
 	}
 	if (prevDisp>10)
-{
+	{
 		sign=-1;
 		//prevDisp=10;
 	}
 	//vbPrint(_textBgMap, 44,27, itoa((int)prevDisp,10,4), 0);
 	delay(50);
 }
+
 void underWater(u32 param,int rows)
 {
 }
+
 void fire(u32 param,int rows)
 {
 }
 
-#endif /*FX_H_*/
+#endif

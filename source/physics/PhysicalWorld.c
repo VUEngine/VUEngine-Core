@@ -123,7 +123,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 
 	// delete all bodies registered
 	for (;node; node = VirtualNode_getNext(node))
-{
+	{
 		__DELETE((Body)VirtualNode_getData(node));
 	}
 
@@ -145,7 +145,7 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight
 	Body body = PhysicalWorld_getBody(this, owner);
 
 	if (body)
-{
+	{
 		return body;
 	}
 
@@ -164,7 +164,7 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, Actor owner)
 	Body body = PhysicalWorld_getBody(this, owner);
 
 	if (body)
-{
+	{
 		// deactivate the shape,
 		// will be removed in the next update
 		Body_setActive(body, false);
@@ -182,13 +182,13 @@ Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner)
 	VirtualNode node = VirtualList_begin(this->bodies);
 
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		// current body
 		Body body = (Body)VirtualNode_getData(node);
 
 		// check if current shape's owner is the same as the entity calling this method
 		if ((Object)owner == Body_getOwner(body) && Body_isActive(body))
-{
+		{
 			return body;
 		}
 	}
@@ -205,9 +205,9 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 	VirtualNode node = VirtualList_begin(this->removedBodies);
 
 	if (node)
-{
+	{
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			Body body = (Body)VirtualNode_getData(node);
 
 			// remove from the lists
@@ -234,7 +234,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 	// prepare bodies which move
 	// this will place the shape in the owner's position
 	for (node = VirtualList_begin(this->bodies); node; node = VirtualNode_getNext(node))
-{
+	{
 		// load the current shape
 		Body body = (Body)VirtualNode_getData(node);
 
@@ -242,9 +242,9 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		int gravitySensibleAxis = Actor_canMoveOverAxis((Actor)Body_getOwner(body), &this->gravity);
 
 		if (gravitySensibleAxis)
-
-{
-			Acceleration gravity = {
+		{
+			Acceleration gravity =
+			{
 				gravitySensibleAxis & __XAXIS? this->gravity.x: 0,
 				gravitySensibleAxis & __YAXIS? this->gravity.y: 0,
 				gravitySensibleAxis & __ZAXIS? this->gravity.z: 0
@@ -262,8 +262,7 @@ void PhysicalWorld_start(PhysicalWorld this)
 	ASSERT(this, "PhysicalWorld::start: null this");
 
 	if (!this->clock)
-
-{
+	{
 		this->clock = Game_getInGameClock(Game_getInstance());
 	}
 
@@ -282,8 +281,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 
 #ifdef __DEBUG
 	if (!this->clock)
-
-{
+	{
 		return;
 	}
 #endif
@@ -292,12 +290,12 @@ void PhysicalWorld_update(PhysicalWorld this)
 	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILISECONDS_IN_SECOND / 10));
 
 	if (0 == this->elapsedTime)
-{
+	{
 		return;
 	}
 
 	if (!checkForGravity--)
-{
+	{
 		checkForGravity = __CHECK_GRAVITY_CYCLE;
 		PhysicalWorld_checkForGravity(this);
 	}
@@ -306,7 +304,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 
 	// check the bodies
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		Body_update((Body)VirtualNode_getData(node), &this->gravity, this->elapsedTime);
 	}
 
@@ -323,7 +321,7 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualNode node = VirtualList_begin(this->bodies);
 
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		// delete it
 		__DELETE((Body)VirtualNode_getData(node));
 	}
@@ -345,13 +343,13 @@ int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner)
 	VirtualNode node = VirtualList_begin(this->bodies);
 
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		// current body
 		Body body = (Body)VirtualNode_getData(node);
 
 		// check if current body's owner is the same as the entity calling this method
 		if ((Object)owner == Body_getOwner(body))
-{
+		{
 			// check if body is active.... maybe a body must be removed
 			// and a new entity has been loaded in the same memory location
 			// as the owner of the found body
@@ -385,7 +383,7 @@ void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body)
 	ASSERT(body, "PhysicalWorld::bodyAwaked: null body");
 
 	if (!VirtualList_find(this->activeBodies, body))
-{
+	{
 		VirtualList_pushBack(this->activeBodies, body);
 	}
 }

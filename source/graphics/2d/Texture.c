@@ -38,16 +38,9 @@ __CLASS_DEFINITION(Texture);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id);
-
-// write an animated map
 static void Texture_writeAnimated(Texture this);
-
-// write an inanimated map
 static void Texture_writeNoAnimated(Texture this);
-
-// write an animated and shared map
 static void Texture_writeAnimatedShared(Texture this);
 
 
@@ -106,7 +99,7 @@ static void Texture_writeAnimated(Texture this)
 
 	//put the map into memory calculating the number of char for each reference
 	for (; i--;)
-{
+	{
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
@@ -131,7 +124,7 @@ static void Texture_writeNoAnimated(Texture this)
 
 	//put the map into memory calculating the number of char for each reference
 	for (; i--;)
-{
+	{
 		//specifying the char displacement inside the char mem
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
@@ -160,12 +153,12 @@ static void Texture_writeAnimatedShared(Texture this)
 
 	//put the map into memory calculating the number of char for each reference
 	for (; i--;)
-{
+	{
 		int j = 1;
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
 		for (; j <= frames; j++)
-{
+		{
 			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
 					(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
 					this->textureDefinition->cols,
@@ -182,7 +175,7 @@ void Texture_freeCharMemory(Texture this)
 	ASSERT(this, "Texture::freeCharMemory: null this");
 
 	if (this->charGroup)
-{
+	{
 		//destroy the chargroup
 		__DELETE(this->charGroup);
 
@@ -196,7 +189,7 @@ void Texture_write(Texture this)
 	ASSERT(this, "Texture::write: null this");
 
 	if (!this->charGroup)
-{
+	{
 		// if the char definition is NULL, it must be a text
 		this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition, (Object)this));
 	}
@@ -206,7 +199,7 @@ void Texture_write(Texture this)
 
 	//determine the allocation type
 	switch (CharGroup_getAllocationType(this->charGroup))
-{
+	{
 		case __ANIMATED:
 
 			// write the definition to graphic memory
@@ -241,7 +234,7 @@ void Texture_rewrite(Texture this)
 
 	// determine the allocation type
 	switch (CharGroup_getAllocationType(this->charGroup))
-{
+	{
 		case __ANIMATED:
 
 			// put the definition in graphic memory
@@ -257,6 +250,7 @@ void Texture_rewrite(Texture this)
 			break;
 
 		case __NO_ANIMATED:
+
 			// put the definition in graphic memory
 			Texture_writeNoAnimated(this);
 
@@ -285,7 +279,7 @@ void Texture_writeHBiasMode(Texture this)
 	// TODO
 	/*
 	int i;
-	//put the this into memory calculatin the number of char for each reference
+	//put the this into memory calculation the number of char for each reference
 	for (i=0;i<this->textureDefinition->rows;i++){
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
@@ -327,7 +321,7 @@ u8 Texture_getTotalCols(Texture this)
 
 	// determine the allocation type
 	switch (CharGroup_getAllocationType(this->charGroup))
-{
+	{
 		case __ANIMATED:
 
 			// just return the cols
@@ -441,7 +435,7 @@ int Texture_handleMessage(Texture this, Telegram telegram)
 {
 	ASSERT(this, "Texture::handleMessage: null this");
 	switch (Telegram_getMessage(telegram))
-{
+	{
 		case kCharGroupRewritten:
 
 			Texture_write(this);

@@ -46,6 +46,7 @@
 // future expansion
 #define __ANIMATED_SHARED_2	0x04
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -104,7 +105,7 @@ typedef struct CharGroupDefinition
 	// pointer to the char definition in ROM
 	BYTE* charDefinition;
 
-}CharGroupDefinition;
+} CharGroupDefinition;
 
 typedef const CharGroupDefinition CharGroupROMDef;
 
@@ -113,49 +114,22 @@ typedef const CharGroupDefinition CharGroupROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition, Object owner));
 
-// class's destructor
 void CharGroup_destructor(CharGroup this);
-
-// retrieve chargroup's allocation type
 int CharGroup_getAllocationType(CharGroup this);
-
-// retrieve chargroup's offset within char segment
 u16 CharGroup_getOffset(CharGroup this);
-
-// set chargroup's offset within the char segment
 void CharGroup_setOffset(CharGroup this, u16 offset);
-
-// get chargroup's char definition
 BYTE* CharGroup_getCharDefinition(CharGroup this);
-
-// set chargroup's char definition
 void CharGroup_setCharDefinition(CharGroup this, void *charDefinition);
-
-// set chargroup's number of chars
 void CharGroup_setNumberOfChars(CharGroup this, int numberOfChars);
-
-// retrieve chargrop's number of chars
 int CharGroup_getNumberOfChars(CharGroup this);
-
-// get chargroup's segment
 int CharGroup_getCharSet(CharGroup this);
-
-// set chargroup's char segment
 void CharGroup_setCharSet(CharGroup this, int charSet);
-
-// copy a chargroup
 void CharGroup_copy(CharGroup this, CharGroup source);
-
-// write char on memory
 void CharGroup_write(CharGroup this);
-
-// rewrite char on memory
 void CharGroup_rewrite(CharGroup this);
-
-// set charDefinitionDisplacement
 void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement);
+
 
 #endif

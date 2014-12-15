@@ -125,23 +125,23 @@ void CharSetManager_reset(CharSetManager this)
 
 	// clear each segment's ofssets
 	for (; i < __CHAR_SEGMENTS; i++)
-{
+	{
 		for (j = 0; j < __CHAR_SEGMENT_SIZE; j++)
-{
+		{
 			this->segment[i][j] = 0;
 		}
 	}
 
 	// clear all definitions and usage
 	for ( i = 0; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG; i++)
-{
+	{
 		this->charDefinition[i] = NULL;
 		this->charDefUsage[i] = 0;
 		this->offset[i] = 0;
 	}
 
 	if (this->charGroups)
-{
+	{
 		__DELETE(this->charGroups);
 	}
 
@@ -181,19 +181,19 @@ void CharSetManager_free(CharSetManager this, CharGroup charGroup)
 
 	// if char found
 	if (i >= 0)
-{
+	{
 		//decrease char definition usage
 		this->charDefUsage[i]--;
 
 		// just make sure it is not going in a loop
 		if (0xFE < this->charDefUsage[i])
-{
+		{
 			this->charDefUsage[i] = 0;
 		}
 
 		// if no other object uses the char defintion
 		if (!this->charDefUsage[i])
-{
+		{
 			// deallocate space
 			CharSetManager_deallocate(this, charGroup);
 
@@ -227,11 +227,11 @@ void CharSetManager_print(CharSetManager this, int x, int y)
 	int charSet = 0;
 	int i = 0;
 	for (; charSet < 4; charSet++)
-{
+	{
 		Printing_text("CharSeg", x, y);
 		Printing_int(charSet, x + 8, y);
 		for (i = 0; i < __CHAR_GRP_PER_SEG && (y + i + 1) < 28; i++)
-{
+		{
 			Printing_hex(this->segment[charSet][i], x, y + i + 1);
 		}
 
@@ -251,10 +251,10 @@ static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup ch
 	ASSERT(charDef, "CharSetManager::searchCharDefinition: null chardef in chargroup");
 
 	for (; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG; i++)
-{
+	{
 		// if char's definition matches
 		if (this->charDefinition[i] == charDef)
-{
+		{
 			// return the index
 			return i;
 		}
@@ -274,7 +274,7 @@ int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup)
 
 	// verify that the char's definition is not already defined
 	if (0 <= i)
-{
+	{
 		// make chargroup point to it
 		CharGroup_setOffset(charGroup, this->offset[i]);
 
@@ -311,22 +311,22 @@ static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u1
 
 	// each segment has 512 chars slots so, 16 ints are 512 bits
 	for (j = 0; j < 16; j++)
-{
+	{
 		// see if there is a 0 in the block
 		block = this->segment[i][j] ^ 0xFFFFFFFF;
 
 		// if there is at least a 1 in the block
 		if (block)
-{
+		{
 			// set index 1000 0000 0000 0000 2b
 			index = 0x80000000;
 
 			// while there is at least a 1 in the block
 			while (index)
-{
+			{
 				// in-block offset
 				if (block & index)
-{
+				{
 					// increase the hole
 					hole++;
 
@@ -351,7 +351,7 @@ static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u1
 			}
 		}
 		else
-{
+		{
 			// move current block, 32 slots ahead
 			currentChar += 32;
 		}
@@ -378,21 +378,22 @@ void CharSetManager_markUsedChars(CharSetManager this, int charSeg, int offset, 
 	// initilize mask
 	index = 0x80000000;
 
-	while (counter--){
+	while (counter--)
+	{
 		// fill the mask acording to number of slots
 		index >>= 1;
 	}
 
 	// mark segmant mask's used slots
 	while (numberOfChars--)
-{
+	{
 		this->segment[charSeg][auxJ] |= index;
 
 		index >>= 1;
 
 		// reset the mask and increase the segment number
 		if (!index)
-{
+		{
 			index = 0x80000000;
 
 			auxJ++;
@@ -415,12 +416,11 @@ void CharSetManager_allocate(CharSetManager this, CharGroup charGroup)
 	// space for it
 	CACHE_ENABLE;
 	for (; i < __CHAR_SEGMENTS ; i++)
-{
+	{
 		u16 offset = CharSetManager_getNextFreeOffset(this, i, numberOfChars);
 
 		if (0 < offset)
-
-{
+		{
 			// set chargroup's offset
 			CharGroup_setOffset(charGroup, offset);
 
@@ -478,7 +478,7 @@ static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 
 
 	// while there are chars
 	while (counter--)
-{
+	{
 		// fill mask
 		index >>= 1;
 	}
@@ -489,7 +489,7 @@ static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 
 	// clear freeded slots within the segment
 	CACHE_ENABLE;
 	while (numberOfChars--)
-{
+	{
 		this->segment[charSet][j] &= index;
 
 		index >>= 1;
@@ -497,7 +497,7 @@ static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 
 		index |= 0x80000000;
 
 		if (index == 0xFFFFFFFF)
-{
+		{
 			index = 0x7FFFFFFF;
 
 			j++;
@@ -512,30 +512,28 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
 	if (!this->needsDefrag)
-{
+	{
 		return;
 	}
 
 	int charSet = 0;
 	for (; charSet < __CHAR_SEGMENTS ; charSet++)
-{
+	{
 		u16 freeOffset = CharSetManager_getNextFreeOffset(this, charSet, 1);
 
 		if (0 < freeOffset)
-{
+		{
 			VirtualNode charGroupNode = VirtualList_begin(this->charGroups);
 
 			int lowestOffset = 10000;
 			CharGroup charGroupToRewrite = NULL;
 
 			for (; charGroupNode; charGroupNode = VirtualNode_getNext(charGroupNode))
-
-{
+			{
 				CharGroup charGroup = (CharGroup)VirtualNode_getData(charGroupNode);
 
 				if (CharGroup_getCharSet(charGroup) != charSet)
-
-{
+				{
 					continue;
 				}
 
@@ -544,11 +542,9 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 				int offset = CharGroup_getOffset(charGroup);
 
 				if (offset > freeOffset)
-
-{
+				{
 					if (offset < lowestOffset)
-
-{
+					{
 						lowestOffset = offset;
 						charGroupToRewrite = charGroup;
 					}
@@ -556,7 +552,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 			}
 
 			if (charGroupToRewrite)
-{
+			{
 				int previousOffset = CharGroup_getOffset(charGroupToRewrite);
 				CharGroup_setOffset(charGroupToRewrite, freeOffset);
 
@@ -568,10 +564,9 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 
 				int i = 0;
 				for (; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG; i++)
-{
+				{
 					if (charDefinition == this->charDefinition[i])
-
-{
+					{
 						this->offset[i] = CharGroup_getOffset(charGroupToRewrite);
 						ASSERT(0 <= this->offset[charSet], "CharSetManager::defragmentProgressively: offset less than 0")
 						break;
@@ -585,5 +580,4 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 	}
 
 	this->needsDefrag = false;
-
 }

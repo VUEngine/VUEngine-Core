@@ -69,34 +69,17 @@ __CLASS(TimerManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 TimerManager TimerManager_getInstance();
 
-// class's destructor
 void TimerManager_destructor(TimerManager this);
-
-// enable interruptions
 void TimerManager_setInterrupt(TimerManager this, int value);
-
-// enable timer
 void TimerManager_enable(TimerManager this, int value);
-
-// get time
 u16 TimerManager_getTime(TimerManager this);
-
-// sest time
 void TimerManager_setTime(TimerManager this, u16 time);
-
-// set frequency
 void TimerManager_setFrequency(TimerManager this, int frequency);
-
-// get stat
 int TimerManager_getStat(TimerManager this);
-
-// clear stat
 void TimerManager_clearStat(TimerManager this);
-
-// initialize
 void TimerManager_initialize(TimerManager this);
 
-#endif /*TIMER_MANAGER_H_*/
+
+#endif

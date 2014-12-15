@@ -65,6 +65,7 @@ __CLASS(Texture);
 //use a Texture when you want to show a static background or a character that must be scaled according
 //its deep on the screen so there exists consistency between the deep and the size of the character
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -96,67 +97,28 @@ typedef const TextureDefinition TextureROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Texture, __PARAMETERS(TextureDefinition* textureDefinition, u16 id));
 
-// class's destructor
 void Texture_destructor(Texture this);
-
-// free char memory
 void Texture_freeCharMemory(Texture this);
-
-// write into memory the chars and this
 void Texture_write(Texture this);
-
-// this reallocate a write the bgmap definition in graphical memory
 void Texture_resetMemoryState(Texture this);
-
-// write into memory the chars and this
 void Texture_rewrite(Texture this);
-
-// write map in hbias mode
 void Texture_writeHBiasMode(Texture this);
-
-// get texture's number of chars
 int Texture_getNumberOfChars(Texture this);
-
-// get texture's y offset within bgmap mem
 u8 Texture_getYOffset(Texture this);
-
-// get texture's x offset within bgmap mem
 u8 Texture_getXOffset(Texture this);
-
-// get texture's cols
 u8 Texture_getTotalCols(Texture this);
-
-// get texture's rows
 u8 Texture_getTotalRows(Texture this);
-
-// get texture's bgmap segment
 u8 Texture_getBgmapSegment(Texture this);
-
-// get texture's chargroup
 CharGroup Texture_getCharGroup(Texture this);
-
-// get texture's bgmap definition
 BYTE* Texture_getBgmapDef(Texture this);
-
-// set the pallet
 void Texture_setPallet(Texture this, u8 pallet);
-
-// retrieve texture's pallet
 u8 Texture_getPallet(Texture this);
-
-// retrieve texture's rows
 u8 Texture_getRows(Texture this);
-
-// retrieve texture's cols
 u8 Texture_getCols(Texture this);
-
-// retrieve texture's id
 u16 Texture_getId(Texture this);
-
-// process a telegram
 int Texture_handleMessage(Texture this, Telegram telegram);
+
 
 #endif

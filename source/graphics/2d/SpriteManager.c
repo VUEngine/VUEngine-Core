@@ -60,10 +60,7 @@ __CLASS_DEFINITION(SpriteManager);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-//class's constructor
 static void SpriteManager_constructor(SpriteManager this);
-
-// set free layers off
 static void SpriteManager_setLastLayer(SpriteManager this);
 
 
@@ -94,13 +91,13 @@ void SpriteManager_destructor(SpriteManager this)
 	ASSERT(this, "SpriteManager::destructor: null this");
 
 	if (this->sprites)
-{
+	{
 		__DELETE(this->sprites);
 		this->sprites = NULL;
 	}
 
 	if (this->removedSprites)
-{
+	{
 		__DELETE(this->removedSprites );
 		this->removedSprites  = NULL;
 	}
@@ -115,13 +112,13 @@ void SpriteManager_reset(SpriteManager this)
 	ASSERT(this, "SpriteManager::reset: null this");
 
 	if (this->sprites)
-{
+	{
 		__DELETE(this->sprites);
 		this->sprites = NULL;
 	}
 
 	if (this->removedSprites )
-{
+	{
 		__DELETE(this->removedSprites );
 		this->removedSprites  = NULL;
 	}
@@ -153,21 +150,20 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	this->node = progressively && this->node? this->otherNode? this->node: VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
 
 	for (; this->node; this->node = VirtualNode_getNext(this->node))
-
-{
+	{
 		Sprite sprite = (Sprite)VirtualNode_getData(this->node);
 		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
 
 		this->otherNode = progressively && this->otherNode? VirtualNode_getNext(this->otherNode): VirtualNode_getNext(this->node);
 
 		for (; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
-{
+		{
 			Sprite otherSprite = (Sprite)VirtualNode_getData(this->otherNode);
 			DrawSpec otherDrawSpec = Sprite_getDrawSpec(otherSprite);
 
 			// check if z positions are swaped
 			if (otherDrawSpec.position.z < drawSpec.position.z)
-{
+			{
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
 				u8 worldLayer2 = Sprite_getWorldLayer(otherSprite);
@@ -182,7 +178,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				this->node = this->otherNode;
 
 				if (!progressively)
-{
+				{
 					// make sure sort is complete
 					this->node = VirtualList_begin(this->sprites);
 					break;
@@ -191,7 +187,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 		}
 
 		if (progressively && !this->otherNode)
-{
+		{
 			break;
 		}
 	}
@@ -228,7 +224,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	ASSERT(node, "SpriteManager::removeSprite: sprite not found");
 
 	if (node)
-{
+	{
 		Sprite_hide(sprite);
 
 		node = VirtualNode_getPrevious(node);
@@ -236,7 +232,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 
 		CACHE_ENABLE;
 		for (; node; node = VirtualNode_getPrevious(node))
-{
+		{
 			Sprite previousSprite = (Sprite)VirtualNode_getData(node);
 			u8 layer = Sprite_getWorldLayer(previousSprite);
 			Sprite_setWorldLayer(previousSprite, layer + 1);
@@ -262,8 +258,7 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 	Printing_render(this->freeLayer);
 
 	if (0 < this->freeLayer)
-
-{
+	{
 		//create an independant of software variable to point XPSTTS register
 		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
@@ -291,29 +286,28 @@ void SpriteManager_render(SpriteManager this)
 	// to make effective its visual properties as quick as
 	// possible
 	if (this->reverseRendering)
-
-{
+	{
 		this->reverseRendering = false;
 
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		for (; node; node = VirtualNode_getNext(node))
-{
+		{
 			Sprite_render((Sprite)VirtualNode_getData(node));
 		}
 	}
 	else
-{
+	{
 		VirtualNode node = VirtualList_end(this->sprites);
 
 		for (; node; node = VirtualNode_getPrevious(node))
-{
+		{
 			Sprite_render((Sprite)VirtualNode_getData(node));
 		}
 	}
 
 	if (0 > this->freeLayer)
-{
+	{
 		SpriteManager_setLastLayer(this);
 	}
 }
@@ -334,13 +328,13 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 	VirtualNode node = VirtualList_end(this->sprites);
 
 	for (; node; node = VirtualNode_getPrevious(node))
-{
+	{
 		if (Sprite_getWorldLayer((Sprite)VirtualNode_getData(node)) != layer)
-{
+		{
 			Sprite_hide((Sprite)VirtualNode_getData(node));
 		}
 		else
-{
+		{
 			Sprite_show((Sprite)VirtualNode_getData(node));
 		}
 	}
@@ -353,7 +347,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 
 	VirtualNode node = VirtualList_end(this->sprites);
 	for (; node; node = VirtualNode_getPrevious(node))
-{
+	{
 		Sprite_show((Sprite)VirtualNode_getData(node));
 	}
 }
@@ -374,7 +368,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 	VirtualNode node = VirtualList_begin(this->sprites);
 
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 		Printing_text("Sprite: ", auxX, auxY);
@@ -382,8 +376,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 		Printing_text(__GET_CLASS_NAME(sprite), auxX + 11, auxY);
 
 		if (28 <= ++auxY)
-
-{
+		{
 			auxY = y + 2;
 			auxX += 25;
 		}

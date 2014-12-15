@@ -67,4 +67,5 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite);
 // print param table's attributes state
 void ParamTableManager_print(ParamTableManager this,int x, int y);
 
-#endif /*PARAMTABLE_H_*/
+
+#endif

@@ -38,57 +38,34 @@
  * is not defined here and so is not accessible to the outside world
  */
 // declare the virtual methods
-#define TextureManager_METHODS						\
-		Object_METHODS								\
+#define TextureManager_METHODS									\
+		Object_METHODS											\
 
 
 // declare the virtual methods which are redefined
 #define TextureManager_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)					\
+		Object_SET_VTABLE(ClassName)							\
 
 
 __CLASS(TextureManager);
-
-
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 TextureManager TextureManager_getInstance();
 
-// class's destructor
 void TextureManager_destructor(TextureManager this);
-
-// reset
 void TextureManager_reset(TextureManager this);
-
-// deallocate texture from bgmap graphic memory
 void TextureManager_free(TextureManager this, Texture texture);
-
-// retrieve free bgmap segment number
 u8 TextureManager_getFreeBgmap(TextureManager this);
-
-// allocate bgmap text boxes
-// this bgmap segment is handled as one only bgmap defined inside so, only
-// TextureManager.xOffset[textbgmap][0] is used
 void TextureManager_allocateText(TextureManager this, Texture texture);
-
-// load and retrieve a texture
 Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition);
-
-// retrieve x offset
 u8 TextureManager_getXOffset(TextureManager this, int id);
-
-// retrieve y offset
 u8 TextureManager_getYOffset(TextureManager this, int id);
-
-// retrieve bgmap segment
 u8 TextureManager_getBgmapSegment(TextureManager this, int id);
-
-// print status
 void TextureManager_print(TextureManager this, int x, int y);
 
-#endif /*TextureManager_H_*/
+
+#endif

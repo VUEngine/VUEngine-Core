@@ -68,4 +68,3 @@ fix19_13 Mass_getWeight(Mass this)
 
 	return this->weight;
 }
-

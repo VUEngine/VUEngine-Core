@@ -271,7 +271,8 @@ static void Stage_setupUI(Stage this)
 {
 			VBVec3D position = Screen_getPosition(Screen_getInstance());
 
-			Transformation environmentTransform = {
+			Transformation environmentTransform =
+{
 					// local position
 					{0, 0, 0},
 					// global position
@@ -304,7 +305,8 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* 
 		Container_addChild((Container)this, (Container)entity);
 
 		// static to avoid call to _memcpy
-		static Transformation environmentTransform = {
+		static Transformation environmentTransform =
+{
 				// local position
 				{0, 0, 0},
 				// global position
@@ -565,7 +567,8 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 		if (0 > stageEntityDescription->id)
 {
-			VBVec3D position3D = {
+			VBVec3D position3D =
+{
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.x),
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.y),
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
@@ -604,7 +607,8 @@ static void Stage_loadInRangeEntities(Stage this)
 		if (-1 == stageEntityDescription->id)
 
 {
-			VBVec3D position3D = {
+			VBVec3D position3D =
+{
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.x),
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.y),
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)

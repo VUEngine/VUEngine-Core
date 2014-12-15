@@ -48,13 +48,9 @@ __CLASS(DirectDraw);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 DirectDraw DirectDraw_getInstance();
-
-// class's destructor
 void DirectDraw_destructor(DirectDraw this);
-
-// line draw algorithm from ....
 void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int pallet);
 
-#endif /*DIRECTDRAW_H_*/
+
+#endif

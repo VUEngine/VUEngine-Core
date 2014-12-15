@@ -90,7 +90,7 @@ void CharGroup_destructor(CharGroup this)
 
 	// first check if the chargroup's definition is valid
 	if (this->charDefinition)
-{
+	{
 		//free char graphic memory
 		CharSetManager_free(CharSetManager_getInstance(), this);
 	}
@@ -194,12 +194,12 @@ void CharGroup_write(CharGroup this)
 
 	// determine allocation type
 	switch (this->allocationType)
-{
+	{
 		case __ANIMATED:
 
 			//if not allocated
 			if (__CH_NOT_ALLOCATED == (int)this->offset)
-{
+			{
 				// ask for allocation
 				CharSetManager_allocate(CharSetManager_getInstance(), this);
 			}
@@ -214,16 +214,16 @@ void CharGroup_write(CharGroup this)
 
 			//if not allocated
 			if (__CH_NOT_ALLOCATED == (int)this->offset)
-{
+			{
 				// ask for allocation
 				if (CharSetManager_allocateShared(CharSetManager_getInstance(), this))
-{
+				{
 					//write to char memory
 					Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 				}
 			}
 			else
-{
+			{
 				//write to char memory
 				Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 			}

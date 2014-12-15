@@ -91,12 +91,11 @@ void Shape_setActive(Shape this, u8 active)
 	ASSERT(this, "Shape::setActive: null this");
 
 	if (active)
-
-{
+	{
 		CollisionManager_shapeBecameActive(CollisionManager_getInstance(), this);
 	}
 	else
-{
+	{
 		CollisionManager_shapeBecameInactive(CollisionManager_getInstance(), this);
 	}
 }

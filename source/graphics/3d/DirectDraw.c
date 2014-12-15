@@ -27,6 +27,7 @@
 #include <Cuboid.h>
 #include <Polygon.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -129,25 +130,26 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	dx <<= 1;
 
 	if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
-{
+	{
 		DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
 		DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
 	}
 
 	int counter = 0;
 	if (dx > dy)
-
-{
+	{
 		int fraction = dy - (dx >> 1);
 
 		int parallaxStep = (dx >> 1)? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)): 0;
 
 		while (fromPoint.x != toPoint.x)
-
-{
-			if (++counter > 100) break;
+		{
+			if (++counter > 100)
+			{
+				break;
+			}
 			if (fraction >= 0)
-{
+			{
 				fromPoint.y += stepY;
 				fraction -= dx;
 			}
@@ -158,7 +160,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 			parallax += parallaxStep;
 
 			if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
-{
+			{
 				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
 				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
 			}
@@ -166,18 +168,20 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 	}
 	else
-{
+	{
 		int fraction = dx - (dy >> 1);
 
 		int parallaxStep = (dy >> 1)? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)): 0;
 
 		while (fromPoint.y != toPoint.y)
-{
-			if (++counter > 100) break;
+		{
+			if (++counter > 100)
+			{
+				break;
+			}
 
 			if (fraction >= 0)
-
-{
+			{
 				fromPoint.x += stepX;
 				fraction -= dy;
 			}
@@ -188,11 +192,10 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 			parallax += parallaxStep;
 
 			if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
-{
+			{
 				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
 				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
 			}
 		}
 	}
 }
-

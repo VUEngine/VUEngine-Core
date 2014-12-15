@@ -101,8 +101,8 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 /* "vbSetWorld" header flags */
 /* (OR these together to build a World Header) */
 
-#define	WRLD_OFF		0x3FFF
-#define	WRLD_ON		0xC000	// There_are_two_screens!__USE_THEM!!!
+#define	WRLD_OFF	0x3FFF
+#define	WRLD_ON		0xC000
 #define	WRLD_LON	0x8000
 #define	WRLD_RON	0x4000
 #define	WRLD_OBJ	0x3000
@@ -135,7 +135,7 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 #define WORLD_PARAM(n,p)		WAM[(n << 4) + 9] = ((p - 0x20000) >> 1) & 0xFFF0
 #define WORLD_OVER(n,o)			WAM[(n << 4) + 10] = o
 
-#define WORLD_SPACER(n,x,o)			WAM[(n << 4) + 11+x] = o
+#define WORLD_SPACER(n,x,o)		WAM[(n << 4) + 11+x] = o
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -159,43 +159,20 @@ __CLASS(VPUManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 VPUManager VPUManager_getInstance();
 
-// class's destructor
 void VPUManager_destructor(VPUManager this);
-
-// wait frame
 void VPUManager_waitForFrame(VPUManager this);
-
-// disable interrupt
 void VPUManager_disableInterrupt(VPUManager this);
-
-// enable interrupt
 void VPUManager_enableInterrupt(VPUManager this);
-
-// turn display on
 void VPUManager_displayOn(VPUManager this);
-
-// turn display off
 void VPUManager_displayOff(VPUManager this);
-
-// setup palletes
 void VPUManager_setupPalettes(VPUManager this);
-
-// set brightness all the way up
 void VPUManager_upBrightness(VPUManager this);
-
-// set brightness all way down
 void VPUManager_displayHide(VPUManager this);
-
-// clear screen
 void VPUManager_clearScreen(VPUManager this);
-
-// clear bgmap
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
-
-// setup default column table
 void VPUManager_setupColumnTable(VPUManager this);
 
-#endif /*VPU_MANAGER_H_*/
+
+#endif

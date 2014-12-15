@@ -235,23 +235,23 @@ void AnimatedSprite_animate(AnimatedSprite this)
 
 	// first check for a valid animation function
 	if (!this->animationFunction)
-{
+	{
 		return;
 	}
 
 	// if the actual frame was set to -1
 	// it means that a not loop animation has been completed
 	if (-1 == this->actualFrame)
-{
+	{
 		return;
 	}
 
 	// show the next frame
 	if (this->actualFrame >= this->animationFunction->numberOfFrames)
-{
+	{
 		// the last frame has been reached
 		if (this->animationFunction->onAnimationComplete)
-{
+		{
 			Object_fireEvent((Object)this, __EVENT_ANIMATION_COMPLETE);
 		}
 
@@ -260,7 +260,7 @@ void AnimatedSprite_animate(AnimatedSprite this)
 
 		// if the animation is not a loop
 		if (!this->animationFunction->loop)
-{
+		{
 			// not playing anymore
 			this->playing = false;
 
@@ -273,7 +273,7 @@ void AnimatedSprite_animate(AnimatedSprite this)
 
 	// if the frame has changed
 	if (this->actualFrame != this->previousFrame)
-{
+	{
 		// write the new frame of animation
 		AnimatedSprite_writeAnimation(this);
 
@@ -286,7 +286,7 @@ void AnimatedSprite_animate(AnimatedSprite this)
 
 	// reduce frame delay count
 	if (0 >= this->frameDelay)
-{
+	{
 		// incrase the frame to show
 		this->previousFrame = this->actualFrame++;
 
@@ -295,7 +295,7 @@ void AnimatedSprite_animate(AnimatedSprite this)
 
 		// if the delay is negative
 		if (0 > this->frameDelay)
-{
+	{
 			// pick up a random delay
 			this->frameDelay = Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
@@ -308,7 +308,7 @@ void AnimatedSprite_update(AnimatedSprite this, Clock clock)
 	ASSERT(this, "AnimatedSprite::update: null this");
 
 	if (this->playing && !Clock_isPaused(clock))
-{
+	{
 		// first animate the frame
 		AnimatedSprite_animate(this);
 	}
@@ -381,10 +381,10 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 
 	// search for the animation function
 	for (; animationDescription->animationFunctions[i]; i++ )
-{
+	{
 		// compare function's names
 		if (!strcmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name))
-{
+		{
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
 
@@ -424,7 +424,6 @@ int AnimatedSprite_isPlaying(AnimatedSprite this)
 	return this->playing;
 }
 
-
 // pause animation
 void AnimatedSprite_pause(AnimatedSprite this, int pause)
 {
@@ -432,7 +431,7 @@ void AnimatedSprite_pause(AnimatedSprite this, int pause)
 	this->playing = !pause;
 
 	if (-1 == this->actualFrame)
-{
+	{
 		this->actualFrame = 0;
 	}
 }

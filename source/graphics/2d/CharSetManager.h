@@ -29,6 +29,7 @@
 #include <Object.h>
 #include <CharGroup.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -46,40 +47,21 @@
 
 __CLASS(CharSetManager);
 
- /* ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * 										PUBLIC INTERFACE
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  * ---------------------------------------------------------------------------------------------------------
-  */
 
-// it is a singleton!
+//---------------------------------------------------------------------------------------------------------
+//											PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
+
 CharSetManager CharSetManager_getInstance();
 
-// class's destructor
 void CharSetManager_destructor(CharSetManager this);
-
-// reset
 void CharSetManager_reset(CharSetManager this);
-
-// release char graphic memory
 void CharSetManager_free(CharSetManager this, CharGroup charGroup);
-
-// print class's attributes's states
 void CharSetManager_print(CharSetManager this, int x, int y);
-
-// if char if part of a background or oder object whose frame doesn't change
 int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup);
-
-// allocate a char defintion within char graphic memory
 void CharSetManager_allocate(CharSetManager this, CharGroup charGroup);
-
-// set number of chars used in a given segment
 void CharSetManager_setChars(CharSetManager  this, int charSet, int numberOfChars);
-
-// defrag char memory
 void CharSetManager_defragmentProgressively(CharSetManager this);
 
-#endif /*CHARSETMEM_H_*/
+
+#endif

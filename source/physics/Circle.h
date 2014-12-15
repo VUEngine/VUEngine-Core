@@ -56,10 +56,9 @@ __CLASS(Circle);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Circle, __PARAMETERS(Entity owner));
 
-// class's destructor
 void Circle_destructor(Circle this);
 
-#endif /*CIRCLE_H_*/
+
+#endif

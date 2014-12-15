@@ -226,7 +226,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
 
-	VBVec3D displacementIncrement = {
+	VBVec3D displacementIncrement =
+{
 			FIX19_13_MULT(displacement.x, FTOFIX19_13(0.1f)),
 			FIX19_13_MULT(displacement.y, FTOFIX19_13(0.1f)),
 			FIX19_13_MULT(displacement.z, FTOFIX19_13(0.1f))

@@ -88,7 +88,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	//this->head = spriteDefinition->display | WRLD_BGMAP;
 	//set world layer's head acording to map's render mode
 	switch (spriteDefinition->bgmapMode)
-{
+	{
 		case WRLD_BGMAP:
 
 			//set map head
@@ -133,7 +133,7 @@ void Sprite_destructor(Sprite this)
 
 	//if affine or bgmap
 	if (WRLD_AFFINE & this->head)
-{
+	{
 		//free param table space
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
 	}
@@ -164,7 +164,7 @@ void Sprite_setDirection(Sprite this, int axis, int direction)
 	ASSERT(this, "Sprite::setDirection: null this");
 
 	switch (axis)
-{
+	{
 		case __XAXIS:
 
 			this->drawSpec.scale.x = FIX7_9_MULT(abs(this->drawSpec.scale.x), ITOFIX7_9(direction));
@@ -195,12 +195,12 @@ void Sprite_calculateScale(Sprite this, fix19_13 z)
 	this->drawSpec.scale.y = ratio;
 
 	if (WRLD_AFFINE == Sprite_getMode(this))
-{
+	{
 		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 	else
-{
+	{
 		this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
 		this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
 	}
@@ -236,8 +236,7 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position)
 	Optics_projectTo2D(&this->drawSpec.position, &position3D);
 
 	if (previousZPosition != this->drawSpec.position.z)
-
-{
+	{
 		this->drawSpec.position.z = position->z;
 
 		// calculate sprite's parallax
@@ -282,8 +281,7 @@ void Sprite_setRenderFlag(Sprite this, u8 renderFlag)
 	// do not override the whole world entry, or will be updated in the
 	// next render
 	if (__UPDATE_HEAD != this->renderFlag || !renderFlag)
-
-{
+	{
 		this->renderFlag = renderFlag;
 	}
 }
@@ -319,10 +317,10 @@ void Sprite_render(Sprite this)
 
 		// if head is modified, render everything
 		if (__UPDATE_HEAD == this->renderFlag)
-{
+		{
 			// write param table before any other thing
 			if (WRLD_AFFINE & this->head)
-{
+			{
 				// scale the sprite now
 				Sprite_scale(this);
 			}
@@ -347,7 +345,7 @@ void Sprite_render(Sprite this)
 
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
-{
+			{
 				// first point to param table
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 
@@ -358,7 +356,7 @@ void Sprite_render(Sprite this)
 
 			}
 			else
-{
+			{
 				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
 			}
 
@@ -370,15 +368,15 @@ void Sprite_render(Sprite this)
 
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G )
-{
+		{
 			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
 		}
 
 		if (this->renderFlag & __UPDATE_SIZE)
-{
+		{
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
-{
+			{
 				// now scale the texture
 				Sprite_scale(this);
 
@@ -389,7 +387,7 @@ void Sprite_render(Sprite this)
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 			}
 			else
-{
+			{
 				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
 			}
 		}
@@ -424,7 +422,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
 	if (this->worldLayer != worldLayer && 0 <= worldLayer)
-{
+	{
 		this->worldLayer = worldLayer;
 
 		Sprite_show(this);
@@ -463,7 +461,6 @@ void Sprite_invalidateParamTable(Sprite this)
 	this->renderFlag |= __UPDATE_SIZE;
 }
 
-
 // this reallocate a write the bgmap definition in graphical memory
 void Sprite_resetMemoryState(Sprite this)
 {
@@ -471,7 +468,7 @@ void Sprite_resetMemoryState(Sprite this)
 
 	//if affine or hbias mode, allocate inside paramtable
 	if (WRLD_AFFINE == Sprite_getMode(this))
-{
+	{
 		ParamTableManager_allocate(ParamTableManager_getInstance(), this);
 	}
 
@@ -488,8 +485,9 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
 	ASSERT(this, "Sprite::setDrawSpec: null this");
 
 	this->drawSpec = *drawSpec;
-
 }
+
+
 //---------------------------------------------------------------------------------------------------------
 // 										MAP FXs
 //---------------------------------------------------------------------------------------------------------
@@ -509,7 +507,7 @@ void Sprite_scale(Sprite this)
 
 	//put the map into memory calculating the number of char for each reference
 	if (this->param)
-{
+	{
 		int cols = (int)Texture_getCols(this->texture) << 2;
 		int rows = (int)Texture_getRows(this->texture) << 2;
 
@@ -526,7 +524,7 @@ void Sprite_rotate(Sprite this, int angle)
 
 	// TODO
 	if (this->param)
-{
+	{
 		int cols = Texture_getCols(this->texture) << 2;
 		int rows = Texture_getRows(this->texture) << 2;
 
@@ -559,7 +557,7 @@ void Sprite_rotate(Sprite this, int angle)
  * H-Bias FX
  */
 
-void Sprite_squezeXHFX(Sprite this)
+void Sprite_squeezeXHFX(Sprite this)
 {
 	ASSERT(this, "Sprite::squezeXHFX: null this");
 

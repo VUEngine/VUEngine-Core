@@ -28,6 +28,7 @@
 
 #include <Object.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -56,16 +57,10 @@ __CLASS(Polygon);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Polygon);
-
-// class's destructor
 void Polygon_destructor(Polygon this);
-
-// add a vertice
 void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z);
-
-// draw polygon to screen
 void Polygon_draw(Polygon this, int calculateParallax);
 
-#endif /*POLYGON_H_*/
+
+#endif

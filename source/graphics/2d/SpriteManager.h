@@ -52,40 +52,19 @@ __CLASS(SpriteManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 SpriteManager SpriteManager_getInstance();
 
-// class's destructo
 void SpriteManager_destructor(SpriteManager this);
-
-// reset
 void SpriteManager_reset(SpriteManager this);
-
-// check if any entity must be assigned another world layer
 void SpriteManager_sortLayers(SpriteManager this, int progressively);
-
-// check if any entity must be assigned another world layer
 void SpriteManager_spriteChangedPosition(SpriteManager this);
-
-// remove a sprite from rendering system
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite);
-
-// add a sprite to rendering system
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite);
-
-// render sprites
 void SpriteManager_render(SpriteManager this);
-
-// retrieve free layer
 int SpriteManager_getFreeLayer(SpriteManager this);
-
-// show a given layer
 void SpriteManager_showLayer(SpriteManager this, u8 layer);
-
-// show all layers
 void SpriteManager_recoverLayers(SpriteManager this);
-
-// print status
 void SpriteManager_print(SpriteManager this, int x, int y);
+
 
 #endif

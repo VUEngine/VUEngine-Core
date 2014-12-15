@@ -91,7 +91,8 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 
 		Container_addChild((Container)this, (Container)entity);
 
-		VBVec3D position = {
+		VBVec3D position =
+{
 				FTOFIX19_13(entities[i].position.x),
 				FTOFIX19_13(entities[i].position.y),
 				FTOFIX19_13(entities[i].position.z)

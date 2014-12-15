@@ -66,12 +66,12 @@ void Polygon_destructor(Polygon this)
 {
 	// delete the vertices list
 	if (this->vertices)
-{
+	{
 		VirtualNode node = VirtualList_begin(this->vertices);
 
 		// delete each vertex
 		for (; node ; node = VirtualNode_getNext(node))
-{
+		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
 
@@ -95,7 +95,7 @@ void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 	// if not vertices list yet created
 	// delete the vertices list
 	if (!this->vertices)
-{
+	{
 		this->vertices = __NEW(VirtualList);
 	}
 
@@ -111,7 +111,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 
 	// if I have some vertex, draw them
 	if (this->vertices)
-{
+	{
 		// the node's which hold the vertices
 		VirtualNode fromNode = VirtualList_begin(this->vertices);
 		VirtualNode toNode = VirtualNode_getNext(fromNode);
@@ -126,7 +126,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 
 		// draw the lines
 		for (; toNode ; fromNode = VirtualNode_getNext(fromNode), toNode = VirtualNode_getNext(toNode))
-{
+		{
 			// normalize vertice to screen coordinates
 			fromVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
 			toVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(toNode));
@@ -137,7 +137,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 
 			// calculate parallax
 			if (calculateParallax)
-{
+			{
 				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
 				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);
 			}
@@ -148,7 +148,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 		}
 
 		if (2 < VirtualList_getSize(this->vertices))
-{
+		{
 			// close the polygon by drawing a line from the last node to the first one
 			fromVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
 			toVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(VirtualList_begin(this->vertices)));
@@ -159,7 +159,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 
 			// calculate parallax
 			if (calculateParallax)
-{
+			{
 				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
 				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);
 			}
@@ -169,5 +169,4 @@ void Polygon_draw(Polygon this, int calculateParallax)
 		}
 	}
 	//VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] & ~XPEN;
-
 }

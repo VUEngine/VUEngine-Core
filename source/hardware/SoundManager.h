@@ -29,6 +29,7 @@
 #include <Object.h>
 #include <MiscStructs.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@
 */
 /* DogP's code
  */
-//musical notes to VB register values (may not be quite correct, based on frequencies from gameboy)
+//musical notes to VB register values (may not be quite correct, based on frequencies from Game Boy)
 #define NONE 0x00
 #define C_10 0x00
 #define CS10 0x00
@@ -183,6 +184,7 @@
 #define AS9 0x00
 #define B_9 0x00
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -202,39 +204,18 @@ __CLASS(SoundManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 SoundManager SoundManager_getInstance();
 
-// class's destructor
 void SoundManager_destructor(SoundManager this);
-
-// load wave form data in the VB memory
 void SoundManager_setWaveForm(SoundManager this);
-
-// load a bgm
 void SoundManager_loadBGM(SoundManager this, u16 (*bgm)[]);
-
-// play background song loaded
 void SoundManager_playBGM(SoundManager this);
-
-// play sound
 void SoundManager_playFxSounds(SoundManager this);
-
-// load a fx sound to be played
-// it is not guaranted that the sound has been loaded
 int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position);
-
-// returns true if the sound is being played
 int SoundManager_playingSound(SoundManager this, u16* fxSound);
-
-// stop sound
 void SoundManager_stopSound(SoundManager this, BYTE *sound);
-
-// continue BGM play
 void SoundManager_continueBGM(SoundManager this,BYTE *sound);
-
-// stop all playing sounds
 void SoundManager_stopAllSound(SoundManager this);
 
 
-#endif /*SOUND_H_*/
+#endif

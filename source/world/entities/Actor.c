@@ -120,7 +120,8 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 {
 		VBVec3D globalPosition = Container_getGlobalPosition((Container)this);
 
-		Transformation environmentTransform = {
+		Transformation environmentTransform =
+{
 				// local position
 				{0, 0, 0},
 				// global position
@@ -161,7 +162,8 @@ void Actor_transform(Actor this, Transformation* environmentTransform)
 	if (this->body && Body_isAwake(this->body))
 {
 		// an Actor with a physical body is agnostic to parenting
-		Transformation environmentAgnosticTransform = {
+		Transformation environmentAgnosticTransform =
+{
 				// local position
 				{0, 0, 0},
 				// global position
@@ -392,7 +394,8 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 {
 			if (this->lastCollidingEntity[i])
 {
-				VBVec3D displacement = {
+				VBVec3D displacement =
+{
 					kXAxis == i? acceleration->x: 0,
 					kYAxis == i? acceleration->y: 0,
 					kZAxis == i? acceleration->z: 0

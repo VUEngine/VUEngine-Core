@@ -102,7 +102,7 @@ typedef struct InGameEntityDefinition
 	// object's size over the z axis
 	u8 deep;
 
-	// flag to precalculte displacement on screen movement
+	// flag to precalculate displacement on screen movement
 	// to reduce flickering
 	u8 moves;
 

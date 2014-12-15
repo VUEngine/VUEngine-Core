@@ -377,7 +377,8 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
                 The Stage_setup method instructs the stage to load the world defined by PVBCC_WR.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">StageDefinition PVBCC_WR = {
+            <pre class="line-numbers"><code class="language-c">StageDefinition PVBCC_WR =
+{
 // size
 {
     // x
@@ -414,7 +415,8 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
                 Let's take a look at one of the Entities being loaded.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">ImageDefinition PVBCC_LEFT_BG = {
+            <pre class="line-numbers"><code class="language-c">ImageDefinition PVBCC_LEFT_BG =
+{
     {
         // object's class
         __TYPE(Image),
@@ -443,7 +445,8 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
                 Then comes the Sprite definition, PVBCC_LEFT_TX is the address of the Texture to use with the Sprite. The Sprite definition dictates the texture display mode (affine, bgmap, h-bias) and the displays on which the image will be shown.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">TextureDefinition PVBCC_LEFT_TX = {
+            <pre class="line-numbers"><code class="language-c">TextureDefinition PVBCC_LEFT_TX =
+{
 
     // Chargroup
     {
@@ -484,7 +487,8 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
             <p>
                 Characters are used to represent Entities which have certain animations and which can move inside the Stage. In order to provide a Character with an animation it must be defined as follow:
             </p>
-            <pre class="line-numbers"><code class="language-c">CharacterDefinition HERO_MC = {
+            <pre class="line-numbers"><code class="language-c">CharacterDefinition HERO_MC =
+{
     {
         {
             // object's class
@@ -522,7 +526,8 @@ Game_FXFadeIn(Game_getInstance(), FADEDELAY);
 };
 
 // a function which defines the frames to play
-AnimationFunction HERO_BLINKING_ANIM = {
+AnimationFunction HERO_BLINKING_ANIM =
+{
 
     // function's name
     "Blink",
@@ -544,7 +549,8 @@ AnimationFunction HERO_BLINKING_ANIM = {
 };
 
 // an animation definition
-AnimationDescription HERO_ANIM = {
+AnimationDescription HERO_ANIM =
+{
 
     // number of animation frames
     28,
@@ -697,7 +703,8 @@ AnimationDescription HERO_ANIM = {
                 The following gives an example for an English language definition file.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">static char* Lang_EN[] = {
+            <pre class="line-numbers"><code class="language-c">static char* Lang_EN[] =
+{
 
     // STR_HELLO
     "Hello",

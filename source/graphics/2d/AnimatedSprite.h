@@ -119,7 +119,7 @@ typedef struct AnimationFunction
 	// function's name
 	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGHT];
 
-}AnimationFunction;
+} AnimationFunction;
 
 typedef const AnimationFunction AnimationFunctionROMDef;
 
@@ -132,7 +132,7 @@ typedef struct AnimationDescription
 	// animation functions
 	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
 
-}AnimationDescription;
+} AnimationDescription;
 
 typedef const AnimationDescription AnimationDescriptionROMDef;
 
@@ -141,86 +141,34 @@ typedef const AnimationDescription AnimationDescriptionROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-//class's allocator
 __CLASS_NEW_DECLARE(AnimatedSprite, __PARAMETERS(Object owner, const SpriteDefinition* spriteDefinition));
 
- //destructor
 void AnimatedSprite_destructor(AnimatedSprite this);
-
-// retrieve frame allocation type
 int AnimatedSprite_getType(AnimatedSprite this);
-
-// retrieve frame's map
 Texture AnimatedSprite_getTexture(AnimatedSprite this);
-
-//write char animation frame to char memory
 void AnimatedSprite_writeAnimation(AnimatedSprite this);
-
-// if true, the frame's screen position will be calculated in the
-// next render cicle
 void AnimatedSprite_setCalculatePositionFlag(AnimatedSprite this, int calculatePositionFlag);
-
-// retrieve actual frame index of animation
 s8 AnimatedSprite_getActualFrame(AnimatedSprite this);
-
-// retrieve previous frame index of animation
 s8 AnimatedSprite_getPreviousFrame(AnimatedSprite this);
-
-// set actual frame of animation
 void AnimatedSprite_setActualFrame(AnimatedSprite this, s8 actualFrame);
-
-// set previous frame index of animation
 void AnimatedSprite_setPreviousFrame(AnimatedSprite this, s8 previousFrame);
-
-// retrieve frame delay
 s8 AnimatedSprite_getFrameDelay(AnimatedSprite this);
-
-// set frame delay
 void AnimatedSprite_setFrameDelay(AnimatedSprite this, u8 frameDelay);
-
-// retrieve frame delay delta
 u8 AnimatedSprite_geFrameDelayDelta(AnimatedSprite this);
-
-// set frame delay delta
 void AnimatedSprite_setFrameDelayDelta(AnimatedSprite this, u8 frameDelayDelta);
-
-// animate the frame
 void AnimatedSprite_animate(AnimatedSprite this);
-
-// execute frame's map's FX
 void AnimatedSprite_fx(AnimatedSprite this);
-
-// render frame
 void AnimatedSprite_update(AnimatedSprite this, Clock clock);
-
-// retrieve frame's map's height
 u8 AnimatedSprite_getRows(AnimatedSprite this);
-
-// retrieve frame's map's width
 u8 AnimatedSprite_getCols(AnimatedSprite this);
-
-// retrieve frame's map's render mode
 int AnimatedSprite_getMapType(AnimatedSprite this);
-
-// allocate a write in graphic memory again
 void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer);
-
-// play animation
 void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction);
-
-// play animation
 void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
-
-// is playing a specific animation
 int AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
-
-// is playing animation
 int AnimatedSprite_isPlaying(AnimatedSprite this);
-
-// write sprite to graphic memory
 void AnimatedSprite_write(AnimatedSprite this);
-
-// pause animation
 void AnimatedSprite_pause(AnimatedSprite this, int pause);
+
 
 #endif

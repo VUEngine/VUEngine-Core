@@ -83,49 +83,21 @@ enum ShapeTypes{
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 void Shape_constructor(Shape this, Entity owner);
-
-// class's destructor
 void Shape_destructor(Shape this);
-
-// retrieve owner
 Entity Shape_getOwner(Shape this);
-
-// set active
 void Shape_setActive(Shape this, u8 active);
-
-// is active?
 u8 Shape_isActive(Shape this);
-
-// do I move?
 u8 Shape_moves(Shape this);
-
-// has been checked
 u8 Shape_isChecked(Shape this);
-
-// set check status
 void Shape_checked(Shape this, u8 checked);
-
-// has been configured?
 u8 Shape_isReady(Shape this);
-
-// set configured flag
 void Shape_setReady(Shape this, u8 ready);
-
-// set flag
 void Shape_setCheckForCollisions(Shape this, u8 checkForCollisions);
-
-// get flag
 u8 Shape_checkForCollisions(Shape this);
-
-// draw debug data
 void Shape_draw(Shape this);
-
-// flush direct draw data
 void Shape_deleteDirectDrawData(Shape this);
-
-// print debug data
 void Shape_print(Shape this, int x, int y);
 
-#endif /*SHAPE_H_*/
+
+#endif

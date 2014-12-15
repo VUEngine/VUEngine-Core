@@ -130,22 +130,21 @@ void HardwareManager_keypadInterruptHandler(void)
 }
 
 // cro's interrupt handler
-void HardwareManager_croInterruptHandler(void){   // Expantion Port Interupt Handler
-
+void HardwareManager_croInterruptHandler(void)   // Expansion Port Interrupt Handler
+{
 	Printing_text("EXP interrupt", 48 - 13, 0);
 }
 
 // com's interrupt handler
-void HardwareManager_communicationInterruptHandler(void){   // Link Port Interrupt Handler
-
+void HardwareManager_communicationInterruptHandler(void)   // Link Port Interrupt Handler
+{
 	Printing_text("COM interrupt", 48 - 13, 0);
 }
 
 // vpu's interrupt handler
 void HardwareManager_vpuInterruptHandler(void)
 {
-	// don't use these interrupt, they introduce a strage
-	// behavior in the machine
+	// don't use these interrupt, they introduce a strange behavior in the machine
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
 	Printing_text("VPU interrupt", 48 - 13, 0);
@@ -183,7 +182,6 @@ void HardwareManager_setInterruptLevel(HardwareManager this, u8 level)
 	: "r5", "r6" // Clobber
 	);
 }
-
 
 // get interruption level
 inline int HardwareManager_geInterruptLevel(HardwareManager this)
@@ -327,7 +325,6 @@ u16 HardwareManager_readKeypad(HardwareManager this)
 
 // print hardware's states
 void HardwareManager_print(HardwareManager this, int x, int y)
-
 {
 	Printing_text("HARDWARE'S STATUS", x, y++);
 

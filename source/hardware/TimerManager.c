@@ -26,6 +26,7 @@
 #include <TimerManager.h>
 #include <HardwareManager.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -81,11 +82,11 @@ void TimerManager_setInterrupt(TimerManager this, int value)
 	ASSERT(this, "TimerManager::setInterrupt: null this");
 
 	if (value)
-{
+	{
 		this->tcrValue |= TIMER_INT;
 	}
 	else
-{
+	{
 		this->tcrValue &= ~TIMER_INT;
 	}
 
@@ -98,11 +99,11 @@ void TimerManager_enable(TimerManager this, int value)
 	ASSERT(this, "TimerManager::enable: null this");
 
 	if (value)
-{
+	{
 		this->tcrValue |= TIMER_ENB;
 	}
 	else
-{
+	{
 		this->tcrValue &= ~TIMER_ENB;
 	}
 
@@ -132,10 +133,11 @@ void TimerManager_setFrequency(TimerManager this, int frequency)
 	ASSERT(this, "TimerManager::setFrequency: null this");
 
 	if (frequency)
-{
+	{
 		this->tcrValue |= TIMER_20US;
 	}
-	else {
+	else
+	{
 		this->tcrValue &= ~TIMER_20US;
 	}
 
@@ -173,4 +175,3 @@ void TimerManager_initialize(TimerManager this)
 	TimerManager_setInterrupt(this, 1);
 	TimerManager_enable(this, true);
 }
-

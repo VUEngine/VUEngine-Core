@@ -33,6 +33,7 @@
 
 #define TAB_SIZE 4 //horizontal tab size in chars
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
@@ -59,15 +60,15 @@ void Printing_loadFont()
 {
 	// check that character definitions is not null
 	if (!_fontCharDefinition)
-{
+	{
 		_fontCharDefinition = (const u16*)FontTiles;
 	}
 
 	//copy font char definition to char segment 3
 	Mem_copy((u8*)(CharSeg3 + ((128 - 1) * 16)), (u8*)_fontCharDefinition, 257 << 4);
 
-    //set third char segment's mem usage
-   // CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
+	//set third char segment's mem usage
+	// CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
 }
 
 //render general print output layer
@@ -105,11 +106,11 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 	u16 i=0,pos=0,col=x;
 
 	while (string[i])
-{
+	{
 		pos = (y << 6) + x;
 
 		switch (string[i])
-{
+		{
 			case 7:
 				// Bell (!)
 				break;
@@ -129,7 +130,7 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 			default:
 				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + 0x680) | (bplt << 14);
 				if (x++ > 63)
-{
+				{
 					x = col;
 					y++;
 				}
@@ -142,35 +143,31 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 void Printing_int(int value,int x,int y)
 {
 	if (value < 0)
-{
+	{
 		value *= -1;
 
-		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
+		Printing_out(__PRINTING_BGMAP, x++, y, "-", 0);
 
-		Printing_out(__PRINTING_BGMAP, x,y,
-				Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
+		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
 
 	}
 	else
-{
-		Printing_out(__PRINTING_BGMAP,
-				//x - vbjDigitCount(value), y, itoa((int)(value), 10, vbjDigitCount(value)) + 1, 0);
-				x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
+	{
+		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
 	}
 }
 
 void Printing_hex(WORD value,int x,int y)
 {
 	if (0 && value<0)
-{
+	{
 		value *= -1;
 
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
 		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALLETE);
-
 	}
 	else
-{
+	{
 		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALLETE);
 	}
 }
@@ -191,7 +188,8 @@ void Printing_float(float value,int x,int y)
 
 	int decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 
-	if (value < 0){
+	if (value < 0)
+	{
 		sign = -1;
 
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
@@ -211,13 +209,13 @@ void Printing_float(float value,int x,int y)
 	// print the decimal part
 	//
 	for (i = 0; size; i++)
-{
+	{
 		if (decimal < size)
-{
+		{
 			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALLETE);
 		}
 		else
-{
+		{
 			i++;
 			break;
 		}

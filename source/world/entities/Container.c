@@ -261,7 +261,8 @@ Transformation Container_getEnvironmentTransform(Container this)
 	}
 
 	// static to avoid call to _memcpy
-	static Transformation environmentTransform = {
+	static Transformation environmentTransform =
+{
 			// local position
 			{0, 0, 0},
 			// global position
@@ -304,7 +305,8 @@ static void Container_applyTransform(Container this, Transformation* environment
 	ASSERT(this, "Container::transform: null this");
 
 	// concatenate environment transform
-	Transformation environmentTransformCopy = {
+	Transformation environmentTransformCopy =
+{
 		// local position
 		{
 			environmentTransform->localPosition.x,
