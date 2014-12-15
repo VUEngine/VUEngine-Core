@@ -18,26 +18,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+// ---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+// ---------------------------------------------------------------------------------------------------------
 
 #include <ParamTableManager.h>
 #include <HardwareManager.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+// ---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DEFINITION
+// ---------------------------------------------------------------------------------------------------------
 
 #define ParamTableManager_ATTRIBUTES											\
 																				\
@@ -54,46 +46,37 @@
 	VirtualList sprites;														\
 																				\
 	/* removed sprites' sizes */												\
-	VirtualList removedSpritesSizes;													\
+	VirtualList removedSpritesSizes;											\
 
 __CLASS_DEFINITION(ParamTableManager);
 
 
-typedef struct ParamTableFreeData {
-	
+typedef struct ParamTableFreeData
+{
 	u32 param;
 	u32 size;
 	u32 recoveredSize;
-}ParamTableFreeData;
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												PROTOTYPES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+} ParamTableFreeData;
 
-// class constructor 
+
+// ---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+// ---------------------------------------------------------------------------------------------------------
+
 static void ParamTableManager_constructor(ParamTableManager this);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												CLASS'S METHODS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------------------------------------------------------
+// 												CLASS'S METHODS
+// ---------------------------------------------------------------------------------------------------------
+
 // a singleton
 __SINGLETON(ParamTableManager);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//class constructor 
-static void ParamTableManager_constructor(ParamTableManager this){
-
+//class constructor
+static void ParamTableManager_constructor(ParamTableManager this)
+{
 	__CONSTRUCT_BASE(Object);
 
 	this->sprites = __NEW(VirtualList);
@@ -102,25 +85,24 @@ static void ParamTableManager_constructor(ParamTableManager this){
 	ParamTableManager_reset(this);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class destructor
-void ParamTableManager_destructor(ParamTableManager this){
-
+void ParamTableManager_destructor(ParamTableManager this)
+{
 	ASSERT(this, "ParamTableManager::destructor: null this");
 
-	if(this->sprites) {
-		
+	if (this->sprites)
+	{
 		__DELETE(this->sprites);
 		
 		this->sprites = NULL;
 	}
 	
-	if(this->removedSpritesSizes) {
-		
+	if (this->removedSpritesSizes)
+	{
 		VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
 		
-		for(; node; node = VirtualNode_getNext(node)){
-			
+		for(; node; node = VirtualNode_getNext(node))
+		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
 		
@@ -133,10 +115,9 @@ void ParamTableManager_destructor(ParamTableManager this){
 	__SINGLETON_DESTROY(Object);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // reset
-void ParamTableManager_reset(ParamTableManager this){
-
+void ParamTableManager_reset(ParamTableManager this)
+{
 	ASSERT(this, "ParamTableManager::reset: null this");
 
 	VirtualList_clear(this->sprites);
@@ -149,10 +130,9 @@ void ParamTableManager_reset(ParamTableManager this){
 	this->used = 1;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // allocate param table space for sprite
-int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
-	
+int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
+{
 	ASSERT(this, "ParamTableManager::allocate: null this");
 
 	int size = 0;
@@ -162,8 +142,8 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
 
 	//if there is space in the param table, allocate
-	if(PARAM((this->used + size)) < __PARAMEND){
-		
+	if(PARAM((this->used + size)) < __PARAMEND)
+	{
 		//set sprite param
 		Sprite_setParam(sprite, this->used);
 		
@@ -184,10 +164,9 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite){
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // deallocate param table space
-void ParamTableManager_free(ParamTableManager this, Sprite sprite){
-	
+void ParamTableManager_free(ParamTableManager this, Sprite sprite)
+{
 	ASSERT(this, "ParamTableManager::free: null this");
 	ASSERT(VirtualList_find(this->sprites, sprite), "ParamTableManager::free: sprite not found");
 
@@ -200,34 +179,30 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite){
 	VirtualList_pushBack(this->removedSpritesSizes, paramTableFreeData);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // relocate sprites
-int ParamTableManager_processRemovedSprites(ParamTableManager this){
-	
+int ParamTableManager_processRemovedSprites(ParamTableManager this)
+{
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
-	/* for each sprite using param table space
-	 * reasign them their param table start
-	 * point.
-	 */
+	// for each sprite using param table space reassign them their param table starting point.
 	VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
 
-	for(; node; node = VirtualNode_getNext(node)){
-
+	for (; node; node = VirtualNode_getNext(node))
+	{
 		ParamTableFreeData* paramTableFreeData = (ParamTableFreeData*)VirtualNode_getData(node);
 
 		//calculate necesary space to allocate	
 		VirtualNode auxNode = VirtualList_begin(this->sprites);
 
-		for(; auxNode; auxNode = VirtualNode_getNext(auxNode)){
-
+		for (; auxNode; auxNode = VirtualNode_getNext(auxNode))
+		{
 			Sprite auxSprite = (Sprite)VirtualNode_getData(auxNode);
 
 			u32 auxParam = Sprite_getParam(auxSprite);
 
 			// retrieve param
-			if(auxParam > paramTableFreeData->param) {
-	
-				//move back paramSize bytes
+			if (auxParam > paramTableFreeData->param)
+			{
+					//move back paramSize bytes
 				Sprite_setParam(auxSprite, paramTableFreeData->param);
 				
 				// set the new param and size to move on the next cycle
@@ -237,8 +212,8 @@ int ParamTableManager_processRemovedSprites(ParamTableManager this){
 			}
 		}
 		
-		if(!auxNode){
-
+		if (!auxNode)
+		{
 			//recover space
 			this->used -= paramTableFreeData->recoveredSize;
 			this->size += paramTableFreeData->recoveredSize;
@@ -253,10 +228,9 @@ int ParamTableManager_processRemovedSprites(ParamTableManager this){
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print param table's attributes state
-void ParamTableManager_print(ParamTableManager this, int x, int y){
-	
+void ParamTableManager_print(ParamTableManager this, int x, int y)
+{
 	ASSERT(this, "ParamTableManager::print: null this");
 
 	int i = 0;
@@ -270,10 +244,9 @@ void ParamTableManager_print(ParamTableManager this, int x, int y){
 	
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
-	for(; node; node = VirtualNode_getNext(node)){
-
+	for(; node; node = VirtualNode_getNext(node))
+	{
 		Printing_hex((int)VirtualNode_getData(node), x, y + i + 3);
 		//printInt((int)this->sprites[i]->param,x+10,y+i+3);
 	}
 }
-

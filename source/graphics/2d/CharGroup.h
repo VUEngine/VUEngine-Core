@@ -1,18 +1,18 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -21,25 +21,17 @@
 #ifndef CHARGROUP_H_
 #define CHARGROUP_H_
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
 
 //definition of a chargroup of an animated character or background
 #define __ANIMATED			0x01
@@ -54,19 +46,15 @@
 // future expansion
 #define __ANIMATED_SHARED_2	0x04
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
 
 /* Defines as a pointer to a structure that
  * is not defined here and so is not accessible to the outside world
  */
- 
+
 #define CharGroup_METHODS														\
 		Object_METHODS															\
 
@@ -101,82 +89,47 @@
 
 __CLASS(CharGroup);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S ROM DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-typedef struct CharGroupDefinition{
-	
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S ROM DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+typedef struct CharGroupDefinition
+{
 	// number of chars
 	u16 numberOfChars;
-	
+
 	// the way its chars and bgtexture will be allocated in graphic memory
 	u16 allocationType;
-	
+
 	// pointer to the char definition in ROM
 	BYTE* charDefinition;
-	
-}CharGroupDefinition;
+
+} CharGroupDefinition;
 
 typedef const CharGroupDefinition CharGroupROMDef;
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 										PUBLIC INTERFACE
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-// class's allocator
+//---------------------------------------------------------------------------------------------------------
+// 										PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
+
 __CLASS_NEW_DECLARE(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition, Object owner));
 
-// class's destructor
 void CharGroup_destructor(CharGroup this);
-
-// retrieve chargroup's allocation type
 int CharGroup_getAllocationType(CharGroup this);
-
-// retrieve chargroup's offset within char segment
 u16 CharGroup_getOffset(CharGroup this);
-
-// set chargroup's offset within the char segment
 void CharGroup_setOffset(CharGroup this, u16 offset);
-
-// get chargroup's char definition	
 BYTE* CharGroup_getCharDefinition(CharGroup this);
-
-// set chargroup's char definition
 void CharGroup_setCharDefinition(CharGroup this, void *charDefinition);
-
-// set chargroup's number of chars
 void CharGroup_setNumberOfChars(CharGroup this, int numberOfChars);
-
-// retrieve chargrop's number of chars
 int CharGroup_getNumberOfChars(CharGroup this);
-
-// get chargroup's segment 
 int CharGroup_getCharSet(CharGroup this);
-
-// set chargroup's char segment
 void CharGroup_setCharSet(CharGroup this, int charSet);
-
-// copy a chargroup
 void CharGroup_copy(CharGroup this, CharGroup source);
-
-// write char on memory	
 void CharGroup_write(CharGroup this);
-
-// rewrite char on memory	
 void CharGroup_rewrite(CharGroup this);
-
-// set charDefinitionDisplacement
 void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement);
+
 
 #endif

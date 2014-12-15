@@ -1,18 +1,18 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -21,14 +21,10 @@
 #ifndef HARWDARE_MANAGER_H_
 #define HARWDARE_MANAGER_H_
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
 #include <VIP.h>
@@ -37,14 +33,10 @@
 #include <TimerManager.h>
 #include <VPUManager.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												DEFINES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												DEFINES
+//---------------------------------------------------------------------------------------------------------
 
 static u8* const HW_REGS =			(u8*)0x02000000;
 
@@ -62,17 +54,13 @@ static u8* const HW_REGS =			(u8*)0x02000000;
 #define	SCR		0x28	// Serial Control Register			(0x0200 0028)
 
 /********Cache Management***************/
-#define CACHE_ENABLE    asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */) 
+#define CACHE_ENABLE    asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 #define CACHE_DISABLE    asm("ldsr r0,sr24")
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
 
 /* Defines as a pointer to a structure that
  * is not defined here and so is not accessible to the outside world
@@ -87,61 +75,28 @@ static u8* const HW_REGS =			(u8*)0x02000000;
 
 __CLASS(HardwareManager);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 										PUBLIC INTERFACE
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-// it is a singleton!
+//---------------------------------------------------------------------------------------------------------
+// 										PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
+
 HardwareManager HardwareManager_getInstance();
 
-// class's destructor
 void HardwareManager_destructor(HardwareManager this);
-
-// setup interrupt vectors
 void HardwareManager_setInterruptVectors(HardwareManager this);
-
-// set interruption level
 void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
-
-// initialize timer
 void HardwareManager_initializeTimer(HardwareManager this);
-
-// clear screen
 void HardwareManager_clearScreen(HardwareManager this);
-
-// display on
 void HardwareManager_displayOn(HardwareManager this);
-
-// display off
 void HardwareManager_displayOff(HardwareManager this);
-
-// disable VPU interrupts
 void HardwareManager_disableRendering(HardwareManager this);
-
-// enable VPU interrupts
 void HardwareManager_enableRendering(HardwareManager this);
-
-// make sure the brigtness is ok
 void HardwareManager_upBrightness(HardwareManager this);
-
-// setup default column table
 void HardwareManager_setupColumnTable(HardwareManager this);
-
-// enable key pad
 void HardwareManager_enableKeypad(HardwareManager this);
-
-// disable key pad
 void HardwareManager_disableKeypad(HardwareManager this);
-
-// read keypad
 u16 HardwareManager_readKeypad(HardwareManager this);
-
-// print hardware's states
 void HardwareManager_print(HardwareManager this, int x, int y);
 
-#endif /*HARWDARE_MANAGER_H_*/
+
+#endif

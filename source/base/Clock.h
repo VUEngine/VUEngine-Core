@@ -1,18 +1,18 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -21,39 +21,26 @@
 #ifndef CLOCK_H_
 #define CLOCK_H_
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
 #include <VirtualList.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												MACROS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
 
 #define __EVENT_SECOND_CHANGED	"secondChanged"
 #define __EVENT_MINUTE_CHANGED	"minuteChanged"
 #define __EVENT_HOUR_CHANGED	"hourChanged"
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
 
 #define Clock_ATTRIBUTES														\
 																				\
@@ -86,67 +73,30 @@
 // declare a Clock
 __CLASS(Clock);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 										PUBLIC INTERFACE
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-// class's allocator
+//---------------------------------------------------------------------------------------------------------
+// 										PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
+
 __CLASS_NEW_DECLARE(Clock);
 
-// class's destructor
 void Clock_destructor(Clock this);
-
-// time delay
 void Clock_delay(Clock this, int miliSeconds);
-
-// print formated class's attributes's states
 void Clock_print(Clock this, int col, int row);
-
-// called on each timer interrupt
 void Clock_update(Clock this, u32 ticks);
-
-// function to call in hardware timer interrupt
 void Clock_interrupt();
-
-// reset clock's attributes
 void Clock_reset(Clock this);
-
-// retrieve clock's miliseconds
 u32 Clock_getMiliSeconds(Clock this);
-
-// retrieve clock's minutes
 u8 Clock_getMinutes(Clock this);
-
-// retrieve clock's seconds
 u8 Clock_getSeconds(Clock this);
-
-// retrieve clock's total elapsed time in seconds
 u32 Clock_getTime(Clock this);
-
-// retrieve current elapsed second (fraction) in the current second
 int Clock_getTimeInCurrentSecond(Clock this);
-
-// set clock's total elapsed time from seconds paramenters 
 void Clock_setTimeInSeconds(Clock this, float totalSeconds);
-
-// set clock's total elapsed time
 void Clock_setTime(Clock this, int hours, int minutes, int seconds);
-
-// start the clock
 void Clock_start(Clock this);
-
-// stop the clock
 void Clock_stop(Clock this);
-
-// pause the clock
 void Clock_pause(Clock this, u8 paused);
-
-// whether the clock is running or not
 u8 Clock_isPaused(Clock this);
 
-#endif /*CLOCK_H_*/
+
+#endif

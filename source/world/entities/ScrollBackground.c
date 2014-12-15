@@ -1,31 +1,27 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <ScrollBackground.h>
 #include <CollisionManager.h>
@@ -34,14 +30,10 @@
 #include <Prototypes.h>
 #include <Game.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DEFINITION
+//---------------------------------------------------------------------------------------------------------
 
 // define the ScrollBackground
 __CLASS_DEFINITION(ScrollBackground);
@@ -51,14 +43,10 @@ enum ScrollSprites {
 	kRightSprite
 };
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												PROTOTYPES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
 
 // global
 extern VBVec3D * _screenPosition;
@@ -67,48 +55,41 @@ const extern VBVec3D* _screenDisplacement;
 // calculate the scroll's screen position
 static void ScrollBackground_updateScrolling(ScrollBackground this);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												CLASS'S METHODS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// always call these to macros next to each other
+//---------------------------------------------------------------------------------------------------------
+// 												CLASS'S METHODS
+//---------------------------------------------------------------------------------------------------------
+
+// always call these two macros next to each other
 __CLASS_NEW_DEFINITION(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 ID))
 __CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, ID));
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 ID){
-
+void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 ID)
+{
 	ASSERT(this, "ScrollBackground::constructor: null this");
 	ASSERT(scrollBackgroundDefinition, "ScrollBackground::constructor: null definition");
-	
+
 	// construct base object
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, ID));
-	
-	
+
+
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
-	
+
 	VirtualNode node = VirtualList_begin(this->sprites);
 	int i = 0;
 
-	for(; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++){
-		
+	for (; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
+	{
 		this->scrollSprites[i] = VirtualNode_getData(node);
-		
+
 		ASSERT(__GET_CAST(Sprite, this->scrollSprites[i]), "ScrollBackground::constructor: no sprite added to list")
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void ScrollBackground_destructor(ScrollBackground this){
-	
+void ScrollBackground_destructor(ScrollBackground this)
+{
 	ASSERT(this, "ScrollBackground::destructor: null this");
 
 	// destroy the super object
@@ -116,10 +97,9 @@ void ScrollBackground_destructor(ScrollBackground this){
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // initial transform
-void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform){
-
+void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform)
+{
 	ASSERT(this, "ScrollBackground::transform: null this");
 
 	// call base class's transform method
@@ -128,47 +108,46 @@ void ScrollBackground_initialTransform(ScrollBackground this, Transformation* en
 	ScrollBackground_updateScrolling(this);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transform class
-void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform){
-
+void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform)
+{
 	ASSERT(this, "ScrollBackground::transform: null this");
 
 	// don't calling base class's transform method
-	// will improve performance 
+	// will improve performance
 #ifdef __STAGE_EDITOR
-	if(Game_isInSpecialMode(Game_getInstance())){
-		
+	if (Game_isInSpecialMode(Game_getInstance()))
+	{
 		Entity_transform((Entity)this, environmentTransform);
 	}
 #endif
 
-	if(_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z){
-		
+	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
+	{
 		ScrollBackground_updateScrolling(this);
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // calculate the scroll's screen position
-static void ScrollBackground_updateScrolling(ScrollBackground this){
-	
+static void ScrollBackground_updateScrolling(ScrollBackground this)
+{
 	ASSERT(this, "ScrollBackground::updateScrolling: null this");
 
 	CACHE_ENABLE;
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
-	DrawSpec drawSpec0 = {
+	DrawSpec drawSpec0 =
+	{
 			{0, 0, this->transform.globalPosition.z},
 			{1, 1}
 	};
-	
+
 	DrawSpec drawSpec1 = drawSpec0;
 
 	VBVec3D position3D = {_screenPosition->x, -_screenPosition->y + this->transform.globalPosition.y, this->transform.globalPosition.z};
-	
+
 	// get the screen's position
-	VBVec2D screenPosition; 
+	VBVec2D screenPosition;
 
 	int screens = 0;
 
@@ -176,49 +155,49 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	int axis = 0;
 	int factor = 1;
 	int displacement = 0;
-	
+
 	// project position to 2D
 	Optics_projectTo2D(&screenPosition, &position3D);
-	
+
 	// get the number of "screens" from the beginnig of the world
 	// to the actual screen's position
 	screens = FIX19_13TOI(screenPosition.x) / __SCREEN_WIDTH;
-	
+
 	// check if the number of screens is divisible by 2
-	//if(!(screens & 2)1 == 0 && screens != 0){
+	//if (!(screens & 2)1 == 0 && screens != 0){
 	displacement = FIX19_13TOI(screenPosition.x);
-	
-	if(screens){
-		
+
+	if (screens)
+	{
 		displacement -= ( screens - 1) * __SCREEN_WIDTH;
 
-		if(!(screens & 1)){	
-			
-			// if so, 
+		if (!(screens & 1))
+	{
+			// if so,
 			factor = 2;
 		}
 	}
-	
+
 	axis = __SCREEN_WIDTH * factor - displacement;
-	
-	if((unsigned)axis <= __SCREEN_WIDTH){
-		
+
+	if ((unsigned)axis <= __SCREEN_WIDTH)
+	{
 		drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH);
-		
+
 		drawSpec1.position.x = ITOFIX19_13(axis);
 	}
-	else{
-		
-		if(axis < 0){
-			
+	else
+	{
+		if (axis < 0)
+	{
 			drawSpec1.position.x = ITOFIX19_13(axis);
-			
+
 			drawSpec0.position.x = drawSpec1.position.x + ITOFIX19_13(__SCREEN_WIDTH);
 		}
-		else{
-			
+		else
+	{
 			drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH - 1);
-			
+
 			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREEN_WIDTH - 1);
 		}
 	}
@@ -230,26 +209,24 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	// set map's position
 	Sprite_setDrawSpec(this->scrollSprites[kRightSprite], &drawSpec0);
 	Sprite_setRenderFlag(this->scrollSprites[kRightSprite], __UPDATE_G);
-	
-	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);	
+
+	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);
 	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATE_G);
 	
 	CACHE_DISABLE;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // whether it is visible
-int ScrollBackground_isVisible(ScrollBackground this, int pad){
-	
+int ScrollBackground_isVisible(ScrollBackground this, int pad)
+{
 	ASSERT(this, "ScrollBackground::isVisible: null this");
 
 	return true;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if must update sprite's position
-int ScrollBackground_updateSpritePosition(ScrollBackground this){
-
+int ScrollBackground_updateSpritePosition(ScrollBackground this)
+{
 	ASSERT(this, "ScrollBackground::updateSpritePosition: null this");
 
 	return false;

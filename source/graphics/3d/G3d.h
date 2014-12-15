@@ -31,8 +31,8 @@ Fixed point math defines
 Type definitions used in
 the game functions
 **********************/
-typedef struct{
-
+typedef struct
+{
 	s32 x; //fixed point
 	s32 y; //fixed point
 	s32 z; //fixed point
@@ -41,8 +41,8 @@ typedef struct{
 
 } vector3d;//represents a vector or coordinate. 20 bytes size
 
-typedef struct{
-
+typedef struct
+{
 	s32 vertexSize;//Size of vertex array portion
 	s32 lineSize;//Size of line data portion
 	s32 faceSize;//Number of points per "face". Since we use only lines for wireframe this should always be 2
@@ -50,16 +50,16 @@ typedef struct{
 
 } objectData;
 
-typedef struct{
-
+typedef struct
+{
 	s32 width;
 	s32 height;
 	s32 depth;
 
 }collisionCube; //This can be used for collision detection 12 bytes size
 
-typedef struct{
-
+typedef struct
+{
 	u32 visible; //Is this object visible
 	u32 clip;//This is whether the object is clipped or not
 	u32 detectCollision; //Do we perform collision detection
@@ -69,8 +69,8 @@ typedef struct{
 
 } objectProperties;//32 bytes size
 
-typedef struct object{
-
+typedef struct object
+{
 	vector3d worldPosition;//Actual position inside the world //20 bytes
 	vector3d moveTo;//worldPosition to move the object to //20 bytes
 	vector3d worldRotation;//Not Fixed Point (x,y,z) rotation in degrees //20 bytes
@@ -85,8 +85,8 @@ typedef struct object{
 
 } object;
 
-typedef struct{
-
+typedef struct
+{
 	vector3d worldPosition; //20 bytes
 	vector3d worldSpeed; //20 bytes
 	vector3d speed; //20 bytes

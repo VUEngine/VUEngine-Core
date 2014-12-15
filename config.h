@@ -6,9 +6,8 @@
 // 							        VBJAENGINE'S CONFIGURATION
 //---------------------------------------------------------------------------------------------------------
 
-
 //---------------------------------------------------------------------------------------------------------
-// 											DEBUGGING
+// 										DEBUGGING
 //---------------------------------------------------------------------------------------------------------
 
 #define __DEBUG_TOOLS
@@ -66,7 +65,6 @@
 // parallax values are divide by this factor to control it's strenght
 #define __PARALLAX_CORRECTION_FACTOR			20
 
-
 //---------------------------------------------------------------------------------------------------------
 // 										FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
@@ -93,11 +91,13 @@
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
-#define __FPS_ANIM_FACTOR 	(__TARGET_FPS / (float)__OPTIMUM_FPS)
+#define __FPS_ANIM_FACTOR 	            (__TARGET_FPS / (float)__OPTIMUM_FPS)
 
 //seconds that must elapse to call rest state... in seconds (15 minutes)
 #define __REST_DELAY 		900
 
+//seconds that must elapse to call rest state... in seconds (15 minutes)
+#define __REST_DELAY 		            900
 
 //---------------------------------------------------------------------------------------------------------
 // 										MEMORY POOL
@@ -176,11 +176,11 @@
 #define __PRINTING_BGMAP_Z_OFFSET		__ZZERO
 #define __PRINTABLE_BGMAP_AREA 			(64 * 28)
 
-#define __PALLET_MASK					0x0600
+#define __PALETTE_MASK					0x0600
 #define __WORLD_LAYER_MASK				0x01F0
 #define __SEGMENT_MASK					0x000F
 
-#define __PALLET_MASK_DISP				0x09 /* 6 */
+#define __PALETTE_MASK_DISP				0x09 /* 6 */
 #define __WORLD_LAYER_MASK_DISP			0x04 /* 1 */
 #define __SEGMENT_MASK_DISP				0x00 /* 0 */
 
@@ -208,7 +208,8 @@
 #define __ENTITY_LOAD_PAD 			20
 #define __ENTITY_UNLOAD_PAD 		30
 
-// since there are 32 layers, that's the theoretical limit of entities to display
+// since there are 32 layers, that's the theoretical limit
+// of entities to display
 #define __STREAMING_AMPLITUDE		32
 
 // number of sprites per entity
@@ -255,15 +256,15 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										COLOR PALETS
+// 										COLOR PALETTES
 //---------------------------------------------------------------------------------------------------------
 
-#define __PRINTING_PALLETE		3
+#define __PRINTING_PALETTE		3
 
-#define __GPLT0VALUE  			0xE4	/* Set all eight palettes to: 11100100 */
-#define __GPLT1VALUE  			0xE0	/* (i.e. "Normal" dark to light progression.) */
-#define __GPLT2VALUE  			0xF0
-#define __GPLT3VALUE  			0xEA
+#define __GPLT0VALUE  			0xE4	// 11 10 01 00
+#define __GPLT1VALUE  			0xE0	// 11 10 00 00
+#define __GPLT2VALUE  			0xF0	// 11 11 00 00
+#define __GPLT3VALUE  			0xEA	// 11 10 10 10
 #define __JPLT0VALUE  			0xE4
 #define __JPLT1VALUE  			0xE4
 #define __JPLT2VALUE  			0xE4
