@@ -1,57 +1,44 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
- 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <Cuboid.h>
 #include <Optics.h>
 #include <Polygon.h>
 #include <Math.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DEFINITION
+//---------------------------------------------------------------------------------------------------------
 
 // define the Cuboid
 __CLASS_DEFINITION(Cuboid);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												PROTOTYPES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
 
 // class's constructor
 static void Cuboid_constructor(Cuboid this, Entity owner);
@@ -71,104 +58,93 @@ static void Cuboid_configurePolygon(Cuboid this, int renew);
 // retrieve shape
 Shape Entity_getShape(Entity this);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												CLASS'S METHODS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// always call these to macros next to each other
+//---------------------------------------------------------------------------------------------------------
+// 												CLASS'S METHODS
+//---------------------------------------------------------------------------------------------------------
+
+// always call these two macros next to each other
 __CLASS_NEW_DEFINITION(Cuboid, __PARAMETERS(Entity owner))
 __CLASS_NEW_END(Cuboid, __ARGUMENTS(owner));
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void Cuboid_constructor(Cuboid this, Entity owner){
-
+static void Cuboid_constructor(Cuboid this, Entity owner)
+{
 	ASSERT(this, "Cuboid::constructor: null this");
 
 	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
-	
+
 	this->polygon = NULL;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void Cuboid_destructor(Cuboid this){
-
+void Cuboid_destructor(Cuboid this)
+{
 	ASSERT(this, "Cuboid::destructor: null this");
 
 	Cuboid_deleteDirectDrawData(this);
-	
+
 	// destroy the super object
 	__DESTROY_BASE(Shape);
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if two rects overlap
-int Cuboid_overlaps(Cuboid this, Shape shape){
-
+int Cuboid_overlaps(Cuboid this, Shape shape)
+{
 	ASSERT(this, "Cuboid::overlaps: null this");
 
-	if(__GET_CAST(Cuboid, shape)){
-		
+	if (__GET_CAST(Cuboid, shape))
+{
 		return Cuboid_overlapsCuboid(this, (Cuboid)shape);
 	}
-	
+
 	return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if overlaps with other rect
-int Cuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second){
-	
+int Cuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second)
+{
 	ASSERT(first, "Cuboid::overlapsWithRightcuboids: null first");
 	ASSERT(second, "Cuboid::overlapsWithRightcuboids: null second");
 
 	// test for collision
-	return !(first->x0 > second->x1 || first->x1 < second->x0 || 
+	return !(first->x0 > second->x1 || first->x1 < second->x0 ||
 			first->y0 > second->y1 || first->y1 < second->y0 ||
 			first->z0 > second->z1 || first->z1 < second->z0);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // check if overlaps with other rect
-int Cuboid_overlapsCuboid(Cuboid this, Cuboid other){
-	
+int Cuboid_overlapsCuboid(Cuboid this, Cuboid other)
+{
 	ASSERT(this, "Cuboid::overlapsCuboid: null this");
 
 	return Cuboid_overlapsWithRightcuboids(&this->positionedRightcuboid, &other->positionedRightcuboid);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Cuboid_setup(Cuboid this){
-
+void Cuboid_setup(Cuboid this)
+{
 	ASSERT(this, "Cuboid::setup: null this");
 
 	// cuboid's center if placed on P(0, 0, 0)
 	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(u8, Entity, getWidth, (Entity)this->owner) >> 1);
 	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(u8, Entity, getHeight, (Entity)this->owner) >> 1);
 	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(u8, Entity, getDeep, (Entity)this->owner) >> 0);
-	
+
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
 	this->rightCuboid.z0 = 0;//-this->rightCuboid.z1;
 
 	// if owner does not move
-	if(!this->moves){
-		
+	if (!this->moves)
+{
 		ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
 
 		// position the shape to avoid in real time calculation
 		VBVec3D ownerPosition = Entity_getPosition((Entity)this->owner);
 		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
-		
+
 		// calculate gap on each side of the rightCuboid
 		this->rightCuboid.x0 += ownerPosition.x + ITOFIX19_13(ownerGap.left);
 		this->rightCuboid.x1 += ownerPosition.x - ITOFIX19_13(ownerGap.right);
@@ -177,17 +153,16 @@ void Cuboid_setup(Cuboid this){
 		this->rightCuboid.z0 += ownerPosition.z;
 		this->rightCuboid.z1 += ownerPosition.z;
 	}
-	
+
 	this->positionedRightcuboid = this->rightCuboid;
-	
+
 	// no more setup needed
 	this->ready = true;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // prepare the shape to be checked
-void Cuboid_positione(Cuboid this){
-	
+void Cuboid_positione(Cuboid this)
+{
 	ASSERT(this, "Cuboid::positione: null this");
 
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::positione: null sprites");
@@ -197,9 +172,9 @@ void Cuboid_positione(Cuboid this){
 	// get owner's position
 	VBVec3D myOwnerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, Entity, getPosition, (Entity)this->owner);
 
-	// calculate positioned rightCuboid	
+	// calculate positioned rightCuboid
 	this->positionedRightcuboid = this->rightCuboid;
-	
+
 	this->positionedRightcuboid.x0 += myOwnerPosition.x + ITOFIX19_13(gap.left);
 	this->positionedRightcuboid.x1 += myOwnerPosition.x - ITOFIX19_13(gap.right);
 	this->positionedRightcuboid.y0 += myOwnerPosition.y + ITOFIX19_13(gap.up);
@@ -211,59 +186,55 @@ void Cuboid_positione(Cuboid this){
 	this->checked = false;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve rightCuboid
-Rightcuboid Cuboid_getRightcuboid(Cuboid this){
-	
+Rightcuboid Cuboid_getRightcuboid(Cuboid this)
+{
 	ASSERT(this, "Cuboid::getRightcuboid: null this");
 
 	return this->rightCuboid;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve rightCuboid
-Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this){
-	
+Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this)
+{
 	ASSERT(this, "Cuboid::getPositionedRightcuboid: null this");
 
 	return this->positionedRightcuboid;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine axis of collision
-int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement){
-	
+int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
+{
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
 
 	Shape shape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
-	
-	if(__GET_CAST(Cuboid, shape)){
-		
+
+	if (__GET_CAST(Cuboid, shape))
+{
 		return Cuboid_getAxisOfCollisionWithCuboid(this, (Cuboid)shape, displacement);
 	}
-	
+
 	return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // determine axis of collision
-static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement){
-	
+static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
+{
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::getAxisOfCollisionWithCuboid: null sprites");
 
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
-	
+
 	VBVec3D displacementIncrement = {
 			FIX19_13_MULT(displacement.x, FTOFIX19_13(0.1f)),
 			FIX19_13_MULT(displacement.y, FTOFIX19_13(0.1f)),
 			FIX19_13_MULT(displacement.z, FTOFIX19_13(0.1f))
 	};
-	
+
 	// setup a cuboid representing the previous position
 	Rightcuboid positionedRightCuboid = this->rightCuboid;
-	
+
 	// get colliding entity's rightcuboid
 	Rightcuboid otherRightcuboid = cuboid->positionedRightcuboid;
 
@@ -279,155 +250,160 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	int axisOfCollision = 0;
 	int passes = 0;
 
-	do{
-
+	do
+{
 		numberOfAxis = 0;
 		axisOfCollision = 0;
 
-		if(displacement.x) {
-
+		if (displacement.x)
+{
 			positionedRightCuboid.x0 += displacement.x;
 			positionedRightCuboid.x1 += displacement.x;
-	
-			if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid)){
-				
+
+			if (Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+{
 				axisOfCollision |= __XAXIS;
 				numberOfAxis++;
 			}
-			
+
 			positionedRightCuboid.x0 -= displacement.x;
 			positionedRightCuboid.x1 -= displacement.x;
 		}
 
-		if(displacement.y) {
-
+		if (displacement.y)
+{
 			positionedRightCuboid.y0 += displacement.y;
 			positionedRightCuboid.y1 += displacement.y;
-		
+
 			// test for collision
-			if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid)){
-				
+			if (Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+{
 				axisOfCollision |= __YAXIS;
 				numberOfAxis++;
 			}
-			
+
 			positionedRightCuboid.y0 -= displacement.y;
 			positionedRightCuboid.y1 -= displacement.y;
 		}
-		
-		if(displacement.z) {
 
+		if (displacement.z)
+{
 			positionedRightCuboid.z0 += displacement.z;
 			positionedRightCuboid.z1 += displacement.z;
-	
+
 			// test for collision
-			if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid)){
-				
+			if (Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+{
 				axisOfCollision |= __ZAXIS;
 				numberOfAxis++;
 			}
-			
+
 			positionedRightCuboid.z0 -= displacement.z;
 			positionedRightCuboid.z1 -= displacement.z;
 		}
-		
-		if(0 == numberOfAxis) {
-			
+
+		if (0 == numberOfAxis)
+
+{
 			displacement.x += displacementIncrement.x;
 			displacement.y += displacementIncrement.y;
 			displacement.z += displacementIncrement.z;
-			
+
 			positionedRightCuboid = this->rightCuboid;
-			
+
 			positionedRightCuboid.x0 += previousPosition.x + ITOFIX19_13(gap.left);
 			positionedRightCuboid.x1 += previousPosition.x - ITOFIX19_13(gap.right);
 			positionedRightCuboid.y0 += previousPosition.y + ITOFIX19_13(gap.up);
 			positionedRightCuboid.y1 += previousPosition.y - ITOFIX19_13(gap.down);
 			positionedRightCuboid.z0 += previousPosition.z;
-			positionedRightCuboid.z1 += previousPosition.z;		
+			positionedRightCuboid.z1 += previousPosition.z;
 		}
 
-	}while(0 == numberOfAxis && ++passes < 10);
+	}while (0 == numberOfAxis && ++passes < 10);
 
-	if(__XAXIS & axisOfCollision){
+	if (__XAXIS & axisOfCollision)
+{
+		if (__YAXIS & axisOfCollision)
+{
+			if (abs(displacement.x) > abs(displacement.y))
 
-		if(__YAXIS & axisOfCollision){
-
-			if(abs(displacement.x) > abs(displacement.y)) {
-			
+{
 				axisOfCollision &= ~__XAXIS;
 			}
 		}
-		if(__ZAXIS & axisOfCollision){
+		if (__ZAXIS & axisOfCollision)
+{
+			if (abs(displacement.x) > abs(displacement.z))
 
-			if(abs(displacement.x) > abs(displacement.z)) {
-			
+{
 				axisOfCollision &= ~__XAXIS;
 			}
 		}
 	}
-	
-	if(__YAXIS & axisOfCollision){
 
-		if(__XAXIS & axisOfCollision){
+	if (__YAXIS & axisOfCollision)
+{
+		if (__XAXIS & axisOfCollision)
+{
+			if (abs(displacement.y) > abs(displacement.x))
 
-			if(abs(displacement.y) > abs(displacement.x)) {
-			
+{
 				axisOfCollision &= ~__YAXIS;
 			}
 		}
-		if(__ZAXIS & axisOfCollision){
+		if (__ZAXIS & axisOfCollision)
+{
+			if (abs(displacement.y) > abs(displacement.z))
 
-			if(abs(displacement.y) > abs(displacement.z)) {
-			
+{
 				axisOfCollision &= ~__YAXIS;
 			}
 		}
 	}
-	
-	if(__ZAXIS & axisOfCollision){
 
-		if(__XAXIS & axisOfCollision){
+	if (__ZAXIS & axisOfCollision)
+{
+		if (__XAXIS & axisOfCollision)
+{
+			if (abs(displacement.z) > abs(displacement.x))
 
-			if(abs(displacement.z) > abs(displacement.x)) {
-			
+{
 				axisOfCollision &= ~__ZAXIS;
 			}
 		}
-		if(__YAXIS & axisOfCollision){
+		if (__YAXIS & axisOfCollision)
+{
+			if (abs(displacement.z) > abs(displacement.y))
 
-			if(abs(displacement.z) > abs(displacement.y)) {
-			
+{
 				axisOfCollision &= ~__ZAXIS;
 			}
 		}
-	}	
-	
+	}
+
 	return axisOfCollision;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // test if collision with the entity give the displacement
-int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement){
-	
+int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
+{
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
 
 	Shape shape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
-	
-	if(__GET_CAST(Cuboid, shape)){
-		
+
+	if (__GET_CAST(Cuboid, shape))
+{
 		return Cuboid_testIfCollisionWithCuboid(this, (Cuboid)shape, __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, collidingEntity), displacement);
 	}
-	
+
 	return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // test if collision with the entity give the displacement
-static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement){
-
+static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement)
+{
 	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 
 	// setup a cuboid representing the previous position
@@ -437,58 +413,58 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 	Rightcuboid otherRightcuboid = cuboid->positionedRightcuboid;
 
 	int axisOfPossibleCollision = 0;
-	
-	if(displacement.x){
-		
+
+	if (displacement.x)
+{
 		positionedRightCuboid.x0 += displacement.x;
 		positionedRightCuboid.x1 += displacement.x;
 
 		// test for collision
-		if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid)){
-			
+		if (Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+{
 			axisOfPossibleCollision |= __XAXIS;
 		}
 	}
-	
-	if(displacement.y){
-		
+
+	if (displacement.y)
+{
 		positionedRightCuboid.y0 += displacement.y;
 		positionedRightCuboid.y1 += displacement.y;
 
 		// test for collision
-		if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid)){
-			
+		if (Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+{
 			axisOfPossibleCollision |= __YAXIS;
 		}
 	}
 
-	if(displacement.z){
-		
+	if (displacement.z)
+{
 		positionedRightCuboid.z0 += displacement.z;
 		positionedRightCuboid.z1 += displacement.z;
 
 		// test for collision
-		if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid)){
-			
+		if (Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+{
 			axisOfPossibleCollision |= __ZAXIS;
 		}
 	}
-	
+
 	return axisOfPossibleCollision;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // configure polygon
-static void Cuboid_configurePolygon(Cuboid this, int renew){
-	
+static void Cuboid_configurePolygon(Cuboid this, int renew)
+{
 	ASSERT(this, "Cuboid::draw: null this");
 
-	if(renew){
-		
+	if (renew)
+{
 		Cuboid_deleteDirectDrawData(this);
 	}
-	else if(this->polygon) {
-		
+	else if (this->polygon)
+
+{
 		return;
 	}
 
@@ -510,32 +486,30 @@ static void Cuboid_configurePolygon(Cuboid this, int renew){
 	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z1);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // draw rect
-void Cuboid_draw(Cuboid this){
-	
+void Cuboid_draw(Cuboid this)
+{
 	Cuboid_configurePolygon(this, this->moves || !this->ready);
 
 	// draw the polygon
 	Polygon_draw(this->polygon, true);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // flush direct draw data
-void Cuboid_deleteDirectDrawData(Cuboid this){
+void Cuboid_deleteDirectDrawData(Cuboid this)
+{
+	if (this->polygon)
 
-	if(this->polygon) {
-		
+{
 		__DELETE(this->polygon);
-		
+
 		this->polygon = NULL;
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print debug data
-void Cuboid_print(Cuboid this, int x, int y){
-
+void Cuboid_print(Cuboid this, int x, int y)
+{
 	ASSERT(this, "Cuboid::print: null this");
 
 	Rightcuboid rightCuboid = this->positionedRightcuboid;

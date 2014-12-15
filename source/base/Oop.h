@@ -1,18 +1,18 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -40,7 +40,7 @@
 		static u8 __callFlag = false;				\
 													\
 		/* check if not called */					\
-		if(!__callFlag){							\
+		if (!__callFlag){							\
 													\
 			/* call method */						\
 			MethodName(__VA_ARGS__);				\
@@ -56,7 +56,7 @@
 																		\
 		/* check that each entry in the table is not NULL */			\
 		int i = 0;														\
-		for(; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++){	\
+		for (; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++){	\
 																		\
 			/* check each entry */										\
 			NM_ASSERT(((void**)&ClassName ## _vTable)[i],				\
@@ -114,7 +114,7 @@
 		ClassName this = ClassName ## _allocator();					\
 																	\
 		/* check if properly created */								\
-		if(!this) return NULL;										\
+		if (!this) return NULL;										\
 
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
@@ -136,22 +136,22 @@
 		/* return the created object */								\
 		return this;												\
 	}
-	
+
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // like new in C++
 #define __NEW(ClassName, ...)							\
 														\
 	/* call class's new implementation */				\
-	ClassName ## _new(0 __VA_ARGS__)		
-	
+	ClassName ## _new(0 __VA_ARGS__)
+
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // like delete in C++ (calls virtual destructor)
 #define __DELETE(Object)													\
 																			\
 	/* since the destructor is the first element in the virtual table */	\
-	((void (*)(void*))((void***)Object)[0][0])(Object);		
+	((void (*)(void*))((void***)Object)[0][0])(Object);
 
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
@@ -161,8 +161,8 @@
 	/* allocate data */													\
 	(ClassName*)MemoryPool_allocate(MemoryPool_getInstance(),			\
 		sizeof(ClassName));
-		
-	
+
+
 
 /* ---------------------------------------------------------------------------------------------------------*/
 // like delete in C++ (calls virtual destructor)
@@ -179,7 +179,7 @@
 	ASSERT(this, __MAKE_STRING(ClassName ## _constructor));				\
 																		\
 	/* call super constructor */										\
-	ClassName ## _constructor((ClassName)this __VA_ARGS__);				
+	ClassName ## _constructor((ClassName)this __VA_ARGS__);
 
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
@@ -190,7 +190,7 @@
 	SuperClass ## _destructor((SuperClass)this);					\
 																	\
 	/* if dynamically created */									\
-	if(this->dynamic){												\
+	if (this->dynamic){												\
 																	\
 		/*  */														\
 		this->dynamic = false;										\
@@ -198,7 +198,7 @@
 		/* free the memory */										\
 		MemoryPool_free(MemoryPool_getInstance(), (void*)this);		\
 	}
-				
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
@@ -210,7 +210,7 @@
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
-#ifdef __DEBUG																		
+#ifdef __DEBUG
 #define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, Object, ...)						\
 		(																					\
 			(__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, Object, ...))?					\
@@ -261,7 +261,7 @@
 			/* cast is null */																		\
 			NULL																					\
 		)
-	
+
 
 /*--------------------------------------------------------------------------------------------------------------------------------*/
 // declare a virtual method
@@ -400,12 +400,12 @@
 		/* set the vtable */															\
 		__SET_CLASS(ClassName);															\
 																						\
-		if(0 == _singletonConstructed){													\
+		if (0 == _singletonConstructed){													\
 																						\
 			NM_ASSERT(false, ClassName get instance during construction);				\
 		}																				\
 		/* first check if not constructed yet */										\
-		if(0 > _singletonConstructed){													\
+		if (0 > _singletonConstructed){													\
 																						\
 			_singletonConstructed = 0;													\
 																						\
@@ -454,13 +454,13 @@
 		/* set the vtable */															\
 		__SET_CLASS(ClassName);															\
 																						\
-		if(0 == _singletonConstructed){													\
+		if (0 == _singletonConstructed){													\
 																						\
 			NM_ASSERT(false, ClassName get instance during construction);				\
 		}																				\
 																						\
 		/* first check if not constructed yet */										\
-		if(0 > _singletonConstructed){													\
+		if (0 > _singletonConstructed){													\
 																						\
 			_singletonConstructed = 0;													\
 																						\

@@ -1,18 +1,18 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -21,28 +21,20 @@
 #ifndef ENTITY_H_
 #define ENTITY_H_
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
 #include <Sprite.h>
 #include <StateMachine.h>
 #include <Telegram.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
 
 #define Entity_METHODS															\
 		Container_METHODS														\
@@ -80,7 +72,7 @@
 		__VIRTUAL_SET(ClassName, Entity, moves);								\
 		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);					\
 		__VIRTUAL_SET(ClassName, Entity, getShape);								\
-	
+
 #define Entity_ATTRIBUTES														\
 																				\
 	/* it is derivated from*/													\
@@ -100,34 +92,30 @@
 
 __CLASS(Entity);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S ROM DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S ROM DECLARATION
+//---------------------------------------------------------------------------------------------------------
 
 // sprites' list
-typedef struct SpritesDescription{
-	
+typedef struct SpritesDescription
+{
 	// animation functions
 	SpriteDefinition spritesDefinitions[__MAX_SPRITES_PER_ENTITY];
-	
+
 }SpritesDescription;
 
 typedef const SpritesDescription SpritesDescriptionROMDef;
 
 // defines a Entity in ROM memory
-typedef struct EntityDefinition{
-
+typedef struct EntityDefinition
+{
 	// the class type
 	void* allocator;
-	
+
 	// the sprite
 	const SpriteDefinition* spritesDefinitions;
-	
+
 	// number of sprites
 	int numberOfSprites;
 
@@ -136,31 +124,26 @@ typedef struct EntityDefinition{
 typedef const EntityDefinition EntityROMDef;
 
 // a actor asociated with a position
-typedef const struct PositionedEntity{
-	
+typedef const struct PositionedEntity
+{
 	// pointer to the entity definition in ROM
 	EntityDefinition* entityDefinition;
-	
+
 	// position in the world
 	VBVec3DReal position;
 
 	// extra info
 	void* extraInfo;
-	
+
 }PositionedEntity;
 
 typedef const PositionedEntity PositionedEntityROMDef;
 
 #define __SPRITE_ARRAY(SpritesDefintionArray) SpritesDefintionArray, sizeof(SpritesDefintionArray) / sizeof(SpriteDefinition)
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 										PUBLIC INTERFACE
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+//---------------------------------------------------------------------------------------------------------
+// 										PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
 
 // class's constructor
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID);

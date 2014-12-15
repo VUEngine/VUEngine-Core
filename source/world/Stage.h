@@ -1,18 +1,18 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -22,29 +22,20 @@
 #define STAGE_H_
 
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
 #include <Entity.h>
 #include <Texture.h>
 #include <UI.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
-	
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
 // declare the virtual methods
 #define Stage_METHODS															\
 		Container_METHODS														\
@@ -54,7 +45,7 @@
 #define Stage_SET_VTABLE(ClassName)												\
 		Container_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, Stage, update);								\
-			
+
 #define Stage_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
@@ -88,21 +79,17 @@
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S ROM DECLARATION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S ROM DECLARATION
+//---------------------------------------------------------------------------------------------------------
 
 // defines a game world in ROM memory
-typedef struct  StageDefinition{
-	
+typedef struct  StageDefinition
+{
 	// world's size over each axis in pixels
 	Size size;
-	
+
 	// initial screen's position inside the game world
 	VBVec3D screenPosition;
 
@@ -111,10 +98,10 @@ typedef struct  StageDefinition{
 
 	// UI's definition
 	UIDefinition uiDefinition;
-	
+
 	// each of the stage's entities
 	PositionedEntity* entities;
-	
+
 	// pointer to the background music
 	const u16 (*bgm)[];
 
@@ -122,14 +109,10 @@ typedef struct  StageDefinition{
 
 typedef const StageDefinition StageROMDef;
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 										PUBLIC INTERFACE
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 										PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
 
 // class's allocator
 __CLASS_NEW_DECLARE(Stage);
@@ -161,7 +144,7 @@ void Stage_streamAll(Stage this);
 // if set to true, the char set memory is flushed when
 // a char defintion is no longer used
 // only useful to false when preloading textures
-// otherwise it doesn't have any effect and flushing 
+// otherwise it doesn't have any effect and flushing
 // is the default  behvior
 void Stage_setFlushCharGroups(Stage this, int flushCharGroups);
 

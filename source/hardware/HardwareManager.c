@@ -1,44 +1,36 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy 
- * 
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
  * Copyright (C) 2007 Jorge Eremiev
  * jorgech3@gmail.com
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												INCLUDES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
 
 #include <HardwareManager.h>
 #include <Game.h>
 #include <ClockManager.h>
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 											CLASS'S DEFINITION
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DEFINITION
+//---------------------------------------------------------------------------------------------------------
 
 #define HardwareManager_ATTRIBUTES												\
 																				\
@@ -60,14 +52,10 @@
 // define the HardwareManager
 __CLASS_DEFINITION(HardwareManager);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												PROTOTYPES
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
+
+//---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
 
 extern u32 key_vector;
 extern u32 tim_vector;
@@ -83,30 +71,24 @@ static ClockManager _clockManager;
 // class's constructor
 static void HardwareManager_constructor(HardwareManager this);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												CLASS'S METHODS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------------------------------
+// 												CLASS'S METHODS
+//---------------------------------------------------------------------------------------------------------
+
 
 __SINGLETON(HardwareManager);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's constructor
-static void HardwareManager_constructor(HardwareManager this){
-	
+static void HardwareManager_constructor(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
-	
+
 	// set ROM waiting to 1 cycle
-	HW_REGS[WCR] |= 0x0001;	
-	
+	HW_REGS[WCR] |= 0x0001;
+
 	this->hwRegisters =	(u8*)0x02000000;
 	this->timerManager = TimerManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
@@ -117,70 +99,63 @@ static void HardwareManager_constructor(HardwareManager this){
 	_clockManager = ClockManager_getInstance();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // class's destructor
-void HardwareManager_destructor(HardwareManager this){
-
+void HardwareManager_destructor(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // timer's interrupt handler
-void HardwareManager_timerInterruptHandler(){
-
+void HardwareManager_timerInterruptHandler()
+{
 	ASSERT(_hardwareManager, "HardwareManager::timerInterruptHandler: null _hardwareManager");
-	
+
 	//disable interrupts
 	TimerManager_setInterrupt(_timerManager, false);
-	
+
 	// update clocks
 	ClockManager_update(_clockManager, __TIMER_RESOLUTION);
-	
+
 	// enable interrupts
 	TimerManager_setInterrupt(_timerManager, true);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // keypad's interrupt handler
-void HardwareManager_keypadInterruptHandler(void){
-
+void HardwareManager_keypadInterruptHandler(void)
+{
 	// broadcast keypad event
 	Printing_text("KYP interrupt", 48 - 13, 0);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // cro's interrupt handler
 void HardwareManager_croInterruptHandler(void){   // Expantion Port Interupt Handler
 
 	Printing_text("EXP interrupt", 48 - 13, 0);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // com's interrupt handler
 void HardwareManager_communicationInterruptHandler(void){   // Link Port Interrupt Handler
 
 	Printing_text("COM interrupt", 48 - 13, 0);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // vpu's interrupt handler
-void HardwareManager_vpuInterruptHandler(void){   
-
+void HardwareManager_vpuInterruptHandler(void)
+{
 	// don't use these interrupt, they introduce a strage
 	// behavior in the machine
 	VPUManager_disableInterrupt(VPUManager_getInstance());
-	
+
 	Printing_text("VPU interrupt", 48 - 13, 0);
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // setup interrupt vectors
-void HardwareManager_setInterruptVectors(HardwareManager this){
-
+void HardwareManager_setInterruptVectors(HardwareManager this)
+{
 	key_vector = (u32)HardwareManager_keypadInterruptHandler;
 	tim_vector = (u32)HardwareManager_timerInterruptHandler;
 	cro_vector = (u32)HardwareManager_croInterruptHandler;
@@ -188,10 +163,9 @@ void HardwareManager_setInterruptVectors(HardwareManager this){
 	vpu_vector = (u32)HardwareManager_vpuInterruptHandler;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set interruption level
-void HardwareManager_setInterruptLevel(HardwareManager this, u8 level) {
-	
+void HardwareManager_setInterruptLevel(HardwareManager this, u8 level)
+{
 	ASSERT(this, "HardwareManager::setInterruptLevel: null this");
 
 	asm(" \n\
@@ -204,18 +178,17 @@ void HardwareManager_setInterruptLevel(HardwareManager this, u8 level) {
 		shl		0x10,r5 \n\
 		or		r6,r5 \n\
 		ldsr	r5,sr5 \n\
-		"	
-	: // Output 
-	: "r" (level) // Input 
-	: "r5", "r6" // Clobber 
+		"
+	: // Output
+	: "r" (level) // Input
+	: "r5", "r6" // Clobber
 	);
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get interruption level
-inline int HardwareManager_geInterruptLevel(HardwareManager this) {
-
+inline int HardwareManager_geInterruptLevel(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::geInterruptLevel: null this");
 
 	int level;
@@ -226,153 +199,139 @@ inline int HardwareManager_geInterruptLevel(HardwareManager this) {
 		andi	0x000F,r5,r5 \n\
 		mov		r5,%0 \n\
 	"
-	: "=r" (level) // Output 
-	: // Input 
-	: "r5" // Clobber 
+	: "=r" (level) // Output
+	: // Input
+	: "r5" // Clobber
 	);
-	
+
 	return level;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get PSW
-inline int HardwareManager_getPSW(HardwareManager this) {
-
+inline int HardwareManager_getPSW(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::getPSW: null this");
 
 	int psw;
 	asm(" \n\
 		stsr	psw,%0  \n\
-		"	
-	: "=r" (psw) // Output 
+		"
+	: "=r" (psw) // Output
 	);
 	return psw;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // get stack pointer
-int HardwareManager_getStackPointer(HardwareManager this) {
-	
+int HardwareManager_getStackPointer(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::getStackPointer: null this");
 
 	int sp;
 	asm(" \
 		mov		sp,%0  \
-		"	
-	: "=r" (sp) // Output 
+		"
+	: "=r" (sp) // Output
 	);
 	return sp;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // initialize timer
-void HardwareManager_initializeTimer(HardwareManager this){
-	
+void HardwareManager_initializeTimer(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::initializeTimer: null this");
 
 	TimerManager_initialize(this->timerManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // clear screen
-void HardwareManager_clearScreen(HardwareManager this){
-	
+void HardwareManager_clearScreen(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::clearScreen: null this");
 
 	VPUManager_clearScreen(this->vpuManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // display on
-void HardwareManager_displayOn(HardwareManager this){
-
+void HardwareManager_displayOn(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::displayOn: null this");
 
 	VPUManager_displayOn(this->vpuManager);
 	VPUManager_setupPalettes(this->vpuManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // display off
-void HardwareManager_displayOff(HardwareManager this){
-	
+void HardwareManager_displayOff(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::displayOff: null this");
 
 	VPUManager_displayOff(this->vpuManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // disable VPU interrupts
-void HardwareManager_disableRendering(HardwareManager this){
-
+void HardwareManager_disableRendering(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::disableRendering: null this");
 
 	// disable interrupt
 	VPUManager_disableInterrupt(this->vpuManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // enable VPU interrupts
-void HardwareManager_enableRendering(HardwareManager this){
-
+void HardwareManager_enableRendering(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::enableRendering: null this");
 
 	// turn on display
 	VPUManager_displayOn(this->vpuManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // make sure the brigtness is ok
-void HardwareManager_upBrightness(HardwareManager this){
-	
+void HardwareManager_upBrightness(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::upBrightness: null this");
 
 	VPUManager_upBrightness(this->vpuManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // setup default column table
-void HardwareManager_setupColumnTable(HardwareManager this){
-	
+void HardwareManager_setupColumnTable(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::setupColumnTable: null this");
 
 	VPUManager_setupColumnTable(this->vpuManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // enable key pad
-void HardwareManager_enableKeypad(HardwareManager this){
-	
+void HardwareManager_enableKeypad(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::enableKeypad: null this");
 
 	KeypadManager_enable(this->keypadManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // disable key pad
-void HardwareManager_disableKeypad(HardwareManager this){
-	
+void HardwareManager_disableKeypad(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::disableKeypad: null this");
 
 	KeypadManager_disable(this->keypadManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // read keypad
-u16 HardwareManager_readKeypad(HardwareManager this){
-	
+u16 HardwareManager_readKeypad(HardwareManager this)
+{
 	ASSERT(this, "HardwareManager::readKeypad: null this");
 
 	return KeypadManager_read(this->keypadManager);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // print hardware's states
-void HardwareManager_print(HardwareManager this, int x, int y){
+void HardwareManager_print(HardwareManager this, int x, int y)
 
-	
+{
 	Printing_text("HARDWARE'S STATUS", x, y++);
-	
+
 	int auxY = y;
 	int xDisplacement = 6;
 
@@ -449,6 +408,6 @@ void HardwareManager_print(HardwareManager this, int x, int y){
 	Printing_hex(VIP_REGS[XPCTRL], x + xDisplacement, auxY);
 	Printing_text("VER:", x, ++auxY);
 	Printing_hex(VIP_REGS[VER], x + xDisplacement, auxY);
-	
+
 //	Printing_hex(HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5);
 }

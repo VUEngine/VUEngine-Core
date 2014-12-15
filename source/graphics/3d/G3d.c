@@ -146,7 +146,7 @@ void inline G3d_copyVector3d(vector3d* from, vector3d* to){
 Scales a vector by a given fixed point vector
 *****************************/
 void inline G3d_scale(vector3d* factor, vector3d* v, vector3d* o){
-	if(factor->x == 1 && factor->y == 1 && factor->z == 1){
+	if (factor->x == 1 && factor->y == 1 && factor->z == 1){
 		G3d_copyVector3d(v,o);
 		return;
 	}
@@ -229,7 +229,7 @@ void  G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o){
 	"st.w r13,             0x04[%[o]]\n"
 	:/*output*/
 	:  [vy]  "m" (v->y)           , [vz]  "m" (v->z)         , [o]        "r" ((vector3d*)o)
-	 , [cos] "m" (cosine[degrees]), [sin] "m" (sine[degrees]), [fixShift] "i" (FIXED_SHIFT)	 
+	 , [cos] "m" (cosine[degrees]), [sin] "m" (sine[degrees]), [fixShift] "i" (FIXED_SHIFT)
 	:"r7","r8","r10","r11","r12","r13"
 	);
 #endif
@@ -317,7 +317,7 @@ void  G3d_rotateZAxis(s32 degrees, vector3d* v, vector3d* o){
 	"st.w r13,0x04[%[o]]\n"
 	:/*output*/
 	: [vy]  "m" (v->y)           ,[vx]  "m" (v->x)         , [o]        "r" ((vector3d*)o)
-	 ,[cos] "m" (cosine[degrees]),[sin] "m" (sine[degrees]), [fixShift] "i" (FIXED_SHIFT)	 
+	 ,[cos] "m" (cosine[degrees]),[sin] "m" (sine[degrees]), [fixShift] "i" (FIXED_SHIFT)
 	:"r7","r8","r10","r11","r12","r13"
 	);
 #endif
@@ -332,26 +332,26 @@ Make sure the rotation values are between -360 and 360
 ************************************************/
 void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o){
 	vector3d t;
-	
-	if(rx==0 && ry==0 && rz==0){
+
+	if (rx==0 && ry==0 && rz==0){
 		G3d_copyVector3d(v,o);
 		return;
 	}
-	
-	if(rx<0) rx=359+rx;
-	if(ry<0) ry=359+ry;
-	if(rz<0) rz=359+rz;
+
+	if (rx<0) rx=359+rx;
+	if (ry<0) ry=359+ry;
+	if (rz<0) rz=359+rz;
 
 	G3d_copyVector3d(v,&t);
-	if(ry != 0){
+	if (ry != 0){
 		G3d_rotateYAxis(ry,&t,o);
 		G3d_copyVector3d(o,&t);
 	}
-	if(rx != 0){
+	if (rx != 0){
 		G3d_rotateXAxis(rx,&t,o);
 		G3d_copyVector3d(o,&t);
 	}
-	if(rz != 0){
+	if (rz != 0){
 		G3d_rotateZAxis(rz,&t,o);
 		G3d_copyVector3d(o,&t);
 	}
@@ -453,18 +453,18 @@ void G3d_renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube){
 	//Transformations
 	G3d_scale(&obj->worldScale,v,&t);
 	G3d_copyVector3d(&t,o);
-	
+
 	G3d_rotateAllAxis(obj->worldRotation.x,obj->worldRotation.y,obj->worldRotation.z,o,&t);
 	G3d_copyVector3d(&t,o);
-	
+
 	G3d_translate(obj->worldPosition.x,obj->worldPosition.y,obj->worldPosition.z,o,&t);
-	G3d_copyVector3d(&t,o);		
-	
-	if(cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0){			
+	G3d_copyVector3d(&t,o);
+
+	if (cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0){
 		G3d_cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,o,&t);
 		G3d_copyVector3d(&t,o);
 	}
-	
+
 	G3d_cameraTranslate(cam.worldPosition.x,cam.worldPosition.y,cam.worldPosition.z,o,&t);
 	G3d_copyVector3d(&t,o);
 }
@@ -535,19 +535,19 @@ void G3d_drawObject(object* o){
 	vector3d* vtp;
 	v1p = &v1;
 	v2p = &v2;
-	
+
 	//Clip objects if needed
 	G3d_clipObject(o);
-	
-	if(o->properties.visible == 0 || o->properties.clip == 1) return;
-	
+
+	if (o->properties.visible == 0 || o->properties.clip == 1) return;
+
 	vertices=o->objData->vertexSize;//total elements in array
 	lines=o->objData->lineSize;//Total line endpoints
 	verts=o->objData->faceSize;//total vertices per section
 
 	v=0;
 	i=0;
-	
+
 	//Put object through the render pipeline
 	G3d_renderObject(o);
 	/*vertices=o->objData->vertexSize;//total elements in array
@@ -559,13 +559,13 @@ void G3d_drawObject(object* o){
 	//Load and render all distinct vertices into the vertex buffer;
 	//This will render all object vertices based on the objects position,rotation etc..
 	_CacheEnable
-	while(v < vertices){
+	while (v < vertices){
 		v1.x = o->objData->data[v];
 		v1.y = o->objData->data[v+1];
 		v1.z = o->objData->data[v+2];
-		
+
 		G3d_renderVector3d(o, &v1, &v2, ((v==0)?(1):(0)));
-		
+
 		vertexBuffer[i] = v2;
 		i++;
 		v+=3;
@@ -575,14 +575,14 @@ void G3d_drawObject(object* o){
 	//This reads the "faces" section of the data and draws lines between points.
 	//We'll use the vertex buffer's already rendered vertices
 	v = vertices;
-	while(v < (lines+vertices)){
-		v1p = &vertexBuffer[o->objData->data[v]];		
-		
-		for(i=1; i<verts; i++){
+	while (v < (lines+vertices)){
+		v1p = &vertexBuffer[o->objData->data[v]];
+
+		for (i=1; i<verts; i++){
 			v++;
 			v2p = &vertexBuffer[o->objData->data[v]];
-			
-			if((v1p->z > cam.d) || (v2p->z > cam.d)){
+
+			if ((v1p->z > cam.d) || (v2p->z > cam.d)){
 				G3d_clipZAxis(v1p, v2p);
 				G3d_calculateProjection(v1p);
 				G3d_calculateProjection(v2p);
@@ -591,7 +591,7 @@ void G3d_drawObject(object* o){
 			vtp = v2p;
 			v1p = v2p;
 			v2p = vtp;
-			
+
 		}
 		v++;
 	}
@@ -603,21 +603,21 @@ void G3d_renderObject(object* o){
 	s32 vertices, lines, verts, v, i;
 	vector3d v1;
 	vector3d v2;
-	
+
 	vertices=o->objData->vertexSize;//total elements in array
-	
+
 	v=0;
 	i=0;
 	//Load and render all distinct vertices into the vertex buffer;
 	//This will render all object vertices based on the objects position,rotation etc..
 	_CacheEnable
-	while(v < vertices){
+	while (v < vertices){
 		v1.x = o->objData->data[v];
 		v1.y = o->objData->data[v+1];
 		v1.z = o->objData->data[v+2];
-		
+
 		G3d_renderVector3d(o, &v1, &v2, ((v==0)?(1):(0)));
-		
+
 		vertexBuffer[i] = v2;
 		i++;
 		v+=3;
@@ -625,14 +625,14 @@ void G3d_renderObject(object* o){
 	_CacheDisable
 #else
 	/*
-	
+
 	Max and Min values for sine and cosine are based on a signed byte so -128 -> 127.
 	We'll store one value per byte within the registers
 	r6 = rotation indicator flag
 	r7 = cos[x],sine[x],cos[y],sine[y]
 	r8 = cos[z],sine[z],cos[camx],sine[camx]
 	r9 = cos[camy],sine[camy],cos[camz],sine[camz]
-	
+
 	r10 = worldposx
 	r11 = worldposy
 	r12 = worldposz
@@ -640,7 +640,7 @@ void G3d_renderObject(object* o){
 	r14 = camposy
 	r15 = camposz
 	r16 = vertex count
-	
+
 	r17, r18 are scratch
 	r19,r20,r12 are x,y,z vertex values
 	*/
@@ -665,7 +665,7 @@ void G3d_renderObject(object* o){
 	"andi 0xFF, r18, r18\n"
 	"shl 24, r18\n"                                      //Move cosine x to 1st byte of r18
 	"mov r18, r7\n"                                      //Store cosine x in 1st byte of r7
-	
+
 	"mov r17, r18\n"                                     //Begin to get the sine value
 	"add %[sine], r18\n"
 	"ld.w 0x00[r18], r18\n"                              //Get the sine value
@@ -689,7 +689,7 @@ void G3d_renderObject(object* o){
 	"andi 0xFF, r18, r18\n"
 	"shl 8, r18\n"                                       //Move cosine of y to 3rd byte of r18
 	"or r18, r7\n"                                       //Store cosine of y to 3rd byte of r7
-	
+
 	"mov r17, r18\n"
 	"add %[sine], r18\n"
 	"ld.w 0x00[r18], r18\n"
@@ -711,7 +711,7 @@ void G3d_renderObject(object* o){
 	"ld.w 0x00[r18], r18\n"
 	"shl 24, r18\n"                                      //Move cosine z in 1st byte of r18
 	"mov r18, r8\n"                                      //Store cosine z in 1st byte of r8
-	
+
 	"mov r17, r18\n"
 	"add %[sine], r18\n"
 	"ld.w 0x00[r18], r18\n"
@@ -737,7 +737,7 @@ void G3d_renderObject(object* o){
 	"andi 0xFF, r18, r18\n"
 	"shl 8, r18\n"                                       //Move cosine x to 3rd byte of r18
 	"or r18, r8\n"                                       //Store cosine x to 3rd byte of r8
-	
+
 	"mov r17, r18\n"
 	"add %[sine], r18\n"
 	"ld.w 0x00[r18], r18\n"
@@ -762,7 +762,7 @@ void G3d_renderObject(object* o){
 	"andi 0xFF, r18, r18\n"
 	"shl 24, r18\n"                                      //Move cosine y to 1st byte of r18
 	"mov r18, r9\n"                                      //Store cosine y to 1st byte of r9
-	
+
 	"mov r17, r18\n"
 	"add %[sine], r18\n"
 	"ld.w 0x00[r18], r18\n"
@@ -788,7 +788,7 @@ void G3d_renderObject(object* o){
 	"andi 0xFF, r18, r18\n"
 	"shl 8, r18\n"                                       //Move cosine z to 3rd byte of r18
 	"or r18, r9\n"                                       //Store cosine z to 3rd byte of r9
-	
+
 	"mov r17, r18\n"
 	"add %[sine], r18\n"
 	"ld.w 0x00[r18], r18\n"
@@ -831,7 +831,7 @@ void G3d_renderObject(object* o){
 	"ld.w 0x00[%[objData]], r19\n"                       //X value
 	"ld.w 0x04[%[objData]], r20\n"                       //Y value
 	"ld.w 0x08[%[objData]], r21\n"                       //Z value
-	
+
 	"addi -3, %[vertices], %[vertices]\n"                //Subtract 3 from vertices for loop
 	/*******************************
 	Perform scaling
@@ -843,14 +843,14 @@ void G3d_renderObject(object* o){
 	"mul r17, r19\n"                                     //Scale x by factor
 	"sar %[fixShift], r19\n"
 	"_skip_scale_x:\n"
-	
+
 	"ld.w 124[%[obj]], r17\n"                            //Y scale factor
 	"cmp %[fixNumUp1], r17\n"
 	"be _skip_scale_y\n"
 	"mul r17, r20\n"                                     //Scale y by factor
 	"sar %[fixShift], r20\n"
 	"_skip_scale_y:\n"
-	
+
 	"ld.w 128[%[obj]], r17\n"                            //Z scale factor
 	"cmp %[fixNumUp1], r17\n"
 	"be _skip_scale_z\n"
@@ -871,14 +871,14 @@ void G3d_renderObject(object* o){
 	"sar 24, r17\n"                                      //Get cosine x axis
 	"mul r21, r17\n"                                     //z * cosine[degrees]
 	"sar %[fixShift], r17\n"                             //F_NUM_DN
-	
+
 	"mov r7, r18\n"
 	"shl 8, r18\n"
 	"sar 24, r18\n"                                      //Get sine x axis
 	"mul r20, r18\n"                                     //y * sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
 	"add r18, r17\n"                                     //r17 now contains new z value
-	
+
 	"mov r7, r18\n"
 	"shl 8, r18\n"
 	"sar 24, r18\n"                                      //Get sine x
@@ -886,13 +886,13 @@ void G3d_renderObject(object* o){
 	"addi 0x01, r18, r18\n"                              //-sine[degrees]
 	"mul r21, r18\n"                                     //z * -sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
-	
+
 	"mov r7, r22\n"
 	"sar 24, r22\n"                                      //Get cosine x
 	"mul r20, r22\n"                                     //y * cosine[degrees]
 	"sar %[fixShift], r22\n"                             //F_NUM_DN
 	"add r22, r18\n"                                     //r18 now contains new y value
-	
+
 	"mov r17, r21\n"                                     //Update z value
 	"mov r18, r20\n"                                     //Update y value
 	"_skip_obj_rot_x:\n"
@@ -905,14 +905,14 @@ void G3d_renderObject(object* o){
 	"sar 24, r17\n"                                      //Get cosine of y axis rotation
 	"mul r19, r17\n"                                     //x * cosine[degrees]
 	"sar %[fixShift], r17\n"                             //F_NUM_DN
-	
+
 	"mov r7, r18\n"
 	"shl 24, r18\n"
 	"sar 24, r18\n"
 	"mul r21, r18\n"
 	"sar %[fixShift], r18\n"
 	"add r18, r17\n"                                     //r17 now contains new value for x
-	
+
 	"mov r7, r18\n"                                      //Get the sine of degrees
 	"shl 24, r18\n"
 	"sar 24, r18\n"                                      //Sign extend sine
@@ -920,14 +920,14 @@ void G3d_renderObject(object* o){
 	"addi 0x01, r18, r18\n"                              //Two's complement of sine value
 	"mul r19, r18\n"                                     //x * -sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
-	
+
 	"mov r7, r22\n"
 	"shl 16, r22\n"
 	"sar 24, r22\n"                                      //Get cosine of y axis
 	"mul r21, r22\n"                                     //z * cosine[degrees]
 	"sar %[fixShift], r22\n"                             //F_NUM_DN
 	"add r22, r18\n"                                     //r18 now contains new z value
-	
+
 	"mov r17, r19\n"                                     //Update new x value
 	"mov r18, r21\n"                                     //Update new z value
 	"_skip_obj_rot_y:\n"
@@ -939,14 +939,14 @@ void G3d_renderObject(object* o){
 	"sar 24, r17\n"                                      //Get cosine z axis
 	"mul r19, r17\n"                                     //x * cosine[degrees]
 	"sar %[fixShift], r17\n"                             //F_NUM_DN
-	
+
 	"mov r8, r18\n"
 	"shl 8, r18\n"
 	"sar 24, r18\n"                                      //Get sine z axis
 	"mul r20, r18\n"                                     //y * sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
 	"add r18, r17\n"                                     //r17 now contains new x value
-	
+
 	"mov r8, r18\n"
 	"shl 8, r18\n"
 	"sar 24, r18\n"                                      //Get sine of z
@@ -954,13 +954,13 @@ void G3d_renderObject(object* o){
 	"addi 0x01, r18, r18\n"                              //Two's complement
 	"mul r19, r18\n"                                     //x * -sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
-	
+
 	"mov r8, r22\n"
 	"sar 24, r22\n"                                      //Get cosine z
 	"mul r20, r22\n"                                     //y * cosine[degrees]
 	"sar %[fixShift], r22\n"                             //F_NUM_DN
 	"add r22, r18\n"                                     //r18 now contains new y value
-	
+
 	"mov r17, r19\n"                                     //Update x value
 	"mov r18, r20\n"                                     //Update y value
 	"_skip_obj_rot_z:\n"
@@ -971,7 +971,7 @@ void G3d_renderObject(object* o){
 	"add r10, r19\n"                                     //Add x
 	"add r11, r20\n"                                     //Add y
 	"add r12, r21\n"                                     //Add z
-	
+
 	"cmp r0, r6\n"
 	"be _skip_cam_rot_z\n"
 	/***************************
@@ -979,18 +979,18 @@ void G3d_renderObject(object* o){
 	****************************/
 	"camRotXAxis:\n"
 	"mov r8, r17\n"
-	"shl 16, r17\n"                                      
+	"shl 16, r17\n"
 	"sar 24, r17\n"                                      //Get cosine x axis
 	"mul r21, r17\n"                                     //z * cosine[degrees]
 	"sar %[fixShift], r17\n"                             //F_NUM_DN
-	
+
 	"mov r8, r18\n"
 	"shl 24, r18\n"
 	"sar 24, r18\n"                                      //Get sine x axis
 	"mul r20, r18\n"                                     //y * sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
 	"add r18, r17\n"                                     //r17 now contains new z value
-	
+
 	"mov r8, r18\n"
 	"shl 24, r18\n"
 	"sar 24, r18\n"                                      //Get sine x
@@ -998,14 +998,14 @@ void G3d_renderObject(object* o){
 	"addi 0x01, r18, r18\n"                              //-sine[degrees]
 	"mul r21, r18\n"                                     //z * -sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
-	
+
 	"mov r8, r22\n"
 	"shl 16, r22\n"
 	"sar 24, r22\n"                                      //Get cosine x
 	"mul r20, r22\n"                                     //y * cosine[degrees]
 	"sar %[fixShift], r22\n"                             //F_NUM_DN
 	"add r22, r18\n"                                     //r18 now contains new y value
-	
+
 	"mov r17, r21\n"                                     //Update z value
 	"mov r18, r20\n"                                     //Update y value
 	"_skip_cam_rot_x:\n"
@@ -1017,14 +1017,14 @@ void G3d_renderObject(object* o){
 	"sar 24, r17\n"                                      //Get cosine of y axis rotation
 	"mul r19, r17\n"                                     //x * cosine[degrees]
 	"sar %[fixShift], r17\n"                             //F_NUM_DN
-	
+
 	"mov r9, r18\n"
 	"shl 8, r18\n"
 	"sar 24, r18\n"
 	"mul r21, r18\n"
 	"sar %[fixShift], r18\n"
 	"add r18, r17\n"                                     //r17 now contains new value for x
-	
+
 	"mov r9, r18\n"                                      //Get the sine of degrees
 	"shl 8, r18\n"
 	"sar 24, r18\n"                                      //Sign extend sine
@@ -1032,13 +1032,13 @@ void G3d_renderObject(object* o){
 	"addi 0x01, r18, r18\n"                              //Two's complement of sine value
 	"mul r19, r18\n"                                     //x * -sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
-	
+
 	"mov r9, r22\n"
 	"sar 24, r22\n"                                      //Get cosine of y axis
 	"mul r21, r22\n"                                     //z * cosine[degrees]
 	"sar %[fixShift], r22\n"                             //F_NUM_DN
 	"add r22, r18\n"                                     //r18 now contains new z value
-	
+
 	"mov r17, r19\n"                                     //Update new x value
 	"mov r18, r21\n"                                     //Update new z value
 	"_skip_cam_rot_y:\n"
@@ -1051,14 +1051,14 @@ void G3d_renderObject(object* o){
 	"sar 24, r17\n"                                      //Get cosine z axis
 	"mul r19, r17\n"                                     //x * cosine[degrees]
 	"sar %[fixShift], r17\n"                             //F_NUM_DN
-	
+
 	"mov r9, r18\n"
 	"shl 24, r18\n"
 	"sar 24, r18\n"                                      //Get sine z axis
 	"mul r20, r18\n"                                     //y * sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
 	"add r18, r17\n"                                     //r17 now contains new x value
-	
+
 	"mov r9, r18\n"
 	"shl 24, r18\n"
 	"sar 24, r18\n"                                      //Get sine of z
@@ -1066,14 +1066,14 @@ void G3d_renderObject(object* o){
 	"addi 0x01, r18, r18\n"                              //Two's complement
 	"mul r19, r18\n"                                     //x * -sine[degrees]
 	"sar %[fixShift], r18\n"                             //F_NUM_DN
-	
+
 	"mov r9, r22\n"
 	"shl 16, r22\n"
 	"sar 24, r22\n"                                      //Get cosine z
 	"mul r20, r22\n"                                     //y * cosine[degrees]
 	"sar %[fixShift], r22\n"                             //F_NUM_DN
 	"add r22, r18\n"                                     //r18 now contains new y value
-	
+
 	"mov r17, r19\n"                                     //Update x value
 	"mov r18, r20\n"                                     //Update y value
 	"_skip_cam_rot_z:\n"
@@ -1091,13 +1091,13 @@ void G3d_renderObject(object* o){
 	"st.w r19, 0x00%[vertexBuff]\n"
 	"st.w r20, 0x04%[vertexBuff]\n"
 	"st.w r21, 0x08%[vertexBuff]\n"
-	
+
 	"addi 12, %[objData], %[objData]\n"                  //Add 12 to objData to point to next vertex
 	"addi 20, %[vertexBuff], %[vertexBuff]\n"            //Add 20 to vertexBuffer to point to next open vector3d slot
 	/***************************
 	End of Loop
 	****************************/
-	"jr _renderObjectTop\n"                              //Continue looping	
+	"jr _renderObjectTop\n"                              //Continue looping
 	"_verts_le_0:\n"                                     //End of loop
 	"ldsr r0, sr24\n"                                    //Disable Caching
 	:
@@ -1137,15 +1137,15 @@ void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* posi
 	c1maxY = position1->y + (c1->height >> 1);
 	c1minZ = position1->z - (c1->depth >> 1);
 	c1maxZ = position1->z + (c1->depth >> 1);
-	
+
 	c2minX = position2->x - (c2->width >> 1);
 	c2maxX = position2->x + (c2->width >> 1);
 	c2minY = position2->y - (c2->height >> 1);
 	c2maxY = position2->y + (c2->height >> 1);
 	c2minZ = position2->z - (c2->depth >> 1);
 	c2maxZ = position2->z + (c2->depth >> 1);
-	
-	if(c1minX > c2maxX ||
+
+	if (c1minX > c2maxX ||
 	   c1minY > c2maxY ||
 	   c1minZ > c2maxZ ||
 	   c1maxX < c2minX ||
@@ -1154,28 +1154,30 @@ void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* posi
 	) return;
 
 	//compare c1 against c2
-	if(
+	if (
 		(c1minX >= c2minX && c1minX <= c2maxX) ||
 		(c1maxX >= c2minX && c1maxX <= c2maxX)){
 			asm("compareC1toC2:\n");
-			if(
+			if (
 				(c1minY >= c2minY && c1minY <= c2maxY) ||
-				(c1maxY >= c2minY && c1maxY <= c2maxY)) {
-					if(
+				(c1maxY >= c2minY && c1maxY <= c2maxY))
+{
+					if (
 						(c1minZ >= c2minZ && c1minZ <= c2maxZ) ||
-						(c1maxZ >= c2minZ && c1maxZ <= c2maxZ)){							
+						(c1maxZ >= c2minZ && c1maxZ <= c2maxZ)){
 							*flag = 1;
 					}
 			}
 	}
 	//compare c2 against c1
-	if(
+	if (
 		(c2minX >= c1minX && c2minX <= c1maxX) ||
 		(c2maxX >= c1minX && c2maxX <= c1maxX)){
-			if(
+			if (
 				(c2minY >= c1minY && c2minY <= c1maxY) ||
-				(c2maxY >= c1minY && c2maxY <= c1maxY)) {
-					if(
+				(c2maxY >= c1minY && c2maxY <= c1maxY))
+{
+					if (
 						(c2minZ >= c1minZ && c2minZ <= c1maxZ) ||
 						(c2maxZ >= c1minZ && c2maxZ <= c1maxZ)){
 							*flag = 1;
@@ -1191,24 +1193,24 @@ screen we'll clip it.
 *************************************/
 void  G3d_clipObject(object* o){
 	vector3d worldTemp, worldOrig;
-	
+
 	worldOrig.x = o->worldPosition.x;
 	worldOrig.y = o->worldPosition.y;
 	worldOrig.z = o->worldPosition.z;
-	
+
 	G3d_cameraTranslate(cam.worldPosition.x,cam.worldPosition.y,cam.worldPosition.z,&worldOrig,&worldTemp);
 	G3d_copyVector3d(&worldTemp,&worldOrig);
-	
-	if(cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0){			
+
+	if (cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0){
 		G3d_cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,&worldOrig,&worldTemp);
 		G3d_copyVector3d(&worldTemp,&worldOrig);
 	}
-	
+
 	G3d_calculateProjection(&worldOrig);
 	o->properties.clip = 0;
-	if(worldOrig.sx < 0 || worldOrig.sx > SCREEN_WIDTH) o->properties.clip = 1;
-	if(worldOrig.sy < -SCREEN_HEIGHT || worldOrig.sy > (SCREEN_HEIGHT<<1)) o->properties.clip = 1;
-	if(worldOrig.z < (cam.d>>1) || worldOrig.z > FAR_Z) o->properties.clip = 1;
+	if (worldOrig.sx < 0 || worldOrig.sx > SCREEN_WIDTH) o->properties.clip = 1;
+	if (worldOrig.sy < -SCREEN_HEIGHT || worldOrig.sy > (SCREEN_HEIGHT<<1)) o->properties.clip = 1;
+	if (worldOrig.z < (cam.d>>1) || worldOrig.z > FAR_Z) o->properties.clip = 1;
 }
 
 /*************************************
@@ -1225,22 +1227,23 @@ void  G3d_clipZAxis(vector3d* v1, vector3d* v2){
 	s32 fracz,fracx,fracy,diff,mult;
 	vector3d* minV;
 	vector3d* maxV;
-	
-	if(v1->z > cam.d && v2->z > cam.d) return;
-	if(v1->z < cam.d && v2->z < cam.d) return;
-	
+
+	if (v1->z > cam.d && v2->z > cam.d) return;
+	if (v1->z < cam.d && v2->z < cam.d) return;
+
 	/****************
 	Calculate 8 positions between the two z points and
 	determine which position the camera is closest to
 	*****************/
-	if(v1->z < cam.d) {
+	if (v1->z < cam.d)
+{
 		minV = v1;
 		maxV = v2;
 	}else {
 		minV = v2;
 		maxV = v1;
 	}
-	fracz = (maxV->z - minV->z) >> 4;	
+	fracz = (maxV->z - minV->z) >> 4;
 	//Get the fractional x portion
 	fracx = (maxV->x - minV->x) >> 4;
 	//Do same thing with y as we did with x
@@ -1251,16 +1254,16 @@ void  G3d_clipZAxis(vector3d* v1, vector3d* v2){
 	//Determine how many fractional portions there are
 	//and set our multiplier. Division is 36 clock cycles
 	//so it should be less expensive to just loop and subtract under most circumstances
-	if(fracz > 0){
-		while(diff > 0){
+	if (fracz > 0){
+		while (diff > 0){
 			diff -= fracz;
 			mult++;
 		}
-		if(mult > 0)mult--;//The while loop always makes the mulitiplier one more than needed
+		if (mult > 0)mult--;//The while loop always makes the mulitiplier one more than needed
 	}
-	
+
 	minV->z = cam.d;
-	//Set new x value	
+	//Set new x value
 	minV->x += (fracx * mult);
 	//Set new y value
 	minV->y += (fracy * mult);
@@ -1269,25 +1272,25 @@ void  G3d_clipZAxis(vector3d* v1, vector3d* v2){
 /*******************************
 Draws a pixel onto the screen
 *******************************/
-void  drawPoint(s32 x, s32 y, u8 color, s32 p){
+void  drawPoint(s32 x, s32 y, u8 color, s32 p)
+{
+	if (y<0 || y>SCREEN_HEIGHT) return;
+	if (x<0 || x>SCREEN_WIDTH) return;
 
-	if(y<0 || y>SCREEN_HEIGHT) return;
-	if(x<0 || x>SCREEN_WIDTH) return;
-	
 	s32 loffset,roffset;
 	u8 yleft;
-	
+
 	//Put a cap on parallax
-	if(p>PARALLAX_MAX) p=PARALLAX_MAX;
-	
+	if (p>PARALLAX_MAX) p=PARALLAX_MAX;
+
 	loffset = (((x-p)<<4) + (y>>4));
 	roffset = (loffset + (p<<5));
-	
-	if(loffset>0x1800 || loffset<0) return;
-	if(roffset>0x1800 || roffset<0) return;
-	
+
+	if (loffset>0x1800 || loffset<0) return;
+	if (roffset>0x1800 || roffset<0) return;
+
 	color &= 0x03;
-	
+
 	yleft = (y&0x0F)<<1;
 
 	currentFrameBuffer[loffset] |= (color<<yleft);
@@ -1307,36 +1310,36 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	#else
 	s32 p;
 	#endif
-	
+
 	vx = v1->sx;
 	vy = v1->sy;
 	vx2 = v2->sx;
 	vy2 = v2->sy;
-	
+
 	dx=(~(vx - vx2)+1);
 	dy=(~(vy - vy2)+1);
 	dz=(~(F_NUM_DN(F_SUB(v1->z,v2->z))+1));
 	//dz=(~(F_NUM_DN(F_SUB(vz,vz2))+1));
-	
+
 	sx=(dx<0)?(-1):(1);
 	sy=(dy<0)?(-1):(1);
 	sz=(dz<0)?(-1):(1);
-	
-	if(dx<0) dx=(~dx)+1;
-	if(dy<0) dy=(~dy)+1;
-	if(dz<0) dz=(~dz)+1;
-	
+
+	if (dx<0) dx=(~dx)+1;
+	if (dy<0) dy=(~dy)+1;
+	if (dz<0) dz=(~dz)+1;
+
 	pixels=((dx>dy)?(dx):(dy))+1;
 	vz = v1->z;
 	_CacheEnable
 	#ifndef __ASM_CODE
-	if(dy<dx){
+	if (dy<dx){
 		err=(dx>>1);
 		sz=(sz)*(F_NUM_UP(dz)/((dx==0)?(1):(dx)));
-		for(p=0;p<pixels;p++){
-			drawPoint(vx,vy,color,(F_NUM_DN(vz)>>PARALLAX_SHIFT));			
+		for (p=0;p<pixels;p++){
+			drawPoint(vx,vy,color,(F_NUM_DN(vz)>>PARALLAX_SHIFT));
 			err+=dy;
-			if(err>dx){
+			if (err>dx){
 				vy+=sy;
 				err-=dx;
 			}
@@ -1346,10 +1349,10 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	}else{
 		err=(dy>>1);
 		sz=(sz)*(F_NUM_UP(dz)/((dy==0)?(1):(dy)));
-		for(p=0;p<pixels;p++){
+		for (p=0;p<pixels;p++){
 			drawPoint(vx,vy,color,(F_NUM_DN(vz)>>PARALLAX_SHIFT));
 			err+=dx;
-			if(err>dy){
+			if (err>dy){
 				vx+=sx;
 				err-=dy;
 			}
@@ -1383,7 +1386,7 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	"ld.w %[fbLeft],            r24\n"
 	"movea %[fbRightOff],       r0,         r25\n"
 	"shl 0x02,                  r25\n"
-	//if(dy<dx){
+	//if (dy<dx){
 	"cmp r6,                    r7\n"
 	"ble _dxltdy\n"
 	//err=(dx>>1);
@@ -1399,7 +1402,7 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	"shl %[fixedShift],         r29\n"
 	"div r28,                   r29\n"
 	"mul r29,                   r9\n"
-	//for(p=0;p<pixels;p++){
+	//for (p=0;p<pixels;p++){
 	"_lineLoop1Top:\n"
 	"cmp r0,                    r11\n"
 	"ble _lineLoop1End\n"
@@ -1410,17 +1413,17 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	"mov r14,                   r26\n"
 	"sar %[fixedShift],         r26\n"
 	"sar %[parallaxShift],      r26\n"
-	//if(y<0 || y>SCREEN_HEIGHT) return;
+	//if (y<0 || y>SCREEN_HEIGHT) return;
 	"cmp r0,                    r12\n"
 	"blt _endDrawPoint1\n"
 	"cmp r12,                   r21\n"
 	"blt _endDrawPoint1\n"
-	//if(x<0 || x>SCREEN_WIDTH) return;
+	//if (x<0 || x>SCREEN_WIDTH) return;
 	"cmp r0,                    r15\n"
 	"blt _endDrawPoint1\n"
 	"cmp r15,                   r22\n"
 	"blt _endDrawPoint1\n"
-	//if(p>PARALLAX_MAX) p=PARALLAX_MAX;
+	//if (p>PARALLAX_MAX) p=PARALLAX_MAX;
 		//"and r23,r26\n"
 	"cmp r26,                   r23\n"
 	"bgt _nextPoint1\n"
@@ -1433,17 +1436,17 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	"sub r26,                   r28\n"
 	"shl 0x04,                  r28\n"
 	"add r28,                   r17\n"
-	//roffset = (loffset + (p<<5));	
+	//roffset = (loffset + (p<<5));
 	"mov r26,                   r18\n"
 	"shl 0x05,                  r18\n"
 	"add r17,                   r18\n"
-	//if(loffset>0x1800 || loffset<0) return;		
+	//if (loffset>0x1800 || loffset<0) return;
 	"movea 0x17FF,              r0,        r28\n"
 	"cmp r28,                   r17\n"
 	"bge _endDrawPoint1\n"
 	"cmp r0,                    r17\n"
 	"blt _endDrawPoint1\n"
-	//if(roffset>0x1800 || roffset<0) return;
+	//if (roffset>0x1800 || roffset<0) return;
 		//"movea 0x17FF,r0,r28\n"
 	"cmp r28,                   r18\n"
 	"bge _endDrawPoint1\n"
@@ -1479,7 +1482,7 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	//******************************************************
 	//err+=dy;
 	"add r6,                    r8\n"
-	//if(err>dx){
+	//if (err>dx){
 	"cmp r8,                    r7\n"
 	"bgt _nextLine2\n"
 	//vy+=sy;
@@ -1487,7 +1490,7 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	//err-=dx;
 	"sub r7,                    r8\n"
 	//}
-	"_nextLine2:\n"		
+	"_nextLine2:\n"
 	//vz+=sz;
 	"add r9,                    r14\n"
 	//vx+=sx;
@@ -1510,7 +1513,7 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	"shl %[fixedShift],         r29\n"
 	"div r28,                   r29\n"
 	"mul r29,                   r9\n"
-	//for(p=0;p<pixels;p++){
+	//for (p=0;p<pixels;p++){
 	"_lineLoop2Top:\n"
 	"cmp r0,                    r11\n"
 	"ble _lineLoop2End\n"
@@ -1521,17 +1524,17 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	"mov r14,                   r26\n"
 	"sar %[fixedShift],         r26\n"
 	"sar %[parallaxShift],      r26\n"
-	//if(y<0 || y>SCREEN_HEIGHT) return;
+	//if (y<0 || y>SCREEN_HEIGHT) return;
 	"cmp r0,                    r12\n"
 	"blt _endDrawPoint2\n"
 	"cmp r12,                   r21\n"
 	"blt _endDrawPoint2\n"
-	//if(x<0 || x>SCREEN_WIDTH) return;
+	//if (x<0 || x>SCREEN_WIDTH) return;
 	"cmp r0,                    r15\n"
 	"blt _endDrawPoint2\n"
 	"cmp r15,                   r22\n"
 	"blt _endDrawPoint2\n"
-	//if(p>PARALLAX_MAX) p=PARALLAX_MAX;
+	//if (p>PARALLAX_MAX) p=PARALLAX_MAX;
 		//"and r23,r26\n"
 	"cmp r26,                   r23\n"
 	"bgt _nextPoint2\n"
@@ -1544,17 +1547,17 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	"sub r26,                   r28\n"
 	"shl 0x04,                  r28\n"
 	"add r28,                   r17\n"
-	//roffset = (loffset + (p<<5));	
+	//roffset = (loffset + (p<<5));
 	"mov r26,                   r18\n"
 	"shl 0x05,                  r18\n"
 	"add r17,                   r18\n"
-	//if(loffset>0x1800 || loffset<0) return;
+	//if (loffset>0x1800 || loffset<0) return;
 	"movea 0x1800,              r0,       r28\n"
 	"cmp r28,                   r17\n"
 	"bge _endDrawPoint2\n"
 	"cmp r0,                    r17\n"
 	"blt _endDrawPoint2\n"
-	//if(roffset>0x1800 || roffset<0) return;
+	//if (roffset>0x1800 || roffset<0) return;
 	"movea 0x1800,              r0,       r28\n"
 	"cmp r28,                   r18\n"
 	"bge _endDrawPoint2\n"
@@ -1590,7 +1593,7 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	//******************************************************
 	//err+=dx;
 	"add r7,                    r8\n"
-	//if(err>dy){
+	//if (err>dy){
 	"cmp r8,                    r6\n"
 	"bgt _nextLine4\n"
 	//vx+=sx;
@@ -1653,7 +1656,7 @@ void  G3d_initObject(object* o, objectData* objData){
 	o->scale.z         = 0;
 	o->parent          = (object*)0x00;
 	o->objData         = (objectData*)objData;
-	
+
 	o->properties.visible         = 1;
 	o->properties.detectCollision = 0;
 	o->properties.lineColor       = 3;
@@ -1661,100 +1664,100 @@ void  G3d_initObject(object* o, objectData* objData){
 }
 
 void  G3d_moveObject(object* o){
-	//Increment attributes	
-	if(o->rotation.x != 0)           o->worldRotation.x += o->rotation.x;
-	if(o->rotation.y != 0)           o->worldRotation.y += o->rotation.y;
-	if(o->rotation.z != 0)           o->worldRotation.z += o->rotation.z;
-	
-	if(o->speed.x != 0)              o->worldSpeed.x += o->speed.x;
-	if(o->speed.y != 0)              o->worldSpeed.y += o->speed.y;
-	if(o->speed.z != 0)              o->worldSpeed.z += o->speed.z;
-	
-	if(o->scale.x != 0)              o->worldScale.x += o->scale.x;
-	if(o->scale.y != 0)              o->worldScale.y += o->scale.y;
-	if(o->scale.z != 0)              o->worldScale.z += o->scale.z;
-		
+	//Increment attributes
+	if (o->rotation.x != 0)           o->worldRotation.x += o->rotation.x;
+	if (o->rotation.y != 0)           o->worldRotation.y += o->rotation.y;
+	if (o->rotation.z != 0)           o->worldRotation.z += o->rotation.z;
+
+	if (o->speed.x != 0)              o->worldSpeed.x += o->speed.x;
+	if (o->speed.y != 0)              o->worldSpeed.y += o->speed.y;
+	if (o->speed.z != 0)              o->worldSpeed.z += o->speed.z;
+
+	if (o->scale.x != 0)              o->worldScale.x += o->scale.x;
+	if (o->scale.y != 0)              o->worldScale.y += o->scale.y;
+	if (o->scale.z != 0)              o->worldScale.z += o->scale.z;
+
 	//Check rotation angles
-	while(o->worldRotation.x > 359)  o->worldRotation.x -= 360;
-	while(o->worldRotation.y > 359)  o->worldRotation.y -= 360;
-	while(o->worldRotation.z > 359)  o->worldRotation.z -= 360;
-	while(o->worldRotation.x < -359) o->worldRotation.x += 360;
-	while(o->worldRotation.y < -359) o->worldRotation.y += 360;
-	while(o->worldRotation.z < -359) o->worldRotation.z += 360;
-	
+	while (o->worldRotation.x > 359)  o->worldRotation.x -= 360;
+	while (o->worldRotation.y > 359)  o->worldRotation.y -= 360;
+	while (o->worldRotation.z > 359)  o->worldRotation.z -= 360;
+	while (o->worldRotation.x < -359) o->worldRotation.x += 360;
+	while (o->worldRotation.y < -359) o->worldRotation.y += 360;
+	while (o->worldRotation.z < -359) o->worldRotation.z += 360;
+
 	//Move the object based on moveto and speed
-	if(o->moveTo.x != o->worldPosition.x){
-		if(o->worldPosition.x < o->moveTo.x){
+	if (o->moveTo.x != o->worldPosition.x){
+		if (o->worldPosition.x < o->moveTo.x){
 			o->worldPosition.x += o->worldSpeed.x;
-			if(o->worldPosition.x > o->moveTo.x) o->worldPosition.x = o->moveTo.x;
+			if (o->worldPosition.x > o->moveTo.x) o->worldPosition.x = o->moveTo.x;
 		}else{
 			o->worldPosition.x -= o->worldSpeed.x;
-			if(o->worldPosition.x < o->moveTo.x) o->worldPosition.x = o->moveTo.x;
+			if (o->worldPosition.x < o->moveTo.x) o->worldPosition.x = o->moveTo.x;
 		}
 	}
-	if(o->moveTo.y != o->worldPosition.y){
-		if(o->worldPosition.y < o->moveTo.y){
+	if (o->moveTo.y != o->worldPosition.y){
+		if (o->worldPosition.y < o->moveTo.y){
 			o->worldPosition.y += o->worldSpeed.y;
-			if(o->worldPosition.y > o->moveTo.y) o->worldPosition.y = o->moveTo.y;
+			if (o->worldPosition.y > o->moveTo.y) o->worldPosition.y = o->moveTo.y;
 		}else{
 			o->worldPosition.y -= o->worldSpeed.y;
-			if(o->worldPosition.y < o->moveTo.y) o->worldPosition.y = o->moveTo.y;
+			if (o->worldPosition.y < o->moveTo.y) o->worldPosition.y = o->moveTo.y;
 		}
 	}
-	if(o->moveTo.z != o->worldPosition.z){
-		if(o->worldPosition.z < o->moveTo.z){
+	if (o->moveTo.z != o->worldPosition.z){
+		if (o->worldPosition.z < o->moveTo.z){
 			o->worldPosition.z += o->worldSpeed.z;
-			if(o->worldPosition.z > o->moveTo.z) o->worldPosition.z = o->moveTo.z;
+			if (o->worldPosition.z > o->moveTo.z) o->worldPosition.z = o->moveTo.z;
 		}else{
 			o->worldPosition.z -= o->worldSpeed.z;
-			if(o->worldPosition.z < o->moveTo.z) o->worldPosition.z = o->moveTo.z;
+			if (o->worldPosition.z < o->moveTo.z) o->worldPosition.z = o->moveTo.z;
 		}
-	}	
+	}
 }
 
 void  G3d_moveCamera(camera* c){
 	//Do increments
-	if(c->rotation.x != 0)           c->worldRotation.x += c->rotation.x;
-	if(c->rotation.y != 0)           c->worldRotation.y += c->rotation.y;
-	if(c->rotation.z != 0)           c->worldRotation.z += c->rotation.z;
-	
-	if(c->speed.x != 0)              c->worldSpeed.x += c->speed.x;
-	if(c->speed.y != 0)              c->worldSpeed.y += c->speed.y;
-	if(c->speed.z != 0)              c->worldSpeed.z += c->speed.z;
-	
+	if (c->rotation.x != 0)           c->worldRotation.x += c->rotation.x;
+	if (c->rotation.y != 0)           c->worldRotation.y += c->rotation.y;
+	if (c->rotation.z != 0)           c->worldRotation.z += c->rotation.z;
+
+	if (c->speed.x != 0)              c->worldSpeed.x += c->speed.x;
+	if (c->speed.y != 0)              c->worldSpeed.y += c->speed.y;
+	if (c->speed.z != 0)              c->worldSpeed.z += c->speed.z;
+
 	//Check rotation angles
-	while(c->worldRotation.x > 359)  c->worldRotation.x -= 360;
-	while(c->worldRotation.y > 359)  c->worldRotation.y -= 360;
-	while(c->worldRotation.z > 359)  c->worldRotation.z -= 360;
-	while(c->worldRotation.x < -359) c->worldRotation.x += 360;
-	while(c->worldRotation.y < -359) c->worldRotation.y += 360;
-	while(c->worldRotation.z < -359) c->worldRotation.z += 360;
+	while (c->worldRotation.x > 359)  c->worldRotation.x -= 360;
+	while (c->worldRotation.y > 359)  c->worldRotation.y -= 360;
+	while (c->worldRotation.z > 359)  c->worldRotation.z -= 360;
+	while (c->worldRotation.x < -359) c->worldRotation.x += 360;
+	while (c->worldRotation.y < -359) c->worldRotation.y += 360;
+	while (c->worldRotation.z < -359) c->worldRotation.z += 360;
 	//Move camera based on moveto and speed
-	if(c->moveTo.x != c->worldPosition.x){
-		if(c->worldPosition.x < c->moveTo.x){
+	if (c->moveTo.x != c->worldPosition.x){
+		if (c->worldPosition.x < c->moveTo.x){
 			c->worldPosition.x += c->worldSpeed.x;
-			if(c->worldPosition.x > c->moveTo.x) c->worldPosition.x = c->moveTo.x;
+			if (c->worldPosition.x > c->moveTo.x) c->worldPosition.x = c->moveTo.x;
 		}else{
 			c->worldPosition.x -= c->worldSpeed.x;
-			if(c->worldPosition.x < c->moveTo.x) c->worldPosition.x = c->moveTo.x;
+			if (c->worldPosition.x < c->moveTo.x) c->worldPosition.x = c->moveTo.x;
 		}
 	}
-	if(c->moveTo.y != c->worldPosition.y){
-		if(c->worldPosition.y < c->moveTo.y){
+	if (c->moveTo.y != c->worldPosition.y){
+		if (c->worldPosition.y < c->moveTo.y){
 			c->worldPosition.y += c->worldSpeed.y;
-			if(c->worldPosition.y > c->moveTo.y) c->worldPosition.y = c->moveTo.y;
+			if (c->worldPosition.y > c->moveTo.y) c->worldPosition.y = c->moveTo.y;
 		}else{
 			c->worldPosition.y -= c->worldSpeed.y;
-			if(c->worldPosition.y < c->moveTo.y) c->worldPosition.y = c->moveTo.y;
+			if (c->worldPosition.y < c->moveTo.y) c->worldPosition.y = c->moveTo.y;
 		}
 	}
-	if(c->moveTo.z != c->worldPosition.z){
-		if(c->worldPosition.z < c->moveTo.z){
+	if (c->moveTo.z != c->worldPosition.z){
+		if (c->worldPosition.z < c->moveTo.z){
 			c->worldPosition.z += c->worldSpeed.z;
-			if(c->worldPosition.z > c->moveTo.z) c->worldPosition.z = c->moveTo.z;
+			if (c->worldPosition.z > c->moveTo.z) c->worldPosition.z = c->moveTo.z;
 		}else{
 			c->worldPosition.z -= c->worldSpeed.z;
-			if(c->worldPosition.z < c->moveTo.z) c->worldPosition.z = c->moveTo.z;
+			if (c->worldPosition.z < c->moveTo.z) c->worldPosition.z = c->moveTo.z;
 		}
 	}
 }
