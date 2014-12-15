@@ -60,7 +60,8 @@ static int AnimationEditorState_handleMessage(AnimationEditorState this, void* o
 extern const u16 FontTiles[];
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
-enum Screens {
+enum Screens
+{
 	kPvbScreen = 0,
 	kPrecautionScreen,
 	kVbJaeScreen,
@@ -86,7 +87,6 @@ __CLASS_DEFINITION(AnimationEditorState);
 
 // it's a singleton
 __SINGLETON(AnimationEditorState);
-
 
 // class's constructor
 static void AnimationEditorState_constructor(AnimationEditorState this)
@@ -127,7 +127,7 @@ static int AnimationEditorState_handleMessage(AnimationEditorState this, void* o
 {
 	// process message
 	switch (Telegram_getMessage(telegram))
-{
+	{
 		case kKeyPressed:
 			{
 				MessageDispatcher_dispatchMessage(0, (Object)this, (Object)AnimationEditor_getInstance(), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
@@ -137,5 +137,6 @@ static int AnimationEditorState_handleMessage(AnimationEditorState this, void* o
 
 	return true;
 }
+
 
 #endif

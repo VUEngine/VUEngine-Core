@@ -64,7 +64,7 @@ void GameState_destructor(GameState this)
 
 	// destroy the stage
 	if (this->stage)
-{
+	{
 		// destroy the stage
 		__DELETE(this->stage);
 
@@ -137,7 +137,7 @@ void GameState_transform(GameState this)
 
 	// static to avoid call to memcpy
 	static Transformation environmentTransform =
-{
+	{
 			// local position
 			{0, 0, 0},
 			// global position
@@ -174,7 +174,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int l
 	Game_disableHardwareInterrupts(Game_getInstance());
 
 	if (this->stage)
-{
+	{
 		// destroy the stage
 		__DELETE(this->stage);
 	}

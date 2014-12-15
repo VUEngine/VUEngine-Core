@@ -86,13 +86,13 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	static int ID = 0;
 	int i = 0;
 	for (;entities[i].entityDefinition; i++)
-{
+	{
 		Entity entity = Entity_load(entities[i].entityDefinition, ID++, entities[i].extraInfo);
 
 		Container_addChild((Container)this, (Container)entity);
 
 		VBVec3D position =
-{
+		{
 				FTOFIX19_13(entities[i].position.x),
 				FTOFIX19_13(entities[i].position.y),
 				FTOFIX19_13(entities[i].position.z)

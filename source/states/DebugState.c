@@ -59,7 +59,8 @@ static int DebugState_handleMessage(DebugState this, void* owner, Telegram teleg
 extern const u16 FontTiles[];
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
-enum Screens {
+enum Screens
+{
 	kPvbScreen = 0,
 	kPrecautionScreen,
 	kVbJaeScreen,
@@ -125,41 +126,41 @@ static int DebugState_handleMessage(DebugState this, void* owner, Telegram teleg
 {
 	// process message
 	switch (Telegram_getMessage(telegram))
-{
+	{
 		case kKeyPressed:
 			{
 				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
 				if (pressedKey & K_LL)
-{
+				{
 					Debug_showPreviousPage(Debug_getInstance());
 				}
 				else if (pressedKey & K_LR)
-{
+				{
 					Debug_showNextPage(Debug_getInstance());
 				}
 				else if (pressedKey & K_LU)
-{
+				{
 					Debug_showPreviousSubPage(Debug_getInstance());
 				}
 				else if (pressedKey & K_LD)
-{
+				{
 					Debug_showNextSubPage(Debug_getInstance());
 				}
 				else if (pressedKey & K_RL)
-{
+				{
 					Debug_diplaceLeft(Debug_getInstance());
 				}
 				else if (pressedKey & K_RR)
-{
+				{
 					Debug_diplaceRight(Debug_getInstance());
 				}
 				else if (pressedKey & K_RU)
-{
+				{
 					Debug_diplaceUp(Debug_getInstance());
 				}
 				else if (pressedKey & K_RD)
-{
+				{
 					Debug_diplaceDown(Debug_getInstance());
 				}
 			}
@@ -168,5 +169,6 @@ static int DebugState_handleMessage(DebugState this, void* owner, Telegram teleg
 
 	return true;
 }
+
 
 #endif

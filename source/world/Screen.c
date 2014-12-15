@@ -68,6 +68,7 @@ static void Screen_constructor(Screen this);
 
 static void Screen_capPosition(Screen this);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												GLOBALS
 //---------------------------------------------------------------------------------------------------------
@@ -136,10 +137,10 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 
 	//if focusInGameEntity is defined
 	if (this->focusInGameEntity)
-{
+	{
 		//get focusInGameEntity is moving
 		if (__VIRTUAL_CALL(int, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
-{
+		{
 			// save last position
 			this->lastDisplacement = this->position;
 
@@ -150,20 +151,20 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 			this->position.z += this->focusEntityPositionDisplacement.z;
 
 			if (0 > this->position.x)
-{
+			{
 				this->position.x = 0;
 			}
 			else if (ITOFIX19_13(this->stageSize.x) < this->position.x + ITOFIX19_13(__SCREEN_WIDTH))
-{
+			{
 				this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
 			}
 
 			if (0 > this->position.y)
-{
+			{
 				this->position.y = 0;
 			}
 			else if (ITOFIX19_13(this->stageSize.y) < this->position.y + ITOFIX19_13(__SCREEN_HEIGHT))
-{
+			{
 				this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
 			}
 
@@ -172,7 +173,7 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 			this->lastDisplacement.z = this->position.z - this->lastDisplacement.z;
 		}
 		else
-{
+		{
 			// not moving
 			this->lastDisplacement.x = 0;
 			this->lastDisplacement.y = 0;
@@ -206,7 +207,7 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor)
 	ASSERT(this, "Screen::focusEntityDeleted: null this");
 
 	if (this->focusInGameEntity == actor)
-{
+	{
 		this->focusInGameEntity = NULL;
 
 		this->lastDisplacement.x = 0;
@@ -228,7 +229,7 @@ void Screen_move(Screen this, VBVec3D translation, int cap)
 	this->position.z += translation.z;
 
 	if (cap)
-{
+	{
 		Screen_capPosition(this);
 	}
 }
@@ -237,32 +238,32 @@ void Screen_move(Screen this, VBVec3D translation, int cap)
 static void Screen_capPosition(Screen this)
 {
 	if (this->position.x < 0)
-{
+	{
 		this->position.x = 0;
 	}
 
 	if (this->position.x + ITOFIX19_13(__SCREEN_WIDTH) > ITOFIX19_13(this->stageSize.x))
-{
+	{
 		this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
 	}
 
 	if (this->position.y < 0)
-{
+	{
 		this->position.y = 0;
 	}
 
 	if (this->position.y + ITOFIX19_13(__SCREEN_HEIGHT) > ITOFIX19_13(this->stageSize.y))
-{
+	{
 		this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
 	}
 
 	if (this->position.z < 0)
-{
+	{
 		this->position.z = 0;
 	}
 
 	if (this->position.z > ITOFIX19_13(this->stageSize.z))
-{
+	{
 		this->position.z = ITOFIX19_13(this->stageSize.z);
 	}
 }
@@ -325,10 +326,9 @@ void Screen_FXFadeIn(Screen this, int wait)
 	int i = 0;
 	//create the delay
 	for (; i <= 32; i += 2)
-
-{
+	{
 		if (wait)
-{
+		{
 			//create time delay
 			Clock_delay(Game_getClock(Game_getInstance()), wait);
 		}
@@ -347,10 +347,9 @@ void Screen_FXFadeOut(Screen this, int wait)
 
 	//create the delay
 	for (; i >= 0; i-=2)
-
-{
+	{
 		if (wait)
-{
+		{
 			//create time delay
 			Clock_delay(Game_getClock((Game)Game_getInstance()), wait);
 		}

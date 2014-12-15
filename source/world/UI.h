@@ -61,22 +61,17 @@ typedef struct UIDefinition
 	// the class type
 	void* allocator;
 
-}UIDefinition;
+} UIDefinition;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(UI, __PARAMETERS(UIDefinition* uiDefinition));
 
-// class's destructor
 void UI_destructor(UI this);
-
-// add entities in the definition
-// if you need to have pointers to specific entities
-// override this method and add them manually there
 void UI_addEntities(UI this, PositionedEntity* entities);
+
 
 #endif

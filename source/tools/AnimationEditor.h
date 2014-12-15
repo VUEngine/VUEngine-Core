@@ -55,31 +55,22 @@ typedef struct UserActor
 	const ActorDefinition* actorDefinition;
 	const char* name;
 
-}UserActor;
+} UserActor;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 AnimationEditor AnimationEditor_getInstance();
 
-// class's destructor
 void AnimationEditor_destructor(AnimationEditor this);
-
-// update
 void AnimationEditor_update(AnimationEditor this);
-
-// start level editor
 void AnimationEditor_start(AnimationEditor this, GameState gameState);
-
-// stop level editor
 void AnimationEditor_stop(AnimationEditor this);
-
-// process a telegram
 int AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram);
 
 #endif
 
-#endif /*CLOCK_H_*/
+
+#endif

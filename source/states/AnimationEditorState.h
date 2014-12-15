@@ -56,4 +56,5 @@ AnimationEditorState AnimationEditorState_getInstance(void);
 
 #endif
 
-#endif /*ANIMATION_EDITOR_STATE_H_*/
+
+#endif

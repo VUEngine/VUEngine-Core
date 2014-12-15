@@ -85,7 +85,7 @@ __CLASS(Stage);
 //---------------------------------------------------------------------------------------------------------
 
 // defines a game world in ROM memory
-typedef struct  StageDefinition
+typedef struct StageDefinition
 {
 	// world's size over each axis in pixels
 	Size size;
@@ -105,7 +105,7 @@ typedef struct  StageDefinition
 	// pointer to the background music
 	const u16 (*bgm)[];
 
-}StageDefinition;
+} StageDefinition;
 
 typedef const StageDefinition StageROMDef;
 
@@ -114,42 +114,18 @@ typedef const StageDefinition StageROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Stage);
 
-// class's destructo
 void Stage_destructor(Stage this);
-
-// load stage's entites
 void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
-
-// retrieve size
 Size Stage_getSize(Stage this);
-
-// add entity to the stage
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, int permanent);
-
-// add entity to the stage
 void Stage_removeEntity(Stage this, Entity entity, int permanent);
-
-// execute stage's logic
 void Stage_update(Stage this);
-
-// stream entities according to screen's position
 void Stage_stream(Stage this);
-
-// stream entities according to screen's position
 void Stage_streamAll(Stage this);
-
-// if set to true, the char set memory is flushed when
-// a char defintion is no longer used
-// only useful to false when preloading textures
-// otherwise it doesn't have any effect and flushing
-// is the default  behvior
 void Stage_setFlushCharGroups(Stage this, int flushCharGroups);
-
-// retrieve ui
 UI Stage_getUI(Stage this);
 
-#endif
 
+#endif

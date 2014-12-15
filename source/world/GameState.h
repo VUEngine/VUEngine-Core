@@ -69,49 +69,21 @@ __CLASS(GameState);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// setup the init focus screen
 GameState GameState_getInstance(void);
-
-// class's constructor
 void GameState_constructor(GameState this);
-
-// class's destructor
 void GameState_destructor(GameState this);
-
-// state's enter
 void GameState_enter(GameState this, void* owner);
-
-// state's execute
 void GameState_execute(GameState this, void* owner);
-
-// state's enter
 void GameState_exit(GameState this, void* owner);
-
-// state's execute
 void GameState_pause(GameState this, void* owner);
-
-// state's execute
 void GameState_resume(GameState this, void* owner);
-
-// state's on message
 int GameState_handleMessage(GameState this, void* owner, Telegram telegram);
-
-// update level entities' positions
 void GameState_transform(GameState this);
-
-// propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message);
-
-// load a stage
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);
-
-// set streaming flag
 void GameState_setCanStream(GameState this, int canStream);
-
-// get streaming flag
 int GameState_canStream(GameState this);
-
-// retrieve stage
 Stage GameState_getStage(GameState this);
 
-#endif /*GAME_STATE_H_*/
+
+#endif

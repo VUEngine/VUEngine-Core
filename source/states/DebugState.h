@@ -57,4 +57,5 @@ DebugState DebugState_getInstance(void);
 
 #endif
 
-#endif /*DEBUG_STATE_H_*/
+
+#endif

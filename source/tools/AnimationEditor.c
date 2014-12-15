@@ -87,15 +87,17 @@
 // define the AnimationEditor
 __CLASS_DEFINITION(AnimationEditor);
 
-enum Modes {
-		kFirstMode = 0,
-		kSelectActor,
-		kSelectAnimation,
-		kEditAnimation,
-		kLastMode
+enum Modes
+{
+	kFirstMode = 0,
+	kSelectActor,
+	kSelectAnimation,
+	kEditAnimation,
+	kLastMode
 };
 
-enum AnimationProperties {
+enum AnimationProperties
+{
 	kNumberOfFrames = 0,
 	kDelay,
 	kLoop,
@@ -139,7 +141,6 @@ static void AnimationEditor_constructor(AnimationEditor this)
 
 	__CONSTRUCT_BASE(Object);
 
-
 	this->animatedSprite = NULL;
 	this->gameState = NULL;
 	this->actorsSelector = NULL;
@@ -156,26 +157,22 @@ void AnimationEditor_destructor(AnimationEditor this)
 	ASSERT(this, "AnimationEditor::destructor: null this");
 
 	if (this->actorsSelector)
-
-{
+	{
 		__DELETE(this->actorsSelector);
 	}
 
 	if (this->animationsSelector)
-
-{
+	{
 		__DELETE(this->animationsSelector);
 	}
 
 	if (this->animationEditionSelector)
-
-{
+	{
 		__DELETE(this->animationEditionSelector);
 	}
 
 	if (this->frameEditionSelector)
-
-{
+	{
 		__DELETE(this->frameEditionSelector);
 	}
 
@@ -189,7 +186,7 @@ void AnimationEditor_update(AnimationEditor this)
 	ASSERT(this, "AnimationEditor::update: null this");
 
 	if (this->gameState && this->animatedSprite)
-{
+	{
 		AnimatedSprite_update(this->animatedSprite, Game_getClock(Game_getInstance()));
 
 		// TODO
@@ -218,7 +215,7 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 
 	int i = 0;
 	for (; _userActors[i].actorDefinition; i++)
-{
+	{
 		ASSERT(_userActors[i].name, "AnimationEditor::start: push null name");
 		VirtualList_pushBack(actorsNames, _userActors[i].name);
 	}
@@ -244,29 +241,25 @@ void AnimationEditor_stop(AnimationEditor this)
 	AnimationEditor_removePreviousAnimatedSprite(this);
 
 	if (this->actorsSelector)
-
-{
+	{
 		__DELETE(this->actorsSelector);
 		this->actorsSelector = NULL;
 	}
 
 	if (this->animationsSelector)
-
-{
+	{
 		__DELETE(this->animationsSelector);
 		this->animationsSelector = NULL;
 	}
 
 	if (this->animationEditionSelector)
-
-{
+	{
 		__DELETE(this->animationEditionSelector);
 		this->animationEditionSelector = NULL;
 	}
 
 	if (this->frameEditionSelector)
-
-{
+	{
 		__DELETE(this->frameEditionSelector);
 		this->frameEditionSelector = NULL;
 	}
@@ -284,7 +277,7 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 	Printing_text("Cancel (B)", 48 - 10, 1);
 
 	switch (this->mode)
-{
+	{
 		case kSelectActor:
 
 			AnimationEditor_printUserActors(this);
@@ -303,7 +296,8 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 			AnimationEditor_loadAnimationFunction(this);
 			AnimationEditor_createAnimationEditionSelector(this);
 			AnimationEditor_createFrameEditionSelector(this);
-			AnimatedSprite_playAnimationFunction(this->animatedSprite, &this->animationFunction);			AnimatedSprite_pause(this->animatedSprite, true);
+			AnimatedSprite_playAnimationFunction(this->animatedSprite, &this->animationFunction);
+			AnimatedSprite_pause(this->animatedSprite, true);
 			AnimatedSprite_pause(this->animatedSprite, false);
 			AnimationEditor_printAnimationConfig(this);
 			break;
@@ -316,36 +310,34 @@ int AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 	ASSERT(this, "AnimationEditor::handleMessage: null this");
 
 	if (!this->gameState)
-
-{
+	{
 		return false;
 	}
 
 	switch (Telegram_getMessage(telegram))
-{
+	{
 		case kKeyPressed:
+
 			{
 				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
 				if (pressedKey & K_B)
-{
+				{
 					this->mode--;
 
 					if (kFirstMode >= this->mode)
-
-{
+					{
 						this->mode = kFirstMode + 1;
 					}
 					else
-{
+					{
 						AnimationEditor_setupMode(this);
 					}
 					break;
 				}
 
 				switch (this->mode)
-
-{
+				{
 					case kSelectActor:
 
 						AnimationEditor_selectActor(this, pressedKey);
@@ -373,16 +365,15 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
 	for (; _userActors[userActorsCount].actorDefinition; userActorsCount++);
 
 	if (pressedKey & K_LU)
-{
+	{
 		OptionsSelector_selectPrevious(this->actorsSelector);
 	}
 	else if (pressedKey & K_LD)
-{
+	{
 		OptionsSelector_selectNext(this->actorsSelector);
 	}
 	else if (pressedKey & K_A)
-
-{
+	{
 		// select the added entity
 		this->mode = kSelectAnimation;
 		AnimationEditor_setupMode(this);
@@ -392,8 +383,7 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
 static void AnimationEditor_removePreviousAnimatedSprite(AnimationEditor this)
 {
 	if (this->animatedSprite)
-
-{
+	{
 		__DELETE(this->animatedSprite);
 		this->animatedSprite = NULL;
 	}
@@ -407,16 +397,15 @@ static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey
 	for (; this->animationDescription->animationFunctions[actorAnimationsCount]; actorAnimationsCount++);
 
 	if (pressedKey & K_LU)
-{
+	{
 		OptionsSelector_selectPrevious(this->animationsSelector);
 	}
 	else if (pressedKey & K_LD)
-{
+	{
 		OptionsSelector_selectNext(this->animationsSelector);
 	}
 	else if (pressedKey & K_A)
-
-{
+	{
 		this->mode = kEditAnimation;
 		AnimationEditor_setupMode(this);
 	}
@@ -425,37 +414,34 @@ static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey
 static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 {
 	if (pressedKey & K_A)
-
-{
+	{
 		if (AnimatedSprite_isPlaying(this->animatedSprite))
-{
+		{
 			AnimatedSprite_pause(this->animatedSprite, true);
 
 		}
 		else
-{
+		{
 			AnimatedSprite_pause(this->animatedSprite, false);
 		}
 	}
 	else if ((pressedKey & K_LU))
-{
+	{
 		OptionsSelector_selectPrevious(this->animationEditionSelector);
 	}
 	else if ((pressedKey & K_LD))
-{
+	{
 		OptionsSelector_selectNext(this->animationEditionSelector);
 	}
 	else if ((pressedKey & K_LL))
-{
+	{
 		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 		switch (selectedProperty)
-
-{
+		{
 			case kNumberOfFrames:
 
 				if (0 >= --this->animationFunction.numberOfFrames)
-
-{
+				{
 					this->animationFunction.numberOfFrames = 1;
 				}
 
@@ -467,8 +453,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 				this->animationFunction.delay -= 1 * __FPS_ANIM_FACTOR;
 
 				if (0 > this->animationFunction.delay)
-
-{
+				{
 					this->animationFunction.delay = 0;
 				}
 				break;
@@ -484,17 +469,14 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 		}
 	}
 	else if (pressedKey & K_LR)
-
-{
+	{
 		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 		switch (selectedProperty)
-
-{
+		{
 			case kNumberOfFrames:
 
 				if (__MAX_FRAMES_PER_ANIMATION_FUNCTION < ++this->animationFunction.numberOfFrames)
-
-{
+				{
 					this->animationFunction.numberOfFrames = __MAX_FRAMES_PER_ANIMATION_FUNCTION;
 				}
 
@@ -507,8 +489,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 				this->animationFunction.delay += 1 * __FPS_ANIM_FACTOR;
 
 				if (1000 < this->animationFunction.delay)
-
-{
+				{
 					this->animationFunction.delay = 1000;
 				}
 				break;
@@ -524,12 +505,10 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 		}
 	}
 	else if (pressedKey & K_RU)
-
-{
+	{
 		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 		switch (selectedProperty)
-
-{
+		{
 			case kFrames:
 
 				OptionsSelector_selectPrevious(this->frameEditionSelector);
@@ -537,12 +516,10 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 		}
 	}
 	else if (pressedKey & K_RD)
-
-{
+	{
 		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 		switch (selectedProperty)
-
-{
+		{
 			case kFrames:
 
 				OptionsSelector_selectNext(this->frameEditionSelector);
@@ -550,19 +527,16 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 		}
 	}
 	else if (pressedKey & K_RL)
-
-{
+	{
 		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 		int selectedFrame = OptionsSelector_getSelectedOption(this->frameEditionSelector);
 
 		switch (selectedProperty)
-
-{
+		{
 			case kFrames:
 
 				if (0 > --this->animationFunction.frames[selectedFrame])
-
-{
+				{
 					this->animationFunction.frames[selectedFrame] = 0;
 				}
 
@@ -570,18 +544,16 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 		}
 	}
 	else if (pressedKey & K_RR)
-
-{
+	{
 		int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 		int selectedFrame = OptionsSelector_getSelectedOption(this->frameEditionSelector);
 
 		switch (selectedProperty)
-
-{
+		{
 			case kFrames:
 
 				if (this->animationDescription->numberOfFrames < ++this->animationFunction.frames[selectedFrame])
-{
+				{
 					this->animationFunction.frames[selectedFrame] = this->animationDescription->numberOfFrames;
 				}
 
@@ -612,7 +584,6 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	int x = 1;
 	int y = 2;
 
-
 	Printing_text("Animation: ", x, y);
 	Printing_text(this->animationFunction.name, x + 12, y++);
 	OptionsSelector_showOptions(this->animationEditionSelector, x, ++y);
@@ -626,11 +597,11 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	Printing_text("           ", 38, 0);
 
 	if (!AnimatedSprite_isPlaying(this->animatedSprite))
-{
+	{
 		Printing_text("Play       (A)", 48 - 14, 2);
 	}
 	else
-{
+	{
 		Printing_text("Pause      (A)", 48 - 14, 2);
 	}
 
@@ -641,7 +612,7 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 
 	switch (selectedProperty)
-{
+	{
 		case kFrames:
 
 			Printing_text("Select (RU/RD)", 48 - 14, 6);
@@ -658,7 +629,7 @@ static void AnimationEditor_loadAnimationFunction(AnimationEditor this)
 
 	int i = 0;
 	for (; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION; i++)
-{
+	{
 		this->animationFunction.frames[i] = animationFunction->frames[i];
 	}
 
@@ -692,11 +663,9 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 	this->animationDescription = _userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->animationDescription;
 
 	if (this->animationDescription)
-
-{
+	{
 		if (this->animationsSelector)
-
-{
+		{
 			__DELETE(this->animationsSelector);
 		}
 
@@ -706,8 +675,7 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 
 		int i = 0;
 		for (i = 0; this->animationDescription->animationFunctions[i]; i++)
-
-{
+		{
 			VirtualList_pushBack(animationsNames, this->animationDescription->animationFunctions[i]->name);
 		}
 
@@ -715,7 +683,7 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 		__DELETE(animationsNames);
 	}
 	else
-{
+	{
 		//TODO
 	}
 }
@@ -723,8 +691,7 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this)
 {
 	if (this->animationEditionSelector)
-
-{
+	{
 		__DELETE(this->animationEditionSelector);
 	}
 
@@ -746,8 +713,7 @@ static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this)
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 {
 	if (this->frameEditionSelector)
-
-{
+	{
 		__DELETE(this->frameEditionSelector);
 	}
 
@@ -757,7 +723,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 
 	int i = 0;
 	for (; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++)
-{
+	{
 		VirtualList_pushBack(framesIndexes, &this->animationFunction.frames[i]);
 	}
 
@@ -768,9 +734,10 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 static void AnimationEditor_onAnimationComplete(AnimationEditor this)
 {
 	if (!this->animationFunction.loop)
-{
+	{
 		Printing_text("Play       (A)", 48 - 14, 2);
 	}
 }
 
-#endif 
+
+#endif

@@ -59,52 +59,22 @@ __CLASS(Screen);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 Screen Screen_getInstance();
 
-// class's destructo
 void Screen_destructor(Screen this);
-
-// positione the screen
 void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving);
-
-// set the focus entity
-// set the focus entity
 void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity);
-
-// retrieve focus entity
 InGameEntity Screen_getFocusInGameEntity(Screen this);
-
-// inform the screen I'm being removed
 void Screen_focusEntityDeleted(Screen this, InGameEntity actor);
-
-// translate screen
 void Screen_move(Screen this, VBVec3D translation, int cap);
-
-// get screen's position
 VBVec3D Screen_getPosition(Screen this);
-
-// set screen's position
 void Screen_setPosition(Screen this, VBVec3D position);
-
-// set screen's position displacement
 void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement);
-
-// retrieve last displacement
 VBVec3D Screen_getLastDisplacement(Screen this);
-
-// get current stage's size
 Size Screen_getStageSize(Screen this);
-
-// set current stage's size
 void Screen_setStageSize(Screen this, Size size);
-
-// create a fade delay
 void Screen_FXFadeIn(Screen this, int wait);
-
-// create a fade delay
 void Screen_FXFadeOut(Screen this, int wait);
 
 
 #endif
-

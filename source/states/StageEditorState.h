@@ -56,4 +56,5 @@ StageEditorState StageEditorState_getInstance(void);
 
 #endif
 
-#endif /*STAGE_EDITOR_STATE_H_*/
+
+#endif

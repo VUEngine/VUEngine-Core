@@ -36,20 +36,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 static void StageEditorState_destructor(StageEditorState this);
-
-// class's constructor
 static void StageEditorState_constructor(StageEditorState this);
-
-// state's enter
 static void StageEditorState_enter(StageEditorState this, void* owner);
-
-// state's execute
 static void StageEditorState_execute(StageEditorState this, void* owner);
-
-// state's enter
 static void StageEditorState_exit(StageEditorState this, void* owner);
-
-// state's on message
 static int StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram);
 
 
@@ -59,7 +49,8 @@ static int StageEditorState_handleMessage(StageEditorState this, void* owner, Te
 
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
-enum Screens {
+enum Screens
+{
 	kPvbScreen = 0,
 	kPrecautionScreen,
 	kVbJaeScreen,
@@ -124,7 +115,7 @@ static int StageEditorState_handleMessage(StageEditorState this, void* owner, Te
 {
 	// process message
 	switch (Telegram_getMessage(telegram))
-{
+	{
 		case kKeyPressed:
 			{
 				MessageDispatcher_dispatchMessage(0, (Object)this, (Object)StageEditor_getInstance(), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
@@ -134,5 +125,6 @@ static int StageEditorState_handleMessage(StageEditorState this, void* owner, Te
 
 	return true;
 }
+
 
 #endif
