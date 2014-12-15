@@ -333,9 +333,9 @@ static void Container_applyTransform(Container this, Transformation* environment
 	Transformation environmentTransformCopy = {
 		// local position
 		{
-			environmentTransform->localPosition.x, 
-			environmentTransform->localPosition.y, 
-			environmentTransform->localPosition.z
+			0,
+			0,
+			0
 		},
 		// global position
 		{
@@ -368,7 +368,7 @@ static void Container_applyTransform(Container this, Transformation* environment
 		VirtualNode node = VirtualList_begin(this->children);
 	
 		// update each child
-		for(; node ; node = VirtualNode_getNext(node)){
+		for(; node; node = VirtualNode_getNext(node)){
 			
 			Container child = (Container)VirtualNode_getData(node);
 			

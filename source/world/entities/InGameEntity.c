@@ -220,9 +220,9 @@ fix19_13 InGameEntity_getFriction(InGameEntity this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve previous position
-VBVec3D InGameEntity_getPreviousPosition(InGameEntity this){
+const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this){
 	
 	ASSERT(this, "InGameEntity::getPreviousPosition: null this");
 
-	return this->transform.globalPosition;
+	return &this->transform.globalPosition;
 }

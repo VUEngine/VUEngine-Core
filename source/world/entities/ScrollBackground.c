@@ -155,6 +155,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	ASSERT(this, "ScrollBackground::updateScrolling: null this");
 
+	CACHE_ENABLE;
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
 	DrawSpec drawSpec0 = {
@@ -232,6 +233,8 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);	
 	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATE_G);
+	
+	CACHE_DISABLE;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

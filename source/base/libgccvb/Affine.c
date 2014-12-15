@@ -89,8 +89,6 @@ void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY,
 					 s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y) {
 	PDx_ST pdx;	
 
-	CACHE_ENABLE;
-
 	if(zoomX < 0){
 		
 		fg_x *= (-1);
@@ -107,38 +105,34 @@ void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY,
 	
 	pdx.paralax = 0x0000;
 	
-	{	
-		AFFINE_ST *affine = (AFFINE_ST*)PARAM(param);
+	AFFINE_ST *affine = (AFFINE_ST*)PARAM(param);
+
+	AFFINE_ST source = {
+			pdx.dx,
+			pdx.paralax,
+			pdx.dy,
+			pdx.pa,
+			pdx.pc
+	};
+
+	int i = FIX7_9TOI(FIX7_9_MULT(ITOFIX7_9(fg_y << 1), zoomY)) + 2;
+	//int i = FIX7_9TOF(zoomY) * (fg_y << 1) + 2;
 	
-		AFFINE_ST source = {
-				pdx.dx,
-				pdx.paralax,
-				pdx.dy,
-				pdx.pa,
-				pdx.pc
-		};
+	if(0 > i){
+	
+		i *= -1;
+	}
 
-		int i = FIX7_9TOI(FIX7_9_MULT(ITOFIX7_9(fg_y << 1), zoomY)) + 2;
-		//int i = FIX7_9TOF(zoomY) * (fg_y << 1) + 2;
+	CACHE_ENABLE;
+	for (; i--; ) {
+
+		// not sure why don't need following line
+		//source.pb_y = FIX13_3_MULT(iFix, pdx.pb) + pdx.dx;
 		
-		if(0 > i){
+		//source.pd_y = FIX13_3_MULT(iFix, pdx.pd) + pdx.dy;
+		source.pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), pdx.pd)) + pdx.dy;
 		
-			i *= -1;
-		}
-
-		for (; i--; ) {
-
-			//fix13_3 iFix = ITOFIX13_3(i);
-			fix19_13 iFix = ITOFIX19_13(i);
-						
-			// not sure why don't need following line
-			//source.pb_y = FIX13_3_MULT(iFix, pdx.pb) + pdx.dx;
-			
-			//source.pd_y = FIX13_3_MULT(iFix, pdx.pd) + pdx.dy;
-			source.pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(iFix, pdx.pd)) + pdx.dy;
-			
-			affine[i] = source;
-		}
+		affine[i] = source;
 	}
 	CACHE_DISABLE;
 }

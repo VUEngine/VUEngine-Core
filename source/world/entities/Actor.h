@@ -159,7 +159,7 @@ void Actor_transform(Actor this, Transformation* environmentTransform);
 void Actor_update(Actor this);
 
 // retrieve previous position
-VBVec3D Actor_getPreviousPosition(Actor this);
+const VBVec3D* Actor_getPreviousPosition(Actor this);
 
 // change direction
 void Actor_moveOpositeDirecion(Actor this, int axis);

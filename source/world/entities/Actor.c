@@ -283,11 +283,11 @@ static void Actor_updateSourroundingFriction(Actor this){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // retrieve previous position
-VBVec3D Actor_getPreviousPosition(Actor this){
+const VBVec3D* Actor_getPreviousPosition(Actor this){
 	
 	ASSERT(this, "Actor::getPreviousPosition: null this");
 	
-	return this->previousGlobalPosition;
+	return &this->previousGlobalPosition;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

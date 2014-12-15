@@ -198,14 +198,12 @@ void Cuboid_positione(Cuboid this){
 	VBVec3D myOwnerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, Entity, getPosition, (Entity)this->owner);
 
 	// calculate positioned rightCuboid	
-	this->positionedRightcuboid = this->rightCuboid;
-	
-	this->positionedRightcuboid.x0 += myOwnerPosition.x + ITOFIX19_13(gap.left);
-	this->positionedRightcuboid.x1 += myOwnerPosition.x - ITOFIX19_13(gap.right);
-	this->positionedRightcuboid.y0 += myOwnerPosition.y + ITOFIX19_13(gap.up);
-	this->positionedRightcuboid.y1 += myOwnerPosition.y - ITOFIX19_13(gap.down);
-	this->positionedRightcuboid.z0 += myOwnerPosition.z;
-	this->positionedRightcuboid.z1 += myOwnerPosition.z;
+	this->positionedRightcuboid.x0 = this->rightCuboid.x0 + myOwnerPosition.x + ITOFIX19_13(gap.left);
+	this->positionedRightcuboid.y0 = this->rightCuboid.y0 + myOwnerPosition.y + ITOFIX19_13(gap.up);
+	this->positionedRightcuboid.z0 = this->rightCuboid.z0 + myOwnerPosition.z;
+	this->positionedRightcuboid.x1 = this->rightCuboid.x1 + myOwnerPosition.x - ITOFIX19_13(gap.right);
+	this->positionedRightcuboid.y1 = this->rightCuboid.y1 + myOwnerPosition.y - ITOFIX19_13(gap.down);
+	this->positionedRightcuboid.z1 = this->rightCuboid.z1 + myOwnerPosition.z;
 
 	// not checked yet
 	this->checked = false;
@@ -253,6 +251,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::getAxisOfCollisionWithCuboid: null sprites");
 
+	CACHE_ENABLE;
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
 	
 	VBVec3D displacementIncrement = {
@@ -261,19 +260,30 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			FIX19_13_MULT(displacement.z, FTOFIX19_13(0.1f))
 	};
 	
-	// setup a cuboid representing the previous position
-	Rightcuboid positionedRightCuboid = this->rightCuboid;
-	
 	// get colliding entity's rightcuboid
-	Rightcuboid otherRightcuboid = cuboid->positionedRightcuboid;
+	Rightcuboid otherRightcuboid = {
+				
+		cuboid->positionedRightcuboid.x0,
+		cuboid->positionedRightcuboid.y0,
+		cuboid->positionedRightcuboid.z0,
+		cuboid->positionedRightcuboid.x1,
+		cuboid->positionedRightcuboid.y1,
+		cuboid->positionedRightcuboid.z1
+	};
+		
+	const VBVec3D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, Entity, getPreviousPosition, (Entity)this->owner);
 
-	VBVec3D previousPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, Entity, getPreviousPosition, (Entity)this->owner);
-	positionedRightCuboid.x0 += previousPosition.x + ITOFIX19_13(gap.left);
-	positionedRightCuboid.x1 += previousPosition.x - ITOFIX19_13(gap.right);
-	positionedRightCuboid.y0 += previousPosition.y + ITOFIX19_13(gap.up);
-	positionedRightCuboid.y1 += previousPosition.y - ITOFIX19_13(gap.down);
-	positionedRightCuboid.z0 += previousPosition.z - displacement.z;
-	positionedRightCuboid.z1 += previousPosition.z - displacement.z;
+	// setup a cuboid representing the previous position
+	Rightcuboid positionedRightCuboid = {
+			
+			this->rightCuboid.x0 + previousPosition->x + ITOFIX19_13(gap.left),
+			this->rightCuboid.y0 + previousPosition->y + ITOFIX19_13(gap.up),
+			this->rightCuboid.z0 + previousPosition->z - displacement.z,
+
+			this->rightCuboid.x1 + previousPosition->x - ITOFIX19_13(gap.right),
+			this->rightCuboid.y1 + previousPosition->y - ITOFIX19_13(gap.down),
+			this->rightCuboid.z1 + previousPosition->z - displacement.z,
+	};
 
 	int numberOfAxis = 0;
 	int axisOfCollision = 0;
@@ -337,14 +347,12 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			displacement.y += displacementIncrement.y;
 			displacement.z += displacementIncrement.z;
 			
-			positionedRightCuboid = this->rightCuboid;
-			
-			positionedRightCuboid.x0 += previousPosition.x + ITOFIX19_13(gap.left);
-			positionedRightCuboid.x1 += previousPosition.x - ITOFIX19_13(gap.right);
-			positionedRightCuboid.y0 += previousPosition.y + ITOFIX19_13(gap.up);
-			positionedRightCuboid.y1 += previousPosition.y - ITOFIX19_13(gap.down);
-			positionedRightCuboid.z0 += previousPosition.z;
-			positionedRightCuboid.z1 += previousPosition.z;		
+			positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition->x + ITOFIX19_13(gap.left);
+			positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition->y + ITOFIX19_13(gap.up);
+			positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition->z - displacement.z;
+			positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition->x - ITOFIX19_13(gap.right);
+			positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition->y - ITOFIX19_13(gap.down);
+			positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition->z - displacement.z;
 		}
 
 	}while(0 == numberOfAxis && ++passes < 10);
@@ -403,6 +411,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		}
 	}	
 	
+	CACHE_DISABLE;
+
 	return axisOfCollision;
 }
 
@@ -431,11 +441,25 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 
 	// setup a cuboid representing the previous position
-	Rightcuboid positionedRightCuboid = this->positionedRightcuboid;
+	Rightcuboid positionedRightCuboid;
+	positionedRightCuboid.x0 = this->positionedRightcuboid.x0;
+	positionedRightCuboid.y0 = this->positionedRightcuboid.y0;
+	positionedRightCuboid.z0 = this->positionedRightcuboid.z0;
+	positionedRightCuboid.x1 = this->positionedRightcuboid.x1;
+	positionedRightCuboid.y1 = this->positionedRightcuboid.y1;
+	positionedRightCuboid.z1 = this->positionedRightcuboid.z1;
 
 	// get colliding entity's rightcuboid
-	Rightcuboid otherRightcuboid = cuboid->positionedRightcuboid;
-
+	Rightcuboid otherRightcuboid = {
+			
+		cuboid->positionedRightcuboid.x0,
+		cuboid->positionedRightcuboid.y0,
+		cuboid->positionedRightcuboid.z0,
+		cuboid->positionedRightcuboid.x1,
+		cuboid->positionedRightcuboid.y1,
+		cuboid->positionedRightcuboid.z1
+	};
+		
 	int axisOfPossibleCollision = 0;
 	
 	if(displacement.x){
