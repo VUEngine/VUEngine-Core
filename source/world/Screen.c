@@ -322,8 +322,9 @@ void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityP
 	ASSERT(this, "Screen::setPosition: null this");
 
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
-	
-	Screen_capPosition(this);
+
+	// center around the focus entity now
+	Screen_positione(this, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

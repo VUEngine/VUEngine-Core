@@ -262,7 +262,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite){
 			Sprite previousSprite = (Sprite)VirtualNode_getData(node);
 			u8 layer = Sprite_getWorldLayer(previousSprite);
 			Sprite_setWorldLayer(previousSprite, layer + 1);
-			//Sprite_render(previousSprite);
+			Sprite_render(previousSprite);
 			this->reverseRendering = false;
 		}
 		CACHE_DISABLE;
