@@ -46,7 +46,7 @@ typedef struct AnimatedInGameEntityDefinition
 	// animation to play automatically
 	char* initialAnimation;
 
-}AnimatedInGameEntityDefinition;
+} AnimatedInGameEntityDefinition;
 
 typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 
@@ -88,46 +88,21 @@ __CLASS(AnimatedInGameEntity);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 ID));
 
-// class's constructor
 void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 ID);
-
-// class's destructor
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
-
-// graphically refresh of characters that are visible
 void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* environmentTransform);
-
-// execute character's logic
 void AnimatedInGameEntity_update(AnimatedInGameEntity this);
-
-// retrieve character's scale
 Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this);
-
-// pause animation
 void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause);
-
-// play an animation
 void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName);
-
-// is play an animation
 int AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);
-
-// is animation selected
 int AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName);
-
-// check if must update sprite's position
 int AnimatedInGameEntity_updateSpritePosition(AnimatedInGameEntity this);
-
-// get animation definition
 AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this);
-
-// set animation description
 void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
-
-// set animation clock
 void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock);
+
 
 #endif

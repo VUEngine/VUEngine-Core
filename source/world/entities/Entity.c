@@ -104,7 +104,7 @@ void Entity_destructor(Entity this)
 
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			__DELETE(sprite);
@@ -132,13 +132,12 @@ static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefini
 	ASSERT(this, "Entity::addSprites: null this");
 
 	if (spritesDefinitions)
-
 	{
 		int i = numberOfSprites;
 
 		//go through n sprites in entity's definition
 		for (; i-- && i < __MAX_SPRITES_PER_ENTITY;)
-	{
+	    {
 			Entity_addSprite(this, &spritesDefinitions[i]);
 		}
 	}
@@ -170,11 +169,9 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 	}
 
 	if (sprite)
-
 	{
 		if (!this->sprites)
-
-	{
+	    {
 			this->sprites = __NEW(VirtualList);
 		}
 
@@ -197,7 +194,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 
 		// update scale if needed
 		if (updateSpriteScale)
-	{
+	    {
 			// calculate the scale
 			Sprite_calculateScale(sprite, this->transform.globalPosition.z);
 
@@ -213,7 +210,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 
 		//if screen is moving
 		if (updateSpritePosition)
-	{
+	    {
 			//update sprite's 2D position
 			Sprite_setPosition(sprite, &this->transform.globalPosition);
 		}
@@ -244,8 +241,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 		__VIRTUAL_CALL(void, Shape, setup, this->shape);
 
 		if (__VIRTUAL_CALL(int, Entity, moves, this))
-
-	{
+	    {
 			__VIRTUAL_CALL(void, Shape, positione, this->shape);
 		}
 	}
@@ -356,7 +352,6 @@ u16 Entity_getDeep(Entity this)
 	ASSERT(this, "Entity::getDeep: null this");
 
 	if (!this->size.z)
-
 	{
 		this->size.z = 1;
 	}
@@ -388,7 +383,6 @@ int Entity_isVisible(Entity this, int pad)
 	ASSERT(this->sprites, "Entity::isVisible: null sprites");
 
 	if (!this->sprites)
-
 	{
 		return true;
 	}
@@ -415,10 +409,10 @@ Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo)
 
 		// setup entity if allocated and constructed
 		if (entity)
-	{
+	    {
 			// process extra info
 			if (extraInfo)
-	{
+	        {
 				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
 			}
 
@@ -455,12 +449,11 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			if (sprite)
-
-	{
+	        {
 				Sprite_setDirection(sprite, axis, direction);
 			}
 		}
@@ -499,12 +492,11 @@ void Entity_show(Entity this)
 
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			if (sprite)
-
-	{
+	        {
 				Sprite_show(sprite);
 			}
 		}
@@ -522,12 +514,11 @@ void Entity_hide(Entity this)
 
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			if (sprite)
-
-	{
+	        {
 				Sprite_hide(sprite);
 			}
 		}

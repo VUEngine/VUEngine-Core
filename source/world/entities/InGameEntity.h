@@ -40,6 +40,7 @@
 #define __NEAR		 ((int)-1)
 #define __FAR		 ((int)1)
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ typedef struct InGameEntityDefinition
 	// to reduce flickering
 	u8 moves;
 
-}InGameEntityDefinition;
+} InGameEntityDefinition;
 
 typedef const InGameEntityDefinition InGameEntityROMDef;
 
@@ -115,52 +116,23 @@ typedef const InGameEntityDefinition InGameEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, s16 ID));
 
-// class's constructor
 void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 ID);
-
-// class's destructor
 void InGameEntity_destructor(InGameEntity this);
-
-// set graphical gap
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);
-
-// retrieve gap
 Gap InGameEntity_getGap(InGameEntity this);
-
-// calculate gap
 void InGameEntity_setGap(InGameEntity this);
-
-// retrieve in game type
 u16 InGameEntity_getInGameType(InGameEntity this);
-
-// retrieve deep
 u8 InGameEntity_getDeep(InGameEntity this);
-
-// does it moves?
 u8 InGameEntity_moves(InGameEntity this);
-
-// is it moving?
 u8 InGameEntity_isMoving(InGameEntity this);
-
-// set direction
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
-
-// get direction
 Direction InGameEntity_getDirection(InGameEntity this);
-
-// set shape state
 void InGameEntity_setShapeState(InGameEntity this, u8 state);
-
-// get elasticiy
 fix19_13 InGameEntity_getElasticity(InGameEntity this);
-
-// get friction
 fix19_13 InGameEntity_getFriction(InGameEntity this);
-
-// retrieve previous position
 const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this);
 
-#endif /*INGAMEENTITY_H_*/
+
+#endif

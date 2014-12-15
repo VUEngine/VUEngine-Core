@@ -103,7 +103,7 @@ typedef struct SpritesDescription
 	// animation functions
 	SpriteDefinition spritesDefinitions[__MAX_SPRITES_PER_ENTITY];
 
-}SpritesDescription;
+} SpritesDescription;
 
 typedef const SpritesDescription SpritesDescriptionROMDef;
 
@@ -119,7 +119,7 @@ typedef struct EntityDefinition
 	// number of sprites
 	int numberOfSprites;
 
-}EntityDefinition;
+} EntityDefinition;
 
 typedef const EntityDefinition EntityROMDef;
 
@@ -135,107 +135,48 @@ typedef const struct PositionedEntity
 	// extra info
 	void* extraInfo;
 
-}PositionedEntity;
+} PositionedEntity;
 
 typedef const PositionedEntity PositionedEntityROMDef;
 
 #define __SPRITE_ARRAY(SpritesDefintionArray) SpritesDefintionArray, sizeof(SpritesDefintionArray) / sizeof(SpriteDefinition)
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID);
-
-// class's destructor
 void Entity_destructor(Entity this);
-
-// process extra info in intialization
 void Entity_setExtraInfo(Entity this, void* extraInfo);
-
-//set class's animation
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
-
-// add sprite
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
-
-// initial transform
 void Entity_initialTransform(Entity this, Transformation* environmentTransform);
-
-//transform class
 void Entity_transform(Entity this, Transformation* environmentTransform);
-
-// retrieve EntityDefinition
 EntityDefinition* Entity_getEntityDefinition(Entity this);
-
-//retrieve class's scale
 Scale Entity_getScale(Entity this);
-
-// retrieve global position
 VBVec3D Entity_getPosition(Entity this);
-
-// retrieve local position
 VBVec3D Entity_getLocalPosition(Entity this);
-
-//retrieve class's map's paralax
 int Entity_getMapParallax(Entity this);
-
-// set graphical gap
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
-
-// retrieve in game type
 int Entity_getInGameType(Entity this);
-
-// retrieve sprite
 VirtualList Entity_getSprites(Entity this);
-
-// process a telegram
 int Entity_handleMessage(Entity this, Telegram telegram);
-
-// get width
 u16 Entity_getWidth(Entity this);
-
-// get height
 u16 Entity_getHeight(Entity this);
-
-// get deep
 u16 Entity_getDeep(Entity this);
-
-// get gap
 Gap Entity_getGap(Entity this);
-
-// get entity's shape type
 int Entity_getShapeType(Entity this);
-
-// does move?
 int Entity_doesMove(Entity this);
-
-// whether it is visible
 int Entity_isVisible(Entity this, int pad);
-
-// create an entity in gameengine's memory
 Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo);
-
-// check if must update sprite's position
 int Entity_updateSpritePosition(Entity this);
-
-// check if must update sprite's scale
 int Entity_updateSpriteScale(Entity this);
-
-// set the direction
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
-
-// does it moves?
 u8 Entity_moves(Entity this);
-
-// retrieve previous position
 const VBVec3D* Entity_getPreviousPosition(Entity this);
-
-// make it visible
 void Entity_show(Entity this);
-
-// make it invisible
 void Entity_hide(Entity this);
 
-#endif /*ENTITY_H_*/
+
+#endif

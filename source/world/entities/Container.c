@@ -112,7 +112,7 @@ void Container_destructor(Container this)
 
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Container child = (Container)VirtualNode_getData(node);
 
 			VirtualList_pushBack(childrenToDelete, (void*)child);
@@ -127,7 +127,7 @@ void Container_destructor(Container this)
 
 		// destroy each child
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Container child = (Container)VirtualNode_getData(node);
 
 			__DELETE(child);
@@ -156,14 +156,14 @@ void Container_addChild(Container this, Container child)
 	{
 		// if don't have any child yet
 		if (!this->children)
-	{
+	    {
 			// create children list
 			this->children = __NEW(VirtualList);
 		}
 
 		// first remove from previous parent
 		if (child->parent)
-	{
+	    {
 			Container_removeChild(child->parent, child);
 		}
 
@@ -190,7 +190,7 @@ static void Container_processRemovedChildren(Container this)
 
 		// remove each child
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Container child = (Container)VirtualNode_getData(node);
 
 			VirtualList_removeElement(this->children, child);
@@ -212,7 +212,7 @@ void Container_removeChild(Container this, Container child)
 	{
 		// if don't have any children to remove yet
 		if (!this->removedChildren)
-	{
+	    {
 			// create children list
 			this->removedChildren = __NEW(VirtualList);
 		}
@@ -240,7 +240,7 @@ void Container_update(Container this)
 
 		// update each child
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			__VIRTUAL_CALL(void, Container, update, (Container)VirtualNode_getData(node));
 		}
 	}
@@ -263,14 +263,14 @@ Transformation Container_getEnvironmentTransform(Container this)
 	// static to avoid call to _memcpy
 	static Transformation environmentTransform =
 	{
-			// local position
-			{0, 0, 0},
-			// global position
-			{0, 0, 0},
-			// scale
-			{1, 1},
-			// rotation
-			{0, 0, 0}
+        // local position
+        {0, 0, 0},
+        // global position
+        {0, 0, 0},
+        // scale
+        {1, 1},
+        // rotation
+        {0, 0, 0}
 	};
 
 	Container_concatenateTransform(&environmentTransform, &this->transform);
@@ -436,7 +436,7 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 	{
 		// propagate if I have children
 		if (this->children)
-	{
+    	{
 			// first remove children
 			Container_processRemovedChildren(this);
 
@@ -444,10 +444,10 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 
 			// update each child
 			for (; node ; node = VirtualNode_getNext(node))
-	{
+	        {
 				// pass event to each child
 				if (Container_passEvent((Container)VirtualNode_getData(node), event, args))
-	{
+	            {
 					return true;
 				}
 			}

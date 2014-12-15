@@ -181,7 +181,7 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			AnimatedSprite_pause((AnimatedSprite)sprite, pause);
@@ -201,7 +201,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
-	{
+	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			AnimatedSprite_play((AnimatedSprite)sprite, this->animationDescription, animationName);
@@ -248,4 +248,3 @@ void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock)
 {
 	this->clock = clock;
 }
-

@@ -72,7 +72,7 @@ typedef struct InanimatedInGameEntityDefinition
 	// whether it must be registered with the collision detection system
 	u8 registerShape;
 
-}InanimatedInGameEntityDefinition;
+} InanimatedInGameEntityDefinition;
 
 typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
 
@@ -81,20 +81,12 @@ typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* backgroundDefinition, s16 ID));
 
-// class's constructor
 void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* backgroundDefinition, s16 ID);
-
-// class's destructor
 void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);
-
-// get elasticiy
 fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this);
-
-// get friction
 fix19_13 InanimatedInGameEntity_getFriction(InanimatedInGameEntity this);
 
 
-#endif /*INANIMATED_IN_GAME_ENTITY_H_*/
+#endif

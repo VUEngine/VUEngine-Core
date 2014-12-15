@@ -70,25 +70,14 @@ typedef const EntityDefinition ScrollBackgroundROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 ID));
 
-// class's constructor
 void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 ID);
-
-// class's destructor
 void ScrollBackground_destructor(ScrollBackground this);
-
-// initial transform
 void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform);
-
-// transform
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform);
-
-// whether it is visible
 int ScrollBackground_isVisible(ScrollBackground this, int pad);
-
-// check if must update sprite's position
 int ScrollBackground_updateSpritePosition(ScrollBackground this);
 
-#endif /*SCROLL_BACKGROUND_H_*/
+
+#endif

@@ -87,70 +87,29 @@ __CLASS(Container);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-//class's allocator
 __CLASS_NEW_DECLARE(Container, __PARAMETERS(s16 id));
 
-// class's constructor
 void Container_constructor(Container this, s16 id);
-
-// class's destructor
 void Container_destructor(Container this);
-
-// add a child Container
 void Container_addChild(Container this, Container child);
-
-// remove child Container
 void Container_removeChild(Container this, Container child);
-
-// update each Container's child
 void Container_update(Container this);
-
-// propagate an event to the children wrapper
 int Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...);
-
-// retrieve environment transformation
 Transformation Container_getEnvironmentTransform(Container this);
-
-// contatenate transform
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform);
-
-// transform
 void Container_transform(Container this, Transformation* environmentTransform);
-
-// intinial transform
 void Container_initialTransform(Container this, Transformation* environmentTransform);
-
-// retrieve global position
 VBVec3D Container_getGlobalPosition(Container this);
-
-// retrieve local position
 VBVec3D Container_getLocalPosition(Container this);
-
-//set class's local position
 void Container_setLocalPosition(Container this, VBVec3D position);
-
-// process user input
 int Container_onMessage(Container this, va_list args);
-
-// process user input
 int Container_doKeyPressed(Container this, int pressedKey);
-
-// process user input
 int Container_doKeyUp(Container this, int pressedKey);
-
-// process user input
 int Container_doKeyHold(Container this, int pressedKey);
-
-// process message
 int Container_doMessage(Container this, int message);
-
-//retrieve object's in game index
 s16 Container_getId(Container this);
-
-// retrieve child count
 int Container_getChildCount(Container this);
-
-// retrieve children
 VirtualList Container_getChildren(Container this);
 
-#endif /* CONTAINER_H_ */
+
+#endif
