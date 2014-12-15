@@ -197,13 +197,11 @@ void Actor_update(Actor this)
 	AnimatedInGameEntity_update((AnimatedInGameEntity)this);
 
 	if (this->stateMachine)
-
 	{
 		StateMachine_update(this->stateMachine);
 	}
 
 	if (this->body)
-
 	{
 		Actor_updateCollisionStatus(this, Body_isMoving(this->body));
 	}
@@ -246,14 +244,12 @@ static void Actor_updateSourroundingFriction(Actor this)
 	}
 
 	if (this->sensibleToFriction.y)
-
 	{
 		friction.y = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
 		friction.y += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
 	}
 
 	if (this->sensibleToFriction.z)
-
 	{
 		friction.z = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
 		friction.z += this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
@@ -331,11 +327,11 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	if ((__XAXIS & axis))
 	{
 		if (__RIGHT == this->direction.x)
-	{
+	    {
 			this->direction.x = __LEFT;
 		}
 		else
-	{
+	    {
 			this->direction.x = __RIGHT;
 		}
 	}
@@ -343,11 +339,11 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	if ((__YAXIS & axis))
 	{
 		if (__NEAR == this->direction.y)
-	{
+	    {
 			this->direction.y = __FAR;
 		}
 		else
-	{
+	    {
 			this->direction.x = __NEAR;
 		}
 	}
@@ -355,11 +351,11 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	if ((__ZAXIS & axis))
 	{
 		if (__RIGHT == this->direction.z)
-	{
+	    {
 			this->direction.x = __LEFT;
 		}
 		else
-	{
+	    {
 			this->direction.x = __RIGHT;
 		}
 	}
@@ -390,11 +386,11 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 		int i = 0;
 		// TODO: must still solve when there will be a collision with an object not yet in the list
 		for (; i <= kZAxis; i++)
-	{
+	    {
 			if (this->lastCollidingEntity[i])
-	{
+	        {
 				VBVec3D displacement =
-	{
+	            {
 					kXAxis == i? acceleration->x: 0,
 					kYAxis == i? acceleration->y: 0,
 					kZAxis == i? acceleration->z: 0
@@ -449,22 +445,22 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, __ARGUMENTS(collidingEntity, displacement));
 
 		if (__XAXIS & axisOfCollision)
-	{
+	    {
 			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
 			this->lastCollidingEntity[kXAxis] = collidingEntity;
 		}
 
 		if (__YAXIS & axisOfCollision)
-	{
+	    {
 			if (!(__XAXIS & axisOfCollision))
-	{
+	        {
 				Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
 				this->lastCollidingEntity[kYAxis] = collidingEntity;
 			}
 		}
 
 		if (__ZAXIS & axisOfCollision)
-	{
+	    {
 			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
 			this->lastCollidingEntity[kZAxis] = collidingEntity;
 		}
@@ -476,11 +472,11 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
 
 		if (!(axisOfCollision & Body_isMoving(this->body)))
-	{
+	    {
 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyStoped, &axisOfCollision);
 		}
 		else
-	{
+	    {
 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyBounced, &axisOfCollision);
 		}
 	}
@@ -492,21 +488,19 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 	ASSERT(this, "Actor::handleMessage: null this");
 
 	if (!StateMachine_handleMessage(this->stateMachine, telegram))
-
 	{
 		// retrieve message
 		int message = Telegram_getMessage(telegram);
 
 		if (this->body)
-
-	{
+	    {
 			Object sender = Telegram_getSender(telegram);
 			Actor atherActor = __GET_CAST(Actor, sender);
 
 			if (sender == (Object)this || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
-	{
+	        {
 				switch (message)
-	{
+	            {
 					case kCollision:
 
 						Actor_resolveCollision(this, (VirtualList)Telegram_getExtraInfo(telegram));
@@ -526,8 +520,7 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 
 //						Printing_text("Actor::handleMessage: kBodyStoped       ", 10, 8);
 						if (!Body_isMoving(this->body))
-
-	{
+	                    {
 							CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
 						}
 						break;
@@ -540,7 +533,7 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 				}
 			}
 			else if (atherActor)
-	{
+	        {
 				__VIRTUAL_CALL(void, Actor, takeHitFrom, atherActor);
 
 				return true;
@@ -580,7 +573,6 @@ VBVec3D Actor_getPosition(Actor this)
 	ASSERT(this, "Actor::getPosition: null this");
 
 	if (this->body)
-
 	{
 		return Body_getPosition(this->body);
 	}
@@ -607,7 +599,6 @@ int Actor_updateSpriteScale(Actor this)
 	}
 
 	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
-
 	{
 		return true;
 	}
@@ -620,7 +611,6 @@ void Actor_stopMovement(Actor this)
 	ASSERT(this, "Actor::stopMovement: null this");
 
 	if (this->body)
-
 	{
 		Body_stopMovement(this->body, __XAXIS);
 		Body_stopMovement(this->body, __YAXIS);
@@ -674,7 +664,6 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 			myHighGap = this->gap.right;
 
 			screenSize = __SCREEN_WIDTH;
-
 			break;
 
 		case __YAXIS:
@@ -765,4 +754,3 @@ fix19_13 Actor_getElasticity(Actor this)
 
 	return this->body? Body_getElasticity(this->body): InGameEntity_getElasticity((InGameEntity)this);
 }
-

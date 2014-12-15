@@ -56,7 +56,7 @@ typedef struct GeneralAxisFlag
 	int y: 2;
 	int z: 2;
 
-}GeneralAxisFlag;
+} GeneralAxisFlag;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -117,79 +117,32 @@ typedef const ActorDefinition ActorROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID));
 
-// class's constructor
 void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID);
-
-// class's destructor
 void Actor_destructor(Actor this);
-
-//set class's local position
 void Actor_setLocalPosition(Actor this, VBVec3D position);
-
-// graphically refresh of characters that are visible
 void Actor_transform(Actor this, Transformation* environmentTransform);
-
-// execute character's logic
 void Actor_update(Actor this);
-
-// retrieve previous position
 const VBVec3D* Actor_getPreviousPosition(Actor this);
-
-// change direction
 void Actor_moveOpositeDirecion(Actor this, int axis);
-
-// whether changed direction in the last cycle or not
 int Actor_changedDirection(Actor this, int axis);
-
-// change direction over axis
 void Actor_changeDirectionOnAxis(Actor this, int axis);
-
-// true if inside the screen range
 int Actor_isInsideGame(Actor this);
-
-// check if gravity must apply to this actor
 int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration);
-
-// retrieve axis free for movement
 int Actor_getAxisFreeForMovement(Actor this);
-
-// process a telegram
 int Actor_handleMessage(Actor this, Telegram telegram);
-
-// retrieve state machine
 StateMachine Actor_getStateMachine(Actor this);
-
-// does it moves?
 u8 Actor_moves(Actor this);
-
-// is it moving?
 u8 Actor_isMoving(Actor this);
-
-// retrieve global position
 VBVec3D Actor_getPosition(Actor this);
-
-// check if must update sprite's position
 int Actor_updateSpritePosition(Actor this);
-
-// check if must update sprite's scale
 int Actor_updateSpriteScale(Actor this);
-
-// stop movement completelty
 void Actor_stopMovement(Actor this);
-
-// align character to other entity on collision
 void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
-
-// retrieve body
 const Body Actor_getBody(Actor this);
-
-// take hit
 void Actor_takeHitFrom(Actor this, Actor other);
-
-// get elasticiy
 fix19_13 Actor_getElasticity(Actor this);
+
 
 #endif

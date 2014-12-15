@@ -38,7 +38,8 @@
 // define the ScrollBackground
 __CLASS_DEFINITION(ScrollBackground);
 
-enum ScrollSprites {
+enum ScrollSprites
+{
 	kLeftSprite = 0,
 	kRightSprite
 };
@@ -48,11 +49,9 @@ enum ScrollSprites {
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
 extern VBVec3D * _screenPosition;
 const extern VBVec3D* _screenDisplacement;
 
-// calculate the scroll's screen position
 static void ScrollBackground_updateScrolling(ScrollBackground this);
 
 
@@ -72,7 +71,6 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 
 	// construct base object
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, ID));
-
 
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 
@@ -189,13 +187,13 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	else
 	{
 		if (axis < 0)
-	{
+    	{
 			drawSpec1.position.x = ITOFIX19_13(axis);
 
 			drawSpec0.position.x = drawSpec1.position.x + ITOFIX19_13(__SCREEN_WIDTH);
 		}
 		else
-	{
+	    {
 			drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH - 1);
 
 			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREEN_WIDTH - 1);

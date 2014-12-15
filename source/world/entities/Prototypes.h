@@ -39,4 +39,5 @@
 // must forward declare
 Shape Entity_getShape(Entity this);
 
-#endif /*PROTOTYPES_H_*/
+
+#endif
