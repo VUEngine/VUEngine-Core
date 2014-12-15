@@ -168,9 +168,13 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 	// update tick count
 	this->ticks += ticksElapsed;
 	
+	Printing_int(this->ticks, 1, 11);
+	Printing_int(this->ticks / __MILISECONDS_IN_SECOND, 1, 12);
+	
     //if second has changed, set frame rate 
     if(previousSecond != (this->ticks / __MILISECONDS_IN_SECOND)){
-    	
+    	Printing_int(previousSecond, 1, 10);
+
     		FrameRate frameRate = FrameRate_getInstance();
     		
 #ifdef __PRINT_FRAMERATE
@@ -190,7 +194,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed){
 			FrameRate_reset(frameRate);
 			
 			// no need to track this, so prevent a very unlikely overflow
-	    	this->ticks = 0;
+	    	//this->ticks = 0;
     }	
 
     // Play background music 

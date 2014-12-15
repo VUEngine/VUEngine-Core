@@ -77,6 +77,9 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite);
 // deallocate param table space
 void ParamTableManager_free(ParamTableManager this, Sprite sprite);
  
+// relocate sprites
+int ParamTableManager_processRemovedSprites(ParamTableManager this);
+
 // print param table's attributes state
 void ParamTableManager_print(ParamTableManager this,int x, int y);
 

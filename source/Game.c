@@ -491,9 +491,10 @@ static void Game_handleInput(Game this){
 	u16 pressedKey = KeypadManager_getPressedKey(keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(keypadManager);
-	u16 previousKey = KeypadManager_getPreviousKey(keypadManager);
 
 #ifdef __DEBUG_TOOLS
+
+	u16 previousKey = KeypadManager_getPreviousKey(keypadManager);
 
 	// check code to access special feature
 	if((previousKey & K_SEL) && (pressedKey & K_STA)){
@@ -610,7 +611,7 @@ static void Game_handleInput(Game this){
 	}
 }
 
-#define __FPS_BASED_SECONDS		1000 / __TARGET_FPS
+#define __FPS_BASED_SECONDS		(int)(__TIMER_RESOLUTION * 1000 / __TARGET_FPS) 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // update game's logic subsystem
@@ -744,7 +745,7 @@ void Game_update(Game this){
 	while(true){
 
 #ifdef __DEBUG
-		currentTime = __CAP_FPS? Clock_getTime(this->clock): lastSubSystemTime + 1001;
+		currentTime = __CAP_FPS? Clock_getTime(this->clock): lastSubSystemTime + 1000 + __TIMER_RESOLUTION;
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
