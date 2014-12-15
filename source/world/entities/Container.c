@@ -309,9 +309,9 @@ static void Container_applyTransform(Container this, Transformation* environment
 {
 		// local position
 		{
-			environmentTransform->localPosition.x,
-			environmentTransform->localPosition.y,
-			environmentTransform->localPosition.z
+			0,
+			0,
+			0
 		},
 		// global position
 		{
@@ -337,21 +337,21 @@ static void Container_applyTransform(Container this, Transformation* environment
 
 	// if I have children
 	if (this->children)
-{
+	{
 		// first remove children
 		Container_processRemovedChildren(this);
 
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// update each child
-		for (; node ; node = VirtualNode_getNext(node))
-{
+		for (; node; node = VirtualNode_getNext(node))
+		{
 			Container child = (Container)VirtualNode_getData(node);
 
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z? child->invalidateGlobalPosition: this->invalidateGlobalPosition;
 
 			if (isInitialTransform)
-{
+			{
 				__VIRTUAL_CALL(void, Container, initialTransform, child, __ARGUMENTS(&environmentTransformCopy));
 			}
 			else{

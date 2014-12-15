@@ -161,6 +161,6 @@ fix19_13 InGameEntity_getElasticity(InGameEntity this);
 fix19_13 InGameEntity_getFriction(InGameEntity this);
 
 // retrieve previous position
-VBVec3D InGameEntity_getPreviousPosition(InGameEntity this);
+const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this);
 
 #endif /*INGAMEENTITY_H_*/

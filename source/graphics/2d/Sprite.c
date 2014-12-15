@@ -424,8 +424,9 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 	if (this->worldLayer != worldLayer && 0 <= worldLayer)
 	{
 		this->worldLayer = worldLayer;
-
-		Sprite_show(this);
+	
+		// make sure everything is setup in the next render cycle
+		this->renderFlag = __UPDATE_HEAD;
 	}
 }
 
@@ -484,7 +485,12 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
 {
 	ASSERT(this, "Sprite::setDrawSpec: null this");
 
-	this->drawSpec = *drawSpec;
+	this->drawSpec.position.x = drawSpec->position.x;
+	this->drawSpec.position.y = drawSpec->position.y;
+	this->drawSpec.position.z = drawSpec->position.z;
+	
+	this->drawSpec.scale.x = drawSpec->scale.x;
+	this->drawSpec.scale.y = drawSpec->scale.y;
 }
 
 

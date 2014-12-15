@@ -672,6 +672,13 @@ static void Game_updateRendering(Game this)
 		CharSetManager_defragmentProgressively(this->charSetManager);
 	}
 #ifdef __DEBUG
+	this->lastProcessName = "update param table";
+#endif
+	if(FrameRate_isFPSHigh(this->frameRate)){
+	
+		ParamTableManager_processRemovedSprites(this->paramTableManager);
+	}
+#ifdef __DEBUG
 	this->lastProcessName = "render";
 #endif
 	// render sprites

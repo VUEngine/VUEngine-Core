@@ -100,14 +100,14 @@ void InGameEntity_setGap(InGameEntity this)
 
 	// if facing to the left... swap left / right gap
 	if (__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode)
-{
+	{
 		this->gap.left 	= this->inGameEntityDefinition->gap.right;
 		this->gap.right = this->inGameEntityDefinition->gap.left;
 	}
 
 	// scale gap if needed
 	if (WRLD_AFFINE != bgmapMode)
-{
+	{
 		// must scale the gap
 		this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
 		this->gap.right =  	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), abs(scale.x)));
@@ -170,7 +170,7 @@ void InGameEntity_setShapeState(InGameEntity this, u8 state)
 	ASSERT(this, "InGameEntity::setShapeState: null this");
 
 	if (this->shape)
-{
+	{
 		Shape_setActive(this->shape, state);
 	}
 }
@@ -192,9 +192,9 @@ fix19_13 InGameEntity_getFriction(InGameEntity this)
 }
 
 // retrieve previous position
-VBVec3D InGameEntity_getPreviousPosition(InGameEntity this)
+const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::getPreviousPosition: null this");
 
-	return this->transform.globalPosition;
+	return &this->transform.globalPosition;
 }

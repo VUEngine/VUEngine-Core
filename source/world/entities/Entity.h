@@ -230,7 +230,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction);
 u8 Entity_moves(Entity this);
 
 // retrieve previous position
-VBVec3D Entity_getPreviousPosition(Entity this);
+const VBVec3D* Entity_getPreviousPosition(Entity this);
 
 // make it visible
 void Entity_show(Entity this);

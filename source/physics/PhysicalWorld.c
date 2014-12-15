@@ -79,9 +79,6 @@ __CLASS_DEFINITION(PhysicalWorld);
 // class's constructor
 static void PhysicalWorld_constructor(PhysicalWorld this);
 
-// only process bodies which move and are active
-//Body bodies[__MAX_BODIES_PER_LEVEL] = {NULL};
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -108,8 +105,6 @@ static void PhysicalWorld_constructor(PhysicalWorld this)
 
 	// record this update's time
 	this->time = 0;
-
-	//bodies[0] = NULL;
 }
 
 // class's destructor

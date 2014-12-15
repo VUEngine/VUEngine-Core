@@ -474,10 +474,10 @@ u8 Entity_moves(Entity this)
 }
 
 // retrieve previous position
-VBVec3D Entity_getPreviousPosition(Entity this)
+const VBVec3D* Entity_getPreviousPosition(Entity this)
 {
-	VBVec3D position = {0, 0, 0};
-	return position;
+	static VBVec3D position = {0, 0, 0};
+	return &position;
 }
 
 // retrieve shape
