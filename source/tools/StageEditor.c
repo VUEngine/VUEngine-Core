@@ -122,7 +122,7 @@ enum Modes {
 // globals
 extern Optical* _optical;
 extern UserObject _userObjects[];
-extern VBVec3D* _screenDisplacement;
+const extern VBVec3D* _screenDisplacement;
 
 static void StageEditor_constructor(StageEditor this);
 static void StageEditor_setupMode(StageEditor this);
@@ -599,18 +599,10 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey){
 	// another variable which most likely will only
 	// take up the previous RAM, or another branching
 	// computation in the Entity's render method
-	_screenDisplacement->x = 1;
-	_screenDisplacement->y = 1;
-	_screenDisplacement->z = 1;
+	Screen_forceDisplacement(Screen_getInstance(), true);
 
 	StageEditor_printProjectionValues(this);
 	GameState_transform(this->gameState);
-
-	// prevent any side effect
-	_screenDisplacement->x = 0;
-	_screenDisplacement->y = 0;
-	_screenDisplacement->z = 0;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -727,16 +719,9 @@ static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D transl
 		// another variable which most likely will only
 		// take up the previous RAM, or another branching
 		// computation in the Entity's render method
-		_screenDisplacement->x = __ACTIVE;
-		_screenDisplacement->y = __ACTIVE;
-		_screenDisplacement->z = __ACTIVE;
+		Screen_forceDisplacement(Screen_getInstance(), true);
 		
 		GameState_transform(this->gameState);
-
-		// prevent any side effect
-		_screenDisplacement->x = __PASSIVE;
-		_screenDisplacement->y = __PASSIVE;
-		_screenDisplacement->z = __PASSIVE;
 
 		StageEditor_positioneShape(this);
 

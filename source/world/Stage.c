@@ -80,7 +80,7 @@ typedef struct StageEntityDescription {
 
 // global
 extern VBVec3D * _screenPosition;
-extern VBVec3D * _screenDisplacement;
+const extern VBVec3D * _screenDisplacement;
 
 //class's constructor
 static void Stage_constructor(Stage this);

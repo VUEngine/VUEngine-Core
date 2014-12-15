@@ -62,7 +62,7 @@ __CLASS_DEFINITION(Actor);
  */
 
 // global
-extern VBVec3D* _screenDisplacement;
+const extern VBVec3D* _screenDisplacement;
 
 // resolve collision against other entities
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);

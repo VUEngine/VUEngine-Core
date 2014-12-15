@@ -73,7 +73,7 @@ __CLASS_DEFINITION(Screen);
  */
 
 // global
-VBVec3D* _screenDisplacement = NULL;
+const VBVec3D* _screenDisplacement = NULL;
 
 //class's constructor
 static void Screen_constructor(Screen this);
@@ -216,6 +216,9 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity){
 	
 	// center around the focus entity now
 	Screen_positione(this, false);
+	
+	// make sure that any other entity knows about the change
+	Screen_forceDisplacement(this, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,6 +314,9 @@ void Screen_setPosition(Screen this, VBVec3D position){
 	ASSERT(this, "Screen::setPosition: null this");
 
 	this->position = position;
+	this->lastDisplacement.x = 0;
+	this->lastDisplacement.y = 0;
+	this->lastDisplacement.z = 0;
 	
 	Screen_capPosition(this);
 }
@@ -325,6 +331,9 @@ void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityP
 
 	// center around the focus entity now
 	Screen_positione(this, false);
+	
+	// make sure that any other entity knows about the change
+	Screen_forceDisplacement(this, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -352,6 +361,15 @@ void Screen_setStageSize(Screen this, Size size){
 	ASSERT(this, "Screen::setStageSize: null this");
 
 	this->stageSize = size;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// force values as if screen is moving
+void Screen_forceDisplacement(Screen this, int flag){
+	
+	this->lastDisplacement.x = flag? 1: 0;
+	this->lastDisplacement.y = flag? 1: 0;
+	this->lastDisplacement.z = flag? 1: 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -395,3 +413,4 @@ void Screen_FXFadeOut(Screen this, int wait){
 		SET_BRIGHT(i, i*2, i);
 	}
 }
+

@@ -116,12 +116,14 @@ Size Screen_getStageSize(Screen this);
 // set current stage's size
 void Screen_setStageSize(Screen this, Size size);
 
+// force values as if screen is moving
+void Screen_forceDisplacement(Screen this, int flag);
+
 // create a fade delay
 void Screen_FXFadeIn(Screen this, int wait);
 
 // create a fade delay
 void Screen_FXFadeOut(Screen this, int wait);
-
 
 #endif
 

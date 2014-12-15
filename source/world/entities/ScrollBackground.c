@@ -62,7 +62,7 @@ enum ScrollSprites {
 
 // global
 extern VBVec3D * _screenPosition;
-extern VBVec3D* _screenDisplacement;
+const extern VBVec3D* _screenDisplacement;
 
 // calculate the scroll's screen position
 static void ScrollBackground_updateScrolling(ScrollBackground this);
