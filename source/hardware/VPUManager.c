@@ -155,7 +155,7 @@ void VPUManager_displayOff(VPUManager this)
 	VPUManager_disableInterrupt(this);
 }
 
-// setup palletes
+// setup palettes
 void VPUManager_setupPalettes(VPUManager this)
 {
 	ASSERT(this, "VPUManager::setupPalettes: null this");
@@ -206,7 +206,7 @@ void VPUManager_clearScreen(VPUManager this)
 	int i;
 	//clear every bgmap segment
     for (i = 0; i < 14; i++)
-{
+	{
 		Mem_clear((u16*)BGMap(i), 8192);
     }
 
@@ -233,7 +233,7 @@ void VPUManager_setupColumnTable(VPUManager this)
 	int i;
 	for (i = 0; i < 128; i++)
 
-{
+	{
 		CLMN_TBL[i] = columnTable[i];
 		CLMN_TBL[i + 0x0080] = columnTable[127 - i];
 		CLMN_TBL[i + 0x0100] = columnTable[i];

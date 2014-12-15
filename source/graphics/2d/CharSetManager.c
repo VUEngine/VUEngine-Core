@@ -333,12 +333,13 @@ static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u1
 					// control if the first free char is the last one from a block
 					// if hole fits numberOfChars plus one free space at the begining and end
 					if (hole >= numberOfChars + 1)
-{
+	                {
 						// stop processing
 						return currentChar - numberOfChars;
 					}
 				}
-				else{
+				else
+				{
 					// otherwise clear hole must be cleared
 					hole = 0;
 				}

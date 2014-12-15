@@ -277,7 +277,7 @@ void Game_start(Game this, State state)
 
 	if (!StateMachine_getCurrentState(this->stateMachine))
 
-{
+	{
 		// start the game's general clock
 		Clock_start(this->clock);
 
@@ -289,7 +289,7 @@ void Game_start(Game this, State state)
 	}
 	else
 
-{
+	{
 		ASSERT(false, "Game: already started");
 	}
 }

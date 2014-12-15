@@ -67,8 +67,8 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 	// if the char definition is NULL, it must be a text
 	this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition, (Object)this));
 
-	// set the pallet
-	this->pallet = textureDefinition->pallet;
+	// set the palette
+	this->palette = textureDefinition->palette;
 }
 
 // class's destructor
@@ -89,7 +89,7 @@ static void Texture_writeAnimated(Texture this)
 	ASSERT(this, "Texture::writeAnimated: null this");
 
 	int bgmapSegment = Texture_getBgmapSegment(this);
-	int pallet = Texture_getPallet(this) << 14;
+	int palette = Texture_getPallet(this) << 14;
 
 	int charLocation = (CharGroup_getCharSet(this->charGroup) << 9) + CharGroup_getOffset(this->charGroup);
 	int i = this->textureDefinition->rows;
@@ -103,7 +103,7 @@ static void Texture_writeAnimated(Texture this)
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
-				(pallet) | (charLocation));
+				(palette) | (charLocation));
 
 	}
 }
@@ -114,7 +114,7 @@ static void Texture_writeNoAnimated(Texture this)
 	ASSERT(this, "Texture::writeNoAnimated: null this");
 
 	int bgmapSegment = Texture_getBgmapSegment(this);
-	int pallet = Texture_getPallet(this) << 14;
+	int palette = Texture_getPallet(this) << 14;
 
 	int charLocation = (CharGroup_getCharSet(this->charGroup) << 9) + CharGroup_getOffset(this->charGroup);
 	int i = this->textureDefinition->rows;
@@ -129,7 +129,7 @@ static void Texture_writeNoAnimated(Texture this)
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
-				(pallet) | (charLocation));
+				(palette) | (charLocation));
 	}
 }
 
@@ -139,7 +139,7 @@ static void Texture_writeAnimatedShared(Texture this)
 	ASSERT(this, "Texture::writeAnimatedShared: null this");
 
 	int bgmapSegment = Texture_getBgmapSegment(this);
-	int pallet = Texture_getPallet(this) << 14;
+	int palette = Texture_getPallet(this) << 14;
 
 	// determine the number of frames the map had
 	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
@@ -162,7 +162,7 @@ static void Texture_writeAnimatedShared(Texture this)
 			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
 					(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
 					this->textureDefinition->cols,
-					(pallet) | (charLocation + area * (j - 1)));
+					(palette) | (charLocation + area * (j - 1)));
 
 		}
 	}
@@ -283,8 +283,8 @@ void Texture_writeHBiasMode(Texture this)
 	for (i=0;i<this->textureDefinition->rows;i++){
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
-		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->pallet<<14)|((CharGroup_getCharSet(&this->charGroup)<<9)+CharGroup_getOffset(&this->charGroup)));
-		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+64* const this->yOffset+64*i)<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->pallet<<14)|((CharGroup_getCharSet(&this->charGroup)<<9)+CharGroup_getOffset(&this->charGroup)));
+		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharGroup_getCharSet(&this->charGroup)<<9)+CharGroup_getOffset(&this->charGroup)));
+		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+64* const this->yOffset+64*i)<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharGroup_getCharSet(&this->charGroup)<<9)+CharGroup_getOffset(&this->charGroup)));
 	}
 	*/
 }
@@ -390,19 +390,19 @@ BYTE* Texture_getBgmapDef(Texture this)
 	return this->textureDefinition->bgmapDefinition;
 }
 
-// set the pallet
-void Texture_setPallet(Texture this, u8 pallet)
+// set the palette
+void Texture_setPallet(Texture this, u8 palette)
 {
 	ASSERT(this, "Texture::setPallet: null this");
 
-	this->pallet = pallet;
+	this->palette = palette;
 }
 
 u8 Texture_getPallet(Texture this)
 {
 	ASSERT(this, "Texture::getPallet: null this");
 
-	return this->pallet;
+	return this->palette;
 }
 
 // retrieve texture's rows

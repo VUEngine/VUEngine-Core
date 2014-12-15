@@ -107,7 +107,7 @@ void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 // draw polygon to screen
 void Polygon_draw(Polygon this, int calculateParallax)
 {
-	int pallet = 0x03;
+	int palette = 0x03;
 
 	// if I have some vertex, draw them
 	if (this->vertices)
@@ -144,7 +144,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 
 
 			// draw the line in both buffers
-			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, pallet);
+			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, palette);
 		}
 
 		if (2 < VirtualList_getSize(this->vertices))
@@ -165,7 +165,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			}
 
 			// draw the line in both buffers
-			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, pallet);
+			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, palette);
 		}
 	}
 	//VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] & ~XPEN;

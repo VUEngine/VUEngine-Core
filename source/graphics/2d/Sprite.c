@@ -312,7 +312,7 @@ void Sprite_render(Sprite this)
 
 	//if render flag is set
 	if (this->renderFlag)
-{
+	{
 		DrawSpec drawSpec = this->drawSpec;
 
 		// if head is modified, render everything

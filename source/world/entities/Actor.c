@@ -117,11 +117,11 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 	Container_setLocalPosition((Container)this, position);
 
 	if (this->body)
-{
+    {
 		VBVec3D globalPosition = Container_getGlobalPosition((Container)this);
 
 		Transformation environmentTransform =
-{
+        {
 				// local position
 				{0, 0, 0},
 				// global position
@@ -133,8 +133,7 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 		};
 
 		if (this->parent)
-
-{
+        {
 			environmentTransform = Container_getEnvironmentTransform(this->parent);
 			globalPosition.x = environmentTransform.globalPosition.x;
 			globalPosition.y = environmentTransform.globalPosition.y;
@@ -160,10 +159,10 @@ void Actor_transform(Actor this, Transformation* environmentTransform)
 	ASSERT(this, "Actor::transform: null this");
 
 	if (this->body && Body_isAwake(this->body))
-{
+    {
 		// an Actor with a physical body is agnostic to parenting
 		Transformation environmentAgnosticTransform =
-{
+        {
 				// local position
 				{0, 0, 0},
 				// global position
@@ -183,7 +182,7 @@ void Actor_transform(Actor this, Transformation* environmentTransform)
 		AnimatedInGameEntity_transform((AnimatedInGameEntity)this, &environmentAgnosticTransform);
 	}
 	else
-{
+	{
 		// call base
 		AnimatedInGameEntity_transform((AnimatedInGameEntity)this, environmentTransform);
 	}
@@ -199,13 +198,13 @@ void Actor_update(Actor this)
 
 	if (this->stateMachine)
 
-{
+	{
 		StateMachine_update(this->stateMachine);
 	}
 
 	if (this->body)
 
-{
+	{
 		Actor_updateCollisionStatus(this, Body_isMoving(this->body));
 	}
 }
@@ -217,15 +216,15 @@ static void Actor_updateCollisionStatus(Actor this, int movementAxis)
 	ASSERT(this->body, "Actor::updateCollisionStatus: null body");
 
 	if (__XAXIS & movementAxis)
-{
+	{
 		this->lastCollidingEntity[kXAxis] = NULL;
 	}
 	if (__YAXIS & movementAxis)
-{
+	{
 		this->lastCollidingEntity[kYAxis] = NULL;
 	}
 	if (__ZAXIS & movementAxis)
-{
+	{
 		this->lastCollidingEntity[kZAxis] = NULL;
 	}
 
@@ -241,21 +240,21 @@ static void Actor_updateSourroundingFriction(Actor this)
 	Force friction = {0, 0, 0};
 
 	if (this->sensibleToFriction.x)
-{
+	{
 		friction.x = this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
 		friction.x += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
 	}
 
 	if (this->sensibleToFriction.y)
 
-{
+	{
 		friction.y = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
 		friction.y += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
 	}
 
 	if (this->sensibleToFriction.z)
 
-{
+	{
 		friction.z = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
 		friction.z += this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
 	}
@@ -277,7 +276,7 @@ void Actor_moveOpositeDirecion(Actor this, int axis)
 	ASSERT(this, "Actor::moveOpositeDirecion: null this");
 
 	switch (axis)
-{
+	{
 		case __XAXIS:
 
 			this->direction.x *= -1;
@@ -301,7 +300,7 @@ int Actor_changedDirection(Actor this, int axis)
 	ASSERT(this, "Actor::changedDirection: null this");
 
 	switch (axis)
-{
+	{
 		case __XAXIS:
 
 			return this->direction.x != this->previousDirection.x;
@@ -330,37 +329,37 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	this->previousDirection = this->direction;
 
 	if ((__XAXIS & axis))
-{
+	{
 		if (__RIGHT == this->direction.x)
-{
+	{
 			this->direction.x = __LEFT;
 		}
 		else
-{
+	{
 			this->direction.x = __RIGHT;
 		}
 	}
 
 	if ((__YAXIS & axis))
-{
+	{
 		if (__NEAR == this->direction.y)
-{
+	{
 			this->direction.y = __FAR;
 		}
 		else
-{
+	{
 			this->direction.x = __NEAR;
 		}
 	}
 
 	if ((__ZAXIS & axis))
-{
+	{
 		if (__RIGHT == this->direction.z)
-{
+	{
 			this->direction.x = __LEFT;
 		}
 		else
-{
+	{
 			this->direction.x = __RIGHT;
 		}
 	}
@@ -385,17 +384,17 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 	int axisOfCollision = 0;
 
 	if (axisFreeForMovement)
-{
+	{
 		ASSERT(this->body, "Actor::resolveCollision: null body");
 
 		int i = 0;
 		// TODO: must still solve when there will be a collision with an object not yet in the list
 		for (; i <= kZAxis; i++)
-{
+	{
 			if (this->lastCollidingEntity[i])
-{
+	{
 				VBVec3D displacement =
-{
+	{
 					kXAxis == i? acceleration->x: 0,
 					kYAxis == i? acceleration->y: 0,
 					kZAxis == i? acceleration->z: 0
@@ -431,7 +430,7 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(10), scale.y));
 
 	if (1 > alignThreshold)
-{
+	{
 		alignThreshold = 1;
 	}
 
@@ -445,43 +444,43 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 
 	// TODO: solve when more than one entity has been touched
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		collidingEntity = VirtualNode_getData(node);
 		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, __ARGUMENTS(collidingEntity, displacement));
 
 		if (__XAXIS & axisOfCollision)
-{
+	{
 			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
 			this->lastCollidingEntity[kXAxis] = collidingEntity;
 		}
 
 		if (__YAXIS & axisOfCollision)
-{
+	{
 			if (!(__XAXIS & axisOfCollision))
-{
+	{
 				Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
 				this->lastCollidingEntity[kYAxis] = collidingEntity;
 			}
 		}
 
 		if (__ZAXIS & axisOfCollision)
-{
+	{
 			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
 			this->lastCollidingEntity[kZAxis] = collidingEntity;
 		}
 	}
 
 	if (axisOfCollision)
-{
+	{
 		// bounce over axis
 		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
 
 		if (!(axisOfCollision & Body_isMoving(this->body)))
-{
+	{
 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyStoped, &axisOfCollision);
 		}
 		else
-{
+	{
 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyBounced, &axisOfCollision);
 		}
 	}
@@ -494,20 +493,20 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 
 	if (!StateMachine_handleMessage(this->stateMachine, telegram))
 
-{
+	{
 		// retrieve message
 		int message = Telegram_getMessage(telegram);
 
 		if (this->body)
 
-{
+	{
 			Object sender = Telegram_getSender(telegram);
 			Actor atherActor = __GET_CAST(Actor, sender);
 
 			if (sender == (Object)this || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
-{
+	{
 				switch (message)
-{
+	{
 					case kCollision:
 
 						Actor_resolveCollision(this, (VirtualList)Telegram_getExtraInfo(telegram));
@@ -528,7 +527,7 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 //						Printing_text("Actor::handleMessage: kBodyStoped       ", 10, 8);
 						if (!Body_isMoving(this->body))
 
-{
+	{
 							CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
 						}
 						break;
@@ -541,7 +540,7 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 				}
 			}
 			else if (atherActor)
-{
+	{
 				__VIRTUAL_CALL(void, Actor, takeHitFrom, atherActor);
 
 				return true;
@@ -582,7 +581,7 @@ VBVec3D Actor_getPosition(Actor this)
 
 	if (this->body)
 
-{
+	{
 		return Body_getPosition(this->body);
 	}
 
@@ -603,13 +602,13 @@ int Actor_updateSpriteScale(Actor this)
 	ASSERT(this, "Actor::updateSpriteScale: null this");
 
 	if (Entity_updateSpriteScale((Entity)this))
-{
+	{
 		return true;
 	}
 
 	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
 
-{
+	{
 		return true;
 	}
 	return false;
@@ -622,7 +621,7 @@ void Actor_stopMovement(Actor this)
 
 	if (this->body)
 
-{
+	{
 		Body_stopMovement(this->body, __XAXIS);
 		Body_stopMovement(this->body, __YAXIS);
 		Body_stopMovement(this->body, __ZAXIS);
@@ -660,7 +659,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 
 	// select the axis to affect
 	switch (axis)
-{
+	{
 		case __XAXIS:
 
 			myPositionAxis = &this->transform.localPosition.x;
@@ -708,15 +707,16 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 
 	// decide to which side of the entity align myself
 	if (*myPositionAxis > *otherPositionAxis)
-{
-//		pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
+    {
+        // pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
 		// align right / below / behind
 		*myPositionAxis = *otherPositionAxis +
 							ITOFIX19_13(otherHalfSize - otherHighGap
 							+ myHalfSize - myLowGap
 							+ pad);
 	}
-	else{
+	else
+	{
 		// align left / over / in front
 		*myPositionAxis = *otherPositionAxis -
 							ITOFIX19_13(otherHalfSize - otherLowGap
@@ -725,7 +725,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	}
 
 	if (this->body)
-{
+	{
 		// force position
 		Body_setPosition(this->body, &this->transform.localPosition, (Object)this);
 	}
@@ -753,7 +753,7 @@ void Actor_takeHitFrom(Actor this, Actor other)
 	const Body otherBody = Actor_getBody(other);
 
 	if (otherBody)
-{
+	{
 		Body_takeHitFrom(this->body, otherBody);
 	}
 }

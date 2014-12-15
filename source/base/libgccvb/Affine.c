@@ -158,7 +158,7 @@ void Affine_rotateZ(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s
 		AFFINE_ST *affine = (AFFINE_ST*)PARAM(param);
 
 		AFFINE_ST source =
-{
+	{
 				pdx.dx,
 				pdx.paralax,
 				pdx.dy,

@@ -96,7 +96,7 @@ void CollisionManager_destructor(CollisionManager this)
 
 	// delete all shapes registered
 	for (;node; node = VirtualNode_getNext(node))
-{
+	{
 		__DELETE((Shape)VirtualNode_getData(node));
 	}
 

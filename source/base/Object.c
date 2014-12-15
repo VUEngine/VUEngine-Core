@@ -62,7 +62,7 @@ void Object_destructor(Object this)
 {
 	if (this->events)
 
-{
+	{
 		VirtualNode node = VirtualList_begin(this->events);
 
 		for (; node; node = VirtualNode_getNext(node))

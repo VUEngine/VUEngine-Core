@@ -56,8 +56,8 @@
 	/* texture's id */															\
 	u16 id;																		\
 																				\
-	/* color pallet */															\
-	u8 pallet: 2;																\
+	/* color palette */															\
+	u8 palette: 2;																\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(Texture);
@@ -85,8 +85,8 @@ typedef struct TextureDefinition
 	// y size, 1 row represents 8 pixeles
 	u8 rows;
 
-	// pallet index to use
-	u8 pallet;
+	// palette index to use
+	u8 palette;
 
 }TextureDefinition;
 
@@ -113,7 +113,7 @@ u8 Texture_getTotalRows(Texture this);
 u8 Texture_getBgmapSegment(Texture this);
 CharGroup Texture_getCharGroup(Texture this);
 BYTE* Texture_getBgmapDef(Texture this);
-void Texture_setPallet(Texture this, u8 pallet);
+void Texture_setPallet(Texture this, u8 palette);
 u8 Texture_getPallet(Texture this);
 u8 Texture_getRows(Texture this);
 u8 Texture_getCols(Texture this);

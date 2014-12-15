@@ -148,12 +148,12 @@ void Printing_int(int value,int x,int y)
 
 		Printing_out(__PRINTING_BGMAP, x++, y, "-", 0);
 
-		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
+		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE);
 
 	}
 	else
 	{
-		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALLETE);
+		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE);
 	}
 }
 
@@ -164,11 +164,11 @@ void Printing_hex(WORD value,int x,int y)
 		value *= -1;
 
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
-		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALLETE);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE);
 	}
 	else
 	{
-		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALLETE);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE);
 	}
 }
 
@@ -201,10 +201,10 @@ void Printing_float(float value,int x,int y)
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
-	Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALLETE);
+	Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALETTE);
 
 	// print the dot
-	Printing_out(__PRINTING_BGMAP, x + length, y, ".", __PRINTING_PALLETE);
+	Printing_out(__PRINTING_BGMAP, x + length, y, ".", __PRINTING_PALETTE);
 
 	// print the decimal part
 	//
@@ -212,7 +212,7 @@ void Printing_float(float value,int x,int y)
 	{
 		if (decimal < size)
 		{
-			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALLETE);
+			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALETTE);
 		}
 		else
 		{
@@ -222,10 +222,10 @@ void Printing_float(float value,int x,int y)
 		size /= 10;
 	}
 
-	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALLETE);
+	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE);
 }
 
 void Printing_text(char *string, int x,int y)
 {
-	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALLETE);
+	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALETTE);
 }

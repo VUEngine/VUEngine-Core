@@ -50,7 +50,7 @@ __CLASS(DirectDraw);
 
 DirectDraw DirectDraw_getInstance();
 void DirectDraw_destructor(DirectDraw this);
-void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int pallet);
+void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int palette);
 
 
 #endif

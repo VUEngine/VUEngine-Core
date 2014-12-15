@@ -12,13 +12,13 @@ u32* currentFrameBuffer=(u32*)0x00008000;
 u32* nextFrameBuffer=(u32*)0x00000000;
 
 /*********************
-Cosine and Sine tables in degrees
-multiplied by a factor of 8
+Cosine and Sine tables in degrees multiplied by a factor of 8
 Example to multiply 25 by cos(8) (degrees)
 Take (25*cosine[8])>>3.
 *********************/
 
-const s32 cosine[360]={
+const s32 cosine[360]=
+{
 	8,8,8,8,8,8,8,8,
 	8,8,8,8,8,8,8,8,
 	8,8,8,8,8,7,7,7,
@@ -65,7 +65,8 @@ const s32 cosine[360]={
 	8,8,8,8,8,8,8,8,
 	8,8,8,8,8,8,8,8
 };
-const s32 sine[360]={
+const s32 sine[360]=
+{
 	0,0,0,0,1,1,1,1,
 	1,1,1,2,2,2,2,2,
 	2,2,2,3,3,3,3,3,
@@ -116,7 +117,8 @@ const s32 sine[360]={
 /****************************
 Copies one vector to another
 *****************************/
-void inline G3d_copyVector3d(vector3d* from, vector3d* to){
+void inline G3d_copyVector3d(vector3d* from, vector3d* to)
+{
 #ifndef __ASM_CODE
 	to->x = from->x;
 	to->y = from->y;
@@ -145,8 +147,10 @@ void inline G3d_copyVector3d(vector3d* from, vector3d* to){
 /****************************
 Scales a vector by a given fixed point vector
 *****************************/
-void inline G3d_scale(vector3d* factor, vector3d* v, vector3d* o){
-	if (factor->x == 1 && factor->y == 1 && factor->z == 1){
+void inline G3d_scale(vector3d* factor, vector3d* v, vector3d* o)
+{
+	if (factor->x == 1 && factor->y == 1 && factor->z == 1)
+	{
 		G3d_copyVector3d(v,o);
 		return;
 	}
@@ -194,7 +198,8 @@ void inline G3d_scale(vector3d* factor, vector3d* v, vector3d* o){
 /***********************************
 Rotates a point around the X axis
 ************************************/
-void  G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o){
+void  G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o)
+{
 	o->x = v->x;
 #ifndef __ASM_CODE
 	o->z = (F_MUL(v->z, cosine[degrees])) + (F_MUL(sine[degrees], v->y));
@@ -238,7 +243,8 @@ void  G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o){
 /**********************************
 Rotates a point around the Y axis
 ***********************************/
-void  G3d_rotateYAxis(s32 degrees, vector3d* v, vector3d* o){
+void  G3d_rotateYAxis(s32 degrees, vector3d* v, vector3d* o)
+{
 	o->y = v->y;
 #ifndef __ASM_CODE
 	o->x = (F_MUL(v->x, cosine[degrees])) + (F_MUL(sine[degrees], v->z));
@@ -282,7 +288,8 @@ void  G3d_rotateYAxis(s32 degrees, vector3d* v, vector3d* o){
 /**********************************
 Rotates a point around the Z axis
 ***********************************/
-void  G3d_rotateZAxis(s32 degrees, vector3d* v, vector3d* o){
+void  G3d_rotateZAxis(s32 degrees, vector3d* v, vector3d* o)
+{
 	o->z = v->z;
 #ifndef __ASM_CODE
 	o->x = (F_MUL(v->x, cosine[degrees])) + (F_MUL(sine[degrees], v->y));
@@ -330,10 +337,12 @@ values are not zero before performing the rotation calculations.
 rx,ry,and rz are degrees and are NOT fixed point
 Make sure the rotation values are between -360 and 360
 ************************************************/
-void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o){
+void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
+{
 	vector3d t;
 
-	if (rx==0 && ry==0 && rz==0){
+	if (rx==0 && ry==0 && rz==0)
+	{
 		G3d_copyVector3d(v,o);
 		return;
 	}
@@ -343,15 +352,18 @@ void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o){
 	if (rz<0) rz=359+rz;
 
 	G3d_copyVector3d(v,&t);
-	if (ry != 0){
+	if (ry != 0)
+	{
 		G3d_rotateYAxis(ry,&t,o);
 		G3d_copyVector3d(o,&t);
 	}
-	if (rx != 0){
+	if (rx != 0)
+	{
 		G3d_rotateXAxis(rx,&t,o);
 		G3d_copyVector3d(o,&t);
 	}
-	if (rz != 0){
+	if (rz != 0)
+	{
 		G3d_rotateZAxis(rz,&t,o);
 		G3d_copyVector3d(o,&t);
 	}
@@ -361,7 +373,8 @@ void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o){
 /*******************************
 This translates or moves a point
 ********************************/
-void  G3d_translate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o){
+void  G3d_translate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o)
+{
 #ifndef __ASM_CODE
 	o->x = v->x + x;
 	o->y = v->y + y;
@@ -389,7 +402,8 @@ This performs the rotations for the camera.
 It just rotates a point in the opposite direction
 of the cameras rotation angles.
 *********************************/
-void  G3d_cameraRotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o){
+void  G3d_cameraRotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
+{
 #ifndef __ASM_CODE
 	rx = (~rx)+1;
 	ry = (~ry)+1;
@@ -421,7 +435,8 @@ This performs the camera translate or move by
 calculating the difference between the camera's position
 and the points position.
 ***********************************/
-void  G3d_cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o){
+void  G3d_cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o)
+{
 #ifndef __ASM_CODE
 	o->x = v->x - x;
 	o->y = v->y - y;
@@ -448,7 +463,8 @@ void  G3d_cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o){
 This performs all affine transformation
 functions against a vector3d object
 ***********************************/
-void G3d_renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube){
+void G3d_renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube)
+{
 	vector3d t;
 	//Transformations
 	G3d_scale(&obj->worldScale,v,&t);
@@ -460,7 +476,8 @@ void G3d_renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube){
 	G3d_translate(obj->worldPosition.x,obj->worldPosition.y,obj->worldPosition.z,o,&t);
 	G3d_copyVector3d(&t,o);
 
-	if (cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0){
+	if (cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0)
+	{
 		G3d_cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,o,&t);
 		G3d_copyVector3d(&t,o);
 	}
@@ -469,7 +486,8 @@ void G3d_renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube){
 	G3d_copyVector3d(&t,o);
 }
 
-void G3d_calculateProjection(vector3d* o){
+void G3d_calculateProjection(vector3d* o)
+{
 #ifndef __ASM_CODE
 	o->sx = F_NUM_DN(F_ADD(F_DIV(F_MUL(o->x,cam.d),F_ADD(cam.d,o->z)),F_NUM_UP(SCREEN_WIDTH>>1)));
 	o->sy = F_NUM_DN(F_ADD(F_DIV(F_MUL(o->y,cam.d),F_ADD(cam.d,o->z)),F_NUM_UP(SCREEN_HEIGHT>>1)));
@@ -526,7 +544,8 @@ void G3d_calculateProjection(vector3d* o){
 This procedure actually draws an
 object
 **************************/
-void G3d_drawObject(object* o){
+void G3d_drawObject(object* o)
+{
 	s32 vertices,lines,v,verts,i;
 	vector3d v1;
 	vector3d v2;
@@ -559,7 +578,8 @@ void G3d_drawObject(object* o){
 	//Load and render all distinct vertices into the vertex buffer;
 	//This will render all object vertices based on the objects position,rotation etc..
 	_CacheEnable
-	while (v < vertices){
+	while (v < vertices)
+	{
 		v1.x = o->objData->data[v];
 		v1.y = o->objData->data[v+1];
 		v1.z = o->objData->data[v+2];
@@ -575,14 +595,17 @@ void G3d_drawObject(object* o){
 	//This reads the "faces" section of the data and draws lines between points.
 	//We'll use the vertex buffer's already rendered vertices
 	v = vertices;
-	while (v < (lines+vertices)){
+	while (v < (lines+vertices))
+	{
 		v1p = &vertexBuffer[o->objData->data[v]];
 
-		for (i=1; i<verts; i++){
+		for (i=1; i<verts; i++)
+		{
 			v++;
 			v2p = &vertexBuffer[o->objData->data[v]];
 
-			if ((v1p->z > cam.d) || (v2p->z > cam.d)){
+			if ((v1p->z > cam.d) || (v2p->z > cam.d))
+			{
 				G3d_clipZAxis(v1p, v2p);
 				G3d_calculateProjection(v1p);
 				G3d_calculateProjection(v2p);
@@ -597,7 +620,8 @@ void G3d_drawObject(object* o){
 	}
 }
 
-void G3d_renderObject(object* o){
+void G3d_renderObject(object* o)
+{
 	u8 resetCube;
 #ifndef __ASM_CODE
 	s32 vertices, lines, verts, v, i;
@@ -611,7 +635,8 @@ void G3d_renderObject(object* o){
 	//Load and render all distinct vertices into the vertex buffer;
 	//This will render all object vertices based on the objects position,rotation etc..
 	_CacheEnable
-	while (v < vertices){
+	while (v < vertices)
+	{
 		v1.x = o->objData->data[v];
 		v1.y = o->objData->data[v+1];
 		v1.z = o->objData->data[v+2];
@@ -1123,7 +1148,8 @@ void G3d_renderObject(object* o){
 Quick and dirty cube based
 collision detection.
 ***********************/
-void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* position2, collisionCube* c2, u32* flag){
+void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* position2, collisionCube* c2, u32* flag)
+{
 	s32 c1minX, c1maxX,
 	    c1minY, c1maxY,
 		c1minZ, c1maxZ,
@@ -1156,15 +1182,17 @@ void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* posi
 	//compare c1 against c2
 	if (
 		(c1minX >= c2minX && c1minX <= c2maxX) ||
-		(c1maxX >= c2minX && c1maxX <= c2maxX)){
+		(c1maxX >= c2minX && c1maxX <= c2maxX))
+		{
 			asm("compareC1toC2:\n");
 			if (
 				(c1minY >= c2minY && c1minY <= c2maxY) ||
 				(c1maxY >= c2minY && c1maxY <= c2maxY))
-{
+	{
 					if (
 						(c1minZ >= c2minZ && c1minZ <= c2maxZ) ||
-						(c1maxZ >= c2minZ && c1maxZ <= c2maxZ)){
+						(c1maxZ >= c2minZ && c1maxZ <= c2maxZ))
+						{
 							*flag = 1;
 					}
 			}
@@ -1172,14 +1200,16 @@ void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* posi
 	//compare c2 against c1
 	if (
 		(c2minX >= c1minX && c2minX <= c1maxX) ||
-		(c2maxX >= c1minX && c2maxX <= c1maxX)){
+		(c2maxX >= c1minX && c2maxX <= c1maxX))
+		{
 			if (
 				(c2minY >= c1minY && c2minY <= c1maxY) ||
 				(c2maxY >= c1minY && c2maxY <= c1maxY))
-{
+	        {
 					if (
 						(c2minZ >= c1minZ && c2minZ <= c1maxZ) ||
-						(c2maxZ >= c1minZ && c2maxZ <= c1maxZ)){
+						(c2maxZ >= c1minZ && c2maxZ <= c1maxZ))
+						{
 							*flag = 1;
 					}
 			}
@@ -1191,7 +1221,8 @@ Cheap little object clipping function.
 If the center of the object is off the
 screen we'll clip it.
 *************************************/
-void  G3d_clipObject(object* o){
+void  G3d_clipObject(object* o)
+{
 	vector3d worldTemp, worldOrig;
 
 	worldOrig.x = o->worldPosition.x;
@@ -1201,7 +1232,8 @@ void  G3d_clipObject(object* o){
 	G3d_cameraTranslate(cam.worldPosition.x,cam.worldPosition.y,cam.worldPosition.z,&worldOrig,&worldTemp);
 	G3d_copyVector3d(&worldTemp,&worldOrig);
 
-	if (cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0){
+	if (cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0)
+	{
 		G3d_cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,&worldOrig,&worldTemp);
 		G3d_copyVector3d(&worldTemp,&worldOrig);
 	}
@@ -1223,7 +1255,8 @@ but should be ok for general purposes.
 This function needs performed before the
 projection calculation occurs.
 **************************************/
-void  G3d_clipZAxis(vector3d* v1, vector3d* v2){
+void  G3d_clipZAxis(vector3d* v1, vector3d* v2)
+{
 	s32 fracz,fracx,fracy,diff,mult;
 	vector3d* minV;
 	vector3d* maxV;
@@ -1236,7 +1269,7 @@ void  G3d_clipZAxis(vector3d* v1, vector3d* v2){
 	determine which position the camera is closest to
 	*****************/
 	if (v1->z < cam.d)
-{
+	{
 		minV = v1;
 		maxV = v2;
 	}else {
@@ -1254,8 +1287,10 @@ void  G3d_clipZAxis(vector3d* v1, vector3d* v2){
 	//Determine how many fractional portions there are
 	//and set our multiplier. Division is 36 clock cycles
 	//so it should be less expensive to just loop and subtract under most circumstances
-	if (fracz > 0){
-		while (diff > 0){
+	if (fracz > 0)
+	{
+		while (diff > 0)
+		{
 			diff -= fracz;
 			mult++;
 		}
@@ -1300,7 +1335,8 @@ void  drawPoint(s32 x, s32 y, u8 color, s32 p)
 /*******************************
 My Line Algorithm (Brezenham based)
 *******************************/
-void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* v2, u8 color){
+void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* v2, u8 color)
+{
 	s32 vx,vy,vz,vx2,vy2;
 	s32 dx, dy, dz;
 	s32 sx,sy,sz,pixels,err;
@@ -1333,26 +1369,33 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 	vz = v1->z;
 	_CacheEnable
 	#ifndef __ASM_CODE
-	if (dy<dx){
+	if (dy<dx)
+	{
 		err=(dx>>1);
 		sz=(sz)*(F_NUM_UP(dz)/((dx==0)?(1):(dx)));
-		for (p=0;p<pixels;p++){
+		for (p=0;p<pixels;p++)
+		{
 			drawPoint(vx,vy,color,(F_NUM_DN(vz)>>PARALLAX_SHIFT));
 			err+=dy;
-			if (err>dx){
+			if (err>dx)
+			{
 				vy+=sy;
 				err-=dx;
 			}
 			vz+=sz;
 			vx+=sx;
 		}
-	}else{
+	}
+	else
+	{
 		err=(dy>>1);
 		sz=(sz)*(F_NUM_UP(dz)/((dy==0)?(1):(dy)));
-		for (p=0;p<pixels;p++){
+		for (p=0;p<pixels;p++)
+		{
 			drawPoint(vx,vy,color,(F_NUM_DN(vz)>>PARALLAX_SHIFT));
 			err+=dx;
-			if (err>dy){
+			if (err>dy)
+			{
 				vx+=sx;
 				err-=dy;
 			}
@@ -1629,7 +1672,8 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 /*********************************
 This initializes an object type
 *********************************/
-void  G3d_initObject(object* o, objectData* objData){
+void  G3d_initObject(object* o, objectData* objData)
+{
 	o->worldPosition.x = 0;
 	o->worldPosition.y = 0;
 	o->worldPosition.z = 0;
@@ -1663,7 +1707,8 @@ void  G3d_initObject(object* o, objectData* objData){
 	o->properties.state           = 0;
 }
 
-void  G3d_moveObject(object* o){
+void  G3d_moveObject(object* o)
+{
 	//Increment attributes
 	if (o->rotation.x != 0)           o->worldRotation.x += o->rotation.x;
 	if (o->rotation.y != 0)           o->worldRotation.y += o->rotation.y;
@@ -1686,44 +1731,57 @@ void  G3d_moveObject(object* o){
 	while (o->worldRotation.z < -359) o->worldRotation.z += 360;
 
 	//Move the object based on moveto and speed
-	if (o->moveTo.x != o->worldPosition.x){
-		if (o->worldPosition.x < o->moveTo.x){
+	if (o->moveTo.x != o->worldPosition.x)
+	{
+		if (o->worldPosition.x < o->moveTo.x)
+		{
 			o->worldPosition.x += o->worldSpeed.x;
 			if (o->worldPosition.x > o->moveTo.x) o->worldPosition.x = o->moveTo.x;
-		}else{
+		}
+		else
+		{
 			o->worldPosition.x -= o->worldSpeed.x;
 			if (o->worldPosition.x < o->moveTo.x) o->worldPosition.x = o->moveTo.x;
 		}
 	}
-	if (o->moveTo.y != o->worldPosition.y){
-		if (o->worldPosition.y < o->moveTo.y){
+	if (o->moveTo.y != o->worldPosition.y)
+	{
+		if (o->worldPosition.y < o->moveTo.y)
+		{
 			o->worldPosition.y += o->worldSpeed.y;
 			if (o->worldPosition.y > o->moveTo.y) o->worldPosition.y = o->moveTo.y;
-		}else{
+		}
+		else
+		{
 			o->worldPosition.y -= o->worldSpeed.y;
 			if (o->worldPosition.y < o->moveTo.y) o->worldPosition.y = o->moveTo.y;
 		}
 	}
-	if (o->moveTo.z != o->worldPosition.z){
-		if (o->worldPosition.z < o->moveTo.z){
+	if (o->moveTo.z != o->worldPosition.z)
+	{
+		if (o->worldPosition.z < o->moveTo.z)
+		{
 			o->worldPosition.z += o->worldSpeed.z;
 			if (o->worldPosition.z > o->moveTo.z) o->worldPosition.z = o->moveTo.z;
-		}else{
+		}
+		else
+		{
 			o->worldPosition.z -= o->worldSpeed.z;
 			if (o->worldPosition.z < o->moveTo.z) o->worldPosition.z = o->moveTo.z;
 		}
 	}
 }
 
-void  G3d_moveCamera(camera* c){
+void  G3d_moveCamera(camera* c)
+{
 	//Do increments
-	if (c->rotation.x != 0)           c->worldRotation.x += c->rotation.x;
-	if (c->rotation.y != 0)           c->worldRotation.y += c->rotation.y;
-	if (c->rotation.z != 0)           c->worldRotation.z += c->rotation.z;
+	if (c->rotation.x != 0)   c->worldRotation.x += c->rotation.x;
+	if (c->rotation.y != 0)   c->worldRotation.y += c->rotation.y;
+	if (c->rotation.z != 0)   c->worldRotation.z += c->rotation.z;
 
-	if (c->speed.x != 0)              c->worldSpeed.x += c->speed.x;
-	if (c->speed.y != 0)              c->worldSpeed.y += c->speed.y;
-	if (c->speed.z != 0)              c->worldSpeed.z += c->speed.z;
+	if (c->speed.x != 0)      c->worldSpeed.x += c->speed.x;
+	if (c->speed.y != 0)      c->worldSpeed.y += c->speed.y;
+	if (c->speed.z != 0)      c->worldSpeed.z += c->speed.z;
 
 	//Check rotation angles
 	while (c->worldRotation.x > 359)  c->worldRotation.x -= 360;
@@ -1733,29 +1791,41 @@ void  G3d_moveCamera(camera* c){
 	while (c->worldRotation.y < -359) c->worldRotation.y += 360;
 	while (c->worldRotation.z < -359) c->worldRotation.z += 360;
 	//Move camera based on moveto and speed
-	if (c->moveTo.x != c->worldPosition.x){
-		if (c->worldPosition.x < c->moveTo.x){
+	if (c->moveTo.x != c->worldPosition.x)
+	{
+		if (c->worldPosition.x < c->moveTo.x)
+		{
 			c->worldPosition.x += c->worldSpeed.x;
 			if (c->worldPosition.x > c->moveTo.x) c->worldPosition.x = c->moveTo.x;
-		}else{
+		}
+		else
+		{
 			c->worldPosition.x -= c->worldSpeed.x;
 			if (c->worldPosition.x < c->moveTo.x) c->worldPosition.x = c->moveTo.x;
 		}
 	}
-	if (c->moveTo.y != c->worldPosition.y){
-		if (c->worldPosition.y < c->moveTo.y){
+	if (c->moveTo.y != c->worldPosition.y)
+	{
+		if (c->worldPosition.y < c->moveTo.y)
+		{
 			c->worldPosition.y += c->worldSpeed.y;
 			if (c->worldPosition.y > c->moveTo.y) c->worldPosition.y = c->moveTo.y;
-		}else{
+		}
+		else
+		{
 			c->worldPosition.y -= c->worldSpeed.y;
 			if (c->worldPosition.y < c->moveTo.y) c->worldPosition.y = c->moveTo.y;
 		}
 	}
-	if (c->moveTo.z != c->worldPosition.z){
-		if (c->worldPosition.z < c->moveTo.z){
+	if (c->moveTo.z != c->worldPosition.z)
+	{
+		if (c->worldPosition.z < c->moveTo.z)
+		{
 			c->worldPosition.z += c->worldSpeed.z;
 			if (c->worldPosition.z > c->moveTo.z) c->worldPosition.z = c->moveTo.z;
-		}else{
+		}
+		else
+		{
 			c->worldPosition.z -= c->worldSpeed.z;
 			if (c->worldPosition.z < c->moveTo.z) c->worldPosition.z = c->moveTo.z;
 		}

@@ -88,14 +88,15 @@
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
-#define __FPS_ANIM_FACTOR 	(__TARGET_FPS / (float)__OPTIMUM_FPS)
+#define __FPS_ANIM_FACTOR 	            (__TARGET_FPS / (float)__OPTIMUM_FPS)
 
 //you will hardly have more than ten mapcharacters in affine mode
 //on screen at once
-#define	__TOTAL_PARAM_OBJECTS 32
+#define	__TOTAL_PARAM_OBJECTS           32
 
 //seconds that must elapse to call rest state... in seconds (15 minutes)
-#define __REST_DELAY 		900
+#define __REST_DELAY 		            900
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										MEMORY POOL
@@ -133,6 +134,7 @@
 
 #define __MIN_BLOCK 		__BLOCK_16B
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										CHAR MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
@@ -156,6 +158,7 @@
 // basically the number of WORLDS
 #define __TOTAL_LAYERS			32
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										TEXTURE MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
@@ -173,32 +176,31 @@
 #define __PRINTING_BGMAP_Z_OFFSET		__ZZERO
 #define __PRINTABLE_BGMAP_AREA 			(64 * 28)
 
-#define __PALLET_MASK					0x0600
+#define __PALETTE_MASK					0x0600
 #define __WORLD_LAYER_MASK				0x01F0
 #define __SEGMENT_MASK					0x000F
 
-#define __PALLET_MASK_DISP				0x09 /* 6 */
+#define __PALETTE_MASK_DISP				0x09 /* 6 */
 #define __WORLD_LAYER_MASK_DISP			0x04 /* 1 */
 #define __SEGMENT_MASK_DISP				0x00 /* 0 */
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										PARAM TABLE
 //---------------------------------------------------------------------------------------------------------
 
-//param table for affine and hbias render
+// param table for affine and hbias render
 #define __PARAMEND 					0x0003D7FF
 
 /* param table initial address
- * To increase param table's size, decrease PARAMBase
- * in libgccvb/video.h
+ * To increase param table's size, decrease PARAMBase in libgccvb/video.h
  */
 
 #define __PARAMINI 					(PARAMBase)
 
-/* Number of the power of 2 to multiply by the number
- * of rows of a given bgmap to allocate space
- */
+// Number of the power of 2 to multiply by the number of rows of a given bgmap to allocate space
 #define __PARAM_SPACE_FACTOR		1
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										WORLD'S CAPACITY
@@ -216,6 +218,7 @@
 // number of sprites per entity
 #define __MAX_SPRITES_PER_ENTITY 	4
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										PHYSICS
 //---------------------------------------------------------------------------------------------------------
@@ -232,6 +235,7 @@
 
 #define __MAX_SHAPES_PER_LEVEL		32
 #define __MAX_BODIES_PER_LEVEL		32
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										SOUND
@@ -253,16 +257,17 @@
 #define __LEFT_EAR_CENTER		96
 #define __RIGHT_EAR_CENTER		288
 
+
 //---------------------------------------------------------------------------------------------------------
-// 										COLOR PALETS
+// 										COLOR PALETTES
 //---------------------------------------------------------------------------------------------------------
 
-#define __PRINTING_PALLETE		3
+#define __PRINTING_PALETTE		3
 
-#define __GPLT0VALUE  			0xE4	/* Set all eight palettes to: 11100100 */
-#define __GPLT1VALUE  			0xE0	/* (i.e. "Normal" dark to light progression.) */
-#define __GPLT2VALUE  			0xF0
-#define __GPLT3VALUE  			0xEA
+#define __GPLT0VALUE  			0xE4	// 11 10 01 00
+#define __GPLT1VALUE  			0xE0	// 11 10 00 00
+#define __GPLT2VALUE  			0xF0	// 11 11 00 00
+#define __GPLT3VALUE  			0xEA	// 11 10 10 10
 #define __JPLT0VALUE  			0xE4
 #define __JPLT1VALUE  			0xE4
 #define __JPLT2VALUE  			0xE4
@@ -274,11 +279,13 @@
 #define __BRTB					0x00
 #define __BRTC					0x00
 
+
 //---------------------------------------------------------------------------------------------------------
-// 										MISCELANEUS
+// 										MISCELLANEOUS
 //---------------------------------------------------------------------------------------------------------
 
 #define __EXCEPTION_COLUMN	1
 #define __EXCEPTION_LINE	0
 
-#endif /*CONFIG_H_*/
+
+#endif

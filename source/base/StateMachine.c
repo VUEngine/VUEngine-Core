@@ -86,7 +86,7 @@ void StateMachine_destructor(StateMachine this)
 	VirtualNode node = VirtualList_begin(this->stateStack);
 
 	for (; node; node = VirtualNode_getNext(node))
-{
+	{
 		__DELETE(VirtualNode_getData(node));
 	}
 
@@ -106,7 +106,7 @@ void StateMachine_update(StateMachine this)
 	ASSERT(this, "StateMachine::update: null this");
 
 	if (this->currentState)
-{
+	{
 		__VIRTUAL_CALL(void, State, execute, this->currentState, __ARGUMENTS(this->owner));
 	}
 }
@@ -123,7 +123,7 @@ void StateMachine_swapState(StateMachine this, State newState)
 
 	// finalize current state
 	if (this->currentState)
-{
+	{
 		this->previousState = this->currentState;
 
 		// call the exit method from current state
@@ -145,13 +145,13 @@ void StateMachine_pushState(StateMachine this, State newState)
 	ASSERT(this, "StateMachine::pushState: null this");
 
 	if (!newState)
-{
+	{
 		return;
 	}
 
 	// finalize current state
 	if (this->currentState)
-{
+	{
 		// call the pause method from current state
 		__VIRTUAL_CALL(void, State, pause, this->currentState, __ARGUMENTS(this->owner));
 	}
@@ -180,7 +180,7 @@ void StateMachine_popState(StateMachine this)
 
 	// finalize current state
 	if (this->currentState)
-{
+	{
 		// call the exit method from current state
 		__VIRTUAL_CALL(void, State, exit, this->currentState, __ARGUMENTS(this->owner));
 	}
@@ -200,9 +200,9 @@ void StateMachine_returnToPreviousState(StateMachine this)
 	ASSERT(this, "StateMachine::returnToPreviousState: null this");
 
 	if (this->previousState)
-{
+	{
 		if (this->currentState)
-{
+	{
 			__VIRTUAL_CALL(void, State, exit, this->currentState, __ARGUMENTS(this->owner));
 		}
 
@@ -218,11 +218,11 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
 	ASSERT(this, "StateMachine::changeToGlobal: null this");
 
 	if (!globalState)
-{
+	{
 		return;
 	}
 	if (this->currentState)
-{
+	{
 		__VIRTUAL_CALL(void, State, pause, this->currentState, __ARGUMENTS(this->owner));
 
 		this->previousState = this->currentState;
@@ -240,7 +240,7 @@ int StateMachine_handleMessage(StateMachine this, Telegram telegram)
 	ASSERT(this, "StateMachine::handleMessage: null this");
 
 	if (this->currentState )
-{
+	{
 		return __VIRTUAL_CALL(int, State, handleMessage, this->currentState, __ARGUMENTS(this->owner, telegram));
 	}
 
@@ -278,7 +278,7 @@ State StateMachine_getPreviousState(StateMachine this)
 	VirtualNode node = VirtualList_begin(this->stateStack);
 
 	if (node)
-{
+	{
 		node = VirtualNode_getNext(node);
 
 		return (State)VirtualNode_getData(node);

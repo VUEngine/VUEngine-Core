@@ -154,7 +154,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	//if texture already defined, don't allocate
 	CACHE_ENABLE;
 	if (Texture_getNumberOfChars(texture))
-{
+	{
 		for (i = 0; i < __NUM_BGMAPS; i++){
 			//if there is space in the segment memory
 			// there are 4096 chars in each bgmap segment
@@ -239,7 +239,6 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 
 		//throw an exception if there is no enough space to allocate the bgmap definition
 		ASSERT(false, "TextureManager::allocate: bgmap segments depleted");
-
 	}
 	CACHE_DISABLE;
 

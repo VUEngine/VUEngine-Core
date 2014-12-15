@@ -129,7 +129,6 @@ inline extern int Optics_isVisible(VBVec3D position3D, u16 width, u16 height, in
 
 // determine if a point is out of the game
 inline extern int vbjInsideGame(VBVec3D position3D, int width, int height)
-
 {
 	/*
 	if (!vbjOutsideGame(position3D, width, height))

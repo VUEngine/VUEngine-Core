@@ -102,7 +102,7 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* e
 
 	// set sprite direction
 	if (this->direction.x != this->previousDirection.x)
-{
+	{
 		// change sprite's direction
 		Entity_setSpritesDirection((Entity)this, __XAXIS, this->direction.x);
 
@@ -124,7 +124,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 
 	// if direction changed
 	if (this->direction.x != this->previousDirection.x)
-{
+	{
 		ASSERT(this->sprites, "AnimatedInGameEntity::update: null sprites");
 
 		// calculate gap again
@@ -132,7 +132,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 	}
 
 	if (this->sprites)
-{
+	{
 		AnimatedInGameEntity_animate(this);
 	}
 }
@@ -144,7 +144,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 
 	// move each child to a temporary list
 	for (; node ; node = VirtualNode_getNext(node))
-{
+	{
 		Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 		// first animate the frame
@@ -176,12 +176,12 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 	ASSERT(this->sprites, "AnimatedInGameEntity::pauseAnimation: null sprites");
 
 	if (this->sprites)
-{
+	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
-{
+	{
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			AnimatedSprite_pause((AnimatedSprite)sprite, pause);
@@ -196,12 +196,12 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 	ASSERT(this->sprites, "AnimatedInGameEntity::playAnimation: null sprites");
 
 	if (this->sprites && animationName)
-{
+	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
-{
+	{
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 
 			AnimatedSprite_play((AnimatedSprite)sprite, this->animationDescription, animationName);

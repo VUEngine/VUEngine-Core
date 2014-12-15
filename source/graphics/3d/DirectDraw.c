@@ -66,7 +66,7 @@ __CLASS_DEFINITION(DirectDraw);
 static void DirectDraw_constructor(DirectDraw this);
 
 // draw a pixel on the screen (DirectDraw)
-static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int pallet);
+static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int palette);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ void DirectDraw_destructor(DirectDraw this)
 }
 
 // draw a pixel on the screen (DirectDraw)
-static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int pallet)
+static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int palette)
 {
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
@@ -104,11 +104,11 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 	pointer += ((x << 6) + (y >> 2));
 
 	// calculate the pixel to be draw
-	*pointer |= (pallet << ((y & 3) << 1));
+	*pointer |= (palette << ((y & 3) << 1));
 }
 
 // line draw algorithm from ....
-void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int pallet)
+void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int palette)
 {
 	fromPoint.x = FIX19_13TOI(fromPoint.x);
 	fromPoint.y = FIX19_13TOI(fromPoint.y);
@@ -131,8 +131,8 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 	if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 	{
-		DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
-		DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
+		DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
+		DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
 	}
 
 	int counter = 0;
@@ -161,8 +161,8 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 			{
-				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
-				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
+				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
 			}
 		}
 
@@ -193,8 +193,8 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 			{
-				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, pallet);
-				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, pallet);
+				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
+				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
 			}
 		}
 	}

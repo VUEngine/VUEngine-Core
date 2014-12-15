@@ -80,7 +80,7 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 	int i = 0;
 
 	for (; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
-{
+	{
 		this->scrollSprites[i] = VirtualNode_getData(node);
 
 		ASSERT(__GET_CAST(Sprite, this->scrollSprites[i]), "ScrollBackground::constructor: no sprite added to list")
@@ -117,13 +117,13 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 	// will improve performance
 #ifdef __STAGE_EDITOR
 	if (Game_isInSpecialMode(Game_getInstance()))
-{
+	{
 		Entity_transform((Entity)this, environmentTransform);
 	}
 #endif
 
 	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
-{
+	{
 		ScrollBackground_updateScrolling(this);
 	}
 }
@@ -137,7 +137,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
 	DrawSpec drawSpec0 =
-{
+	{
 			{0, 0, this->transform.globalPosition.z},
 			{1, 1}
 	};
@@ -168,11 +168,11 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	displacement = FIX19_13TOI(screenPosition.x);
 
 	if (screens)
-{
+	{
 		displacement -= ( screens - 1) * __SCREEN_WIDTH;
 
 		if (!(screens & 1))
-{
+	{
 			// if so,
 			factor = 2;
 		}
@@ -181,21 +181,21 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	axis = __SCREEN_WIDTH * factor - displacement;
 
 	if ((unsigned)axis <= __SCREEN_WIDTH)
-{
+	{
 		drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH);
 
 		drawSpec1.position.x = ITOFIX19_13(axis);
 	}
 	else
-{
+	{
 		if (axis < 0)
-{
+	{
 			drawSpec1.position.x = ITOFIX19_13(axis);
 
 			drawSpec0.position.x = drawSpec1.position.x + ITOFIX19_13(__SCREEN_WIDTH);
 		}
 		else
-{
+	{
 			drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH - 1);
 
 			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREEN_WIDTH - 1);
