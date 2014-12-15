@@ -758,8 +758,8 @@ void Game_update(Game this){
 		FrameRate_increaseRawFPS(this->frameRate);
 		
 #ifdef __DEBUG
-		Printing_text("                               ", 20, 1);
-		Printing_text(this->lastProcessName, 20, 1);
+		Printing_text(":                              ", 10, 0);
+		Printing_text(this->lastProcessName, 12, 0);
 #endif 
 	}
 }

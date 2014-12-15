@@ -394,4 +394,3 @@ void Screen_FXFadeOut(Screen this, int wait){
 		SET_BRIGHT(i, i*2, i);
 	}
 }
-

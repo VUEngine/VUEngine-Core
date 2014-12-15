@@ -364,7 +364,7 @@ void Sprite_render(Sprite this){
 			}
 
 			// make sure it is not visible until everything is setup 
-			WORLD_SIZE(this->worldLayer, 0, 0);
+			//WORLD_SIZE(this->worldLayer, 0, 0);
 
 			//create an independant of software variable to point XPSTTS register
 			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];

@@ -329,6 +329,7 @@ static void Container_applyTransform(Container this, Transformation* environment
 
 	ASSERT(this, "Container::transform: null this");
 
+	// concatenate environment transform
 	Transformation environmentTransformCopy = {
 		// local position
 		{
@@ -338,25 +339,22 @@ static void Container_applyTransform(Container this, Transformation* environment
 		},
 		// global position
 		{
-			environmentTransform->globalPosition.x, 
-			environmentTransform->globalPosition.y, 
-			environmentTransform->globalPosition.z
+			environmentTransform->globalPosition.x + this->transform.localPosition.x, 
+			environmentTransform->globalPosition.y + this->transform.localPosition.y, 
+			environmentTransform->globalPosition.z + this->transform.localPosition.z
 		},
 		// scale
 		{
-			environmentTransform->scale.x, 
-			environmentTransform->scale.y
+			environmentTransform->scale.x * this->transform.scale.x, 
+			environmentTransform->scale.y * this->transform.scale.y
 		},
 		// rotation
 		{
-			environmentTransform->rotation.x, 
-			environmentTransform->rotation.y, 
-			environmentTransform->rotation.z
+			environmentTransform->rotation.x + this->transform.rotation.x, 
+			environmentTransform->rotation.y + this->transform.rotation.y, 
+			environmentTransform->rotation.z + this->transform.rotation.z
 		}
 	};
-
-	// concatenate environment transform
-	Container_concatenateTransform(&environmentTransformCopy, &this->transform);
 
 	// save new global position
 	this->transform.globalPosition = environmentTransformCopy.globalPosition;
