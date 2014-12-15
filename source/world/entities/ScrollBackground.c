@@ -233,7 +233,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this){
 	
 	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);	
 	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATE_G);
-
+	
 	CACHE_DISABLE;
 }
 
