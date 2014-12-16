@@ -66,7 +66,6 @@ typedef struct ParamTableFreeData
 static void ParamTableManager_constructor(ParamTableManager this);
 
 
-
 // ---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 // ---------------------------------------------------------------------------------------------------------
@@ -137,7 +136,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 
 	int size = 0;
 
-	//calculate necesary space to allocate	
+	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row
 	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
 
@@ -190,7 +189,7 @@ int ParamTableManager_processRemovedSprites(ParamTableManager this)
 	{
 		ParamTableFreeData* paramTableFreeData = (ParamTableFreeData*)VirtualNode_getData(node);
 
-		//calculate necesary space to allocate	
+		//calculate necessary space to allocate
 		VirtualNode auxNode = VirtualList_begin(this->sprites);
 
 		for (; auxNode; auxNode = VirtualNode_getNext(auxNode))
@@ -202,7 +201,7 @@ int ParamTableManager_processRemovedSprites(ParamTableManager this)
 			// retrieve param
 			if (auxParam > paramTableFreeData->param)
 			{
-					//move back paramSize bytes
+				//move back paramSize bytes
 				Sprite_setParam(auxSprite, paramTableFreeData->param);
 				
 				// set the new param and size to move on the next cycle

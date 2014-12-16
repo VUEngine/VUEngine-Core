@@ -62,7 +62,7 @@ __CLASS_NEW_DEFINITION(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDe
 __CLASS_NEW_END(AnimatedInGameEntity, __ARGUMENTS(animatedInGameEntityDefinition, ID));
 
 // AnimatedInGameEntity.c
-// class's conctructor
+// class's constructor
 void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 ID)
 {
 	ASSERT(this, "AnimatedInGameEntity::constructor: null this");

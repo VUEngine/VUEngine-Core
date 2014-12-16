@@ -58,7 +58,7 @@ __CLASS_DEFINITION(Sprite);
 __CLASS_NEW_DEFINITION(Sprite, __PARAMETERS(const SpriteDefinition* spriteDefinition))
 __CLASS_NEW_END(Sprite, __ARGUMENTS(spriteDefinition));
 
-// class's conctructor
+// class's constructor
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 {
 	__CONSTRUCT_BASE(Object);
@@ -475,7 +475,7 @@ void Sprite_resetMemoryState(Sprite this)
 {
 	ASSERT(this, "Sprite::resetMemoryState: null this");
 
-	//if affine or hbias mode, allocate inside paramtable
+	// if affine or hbias mode, allocate inside paramtable
 	if (WRLD_AFFINE == Sprite_getMode(this))
 	{
 		ParamTableManager_allocate(ParamTableManager_getInstance(), this);
@@ -519,7 +519,7 @@ void Sprite_scale(Sprite this)
 {
 	ASSERT(this, "Sprite::scale: null this");
 
-	//put the map into memory calculating the number of char for each reference
+	// put the map into memory calculating the number of chars for each reference
 	if (this->param)
 	{
 		int cols = (int)Texture_getCols(this->texture) << 2;

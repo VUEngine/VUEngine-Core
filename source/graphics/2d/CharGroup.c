@@ -37,7 +37,8 @@
 #define ALLOC_TYPE_MASK		(u32)0x003C0000
 #define CHARSET_MASK		(u32)0x00C00000
 
-#define __CH_NOT_ALLOCATED		0x200
+#define __CH_NOT_ALLOCATED	0x200
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION

@@ -23,7 +23,7 @@
 
 float disp111;
 
-void initialiceGeneralWave(u32 param,int rows,int totalDisplacement)
+void initializeGeneralWave(u32 param,int rows,int totalDisplacement)
 {
 	int amplitude=totalDisplacement;
 	float displacement=0;
@@ -49,7 +49,6 @@ void initialiceGeneralWave(u32 param,int rows,int totalDisplacement)
 			sign=1;
 		}
 	}
-
 }
 
 void generalWave(u32 param,int rows){
@@ -176,5 +175,6 @@ void underWater(u32 param,int rows)
 void fire(u32 param,int rows)
 {
 }
+
 
 #endif
