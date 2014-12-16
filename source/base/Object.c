@@ -48,7 +48,7 @@ typedef struct Event
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// class's conctructor
+// class's constructor
 void Object_constructor(Object this)
 {
 	__SET_CLASS(Object);

@@ -26,6 +26,7 @@
 #include <VPUManager.h>
 #include <HardwareManager.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ void VPUManager_waitForFrame(VPUManager this)
 	// disable interrupt
 	VPUManager_disableInterrupt(this);
 
-	//create an independant of software variable to point XPSTTS register
+	//create an independent of software variable to point XPSTTS register
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 	//wait for screen to idle

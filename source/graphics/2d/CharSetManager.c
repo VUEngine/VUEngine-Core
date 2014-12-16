@@ -68,30 +68,19 @@ __CLASS_DEFINITION(CharSetManager);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void CharSetManager_constructor(CharSetManager this);
-
-// look for an already writen char group
 static int CharSetManager_searchCharDefinition(CharSetManager this, CharGroup charGroup);
-
-// record an allocated char defintion
 static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, u16 offset);
-
-// find a hole long enough to fit the number of chars
 static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u16 numberOfChars);
-
-// free char graphic memory
 static void CharSetManager_deallocate(CharSetManager this, CharGroup charGroup);
-
-// free char graphic memory
 static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 offset, u16 numberOfChars);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(CharSetManager);
-
 
 // class's constructor
 static void CharSetManager_constructor(CharSetManager this)

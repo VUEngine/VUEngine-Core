@@ -55,7 +55,7 @@ void Printing_setFontDefinition(const u16* fontCharDefinition)
 	_fontCharDefinition = fontCharDefinition;
 }
 
-//setup the bgmap and char memory with printing data
+// setup the bgmap and char memory with printing data
 void Printing_loadFont()
 {
 	// check that character definitions is not null
@@ -74,7 +74,7 @@ void Printing_loadFont()
 //render general print output layer
 void Printing_render(int textLayer)
 {
-	//create an independant of software variable to point XPSTTS register
+	//create an independent of software variable to point XPSTTS register
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 	//wait for screen to idle
@@ -111,28 +111,33 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 
 		switch (string[i])
 		{
-			case 7:
-				// Bell (!)
+			case 7: // Bell (!)
+
 				break;
-			case 9:
-				// Horizontal Tab
+
+			case 9: // Horizontal Tab
+
 				x = (x / TAB_SIZE + 1) * TAB_SIZE;
 				break;
-			case 10:
-				// Carriage Return
+
+			case 10: // Carriage Return
+
 				y++;
 				x = col;
 				break;
-			case 13:
-				// Line Feed
+
+			case 13: // Line Feed
+
 				// x = col;
 				break;
+
 			default:
+
 				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + 0x680) | (bplt << 14);
 				if (x++ > 63)
 				{
-					x = col;
 					y++;
+					x = col;
 				}
 				break;
 		}
@@ -149,7 +154,6 @@ void Printing_int(int value,int x,int y)
 		Printing_out(__PRINTING_BGMAP, x++, y, "-", 0);
 
 		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE);
-
 	}
 	else
 	{
@@ -207,7 +211,6 @@ void Printing_float(float value,int x,int y)
 	Printing_out(__PRINTING_BGMAP, x + length, y, ".", __PRINTING_PALETTE);
 
 	// print the decimal part
-	//
 	for (i = 0; size; i++)
 	{
 		if (decimal < size)

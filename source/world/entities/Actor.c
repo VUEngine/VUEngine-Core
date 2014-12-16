@@ -69,7 +69,7 @@ static void Actor_updateSourroundingFriction(Actor this);
 __CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID))
 __CLASS_NEW_END(Actor, __ARGUMENTS(actorDefinition, ID));
 
-// class's conctructor
+// class's constructor
 void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID)
 {
 	ASSERT(this, "Actor::constructor: null this");

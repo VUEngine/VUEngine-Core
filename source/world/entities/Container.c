@@ -55,7 +55,7 @@ static void Container_applyTransform(Container this, Transformation* environment
 __CLASS_NEW_DEFINITION(Container, __PARAMETERS(s16 id))
 __CLASS_NEW_END(Container, __ARGUMENTS(id));
 
-// class's conctructor
+// class's constructor
 void Container_constructor(Container this, s16 id)
 {
 	ASSERT(this, "Container::constructor: null this");
