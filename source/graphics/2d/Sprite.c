@@ -323,13 +323,13 @@ void Sprite_render(Sprite this)
 			{
 				// scale the sprite now
 				Sprite_scale(this);
+
+				//create an independant of software variable to point XPSTTS register
+				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+				//wait for screen to idle
+				while (*xpstts & XPBSYR);
 			}
-
-			//create an independant of software variable to point XPSTTS register
-			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-			//wait for screen to idle
-			while (*xpstts & XPBSYR);
 
 			// finally write the head
 			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
@@ -363,10 +363,10 @@ void Sprite_render(Sprite this)
 		}
 
 		//create an independant of software variable to point XPSTTS register
-		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+		//unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 		//wait for screen to idle
-		while (*xpstts & XPBSYR);
+		//while (*xpstts & XPBSYR);
 
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G )
@@ -381,6 +381,12 @@ void Sprite_render(Sprite this)
 			{
 				// now scale the texture
 				Sprite_scale(this);
+
+				//create an independant of software variable to point XPSTTS register
+				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+				//wait for screen to idle
+				while (*xpstts & XPBSYR);
 
 				WORLD_SIZE(this->worldLayer,
 						((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,

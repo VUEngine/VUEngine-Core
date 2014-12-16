@@ -50,9 +50,6 @@
 	/* list of sprites to render */												\
 	s8 freedLayer;																\
 	s8 freedLayersCount;														\
-																				\
-	/* flag controls END layer	*/												\
-	u8 reverseRendering;																\
 
 __CLASS_DEFINITION(SpriteManager);
 
@@ -119,8 +116,6 @@ void SpriteManager_reset(SpriteManager this)
 	this->freedLayer = 0;
 	this->freedLayersCount = 0;
 
-	this->reverseRendering = false;
-
 	this->node = NULL;
 	this->otherNode = NULL;
 
@@ -160,6 +155,9 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
 				u8 worldLayer2 = Sprite_getWorldLayer(otherSprite);
 
+				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
+				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
+
 				// swap layers
 				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(otherSprite, worldLayer1);
@@ -197,15 +195,11 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 	// retrieve the next free layer, taking into account
 	// if there are layers being freed up by the recovery algorithm
 	u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
-	Sprite_setWorldLayer(sprite, layer - (this->freedLayersCount? this->freedLayersCount--: 0));
+	Sprite_setWorldLayer(sprite, layer - this->freedLayersCount);
 	
 	// configure printing layer
 	// and shutdown unused layers
 	SpriteManager_setLastLayer(this);
-	
-	// render from the front of the list so the
-	// new sprites is rendered as soon as possible
-	this->reverseRendering = true;
 	
 	// this will force the sorting algoritm to take care
 	// first of the new sprite
@@ -273,7 +267,7 @@ static int SpriteManager_processFreedLayers(SpriteManager this)
 			    // must render inmediately 
 				Sprite_render(sprite);
 				// and hide old layer, otherwise,
-				// there will be a flickering
+				// there will be flickering
 			    WORLD_SIZE(spriteLayer, 0, 0);
 			    
 			    // don't enter here again if the end has been reached
@@ -310,7 +304,8 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 	}
 	
 	ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
-	this->freeLayer = 0 <= this->freeLayer? this->freeLayer: 0;
+	ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: more free layers");
+	this->freeLayer = 0 < this->freeLayer? this->freeLayer--: 0;
 
 	Printing_render(this->freeLayer);
 
@@ -335,37 +330,28 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	// sort sprites
-	if(!SpriteManager_processFreedLayers(this))
+	// sort layers
 	SpriteManager_sortLayers(this, true);
 
+	// recover layers
+	SpriteManager_processFreedLayers(this);
+		
 	// render from WORLD 31 to the lowes active one
 	// reverse this order when a new sprite was added
 	// to make effective its visual properties as quick as
 	// possible
+	VirtualNode node = VirtualList_begin(this->sprites);
 
-	if (this->reverseRendering)
+	//create an independant of software variable to point XPSTTS register
+	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+	//wait for screen to idle
+	while (*xpstts & XPBSYR);
+
+	for (; node; node = VirtualNode_getNext(node))
 	{
-		this->reverseRendering = false;
-
-		VirtualNode node = VirtualList_begin(this->sprites);
-
-		for (; node; node = VirtualNode_getNext(node))
-		{
-			Sprite_render((Sprite)VirtualNode_getData(node));
-		}
+		Sprite_render((Sprite)VirtualNode_getData(node));
 	}
-	else
-	{
-		VirtualNode node = VirtualList_end(this->sprites);
-
-		for (; node; node = VirtualNode_getPrevious(node))
-		{
-			Sprite_render((Sprite)VirtualNode_getData(node));
-		}
-	}
-	
-	//SpriteManager_processFreedLayers(this);
 }
 
 // retrieve free layer
