@@ -342,12 +342,6 @@ void SpriteManager_render(SpriteManager this)
 	// possible
 	VirtualNode node = VirtualList_begin(this->sprites);
 
-	//create an independant of software variable to point XPSTTS register
-	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-	//wait for screen to idle
-	while (*xpstts & XPBSYR);
-
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		Sprite_render((Sprite)VirtualNode_getData(node));
