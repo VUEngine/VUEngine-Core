@@ -282,7 +282,7 @@ void Sprite_setRenderFlag(Sprite this, u8 renderFlag)
 	// next render
 	if (__UPDATE_HEAD != this->renderFlag || !renderFlag)
 	{
-		this->renderFlag = renderFlag;
+		this->renderFlag = !renderFlag? 0: this->renderFlag | renderFlag;
 	}
 }
 
@@ -325,9 +325,6 @@ void Sprite_render(Sprite this)
 				Sprite_scale(this);
 			}
 
-			// make sure it is not visible until everything is setup
-			//WORLD_SIZE(this->worldLayer, 0, 0);
-
 			//create an independant of software variable to point XPSTTS register
 			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
@@ -341,7 +338,7 @@ void Sprite_render(Sprite this)
 			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
 
 			// set the position
-			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
+			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y));
 
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
@@ -360,16 +357,21 @@ void Sprite_render(Sprite this)
 				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
 			}
 
-
 			this->renderFlag = false;
 
 			return;
 		}
 
+		//create an independant of software variable to point XPSTTS register
+		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+		//wait for screen to idle
+		while (*xpstts & XPBSYR);
+
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G )
 		{
-			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x + FIX19_13_05F), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y + FIX19_13_05F));
+			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y));
 		}
 
 		if (this->renderFlag & __UPDATE_SIZE)
@@ -421,7 +423,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 {
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
-	if (this->worldLayer != worldLayer && 0 <= worldLayer)
+	if (0 <= worldLayer)
 	{
 		this->worldLayer = worldLayer;
 	

@@ -128,9 +128,6 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this)
 
 				//write charset
 				CharGroup_write(charGroup);
-
-				// must update the whole world layer in the next render cicle
-				this->renderFlag = __UPDATE_HEAD;
 			}
 
 			break;

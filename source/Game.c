@@ -61,7 +61,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __NUMBER_OF_SUB_SYSTEMS		3
+#define __FPS_BASED_SECONDS		(int)(1000 / __TARGET_FPS) 
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -558,7 +558,7 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInAnimationEditor(this) && (pressedKey & K_LT))
+	if (!Game_isInSpecialMode(this) && (pressedKey & K_LT))
 	{
 		return;
 	}
@@ -583,8 +583,6 @@ static void Game_handleInput(Game this)
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
 	}
 }
-
-#define __FPS_BASED_SECONDS		(int)(1000 / __TARGET_FPS) 
 
 // update game's logic subsystem
 static void Game_updateLogic(Game this)

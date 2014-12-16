@@ -40,15 +40,16 @@
 	/* list of sprites to render */												\
 	VirtualList sprites;														\
 																				\
-	/* list of sprites to render */												\
-	VirtualList removedSprites;													\
-																				\
 	/* sorting nodes	*/														\
 	VirtualNode node;															\
 	VirtualNode otherNode;														\
 																				\
 	/* next world layer	*/														\
 	s8 freeLayer;																\
+																				\
+	/* list of sprites to render */												\
+	s8 freedLayer;																\
+	s8 freedLayersCount;														\
 																				\
 	/* flag controls END layer	*/												\
 	u8 reverseRendering;																\
@@ -62,7 +63,7 @@ __CLASS_DEFINITION(SpriteManager);
 
 static void SpriteManager_constructor(SpriteManager this);
 static void SpriteManager_setLastLayer(SpriteManager this);
-
+static int SpriteManager_processFreedLayers(SpriteManager this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -80,7 +81,8 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->otherNode = NULL;
 
 	this->sprites = NULL;
-	this->removedSprites = NULL;
+	this->freedLayer = 0;
+	this->freedLayersCount = 0;
 
 	SpriteManager_reset(this);
 }
@@ -94,12 +96,6 @@ void SpriteManager_destructor(SpriteManager this)
 	{
 		__DELETE(this->sprites);
 		this->sprites = NULL;
-	}
-
-	if (this->removedSprites)
-	{
-		__DELETE(this->removedSprites );
-		this->removedSprites  = NULL;
 	}
 
 	// allow a new construct
@@ -117,16 +113,12 @@ void SpriteManager_reset(SpriteManager this)
 		this->sprites = NULL;
 	}
 
-	if (this->removedSprites )
-	{
-		__DELETE(this->removedSprites );
-		this->removedSprites  = NULL;
-	}
-
 	this->sprites = __NEW(VirtualList);
-	this->removedSprites = __NEW(VirtualList);
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
+	this->freedLayer = 0;
+	this->freedLayersCount = 0;
+
 	this->reverseRendering = false;
 
 	this->node = NULL;
@@ -201,50 +193,106 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 
 	// add to the front: last element corresponde to the 31 WORLD
 	VirtualList_pushFront(this->sprites, sprite);
+
+	// retrieve the next free layer, taking into account
+	// if there are layers being freed up by the recovery algorithm
 	u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
-	Sprite_setWorldLayer(sprite, layer);
+	Sprite_setWorldLayer(sprite, layer - (this->freedLayersCount? this->freedLayersCount--: 0));
+	
+	// configure printing layer
+	// and shutdown unused layers
 	SpriteManager_setLastLayer(this);
-
+	
 	// render from the front of the list so the
-	// first object to be updated is the new one
+	// new sprites is rendered as soon as possible
 	this->reverseRendering = true;
-
+	
 	// this will force the sorting algoritm to take care
 	// first of the new sprite
 	this->node = NULL;
 	this->otherNode = NULL;
 }
 
+// remove sprite
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::removeSprite: null this");
 
-	VirtualNode node = VirtualList_find(this->sprites, sprite);
+	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::removeSprite: sprite not found");
 
-	ASSERT(node, "SpriteManager::removeSprite: sprite not found");
-
-	if (node)
+	// check if exists
+	if(VirtualList_removeElement(this->sprites, sprite))
 	{
+		// hide it
 		Sprite_hide(sprite);
-
-		node = VirtualNode_getPrevious(node);
-		VirtualList_removeElement(this->sprites, sprite);
-
-		CACHE_ENABLE;
-		for (; node; node = VirtualNode_getPrevious(node))
-		{
-			Sprite previousSprite = (Sprite)VirtualNode_getData(node);
-			u8 layer = Sprite_getWorldLayer(previousSprite);
-			Sprite_setWorldLayer(previousSprite, layer + 1);
-			Sprite_render(previousSprite);
-			this->reverseRendering = false;
-		}
-		CACHE_DISABLE;
-
-		// force printing WORLD to be
-		// setup in the next rendering cycle
-		SpriteManager_setLastLayer(this);
+		
+		// calculate the freed layer
+		// if there is already a higher layer being freed
+		// don't do anything, the recovery algorithm will take
+		// care of this new freed layer
+		this->freedLayer = this->freedLayer < Sprite_getWorldLayer(sprite)? Sprite_getWorldLayer(sprite): this->freedLayer;
+		
+		// need to know the number of free layers so new sprites
+		// don't override other sprites' layers
+		this->freedLayersCount++;
 	}
+	else 
+	{
+		ASSERT(this, "SpriteManager::removeSprite: sprite not registered");
+	}
+}
+
+// process removed sprites
+static int SpriteManager_processFreedLayers(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::processRemovedSprites: null this");
+
+	if(this->freedLayer) 
+	{
+		ASSERT(this->freedLayer < __TOTAL_LAYERS, "SpriteManager::processRemovedSprites: error freedLayer");
+
+		VirtualNode node = VirtualList_end(this->sprites);
+
+		for(; node; node = VirtualNode_getPrevious(node))
+		{
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			u8 spriteLayer = Sprite_getWorldLayer(sprite);
+			
+			// search for the next sprite with the closest 
+			// layer to the freed layer
+			if(spriteLayer < this->freedLayer)
+			{
+				// move the sprite to the freed layer
+				Sprite_setWorldLayer(sprite, this->freedLayer);
+				
+				// decrease freed layer
+				// so the next time it is checked against the 
+				// previous sprite in the list
+			    this->freedLayer--;
+			    
+			    // must render inmediately 
+				Sprite_render(sprite);
+				// and hide old layer, otherwise,
+				// there will be a flickering
+			    WORLD_SIZE(spriteLayer, 0, 0);
+			    
+			    // don't enter here again if the end has been reached
+			    node = VirtualNode_getPrevious(node);
+				break;
+			}
+		}
+		
+		if(!node)
+		{
+			this->freedLayer = 0;
+			this->freedLayersCount = 0;
+			SpriteManager_setLastLayer(this);
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 // set free layers off
@@ -252,8 +300,17 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
-	this->freeLayer = (__TOTAL_LAYERS - 1) - VirtualList_getSize(this->sprites);
-	this->freeLayer = 0 <= this->freeLayer? this->freeLayer: 1;
+	if(VirtualList_getSize(this->sprites)) 
+	{
+		this->freeLayer = Sprite_getWorldLayer((Sprite)VirtualList_front(this->sprites)) - 1;
+	}
+	else 
+	{
+		this->freeLayer = __TOTAL_LAYERS - 1;
+	}
+	
+	ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
+	this->freeLayer = 0 <= this->freeLayer? this->freeLayer: 0;
 
 	Printing_render(this->freeLayer);
 
@@ -279,12 +336,14 @@ void SpriteManager_render(SpriteManager this)
 	ASSERT(this, "SpriteManager::render: null this");
 
 	// sort sprites
+	if(!SpriteManager_processFreedLayers(this))
 	SpriteManager_sortLayers(this, true);
 
 	// render from WORLD 31 to the lowes active one
 	// reverse this order when a new sprite was added
 	// to make effective its visual properties as quick as
 	// possible
+
 	if (this->reverseRendering)
 	{
 		this->reverseRendering = false;
@@ -305,6 +364,8 @@ void SpriteManager_render(SpriteManager this)
 			Sprite_render((Sprite)VirtualNode_getData(node));
 		}
 	}
+	
+	//SpriteManager_processFreedLayers(this);
 }
 
 // retrieve free layer
