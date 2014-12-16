@@ -56,7 +56,7 @@ int Math_powerFast(int base, int power)
 	int result = 0;
 	int limit = base;
 
-	power = 0 > power? -power: power;
+	power = 0 > power ? -power : power;
 
 	for (i = 1; i < power; i++)
 	{
@@ -68,20 +68,20 @@ int Math_powerFast(int base, int power)
 		sum = result;
 	}
 
-	return 0 == power? 1: 1 == power? base: result;
+	return 0 == power ? 1 : 1 == power ? base : result;
 }
 
 int Math_multiply(int a, int b)
 {
-	return (0 < b)? a + Math_multiply(a, b - 1): 0;
+	return (0 < b) ? a + Math_multiply(a, b - 1) : 0;
 }
 
 int Math_doPower(int sum, int base, int power)
 {
-	return (1 < power)? Math_doPower(Math_multiply(sum, base), base, power - 1): sum;
+	return (1 < power) ? Math_doPower(Math_multiply(sum, base), base, power - 1) : sum;
 }
 
 int Math_power(int base, int power)
 {
-	return 0 == power? 1: 1 == power? base: Math_doPower(base, base, 0 > power? -power: power);
+	return 0 == power ? 1 : 1 == power ? base : Math_doPower(base, base, 0 > power ? -power : power);
 }

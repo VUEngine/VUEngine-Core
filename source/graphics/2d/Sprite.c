@@ -191,7 +191,7 @@ void Sprite_calculateScale(Sprite this, fix19_13 z)
 			       FIX19_13_DIV(z , optical.maximunViewDistance));
 
 	// TODO: remove the * and the branch
-	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0? -1: 1);
+	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0 ? -1 : 1);
 	this->drawSpec.scale.y = ratio;
 
 	if (WRLD_AFFINE == Sprite_getMode(this))
@@ -282,7 +282,7 @@ void Sprite_setRenderFlag(Sprite this, u8 renderFlag)
 	// next render
 	if (__UPDATE_HEAD != this->renderFlag || !renderFlag)
 	{
-		this->renderFlag = !renderFlag? 0: this->renderFlag | renderFlag;
+		this->renderFlag = !renderFlag ? 0 : this->renderFlag | renderFlag;
 	}
 }
 

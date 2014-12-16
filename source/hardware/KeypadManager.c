@@ -124,17 +124,17 @@ u16 KeypadManager_getPressedKey(KeypadManager this)
 // get released key
 u16 KeypadManager_getReleasedKey(KeypadManager this)
 {
-	return this->currentKey != this->previousKey? this->previousKey & ~this->currentKey: 0;
+	return this->currentKey != this->previousKey ? this->previousKey & ~this->currentKey : 0;
 }
 
 // get hold key
 u16 KeypadManager_getHoldKey(KeypadManager this)
 {
-	return this->currentKey & this->previousKey? this->currentKey & this->previousKey: 0;
+	return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
 }
 
 // get previous key
 u16 KeypadManager_getPreviousKey(KeypadManager this)
 {
-	return this->currentKey & this->previousKey? this->currentKey & this->previousKey: 0;
+	return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
 }

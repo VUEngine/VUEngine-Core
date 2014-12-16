@@ -239,20 +239,20 @@ static void Actor_updateSourroundingFriction(Actor this)
 
 	if (this->sensibleToFriction.x)
 	{
-		friction.x = this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
-		friction.x += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
+		friction.x = this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
+		friction.x += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
 	}
 
 	if (this->sensibleToFriction.y)
 	{
-		friction.y = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
-		friction.y += this->lastCollidingEntity[kZAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]): 0;
+		friction.y = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
+		friction.y += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
 	}
 
 	if (this->sensibleToFriction.z)
 	{
-		friction.z = this->lastCollidingEntity[kXAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]): 0;
-		friction.z += this->lastCollidingEntity[kYAxis]? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]): 0;
+		friction.z = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
+		friction.z += this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
 	}
 
 	Body_setFriction(this->body, friction);
@@ -391,9 +391,9 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 	        {
 				VBVec3D displacement =
 	            {
-					kXAxis == i? acceleration->x: 0,
-					kYAxis == i? acceleration->y: 0,
-					kZAxis == i? acceleration->z: 0
+					kXAxis == i ? acceleration->x : 0,
+					kYAxis == i ? acceleration->y : 0,
+					kZAxis == i ? acceleration->z : 0
 				};
 
 				axisOfCollision |= __VIRTUAL_CALL(int, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
@@ -564,7 +564,7 @@ u8 Actor_isMoving(Actor this)
 {
 	ASSERT(this, "Actor::isMoving: null this");
 
-	return this->body? Body_isMoving(this->body): 0;
+	return this->body ? Body_isMoving(this->body) : 0;
 }
 
 // retrieve global position
@@ -697,7 +697,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	// decide to which side of the entity align myself
 	if (*myPositionAxis > *otherPositionAxis)
     {
-        // pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
+        // pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1) ? 1 : 0);
 		// align right / below / behind
 		*myPositionAxis = *otherPositionAxis +
 							ITOFIX19_13(otherHalfSize - otherHighGap
@@ -752,5 +752,5 @@ fix19_13 Actor_getElasticity(Actor this)
 {
 	ASSERT(this, "Actor::getElasticity: null this");
 
-	return this->body? Body_getElasticity(this->body): InGameEntity_getElasticity((InGameEntity)this);
+	return this->body ? Body_getElasticity(this->body) : InGameEntity_getElasticity((InGameEntity)this);
 }

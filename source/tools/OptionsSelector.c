@@ -150,8 +150,8 @@ void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char*
 	this->currentOptionIndex = 0;
 	this->x = 0;
 	this->y = 0;
-	this->cols = 0 < cols && cols <= __SCREEN_WIDTH >> 3 / 4? cols: 1;
-	this->rows = 0 < rows && rows <= __SCREEN_WIDTH >> 3? rows: __SCREEN_HEIGHT >> 3;
+	this->cols = 0 < cols && cols <= __SCREEN_WIDTH >> 3 / 4 ? cols : 1;
+	this->rows = 0 < rows && rows <= __SCREEN_WIDTH >> 3 ? rows : __SCREEN_HEIGHT >> 3;
 	this->totalOptions = 0;
 	this->mark = mark;
 	this->type = type;
@@ -203,7 +203,7 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames)
 
 	int optionsPerPage = this->cols * this->rows;
 	int numberOfPages = (int)(this->totalOptions / optionsPerPage);
-	numberOfPages += 0 < this->totalOptions % optionsPerPage? 1: 0;
+	numberOfPages += 0 < this->totalOptions % optionsPerPage ? 1 : 0;
 
 
 	VirtualNode node = VirtualList_begin(optionsNames);
@@ -233,7 +233,7 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames)
 		this->currentPage = VirtualList_begin(this->pages);
 		ASSERT(VirtualList_getSize(this->pages), "OptionsSelector::setOptions: empty pages");
 
-		this->currentOption = this->currentPage? VirtualList_begin((VirtualList)VirtualNode_getData(this->currentPage)): NULL;
+		this->currentOption = this->currentPage ? VirtualList_begin((VirtualList)VirtualNode_getData(this->currentPage)) : NULL;
 	}
 
 	this->currentPageIndex = 0;
@@ -324,8 +324,8 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 
 	if (this->currentPage && 0 < VirtualList_getSize((VirtualList)VirtualNode_getData(this->currentPage)))
 	{
-		this->x = 0 <= x && x <= __SCREEN_WIDTH >> 3? x: 0;
-		this->y = 0 <= y && y <= __SCREEN_HEIGHT >> 3? y: 0;
+		this->x = 0 <= x && x <= __SCREEN_WIDTH >> 3 ? x : 0;
+		this->y = 0 <= y && y <= __SCREEN_HEIGHT >> 3 ? y : 0;
 
 		ASSERT(this->currentPage, "showOptions: currentPage");
 		VirtualNode node = VirtualList_begin((VirtualList)VirtualNode_getData(this->currentPage));

@@ -44,7 +44,7 @@ int Utilities_intLength(int value)
 
 		length++;
 	}
-	(!length)? length++: length;
+	(!length) ? length++ : length;
 
 	return length;
 }

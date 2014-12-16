@@ -590,7 +590,7 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 
 	Printing_int(this->animationFunction.numberOfFrames, x + 20, y++);
 	Printing_int(this->animationFunction.delay, x + 20, y++);
-	Printing_text(this->animationFunction.loop? "true": "false", x + 20, y++);
+	Printing_text(this->animationFunction.loop ? "true" : "false", x + 20, y++);
 
 	OptionsSelector_showOptions(this->frameEditionSelector, x, ++y + 1);
 

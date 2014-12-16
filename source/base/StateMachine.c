@@ -253,7 +253,7 @@ int StateMachine_isInState(StateMachine this, const State state)
 {
 	ASSERT(this, "StateMachine::isInState: null this");
 
-	return (this->currentState == state)? true: false;
+	return (this->currentState == state) ? true : false;
 }
 
 // set owner

@@ -403,7 +403,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 	if (!this->currentEntityNode)
 
 	{
-		this->currentEntityNode = stageEntities? VirtualList_end(stageEntities): NULL;
+		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 	}
 	else
 	{
@@ -412,7 +412,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 		if (!this->currentEntityNode)
 
 	{
-			this->currentEntityNode = stageEntities? VirtualList_end(stageEntities): NULL;
+			this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 		}
 	}
 
@@ -434,7 +434,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 	if (!this->currentEntityNode)
 
 	{
-		this->currentEntityNode = stageEntities? VirtualList_begin(stageEntities): NULL;
+		this->currentEntityNode = stageEntities ? VirtualList_begin(stageEntities) : NULL;
 	}
 	else
 	{
@@ -444,7 +444,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 		if (!this->currentEntityNode)
 
 	{
-			this->currentEntityNode = stageEntities? VirtualList_begin(stageEntities): NULL;
+			this->currentEntityNode = stageEntities ? VirtualList_begin(stageEntities) : NULL;
 		}
 	}
 
@@ -753,7 +753,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, __ARGUMENTS(position));
 
 		VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
-		this->currentEntityNode = stageEntities? VirtualList_end(stageEntities): NULL;
+		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 
 		// select the added entity
 		this->mode = kTranslateEntities;

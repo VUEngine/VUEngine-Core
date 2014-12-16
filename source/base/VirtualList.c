@@ -360,7 +360,7 @@ void* VirtualList_getNodeData(VirtualList this, int item)
 	VirtualNode node = VirtualList_getNode(this, item);
 
 	// return the data
-	return (node)? node->data: NULL;
+	return (node) ? node->data : NULL;
 }
 
 // get node at item position

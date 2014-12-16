@@ -134,14 +134,14 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	ASSERT(this, "SpriteManager::sortLayers: null this");
 
 	CACHE_ENABLE;
-	this->node = progressively && this->node? this->otherNode? this->node: VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
+	this->node = progressively && this->node ? this->otherNode ? this->node : VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
 
 	for (; this->node; this->node = VirtualNode_getNext(this->node))
 	{
 		Sprite sprite = (Sprite)VirtualNode_getData(this->node);
 		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
 
-		this->otherNode = progressively && this->otherNode? VirtualNode_getNext(this->otherNode): VirtualNode_getNext(this->node);
+		this->otherNode = progressively && this->otherNode ? VirtualNode_getNext(this->otherNode) : VirtualNode_getNext(this->node);
 
 		for (; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
 		{
@@ -224,7 +224,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		// if there is already a higher layer being freed
 		// don't do anything, the recovery algorithm will take
 		// care of this new freed layer
-		this->freedLayer = this->freedLayer < Sprite_getWorldLayer(sprite)? Sprite_getWorldLayer(sprite): this->freedLayer;
+		this->freedLayer = this->freedLayer < Sprite_getWorldLayer(sprite) ? Sprite_getWorldLayer(sprite) : this->freedLayer;
 		
 		// need to know the number of free layers so new sprites
 		// don't override other sprites' layers
@@ -305,7 +305,7 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 	
 	ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
 	ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: more free layers");
-	this->freeLayer = 0 < this->freeLayer? this->freeLayer: 0;
+	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
 	Printing_render(this->freeLayer);
 

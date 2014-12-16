@@ -480,9 +480,9 @@ static Force Body_calculateFriction(Body this, int axisOfMovement)
 
 	Force friction;
 
-	friction.x = __XAXIS & axisOfMovement? 0 < this->velocity.x? -(this->friction.x + worldFriction): this->friction.x + worldFriction : 0;
-	friction.y = __YAXIS & axisOfMovement? 0 < this->velocity.y? -(this->friction.y + worldFriction): this->friction.y +  worldFriction : 0;
-	friction.z = __ZAXIS & axisOfMovement? 0 < this->velocity.z? -(this->friction.z + worldFriction): this->friction.z +  worldFriction : 0;
+	friction.x = __XAXIS & axisOfMovement ? 0 < this->velocity.x ? -(this->friction.x + worldFriction) : this->friction.x + worldFriction : 0;
+	friction.y = __YAXIS & axisOfMovement ? 0 < this->velocity.y ? -(this->friction.y + worldFriction) : this->friction.y +  worldFriction : 0;
+	friction.z = __ZAXIS & axisOfMovement ? 0 < this->velocity.z ? -(this->friction.z + worldFriction) : this->friction.z +  worldFriction : 0;
 
 	return friction;
 }
@@ -492,7 +492,7 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 {
 	ASSERT(this, "Body::updateAcceleration: null this");
 
-	fix19_13 sign = ITOFIX19_13(0 <= gravity? -1: 1);
+	fix19_13 sign = ITOFIX19_13(0 <= gravity ? -1 : 1);
 
 	if (gravity)
 	{
@@ -592,7 +592,7 @@ void Body_printPhysics(Body this, int x, int y)
 {
 	ASSERT(this, "Body::printPhysics: null this");
 
-	__ACCELERATED_MOVEMENT == this->movementType.x? Printing_text("Accelerated", x, y++): Printing_text("Uniform", x, y++);
+	__ACCELERATED_MOVEMENT == this->movementType.x ? Printing_text("Accelerated", x, y++) : Printing_text("Uniform", x, y++);
 
 	Printing_text("X             Y             Z",x,y++);
 
@@ -786,11 +786,11 @@ u8 Body_isMoving(Body this)
 
 	int result = 0;
 
-	result |= ((int)FIX19_13TOI(this->velocity.x) || this->acceleration.x)? __XAXIS: 0;
-	result |= ((int)FIX19_13TOI(this->velocity.y) || this->acceleration.y)? __YAXIS: 0;
-	result |= ((int)FIX19_13TOI(this->velocity.z) || this->acceleration.z)? __ZAXIS: 0;
+	result |= ((int)FIX19_13TOI(this->velocity.x) || this->acceleration.x) ? __XAXIS : 0;
+	result |= ((int)FIX19_13TOI(this->velocity.y) || this->acceleration.y) ? __YAXIS : 0;
+	result |= ((int)FIX19_13TOI(this->velocity.z) || this->acceleration.z) ? __ZAXIS : 0;
 
-	return this->awake && this->active? result: 0;
+	return this->awake && this->active ? result : 0;
 }
 
 // is it moving?
@@ -800,11 +800,11 @@ static int Body_isMovingInternal(Body this)
 
 	int result = 0;
 
-	result |= (this->velocity.x)? __XAXIS: 0;
-	result |= (this->velocity.y)? __YAXIS: 0;
-	result |= (this->velocity.z)? __ZAXIS: 0;
+	result |= (this->velocity.x) ? __XAXIS : 0;
+	result |= (this->velocity.y) ? __YAXIS : 0;
+	result |= (this->velocity.z) ? __ZAXIS : 0;
 
-	return this->awake && this->active? result: 0;
+	return this->awake && this->active ? result : 0;
 }
 
 // bounce back
