@@ -504,13 +504,11 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 					case kCollision:
 
 						Actor_resolveCollision(this, (VirtualList)Telegram_getExtraInfo(telegram));
-						Actor_updateCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
 					case kBodyStartedMoving:
 
-//						Printing_text("Actor::handleMessage: kBodyStartedMoving", 10, 8);
 						CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
 						Actor_updateCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 						return true;
@@ -518,7 +516,6 @@ int Actor_handleMessage(Actor this, Telegram telegram)
 
 					case kBodyStoped:
 
-//						Printing_text("Actor::handleMessage: kBodyStoped       ", 10, 8);
 						if (!Body_isMoving(this->body))
 	                    {
 							CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
