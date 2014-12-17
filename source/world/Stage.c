@@ -491,17 +491,17 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 	static VirtualNode savedNode = NULL;
 
-	VirtualNode node = savedNode? savedNode: VirtualList_begin(this->stageEntities);
+	VirtualNode node = savedNode ? savedNode : VirtualList_begin(this->stageEntities);
 	int counter = 0;
 
-	for (; node && counter < __STREAMING_AMPLITUDE / 4; node = direction? VirtualNode_getPrevious(node): VirtualNode_getNext(node), counter++);
+	for (; node && counter < __STREAMING_AMPLITUDE / 4; node = direction ? VirtualNode_getPrevious(node) : VirtualNode_getNext(node), counter++);
 
-	node = node? node: direction? VirtualList_begin(this->stageEntities): VirtualList_end(this->stageEntities);
+	node = node ? node: direction ? VirtualList_begin(this->stageEntities) : VirtualList_end(this->stageEntities);
 	savedNode = NULL;
 
 	int entityLoaded = false;
 
-	for (counter = 0; node && (!savedNode || counter < __STREAMING_AMPLITUDE); node = direction? VirtualNode_getNext(node): VirtualNode_getPrevious(node), counter++)
+	for (counter = 0; node && (!savedNode || counter < __STREAMING_AMPLITUDE); node = direction ? VirtualNode_getNext(node) : VirtualNode_getPrevious(node), counter++)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
 

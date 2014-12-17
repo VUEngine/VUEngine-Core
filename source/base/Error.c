@@ -76,8 +76,8 @@ void Error_destructor(Error this)
 // setup the error message and lock program here
 int Error_triggerException(Error this, char* string)
 {
-	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2? __EXCEPTION_COLUMN: 0;
-	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28? __EXCEPTION_LINE: 0;
+	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2 ? __EXCEPTION_COLUMN : 0;
+	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
 	//VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 
@@ -104,7 +104,7 @@ int Error_triggerException(Error this, char* string)
 	}
 
 	Printing_text("Game::lastProcess:", x, y);
-	Printing_text(Game_isConstructed()? Game_getLastProcessName(Game_getInstance()): "constructor", x + 19, y);
+	Printing_text(Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 19, y);
 	Printing_text("Exception:" , x, y + 1);
 	Printing_text(string, x, y + 2);
 

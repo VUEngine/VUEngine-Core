@@ -711,7 +711,7 @@ void Game_update(Game this)
 	while (true)
 	{
 #ifdef __DEBUG
-		currentTime = __CAP_FPS? Clock_getTime(this->clock): lastSubSystemTime + 1000 + __TIMER_RESOLUTION;
+		currentTime = __CAP_FPS ? Clock_getTime(this->clock) : lastSubSystemTime + 1000 + __TIMER_RESOLUTION;
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		

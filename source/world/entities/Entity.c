@@ -407,11 +407,11 @@ int Entity_isVisible(Entity this, int pad)
 
 	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
-	return sprite? Optics_isVisible(this->transform.globalPosition,
+	return sprite ? Optics_isVisible(this->transform.globalPosition,
 			Entity_getWidth(this),
 			Entity_getHeight(this),
 			Sprite_getDrawSpec(sprite).position.parallax,
-			pad): true;
+			pad) : true;
 }
 
 // create an entity in gameengine's memory

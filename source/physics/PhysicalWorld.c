@@ -240,9 +240,9 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		{
 			Acceleration gravity =
 			{
-				gravitySensibleAxis & __XAXIS? this->gravity.x: 0,
-				gravitySensibleAxis & __YAXIS? this->gravity.y: 0,
-				gravitySensibleAxis & __ZAXIS? this->gravity.z: 0
+				gravitySensibleAxis & __XAXIS ? this->gravity.x : 0,
+				gravitySensibleAxis & __YAXIS ? this->gravity.y : 0,
+				gravitySensibleAxis & __ZAXIS ? this->gravity.z : 0
 			};
 
 			// add gravity

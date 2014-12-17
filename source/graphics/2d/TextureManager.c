@@ -373,7 +373,7 @@ static Texture TextureManager_writeTexture(TextureManager this, TextureDefinitio
 			Texture_write(this->texture[i]);
 
 			// set texture usage
-			this->textureUsageCount[i] = isPreload? 0: 1;
+			this->textureUsageCount[i] = isPreload ? 0 : 1;
 
 			return this->texture[i];
 		}

@@ -420,7 +420,7 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 	Printing_text("UI Entities: ", 20, ++y + 3);
 
 	UI ui = Stage_getUI(GameState_getStage(this->gameState));
-	Printing_int(ui? Container_getChildCount((Container)ui): 0, 34, y + 3);
+	Printing_int(ui ? Container_getChildCount((Container)ui) : 0, 34, y + 3);
 }
 
 static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)

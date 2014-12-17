@@ -348,7 +348,7 @@ static void Container_applyTransform(Container this, Transformation* environment
 		{
 			Container child = (Container)VirtualNode_getData(node);
 
-			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z? child->invalidateGlobalPosition: this->invalidateGlobalPosition;
+			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
 
 			if (isInitialTransform)
 			{
@@ -484,7 +484,7 @@ s16 Container_getId(Container this)
 // retrieve child count
 int Container_getChildCount(Container this)
 {
-	return this->children? VirtualList_getSize(this->children): 0;
+	return this->children ?  VirtualList_getSize(this->children) : 0;
 }
 
 // retrieve children
