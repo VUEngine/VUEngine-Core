@@ -68,6 +68,7 @@
 #include <InGameEntity.h>
 #include <AnimatedInGameEntity.h>
 #include <InanimatedInGameEntity.h>
+#include <InvisibleInGameEntity.h>
 #include <Actor.h>
 #include <Image.h>
 #include <ScrollBackground.h>
@@ -475,6 +476,7 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 			{&InGameEntity_getObjectSize, "InGameEntity"},
 			{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
 			{&InanimatedInGameEntity_getObjectSize, "Inanim. InGameEntity"},
+			{&InvisibleInGameEntity_getObjectSize, "Invis. InGameEntity"},
 			{&Actor_getObjectSize, "Actor"},
 			{&Image_getObjectSize, "Image"},
 			{&ScrollBackground_getObjectSize, "ScrollBackg."},
@@ -591,10 +593,16 @@ static void Debug_showDebugBgmap(Debug this)
 	}
 
 	// write the head
-	WORLD_HEAD((__TOTAL_LAYERS - 1), WRLD_ON | this->currentBgmap);
-	WORLD_MSET((__TOTAL_LAYERS - 1), this->bgmapDisplacement.x, 0, this->bgmapDisplacement.y);
-	WORLD_GSET((__TOTAL_LAYERS - 1), 0, 3, 0);
-	WORLD_SIZE((__TOTAL_LAYERS - 1), __SCREEN_WIDTH, __SCREEN_HEIGHT);
+	
+	WA[__TOTAL_LAYERS - 1].head = WRLD_ON | this->currentBgmap;
+	WA[__TOTAL_LAYERS - 1].mx = this->bgmapDisplacement.x;
+	WA[__TOTAL_LAYERS - 1].mp = 0;
+	WA[__TOTAL_LAYERS - 1].my = this->bgmapDisplacement.y;
+	WA[__TOTAL_LAYERS - 1].gx = 0;
+	WA[__TOTAL_LAYERS - 1].gp = 3;
+	WA[__TOTAL_LAYERS - 1].gy = 0;
+	WA[__TOTAL_LAYERS - 1].w = __SCREEN_WIDTH;
+	WA[__TOTAL_LAYERS - 1].h = __SCREEN_HEIGHT;
 }
 
 static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)

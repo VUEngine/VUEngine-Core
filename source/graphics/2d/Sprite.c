@@ -314,7 +314,8 @@ void Sprite_render(Sprite this)
 	if (this->renderFlag)
 	{
 		DrawSpec drawSpec = this->drawSpec;
-
+		WORLD* worldPointer = &WA[this->worldLayer];
+		
 		// if head is modified, render everything
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
@@ -331,30 +332,27 @@ void Sprite_render(Sprite this)
 			//wait for screen to idle
 			while (*xpstts & XPBSYR);
 
-			// finally write the head
-			WORLD_HEAD(this->worldLayer, this->head | Texture_getBgmapSegment(this->texture));
-
-			// set displacement in bgmap memory
-			WORLD_MSET(this->worldLayer, (this->texturePosition.x << 3), 0, this->texturePosition.y << 3);
-
-			// set the position
-			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y));
+			worldPointer->head = this->head | Texture_getBgmapSegment(this->texture);
+			worldPointer->mx = this->texturePosition.x << 3;
+			worldPointer->mp = 0;
+			worldPointer->my = this->texturePosition.y << 3;
+			worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
+			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
+			worldPointer->gy = FIX19_13TOI(drawSpec.position.y);
 
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				// first point to param table
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 
-				// set size
-				WORLD_SIZE(this->worldLayer,
-						((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,
-						((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));)
-
+//				worldPointer->param = PARAM(this->param);
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
 			}
 			else
 			{
-				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
+				worldPointer->w = ((int)Texture_getCols(this->texture))<< 3;
+				worldPointer->h = ((int)Texture_getRows(this->texture))<< 3;
 			}
 
 			this->renderFlag = false;
@@ -371,7 +369,9 @@ void Sprite_render(Sprite this)
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G )
 		{
-			WORLD_GSET(this->worldLayer, FIX19_13TOI(drawSpec.position.x), drawSpec.position.parallax + this->parallaxDisplacement, FIX19_13TOI(drawSpec.position.y));
+			worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
+			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
+			worldPointer->gy = FIX19_13TOI(drawSpec.position.y);
 		}
 
 		if (this->renderFlag & __UPDATE_SIZE)
@@ -388,15 +388,15 @@ void Sprite_render(Sprite this)
 				//wait for screen to idle
 				while (*xpstts & XPBSYR);
 
-				WORLD_SIZE(this->worldLayer,
-						((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1,
-						((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));)
-
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
+
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
 			}
 			else
 			{
-				WORLD_SIZE(this->worldLayer, (Texture_getCols(this->texture) << 3), (Texture_getRows(this->texture) << 3));
+				worldPointer->w = ((int)Texture_getCols(this->texture))<< 3;
+				worldPointer->h = ((int)Texture_getRows(this->texture))<< 3;
 			}
 		}
 

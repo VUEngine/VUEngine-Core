@@ -317,11 +317,10 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 		//wait for screen to idle
 		while (*xpstts & XPBSYR);
 
-		WORLD_HEAD((this->freeLayer - 1), WRLD_OFF);
-
-	    WORLD_SIZE((this->freeLayer - 1), 0, 0);
-
-		WORLD_HEAD((this->freeLayer - 1), WRLD_END);
+		WA[this->freeLayer - 1].head = WRLD_OFF;
+		WA[this->freeLayer - 1].w = 0;
+		WA[this->freeLayer - 1].h = 0;
+		WA[this->freeLayer - 1].head = WRLD_END;
 	}
 }
 

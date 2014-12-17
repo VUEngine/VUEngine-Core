@@ -66,16 +66,16 @@ static void Actor_updateSourroundingFriction(Actor this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID))
-__CLASS_NEW_END(Actor, __ARGUMENTS(actorDefinition, ID));
+__CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 id))
+__CLASS_NEW_END(Actor, __ARGUMENTS(actorDefinition, id));
 
 // class's constructor
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID)
+void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 id)
 {
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedInGameEntity, __ARGUMENTS((AnimatedInGameEntityDefinition*)&actorDefinition->inGameEntityDefinition, ID));
+	__CONSTRUCT_BASE(AnimatedInGameEntity, __ARGUMENTS((AnimatedInGameEntityDefinition*)&actorDefinition->inGameEntityDefinition, id));
 
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
@@ -625,24 +625,23 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	ASSERT(this->sprites, "Actor::alignTo: null sprites");
 
 	// retrieve the colliding entity's position and gap
-	VBVec3D otherPosition = Entity_getLocalPosition((Entity) entity);
+	VBVec3D otherPosition = Container_getGlobalPosition((Container) entity);
 	Gap otherGap = InGameEntity_getGap(entity);
 
 	// pointers to the dimensions to affect
+	fix19_13 *myPositionAxisToCheck = NULL;
 	fix19_13 *myPositionAxis = NULL;
 	fix19_13 *otherPositionAxis = NULL;
 
 	// used to the width, height or deep
-	u8 myHalfSize = 0;
-	u8 otherHalfSize = 0;
+	u16 myHalfSize = 0;
+	u16 otherHalfSize = 0;
 
 	// gap to use based on the axis
 	int otherLowGap = 0;
 	int otherHighGap = 0;
 	int myLowGap = 0;
 	int myHighGap = 0;
-
-	int screenSize = 0;
 
 	// calculate gap again (scale, etc)
 	InGameEntity_setGap((InGameEntity)this);
@@ -652,50 +651,60 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	{
 		case __XAXIS:
 
+			myPositionAxisToCheck = &this->transform.globalPosition.x;
 			myPositionAxis = &this->transform.localPosition.x;
 			otherPositionAxis = &otherPosition.x;
 
-			myHalfSize = (Entity_getWidth((Entity)this) >> 1);
-			otherHalfSize = (Entity_getWidth((Entity)entity) >> 1);
+			myHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, (Entity)this) >> 1;
+			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, (Entity)entity) >> 1;
 
 			otherLowGap = otherGap.left;
 			otherHighGap = otherGap.right;
 			myLowGap = this->gap.left;
 			myHighGap = this->gap.right;
-
-			screenSize = __SCREEN_WIDTH;
 			break;
 
 		case __YAXIS:
 
+			myPositionAxisToCheck = &this->transform.globalPosition.y;
 			myPositionAxis = &this->transform.localPosition.y;
 			otherPositionAxis = &otherPosition.y;
 
-			myHalfSize = (Entity_getHeight((Entity)this) >> 1);
-			otherHalfSize = (Entity_getHeight((Entity)entity) >> 1);
+			myHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, (Entity)this) >> 1;
+			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, (Entity)entity) >> 1;
 
 			otherLowGap = otherGap.up;
 			otherHighGap = otherGap.down;
 			myLowGap = this->gap.up;
 			myHighGap = this->gap.down;
-
-			screenSize = __SCREEN_HEIGHT * 100;
 			break;
 
 		case __ZAXIS:
 
+			myPositionAxisToCheck = &this->transform.globalPosition.z;
 			myPositionAxis = &this->transform.localPosition.z;
 			otherPositionAxis = &otherPosition.z;
 
-			myHalfSize = (InGameEntity_getDeep((InGameEntity)this) >> 1);
-			otherHalfSize = (InGameEntity_getDeep(entity) >> 1);
+			// TODO: must make deep work as the width and high
+			if(this->transform.globalPosition.z < otherPosition.z)
+			{
+				myHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, (Entity)this);
+				otherHalfSize = 0;
+			}
+			else
+			{
+				myHalfSize = 0;
+				otherHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, (Entity)entity);
+			}
+			
+			myLowGap = 0;
+			myHighGap = 0;
 
-			screenSize = __MAX_VIEW_DISTANCE;
 			break;
 	}
 
 	// decide to which side of the entity align myself
-	if (*myPositionAxis > *otherPositionAxis)
+	if (*myPositionAxisToCheck > *otherPositionAxis)
     {
         // pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1)? 1: 0);
 		// align right / below / behind
@@ -723,7 +732,6 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	Actor_transform(this, &transform);
 
 	__VIRTUAL_CALL(int, Shape, positione, this->shape);
-
 }
 
 // retrieve body

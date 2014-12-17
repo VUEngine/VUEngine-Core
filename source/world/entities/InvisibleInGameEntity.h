@@ -18,75 +18,77 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef INANIMATED_IN_GAME_ENTITY_H_
-#define INANIMATED_IN_GAME_ENTITY_H_
+#ifndef INVISIBLE_IN_GAME_ENTITY_H_
+#define INVISIBLE_IN_GAME_ENTITY_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <InGameEntity.h>
+#include <InanimatedInGameEntity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define InanimatedInGameEntity_METHODS											\
-		InGameEntity_METHODS													\
+#define InvisibleInGameEntity_METHODS											\
+		InanimatedInGameEntity_METHODS													\
 
-#define InanimatedInGameEntity_SET_VTABLE(ClassName)							\
-		InGameEntity_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getElasticity);		\
-		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getFriction);			\
+#define InvisibleInGameEntity_SET_VTABLE(ClassName)								\
+		InanimatedInGameEntity_SET_VTABLE(ClassName)							\
+		__VIRTUAL_SET(ClassName, InvisibleInGameEntity, getWidth);				\
+		__VIRTUAL_SET(ClassName, InvisibleInGameEntity, getHeight);				\
+		__VIRTUAL_SET(ClassName, InvisibleInGameEntity, getDeep);				\
 
-// A InanimatedInGameEntity which represent a generic object inside a Stage
-#define InanimatedInGameEntity_ATTRIBUTES										\
+// A InvisibleInGameEntity which represent a generic object inside a Stage
+#define InvisibleInGameEntity_ATTRIBUTES										\
 																				\
 	/* super's attributes */													\
-	InGameEntity_ATTRIBUTES														\
+	InanimatedInGameEntity_ATTRIBUTES											\
 																				\
 	/* ROM definition */														\
-	InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition;			\
+	InvisibleInGameEntityDefinition* invisibleInGameEntityDefinition;			\
 
-__CLASS(InanimatedInGameEntity);
+__CLASS(InvisibleInGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines a InanimatedInGameEntity in ROM memory
-typedef struct InanimatedInGameEntityDefinition
+// defines a InvisibleInGameEntity in ROM memory
+typedef struct InvisibleInGameEntityDefinition
 {
 	// It has an InGameEntity at the beggining
-	InGameEntityDefinition inGameEntityDefinition;
+	InanimatedInGameEntityDefinition inanimatedInGameEntityDefinition;
 
-	// friction for physics
-	fix19_13 friction;
+	// shape's width
+	u16 width;
 
-	// elasticity for physics
-	fix19_13 elasticity;
+	// shape's height
+	u16 height;
 
-	// whether it must be registered with the collision detection system
-	u8 registerShape;
+	// shape's height
+	u16 deep;
 
-} InanimatedInGameEntityDefinition;
+} InvisibleInGameEntityDefinition;
 
-typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
+typedef const InvisibleInGameEntityDefinition InvisibleInGameEntityROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id));
+__CLASS_NEW_DECLARE(InvisibleInGameEntity, __PARAMETERS(InvisibleInGameEntityDefinition* invisibleInGameEntityDefinition, s16 id));
 
-void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id);
-void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);
-fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this);
-fix19_13 InanimatedInGameEntity_getFriction(InanimatedInGameEntity this);
+void InvisibleInGameEntity_constructor(InvisibleInGameEntity this, InvisibleInGameEntityDefinition* invisibleInGameEntityDefinition, s16 id);
+void InvisibleInGameEntity_destructor(InvisibleInGameEntity this);
+u16 InvisibleInGameEntity_getWidth(InvisibleInGameEntity this);
+u16 InvisibleInGameEntity_getHeight(InvisibleInGameEntity this);
+u16 InvisibleInGameEntity_getDeep(InvisibleInGameEntity this);
 
 
 #endif

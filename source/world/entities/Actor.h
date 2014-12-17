@@ -117,9 +117,9 @@ typedef const ActorDefinition ActorROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 ID));
+__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 id));
 
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 ID);
+void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 id);
 void Actor_destructor(Actor this);
 void Actor_setLocalPosition(Actor this, VBVec3D position);
 void Actor_transform(Actor this, Transformation* environmentTransform);

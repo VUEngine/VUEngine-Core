@@ -761,6 +761,11 @@ static void Body_awake(Body this, int axisStartedMovement)
 		dispatchMessage |= (__YAXIS & axisStartedMovement);
 	}
 
+	if (!this->velocity.z && (__ZAXIS & axisStartedMovement))
+	{
+		dispatchMessage |= (__ZAXIS & axisStartedMovement);
+	}
+
 	if (dispatchMessage)
 	{
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStartedMoving, &axisStartedMovement);

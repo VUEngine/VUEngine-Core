@@ -85,17 +85,15 @@ void Printing_render(int textLayer)
 	//wait for screen to idle
 	while (*xpstts & XPBSYR);
 
-	//set the world's head
-    WORLD_HEAD((textLayer), WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP));
-
-    //set the world's size
-    WORLD_SIZE((textLayer), 384, 224);
-
-    //set the world's ...
-    WORLD_GSET((textLayer), __PRINTING_BGMAP_X_OFFSET, __PRINTING_BGMAP_Z_OFFSET, __PRINTING_BGMAP_Y_OFFSET);
-
-    //set world cuting point
-    WORLD_MSET((textLayer), 0, 0, 0);
+	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP);
+	WA[textLayer].mx = 0;
+	WA[textLayer].mp = 0;
+	WA[textLayer].my = 0;
+	WA[textLayer].gx = __PRINTING_BGMAP_X_OFFSET;
+	WA[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
+	WA[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
+	WA[textLayer].w = __SCREEN_WIDTH;
+	WA[textLayer].h = __SCREEN_HEIGHT;
 }
 
 // clear printing area

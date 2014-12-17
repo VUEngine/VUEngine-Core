@@ -61,9 +61,9 @@ typedef const EntityDefinition ImageROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Image, __PARAMETERS(ImageDefinition* imageDefinition, s16 ID));
+__CLASS_NEW_DECLARE(Image, __PARAMETERS(ImageDefinition* imageDefinition, s16 id));
 
-void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 ID);
+void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 id);
 void Image_destructor(Image this);
 
 

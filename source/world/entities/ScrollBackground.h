@@ -70,9 +70,9 @@ typedef const EntityDefinition ScrollBackgroundROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 ID));
+__CLASS_NEW_DECLARE(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 id));
 
-void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 ID);
+void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 id);
 void ScrollBackground_destructor(ScrollBackground this);
 void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform);
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform);

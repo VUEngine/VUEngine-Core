@@ -870,3 +870,11 @@ Stage Game_getStage(Game this)
 
 	return GameState_getStage((GameState)StateMachine_getCurrentState(this->stateMachine));
 }
+
+// retrieve current state
+GameState Game_getCurrentState(Game this) 
+{
+	ASSERT(this, "Game::getCurrentState: null this");
+
+	return (GameState)StateMachine_getCurrentState(this->stateMachine);
+}

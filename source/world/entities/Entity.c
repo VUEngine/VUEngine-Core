@@ -57,7 +57,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID)
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
 {
 	ASSERT(this, "Entity::constructor: null this");
 
@@ -66,7 +66,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID)
 	__SET_CLASS(Entity);
 
 	// construct base Container
-	__CONSTRUCT_BASE(Container, __ARGUMENTS(ID));
+	__CONSTRUCT_BASE(Container, __ARGUMENTS(id));
 
 	// save definition
 	this->entityDefinition = entityDefinition;
@@ -183,36 +183,38 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 static void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition)
 {
 	ASSERT(this, "Entity::transform: null this");
-	ASSERT(this->sprites, "Entity::transform: null sprites");
 
-	VirtualNode node = VirtualList_begin(this->sprites);
-
-	// move each child to a temporary list
-	for (; node ; node = VirtualNode_getNext(node))
+	if(this->sprites) 
 	{
-		Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-		// update scale if needed
-		if (updateSpriteScale)
-	    {
-			// calculate the scale
-			Sprite_calculateScale(sprite, this->transform.globalPosition.z);
-
-			// scale the sprite
-			Sprite_scale(sprite);
-
-			// calculate sprite's parallax
-			Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
-
-			// reset size so it is recalculated
-			this->size.x = this->size.y = this->size.z = 0;
-		}
-
-		//if screen is moving
-		if (updateSpritePosition)
-	    {
-			//update sprite's 2D position
-			Sprite_setPosition(sprite, &this->transform.globalPosition);
+		VirtualNode node = VirtualList_begin(this->sprites);
+	
+		// move each child to a temporary list
+		for (; node ; node = VirtualNode_getNext(node))
+		{
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+	
+			// update scale if needed
+			if (updateSpriteScale)
+		    {
+				// calculate the scale
+				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
+	
+				// scale the sprite
+				Sprite_scale(sprite);
+	
+				// calculate sprite's parallax
+				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+	
+				// reset size so it is recalculated
+				this->size.x = this->size.y = this->size.z = 0;
+			}
+	
+			//if screen is moving
+			if (updateSpritePosition)
+		    {
+				//update sprite's 2D position
+				Sprite_setPosition(sprite, &this->transform.globalPosition);
+			}
 		}
 	}
 }
@@ -274,8 +276,18 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
 Scale Entity_getScale(Entity this)
 {
 	ASSERT(this, "Entity::getScale: null this");
-	ASSERT(this->sprites, "Entity::getScale: null sprites");
 
+	if(!this->sprites)
+	{
+		Scale scale = 
+		{
+			1,
+			1
+		};
+		
+		return scale;
+	}
+	
 	return Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
 }
 
@@ -315,8 +327,12 @@ int Entity_handleMessage(Entity this, Telegram telegram)
 u16 Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
-	ASSERT(this->sprites, "Entity::getWidth: null sprites");
 
+	if(!this->sprites)
+	{
+		return 0;
+	}
+	
 	if (!this->size.x)
 	{
 		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
@@ -333,7 +349,11 @@ u16 Entity_getWidth(Entity this)
 u16 Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
-	ASSERT(this->sprites, "Entity::getHeight: null sprites");
+
+	if(!this->sprites)
+	{
+		return 0;
+	}
 
 	if (!this->size.y)
 	{
@@ -379,8 +399,6 @@ int Entity_getShapeType(Entity this)
 int Entity_isVisible(Entity this, int pad)
 {
 	ASSERT(this, "Entity::isVisible: null this");
-
-	ASSERT(this->sprites, "Entity::isVisible: null sprites");
 
 	if (!this->sprites)
 	{

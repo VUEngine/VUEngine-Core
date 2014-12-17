@@ -22,9 +22,8 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <InanimatedInGameEntity.h>
+#include <InvisibleInGameEntity.h>
 #include <CollisionManager.h>
-#include <Optics.h>
 #include <Shape.h>
 #include <Prototypes.h>
 
@@ -33,8 +32,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the InanimatedInGameEntity
-__CLASS_DEFINITION(InanimatedInGameEntity);
+// define the InvisibleInGameEntity
+__CLASS_DEFINITION(InvisibleInGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -42,51 +41,44 @@ __CLASS_DEFINITION(InanimatedInGameEntity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id))
-__CLASS_NEW_END(InanimatedInGameEntity, __ARGUMENTS(inanimatedInGameEntityDefinition, id));
+__CLASS_NEW_DEFINITION(InvisibleInGameEntity, __PARAMETERS(InvisibleInGameEntityDefinition* invisibleInGameEntityDefinition, s16 id))
+__CLASS_NEW_END(InvisibleInGameEntity, __ARGUMENTS(invisibleInGameEntityDefinition, id));
 
 // class's constructor
-void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id)
+void InvisibleInGameEntity_constructor(InvisibleInGameEntity this, InvisibleInGameEntityDefinition* invisibleInGameEntityDefinition, s16 id)
 {
-	ASSERT(this, "InanimatedInGameEntity::constructor: null this");
-	ASSERT(inanimatedInGameEntityDefinition, "InanimatedInGameEntity::constructor: null definition");
+	ASSERT(this, "InvisibleInGameEntity::constructor: null this");
+	ASSERT(invisibleInGameEntityDefinition, "InvisibleInGameEntity::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&inanimatedInGameEntityDefinition->inGameEntityDefinition, id));
+	__CONSTRUCT_BASE(InanimatedInGameEntity, __ARGUMENTS(&invisibleInGameEntityDefinition->inanimatedInGameEntityDefinition, id));
 
-	// check if register for collision detection
-	if (inanimatedInGameEntityDefinition->registerShape)
-	{
-		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (Entity)this, kCuboid);
-
-		ASSERT(this->shape, "InanimatedInGameEntity::constructor: shape not created");
-	}
-
-	this->inanimatedInGameEntityDefinition = inanimatedInGameEntityDefinition;
+	this->invisibleInGameEntityDefinition = invisibleInGameEntityDefinition;
 }
 
 // class's destructor
-void InanimatedInGameEntity_destructor(InanimatedInGameEntity this)
+void InvisibleInGameEntity_destructor(InvisibleInGameEntity this)
 {
-	ASSERT(this, "InanimatedInGameEntity::destructor: null this");
+	ASSERT(this, "InvisibleInGameEntity::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(InGameEntity);
+	__DESTROY_BASE(InanimatedInGameEntity);
 }
 
-// get elasticiy
-fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this)
+// retrieve width
+u16 InvisibleInGameEntity_getWidth(InvisibleInGameEntity this)
 {
-	ASSERT(this, "InanimatedInGameEntity::getElasticity: null this");
-
-	return this->inanimatedInGameEntityDefinition->elasticity;
+	return this->invisibleInGameEntityDefinition->width;
 }
 
-// get friction
-fix19_13 InanimatedInGameEntity_getFriction(InanimatedInGameEntity this)
+// retrieve height
+u16 InvisibleInGameEntity_getHeight(InvisibleInGameEntity this)
 {
-	ASSERT(this, "InanimatedInGameEntity::getFriction: null this");
+	return this->invisibleInGameEntityDefinition->height;
+}
 
-	return this->inanimatedInGameEntityDefinition->friction;
+// retrieve deep
+u16 InvisibleInGameEntity_getDeep(InvisibleInGameEntity this)
+{
+	return this->invisibleInGameEntityDefinition->deep;
 }

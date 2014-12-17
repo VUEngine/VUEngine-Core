@@ -60,17 +60,17 @@ static void ScrollBackground_updateScrolling(ScrollBackground this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 ID))
-__CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, ID));
+__CLASS_NEW_DEFINITION(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 id))
+__CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, id));
 
 // class's constructor
-void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 ID)
+void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 id)
 {
 	ASSERT(this, "ScrollBackground::constructor: null this");
 	ASSERT(scrollBackgroundDefinition, "ScrollBackground::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, ID));
+	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, id));
 
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 

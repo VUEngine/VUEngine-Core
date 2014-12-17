@@ -117,9 +117,9 @@ void Cuboid_setup(Cuboid this)
 	ASSERT(this, "Cuboid::setup: null this");
 
 	// cuboid's center if placed on P(0, 0, 0)
-	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(u8, Entity, getWidth, (Entity)this->owner) >> 1);
-	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(u8, Entity, getHeight, (Entity)this->owner) >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(u8, Entity, getDeep, (Entity)this->owner) >> 0);
+	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, Entity, getWidth, (Entity)this->owner) >> 1);
+	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, Entity, getHeight, (Entity)this->owner) >> 1);
+	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, Entity, getDeep, (Entity)this->owner) >> 0);
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
@@ -128,8 +128,6 @@ void Cuboid_setup(Cuboid this)
 	// if owner does not move
 	if (!this->moves)
 	{
-		ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
-
 		// position the shape to avoid in real time calculation
 		VBVec3D ownerPosition = Entity_getPosition((Entity)this->owner);
 		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
@@ -153,8 +151,6 @@ void Cuboid_setup(Cuboid this)
 void Cuboid_positione(Cuboid this)
 {
 	ASSERT(this, "Cuboid::positione: null this");
-
-	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::positione: null sprites");
 
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
 
@@ -208,8 +204,6 @@ int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displ
 static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
-
-	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::getAxisOfCollisionWithCuboid: null sprites");
 
 	CACHE_ENABLE;
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
@@ -382,8 +376,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
-
-	ASSERT(Entity_getSprites((Entity)this->owner), "Cuboid::testIfCollision: null sprites");
 
 	Shape shape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
 
