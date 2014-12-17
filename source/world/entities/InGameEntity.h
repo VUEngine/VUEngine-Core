@@ -57,7 +57,6 @@ struct Shape_str;
 		Entity_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);						\
-		__VIRTUAL_SET(ClassName, InGameEntity, getDeep);						\
 		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);					\
 		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);					\
 		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);			\
@@ -101,11 +100,13 @@ typedef struct InGameEntityDefinition
 	u16 inGameType;
 
 	// object's size over the z axis
-	u8 deep;
+	u16 width;
 
-	// flag to precalculate displacement on screen movement
-	// to reduce flickering
-	u8 moves;
+	// object's size over the z axis
+	u16 height;
+
+	// object's size over the z axis
+	u16 deep;
 
 } InGameEntityDefinition;
 
@@ -124,7 +125,6 @@ void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int
 Gap InGameEntity_getGap(InGameEntity this);
 void InGameEntity_setGap(InGameEntity this);
 u16 InGameEntity_getInGameType(InGameEntity this);
-u8 InGameEntity_getDeep(InGameEntity this);
 u8 InGameEntity_moves(InGameEntity this);
 u8 InGameEntity_isMoving(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);

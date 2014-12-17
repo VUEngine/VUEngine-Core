@@ -68,7 +68,6 @@
 #include <InGameEntity.h>
 #include <AnimatedInGameEntity.h>
 #include <InanimatedInGameEntity.h>
-#include <InvisibleInGameEntity.h>
 #include <Actor.h>
 #include <Image.h>
 #include <ScrollBackground.h>
@@ -476,7 +475,6 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 			{&InGameEntity_getObjectSize, "InGameEntity"},
 			{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
 			{&InanimatedInGameEntity_getObjectSize, "Inanim. InGameEntity"},
-			{&InvisibleInGameEntity_getObjectSize, "Invis. InGameEntity"},
 			{&Actor_getObjectSize, "Actor"},
 			{&Image_getObjectSize, "Image"},
 			{&ScrollBackground_getObjectSize, "ScrollBackg."},

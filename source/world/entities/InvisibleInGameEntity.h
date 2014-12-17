@@ -38,18 +38,12 @@
 
 #define InvisibleInGameEntity_SET_VTABLE(ClassName)								\
 		InanimatedInGameEntity_SET_VTABLE(ClassName)							\
-		__VIRTUAL_SET(ClassName, InvisibleInGameEntity, getWidth);				\
-		__VIRTUAL_SET(ClassName, InvisibleInGameEntity, getHeight);				\
-		__VIRTUAL_SET(ClassName, InvisibleInGameEntity, getDeep);				\
 
 // A InvisibleInGameEntity which represent a generic object inside a Stage
 #define InvisibleInGameEntity_ATTRIBUTES										\
 																				\
 	/* super's attributes */													\
 	InanimatedInGameEntity_ATTRIBUTES											\
-																				\
-	/* ROM definition */														\
-	InvisibleInGameEntityDefinition* invisibleInGameEntityDefinition;			\
 
 __CLASS(InvisibleInGameEntity);
 
@@ -86,9 +80,6 @@ __CLASS_NEW_DECLARE(InvisibleInGameEntity, __PARAMETERS(InvisibleInGameEntityDef
 
 void InvisibleInGameEntity_constructor(InvisibleInGameEntity this, InvisibleInGameEntityDefinition* invisibleInGameEntityDefinition, s16 id);
 void InvisibleInGameEntity_destructor(InvisibleInGameEntity this);
-u16 InvisibleInGameEntity_getWidth(InvisibleInGameEntity this);
-u16 InvisibleInGameEntity_getHeight(InvisibleInGameEntity this);
-u16 InvisibleInGameEntity_getDeep(InvisibleInGameEntity this);
 
 
 #endif

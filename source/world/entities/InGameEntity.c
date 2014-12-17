@@ -56,6 +56,10 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 
 	this->inGameEntityDefinition = inGameEntityDefinition;
 
+	this->size.x = inGameEntityDefinition->width;
+	this->size.y = inGameEntityDefinition->height;
+	this->size.z = inGameEntityDefinition->deep;
+
 	this->gap = this->inGameEntityDefinition->gap;
 
 	this->direction.x = __RIGHT;
@@ -125,14 +129,6 @@ u16 InGameEntity_getInGameType(InGameEntity this)
 	ASSERT(this, "InGameEntity::getInGameType: null this");
 
 	return this->inGameType;
-}
-
-// retrieve deep
-u8 InGameEntity_getDeep(InGameEntity this)
-{
-	ASSERT(this, "InGameEntity::getDeep: null this");
-
-	return this->inGameEntityDefinition->deep;
 }
 
 // does it moves?

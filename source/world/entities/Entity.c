@@ -206,7 +206,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
 	
 				// reset size so it is recalculated
-				this->size.x = this->size.y = this->size.z = 0;
+				this->size.x = this->size.y = 0;
 			}
 	
 			//if screen is moving
@@ -328,12 +328,7 @@ u16 Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
 
-	if(!this->sprites)
-	{
-		return 0;
-	}
-	
-	if (!this->size.x)
+	if (!this->size.x && this->sprites)
 	{
 		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 		Texture texture = Sprite_getTexture(sprite);
@@ -350,12 +345,7 @@ u16 Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
 
-	if(!this->sprites)
-	{
-		return 0;
-	}
-
-	if (!this->size.y)
+	if (!this->size.y && this->sprites)
 	{
 		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 		Texture texture = Sprite_getTexture(sprite);
