@@ -79,12 +79,6 @@ void GameState_destructor(GameState this)
 void GameState_enter(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::enter: null this");
-
-	// reset the global clock
-	//Clock_reset(Game_getClock(Game_getInstance()));
-
-	Clock_reset(Game_getInGameClock(Game_getInstance()));
-	Clock_start(Game_getInGameClock(Game_getInstance()));
 }
 
 // state's execute
@@ -105,8 +99,14 @@ void GameState_exit(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::exit: null this");
 
-	// destroy the state
-	__DELETE(this);
+	// make sure to free the memory
+	if (this->stage)
+	{
+		// destroy the stage
+		__DELETE(this->stage);
+	}
+
+	this->stage = NULL;
 }
 
 // state's execute
