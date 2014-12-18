@@ -62,8 +62,8 @@ void TextureManager_free(TextureManager this, Texture texture);
 u8 TextureManager_getFreeBgmap(TextureManager this);
 void TextureManager_allocateText(TextureManager this, Texture texture);
 Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition);
-u8 TextureManager_getXOffset(TextureManager this, int id);
-u8 TextureManager_getYOffset(TextureManager this, int id);
+s8 TextureManager_getXOffset(TextureManager this, int id);
+s8 TextureManager_getYOffset(TextureManager this, int id);
 u8 TextureManager_getBgmapSegment(TextureManager this, int id);
 void TextureManager_print(TextureManager this, int x, int y);
 

@@ -61,7 +61,7 @@ static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const 
 	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(spriteDefinition));
 
 	// since the offset will be moved during animation, must save it
-	this->originalTextureXOffset = Texture_getXOffset(this->texture);
+	this->originalTextureXOffset = abs(Texture_getXOffset(this->texture));
 
 	// set the owner
 	this->owner = owner;
@@ -442,5 +442,5 @@ void AnimatedSprite_write(AnimatedSprite this)
 	Texture_write(this->texture);
 
 	// save the original offset
-	this->originalTextureXOffset = Texture_getXOffset(this->texture);
+	this->originalTextureXOffset = abs(Texture_getXOffset(this->texture));
 }

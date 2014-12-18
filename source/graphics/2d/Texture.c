@@ -94,8 +94,13 @@ static void Texture_writeAnimated(Texture this)
 	int charLocation = (CharGroup_getCharSet(this->charGroup) << 9) + CharGroup_getOffset(this->charGroup);
 	int i = this->textureDefinition->rows;
 
-	int xOffset = TextureManager_getXOffset(TextureManager_getInstance(), this->id);
-	int yOffset = TextureManager_getYOffset(TextureManager_getInstance(), this->id);
+	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
+	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
+
+	if(0 > xOffset || 0 > yOffset)
+	{
+		return;
+	}
 
 	//put the map into memory calculating the number of char for each reference
 	for (; i--;)
@@ -119,9 +124,14 @@ static void Texture_writeNoAnimated(Texture this)
 	int charLocation = (CharGroup_getCharSet(this->charGroup) << 9) + CharGroup_getOffset(this->charGroup);
 	int i = this->textureDefinition->rows;
 
-	int xOffset = TextureManager_getXOffset(TextureManager_getInstance(), this->id);
-	int yOffset = TextureManager_getYOffset(TextureManager_getInstance(), this->id);
+	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
+	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
 
+	if(0 > xOffset || 0 > yOffset)
+	{
+		return;
+	}
+	
 	//put the map into memory calculating the number of char for each reference
 	for (; i--;)
 	{
@@ -148,8 +158,13 @@ static void Texture_writeAnimatedShared(Texture this)
 
 	int i = this->textureDefinition->rows;
 
-	int xOffset = TextureManager_getXOffset(TextureManager_getInstance(), this->id);
-	int yOffset = TextureManager_getYOffset(TextureManager_getInstance(), this->id);
+	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
+	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
+
+	if(0 > xOffset || 0 > yOffset)
+	{
+		return;
+	}
 
 	//put the map into memory calculating the number of char for each reference
 	for (; i--;)
@@ -298,20 +313,20 @@ int Texture_getNumberOfChars(Texture this)
 	return CharGroup_getNumberOfChars(this->charGroup);
 }
 
-// get texture's y offset within bgmap mem
-u8 Texture_getYOffset(Texture this)
-{
-	ASSERT(this, "Texture::getYOffset: null this");
-
-	return TextureManager_getYOffset(TextureManager_getInstance(), this->id);
-}
-
 // get texture's x offset within bgmap mem
 u8 Texture_getXOffset(Texture this)
 {
 	ASSERT(this, "Texture::getXOffset: null this");
 
-	return TextureManager_getXOffset(TextureManager_getInstance(), this->id);
+	return abs(TextureManager_getXOffset(TextureManager_getInstance(), this->id));
+}
+
+// get texture's y offset within bgmap mem
+u8 Texture_getYOffset(Texture this)
+{
+	ASSERT(this, "Texture::getYOffset: null this");
+
+	return abs(TextureManager_getYOffset(TextureManager_getInstance(), this->id));
 }
 
 // get texture's cols

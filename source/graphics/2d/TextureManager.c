@@ -38,13 +38,13 @@
 	u16 numberOfChars[__NUM_BGMAPS];											\
 																				\
 	/* current x offset to set the next bgmap */								\
-	u8 xOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
+	s16 xOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
 																				\
 	/* current y offset to set the next bgmap */								\
-	u8 yOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
+	s16 yOffset[__NUM_BGMAPS][__NUM_MAPS_PER_SEG];								\
 																				\
 	/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 				\
-	u8 offset[__NUM_BGMAPS * __NUM_MAPS_PER_SEG][3];							\
+	s8 offset[__NUM_BGMAPS * __NUM_MAPS_PER_SEG][3];							\
 																				\
 	/* next free bgmap used for text printing */								\
 	u8 freeBgmap;																\
@@ -121,9 +121,9 @@ void TextureManager_reset(TextureManager this)
 
 	for (i = 0; i < __NUM_BGMAPS * __NUM_MAPS_PER_SEG; i++)
 	{
-		this->offset[i][kXOffset] = 0;
-		this->offset[i][kYOffset] = 0;
-		this->offset[i][kBgmapSegment] = 0;
+		this->offset[i][kXOffset] = -1;
+		this->offset[i][kYOffset] = -1;
+		this->offset[i][kBgmapSegment] = -1;
 
 		if (this->texture[i])
 		{
@@ -144,10 +144,9 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	int i = 0;
 	int j = 0;
 	int aux = 0;
-	//int bgmapMask = 0x0001;
 
-	u8 rows = Texture_getRows(texture) + 1;
-	u8 cols = Texture_getTotalCols(texture) + 1;
+	u8 rows = Texture_getRows(texture);
+	u8 cols = Texture_getTotalCols(texture);
 
 	u16 area = rows * cols;
 
@@ -155,10 +154,11 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	CACHE_ENABLE;
 	if (Texture_getNumberOfChars(texture))
 	{
-		for (i = 0; i < __NUM_BGMAPS; i++){
-			//if there is space in the segment memory
+		for (i = 0; i < __NUM_BGMAPS; i++)
+		{
+			// if there is space in the segment memory
 			// there are 4096 chars in each bgmap segment
-			if ((4096 - this->numberOfChars[i]) >= area )
+			if ((int)(4096 - this->numberOfChars[i]) >= (int)area )
 			{
 				//check if there is space within the segment
 				// we check the next so don't go to the last element
@@ -175,7 +175,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 					}
 
 					//determine if there is still mem space (columns) in the current y offset
-					if (rows <= aux - this->yOffset[i][j] || (!this->yOffset[i][j+1]))
+					if (rows <= aux - this->yOffset[i][j] || (!this->yOffset[i][j + 1]))
 					{
 						if (rows <= 64 - this->yOffset[i][j])
 						{
@@ -193,9 +193,9 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 
 								//if the number of rows of the bgmap definition is greater than the
 								//next y offset defined, increase the next y offset
-								if (this->yOffset[i][j+1] - this->yOffset[i][j] < rows)
+								if (this->yOffset[i][j + 1] - this->yOffset[i][j] < rows)
 								{
-									this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;
+									this->yOffset[i][j + 1] = this->yOffset[i][j] + rows ;
 								}
 								else
 								{
@@ -443,7 +443,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 }
 
 // retrieve x offset
-u8 TextureManager_getXOffset(TextureManager this, int id)
+s8 TextureManager_getXOffset(TextureManager this, int id)
 {
 	ASSERT(this, "TextureManager::getXOffset: null this");
 
@@ -451,7 +451,7 @@ u8 TextureManager_getXOffset(TextureManager this, int id)
 }
 
 // retrieve y offset
-u8 TextureManager_getYOffset(TextureManager this, int id)
+s8 TextureManager_getYOffset(TextureManager this, int id)
 {
 	ASSERT(this, "TextureManager::getYOffset: null this");
 

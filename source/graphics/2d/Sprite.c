@@ -36,6 +36,9 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -346,13 +349,13 @@ void Sprite_render(Sprite this)
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 
 //				worldPointer->param = PARAM(this->param);
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
 			else
 			{
-				worldPointer->w = ((int)Texture_getCols(this->texture))<< 3;
-				worldPointer->h = ((int)Texture_getRows(this->texture))<< 3;
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
 
 			this->renderFlag = false;
@@ -390,13 +393,13 @@ void Sprite_render(Sprite this)
 
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - 1;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
 			else
 			{
-				worldPointer->w = ((int)Texture_getCols(this->texture))<< 3;
-				worldPointer->h = ((int)Texture_getRows(this->texture))<< 3;
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
 		}
 
