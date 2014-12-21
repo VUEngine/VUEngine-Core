@@ -1,0 +1,10 @@
+libgccvb was created in a collaborative effort by:
+Amos "RunnerPack" Bieler
+Alberto "Virtual-E" Covarrubias
+Cody "frostgiant" Planteen
+David Tucker
+"Parasyte"
+Pat "DogP" Daderko
+And probably others... (You know who you are!)
+
+Refactored to work better with the VBJaEngine.

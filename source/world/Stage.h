@@ -33,6 +33,17 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+// max length of a stage's string identifier
+#define __MAX_STAGE_IDENTIFIER_LENGTH 8
+
+// max length of a stage's name
+#define __MAX_STAGE_NAME_LENGTH	32
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -104,6 +115,12 @@ typedef struct StageDefinition
 
 	// pointer to the background music
 	const u16 (*bgm)[];
+
+	// stages's identifier
+	char identifier[__MAX_STAGE_IDENTIFIER_LENGTH];
+
+	// stages's name
+	char name[__MAX_STAGE_NAME_LENGTH];
 
 } StageDefinition;
 

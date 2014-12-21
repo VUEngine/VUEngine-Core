@@ -33,17 +33,19 @@
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
+
 // event
 #define __EVENT_ANIMATION_COMPLETE	"animationComplete"
 
-//max leght of an animation function's name
-#define __MAX_ANIMATION_FUNCTION_NAME_LENGHT	20
+// max length of an animation function's name
+#define __MAX_ANIMATION_FUNCTION_NAME_LENGTH	20
 
 // max number of frames per animation function
 #define __MAX_FRAMES_PER_ANIMATION_FUNCTION		16
 
 // max number of animation functions per description
 #define __MAX_ANIMATION_FUNCTIONS				32
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -117,7 +119,7 @@ typedef struct AnimationFunction
 	void* onAnimationComplete;
 
 	// function's name
-	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGHT];
+	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];
 
 } AnimationFunction;
 

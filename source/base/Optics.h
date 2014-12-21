@@ -43,14 +43,14 @@ extern VBVec3D*_screenPosition;
 // 												3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-//calculate the parallax
+// calculate the parallax
 inline extern  int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 {
 	fix19_13 leftEyePoint, rightEyePoint;
 
 	fix19_13 leftEjeGx, rightEjeGx;
 
-	//set map position and parallax
+	// set map position and parallax
 	leftEyePoint = _optical->horizontalViewPointCenter - (_optical->baseDistance >> 1);
 
 	rightEyePoint = _optical->horizontalViewPointCenter + (_optical->baseDistance >> 1);
@@ -143,12 +143,13 @@ inline extern int vbjInsideGame(VBVec3D position3D, int width, int height)
 	return false;
 }
 
-// determine the squared lenght of a given vector
+// determine the squared length of a given vector
 inline extern int Optics_lengthSquared3D(VBVec3D vect1, VBVec3D vect2)
 {
 	return  FIX19_13TOI(FIX19_13_MULT((vect1.x - vect2.x), (vect1.x - vect2.x)) +
 			FIX19_13_MULT((vect1.y - vect2.y), (vect1.y - vect2.y))+
 			FIX19_13_MULT((vect1.z - vect2.z), (vect1.z - vect2.z)));
 }
+
 
 #endif

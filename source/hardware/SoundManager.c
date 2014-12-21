@@ -259,7 +259,7 @@ void SoundManager_playBGM(SoundManager this)
 	//only if bgm loaded
 	if (this->bgm != NULL)
 	{
-		//check if note's lenght have been played
+		//check if note's length has been played
 		if (this->noteWait[0] > this->bgm[0][1])
 		{
 			//move to the next note
@@ -397,7 +397,7 @@ void SoundManager_playFxSounds(SoundManager this)
 		//only if fx defined
 		if (this->fxSound[fxS])
 		{
-			//check if note's lenght have been played
+			//check if note's length has been played
 			if (this->noteWait[fxS+1] > this->fxSound[fxS][1])
 			{
 				//move to the next note
