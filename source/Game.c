@@ -117,44 +117,19 @@ __CLASS_DEFINITION(Game);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
 Optical* _optical = NULL;
 
-// class's constructor
 static void Game_constructor(Game this);
-
-// setup engine paramenters
 static void Game_initialize(Game this);
-
-// initialize optic paramenters
 static void Game_setOpticalGlobals(Game this);
-
-// set game's state
 static void Game_setState(Game this, State state);
-
-// process input data according to the actual game status
 static void Game_handleInput(Game this);
-
-// update game's logic subsystem
 static void Game_updateLogic(Game this);
-
-// update game's physics subsystem
 static void Game_updatePhysics(Game this);
-
-// update game's rendering subsystem
 static void Game_updateRendering(Game this);
-
-// do defragmentation, memory recovy, etc
 static void Game_cleanUp(Game this);
+static void Game_showLowBatteryIndicator(Game this);
 
-/* ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * 												CLASS'S METHODS
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- * ---------------------------------------------------------------------------------------------------------
- */
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -582,6 +557,13 @@ static void Game_handleInput(Game this)
 		// inform the game about the hold key
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
 	}
+
+    // check for low battery
+	// TODO: check if this actually works in hardware
+	if (__LOWBAT_SHOW && (holdKey & K_PWR))
+	{
+	    Game_showLowBatteryIndicator(this);
+	}
 }
 
 // update game's logic subsystem
@@ -877,4 +859,11 @@ GameState Game_getCurrentState(Game this)
 	ASSERT(this, "Game::getCurrentState: null this");
 
 	return (GameState)StateMachine_getCurrentState(this->stateMachine);
+}
+
+// check for low battery and show indicator, if appropriate
+static void Game_showLowBatteryIndicator(Game this)
+{
+    u8 currentSecond = Clock_getSeconds(Game_getInGameClock(Game_getInstance()));
+    Printing_text((currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y);
 }

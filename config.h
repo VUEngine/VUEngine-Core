@@ -65,6 +65,7 @@
 // parallax values are divide by this factor to control it's strenght
 #define __PARALLAX_CORRECTION_FACTOR			20
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
@@ -99,11 +100,12 @@
 //seconds that must elapse to call rest state... in seconds (15 minutes)
 #define __REST_DELAY 		            900
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-#define __MEMORY_POOLS	9
+#define __MEMORY_POOLS		9
 
 //each block size
 #define __BLOCK_512B 		512
@@ -275,6 +277,18 @@
 #define __BRTA					0x00
 #define __BRTB					0x00
 #define __BRTC					0x00
+
+
+//---------------------------------------------------------------------------------------------------------
+// 									LOW BATTERY INDICATOR
+//---------------------------------------------------------------------------------------------------------
+
+// whether to show low battery indicator or not
+#define __LOWBAT_SHOW	    1
+
+// position of battery indicator
+#define __LOWBAT_POS_X	    45
+#define __LOWBAT_POS_Y	    1
 
 
 //---------------------------------------------------------------------------------------------------------
