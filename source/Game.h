@@ -85,6 +85,7 @@ int Game_isInAnimationEditor(Game this);
 int Game_isInSpecialMode(Game this);
 StateMachine Game_getStateMachine(Game this);
 Stage Game_getStage(Game this);
+GameState Game_getCurrentState(Game this);
 
 
 #endif

@@ -872,7 +872,7 @@ Stage Game_getStage(Game this)
 }
 
 // retrieve current state
-GameState Game_getCurrentState(Game this) 
+GameState Game_getCurrentState(Game this)
 {
 	ASSERT(this, "Game::getCurrentState: null this");
 
