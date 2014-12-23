@@ -106,9 +106,11 @@
 	/* last process' name */													\
 	char* lastProcessName;														\
 																				\
-	/* flag to autopause or not the game*/ 										\
-	/* after 15 minutes of play */ 												\
+	/* flag to autopause the game after 15 minutes of play or not */ 			\
 	u8 restFlag;																\
+																				\
+	/* seconds the battery status was last checked */							\
+	u8 lowbatLastCheckSeconds;													\
 
 __CLASS_DEFINITION(Game);
 
@@ -205,6 +207,9 @@ static void Game_constructor(Game this)
 	// setup global pointers
 	// need globals to speed up critical processes
 	_optical = &this->optical;
+
+    // init low battery last check
+    this->lowbatLastCheckSeconds = 0;
 
 	// setup engine paramenters
 	Game_initialize(this);
@@ -558,7 +563,7 @@ static void Game_handleInput(Game this)
 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
 	}
 
-    // check for low battery
+    // check for low battery and show indicator, if appropriate
 	// TODO: check if this actually works in hardware
 	if (__LOWBAT_SHOW && (holdKey & K_PWR))
 	{
@@ -861,9 +866,13 @@ GameState Game_getCurrentState(Game this)
 	return (GameState)StateMachine_getCurrentState(this->stateMachine);
 }
 
-// check for low battery and show indicator, if appropriate
+// print low battery indicator
 static void Game_showLowBatteryIndicator(Game this)
 {
     u8 currentSecond = Clock_getSeconds(Game_getInGameClock(Game_getInstance()));
-    Printing_text((currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y);
+    // write only if one second has passed
+    if (currentSecond != this->lowbatLastCheckSeconds) {
+        Printing_text((currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y);
+        this->lowbatLastCheckSeconds = currentSecond;
+    }
 }
