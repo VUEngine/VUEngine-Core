@@ -94,10 +94,7 @@
 // and multiply by this factor
 #define __FPS_ANIM_FACTOR 	            (__TARGET_FPS / (float)__OPTIMUM_FPS)
 
-//seconds that must elapse to call rest state... in seconds (15 minutes)
-#define __REST_DELAY 		900
-
-//seconds that must elapse to call rest state... in seconds (15 minutes)
+// seconds that must elapse to call rest state... in seconds (15 minutes)
 #define __REST_DELAY 		            900
 
 
@@ -157,6 +154,7 @@
 // 										SPRITE MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
+// total number of layers
 // basically the number of WORLDS
 #define __TOTAL_LAYERS			32
 
