@@ -56,7 +56,7 @@ static int DebugState_handleMessage(DebugState this, void* owner, Telegram teleg
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern const u16 FontTiles[];
+extern const u16 VBJAE_DEFAULT_FONT[];
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens

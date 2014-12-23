@@ -42,7 +42,7 @@
 static const u16* _fontCharDefinition = NULL;
 
 // fall back measure
-extern const u16 FontTiles[];
+extern const u16 VBJAE_DEFAULT_FONT[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ void Printing_loadFont()
 	// check that character definitions is not null
 	if (!_fontCharDefinition)
 	{
-		_fontCharDefinition = (const u16*)FontTiles;
+		_fontCharDefinition = (const u16*)VBJAE_DEFAULT_FONT;
 	}
 
 	//copy font char definition to char segment 3
