@@ -234,7 +234,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		Body body = (Body)VirtualNode_getData(node);
 
 		// check if must apply gravity
-		int gravitySensibleAxis = Actor_canMoveOverAxis((Actor)Body_getOwner(body), &this->gravity);
+		bool gravitySensibleAxis = Actor_canMoveOverAxis((Actor)Body_getOwner(body), &this->gravity);
 
 		if (gravitySensibleAxis)
 		{
@@ -282,7 +282,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 #endif
 
 	// get the elapsed time
-	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILISECONDS_IN_SECOND / 10));
+	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILLISECONDS_IN_SECOND / 10));
 
 	if (0 == this->elapsedTime)
 	{
@@ -330,7 +330,7 @@ void PhysicalWorld_reset(PhysicalWorld this)
 }
 
 // check if an entity has been registered
-int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner)
+bool PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner)
 {
 	ASSERT(this, "PhysicalWorld::isEntityRegistered: null this");
 	ASSERT(this->bodies, "PhysicalWorld::isEntityRegistered: null bodies");

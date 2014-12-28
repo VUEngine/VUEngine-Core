@@ -263,7 +263,6 @@ static void MemoryPool_reset(MemoryPool this)
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool16B);
 	this->poolSizes[pool++][eBlockSize] = __BLOCK_16B;
 
-
 	/*
 	this->poolLocation[pool] = this->pool8B;
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool8B);
@@ -297,7 +296,6 @@ int MemoryPool_getPoolSize(MemoryPool this)
 	size += sizeof(this->pool32B);
 	size += sizeof(this->pool24B);
 	size += sizeof(this->pool16B);
-
 
 	return size;
 }

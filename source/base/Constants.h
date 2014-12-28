@@ -22,32 +22,26 @@
 #define CONSTANTS_H_
 
 
-#include <Error.h>
 //---------------------------------------------------------------------------------------------------------
-// 							!!!!!The next values must NOT be changed!!!!!!
+// 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-//override null definition (because we don't want to include standard C libraries)
+#include <Error.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DEFINES
+//---------------------------------------------------------------------------------------------------------
+
+// override null definition (because we don't want to include standard C libraries)
 #define NULL 	(void *)0x00000000
 
-// booleans
-#define true 	(u8)1
-#define false 	(u8)0
-
-//---------------------------------------------------------------------------------------------------------
-// 										AXES
-//---------------------------------------------------------------------------------------------------------
-
-//axis definitions
+// axis definitions
 #define __XAXIS 		0x01
 #define __YAXIS 		0x02
 #define __ZAXIS 		0x04
 
-
-//---------------------------------------------------------------------------------------------------------
-// 										MESSAGES
-//---------------------------------------------------------------------------------------------------------
-
+// messages
 enum MessagesTypes
 {
 	// general porpuse messages
@@ -74,16 +68,13 @@ enum MessagesTypes
 	kBodyChangedDirection,
 	kBodySleep,
 
-
 	// don't place messages below this:
 	kLastEngineMessage
 };
 
-
-
-
-#define NM_ASSERT( STATEMENT, ... )																\
-	if (!(STATEMENT)) { 																\
+#define NM_ASSERT( STATEMENT, ... )													\
+	if (!(STATEMENT))																\
+	{ 																				\
 		/* thrown exception */														\
 		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__));	\
 	}
@@ -95,10 +86,12 @@ enum MessagesTypes
 
 #else
 	#define ASSERT( STATEMENT, MESSAGE )											\
-	if (!(STATEMENT)) { 																\
+	if (!(STATEMENT)) 																\
+	{																				\
 		/* thrown exception */														\
 		Error_triggerException(Error_getInstance(), MESSAGE);						\
 	}
 #endif
 
-#endif /*CONSTANTS_H_*/
+
+#endif

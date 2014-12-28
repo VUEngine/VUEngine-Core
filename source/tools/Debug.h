@@ -53,52 +53,29 @@ typedef struct ClassSizeData
 	int (*classSizeFunction)(void);
 	char* name;
 
-}ClassSizeData;
+} ClassSizeData;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 Debug Debug_getInstance();
 
-// class's destructor
 void Debug_destructor(Debug this);
-
-// update
 void Debug_update(Debug this);
-
-// show debug screens
 void Debug_show(Debug this, GameState gameState);
-
-// hide debug screens
 void Debug_hide(Debug this);
-
-// show previous page
 void Debug_showPreviousPage(Debug this);
-
-// show next page
 void Debug_showNextPage(Debug this);
-
-// show previous sub page
 void Debug_showPreviousSubPage(Debug this);
-
-// show next sub page
 void Debug_showNextSubPage(Debug this);
-
-// displace view to the left
 void Debug_diplaceLeft(Debug this);
-
-// displace view to the right
 void Debug_diplaceRight(Debug this);
-
-// displace view up
 void Debug_diplaceUp(Debug this);
-
-// displace view down
 void Debug_diplaceDown(Debug this);
 
 #endif
 
-#endif /*CLOCK_H_*/
+
+#endif

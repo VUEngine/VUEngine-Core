@@ -59,7 +59,7 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 void PhysicalWorld_start(PhysicalWorld this);
 void PhysicalWorld_update(PhysicalWorld this);
 void PhysicalWorld_reset(PhysicalWorld this);
-int PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner);
+bool PhysicalWorld_isEntityRegistered(PhysicalWorld this, Actor owner);
 Body PhysicalWorld_getBody(PhysicalWorld this, Actor owner);
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);

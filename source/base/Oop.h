@@ -25,47 +25,42 @@
 #define __PARAMETERS(...)  ,__VA_ARGS__
 #define __ARGUMENTS(...)  ,__VA_ARGS__
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // concatenate two strigs
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
 #define __CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // call to this method only once
 #define __CALL_ONCE(MethodName, ...)											\
 																				\
 	{																			\
 		/* a static flag */														\
-		static u8 __callFlag = false;											\
+		static bool __callFlag = false;											\
 																				\
 		/* check if not called */												\
-		if (!__callFlag){														\
-																				\
+		if (!__callFlag)														\
+		{																		\
 			/* call method */													\
 			MethodName(__VA_ARGS__);											\
 		}																		\
 	}
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // to support in run time abstract class instantiation and debug
 #define __DEFINE_CHECK_VTABLE(ClassName)										\
 																				\
 	/* define the checking method */											\
 	void ClassName  ## _checkVTable()											\
 	{																			\
-																				\
 		/* check that each entry in the table is not NULL */					\
 		int i = 0;																\
-		for (; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++){			\
-																				\
+		for (; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++)			\
+		{																		\
 			/* check each entry */												\
 			NM_ASSERT(((void**)&ClassName ## _vTable)[i],						\
 					ClassName ## is abstract);									\
 		}																		\
 	}
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // call to check that the vtable doesn't have null pointers
 #define __CHECK_VTABLE(ClassName)												\
 																				\
@@ -73,7 +68,6 @@
 	__CALL_ONCE(ClassName  ## _checkVTable);
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // define the class's method which allocates the instances
 #define __ALLOCATOR_DEFINITION(ClassName)										\
 																				\
@@ -96,7 +90,6 @@
 																				\
 	}
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // define the class's allocator declaration
 #define __CLASS_NEW_DECLARE(ClassName, ...)										\
 																				\
@@ -104,13 +97,12 @@
 	ClassName ClassName ## _new(int dummy __VA_ARGS__)
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // define the class's allocator
 #define __CLASS_NEW_DEFINITION(ClassName, ...)									\
 																				\
 	/* define the method */														\
-	ClassName ClassName ## _new(int dummy __VA_ARGS__){							\
-																				\
+	ClassName ClassName ## _new(int dummy __VA_ARGS__)							\
+	{																			\
 		/* create the object and allocate memory for it */						\
 		ClassName this = ClassName ## _allocator();								\
 																				\
@@ -118,7 +110,6 @@
 		if (!this) return NULL;													\
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // end class's allocator
 #define __CLASS_NEW_END(ClassName, ...)											\
 																				\
@@ -139,7 +130,6 @@
 	}
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // like new in C++
 #define __NEW(ClassName, ...)													\
 																				\
@@ -147,7 +137,6 @@
 	ClassName ## _new(0 __VA_ARGS__)
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // like delete in C++ (calls virtual destructor)
 #define __DELETE(Object)														\
 																				\
@@ -155,7 +144,6 @@
 	((void (*)(void*))((void***)Object)[0][0])(Object);
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // like new in C++
 #define __NEW_BASIC(ClassName)													\
 																				\
@@ -165,14 +153,12 @@
 
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // like delete in C++ (calls virtual destructor)
 #define __DELETE_BASIC(Object)													\
 																				\
 	/* free the memory */														\
 	MemoryPool_free(MemoryPool_getInstance(), (void*)Object)
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // construct the base object
 #define __CONSTRUCT_BASE(ClassName, ...)										\
 																				\
@@ -183,7 +169,6 @@
 	ClassName ## _constructor((ClassName)this __VA_ARGS__);
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // must always call base class's destructor
 #define __DESTROY_BASE(SuperClass)												\
 																				\
@@ -191,9 +176,8 @@
 	SuperClass ## _destructor((SuperClass)this);								\
 																				\
 	/* if dynamically created */												\
-	if (this->dynamic){															\
-																				\
-		/*  */																	\
+	if (this->dynamic)															\
+	{																			\
 		this->dynamic = false;													\
 																				\
 		/* free the memory */													\
@@ -202,14 +186,12 @@
 
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // retrieve virtual method's address
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, Object, ...)				\
 																				\
 	/* call derived implementation */											\
 	(((struct ClassName ## _vTable*)((*((void**)Object))))->MethodName)
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
 #ifdef __DEBUG
 #define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, Object, ...)			\
@@ -246,7 +228,6 @@
 					Object __VA_ARGS__											\
 			)																	\
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // cast macro
 #define __GET_CAST(ClassName, Object)											\
 		(																		\
@@ -264,7 +245,6 @@
 		)
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // declare a virtual method
 #define __VIRTUAL_DEC(MethodName)												\
 																				\
@@ -272,7 +252,6 @@
 	void* MethodName
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // override a virtual method
 #define __VIRTUAL_SET(ClassVTable, ClassName, MethodName)						\
 																				\
@@ -280,14 +259,12 @@
 	ClassVTable ## _vTable.MethodName = ClassName ## _ ## MethodName
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // call configure class's vtable method
 #define __SET_CLASS(ClassName)													\
 																				\
 	/* setup the class's vtable on first call only */							\
 	__CALL_ONCE(ClassName ## _setVTable)
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // configure class's vtable
 #define __SET_VTABLE(ClassName)													\
 																				\
@@ -304,7 +281,6 @@
 		__VIRTUAL_SET(ClassName, ClassName, getClassName);						\
 	}
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // class's vtable declaration and instantiation
 #define __VTABLE(ClassName)														\
 																				\
@@ -325,7 +301,6 @@
 																				\
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // declare a class
 #define __CLASS(ClassName)														\
 																				\
@@ -341,7 +316,6 @@
 	/* declare getClass name method */											\
 	char* ClassName ## _getClassName()
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // define a class
 #define __CLASS_DEFINITION(ClassName)											\
 																				\
@@ -375,17 +349,14 @@
 	__ALLOCATOR_DEFINITION(ClassName)
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // retrieves object's class' name
 #define __GET_CLASS_NAME(object)												\
 																				\
 	__VIRTUAL_CALL(char*, Object, getClassName, (Object)object)
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // declare an object type
 #define __TYPE(ClassName)	ClassName ## _new
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // defines a singleton (unique instance of a class)
 #define __SINGLETON(ClassName)													\
 																				\
@@ -396,8 +367,8 @@
 	static s8 _singletonConstructed = -1;										\
 																				\
 	/* define get instance method */											\
-	ClassName ClassName ## _getInstance(){										\
-																				\
+	ClassName ClassName ## _getInstance()										\
+	{																			\
 		/* set the vtable */													\
 		__SET_CLASS(ClassName);													\
 																				\
@@ -424,7 +395,6 @@
 		return &_instance ## ClassName;											\
 	}
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // must always call base class's destructor
 #define __SINGLETON_DESTROY(SuperClass)											\
 																				\
@@ -435,7 +405,6 @@
 	_singletonConstructed = -1;													\
 
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // defines a dynamic singleton (unique instance of a class)
 #define __SINGLETON_DYNAMIC(ClassName)											\
 																				\
@@ -450,8 +419,8 @@
 	static s8 _singletonConstructed = -1;										\
 																				\
 	/* define get instance method */											\
-	ClassName ClassName ## _getInstance(){										\
-																				\
+	ClassName ClassName ## _getInstance()										\
+	{																			\
 		/* set the vtable */													\
 		__SET_CLASS(ClassName);													\
 																				\
@@ -476,7 +445,6 @@
 		return _instance ## ClassName;											\
 	}
 
-/* ---------------------------------------------------------------------------------------------------------*/
 // gcc has a bug, it doesn't move back the sp register after returning
 // from a variadic call
 #define __CALL_VARIADIC(VariadicFunctionCall)									\

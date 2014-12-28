@@ -246,7 +246,6 @@ static void Debug_lightUpGame(Debug this)
 void Debug_update(Debug this)
 {
 	if (this->update)
-
 	{
 		((void (*)(Debug))this->update)(this);
 	}
@@ -339,7 +338,6 @@ void Debug_showNextSubPage(Debug this)
 static void Debug_showPage(Debug this, int increment)
 {
 	if (this->currentPage && VirtualNode_getData(this->currentPage))
-
 	{
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
@@ -355,7 +353,6 @@ static void Debug_showPage(Debug this, int increment)
 static void Debug_showSubPage(Debug this, int increment)
 {
 	if (this->currentSubPage && VirtualNode_getData(this->currentSubPage))
-
 	{
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
@@ -550,7 +547,6 @@ static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
 	int i = 0;
 	int j = 0;
 	for (; i <  __CHAR_SEGMENT_TOTAL_CHARS; i+= 2, j++)
-
 	{
 		CHAR_MEMORY_MP[i] = (BYTE)(j & 0xFF);
 		CHAR_MEMORY_MP[i + 1] = (BYTE)((j & 0xFF00) >> 8);
@@ -740,7 +736,6 @@ static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int 
 
 	int i = 0;
 	for (; classesSizeData[i].classSizeFunction && (0 == size || i < size); i++)
-
 	{
 		Printing_text(classesSizeData[i].name, x, ++y);
 		Printing_int(((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y);

@@ -362,7 +362,7 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 }
 
 // true if inside the screen range
-int Actor_isInsideGame(Actor this)
+bool Actor_isInsideGame(Actor this)
 {
 	ASSERT(this, "Actor::isInsideGame: null this");
 	//Texture map = Sprite_getTexture(this->sprite);
@@ -371,11 +371,11 @@ int Actor_isInsideGame(Actor this)
 }
 
 // check if gravity must apply to this actor
-int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
+bool Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 {
 	ASSERT(this, "Actor::canMoveOverAxis: null this");
 
-	int axisFreeForMovement = __VIRTUAL_CALL(int, Actor, getAxisFreeForMovement, this);
+	bool axisFreeForMovement = __VIRTUAL_CALL(bool, Actor, getAxisFreeForMovement, this);
 
 	int axisOfCollision = 0;
 
@@ -396,7 +396,7 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 					kZAxis == i ? acceleration->z : 0
 				};
 
-				axisOfCollision |= __VIRTUAL_CALL(int, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
+				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
 			}
 		}
 	}
@@ -409,7 +409,7 @@ int Actor_getAxisFreeForMovement(Actor this)
 {
 	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
 
-	int movingState = Body_isMoving(this->body);
+	bool movingState = Body_isMoving(this->body);
 
 	return ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 }
@@ -483,7 +483,7 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 }
 
 // process a telegram
-int Actor_handleMessage(Actor this, Telegram telegram)
+bool Actor_handleMessage(Actor this, Telegram telegram)
 {
 	ASSERT(this, "Actor::handleMessage: null this");
 
@@ -549,7 +549,7 @@ StateMachine Actor_getStateMachine(Actor this)
 }
 
 // does it moves?
-u8 Actor_moves(Actor this)
+bool Actor_moves(Actor this)
 {
 	ASSERT(this, "Actor::moves: null this");
 
@@ -557,7 +557,7 @@ u8 Actor_moves(Actor this)
 }
 
 // is it moving?
-u8 Actor_isMoving(Actor this)
+bool Actor_isMoving(Actor this)
 {
 	ASSERT(this, "Actor::isMoving: null this");
 
@@ -683,7 +683,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 			otherPositionAxis = &otherPosition.z;
 
 			// TODO: must make deep work as the width and high
-			if(this->transform.globalPosition.z < otherPosition.z)
+			if (this->transform.globalPosition.z < otherPosition.z)
 			{
 				myHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, (Entity)this);
 				otherHalfSize = 0;

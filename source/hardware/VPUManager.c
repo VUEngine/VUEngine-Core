@@ -233,7 +233,6 @@ void VPUManager_setupColumnTable(VPUManager this)
 
 	int i;
 	for (i = 0; i < 128; i++)
-
 	{
 		CLMN_TBL[i] = columnTable[i];
 		CLMN_TBL[i + 0x0080] = columnTable[127 - i];
@@ -241,4 +240,3 @@ void VPUManager_setupColumnTable(VPUManager this)
 		CLMN_TBL[i + 0x0180] = columnTable[127 - i];
 	}
 }
-

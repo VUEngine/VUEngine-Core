@@ -58,8 +58,8 @@ static void Body_awake(Body this, int axisStartedMovement);
 static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity, fix19_13 friction);
 static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 friction);
 static void Body_setMovementType(Body this, int movementType, int axis);
-static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity);
-static int Body_isMovingInternal(Body this);
+static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity);
+static bool Body_isMovingInternal(Body this);
 static Force Body_calculateFriction(Body this, int axisOfMovement);
 
 enum CollidingObjectIndexes
@@ -649,7 +649,7 @@ void Body_stopMovement(Body this, int axis)
 }
 
 // set active
-void Body_setActive(Body this, u8 active)
+void Body_setActive(Body this, bool active)
 {
 	ASSERT(this, "Body::setActive: null this");
 
@@ -658,7 +658,7 @@ void Body_setActive(Body this, u8 active)
 }
 
 // is active?
-u8 Body_isActive(Body this)
+bool Body_isActive(Body this)
 {
 	ASSERT(this, "Body::isActive: null this");
 
@@ -729,7 +729,7 @@ void Body_setFriction(Body this, Force friction)
 }
 
 // retrieve state
-u8 Body_isAwake(Body this)
+bool Body_isAwake(Body this)
 {
 	ASSERT(this, "Body::isAwake: null this");
 
@@ -741,7 +741,7 @@ static void Body_awake(Body this, int axisStartedMovement)
 {
 	ASSERT(this, "Body::awake: null this");
 
-	int dispatchMessage = 0;
+	bool dispatchMessage = false;
 
 	if (!this->awake)
 	{
@@ -754,7 +754,6 @@ static void Body_awake(Body this, int axisStartedMovement)
 	{
 		dispatchMessage |= (__XAXIS & axisStartedMovement);
 	}
-
 
 	if (!this->velocity.y && (__YAXIS & axisStartedMovement))
 	{
@@ -785,7 +784,7 @@ void Body_sleep(Body this)
 }
 
 // is it moving?
-u8 Body_isMoving(Body this)
+bool Body_isMoving(Body this)
 {
 	ASSERT(this, "Body::isMoving: null this");
 
@@ -799,7 +798,7 @@ u8 Body_isMoving(Body this)
 }
 
 // is it moving?
-static int Body_isMovingInternal(Body this)
+static bool Body_isMovingInternal(Body this)
 {
 	ASSERT(this, "Body::isMovingInternal: null this");
 
@@ -868,7 +867,7 @@ void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity)
 }
 
 // bounce back
-static int Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity)
+static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounceOnAxis: null this");
 

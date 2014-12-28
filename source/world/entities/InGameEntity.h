@@ -125,11 +125,11 @@ void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int
 Gap InGameEntity_getGap(InGameEntity this);
 void InGameEntity_setGap(InGameEntity this);
 u16 InGameEntity_getInGameType(InGameEntity this);
-u8 InGameEntity_moves(InGameEntity this);
-u8 InGameEntity_isMoving(InGameEntity this);
+bool InGameEntity_moves(InGameEntity this);
+bool InGameEntity_isMoving(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
 Direction InGameEntity_getDirection(InGameEntity this);
-void InGameEntity_setShapeState(InGameEntity this, u8 state);
+void InGameEntity_setShapeState(InGameEntity this, bool state);
 fix19_13 InGameEntity_getElasticity(InGameEntity this);
 fix19_13 InGameEntity_getFriction(InGameEntity this);
 const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this);

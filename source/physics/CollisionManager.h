@@ -49,49 +49,22 @@ __CLASS(CollisionManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 CollisionManager CollisionManager_getInstance();
 
-// class's destructor
 void CollisionManager_destructor(CollisionManager this);
-
-// register a shape
 Shape CollisionManager_registerShape(CollisionManager this, Entity owner, int shapeType);
-
-// remove a shape
 void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
-
-// find a shape given an owner
 Shape CollisionManager_getShape(CollisionManager this, Entity owner);
-
-// process removed shapes
 void CollisionManager_processRemovedShapes(CollisionManager this);
-
-// calculate collisions
 int CollisionManager_update(CollisionManager this);
-
-// unregister all shapes
 void CollisionManager_reset(CollisionManager this);
-
-// inform of a change in the shape
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
-
-// inform of a change in the shape
 void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape);
-
-// inform of a change in the shape
 void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape);
-
-// inform of a change in the shape
 void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
-
-// draw shapes
 void CollisionManager_drawShapes(CollisionManager this);
-
-// free memory by deleting direct draw vectors
 void CollisionManager_flushShapesDirectDrawData(CollisionManager this);
-
-// print status
 void CollisionManager_print(CollisionManager this, int x, int y);
 
-#endif /*CollisionManager_H_*/
+
+#endif

@@ -35,21 +35,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 static void DebugState_destructor(DebugState this);
-
-// class's constructor
 static void DebugState_constructor(DebugState this);
-
-// state's enter
 static void DebugState_enter(DebugState this, void* owner);
-
-// state's execute
 static void DebugState_execute(DebugState this, void* owner);
-
-// state's enter
 static void DebugState_exit(DebugState this, void* owner);
-
-// state's on message
-static int DebugState_handleMessage(DebugState this, void* owner, Telegram telegram);
+static bool DebugState_handleMessage(DebugState this, void* owner, Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -122,7 +112,7 @@ static void DebugState_exit(DebugState this, void* owner)
 }
 
 // state's on message
-static int DebugState_handleMessage(DebugState this, void* owner, Telegram telegram)
+static bool DebugState_handleMessage(DebugState this, void* owner, Telegram telegram)
 {
 	// process message
 	switch (Telegram_getMessage(telegram))

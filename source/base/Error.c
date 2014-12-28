@@ -50,7 +50,7 @@ __CLASS_DEFINITION(Error);
 // class's constructor
 static void Error_constructor(Error this);
 
-int Game_isConstructed();
+bool Game_isConstructed();
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ int Error_triggerException(Error this, char* string)
 
 	//VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 
-	//clear screen
+	// clear screen
     //HardwareManager_clearScreen(HardwareManager_getInstance());
 
 	// disable timer

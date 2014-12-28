@@ -85,14 +85,15 @@
 // define the StageEditor
 __CLASS_DEFINITION(StageEditor);
 
-enum Modes {
-		kFirstMode = 0,
-		kMoveScreen,
-		kChangeProjection,
-		kTranslateEntities,
-		kAddObjects,
+enum Modes
+{
+    kFirstMode = 0,
+    kMoveScreen,
+    kChangeProjection,
+    kTranslateEntities,
+    kAddObjects,
 
-		kLastMode
+    kLastMode
 };
 
 
@@ -167,7 +168,6 @@ void StageEditor_destructor(StageEditor this)
 	ASSERT(this, "StageEditor::destructor: null this");
 
 	if (this->userObjectsSelector)
-
 	{
 		__DELETE(this->userObjectsSelector);
 	}
@@ -182,7 +182,6 @@ void StageEditor_update(StageEditor this)
 	ASSERT(this, "StageEditor::update: null this");
 
 	if (this->gameState && this->shape)
-
 	{
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
@@ -212,12 +211,11 @@ void StageEditor_stop(StageEditor this)
 }
 
 // process a telegram
-int StageEditor_handleMessage(StageEditor this, Telegram telegram)
+bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 {
 	ASSERT(this, "StageEditor::handleMessage: null this");
 
 	if (!this->gameState)
-
 	{
 		return false;
 	}
@@ -225,48 +223,46 @@ int StageEditor_handleMessage(StageEditor this, Telegram telegram)
 	switch (Telegram_getMessage(telegram))
 	{
 		case kKeyPressed:
-			{
-				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+		{
+            u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-				if (pressedKey & K_SEL)
-	{
-					this->mode++;
+            if (pressedKey & K_SEL)
+            {
+                this->mode++;
 
-					if (kLastMode <= this->mode)
+                if (kLastMode <= this->mode)
+                {
+                    this->mode = kFirstMode + 1;
+                }
 
-	{
-						this->mode = kFirstMode + 1;
-					}
+                StageEditor_setupMode(this);
+                break;
+            }
 
-					StageEditor_setupMode(this);
-					break;
-				}
+            switch (this->mode)
+            {
+                case kMoveScreen:
 
-				switch (this->mode)
+                    StageEditor_moveScreen(this, pressedKey);
+                    break;
 
-	{
-					case kMoveScreen:
+                case kChangeProjection:
 
-						StageEditor_moveScreen(this, pressedKey);
-						break;
+                    StageEditor_changeProjection(this, pressedKey);
+                    break;
 
-					case kChangeProjection:
+                case kTranslateEntities:
 
-						StageEditor_changeProjection(this, pressedKey);
-						break;
+                    StageEditor_traslateEntity(this, pressedKey);
+                    break;
 
-					case kTranslateEntities:
+                case kAddObjects:
 
-						StageEditor_traslateEntity(this, pressedKey);
-						break;
-
-					case kAddObjects:
-
-						StageEditor_selectUserObject(this, pressedKey);
-						break;
-				}
-			}
-			break;
+                    StageEditor_selectUserObject(this, pressedKey);
+                    break;
+            }
+        }
+        break;
 	}
 	return true;
 }
@@ -294,11 +290,11 @@ static void StageEditor_setupMode(StageEditor this)
 		case kTranslateEntities:
 
 			if (!this->currentEntityNode)
-	{
+	        {
 				StageEditor_selectNextEntity(this);
 			}
 			else
-	{
+	        {
 				StageEditor_getShape(this);
 				StageEditor_highLightEntity(this);
 			}
@@ -318,13 +314,11 @@ static void StageEditor_setupMode(StageEditor this)
 static void StageEditor_releaseShape(StageEditor this)
 {
 	if (this->currentEntityNode)
-
 	{
 		Entity entity = (Entity)VirtualNode_getData(this->currentEntityNode);
 
 		if (this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, (Entity)entity))
-
-	{
+	    {
 			__DELETE(this->shape);
 		}
 
@@ -344,10 +338,9 @@ static void StageEditor_getShape(StageEditor this)
 	this->shape = __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, (Entity)entity);
 
 	if (!this->shape)
-
 	{
 		switch (__VIRTUAL_CALL(int, Entity, getShapeType, entity))
-	{
+	    {
 			case kCircle:
 
 				//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, __ARGUMENTS(owner)));
@@ -374,7 +367,7 @@ static void StageEditor_positioneShape(StageEditor this)
 
 	Shape_setReady(this->shape, false);
 
-	if (__VIRTUAL_CALL(int, Entity, moves, entity))
+	if (__VIRTUAL_CALL(bool, Entity, moves, entity))
 	{
 		__VIRTUAL_CALL(void, Shape, positione, this->shape);
 	}
@@ -401,7 +394,6 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 	VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
 
 	if (!this->currentEntityNode)
-
 	{
 		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 	}
@@ -410,14 +402,12 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 		this->currentEntityNode = VirtualNode_getPrevious(this->currentEntityNode);
 
 		if (!this->currentEntityNode)
-
-	{
+    	{
 			this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 		}
 	}
 
 	if (this->currentEntityNode)
-
 	{
 		StageEditor_getShape(this);
 		StageEditor_highLightEntity(this);
@@ -432,7 +422,6 @@ static void StageEditor_selectNextEntity(StageEditor this)
 	VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
 
 	if (!this->currentEntityNode)
-
 	{
 		this->currentEntityNode = stageEntities ? VirtualList_begin(stageEntities) : NULL;
 	}
@@ -442,14 +431,12 @@ static void StageEditor_selectNextEntity(StageEditor this)
 		this->currentEntityNode = VirtualNode_getNext(this->currentEntityNode);
 
 		if (!this->currentEntityNode)
-
-	{
+	    {
 			this->currentEntityNode = stageEntities ? VirtualList_begin(stageEntities) : NULL;
 		}
 	}
 
 	if (this->currentEntityNode)
-
 	{
 		StageEditor_getShape(this);
 		StageEditor_highLightEntity(this);
@@ -462,10 +449,10 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	if (pressedKey & K_LL)
 	{
 		VBVec3D translation =
-	{
-				ITOFIX19_13(-__SCREEN_X_TRANSLATION_STEP),
-				0,
-				0
+	    {
+            ITOFIX19_13(-__SCREEN_X_TRANSLATION_STEP),
+            0,
+            0
 		};
 
 		StageEditor_applyTraslationToScreen(this, translation);
@@ -473,10 +460,10 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_LR)
 	{
 		VBVec3D translation =
-	{
-				ITOFIX19_13(__SCREEN_X_TRANSLATION_STEP),
-				0,
-				0
+	    {
+            ITOFIX19_13(__SCREEN_X_TRANSLATION_STEP),
+            0,
+            0
 		};
 
 		StageEditor_applyTraslationToScreen(this, translation);
@@ -484,10 +471,10 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_LU)
 	{
 		VBVec3D translation =
-	{
-				0,
-				ITOFIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
-				0
+	    {
+            0,
+            ITOFIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
+            0
 		};
 
 		StageEditor_applyTraslationToScreen(this, translation);
@@ -495,10 +482,10 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_LD)
 	{
 		VBVec3D translation =
-	{
-				0,
-				ITOFIX19_13(__SCREEN_Y_TRANSLATION_STEP),
-				0
+	    {
+            0,
+            ITOFIX19_13(__SCREEN_Y_TRANSLATION_STEP),
+            0
 		};
 
 		StageEditor_applyTraslationToScreen(this, translation);
@@ -506,10 +493,10 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_RU)
 	{
 		VBVec3D translation =
-	{
-				0,
-				0,
-				ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
+	    {
+            0,
+            0,
+            ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
 		};
 
 		StageEditor_applyTraslationToScreen(this, translation);
@@ -517,10 +504,10 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_RD)
 	{
 		VBVec3D translation =
-	{
-				0,
-				0,
-				ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
+	    {
+            0,
+            0,
+            ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
 		};
 
 		StageEditor_applyTraslationToScreen(this, translation);
@@ -590,10 +577,10 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	if (pressedKey & K_LL)
 	{
 		VBVec3D translation =
-	{
-				ITOFIX19_13(-this->translationStepSize),
-				0,
-				0
+	    {
+            ITOFIX19_13(-this->translationStepSize),
+            0,
+            0
 		};
 
 		StageEditor_applyTraslationToEntity(this, translation);
@@ -601,10 +588,10 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_LR)
 	{
 		VBVec3D translation =
-	{
-				ITOFIX19_13(this->translationStepSize),
-				0,
-				0
+	    {
+            ITOFIX19_13(this->translationStepSize),
+            0,
+            0
 		};
 
 		StageEditor_applyTraslationToEntity(this, translation);
@@ -612,10 +599,10 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_LU)
 	{
 		VBVec3D translation =
-	{
-				0,
-				ITOFIX19_13(-this->translationStepSize),
-				0
+	    {
+            0,
+            ITOFIX19_13(-this->translationStepSize),
+            0
 		};
 
 		StageEditor_applyTraslationToEntity(this, translation);
@@ -623,10 +610,10 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_LD)
 	{
 		VBVec3D translation =
-	{
-				0,
-				ITOFIX19_13(this->translationStepSize),
-				0
+	    {
+            0,
+            ITOFIX19_13(this->translationStepSize),
+            0
 		};
 
 		StageEditor_applyTraslationToEntity(this, translation);
@@ -634,8 +621,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_RR)
 	{
 		if (__MAX_TRANSLATION_STEP < ++this->translationStepSize)
-
-	{
+	    {
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 
@@ -644,8 +630,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_RL)
 	{
 		if (1 > --this->translationStepSize)
-
-	{
+    	{
 			this->translationStepSize = 1;
 		}
 
@@ -654,10 +639,10 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_RU)
 	{
 		VBVec3D translation =
-	{
-				0,
-				0,
-				ITOFIX19_13(this->translationStepSize),
+    	{
+            0,
+            0,
+            ITOFIX19_13(this->translationStepSize),
 		};
 
 		StageEditor_applyTraslationToEntity(this, translation);
@@ -665,16 +650,15 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	else if (pressedKey & K_RD)
 	{
 		VBVec3D translation =
-	{
-				0,
-				0,
-				ITOFIX19_13(-this->translationStepSize),
+	    {
+            0,
+            0,
+            ITOFIX19_13(-this->translationStepSize),
 		};
 
 		StageEditor_applyTraslationToEntity(this, translation);
 	}
 	else if (pressedKey & K_LT)
-
 	{
 		StageEditor_selectPreviousEntity(this);
 	}
@@ -731,10 +715,9 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		OptionsSelector_selectNext(this->userObjectsSelector);
 	}
 	else if (pressedKey & K_A)
-
 	{
 		if (1 >= SpriteManager_getFreeLayer(SpriteManager_getInstance()))
-	{
+	    {
 			Printing_text("No more WORLDs", 48 - 15, 4);
 			Printing_text("available     ", 48 - 15, 5);
 			return;
@@ -856,5 +839,6 @@ static void StageEditor_printTranslationStepSize(StageEditor this)
 	Printing_text("+     ", 48 - 12, 5);
 	Printing_int(this->translationStepSize, 48 - 11, 5);
 }
+
 
 #endif

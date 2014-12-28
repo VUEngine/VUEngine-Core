@@ -49,25 +49,14 @@ __CLASS(ParamTableManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
 ParamTableManager ParamTableManager_getInstance();
 
-// class destructor
 void ParamTableManager_destructor(ParamTableManager this);
-
-// reset
 void ParamTableManager_reset(ParamTableManager this);
-
-// allocate param table space for map
 int ParamTableManager_allocate(ParamTableManager this, Sprite sprite);
-
-// deallocate param table space
 void ParamTableManager_free(ParamTableManager this, Sprite sprite);
- 
-// relocate sprites
-int ParamTableManager_processRemovedSprites(ParamTableManager this);
-
-// print param table's attributes state
+bool ParamTableManager_processRemovedSprites(ParamTableManager this);
 void ParamTableManager_print(ParamTableManager this,int x, int y);
+
 
 #endif

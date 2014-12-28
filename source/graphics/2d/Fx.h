@@ -51,7 +51,8 @@ void initializeGeneralWave(u32 param,int rows,int totalDisplacement)
 	}
 }
 
-void generalWave(u32 param,int rows){
+void generalWave(u32 param,int rows)
+{
 	int paramPointer=(int)param;
 	int i;
 	int difference=PARAM[paramPointer+(int)rows*2-2]-PARAM[paramPointer];

@@ -124,7 +124,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
-	u32 previousSecond = this->ticks / __MILISECONDS_IN_SECOND;
+	u32 previousSecond = this->ticks / __MILLISECONDS_IN_SECOND;
 
 	if (this->clocks)
 	{
@@ -141,18 +141,18 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	this->ticks += ticksElapsed;
 	
     //if second has changed, set frame rate 
-    if(previousSecond != (this->ticks / __MILISECONDS_IN_SECOND))
+    if (previousSecond != (this->ticks / __MILLISECONDS_IN_SECOND))
     {
     		FrameRate frameRate = FrameRate_getInstance();
     		
 #ifdef __PRINT_FRAMERATE
-    		int printFrameRate = !Game_isInSpecialMode(Game_getInstance());
+    		bool printFrameRate = !Game_isInSpecialMode(Game_getInstance());
     		int y = 0;
 #ifdef __DEBUG
     		Printing_text("DEBUG MODE", 0, 0);
     		y = 1;
 #endif 	    		
-	    	if(printFrameRate)
+	    	if (printFrameRate)
 	    	{
 	    		FrameRate_print(frameRate, 0, y);
 	    	}

@@ -49,13 +49,9 @@ __CLASS(Error);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 Error Error_getInstance();
 
-// class's destructor
 void Error_destructor(Error this);
-
-// setup the error message and lock program here
 int Error_triggerException(Error this, char* string);
 
 

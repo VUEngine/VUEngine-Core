@@ -123,8 +123,25 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 	int parallax = fromPoint.parallax;
 
-	if (dy < 0) { dy = -dy;  stepY = -1; } else { stepY = 1; }
-	if (dx < 0) { dx = -dx;  stepX = -1; } else { stepX = 1; }
+	if (dy < 0)
+	{
+	    dy = -dy;
+	    stepY = -1;
+	}
+	else
+	{
+	    stepY = 1;
+	}
+
+	if (dx < 0)
+	{
+	    dx = -dx;
+	    stepX = -1;
+	}
+	else
+	{
+	    stepX = 1;
+	}
 
 	dy <<= 1;
 	dx <<= 1;

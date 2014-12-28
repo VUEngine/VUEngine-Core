@@ -103,7 +103,8 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 	return rev+i;
 }
 
-long Utilities_randomSeed(){
+long Utilities_randomSeed()
+{
 	/* When run at startup gets a random number based on the changing CTA */
 	long random = 1;
 	int	rand, prevnum = 0,	count = 1;

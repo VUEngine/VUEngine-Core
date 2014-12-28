@@ -305,7 +305,7 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 }
 
 // process a telegram
-int AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
+bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 {
 	ASSERT(this, "AnimationEditor::handleMessage: null this");
 

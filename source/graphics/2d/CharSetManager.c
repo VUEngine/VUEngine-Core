@@ -58,7 +58,7 @@
 	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];							\
 																				\
 	/* defragmentation flag */													\
-	u8 needsDefrag;																\
+	bool needsDefrag;																\
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager);

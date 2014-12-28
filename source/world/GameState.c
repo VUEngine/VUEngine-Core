@@ -122,7 +122,7 @@ void GameState_resume(GameState this, void* owner)
 }
 
 // state's on message
-int GameState_handleMessage(GameState this, void* owner, Telegram telegram)
+bool GameState_handleMessage(GameState this, void* owner, Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
@@ -216,7 +216,7 @@ void GameState_setCanStream(GameState this, int canStream)
 }
 
 // get streaming flag
-int GameState_canStream(GameState this)
+bool GameState_canStream(GameState this)
 {
 	ASSERT(this, "GameState::canStream: null this");
 

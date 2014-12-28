@@ -93,7 +93,7 @@ inline extern u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 sc
 }
 
 //determine if a point is visible
-inline extern int Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad)
+inline extern bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad)
 {
 	int lowLimit = 0 - parallax - pad;
 	int highLimit = __SCREEN_WIDTH + parallax + pad;

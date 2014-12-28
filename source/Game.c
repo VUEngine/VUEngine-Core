@@ -107,7 +107,7 @@
 	char* lastProcessName;														\
 																				\
 	/* flag to autopause the game after 15 minutes of play or not */ 			\
-	u8 restFlag;																\
+	bool restFlag;																\
 																				\
 	/* seconds the battery status was last checked */							\
 	u8 lowbatLastCheckSeconds;													\
@@ -141,7 +141,7 @@ static void Game_showLowBatteryIndicator(Game this);
 __SINGLETON(Game);
 
 // class's constructor
-int Game_isConstructed()
+bool Game_isConstructed()
 {
 	return 0 < _singletonConstructed;
 }
@@ -262,7 +262,6 @@ void Game_start(Game this, State state)
 	HardwareManager_displayOn(this->hardwareManager);
 
 	if (!StateMachine_getCurrentState(this->stateMachine))
-
 	{
 		// start the game's general clock
 		Clock_start(this->clock);
@@ -274,7 +273,6 @@ void Game_start(Game this, State state)
 		Game_update(this);
 	}
 	else
-
 	{
 		ASSERT(false, "Game: already started");
 	}
@@ -669,14 +667,15 @@ static void Game_updateRendering(Game this)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // do defragmentation, memory recovy, etc
-static void Game_cleanUp(Game this) {
+static void Game_cleanUp(Game this)
+{
 	
 #ifdef __DEBUG
 	this->lastProcessName = "update param table";
 #endif
 
-	if(!ParamTableManager_processRemovedSprites(this->paramTableManager)){
-
+	if (!ParamTableManager_processRemovedSprites(this->paramTableManager))
+	{
 		#ifdef __DEBUG
 		this->lastProcessName = "defragmenting";
 #endif
@@ -721,8 +720,8 @@ void Game_update(Game this)
 		}
 		// do some clean up at the half of the second, to don't interfere
 		// with the game' normal flow
-		else if(currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate)) {
-
+		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
+		{
 			Game_cleanUp(this);
 
 			// record time
@@ -739,7 +738,7 @@ void Game_update(Game this)
 }
 
 // process a telegram
-int Game_handleMessage(Game this, Telegram telegram)
+bool Game_handleMessage(Game this, Telegram telegram)
 {
 	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
@@ -748,7 +747,7 @@ int Game_handleMessage(Game this, Telegram telegram)
 }
 
 // set rest flag
-void Game_setRestFlag(Game this, int flag)
+void Game_setRestFlag(Game this, bool flag)
 {
 	ASSERT(this, "Game::setRestFlag: null this");
 
@@ -796,7 +795,7 @@ void Game_setOptical(Game this, Optical optical)
 }
 
 #ifdef __DEBUG_TOOLS
-int Game_isInDebugMode(Game this)
+bool Game_isInDebugMode(Game this)
 {
 	ASSERT(this, "Game::isInDebugMode: null this");
 
@@ -805,7 +804,7 @@ int Game_isInDebugMode(Game this)
 #endif
 
 #ifdef __STAGE_EDITOR
-int Game_isInStageEditor(Game this)
+bool Game_isInStageEditor(Game this)
 {
 	ASSERT(this, "Game::isInGameStateEditor: null this");
 
@@ -814,7 +813,7 @@ int Game_isInStageEditor(Game this)
 #endif
 
 #ifdef __ANIMATION_EDITOR
-int Game_isInAnimationEditor(Game this)
+bool Game_isInAnimationEditor(Game this)
 {
 	ASSERT(this, "Game::isInAnimationEditor: null this");
 
@@ -823,7 +822,7 @@ int Game_isInAnimationEditor(Game this)
 #endif
 
 // whether if a special mode is active
-int Game_isInSpecialMode(Game this)
+bool Game_isInSpecialMode(Game this)
 {
 	ASSERT(this, "Game::isInSpecialMode: null this");
 
@@ -871,7 +870,8 @@ static void Game_showLowBatteryIndicator(Game this)
 {
     u8 currentSecond = Clock_getSeconds(Game_getInGameClock(Game_getInstance()));
     // write only if one second has passed
-    if (currentSecond != this->lowbatLastCheckSeconds) {
+    if (currentSecond != this->lowbatLastCheckSeconds)
+    {
         Printing_text((currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y);
         this->lowbatLastCheckSeconds = currentSecond;
     }

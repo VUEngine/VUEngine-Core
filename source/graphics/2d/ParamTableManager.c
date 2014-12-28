@@ -100,7 +100,7 @@ void ParamTableManager_destructor(ParamTableManager this)
 	{
 		VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for (; node; node = VirtualNode_getNext(node))
 		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
@@ -141,7 +141,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
 
 	//if there is space in the param table, allocate
-	if(PARAM((this->used + size)) < __PARAMEND)
+	if (PARAM((this->used + size)) < __PARAMEND)
 	{
 		//set sprite param
 		Sprite_setParam(sprite, this->used);
@@ -179,7 +179,7 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 }
 
 // relocate sprites
-int ParamTableManager_processRemovedSprites(ParamTableManager this)
+bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 	// for each sprite using param table space reassign them their param table starting point.
@@ -243,7 +243,7 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 	
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for (; node; node = VirtualNode_getNext(node))
 	{
 		Printing_hex((int)VirtualNode_getData(node), x, y + i + 3);
 		//printInt((int)this->sprites[i]->param,x+10,y+i+3);

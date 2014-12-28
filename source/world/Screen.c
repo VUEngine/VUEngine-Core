@@ -139,7 +139,7 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	if (this->focusInGameEntity)
 	{
 		//get focusInGameEntity is moving
-		if (__VIRTUAL_CALL(int, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
+		if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 		{
 			// save last position
 			this->lastDisplacement = this->position;
@@ -330,8 +330,8 @@ void Screen_setStageSize(Screen this, Size size)
 }
 
 // force values as if screen is moving
-void Screen_forceDisplacement(Screen this, int flag){
-	
+void Screen_forceDisplacement(Screen this, int flag)
+{
 	this->lastDisplacement.x = flag ? 1 : 0;
 	this->lastDisplacement.y = flag ? 1 : 0;
 	this->lastDisplacement.z = flag ? 1 : 0;

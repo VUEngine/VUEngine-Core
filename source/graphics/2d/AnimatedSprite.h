@@ -166,8 +166,8 @@ int AnimatedSprite_getMapType(AnimatedSprite this);
 void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer);
 void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction);
 void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
-int AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
-int AnimatedSprite_isPlaying(AnimatedSprite this);
+bool AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
+bool AnimatedSprite_isPlaying(AnimatedSprite this);
 void AnimatedSprite_write(AnimatedSprite this);
 void AnimatedSprite_pause(AnimatedSprite this, int pause);
 

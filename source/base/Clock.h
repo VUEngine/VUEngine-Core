@@ -48,7 +48,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* time elapsed */															\
-	u32 miliSeconds;															\
+	u32 milliSeconds;															\
 																				\
 	/* register */																\
 	u8 previousSecond;															\
@@ -57,7 +57,7 @@
 	u8 previousMinute;															\
 																				\
 	/* flag to pause the clock */												\
-	u8 paused;																	\
+	bool paused;																\
 																				\
 
 // declare the virtual methods
@@ -81,12 +81,12 @@ __CLASS(Clock);
 __CLASS_NEW_DECLARE(Clock);
 
 void Clock_destructor(Clock this);
-void Clock_delay(Clock this, int miliSeconds);
+void Clock_delay(Clock this, int milliSeconds);
 void Clock_print(Clock this, int col, int row);
 void Clock_update(Clock this, u32 ticks);
 void Clock_interrupt();
 void Clock_reset(Clock this);
-u32 Clock_getMiliSeconds(Clock this);
+u32 Clock_getMilliSeconds(Clock this);
 u8 Clock_getMinutes(Clock this);
 u8 Clock_getSeconds(Clock this);
 u32 Clock_getTime(Clock this);
@@ -95,8 +95,8 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds);
 void Clock_setTime(Clock this, int hours, int minutes, int seconds);
 void Clock_start(Clock this);
 void Clock_stop(Clock this);
-void Clock_pause(Clock this, u8 paused);
-u8 Clock_isPaused(Clock this);
+void Clock_pause(Clock this, bool paused);
+bool Clock_isPaused(Clock this);
 
 
 #endif

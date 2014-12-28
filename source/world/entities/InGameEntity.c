@@ -93,7 +93,7 @@ void InGameEntity_setGap(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::setGap: null this");
 
-	if(this->sprites)
+	if (this->sprites)
 	{
 		// retrieve the sprite's scale
 		Scale scale = Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
@@ -132,7 +132,7 @@ u16 InGameEntity_getInGameType(InGameEntity this)
 }
 
 // does it moves?
-u8 InGameEntity_moves(InGameEntity this)
+bool InGameEntity_moves(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::moves: null this");
 
@@ -140,7 +140,7 @@ u8 InGameEntity_moves(InGameEntity this)
 }
 
 // is it moving?
-u8 InGameEntity_isMoving(InGameEntity this)
+bool InGameEntity_isMoving(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::isMoving: null this");
 
@@ -164,7 +164,7 @@ Direction InGameEntity_getDirection(InGameEntity this)
 }
 
 // set shape state
-void InGameEntity_setShapeState(InGameEntity this, u8 state)
+void InGameEntity_setShapeState(InGameEntity this, bool state)
 {
 	ASSERT(this, "InGameEntity::setShapeState: null this");
 

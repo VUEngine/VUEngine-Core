@@ -89,10 +89,10 @@
 																				\
 	/* h-bias max amplitude */													\
 	/* int hbiasAmplitude; */													\
-	u8 renderFlag;																\
 																				\
-	/* parallax modifier to achieve better */									\
-	/* control over display */													\
+	bool renderFlag;															\
+																				\
+	/* parallax modifier to achieve better control over display */				\
 	s8 parallaxDisplacement;													\
 
 
@@ -112,13 +112,13 @@ typedef struct SpriteDefinition
 	// texture to use with the sprite
 	TextureDefinition* textureDefinition;
 
-	// the display mode ( BGMAP, AFFINE, H-BIAS)
+	// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
 
-	// flag to indicate in which display to show the bgtexture
+	// flag to indicate in which display to show the bg texture
 	u16 display;
 
-	// parallax modifier to achieve better */
+	// parallax modifier to achieve better control over display
 	s8 parallaxDisplacement;
 
 } SpriteDefinition;
@@ -151,7 +151,7 @@ void Sprite_setParam(Sprite this, u32 param);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 u8 Sprite_getWorldLayer(Sprite this);
 u16 Sprite_getHead(Sprite this);
-void Sprite_setRenderFlag(Sprite this, u8 renderFlag);
+void Sprite_setRenderFlag(Sprite this, bool renderFlag);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 void Sprite_update(Sprite this);

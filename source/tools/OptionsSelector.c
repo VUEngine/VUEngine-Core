@@ -131,13 +131,11 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OptionsSelector, __PARAMETERS(int cols, int rows, char* mark, int type
-))
+__CLASS_NEW_DEFINITION(OptionsSelector, __PARAMETERS(int cols, int rows, char* mark, int type))
 __CLASS_NEW_END(OptionsSelector, __ARGUMENTS(cols, rows, mark, type));
 
 // class's constructor
-void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type
-)
+void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type)
 {
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
@@ -173,12 +171,11 @@ static void OptionsSelector_flushPages(OptionsSelector this)
 	ASSERT(this, "OptionsSelector::flushPages: null this");
 
 	if (this->pages)
-
 	{
 		VirtualNode node = VirtualList_begin(this->pages);
 
 		for (; node; node = VirtualNode_getNext(node))
-	{
+		{
 			ASSERT(VirtualNode_getData(node), "flushPages: null node data");
 			__DELETE(VirtualNode_getData(node));
 		}
@@ -205,25 +202,22 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames)
 	int numberOfPages = (int)(this->totalOptions / optionsPerPage);
 	numberOfPages += 0 < this->totalOptions % optionsPerPage ? 1 : 0;
 
-
 	VirtualNode node = VirtualList_begin(optionsNames);
 
 	ASSERT(VirtualList_getSize(optionsNames), "OptionsSelector::setOptions: empty optionsNames");
 	ASSERT(VirtualList_getSize(optionsNames), "OptionsSelector::setOptions: empty options");
 
 	if (0 < VirtualList_getSize(optionsNames))
-
 	{
 		int page = 0;
 
 		for (; page < numberOfPages && node; page++)
-
-	{
+		{
 			VirtualList options = __NEW(VirtualList);
 
 			int counter = 0;
 			for (; node && counter < optionsPerPage; counter++, node = VirtualNode_getNext(node))
-	{
+			{
 				VirtualList_pushBack(options, (const char*)VirtualNode_getData(node));
 			}
 
@@ -246,7 +240,6 @@ void OptionsSelector_selectNext(OptionsSelector this)
 	ASSERT(this, "OptionsSelector::selectNext: null this");
 
 	if (this->currentOption)
-
 	{
 		OptionsSelector_printSelectorMark(this, " ");
 
@@ -254,13 +247,12 @@ void OptionsSelector_selectNext(OptionsSelector this)
 		this->currentOptionIndex++;
 
 		if (!this->currentOption)
-	{
+		{
 			this->currentPage = VirtualNode_getNext(this->currentPage);
 			this->currentPageIndex++;
 
 			if (!this->currentPage)
-
-	{
+			{
 				this->currentPage = VirtualList_begin(this->pages);
 				this->currentPageIndex = 0;
 				this->currentOptionIndex = 0;
@@ -289,13 +281,12 @@ void OptionsSelector_selectPrevious(OptionsSelector this)
 		this->currentOptionIndex--;
 
 		if (!this->currentOption)
-	{
+		{
 			this->currentPage = VirtualNode_getPrevious(this->currentPage);
 			this->currentPageIndex--;
 
 			if (!this->currentPage)
-
-	{
+			{
 				this->currentPage = VirtualList_end(this->pages);
 				this->currentPageIndex = VirtualList_getSize(this->pages) - 1;
 				this->currentOptionIndex = this->totalOptions - 1;
@@ -332,24 +323,23 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 
 		int i = 0;
 		for (; i + y < (__SCREEN_HEIGHT >> 3); i++)
-	{
+		{
 			int j = 0;
 			for (; ((__SCREEN_WIDTH >> 3) >= (x + j)); j++)
-	{
+			{
 				Printing_text(" ", x + j, y + i);
 			}
 		}
 
 		for (; node; node = VirtualNode_getNext(node))
-	{
+		{
 			if (y <= __SCREEN_WIDTH >> 3)
-
-	{
+			{
 				ASSERT(node, "showOptions: push null node");
 				ASSERT(VirtualNode_getData(node), "showOptions: push null node data");
 
 				switch (this->type)
-	{
+				{
 					case kString:
 						Printing_text((char*)VirtualNode_getData(node), x + 1, y);
 						break;
@@ -365,8 +355,7 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 			}
 
 			if (++y >= this->rows + this->y || y > (__SCREEN_HEIGHT >> 3))
-
-	{
+			{
 				y = this->y;
 				x += (__SCREEN_WIDTH >> 3) / this->cols;
 			}

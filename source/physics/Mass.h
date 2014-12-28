@@ -60,7 +60,7 @@ typedef struct MassDefinition
 	// the sprite
 	fix19_13 weight;
 
-}MassDefinition;
+} MassDefinition;
 
 typedef const MassDefinition MassROMDef;
 

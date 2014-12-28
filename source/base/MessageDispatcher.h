@@ -45,12 +45,13 @@
 
 __CLASS(MessageDispatcher);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 MessageDispatcher MessageDispatcher_getInstance();
-int MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
+bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
 void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
 void MessageDispatcher_discardDelayedMessages(MessageDispatcher this);
 

@@ -76,8 +76,8 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 void ScrollBackground_destructor(ScrollBackground this);
 void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform);
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform);
-int ScrollBackground_isVisible(ScrollBackground this, int pad);
-int ScrollBackground_updateSpritePosition(ScrollBackground this);
+bool ScrollBackground_isVisible(ScrollBackground this, int pad);
+bool ScrollBackground_updateSpritePosition(ScrollBackground this);
 
 
 #endif
