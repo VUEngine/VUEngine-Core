@@ -247,7 +247,7 @@ static bool SpriteManager_processFreedLayers(SpriteManager this)
 
 		VirtualNode node = VirtualList_end(this->sprites);
 
-		for(; node; node = VirtualNode_getPrevious(node))
+		for (; node; node = VirtualNode_getPrevious(node))
 		{
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 			u8 spriteLayer = Sprite_getWorldLayer(sprite);

@@ -61,7 +61,7 @@ typedef struct Rightcuboid
 	fix19_13 y1;
 	fix19_13 z1;
 
-}Rightcuboid;
+} Rightcuboid;
 
 #define Cuboid_ATTRIBUTES														\
 																				\

@@ -100,7 +100,7 @@ void ParamTableManager_destructor(ParamTableManager this)
 	{
 		VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for (; node; node = VirtualNode_getNext(node))
 		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
@@ -243,7 +243,7 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 	
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for (; node; node = VirtualNode_getNext(node))
 	{
 		Printing_hex((int)VirtualNode_getData(node), x, y + i + 3);
 		//printInt((int)this->sprites[i]->param,x+10,y+i+3);
