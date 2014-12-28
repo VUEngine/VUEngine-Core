@@ -10,7 +10,7 @@
 extern int abs(int);
 extern float fabsf(float);
 
-//Fixed Point macros
+// fixed point macros
 #define fix7_9				s16
 #define fix13_3				s16
 #define fix13_3				s16
@@ -19,13 +19,11 @@ extern float fabsf(float);
 
 // round functions
 #define FIX19_13_ROUNDTOI(n)	((FIX19_13TOI(n)) + (((n) & 0x000001FF) >> 8))
-
-#define F_ROUND(n)		(int)((n) + 0.5f)
-//floor and ceil
-#define F_FLOOR(n)		(int) ((n)-0.5f)
+#define F_ROUND(n)			(int)((n) + 0.5f)
+#define F_FLOOR(n)			(int) ((n)-0.5f)
 #define F_CEIL(n)			(int)((n)+0.5f)
 
-//convert a float to fixed point and back
+// convert a float to fixed point and back
 #define FTOFIX7_9(n)		(fix7_9) ((n) * 512.0f+0.5f)
 #define FTOFIX13_3(n)		(fix13_3)((n) *   8.0f+0.5f)
 #define FTOFIX19_13(n)		(fix19_13)((n) * 8192.0f+0.5f)
@@ -36,7 +34,7 @@ extern float fabsf(float);
 #define FIX19_13TOF(n)		(float)  ((n) / 8192.0f)
 #define FIX15_17TOF(n)		(float)  ((n) / 131072.0f)
 
-//convert an int to fixed point and back
+// convert an int to fixed point and back
 #define ITOFIX7_9(n)		(fix7_9) ((n)<<9)
 #define ITOFIX13_3(n)		(fix13_3)((n)<<3)
 #define ITOFIX19_13(n)		(fix19_13)((n)<<13)
@@ -55,26 +53,24 @@ extern float fabsf(float);
 #define FIX7_9TOFIX19_13(n)	(fix19_13)((n)<<4)
 #define FIX15_17TOFIX19_13(n)	(fix15_17)((n)>>4)
 
-//Return fractional part of fixed
+// return fractional part of fixed
 #define FIX7_9_FRAC(n)		((n)&0x01FF)
 #define FIX13_3_FRAC(n)		((n)&0x0007)
 //#define FIX23_9_FRAC(n)		((n)&0x01FF)
 
-//fixed multiplication, what a mess of brackets
-//question how do we return an s32 from s16*s16 without forcing a promotion to s32
+// fixed multiplication, what a mess of brackets
+// TODO: how do we return an s32 from s16*s16 without forcing a promotion to s32?
 #define FIX7_9_MULT(a,b)	(fix7_9) ((((s32)(a))*((s32)(b)))>>9)
 #define FIX13_3_MULT(a,b)	(fix13_3)((((s32)(a))*((s32)(b)))>>3)
 #define FIX19_13_MULT(a,b)	(fix19_13)((((s64)(a))*((s64)(b)))>>13)
 #define FIX15_17_MULT(a,b)	(fix15_17)((((s64)(a))*((s64)(b)))>>17)
 
-//Fixed division
+// fixed division
 #define FIX7_9_DIV(a,b)		(fix7_9) ((((s32)(a))<<9)/((s32)(b)))
 #define FIX13_3_DIV(a,b)	(fix13_3)((((s32)(a))<<3)/((s32)(b)))
 #define FIX19_13_DIV(a,b)	(fix19_13)((((s64)(a))<<13)/((s64)(b)))
 #define FIX15_17_DIV(a,b)	(fix15_17)((((s64)(a))<<17)/((s64)(b)))
 
-
-//==========================================================
 static const s16 SINLUT[] =
 {
    0,    6,   12,   18,   25,   31,   37,   43, //1
@@ -141,7 +137,6 @@ static const s16 SINLUT[] =
 -148, -142, -136, -130, -124, -118, -112, -106, //62
  -99,  -93,  -87,  -81,  -75,  -68,  -62,  -56, //63
  -50,  -43,  -37,  -31,  -25,  -18,  -12,   -6 };//64
-
 
 #define COS(x) SINLUT[((x)+128)&0x1FF]
 #define SIN(x) SINLUT[(x)&0x1FF]

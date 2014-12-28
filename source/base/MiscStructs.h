@@ -28,7 +28,7 @@
 
 #include <libgccvb.h>
 
-//spacial size
+// spacial size
 typedef struct Size
 {
 	u16 x;
@@ -38,20 +38,20 @@ typedef struct Size
 } Size;
 
 
-//spacial position
+// spacial position
 typedef struct VBVec3DReal
 {
-	//FPS increases a lot in hardware with ints
+	// fps increases a lot in hardware with ints
 	float x;
 	float y;
 	float z;
 
 } VBVec3DReal;
 
-//spacial position
+// spacial position
 typedef struct VBVec3D
 {
-	//FPS increases a lot in hardware with ints
+	// fps increases a lot in hardware with ints
 	fix19_13 x;
 	fix19_13 y;
 	fix19_13 z;
@@ -60,17 +60,17 @@ typedef struct VBVec3D
 
 typedef struct IntegralPosition
 {
-	//FPS increases a lot in hardware with ints
+	// fps increases a lot in hardware with ints
 	int x;
 	int y;
 	int z;
 
 } IntegralPosition;
 
-//spacial movement vector
+// spacial movement vector
 typedef struct Velocity
 {
-	//FPS increases a lot in hardware with ints
+	// fps increases a lot in hardware with ints
 	fix19_13 x;
 	fix19_13 y;
 	fix19_13 z;
@@ -79,7 +79,7 @@ typedef struct Velocity
 } Velocity;
 
 
-//spacial velocity variation vector
+// spacial velocity variation vector
 typedef struct Acceleration
 {
 	fix19_13 x;
@@ -88,7 +88,7 @@ typedef struct Acceleration
 
 } Acceleration;
 
-//spacial velocity variation vector
+// spacial velocity variation vector
 typedef struct Force
 {
 	fix19_13 x;
@@ -180,7 +180,7 @@ typedef struct Vector
 	int j;
 	int k;
 
-}Vector;
+} Vector;
 */
 // scaling factor
 typedef struct Scale

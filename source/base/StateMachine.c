@@ -202,7 +202,7 @@ void StateMachine_returnToPreviousState(StateMachine this)
 	if (this->previousState)
 	{
 		if (this->currentState)
-	{
+		{
 			__VIRTUAL_CALL(void, State, exit, this->currentState, __ARGUMENTS(this->owner));
 		}
 
@@ -226,7 +226,6 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
 		__VIRTUAL_CALL(void, State, pause, this->currentState, __ARGUMENTS(this->owner));
 
 		this->previousState = this->currentState;
-
 	}
 
 	this->currentState = globalState;

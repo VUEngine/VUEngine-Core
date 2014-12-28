@@ -262,7 +262,6 @@ void Game_start(Game this, State state)
 	HardwareManager_displayOn(this->hardwareManager);
 
 	if (!StateMachine_getCurrentState(this->stateMachine))
-
 	{
 		// start the game's general clock
 		Clock_start(this->clock);
@@ -274,7 +273,6 @@ void Game_start(Game this, State state)
 		Game_update(this);
 	}
 	else
-
 	{
 		ASSERT(false, "Game: already started");
 	}

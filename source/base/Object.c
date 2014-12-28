@@ -61,7 +61,6 @@ void Object_constructor(Object this)
 void Object_destructor(Object this)
 {
 	if (this->events)
-
 	{
 		VirtualNode node = VirtualList_begin(this->events);
 

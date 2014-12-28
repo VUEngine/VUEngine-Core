@@ -57,7 +57,7 @@
 	u8 previousMinute;															\
 																				\
 	/* flag to pause the clock */												\
-	bool paused;																	\
+	bool paused;																\
 																				\
 
 // declare the virtual methods

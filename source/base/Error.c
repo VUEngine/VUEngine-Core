@@ -81,7 +81,7 @@ int Error_triggerException(Error this, char* string)
 
 	//VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 
-	//clear screen
+	// clear screen
     //HardwareManager_clearScreen(HardwareManager_getInstance());
 
 	// disable timer
