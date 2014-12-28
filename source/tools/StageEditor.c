@@ -85,14 +85,15 @@
 // define the StageEditor
 __CLASS_DEFINITION(StageEditor);
 
-enum Modes {
-		kFirstMode = 0,
-		kMoveScreen,
-		kChangeProjection,
-		kTranslateEntities,
-		kAddObjects,
+enum Modes
+{
+    kFirstMode = 0,
+    kMoveScreen,
+    kChangeProjection,
+    kTranslateEntities,
+    kAddObjects,
 
-		kLastMode
+    kLastMode
 };
 
 

@@ -35,8 +35,8 @@ void Mem_copy (u8* dest, const u8* src, u16 num)
 {
 	u16 i;
 	CACHE_ENABLE;
-	for (i = 0; i < num; i++) {
-		
+	for (i = 0; i < num; i++)
+	{
 		*dest++ = *src++;
 	}
 	CACHE_DISABLE;
@@ -92,8 +92,8 @@ void Mem_substract (u8* dest, const u8* src, u16 num, u16 offset,u8 modifier)
 {
 }
 
-void Mem_add (u8* dest, const u8* src, u16 num, u16 offset) {
-	
+void Mem_add (u8* dest, const u8* src, u16 num, u16 offset)
+{
 	CACHE_ENABLE;
 	u16 i;
 	int carry;

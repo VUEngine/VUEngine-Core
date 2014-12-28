@@ -149,11 +149,8 @@ static const s16 SINLUT[] =
 #define COSF(x) FIX7_9TOF(SINLUT[((x)+128)&0x1FF])
 #define SINF(x) FIX7_9TOF(SINLUT[(x)&0x1FF])
 
-// retrieve the square root
 float Math_squareRoot(float number);
-
-// elevate any number to a positive integer
 int Math_powerFast(int base, int power);
 
-//
-#endif //MATH_H
+
+#endif

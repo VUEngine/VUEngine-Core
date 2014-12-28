@@ -90,7 +90,7 @@ ObjectManager ObjectManager_getInstance();
 void ObjectManager_destructor(ObjectManager this);
 
 
-#endif /*OBJECT_MANAGER_H_*/
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------

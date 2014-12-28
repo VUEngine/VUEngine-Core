@@ -669,14 +669,15 @@ static void Game_updateRendering(Game this)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // do defragmentation, memory recovy, etc
-static void Game_cleanUp(Game this) {
+static void Game_cleanUp(Game this)
+{
 	
 #ifdef __DEBUG
 	this->lastProcessName = "update param table";
 #endif
 
-	if (!ParamTableManager_processRemovedSprites(this->paramTableManager)){
-
+	if (!ParamTableManager_processRemovedSprites(this->paramTableManager))
+	{
 		#ifdef __DEBUG
 		this->lastProcessName = "defragmenting";
 #endif
@@ -721,8 +722,8 @@ void Game_update(Game this)
 		}
 		// do some clean up at the half of the second, to don't interfere
 		// with the game' normal flow
-		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate)) {
-
+		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
+		{
 			Game_cleanUp(this);
 
 			// record time
@@ -871,7 +872,8 @@ static void Game_showLowBatteryIndicator(Game this)
 {
     u8 currentSecond = Clock_getSeconds(Game_getInGameClock(Game_getInstance()));
     // write only if one second has passed
-    if (currentSecond != this->lowbatLastCheckSeconds) {
+    if (currentSecond != this->lowbatLastCheckSeconds)
+    {
         Printing_text((currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y);
         this->lowbatLastCheckSeconds = currentSecond;
     }

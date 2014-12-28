@@ -555,17 +555,17 @@ void Sprite_rotate(Sprite this, int angle)
 	// TODO
 	/*
 	static int alpha=0;
-	if (this->updateParamTable==true){
+	if (this->updateParamTable==true)
+	{
 		affineRotateY(this->param,alpha,this->scale.x,this->scale.y,
 		(this->xOffset<<3)+(this->cols<<2), (this->yOffset<<3)+(this->rows<<2),
 		(this->cols<<2),(this->rows<<2));
-		if (alpha++ >125){
+		if (alpha++ >125)
+		{
 			alpha=125;
-
 		}
 		// put down the flag
 		Sprite_setUpdateParamTableFlag(this, false);
-
 	}
 	*/
 	//delay(5);
@@ -588,7 +588,8 @@ void Sprite_fireHFX(Sprite this)
 	// TODO
 }
 
-void Sprite_waveHFX(Sprite this){
+void Sprite_waveHFX(Sprite this)
+{
 	ASSERT(this, "Sprite::waveHFX: null this");
 
 	// TODO

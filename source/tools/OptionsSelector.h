@@ -65,28 +65,15 @@ enum OptionTypes
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// class's allocator
 __CLASS_NEW_DECLARE(OptionsSelector, __PARAMETERS(int cols, int rows, char* mark, int type));
 
-// class's constructor
 void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type);
-
-// class's destructor
 void OptionsSelector_destructor(OptionsSelector this);
-
-// set options
 void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames);
-
-// select next option
 void OptionsSelector_selectNext(OptionsSelector this);
-
-// select previous option
 void OptionsSelector_selectPrevious(OptionsSelector this);
-
-// retrieve selected options name
 int OptionsSelector_getSelectedOption(OptionsSelector this);
-
-// set options
 void OptionsSelector_showOptions(OptionsSelector this, int x, int y);
 
-#endif /*CLOCK_H_*/
+
+#endif

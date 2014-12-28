@@ -71,7 +71,8 @@
 // A Shape which represent a generic object inside a Stage
 __CLASS(Shape);
 
-enum ShapeTypes{
+enum ShapeTypes
+{
 	kCircle = 0,
 	kCuboid,
 };

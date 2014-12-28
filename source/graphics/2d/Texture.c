@@ -295,7 +295,8 @@ void Texture_writeHBiasMode(Texture this)
 	/*
 	int i;
 	//put the this into memory calculation the number of char for each reference
-	for (i=0;i<this->textureDefinition->rows;i++){
+	for (i=0;i<this->textureDefinition->rows;i++)
+	{
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
 		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharGroup_getCharSet(&this->charGroup)<<9)+CharGroup_getOffset(&this->charGroup)));
@@ -366,7 +367,8 @@ u8 Texture_getTotalRows(Texture this)
 
 	return this->textureDefinition->rows;
 	/*
-	switch (CharGroup_getAllocationType(&this->charGroup)){
+	switch (CharGroup_getAllocationType(&this->charGroup))
+	{
 		case __ANIMATED:
 			return this->textureDefinition->rows;
 			break;

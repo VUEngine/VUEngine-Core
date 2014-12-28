@@ -254,7 +254,8 @@ void Affine_scaleProject(u16 param, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y, floa
 	u16 i;
 	//ent->map.zoom=1-((float)0.5/DES)*ent->gz;
 	float paralax=0;
-	for (i=0;i<fg_y*2;i++){
+	for (i=0;i<fg_y*2;i++)
+	{
 		pdx.pa  = 1.0f/zoomX;
 		pdx.pb  = 0.0f;
 		pdx.pc  = 0.0f;

@@ -79,8 +79,9 @@ enum MessagesTypes
 
 
 
-#define NM_ASSERT( STATEMENT, ... )																\
-	if (!(STATEMENT)) { 																\
+#define NM_ASSERT( STATEMENT, ... )													\
+	if (!(STATEMENT))																\
+	{ 																				\
 		/* thrown exception */														\
 		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__));	\
 	}
@@ -92,10 +93,12 @@ enum MessagesTypes
 
 #else
 	#define ASSERT( STATEMENT, MESSAGE )											\
-	if (!(STATEMENT)) { 																\
+	if (!(STATEMENT)) 																\
+	{																				\
 		/* thrown exception */														\
 		Error_triggerException(Error_getInstance(), MESSAGE);						\
 	}
 #endif
 
-#endif /*CONSTANTS_H_*/
+
+#endif
