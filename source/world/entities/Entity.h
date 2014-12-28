@@ -97,16 +97,6 @@ __CLASS(Entity);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// sprites' list
-typedef struct SpritesDescription
-{
-	// animation functions
-	SpriteDefinition spritesDefinitions[__MAX_SPRITES_PER_ENTITY];
-
-} SpritesDescription;
-
-typedef const SpritesDescription SpritesDescriptionROMDef;
-
 // defines a Entity in ROM memory
 typedef struct EntityDefinition
 {
@@ -115,9 +105,6 @@ typedef struct EntityDefinition
 
 	// the sprite
 	const SpriteDefinition* spritesDefinitions;
-
-	// number of sprites
-	int numberOfSprites;
 
 } EntityDefinition;
 
@@ -138,8 +125,6 @@ typedef const struct PositionedEntity
 } PositionedEntity;
 
 typedef const PositionedEntity PositionedEntityROMDef;
-
-#define __SPRITE_ARRAY(SpritesDefintionArray) SpritesDefintionArray, sizeof(SpritesDefintionArray) / sizeof(SpriteDefinition)
 
 
 //---------------------------------------------------------------------------------------------------------

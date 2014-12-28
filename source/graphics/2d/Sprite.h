@@ -49,12 +49,14 @@
 // declare the virtual methods
 #define Sprite_METHODS															\
 	Object_METHODS																\
-	__VIRTUAL_DEC(update);														\
+	__VIRTUAL_DEC(render);														\
+	__VIRTUAL_DEC(setPosition);													\
 
 // declare the virtual methods which are redefined
 #define Sprite_SET_VTABLE(ClassName)											\
 		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, Sprite, update);								\
+		__VIRTUAL_SET(ClassName, Sprite, render);								\
+		__VIRTUAL_SET(ClassName, Sprite, setPosition);							\
 
 #define Sprite_ATTRIBUTES														\
 																				\
@@ -104,6 +106,9 @@ __CLASS(Sprite);
 
 typedef struct SpriteDefinition
 {
+	// the class type
+	void* allocator;
+
 	// texture to use with the sprite
 	TextureDefinition* textureDefinition;
 
@@ -151,8 +156,6 @@ void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 void Sprite_update(Sprite this);
 void Sprite_render(Sprite this);
-void Sprite_renderAll(Sprite this);
-void Sprite_renderOut(Sprite this);
 
 
 //---------------------------------------------------------------------------------------------------------

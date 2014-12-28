@@ -58,7 +58,6 @@
 // declare the virtual methods which are redefined
 #define AnimatedSprite_SET_VTABLE(ClassName)									\
 		Sprite_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, AnimatedSprite, update);						\
 
 #define AnimatedSprite_ATTRIBUTES												\
 																				\
@@ -143,7 +142,7 @@ typedef const AnimationDescription AnimationDescriptionROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(AnimatedSprite, __PARAMETERS(Object owner, const SpriteDefinition* spriteDefinition));
+__CLASS_NEW_DECLARE(AnimatedSprite, __PARAMETERS(const SpriteDefinition* spriteDefinition, Object owner));
 
 void AnimatedSprite_destructor(AnimatedSprite this);
 int AnimatedSprite_getType(AnimatedSprite this);

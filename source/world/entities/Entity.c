@@ -46,7 +46,7 @@ __CLASS_DEFINITION(Entity);
 const extern VBVec3D* _screenDisplacement;
 
 // add sprite
-static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites);
+static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions);
 
 // set sprites' visual properties
 static void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition);
@@ -83,7 +83,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
 	// initialize sprites
 	if (entityDefinition)
 	{
-		Entity_addSprites(this, entityDefinition->spritesDefinitions, entityDefinition->numberOfSprites);
+		Entity_addSprites(this, entityDefinition->spritesDefinitions);
 	}
 }
 
@@ -127,16 +127,16 @@ void Entity_setExtraInfo(Entity this, void* extraInfo)
 }
 
 // add sprite
-static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions, int numberOfSprites)
+static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions)
 {
 	ASSERT(this, "Entity::addSprites: null this");
 
 	if (spritesDefinitions)
 	{
-		int i = numberOfSprites;
+		int i = 0;
 
 		//go through n sprites in entity's definition
-		for (; i-- && i < __MAX_SPRITES_PER_ENTITY;)
+		for (; spritesDefinitions[i].allocator; i++)
 	    {
 			Entity_addSprite(this, &spritesDefinitions[i]);
 		}
@@ -150,22 +150,12 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 
 	Sprite sprite = NULL;
 
-	switch (spriteDefinition->textureDefinition->charGroupDefinition.allocationType)
+	ASSERT(spriteDefinition->allocator, "Entity::load: no sprite allocator defined");
+
+	if (spriteDefinition->allocator)
 	{
-		case __ANIMATED:
-		case __ANIMATED_SHARED:
-
-			// create the animated sprite
-			sprite = (Sprite)__NEW(AnimatedSprite, __ARGUMENTS((void*)this, spriteDefinition));
-
-			break;
-
-		default:
-
-			// create the sprite
-			sprite = __NEW(Sprite, __ARGUMENTS(spriteDefinition));
-
-			break;
+		// call the appropiate allocator to support inheritance!
+		sprite = (Sprite)((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)(0, spriteDefinition, this);
 	}
 
 	if (sprite)

@@ -48,10 +48,9 @@ __CLASS_DEFINITION(Sprite);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+// 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-#define FIX19_13_05F 0x00001000
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -67,7 +66,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	__CONSTRUCT_BASE(Object);
 
 	// create the texture
-	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
+	this->texture = spriteDefinition->textureDefinition? TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition): NULL;
 
 	ASSERT(this->texture, "Sprite::constructor: texture no allocated");
 
@@ -300,12 +299,6 @@ void Sprite_hide(Sprite this)
 {
     WORLD_SIZE(this->worldLayer, 0, 0);
 //	WORLD_GSET(this->worldLayer, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
-}
-
-// update sprite
-void Sprite_update(Sprite this)
-{
-	ASSERT(this, "Sprite::update: null this");
 }
 
 // render a world layer with the map's information

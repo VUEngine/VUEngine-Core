@@ -265,7 +265,8 @@ static int SpriteManager_processFreedLayers(SpriteManager this)
 			    this->freedLayer--;
 			    
 			    // must render inmediately 
-				Sprite_render(sprite);
+				__VIRTUAL_CALL(void, Sprite, render, (Sprite)VirtualNode_getData(node));
+
 				// and hide old layer, otherwise,
 				// there will be flickering
 			    WORLD_SIZE(spriteLayer, 0, 0);
@@ -343,7 +344,7 @@ void SpriteManager_render(SpriteManager this)
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		Sprite_render((Sprite)VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Sprite, render, (Sprite)VirtualNode_getData(node));
 	}
 }
 

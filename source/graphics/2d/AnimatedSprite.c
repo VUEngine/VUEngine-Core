@@ -43,7 +43,7 @@ __CLASS_DEFINITION(AnimatedSprite);
 extern int strcmp(const char *, const char *);
 
 // class's constructor
-static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const SpriteDefinition* spriteDefinition);
+static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,11 +51,11 @@ static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const 
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedSprite, __PARAMETERS(Object owner, const SpriteDefinition* spriteDefinition))
-__CLASS_NEW_END(AnimatedSprite, __ARGUMENTS(owner, spriteDefinition));
+__CLASS_NEW_DEFINITION(AnimatedSprite, __PARAMETERS(const SpriteDefinition* spriteDefinition, Object owner))
+__CLASS_NEW_END(AnimatedSprite, __ARGUMENTS(spriteDefinition, owner));
 
 // class's constructor
-static void AnimatedSprite_constructor(AnimatedSprite this, Object owner, const SpriteDefinition* spriteDefinition)
+static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
 {
 	// construct base object
 	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(spriteDefinition));

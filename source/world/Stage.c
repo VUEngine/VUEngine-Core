@@ -424,7 +424,7 @@ static void Stage_registerEntities(Stage this)
 		u8 height = 0;
 
 		int i = 0;
-		for (; i < stageEntityDescription->positionedEntity->entityDefinition->numberOfSprites; i++)
+		for (; i < stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i].allocator; i++)
 		{
 			const SpriteDefinition* spriteDefinition = &stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i];
 
