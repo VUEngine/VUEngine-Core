@@ -244,7 +244,7 @@ int CollisionManager_update(CollisionManager this)
 			if (shape != shapeToCheck && !Shape_isChecked(shapeToCheck))
 			{
 				// check if shapes overlap
-				collisionResult = __VIRTUAL_CALL(int, Shape, overlaps, shape, __ARGUMENTS(shapeToCheck));
+				collisionResult = __VIRTUAL_CALL(bool, Shape, overlaps, shape, __ARGUMENTS(shapeToCheck));
 
 				if (collisionResult)
 				{

@@ -366,7 +366,7 @@ static void StageEditor_positioneShape(StageEditor this)
 
 	Shape_setReady(this->shape, false);
 
-	if (__VIRTUAL_CALL(int, Entity, moves, entity))
+	if (__VIRTUAL_CALL(bool, Entity, moves, entity))
 	{
 		__VIRTUAL_CALL(void, Shape, positione, this->shape);
 	}

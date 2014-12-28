@@ -88,7 +88,7 @@ __CLASS(Cuboid);
 __CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(Entity owner));
 
 void Cuboid_destructor(Cuboid this);
-int Cuboid_overlaps(Cuboid this, Shape shape);
+bool Cuboid_overlaps(Cuboid this, Shape shape);
 void Cuboid_setup(Cuboid this);
 void Cuboid_positione(Cuboid this);
 Rightcuboid Cuboid_getRightcuboid(Cuboid this);

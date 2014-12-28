@@ -375,7 +375,7 @@ bool Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 {
 	ASSERT(this, "Actor::canMoveOverAxis: null this");
 
-	int axisFreeForMovement = __VIRTUAL_CALL(int, Actor, getAxisFreeForMovement, this);
+	bool axisFreeForMovement = __VIRTUAL_CALL(bool, Actor, getAxisFreeForMovement, this);
 
 	int axisOfCollision = 0;
 
@@ -396,7 +396,7 @@ bool Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 					kZAxis == i ? acceleration->z : 0
 				};
 
-				axisOfCollision |= __VIRTUAL_CALL(int, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
+				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
 			}
 		}
 	}

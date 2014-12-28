@@ -54,7 +54,7 @@ void Shape_constructor(Shape this, Entity owner)
 	this->owner = owner;
 
 	// do I move?
-	this->moves = __VIRTUAL_CALL(u8, Entity, moves, owner);
+	this->moves = __VIRTUAL_CALL(bool, Entity, moves, owner);
 
 	// not checked yet
 	this->checked = false;

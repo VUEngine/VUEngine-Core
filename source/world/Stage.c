@@ -617,7 +617,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		Entity entity = (Entity)VirtualNode_getData(node);
 
 		// if the entity isn't visible inside the view field, unload it
-		if (!__VIRTUAL_CALL(int, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD)))
+		if (!__VIRTUAL_CALL(bool, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD)))
 		{
 			s16 id = Container_getId((Container)entity);
 

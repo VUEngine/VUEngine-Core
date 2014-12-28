@@ -139,7 +139,7 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	if (this->focusInGameEntity)
 	{
 		//get focusInGameEntity is moving
-		if (__VIRTUAL_CALL(int, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
+		if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 		{
 			// save last position
 			this->lastDisplacement = this->position;
