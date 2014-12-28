@@ -88,7 +88,7 @@
 // target frames per second
 #define __MINIMUM_GOOD_FPS 				(__TARGET_FPS - 3)
 
-#define __MILISECONDS_IN_SECOND			1000
+#define __MILLISECONDS_IN_SECOND			1000
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor

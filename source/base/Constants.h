@@ -30,9 +30,6 @@
 //override null definition (because we don't want to include standard C libraries)
 #define NULL 	(void *)0x00000000
 
-// booleans
-#define true 	(u8)1
-#define false 	(u8)0
 
 //---------------------------------------------------------------------------------------------------------
 // 										AXES

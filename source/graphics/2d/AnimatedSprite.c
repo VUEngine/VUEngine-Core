@@ -405,7 +405,7 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 }
 
 // is play animation
-int AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName)
+bool AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName)
 {
 	ASSERT(this, "AnimatedSprite::isPlayingFunction: null this");
 
@@ -414,7 +414,7 @@ int AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* 
 }
 
 // is playing animation
-int AnimatedSprite_isPlaying(AnimatedSprite this)
+bool AnimatedSprite_isPlaying(AnimatedSprite this)
 {
 	ASSERT(this, "AnimatedSprite::isPlaying: null this");
 

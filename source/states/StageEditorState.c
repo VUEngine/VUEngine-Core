@@ -40,7 +40,7 @@ static void StageEditorState_constructor(StageEditorState this);
 static void StageEditorState_enter(StageEditorState this, void* owner);
 static void StageEditorState_execute(StageEditorState this, void* owner);
 static void StageEditorState_exit(StageEditorState this, void* owner);
-static int StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram);
+static bool StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ static void StageEditorState_exit(StageEditorState this, void* owner)
 }
 
 // state's on message
-static int StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram)
+static bool StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram)
 {
 	// process message
 	switch (Telegram_getMessage(telegram))

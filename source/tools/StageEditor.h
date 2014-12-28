@@ -56,31 +56,22 @@ typedef struct UserObject
 	EntityDefinition* entityDefinition;
 	char* name;
 
-}UserObject;
+} UserObject;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// it is a singleton!
 StageEditor StageEditor_getInstance();
 
-// class's destructor
 void StageEditor_destructor(StageEditor this);
-
-// update
 void StageEditor_update(StageEditor this);
-
-// start level editor
 void StageEditor_start(StageEditor this, GameState gameState);
-
-// stop level editor
 void StageEditor_stop(StageEditor this);
-
-// process a telegram
-int StageEditor_handleMessage(StageEditor this, Telegram telegram);
+bool StageEditor_handleMessage(StageEditor this, Telegram telegram);
 
 #endif
 
-#endif /*CLOCK_H_*/
+
+#endif

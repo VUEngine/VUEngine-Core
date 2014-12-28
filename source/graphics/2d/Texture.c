@@ -97,7 +97,7 @@ static void Texture_writeAnimated(Texture this)
 	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
 	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if (0 > xOffset || 0 > yOffset)
 	{
 		return;
 	}
@@ -127,7 +127,7 @@ static void Texture_writeNoAnimated(Texture this)
 	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
 	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if (0 > xOffset || 0 > yOffset)
 	{
 		return;
 	}
@@ -161,7 +161,7 @@ static void Texture_writeAnimatedShared(Texture this)
 	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
 	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if (0 > xOffset || 0 > yOffset)
 	{
 		return;
 	}
@@ -446,7 +446,7 @@ u16 Texture_getId(Texture this)
 }
 
 // process a telegram
-int Texture_handleMessage(Texture this, Telegram telegram)
+bool Texture_handleMessage(Texture this, Telegram telegram)
 {
 	ASSERT(this, "Texture::handleMessage: null this");
 	switch (Telegram_getMessage(telegram))

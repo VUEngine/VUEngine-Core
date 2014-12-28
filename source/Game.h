@@ -65,8 +65,8 @@ void Game_saveState(Game this);
 void Game_recoverState(Game this);
 void Game_render(Game this);
 void Game_update(Game this);
-int Game_handleMessage(Game this, Telegram telegram);
-void Game_setRestFlag(Game this, int flag);
+bool Game_handleMessage(Game this, Telegram telegram);
+void Game_setRestFlag(Game this, bool flag);
 Clock Game_getClock(Game this);
 Clock Game_getInGameClock(Game this);
 void Game_printClassSizes(int x, int y);
@@ -74,15 +74,15 @@ char* Game_getLastProcessName(Game this);
 Optical Game_getOptical(Game this);
 void Game_setOptical(Game this, Optical optical);
 #ifdef __DEBUG_TOOLS
-int Game_isInDebugMode(Game this);
+bool Game_isInDebugMode(Game this);
 #endif
 #ifdef __STAGE_EDITOR
-int Game_isInStageEditor(Game this);
+bool Game_isInStageEditor(Game this);
 #endif
 #ifdef __ANIMATION_EDITOR
-int Game_isInAnimationEditor(Game this);
+bool Game_isInAnimationEditor(Game this);
 #endif
-int Game_isInSpecialMode(Game this);
+bool Game_isInSpecialMode(Game this);
 StateMachine Game_getStateMachine(Game this);
 Stage Game_getStage(Game this);
 GameState Game_getCurrentState(Game this);

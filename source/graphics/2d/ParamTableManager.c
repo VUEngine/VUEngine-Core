@@ -141,7 +141,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
 
 	//if there is space in the param table, allocate
-	if(PARAM((this->used + size)) < __PARAMEND)
+	if (PARAM((this->used + size)) < __PARAMEND)
 	{
 		//set sprite param
 		Sprite_setParam(sprite, this->used);
@@ -179,7 +179,7 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 }
 
 // relocate sprites
-int ParamTableManager_processRemovedSprites(ParamTableManager this)
+bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 	// for each sprite using param table space reassign them their param table starting point.

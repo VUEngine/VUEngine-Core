@@ -81,7 +81,7 @@ void Object_destructor(Object this)
 }
 
 // on message
-int Object_handleMessage(Object this, void* owner, void* telegram)
+bool Object_handleMessage(Object this, void* owner, void* telegram)
 {
 	ASSERT(this, "Object::handleMessage: null this");
 

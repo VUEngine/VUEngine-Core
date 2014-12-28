@@ -235,13 +235,13 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
 }
 
 // return to previous state
-int StateMachine_handleMessage(StateMachine this, Telegram telegram)
+bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 {
 	ASSERT(this, "StateMachine::handleMessage: null this");
 
 	if (this->currentState )
 	{
-		return __VIRTUAL_CALL(int, State, handleMessage, this->currentState, __ARGUMENTS(this->owner, telegram));
+		return __VIRTUAL_CALL(bool, State, handleMessage, this->currentState, __ARGUMENTS(this->owner, telegram));
 	}
 
 	return false;
@@ -249,7 +249,7 @@ int StateMachine_handleMessage(StateMachine this, Telegram telegram)
 
 // returns true if the current state's type is equal to the type of the
 // class passed as a parameter.
-int StateMachine_isInState(StateMachine this, const State state)
+bool StateMachine_isInState(StateMachine this, const State state)
 {
 	ASSERT(this, "StateMachine::isInState: null this");
 

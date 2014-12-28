@@ -37,7 +37,7 @@
 																				\
 	{																			\
 		/* a static flag */														\
-		static u8 __callFlag = false;											\
+		static bool __callFlag = false;											\
 																				\
 		/* check if not called */												\
 		if (!__callFlag){														\

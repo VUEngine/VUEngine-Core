@@ -184,7 +184,7 @@ static void Entity_translateSprites(Entity this, int updateSpriteScale, int upda
 {
 	ASSERT(this, "Entity::transform: null this");
 
-	if(this->sprites) 
+	if (this->sprites)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 	
@@ -277,7 +277,7 @@ Scale Entity_getScale(Entity this)
 {
 	ASSERT(this, "Entity::getScale: null this");
 
-	if(!this->sprites)
+	if (!this->sprites)
 	{
 		Scale scale = 
 		{
@@ -316,7 +316,7 @@ VirtualList Entity_getSprites(Entity this)
 }
 
 // process a telegram
-int Entity_handleMessage(Entity this, Telegram telegram)
+bool Entity_handleMessage(Entity this, Telegram telegram)
 {
 	ASSERT(this, "Entity::handleMessage: null this");
 
@@ -386,7 +386,7 @@ int Entity_getShapeType(Entity this)
 }
 
 // whether it is visible
-int Entity_isVisible(Entity this, int pad)
+bool Entity_isVisible(Entity this, int pad)
 {
 	ASSERT(this, "Entity::isVisible: null this");
 
@@ -469,7 +469,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 }
 
 // does it moves?
-u8 Entity_moves(Entity this)
+bool Entity_moves(Entity this)
 {
 	return false;
 }

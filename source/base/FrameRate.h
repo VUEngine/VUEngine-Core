@@ -59,7 +59,7 @@ void FrameRate_increaseRenderFPS(FrameRate this);
 void FrameRate_increaseRawFPS(FrameRate this);
 void FrameRate_increaseLogicFPS(FrameRate this);
 void FrameRate_increasePhysicsFPS(FrameRate this);
-int FrameRate_isFPSHigh(FrameRate this);
+bool FrameRate_isFPSHigh(FrameRate this);
 void FrameRate_print(FrameRate this,int col,int row);
 void FrameRate_printLastRecord(FrameRate this, int col, int row);
 

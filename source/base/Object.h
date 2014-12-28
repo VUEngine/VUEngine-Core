@@ -72,7 +72,7 @@ __CLASS(Object);
 
 void Object_constructor(Object this);
 void Object_destructor(Object this);
-int Object_handleMessage(Object this, void* owner, void* telegram);
+bool Object_handleMessage(Object this, void* owner, void* telegram);
 void Object_addEventListener(Object this, Object listener, void (*method)(Object), char* eventName);
 void Object_removeEventListener(Object this, Object listener, void (*method)(Object), char* eventName);
 void Object_fireEvent(Object this, char* eventName);

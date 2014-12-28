@@ -210,7 +210,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 }
 
 // is play an animation
-int AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
+bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::isPlayingAnimation: null sprites");
@@ -221,7 +221,7 @@ int AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 }
 
 // is animation selected
-int AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName)
+bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName)
 {
 	ASSERT(this, "AnimatedInGameEntity::isAnimationLoaded: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::isAnimationLoaded: null sprites");

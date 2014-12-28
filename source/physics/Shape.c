@@ -86,7 +86,7 @@ Entity Shape_getOwner(Shape this)
 }
 
 // set active
-void Shape_setActive(Shape this, u8 active)
+void Shape_setActive(Shape this, bool active)
 {
 	ASSERT(this, "Shape::setActive: null this");
 
@@ -101,7 +101,7 @@ void Shape_setActive(Shape this, u8 active)
 }
 
 // is active?
-u8 Shape_isActive(Shape this)
+bool Shape_isActive(Shape this)
 {
 	ASSERT(this, "Shape::isActive: null this");
 
@@ -109,7 +109,7 @@ u8 Shape_isActive(Shape this)
 }
 
 // do I move?
-u8 Shape_moves(Shape this)
+bool Shape_moves(Shape this)
 {
 	ASSERT(this, "Shape::moves: null this");
 
@@ -117,7 +117,7 @@ u8 Shape_moves(Shape this)
 }
 
 // has been checked
-u8 Shape_isChecked(Shape this)
+bool Shape_isChecked(Shape this)
 {
 	ASSERT(this, "Shape::isChecked: null this");
 
@@ -125,7 +125,7 @@ u8 Shape_isChecked(Shape this)
 }
 
 // set check status
-void Shape_checked(Shape this, u8 checked)
+void Shape_checked(Shape this, bool checked)
 {
 	ASSERT(this, "Shape::checked: null this");
 
@@ -133,25 +133,25 @@ void Shape_checked(Shape this, u8 checked)
 }
 
 // has been configured?
-u8 Shape_isReady(Shape this)
+bool Shape_isReady(Shape this)
 {
 	return this->ready;
 }
 
 // set configured flag
-void Shape_setReady(Shape this, u8 ready)
+void Shape_setReady(Shape this, bool ready)
 {
 	this->ready = ready;
 }
 
 // set flag
-void Shape_setCheckForCollisions(Shape this, u8 checkForCollisions)
+void Shape_setCheckForCollisions(Shape this, bool checkForCollisions)
 {
 	this->checkForCollisions = checkForCollisions;
 }
 
 // get flag
-u8 Shape_checkForCollisions(Shape this)
+bool Shape_checkForCollisions(Shape this)
 {
 	return this->checkForCollisions;
 }

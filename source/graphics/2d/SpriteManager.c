@@ -60,7 +60,7 @@ __CLASS_DEFINITION(SpriteManager);
 
 static void SpriteManager_constructor(SpriteManager this);
 static void SpriteManager_setLastLayer(SpriteManager this);
-static int SpriteManager_processFreedLayers(SpriteManager this);
+static bool SpriteManager_processFreedLayers(SpriteManager this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -215,7 +215,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::removeSprite: sprite not found");
 
 	// check if exists
-	if(VirtualList_removeElement(this->sprites, sprite))
+	if (VirtualList_removeElement(this->sprites, sprite))
 	{
 		// hide it
 		Sprite_hide(sprite);
@@ -237,11 +237,11 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 }
 
 // process removed sprites
-static int SpriteManager_processFreedLayers(SpriteManager this)
+static bool SpriteManager_processFreedLayers(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::processRemovedSprites: null this");
 
-	if(this->freedLayer) 
+	if (this->freedLayer)
 	{
 		ASSERT(this->freedLayer < __TOTAL_LAYERS, "SpriteManager::processRemovedSprites: error freedLayer");
 
@@ -254,7 +254,7 @@ static int SpriteManager_processFreedLayers(SpriteManager this)
 			
 			// search for the next sprite with the closest 
 			// layer to the freed layer
-			if(spriteLayer < this->freedLayer)
+			if (spriteLayer < this->freedLayer)
 			{
 				// move the sprite to the freed layer
 				Sprite_setWorldLayer(sprite, this->freedLayer);
@@ -276,7 +276,7 @@ static int SpriteManager_processFreedLayers(SpriteManager this)
 			}
 		}
 		
-		if(!node)
+		if (!node)
 		{
 			this->freedLayer = 0;
 			this->freedLayersCount = 0;
@@ -294,7 +294,7 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
-	if(VirtualList_getSize(this->sprites)) 
+	if (VirtualList_getSize(this->sprites))
 	{
 		this->freeLayer = Sprite_getWorldLayer((Sprite)VirtualList_front(this->sprites)) - 1;
 	}

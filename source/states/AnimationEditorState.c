@@ -36,21 +36,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 static void AnimationEditorState_destructor(AnimationEditorState this);
-
-// class's constructor
 static void AnimationEditorState_constructor(AnimationEditorState this);
-
-// state's enter
 static void AnimationEditorState_enter(AnimationEditorState this, void* owner);
-
-// state's execute
 static void AnimationEditorState_execute(AnimationEditorState this, void* owner);
-
-// state's enter
 static void AnimationEditorState_exit(AnimationEditorState this, void* owner);
-
-// state's on message
-static int AnimationEditorState_handleMessage(AnimationEditorState this, void* owner, Telegram telegram);
+static bool AnimationEditorState_handleMessage(AnimationEditorState this, void* owner, Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -123,7 +113,7 @@ static void AnimationEditorState_exit(AnimationEditorState this, void* owner)
 }
 
 // state's on message
-static int AnimationEditorState_handleMessage(AnimationEditorState this, void* owner, Telegram telegram)
+static bool AnimationEditorState_handleMessage(AnimationEditorState this, void* owner, Telegram telegram)
 {
 	// process message
 	switch (Telegram_getMessage(telegram))

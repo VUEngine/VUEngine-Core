@@ -74,7 +74,7 @@ void Printing_loadFont()
 //render general print output layer
 void Printing_render(int textLayer)
 {
-	if(0 > textLayer || textLayer >= __TOTAL_LAYERS)
+	if (0 > textLayer || textLayer >= __TOTAL_LAYERS)
 	{
 		ASSERT(false, "Printing::render: invalid layer");
 		return;

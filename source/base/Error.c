@@ -50,7 +50,7 @@ __CLASS_DEFINITION(Error);
 // class's constructor
 static void Error_constructor(Error this);
 
-int Game_isConstructed();
+bool Game_isConstructed();
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -183,7 +183,7 @@ void FrameRate_increasePhysicsFPS(FrameRate this)
 }
 
 // test if FPS are almost at their maximum
-int FrameRate_isFPSHigh(FrameRate this)
+bool FrameRate_isFPSHigh(FrameRate this)
 {
 	// TODO: change magic number
 	return __MINIMUM_GOOD_FPS * 3 <= this->lastLogicFPS + this->lastPhysicsFPS + this->lastRenderFPS;

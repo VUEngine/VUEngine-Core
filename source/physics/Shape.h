@@ -56,19 +56,17 @@
 	/* the entity to which the shape belongs */									\
 	Entity owner;																\
 																				\
-	/* flag to know if the shapes below to an */								\
-	/* entity which moves */													\
-	u8 moves: 1;																\
+	/* flag to know if the shapes below to an entity which moves */				\
+	bool moves: true;															\
 																				\
-	/* whether it has been checked */											\
-	/* for collision in current update */										\
-	u8 checked :1;																\
+	/* whether it has been checked for collision in current update */			\
+	bool checked: true;															\
 																				\
 	/* flag to know if setup is needed */										\
-	u8 ready :1;																\
+	bool ready: true;															\
 																				\
 	/* flag to check agains other shapes */										\
-	u8 checkForCollisions :1;
+	bool checkForCollisions: true;
 
 // A Shape which represent a generic object inside a Stage
 __CLASS(Shape);
@@ -86,15 +84,15 @@ enum ShapeTypes{
 void Shape_constructor(Shape this, Entity owner);
 void Shape_destructor(Shape this);
 Entity Shape_getOwner(Shape this);
-void Shape_setActive(Shape this, u8 active);
-u8 Shape_isActive(Shape this);
-u8 Shape_moves(Shape this);
-u8 Shape_isChecked(Shape this);
-void Shape_checked(Shape this, u8 checked);
-u8 Shape_isReady(Shape this);
-void Shape_setReady(Shape this, u8 ready);
-void Shape_setCheckForCollisions(Shape this, u8 checkForCollisions);
-u8 Shape_checkForCollisions(Shape this);
+void Shape_setActive(Shape this, bool active);
+bool Shape_isActive(Shape this);
+bool Shape_moves(Shape this);
+bool Shape_isChecked(Shape this);
+void Shape_checked(Shape this, bool checked);
+bool Shape_isReady(Shape this);
+void Shape_setReady(Shape this, bool ready);
+void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
+bool Shape_checkForCollisions(Shape this);
 void Shape_draw(Shape this);
 void Shape_deleteDirectDrawData(Shape this);
 void Shape_print(Shape this, int x, int y);

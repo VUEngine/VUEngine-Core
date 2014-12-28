@@ -87,7 +87,7 @@
 																				\
 	/* h-bias max amplitude */													\
 	/* int hbiasAmplitude; */													\
-	u8 renderFlag;																\
+	bool renderFlag;																\
 																				\
 	/* parallax modifier to achieve better */									\
 	/* control over display */													\
@@ -146,7 +146,7 @@ void Sprite_setParam(Sprite this, u32 param);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 u8 Sprite_getWorldLayer(Sprite this);
 u16 Sprite_getHead(Sprite this);
-void Sprite_setRenderFlag(Sprite this, u8 renderFlag);
+void Sprite_setRenderFlag(Sprite this, bool renderFlag);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 void Sprite_update(Sprite this);

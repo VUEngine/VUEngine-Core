@@ -118,7 +118,7 @@ u8 Texture_getPallet(Texture this);
 u8 Texture_getRows(Texture this);
 u8 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
-int Texture_handleMessage(Texture this, Telegram telegram);
+bool Texture_handleMessage(Texture this, Telegram telegram);
 
 
 #endif
