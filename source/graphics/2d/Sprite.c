@@ -66,7 +66,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	__CONSTRUCT_BASE(Object);
 
 	// create the texture
-	this->texture = spriteDefinition->textureDefinition? TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition): NULL;
+	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
 
 	ASSERT(this->texture, "Sprite::constructor: texture no allocated");
 
@@ -120,7 +120,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	this->worldLayer = 0;
 
 	// set the render flag
-	this->renderFlag = false;
+	this->renderFlag = 0;
 
 	// register with sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), this);
@@ -284,7 +284,7 @@ void Sprite_setRenderFlag(Sprite this, bool renderFlag)
 	// next render
 	if (__UPDATE_HEAD != this->renderFlag || !renderFlag)
 	{
-		this->renderFlag = !renderFlag ? false : this->renderFlag | renderFlag;
+		this->renderFlag = !renderFlag ? 0 : this->renderFlag | renderFlag;
 	}
 }
 
@@ -548,17 +548,17 @@ void Sprite_rotate(Sprite this, int angle)
 	// TODO
 	/*
 	static int alpha=0;
-	if (this->updateParamTable==true)
-	{
+	if (this->updateParamTable==true){
 		affineRotateY(this->param,alpha,this->scale.x,this->scale.y,
 		(this->xOffset<<3)+(this->cols<<2), (this->yOffset<<3)+(this->rows<<2),
 		(this->cols<<2),(this->rows<<2));
-		if (alpha++ >125)
-		{
+		if (alpha++ >125){
 			alpha=125;
+
 		}
 		// put down the flag
 		Sprite_setUpdateParamTableFlag(this, false);
+
 	}
 	*/
 	//delay(5);
@@ -581,8 +581,7 @@ void Sprite_fireHFX(Sprite this)
 	// TODO
 }
 
-void Sprite_waveHFX(Sprite this)
-{
+void Sprite_waveHFX(Sprite this){
 	ASSERT(this, "Sprite::waveHFX: null this");
 
 	// TODO
