@@ -694,10 +694,15 @@ void Game_update(Game this)
 	u32 lastSubSystemTime = 0;
 	u32 cleanUpTime = 0;
 	
+#ifdef __DEBUG
+	char* previousLastProcessName = NULL;
+#endif
+	
 	while (true)
 	{
 #ifdef __DEBUG
 		currentTime = __CAP_FPS ? Clock_getTime(this->clock) : lastSubSystemTime + 1000 + __TIMER_RESOLUTION;
+		previousLastProcessName = this->lastProcessName;
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
@@ -731,8 +736,11 @@ void Game_update(Game this)
 		FrameRate_increaseRawFPS(this->frameRate);
 
 #ifdef __DEBUG
-		Printing_text(":                              ", 10, 0);
-		Printing_text(this->lastProcessName, 12, 0);
+		if(previousLastProcessName != this->lastProcessName)
+		{
+			Printing_text(":                              ", 10, 0);
+			Printing_text(this->lastProcessName, 12, 0);
+		}
 #endif
 	}
 }
