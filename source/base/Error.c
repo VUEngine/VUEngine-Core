@@ -95,7 +95,7 @@ int Error_triggerException(Error this, char* string)
 
     TimerManager_enable(TimerManager_getInstance(), true);
 
-	Printing_loadFont();
+	Printing_loadFonts();
 
 	//print error message to screen
 	if (0 < y)

@@ -89,7 +89,7 @@ void ClockManager_destructor(ClockManager this)
 		Clock_destructor((Clock)VirtualNode_getData(node));
 	}
 
-	// clear my liest
+	// clear my list
 	VirtualList_clear(this->clocks);
 
 	// allow a new construct

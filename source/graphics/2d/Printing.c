@@ -31,7 +31,8 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define TAB_SIZE 4 //horizontal tab size in chars
+// horizontal tab size in chars
+#define TAB_SIZE 4
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -39,10 +40,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 // global to change
-static const u16* _fontCharDefinition = NULL;
+static const FontDefinition* _fontDefinitions[8] = {NULL};
 
-// fall back measure
-extern const u16 VBJAE_DEFAULT_FONT[];
+// number of registered fonts
+u8 _fontsDefinitionCount = 1;
+
+// default font
+extern const u16 VBJAE_DEFAULT_FONT_CHARS[];
+FontROMDef VBJAE_DEFAULT_FONT =
+{
+    VBJAE_DEFAULT_FONT_CHARS,
+    kFont8x8,
+    "VBJaE Default",
+};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,25 +60,26 @@ extern const u16 VBJAE_DEFAULT_FONT[];
 //---------------------------------------------------------------------------------------------------------
 
 // setup the bgmap and char memory with printing data
-void Printing_setFontDefinition(const u16* fontCharDefinition)
+void Printing_registerFont(const FontDefinition* fontDefinition, bool makeDefault)
 {
-	_fontCharDefinition = fontCharDefinition;
+	_fontDefinitions[makeDefault ? 0 : _fontsDefinitionCount] = fontDefinition;
+	_fontsDefinitionCount += (makeDefault && (_fontsDefinitionCount > 0)) ? 0 : 1;
 }
 
-// setup the bgmap and char memory with printing data
-void Printing_loadFont()
+// load font data to char memory
+void Printing_loadFonts()
 {
-	// check that character definitions is not null
-	if (!_fontCharDefinition)
+	// register default font if there's no registered font yet
+	if (_fontDefinitions[0] == NULL)
 	{
-		_fontCharDefinition = (const u16*)VBJAE_DEFAULT_FONT;
+		Printing_registerFont(&VBJAE_DEFAULT_FONT, true);
 	}
 
-	//copy font char definition to char segment 3
-	Mem_copy((u8*)(CharSeg3 + ((128 - 1) * 16)), (u8*)_fontCharDefinition, 257 << 4);
+	// copy font char definition to char segment 3
+	Mem_copy((u8*)(CharSeg3 + ((128 - 1) * 16)), (u8*)(_fontDefinitions[0]->fontCharDefinition), 257 << 4);
 
-	//set third char segment's mem usage
-	// CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
+	// set char mem usage
+	//CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
 }
 
 //render general print output layer
@@ -105,7 +116,6 @@ void Printing_clear()
 // direct printing out method
 void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 {
-	/* Font consists of the last 256 chars (1792-2047) */
 	u16 i = 0, pos = 0, col = x;
 
 	while (string[i])
@@ -182,16 +192,11 @@ void Printing_hex(WORD value,int x,int y)
 void Printing_float(float value,int x,int y)
 {
 	int sign = 1;
-
 	int i = 0;
-
 	int length;
-
 	int size = 10;
 
-//	int decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value)) / 512.f) * 100.f);
-
-	#define FIX19_13_FRAC(n)		((n)&0x1FFF)
+	#define FIX19_13_FRAC(n)	((n)&0x1FFF)
 
 	int decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 
@@ -202,7 +207,6 @@ void Printing_float(float value,int x,int y)
 		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
 	}
 
-//	decimal = (int)(((float)FIX7_9_FRAC(FTOFIX7_9(value * sign)) / 512.f) * 100.f);
 	decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 
 	// print integral part
@@ -231,7 +235,7 @@ void Printing_float(float value,int x,int y)
 	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE);
 }
 
-void Printing_text(char *string, int x,int y)
+void Printing_text(char *string, int x, int y)
 {
 	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALETTE);
 }
