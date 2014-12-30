@@ -102,6 +102,8 @@ static void Stage_constructor(Stage this)
 
 	this->flushCharGroups = true;
 	this->focusEntity = NULL;
+	
+	this->nextEntityId = 0;
 }
 
 // class's destructor
@@ -268,43 +270,62 @@ static void Stage_setupUI(Stage this)
 	}
 }
 
-// add entity to the stage
-Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D* position, void *extraInfo, int permanent)
+// 
+Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, int permanent)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
-	static s16 id = 0;
-
 	if (entityDefinition)
 	{
-		Entity entity = Entity_load(entityDefinition, id++, extraInfo);
+		Entity entity = Entity_load(entityDefinition, this->nextEntityId++, extraInfo);
 
-		// create the entity and add it to the world
-		Container_addChild((Container)this, (Container)entity);
-
-		// static to avoid call to _memcpy
-		static Transformation environmentTransform =
+		if(entity)
 		{
-				// local position
-				{0, 0, 0},
-				// global position
-				{0, 0, 0},
-				// scale
-				{1, 1},
-				// rotation
-				{0, 0, 0}
-		};
+			// create the entity and add it to the world
+			Container_addChild((Container)this, (Container)entity);
+	
+			Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+	
+			// set spatial position
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+	
+			// apply transformations
+			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(&environmentTransform));
+	
+			if (permanent)
+			{
+				// TODO
+			}
+			
+			return entity;
+		}
+	}
 
-		// set spatial position
-		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+	return NULL;
+}
 
-		// apply transformations
-		__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(&environmentTransform));
+// add entity to the stage
+Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, int permanent)
+{
+	ASSERT(this, "Stage::addEntity: null this");
+
+	if (positionedEntity)
+	{
+		Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+
+		Entity entity = Entity_loadFromDefinition(positionedEntity, &environmentTransform, this->nextEntityId++);
+
+		if(entity)
+		{
+			// create the entity and add it to the world
+			Container_addChild((Container)this, (Container)entity);
+		}
 
 		if (permanent)
 		{
 			// TODO
 		}
+		
 		return entity;
 	}
 
@@ -424,7 +445,7 @@ static void Stage_registerEntities(Stage this)
 		u8 height = 0;
 
 		int i = 0;
-		for (; i < stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i].allocator; i++)
+		for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i].allocator; i++)
 		{
 			const SpriteDefinition* spriteDefinition = &stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i];
 
@@ -547,12 +568,26 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols,
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows))
 			{
-				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position3D, stageEntityDescription->positionedEntity->extraInfo, false);
-				stageEntityDescription->id = Container_getId((Container)entity);
+				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
-				VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
+				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
-				entityLoaded = true;
+				if(entity)
+				{
+					stageEntityDescription->id = Container_getId((Container)entity);
+	
+					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
+	
+					entityLoaded = true;
+				}
+				else 
+				{
+					// can't load this entity, so remove its definition
+					VirtualList_removeElement(this->stageEntities, stageEntityDescription);
+					
+					__DELETE_BASIC(stageEntityDescription);
+					break;
+				}
 			}
 		}
 	}
@@ -563,10 +598,10 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 // load all visible entities
 static void Stage_loadInRangeEntities(Stage this)
 {
-	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
+	ASSERT(this, "Stage::loadInRangeEntities: null this");
 
 	// need a temporal list to remove and delete entities
-	VirtualNode node = VirtualList_begin(this->stageEntities);;
+	VirtualNode node = VirtualList_begin(this->stageEntities);
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
@@ -586,10 +621,24 @@ static void Stage_loadInRangeEntities(Stage this)
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols,
 					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows))
 			{
-				Entity entity = Stage_addEntity(this, stageEntityDescription->positionedEntity->entityDefinition, &position3D, stageEntityDescription->positionedEntity->extraInfo, false);
-				stageEntityDescription->id = Container_getId((Container)entity);
+				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
-				VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
+				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
+
+				if(entity) 
+				{
+					stageEntityDescription->id = Container_getId((Container)entity);
+	
+					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
+				}
+				else 
+				{
+					// can't load this entity, so remove its definition
+					VirtualList_removeElement(this->stageEntities, stageEntityDescription);
+					
+					__DELETE_BASIC(stageEntityDescription);
+					break;
+				}
 			}
 		}
 	}

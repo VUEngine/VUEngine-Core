@@ -119,6 +119,9 @@ typedef const struct PositionedEntity
 	// position in the world
 	VBVec3DReal position;
 
+	// the children
+	struct PositionedEntity* childrenDefinitions;
+
 	// extra info
 	void* extraInfo;
 
@@ -133,6 +136,9 @@ typedef const PositionedEntity PositionedEntityROMDef;
 
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID);
 void Entity_destructor(Entity this);
+Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo);
+Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const Transformation* environmentTransform, s16 id);
+void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions, const Transformation* environmentTransform);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
@@ -154,7 +160,6 @@ Gap Entity_getGap(Entity this);
 int Entity_getShapeType(Entity this);
 int Entity_doesMove(Entity this);
 bool Entity_isVisible(Entity this, int pad);
-Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo);
 int Entity_updateSpritePosition(Entity this);
 int Entity_updateSpriteScale(Entity this);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);

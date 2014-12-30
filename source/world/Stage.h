@@ -86,6 +86,10 @@
 																				\
 	/* focus entity: needed for streaming */									\
 	Entity focusEntity;															\
+																				\
+	/* next entity's id */														\
+	s16 nextEntityId;															\
+
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
@@ -136,6 +140,7 @@ __CLASS_NEW_DECLARE(Stage);
 void Stage_destructor(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
 Size Stage_getSize(Stage this);
+Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, int permanent);
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, int permanent);
 void Stage_removeEntity(Stage this, Entity entity, int permanent);
 void Stage_update(Stage this);

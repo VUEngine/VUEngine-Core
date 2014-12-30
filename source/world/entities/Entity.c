@@ -120,6 +120,87 @@ void Entity_destructor(Entity this)
 	__DESTROY_BASE(Container);
 }
 
+// create an entity in gameengine's memory
+Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo)
+{
+	ASSERT(entityDefinition, "Entity::load: null definition");
+	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
+
+	if (entityDefinition->allocator)
+	{
+		// call the appropiate allocator to support inheritance!
+		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
+
+		// setup entity if allocated and constructed
+		if (entity)
+	    {
+			// process extra info
+			if (extraInfo)
+	        {
+				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
+			}
+
+			return entity;
+		}
+	}
+
+	return NULL;
+}
+
+// load an entity from a PositionedEntity definition
+Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const Transformation* environmentTransform, s16 id)
+{
+	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
+	
+	if (positionedEntity)
+	{
+		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
+
+		if(entity)
+		{
+			VBVec3D position3D =
+			{
+					FTOFIX19_13(positionedEntity->position.x),
+					FTOFIX19_13(positionedEntity->position.y),
+					FTOFIX19_13(positionedEntity->position.z)
+			};
+	
+			// set spatial position
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position3D));
+	
+			// apply transformations
+			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(environmentTransform));
+	
+			// add children if defined
+			Entity_addChildren(entity, positionedEntity->childrenDefinitions, environmentTransform);
+	
+			return entity;
+		}
+	}
+
+	return NULL;
+}
+
+// load children
+void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions, const Transformation* environmentTransform)
+{
+	ASSERT(this, "Entity::loadChildren: null this");
+
+	if (childrenDefinitions)
+	{
+		int i = 0;
+
+		//go through n sprites in entity's definition
+		for (; childrenDefinitions[i].entityDefinition; i++)
+	    {
+			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], environmentTransform, this->id + Container_getChildCount((Container)this));
+
+			// create the entity and add it to the world
+			Container_addChild((Container)this, (Container)entity);
+		}
+	}	
+}
+
 // process extra info in intialization
 void Entity_setExtraInfo(Entity this, void* extraInfo)
 {
@@ -392,33 +473,6 @@ bool Entity_isVisible(Entity this, int pad)
 			Entity_getHeight(this),
 			Sprite_getDrawSpec(sprite).position.parallax,
 			pad) : true;
-}
-
-// create an entity in gameengine's memory
-Entity Entity_load(EntityDefinition* entityDefinition, int ID, void* extraInfo)
-{
-	ASSERT(entityDefinition, "Entity::load: null definition");
-	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
-
-	if (entityDefinition->allocator)
-	{
-		// call the appropiate allocator to support inheritance!
-		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
-
-		// setup entity if allocated and constructed
-		if (entity)
-	    {
-			// process extra info
-			if (extraInfo)
-	        {
-				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
-			}
-
-			return entity;
-		}
-	}
-
-	return NULL;
 }
 
 // check if must update sprite's position
