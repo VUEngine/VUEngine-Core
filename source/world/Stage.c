@@ -179,8 +179,8 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D* position3D, u8 width, u
 		       FIX19_13_DIV(position3D->z , _optical->maximunViewDistance));
 
 	return Optics_isVisible(*position3D,
-			Optics_calculateRealSize(((u16)width) << 3, WRLD_BGMAP, scale.x),
-			Optics_calculateRealSize(((u16)height) << 3, WRLD_BGMAP, scale.y),
+			Optics_calculateRealSize(((u16)width), WRLD_BGMAP, scale.x),
+			Optics_calculateRealSize(((u16)height), WRLD_BGMAP, scale.y),
 			Optics_calculateParallax(position3D->x, position3D->z),
 			__ENTITY_LOAD_PAD);
 }
@@ -444,6 +444,7 @@ static void Stage_registerEntities(Stage this)
 		u8 width = 0;
 		u8 height = 0;
 
+		/*
 		int i = 0;
 		for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i].allocator; i++)
 		{
@@ -465,6 +466,7 @@ static void Stage_registerEntities(Stage this)
 				}
 			}
 		}
+		*/
 
 		stageEntityDescription->distance = (stageEntityDescription->positionedEntity->position.x - (width >> 1)) * (stageEntityDescription->positionedEntity->position.x - (width >> 1)) +
 		(stageEntityDescription->positionedEntity->position.y - (height >> 1)) * (stageEntityDescription->positionedEntity->position.y - (height >> 1)) +
@@ -562,11 +564,13 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.y),
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
 			};
+			
+			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions? true: false;
+			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols << 3: __SCREEN_WIDTH;
+			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows << 3: __SCREEN_HEIGHT;
 
 			// if entity in load range
-			if (!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position3D,
-					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols,
-					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows))
+			if (!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position3D, width, height))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
@@ -616,10 +620,12 @@ static void Stage_loadInRangeEntities(Stage this)
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
 			};
 
+			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions? true: false;
+			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols << 3: __SCREEN_WIDTH;
+			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows << 3: __SCREEN_HEIGHT;
+
 			// if entity in load range
-			if (Stage_inLoadRange(this, &position3D,
-					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols,
-					stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows))
+			if (Stage_inLoadRange(this, &position3D, width, height))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 

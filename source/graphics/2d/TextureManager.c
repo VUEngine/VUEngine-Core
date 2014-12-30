@@ -145,8 +145,11 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	int j = 0;
 	int aux = 0;
 
-	u8 rows = Texture_getRows(texture);
 	u8 cols = Texture_getTotalCols(texture);
+	u8 rows = Texture_getRows(texture);
+	
+	cols += cols < 64? 1: 0;
+	rows += rows < 64? 1: 0;
 
 	u16 area = rows * cols;
 
