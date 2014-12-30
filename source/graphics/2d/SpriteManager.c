@@ -304,8 +304,8 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 		this->freeLayer = __TOTAL_LAYERS - 1;
 	}
 	
-	ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
-	ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: more free layers");
+	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
+	NM_ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: more free layers");
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
 	Printing_render(this->freeLayer);

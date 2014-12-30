@@ -241,7 +241,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 		}
 
 		//throw an exception if there is no enough space to allocate the bgmap definition
-		ASSERT(false, "TextureManager::allocate: bgmap segments depleted");
+		NM_ASSERT(false, "TextureManager::allocate: bgmap segments depleted");
 	}
 	CACHE_DISABLE;
 

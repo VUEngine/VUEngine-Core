@@ -144,14 +144,12 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 	    i < numberOfOjects && this->poolLocation[pool][displacement];
 	    i++, displacement += displacementStep);
 
-#ifdef __DEBUG
 	if (i >= numberOfOjects)
 	{
 		Printing_clear();
 		MemoryPool_printMemUsage(this, 1, 4);
-		ASSERT(false, "MemoryPool::allocate: pool exhausted");
+		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
-#endif
 
 	// assign address to allocated object
 	this->poolLocation[pool][displacement] = 0xFF;

@@ -158,7 +158,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 		return true;
 	}
 	
-	ASSERT(false, "ParamTableManager::allocate: memory depleted");
+	NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 
 	return false;
 }
