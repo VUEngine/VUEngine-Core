@@ -53,7 +53,7 @@
 	BYTE pool192B[__POOL_192B_SIZE]; 											\
 	BYTE pool128B[__POOL_128B_SIZE];											\
 	BYTE pool96B[__POOL_100B_SIZE];												\
-	BYTE pool64B[__POOL_64B_SIZE];												\
+	BYTE pool80B[__POOL_80B_SIZE];												\
 	BYTE pool48B[__POOL_48B_SIZE];												\
 	BYTE pool32B[__POOL_32B_SIZE];												\
 	BYTE pool24B[__POOL_28B_SIZE];												\
@@ -241,9 +241,9 @@ static void MemoryPool_reset(MemoryPool this)
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool96B);
 	this->poolSizes[pool++][eBlockSize] = __BLOCK_100B;
 
-	this->poolLocation[pool] = this->pool64B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool64B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_64B;
+	this->poolLocation[pool] = this->pool80B;
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool80B);
+	this->poolSizes[pool++][eBlockSize] = __BLOCK_80B;
 
 	this->poolLocation[pool] = this->pool48B;
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool48B);
@@ -289,7 +289,7 @@ int MemoryPool_getPoolSize(MemoryPool this)
 	size += sizeof(this->pool192B);
 	size += sizeof(this->pool128B);
 	size += sizeof(this->pool96B);
-	size += sizeof(this->pool64B);
+	size += sizeof(this->pool80B);
 	size += sizeof(this->pool48B);
 	size += sizeof(this->pool32B);
 	size += sizeof(this->pool24B);

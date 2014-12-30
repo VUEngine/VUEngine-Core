@@ -110,7 +110,7 @@
 #define __BLOCK_192B 		192
 #define __BLOCK_128B 		128
 #define __BLOCK_100B 		100		// Used by images
-#define __BLOCK_64B 		64		// Used mainly by Sprites
+#define __BLOCK_80B 		80		// Used mainly by Sprites
 #define __BLOCK_48B 		48		// Used mainly by Telegrams
 #define __BLOCK_32B 		32		// Used mainly by CharGroups
 #define __BLOCK_28B 		28		// Virtual nodes are 24 bytes long so a 32b block is too much
@@ -120,16 +120,20 @@
 #define __POOL_192B_SIZE 	(__BLOCK_192B * 10)
 #define __POOL_128B_SIZE 	(__BLOCK_128B * 24)
 #define __POOL_100B_SIZE 	(__BLOCK_100B * 64)
-#define __POOL_64B_SIZE 	(__BLOCK_64B * 32)
+#define __POOL_80B_SIZE 	(__BLOCK_80B * 32)
 #define __POOL_48B_SIZE 	(__BLOCK_48B * 16)
 #define __POOL_32B_SIZE 	(__BLOCK_32B * 64)
-#define __POOL_28B_SIZE 	(__BLOCK_28B * 512)
 
-#ifdef __DEBUG_TOOLS
-#define __POOL_16B_SIZE 	(__BLOCK_16B * 512)
-#else
+#ifndef __DEBUG_TOOLS
+#define __POOL_28B_SIZE 	(__BLOCK_28B * 512)
+// make sure that the n value in  __BLOCK_16B * n is greater than the number
+// of entities in your biggest stage's definition
 #define __POOL_16B_SIZE 	(__BLOCK_16B * 128)
+#else
+#define __POOL_28B_SIZE 	(__BLOCK_28B * 640)
+#define __POOL_16B_SIZE 	(__BLOCK_16B * 256)
 #endif
+
 
 #define __MIN_BLOCK 		__BLOCK_16B
 
