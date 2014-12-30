@@ -89,26 +89,13 @@ void ParamTableManager_destructor(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::destructor: null this");
 
-	if (this->sprites)
-	{
-		__DELETE(this->sprites);
-		
-		this->sprites = NULL;
-	}
+	ParamTableManager_reset(this);
 	
-	if (this->removedSpritesSizes)
-	{
-		VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
-		
-		for (; node; node = VirtualNode_getNext(node))
-		{
-			__DELETE_BASIC(VirtualNode_getData(node));
-		}
-		
-		__DELETE(this->removedSpritesSizes);
-		
-		this->removedSpritesSizes = NULL;
-	}
+	__DELETE(this->sprites);
+	this->sprites = NULL;
+	
+	__DELETE(this->removedSpritesSizes);
+	this->removedSpritesSizes = NULL;
 
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
@@ -120,6 +107,14 @@ void ParamTableManager_reset(ParamTableManager this)
 	ASSERT(this, "ParamTableManager::reset: null this");
 
 	VirtualList_clear(this->sprites);
+	
+	VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
+	
+	for (; node; node = VirtualNode_getNext(node))
+	{
+		__DELETE_BASIC(VirtualNode_getData(node));
+	}
+	
 	VirtualList_clear(this->removedSpritesSizes);
 		
 	// set the size of the paramtable

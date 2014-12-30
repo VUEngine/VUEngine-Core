@@ -116,46 +116,39 @@ void Stage_destructor(Stage this)
 		__DELETE(this->ui);
 		this->ui = NULL;
 	}
-
+	
 	if (this->stageEntities)
 	{
+		//Printing_int(VirtualList_getSize(this->stageEntities), 1, 10);
+		//NM_ASSERT(false, test);
 		VirtualNode node = VirtualList_begin(this->stageEntities);
 
 		for (; node; node = VirtualNode_getNext(node))
 		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
-
+		
 		__DELETE(this->stageEntities);
 
 		this->stageEntities = NULL;
 	}
 
-	if (	this->stageEntitiesToTest)
+	if (this->stageEntitiesToTest)
 	{
 		__DELETE(this->stageEntitiesToTest);
 		this->stageEntitiesToTest = NULL;
 	}
 
-	if (	this->loadedStageEntities)
+	if (this->loadedStageEntities)
 	{
 		__DELETE(this->loadedStageEntities);
 		this->loadedStageEntities = NULL;
 	}
+	
+	Stage_processRemovedEntities(this);
 
-	if (this->removedEntities)
-	{
-		VirtualNode node = VirtualList_begin(this->removedEntities);
-
-		for (; node; node = VirtualNode_getNext(node))
-		{
-			__DELETE_BASIC(VirtualNode_getData(node));
-		}
-
-		__DELETE(this->removedEntities);
-
-		this->removedEntities = NULL;
-	}
+	__DELETE(this->removedEntities);
+	this->removedEntities = NULL;
 
 	// destroy the super object
 	__DESTROY_BASE(Container);
@@ -405,32 +398,23 @@ static void Stage_registerEntities(Stage this)
 	if (this->stageEntities)
 	{
 		__DELETE(this->stageEntities);
-		this->stageEntities = NULL;
 	}
-	else
-	{
-		this->stageEntities = __NEW(VirtualList);
-	}
+
+	this->stageEntities = __NEW(VirtualList);
 
 	if (this->stageEntitiesToTest)
 	{
 		__DELETE(this->stageEntitiesToTest);
-		this->stageEntitiesToTest = NULL;
 	}
-	else
-	{
-		this->stageEntitiesToTest = __NEW(VirtualList);
-	}
+
+	this->stageEntitiesToTest = __NEW(VirtualList);
 
 	if (this->loadedStageEntities)
 	{
 		__DELETE(this->loadedStageEntities);
-		this->loadedStageEntities = NULL;
 	}
-	else
-	{
-		this->loadedStageEntities = __NEW(VirtualList);
-	}
+
+	this->loadedStageEntities = __NEW(VirtualList);
 
 	// register entities ordering them according to their distances to the origin
 	// givin increasing weight (more distance) to the objects according to their

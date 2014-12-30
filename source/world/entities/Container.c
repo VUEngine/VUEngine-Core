@@ -105,31 +105,23 @@ void Container_destructor(Container this)
 	// if I have children
 	if (this->children)
 	{
-		// create children list
+		// create a temporary children list
 		VirtualList childrenToDelete = __NEW(VirtualList);
-
-		VirtualNode node = VirtualList_begin(this->children);
-
-		// move each child to a temporary list
-		for (; node ; node = VirtualNode_getNext(node))
-	    {
-			Container child = (Container)VirtualNode_getData(node);
-
-			VirtualList_pushBack(childrenToDelete, (void*)child);
-		}
-
+		VirtualList_copy(childrenToDelete, this->children);
+		
 		// delete children list
 		__DELETE(this->children);
-
 		this->children = NULL;
 
-		node = VirtualList_begin(childrenToDelete);
+		VirtualNode node = VirtualList_begin(childrenToDelete);
 
 		// destroy each child
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
 			Container child = (Container)VirtualNode_getData(node);
 
+			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
+			child->parent = NULL;
 			__DELETE(child);
 		}
 
