@@ -239,6 +239,8 @@ void CharGroup_write(CharGroup this)
 // rewrite char on memory
 void CharGroup_rewrite(CharGroup this)
 {
+	ASSERT(this, "CharGroup::rewrite: null this");
+
 	VPUManager_waitForFrame(VPUManager_getInstance());
 
 	// write again
@@ -251,5 +253,18 @@ void CharGroup_rewrite(CharGroup this)
 // set charDefinitionDisplacement
 void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement)
 {
+	ASSERT(this, "CharGroup::setCharDefinitionDisplacement: null this");
+
 	this->charDefinitionDisplacement = charDefinitionDisplacement;
+}
+
+// write to char memory
+void CharGroup_putChar(CharGroup this, u16 charToReplace, BYTE* newChar)
+{
+	ASSERT(this, "CharGroup::putChar: null this");
+
+	if(newChar && charToReplace < this->numberOfChars)
+	{
+		Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
+	}
 }

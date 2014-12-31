@@ -159,8 +159,11 @@ void Sprite_render(Sprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										MAP FXs
+// 										Sprites FXs
 //---------------------------------------------------------------------------------------------------------
+
+// direct draw
+void Sprite_putChar(Sprite this, u8 x, u8 y, BYTE* newChar);
 
 // Affine FX
 void Sprite_scale(Sprite this);

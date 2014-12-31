@@ -119,6 +119,7 @@ u8 Texture_getRows(Texture this);
 u8 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
 bool Texture_handleMessage(Texture this, Telegram telegram);
+void Texture_putChar(Texture this, u8 x, u8 y, BYTE* newChar);
 
 
 #endif
