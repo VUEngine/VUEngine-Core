@@ -194,15 +194,15 @@ void FrameRate_print(FrameRate this, int col, int row)
 {
 	ASSERT(this, "FrameRate::print: null this");
 
-	Printing_text("FPS", col, row++);
-	Printing_text("Raw             ", col, row);
-	Printing_int(this->rawFPS, col + 8, row++);
-	Printing_text("Render          ", col, row);
-	Printing_int(this->renderFPS, col + 8, row++);
-	Printing_text("Logic           ", col, row);
-	Printing_int(this->logicFPS, col + 8, row++);
-	Printing_text("Physics         ", col, row);
-	Printing_int(this->physicsFPS, col + 8, row++);
+	Printing_text("FPS", col, row++, NULL);
+	Printing_text("Raw             ", col, row, NULL);
+	Printing_int(this->rawFPS, col + 8, row++, NULL);
+	Printing_text("Render          ", col, row, NULL);
+	Printing_int(this->renderFPS, col + 8, row++, NULL);
+	Printing_text("Logic           ", col, row, NULL);
+	Printing_int(this->logicFPS, col + 8, row++, NULL);
+	Printing_text("Physics         ", col, row, NULL);
+	Printing_int(this->physicsFPS, col + 8, row++, NULL);
 }
 
 // print renderFPS
@@ -210,13 +210,13 @@ void FrameRate_printLastRecord(FrameRate this, int col, int row)
 {
 	ASSERT(this, "FrameRate::print: null this");
 
-	Printing_text("FPS", col, row++);
-	Printing_text("Raw                          ", col, row);
-	Printing_int(this->lastRawFPS, col + 8, row++);
-	Printing_text("Render                       ", col, row);
-	Printing_int(this->lastRenderFPS, col + 8, row++);
-	Printing_text("Logic                        ", col, row);
-	Printing_int(this->lastLogicFPS, col + 8, row++);
-	Printing_text("Physics                      ", col, row);
-	Printing_int(this->lastPhysicsFPS, col + 8, row++);
+	Printing_text("FPS", col, row++, NULL);
+	Printing_text("Raw                          ", col, row, NULL);
+	Printing_int(this->lastRawFPS, col + 8, row++, NULL);
+	Printing_text("Render                       ", col, row, NULL);
+	Printing_int(this->lastRenderFPS, col + 8, row++, NULL);
+	Printing_text("Logic                        ", col, row, NULL);
+	Printing_int(this->lastLogicFPS, col + 8, row++, NULL);
+	Printing_text("Physics                      ", col, row, NULL);
+	Printing_int(this->lastPhysicsFPS, col + 8, row++, NULL);
 }

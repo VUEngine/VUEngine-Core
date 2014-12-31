@@ -327,7 +327,7 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 			int j = 0;
 			for (; ((__SCREEN_WIDTH >> 3) >= (x + j)); j++)
 			{
-				Printing_text(" ", x + j, y + i);
+				Printing_text(" ", x + j, y + i, NULL);
 			}
 		}
 
@@ -341,15 +341,15 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 				switch (this->type)
 				{
 					case kString:
-						Printing_text((char*)VirtualNode_getData(node), x + 1, y);
+						Printing_text((char*)VirtualNode_getData(node), x + 1, y, NULL);
 						break;
 
 					case kInt:
-						Printing_int(*((int*)VirtualNode_getData(node)), x + 1, y);
+						Printing_int(*((int*)VirtualNode_getData(node)), x + 1, y, NULL);
 						break;
 
 					case kFloat:
-						Printing_float(*((float*)VirtualNode_getData(node)), x + 1, y);
+						Printing_float(*((float*)VirtualNode_getData(node)), x + 1, y, NULL);
 						break;
 				}
 			}
@@ -378,6 +378,6 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
 		int optionColumn = (int)(indexOption / this->rows);
 		int optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = (__SCREEN_WIDTH >> 3) / this->cols * optionColumn;
-		Printing_text(mark, this->x + optionColumn, this->y + optionRow);
+		Printing_text(mark, this->x + optionColumn, this->y + optionRow, NULL);
 	}
 }

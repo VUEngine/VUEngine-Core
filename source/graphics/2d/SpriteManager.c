@@ -393,10 +393,10 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 {
 	ASSERT(this, "SpriteManager::print: null this");
 
-	Printing_text("SPRITES' USAGE", x, y++);
-	Printing_text("Free layers: ", x, ++y);
-	Printing_int(this->freeLayer, x + 15, y);
-	Printing_text("Sprites count: ", x, ++y);
+	Printing_text("SPRITES' USAGE", x, y++, NULL);
+	Printing_text("Free layers: ", x, ++y, NULL);
+	Printing_int(this->freeLayer, x + 15, y, NULL);
+	Printing_text("Sprites count: ", x, ++y, NULL);
 
 	int auxY = y + 2;
 	int auxX = x;
@@ -407,9 +407,9 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 	{
 		Sprite sprite = (Sprite)VirtualNode_getData(node);
 
-		Printing_text("Sprite: ", auxX, auxY);
-		Printing_int(Sprite_getWorldLayer(sprite), auxX + 8, auxY);
-		Printing_text(__GET_CLASS_NAME(sprite), auxX + 11, auxY);
+		Printing_text("Sprite: ", auxX, auxY, NULL);
+		Printing_int(Sprite_getWorldLayer(sprite), auxX + 8, auxY, NULL);
+		Printing_text(__GET_CLASS_NAME(sprite), auxX + 11, auxY, NULL);
 
 		if (28 <= ++auxY)
 		{
@@ -418,5 +418,5 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 		}
 	}
 
-	Printing_int(VirtualList_getSize(this->sprites), x + 15, y);
+	Printing_int(VirtualList_getSize(this->sprites), x + 15, y, NULL);
 }

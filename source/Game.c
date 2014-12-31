@@ -738,8 +738,8 @@ void Game_update(Game this)
 #ifdef __DEBUG
 		if(previousLastProcessName != this->lastProcessName)
 		{
-			Printing_text(":                              ", 10, 0);
-			Printing_text(this->lastProcessName, 12, 0);
+			Printing_text(":                              ", 10, 0, NULL);
+			Printing_text(this->lastProcessName, 12, 0, NULL);
 		}
 #endif
 	}
@@ -880,7 +880,7 @@ static void Game_showLowBatteryIndicator(Game this)
     // write only if one second has passed
     if (currentSecond != this->lowbatLastCheckSeconds)
     {
-        Printing_text((currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y);
+        Printing_text((currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y, NULL);
         this->lowbatLastCheckSeconds = currentSecond;
     }
 }

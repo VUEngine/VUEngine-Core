@@ -84,11 +84,11 @@ void Printing_render(int textLayer);
 void Printing_registerFont(const FontDefinition* fontDefinition, bool makeDefault);
 void Printing_loadFonts();
 void Printing_clear();
-void Printing_int(int value,int x,int y);
-void Printing_hex(WORD value,int x,int y);
+void Printing_int(int value, int x, int y, const char* font);
+void Printing_hex(WORD value, int x, int y, const char* font);
+void Printing_float(float value, int x, int y, const char* font);
+void Printing_text(char *string, int x, int y, const char* font);
 int Utilities_intLength(int value);
-void Printing_text(char *string,int x,int y);
-void Printing_float(float value,int x,int y);
 
 
 #endif

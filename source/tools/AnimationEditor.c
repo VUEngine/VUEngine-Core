@@ -272,9 +272,9 @@ void AnimationEditor_stop(AnimationEditor this)
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-	Printing_text("ANIMATION INSPECTOR", 14, 0);
-	Printing_text("Accept (A)", 48 - 10, 0);
-	Printing_text("Cancel (B)", 48 - 10, 1);
+	Printing_text("ANIMATION INSPECTOR", 14, 0, NULL);
+	Printing_text("Accept (A)", 48 - 10, 0, NULL);
+	Printing_text("Cancel (B)", 48 - 10, 1, NULL);
 
 	switch (this->mode)
 	{
@@ -567,15 +567,15 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 
 static void AnimationEditor_printUserActors(AnimationEditor this)
 {
-	Printing_text("User's actors  ", 1, 2);
-	Printing_text("                       ", 1, 3);
+	Printing_text("User's actors  ", 1, 2, NULL);
+	Printing_text("                       ", 1, 3, NULL);
 	OptionsSelector_showOptions(this->actorsSelector, 1, 4);
 }
 
 static void AnimationEditor_printActorAnimations(AnimationEditor this)
 {
-	Printing_text("Actor's animations ", 1, 2);
-	Printing_text("                       ", 1, 3);
+	Printing_text("Actor's animations ", 1, 2, NULL);
+	Printing_text("                       ", 1, 3, NULL);
 	OptionsSelector_showOptions(this->animationsSelector, 1, 4);
 }
 
@@ -584,30 +584,30 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	int x = 1;
 	int y = 2;
 
-	Printing_text("Animation: ", x, y);
-	Printing_text(this->animationFunction.name, x + 12, y++);
+	Printing_text("Animation: ", x, y, NULL);
+	Printing_text(this->animationFunction.name, x + 12, y++, NULL);
 	OptionsSelector_showOptions(this->animationEditionSelector, x, ++y);
 
-	Printing_int(this->animationFunction.numberOfFrames, x + 20, y++);
-	Printing_int(this->animationFunction.delay, x + 20, y++);
-	Printing_text(this->animationFunction.loop ? "true" : "false", x + 20, y++);
+	Printing_int(this->animationFunction.numberOfFrames, x + 20, y++, NULL);
+	Printing_int(this->animationFunction.delay, x + 20, y++, NULL);
+	Printing_text(this->animationFunction.loop ? "true" : "false", x + 20, y++, NULL);
 
 	OptionsSelector_showOptions(this->frameEditionSelector, x, ++y + 1);
 
-	Printing_text("           ", 38, 0);
+	Printing_text("           ", 38, 0, NULL);
 
 	if (!AnimatedSprite_isPlaying(this->animatedSprite))
 	{
-		Printing_text("Play       (A)", 48 - 14, 2);
+		Printing_text("Play       (A)", 48 - 14, 2, NULL);
 	}
 	else
 	{
-		Printing_text("Pause      (A)", 48 - 14, 2);
+		Printing_text("Pause      (A)", 48 - 14, 2, NULL);
 	}
 
-	Printing_text("Cancel     (B)", 48 - 14, 1);
-	Printing_text("Select (LU/LD)", 48 - 14, 3);
-	Printing_text("Modify (LL/LR)", 48 - 14, 4);
+	Printing_text("Cancel     (B)", 48 - 14, 1, NULL);
+	Printing_text("Select (LU/LD)", 48 - 14, 3, NULL);
+	Printing_text("Modify (LL/LR)", 48 - 14, 4, NULL);
 
 	int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 
@@ -615,8 +615,8 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	{
 		case kFrames:
 
-			Printing_text("Select (RU/RD)", 48 - 14, 6);
-			Printing_text("Modify (RL/RR)", 48 - 14, 7);
+			Printing_text("Select (RU/RD)", 48 - 14, 6, NULL);
+			Printing_text("Modify (RL/RR)", 48 - 14, 7, NULL);
 			break;
 	}
 }
@@ -735,7 +735,7 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this)
 {
 	if (!this->animationFunction.loop)
 	{
-		Printing_text("Play       (A)", 48 - 14, 2);
+		Printing_text("Play       (A)", 48 - 14, 2, NULL);
 	}
 }
 

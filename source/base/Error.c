@@ -100,17 +100,17 @@ int Error_triggerException(Error this, char* string)
 	//print error message to screen
 	if (0 < y)
 	{
-		Printing_text("                                             ", x, y - 1);
+		Printing_text("                                             ", x, y - 1, NULL);
 	}
 
-	Printing_text("Game::lastProcess:", x, y);
-	Printing_text(Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 19, y);
-	Printing_text("Exception:" , x, y + 1);
-	Printing_text(string, x, y + 2);
+	Printing_text("Game::lastProcess:", x, y, NULL);
+	Printing_text(Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 19, y, NULL);
+	Printing_text("Exception:" , x, y + 1, NULL);
+	Printing_text(string, x, y + 2, NULL);
 
 	if (y < 26)
 	{
-		Printing_text("                                             ", x, y + 3);
+		Printing_text("                                             ", x, y + 3, NULL);
 	}
 
 	// error display message

@@ -271,7 +271,7 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 static void StageEditor_setupMode(StageEditor this)
 {
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-	Printing_text("LEVEL EDITOR", 17, 0);
+	Printing_text("LEVEL EDITOR", 17, 0, NULL);
 
 	switch (this->mode)
 	{
@@ -382,7 +382,7 @@ static void StageEditor_highLightEntity(StageEditor this)
 	}
 	else
 	{
-		Printing_text("No entities in stage", 1, 4);
+		Printing_text("No entities in stage", 1, 4, NULL);
 	}
 }
 
@@ -427,7 +427,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 	}
 	else
 	{
-		Printing_text("StageEditor", 1, 10);
+		Printing_text("StageEditor", 1, 10, NULL);
 		this->currentEntityNode = VirtualNode_getNext(this->currentEntityNode);
 
 		if (!this->currentEntityNode)
@@ -718,8 +718,8 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 	{
 		if (1 >= SpriteManager_getFreeLayer(SpriteManager_getInstance()))
 	    {
-			Printing_text("No more WORLDs", 48 - 15, 4);
-			Printing_text("available     ", 48 - 15, 5);
+			Printing_text("No more WORLDs", 48 - 15, 4, NULL);
+			Printing_text("available     ", 48 - 15, 5, NULL);
 			return;
 		}
 
@@ -748,25 +748,25 @@ static void StageEditor_printEntityPosition(StageEditor this)
 {
 	int y = 2;
 	int x = 1;
-	Printing_text("MOVE OBJECT", x, y++);
-	Printing_text("Nav.     (SEL)", 48 - 14, 0);
-	Printing_text("Next   (LT/RT)", 48 - 14, 1);
-	Printing_text("Move (LU/LD/LL", 48 - 14, 2);
-	Printing_text("/LR/RU/LD)", 48 - 10, 3);
+	Printing_text("MOVE OBJECT", x, y++, NULL);
+	Printing_text("Nav.     (SEL)", 48 - 14, 0, NULL);
+	Printing_text("Next   (LT/RT)", 48 - 14, 1, NULL);
+	Printing_text("Move (LU/LD/LL", 48 - 14, 2, NULL);
+	Printing_text("/LR/RU/LD)", 48 - 10, 3, NULL);
 
 	if (this->currentEntityNode)
 	{
 		Container container = (Container)VirtualNode_getData(this->currentEntityNode);
 		VBVec3D globalPosition = Container_getGlobalPosition(container);
 
-		Printing_text("ID: ", x, ++y);
-		Printing_int(Container_getId(container), x + 6, y);
-		Printing_text("Type:                                  ", x, ++y);
-		Printing_text(__GET_CLASS_NAME(container), x + 6, y);
-		Printing_text("Position:                  ", x, ++y);
-		Printing_int(FIX19_13TOI(globalPosition.x), x + 10, y);
-		Printing_int(FIX19_13TOI(globalPosition.y), x + 15, y);
-		Printing_int(FIX19_13TOI(globalPosition.z), x + 20, y);
+		Printing_text("ID: ", x, ++y, NULL);
+		Printing_int(Container_getId(container), x + 6, y, NULL);
+		Printing_text("Type:                                  ", x, ++y, NULL);
+		Printing_text(__GET_CLASS_NAME(container), x + 6, y, NULL);
+		Printing_text("Position:                  ", x, ++y, NULL);
+		Printing_int(FIX19_13TOI(globalPosition.x), x + 10, y, NULL);
+		Printing_int(FIX19_13TOI(globalPosition.y), x + 15, y, NULL);
+		Printing_int(FIX19_13TOI(globalPosition.z), x + 20, y, NULL);
 	}
 }
 
@@ -788,14 +788,14 @@ static void StageEditor_printScreenPosition(StageEditor this)
 
 	VBVec3D position = Screen_getPosition(Screen_getInstance());
 
-	Printing_text("MOVE SCREEN", x, y++);
-	Printing_text("Nav.     (SEL)", 48 - 14, 0);
-	Printing_text("Move (LU/LD/LL", 48 - 14, 1);
-	Printing_text("/LR/RU/LD)", 48 - 10, 2);
-	Printing_text("Position:               ", x, ++y);
-	Printing_int(FIX19_13TOI(position.x), x + 10, y);
-	Printing_int(FIX19_13TOI(position.y), x + 15, y);
-	Printing_int(FIX19_13TOI(position.z), x + 20, y);
+	Printing_text("MOVE SCREEN", x, y++, NULL);
+	Printing_text("Nav.     (SEL)", 48 - 14, 0, NULL);
+	Printing_text("Move (LU/LD/LL", 48 - 14, 1, NULL);
+	Printing_text("/LR/RU/LD)", 48 - 10, 2, NULL);
+	Printing_text("Position:               ", x, ++y, NULL);
+	Printing_int(FIX19_13TOI(position.x), x + 10, y, NULL);
+	Printing_int(FIX19_13TOI(position.y), x + 15, y, NULL);
+	Printing_int(FIX19_13TOI(position.z), x + 20, y, NULL);
 }
 
 static void StageEditor_printProjectionValues(StageEditor this)
@@ -803,41 +803,41 @@ static void StageEditor_printProjectionValues(StageEditor this)
 	int x = 1;
 	int y = 2;
 
-	Printing_text("PROJECTION VALUES", x, y++);
-	Printing_text("Nav.   (SEL)", 48 - 12, 0);
-	Printing_text("HVPC (LD/LL)", 48 - 12, 1);
-	Printing_text("VVPC (LU/LD)", 48 - 12, 2);
-	Printing_text("DES  (RL/RR)", 48 - 12, 3);
-	Printing_text("MVD  (RU/RD)", 48 - 12, 4);
-	Printing_text("BD   (LT/RT)", 48 - 12, 5);
+	Printing_text("PROJECTION VALUES", x, y++, NULL);
+	Printing_text("Nav.   (SEL)", 48 - 12, 0, NULL);
+	Printing_text("HVPC (LD/LL)", 48 - 12, 1, NULL);
+	Printing_text("VVPC (LU/LD)", 48 - 12, 2, NULL);
+	Printing_text("DES  (RL/RR)", 48 - 12, 3, NULL);
+	Printing_text("MVD  (RU/RD)", 48 - 12, 4, NULL);
+	Printing_text("BD   (LT/RT)", 48 - 12, 5, NULL);
 
-	Printing_text("H. view point center:            ", x, ++y);
-	Printing_int(FIX19_13TOI(_optical->horizontalViewPointCenter), x + 22, y);
-	Printing_text("V. view point center:            ", x, ++y);
-	Printing_int(FIX19_13TOI(_optical->verticalViewPointCenter), x + 22, y);
-	Printing_text("Distance Eye Screen:            ", x, ++y);
-	Printing_int(FIX19_13TOI(_optical->distanceEyeScreen), x + 22, y);
-	Printing_text("Maximum View Screen:            ", x, ++y);
-	Printing_int(FIX19_13TOI(_optical->maximunViewDistance), x + 22, y);
-	Printing_text("Base Distance:                  ", x, ++y);
-	Printing_int(FIX19_13TOI(_optical->baseDistance), x + 22, y);
+	Printing_text("H. view point center:            ", x, ++y, NULL);
+	Printing_int(FIX19_13TOI(_optical->horizontalViewPointCenter), x + 22, y, NULL);
+	Printing_text("V. view point center:            ", x, ++y, NULL);
+	Printing_int(FIX19_13TOI(_optical->verticalViewPointCenter), x + 22, y, NULL);
+	Printing_text("Distance Eye Screen:            ", x, ++y, NULL);
+	Printing_int(FIX19_13TOI(_optical->distanceEyeScreen), x + 22, y, NULL);
+	Printing_text("Maximum View Screen:            ", x, ++y, NULL);
+	Printing_int(FIX19_13TOI(_optical->maximunViewDistance), x + 22, y, NULL);
+	Printing_text("Base Distance:                  ", x, ++y, NULL);
+	Printing_int(FIX19_13TOI(_optical->baseDistance), x + 22, y, NULL);
 }
 
 static void StageEditor_printUserObjects(StageEditor this)
 {
-	Printing_text("ADD OBJECTS", 1, 2);
-	Printing_text("                       ", 1, 3);
-	Printing_text("Nav. (SEL)", 48 - 10, 0);
-	Printing_text("Accept (A)", 48 - 10, 1);
+	Printing_text("ADD OBJECTS", 1, 2, NULL);
+	Printing_text("                       ", 1, 3, NULL);
+	Printing_text("Nav. (SEL)", 48 - 10, 0, NULL);
+	Printing_text("Accept (A)", 48 - 10, 1, NULL);
 
 	OptionsSelector_showOptions(this->userObjectsSelector, 1, 4);
 }
 
 static void StageEditor_printTranslationStepSize(StageEditor this)
 {
-	Printing_text("Step   (RL/RR)", 48 - 14, 4);
-	Printing_text("+     ", 48 - 12, 5);
-	Printing_int(this->translationStepSize, 48 - 11, 5);
+	Printing_text("Step   (RL/RR)", 48 - 14, 4, NULL);
+	Printing_text("+     ", 48 - 12, 5, NULL);
+	Printing_int(this->translationStepSize, 48 - 11, 5, NULL);
 }
 
 

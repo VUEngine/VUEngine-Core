@@ -311,7 +311,7 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 
 	if (!VirtualList_find(this->movingShapes, shape))
 	{
-//		Printing_text("CollisionManager::shapeStartedMoving", 10, 10);
+//		Printing_text("CollisionManager::shapeStartedMoving", 10, 10, NULL);
 		VirtualList_pushBack(this->movingShapes, shape);
 	}
 }
@@ -323,7 +323,7 @@ void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape)
 
 	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
 
-//	Printing_text("CollisionManager::shapeStopedMoving", 10, 10);
+//	Printing_text("CollisionManager::shapeStopedMoving", 10, 10, NULL);
 	VirtualList_removeElement(this->movingShapes, shape);
 }
 
@@ -386,11 +386,11 @@ void CollisionManager_print(CollisionManager this, int x, int y)
 {
 	ASSERT(this, "CollisionManager::print: null this");
 
-	Printing_text("COLLISION SHAPES", x, y++);
-	Printing_text("Registered shapes: ", x, ++y);
-	Printing_int(VirtualList_getSize(this->shapes), x + 19, y);
-	Printing_text("Active shapes: ", x, ++y);
-	Printing_int(VirtualList_getSize(this->activeShapes), x + 19, y);
-	Printing_text("Moving shapes: ", x, ++y);
-	Printing_int(VirtualList_getSize(this->movingShapes), x + 19, y);
+	Printing_text("COLLISION SHAPES", x, y++, NULL);
+	Printing_text("Registered shapes: ", x, ++y, NULL);
+	Printing_int(VirtualList_getSize(this->shapes), x + 19, y, NULL);
+	Printing_text("Active shapes: ", x, ++y, NULL);
+	Printing_int(VirtualList_getSize(this->activeShapes), x + 19, y, NULL);
+	Printing_text("Moving shapes: ", x, ++y, NULL);
+	Printing_int(VirtualList_getSize(this->movingShapes), x + 19, y, NULL);
 }

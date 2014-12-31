@@ -229,18 +229,17 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 
 	int i = 0;
 	
-	Printing_text("PARAM TABLE'S STATUS", x, y++);
-	Printing_text("Size:", x, ++y);
-	Printing_int(this->size, x + 6, y);
+	Printing_text("PARAM TABLE'S STATUS", x, y++, NULL);
+	Printing_text("Size:", x, ++y, NULL);
+	Printing_int(this->size, x + 6, y, NULL);
 	
-	Printing_text("Used:", x, y + 1);
-	Printing_int(this->used, x + 6, y + 1);
+	Printing_text("Used:", x, y + 1, NULL);
+	Printing_int(this->used, x + 6, y + 1, NULL);
 	
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		Printing_hex((int)VirtualNode_getData(node), x, y + i + 3);
-		//printInt((int)this->sprites[i]->param,x+10,y+i+3);
+		Printing_hex((int)VirtualNode_getData(node), x, y + i + 3, NULL);
 	}
 }

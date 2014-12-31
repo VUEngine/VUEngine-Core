@@ -131,13 +131,17 @@ void Printing_clear()
 }
 
 // direct printing out method
-// TODO: make font name an argument
-void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
+void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
 	u16 i = 0, pos = 0, col = x;
 
 	u8 j = 0;
 	u16 charOffset = 2048;
+
+	if (font == NULL)
+	{
+	    font = "VBJaE Default";
+	}
 
     // iterate over registered fonts to find offset for font to use
     // TODO: add fallback for when font could not be found
@@ -145,7 +149,7 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
     for (j = 0; j < _fontsDefinitionCount; j++)
     {
         charOffset -= _fontDefinitions[j]->characterCount;
-        if (0 == strcmp(_fontDefinitions[j]->name, "VBJaE Default"))
+        if (0 == strcmp(_fontDefinitions[j]->name, font))
         {
             charOffset += _fontDefinitions[j]->offset;
             break;
@@ -193,38 +197,38 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 	}
 }
 
-void Printing_int(int value,int x,int y)
+void Printing_int(int value, int x, int y, const char* font)
 {
 	if (value < 0)
 	{
 		value *= -1;
 
-		Printing_out(__PRINTING_BGMAP, x++, y, "-", 0);
+		Printing_out(__PRINTING_BGMAP, x++, y, "-", 0, font);
 
-		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE);
+		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
 	}
 	else
 	{
-		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE);
+		Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
 	}
 }
 
-void Printing_hex(WORD value,int x,int y)
+void Printing_hex(WORD value, int x, int y, const char* font)
 {
 	if (0 && value<0)
 	{
 		value *= -1;
 
-		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
-		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE);
+		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0, font);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
 	}
 	else
 	{
-		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE);
+		Printing_out(__PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
 	}
 }
 
-void Printing_float(float value,int x,int y)
+void Printing_float(float value, int x, int y, const char* font)
 {
 	int sign = 1;
 	int i = 0;
@@ -239,7 +243,7 @@ void Printing_float(float value,int x,int y)
 	{
 		sign = -1;
 
-		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0);
+		Printing_out(__PRINTING_BGMAP, x++,y,"-", 0, font);
 	}
 
 	decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
@@ -247,17 +251,17 @@ void Printing_float(float value,int x,int y)
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
-	Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALETTE);
+	Printing_out(__PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALETTE, font);
 
 	// print the dot
-	Printing_out(__PRINTING_BGMAP, x + length, y, ".", __PRINTING_PALETTE);
+	Printing_out(__PRINTING_BGMAP, x + length, y, ".", __PRINTING_PALETTE, font);
 
 	// print the decimal part
 	for (i = 0; size; i++)
 	{
 		if (decimal < size)
 		{
-			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALETTE);
+			Printing_out(__PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALETTE, font);
 		}
 		else
 		{
@@ -267,10 +271,10 @@ void Printing_float(float value,int x,int y)
 		size /= 10;
 	}
 
-	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE);
+	Printing_out(__PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
 }
 
-void Printing_text(char *string, int x, int y)
+void Printing_text(char *string, int x, int y, const char* font)
 {
-	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALETTE);
+	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALETTE, font);
 }
