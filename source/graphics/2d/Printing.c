@@ -22,6 +22,8 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <Printing.h>
 #include <HardwareManager.h>
 #include <Utilities.h>
@@ -51,6 +53,7 @@ FontROMDef VBJAE_DEFAULT_FONT =
 {
     VBJAE_DEFAULT_FONT_CHARS,
     256,
+    0,
     kFont8x8,
     "VBJaE Default",
 };
@@ -96,7 +99,7 @@ void Printing_loadFonts()
     }
 }
 
-//render general print output layer
+// render general print output layer
 void Printing_render(int textLayer)
 {
 	if (0 > textLayer || textLayer >= __TOTAL_LAYERS)
@@ -107,7 +110,7 @@ void Printing_render(int textLayer)
 	
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
-	//wait for screen to idle
+	// wait for screen to idle
 	while (*xpstts & XPBSYR);
 
 	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP);
@@ -128,10 +131,28 @@ void Printing_clear()
 }
 
 // direct printing out method
+// TODO: make font name an argument
 void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 {
 	u16 i = 0, pos = 0, col = x;
 
+	u8 j = 0;
+	u16 charOffset = 2048;
+
+    // iterate over registered fonts to find offset for font to use
+    // TODO: add fallback for when font could not be found
+    // TODO: use font size of fontDefinition to adjust printing loop below
+    for (j = 0; j < _fontsDefinitionCount; j++)
+    {
+        charOffset -= _fontDefinitions[j]->characterCount;
+        if (0 == strcmp(_fontDefinitions[j]->name, "VBJaE Default"))
+        {
+            charOffset += _fontDefinitions[j]->offset;
+            break;
+        }
+    }
+
+    // print text
 	while (string[i])
 	{
 		pos = (y << 6) + x;
@@ -160,7 +181,7 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 
 			default:
 
-				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + 512 + 512 + 512 + 256) | (bplt << 14);
+				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + charOffset) | (bplt << 14);
 				if (x++ > 63)
 				{
 					y++;
