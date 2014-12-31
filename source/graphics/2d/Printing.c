@@ -50,6 +50,7 @@ extern const u16 VBJAE_DEFAULT_FONT_CHARS[];
 FontROMDef VBJAE_DEFAULT_FONT =
 {
     VBJAE_DEFAULT_FONT_CHARS,
+    256,
     kFont8x8,
     "VBJaE Default",
 };
@@ -69,17 +70,30 @@ void Printing_registerFont(const FontDefinition* fontDefinition, bool makeDefaul
 // load font data to char memory
 void Printing_loadFonts()
 {
-	// register default font if there's no registered font yet
+    int lastFontDefEndPos = CharSeg3 + (512 << 4);
+    u16 numCharsToAdd = 0;
+    u8 i = 0;
+
+	// register vbjaengine default font if there's no default font yet
 	if (_fontDefinitions[0] == NULL)
 	{
 		Printing_registerFont(&VBJAE_DEFAULT_FONT, true);
 	}
 
-	// copy font char definition to char segment 3
-	Mem_copy((u8*)(CharSeg3 + ((128 - 1) * 16)), (u8*)(_fontDefinitions[0]->fontCharDefinition), 257 << 4);
+    // load registered fonts to (end of) char memory
+    for (i = 0; i < _fontsDefinitionCount; i++)
+    {
+        numCharsToAdd = (_fontDefinitions[i]->characterCount + 1) << 4;
+        lastFontDefEndPos -= numCharsToAdd;
+	    Mem_copy(
+	        (u8*)lastFontDefEndPos,
+	        (u8*)(_fontDefinitions[i]->fontCharDefinition),
+	        numCharsToAdd
+	    );
 
-	// set char mem usage
-	//CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
+        // set char mem usage
+        //CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
+    }
 }
 
 //render general print output layer
@@ -146,7 +160,7 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt)
 
 			default:
 
-				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + 0x680) | (bplt << 14);
+				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + 512 + 512 + 512 + 256) | (bplt << 14);
 				if (x++ > 63)
 				{
 					y++;

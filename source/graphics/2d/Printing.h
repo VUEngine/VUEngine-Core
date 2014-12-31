@@ -59,6 +59,9 @@ typedef struct FontDefinition
     // font chars definition
 	const u16* fontCharDefinition;
 
+	// number of characters in font
+	u16 characterCount;
+
 	// size of a single character (e.g. kFont8x8)
 	u8 fontSize;
 
