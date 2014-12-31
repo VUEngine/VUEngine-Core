@@ -47,7 +47,6 @@ static bool AnimationEditorState_handleMessage(AnimationEditorState this, void* 
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern const u16 VBJAE_DEFAULT_FONT[];
 extern State __CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens

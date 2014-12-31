@@ -58,7 +58,6 @@ static u16* const	PARAM =		(u16*)PARAMBase;
 #define		PARAM(b)	(PARAMBase + (b&0xFFF0))		// Address of CharSet b (0 <= b <= 3)
 //#define		PARAM(b)	(PARAMBase + (b&0xFFF0)*1)		// Address of CharSet b (0 <= b <= 3)
 
-
 #define		WAMBase			 0x0003D800					// Base address of World Attribute Memory
 static u16* const	WAM =		(u16*)WAMBase;					// Pointer to WAM
 #define		World(w)		 (WAMBase + (w * 0x0020))	// Address of World w (0 <= w <= 31)
@@ -98,8 +97,8 @@ typedef struct WORLD
 
 static WORLD* const WA = (WORLD*)0x0003D800;
 
-/* "vbSetWorld" header flags */
-/* (OR these together to build a World Header) */
+// "vbSetWorld" header flags
+// (OR these together to build a World Header)
 
 #define	WRLD_OFF	0x3FFF
 #define	WRLD_ON		0xC000
@@ -109,7 +108,6 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 #define	WRLD_AFFINE	0x2000
 #define	WRLD_HBIAS	0x1000
 #define	WRLD_BGMAP	0x0000
-
 
 #define	WRLD_1x1	0x0000
 #define	WRLD_1x2	0x0100
@@ -125,7 +123,7 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 #define	WRLD_OVR	0x0080
 #define	WRLD_END	0x0040
 
-/* Macros for world manipulation */
+// Macros for world manipulation
 // (Obsoleted by the WA array of WORLD structures...)
 
 #define	WORLD_HEAD(n,head)		WAM[(n << 4)    ] = head
@@ -137,13 +135,13 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 
 #define WORLD_SPACER(n,x,o)		WAM[(n << 4) + 11+x] = o
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
+// Defines as a pointer to a struct that is not defined here and so is not accessible to the outside world
+
 // declare the virtual methods
 #define VPUManager_METHODS														\
 		Object_METHODS															\

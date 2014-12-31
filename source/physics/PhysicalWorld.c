@@ -419,9 +419,9 @@ void PhysicalWorld_print(PhysicalWorld this, int x, int y)
 {
 	ASSERT(this, "PhysicalWorld::print: null this");
 
-	Printing_text("PHYSICS' STATUS", x, y++);
-	Printing_text("Registered bodies: ", x, ++y);
-	Printing_int(VirtualList_getSize(this->bodies), x + 19, y);
-	Printing_text("Active bodies: ", x, ++y);
-	Printing_int(VirtualList_getSize(this->activeBodies), x + 19, y);
+	Printing_text("PHYSICS' STATUS", x, y++, NULL);
+	Printing_text("Registered bodies: ", x, ++y, NULL);
+	Printing_int(VirtualList_getSize(this->bodies), x + 19, y, NULL);
+	Printing_text("Active bodies: ", x, ++y, NULL);
+	Printing_int(VirtualList_getSize(this->activeBodies), x + 19, y, NULL);
 }

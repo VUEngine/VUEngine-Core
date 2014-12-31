@@ -592,24 +592,26 @@ void Body_printPhysics(Body this, int x, int y)
 {
 	ASSERT(this, "Body::printPhysics: null this");
 
-	__ACCELERATED_MOVEMENT == this->movementType.x ? Printing_text("Accelerated", x, y++) : Printing_text("Uniform", x, y++);
+	__ACCELERATED_MOVEMENT == this->movementType.x
+	    ? Printing_text("Accelerated", x, y++, NULL)
+	    : Printing_text("Uniform", x, y++, NULL);
 
-	Printing_text("X             Y             Z",x,y++);
+	Printing_text("X             Y             Z", x, y++, NULL);
 
-	Printing_text("X             Y             Z",x,y++);
-	Printing_text("Position",x,y++);
-	Printing_int(FIX19_13TOI(this->position.x ),x,y);
-	Printing_int(FIX19_13TOI(this->position.y),x+14,y);
-	Printing_int(FIX19_13TOI(this->position.z),x+14*2,y++);
+	Printing_text("X             Y             Z", x, y++, NULL);
+	Printing_text("Position", x, y++, NULL);
+	Printing_int(FIX19_13TOI(this->position.x ), x, y, NULL);
+	Printing_int(FIX19_13TOI(this->position.y), x+14, y, NULL);
+	Printing_int(FIX19_13TOI(this->position.z), x+14*2, y++, NULL);
 
-	Printing_text("Velocity",x,y++);
-	Printing_float(FIX19_13TOF(this->velocity.x),x,y);
-	Printing_float(FIX19_13TOF(this->velocity.y),x+14,y);
-	Printing_float(FIX19_13TOF(this->velocity.z),x+14*2,y++);
-	Printing_text("Acceleration",x,y++);
-	Printing_float(FIX19_13TOF(this->acceleration.x),x,y);
-	Printing_float(FIX19_13TOF(this->acceleration.y),x+14,y);
-	Printing_float(FIX19_13TOF(this->acceleration.z),x+14*2,y++);
+	Printing_text("Velocity", x, y++, NULL);
+	Printing_float(FIX19_13TOF(this->velocity.x), x, y, NULL);
+	Printing_float(FIX19_13TOF(this->velocity.y), x+14, y, NULL);
+	Printing_float(FIX19_13TOF(this->velocity.z), x+14*2, y++, NULL);
+	Printing_text("Acceleration", x, y++, NULL);
+	Printing_float(FIX19_13TOF(this->acceleration.x), x, y, NULL);
+	Printing_float(FIX19_13TOF(this->acceleration.y), x+14, y, NULL);
+	Printing_float(FIX19_13TOF(this->acceleration.z), x+14*2, y++, NULL);
 }
 
 // stop movement over an axis

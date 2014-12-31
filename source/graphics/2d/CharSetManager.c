@@ -208,20 +208,20 @@ void CharSetManager_print(CharSetManager this, int x, int y)
 {
 	ASSERT(this, "CharSetManager::print: null this");
 
-	Printing_text("CHAR MEMORY'S USAGE", x, y++);
-	Printing_text("CharGroups: ", x, ++y);
-	Printing_int(VirtualList_getSize(this->charGroups), x + 12, y++);
+	Printing_text("CHAR MEMORY'S USAGE", x, y++, NULL);
+	Printing_text("CharGroups: ", x, ++y, NULL);
+	Printing_int(VirtualList_getSize(this->charGroups), x + 12, y++, NULL);
 	y++;
 
 	int charSet = 0;
 	int i = 0;
 	for (; charSet < 4; charSet++)
 	{
-		Printing_text("CharSeg", x, y);
-		Printing_int(charSet, x + 8, y);
+		Printing_text("CharSeg", x, y, NULL);
+		Printing_int(charSet, x + 8, y, NULL);
 		for (i = 0; i < __CHAR_GRP_PER_SEG && (y + i + 1) < 28; i++)
 		{
-			Printing_hex(this->segment[charSet][i], x, y + i + 1);
+			Printing_hex(this->segment[charSet][i], x, y + i + 1, NULL);
 		}
 
 		x += 12;
