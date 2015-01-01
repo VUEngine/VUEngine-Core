@@ -99,7 +99,7 @@ void Clock_delay(Clock this, int milliSeconds)
 }
 
 // print formated class's attributes's states
-void Clock_print(Clock this, int col, int row)
+void Clock_print(Clock this, int col, int row, const char* font)
 {
 	ASSERT(this, "Clock::print: null this");
 
@@ -112,23 +112,23 @@ void Clock_print(Clock this, int col, int row)
 	//print minutes
 	if (minutes < 10)
 	{
-		Printing_text("0", minutesPosition, row, NULL);
+		Printing_text("0", minutesPosition, row, font);
 		minutesPosition++;
 	}
 
-	Printing_int(minutes, minutesPosition, row, NULL);
+	Printing_int(minutes, minutesPosition, row, font);
 
 	// print divisor
-	Printing_text(":", secondsPosition - 1, row, NULL);
+	Printing_text(":", secondsPosition - 1, row, font);
 
 	//print seconds
 	if (seconds < 10)
 	{
-		Printing_text("0", secondsPosition, row, NULL);
+		Printing_text("0", secondsPosition, row, font);
 		secondsPosition++;
 	}
 
-	Printing_int(seconds, secondsPosition, row, NULL);
+	Printing_int(seconds, secondsPosition, row, font);
 }
 
 // called on each timer interrupt

@@ -405,9 +405,9 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 	Debug_removeSubPages(this);
 	Printing_text("GENERAL STATUS", 1, y++, NULL);
 	Printing_text("General clock's time: ", 1, ++y, NULL);
-	Clock_print(Game_getClock(Game_getInstance()), 23, y);
+	Clock_print(Game_getClock(Game_getInstance()), 23, y, NULL);
 	Printing_text("In game clock's time: ", 1, ++y, NULL);
-	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y);
+	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y, NULL);
 	FrameRate_printLastRecord(FrameRate_getInstance(), 1, y + 3);
 
 	Printing_text("STAGE'S STATUS", 20, y + 3, NULL);

@@ -34,16 +34,17 @@
 // 												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct FontSize
+{
+	u8 x;
+	u8 y;
+
+} FontSize;
+
 enum FontSizes
 {
-	kFont4x8,
-	kFont4x16,
 	kFont8x8,
 	kFont8x16,
-	kFont16x16,
-	kFont16x32,
-	kFont32x32,
-	kFont32x64,
 };
 
 // max length of a font's name
@@ -56,7 +57,7 @@ enum FontSizes
 
 typedef struct FontDefinition
 {
-    // font chars definition
+    // font chars definition pointer
 	const u16* fontCharDefinition;
 
 	// number of characters in font
@@ -81,7 +82,7 @@ typedef const FontDefinition FontROMDef;
 //---------------------------------------------------------------------------------------------------------
 
 void Printing_render(int textLayer);
-void Printing_registerFont(const FontDefinition* fontDefinition, bool makeDefault);
+void Printing_registerFont(const FontDefinition* fontDefinition);
 void Printing_loadFonts();
 void Printing_clear();
 void Printing_int(int value, int x, int y, const char* font);
