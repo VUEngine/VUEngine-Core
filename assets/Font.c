@@ -152,7 +152,7 @@ const unsigned int VBJAE_DEFAULT_FONT_CHARS[1024] =
 FontROMDef VBJAE_DEFAULT_FONT =
 {
     // font chars definition pointer
-	(u16*)VBJAE_DEFAULT_FONT_CHARS,
+	(BYTE*)VBJAE_DEFAULT_FONT_CHARS,
 
 	// number of characters in font
 	256,

@@ -469,7 +469,7 @@ static void Cuboid_configurePolygon(Cuboid this, int renew)
 
 	// create a polygon
 	this->polygon = __NEW(Polygon);
-	Printing_text("     ", 20, 12, NULL);
+	Printing_text(Printing_getInstance(), "     ", 20, 12, NULL);
 
 	// add vertices
 	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
@@ -512,18 +512,18 @@ void Cuboid_print(Cuboid this, int x, int y)
 
 	Rightcuboid rightCuboid = this->positionedRightcuboid;
 
-	Printing_text("X:" , x, y, NULL);
-	Printing_int(FIX19_13TOI(rightCuboid.x0), x + 2, y, NULL);
-	Printing_text("-" , x + 5, y, NULL);
-	Printing_int(FIX19_13TOI(rightCuboid.x1), x + 7, y++, NULL);
+	Printing_text(Printing_getInstance(), "X:" , x, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.x0), x + 2, y, NULL);
+	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.x1), x + 7, y++, NULL);
 
-	Printing_text("Y:" , x, y, NULL);
-	Printing_int(FIX19_13TOI(rightCuboid.y0), x + 2, y, NULL);
-	Printing_text("-" , x + 5, y, NULL);
-	Printing_int(FIX19_13TOI(rightCuboid.y1), x + 7, y++, NULL);
+	Printing_text(Printing_getInstance(), "Y:" , x, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.y0), x + 2, y, NULL);
+	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.y1), x + 7, y++, NULL);
 
-	Printing_text("Z:" , x, y, NULL);
-	Printing_int(FIX19_13TOI(rightCuboid.z0), x + 2, y, NULL);
-	Printing_text("-" , x + 5, y, NULL);
-	Printing_int(FIX19_13TOI(rightCuboid.z1), x + 7, y++, NULL);
+	Printing_text(Printing_getInstance(), "Z:" , x, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.z0), x + 2, y, NULL);
+	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.z1), x + 7, y++, NULL);
 }

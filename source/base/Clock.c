@@ -112,23 +112,23 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	//print minutes
 	if (minutes < 10)
 	{
-		Printing_text("0", minutesPosition, row, font);
+		Printing_text(Printing_getInstance(), "0", minutesPosition, row, font);
 		minutesPosition++;
 	}
 
-	Printing_int(minutes, minutesPosition, row, font);
+	Printing_int(Printing_getInstance(), minutes, minutesPosition, row, font);
 
 	// print divisor
-	Printing_text(":", secondsPosition - 1, row, font);
+	Printing_text(Printing_getInstance(), ":", secondsPosition - 1, row, font);
 
 	//print seconds
 	if (seconds < 10)
 	{
-		Printing_text("0", secondsPosition, row, font);
+		Printing_text(Printing_getInstance(), "0", secondsPosition, row, font);
 		secondsPosition++;
 	}
 
-	Printing_int(seconds, secondsPosition, row, font);
+	Printing_int(Printing_getInstance(), seconds, secondsPosition, row, font);
 }
 
 // called on each timer interrupt

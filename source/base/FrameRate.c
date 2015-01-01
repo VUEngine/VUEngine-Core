@@ -194,15 +194,15 @@ void FrameRate_print(FrameRate this, int col, int row)
 {
 	ASSERT(this, "FrameRate::print: null this");
 
-	Printing_text("FPS", col, row++, NULL);
-	Printing_text("Raw             ", col, row, NULL);
-	Printing_int(this->rawFPS, col + 8, row++, NULL);
-	Printing_text("Render          ", col, row, NULL);
-	Printing_int(this->renderFPS, col + 8, row++, NULL);
-	Printing_text("Logic           ", col, row, NULL);
-	Printing_int(this->logicFPS, col + 8, row++, NULL);
-	Printing_text("Physics         ", col, row, NULL);
-	Printing_int(this->physicsFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "FPS", col, row++, NULL);
+	Printing_text(Printing_getInstance(), "Raw             ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->rawFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "Render          ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->renderFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "Logic           ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->logicFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "Physics         ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->physicsFPS, col + 8, row++, NULL);
 }
 
 // print renderFPS
@@ -210,13 +210,13 @@ void FrameRate_printLastRecord(FrameRate this, int col, int row)
 {
 	ASSERT(this, "FrameRate::print: null this");
 
-	Printing_text("FPS", col, row++, NULL);
-	Printing_text("Raw                          ", col, row, NULL);
-	Printing_int(this->lastRawFPS, col + 8, row++, NULL);
-	Printing_text("Render                       ", col, row, NULL);
-	Printing_int(this->lastRenderFPS, col + 8, row++, NULL);
-	Printing_text("Logic                        ", col, row, NULL);
-	Printing_int(this->lastLogicFPS, col + 8, row++, NULL);
-	Printing_text("Physics                      ", col, row, NULL);
-	Printing_int(this->lastPhysicsFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "FPS", col, row++, NULL);
+	Printing_text(Printing_getInstance(), "Raw                          ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->lastRawFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "Render                       ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->lastRenderFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "Logic                        ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->lastLogicFPS, col + 8, row++, NULL);
+	Printing_text(Printing_getInstance(), "Physics                      ", col, row, NULL);
+	Printing_int(Printing_getInstance(), this->lastPhysicsFPS, col + 8, row++, NULL);
 }
