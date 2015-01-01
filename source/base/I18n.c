@@ -23,6 +23,8 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <I18n.h>
 #include <Game.h>
 
@@ -37,7 +39,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* registered languages */													\
-	char** languages[16];														\
+	const LangDefinition* languages[16];										\
 																				\
 	/* total number of registered languages */									\
 	u8 languageCount;															\
@@ -82,27 +84,26 @@ void I18n_destructor(I18n this)
 // get localized string
 char* I18n_getText(I18n this, int string)
 {
-	return this->languages[this->language][string];
+	return this->languages[this->language]->language[string];
 }
 
 // set the language
-void I18n_setLanguage(I18n this, int lang)
+void I18n_setLanguage(I18n this, const char* lang)
 {
-	this->language = lang;
+    u8 i;
+
+    for (i = 0; i < this->languageCount; i++)
+    {
+        if (0 == strcmp(this->languages[i]->name, lang))
+        {
+	        this->language = i;
+	        break;
+        }
+    }
 }
 
 // register a languages
-void I18n_registerLanguage(I18n this, char* language[])
+void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition)
 {
-	this->languages[this->languageCount++] = language;
-}
-
-// register several languages at once
-void I18n_registerLanguages(I18n this, char** languages[])
-{
-	u8 i;
-    for (i = 0; i < sizeof(languages); i++)
-	{
-		this->languages[this->languageCount++] = languages[i];
-	}
+	this->languages[this->languageCount++] = langDefinition;
 }
