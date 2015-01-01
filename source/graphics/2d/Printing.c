@@ -50,15 +50,7 @@ static const FontDefinition* _fontDefinitions[8] = {NULL};
 u8 _fontsDefinitionCount = 0;
 
 // default font
-extern const u16 VBJAE_DEFAULT_FONT_CHARS[];
-FontROMDef VBJAE_DEFAULT_FONT =
-{
-    VBJAE_DEFAULT_FONT_CHARS,
-    256,
-    0,
-    kFont8x8,
-    "VBJaEngineFont",
-};
+extern FontDefinition VBJAE_DEFAULT_FONT;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -68,15 +60,13 @@ FontROMDef VBJAE_DEFAULT_FONT =
 // setup the bgmap and char memory with printing data
 void Printing_registerFont(const FontDefinition* fontDefinition)
 {
-	_fontDefinitions[_fontsDefinitionCount] = fontDefinition;
-	_fontsDefinitionCount ++;
+	_fontDefinitions[_fontsDefinitionCount++] = fontDefinition;
 }
 
 // load font data to char memory
 void Printing_loadFonts()
 {
     int lastFontDefEndPos = CharSeg3 + (512 << 4);
-    FontSize fontSize;
     u16 numCharsToAdd = 0;
     u8 i = 0;
 
@@ -89,17 +79,10 @@ void Printing_loadFonts()
     // load registered fonts to (end of) char memory
     for (i = 0; i < _fontsDefinitionCount; i++)
     {
-        fontSize = Printing_getFontSize(_fontDefinitions[i]->fontSize);
-
-        numCharsToAdd = (_fontDefinitions[i]->characterCount * fontSize.x * fontSize.y) << 4;
+        numCharsToAdd = (_fontDefinitions[i]->characterCount * _fontDefinitions[i]->fontSize.x * _fontDefinitions[i]->fontSize.y) << 4;
         lastFontDefEndPos -= numCharsToAdd;
 
-        // note: grit always adds an empty tile at the start of a tileset, so we need to factor this in here
-	    Mem_copy(
-	        (u8*)(lastFontDefEndPos - (1 << 4)),
-	        (u8*)(_fontDefinitions[i]->fontCharDefinition),
-	        numCharsToAdd + (1 << 4)
-	    );
+	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(_fontDefinitions[i]->fontCharDefinition), numCharsToAdd);
     }
 }
 
@@ -137,18 +120,15 @@ void Printing_clear()
 // direct printing out method
 void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
-	u16 i = 0, pos = 0, col = x, fontOffset = 2048;
+	u16 i = 0, pos = 0, col = x, fontStart = 2048;
 	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
-	FontSize fontSize;
 
-    // iterate over registered fonts to find offset for font to use
+    // iterate over registered fonts to find memory offset of font to use
     for (j = 0; j < _fontsDefinitionCount; j++)
     {
-        fontSize = Printing_getFontSize(_fontDefinitions[j]->fontSize);
-        fontOffset -= (_fontDefinitions[j]->characterCount * fontSize.x * fontSize.y);
+        fontStart -= (_fontDefinitions[j]->characterCount * _fontDefinitions[j]->fontSize.x * _fontDefinitions[j]->fontSize.y);
         if ((font == NULL) || (0 == strcmp(_fontDefinitions[j]->name, font)))
         {
-            fontOffset -= (_fontDefinitions[j]->offset * fontSize.x);
             break;
         }
     }
@@ -172,26 +152,41 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const ch
 
 			case 10: // Carriage Return
 
-				y += fontSize.y;
+				y++;
 				x = col;
 				break;
 
 			default:
 
-                for (charOffsetX = 0; charOffsetX < fontSize.x; charOffsetX++)
+                for (charOffsetX = 0; charOffsetX < _fontDefinitions[j]->fontSize.x; charOffsetX++)
                 {
-                    for (charOffsetY = 0; charOffsetY < fontSize.y; charOffsetY++)
+                    for (charOffsetY = 0; charOffsetY < _fontDefinitions[j]->fontSize.y; charOffsetY++)
                     {
-                        BGMM[(0x1000 * bgmap) + pos + (charOffsetY << 6) + charOffsetX] =
-                            ((u8)string[i] + fontOffset - 1 + (charOffsetY << 5) + charOffsetX) | (bplt << 14);
+                        // TODO: use _fontDefinitions[j]->offset
+                        BGMM[(0x1000 * bgmap) + pos + charOffsetX + (charOffsetY << 6)] =
+                            (
+                                // start at correct font
+                                fontStart +
+
+                                // top left char of letter
+                                ((u8)string[i] * _fontDefinitions[j]->fontSize.x) +
+
+                                // skip lower chars of multi-char fonts with y > 1
+                                (((u8)string[i] >> 5) * ((_fontDefinitions[j]->fontSize.y - 1)) << 5) +
+
+                                // respective char of letter in multi-char fonts
+                                charOffsetX + (charOffsetY << 5)
+                            )
+                            | (bplt << 14);
                     }
                 }
-				x += fontSize.x;
-				if (x >= 64)
+
+				if (x++ >= 64)
 				{
-				    y += fontSize.y;
+				    y++;
 					x = col;
 				}
+
 				break;
 		}
 		i++;
@@ -278,25 +273,4 @@ void Printing_float(float value, int x, int y, const char* font)
 void Printing_text(char *string, int x, int y, const char* font)
 {
 	Printing_out(__PRINTING_BGMAP, x, y, string, __PRINTING_PALETTE, font);
-}
-
-FontSize Printing_getFontSize(u8 fontSizeDefine)
-{
-    FontSize fontSize;
-
-    switch (fontSizeDefine)
-    {
-        default:
-        case kFont8x8:
-            fontSize.x = 1;
-            fontSize.y = 1;
-            break;
-
-        case kFont8x16:
-            fontSize.x = 1;
-            fontSize.y = 2;
-            break;
-    }
-
-    return fontSize;
 }

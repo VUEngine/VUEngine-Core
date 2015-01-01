@@ -41,12 +41,6 @@ typedef struct FontSize
 
 } FontSize;
 
-enum FontSizes
-{
-	kFont8x8,
-	kFont8x16,
-};
-
 // max length of a font's name
 #define __MAX_FONT_NAME_LENGTH	16
 
@@ -66,8 +60,8 @@ typedef struct FontDefinition
 	// at which character number the font starts
 	s16 offset;
 
-	// size of a single character (e.g. kFont8x8)
-	u8 fontSize;
+	// size of a single character (in chars) ({width, height})
+	FontSize fontSize;
 
 	// font's name
 	char name[__MAX_FONT_NAME_LENGTH];
