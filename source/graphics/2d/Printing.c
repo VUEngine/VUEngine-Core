@@ -162,17 +162,16 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const ch
                 {
                     for (charOffsetY = 0; charOffsetY < _fontDefinitions[j]->fontSize.y; charOffsetY++)
                     {
-                        // TODO: use _fontDefinitions[j]->offset
                         BGMM[(0x1000 * bgmap) + pos + charOffsetX + (charOffsetY << 6)] =
                             (
                                 // start at correct font
                                 fontStart +
 
                                 // top left char of letter
-                                ((u8)string[i] * _fontDefinitions[j]->fontSize.x) +
+                                ((u8)(string[i] - _fontDefinitions[j]->offset) * _fontDefinitions[j]->fontSize.x) +
 
                                 // skip lower chars of multi-char fonts with y > 1
-                                (((u8)string[i] >> 5) * ((_fontDefinitions[j]->fontSize.y - 1)) << 5) +
+                                (((u8)(string[i] - _fontDefinitions[j]->offset) >> 5) * ((_fontDefinitions[j]->fontSize.y - 1)) << 5) +
 
                                 // respective char of letter in multi-char fonts
                                 charOffsetX + (charOffsetY << 5)
