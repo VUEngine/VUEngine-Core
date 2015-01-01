@@ -147,12 +147,12 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const ch
 
 			case 9: // Horizontal Tab
 
-				x = (x / TAB_SIZE + 1) * TAB_SIZE;
+				x = (x / TAB_SIZE + 1) * TAB_SIZE * _fontDefinitions[j]->fontSize.x;
 				break;
 
 			case 10: // Carriage Return
 
-				y++;
+				y += _fontDefinitions[j]->fontSize.y;
 				x = col;
 				break;
 
@@ -171,7 +171,7 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const ch
                                 ((u8)(string[i] - _fontDefinitions[j]->offset) * _fontDefinitions[j]->fontSize.x) +
 
                                 // skip lower chars of multi-char fonts with y > 1
-                                (((u8)(string[i] - _fontDefinitions[j]->offset) >> 5) * ((_fontDefinitions[j]->fontSize.y - 1)) << 5) +
+                                ((((u8)(string[i] - _fontDefinitions[j]->offset) * _fontDefinitions[j]->fontSize.x) >> 5) * ((_fontDefinitions[j]->fontSize.y - 1)) << 5) +
 
                                 // respective char of letter in multi-char fonts
                                 charOffsetX + (charOffsetY << 5)
@@ -180,9 +180,10 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const ch
                     }
                 }
 
-				if (x++ >= 64)
+                x += _fontDefinitions[j]->fontSize.x;
+				if (x >= 64)
 				{
-				    y++;
+				    y += _fontDefinitions[j]->fontSize.y;
 					x = col;
 				}
 

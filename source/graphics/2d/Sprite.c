@@ -68,7 +68,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	// create the texture
 	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
 
-	ASSERT(this->texture, "Sprite::constructor: texture no allocated");
+	ASSERT(this->texture, "Sprite::constructor: texture not allocated");
 
 	// set texture position
 	this->texturePosition.x = Texture_getXOffset(this->texture);
