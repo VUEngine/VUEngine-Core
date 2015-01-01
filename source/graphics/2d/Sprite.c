@@ -502,6 +502,17 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
 // 										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
+// write directly to texture
+void Sprite_putChar(Sprite this, u8 x, u8 y, BYTE* newChar)
+{
+	ASSERT(this, "Sprite::putChar: null this");
+
+	if(this->texture && newChar)
+	{
+		Texture_putChar(this->texture, x, y, newChar);
+	}
+}
+
 /*
  * Affine FX
  */

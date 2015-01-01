@@ -451,6 +451,7 @@ u16 Texture_getId(Texture this)
 bool Texture_handleMessage(Texture this, Telegram telegram)
 {
 	ASSERT(this, "Texture::handleMessage: null this");
+
 	switch (Telegram_getMessage(telegram))
 	{
 		case kCharGroupRewritten:
@@ -461,4 +462,17 @@ bool Texture_handleMessage(Texture this, Telegram telegram)
 	}
 
 	return false;
+}
+
+// write directly to texture
+void Texture_putChar(Texture this, u8 x, u8 y, BYTE* newChar)
+{
+	ASSERT(this, "Texture::putChar: null this");
+
+	if(x < this->textureDefinition->cols && y < this->textureDefinition->rows)
+	{
+		u16 displacement = (this->textureDefinition->cols * y + x) << 1;
+		u16 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
+		CharGroup_putChar(this->charGroup, charToReplace, newChar);
+	}
 }

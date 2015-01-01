@@ -130,6 +130,7 @@ void CharGroup_copy(CharGroup this, CharGroup source);
 void CharGroup_write(CharGroup this);
 void CharGroup_rewrite(CharGroup this);
 void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement);
+void CharGroup_putChar(CharGroup this, u16 charToReplace, BYTE* newChar);
 
 
 #endif
