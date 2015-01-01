@@ -82,7 +82,7 @@ __CLASS_NEW_DECLARE(Clock);
 
 void Clock_destructor(Clock this);
 void Clock_delay(Clock this, int milliSeconds);
-void Clock_print(Clock this, int col, int row);
+void Clock_print(Clock this, int col, int row, const char* font);
 void Clock_update(Clock this, u32 ticks);
 void Clock_interrupt();
 void Clock_reset(Clock this);

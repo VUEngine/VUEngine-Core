@@ -41,22 +41,16 @@
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+FontSize Printing_getFontSize(u8 fontSizeDefine);
+
 // global to change
 static const FontDefinition* _fontDefinitions[8] = {NULL};
 
 // number of registered fonts
-u8 _fontsDefinitionCount = 1;
+u8 _fontsDefinitionCount = 0;
 
 // default font
-extern const u16 VBJAE_DEFAULT_FONT_CHARS[];
-FontROMDef VBJAE_DEFAULT_FONT =
-{
-    VBJAE_DEFAULT_FONT_CHARS,
-    256,
-    0,
-    kFont8x8,
-    "VBJaE Default",
-};
+extern FontDefinition VBJAE_DEFAULT_FONT;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,10 +58,9 @@ FontROMDef VBJAE_DEFAULT_FONT =
 //---------------------------------------------------------------------------------------------------------
 
 // setup the bgmap and char memory with printing data
-void Printing_registerFont(const FontDefinition* fontDefinition, bool makeDefault)
+void Printing_registerFont(const FontDefinition* fontDefinition)
 {
-	_fontDefinitions[makeDefault ? 0 : _fontsDefinitionCount] = fontDefinition;
-	_fontsDefinitionCount += (makeDefault && (_fontsDefinitionCount > 0)) ? 0 : 1;
+	_fontDefinitions[_fontsDefinitionCount++] = fontDefinition;
 }
 
 // load font data to char memory
@@ -77,25 +70,19 @@ void Printing_loadFonts()
     u16 numCharsToAdd = 0;
     u8 i = 0;
 
-	// register vbjaengine default font if there's no default font yet
+	// register vbjaengine default font if there's no custom font registered
 	if (_fontDefinitions[0] == NULL)
 	{
-		Printing_registerFont(&VBJAE_DEFAULT_FONT, true);
+		Printing_registerFont(&VBJAE_DEFAULT_FONT);
 	}
 
     // load registered fonts to (end of) char memory
     for (i = 0; i < _fontsDefinitionCount; i++)
     {
-        numCharsToAdd = (_fontDefinitions[i]->characterCount + 1) << 4;
+        numCharsToAdd = (_fontDefinitions[i]->characterCount * _fontDefinitions[i]->fontSize.x * _fontDefinitions[i]->fontSize.y) << 4;
         lastFontDefEndPos -= numCharsToAdd;
-	    Mem_copy(
-	        (u8*)lastFontDefEndPos,
-	        (u8*)(_fontDefinitions[i]->fontCharDefinition),
-	        numCharsToAdd
-	    );
 
-        // set char mem usage
-        //CharSetManager_setChars(CharSetManager_getInstance(), 3, 200);
+	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(_fontDefinitions[i]->fontCharDefinition), numCharsToAdd);
     }
 }
 
@@ -133,25 +120,15 @@ void Printing_clear()
 // direct printing out method
 void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
-	u16 i = 0, pos = 0, col = x;
+	u16 i = 0, pos = 0, col = x, fontStart = 2048;
+	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
 
-	u8 j = 0;
-	u16 charOffset = 2048;
-
-	if (font == NULL)
-	{
-	    font = "VBJaE Default";
-	}
-
-    // iterate over registered fonts to find offset for font to use
-    // TODO: add fallback for when font could not be found
-    // TODO: use font size of fontDefinition to adjust printing loop below
+    // iterate over registered fonts to find memory offset of font to use
     for (j = 0; j < _fontsDefinitionCount; j++)
     {
-        charOffset -= _fontDefinitions[j]->characterCount;
-        if (0 == strcmp(_fontDefinitions[j]->name, font))
+        fontStart -= (_fontDefinitions[j]->characterCount * _fontDefinitions[j]->fontSize.x * _fontDefinitions[j]->fontSize.y);
+        if ((font == NULL) || (0 == strcmp(_fontDefinitions[j]->name, font)))
         {
-            charOffset += _fontDefinitions[j]->offset;
             break;
         }
     }
@@ -164,6 +141,7 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const ch
 		switch (string[i])
 		{
 			case 7: // Bell (!)
+			case 13: // Line Feed
 
 				break;
 
@@ -178,19 +156,36 @@ void Printing_out(u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const ch
 				x = col;
 				break;
 
-			case 13: // Line Feed
-
-				// x = col;
-				break;
-
 			default:
 
-				BGMM[(0x1000 * bgmap) + pos] = ((u8)string[i] + charOffset) | (bplt << 14);
-				if (x++ > 63)
+                for (charOffsetX = 0; charOffsetX < _fontDefinitions[j]->fontSize.x; charOffsetX++)
+                {
+                    for (charOffsetY = 0; charOffsetY < _fontDefinitions[j]->fontSize.y; charOffsetY++)
+                    {
+                        BGMM[(0x1000 * bgmap) + pos + charOffsetX + (charOffsetY << 6)] =
+                            (
+                                // start at correct font
+                                fontStart +
+
+                                // top left char of letter
+                                ((u8)(string[i] - _fontDefinitions[j]->offset) * _fontDefinitions[j]->fontSize.x) +
+
+                                // skip lower chars of multi-char fonts with y > 1
+                                (((u8)(string[i] - _fontDefinitions[j]->offset) >> 5) * ((_fontDefinitions[j]->fontSize.y - 1)) << 5) +
+
+                                // respective char of letter in multi-char fonts
+                                charOffsetX + (charOffsetY << 5)
+                            )
+                            | (bplt << 14);
+                    }
+                }
+
+				if (x++ >= 64)
 				{
-					y++;
+				    y++;
 					x = col;
 				}
+
 				break;
 		}
 		i++;
