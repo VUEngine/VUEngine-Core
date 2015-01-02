@@ -290,7 +290,7 @@ void CharGroup_putPixel(CharGroup this, u16 charToReplace, Point* charGroupPixel
 
 		Mem_copy(auxChar, (u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), (int)(1 << 4));
 
-		u16 displacement = 2 * charGroupPixel->y + (charGroupPixel->x >> 2);
+		u16 displacement = (charGroupPixel->y << 1) + (charGroupPixel->x >> 2);
 		u16 pixelToReplaceDisplacement = (charGroupPixel->x % 4) << 1;
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
 		Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
