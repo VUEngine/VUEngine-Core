@@ -247,42 +247,8 @@ void Texture_rewrite(Texture this)
 {
 	ASSERT(this, "Texture::rewrite: null this");
 
-	// determine the allocation type
-	switch (CharGroup_getAllocationType(this->charGroup))
-	{
-		case __ANIMATED:
-
-			// put the definition in graphic memory
-			Texture_writeAnimated(this);
-
-			break;
-
-		case __ANIMATED_SHARED:
-
-			// put the definitionin graphic memory
-			Texture_writeAnimatedShared(this);
-
-			break;
-
-		case __NO_ANIMATED:
-
-			// put the definition in graphic memory
-			Texture_writeNoAnimated(this);
-
-			break;
-	}
-}
-
-// this reallocate a write the bgmap definition in graphical memory
-void Texture_resetMemoryState(Texture this)
-{
-	ASSERT(this, "Texture::resetMemoryState: null this");
-
-	ASSERT(false, "Texture::resetMemoryState: null this");
-	//fake char offset so it is allocated again
-	CharGroup_setOffset(this->charGroup, 0xFF);
-
-	// write it in graphical memory
+	CharGroup_rewrite(this->charGroup);
+	
 	Texture_write(this);
 }
 
@@ -465,14 +431,29 @@ bool Texture_handleMessage(Texture this, Telegram telegram)
 }
 
 // write directly to texture
-void Texture_putChar(Texture this, u8 x, u8 y, BYTE* newChar)
+void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 {
 	ASSERT(this, "Texture::putChar: null this");
 
-	if(x < this->textureDefinition->cols && y < this->textureDefinition->rows)
+	if(texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
-		u16 displacement = (this->textureDefinition->cols * y + x) << 1;
+		u16 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
 		u16 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
 		CharGroup_putChar(this->charGroup, charToReplace, newChar);
 	}
 }
+
+
+// write directly to texture
+void Texture_putPixel(Texture this, Point* texturePixel, Point* charGroupPixel, BYTE newPixelColor)
+{
+	ASSERT(this, "Texture::putPixel: null this");
+
+	if(texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
+	{
+		u16 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
+		u16 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
+		CharGroup_putPixel(this->charGroup, charToReplace, charGroupPixel, newPixelColor);
+	}
+}
+

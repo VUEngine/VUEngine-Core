@@ -163,7 +163,6 @@ void AnimatedSprite_update(AnimatedSprite this, Clock clock);
 u8 AnimatedSprite_getRows(AnimatedSprite this);
 u8 AnimatedSprite_getCols(AnimatedSprite this);
 int AnimatedSprite_getMapType(AnimatedSprite this);
-void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer);
 void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction);
 void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
 bool AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);

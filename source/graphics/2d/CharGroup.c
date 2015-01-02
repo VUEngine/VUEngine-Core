@@ -268,3 +268,31 @@ void CharGroup_putChar(CharGroup this, u16 charToReplace, BYTE* newChar)
 		Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
 	}
 }
+
+// write to char memory
+void CharGroup_putPixel(CharGroup this, u16 charToReplace, Point* charGroupPixel, BYTE newPixelColor)
+{
+	ASSERT(this, "CharGroup::putPixel: null this");
+
+	if(charGroupPixel && charToReplace < this->numberOfChars && (unsigned)charGroupPixel->x < 8 && (unsigned)charGroupPixel->y < 8)
+	{
+		static BYTE auxChar[] = 
+		{
+			0x00, 0x00,
+			0x00, 0x00,
+			0x00, 0x00,  
+			0x00, 0x00,
+			0x00, 0x00,
+			0x00, 0x00,
+			0x00, 0x00,
+			0x00, 0x00,
+		};
+
+		Mem_copy(auxChar, (u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), (int)(1 << 4));
+
+		u16 displacement = 2 * charGroupPixel->y + charGroupPixel->x / 4;
+		u16 pixelToReplaceDisplacement = 2 * (charGroupPixel->x % 4);
+		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
+		Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
+	}
+}

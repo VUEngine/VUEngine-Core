@@ -144,7 +144,7 @@ Texture Sprite_getTexture(Sprite this);
 DrawSpec Sprite_getDrawSpec(Sprite this);
 u16 Sprite_getMode(Sprite this);
 void Sprite_invalidateParamTable(Sprite this);
-void Sprite_resetMemoryState(Sprite this);
+void Sprite_rewrite(Sprite this);
 void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec);
 u32 Sprite_getParam(Sprite this);
 void Sprite_setParam(Sprite this, u32 param);
@@ -163,7 +163,8 @@ void Sprite_render(Sprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // direct draw
-void Sprite_putChar(Sprite this, u8 x, u8 y, BYTE* newChar);
+void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);
+void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charGroupPixel, BYTE newPixelColor);
 
 // Affine FX
 void Sprite_scale(Sprite this);

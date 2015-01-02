@@ -327,24 +327,6 @@ u8 AnimatedSprite_getCols(AnimatedSprite this)
 	return Texture_getCols(this->texture);
 }
 
-// allocate a write in graphic memory again
-void AnimatedSprite_resetMemoryState(AnimatedSprite this, int worldLayer)
-{
-	ASSERT(this, "AnimatedSprite::resetMemoryState: null this");
-
-	// make sure is is allocated and written
-	Texture_resetMemoryState(this->texture);
-
-	this->worldLayer= worldLayer;
-
-	// recover frame's current frame animation
-	AnimatedSprite_setPreviousFrame(this, __MAX_FRAMES_PER_ANIMATION_FUNCTION);
-
-	// write the animation
-	AnimatedSprite_writeAnimation(this);
-
-}
-
 // play animation
 void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction)
 {

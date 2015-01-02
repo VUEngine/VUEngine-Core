@@ -466,22 +466,16 @@ void Sprite_invalidateParamTable(Sprite this)
 	this->renderFlag |= __UPDATE_SIZE;
 }
 
-// this reallocate a write the bgmap definition in graphical memory
-void Sprite_resetMemoryState(Sprite this)
+// reload the sprite in bgmap memory
+void Sprite_rewrite(Sprite this)
 {
-	ASSERT(this, "Sprite::resetMemoryState: null this");
-
-	// if affine or hbias mode, allocate inside paramtable
-	if (WRLD_AFFINE == Sprite_getMode(this))
-	{
-		ParamTableManager_allocate(ParamTableManager_getInstance(), this);
-	}
-
-	//allow to render
-	//this->renderFlag = __UPDATE_HEAD;
+	ASSERT(this, "Sprite::reload: null this");
 
 	// write it in graphical memory
-	Texture_resetMemoryState(this->texture);
+	Texture_rewrite(this->texture);
+
+	// raise flag to render again
+	Sprite_show(this);
 }
 
 // set drawspec
@@ -503,13 +497,24 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
 //---------------------------------------------------------------------------------------------------------
 
 // write directly to texture
-void Sprite_putChar(Sprite this, u8 x, u8 y, BYTE* newChar)
+void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
 {
 	ASSERT(this, "Sprite::putChar: null this");
 
-	if(this->texture && newChar)
+	if(this->texture && newChar && texturePixel)
 	{
-		Texture_putChar(this->texture, x, y, newChar);
+		Texture_putChar(this->texture, texturePixel, newChar);
+	}
+}
+
+// write directly to texture
+void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charGroupPixel, BYTE newPixelColor)
+{
+	ASSERT(this, "Sprite::putPixel: null this");
+
+	if(this->texture)
+	{
+		Texture_putPixel(this->texture, texturePixel, charGroupPixel, newPixelColor);
 	}
 }
 
