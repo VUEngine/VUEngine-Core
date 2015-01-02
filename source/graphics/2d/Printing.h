@@ -26,6 +26,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <CharSetManager.h>
 #include <TextureManager.h>
 
@@ -46,13 +47,24 @@ typedef struct FontSize
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+// 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
+
+// declare the virtual methods
+#define Printing_METHODS														\
+		Object_METHODS															\
+
+// declare the virtual methods which are redefined
+#define Printing_SET_VTABLE(ClassName)											\
+		Object_SET_VTABLE(ClassName)											\
+
+// declare Printing class
+__CLASS(Printing);
 
 typedef struct FontDefinition
 {
     // font chars definition pointer
-	const u16* fontCharDefinition;
+	BYTE* fontCharDefinition;
 
 	// number of characters in font
 	u16 characterCount;
@@ -75,15 +87,17 @@ typedef const FontDefinition FontROMDef;
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-void Printing_render(int textLayer);
-void Printing_registerFont(const FontDefinition* fontDefinition);
-void Printing_loadFonts();
-void Printing_clear();
-void Printing_int(int value, int x, int y, const char* font);
-void Printing_hex(WORD value, int x, int y, const char* font);
-void Printing_float(float value, int x, int y, const char* font);
-void Printing_text(char *string, int x, int y, const char* font);
-int Utilities_intLength(int value);
+Printing Printing_getInstance();
+
+void Printing_destructor(Printing this);
+void Printing_render(Printing this, int textLayer);
+void Printing_registerFont(Printing this, const FontDefinition* fontDefinition);
+void Printing_loadFonts(Printing this);
+void Printing_clear(Printing this);
+void Printing_int(Printing this, int value, int x, int y, const char* font);
+void Printing_hex(Printing this, WORD value, int x, int y, const char* font);
+void Printing_float(Printing this, float value, int x, int y, const char* font);
+void Printing_text(Printing this, char *string, int x, int y, const char* font);
 
 
 #endif

@@ -146,7 +146,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 
 	if (i >= numberOfOjects)
 	{
-		Printing_clear();
+		Printing_clear(Printing_getInstance());
 		MemoryPool_printMemUsage(this, 1, 4);
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
@@ -309,14 +309,14 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y)
 	int pool;
 	int displacement = 0;
 
-	Printing_text("MEMORY'S STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "MEMORY'S STATUS", x, y++, NULL);
 
-	Printing_text("Pool's size: ", x, ++y, NULL);
-	Printing_int(MemoryPool_getPoolSize(MemoryPool_getInstance()), x + 13, y++, NULL);
+	Printing_text(Printing_getInstance(), "Pool's size: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), MemoryPool_getPoolSize(MemoryPool_getInstance()), x + 13, y++, NULL);
 
-	Printing_text("Pool", x, ++y, NULL);
-	Printing_text("Free", x + 7, y, NULL);
-	Printing_text("Used", x + 14, y++, NULL);
+	Printing_text(Printing_getInstance(), "Pool", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Free", x + 7, y, NULL);
+	Printing_text(Printing_getInstance(), "Used", x + 14, y++, NULL);
 
 	for (pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -330,10 +330,10 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y)
 
 		total += counter * this->poolSizes[pool][eBlockSize];
 
-		Printing_text(Utilities_itoa(this->poolSizes[pool][eBlockSize],10,0) ,  x, ++y, NULL);
-		Printing_int(this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - counter, x +7, y, NULL);
-		Printing_text("      ", x + 14, y, NULL);
-		Printing_int(counter, x + 14, y, NULL);
+		Printing_text(Printing_getInstance(), Utilities_itoa(this->poolSizes[pool][eBlockSize],10,0) ,  x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - counter, x +7, y, NULL);
+		Printing_text(Printing_getInstance(), "      ", x + 14, y, NULL);
+		Printing_int(Printing_getInstance(), counter, x + 14, y, NULL);
 		counter = 0 ;
 	}
 }

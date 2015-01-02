@@ -119,7 +119,7 @@ void Stage_destructor(Stage this)
 	
 	if (this->stageEntities)
 	{
-		//Printing_int(VirtualList_getSize(this->stageEntities), 1, 10, NULL);
+		//Printing_int(Printing_getInstance(), VirtualList_getSize(this->stageEntities), 1, 10, NULL);
 		//NM_ASSERT(false, test);
 		VirtualNode node = VirtualList_begin(this->stageEntities);
 

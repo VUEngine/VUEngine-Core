@@ -88,7 +88,7 @@ typedef struct TextureDefinition
 	// palette index to use
 	u8 palette;
 
-}TextureDefinition;
+} TextureDefinition;
 
 typedef const TextureDefinition TextureROMDef;
 

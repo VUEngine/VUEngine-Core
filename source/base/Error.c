@@ -95,26 +95,26 @@ int Error_triggerException(Error this, char* string)
 
     TimerManager_enable(TimerManager_getInstance(), true);
 
-	Printing_loadFonts();
+	Printing_loadFonts(Printing_getInstance());
 
 	//print error message to screen
 	if (0 < y)
 	{
-		Printing_text("                                             ", x, y - 1, NULL);
+		Printing_text(Printing_getInstance(), "                                             ", x, y - 1, NULL);
 	}
 
-	Printing_text("Game::lastProcess:", x, y, NULL);
-	Printing_text(Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 19, y, NULL);
-	Printing_text("Exception:" , x, y + 1, NULL);
-	Printing_text(string, x, y + 2, NULL);
+	Printing_text(Printing_getInstance(), "Game::lastProcess:", x, y, NULL);
+	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 19, y, NULL);
+	Printing_text(Printing_getInstance(), "Exception:" , x, y + 1, NULL);
+	Printing_text(Printing_getInstance(), string, x, y + 2, NULL);
 
 	if (y < 26)
 	{
-		Printing_text("                                             ", x, y + 3, NULL);
+		Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 	}
 
 	// error display message
-	Printing_render(SpriteManager_getFreeLayer(SpriteManager_getInstance()));
+	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 
 	//trap the game here
 	while (true);

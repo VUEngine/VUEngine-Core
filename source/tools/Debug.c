@@ -342,8 +342,8 @@ static void Debug_showPage(Debug this, int increment)
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		Printing_text("DEBUG SYSTEM", 17, 0, NULL);
-		Printing_text("Nav. (LL/LR)", 48 - 12, 0, NULL);
+		Printing_text(Printing_getInstance(), "DEBUG SYSTEM", 17, 0, NULL);
+		Printing_text(Printing_getInstance(), "Nav. (LL/LR)", 48 - 12, 0, NULL);
 		Debug_dimmGame(this);
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 2);
 	}
@@ -356,9 +356,9 @@ static void Debug_showSubPage(Debug this, int increment)
 	{
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-		Printing_text("DEBUG SYSTEM", 17, 0, NULL);
-		Printing_text("Nav. (LL/LR)", 48 - 12, 0, NULL);
-		Printing_text("     (LU/LD)", 48 - 12, 1, NULL);
+		Printing_text(Printing_getInstance(), "DEBUG SYSTEM", 17, 0, NULL);
+		Printing_text(Printing_getInstance(), "Nav. (LL/LR)", 48 - 12, 0, NULL);
+		Printing_text(Printing_getInstance(), "     (LU/LD)", 48 - 12, 1, NULL);
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 2);
 	}
 }
@@ -403,20 +403,20 @@ static void Debug_removeSubPages(Debug this)
 static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 {
 	Debug_removeSubPages(this);
-	Printing_text("GENERAL STATUS", 1, y++, NULL);
-	Printing_text("General clock's time: ", 1, ++y, NULL);
+	Printing_text(Printing_getInstance(), "GENERAL STATUS", 1, y++, NULL);
+	Printing_text(Printing_getInstance(), "General clock's time: ", 1, ++y, NULL);
 	Clock_print(Game_getClock(Game_getInstance()), 23, y, NULL);
-	Printing_text("In game clock's time: ", 1, ++y, NULL);
+	Printing_text(Printing_getInstance(), "In game clock's time: ", 1, ++y, NULL);
 	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y, NULL);
 	FrameRate_printLastRecord(FrameRate_getInstance(), 1, y + 3);
 
-	Printing_text("STAGE'S STATUS", 20, y + 3, NULL);
-	Printing_text("Entities: ", 20, ++y + 3, NULL);
-	Printing_int(Container_getChildCount((Container)GameState_getStage(this->gameState)), 34, y + 3, NULL);
-	Printing_text("UI Entities: ", 20, ++y + 3, NULL);
+	Printing_text(Printing_getInstance(), "STAGE'S STATUS", 20, y + 3, NULL);
+	Printing_text(Printing_getInstance(), "Entities: ", 20, ++y + 3, NULL);
+	Printing_int(Printing_getInstance(), Container_getChildCount((Container)GameState_getStage(this->gameState)), 34, y + 3, NULL);
+	Printing_text(Printing_getInstance(), "UI Entities: ", 20, ++y + 3, NULL);
 
 	UI ui = Stage_getUI(GameState_getStage(this->gameState));
-	Printing_int(ui ? Container_getChildCount((Container)ui) : 0, 34, y + 3, NULL);
+	Printing_int(Printing_getInstance(), ui ? Container_getChildCount((Container)ui) : 0, 34, y + 3, NULL);
 }
 
 static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
@@ -519,9 +519,9 @@ static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y)
 	}
 	else if (__CHAR_SEGMENTS > this->charSeg)
 	{
-		Printing_text("CHAR MEMORY'S USAGE", x, y++, NULL);
-		Printing_text("Char segment: ", x, ++y, NULL);
-		Printing_int(this->charSeg + 1, x + 14, y, NULL);
+		Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
+		Printing_text(Printing_getInstance(), "Char segment: ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->charSeg + 1, x + 14, y, NULL);
 
 		Debug_charMemoryShowMemory(this, increment, x, y);
 		Debug_lightUpGame(this);
@@ -612,16 +612,16 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		TextureManager_print(TextureManager_getInstance(), x, y);
-		Printing_text("Dips. (RL/RR)", 48 - 13, 2, NULL);
-		Printing_text("      (RU/RD)", 48 - 13, 3, NULL);
+		Printing_text(Printing_getInstance(), "Dips. (RL/RR)", 48 - 13, 2, NULL);
+		Printing_text(Printing_getInstance(), "      (RU/RD)", 48 - 13, 3, NULL);
 
 		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
 		Debug_dimmGame(this);
 	}
 	else if (__NUM_BGMAPS > this->currentBgmap)
 	{
-		Printing_text("Bgmap: ", x, y, NULL);
-		Printing_int (this->currentBgmap, x + 7, y, NULL);
+		Printing_text(Printing_getInstance(), "Bgmap: ", x, y, NULL);
+		Printing_int(Printing_getInstance(), this->currentBgmap, x + 7, y, NULL);
 
 		SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
@@ -670,8 +670,8 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 	}
 	else if (SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer)
 	{
-		Printing_text("Layer: ", x, y, NULL);
-		Printing_int (this->currentLayer, x + 7, y, NULL);
+		Printing_text(Printing_getInstance(), "Layer: ", x, y, NULL);
+		Printing_int(Printing_getInstance(), this->currentLayer, x + 7, y, NULL);
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 		Debug_lightUpGame(this);
 	}
@@ -703,7 +703,7 @@ static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, i
 
 static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y)
 {
-	Printing_text("COLLISION SHAPES", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "COLLISION SHAPES", x, y++, NULL);
 	this->update = (void (*)(void *))&Debug_showCollisionShapes;
 }
 
@@ -723,22 +723,22 @@ static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int 
 {
 	int columnIncrement = 20;
 
-	Printing_text("CLASSES' MEMORY USAGE (B) ", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "CLASSES' MEMORY USAGE (B) ", x, y++, NULL);
 
 	if (message)
 	{
-		Printing_text(message, x, ++y, NULL);
+		Printing_text(Printing_getInstance(), message, x, ++y, NULL);
 		y++;
 	}
 
-	Printing_text("Name				Size", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Name				Size", x, ++y, NULL);
 	y++;
 
 	int i = 0;
 	for (; classesSizeData[i].classSizeFunction && (0 == size || i < size); i++)
 	{
-		Printing_text(classesSizeData[i].name, x, ++y, NULL);
-		Printing_int(((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);
+		Printing_text(Printing_getInstance(), classesSizeData[i].name, x, ++y, NULL);
+		Printing_int(Printing_getInstance(), ((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);
 	}
 }
 

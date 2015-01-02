@@ -30,6 +30,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												DEFINES
+//---------------------------------------------------------------------------------------------------------
+
+// max length of a font's name
+#define __MAX_LANG_NAME_LENGTH	32
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -44,6 +52,18 @@
 // declare a I18n
 __CLASS(I18n);
 
+typedef struct LangDefinition
+{
+	// language name
+	char name[__MAX_LANG_NAME_LENGTH];
+
+    // language strings
+	char* language[];
+
+} LangDefinition;
+
+typedef const LangDefinition LangROMDef;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
@@ -53,9 +73,8 @@ I18n I18n_getInstance();
 
 void I18n_destructor(I18n this);
 char* I18n_getText(I18n this, int string);
-void I18n_setLanguage(I18n this, int lang);
-void I18n_registerLanguage(I18n this, char* language[]);
-void I18n_registerLanguages(I18n this, char** languages[]);
+void I18n_setLanguage(I18n this, const char* lang);
+void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition);
 
 
 #endif
