@@ -59,7 +59,7 @@ typedef struct LangDefinition
 	char name[__MAX_LANG_NAME_LENGTH];
 
     // language strings
-	char* language[__MAX_LANGUAGES];
+	char* language[];
 
 } LangDefinition;
 

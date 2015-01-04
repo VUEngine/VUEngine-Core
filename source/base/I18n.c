@@ -39,7 +39,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* registered languages */													\
-	const LangDefinition* languages[16];										\
+	const LangDefinition* languages[__MAX_LANGUAGES];							\
 																				\
 	/* total number of registered languages */									\
 	u8 languageCount;															\
