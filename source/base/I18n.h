@@ -75,6 +75,7 @@ void I18n_destructor(I18n this);
 char* I18n_getText(I18n this, int string);
 void I18n_setLanguage(I18n this, const char* lang);
 void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition);
+LangDefinition* I18n_getLanguages(I18n this);
 
 
 #endif

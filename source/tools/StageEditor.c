@@ -146,7 +146,7 @@ static void StageEditor_constructor(StageEditor this)
 
 	this->mode = kFirstMode + 1;
 
-	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12, ">", kString));
+	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12, "\x10", kString));
 
 	VirtualList userObjects = __NEW(VirtualList);
 

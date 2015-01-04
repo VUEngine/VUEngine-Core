@@ -107,3 +107,9 @@ void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition)
 {
 	this->languages[this->languageCount++] = langDefinition;
 }
+
+// get all registered languages
+LangDefinition* I18n_getLanguages(I18n this)
+{
+    return this->languages;
+}
