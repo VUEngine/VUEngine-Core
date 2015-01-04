@@ -1,8 +1,19 @@
-#ifndef FONT_H_
-#define FONT_H_
 
+//{{BLOCK(VBJaEngineDefaultFont)
 
-const unsigned int VBJAE_DEFAULT_FONT_CHARS[1024] =
+//======================================================================
+//
+//	VBJaEngineDefaultFont, 256x64@2, 
+//	+ 256 tiles not compressed
+//	Total size: 4096 = 4096
+//
+//	Time-stamp: 2015-01-04, 19:57:12
+//	Exported by Cearn's GBA Image Transmogrifier, v0.8.6
+//	( http://www.coranac.com/projects/#grit )
+//
+//======================================================================
+
+const unsigned int VBJaEngineDefaultFontTiles[1024] __attribute__((aligned(4)))=
 {
 	0x00000000,0x00000000,0x00000000,0x00000000,0x0003C3FF,0x3FF30FF3,0xFFF3FFF3,0xFFFF0003,
 	0x0C000FFF,0xFC00FC00,0xFC03FC00,0x0F0F0C00,0x3FFF0F3C,0x3FFF3FFF,0x03F00FFC,0x000000C0,
@@ -149,23 +160,4 @@ const unsigned int VBJAE_DEFAULT_FONT_CHARS[1024] =
 	0x003C003C,0x0F3C03FC,0x003C03FC,0x0000003C,0x0F0F0000,0x0F0F0000,0x0FFF0F0F,0x03FF0F00,
 };
 
-FontROMDef VBJAE_DEFAULT_FONT =
-{
-    // font chars definition pointer
-	(BYTE*)VBJAE_DEFAULT_FONT_CHARS,
-
-	// number of characters in font
-	256,
-
-	// at which character number the font starts
-	0,
-
-	// size of a single character (in chars) ({width, height})
-	{1, 1},
-
-	// font's name
-	"VBJaEngineFont",
-};
-
-
-#endif
+//}}BLOCK(VBJaEngineDefaultFont)

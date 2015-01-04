@@ -1,2 +1,5 @@
 /.make-*/
+/.idea/
+/.settings/
 *.a
+*.ram

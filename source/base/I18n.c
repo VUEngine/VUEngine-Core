@@ -38,8 +38,8 @@
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
 																				\
-	/* registered languages */													\
-	const LangDefinition* languages[__MAX_LANGUAGES];							\
+	/* array of pointers to registered languages' definitions */				\
+	const LangDefinition *languages[__MAX_LANGUAGES];							\
 																				\
 	/* total number of registered languages */									\
 	u8 languageCount;															\
@@ -115,9 +115,9 @@ void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition)
 }
 
 // get all registered languages
-LangDefinition* I18n_getLanguages(I18n this)
+LangDefinition * I18n_getLanguages(I18n this)
 {
-    return *(this->languages);
+    return (LangDefinition *)this->languages;
 }
 
 // get the total number of registered languages
