@@ -40,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_ACTOR_SHOW_ROW 	6
-#define __OPTION_MARK	">"
+#define __OPTION_MARK	"\x10"
 #define __FRAME_OPTION_MARK	"*"
 
 #define __TRANSLATION_STEP	8
@@ -650,7 +650,7 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 	position.z += 0;
 
-	this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((void*)this, (SpriteDefinition*)&_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]));
+	this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((SpriteDefinition*)&_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]), (void*)this);
 
 	Sprite_setPosition((Sprite)this->animatedSprite, &position);
 	SpriteManager_render(SpriteManager_getInstance());
