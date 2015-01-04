@@ -36,12 +36,6 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// max length of a stage's string identifier
-#define __MAX_STAGE_IDENTIFIER_LENGTH 8
-
-// max length of a stage's name
-#define __MAX_STAGE_NAME_LENGTH	32
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -121,10 +115,10 @@ typedef struct StageDefinition
 	const u16 (*bgm)[];
 
 	// stages's identifier
-	char identifier[__MAX_STAGE_IDENTIFIER_LENGTH];
+	void* identifier;
 
 	// stages's name
-	char name[__MAX_STAGE_NAME_LENGTH];
+	void* name;
 
 } StageDefinition;
 
