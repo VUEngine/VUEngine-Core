@@ -88,7 +88,13 @@ char* I18n_getText(I18n this, int string)
 }
 
 // set the language
-void I18n_setLanguage(I18n this, const char* lang)
+void I18n_setLanguage(I18n this, u8 languageId)
+{
+    this->language = languageId;
+}
+
+// set the language by language name
+void I18n_setLanguageByName(I18n this, const char* lang)
 {
     u8 i;
 
@@ -96,7 +102,7 @@ void I18n_setLanguage(I18n this, const char* lang)
     {
         if (0 == strcmp(this->languages[i]->name, lang))
         {
-	        this->language = i;
+            I18n_setLanguage(I18n_getInstance(), i);
 	        break;
         }
     }
@@ -111,5 +117,11 @@ void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition)
 // get all registered languages
 LangDefinition* I18n_getLanguages(I18n this)
 {
-    return this->languages;
+    return *(this->languages);
+}
+
+// get the total number of registered languages
+u8 I18n_getLanguageCount(I18n this)
+{
+    return this->languageCount;
 }

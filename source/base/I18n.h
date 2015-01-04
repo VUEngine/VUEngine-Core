@@ -35,6 +35,7 @@
 
 // max length of a font's name
 #define __MAX_LANG_NAME_LENGTH	32
+#define __MAX_LANGUAGES	        10
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,7 +59,7 @@ typedef struct LangDefinition
 	char name[__MAX_LANG_NAME_LENGTH];
 
     // language strings
-	char* language[];
+	char* language[__MAX_LANGUAGES];
 
 } LangDefinition;
 
@@ -73,9 +74,11 @@ I18n I18n_getInstance();
 
 void I18n_destructor(I18n this);
 char* I18n_getText(I18n this, int string);
-void I18n_setLanguage(I18n this, const char* lang);
+void I18n_setLanguage(I18n this, u8 languageId);
+void I18n_setLanguageByName(I18n this, const char* lang);
 void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition);
 LangDefinition* I18n_getLanguages(I18n this);
+u8 I18n_getLanguageCount(I18n this);
 
 
 #endif
