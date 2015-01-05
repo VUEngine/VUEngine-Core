@@ -74,8 +74,7 @@
 	/* the UI */ 																\
 	UI ui;																		\
 																				\
-	/* flag to know if the stage must */										\
-	/* flush unused char groups */												\
+	/* flag to know if the stage must flush unused char groups */				\
 	int flushCharGroups;														\
 																				\
 	/* focus entity: needed for streaming */									\
