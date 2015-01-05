@@ -53,6 +53,7 @@ enum MessagesTypes
 	// physics messages
 	kNoCollision,
 	kCollision,
+	kCollisionWithYou,
 	kFloorReached,
 	kShapeBelow,
 	kNoObjectBelow,

@@ -51,13 +51,11 @@ __CLASS_DEFINITION(Actor);
 // global
 const extern VBVec3D* _screenDisplacement;
 
-// resolve collision against other entities
+static void Actor_alignToCollidingEntity(Actor this, InGameEntity collidingEntity, int axisOfCollision);
+static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, int axisOfCollision);
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
-
-// update colliding entities
+static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEntity, VBVec3D* collidingEntityLastDisplacement);
 static void Actor_updateCollisionStatus(Actor this, int movementAxis);
-
-// retrieve friction of colliding objects
 static void Actor_updateSourroundingFriction(Actor this);
 
 
@@ -152,6 +150,14 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 	}
 }
 
+static void Actor_syncPositionWithBody(Actor this)
+{
+	// save previous position
+	this->previousGlobalPosition = this->transform.globalPosition;
+
+	Container_setLocalPosition((Container) this, Body_getPosition(this->body));
+}
+
 // updates the animation attributes
 // graphically refresh of characters that are visible
 void Actor_transform(Actor this, Transformation* environmentTransform)
@@ -160,9 +166,11 @@ void Actor_transform(Actor this, Transformation* environmentTransform)
 
 	if (this->body && Body_isAwake(this->body))
     {
+		Actor_syncPositionWithBody(this);
+		
 		// an Actor with a physical body is agnostic to parenting
 		Transformation environmentAgnosticTransform =
-        {
+	    {
 				// local position
 				{0, 0, 0},
 				// global position
@@ -172,11 +180,6 @@ void Actor_transform(Actor this, Transformation* environmentTransform)
 				// rotation
 				{0, 0, 0}
 		};
-
-		// save previous position
-		this->previousGlobalPosition = this->transform.globalPosition;
-
-		Container_setLocalPosition((Container) this, Body_getPosition(this->body));
 
 		// call base
 		AnimatedInGameEntity_transform((AnimatedInGameEntity)this, &environmentAgnosticTransform);
@@ -414,74 +417,6 @@ int Actor_getAxisFreeForMovement(Actor this)
 	return ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 }
 
-// resolve collision against other entities
-static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
-{
-	ASSERT(this, "Actor::resolveCollision: null this");
-	ASSERT(this->body, "Actor::resolveCollision: null body");
-	ASSERT(collidingEntities, "Actor::resolveCollision: collidingEntities");
-
-	int axisOfCollision = 0;
-	Scale scale = Entity_getScale((Entity) this);
-	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(10), scale.y));
-
-	if (1 > alignThreshold)
-	{
-		alignThreshold = 1;
-	}
-
-	alignThreshold = 1;
-	// get last physical displacement
-	VBVec3D displacement = Body_getLastDisplacement(this->body);
-
-	VirtualNode node = VirtualList_begin(collidingEntities);
-
-	InGameEntity collidingEntity = NULL;
-
-	// TODO: solve when more than one entity has been touched
-	for (; node; node = VirtualNode_getNext(node))
-	{
-		collidingEntity = VirtualNode_getData(node);
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, __ARGUMENTS(collidingEntity, displacement));
-
-		if (__XAXIS & axisOfCollision)
-	    {
-			Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
-			this->lastCollidingEntity[kXAxis] = collidingEntity;
-		}
-
-		if (__YAXIS & axisOfCollision)
-	    {
-			if (!(__XAXIS & axisOfCollision))
-	        {
-				Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
-				this->lastCollidingEntity[kYAxis] = collidingEntity;
-			}
-		}
-
-		if (__ZAXIS & axisOfCollision)
-	    {
-			Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
-			this->lastCollidingEntity[kZAxis] = collidingEntity;
-		}
-	}
-
-	if (axisOfCollision)
-	{
-		// bounce over axis
-		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
-
-		if (!(axisOfCollision & Body_isMoving(this->body)))
-	    {
-			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyStoped, &axisOfCollision);
-		}
-		else
-	    {
-			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyBounced, &axisOfCollision);
-		}
-	}
-}
-
 // process a telegram
 bool Actor_handleMessage(Actor this, Telegram telegram)
 {
@@ -497,13 +432,19 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 			Object sender = Telegram_getSender(telegram);
 			Actor atherActor = __GET_CAST(Actor, sender);
 
-			if (sender == (Object)this || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
+			if (true || sender == (Object)this || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
 	        {
 				switch (message)
 	            {
 					case kCollision:
 
 						Actor_resolveCollision(this, (VirtualList)Telegram_getExtraInfo(telegram));
+						return true;
+						break;
+						
+					case kCollisionWithYou:
+
+						Actor_resolveCollisionAgainstMe(this, (InGameEntity)Telegram_getSender(telegram), (VBVec3D*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
@@ -615,6 +556,104 @@ void Actor_stopMovement(Actor this)
 	}
 }
 
+// align to colliding entity
+static void Actor_alignToCollidingEntity(Actor this, InGameEntity collidingEntity, int axisOfCollision)
+{
+	Scale scale = Entity_getScale((Entity) this);
+	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(1), scale.y));
+
+	if (1 > alignThreshold)
+	{
+		alignThreshold = 1;
+	}
+
+	if (__XAXIS & axisOfCollision)
+    {
+		Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
+		this->lastCollidingEntity[kXAxis] = collidingEntity;
+	}
+
+	if (__YAXIS & axisOfCollision)
+    {
+		Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
+		this->lastCollidingEntity[kYAxis] = collidingEntity;
+	}
+
+	if (__ZAXIS & axisOfCollision)
+    {
+		Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
+		this->lastCollidingEntity[kZAxis] = collidingEntity;
+	}	
+}
+
+// start bouncing after collision with another inGameEntity
+static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, int axisOfCollision)
+{
+	ASSERT(this, "Actor::bounce: null this");
+
+	if (collidingEntity && axisOfCollision)
+	{
+		// bounce over axis
+		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
+
+		if (!(axisOfCollision & Body_isMoving(this->body)))
+	    {
+			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyStoped, &axisOfCollision);
+		}
+		else
+	    {
+			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyBounced, &axisOfCollision);
+		}
+	}
+}
+
+// resolve collision against other entities
+static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
+{
+	ASSERT(this, "Actor::resolveCollision: null this");
+	ASSERT(this->body, "Actor::resolveCollision: null body");
+	ASSERT(collidingEntities, "Actor::resolveCollision: collidingEntities");
+
+	int axisOfCollision = 0;
+
+	// get last physical displacement
+	VBVec3D displacement = Body_getLastDisplacement(this->body);
+
+	VirtualNode node = VirtualList_begin(collidingEntities);
+
+	InGameEntity collidingEntity = NULL;
+
+	// TODO: solve when more than one entity has been touched
+	for (; node && !axisOfCollision; node = VirtualNode_getNext(node))
+	{
+		collidingEntity = VirtualNode_getData(node);
+		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, __ARGUMENTS(collidingEntity, displacement));
+		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
+	}
+
+	Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
+}
+
+// resolve collision against me entities
+static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEntity, VBVec3D* collidingEntityLastDisplacement)
+{
+	ASSERT(this, "Actor::resolveCollisionAgainstMe: null this");
+	ASSERT(this->body, "Actor::resolveCollisionAgainstMe: null body");
+
+	int axisOfCollision = 0;
+	
+	Shape collidingEntityShape = __VIRTUAL_CALL(Shape, Entity, getShape, (Entity)collidingEntity);
+
+	ASSERT(collidingEntityShape, "Actor::resolveCollision: null shape");
+	
+	if(collidingEntityShape)
+	{
+		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, collidingEntityShape, __ARGUMENTS((Entity)this, collidingEntityLastDisplacement));
+		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
+		Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
+	}
+}
+
 // align character to other entity on collision
 void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 {
@@ -723,12 +762,14 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	{
 		// force position
 		Body_setPosition(this->body, &this->transform.localPosition, (Object)this);
+		Actor_syncPositionWithBody(this);
 	}
 
-	Transformation transform = Container_getEnvironmentTransform((Container)this);
-	Actor_transform(this, &transform);
+	Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+	Actor_transform((Actor)this, &environmentTransform);
 
-	__VIRTUAL_CALL(int, Shape, positione, this->shape);
+	__VIRTUAL_CALL(void, Shape, positione, this->shape);
+	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
 }
 
 // retrieve body

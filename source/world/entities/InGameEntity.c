@@ -66,8 +66,6 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 	this->direction.y = __DOWN;
 	this->direction.z = __FAR;
 
-	this->inGameType = inGameEntityDefinition->inGameType;
-
 	this->shape = NULL;
 }
 
@@ -128,7 +126,7 @@ u16 InGameEntity_getInGameType(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::getInGameType: null this");
 
-	return this->inGameType;
+	return this->inGameEntityDefinition->inGameType;
 }
 
 // does it moves?

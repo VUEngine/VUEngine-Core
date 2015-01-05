@@ -52,7 +52,8 @@ struct Shape_str;
 		__VIRTUAL_DEC(isMoving);												\
 		__VIRTUAL_DEC(getElasticity);											\
 		__VIRTUAL_DEC(getFriction);												\
-
+		__VIRTUAL_DEC(getInGameType);											\
+		
 #define InGameEntity_SET_VTABLE(ClassName)										\
 		Entity_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);							\
@@ -61,7 +62,8 @@ struct Shape_str;
 		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);					\
 		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);							\
-
+		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);					\
+		
 #define InGameEntity_ATTRIBUTES													\
 																				\
 	/* it is derivated from*/													\
@@ -72,9 +74,6 @@ struct Shape_str;
 																				\
 	/* direction */																\
 	Direction direction;														\
-																				\
-	/* gameworld's character's type	*/											\
-	u16 inGameType;																\
 																				\
 	/* Gap to calculate collisions */											\
 	Gap gap;																	\

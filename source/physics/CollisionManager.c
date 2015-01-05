@@ -234,7 +234,7 @@ int CollisionManager_update(CollisionManager this)
 
 		// check the shapes
 		for (; nodeForActiveShapes; nodeForActiveShapes = VirtualNode_getNext(nodeForActiveShapes))
-		{
+		{	
 			// load the current shape to check against
 			Shape shapeToCheck = (Shape)VirtualNode_getData(nodeForActiveShapes);
 
@@ -248,13 +248,14 @@ int CollisionManager_update(CollisionManager this)
 
 				if (collisionResult)
 				{
+
 					if (!collidingObjects)
 					{
 						collidingObjects = __NEW(VirtualList);
 					}
 
 					// add object to list
-					VirtualList_pushFront(collidingObjects, (void*)Shape_getOwner(shapeToCheck));
+					VirtualList_pushFront(collidingObjects, Shape_getOwner(shapeToCheck));
 				}
 			}
 		}
@@ -320,11 +321,12 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape)
 {
 	ASSERT(this, "CollisionManager::shapeChangedState: null this");
-
 	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
 
-//	Printing_text(Printing_getInstance(), "CollisionManager::shapeStopedMoving", 10, 10, NULL);
 	VirtualList_removeElement(this->movingShapes, shape);
+	
+	// make sure other moving shapes test for collisions against it
+//	Shape_checked(shape, false);
 }
 
 // inform of a change in the shape

@@ -619,6 +619,16 @@ static void Game_updatePhysics(Game this)
 #ifdef __DEBUG
 	this->lastProcessName = "process collisions";
 #endif
+
+#ifdef __DEBUG_TOOLS
+	if (!Game_isInSpecialMode(this))
+#endif
+#ifdef __STAGE_EDITOR
+	if (!Game_isInSpecialMode(this))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if (!Game_isInSpecialMode(this))
+#endif
 	// process collisions
 	CollisionManager_update(this->collisionManager);
 
