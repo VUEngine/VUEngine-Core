@@ -45,7 +45,7 @@
 	u8 languageCount;															\
 																				\
 	/* currently active language */												\
-	u8 language;																\
+	u8 ActiveLanguage;															\
 
 // define the I18n
 __CLASS_DEFINITION(I18n);
@@ -69,7 +69,7 @@ __SINGLETON(I18n);
 static void I18n_constructor(I18n this)
 {
 	this->languageCount = 0;
-	this->language = 0;
+	this->ActiveLanguage = 0;
 
 	__CONSTRUCT_BASE(Object);
 }
@@ -84,13 +84,13 @@ void I18n_destructor(I18n this)
 // get localized string
 char* I18n_getText(I18n this, int string)
 {
-	return this->languages[this->language]->language[string];
+	return this->languages[this->ActiveLanguage]->language[string];
 }
 
 // set the language
 void I18n_setLanguage(I18n this, u8 languageId)
 {
-    this->language = languageId;
+    this->ActiveLanguage = languageId;
 }
 
 // set the language by language name
@@ -124,4 +124,10 @@ LangDefinition * I18n_getLanguages(I18n this)
 u8 I18n_getLanguageCount(I18n this)
 {
     return this->languageCount;
+}
+
+// get the name of the currently active language
+char* I18n_getActiveLanguageName(I18n this)
+{
+    return (char*)this->languages[this->ActiveLanguage]->name;
 }
