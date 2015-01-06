@@ -33,14 +33,13 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-//definition of a chargroup of an animated character or background
+// definition of a chargroup of an animated character or background
 #define __ANIMATED			0x01
 
-//definition of a chargroup of an unanimated character or background
+// definition of a chargroup of an unanimated character or background
 #define __NO_ANIMATED		0x02
 
-//definition of a chargroup of an animated character which it's all frames are written
-//and shared
+// definition of a chargroup of an animated character of which all frames are written to memory and shared
 #define __ANIMATED_SHARED	0x03
 
 // future expansion
@@ -96,8 +95,8 @@ __CLASS(CharGroup);
 
 typedef struct CharGroupDefinition
 {
-	// number of chars, depending on allocation type:
-	// __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
+	// number of chars, depending on allocationType:
+	// __ANIMATED: number of chars of a single animation frame
 	// __ANIMATED_SHARED: sum of chars of all animation frames
 	// __NO_ANIMATED: number of chars of whole image
 	u16 numberOfChars;
