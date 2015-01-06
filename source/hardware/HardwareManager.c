@@ -184,7 +184,7 @@ void HardwareManager_setInterruptLevel(HardwareManager this, u8 level)
 }
 
 // get interruption level
-inline int HardwareManager_geInterruptLevel(HardwareManager this)
+inline int HardwareManager_getInterruptLevel(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::geInterruptLevel: null this");
 

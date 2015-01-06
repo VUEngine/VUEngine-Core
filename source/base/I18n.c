@@ -129,5 +129,5 @@ u8 I18n_getLanguageCount(I18n this)
 // get the name of the currently active language
 char* I18n_getActiveLanguageName(I18n this)
 {
-    return this->languages[this->ActiveLanguage]->name;
+    return (char*)this->languages[this->ActiveLanguage]->name;
 }

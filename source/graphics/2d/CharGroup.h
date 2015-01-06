@@ -96,7 +96,10 @@ __CLASS(CharGroup);
 
 typedef struct CharGroupDefinition
 {
-	// number of chars
+	// number of chars, depending on allocation type:
+	// __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
+	// __ANIMATED_SHARED: sum of chars of all animation frames
+	// __NO_ANIMATED: number of chars of whole image
 	u16 numberOfChars;
 
 	// the way its chars and bgtexture will be allocated in graphic memory
