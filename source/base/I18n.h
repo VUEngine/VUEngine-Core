@@ -79,6 +79,7 @@ void I18n_setLanguageByName(I18n this, const char* lang);
 void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition);
 LangDefinition * I18n_getLanguages(I18n this);
 u8 I18n_getLanguageCount(I18n this);
+char* I18n_getActiveLanguageName(I18n this);
 
 
 #endif
