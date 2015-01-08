@@ -146,7 +146,7 @@ static void StageEditor_constructor(StageEditor this)
 
 	this->mode = kFirstMode + 1;
 
-	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12, "\x10", kString));
+	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12, "\x0B", kString));
 
 	VirtualList userObjects = __NEW(VirtualList);
 
@@ -271,7 +271,8 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 static void StageEditor_setupMode(StageEditor this)
 {
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-	Printing_text(Printing_getInstance(), "LEVEL EDITOR", 17, 0, NULL);
+	Printing_text(Printing_getInstance(), "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", 0, 0, NULL);
+	Printing_text(Printing_getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
 
 	switch (this->mode)
 	{
@@ -514,7 +515,6 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
 	}
 }
 
-
 // modify projection values
 static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
 {
@@ -559,12 +559,9 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
 		_optical->baseDistance += __BASE_DISTACE_STEP;
 	}
 
-	// this hack forces the Entity to recalculate
-	// its sprites' value
-	// must hack this global, otherwise will need
-	// another variable which most likely will only
-	// take up the previous RAM, or another branching
-	// computation in the Entity's render method
+	// this hack forces the Entity to recalculate its sprites' value.
+	// must hack this global, otherwise will need another variable which most likely will only
+	// take up the previous RAM, or another branching computation in the Entity's render method.
 	Screen_forceDisplacement(Screen_getInstance(), true);
 
 	StageEditor_printProjectionValues(this);
@@ -681,12 +678,9 @@ static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D transl
 
 		__VIRTUAL_CALL(void, Container, setLocalPosition, container, __ARGUMENTS(localPosition));
 
-		// this hack forces the Entity to recalculate
-		// its sprites' value
-		// must hack this global, otherwise will need
-		// another variable which most likely will only
-		// take up the previous RAM, or another branching
-		// computation in the Entity's render method
+		// this hack forces the Entity to recalculate its sprites' value.
+		// must hack this global, otherwise will need another variable which most likely will only
+		// take up the previous RAM, or another branching computation in the Entity's render method.
 		Screen_forceDisplacement(Screen_getInstance(), true);
 		
 		GameState_transform(this->gameState);
@@ -718,8 +712,8 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 	{
 		if (1 >= SpriteManager_getFreeLayer(SpriteManager_getInstance()))
 	    {
-			Printing_text(Printing_getInstance(), "No more WORLDs", 48 - 15, 4, NULL);
-			Printing_text(Printing_getInstance(), "available     ", 48 - 15, 5, NULL);
+			Printing_text(Printing_getInstance(), "No more WORLDs", 48 - 15, 5, NULL);
+			Printing_text(Printing_getInstance(), "available     ", 48 - 15, 6, NULL);
 			return;
 		}
 
@@ -749,10 +743,10 @@ static void StageEditor_printEntityPosition(StageEditor this)
 	int y = 2;
 	int x = 1;
 	Printing_text(Printing_getInstance(), "MOVE OBJECT", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Nav.     (SEL)", 48 - 14, 0, NULL);
-	Printing_text(Printing_getInstance(), "Next   (LT/RT)", 48 - 14, 1, NULL);
-	Printing_text(Printing_getInstance(), "Move (LU/LD/LL", 48 - 14, 2, NULL);
-	Printing_text(Printing_getInstance(), "/LR/RU/LD)", 48 - 10, 3, NULL);
+	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing_text(Printing_getInstance(), "Next   \x17\x18", 38, 2, NULL);
+	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 3, NULL);
+	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
 
 	if (this->currentEntityNode)
 	{
@@ -789,9 +783,9 @@ static void StageEditor_printScreenPosition(StageEditor this)
 	VBVec3D position = Screen_getPosition(Screen_getInstance());
 
 	Printing_text(Printing_getInstance(), "MOVE SCREEN", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Nav.     (SEL)", 48 - 14, 0, NULL);
-	Printing_text(Printing_getInstance(), "Move (LU/LD/LL", 48 - 14, 1, NULL);
-	Printing_text(Printing_getInstance(), "/LR/RU/LD)", 48 - 10, 2, NULL);
+	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 2, NULL);
+	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
 	Printing_text(Printing_getInstance(), "Position:               ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(position.x), x + 10, y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(position.y), x + 15, y, NULL);
@@ -804,12 +798,12 @@ static void StageEditor_printProjectionValues(StageEditor this)
 	int y = 2;
 
 	Printing_text(Printing_getInstance(), "PROJECTION VALUES", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Nav.   (SEL)", 48 - 12, 0, NULL);
-	Printing_text(Printing_getInstance(), "HVPC (LD/LL)", 48 - 12, 1, NULL);
-	Printing_text(Printing_getInstance(), "VVPC (LU/LD)", 48 - 12, 2, NULL);
-	Printing_text(Printing_getInstance(), "DES  (RL/RR)", 48 - 12, 3, NULL);
-	Printing_text(Printing_getInstance(), "MVD  (RU/RD)", 48 - 12, 4, NULL);
-	Printing_text(Printing_getInstance(), "BD   (LT/RT)", 48 - 12, 5, NULL);
+	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing_text(Printing_getInstance(), "HVPC  \x1E\x1C\x1D", 38, 2, NULL);
+	Printing_text(Printing_getInstance(), "VVPC  \x1E\x1A\x1B", 38, 3, NULL);
+	Printing_text(Printing_getInstance(), "DES   \x1F\x1C\x1D", 38, 4, NULL);
+	Printing_text(Printing_getInstance(), "MVD   \x1F\x1A\x1B", 38, 5, NULL);
+	Printing_text(Printing_getInstance(), "BD     \x17\x18", 38, 6, NULL);
 
 	Printing_text(Printing_getInstance(), "H. view point center:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->horizontalViewPointCenter), x + 22, y, NULL);
@@ -827,17 +821,17 @@ static void StageEditor_printUserObjects(StageEditor this)
 {
 	Printing_text(Printing_getInstance(), "ADD OBJECTS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
-	Printing_text(Printing_getInstance(), "Nav. (SEL)", 48 - 10, 0, NULL);
-	Printing_text(Printing_getInstance(), "Accept (A)", 48 - 10, 1, NULL);
+	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing_text(Printing_getInstance(), "Accept  \x13", 38, 2, NULL);
 
 	OptionsSelector_showOptions(this->userObjectsSelector, 1, 4);
 }
 
 static void StageEditor_printTranslationStepSize(StageEditor this)
 {
-	Printing_text(Printing_getInstance(), "Step   (RL/RR)", 48 - 14, 4, NULL);
-	Printing_text(Printing_getInstance(), "+     ", 48 - 12, 5, NULL);
-	Printing_int(Printing_getInstance(), this->translationStepSize, 48 - 11, 5, NULL);
+	Printing_text(Printing_getInstance(), "Step  \x1F\x1C\x1D", 38, 5, NULL);
+	Printing_text(Printing_getInstance(), "+     ", 38, 6, NULL);
+	Printing_int(Printing_getInstance(), this->translationStepSize, 39, 6, NULL);
 }
 
 

@@ -342,8 +342,9 @@ static void Debug_showPage(Debug this, int increment)
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		Printing_text(Printing_getInstance(), "DEBUG SYSTEM", 17, 0, NULL);
-		Printing_text(Printing_getInstance(), "Nav. (LL/LR)", 48 - 12, 0, NULL);
+		Printing_text(Printing_getInstance(), "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", 0, 0, NULL);
+		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+		Printing_text(Printing_getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
 		Debug_dimmGame(this);
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 2);
 	}
@@ -356,9 +357,9 @@ static void Debug_showSubPage(Debug this, int increment)
 	{
 		this->update = NULL;
 		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-		Printing_text(Printing_getInstance(), "DEBUG SYSTEM", 17, 0, NULL);
-		Printing_text(Printing_getInstance(), "Nav. (LL/LR)", 48 - 12, 0, NULL);
-		Printing_text(Printing_getInstance(), "     (LU/LD)", 48 - 12, 1, NULL);
+		Printing_text(Printing_getInstance(), "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", 0, 0, NULL);
+		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 2);
 	}
 }
@@ -612,14 +613,13 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		TextureManager_print(TextureManager_getInstance(), x, y);
-		Printing_text(Printing_getInstance(), "Dips. (RL/RR)", 48 - 13, 2, NULL);
-		Printing_text(Printing_getInstance(), "      (RU/RD)", 48 - 13, 3, NULL);
 
 		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
 		Debug_dimmGame(this);
 	}
 	else if (__NUM_BGMAPS > this->currentBgmap)
 	{
+		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing_text(Printing_getInstance(), "Bgmap: ", x, y, NULL);
 		Printing_int(Printing_getInstance(), this->currentBgmap, x + 7, y, NULL);
 

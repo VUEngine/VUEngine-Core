@@ -890,7 +890,7 @@ static void Game_showLowBatteryIndicator(Game this)
     // write only if one second has passed
     if (currentSecond != this->lowbatLastCheckSeconds)
     {
-        Printing_text(Printing_getInstance(), (currentSecond & 1) ? "\x01\x02" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y, NULL);
+        Printing_text(Printing_getInstance(), (currentSecond & 1) ? "\x00\x01" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y, NULL);
         this->lowbatLastCheckSeconds = currentSecond;
     }
 }
