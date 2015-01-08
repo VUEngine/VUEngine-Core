@@ -18,7 +18,7 @@ See GPL-license.txt for the GNU GENERAL PUBLIC LICENSE
 
 Some source code in this release that may not be covered by the GPL:
 
-	· libgccvb: compiled by a lot of other people.
+	ï¿½ libgccvb: compiled by a lot of other people.
 
 -----------------------------------------------------------------------------
 
@@ -52,53 +52,53 @@ Description:
 
 Features:
 
-	· General features:
+	ï¿½ General features:
 		* Automatic frame rate control
 		* Generic clocks based on hardware interrupts
 		* Memory Pool to allocate memory dynamically
-		* Easy to use printing functions to facilitate debug
+		* Generic state machines
 		* Generic parenting system
 		* Generic messaging system
-		* Generic state machines
 		* Generic event listening/firing system
-	· Debugging
+		* Easy to use printing functions to facilitate debug
+	ï¿½ Debugging
 		* Memory usage
 		* Hardware registers' usage 
 		* Real time tools to check:
-			Char memory status
-			BgMap memory status
-			World layer status
-			Collision boxes
-	· Object Oriented support through the use of Metaprogramming (C MACROS):
+			- Char memory status
+			- BGMap memory status
+			- World layer status
+			- Collision boxes
+	ï¿½ Object Oriented support through the use of Metaprogramming (C MACROS):
 		* Simple inheritance
 		* Polymorphism
 		* Encapsulation
-	· Rendering:
+	ï¿½ Rendering:
 		* Automatic char memory allocation
 		* Real time char memory defragmentation
-		* Automatic bgmap memory allocation
+		* Automatic BGMap memory allocation
 		* Automatic world layer assignment based on the objects' z position
-		* Preload textures
+		* Preloading textures
 		* Automatic char memory defragmentation
 		* Scaling/rotation effects
 		* Automatic projection/parallax/scale calculations and rendering
 		* Customizable perspective/deep effects on real time
 		* Automatic memory allocation for param tables (used in affine and h-bias modes)
-	· Animation:
+	ï¿½ Animation:
 		* Multiple memory allocation schemas to improve efficiency
 		* Frame based animation system with callback support
-	· Sound:
+	ï¿½ Sound:
 		* Sound reproduction of one BGM and up to two FX sounds simultaneous.
-	· Physics:
+	ï¿½ Physics:
 		* Accelerated/uniform movement
 		* Gravity
 		* Friction
 		* Bouncing
 		* Automatic collision detection and notification
-	· Stages:
+	ï¿½ Stages:
 		* 3D stages
 		* Level streaming
-	· Useful classes to speed up the content creation process:
+	ï¿½ Useful classes to speed up the content creation process:
 		* Container: for transformation propagation (translation/rotation/scaling)
 		* Entity: a container with a list of sprites (a "visual object")
 		* InGameEntity: interactive entities in the levels (collision detection)
@@ -111,10 +111,10 @@ Features:
 A short summary of the file layout:
 
 source/					VBJaEngine source code.
-source/base/libgccvb/		heavily modified libgccvb
-lib/					miscelaneous files needed for linking, etc.				
-lib/src/				miscelaneous files needed for linking, etc.	sources, and other utilities sources.
-utilities/				miscelaneous utitilities for padding, sound, etc.
+source/base/libgccvb/	heavily modified libgccvb
+lib/					miscellaneous files needed for linking, etc.
+lib/src/				miscellaneous files needed for linking, etc.	sources, and other utilities sources.
+utilities/				miscellaneous utitilities for padding, sound, etc.
 
 
 For more documentation go to:
@@ -127,9 +127,9 @@ COMPILING ON WIN32
 
 Requirements: 
 
-	· Minimal Linux environment (i.e: CygWin) that includes make and git
+	ï¿½ Minimal Linux environment (i.e: CygWin) that includes make and git
 	
-	· GCCVB 4.4.2 for V810 
+	ï¿½ GCCVB 4.4.2 for V810 
 
 
 1. Create a CygWin environment variable called VBDE which must point to the VBJaEngine's parent folder.
@@ -149,20 +149,20 @@ Requirements:
 ACKNOWLEDGMENTS
 ==================
 
-	· David Tucker, for always being open to answer all my questions (even the silly ones).
+	ï¿½ David Tucker, for always being open to answer all my questions (even the silly ones).
 	
-	· DogP, for all the performace tips which really helped this project to be feasible, and
+	ï¿½ DogP, for all the performace tips which really helped this project to be feasible, and
 	  for providing the code necessary to make sound support possible in the engine. 
 	
-	· Christian Radke (KR155E):
+	ï¿½ Christian Radke (KR155E):
 		* Debugging and testing
 		* Documentation
 		* Engine's features and structure advisor
 	  
-	· RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums 
+	ï¿½ RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums 
 	  who always are kind enough to share their knowledge. 
 
-	· Libgccvb has been refactored to accomodate better to this engine, all it's code is credited to
+	ï¿½ Libgccvb has been refactored to accomodate better to this engine, all it's code is credited to
 	  it's creators and Jorge Eremiev doesn't take any credit on it.
 
 ==================  
