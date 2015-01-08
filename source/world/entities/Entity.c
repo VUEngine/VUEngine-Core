@@ -168,12 +168,12 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 			// set spatial position
 			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position3D));
 	
-			// apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(environmentTransform));
-	
 			// add children if defined
 			Entity_addChildren(entity, positionedEntity->childrenDefinitions, environmentTransform);
 	
+			// apply transformations
+			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(environmentTransform));
+
 			return entity;
 		}
 	}

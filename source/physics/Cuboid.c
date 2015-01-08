@@ -469,7 +469,6 @@ static void Cuboid_configurePolygon(Cuboid this, int renew)
 
 	// create a polygon
 	this->polygon = __NEW(Polygon);
-	Printing_text(Printing_getInstance(), "     ", 20, 12, NULL);
 
 	// add vertices
 	Polygon_addVertice(this->polygon, this->positionedRightcuboid.x0, this->positionedRightcuboid.y0, this->positionedRightcuboid.z0);
