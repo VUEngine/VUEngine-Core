@@ -40,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_ACTOR_SHOW_ROW 	6
-#define __OPTION_MARK	"\x10"
+#define __OPTION_MARK	"\x0B"
 #define __FRAME_OPTION_MARK	"*"
 
 #define __TRANSLATION_STEP	8
@@ -272,9 +272,10 @@ void AnimationEditor_stop(AnimationEditor this)
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
 	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-	Printing_text(Printing_getInstance(), "ANIMATION INSPECTOR", 14, 0, NULL);
-	Printing_text(Printing_getInstance(), "Accept (A)", 48 - 10, 0, NULL);
-	Printing_text(Printing_getInstance(), "Cancel (B)", 48 - 10, 1, NULL);
+	Printing_text(Printing_getInstance(), "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03", 0, 0, NULL);
+	Printing_text(Printing_getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
+	Printing_text(Printing_getInstance(), " Accept \x13  ", 38, 1, NULL);
+	Printing_text(Printing_getInstance(), " Cancel \x14  ", 38, 2, NULL);
 
 	switch (this->mode)
 	{
@@ -594,20 +595,19 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 
 	OptionsSelector_showOptions(this->frameEditionSelector, x, ++y + 1);
 
-	Printing_text(Printing_getInstance(), "           ", 38, 0, NULL);
-
+	Printing_text(Printing_getInstance(), " Cancel   \x14 ", 36, 1, NULL);
 	if (!AnimatedSprite_isPlaying(this->animatedSprite))
 	{
-		Printing_text(Printing_getInstance(), "Play       (A)", 48 - 14, 2, NULL);
+		Printing_text(Printing_getInstance(), " Play     \x13 ", 36, 2, NULL);
 	}
 	else
 	{
-		Printing_text(Printing_getInstance(), "Pause      (A)", 48 - 14, 2, NULL);
+		Printing_text(Printing_getInstance(), " Pause    \x13 ", 36, 2, NULL);
 	}
-
-	Printing_text(Printing_getInstance(), "Cancel     (B)", 48 - 14, 1, NULL);
-	Printing_text(Printing_getInstance(), "Select (LU/LD)", 48 - 14, 3, NULL);
-	Printing_text(Printing_getInstance(), "Modify (LL/LR)", 48 - 14, 4, NULL);
+	Printing_text(Printing_getInstance(), " Select \x14 ", 36, 3, NULL);
+	Printing_text(Printing_getInstance(), " Modify \x14 ", 36, 4, NULL);
+	Printing_text(Printing_getInstance(), " Select \x1E\x1A\x1B", 36, 3, NULL);
+	Printing_text(Printing_getInstance(), " Modify \x1E\x1C\x1D", 36, 4, NULL);
 
 	int selectedProperty = OptionsSelector_getSelectedOption(this->animationEditionSelector);
 
@@ -615,8 +615,8 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	{
 		case kFrames:
 
-			Printing_text(Printing_getInstance(), "Select (RU/RD)", 48 - 14, 6, NULL);
-			Printing_text(Printing_getInstance(), "Modify (RL/RR)", 48 - 14, 7, NULL);
+			Printing_text(Printing_getInstance(), " Select \x1F\x1A\x1B", 36, 6, NULL);
+			Printing_text(Printing_getInstance(), " Modify \x1F\x1C\x1D", 36, 7, NULL);
 			break;
 	}
 }
@@ -735,7 +735,7 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this)
 {
 	if (!this->animationFunction.loop)
 	{
-		Printing_text(Printing_getInstance(), "Play       (A)", 48 - 14, 2, NULL);
+		Printing_text(Printing_getInstance(), " Play     \x13 ", 36, 2, NULL);
 	}
 }
 

@@ -168,7 +168,6 @@ void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16
 
 		switch (string[i])
 		{
-			case 7: // Bell (!)
 			case 13: // Line Feed
 
 				break;
