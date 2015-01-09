@@ -164,8 +164,8 @@ void VPUManager_setupPalettes(VPUManager this)
 	VIP_REGS[BRTA]  = __BRTA;
 	VIP_REGS[BRTB]  = __BRTB;
 	VIP_REGS[BRTC]  = __BRTC;
-	VIP_REGS[GPLT0] = __GPLT0VALUE;	/* Set all eight palettes to: 11100100 */
-	VIP_REGS[GPLT1] = __GPLT1VALUE;	/* (i.e. "Normal" dark to light progression.) */
+	VIP_REGS[GPLT0] = __GPLT0VALUE;
+	VIP_REGS[GPLT1] = __GPLT1VALUE;
 	VIP_REGS[GPLT2] = __GPLT2VALUE;
 	VIP_REGS[GPLT3] = __GPLT3VALUE;
 	VIP_REGS[JPLT0] = __JPLT0VALUE;

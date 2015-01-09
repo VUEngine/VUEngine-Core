@@ -257,16 +257,17 @@
 // 										COLOR PALETTES
 //---------------------------------------------------------------------------------------------------------
 
-#define __PRINTING_PALETTE		1
+#define __PRINTING_PALETTE		3
 
 #define __GPLT0VALUE  			0xE4	// 11 10 01 00
 #define __GPLT1VALUE  			0xE0	// 11 10 00 00
 #define __GPLT2VALUE  			0xF0	// 11 11 00 00
-#define __GPLT3VALUE  			0xEA	// 11 10 10 10
-#define __JPLT0VALUE  			0xE4
-#define __JPLT1VALUE  			0xE4
-#define __JPLT2VALUE  			0xE4
-#define __JPLT3VALUE  			0xE4
+#define __GPLT3VALUE  			0xE0	// 11 10 00 00
+
+#define __JPLT0VALUE  			0xE4	// 11 10 01 00
+#define __JPLT1VALUE  			0xE4	// 11 10 01 00
+#define __JPLT2VALUE  			0xE4	// 11 10 01 00
+#define __JPLT3VALUE  			0xE4	// 11 10 01 00
 
 #define	__BKCOL					0x00
 
