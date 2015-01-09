@@ -201,6 +201,25 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 	}	
 }
 
+// add child from definition
+Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const VBVec3DReal* position, void* extraInfo)
+{
+	PositionedEntity positionedEntityDefinition = 
+	{
+		(EntityDefinition*)entityDefinition, {position->x, position->y, position->z}, NULL, extraInfo
+	};
+
+	Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+	
+    // create the hint entity and add it to the hero as a child entity
+	Entity childEntity = Entity_loadFromDefinition(&positionedEntityDefinition, &environmentTransform, 0 > id? id: this->id + Container_getChildCount((Container)this));
+
+	// create the entity and add it to the world
+	Container_addChild((Container)this, (Container)childEntity);
+
+	return childEntity;
+}
+
 // process extra info in intialization
 void Entity_setExtraInfo(Entity this, void* extraInfo)
 {

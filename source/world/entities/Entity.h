@@ -139,6 +139,7 @@ void Entity_destructor(Entity this);
 Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo);
 Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const Transformation* environmentTransform, s16 id);
 void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions, const Transformation* environmentTransform);
+Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const VBVec3DReal* position, void* extraInfo);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
