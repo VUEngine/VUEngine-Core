@@ -143,6 +143,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
 const Body Actor_getBody(Actor this);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
+void Actor_addForce(Actor this, const Force* force);
 
 
 #endif

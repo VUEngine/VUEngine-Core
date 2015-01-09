@@ -394,9 +394,9 @@ bool Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 	        {
 				VBVec3D displacement =
 	            {
-					kXAxis == i ? acceleration->x : 0,
-					kYAxis == i ? acceleration->y : 0,
-					kZAxis == i ? acceleration->z : 0
+					kXAxis == i ? 0 < acceleration->x? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
+					kYAxis == i ? 0 < acceleration->y? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
+					kZAxis == i ? 0 < acceleration->z? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0
 				};
 
 				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
@@ -566,6 +566,7 @@ static void Actor_alignToCollidingEntity(Actor this, InGameEntity collidingEntit
 	{
 		alignThreshold = 1;
 	}
+	alignThreshold = 1;
 
 	if (__XAXIS & axisOfCollision)
     {
@@ -799,4 +800,28 @@ fix19_13 Actor_getElasticity(Actor this)
 	ASSERT(this, "Actor::getElasticity: null this");
 
 	return this->body ? Body_getElasticity(this->body) : InGameEntity_getElasticity((InGameEntity)this);
+}
+
+void Actor_addForce(Actor this, const Force* force)
+{
+	ASSERT(this, "Actor::Force: null this");
+	ASSERT(this->body, "Actor::Force: null body");
+
+	Acceleration acceleration =
+    {
+    	force->x,
+    	force->y,
+    	force->z
+	};
+	
+	Velocity velocity = Body_getVelocity(this->body);
+
+	Force effectiveForceToApply =
+	{
+		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis((Actor)this, &acceleration)))? force->x: 0,
+		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis((Actor)this, &acceleration)))? force->y: 0,
+		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis((Actor)this, &acceleration)))? force->z: 0
+	};
+
+	Body_addForce(this->body, &effectiveForceToApply);
 }
