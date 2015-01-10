@@ -92,6 +92,7 @@ void Container_constructor(Container this, s16 id)
 	this->parent = NULL;
 	this->children = NULL;
 	this->removedChildren = NULL;
+	this->deleteMe = false;
 }
 
 // class's destructor
@@ -136,6 +137,20 @@ void Container_destructor(Container this)
 
 	// destroy the super Container
 	__DESTROY_BASE(Object);
+}
+
+// safe call to delete entities within a normal stage
+void Container_deleteMyself(Container this)
+{
+	if(this->parent)
+	{
+		this->deleteMe = true;
+		Container_removeChild(this->parent, this);
+	}
+	else
+	{
+		NM_ASSERT(false, "Container::deleteMyself: I'm orphan");
+	}
 }
 
 // add a child Container
@@ -186,6 +201,11 @@ static void Container_processRemovedChildren(Container this)
 			Container child = (Container)VirtualNode_getData(node);
 
 			VirtualList_removeElement(this->children, child);
+			
+			if(child->deleteMe)
+			{
+				__DELETE(child);
+			}
 		}
 
 		__DELETE(this->removedChildren);

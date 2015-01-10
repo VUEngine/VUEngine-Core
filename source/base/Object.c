@@ -38,7 +38,7 @@ __CLASS_DEFINITION(Object);
 typedef struct Event
 {
 	Object listener;
-	void (*method)(Object);
+	void (*method)(Object, Object);
 	char name[__MAX_EVENT_NAME_LENGTH];
 
 } Event;
@@ -154,7 +154,7 @@ void Object_fireEvent(Object this,  char* eventName)
 
 			if (!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
 			{
-				event->method(event->listener);
+				event->method(event->listener, this);
 			}
 		}
 	}

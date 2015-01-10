@@ -74,11 +74,15 @@
 	/* entity's id */															\
 	u16 id;																		\
 																				\
+	/* flag for parent to know to delete it */									\
+	u8 deleteMe;																\
+																				\
 	/* 3d transformation */														\
 	Transformation transform;													\
 																				\
 	/* flag to recalculate global position */									\
 	VBVec3D invalidateGlobalPosition;											\
+																				\
 
 __CLASS(Container);
 
@@ -91,6 +95,7 @@ __CLASS_NEW_DECLARE(Container, __PARAMETERS(s16 id));
 
 void Container_constructor(Container this, s16 id);
 void Container_destructor(Container this);
+void Container_deleteMyself(Container this);
 void Container_addChild(Container this, Container child);
 void Container_removeChild(Container this, Container child);
 void Container_update(Container this);
