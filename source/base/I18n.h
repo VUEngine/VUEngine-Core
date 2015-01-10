@@ -74,11 +74,12 @@ I18n I18n_getInstance();
 
 void I18n_destructor(I18n this);
 char* I18n_getText(I18n this, int string);
-void I18n_setLanguage(I18n this, u8 languageId);
-void I18n_setLanguageByName(I18n this, const char* lang);
+void I18n_setActiveLanguage(I18n this, u8 languageId);
+void I18n_setActiveLanguageByName(I18n this, const char* lang);
 void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition);
 LangDefinition * I18n_getLanguages(I18n this);
 u8 I18n_getLanguageCount(I18n this);
+u8 I18n_getActiveLanguage(I18n this);
 char* I18n_getActiveLanguageName(I18n this);
 
 
