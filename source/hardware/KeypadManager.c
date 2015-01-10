@@ -112,6 +112,8 @@ u16 KeypadManager_read(KeypadManager this)
 	this->previousKey = this->currentKey;
 	this->currentKey = (((HW_REGS[SDHR] << 8)) | HW_REGS[SDLR]) & 0xFFFC;
 
+	KeypadManager_enable(this);
+
 	return this->currentKey;
 }
 

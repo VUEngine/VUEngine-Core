@@ -112,7 +112,7 @@ void TextureManager_reset(TextureManager this)
 		this->numberOfChars[i] = 0;
 
 		// clear the offsets
-		for (j=0;j<__NUM_MAPS_PER_SEG;j++)
+		for (j = 0;j<__NUM_MAPS_PER_SEG; j++)
 		{
 			this->xOffset[i][j] = 0;
 			this->yOffset[i][j] = 0;

@@ -86,6 +86,7 @@ bool Game_isInSpecialMode(Game this);
 StateMachine Game_getStateMachine(Game this);
 Stage Game_getStage(Game this);
 GameState Game_getCurrentState(Game this);
-
+void Game_pause(Game this, GameState pauseState);
+void Game_unpause(Game this, GameState pauseState);
 
 #endif

@@ -63,6 +63,13 @@
 
 #define __FPS_BASED_SECONDS		(int)(1000 / __TARGET_FPS) 
 
+enum StateOperations
+{
+	kSwapState = 0,
+	kPushState,
+	kPopState
+};
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -103,6 +110,9 @@
 	/* game's next state */														\
 	State nextState;															\
 																				\
+	/* game's next state operation */											\
+	int nextStateOperation; 													\
+																				\
 	/* last process' name */													\
 	char* lastProcessName;														\
 																				\
@@ -124,7 +134,7 @@ Optical* _optical = NULL;
 static void Game_constructor(Game this);
 static void Game_initialize(Game this);
 static void Game_setOpticalGlobals(Game this);
-static void Game_setState(Game this, State state);
+static void Game_setNextState(Game this, State state);
 static void Game_handleInput(Game this);
 static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
@@ -210,6 +220,8 @@ static void Game_constructor(Game this)
 
     // init low battery last check
     this->lowbatLastCheckSeconds = 0;
+    
+    this->nextStateOperation = kSwapState;
 
 	// setup engine paramenters
 	Game_initialize(this);
@@ -267,7 +279,7 @@ void Game_start(Game this, State state)
 		Clock_start(this->clock);
 
 		// set state
-		Game_setState(this, state);
+		Game_setNextState(this, state);
 
 		// start game's cycle
 		Game_update(this);
@@ -286,10 +298,11 @@ void Game_changeState(Game this, State state)
 	// state changing must be done when no other process
 	// may be affecting the game's general state
 	this->nextState = state;
+	this->nextStateOperation = kSwapState;
 }
 
 // set game's state
-static void Game_setState(Game this, State state)
+static void Game_setNextState(Game this, State state)
 {
 	ASSERT(this, "Game::setState: null this");
     ASSERT(state, "Game::setState: setting NULL state");
@@ -303,8 +316,26 @@ static void Game_setState(Game this, State state)
 	// set waveform data
     SoundManager_setWaveForm(this->soundManager);
 
-    // setup new state
-    StateMachine_swapState(this->stateMachine, state);
+    switch(this->nextStateOperation)
+    {
+		case kSwapState:
+	
+			// setup new state
+		    StateMachine_swapState(this->stateMachine, state);
+			break;
+	
+		case kPushState:
+	
+			// setup new state
+		    StateMachine_pushState(this->stateMachine, state);
+			break;
+	
+		case kPopState:
+	
+			// setup new state
+		    StateMachine_popState(this->stateMachine);
+			break;
+    }
 
     // enable hardware pad read
     HardwareManager_enableKeypad(this->hardwareManager);
@@ -317,6 +348,9 @@ static void Game_setState(Game this, State state)
 
 	// disable rendering
 	HardwareManager_enableRendering(this->hardwareManager);
+
+	// no next state now
+	this->nextState = NULL;
 }
 
 // disable interrutps
@@ -721,8 +755,7 @@ void Game_update(Game this)
 			// check if new state available
 			if (this->nextState)
 			{
-				Game_setState(this, this->nextState);
-				this->nextState = NULL;
+				Game_setNextState(this, this->nextState);
 			}
 
 			// update each subsystem
@@ -886,6 +919,8 @@ GameState Game_getCurrentState(Game this)
 // print low battery indicator
 static void Game_showLowBatteryIndicator(Game this)
 {
+	ASSERT(this, "Game::showLowBatteryIndicator: null this");
+
     u8 currentSecond = Clock_getSeconds(Game_getInGameClock(Game_getInstance()));
     // write only if one second has passed
     if (currentSecond != this->lowbatLastCheckSeconds)
@@ -893,4 +928,29 @@ static void Game_showLowBatteryIndicator(Game this)
         Printing_text(Printing_getInstance(), (currentSecond & 1) ? "\x00\x01" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y, NULL);
         this->lowbatLastCheckSeconds = currentSecond;
     }
+}
+
+void Game_pause(Game this, GameState pauseState)
+{
+	ASSERT(this, "Game::pause: null this");
+	ASSERT(pauseState, "Game::pause: null pauseState");
+
+	if(pauseState)
+	{
+		this->nextState = (State)pauseState;
+		this->nextStateOperation = kPushState;
+	}
+}
+
+void Game_unpause(Game this, GameState pauseState)
+{
+	ASSERT(this, "Game::unpause: null this");
+	ASSERT(pauseState, "Game::unpause: null pauseState");
+	ASSERT(pauseState == Game_getCurrentState(this), "Game::unpause: null pauseState sent is not the current one");
+
+	if(pauseState == Game_getCurrentState(this))
+	{
+		this->nextState = pauseState;
+		this->nextStateOperation = kPopState;
+	}
 }

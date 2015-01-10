@@ -156,6 +156,8 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 	{
 		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
 
+		Container_setName((Container)entity, positionedEntity->name);
+		
 		if(entity)
 		{
 			VBVec3D position3D =
@@ -202,11 +204,15 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 }
 
 // add child from definition
-Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const VBVec3DReal* position, void* extraInfo)
+Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3DReal* position, void* extraInfo)
 {
 	PositionedEntity positionedEntityDefinition = 
 	{
-		(EntityDefinition*)entityDefinition, {position->x, position->y, position->z}, NULL, extraInfo
+		(EntityDefinition*)entityDefinition, 
+		{position->x, position->y, position->z}, 
+		name,
+		NULL, 
+		extraInfo
 	};
 
 	Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
@@ -350,7 +356,15 @@ void Entity_transform(Entity this, Transformation* environmentTransform)
 	// call base class's transform method
 	Container_transform((Container)this, environmentTransform);
 
+	// update graphical representation
 	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
+	
+	// update shape if needed
+	if (updateSpritePosition && this->shape && !__VIRTUAL_CALL(int, Entity, moves, this))
+	{
+		// setup shape
+		__VIRTUAL_CALL(void, Shape, setup, this->shape);
+	}
 }
 
 // retrieve EntityDefinition
@@ -379,6 +393,12 @@ Scale Entity_getScale(Entity this)
 	}
 	
 	return Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
+}
+
+// set local position
+void Entity_setLocalPosition(Entity this, VBVec3D position)
+{
+	Container_setLocalPosition((Container)this, position);
 }
 
 // retrieve position

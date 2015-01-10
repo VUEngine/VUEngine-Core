@@ -63,6 +63,7 @@
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);							\
 		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);					\
 		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);					\
+		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);						\
 		__VIRTUAL_SET(ClassName, Entity, getPosition);							\
 		__VIRTUAL_SET(ClassName, Entity, getWidth);								\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);							\
@@ -118,6 +119,9 @@ typedef const struct PositionedEntity
 
 	// position in the world
 	VBVec3DReal position;
+	
+	// name
+	char* name;
 
 	// the children
 	struct PositionedEntity* childrenDefinitions;
@@ -139,7 +143,7 @@ void Entity_destructor(Entity this);
 Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo);
 Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const Transformation* environmentTransform, s16 id);
 void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions, const Transformation* environmentTransform);
-Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const VBVec3DReal* position, void* extraInfo);
+Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3DReal* position, void* extraInfo);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
@@ -147,6 +151,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 void Entity_transform(Entity this, Transformation* environmentTransform);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
 Scale Entity_getScale(Entity this);
+void Entity_setLocalPosition(Entity this, VBVec3D position);
 VBVec3D Entity_getPosition(Entity this);
 VBVec3D Entity_getLocalPosition(Entity this);
 int Entity_getMapParallax(Entity this);

@@ -83,7 +83,7 @@ Gap InGameEntity_getGap(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::getGap: null this");
 
-	InGameEntity_setGap(this);
+	//InGameEntity_setGap(this);
 	return this->gap;
 }
 

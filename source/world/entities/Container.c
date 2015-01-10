@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
+#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -93,6 +94,8 @@ void Container_constructor(Container this, s16 id)
 	this->children = NULL;
 	this->removedChildren = NULL;
 	this->deleteMe = false;
+	
+	this->name = NULL;
 }
 
 // class's destructor
@@ -133,6 +136,12 @@ void Container_destructor(Container this)
 	if (this->parent)
 	{
 		Container_removeChild(this->parent, this);
+	}
+	
+	// delete name
+	if(this->name)
+	{
+		__DELETE_BASIC(this->name);
 	}
 
 	// destroy the super Container
@@ -422,6 +431,26 @@ void Container_setLocalPosition(Container this, VBVec3D position)
 	this->invalidateGlobalPosition.z = this->transform.localPosition.z != position.z;
 
 	this->transform.localPosition = position;
+	
+	// if I have children
+	if (this->children)
+	{
+		VirtualNode node = VirtualList_begin(this->children);
+
+		// update each child
+		for (; node; node = VirtualNode_getNext(node))
+		{
+			Container child = (Container)VirtualNode_getData(node);
+			
+			// make sure children recalculates its global position
+			Container_invalidateGlobalPosition((Container)child);
+		}
+	}
+}
+
+void Container_invalidateGlobalPosition(Container this)
+{
+	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
 }
 
 // propagate an event to the children wrapper
@@ -484,23 +513,120 @@ int Container_onMessage(Container this, va_list args)
 // process message
 int Container_doMessage(Container this, int message)
 {
+	ASSERT(this, "Container::doMessage: null this");
+
 	return false;
 }
 
 //retrieve class's in game index
 s16 Container_getId(Container this)
 {
+	ASSERT(this, "Container::doMessage: null this");
+
 	return this->id;
 }
 
 // retrieve child count
 int Container_getChildCount(Container this)
-{
+{	
+	ASSERT(this, "Container::getChildCount: null this");
+
 	return this->children ? VirtualList_getSize(this->children) : 0;
 }
 
 // retrieve children
 VirtualList Container_getChildren(Container this)
 {
+	ASSERT(this, "Container::getChildren: null this");
+
 	return this->children;
+}
+
+// set name
+void Container_setName(Container this, char* name)
+{
+	ASSERT(this, "Container::setName: null this");
+	
+	if(this->name)
+	{
+		__DELETE_BASIC(this->name);
+	}
+
+	if(!name)
+	{
+		return;
+	}
+	
+	typedef struct NameWrapper
+	{
+		char name[__MAX_CONTAINER_NAME_LENGTH];
+		
+	}NameWrapper;
+	
+	NameWrapper* nameWrapper = (NameWrapper*)__NEW_BASIC(NameWrapper);
+	this->name = nameWrapper->name;
+	
+	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
+}
+
+// get name
+char* Container_getName(Container this)
+{
+	ASSERT(this, "Container::getName: null this");
+
+	return this->name;
+}
+
+// get child by name
+Container Container_getChildByName(Container this, char* childName)
+{
+	ASSERT(this, "Container::getChildByName: null this");
+
+	if (childName && this->children)
+	{
+		// first remove children
+		Container_processRemovedChildren(this);
+
+		VirtualNode node = VirtualList_begin(this->children);
+
+		// update each child
+		for (; node ; node = VirtualNode_getNext(node))
+        {
+			Container child = (Container)VirtualNode_getData(node);
+
+			if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
+			{
+				return child;
+			}
+        }
+	}
+	
+	return NULL;
+}
+
+// get child by id
+Container Container_getChildById(Container this, s16 id)
+{
+	ASSERT(this, "Container::getChildById: null this");
+
+	if (this->children)
+	{
+		// first remove children
+		Container_processRemovedChildren(this);
+
+		VirtualNode node = VirtualList_begin(this->children);
+
+		// update each child
+		for (; node ; node = VirtualNode_getNext(node))
+        {
+			Container child = (Container)VirtualNode_getData(node);
+
+			if(child->id == id)
+			{
+				return child;
+			}
+        }
+	}
+	
+	return NULL;
 }

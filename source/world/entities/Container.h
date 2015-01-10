@@ -34,6 +34,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 											 CLASS'S MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __MAX_CONTAINER_NAME_LENGTH	16
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -71,8 +78,11 @@
 	/* parent */																\
 	Container parent;															\
 																				\
+	/* name */																	\
+	char* name;																	\
+																				\
 	/* entity's id */															\
-	u16 id;																		\
+	s16 id;																		\
 																				\
 	/* flag for parent to know to delete it */									\
 	u8 deleteMe;																\
@@ -115,6 +125,10 @@ int Container_doMessage(Container this, int message);
 s16 Container_getId(Container this);
 int Container_getChildCount(Container this);
 VirtualList Container_getChildren(Container this);
+void Container_setName(Container this, char* name);
+char* Container_getName(Container this);
+Container Container_getChildByName(Container this, char* childName);
+Container Container_getChildById(Container this, s16 id);
 
 
 #endif

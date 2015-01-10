@@ -113,12 +113,21 @@ void GameState_exit(GameState this, void* owner)
 void GameState_pause(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::pause: null this");
+
+	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
 }
 
 // state's execute
 void GameState_resume(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::resume: null this");
+
+	if(this->stage)
+	{
+	//	__VIRTUAL_CALL(void, Container, reload, (container)this->stage);
+	}
+	
+	Clock_pause(Game_getInGameClock(Game_getInstance()), false);
 }
 
 // state's on message
