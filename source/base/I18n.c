@@ -88,13 +88,13 @@ char* I18n_getText(I18n this, int string)
 }
 
 // set the language
-void I18n_setLanguage(I18n this, u8 languageId)
+void I18n_setActiveLanguage(I18n this, u8 languageId)
 {
     this->ActiveLanguage = languageId;
 }
 
 // set the language by language name
-void I18n_setLanguageByName(I18n this, const char* lang)
+void I18n_setActiveLanguageByName(I18n this, const char* lang)
 {
     u8 i;
 
@@ -102,7 +102,7 @@ void I18n_setLanguageByName(I18n this, const char* lang)
     {
         if (0 == strcmp(this->languages[i]->name, lang))
         {
-            I18n_setLanguage(I18n_getInstance(), i);
+            I18n_setActiveLanguage(I18n_getInstance(), i);
 	        break;
         }
     }
@@ -124,6 +124,12 @@ LangDefinition * I18n_getLanguages(I18n this)
 u8 I18n_getLanguageCount(I18n this)
 {
     return this->languageCount;
+}
+
+// get the id of the currently active language
+u8 I18n_getActiveLanguage(I18n this)
+{
+    return this->ActiveLanguage;
 }
 
 // get the name of the currently active language
