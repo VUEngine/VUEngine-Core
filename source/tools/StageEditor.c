@@ -205,7 +205,7 @@ void StageEditor_stop(StageEditor this)
 	ASSERT(this, "StageEditor::stop: null this");
 
 	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	StageEditor_releaseShape(this);
 	this->currentEntityNode = NULL;
 }
@@ -270,7 +270,7 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 // print title
 static void StageEditor_setupMode(StageEditor this)
 {
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	Printing_text(Printing_getInstance(), "\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07", 0, 0, NULL);
 	Printing_text(Printing_getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
 

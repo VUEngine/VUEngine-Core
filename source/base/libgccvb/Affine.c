@@ -60,7 +60,7 @@ void Affine_setAll(u16 param, PDx_ST * pdx, s16 max)
 {
 	s16 i;
 	AFFINE_ST *affine;
-	affine = (AFFINE_ST*)PARAM(param);
+	affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
 	CACHE_ENABLE;
 	for (i = 0; i < max; i++)
 	{
@@ -94,7 +94,7 @@ void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16
 
 	pdx.paralax = 0x0000;
 	
-	AFFINE_ST *affine = (AFFINE_ST*)PARAM(param);
+	AFFINE_ST* affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
 
 	AFFINE_ST source = 
 	{
@@ -155,7 +155,7 @@ void Affine_rotateZ(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s
 	pdx.paralax = 0x0000;
 
 	{
-		AFFINE_ST *affine = (AFFINE_ST*)PARAM(param);
+		AFFINE_ST* affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
 
 		AFFINE_ST source =
 	{
@@ -240,7 +240,7 @@ void Affine_rotateY(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16
 void affineSetAll0(u16 param, PDx_ST * pdx,s16 max,int  i)
 {
 	AFFINE_ST *affine;
-	affine = (AFFINE_ST*)PARAM(param);
+	affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
 	affine[i].pb_y    = FTOFIX13_3(i*pdx->pb+pdx->dx);
 	affine[i].paralax = pdx->paralax;
 	affine[i].pd_y    = FTOFIX13_3(i*pdx->pd+pdx->dy);

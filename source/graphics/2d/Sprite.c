@@ -192,10 +192,11 @@ void Sprite_calculateScale(Sprite this, fix19_13 z)
 	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) -
 			       FIX19_13_DIV(z , optical.maximunViewDistance));
 
-	// TODO: remove the * and the branch
+	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE): ratio;
+	
 	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0 ? -1 : 1);
 	this->drawSpec.scale.y = ratio;
-
+	
 	ASSERT(this->texture, "Sprite::calculateScale: null texture");
 
 	if (WRLD_AFFINE == Sprite_getMode(this))
@@ -332,9 +333,9 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				WORLD_PARAM(this->worldLayer, PARAM(this->param));
-
-//				worldPointer->param = PARAM(this->param);
+				WORLD_PARAM(this->worldLayer, VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param));
+//				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
+//				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 0) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
@@ -362,14 +363,8 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				//create an independant of software variable to point XPSTTS register
-				//unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-				//wait for screen to idle
-				//while (*xpstts & XPBSYR);
-
-				WORLD_PARAM(this->worldLayer, PARAM(this->param));
-
+				WORLD_PARAM(this->worldLayer, VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param));
+//				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}

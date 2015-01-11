@@ -128,7 +128,7 @@ void Printing_render(Printing this, int textLayer)
 	// wait for screen to idle
 	while (*xpstts & XPBSYR);
 
-	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (__PRINTING_BGMAP);
+	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()));
 	WA[textLayer].mx = 0;
 	WA[textLayer].mp = 0;
 	WA[textLayer].my = 0;
@@ -142,7 +142,9 @@ void Printing_render(Printing this, int textLayer)
 // clear printing area
 void Printing_clear(Printing this)
 {
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+
+	VPUManager_clearBgmap(VPUManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
 // direct printing out method
@@ -222,37 +224,43 @@ void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16
 
 void Printing_int(Printing this, int value, int x, int y, const char* font)
 {
+	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+	
 	if (value < 0)
 	{
 		value *= -1;
 
-		Printing_out(this, __PRINTING_BGMAP, x++, y, "-", 0, font);
+		Printing_out(this, printingBgmap, x++, y, "-", 0, font);
 
-		Printing_out(this, __PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
+		Printing_out(this, printingBgmap, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
 	}
 	else
 	{
-		Printing_out(this, __PRINTING_BGMAP, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
+		Printing_out(this, printingBgmap, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
 	}
 }
 
 void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 {
+	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+
 	if (0 && value<0)
 	{
 		value *= -1;
 
-		Printing_out(this, __PRINTING_BGMAP, x++,y,"-", 0, font);
-		Printing_out(this, __PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
+		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
+		Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
 	}
 	else
 	{
-		Printing_out(this, __PRINTING_BGMAP, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
+		Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
 	}
 }
 
 void Printing_float(Printing this, float value, int x, int y, const char* font)
 {
+	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+
 	int sign = 1;
 	int i = 0;
 	int length;
@@ -266,7 +274,7 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 	{
 		sign = -1;
 
-		Printing_out(this, __PRINTING_BGMAP, x++,y,"-", 0, font);
+		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
 	}
 
 	decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
@@ -274,17 +282,17 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
-	Printing_out(this, __PRINTING_BGMAP, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALETTE, font);
+	Printing_out(this, printingBgmap, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALETTE, font);
 
 	// print the dot
-	Printing_out(this, __PRINTING_BGMAP, x + length, y, ".", __PRINTING_PALETTE, font);
+	Printing_out(this, printingBgmap, x + length, y, ".", __PRINTING_PALETTE, font);
 
 	// print the decimal part
 	for (i = 0; size; i++)
 	{
 		if (decimal < size)
 		{
-			Printing_out(this, __PRINTING_BGMAP, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALETTE, font);
+			Printing_out(this, printingBgmap, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALETTE, font);
 		}
 		else
 		{
@@ -294,10 +302,12 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 		size /= 10;
 	}
 
-	Printing_out(this, __PRINTING_BGMAP, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
+	Printing_out(this, printingBgmap, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
 }
 
 void Printing_text(Printing this, char *string, int x, int y, const char* font)
 {
-	Printing_out(this, __PRINTING_BGMAP, x, y, string, __PRINTING_PALETTE, font);
+	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+
+	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
 }

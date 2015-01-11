@@ -254,7 +254,7 @@ void Debug_update(Debug this)
 // show debug screens
 void Debug_show(Debug this, GameState gameState)
 {
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 	this->gameState = gameState;
@@ -267,7 +267,7 @@ void Debug_show(Debug this, GameState gameState)
 void Debug_hide(Debug this)
 {
 	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_lightUpGame(this);
 }
@@ -340,7 +340,7 @@ static void Debug_showPage(Debug this, int increment)
 	if (this->currentPage && VirtualNode_getData(this->currentPage))
 	{
 		this->update = NULL;
-		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+		VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		Printing_text(Printing_getInstance(), "\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07", 0, 0, NULL);
 		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
@@ -356,7 +356,7 @@ static void Debug_showSubPage(Debug this, int increment)
 	if (this->currentSubPage && VirtualNode_getData(this->currentSubPage))
 	{
 		this->update = NULL;
-		VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+		VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		Printing_text(Printing_getInstance(), "\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07", 0, 0, NULL);
 		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
@@ -556,7 +556,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
 	//put the map into memory calculating the number of char for each reference
 	for (i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 64; i++)
 	{
-		Mem_add((u8*)BGMap(__PRINTING_BGMAP) + (((yOffset << 6) + (i << 6)) << 1),
+		Mem_add((u8*)BGMap(TextureManager_getPrintingBgmapSegment(TextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
 				(const u8*)CHAR_MEMORY_MP,
 				__SCREEN_WIDTH >> 3,
 				(this->charSeg << 9) + i * (__SCREEN_WIDTH >> 3));
@@ -606,7 +606,7 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 
 	if (-1 > this->currentBgmap)
 	{
-		this->currentBgmap = __NUM_BGMAPS - 1;
+		this->currentBgmap = TextureManager_getAvailableBgmapSegments(TextureManager_getInstance()) - 1;
 	}
 
 	if (-1 == this->currentBgmap)
@@ -617,7 +617,7 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
 		Debug_dimmGame(this);
 	}
-	else if (__NUM_BGMAPS > this->currentBgmap)
+	else if (TextureManager_getAvailableBgmapSegments(TextureManager_getInstance()) > this->currentBgmap)
 	{
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing_text(Printing_getInstance(), "Bgmap: ", x, y, NULL);

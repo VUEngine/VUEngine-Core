@@ -88,7 +88,7 @@ bool Object_handleMessage(Object this, void* owner, void* telegram)
 }
 
 // register an event listener
-void Object_addEventListener(Object this, Object listener, void (*method)(Object),  char* eventName)
+void Object_addEventListener(Object this, Object listener, void (*method)(Object, Object),  char* eventName)
 {
 	ASSERT(this, "Object::addEventListener: null this");
 
@@ -116,7 +116,7 @@ void Object_addEventListener(Object this, Object listener, void (*method)(Object
 }
 
 // remove an event listener
-void Object_removeEventListener(Object this, Object listener, void (*method)(Object),  char* eventName)
+void Object_removeEventListener(Object this, Object listener, void (*method)(Object, Object),  char* eventName)
 {
 	ASSERT(this, "Object::addEventListener: null this");
 

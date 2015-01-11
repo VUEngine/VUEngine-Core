@@ -41,6 +41,7 @@
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -118,8 +119,6 @@ void Stage_destructor(Stage this)
 	
 	if (this->stageEntities)
 	{
-		//Printing_int(Printing_getInstance(), VirtualList_getSize(this->stageEntities), 1, 10, NULL);
-		//NM_ASSERT(false, test);
 		VirtualNode node = VirtualList_begin(this->stageEntities);
 
 		for (; node; node = VirtualNode_getNext(node))
@@ -374,6 +373,16 @@ static void Stage_loadTextures(Stage this)
 	for (; this->stageDefinition->textures[i]; i++)
 	{
 		TextureManager_loadTexture(TextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharGroups);
+	}
+	
+	if(0 < i)
+	{
+		TextureManager_calculateAvailableBgmapSegments(TextureManager_getInstance());
+		ParamTableManager_reset(ParamTableManager_getInstance());
+	}
+	else 
+	{
+		TextureManager_resetAvailableBgmapSegments(TextureManager_getInstance());
 	}
 }
 

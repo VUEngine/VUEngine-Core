@@ -390,6 +390,8 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	ASSERT(this, "Container::initialTransform: null this");
 
 	Container_applyTransform(this, environmentTransform, true);
+	
+	Container_invalidateGlobalPosition(this);
 }
 
 // initial transform

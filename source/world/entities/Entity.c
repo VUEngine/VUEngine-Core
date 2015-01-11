@@ -313,7 +313,7 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 				// reset size so it is recalculated
 				this->size.x = this->size.y = 0;
 			}
-	
+
 			//if screen is moving
 			if (updateSpritePosition)
 		    {

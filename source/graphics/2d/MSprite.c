@@ -210,9 +210,8 @@ void MSprite_render(MSprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 
-//				worldPointer->param = PARAM(this->param);
+				//				worldPointer->param = VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param);
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
@@ -246,8 +245,7 @@ void MSprite_render(MSprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				WORLD_PARAM(this->worldLayer, PARAM(this->param));
-
+				//				worldPointer->param = VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param);
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}

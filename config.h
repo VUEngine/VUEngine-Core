@@ -3,8 +3,9 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 							        VBJAENGINE'S CONFIGURATION
+// 							  VBJAENGINE'S CUSTOM CONFIGURATION
 //---------------------------------------------------------------------------------------------------------
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										DEBUGGING TOOLS
@@ -80,23 +81,23 @@
 #define __OPTIMUM_FPS 					__TARGET_FPS
 
 // target frames per second
-#define __MINIMUM_GOOD_FPS 				(__TARGET_FPS - 3)
+#define __MINIMUM_GOOD_FPS 				(__TARGET_FPS - 0)
 
 #define __MILLISECONDS_IN_SECOND			1000
 
 // set animation delays as if they are 60 FPS,
 // and multiply by this factor
-#define __FPS_ANIM_FACTOR 	            (__TARGET_FPS / (float)__OPTIMUM_FPS)
+#define __FPS_ANIM_FACTOR 	(__TARGET_FPS / (float)__OPTIMUM_FPS)
 
 // seconds that must elapse to call rest state... in seconds (15 minutes)
-#define __REST_DELAY 		            900
+#define __REST_DELAY 		900
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-#define __MEMORY_POOLS		9
+#define __MEMORY_POOLS	9
 
 //each block size
 #define __BLOCK_512B 		512
@@ -110,11 +111,11 @@
 #define __BLOCK_28B 		28		// Virtual nodes are 24 bytes long so a 32b block is too much
 #define __BLOCK_16B 		16
 #define __POOL_512B_SIZE 	(__BLOCK_512B * 0)
-#define __POOL_256B_SIZE 	(__BLOCK_256B * 0)
+#define __POOL_256B_SIZE 	(__BLOCK_256B * 1)
 #define __POOL_192B_SIZE 	(__BLOCK_192B * 10)
 #define __POOL_128B_SIZE 	(__BLOCK_128B * 24)
 #define __POOL_100B_SIZE 	(__BLOCK_100B * 64)
-#define __POOL_80B_SIZE 	(__BLOCK_80B * 32)
+#define __POOL_80B_SIZE 	(__BLOCK_80B * 48)
 #define __POOL_48B_SIZE 	(__BLOCK_48B * 16)
 #define __POOL_32B_SIZE 	(__BLOCK_32B * 64)
 
@@ -161,26 +162,28 @@
 // 										TEXTURE MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
-//bgmaps to use (leave 2 bgmaps to allocate param table)
-#define __NUM_BGMAPS 					10
+// bgmaps to use (leave 2 bgmaps to allocate param table)
+#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 			14
 
-//number of bgmap definitions in each bgmap segment
-#define __NUM_MAPS_PER_SEG 				16
+// bgmaps to use (leave 2 bgmaps to allocate param table)
+#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 1)
+
+// number of bgmap definitions in each bgmap segment
+#define __NUM_BGMAPS_PER_SEGMENT 					16
 
 // printing area
-#define __PRINTING_BGMAP 				(__NUM_BGMAPS + 1)
-#define __PRINTING_BGMAP_X_OFFSET		0
-#define __PRINTING_BGMAP_Y_OFFSET		5
-#define __PRINTING_BGMAP_Z_OFFSET		__ZZERO
-#define __PRINTABLE_BGMAP_AREA 			(64 * 28)
+#define __PRINTING_BGMAP_X_OFFSET					0
+#define __PRINTING_BGMAP_Y_OFFSET					0
+#define __PRINTING_BGMAP_Z_OFFSET					__ZZERO
+#define __PRINTABLE_BGMAP_AREA 						(64 * 28)
 
-#define __PALETTE_MASK					0x0600
-#define __WORLD_LAYER_MASK				0x01F0
-#define __SEGMENT_MASK					0x000F
+#define __PALETTE_MASK								0x0600
+#define __WORLD_LAYER_MASK							0x01F0
+#define __SEGMENT_MASK								0x000F
 
-#define __PALETTE_MASK_DISP				0x09 /* 6 */
-#define __WORLD_LAYER_MASK_DISP			0x04 /* 1 */
-#define __SEGMENT_MASK_DISP				0x00 /* 0 */
+#define __PALETTE_MASK_DISP							0x09 /* 6 */
+#define __WORLD_LAYER_MASK_DISP						0x04 /* 1 */
+#define __SEGMENT_MASK_DISP							0x00 /* 0 */
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -188,14 +191,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 // param table for affine and hbias render
-#define __PARAMEND 					0x0003D7FF
+#define __PARAM_TABLE_END 			0x0003C000
 
-// param table initial address
-// To increase param table's size, decrease PARAMBase in libgccvb/video.h
-#define __PARAMINI 					(PARAMBase)
-
-// Number of the power of 2 to multiply by the number of rows of a given bgmap to allocate space
-#define __PARAM_SPACE_FACTOR		1
+// maximum possible scale: affects param table allocation space
+#define __MAXIMUM_SCALE				2
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -203,11 +202,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 // padd to determine if a character must be loaded/unloaded load pad must always be lower than unload pad!
-#define __ENTITY_LOAD_PAD 			20
-#define __ENTITY_UNLOAD_PAD 		30
+// too close values will put under heavy load the streaming!
+#define __ENTITY_LOAD_PAD 			15
+#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 30)
 
-// since there are 32 layers, that's the theoretical limit
-// of entities to display
+// since there are 32 layers, that's the theoretical limit of entities to display
 #define __STREAMING_AMPLITUDE		32
 
 // number of sprites per entity
@@ -261,7 +260,7 @@
 
 #define __GPLT0VALUE  			0xE4	// 11 10 01 00
 #define __GPLT1VALUE  			0xE0	// 11 10 00 00
-#define __GPLT2VALUE  			0xF0	// 11 11 00 00
+#define __GPLT2VALUE  			0xD0	// 11 01 00 00
 #define __GPLT3VALUE  			0xE0	// 11 10 00 00
 
 #define __JPLT0VALUE  			0xE4	// 11 10 01 00

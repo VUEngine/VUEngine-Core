@@ -52,12 +52,6 @@ static u16* const	BGMM =		(u16*)BGMMBase;					// Pointer to BGMM
 static u16* const	CHARB =		(u16*)CHARBase;
 #define		CharSegs(b)	(CHARBase + (b*0x8000))		// Address of CharSet b (0 <= b <= 3)
 
-//#define		PARAMBase		0x00034000
-#define		PARAMBase		(0x0003C000 - 0x00002000 * (14 - __NUM_BGMAPS - 2) - 0x00001000)
-static u16* const	PARAM =		(u16*)PARAMBase;
-#define		PARAM(b)	(PARAMBase + (b&0xFFF0))		// Address of CharSet b (0 <= b <= 3)
-//#define		PARAM(b)	(PARAMBase + (b&0xFFF0)*1)		// Address of CharSet b (0 <= b <= 3)
-
 #define		WAMBase			 0x0003D800					// Base address of World Attribute Memory
 static u16* const	WAM =		(u16*)WAMBase;					// Pointer to WAM
 #define		World(w)		 (WAMBase + (w * 0x0020))	// Address of World w (0 <= w <= 31)
@@ -171,6 +165,8 @@ void VPUManager_displayHide(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this);
+u32 VPUManager_getParamBase(VPUManager this);
+u32 VPUManager_getParamDisplacement(VPUManager this, int value);
 
 
 #endif

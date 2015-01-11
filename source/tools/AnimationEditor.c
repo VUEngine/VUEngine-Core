@@ -236,7 +236,7 @@ void AnimationEditor_stop(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::stop: null this");
 
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
 	AnimationEditor_removePreviousAnimatedSprite(this);
 
@@ -271,7 +271,7 @@ void AnimationEditor_stop(AnimationEditor this)
 // print title
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
-	VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	Printing_text(Printing_getInstance(), "\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07", 0, 0, NULL);
 	Printing_text(Printing_getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
 	Printing_text(Printing_getInstance(), " Accept \x13  ", 38, 1, NULL);
