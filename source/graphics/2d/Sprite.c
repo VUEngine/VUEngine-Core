@@ -196,6 +196,8 @@ void Sprite_calculateScale(Sprite this, fix19_13 z)
 	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0 ? -1 : 1);
 	this->drawSpec.scale.y = ratio;
 
+	ASSERT(this->texture, "Sprite::calculateScale: null texture");
+
 	if (WRLD_AFFINE == Sprite_getMode(this))
 	{
 		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
@@ -219,7 +221,6 @@ void Sprite_roundDrawSpec(Sprite this)
 	this->drawSpec.position.z &= 0xFFFFE000;
 }
 
-// set sprite's position
 void Sprite_setPosition(Sprite this, const VBVec3D* const position)
 {
 	ASSERT(this, "Sprite::setPosition: null this");
@@ -243,8 +244,6 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position)
 
 		// calculate sprite's parallax
 		Sprite_calculateParallax(this, this->drawSpec.position.z);
-
-		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
 
 	this->renderFlag |= __UPDATE_G;
@@ -305,6 +304,7 @@ void Sprite_hide(Sprite this)
 void Sprite_render(Sprite this)
 {
 	ASSERT(this, "Sprite::render: null this");
+	ASSERT(this->texture, "Sprite::render: null texture");
 
 	//if render flag is set
 	if (this->renderFlag)
@@ -534,6 +534,8 @@ void Sprite_scale(Sprite this)
 	// put the map into memory calculating the number of chars for each reference
 	if (this->param)
 	{
+		ASSERT(this->texture, "Sprite::scale: null texture");
+		
 		int cols = (int)Texture_getCols(this->texture) << 2;
 		int rows = (int)Texture_getRows(this->texture) << 2;
 
@@ -551,6 +553,8 @@ void Sprite_rotate(Sprite this, int angle)
 	// TODO
 	if (this->param)
 	{
+		ASSERT(this->texture, "Sprite::rotate: null texture");
+
 		int cols = Texture_getCols(this->texture) << 2;
 		int rows = Texture_getRows(this->texture) << 2;
 

@@ -73,6 +73,8 @@
 		__VIRTUAL_SET(ClassName, Entity, moves);								\
 		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);					\
 		__VIRTUAL_SET(ClassName, Entity, getShape);								\
+		__VIRTUAL_SET(ClassName, Entity, suspend);								\
+		__VIRTUAL_SET(ClassName, Entity, resume);								\
 
 #define Entity_ATTRIBUTES														\
 																				\
@@ -147,6 +149,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
+void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition);
 void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 void Entity_transform(Entity this, Transformation* environmentTransform);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
@@ -173,6 +176,8 @@ bool Entity_moves(Entity this);
 const VBVec3D* Entity_getPreviousPosition(Entity this);
 void Entity_show(Entity this);
 void Entity_hide(Entity this);
+void Entity_suspend(Entity this);
+void Entity_resume(Entity this);
 
 
 #endif

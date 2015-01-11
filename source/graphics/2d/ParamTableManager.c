@@ -128,12 +128,11 @@ void ParamTableManager_reset(ParamTableManager this)
 int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
-
-	int size = 0;
+	NM_ASSERT(sprite, "ParamTableManager::allocate: null sprite");
 
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row
-	size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
+	int size = (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << (7 + __PARAM_SPACE_FACTOR));
 
 	//if there is space in the param table, allocate
 	if (PARAM((this->used + size)) < __PARAMEND)
@@ -148,7 +147,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 		this->size -= size;
 		this->used += size;
 
-		ASSERT(PARAMBase + this->used < WAMBase, "ParamTableManager::allocate: exceded memory area");
+		NM_ASSERT(PARAMBase + this->used < WAMBase, "ParamTableManager::allocate: exceded memory area");
 		
 		return true;
 	}

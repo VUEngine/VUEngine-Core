@@ -129,6 +129,7 @@ void TextureManager_reset(TextureManager this)
 		{
 			__DELETE(this->texture[i]);
 		}
+		
 		this->texture[i] = NULL;
 		this->textureUsageCount[i] = 0;
 	}

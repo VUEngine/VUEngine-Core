@@ -38,13 +38,9 @@ __CLASS_DEFINITION(Container);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// pass event to children recursively
 static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args);
-
-// process removed children
-static void Container_processRemovedChildren(Container this);
-
-// apply transformations
+static void Container_invalidateGlobalPosition(Container this);
+void Container_processRemovedChildren(Container this);
 static void Container_applyTransform(Container this, Transformation* environmentTransform, int isInitialTransform);
 
 
@@ -196,7 +192,7 @@ void Container_addChild(Container this, Container child)
 }
 
 // add a child Container
-static void Container_processRemovedChildren(Container this)
+void Container_processRemovedChildren(Container this)
 {
 	ASSERT(this, "Container::processRemovedChildren: null this");
 
@@ -448,7 +444,8 @@ void Container_setLocalPosition(Container this, VBVec3D position)
 	}
 }
 
-void Container_invalidateGlobalPosition(Container this)
+// invalidate global position
+static void Container_invalidateGlobalPosition(Container this)
 {
 	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
 }
@@ -630,3 +627,43 @@ Container Container_getChildById(Container this, s16 id)
 	
 	return NULL;
 }
+
+// suspend for pause
+void Container_suspend(Container this)
+{
+	ASSERT(this, "Container::suspend: null this");
+
+	if(this->children)
+	{
+		VirtualNode node = VirtualList_begin(this->children);
+		
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			Container child = (Container)VirtualNode_getData(node);
+			
+			__VIRTUAL_CALL(void, Container, suspend, (Container)child);
+		}
+	}
+}
+
+// resume after pause
+void Container_resume(Container this)
+{
+	ASSERT(this, "Container::resume: null this");
+
+	if(this->children)
+	{
+		VirtualNode node = VirtualList_begin(this->children);
+		
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			Container child = (Container)VirtualNode_getData(node);
+			
+			__VIRTUAL_CALL(void, Container, resume, (Container)child);
+		}
+	}
+	
+	// force translation recalculations
+	Container_invalidateGlobalPosition(this);
+}
+

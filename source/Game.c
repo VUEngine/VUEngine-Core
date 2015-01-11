@@ -319,6 +319,10 @@ static void Game_setNextState(Game this, State state)
     switch(this->nextStateOperation)
     {
 		case kSwapState:
+
+#ifdef __DEBUG
+			this->lastProcessName = "kSwapState";
+#endif		
 	
 			// setup new state
 		    StateMachine_swapState(this->stateMachine, state);
@@ -326,12 +330,18 @@ static void Game_setNextState(Game this, State state)
 	
 		case kPushState:
 	
+#ifdef __DEBUG
+			this->lastProcessName = "kPushState";
+#endif		
 			// setup new state
 		    StateMachine_pushState(this->stateMachine, state);
 			break;
 	
 		case kPopState:
 	
+#ifdef __DEBUG
+			this->lastProcessName = "kPopState";
+#endif		
 			// setup new state
 		    StateMachine_popState(this->stateMachine);
 			break;
@@ -394,6 +404,8 @@ void Game_reset(Game this)
 {
 	ASSERT(this, "Game::reset: null this");
 
+	MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance());
+	
 	//clear char and bgmap memory
     HardwareManager_clearScreen(this->hardwareManager);
 
@@ -402,8 +414,8 @@ void Game_reset(Game this)
 	TextureManager_reset(this->bgmapManager);
 	ParamTableManager_reset(this->paramTableManager);
 	SpriteManager_reset(this->spriteManager);
-	CollisionManager_reset(this->collisionManager);
-	PhysicalWorld_reset(this->physicalWorld);
+	//CollisionManager_reset(this->collisionManager);
+	//PhysicalWorld_reset(this->physicalWorld);
 
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
@@ -472,6 +484,11 @@ static void Game_handleInput(Game this)
 	ASSERT(this, "Game::handleInput: null this");
 
 	KeypadManager keypadManager = KeypadManager_getInstance();
+	if(!KeypadManager_isEnabled(keypadManager))
+	{
+		return;
+	}
+	
 	KeypadManager_read(keypadManager);
 	u16 pressedKey = KeypadManager_getPressedKey(keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(keypadManager);
@@ -482,20 +499,26 @@ static void Game_handleInput(Game this)
 	u16 previousKey = KeypadManager_getPreviousKey(keypadManager);
 
 	// check code to access special feature
-	if ((previousKey & K_SEL) && (pressedKey & K_STA))
+	if ((previousKey & K_SEL) && (pressedKey & K_RU))
 	{
 		if (Game_isInDebugMode(this))
 		{
+			this->nextState = StateMachine_getCurrentState(this->stateMachine);
 			StateMachine_popState(this->stateMachine);
+			this->nextState = NULL;
 		}
 		else
 		{
 			if (Game_isInSpecialMode(this))
 			{
+				this->nextState = StateMachine_getCurrentState(this->stateMachine);
 				StateMachine_popState(this->stateMachine);
+				this->nextState = NULL;
 			}
 
-			StateMachine_pushState(this->stateMachine, (State)DebugState_getInstance());
+			this->nextState = (State)DebugState_getInstance();
+			StateMachine_pushState(this->stateMachine, this->nextState);
+			this->nextState = NULL;
 		}
 
 		return;
@@ -505,27 +528,28 @@ static void Game_handleInput(Game this)
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if ((previousKey & K_STA) && (pressedKey & K_SEL))
+	if ((previousKey & K_SEL) && (pressedKey & K_RD))
 	{
 		if (Game_isInStageEditor(this))
 		{
+			this->nextState = StateMachine_getCurrentState(this->stateMachine);
 			StateMachine_popState(this->stateMachine);
+			this->nextState = NULL;
 		}
 		else
 		{
 			if (Game_isInSpecialMode(this))
 			{
+				this->nextState = StateMachine_getCurrentState(this->stateMachine);
 				StateMachine_popState(this->stateMachine);
+				this->nextState = NULL;
 			}
 
-			StateMachine_pushState(this->stateMachine, (State)StageEditorState_getInstance());
+			this->nextState = (State)StageEditorState_getInstance();
+			StateMachine_pushState(this->stateMachine, this->nextState);
+			this->nextState = NULL;
 		}
 
-		return;
-	}
-
-	if (pressedKey & K_STA)
-	{
 		return;
 	}
 
@@ -534,20 +558,26 @@ static void Game_handleInput(Game this)
 #ifdef __ANIMATION_EDITOR
 
 	// check code to access special feature
-	if ((previousKey & K_LT) && (pressedKey & K_RT))
+	if ((previousKey & K_SEL) && (pressedKey & K_RR))
 	{
 		if (Game_isInAnimationEditor(this))
 		{
+			this->nextState = StateMachine_getCurrentState(this->stateMachine);
 			StateMachine_popState(this->stateMachine);
+			this->nextState = NULL;
 		}
 		else
 		{
 			if (Game_isInSpecialMode(this))
 			{
+				this->nextState = StateMachine_getCurrentState(this->stateMachine);
 				StateMachine_popState(this->stateMachine);
+				this->nextState = NULL;
 			}
 
-			StateMachine_pushState(this->stateMachine, (State)AnimationEditorState_getInstance());
+			this->nextState = (State)AnimationEditorState_getInstance();
+			StateMachine_pushState(this->stateMachine, this->nextState);
+			this->nextState = NULL;
 		}
 
 		return;
@@ -563,14 +593,14 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(this) && (pressedKey & K_STA))
+	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
 	{
 		return;
 	}
 #endif
 
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(this) && (pressedKey & K_LT))
+	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
 	{
 		return;
 	}
@@ -720,7 +750,7 @@ static void Game_cleanUp(Game this)
 
 	if (!ParamTableManager_processRemovedSprites(this->paramTableManager))
 	{
-		#ifdef __DEBUG
+#ifdef __DEBUG
 		this->lastProcessName = "defragmenting";
 #endif
 		CharSetManager_defragmentProgressively(this->charSetManager);
@@ -755,7 +785,13 @@ void Game_update(Game this)
 			// check if new state available
 			if (this->nextState)
 			{
+#ifdef __DEBUG
+			this->lastProcessName = "setting next state";
+#endif		
 				Game_setNextState(this, this->nextState);
+#ifdef __DEBUG
+			this->lastProcessName = "setting next state done";
+#endif		
 			}
 
 			// update each subsystem
@@ -892,6 +928,43 @@ bool Game_isInSpecialMode(Game this)
 	return isInSpecialMode;
 }
 
+// whether if a special mode is being started
+bool Game_isEnteringSpecialMode(Game this)
+{
+	ASSERT(this, "Game::isInSpecialMode: null this");
+
+	int isEnteringSpecialMode = false;
+#ifdef __DEBUG_TOOLS
+	isEnteringSpecialMode |= 	(State)DebugState_getInstance() == this->nextState;
+#endif
+#ifdef __STAGE_EDITOR
+	isEnteringSpecialMode |= 	(State)StageEditorState_getInstance() == this->nextState;
+#endif
+#ifdef __ANIMATION_EDITOR
+	isEnteringSpecialMode |= 	(State)AnimationEditorState_getInstance() == this->nextState;
+#endif
+
+	return isEnteringSpecialMode;
+}
+
+// whether if a special mode is being started
+bool Game_isExitingSpecialMode(Game this)
+{
+	ASSERT(this, "Game::isInSpecialMode: null this");
+
+	int isEnteringSpecialMode = false;
+#ifdef __DEBUG_TOOLS
+	isEnteringSpecialMode |= 	(State)DebugState_getInstance() == this->nextState;
+#endif
+#ifdef __STAGE_EDITOR
+	isEnteringSpecialMode |= 	(State)StageEditorState_getInstance() == this->nextState;
+#endif
+#ifdef __ANIMATION_EDITOR
+	isEnteringSpecialMode |= 	(State)AnimationEditorState_getInstance() == this->nextState;
+#endif
+
+	return isEnteringSpecialMode;
+}
 // retrieve state machine, use with caution!!!
 StateMachine Game_getStateMachine(Game this)
 {
@@ -930,6 +1003,7 @@ static void Game_showLowBatteryIndicator(Game this)
     }
 }
 
+// pause
 void Game_pause(Game this, GameState pauseState)
 {
 	ASSERT(this, "Game::pause: null this");
@@ -942,6 +1016,7 @@ void Game_pause(Game this, GameState pauseState)
 	}
 }
 
+// resume game
 void Game_unpause(Game this, GameState pauseState)
 {
 	ASSERT(this, "Game::unpause: null this");
@@ -950,7 +1025,7 @@ void Game_unpause(Game this, GameState pauseState)
 
 	if(pauseState == Game_getCurrentState(this))
 	{
-		this->nextState = pauseState;
+		this->nextState = (State)pauseState;
 		this->nextStateOperation = kPopState;
 	}
 }

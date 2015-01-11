@@ -53,6 +53,7 @@ extern VBVec3D * _screenPosition;
 const extern VBVec3D* _screenDisplacement;
 
 static void ScrollBackground_updateScrolling(ScrollBackground this);
+static void ScrollBackground_retrieveSprites(ScrollBackground this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,15 +75,7 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 
-	VirtualNode node = VirtualList_begin(this->sprites);
-	int i = 0;
-
-	for (; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
-	{
-		this->scrollSprites[i] = VirtualNode_getData(node);
-
-		ASSERT(__GET_CAST(Sprite, this->scrollSprites[i]), "ScrollBackground::constructor: no sprite added to list")
-	}
+	ScrollBackground_retrieveSprites(this);
 }
 
 // class's destructor
@@ -94,6 +87,21 @@ void ScrollBackground_destructor(ScrollBackground this)
 	__DESTROY_BASE(Entity);
 }
 
+// get the sprites so I can manipulate them
+static void ScrollBackground_retrieveSprites(ScrollBackground this)
+{
+	ASSERT(this, "ScrollBackground::retrieveSprites: null this");
+
+	VirtualNode node = VirtualList_begin(this->sprites);
+	int i = 0;
+
+	for (; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
+	{
+		this->scrollSprites[i] = VirtualNode_getData(node);
+
+		ASSERT(__GET_CAST(Sprite, this->scrollSprites[i]), "ScrollBackground::constructor: no sprite added to list")
+	}
+}
 
 // initial transform
 void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform)
@@ -120,7 +128,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 	}
 #endif
 
-	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
+//	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
 	{
 		ScrollBackground_updateScrolling(this);
 	}
@@ -205,6 +213,9 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	drawSpec0.position.parallax = drawSpec1.position.parallax = Sprite_getDrawSpec(this->scrollSprites[kLeftSprite]).position.parallax;
 
 	// set map's position
+	ASSERT(this->scrollSprites[kLeftSprite], "ScrollBackground::updateScrolling: null kLeftSprite sprite");
+	ASSERT(this->scrollSprites[kRightSprite], "ScrollBackground::updateScrolling: null kRightSprite sprite");
+
 	Sprite_setDrawSpec(this->scrollSprites[kRightSprite], &drawSpec0);
 	Sprite_setRenderFlag(this->scrollSprites[kRightSprite], __UPDATE_G);
 
@@ -228,4 +239,30 @@ bool ScrollBackground_updateSpritePosition(ScrollBackground this)
 	ASSERT(this, "ScrollBackground::updateSpritePosition: null this");
 
 	return false;
+}
+
+
+void ScrollBackground_suspend(ScrollBackground this)
+{
+	ASSERT(this, "ScrollBackground::suspend: null this");
+
+	Entity_suspend((Entity)this);
+
+	int i = 0;
+
+	for (; i <= kRightSprite ; i++)
+	{
+		this->scrollSprites[i] = NULL;
+	}
+}
+
+void ScrollBackground_resume(ScrollBackground this)
+{
+	ASSERT(this, "ScrollBackground::resume: null this");
+
+	Entity_resume((Entity)this);
+
+	ScrollBackground_retrieveSprites(this);
+	
+	Entity_translateSprites((Entity)this, true, true);
 }

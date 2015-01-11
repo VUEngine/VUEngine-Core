@@ -188,23 +188,29 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::addSprite: null this");
-
-	// add to the front: last element corresponde to the 31 WORLD
-	VirtualList_pushFront(this->sprites, sprite);
-
-	// retrieve the next free layer, taking into account
-	// if there are layers being freed up by the recovery algorithm
-	u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
-	Sprite_setWorldLayer(sprite, layer - this->freedLayersCount);
 	
-	// configure printing layer
-	// and shutdown unused layers
-	SpriteManager_setLastLayer(this);
+	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
+	ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::addSprite: sprite already registered");
+
+	if(!alreadyLoadedSpriteNode)
+	{
+		// add to the front: last element corresponde to the 31 WORLD
+		VirtualList_pushFront(this->sprites, sprite);
 	
-	// this will force the sorting algoritm to take care
-	// first of the new sprite
-	this->node = NULL;
-	this->otherNode = NULL;
+		// retrieve the next free layer, taking into account
+		// if there are layers being freed up by the recovery algorithm
+		u8 layer = __TOTAL_LAYERS - VirtualList_getSize(this->sprites);
+		Sprite_setWorldLayer(sprite, layer - this->freedLayersCount);
+		
+		// configure printing layer
+		// and shutdown unused layers
+		SpriteManager_setLastLayer(this);
+		
+		// this will force the sorting algoritm to take care
+		// first of the new sprite
+		this->node = NULL;
+		this->otherNode = NULL;
+	}
 }
 
 // remove sprite
@@ -232,7 +238,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	}
 	else 
 	{
-		ASSERT(this, "SpriteManager::removeSprite: sprite not registered");
+		ASSERT(false, "SpriteManager::removeSprite: sprite not registered");
 	}
 }
 
@@ -395,7 +401,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Free layers: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->freeLayer, x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), __TOTAL_LAYERS - 1 - VirtualList_getSize(this->sprites), x + 15, y, NULL);
 	Printing_text(Printing_getInstance(), "Sprites count: ", x, ++y, NULL);
 
 	int auxY = y + 2;

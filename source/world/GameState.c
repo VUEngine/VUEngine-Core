@@ -54,7 +54,12 @@ void GameState_constructor(GameState this)
 	// construct the stage
 	this->stage = NULL;
 
+	// by default can stream
 	this->canStream = true;
+	
+	this->screenPosition.x = 0;
+	this->screenPosition.y = 0;
+	this->screenPosition.z = 0;
 }
 
 // class's destructor
@@ -114,20 +119,84 @@ void GameState_pause(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::pause: null this");
 
-	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
+#ifdef __DEBUG_TOOLS
+	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	{
+#endif
+#ifdef __STAGE_EDITOR
+	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	{
+#endif
+#ifdef __ANIMATION_EDITOR
+	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	{
+#endif
+	
+	// save the screen position for resume reconfiguration
+	this->screenPosition = Screen_getPosition(Screen_getInstance());
+
+	if(this->stage)
+	{
+		__VIRTUAL_CALL(void, Container, suspend, (Container)this->stage);
+	}
+	
+#ifdef __DEBUG_TOOLS
+	}
+#endif
+#ifdef __STAGE_EDITOR
+	}
+#endif
+#ifdef __ANIMATION_EDITOR
+	}
+#endif
 }
 
 // state's execute
 void GameState_resume(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::resume: null this");
+	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
+#ifdef __DEBUG_TOOLS
+	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	{
+#endif
+#ifdef __STAGE_EDITOR
+	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	{
+#endif
+#ifdef __ANIMATION_EDITOR
+	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	{
+#endif
+
+	// set screen to its previous position
+	Screen_setStageSize(Screen_getInstance(), Stage_getSize(this->stage));
+	Screen_setPosition(Screen_getInstance(), this->screenPosition);
+	
 	if(this->stage)
 	{
-	//	__VIRTUAL_CALL(void, Container, reload, (container)this->stage);
+		Game_reset(Game_getInstance());
+		__VIRTUAL_CALL(void, Container, resume, (Container)this->stage);
 	}
 	
-	Clock_pause(Game_getInGameClock(Game_getInstance()), false);
+	// transform everything before showing up
+	GameState_transform(this);
+
+	// sort all sprites' layers
+	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+
+	// render sprites as soon as possible
+	SpriteManager_render(SpriteManager_getInstance());
+#ifdef __DEBUG_TOOLS
+	}
+#endif
+#ifdef __STAGE_EDITOR
+	}
+#endif
+#ifdef __ANIMATION_EDITOR
+	}
+#endif
 }
 
 // state's on message
@@ -210,10 +279,6 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int l
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
-
-	// reset ingame clock and start it
-	Clock_reset(Game_getInGameClock(Game_getInstance()));
-	Clock_start(Game_getInGameClock(Game_getInstance()));
 }
 
 // set streaming flag

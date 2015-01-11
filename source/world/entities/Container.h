@@ -53,6 +53,8 @@
 		__VIRTUAL_DEC(setLocalPosition);										\
 		__VIRTUAL_DEC(doMessage);												\
 		__VIRTUAL_DEC(addChild);												\
+		__VIRTUAL_DEC(suspend);													\
+		__VIRTUAL_DEC(resume);													\
 
 // define the virtual methods
 #define Container_SET_VTABLE(ClassName)											\
@@ -63,6 +65,8 @@
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);					\
 		__VIRTUAL_SET(ClassName, Container, doMessage);							\
 		__VIRTUAL_SET(ClassName, Container, addChild);							\
+		__VIRTUAL_SET(ClassName, Container, suspend);							\
+		__VIRTUAL_SET(ClassName, Container, resume);							\
 
 #define Container_ATTRIBUTES													\
 																				\
@@ -129,6 +133,8 @@ void Container_setName(Container this, char* name);
 char* Container_getName(Container this);
 Container Container_getChildByName(Container this, char* childName);
 Container Container_getChildById(Container this, s16 id);
+void Container_suspend(Container this);
+void Container_resume(Container this);
 
 
 #endif

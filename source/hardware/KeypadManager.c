@@ -96,6 +96,14 @@ void KeypadManager_disable(KeypadManager this)
 	HW_REGS[SCR] = (S_INTDIS | S_HW);
 }
 
+// get status
+int KeypadManager_isEnabled(KeypadManager this)
+{
+	ASSERT(this, "KeypadManager::disable: null this");
+
+	return (S_INTDIS | S_HW) != HW_REGS[SCR];
+}
+
 // read keypad
 u16 KeypadManager_read(KeypadManager this)
 {

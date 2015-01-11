@@ -50,6 +50,8 @@
 #define Stage_SET_VTABLE(ClassName)												\
 		Container_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, Stage, update);								\
+		__VIRTUAL_SET(ClassName, Stage, suspend);								\
+		__VIRTUAL_SET(ClassName, Stage, resume);								\
 
 #define Stage_ATTRIBUTES														\
 																				\
@@ -141,6 +143,8 @@ void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
 void Stage_setFlushCharGroups(Stage this, int flushCharGroups);
 UI Stage_getUI(Stage this);
+void Stage_suspend(Stage this);
+void Stage_resume(Stage this);
 
 
 #endif

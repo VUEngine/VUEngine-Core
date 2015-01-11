@@ -83,6 +83,8 @@ bool Game_isInStageEditor(Game this);
 bool Game_isInAnimationEditor(Game this);
 #endif
 bool Game_isInSpecialMode(Game this);
+bool Game_isEnteringSpecialMode(Game this);
+bool Game_isExitingSpecialMode(Game this);
 StateMachine Game_getStateMachine(Game this);
 Stage Game_getStage(Game this);
 GameState Game_getCurrentState(Game this);

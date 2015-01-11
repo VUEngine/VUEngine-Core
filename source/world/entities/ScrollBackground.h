@@ -42,6 +42,8 @@
 		__VIRTUAL_SET(ClassName, ScrollBackground, transform);					\
 		__VIRTUAL_SET(ClassName, ScrollBackground, initialTransform);			\
 		__VIRTUAL_SET(ClassName, ScrollBackground, updateSpritePosition);		\
+		__VIRTUAL_SET(ClassName, ScrollBackground, suspend);					\
+		__VIRTUAL_SET(ClassName, ScrollBackground, resume);						\
 
 // A ScrollBackground which represent a generic object inside a Stage
 #define ScrollBackground_ATTRIBUTES												\
@@ -78,6 +80,8 @@ void ScrollBackground_initialTransform(ScrollBackground this, Transformation* en
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform);
 bool ScrollBackground_isVisible(ScrollBackground this, int pad);
 bool ScrollBackground_updateSpritePosition(ScrollBackground this);
+void ScrollBackground_suspend(ScrollBackground this);
+void ScrollBackground_resume(ScrollBackground this);
 
 
 #endif

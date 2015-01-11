@@ -82,6 +82,8 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 
 	this->clock = Game_getInGameClock(Game_getInstance());
 
+	this->currentAnimationName = NULL;
+	
 	AnimatedInGameEntity_playAnimation(this, animatedInGameEntityDefinition->initialAnimation);
 }
 
@@ -197,6 +199,8 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 
 	if (this->sprites && animationName)
 	{
+		this->currentAnimationName = animationName;
+		
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// play animation on each sprite
@@ -234,17 +238,33 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 // get animation definition
 AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this)
 {
+	ASSERT(this, "AnimatedInGameEntity::getAnimationDescription: null this");
+
 	return this->animationDescription;
 }
 
 // set animation description
 void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription)
 {
+	ASSERT(this, "AnimatedInGameEntity::setAnimationDescription: null this");
+
 	this->animationDescription = animationDescription;
 }
 
 // set animation clock
 void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock)
 {
+	ASSERT(this, "AnimatedInGameEntity::setClock: null this");
+
 	this->clock = clock;
+}
+
+// resume method
+void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
+{
+	ASSERT(this, "AnimatedInGameEntity::resume: null this");
+
+	Entity_resume((Entity)this);
+
+	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
 }

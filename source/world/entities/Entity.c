@@ -45,12 +45,8 @@ __CLASS_DEFINITION(Entity);
 // global
 const extern VBVec3D* _screenDisplacement;
 
-// add sprite
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions);
-
-// set sprites' visual properties
-static void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition);
-
+static void Entity_releaseSprites(Entity this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -98,6 +94,17 @@ void Entity_destructor(Entity this)
 
 	this->shape = NULL;
 
+	Entity_releaseSprites(this);
+
+	// destroy the super Container
+	__DESTROY_BASE(Container);
+}
+
+// release sprites
+static void Entity_releaseSprites(Entity this)
+{
+	ASSERT(this, "Entity::releaseSprites: null this");
+
 	if (this->sprites)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
@@ -115,9 +122,6 @@ void Entity_destructor(Entity this)
 
 		this->sprites = NULL;
 	}
-
-	// destroy the super Container
-	__DESTROY_BASE(Container);
 }
 
 // create an entity in gameengine's memory
@@ -210,7 +214,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 	{
 		(EntityDefinition*)entityDefinition, 
 		{position->x, position->y, position->z}, 
-		name,
+		(char*)name,
 		NULL, 
 		extraInfo
 	};
@@ -273,15 +277,20 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 
 		VirtualList_pushBack(this->sprites, (void*)sprite);
 	}
+	else 
+	{
+		ASSERT(false, "Entity::addSprite: sprite not created");
+	}
 }
 
 // transform sprites
-static void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition)
+void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition)
 {
 	ASSERT(this, "Entity::transform: null this");
 
 	if (this->sprites)
 	{
+		updateSpriteScale = updateSpritePosition = true;
 		VirtualNode node = VirtualList_begin(this->sprites);
 	
 		// move each child to a temporary list
@@ -459,6 +468,7 @@ u16 Entity_getHeight(Entity this)
 	{
 		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 		Texture texture = Sprite_getTexture(sprite);
+		ASSERT(texture, "Entity::getHeight: null texture");
 
 		this->size.y = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
 	}
@@ -613,5 +623,28 @@ void Entity_hide(Entity this)
 				Sprite_hide(sprite);
 			}
 		}
+	}
+}
+
+// suspend for pause
+void Entity_suspend(Entity this)
+{
+	ASSERT(this, "Entity::suspend: null this");
+
+	Container_suspend((Container)this);
+	Entity_releaseSprites(this);
+}
+
+// resume after pause
+void Entity_resume(Entity this)
+{
+	ASSERT(this, "Entity::resume: null this");
+
+	Container_resume((Container)this);
+
+	// initialize sprites
+	if (this->entityDefinition)
+	{
+		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 	}
 }

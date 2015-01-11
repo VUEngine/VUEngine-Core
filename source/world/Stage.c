@@ -68,7 +68,6 @@ static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
 static void Stage_registerEntities(Stage this);
-static void Stage_processRemovedEntities(Stage this);
 static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
 static void Stage_loadTextures(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
@@ -95,7 +94,7 @@ static void Stage_constructor(Stage this)
 	this->stageEntities = NULL;
 	this->stageEntitiesToTest = NULL;
 	this->loadedStageEntities = NULL;
-	this->removedEntities = __NEW(VirtualList);
+	this->removedEntities = NULL;//__NEW(VirtualList);
 
 	this->ui = NULL;
 	this->stageDefinition = NULL;
@@ -145,11 +144,6 @@ void Stage_destructor(Stage this)
 		this->loadedStageEntities = NULL;
 	}
 	
-	Stage_processRemovedEntities(this);
-
-	__DELETE(this->removedEntities);
-	this->removedEntities = NULL;
-
 	// destroy the super object
 	__DESTROY_BASE(Container);
 }
@@ -219,6 +213,16 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 
 	//setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
+}
+
+// retrieve size
+Size Stage_getSize(Stage this)
+{
+	ASSERT(this, "Stage::getSize: null this");
+	ASSERT(this->stageDefinition, "Stage::getSize: null stageDefinition");
+
+	// set world's limits
+	return this->stageDefinition->size;
 }
 
 // setup ui
@@ -339,7 +343,7 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent)
 	// hide until effectively deleted
 	Entity_hide(entity);
 
-	VirtualList_pushBack(this->removedEntities, entity);
+	Container_deleteMyself((Container)entity);
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
@@ -675,8 +679,8 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 				}
 			}
 
-			// register entity to remove
-			VirtualList_pushBack(this->removedEntities, (const BYTE* const )entity);
+			// delete it
+			Container_deleteMyself((Container)entity);
 		}
 	}
 
@@ -684,30 +688,9 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 }
 
 // execute stage's logic
-static void Stage_processRemovedEntities(Stage this)
-{
-	ASSERT(this, "Stage::processRemovedEntities: null this");
-
-	VirtualNode node = VirtualList_begin(this->removedEntities);
-
-	for (; node; node = VirtualNode_getNext(node))
-	{
-		// don't need to remove manually from children list
-		// since the entity will do it by itself on its
-		// destructor
-		// destroy it
-		__DELETE(VirtualNode_getData(node));
-	}
-
-	VirtualList_clear(this->removedEntities);
-}
-
-// execute stage's logic
 void Stage_update(Stage this)
 {
 	ASSERT(this, "Stage::update: null this");
-
-	Stage_processRemovedEntities(this);
 
 	Container_update((Container)this);
 
@@ -733,9 +716,9 @@ void Stage_stream(Stage this)
 	}
 	else if (__STREAM_LOAD_CYCLE_1 == load || __STREAM_LOAD_CYCLE_2 == load)
 	{
-		if (VirtualList_getSize(this->removedEntities))
+		if (this->removedChildren && VirtualList_getSize(this->removedChildren))
 		{
-			Stage_processRemovedEntities(this);
+			Container_processRemovedChildren((Container)this);
 		}
 		else if (this->focusEntity)
 		{
@@ -752,8 +735,10 @@ void Stage_stream(Stage this)
 // stream entities according to screen's position
 void Stage_streamAll(Stage this)
 {
+	ASSERT(this, "Stage::streamAll: null this");
+
 	// must make sure there are not pending entities for removal
-	Stage_processRemovedEntities(this);
+	Container_processRemovedChildren((Container)this);
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
 }
@@ -763,6 +748,8 @@ void Stage_streamAll(Stage this)
 // otherwise it doesn't have any effect add flushing is the default behvior
 void Stage_setFlushCharGroups(Stage this, int flushCharGroups)
 {
+	ASSERT(this, "Stage::setFlushCharGroups: null this");
+
 	this->flushCharGroups = flushCharGroups;
 
 	/*
@@ -783,5 +770,50 @@ void Stage_setFlushCharGroups(Stage this, int flushCharGroups)
 // retrieve ui
 UI Stage_getUI(Stage this)
 {
+	ASSERT(this, "Stage::getUI: null this");
+
 	return this->ui;
+}
+
+// suspend for pause
+void Stage_suspend(Stage this)
+{
+	ASSERT(this, "Stage::suspend: null this");
+
+	Container_suspend((Container)this);
+	
+	if(this->ui)
+	{
+		__VIRTUAL_CALL(void, Container, suspend, (Container)this->ui);
+	}
+}
+
+// resume after pause
+void Stage_resume(Stage this)
+{
+	ASSERT(this, "Stage::resume: null this");
+
+	// reload textures
+	Stage_loadTextures(this);
+	
+	Container_resume((Container)this);
+
+	if(this->ui)
+	{
+		__VIRTUAL_CALL(void, Container, resume, (Container)this->ui);
+		
+		Transformation environmentTransform =
+		{
+				// local position
+				{0, 0, 0},
+				// global position
+				{0, 0, 0},
+				// scale
+				{1, 1},
+				// rotation
+				{0, 0, 0}
+		};
+
+		__VIRTUAL_CALL(void, Container, transform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
+	}
 }

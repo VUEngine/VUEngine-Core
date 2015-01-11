@@ -61,6 +61,9 @@
 																				\
 	/* flag to allow streaming */												\
 	int canStream;																\
+																				\
+	/* must save to allow pause */												\
+	VBVec3D screenPosition;														\
 
 __CLASS(GameState);
 
