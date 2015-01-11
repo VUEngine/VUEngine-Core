@@ -39,7 +39,7 @@ __CLASS_DEFINITION(Container);
 //---------------------------------------------------------------------------------------------------------
 
 static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args);
-static void Container_invalidateGlobalPosition(Container this);
+void Container_invalidateGlobalPosition(Container this);
 void Container_processRemovedChildren(Container this);
 static void Container_applyTransform(Container this, Transformation* environmentTransform, int isInitialTransform);
 
@@ -447,7 +447,7 @@ void Container_setLocalPosition(Container this, VBVec3D position)
 }
 
 // invalidate global position
-static void Container_invalidateGlobalPosition(Container this)
+void Container_invalidateGlobalPosition(Container this)
 {
 	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
 }

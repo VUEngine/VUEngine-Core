@@ -51,7 +51,7 @@
 	s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][3];		\
 																					\
 	/* next free bgmap used for text printing */									\
-	u8 freeBgmap;																	\
+	u8 freeBgmapSegment;																	\
 																					\
 	/* the textures allocated */													\
 	Texture texture[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];	\
@@ -143,7 +143,7 @@ void TextureManager_reset(TextureManager this)
 		this->textureUsageCount[i] = 0;
 	}
 
-	this->freeBgmap = 0;
+	this->freeBgmapSegment = 0;
 }
 
 // allocate texture in bgmap graphic memory
@@ -223,9 +223,9 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 								//update the number of chars defined inside the bgmap segment
 								this->numberOfChars[i] += area;
 
-								if (i + 1 > this->freeBgmap)
+								if (i + 1 > this->freeBgmapSegment)
 								{
-									this->freeBgmap = i + 1;
+									this->freeBgmapSegment = i + 1;
 								}
 
 								CACHE_DISABLE;
@@ -261,15 +261,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	return false;
 }
 
-
 // retrieve free bgmap segment number
-u8 TextureManager_getFreeBgmap(TextureManager this)
-{
-	ASSERT(this, "TextureManager::getFreeBgmap: null this");
-
-	return this->freeBgmap;
-}
-
 // allocate bgmap text boxes
 // this bgmap segment is handled as one only bgmap defined inside so, only
 // TextureManager.xOffset[textbgmap][0] is used
@@ -285,24 +277,24 @@ void TextureManager_allocateText(TextureManager this, Texture texture)
 	//if there is space in the first row
 	//calculate y displacement
 	//offset/64->chars per row inside a bgmap
-	yDisplacement = (this->xOffset[this->freeBgmap][0] + length) >> 6;
+	yDisplacement = (this->xOffset[this->freeBgmapSegment][0] + length) >> 6;
 
 	//move to the next row
-	if (this->xOffset[this->freeBgmap][0] < 64 * yDisplacement)
+	if (this->xOffset[this->freeBgmapSegment][0] < 64 * yDisplacement)
 	{
-		this->xOffset[this->freeBgmap][0] = 64 * yDisplacement;
+		this->xOffset[this->freeBgmapSegment][0] = 64 * yDisplacement;
 	}
 
 	//offset%/64->chars per row inside a bgmap
-	xDisplacement = (this->xOffset[this->freeBgmap][0]) % 64;
+	xDisplacement = (this->xOffset[this->freeBgmapSegment][0]) % 64;
 
 	//set next ofsset entry to modify within the free bgmap segment
-	this->xOffset[this->freeBgmap][0] += length;
+	this->xOffset[this->freeBgmapSegment][0] += length;
 
-	//Texture_setBgmapSegment(texture, this->freeBgmap);
+	//Texture_setBgmapSegment(texture, this->freeBgmapSegment);
 
 	//if there are no more rows in the segment... thrown and exception
-	ASSERT(this->xOffset[this->freeBgmap][0] < 4096, "TextureManager::allocateText: mem depleted (TextBox)");
+	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 4096, "TextureManager::allocateText: mem depleted (TextBox)");
 }
 
 // deallocate texture from bgmap graphic memory
@@ -499,13 +491,13 @@ u8 TextureManager_getPrintingBgmapSegment(TextureManager this)
 {
 	ASSERT(this, "TextureManager::print: null this");
 	
-	return this->freeBgmap;
+	return this->freeBgmapSegment;
 }
 
 // calculate the available bgmap segments based on usage
 void TextureManager_calculateAvailableBgmapSegments(TextureManager this)
 {
-	this->availableBgmapSegments = this->freeBgmap;
+	this->availableBgmapSegments = this->freeBgmapSegment;
 }
 
 // set the available bgmap segments based to maximum defined
