@@ -61,8 +61,8 @@ typedef struct StageEntityDescription
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern VBVec3D * _screenPosition;
-const extern VBVec3D * _screenDisplacement;
+extern const Optical* _optical;
+void Container_processRemovedChildren(Container this);
 
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
@@ -246,8 +246,6 @@ static void Stage_setupUI(Stage this)
 		// setup ui if allocated and constructed
 		if (this->ui)
 		{
-			VBVec3D position = Screen_getPosition(Screen_getInstance());
-
 			Transformation environmentTransform =
 			{
 					// local position
@@ -259,8 +257,6 @@ static void Stage_setupUI(Stage this)
 					// rotation
 					{0, 0, 0}
 			};
-
-			Container_setLocalPosition((Container)this->ui, position);
 
 			__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
 		}

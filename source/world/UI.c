@@ -26,6 +26,7 @@
 #include <UI.h>
 #include <Optics.h>
 #include <Game.h>
+#include <Screen.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -100,5 +101,77 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 
 		// set spatial position
 		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+	}
+}
+
+// transform
+void UI_transform(UI this, Transformation* environmentTransform)
+{
+	ASSERT(this, "UI::transform: null this");
+
+	Screen screen = Screen_getInstance();
+	ASSERT(screen, "UI::transform: null screen");
+
+	VBVec3D originalScreenPosition  = 
+	{
+		0, 0, 0
+	};
+	
+	if(screen)
+	{
+		// must hack the screen position for my children's sprites
+		// being properly rendered
+		originalScreenPosition = Screen_getPosition(screen);
+	
+		VBVec3D tempScreenPosition = 
+		{
+			0, 0, 0
+		};
+		
+		Screen_setPosition(screen, tempScreenPosition);
+	}
+
+	Container_transform((Container)this, environmentTransform);
+	
+	if(screen)
+	{
+		// recover screen
+		Screen_setPosition(screen, originalScreenPosition);
+	}
+}
+
+// transform
+void UI_initialTransform(UI this, Transformation* environmentTransform)
+{
+	ASSERT(this, "UI::initialTransform: null this");
+
+	Screen screen = Screen_getInstance();
+	ASSERT(screen, "UI::initialTransform: null screen");
+
+	VBVec3D originalScreenPosition  = 
+	{
+		0, 0, 0
+	};
+	
+	if(screen)
+	{
+		// must hack the screen position for my children's sprites
+		// being properly rendered
+		originalScreenPosition = Screen_getPosition(screen);
+	
+		VBVec3D tempScreenPosition = 
+		{
+			0, 0, 0
+		};
+		
+		Screen_setPosition(screen, tempScreenPosition);
+	}
+
+	Container_initialTransform((Container)this, environmentTransform);
+	
+	if(screen)
+	{
+		// recover screen
+		Screen_setPosition(screen, originalScreenPosition);
 	}
 }

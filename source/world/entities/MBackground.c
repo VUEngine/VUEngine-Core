@@ -49,8 +49,8 @@ enum ScrollSprites
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern VBVec3D * _screenPosition;
-const extern VBVec3D* _screenDisplacement;
+extern const VBVec3D * _screenPosition;
+extern const VBVec3D* _screenDisplacement;
 
 static void MBackground_updateScrolling(MBackground this);
 

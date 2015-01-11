@@ -191,7 +191,7 @@ void Container_addChild(Container this, Container child)
 	}
 }
 
-// add a child Container
+// process removed children
 void Container_processRemovedChildren(Container this)
 {
 	ASSERT(this, "Container::processRemovedChildren: null this");
