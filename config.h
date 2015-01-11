@@ -191,7 +191,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // param table for affine and hbias render
-#define __PARAM_TABLE_END 			0x0003C000
+#define __PARAM_TABLE_END 			0x0003D800
 
 // maximum possible scale: affects param table allocation space
 #define __MAXIMUM_SCALE				2

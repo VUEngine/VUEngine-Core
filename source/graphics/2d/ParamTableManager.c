@@ -66,7 +66,6 @@ typedef struct ParamTableFreeData
 static void ParamTableManager_constructor(ParamTableManager this);
 static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite);
 
-
 // ---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 // ---------------------------------------------------------------------------------------------------------
@@ -119,8 +118,11 @@ void ParamTableManager_reset(ParamTableManager this)
 	VirtualList_clear(this->removedSpritesSizes);
 		
 	// set the size of the paramtable
-	this->size = __PARAM_TABLE_END - (int)VPUManager_getParamBase(VPUManager_getInstance());
-	
+	int paramTableBase = (int)VPUManager_getParamBase(VPUManager_getInstance());
+	this->size = __PARAM_TABLE_END - paramTableBase;
+
+	NM_ASSERT(0 < __PARAM_TABLE_END - paramTableBase, "ParamTableManager::reset: param table size is negative");
+
 	// all the memory is free
 	this->used = 1;
 }
@@ -133,7 +135,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << 7) * __MAXIMUM_SCALE;
+	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + 1) << 6) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite
@@ -146,7 +148,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 	int size = ParamTableManager_calculateSize(this, sprite);
 	
 	//if there is space in the param table, allocate
-	if (VPUManager_getParamDisplacement(VPUManager_getInstance(), this->used + size) < __PARAM_TABLE_END + 64 * 64)
+	if (VPUManager_getParamDisplacement(VPUManager_getInstance(), this->used + size) < __PARAM_TABLE_END)
 	{
 		//set sprite param
 		Sprite_setParam(sprite, this->used);
@@ -158,12 +160,12 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 		this->size -= size;
 		this->used += size;
 
-		NM_ASSERT(VPUManager_getParamBase(VPUManager_getInstance()) + this->used < WAMBase, "ParamTableManager::allocate: exceded memory area");
-		
 		return true;
 	}
 
-	ParamTableManager_print(this, 1, 6);
+	Printing_text(Printing_getInstance(), "Total size: ", 20, 7, NULL);
+	Printing_int(Printing_getInstance(), __PARAM_TABLE_END - (int)VPUManager_getParamBase(VPUManager_getInstance()), 20 + 19, 7, NULL);
+	
 	NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 
 	return false;

@@ -244,7 +244,7 @@ void VPUManager_setupColumnTable(VPUManager this)
 // retrieve param base
 u32 VPUManager_getParamBase(VPUManager this)
 {
-	return (__PARAM_TABLE_END - 0x00002000 * (__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - TextureManager_getAvailableBgmapSegments(TextureManager_getInstance()) - 2) - __PRINTABLE_BGMAP_AREA * 1);
+	return (__PARAM_TABLE_END - 0x00002000 * (__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - TextureManager_getAvailableBgmapSegments(TextureManager_getInstance())) - __PRINTABLE_BGMAP_AREA);
 }
 
 // retrieve param displacement
