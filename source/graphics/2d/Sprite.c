@@ -315,13 +315,6 @@ void Sprite_render(Sprite this)
 		// if head is modified, render everything
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
-			// write param table before any other thing
-			if (WRLD_AFFINE & this->head)
-			{
-				// scale the sprite now
-				Sprite_scale(this);
-			}
-			
 			//create an independant of software variable to point XPSTTS register
 			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
@@ -356,12 +349,6 @@ void Sprite_render(Sprite this)
 			return;
 		}
 
-		//create an independant of software variable to point XPSTTS register
-		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-		//wait for screen to idle
-		while (*xpstts & XPBSYR);
-
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G )
 		{
@@ -375,14 +362,11 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				// now scale the texture
-				Sprite_scale(this);
-
 				//create an independant of software variable to point XPSTTS register
-				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+				//unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 				//wait for screen to idle
-				while (*xpstts & XPBSYR);
+				//while (*xpstts & XPBSYR);
 
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 

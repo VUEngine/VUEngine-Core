@@ -193,13 +193,6 @@ void MSprite_render(MSprite this)
 		// if head is modified, render everything
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
-			// write param table before any other thing
-			if (WRLD_AFFINE & this->head)
-			{
-				// scale the sprite now
-				Sprite_scale((Sprite)this);
-			}
-			
 			//create an independant of software variable to point XPSTTS register
 			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
@@ -253,15 +246,6 @@ void MSprite_render(MSprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				// now scale the texture
-				Sprite_scale((Sprite)this);
-
-				//create an independant of software variable to point XPSTTS register
-				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-				//wait for screen to idle
-				while (*xpstts & XPBSYR);
-
 				WORLD_PARAM(this->worldLayer, PARAM(this->param));
 
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;

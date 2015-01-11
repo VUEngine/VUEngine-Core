@@ -162,6 +162,10 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(otherSprite, worldLayer1);
 
+			    // must render inmediately 
+				//__VIRTUAL_CALL(void, Sprite, render, sprite);
+				//__VIRTUAL_CALL(void, Sprite, render, otherSprite);
+
 				// swap array entries
 				VirtualNode_swapData(this->node, this->otherNode);
 
