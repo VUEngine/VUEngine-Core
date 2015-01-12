@@ -531,7 +531,7 @@ int Actor_updateSpriteScale(Actor this)
 {
 	ASSERT(this, "Actor::updateSpriteScale: null this");
 
-	if (Entity_updateSpriteScale((Entity)this))
+	if (AnimatedInGameEntity_updateSpriteScale((Entity)this))
 	{
 		return true;
 	}
@@ -540,6 +540,7 @@ int Actor_updateSpriteScale(Actor this)
 	{
 		return true;
 	}
+	
 	return false;
 }
 

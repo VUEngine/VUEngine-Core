@@ -35,7 +35,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // event
-#define __EVENT_ANIMATION_COMPLETE	"animationComplete"
+#define __EVENT_ANIMATION_COMPLETE				"animationComplete"
+#define __EVENT_ANIMATION_FRAME_CHANGED			"animationFrameChanged"
 
 // max length of an animation function's name
 #define __MAX_ANIMATION_FUNCTION_NAME_LENGTH	20

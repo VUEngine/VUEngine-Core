@@ -51,6 +51,7 @@ __CLASS_DEFINITION(AnimatedInGameEntity);
 
 // update animations
 static void AnimatedInGameEntity_animate(AnimatedInGameEntity this);
+static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Object firer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,8 +84,20 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	this->clock = Game_getInGameClock(Game_getInstance());
 
 	this->currentAnimationName = NULL;
+	this->animationFrameChanged = false;
 	
 	AnimatedInGameEntity_playAnimation(this, animatedInGameEntityDefinition->initialAnimation);
+
+	VirtualNode node = VirtualList_begin(this->sprites);
+
+	// setup listeners
+	for (; node ; node = VirtualNode_getNext(node))
+    {
+		Sprite sprite = (Sprite)VirtualNode_getData(node);
+
+		Object_addEventListener((Object)sprite, (Object)this, (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
+	}
+
 }
 
 // class's destructor
@@ -92,8 +105,27 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::destructor: null this");
 
+	if(this->sprites)
+	{
+		VirtualNode node = VirtualList_begin(this->sprites);
+		
+		// setup listeners
+		for (; node ; node = VirtualNode_getNext(node))
+	    {
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+	
+			Object_removeEventListener((Object)sprite, (Object)this, (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
+		}
+	}
+
 	// destroy the super object
 	__DESTROY_BASE(InGameEntity);
+}
+
+// called when one sprite changed its animation
+static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Object firer)
+{
+	this->animationFrameChanged = true;
 }
 
 // updates the animation attributes
@@ -135,6 +167,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 
 	if (this->sprites)
 	{
+		this->animationFrameChanged = false;
 		AnimatedInGameEntity_animate(this);
 	}
 }
@@ -267,4 +300,10 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 	Entity_resume((Entity)this);
 
 	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
+}
+
+// check if must update sprite's scale
+int AnimatedInGameEntity_updateSpriteScale(AnimatedInGameEntity this)
+{
+	return this->animationFrameChanged || Entity_updateSpriteScale((Entity)this);
 }

@@ -290,7 +290,6 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 
 	if (this->sprites)
 	{
-		updateSpriteScale = updateSpritePosition = true;
 		VirtualNode node = VirtualList_begin(this->sprites);
 	
 		// move each child to a temporary list
@@ -306,7 +305,7 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 	
 				// scale the sprite
 				Sprite_scale(sprite);
-	
+
 				// calculate sprite's parallax
 				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
 	

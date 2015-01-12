@@ -135,7 +135,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + 1) << 6) * __MAXIMUM_SCALE;
+	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + 1) << 7) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite
@@ -177,19 +177,39 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 	ASSERT(this, "ParamTableManager::free: null this");
 	ASSERT(VirtualList_find(this->sprites, sprite), "ParamTableManager::free: sprite not found");
 
-	ParamTableFreeData* paramTableFreeData = __NEW_BASIC(ParamTableFreeData);
-	paramTableFreeData->size = ParamTableManager_calculateSize(this, sprite);
-	paramTableFreeData->param = Sprite_getParam(sprite);
-	paramTableFreeData->recoveredSize = paramTableFreeData->size;
+	// for each sprite using param table space reassign them their param table starting point.
+	VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
+
+	for (; node; node = VirtualNode_getNext(node))
+	{
+		ParamTableFreeData* paramTableFreeData = (ParamTableFreeData*)VirtualNode_getData(node);
+		
+		// if there is a lower address being already freed
+		// don't worry about this release since will be
+		// accounted for
+		if(paramTableFreeData->param < Sprite_getParam(sprite))
+		{
+			break;
+		}
+	}
 	
-	VirtualList_removeElement(this->sprites, sprite);
-	VirtualList_pushBack(this->removedSpritesSizes, paramTableFreeData);
+	if(!node)
+	{
+		ParamTableFreeData* paramTableFreeData = __NEW_BASIC(ParamTableFreeData);
+		paramTableFreeData->size = ParamTableManager_calculateSize(this, sprite);
+		paramTableFreeData->param = Sprite_getParam(sprite);
+		paramTableFreeData->recoveredSize = paramTableFreeData->size;
+		
+		VirtualList_removeElement(this->sprites, sprite);
+		VirtualList_pushBack(this->removedSpritesSizes, paramTableFreeData);
+	}
 }
 
 // relocate sprites
 bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
+	
 	// for each sprite using param table space reassign them their param table starting point.
 	VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
 
@@ -223,14 +243,16 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 
 				//wait for screen to idle
 				while (*xpstts & XPBSYR);
+				
 				// render now
 				Sprite_render(auxSprite);
 
 				// set the new param and size to move on the next cycle
 				paramTableFreeData->size = ParamTableManager_calculateSize(this, auxSprite);
 				paramTableFreeData->param += paramTableFreeData->size;
-				break;
 			}
+			
+			break;
 		}
 		
 		if (!auxNode)
@@ -242,8 +264,11 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 			VirtualList_removeElement(this->removedSpritesSizes, paramTableFreeData);
 
 			__DELETE_BASIC(paramTableFreeData);
+			
 			return true;
 		}
+		
+		return false;
 	}
 	
 	return false;

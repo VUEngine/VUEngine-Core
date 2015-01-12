@@ -277,6 +277,8 @@ void AnimatedSprite_animate(AnimatedSprite this)
 		// don't write animation each time, only when the animation
 		// has changed
 		this->previousFrame = this->actualFrame;
+		
+		Object_fireEvent((Object)this, __EVENT_ANIMATION_FRAME_CHANGED);
 	}
 
 	this->frameDelay += this->frameDelayDelta;
@@ -292,7 +294,7 @@ void AnimatedSprite_animate(AnimatedSprite this)
 
 		// if the delay is negative
 		if (0 > this->frameDelay)
-	{
+		{
 			// pick up a random delay
 			this->frameDelay = Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
