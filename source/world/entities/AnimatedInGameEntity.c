@@ -49,7 +49,9 @@ __CLASS_DEFINITION(AnimatedInGameEntity);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// update animations
+static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, void (*function)(Object this, Object listener, void (*method)(Object, Object),  char* eventName));
+static void AnimatedInGameEntity_addListeners(AnimatedInGameEntity this);
+static void AnimatedInGameEntity_removeListeners(AnimatedInGameEntity this);
 static void AnimatedInGameEntity_animate(AnimatedInGameEntity this);
 static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Object firer);
 
@@ -88,16 +90,7 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	
 	AnimatedInGameEntity_playAnimation(this, animatedInGameEntityDefinition->initialAnimation);
 
-	VirtualNode node = VirtualList_begin(this->sprites);
-
-	// setup listeners
-	for (; node ; node = VirtualNode_getNext(node))
-    {
-		Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-		Object_addEventListener((Object)sprite, (Object)this, (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
-	}
-
+	AnimatedInGameEntity_addListeners(this);
 }
 
 // class's destructor
@@ -105,21 +98,39 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::destructor: null this");
 
+	AnimatedInGameEntity_removeListeners(this);
+
+	// destroy the super object
+	__DESTROY_BASE(InGameEntity);
+}
+
+// add listeners to sprites
+static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, void (*function)(Object this, Object listener, void (*method)(Object, Object),  char* eventName))
+{
 	if(this->sprites)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
-		
+	
 		// setup listeners
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 	
-			Object_removeEventListener((Object)sprite, (Object)this, (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
+			function((Object)sprite, (Object)this, (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
 		}
 	}
+}
 
-	// destroy the super object
-	__DESTROY_BASE(InGameEntity);
+// add listeners to sprites
+static void AnimatedInGameEntity_addListeners(AnimatedInGameEntity this)
+{
+	AnimatedInGameEntity_doProcessListeners(this, Object_addEventListener);
+}
+
+// remove listeners to sprites
+static void AnimatedInGameEntity_removeListeners(AnimatedInGameEntity this)
+{
+	AnimatedInGameEntity_doProcessListeners(this, Object_removeEventListener);
 }
 
 // called when one sprite changed its animation
@@ -299,7 +310,11 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 
 	Entity_resume((Entity)this);
 
+	Entity_setSpritesDirection((Entity)this, __XAXIS, this->direction.x);
+
 	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
+	
+	AnimatedInGameEntity_addListeners(this);
 }
 
 // check if must update sprite's scale

@@ -531,17 +531,12 @@ int Actor_updateSpriteScale(Actor this)
 {
 	ASSERT(this, "Actor::updateSpriteScale: null this");
 
-	if (AnimatedInGameEntity_updateSpriteScale((Entity)this))
-	{
-		return true;
-	}
-
 	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
 	{
 		return true;
 	}
 	
-	return false;
+	return AnimatedInGameEntity_updateSpriteScale((AnimatedInGameEntity)this);
 }
 
 // stop movement completelty
