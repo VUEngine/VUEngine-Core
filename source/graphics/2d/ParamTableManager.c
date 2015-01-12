@@ -135,7 +135,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + 1) << 7) * __MAXIMUM_SCALE;
+	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << 7) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite
@@ -177,6 +177,8 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 	ASSERT(this, "ParamTableManager::free: null this");
 	ASSERT(VirtualList_find(this->sprites, sprite), "ParamTableManager::free: sprite not found");
 
+	VirtualList_removeElement(this->sprites, sprite);
+
 	// for each sprite using param table space reassign them their param table starting point.
 	VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
 
@@ -189,7 +191,10 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 		// accounted for
 		if(paramTableFreeData->param < Sprite_getParam(sprite))
 		{
-			break;
+			// but increase the space recovered
+			paramTableFreeData->recoveredSize += ParamTableManager_calculateSize(this, sprite);
+
+			return;
 		}
 	}
 	
@@ -200,7 +205,6 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 		paramTableFreeData->param = Sprite_getParam(sprite);
 		paramTableFreeData->recoveredSize = paramTableFreeData->size;
 		
-		VirtualList_removeElement(this->sprites, sprite);
 		VirtualList_pushBack(this->removedSpritesSizes, paramTableFreeData);
 	}
 }
@@ -232,20 +236,11 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 				//move back paramSize bytes
 				Sprite_setParam(auxSprite, paramTableFreeData->param);
 
-				//create an independant of software variable to point XPSTTS register
-				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-				//wait for screen to idle
-				while (*xpstts & XPBSYR);
-
 				// scale now
 				Sprite_scale(auxSprite);
 
-				//wait for screen to idle
-				while (*xpstts & XPBSYR);
-				
 				// render now
-				Sprite_render(auxSprite);
+				__VIRTUAL_CALL(void, Sprite, render, auxSprite);
 
 				// set the new param and size to move on the next cycle
 				paramTableFreeData->size = ParamTableManager_calculateSize(this, auxSprite);

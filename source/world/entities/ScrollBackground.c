@@ -121,12 +121,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 
 	// don't calling base class's transform method
 	// will improve performance
-#ifdef __STAGE_EDITOR
-	if (Game_isInSpecialMode(Game_getInstance()))
-	{
-		Entity_transform((Entity)this, environmentTransform);
-	}
-#endif
+	Entity_transform((Entity)this, environmentTransform);
 
 //	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
 	{
@@ -139,6 +134,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::updateScrolling: null this");
 
+	return;
 	CACHE_ENABLE;
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
@@ -238,7 +234,7 @@ bool ScrollBackground_updateSpritePosition(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::updateSpritePosition: null this");
 
-	return false;
+	return true;
 }
 
 

@@ -102,6 +102,7 @@ enum StateOperations
 	SpriteManager spriteManager;												\
 	CollisionManager collisionManager;											\
 	PhysicalWorld physicalWorld;												\
+	KeypadManager keypadManager;												\
 	VPUManager vpuManager;														\
 	DirectDraw directDraw;														\
 	I18n i18n;																	\
@@ -191,6 +192,7 @@ static void Game_constructor(Game this)
 	this->spriteManager = SpriteManager_getInstance();
 	this->collisionManager = CollisionManager_getInstance();
 	this->physicalWorld = PhysicalWorld_getInstance();
+	this->keypadManager = KeypadManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
@@ -414,8 +416,6 @@ void Game_reset(Game this)
 	TextureManager_reset(this->bgmapManager);
 	ParamTableManager_reset(this->paramTableManager);
 	SpriteManager_reset(this->spriteManager);
-	//CollisionManager_reset(this->collisionManager);
-	//PhysicalWorld_reset(this->physicalWorld);
 
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
@@ -483,20 +483,13 @@ static void Game_handleInput(Game this)
 {
 	ASSERT(this, "Game::handleInput: null this");
 
-	KeypadManager keypadManager = KeypadManager_getInstance();
-	if(!KeypadManager_isEnabled(keypadManager))
-	{
-		return;
-	}
-	
-	KeypadManager_read(keypadManager);
-	u16 pressedKey = KeypadManager_getPressedKey(keypadManager);
-	u16 releasedKey = KeypadManager_getReleasedKey(keypadManager);
-	u16 holdKey = KeypadManager_getHoldKey(keypadManager);
+	KeypadManager_read(this->keypadManager);
+	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
+	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
+	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
+	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 
 #ifdef __DEBUG_TOOLS
-
-	u16 previousKey = KeypadManager_getPreviousKey(keypadManager);
 
 	// check code to access special feature
 	if ((previousKey & K_SEL) && (pressedKey & K_RU))

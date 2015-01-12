@@ -68,9 +68,9 @@ void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinitio
 	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(&mSpriteDefinition->spriteDefinition));
 	
 	this->mSpriteDefinition = mSpriteDefinition;
-	this->textures = NULL;
+	//this->textures = NULL;
 	
-	MSprite_loadTextures(this);
+	//MSprite_loadTextures(this);
 }
 
 // class's destructor
@@ -184,6 +184,9 @@ void MSprite_render(MSprite this)
 #define	WRLD_4x1	0x0800
 #define	WRLD_8x1	0x0C00
 */
+	static int x = 0;
+	
+	Printing_int(Printing_getInstance(), x, 1, 10, NULL);
 	//if render flag is set
 	if (this->renderFlag)
 	{
@@ -199,13 +202,13 @@ void MSprite_render(MSprite this)
 			//wait for screen to idle
 			while (*xpstts & XPBSYR);
 
-			worldPointer->head = this->head | this->mSpriteDefinition->scValue | Texture_getBgmapSegment(this->texture);
-			worldPointer->mx = this->texturePosition.x << 3;
+			worldPointer->head = this->head | WRLD_2x1 | this->mSpriteDefinition->scValue | Texture_getBgmapSegment(this->texture);
+			worldPointer->mx = x++;
 			worldPointer->mp = 0;
 			worldPointer->my = this->texturePosition.y << 3;
-			worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
+			worldPointer->gx = 0;
 			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
-			worldPointer->gy = FIX19_13TOI(drawSpec.position.y);
+			worldPointer->gy = 0;
 
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
@@ -235,9 +238,12 @@ void MSprite_render(MSprite this)
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G )
 		{
-			worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
+			worldPointer->mx = x++;
+			worldPointer->mp = 0;
+			worldPointer->my = this->texturePosition.y << 3;
+			worldPointer->gx = 0;
 			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
-			worldPointer->gy = FIX19_13TOI(drawSpec.position.y);
+			worldPointer->gy = 0;
 		}
 
 		if (this->renderFlag & __UPDATE_SIZE)

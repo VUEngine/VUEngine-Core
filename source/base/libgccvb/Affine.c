@@ -105,7 +105,7 @@ void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16
 			pdx.pc
 	};
 
-	int totalRows = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(fg_y << 1), FIX7_9TOFIX19_13(zoomY))) + 1;
+	int totalRows = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(fg_y << 1), FIX7_9TOFIX19_13(zoomY)));
 	//int i = FIX7_9TOF(zoomY) * (fg_y << 1) + 2;
 	
 	if (0 > totalRows)
