@@ -332,21 +332,6 @@ u8 Texture_getTotalRows(Texture this)
 	ASSERT(this, "Texture::getTotalRows: null this");
 
 	return this->textureDefinition->rows;
-	/*
-	switch (CharGroup_getAllocationType(&this->charGroup))
-	{
-		case __ANIMATED:
-			return this->textureDefinition->rows;
-			break;
-		case __ANIMATEDSHARED:
-			return this->textureDefinition->rows*CharGroup_getNumberOfChars(&this->charGroup)/this->textureDefinition->cols;
-			break;
-		case __NOANIMATED:
-			return this->textureDefinition->cols;
-			break;
-	}
-	return 0;
-	*/
 }
 
 //get texture's bgmap segment

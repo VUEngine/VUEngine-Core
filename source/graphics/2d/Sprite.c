@@ -513,7 +513,7 @@ void Sprite_scale(Sprite this)
 		ASSERT(this->texture, "Sprite::scale: null texture");
 		
 		int cols = (int)Texture_getCols(this->texture) << 2;
-		int rows = ((int)Texture_getRows(this->texture) + 1) << 2;
+		int rows = (int)Texture_getRows(this->texture) << 2;
 
 		Affine_scale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y,
 				   (this->texturePosition.x << 3) + cols,

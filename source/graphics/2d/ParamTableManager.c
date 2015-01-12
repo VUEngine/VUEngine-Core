@@ -33,7 +33,6 @@
 typedef struct ParamTableFreeData
 {
 	u32 param;
-	u32 size;
 	u32 recoveredSize;
 } ParamTableFreeData;
 
@@ -132,7 +131,6 @@ void ParamTableManager_reset(ParamTableManager this)
 	this->used = 1;
 	
 	this->paramTableFreeData.param = 0;
-	this->paramTableFreeData.size = 0;
 	this->paramTableFreeData.recoveredSize = 0;
 }
 
@@ -144,6 +142,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
+	// add one row as padding to make sure not ovewriting take place
 	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + 1) << 7) * __MAXIMUM_SCALE;
 }
 
@@ -189,7 +188,7 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 	VirtualList_removeElement(this->sprites, sprite);
 
 	// accounted for
-	if(this->paramTableFreeData.param && this->paramTableFreeData.param < Sprite_getParam(sprite))
+	if(this->paramTableFreeData.param && this->paramTableFreeData.param <= Sprite_getParam(sprite))
 	{
 		// but increase the space recovered
 		this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSize(this, sprite);
@@ -197,10 +196,8 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 		return;
 	}
 	
-	int size = ParamTableManager_calculateSize(this, sprite);
-	this->paramTableFreeData.size = size;
 	this->paramTableFreeData.param = Sprite_getParam(sprite);
-	this->paramTableFreeData.recoveredSize += size;
+	this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSize(this, sprite);
 }
 
 // relocate sprites
@@ -208,7 +205,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 	
-	if(this->paramTableFreeData.size)
+	if(this->paramTableFreeData.param)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 		
@@ -216,27 +213,31 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 		{
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 	
-			u32 auxParam = Sprite_getParam(sprite);
+			u32 spriteParam = Sprite_getParam(sprite);
 	
 			// retrieve param
-			if (auxParam > this->paramTableFreeData.param)
+			if (spriteParam > this->paramTableFreeData.param)
 			{
 				//move back paramSize bytes
 				Sprite_setParam(sprite, this->paramTableFreeData.param);
 	
+				//create an independant of software variable to point XPSTTS register
+				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+				//wait for screen to idle
+				while (*xpstts & XPBSYR);
+
 				// scale now
 				Sprite_scale(sprite);
 	
 				// render now
 				__VIRTUAL_CALL(void, Sprite, render, sprite);
-	
-				// set the new param and size to move on the next cycle
-				this->paramTableFreeData.size = ParamTableManager_calculateSize(this, sprite);
-				this->paramTableFreeData.param += this->paramTableFreeData.size;
+
+				// set the new param to move on the next cycle
+				this->paramTableFreeData.param += ParamTableManager_calculateSize(this, sprite);
+
+				break;
 			}
-			
-			// TODO: fix me
-			// break;
 		}
 			
 		if (!node)
@@ -245,7 +246,6 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 			this->used -= this->paramTableFreeData.recoveredSize;
 			this->size += this->paramTableFreeData.recoveredSize;
 			
-			this->paramTableFreeData.size = 0;
 			this->paramTableFreeData.param = 0;
 			this->paramTableFreeData.recoveredSize = 0;
 			

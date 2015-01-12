@@ -313,9 +313,7 @@ void TextureManager_free(TextureManager this, Texture texture)
 		//determine the allocation type
 		switch (allocationType)
 		{
-			default:
 			case __ANIMATED:
-
 				{
 					int i = 0;
 
