@@ -409,8 +409,10 @@ void Game_reset(Game this)
 
 	MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance());
 	
-	//clear char and bgmap memory
+	// setup the display
     HardwareManager_clearScreen(this->hardwareManager);
+	HardwareManager_setupColumnTable(this->hardwareManager);
+    HardwareManager_displayOn(this->hardwareManager);
 
 	// reset managers
 	CharSetManager_reset(this->charSetManager);
@@ -420,6 +422,7 @@ void Game_reset(Game this)
 
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
+
 
 	// TODO
 	//SoundManager_getInstance();
@@ -798,7 +801,7 @@ void Game_update(Game this)
 		}
 		// do some clean up at the half of the second, to don't interfere
 		// with the game' normal flow
-		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
+		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2) && FrameRate_isFPSHigh(this->frameRate))
 		{
 			Game_cleanUp(this);
 

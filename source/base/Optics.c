@@ -71,7 +71,7 @@ inline  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D)
 	{
 		position3D->x - _screenPosition->x,
 		position3D->y - _screenPosition->y,
-		position3D->z - (_screenPosition->z - __ZZERO)
+		position3D->z - _screenPosition->z
 	};
 
 	return position;

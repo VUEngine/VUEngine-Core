@@ -183,11 +183,15 @@ void Sprite_setDirection(Sprite this, int axis, int direction)
 	Sprite_invalidateParamTable(this);
 }
 
+extern const VBVec3D* _screenPosition;
+
 // calculate zoom scaling factor
 void Sprite_calculateScale(Sprite this, fix19_13 z)
 {
 	ASSERT(this, "Sprite::calculateScale: null this");
 
+	z -= _screenPosition->z;
+	
 	Optical optical = Game_getOptical(Game_getInstance());
 	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) -
 			       FIX19_13_DIV(z , optical.maximunViewDistance));
