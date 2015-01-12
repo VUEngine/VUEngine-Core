@@ -349,8 +349,9 @@ static void Game_setNextState(Game this, State state)
 			break;
     }
 
+    // TODO: crashes on Mednafen
     // enable hardware pad read
-    HardwareManager_enableKeypad(this->hardwareManager);
+    //HardwareManager_enableKeypad(this->hardwareManager);
 
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
@@ -797,8 +798,7 @@ void Game_update(Game this)
 		}
 		// do some clean up at the half of the second, to don't interfere
 		// with the game' normal flow
-//		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
-		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2)
+		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
 		{
 			Game_cleanUp(this);
 

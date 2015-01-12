@@ -221,15 +221,15 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 				//move back paramSize bytes
 				Sprite_setParam(sprite, this->paramTableFreeData.param);
 	
+				// scale now
+				Sprite_scale(sprite);
+
 				//create an independant of software variable to point XPSTTS register
 				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 				//wait for screen to idle
 				while (*xpstts & XPBSYR);
 
-				// scale now
-				Sprite_scale(sprite);
-	
 				// render now
 				__VIRTUAL_CALL(void, Sprite, render, sprite);
 

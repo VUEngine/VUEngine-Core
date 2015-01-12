@@ -204,7 +204,9 @@ bool GameState_handleMessage(GameState this, void* owner, Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
-	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, Telegram_getMessage(telegram)));
+	bool result = __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, Telegram_getMessage(telegram)));
+	
+	return result;
 }
 
 // update level entities' positions
@@ -233,7 +235,9 @@ void GameState_transform(GameState this)
 // propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message)
 {
-	return __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, message));
+	bool result = __CALL_VARIADIC(Container_propagateEvent((Container)this->stage, Container_onMessage, message));
+	
+	return result;
 }
 
 // process user input
