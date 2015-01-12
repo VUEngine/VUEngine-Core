@@ -333,9 +333,7 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				WORLD_PARAM(this->worldLayer, VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param));
-//				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
-//				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 0) & 0xFFF0;
+				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
@@ -363,8 +361,7 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				WORLD_PARAM(this->worldLayer, VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param));
-//				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
+				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
@@ -516,7 +513,7 @@ void Sprite_scale(Sprite this)
 		ASSERT(this->texture, "Sprite::scale: null texture");
 		
 		int cols = (int)Texture_getCols(this->texture) << 2;
-		int rows = (int)Texture_getRows(this->texture) << 2;
+		int rows = ((int)Texture_getRows(this->texture) + 1) << 2;
 
 		Affine_scale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y,
 				   (this->texturePosition.x << 3) + cols,

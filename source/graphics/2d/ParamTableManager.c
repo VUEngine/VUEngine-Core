@@ -26,6 +26,16 @@
 #include <ParamTableManager.h>
 #include <HardwareManager.h>
 
+// ---------------------------------------------------------------------------------------------------------
+// 											  DECLARATIONS
+// ---------------------------------------------------------------------------------------------------------
+
+typedef struct ParamTableFreeData
+{
+	u32 param;
+	u32 size;
+	u32 recoveredSize;
+} ParamTableFreeData;
 
 // ---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -47,16 +57,11 @@
 																				\
 	/* removed sprites' sizes */												\
 	VirtualList removedSpritesSizes;											\
+																				\
+	/* user for defragmentation */												\
+	ParamTableFreeData paramTableFreeData;										\
 
 __CLASS_DEFINITION(ParamTableManager);
-
-
-typedef struct ParamTableFreeData
-{
-	u32 param;
-	u32 size;
-	u32 recoveredSize;
-} ParamTableFreeData;
 
 
 // ---------------------------------------------------------------------------------------------------------
@@ -125,6 +130,10 @@ void ParamTableManager_reset(ParamTableManager this)
 
 	// all the memory is free
 	this->used = 1;
+	
+	this->paramTableFreeData.param = 0;
+	this->paramTableFreeData.size = 0;
+	this->paramTableFreeData.recoveredSize = 0;
 }
 
 // calculate size of param table
@@ -135,7 +144,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite))) << 7) * __MAXIMUM_SCALE;
+	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + 1) << 7) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite
@@ -179,34 +188,19 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 
 	VirtualList_removeElement(this->sprites, sprite);
 
-	// for each sprite using param table space reassign them their param table starting point.
-	VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
-
-	for (; node; node = VirtualNode_getNext(node))
+	// accounted for
+	if(this->paramTableFreeData.param && this->paramTableFreeData.param < Sprite_getParam(sprite))
 	{
-		ParamTableFreeData* paramTableFreeData = (ParamTableFreeData*)VirtualNode_getData(node);
-		
-		// if there is a lower address being already freed
-		// don't worry about this release since will be
-		// accounted for
-		if(paramTableFreeData->param < Sprite_getParam(sprite))
-		{
-			// but increase the space recovered
-			paramTableFreeData->recoveredSize += ParamTableManager_calculateSize(this, sprite);
+		// but increase the space recovered
+		this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSize(this, sprite);
 
-			return;
-		}
+		return;
 	}
 	
-	if(!node)
-	{
-		ParamTableFreeData* paramTableFreeData = __NEW_BASIC(ParamTableFreeData);
-		paramTableFreeData->size = ParamTableManager_calculateSize(this, sprite);
-		paramTableFreeData->param = Sprite_getParam(sprite);
-		paramTableFreeData->recoveredSize = paramTableFreeData->size;
-		
-		VirtualList_pushBack(this->removedSpritesSizes, paramTableFreeData);
-	}
+	int size = ParamTableManager_calculateSize(this, sprite);
+	this->paramTableFreeData.size = size;
+	this->paramTableFreeData.param = Sprite_getParam(sprite);
+	this->paramTableFreeData.recoveredSize += size;
 }
 
 // relocate sprites
@@ -214,56 +208,49 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 	
-	// for each sprite using param table space reassign them their param table starting point.
-	VirtualNode node = VirtualList_begin(this->removedSpritesSizes);
-
-	for (; node; node = VirtualNode_getNext(node))
+	if(this->paramTableFreeData.size)
 	{
-		ParamTableFreeData* paramTableFreeData = (ParamTableFreeData*)VirtualNode_getData(node);
-
-		//calculate necessary space to allocate
-		VirtualNode auxNode = VirtualList_begin(this->sprites);
-
-		for (; auxNode; auxNode = VirtualNode_getNext(auxNode))
+		VirtualNode node = VirtualList_begin(this->sprites);
+		
+		for (; node; node = VirtualNode_getNext(node))
 		{
-			Sprite auxSprite = (Sprite)VirtualNode_getData(auxNode);
-
-			u32 auxParam = Sprite_getParam(auxSprite);
-
+			Sprite sprite = (Sprite)VirtualNode_getData(node);
+	
+			u32 auxParam = Sprite_getParam(sprite);
+	
 			// retrieve param
-			if (auxParam > paramTableFreeData->param)
+			if (auxParam > this->paramTableFreeData.param)
 			{
 				//move back paramSize bytes
-				Sprite_setParam(auxSprite, paramTableFreeData->param);
-
+				Sprite_setParam(sprite, this->paramTableFreeData.param);
+	
 				// scale now
-				Sprite_scale(auxSprite);
-
+				Sprite_scale(sprite);
+	
 				// render now
-				__VIRTUAL_CALL(void, Sprite, render, auxSprite);
-
+				__VIRTUAL_CALL(void, Sprite, render, sprite);
+	
 				// set the new param and size to move on the next cycle
-				paramTableFreeData->size = ParamTableManager_calculateSize(this, auxSprite);
-				paramTableFreeData->param += paramTableFreeData->size;
+				this->paramTableFreeData.size = ParamTableManager_calculateSize(this, sprite);
+				this->paramTableFreeData.param += this->paramTableFreeData.size;
 			}
 			
-			break;
+			// TODO: fix me
+			// break;
 		}
-		
-		if (!auxNode)
+			
+		if (!node)
 		{
 			//recover space
-			this->used -= paramTableFreeData->recoveredSize;
-			this->size += paramTableFreeData->recoveredSize;
+			this->used -= this->paramTableFreeData.recoveredSize;
+			this->size += this->paramTableFreeData.recoveredSize;
 			
-			VirtualList_removeElement(this->removedSpritesSizes, paramTableFreeData);
-
-			__DELETE_BASIC(paramTableFreeData);
+			this->paramTableFreeData.size = 0;
+			this->paramTableFreeData.param = 0;
+			this->paramTableFreeData.recoveredSize = 0;
 			
 			return true;
 		}
-		
-		return false;
 	}
 	
 	return false;
