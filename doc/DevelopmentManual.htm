@@ -102,7 +102,12 @@
                 <li>Particle system</li>
                 <li>Polygon based engine</li>
                 <li>Tile based collision detection</li>
+                <li>BGMAP defragmentation<li>
+                <li>More collision shapes: spheres, complex polyhedrons, etc.</li>
+                <li>Object based entities (instead of Texture based as they currently are)</li>
+
             </ul>
+
 
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
@@ -142,16 +147,16 @@
                 virtual methods from the Character class.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">#define Hero_METHODS								        \
-Character_METHODS;</code></pre>
+                <pre class="line-numbers"><code class="language-c">#define Hero_METHODS								        \
+                    Character_METHODS;</code></pre>
 
             <p>
                 Next, it is necessary to inherit and/or redefine those method's definitions.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">#define Hero_SET_VTABLE(ClassName)						\
-Character_SET_VTABLE(ClassName);						\
-__VIRTUAL_SET(ClassName, Hero, die);</code></pre>
+                <pre class="line-numbers"><code class="language-c">#define Hero_SET_VTABLE(ClassName)						\
+                    Character_SET_VTABLE(ClassName);						\
+                    __VIRTUAL_SET(ClassName, Hero, die);</code></pre>
 
             <p>
                 This tells the engine that Character has a virtual method called <code>die</code>
@@ -174,13 +179,13 @@ __VIRTUAL_SET(ClassName, Hero, die);</code></pre>
                 Then you must declare Hero class's specific attributes, to do so, declare the following MACRO:
             </p>
 
-            <pre class="line-numbers"><code class="language-c">#define Hero_ATTRIBUTES						        	\
-                                                        \
-/* it is derivated from */					    		\
-Character_ATTRIBUTES							    	\
-                                                        \
-/* hero has energy	*/							        \
-u8 energy;</code></pre>
+                <pre class="line-numbers"><code class="language-c">#define Hero_ATTRIBUTES						        	\
+                    \
+                    /* it is derivated from */					    		\
+                    Character_ATTRIBUTES							    	\
+                    \
+                    /* hero has energy	*/							        \
+                    u8 energy;</code></pre>
 
             <p>
                 Notice that all of these macros have a backslash ("\") at the end of each line, you must be careful and
@@ -220,44 +225,44 @@ u8 energy;</code></pre>
                 Define the class:
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// A Hero! Which inherits from Character
-__CLASS_DEFINITION(Hero, Character);</code></pre>
+                <pre class="line-numbers"><code class="language-c">// A Hero! Which inherits from Character
+                    __CLASS_DEFINITION(Hero, Character);</code></pre>
 
             <p>
                 Define the allocator:
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// always call these to macros next to each other
-__CLASS_NEW_DEFINITION(Hero, __PARAMETERS(CharacterDefinition* characterDefinition, int ID))
-__CLASS_NEW_END(Hero, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
+                <pre class="line-numbers"><code class="language-c">// always call these to macros next to each other
+                    __CLASS_NEW_DEFINITION(Hero, __PARAMETERS(CharacterDefinition* characterDefinition, int ID))
+                    __CLASS_NEW_END(Hero, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
 
             <p>
                 Define the constructor: must always call the parent class's constructor to properly initialize the object.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// class's constructor
-    void Hero_constructor(Hero this, CharacterDefinition* characterDefinition, int ID){
+                <pre class="line-numbers"><code class="language-c">// class's constructor
+                    void Hero_constructor(Hero this, CharacterDefinition* characterDefinition, int ID){
 
-    __CONSTRUCT_BASE(Character, __ARGUMENTS(this, characterDefinition, ID));
+                    __CONSTRUCT_BASE(Character, __ARGUMENTS(this, characterDefinition, ID));
 
-    this->energy = 1;
+                    this->energy = 1;
 
-    ...
+                    ...
 
-} </code></pre>
+                    } </code></pre>
 
             <p>
                 Define the destructor: must always destroy the parent class at the end of the method.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// class's destructor
-    void Hero_destructor(Hero this){
+                <pre class="line-numbers"><code class="language-c">// class's destructor
+                    void Hero_destructor(Hero this){
 
-    // free space allocated here
+                    // free space allocated here
 
-    // delete the super object
-    __DEALLOCATE(Character);
-} </code></pre>
+                    // delete the super object
+                    __DEALLOCATE(Character);
+                    } </code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -282,15 +287,15 @@ __CLASS_NEW_END(Hero, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
                 </li>
             </ol>
 
-            <pre class="line-numbers"><code class="language-c">// update each entity's internal state
-void Stage_update(Stage this)
-{
-    VirtualNode node = VirtualList_begin(this->entities);
+                <pre class="line-numbers"><code class="language-c">// update each entity's internal state
+                    void Stage_update(Stage this)
+                    {
+                    VirtualNode node = VirtualList_begin(this->entities);
 
-    for(; node ; node = VirtualNode_getNext(node)) {
-        __VIRTUAL_CALL(void, Entity, update,(Entity)VirtualNode_getData(node));
-    }
-} </code></pre>
+                    for(; node ; node = VirtualNode_getNext(node)) {
+                    __VIRTUAL_CALL(void, Entity, update,(Entity)VirtualNode_getData(node));
+                    }
+                    } </code></pre>
 
             <p>
                 As you can see, there is only one call to the method, which depends on the type of object that is currently being processed.
@@ -323,281 +328,22 @@ void Stage_update(Stage this)
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h2>The Game's StateMachine</h2>
-
-            <p>
-                The Game itself has a StateMachine to hold the actual state of it and execute the proper logic. So
-                after creating the game, and before entering the game's infinite loop, it must enter a valid state:
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">// Main game algorithm
-// There should not be need
-// to modify this.
-
-int main(void){
-
-// create the game
-Game game = Game_getInstance();
-
-// clear sprite memory
-vbClearScreen();
-
-// turn on the display
-vbDisplayOn();
-
-// set engine's initial state
-Game_setState(game, (State)PVBCCScreen_getInstance());
-
-// main game loop
-Game_update (game);
-
-// end program
-return true;
-} </code></pre>
-
-            <p>
-                As you can see, the game will enter the state PVBCCScreen first, and then will enter the game's main loop Game_update();
-                PVBCCScreen is a game state which must perform and initialization, execute its logic, and change the game's current state to another one based on user input.
-            </p>
-            <p>
-                In its initialization stage, PVBCCScreen loads a GameWorld definition which describes the Stage, and the Entities within it:
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">// state's enter
-static void PVBCCScreen_enter(PVBCCScreen this, void* owner){
-
-//clear char and bgmap memory
-vbClearScreen();
-
-// reset the engine state
-Game_reset(Game_getInstance(), true);
-
-// load world's entities
-Stage_setup(Game_getStage(Game_getInstance()), &PVBCC_WR);
-
-// call the render to setup world entries
-Game_render(Game_getInstance());
-
-// make a fade in
-Game_FXFadeIn(Game_getInstance(), FADEDELAY);
-}</code></pre>
-
-            <p>
-                The Stage_setup method instructs the stage to load the world defined by PVBCC_WR.
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">StageDefinition PVBCC_WR =
-{
-// size
-{
-    // x
-    384,
-    // y
-    228,
-    // z
-    10
-},
-//initial screen position
-{
-    // x
-    0,
-    // y
-    0,
-    //z
-    __ZZERO
-},
-//background music
-    NULL,
-
-//entities
-{
-    {&PVBCC_LEFT_BG,{SCREEN_CENTER_X, SCREEN_CENTER_Y, 0}},
-    {&PVBCC_RIGHT_BG,{SCREEN_CENTER_X, SCREEN_CENTER_Y, 0}},
-    {NULL, {0,0,0}},
-},
-};</code></pre>
-
-            <p>
-                A Stage is defined by its size, the initial screen position, a pointer to a BGM, and a list of Entities. There must be always a {NULL, {0,0,0}} at the end of the definition to inform the Stage that the Entity list ends there.
-            </p>
-            <p>
-                Let's take a look at one of the Entities being loaded.
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">ImageDefinition PVBCC_LEFT_BG =
-{
-    {
-        // object's class
-        __TYPE(Image),
-
-        // Sprite
-        {
-            // the texture
-            &PVBCC_LEFT_TX,
-
-            // bgmap mode ( BGMAP, AFFINE, H-BIAS)
-            WRLD_BGMAP,
-
-            // display mode
-            WRLD_LON,
-        },
-    },
-};</code></pre>
-
-            <p>
-                The following line tells the Stage which kind of Entity is currently being loaded so the proper constructor is called.
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">__TYPE(Image)</code></pre>
-
-            <p>
-                Then comes the Sprite definition, PVBCC_LEFT_TX is the address of the Texture to use with the Sprite. The Sprite definition dictates the texture display mode (affine, bgmap, h-bias) and the displays on which the image will be shown.
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">TextureDefinition PVBCC_LEFT_TX =
-{
-
-    // Chargroup
-    {
-        // chDefinition,
-        PVBCC_CHARSET_LEFT,
-
-        // numChars,
-        238,
-
-        // allocation type
-        __NO_ANIMATED
-    },
-
-    // bgmap definition
-    PVBCC_MAP_LEFT,
-
-    // cols (max 48)
-    48,
-
-    // rows (max 28)
-    28,
-
-    //palette number,
-    0
-}; </code></pre>
-
-            <p>
-                PVBCC_CHARSET_LEFT and PVBCC_MAP_LEFT are the names of the const arrays with the char and bgmap definitions produced by programs like VIDE.
-            </p>
-            <p>
-                Notice that the total cols and rows which represent the image's size, are 8's divisors since each char is 8 pixels wide and 8 pixels height.
-            </p>
-
-            <!--------------------------------------------------------------------------------------------------------->
-
-            <h2>Creating Animations</h2>
-
-            <p>
-                Characters are used to represent Entities which have certain animations and which can move inside the Stage. In order to provide a Character with an animation it must be defined as follow:
-            </p>
-            <pre class="line-numbers"><code class="language-c">CharacterDefinition HERO_MC =
-{
-    {
-        {
-            // object's class
-            __TYPE(Hero),
-
-            // Sprite
-            {
-                // the texture
-                &HERO_TX,
-
-                // bgmap mode ( BGMAP, AFFINE, H-BIAS)
-                WRLD_AFFINE,
-
-                // display mode
-                WRLD_ON,
-            },
-        },
-
-        // deep
-        5,
-
-        // friction factor
-        5.5,
-
-        //collision detection gap
-        //up,	down,	left,	right,
-        {5,		0,		8,		6,},
-
-        // in game type
-        kHero,
-    },
-
-    // pointer to the animation definition for the character
-    &HERO_ANIM,
-};
-
-// a function which defines the frames to play
-AnimationFunction HERO_BLINKING_ANIM =
-{
-
-    // function's name
-    "Blink",
-
-    // number of frames of this animation function
-    3,
-
-    // frames to play in animation
-    {16, 17, 16},
-
-    // number of cicles a frame of animation is displayed
-    5 * __FPS_ANIM_FACTOR,
-
-    // whether to play it in loop or not
-    false,
-
-    // method to call function completion
-    Hero_blinkDone,
-};
-
-// an animation definition
-AnimationDescription HERO_ANIM =
-{
-
-    // number of animation frames
-    28,
-
-    // animation functions
-    {
-        &HERO_IDLE_ANIM,
-        &HERO_WALKING_ANIM,
-        &HERO_JUMPING_ANIM,
-        &HERO_FALLING_ANIM,
-        &HERO_SLIDING_ANIM,
-        &HERO_HIT_FRONT_ANIM,
-        &HERO_HIT_BEHIND_ANIM,
-        &HERO_JUMP_BACK_ANIM,
-        &HERO_JUMP_FRONT_ANIM,
-        &HERO_FRONT_ANIM,
-        &HERO_BACK_ANIM,
-        &HERO_BLINKING_ANIM,
-        &HERO_WALKING_HOLD_ANIM,
-        &HERO_BLINKING_HOLD_ANIM,
-        &HERO_IDLE_HOLD_ANIM,
-        &HERO_JUMPING_HOLD_ANIM,
-        &HERO_FALLING_HOLD_ANIM,
-        &HERO_WALKING_FRONT_ANIM,
-        &HERO_WALKING_BACK_ANIM,
-        NULL,
-    }
-
-}; </code></pre>
-
-            <p>
-                The AnimationDescription defines how many animation frames comprise the animation, and holds the address of each AnimationFunction. An AnimationFunction must provide a name, the number of frames to be played, the sequence of frames, each frame duration based on the target frame rate, whether the frames must be played in a loop, and a function pointer to be called when the last frame of animation has been displayed.
-            </p>
+            <h2>Graphics</h2>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>Animation allocation types</h3>
+            <h3>2D</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h4>AnimatedSprite</h4>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h5>Animation allocation types</h5>
 
             <p>
                 Since there can be Characters with many frames of animations like Hero, and Characters with simple animations like Koopas, there is a need to allocate each kind in different ways.
@@ -628,51 +374,446 @@ AnimationDescription HERO_ANIM =
 
 
             <!--------------------------------------------------------------------------------------------------------->
-            <!--------------------------------------------------------------------------------------------------------->
-            <!--------------------------------------------------------------------------------------------------------->
 
-            <h2>The Stage</h2>
+            <h4>Sprite</h4>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>Adding objects to the Stage</h3>
+            <h5>Sprite</h5>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h5>MSprite</h5>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h5>SpriteManager</h5>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h4>ParamTable</h4>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h5>ParamTableManager</h5>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h4>Texture</h4>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h5>TextureManager</h5>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>3D</h3>
+
+            <p>[not yet implemented]</p>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+
+            <h2>In-game object types</h2>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Container</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Entity</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>InGameEntity</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>AnimatedInGameEntity</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Actor</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>InanimatedInGameEntity</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Image</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>MBackground</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Stage</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Streaming</h3>
+                - Constructing a Stage: Here we have to address the PositionedEntity struct in detail, specially the extra info attribute which must only be used in "final" classes.
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Physics</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>PhysicalWorld</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Body</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Mass</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Collisions</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Shape</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Cuboid</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Circle</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Object interaction</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Messaging</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Event System</h3>
+                - There is an event propagation capability in the engine, indeed, I could combine this with the event system, and we would get the full bubbling event capabilities of languages like ActionScript... at least as far as I remember :P
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>State Machine</h2>
 
             <p>
-                To add objects to the Stage call the following method:
+                The Game itself has a StateMachine to hold the actual state of it and execute the proper logic. So
+                after creating the game, and before entering the game's infinite loop, it must enter a valid state:
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// create an entity in the game's and load it into the Stage
-                Hero hero = Stage_addEntity(Game_getStage(Game_getInstance(),heroDefinition, position, -1); </code></pre>
+            <pre class="line-numbers"><code class="language-c">// Main game algorithm
+                // There should not be need
+                // to modify this.
+
+                int main(void){
+
+                // create the game
+                Game game = Game_getInstance();
+
+                // clear sprite memory
+                vbClearScreen();
+
+                // turn on the display
+                vbDisplayOn();
+
+                // set engine's initial state
+                Game_setState(game, (State)PVBCCScreen_getInstance());
+
+                // main game loop
+                Game_update (game);
+
+                // end program
+                return true;
+                } </code></pre>
 
             <p>
-                Notice the -1, that is the Entity's ID, the Stage will assign valid IDs to Entities loaded from a
-                GameWorld definition, when you want to create a dynamic Entity (i.e: a Hero's fireball) provide the -1
-                index. This method will do the necessary calls to allocate the object in CPU and graphic memory, add it
-                to the stage and assign a world layer to be displayed.
+                As you can see, the game will enter the state PVBCCScreen first, and then will enter the game's main loop Game_update();
+                PVBCCScreen is a game state which must perform and initialization, execute its logic, and change the game's current state to another one based on user input.
+            </p>
+            <p>
+                In its initialization stage, PVBCCScreen loads a GameWorld definition which describes the Stage, and the Entities within it:
             </p>
 
+            <pre class="line-numbers"><code class="language-c">// state's enter
+                static void PVBCCScreen_enter(PVBCCScreen this, void* owner){
 
-            <!--------------------------------------------------------------------------------------------------------->
+                //clear char and bgmap memory
+                vbClearScreen();
 
-            <h3>Removing objects from the Stage</h3>
+                // reset the engine state
+                Game_reset(Game_getInstance(), true);
+
+                // load world's entities
+                Stage_setup(Game_getStage(Game_getInstance()), &PVBCC_WR);
+
+                // call the render to setup world entries
+                Game_render(Game_getInstance());
+
+                // make a fade in
+                Game_FXFadeIn(Game_getInstance(), FADEDELAY);
+                }</code></pre>
 
             <p>
-                Let say our Hero character has been killed and must now to be removed from the Stage, to do so call the
-                following method:
+                The Stage_setup method instructs the stage to load the world defined by PVBCC_WR.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">// inform the game that I'm dead
-                Stage_removeEntity(Game_getStage(Game_getInstance()), (Entity)hero, kDead); </code></pre>
+            <pre class="line-numbers"><code class="language-c">StageDefinition PVBCC_WR =
+                {
+                // size
+                {
+                // x
+                384,
+                // y
+                228,
+                // z
+                10
+                },
+                //initial screen position
+                {
+                // x
+                0,
+                // y
+                0,
+                //z
+                __ZZERO
+                },
+                //background music
+                NULL,
+
+                //entities
+                {
+                {&PVBCC_LEFT_BG,{SCREEN_CENTER_X, SCREEN_CENTER_Y, 0}},
+                {&PVBCC_RIGHT_BG,{SCREEN_CENTER_X, SCREEN_CENTER_Y, 0}},
+                {NULL, {0,0,0}},
+                },
+                };</code></pre>
 
             <p>
-                Notice the kDead enum, which tells the engine to not load the Entity again if it is within the screen range.
+                A Stage is defined by its size, the initial screen position, a pointer to a BGM, and a list of Entities. There must be always a {NULL, {0,0,0}} at the end of the definition to inform the Stage that the Entity list ends there.
+            </p>
+            <p>
+                Let's take a look at one of the Entities being loaded.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">ImageDefinition PVBCC_LEFT_BG =
+                {
+                {
+                // object's class
+                __TYPE(Image),
+
+                // Sprite
+                {
+                // the texture
+                &PVBCC_LEFT_TX,
+
+                // bgmap mode ( BGMAP, AFFINE, H-BIAS)
+                WRLD_BGMAP,
+
+                // display mode
+                WRLD_LON,
+                },
+                },
+                };</code></pre>
+
+            <p>
+                The following line tells the Stage which kind of Entity is currently being loaded so the proper constructor is called.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">__TYPE(Image)</code></pre>
+
+            <p>
+                Then comes the Sprite definition, PVBCC_LEFT_TX is the address of the Texture to use with the Sprite. The Sprite definition dictates the texture display mode (affine, bgmap, h-bias) and the displays on which the image will be shown.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">TextureDefinition PVBCC_LEFT_TX =
+                {
+
+                // Chargroup
+                {
+                // chDefinition,
+                PVBCC_CHARSET_LEFT,
+
+                // numChars,
+                238,
+
+                // allocation type
+                __NO_ANIMATED
+                },
+
+                // bgmap definition
+                PVBCC_MAP_LEFT,
+
+                // cols (max 48)
+                48,
+
+                // rows (max 28)
+                28,
+
+                //palette number,
+                0
+                }; </code></pre>
+
+            <p>
+                PVBCC_CHARSET_LEFT and PVBCC_MAP_LEFT are the names of the const arrays with the char and bgmap definitions produced by programs like VIDE.
+            </p>
+            <p>
+                Notice that the total cols and rows which represent the image's size, are 8's divisors since each char is 8 pixels wide and 8 pixels height.
             </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>In-game clock</h2>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Hardware</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Memory Pool</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>HardwareManager</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Keypad</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Timers</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>VIP</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>VPU</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>SaveRAM</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Link Cable</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Sound</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Printing</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>The printing layer</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Font management</h3>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -693,9 +834,9 @@ AnimationDescription HERO_ANIM =
             </p>
 
             <pre class="line-numbers"><code class="language-c">enum {
-    STR_HELLO,
-    STR_VBJAENGINE_ROCKS
-};</code></pre>
+                STR_HELLO,
+                STR_VBJAENGINE_ROCKS
+                };</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -713,15 +854,15 @@ AnimationDescription HERO_ANIM =
             </p>
 
             <pre class="line-numbers"><code class="language-c">static char* Lang_EN[] =
-{
+                {
 
-    // STR_HELLO
-    "Hello",
+                // STR_HELLO
+                "Hello",
 
-    // STR_VBJAENGINE_ROCKS
-    "The VBJaEngine rocks!",
+                // STR_VBJAENGINE_ROCKS
+                "The VBJaEngine rocks!",
 
-};</code></pre>
+                };</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -754,9 +895,9 @@ AnimationDescription HERO_ANIM =
             </p>
 
             <pre class="line-numbers"><code class="language-c">enum {
-    LANGUAGE_EN,
-    LANGUAGE_DE
-};</code></pre>
+                LANGUAGE_EN,
+                LANGUAGE_DE
+                };</code></pre>
 
             <p>
                 If you made languages accessible through these, a call to change the language to German would look like
@@ -776,6 +917,159 @@ AnimationDescription HERO_ANIM =
             </p>
 
             <pre class="line-numbers"><code class="language-c">I18n_getText(I18n_getInstance(), STR_HELLO)</code></pre>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Other useful classes</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>VirtualList</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>OptionsSelector</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Errors</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Configuration</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>config.h</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Assets</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Managing and using graphical assets in VBDE</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Defaults</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Splash screens</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Low Battery Indicator</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Automatic Pause</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Debugging</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Debug Tools</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Debug System</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Stage Editor</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Animation Editor</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Macros</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>ASSERT & others</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Pre-processing</h2>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Final clean-up to save some space and performance</h3>
+
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h3>Building the master ROM</h3>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>FAQ</h2>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h2>Class reference</h2>
+
 
 
             <!--------------------------------------------------------------------------------------------------------->

@@ -66,12 +66,12 @@ h1 {
 h2 {
     font-family: VB;
     font-size: 40px;
-    margin: 25px 0 0;
-    padding: 15px 0 25px;
+    margin: 40px 0 25px;
+    padding: 15px 0 0;
 }
 h3 {
-    margin-top: 15px;
-    padding-top: 15px;
+    margin-top: 5px 0 25px;
+    padding: 15px 0 0;
 }
 h4, h5, h6 {
     padding-top: 15px;
@@ -112,16 +112,23 @@ footer {
     padding-left: 0
 }
 
+.sidebar {
+    max-height: 100%;
+    overflow: auto;
+    padding: 0;
+}
+
 @media (min-width: 768px) {
     footer p {
         margin-bottom: 0
     }
 }
 
-@media (min-width: 768px) {
-    .sidebar {
-        padding: 20px 0 0 20px;
-    }
+#jae-sidebar-toc {
+    background: #eee;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 10px;
 }
 
 #jae-sidebar-toc a {
@@ -134,7 +141,12 @@ footer {
 }
 
 #jae-sidebar-toc > li > a {
-    padding: 6px 15px;
+    padding: 0 15px;
+}
+
+#jae-sidebar-toc > li.active > a {
+    padding-bottom: 6px;
+    padding-top: 6px;
 }
 
 #jae-sidebar-toc > li > ul {
@@ -148,11 +160,16 @@ footer {
 }
 #jae-sidebar-toc > li > ul > li > a {
     font-size: 90%;
-    padding: 3px 0 0 30px;
+    padding: 0 0 0 30px;
 }
 #jae-sidebar-toc > li > ul > li.active > a {
     color: #E0313F;
     font-weight: bold;
+}
+
+#jae-sidebar-toc > li > ul > li > ul> li > a {
+    font-size: 90%;
+    padding: 0 0 0 50px;
 }
 
 #jae-sidebar-toc > .active > a,
