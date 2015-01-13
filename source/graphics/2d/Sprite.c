@@ -36,8 +36,6 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -317,15 +315,16 @@ void Sprite_render(Sprite this)
 		DrawSpec drawSpec = this->drawSpec;
 		WORLD* worldPointer = &WA[this->worldLayer];
 		
+		// create an independant of software variable to point XPSTTS register
+		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+		// wait for screen to idle
+		// I'm the result of many many testing, don't move me again!
+		while (*xpstts & XPBSYR);
+
 		// if head is modified, render everything
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
-			//create an independant of software variable to point XPSTTS register
-			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-			//wait for screen to idle
-			while (*xpstts & XPBSYR);
-
 			worldPointer->head = this->head | Texture_getBgmapSegment(this->texture);
 			worldPointer->mx = this->texturePosition.x << 3;
 			worldPointer->mp = 0;
@@ -338,13 +337,13 @@ void Sprite_render(Sprite this)
 			if (WRLD_AFFINE & this->head)
 			{
 				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x));
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
 			}
 			else
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3);
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
 			}
 
 			this->renderFlag = false;
@@ -366,13 +365,13 @@ void Sprite_render(Sprite this)
 			if (WRLD_AFFINE & this->head)
 			{
 				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x));
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
 			}
 			else
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3);
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
 			}
 		}
 
@@ -517,7 +516,7 @@ void Sprite_scale(Sprite this)
 		ASSERT(this->texture, "Sprite::scale: null texture");
 		
 		int cols = (int)Texture_getCols(this->texture) << 2;
-		int rows = (int)Texture_getRows(this->texture) << 2;
+		int rows = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
 
 		Affine_scale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y,
 				   (this->texturePosition.x << 3) + cols,

@@ -143,7 +143,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
 	// add one row as padding to make sure not ovewriting take place
-	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + 1) << 7) * __MAXIMUM_SCALE;
+	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite
@@ -214,28 +214,30 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 	
 			u32 spriteParam = Sprite_getParam(sprite);
-	
+			
 			// retrieve param
 			if (spriteParam > this->paramTableFreeData.param)
 			{
+				int size = ParamTableManager_calculateSize(this, sprite);
+
+				// check that the sprite won't override itself
+				if(this->paramTableFreeData.param + size > spriteParam)
+				{
+					break;
+				}
+				
 				//move back paramSize bytes
 				Sprite_setParam(sprite, this->paramTableFreeData.param);
 	
 				// scale now
 				Sprite_scale(sprite);
 
-				//create an independant of software variable to point XPSTTS register
-				unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-				//wait for screen to idle
-				while (*xpstts & XPBSYR);
-
 				// render now
 				__VIRTUAL_CALL(void, Sprite, render, sprite);
 
 				// set the new param to move on the next cycle
-				this->paramTableFreeData.param += ParamTableManager_calculateSize(this, sprite);
-
+				this->paramTableFreeData.param += size;
+				
 				break;
 			}
 		}
@@ -264,15 +266,15 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 	int xDisplacement = 11;
 	
 	Printing_text(Printing_getInstance(), "PARAM TABLE'S STATUS", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Size:", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Size:              ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->size, x + xDisplacement, y, NULL);
 	
-	Printing_text(Printing_getInstance(), "Used:", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Used:              ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->used, x + xDisplacement, y, NULL);
 
-	Printing_text(Printing_getInstance(), "ParamBase:", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "ParamBase:          ", x, ++y, NULL);
 	Printing_hex(Printing_getInstance(), VPUManager_getParamBase(VPUManager_getInstance()), x + xDisplacement, y, NULL);
-	Printing_text(Printing_getInstance(), "ParamEnd:", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "ParamEnd:           ", x, ++y, NULL);
 	Printing_hex(Printing_getInstance(), __PARAM_TABLE_END, x + xDisplacement, y, NULL);
 
 	VirtualNode node = VirtualList_begin(this->sprites);
