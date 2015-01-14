@@ -30,7 +30,7 @@
 #include <HardwareManager.h>
 #include <SpriteManager.h>
 #include <Texture.h>
-
+#include <ParamTableManager.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS

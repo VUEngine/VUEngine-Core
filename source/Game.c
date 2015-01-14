@@ -1049,6 +1049,7 @@ void Game_unpause(Game this, GameState pauseState)
 		if(Game_getCurrentState(this) == this->automaticPauseState)
 		{
 			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, (Object)this, (Object)this, kAutoPause, NULL);
+			this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 		}
 	}
 }
