@@ -25,7 +25,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <State.h>
+#include <GameState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -33,16 +33,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define StageEditorState_METHODS												\
-	State_METHODS;																\
+#define StageEditorState_METHODS													\
+	GameState_METHODS;																\
 
 // declare the virtual methods which are redefined
-#define StageEditorState_SET_VTABLE(ClassName)									\
-	State_SET_VTABLE(ClassName)													\
-	__VIRTUAL_SET(ClassName, StageEditorState, enter);							\
-	__VIRTUAL_SET(ClassName, StageEditorState, execute);						\
-	__VIRTUAL_SET(ClassName, StageEditorState, exit);							\
-	__VIRTUAL_SET(ClassName, StageEditorState, handleMessage);					\
+#define StageEditorState_SET_VTABLE(ClassName)										\
+	GameState_SET_VTABLE(ClassName)													\
+	__VIRTUAL_SET(ClassName, StageEditorState, enter);								\
+	__VIRTUAL_SET(ClassName, StageEditorState, execute);							\
+	__VIRTUAL_SET(ClassName, StageEditorState, exit);								\
+	__VIRTUAL_SET(ClassName, StageEditorState, handleMessage);						\
 
 __CLASS(StageEditorState);
 

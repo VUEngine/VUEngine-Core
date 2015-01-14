@@ -36,6 +36,8 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -319,7 +321,8 @@ void Sprite_render(Sprite this)
 		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
 
 		// wait for screen to idle
-		// I'm the result of many many testing, don't move me again!
+		// I, placed right here, am the result of many many hours of testing, 
+		// so, don't move me again!
 		while (*xpstts & XPBSYR);
 
 		// if head is modified, render everything
@@ -337,8 +340,8 @@ void Sprite_render(Sprite this)
 			if (WRLD_AFFINE & this->head)
 			{
 				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x));
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
 			else
 			{
@@ -365,8 +368,8 @@ void Sprite_render(Sprite this)
 			if (WRLD_AFFINE & this->head)
 			{
 				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x));
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y));
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
 			else
 			{

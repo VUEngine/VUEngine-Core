@@ -61,10 +61,10 @@ enum Screens
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define DebugState_ATTRIBUTES													\
-																				\
-	/* inherits */																\
-	State_ATTRIBUTES															\
+#define DebugState_ATTRIBUTES														\
+																					\
+	/* inherits */																	\
+	GameState_ATTRIBUTES															\
 
 __CLASS_DEFINITION(DebugState);
 
@@ -79,14 +79,14 @@ __SINGLETON(DebugState);
 // class's constructor
 static void DebugState_constructor(DebugState this)
 {
-	__CONSTRUCT_BASE(State);
+	__CONSTRUCT_BASE(GameState);
 }
 
 // class's destructor
 static void DebugState_destructor(DebugState this)
 {
 	// destroy base
-	__SINGLETON_DESTROY(State);
+	__SINGLETON_DESTROY(GameState);
 }
 
 // state's enter

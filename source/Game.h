@@ -55,8 +55,8 @@ __CLASS(Game);
 
 Game Game_getInstance();
 void Game_destructor(Game this);
-void Game_start(Game this, State state);
-void Game_changeState(Game this, State state);
+void Game_start(Game this, GameState state);
+void Game_changeState(Game this, GameState state);
 void Game_disableHardwareInterrupts(Game this);
 void Game_enableHardwareInterrupts(Game this);
 void Game_recoverGraphicMemory(Game this);
@@ -90,5 +90,6 @@ Stage Game_getStage(Game this);
 GameState Game_getCurrentState(Game this);
 void Game_pause(Game this, GameState pauseState);
 void Game_unpause(Game this, GameState pauseState);
+void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
 
 #endif

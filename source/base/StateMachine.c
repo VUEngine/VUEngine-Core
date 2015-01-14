@@ -274,6 +274,8 @@ State StateMachine_getCurrentState(StateMachine this)
 // retrieve previous state in the stack
 State StateMachine_getPreviousState(StateMachine this)
 {
+	ASSERT(this, "StateMachine::getPreviousState: null this");
+
 	VirtualNode node = VirtualList_begin(this->stateStack);
 
 	if (node)
@@ -284,4 +286,12 @@ State StateMachine_getPreviousState(StateMachine this)
 	}
 
 	return NULL;
+}
+
+// retrieve the stack's size
+int StateMachine_getStackSize(StateMachine this)
+{
+	ASSERT(this, "StateMachine::getStackSize: null this");
+
+	return VirtualList_getSize(this->stateStack);
 }

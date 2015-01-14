@@ -41,11 +41,20 @@
 #define __YAXIS 		0x02
 #define __ZAXIS 		0x04
 
+// auto pause delay
+#define __AUTO_PAUSE_DELAY	(15 * 60 * 1000)
+
+// if there is more than one state in the game's stack
+// the automatic pause state is not pushed until there is only one
+// so this causes a faster checked until the condition is met
+#define __AUTO_PAUSE_RECHECK_DELAY (60 * 1000)
+
 // messages
 enum MessagesTypes
 {
 	// general porpuse messages
 	kHighFPS = 0,
+	kAutoPause,
 
 	// graphic system's messages
 	kCharGroupRewritten,

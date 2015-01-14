@@ -109,7 +109,7 @@ enum StateOperations
 	Screen screen;																\
 																				\
 	/* game's next state */														\
-	State nextState;															\
+	GameState nextState;															\
 																				\
 	/* game's next state operation */											\
 	int nextStateOperation; 													\
@@ -117,11 +117,15 @@ enum StateOperations
 	/* last process' name */													\
 	char* lastProcessName;														\
 																				\
-	/* flag to autopause the game after 15 minutes of play or not */ 			\
-	bool restFlag;																\
+	/* auto pause state  */											 			\
+	GameState automaticPauseState;												\
+																				\
+	/* auto pause state  */											 			\
+	u32 lastAutoPauseCheckTime;													\
 																				\
 	/* seconds the battery status was last checked */							\
 	u8 lowbatLastCheckSeconds;													\
+	
 
 __CLASS_DEFINITION(Game);
 
@@ -135,13 +139,14 @@ Optical* _optical = NULL;
 static void Game_constructor(Game this);
 static void Game_initialize(Game this);
 static void Game_setOpticalGlobals(Game this);
-static void Game_setNextState(Game this, State state);
+static void Game_setNextState(Game this, GameState state);
 static void Game_handleInput(Game this);
 static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
 static void Game_updateRendering(Game this);
 static void Game_cleanUp(Game this);
 static void Game_showLowBatteryIndicator(Game this);
+static void Game_autoPause(Game this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -181,6 +186,8 @@ static void Game_constructor(Game this)
 	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
 
 	this->nextState = NULL;
+	this->automaticPauseState = NULL;
+	this->lastAutoPauseCheckTime = 0;
 
 	// make sure all managers are initialized now
 	this->frameRate  = FrameRate_getInstance();
@@ -268,7 +275,7 @@ void Game_initialize(Game this)
 }
 
 // set game's initial state
-void Game_start(Game this, State state)
+void Game_start(Game this, GameState state)
 {
 	ASSERT(this, "Game::start: null this");
 	ASSERT(state, "Game::start: initial state is NULL");
@@ -279,6 +286,9 @@ void Game_start(Game this, State state)
 	{
 		// start the game's general clock
 		Clock_start(this->clock);
+		
+		// register start time for auto pause check
+		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 
 		// set state
 		Game_setNextState(this, state);
@@ -293,7 +303,7 @@ void Game_start(Game this, State state)
 }
 
 // set game's state
-void Game_changeState(Game this, State state)
+void Game_changeState(Game this, GameState state)
 {
 	ASSERT(this, "Game::changeState: null this");
 
@@ -304,7 +314,7 @@ void Game_changeState(Game this, State state)
 }
 
 // set game's state
-static void Game_setNextState(Game this, State state)
+static void Game_setNextState(Game this, GameState state)
 {
 	ASSERT(this, "Game::setState: null this");
     ASSERT(state, "Game::setState: setting NULL state");
@@ -327,7 +337,7 @@ static void Game_setNextState(Game this, State state)
 #endif		
 	
 			// setup new state
-		    StateMachine_swapState(this->stateMachine, state);
+		    StateMachine_swapState(this->stateMachine, (State)state);
 			break;
 	
 		case kPushState:
@@ -336,7 +346,7 @@ static void Game_setNextState(Game this, State state)
 			this->lastProcessName = "kPushState";
 #endif		
 			// setup new state
-		    StateMachine_pushState(this->stateMachine, state);
+		    StateMachine_pushState(this->stateMachine, (State)state);
 			break;
 	
 		case kPopState:
@@ -361,6 +371,16 @@ static void Game_setNextState(Game this, State state)
 
 	// disable rendering
 	HardwareManager_enableRendering(this->hardwareManager);
+
+	// if automatic pause function is in place
+	if(this->automaticPauseState) 
+	{
+		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock_getTime(this->clock) - this->lastAutoPauseCheckTime);
+		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
+		
+		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, (Object)this, (Object)this, kAutoPause, NULL);
+		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
+	}
 
 	// no next state now
 	this->nextState = NULL;
@@ -500,7 +520,7 @@ static void Game_handleInput(Game this)
 	{
 		if (Game_isInDebugMode(this))
 		{
-			this->nextState = StateMachine_getCurrentState(this->stateMachine);
+			this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -508,13 +528,13 @@ static void Game_handleInput(Game this)
 		{
 			if (Game_isInSpecialMode(this))
 			{
-				this->nextState = StateMachine_getCurrentState(this->stateMachine);
+				this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = (State)DebugState_getInstance();
-			StateMachine_pushState(this->stateMachine, this->nextState);
+			this->nextState = (GameState)DebugState_getInstance();
+			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
 
@@ -529,7 +549,7 @@ static void Game_handleInput(Game this)
 	{
 		if (Game_isInStageEditor(this))
 		{
-			this->nextState = StateMachine_getCurrentState(this->stateMachine);
+			this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -537,13 +557,13 @@ static void Game_handleInput(Game this)
 		{
 			if (Game_isInSpecialMode(this))
 			{
-				this->nextState = StateMachine_getCurrentState(this->stateMachine);
+				this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = (State)StageEditorState_getInstance();
-			StateMachine_pushState(this->stateMachine, this->nextState);
+			this->nextState = (GameState)StageEditorState_getInstance();
+			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
 
@@ -559,7 +579,7 @@ static void Game_handleInput(Game this)
 	{
 		if (Game_isInAnimationEditor(this))
 		{
-			this->nextState = StateMachine_getCurrentState(this->stateMachine);
+			this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -567,13 +587,13 @@ static void Game_handleInput(Game this)
 		{
 			if (Game_isInSpecialMode(this))
 			{
-				this->nextState = StateMachine_getCurrentState(this->stateMachine);
+				this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = (State)AnimationEditorState_getInstance();
-			StateMachine_pushState(this->stateMachine, this->nextState);
+			this->nextState = (GameState)AnimationEditorState_getInstance();
+			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
 
@@ -827,15 +847,16 @@ bool Game_handleMessage(Game this, Telegram telegram)
 	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
 
+	switch(Telegram_getMessage(telegram))
+	{
+		case kAutoPause:
+			
+			Game_autoPause(this);
+			return true;
+			break;
+	}
+	
 	return StateMachine_handleMessage(this->stateMachine, telegram);
-}
-
-// set rest flag
-void Game_setRestFlag(Game this, bool flag)
-{
-	ASSERT(this, "Game::setRestFlag: null this");
-
-	this->restFlag = flag;
 }
 
 // retrieve clock
@@ -932,13 +953,13 @@ bool Game_isEnteringSpecialMode(Game this)
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= 	(State)DebugState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= (GameState)DebugState_getInstance() == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= 	(State)StageEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= (GameState)StageEditorState_getInstance() == this->nextState;
 #endif
 #ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= 	(State)AnimationEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= (GameState)AnimationEditorState_getInstance() == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -951,13 +972,13 @@ bool Game_isExitingSpecialMode(Game this)
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= 	(State)DebugState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= (GameState)DebugState_getInstance() == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= 	(State)StageEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= (GameState)StageEditorState_getInstance() == this->nextState;
 #endif
 #ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= 	(State)AnimationEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= (GameState)AnimationEditorState_getInstance() == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -1008,7 +1029,7 @@ void Game_pause(Game this, GameState pauseState)
 
 	if(pauseState)
 	{
-		this->nextState = (State)pauseState;
+		this->nextState = pauseState;
 		this->nextStateOperation = kPushState;
 	}
 }
@@ -1020,9 +1041,41 @@ void Game_unpause(Game this, GameState pauseState)
 	ASSERT(pauseState, "Game::unpause: null pauseState");
 	ASSERT(pauseState == Game_getCurrentState(this), "Game::unpause: null pauseState sent is not the current one");
 
-	if(pauseState == Game_getCurrentState(this))
+	if(pauseState && Game_getCurrentState(this) == pauseState)
 	{
-		this->nextState = (State)pauseState;
+		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
+		
+		if(Game_getCurrentState(this) == this->automaticPauseState)
+		{
+			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, (Object)this, (Object)this, kAutoPause, NULL);
+		}
+	}
+}
+
+// set auto pause flag
+void Game_setAutomaticPauseState(Game this, GameState automaticPauseState)
+{
+	ASSERT(this, "Game::setAutoPause: null this");
+	this->automaticPauseState = automaticPauseState;
+}
+
+// show auto pause screen
+static void Game_autoPause(Game this)
+{
+	ASSERT(this, "Game::autoPause: null this");
+
+	if(this->automaticPauseState)
+	{
+		// only pause if no more than one state is active
+		if(1 == StateMachine_getStackSize(this->stateMachine))
+		{
+			Game_pause(this, this->automaticPauseState);
+		}
+		else 
+		{
+			// otherwise just wait a minute to check again
+			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, (Object)this, (Object)this, kAutoPause, NULL);
+		}
 	}
 }

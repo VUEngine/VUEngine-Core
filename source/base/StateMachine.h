@@ -66,6 +66,7 @@ bool StateMachine_isInState(StateMachine this, State state);
 void StateMachine_setOwner(StateMachine this, void* owner);
 State StateMachine_getCurrentState(StateMachine this);
 State StateMachine_getPreviousState(StateMachine this);
+int StateMachine_getStackSize(StateMachine this);
 
 
 #endif
