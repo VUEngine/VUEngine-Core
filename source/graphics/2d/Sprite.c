@@ -68,12 +68,20 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	// create the texture
 	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
 
-	ASSERT(this->texture, "Sprite::constructor: texture not allocated");
-
-	// set texture position
-	this->texturePosition.x = Texture_getXOffset(this->texture);
-	this->texturePosition.y = Texture_getYOffset(this->texture);
-
+	if(this->texture)
+	{
+		ASSERT(this->texture, "Sprite::constructor: texture not allocated");
+	
+		// set texture position
+		this->texturePosition.x = Texture_getXOffset(this->texture);
+		this->texturePosition.y = Texture_getYOffset(this->texture);
+	}
+	else
+	{
+		this->texturePosition.x = 0;
+		this->texturePosition.y = 0;
+	}
+	
 	// clear position
 	this->drawSpec.position.x = 0;
 	this->drawSpec.position.y = 0;
@@ -201,17 +209,18 @@ void Sprite_calculateScale(Sprite this, fix19_13 z)
 	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0 ? -1 : 1);
 	this->drawSpec.scale.y = ratio;
 	
-	ASSERT(this->texture, "Sprite::calculateScale: null texture");
-
-	if (WRLD_AFFINE == Sprite_getMode(this))
+	if(this->texture)
 	{
-		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
-	}
-	else
-	{
-		this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
-		this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
+		if (WRLD_AFFINE == Sprite_getMode(this))
+		{
+			this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+			this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+		}
+		else
+		{
+			this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
+			this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
+		}
 	}
 
 	Sprite_invalidateParamTable(this);
@@ -453,9 +462,12 @@ void Sprite_rewrite(Sprite this)
 {
 	ASSERT(this, "Sprite::reload: null this");
 
-	// write it in graphical memory
-	Texture_rewrite(this->texture);
-
+	if(this->texture)
+	{
+		// write it in graphical memory
+		Texture_rewrite(this->texture);
+	}
+	
 	// raise flag to render again
 	Sprite_show(this);
 }
@@ -514,7 +526,7 @@ void Sprite_scale(Sprite this)
 	ASSERT(this, "Sprite::scale: null this");
 
 	// put the map into memory calculating the number of chars for each reference
-	if (this->param)
+	if (this->param && this->texture)
 	{
 		ASSERT(this->texture, "Sprite::scale: null texture");
 		
@@ -533,7 +545,7 @@ void Sprite_rotate(Sprite this, int angle)
 	ASSERT(this, "Sprite::rotate: null this");
 
 	// TODO
-	if (this->param)
+	if (this->param && this->texture)
 	{
 		ASSERT(this->texture, "Sprite::rotate: null texture");
 

@@ -47,6 +47,7 @@
 #define MSprite_SET_VTABLE(ClassName)											\
 		Sprite_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, MSprite, render);								\
+		__VIRTUAL_SET(ClassName, MSprite, setPosition);							\
 
 #define MSprite_ATTRIBUTES														\
 																				\

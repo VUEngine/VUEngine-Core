@@ -107,7 +107,7 @@ typedef struct EntityDefinition
 	void* allocator;
 
 	// the sprite
-	const SpriteDefinition* spritesDefinitions;
+	const SpriteDefinition** spritesDefinitions;
 
 } EntityDefinition;
 

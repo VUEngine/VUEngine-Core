@@ -331,7 +331,7 @@ u8 Texture_getTotalRows(Texture this)
 {
 	ASSERT(this, "Texture::getTotalRows: null this");
 
-	return this->textureDefinition->rows;
+	return this->textureDefinition? this->textureDefinition->rows: 0;
 }
 
 //get texture's bgmap segment

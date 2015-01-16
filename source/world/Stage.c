@@ -559,8 +559,8 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 			};
 			
 			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions? true: false;
-			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols << 3: __SCREEN_WIDTH;
-			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows << 3: __SCREEN_HEIGHT;
+			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 3: __SCREEN_WIDTH;
+			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 3: __SCREEN_HEIGHT;
 
 			// if entity in load range
 			if (!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position3D, width, height))
@@ -614,8 +614,8 @@ static void Stage_loadInRangeEntities(Stage this)
 			};
 
 			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions? true: false;
-			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->cols << 3: __SCREEN_WIDTH;
-			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0].textureDefinition->rows << 3: __SCREEN_HEIGHT;
+			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 3: __SCREEN_WIDTH;
+			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 3: __SCREEN_HEIGHT;
 
 			// if entity in load range
 			if (Stage_inLoadRange(this, &position3D, width, height))

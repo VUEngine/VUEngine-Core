@@ -51,6 +51,7 @@ __CLASS_DEFINITION(MSprite);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+static void MSprinte_releaseTextures(MSprite this);
 static void MSprite_loadTextures(MSprite this);
 static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefinition);
 
@@ -68,9 +69,9 @@ void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinitio
 	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(&mSpriteDefinition->spriteDefinition));
 	
 	this->mSpriteDefinition = mSpriteDefinition;
-	//this->textures = NULL;
-	
-	//MSprite_loadTextures(this);
+	this->texture = NULL;
+
+	MSprite_loadTextures(this);
 }
 
 // class's destructor
@@ -78,6 +79,15 @@ void MSprite_destructor(MSprite this)
 {
 	ASSERT(this, "MSprite::destructor: null this");
 
+	MSprinte_releaseTextures(this);
+
+	// destroy the super object
+	__DESTROY_BASE(Sprite);
+}
+
+// release loaded textures
+static void MSprinte_releaseTextures(MSprite this)
+{
 	if(this->textures)
 	{
 		VirtualNode node = VirtualList_begin(this->textures);
@@ -91,9 +101,6 @@ void MSprite_destructor(MSprite this)
 		__DELETE(this->textures);
 		this->textures = NULL;
 	}
-
-	// destroy the super object
-	__DESTROY_BASE(Sprite);
 }
 
 // load textures
@@ -103,10 +110,8 @@ static void MSprite_loadTextures(MSprite this)
 
 	if (this->mSpriteDefinition)
 	{
-		if(NULL == this->textures)
-		{
-			this->textures = __NEW(VirtualList);
-		}
+		MSprinte_releaseTextures(this);
+		this->textures = __NEW(VirtualList);
 		
 		int i = 0;
 		
@@ -134,6 +139,15 @@ static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefiniti
 		{
 			VirtualList_pushBack(this->textures, texture);
 		}
+		/*
+		Printing_hex(Printing_getInstance(), &TEST_BG_1_TX, 1, 6, NULL);
+		Printing_hex(Printing_getInstance(), textureDefinition, 10, 6, NULL);
+		Printing_int(Printing_getInstance(), TEST_BG_1_TX.cols, 1, 7, NULL);
+		Printing_int(Printing_getInstance(), textureDefinition->cols, 10, 7, NULL);
+		Printing_int(Printing_getInstance(), TEST_BG_1_TX.rows, 1, 7, NULL);
+		Printing_int(Printing_getInstance(), textureDefinition->rows, 10, 7, NULL);
+		NM_ASSERT(false, "break");
+*/
 	}
 }
 
@@ -193,6 +207,12 @@ void MSprite_render(MSprite this)
 		DrawSpec drawSpec = this->drawSpec;
 		WORLD* worldPointer = &WA[this->worldLayer];
 		
+		//create an independant of software variable to point XPSTTS register
+		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+
+		//wait for screen to idle
+		while (*xpstts & XPBSYR);
+
 		// if head is modified, render everything
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
@@ -202,7 +222,7 @@ void MSprite_render(MSprite this)
 			//wait for screen to idle
 			while (*xpstts & XPBSYR);
 
-			worldPointer->head = this->head | WRLD_2x1 | this->mSpriteDefinition->scValue | Texture_getBgmapSegment(this->texture);
+			worldPointer->head = this->head | WRLD_2x1 | this->mSpriteDefinition->scValue | Texture_getBgmapSegment((Texture)VirtualList_front(this->textures));
 			worldPointer->mx = x++;
 			worldPointer->mp = 0;
 			worldPointer->my = this->texturePosition.y << 3;
@@ -210,30 +230,13 @@ void MSprite_render(MSprite this)
 			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
 			worldPointer->gy = 0;
 
-			//set the world size according to the zoom
-			if (WRLD_AFFINE & this->head)
-			{
-
-				//				worldPointer->param = VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param);
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-			}
-			else
-			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-			}
+			worldPointer->w = __SCREEN_WIDTH;
+			worldPointer->h = __SCREEN_HEIGHT;
 
 			this->renderFlag = false;
 
 			return;
 		}
-
-		//create an independant of software variable to point XPSTTS register
-		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-		//wait for screen to idle
-		while (*xpstts & XPBSYR);
 
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G )
@@ -248,18 +251,8 @@ void MSprite_render(MSprite this)
 
 		if (this->renderFlag & __UPDATE_SIZE)
 		{
-			//set the world size according to the zoom
-			if (WRLD_AFFINE & this->head)
-			{
-				//				worldPointer->param = VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param);
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-			}
-			else
-			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-			}
+			worldPointer->w = __SCREEN_WIDTH;
+			worldPointer->h = __SCREEN_HEIGHT;
 		}
 
 		// make sure to not render again

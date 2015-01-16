@@ -45,7 +45,7 @@ __CLASS_DEFINITION(Entity);
 // global
 const extern VBVec3D* _screenDisplacement;
 
-static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions);
+static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
 static void Entity_releaseSprites(Entity this);
 
 //---------------------------------------------------------------------------------------------------------
@@ -237,7 +237,7 @@ void Entity_setExtraInfo(Entity this, void* extraInfo)
 }
 
 // add sprite
-static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions)
+static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[])
 {
 	ASSERT(this, "Entity::addSprites: null this");
 
@@ -246,9 +246,9 @@ static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefini
 		int i = 0;
 
 		//go through n sprites in entity's definition
-		for (; spritesDefinitions[i].allocator; i++)
+		for (; spritesDefinitions[i]; i++)
 	    {
-			Entity_addSprite(this, &spritesDefinitions[i]);
+			Entity_addSprite(this, spritesDefinitions[i]);
 		}
 	}
 }
@@ -317,7 +317,7 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 			if (updateSpritePosition)
 		    {
 				//update sprite's 2D position
-				Sprite_setPosition(sprite, &this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, __ARGUMENTS(&this->transform.globalPosition));
 			}
 		}
 	}

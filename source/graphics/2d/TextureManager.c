@@ -303,7 +303,7 @@ void TextureManager_free(TextureManager this, Texture texture)
 	ASSERT(this, "TextureManager::free: null this");
 
 	// if no one is using the texture anymore
-	if (!(--this->textureUsageCount[Texture_getId(texture)]))
+	if (texture && !(--this->textureUsageCount[Texture_getId(texture)]))
 	{
 		int allocationType = CharGroup_getAllocationType(Texture_getCharGroup(texture));
 
@@ -442,7 +442,7 @@ Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefini
 {
 	ASSERT(this, "TextureManager::get: null this");
 
-	return TextureManager_loadTexture(this, textureDefinition, false);
+	return textureDefinition? TextureManager_loadTexture(this, textureDefinition, false): NULL;
 }
 
 // retrieve x offset

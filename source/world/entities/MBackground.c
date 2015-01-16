@@ -70,8 +70,8 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(mBackgroundDefinition, id));
-
+	__CONSTRUCT_BASE(Entity, __ARGUMENTS((EntityDefinition*)mBackgroundDefinition, id));
+	
 	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
 }
 
@@ -84,7 +84,6 @@ void MBackground_destructor(MBackground this)
 	__DESTROY_BASE(Entity);
 }
 
-
 // initial transform
 void MBackground_initialTransform(MBackground this, Transformation* environmentTransform)
 {
@@ -93,7 +92,7 @@ void MBackground_initialTransform(MBackground this, Transformation* environmentT
 	// call base class's transform method
 	Entity_transform((Entity)this, environmentTransform);
 
-	MBackground_updateScrolling(this);
+	//MBackground_updateScrolling(this);
 }
 
 // transform class
@@ -112,7 +111,7 @@ void MBackground_transform(MBackground this, Transformation* environmentTransfor
 
 	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
 	{
-		MBackground_updateScrolling(this);
+		//MBackground_updateScrolling(this);
 	}
 }
 
