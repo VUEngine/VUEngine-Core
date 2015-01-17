@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <CharGroup.h>
+#include <CharSet.h>
 #include <Telegram.h>
 
 
@@ -48,7 +48,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* char group to use int this texture */									\
-	CharGroup charGroup;														\
+	CharSet charSet;														\
 																				\
 	/* pointer to ROM definition */												\
 	TextureROMDef* textureDefinition;											\
@@ -74,7 +74,7 @@ __CLASS(Texture);
 typedef struct TextureDefinition
 {
 	// pointer to the char definition
-	CharGroupDefinition charGroupDefinition;
+	CharSetDefinition charSetDefinition;
 
 	// pointer to the bgtexture definition in ROM
 	BYTE* bgmapDefinition;
@@ -110,7 +110,7 @@ u8 Texture_getYOffset(Texture this);
 u8 Texture_getTotalCols(Texture this);
 u8 Texture_getTotalRows(Texture this);
 u8 Texture_getBgmapSegment(Texture this);
-CharGroup Texture_getCharGroup(Texture this);
+CharSet Texture_getCharSet(Texture this);
 BYTE* Texture_getBgmapDef(Texture this);
 void Texture_setPallet(Texture this, u8 palette);
 u8 Texture_getPallet(Texture this);
@@ -119,7 +119,7 @@ u8 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
 bool Texture_handleMessage(Texture this, Telegram telegram);
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
-void Texture_putPixel(Texture this, Point* texturePixel, Point* charGroupPixel, BYTE newPixelColor);
+void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
 
 #endif

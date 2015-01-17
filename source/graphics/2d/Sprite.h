@@ -161,7 +161,7 @@ void Sprite_render(Sprite this);
 
 // direct draw
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);
-void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charGroupPixel, BYTE newPixelColor);
+void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
 // Affine FX
 void Sprite_scale(Sprite this);

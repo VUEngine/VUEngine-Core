@@ -107,7 +107,7 @@
 #define __BLOCK_100B 		100		// Used by images
 #define __BLOCK_80B 		80		// Used mainly by Sprites
 #define __BLOCK_48B 		48		// Used mainly by Telegrams
-#define __BLOCK_32B 		32		// Used mainly by CharGroups
+#define __BLOCK_32B 		32		// Used mainly by CharSets
 #define __BLOCK_28B 		28		// Virtual nodes are 24 bytes long so a 32b block is too much
 #define __BLOCK_16B 		16
 #define __POOL_512B_SIZE 	(__BLOCK_512B * 0)
@@ -139,10 +139,10 @@
 
 #define __CHAR_SEGMENTS					4
 
-// number of chargroups per char segment
+// number of charsets per char segment
 #define __CHAR_GRP_PER_SEG				32
 
-// number of chargroups per char segment
+// number of charsets per char segment
 #define __CHAR_SEGMENT_SIZE 			16
 
 // number of chars per char segment

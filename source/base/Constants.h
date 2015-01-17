@@ -57,7 +57,7 @@ enum MessagesTypes
 	kAutoPause,
 
 	// graphic system's messages
-	kCharGroupRewritten,
+	kCharSetRewritten,
 
 	// physics messages
 	kNoCollision,

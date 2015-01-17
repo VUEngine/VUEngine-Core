@@ -49,7 +49,7 @@
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <AnimatedSprite.h>
-#include <CharGroup.h>
+#include <CharSet.h>
 #include <Sprite.h>
 #include <Texture.h>
 #include <Body.h>

@@ -98,7 +98,7 @@ int AnimatedSprite_getType(AnimatedSprite this)
 {
 	ASSERT(this, "AnimatedSprite::getType: null this");
 
-	return CharGroup_getAllocationType(Texture_getCharGroup(this->texture));
+	return CharSet_getAllocationType(Texture_getCharSet(this->texture));
 }
 
 // retrieve frame's map
@@ -115,19 +115,19 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this)
 	ASSERT(this, "AnimatedSprite::writeAnimation: null this");
 
 	// write according to the allocation type
-	switch (CharGroup_getAllocationType(Texture_getCharGroup(this->texture)))
+	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
 		case __ANIMATED:
 
 			{
-				CharGroup charGroup = Texture_getCharGroup(this->texture);
+				CharSet charSet = Texture_getCharSet(this->texture);
 
-				// move chargroup's charset's definition to the next frame chars
-				CharGroup_setCharDefinitionDisplacement(charGroup, Texture_getNumberOfChars(this->texture) *
+				// move charset's charset's definition to the next frame chars
+				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
 						(this->animationFunction->frames[this->actualFrame] << 4));
 
 				//write charset
-				CharGroup_write(charGroup);
+				CharSet_write(charSet);
 			}
 
 			break;

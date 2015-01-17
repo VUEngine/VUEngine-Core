@@ -100,7 +100,7 @@ static void Stage_constructor(Stage this)
 	this->ui = NULL;
 	this->stageDefinition = NULL;
 
-	this->flushCharGroups = true;
+	this->flushCharSets = true;
 	this->focusEntity = NULL;
 	
 	this->nextEntityId = 0;
@@ -372,7 +372,7 @@ static void Stage_loadTextures(Stage this)
 
 	for (; this->stageDefinition->textures[i]; i++)
 	{
-		TextureManager_loadTexture(TextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharGroups);
+		TextureManager_loadTexture(TextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharSets);
 	}
 	
 	if(0 < i)
@@ -751,23 +751,23 @@ void Stage_streamAll(Stage this)
 // if set to false, the char set memory is flushed when  a char defintion is no longer used
 // only useful to false when preloading textures
 // otherwise it doesn't have any effect add flushing is the default behvior
-void Stage_setFlushCharGroups(Stage this, int flushCharGroups)
+void Stage_setFlushCharSets(Stage this, int flushCharSets)
 {
-	ASSERT(this, "Stage::setFlushCharGroups: null this");
+	ASSERT(this, "Stage::setFlushCharSets: null this");
 
-	this->flushCharGroups = flushCharGroups;
+	this->flushCharSets = flushCharSets;
 
 	/*
-	if (!flushCharGroups)
+	if (!flushCharSets)
 	{
 		if (this->stageDefinition->textures[0])
 		{
-			this->flushCharGroups = flushCharGroups;
+			this->flushCharSets = flushCharSets;
 		}
 	}
 	else
 	{
-		this->flushCharGroups = flushCharGroups;
+		this->flushCharSets = flushCharSets;
 	}
 	*/
 }
