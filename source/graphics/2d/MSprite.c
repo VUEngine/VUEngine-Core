@@ -191,22 +191,21 @@ void MSprite_setPosition(MSprite this, const VBVec3D* const position)
 
 		// calculate sprite's parallax
 		Sprite_calculateParallax((Sprite)this, this->drawSpec.position.z);
-
-		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
 
-	this->renderFlag |= __UPDATE_G | __UPDATE_M;
-	
+	this->renderFlag |= __UPDATE_M;
 	Point axisCapped = MSprite_capPosition(this);
 	
 	if(axisCapped.x && !this->mSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = ITOFIX19_13(-axisCapped.x);
+		this->renderFlag |= __UPDATE_G;
 	}
 	
 	if(axisCapped.y && !this->mSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = ITOFIX19_13(-axisCapped.y);
+		this->renderFlag |= __UPDATE_G;
 	}
 
 	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? Texture_getYOffset(this->texture) << 3: 0;

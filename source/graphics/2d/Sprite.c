@@ -258,9 +258,6 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position)
 	if (previousZPosition != this->drawSpec.position.z)
 	{
 		this->drawSpec.position.z = position->z;
-
-		// calculate sprite's parallax
-		Sprite_calculateParallax(this, this->drawSpec.position.z);
 	}
 
 	this->renderFlag |= __UPDATE_G;
@@ -539,12 +536,11 @@ void Sprite_noAFX(Sprite this, int direction)
 void Sprite_scale(Sprite this)
 {
 	ASSERT(this, "Sprite::scale: null this");
+	ASSERT(this->texture, "Sprite::scale: null texture");
 
 	// put the map into memory calculating the number of chars for each reference
-	if (this->param && this->texture)
+	if (this->param)
 	{
-		ASSERT(this->texture, "Sprite::scale: null texture");
-		
 		int cols = (int)Texture_getCols(this->texture) << 2;
 		int rows = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
 
@@ -558,12 +554,11 @@ void Sprite_scale(Sprite this)
 void Sprite_rotate(Sprite this, int angle)
 {
 	ASSERT(this, "Sprite::rotate: null this");
+	ASSERT(this->texture, "Sprite::rotate: null texture");
 
 	// TODO
-	if (this->param && this->texture)
+	if (this->param)
 	{
-		ASSERT(this->texture, "Sprite::rotate: null texture");
-
 		int cols = Texture_getCols(this->texture) << 2;
 		int rows = Texture_getRows(this->texture) << 2;
 

@@ -84,11 +84,3 @@ int MBackground_isVisible(MBackground this, int pad)
 
 	return true;
 }
-
-// check if must update sprite's position
-int MBackground_updateSpritePosition(MBackground this)
-{
-	ASSERT(this, "MBackground::updateSpritePosition: null this");
-
-	return false;
-}
