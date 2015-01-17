@@ -83,7 +83,7 @@ void GameState_resume(GameState this, void* owner);
 bool GameState_handleMessage(GameState this, void* owner, Telegram telegram);
 void GameState_transform(GameState this);
 int GameState_propagateMessage(GameState this, int message);
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups);
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharSets);
 void GameState_setCanStream(GameState this, int canStream);
 bool GameState_canStream(GameState this);
 Stage GameState_getStage(GameState this);

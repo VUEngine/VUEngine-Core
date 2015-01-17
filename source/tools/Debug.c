@@ -51,7 +51,7 @@
 #include <Telegram.h>
 #include <VirtualList.h>
 #include <AnimatedSprite.h>
-#include <CharGroup.h>
+#include <CharSet.h>
 #include <Sprite.h>
 #include <Texture.h>
 #include <Body.h>
@@ -447,7 +447,7 @@ static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, in
 			{&VirtualList_getObjectSize, "VirtualList"},
 			{&VirtualNode_getObjectSize, "VirtualNode"},
 			{&AnimatedSprite_getObjectSize, "AnimatedSprite"},
-			{&CharGroup_getObjectSize, "CharGroup"},
+			{&CharSet_getObjectSize, "CharSet"},
 			{&Sprite_getObjectSize, "Sprite"},
 			{&Texture_getObjectSize, "Texture"},
 

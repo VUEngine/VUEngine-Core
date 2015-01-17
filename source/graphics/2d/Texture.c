@@ -65,7 +65,7 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 	this->textureDefinition = textureDefinition;
 
 	// if the char definition is NULL, it must be a text
-	this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition, (Object)this));
+	this->charSet = __NEW(CharSet, __ARGUMENTS((CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this));
 
 	// set the palette
 	this->palette = textureDefinition->palette;
@@ -91,7 +91,7 @@ static void Texture_writeAnimated(Texture this)
 	int bgmapSegment = Texture_getBgmapSegment(this);
 	int palette = Texture_getPallet(this) << 14;
 
-	int charLocation = (CharGroup_getCharSet(this->charGroup) << 9) + CharGroup_getOffset(this->charGroup);
+	int charLocation = (CharSet_getCharSet(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
 	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
@@ -121,7 +121,7 @@ static void Texture_writeNoAnimated(Texture this)
 	int bgmapSegment = Texture_getBgmapSegment(this);
 	int palette = Texture_getPallet(this) << 14;
 
-	int charLocation = (CharGroup_getCharSet(this->charGroup) << 9) + CharGroup_getOffset(this->charGroup);
+	int charLocation = (CharSet_getCharSet(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
 	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
@@ -153,8 +153,8 @@ static void Texture_writeAnimatedShared(Texture this)
 
 	// determine the number of frames the map had
 	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
-	int charLocation = (CharGroup_getCharSet(this->charGroup) << 9) + CharGroup_getOffset(this->charGroup);
-	int frames = CharGroup_getNumberOfChars(this->charGroup) / area;
+	int charLocation = (CharSet_getCharSet(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int frames = CharSet_getNumberOfChars(this->charSet) / area;
 
 	int i = this->textureDefinition->rows;
 
@@ -189,12 +189,12 @@ void Texture_freeCharMemory(Texture this)
 {
 	ASSERT(this, "Texture::freeCharMemory: null this");
 
-	if (this->charGroup)
+	if (this->charSet)
 	{
-		//destroy the chargroup
-		__DELETE(this->charGroup);
+		//destroy the charset
+		__DELETE(this->charSet);
 
-		this->charGroup = NULL;
+		this->charSet = NULL;
 	}
 }
 
@@ -203,17 +203,17 @@ void Texture_write(Texture this)
 {
 	ASSERT(this, "Texture::write: null this");
 
-	if (!this->charGroup)
+	if (!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
-		this->charGroup = __NEW(CharGroup, __ARGUMENTS((CharGroupDefinition*)&this->textureDefinition->charGroupDefinition, (Object)this));
+		this->charSet = __NEW(CharSet, __ARGUMENTS((CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this));
 	}
 
 	//write char group
-	CharGroup_write(this->charGroup);
+	CharSet_write(this->charSet);
 
 	//determine the allocation type
-	switch (CharGroup_getAllocationType(this->charGroup))
+	switch (CharSet_getAllocationType(this->charSet))
 	{
 		case __ANIMATED:
 
@@ -247,7 +247,7 @@ void Texture_rewrite(Texture this)
 {
 	ASSERT(this, "Texture::rewrite: null this");
 
-	CharGroup_rewrite(this->charGroup);
+	CharSet_rewrite(this->charSet);
 	
 	Texture_write(this);
 }
@@ -265,8 +265,8 @@ void Texture_writeHBiasMode(Texture this)
 	{
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
-		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharGroup_getCharSet(&this->charGroup)<<9)+CharGroup_getOffset(&this->charGroup)));
-		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+64* const this->yOffset+64*i)<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharGroup_getCharSet(&this->charGroup)<<9)+CharGroup_getOffset(&this->charGroup)));
+		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet_getCharSet(&this->charSet)<<9)+CharSet_getOffset(&this->charSet)));
+		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+64* const this->yOffset+64*i)<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet_getCharSet(&this->charSet)<<9)+CharSet_getOffset(&this->charSet)));
 	}
 	*/
 }
@@ -275,9 +275,9 @@ void Texture_writeHBiasMode(Texture this)
 int Texture_getNumberOfChars(Texture this)
 {
 	ASSERT(this, "Texture::getNumberOfChars: null this");
-	ASSERT(this->charGroup, "Texture::getNumberOfChars: null chargroup");
+	ASSERT(this->charSet, "Texture::getNumberOfChars: null charset");
 
-	return CharGroup_getNumberOfChars(this->charGroup);
+	return CharSet_getNumberOfChars(this->charSet);
 }
 
 // get texture's x offset within bgmap mem
@@ -302,7 +302,7 @@ u8 Texture_getTotalCols(Texture this)
 	ASSERT(this, "Texture::getTotalCols: null this");
 
 	// determine the allocation type
-	switch (CharGroup_getAllocationType(this->charGroup))
+	switch (CharSet_getAllocationType(this->charSet))
 	{
 		case __ANIMATED:
 
@@ -313,7 +313,7 @@ u8 Texture_getTotalCols(Texture this)
 		case __ANIMATED_SHARED:
 
 			// return the total number of chars
-			return CharGroup_getNumberOfChars(this->charGroup) / this->textureDefinition->rows;
+			return CharSet_getNumberOfChars(this->charSet) / this->textureDefinition->rows;
 			break;
 
 		case __NO_ANIMATED:
@@ -342,12 +342,12 @@ u8 Texture_getBgmapSegment(Texture this)
 	return TextureManager_getBgmapSegment(TextureManager_getInstance(), this->id);
 }
 
-//get texture's chargroup
-CharGroup Texture_getCharGroup(Texture this)
+//get texture's charset
+CharSet Texture_getCharSet(Texture this)
 {
-	ASSERT(this, "Texture::getCharGroup: null this");
+	ASSERT(this, "Texture::getCharSet: null this");
 
-	return this->charGroup;
+	return this->charSet;
 }
 
 //get texture's bgmap definition
@@ -405,7 +405,7 @@ bool Texture_handleMessage(Texture this, Telegram telegram)
 
 	switch (Telegram_getMessage(telegram))
 	{
-		case kCharGroupRewritten:
+		case kCharSetRewritten:
 
 			Texture_write(this);
 			return true;
@@ -424,13 +424,13 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 	{
 		u16 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
 		u16 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
-		CharGroup_putChar(this->charGroup, charToReplace, newChar);
+		CharSet_putChar(this->charSet, charToReplace, newChar);
 	}
 }
 
 
 // write directly to texture
-void Texture_putPixel(Texture this, Point* texturePixel, Point* charGroupPixel, BYTE newPixelColor)
+void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "Texture::putPixel: null this");
 
@@ -438,7 +438,7 @@ void Texture_putPixel(Texture this, Point* texturePixel, Point* charGroupPixel, 
 	{
 		u16 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
 		u16 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
-		CharGroup_putPixel(this->charGroup, charToReplace, charGroupPixel, newPixelColor);
+		CharSet_putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
 

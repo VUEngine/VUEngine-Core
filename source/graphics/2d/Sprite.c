@@ -509,13 +509,13 @@ void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
 }
 
 // write directly to texture
-void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charGroupPixel, BYTE newPixelColor)
+void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "Sprite::putPixel: null this");
 
 	if(this->texture)
 	{
-		Texture_putPixel(this->texture, texturePixel, charGroupPixel, newPixelColor);
+		Texture_putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
 	}
 }
 

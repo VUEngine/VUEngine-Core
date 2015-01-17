@@ -77,7 +77,7 @@
 	UI ui;																		\
 																				\
 	/* flag to know if the stage must flush unused char groups */				\
-	int flushCharGroups;														\
+	int flushCharSets;														\
 																				\
 	/* focus entity: needed for streaming */									\
 	Entity focusEntity;															\
@@ -141,7 +141,7 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent);
 void Stage_update(Stage this);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
-void Stage_setFlushCharGroups(Stage this, int flushCharGroups);
+void Stage_setFlushCharSets(Stage this, int flushCharSets);
 UI Stage_getUI(Stage this);
 void Stage_suspend(Stage this);
 void Stage_resume(Stage this);

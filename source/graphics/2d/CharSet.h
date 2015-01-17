@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef CHARGROUP_H_
-#define CHARGROUP_H_
+#ifndef CHARSET_H_
+#define CHARSET_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -33,13 +33,13 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// definition of a chargroup of an animated character or background
+// definition of a charset of an animated character or background
 #define __ANIMATED			0x01
 
-// definition of a chargroup of an unanimated character or background
+// definition of a charset of an unanimated character or background
 #define __NO_ANIMATED		0x02
 
-// definition of a chargroup of an animated character of which all frames are written to memory and shared
+// definition of a charset of an animated character of which all frames are written to memory and shared
 #define __ANIMATED_SHARED	0x03
 
 // future expansion
@@ -54,13 +54,13 @@
  * is not defined here and so is not accessible to the outside world
  */
 
-#define CharGroup_METHODS														\
+#define CharSet_METHODS														\
 		Object_METHODS															\
 
-#define CharGroup_SET_VTABLE(ClassName)											\
+#define CharSet_SET_VTABLE(ClassName)											\
 		Object_SET_VTABLE(ClassName)											\
 
-#define CharGroup_ATTRIBUTES													\
+#define CharSet_ATTRIBUTES													\
 																				\
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
@@ -86,14 +86,14 @@
 	/* owner */																	\
 	Object owner;																\
 
-__CLASS(CharGroup);
+__CLASS(CharSet);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct CharGroupDefinition
+typedef struct CharSetDefinition
 {
 	// number of chars, depending on allocationType:
 	// __ANIMATED: number of chars of a single animation frame
@@ -107,33 +107,33 @@ typedef struct CharGroupDefinition
 	// pointer to the char definition in ROM
 	BYTE* charDefinition;
 
-} CharGroupDefinition;
+} CharSetDefinition;
 
-typedef const CharGroupDefinition CharGroupROMDef;
+typedef const CharSetDefinition CharSetROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition, Object owner));
+__CLASS_NEW_DECLARE(CharSet, __PARAMETERS(CharSetDefinition* charSetDefinition, Object owner));
 
-void CharGroup_destructor(CharGroup this);
-int CharGroup_getAllocationType(CharGroup this);
-u16 CharGroup_getOffset(CharGroup this);
-void CharGroup_setOffset(CharGroup this, u16 offset);
-BYTE* CharGroup_getCharDefinition(CharGroup this);
-void CharGroup_setCharDefinition(CharGroup this, void *charDefinition);
-void CharGroup_setNumberOfChars(CharGroup this, int numberOfChars);
-int CharGroup_getNumberOfChars(CharGroup this);
-int CharGroup_getCharSet(CharGroup this);
-void CharGroup_setCharSet(CharGroup this, int charSet);
-void CharGroup_copy(CharGroup this, CharGroup source);
-void CharGroup_write(CharGroup this);
-void CharGroup_rewrite(CharGroup this);
-void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement);
-void CharGroup_putChar(CharGroup this, u16 charToReplace, BYTE* newChar);
-void CharGroup_putPixel(CharGroup this, u16 charToReplace, Point* charGroupPixel, BYTE newPixelColor);
+void CharSet_destructor(CharSet this);
+int CharSet_getAllocationType(CharSet this);
+u16 CharSet_getOffset(CharSet this);
+void CharSet_setOffset(CharSet this, u16 offset);
+BYTE* CharSet_getCharDefinition(CharSet this);
+void CharSet_setCharDefinition(CharSet this, void *charDefinition);
+void CharSet_setNumberOfChars(CharSet this, int numberOfChars);
+int CharSet_getNumberOfChars(CharSet this);
+int CharSet_getCharSet(CharSet this);
+void CharSet_setCharSet(CharSet this, int charSet);
+void CharSet_copy(CharSet this, CharSet source);
+void CharSet_write(CharSet this);
+void CharSet_rewrite(CharSet this);
+void CharSet_setCharDefinitionDisplacement(CharSet this, u16 charDefinitionDisplacement);
+void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar);
+void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE newPixelColor);
 
 
 #endif

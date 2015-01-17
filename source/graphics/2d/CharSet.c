@@ -23,7 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <CharGroup.h>
+#include <CharSet.h>
 #include <CharSetManager.h>
 #include <MessageDispatcher.h>
 
@@ -44,7 +44,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(CharGroup);
+__CLASS_DEFINITION(CharSet);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ __CLASS_DEFINITION(CharGroup);
 //---------------------------------------------------------------------------------------------------------
 
 //class's constructor
-static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroupDefinition, Object owner);
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,36 +60,36 @@ static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroup
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(CharGroup, __PARAMETERS(CharGroupDefinition* charGroupDefinition, Object owner))
-__CLASS_NEW_END(CharGroup, __ARGUMENTS(charGroupDefinition, owner))
+__CLASS_NEW_DEFINITION(CharSet, __PARAMETERS(CharSetDefinition* charSetDefinition, Object owner))
+__CLASS_NEW_END(CharSet, __ARGUMENTS(charSetDefinition, owner))
 
 // class's constructor
-static void CharGroup_constructor(CharGroup this, CharGroupDefinition* charGroupDefinition, Object owner)
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, Object owner)
 {
 	__CONSTRUCT_BASE(Object);
 
 	// save definition
-	this->charDefinition = charGroupDefinition->charDefinition;
+	this->charDefinition = charSetDefinition->charDefinition;
 	this->owner = owner;
 
 	// set number of chars
-	CharGroup_setNumberOfChars(this, charGroupDefinition->numberOfChars);
+	CharSet_setNumberOfChars(this, charSetDefinition->numberOfChars);
 
 	// set the offset
 	this->offset = __CH_NOT_ALLOCATED;
 
 	// set the allocation type
-	this->allocationType = charGroupDefinition->allocationType;
+	this->allocationType = charSetDefinition->allocationType;
 
 	this->charDefinitionDisplacement = 0;
 }
 
 // class's destructor
-void CharGroup_destructor(CharGroup this)
+void CharSet_destructor(CharSet this)
 {
-	ASSERT(this, "CharGroup::destructor: null this");
+	ASSERT(this, "CharSet::destructor: null this");
 
-	// first check if the chargroup's definition is valid
+	// first check if the charset's definition is valid
 	if (this->charDefinition)
 	{
 		//free char graphic memory
@@ -100,83 +100,83 @@ void CharGroup_destructor(CharGroup this)
 	__DESTROY_BASE(Object);
 }
 
-// retrieve chargroup's allocation type
-int CharGroup_getAllocationType(CharGroup this)
+// retrieve charset's allocation type
+int CharSet_getAllocationType(CharSet this)
 {
-	ASSERT(this, "CharGroup::getAllocationType: null this");
+	ASSERT(this, "CharSet::getAllocationType: null this");
 
 	return this->allocationType;
 }
 
-// retrieve chargroup's offset within char segment
-u16 CharGroup_getOffset(CharGroup this)
+// retrieve charset's offset within char segment
+u16 CharSet_getOffset(CharSet this)
 {
-	ASSERT(this, "CharGroup::getOffset: null this");
+	ASSERT(this, "CharSet::getOffset: null this");
 
 	return this->offset;
 }
 
-// set chargroup's offset within the char segment
-void CharGroup_setOffset(CharGroup this, u16 offset)
+// set charset's offset within the char segment
+void CharSet_setOffset(CharSet this, u16 offset)
 {
-	ASSERT(this, "CharGroup::setOffset: null this");
-	ASSERT(0 <= offset, "CharGroup::setOffset: offset less than 0");
+	ASSERT(this, "CharSet::setOffset: null this");
+	ASSERT(0 <= offset, "CharSet::setOffset: offset less than 0");
 
 	this->offset = offset;
 }
 
-// get chargroup's char definition
-BYTE* CharGroup_getCharDefinition(CharGroup this)
+// get charset's char definition
+BYTE* CharSet_getCharDefinition(CharSet this)
 {
-	ASSERT(this, "CharGroup::getCharDefinition: null this");
+	ASSERT(this, "CharSet::getCharDefinition: null this");
 
 	return this->charDefinition;
 }
 
-// set chargroup's char definition
-void CharGroup_setCharDefinition(CharGroup this, void *charDefinition)
+// set charset's char definition
+void CharSet_setCharDefinition(CharSet this, void *charDefinition)
 {
-	ASSERT(this, "CharGroup::setCharDefinition: null this");
+	ASSERT(this, "CharSet::setCharDefinition: null this");
 
 	this->charDefinition = charDefinition;
 }
 
-// set chargroup's number of chars
-void CharGroup_setNumberOfChars(CharGroup this, int numberOfChars)
+// set charset's number of chars
+void CharSet_setNumberOfChars(CharSet this, int numberOfChars)
 {
-	ASSERT(this, "CharGroup::setNumberOfChars: null this");
+	ASSERT(this, "CharSet::setNumberOfChars: null this");
 
 	this->numberOfChars = numberOfChars;
 }
 
 // retrieve chargrop's number of chars
-int CharGroup_getNumberOfChars(CharGroup this)
+int CharSet_getNumberOfChars(CharSet this)
 {
-	ASSERT(this, "CharGroup::getNumberOfChars: null this");
+	ASSERT(this, "CharSet::getNumberOfChars: null this");
 
 	return this->numberOfChars;
 }
 
-// get chargroup's segment
-int CharGroup_getCharSet(CharGroup this)
+// get charset's segment
+int CharSet_getCharSet(CharSet this)
 {
-	ASSERT(this, "CharGroup::getCharSet: null this");
+	ASSERT(this, "CharSet::getCharSet: null this");
 
 	return this->charset;
 }
 
-// set chargroup's char segment
-void CharGroup_setCharSet(CharGroup this, int charSet)
+// set charset's char segment
+void CharSet_setCharSet(CharSet this, int charSet)
 {
-	ASSERT(this, "CharGroup::setCharSet: null this");
+	ASSERT(this, "CharSet::setCharSet: null this");
 
 	this->charset = charSet;
 }
 
-//copy a chargroup
-void CharGroup_copy(CharGroup this,CharGroup source)
+//copy a charset
+void CharSet_copy(CharSet this,CharSet source)
 {
-	ASSERT(this, "CharGroup::copy: null this");
+	ASSERT(this, "CharSet::copy: null this");
 
 	// copy the definition
 	this->charDefinition = source->charDefinition;
@@ -189,9 +189,9 @@ void CharGroup_copy(CharGroup this,CharGroup source)
 }
 
 // write char on memory
-void CharGroup_write(CharGroup this)
+void CharSet_write(CharSet this)
 {
-	ASSERT(this, "CharGroup::write: null this");
+	ASSERT(this, "CharSet::write: null this");
 
 	// determine allocation type
 	switch (this->allocationType)
@@ -232,36 +232,36 @@ void CharGroup_write(CharGroup this)
 
 		default:
 
-			ASSERT(false, "CharGroup::write: with no allocation type");
+			ASSERT(false, "CharSet::write: with no allocation type");
 	}
 }
 
 // rewrite char on memory
-void CharGroup_rewrite(CharGroup this)
+void CharSet_rewrite(CharSet this)
 {
-	ASSERT(this, "CharGroup::rewrite: null this");
+	ASSERT(this, "CharSet::rewrite: null this");
 
 	VPUManager_waitForFrame(VPUManager_getInstance());
 
 	// write again
-	CharGroup_write(this);
+	CharSet_write(this);
 
 	// inform my owner
-	MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharGroupRewritten, NULL);
+	MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharSetRewritten, NULL);
 }
 
 // set charDefinitionDisplacement
-void CharGroup_setCharDefinitionDisplacement(CharGroup this, u16 charDefinitionDisplacement)
+void CharSet_setCharDefinitionDisplacement(CharSet this, u16 charDefinitionDisplacement)
 {
-	ASSERT(this, "CharGroup::setCharDefinitionDisplacement: null this");
+	ASSERT(this, "CharSet::setCharDefinitionDisplacement: null this");
 
 	this->charDefinitionDisplacement = charDefinitionDisplacement;
 }
 
 // write to char memory
-void CharGroup_putChar(CharGroup this, u16 charToReplace, BYTE* newChar)
+void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar)
 {
-	ASSERT(this, "CharGroup::putChar: null this");
+	ASSERT(this, "CharSet::putChar: null this");
 
 	if(newChar && charToReplace < this->numberOfChars)
 	{
@@ -270,11 +270,11 @@ void CharGroup_putChar(CharGroup this, u16 charToReplace, BYTE* newChar)
 }
 
 // write to char memory
-void CharGroup_putPixel(CharGroup this, u16 charToReplace, Point* charGroupPixel, BYTE newPixelColor)
+void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE newPixelColor)
 {
-	ASSERT(this, "CharGroup::putPixel: null this");
+	ASSERT(this, "CharSet::putPixel: null this");
 
-	if(charGroupPixel && charToReplace < this->numberOfChars && (unsigned)charGroupPixel->x < 8 && (unsigned)charGroupPixel->y < 8)
+	if(charSetPixel && charToReplace < this->numberOfChars && (unsigned)charSetPixel->x < 8 && (unsigned)charSetPixel->y < 8)
 	{
 		static BYTE auxChar[] = 
 		{
@@ -290,8 +290,8 @@ void CharGroup_putPixel(CharGroup this, u16 charToReplace, Point* charGroupPixel
 
 		Mem_copy(auxChar, (u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), (int)(1 << 4));
 
-		u16 displacement = (charGroupPixel->y << 1) + (charGroupPixel->x >> 2);
-		u16 pixelToReplaceDisplacement = (charGroupPixel->x % 4) << 1;
+		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
+		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
 		Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
 	}

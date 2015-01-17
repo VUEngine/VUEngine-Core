@@ -243,7 +243,7 @@ void GameState_onMessage(GameState this, int message)
 
 }
 // load a stage
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharGroups)
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities, int flushCharSets)
 {
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
@@ -264,7 +264,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, int l
 	this->stage = __NEW(Stage);
 
 	// set char memory flushing config
-	Stage_setFlushCharGroups(this->stage, flushCharGroups);
+	Stage_setFlushCharSets(this->stage, flushCharSets);
 
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 

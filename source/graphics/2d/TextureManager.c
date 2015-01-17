@@ -301,7 +301,7 @@ void TextureManager_free(TextureManager this, Texture texture)
 	// if no one is using the texture anymore
 	if (texture && !(--this->textureUsageCount[Texture_getId(texture)]))
 	{
-		int allocationType = CharGroup_getAllocationType(Texture_getCharGroup(texture));
+		int allocationType = CharSet_getAllocationType(Texture_getCharSet(texture));
 
 		// free char memory
 		Texture_freeCharMemory(texture);
@@ -389,7 +389,7 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 	Texture texture = NULL;
 
 	//determine the allocation type
-	switch (textureDefinition->charGroupDefinition.allocationType)
+	switch (textureDefinition->charSetDefinition.allocationType)
 	{
 		case __ANIMATED:
 

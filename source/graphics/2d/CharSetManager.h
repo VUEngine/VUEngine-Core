@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <CharGroup.h>
+#include <CharSet.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,10 +56,10 @@ CharSetManager CharSetManager_getInstance();
 
 void CharSetManager_destructor(CharSetManager this);
 void CharSetManager_reset(CharSetManager this);
-void CharSetManager_free(CharSetManager this, CharGroup charGroup);
+void CharSetManager_free(CharSetManager this, CharSet charSet);
 void CharSetManager_print(CharSetManager this, int x, int y);
-int CharSetManager_allocateShared(CharSetManager this, CharGroup charGroup);
-void CharSetManager_allocate(CharSetManager this, CharGroup charGroup);
+int CharSetManager_allocateShared(CharSetManager this, CharSet charSet);
+void CharSetManager_allocate(CharSetManager this, CharSet charSet);
 void CharSetManager_setChars(CharSetManager  this, int charSet, int numberOfChars);
 void CharSetManager_defragmentProgressively(CharSetManager this);
 
