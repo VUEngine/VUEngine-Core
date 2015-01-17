@@ -29,10 +29,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-//#undef __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS
-//#undef __MAX_NUMBER_OF_BGMAPS_SEGMENTS
-//#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 6
-
 #define TextureManager_ATTRIBUTES													\
 																					\
 	/* super's attributes */														\
@@ -401,7 +397,6 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 			texture = TextureManager_writeTexture(this, textureDefinition, isPreload);
 
 			ASSERT(texture, "TextureManager::get: (animated) texture no allocated");
-
 			break;
 
 		case __ANIMATED_SHARED:
@@ -410,7 +405,7 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 			// first try to find an already created texture
 			texture = TextureManager_findTexture(this, textureDefinition);
 
-			// if coudn't find the texture
+			// if couldn't find the texture
 			if (!texture)
 			{
 				// load it
@@ -430,7 +425,6 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 			}
 
 			ASSERT(texture, "TextureManager::get: (shared) texture no allocated");
-
 			break;
 	}
 

@@ -223,12 +223,24 @@ typedef struct VBVec2D
 
 } VBVec2D;
 
+// used to representthe m coordinates of the bgmaps
+typedef struct TextureSource
+{
+	s16 mx;
+	s16 mp;
+	s16 my;
+	
+}TextureSource;
+
 // a spatial description
 typedef struct DrawSpec
 {
 	// spatial position	with parallax info
 	VBVec2D position;
 
+	// bgmap's source coordinates
+	TextureSource textureSource;
+	
 	// scale
 	Scale scale;
 

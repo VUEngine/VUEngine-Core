@@ -135,8 +135,8 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this)
 		case __ANIMATED_SHARED:
 
 			// shared animations are updated writing the param table values
-			this->texturePosition.x = this->originalTextureXOffset + Texture_getCols(this->texture)
-										* this->animationFunction->frames[this->actualFrame];
+			this->drawSpec.textureSource.mx = (this->originalTextureXOffset + Texture_getCols(this->texture)
+										* this->animationFunction->frames[this->actualFrame]) << 3;
 
 			// must retrieve the owner scale first (to allow for flips)
 			Sprite_invalidateParamTable((Sprite)this);

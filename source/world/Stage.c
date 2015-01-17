@@ -558,7 +558,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
 			};
 			
-			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions? true: false;
+			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0] && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition? true: false;
 			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 3: __SCREEN_WIDTH;
 			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 3: __SCREEN_HEIGHT;
 
@@ -613,7 +613,7 @@ static void Stage_loadInRangeEntities(Stage this)
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
 			};
 
-			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions? true: false;
+			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0] && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition? true: false;
 			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 3: __SCREEN_WIDTH;
 			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 3: __SCREEN_HEIGHT;
 

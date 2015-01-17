@@ -76,6 +76,22 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 
 	ScrollBackground_retrieveSprites(this);
+	
+	this->size.x = __SCREEN_WIDTH;
+	this->size.y = __SCREEN_HEIGHT;
+	this->size.z = 1;
+
+	Sprite sprite = this->scrollSprites[kRightSprite];
+	
+	if(sprite)
+	{
+		Texture texture = Sprite_getTexture(sprite);
+
+		if(texture)
+		{
+			this->size.y = (u16)Texture_getRows(texture) << 3;
+		}
+	}
 }
 
 // class's destructor
@@ -142,11 +158,8 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	CACHE_ENABLE;
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
-	DrawSpec drawSpec0 =
-	{
-			{0, 0, this->transform.globalPosition.z},
-			{1, 1}
-	};
+	DrawSpec drawSpec0 = Sprite_getDrawSpec(this->scrollSprites[kRightSprite]);
+	drawSpec0.position.z = this->transform.globalPosition.z;
 
 	DrawSpec drawSpec1 = drawSpec0;
 
@@ -240,7 +253,6 @@ bool ScrollBackground_updateSpritePosition(ScrollBackground this)
 
 	return false;
 }
-
 
 void ScrollBackground_suspend(ScrollBackground this)
 {

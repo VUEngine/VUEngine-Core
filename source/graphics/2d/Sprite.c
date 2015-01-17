@@ -51,6 +51,9 @@ __CLASS_DEFINITION(Sprite);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+// global
+extern const VBVec3D* _screenPosition;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -73,13 +76,15 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 		ASSERT(this->texture, "Sprite::constructor: texture not allocated");
 	
 		// set texture position
-		this->texturePosition.x = Texture_getXOffset(this->texture);
-		this->texturePosition.y = Texture_getYOffset(this->texture);
+		this->drawSpec.textureSource.mx = Texture_getXOffset(this->texture) << 3;
+		this->drawSpec.textureSource.my = Texture_getYOffset(this->texture) << 3;
+		this->drawSpec.textureSource.mp = 0;
 	}
 	else
 	{
-		this->texturePosition.x = 0;
-		this->texturePosition.y = 0;
+		this->drawSpec.textureSource.mx = 0;
+		this->drawSpec.textureSource.my = 0;
+		this->drawSpec.textureSource.mp = 0;
 	}
 	
 	// clear position
@@ -190,8 +195,6 @@ void Sprite_setDirection(Sprite this, int axis, int direction)
 	// scale the texture in the next render cycle
 	Sprite_invalidateParamTable(this);
 }
-
-extern const VBVec3D* _screenPosition;
 
 // calculate zoom scaling factor
 void Sprite_calculateScale(Sprite this, fix19_13 z)
@@ -338,9 +341,9 @@ void Sprite_render(Sprite this)
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
 			worldPointer->head = this->head | Texture_getBgmapSegment(this->texture);
-			worldPointer->mx = this->texturePosition.x << 3;
-			worldPointer->mp = 0;
-			worldPointer->my = this->texturePosition.y << 3;
+			worldPointer->mx = this->drawSpec.textureSource.mx;
+			worldPointer->mp = this->drawSpec.textureSource.mp;
+			worldPointer->my = this->drawSpec.textureSource.my;
 			worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
 			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
 			worldPointer->gy = FIX19_13TOI(drawSpec.position.y);
@@ -364,7 +367,15 @@ void Sprite_render(Sprite this)
 		}
 
 		//set the world screen position
-		if (this->renderFlag & __UPDATE_G )
+		if (this->renderFlag & __UPDATE_M)
+		{
+			worldPointer->mx = this->drawSpec.textureSource.mx;
+			worldPointer->mp = this->drawSpec.textureSource.mp;
+			worldPointer->my = this->drawSpec.textureSource.my;
+		}
+		
+		//set the world screen position
+		if (this->renderFlag & __UPDATE_G)
 		{
 			worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
 			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
@@ -480,7 +491,11 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
 	this->drawSpec.position.x = drawSpec->position.x;
 	this->drawSpec.position.y = drawSpec->position.y;
 	this->drawSpec.position.z = drawSpec->position.z;
-	
+
+	this->drawSpec.textureSource.mx = drawSpec->textureSource.mx;
+	this->drawSpec.textureSource.my = drawSpec->textureSource.my;
+	this->drawSpec.textureSource.mp = drawSpec->textureSource.mp;
+
 	this->drawSpec.scale.x = drawSpec->scale.x;
 	this->drawSpec.scale.y = drawSpec->scale.y;
 }
@@ -534,8 +549,8 @@ void Sprite_scale(Sprite this)
 		int rows = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
 
 		Affine_scale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y,
-				   (this->texturePosition.x << 3) + cols,
-				   (this->texturePosition.y << 3) + rows,
+				   this->drawSpec.textureSource.mx + cols,
+				   this->drawSpec.textureSource.my + rows,
 				   cols, rows);
 	}
 }
@@ -553,8 +568,8 @@ void Sprite_rotate(Sprite this, int angle)
 		int rows = Texture_getRows(this->texture) << 2;
 
 		Affine_rotateZ(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y,
-				   (this->texturePosition.x << 3) + cols,
-				   (this->texturePosition.y << 3) + rows,
+				   this->drawSpec.textureSource.mx + cols,
+				   this->drawSpec.textureSource.my + rows,
 				   cols, rows, angle);
 	}
 }

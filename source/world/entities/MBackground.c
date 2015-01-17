@@ -38,21 +38,10 @@
 // define the MBackground
 __CLASS_DEFINITION(MBackground);
 
-enum ScrollSprites
-{
-	kLeftSprite = 0,
-	kRightSprite
-};
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
-
-extern const VBVec3D * _screenPosition;
-extern const VBVec3D* _screenDisplacement;
-
-static void MBackground_updateScrolling(MBackground this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -73,6 +62,10 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	__CONSTRUCT_BASE(Entity, __ARGUMENTS((EntityDefinition*)mBackgroundDefinition, id));
 	
 	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
+	
+	this->size.x = __SCREEN_WIDTH;
+	this->size.y = __SCREEN_HEIGHT;
+	this->size.z = 1;
 }
 
 // class's destructor
@@ -82,120 +75,6 @@ void MBackground_destructor(MBackground this)
 
 	// destroy the super object
 	__DESTROY_BASE(Entity);
-}
-
-// initial transform
-void MBackground_initialTransform(MBackground this, Transformation* environmentTransform)
-{
-	ASSERT(this, "MBackground::transform: null this");
-
-	// call base class's transform method
-	Entity_transform((Entity)this, environmentTransform);
-
-	//MBackground_updateScrolling(this);
-}
-
-// transform class
-void MBackground_transform(MBackground this, Transformation* environmentTransform)
-{
-	ASSERT(this, "MBackground::transform: null this");
-
-	// don't calling base class's transform method
-	// will improve performance
-#ifdef __STAGE_EDITOR
-	if (Game_isInSpecialMode(Game_getInstance()))
-	{
-		Entity_transform((Entity)this, environmentTransform);
-	}
-#endif
-
-	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
-	{
-		//MBackground_updateScrolling(this);
-	}
-}
-
-// calculate the scroll's screen position
-static void MBackground_updateScrolling(MBackground this)
-{
-	ASSERT(this, "MBackground::updateScrolling: null this");
-
-	CACHE_ENABLE;
-	// TODO: add proper comments
-	// TODO: this needs serious improvements
-	DrawSpec drawSpec0 =
-	{
-			{0, 0, this->transform.globalPosition.z},
-			{1, 1}
-	};
-
-	DrawSpec drawSpec1 = drawSpec0;
-
-	VBVec3D position3D = {_screenPosition->x, -_screenPosition->y + this->transform.globalPosition.y, this->transform.globalPosition.z};
-
-	// get the screen's position
-	VBVec2D screenPosition;
-
-	int screens = 0;
-
-	// axis to put one map o each side of it
-	int axis = 0;
-	int factor = 1;
-	int displacement = 0;
-
-	// project position to 2D
-	Optics_projectTo2D(&screenPosition, &position3D);
-
-	// get the number of "screens" from the beginnig of the world
-	// to the actual screen's position
-	screens = FIX19_13TOI(screenPosition.x) / __SCREEN_WIDTH;
-
-	// check if the number of screens is divisible by 2
-	//if (!(screens & 2)1 == 0 && screens != 0){
-	displacement = FIX19_13TOI(screenPosition.x);
-
-	if (screens)
-	{
-		displacement -= ( screens - 1) * __SCREEN_WIDTH;
-
-		if (!(screens & 1))
-	{
-			// if so,
-			factor = 2;
-		}
-	}
-
-	axis = __SCREEN_WIDTH * factor - displacement;
-
-	if ((unsigned)axis <= __SCREEN_WIDTH)
-	{
-		drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH);
-
-		drawSpec1.position.x = ITOFIX19_13(axis);
-	}
-	else
-	{
-		if (axis < 0)
-    	{
-			drawSpec1.position.x = ITOFIX19_13(axis);
-
-			drawSpec0.position.x = drawSpec1.position.x + ITOFIX19_13(__SCREEN_WIDTH);
-		}
-		else
-	    {
-			drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH - 1);
-
-			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREEN_WIDTH - 1);
-		}
-	}
-
-	// now move the drawspec in order to render the texture in the center
-	//drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(this->scrollSprites[kLeftSprite])) << 2);
-	//drawSpec0.position.parallax = drawSpec1.position.parallax = Sprite_getDrawSpec(this->scrollSprites[kLeftSprite]).position.parallax;
-
-	// set map's position
-	
-	CACHE_DISABLE;
 }
 
 // whether it is visible

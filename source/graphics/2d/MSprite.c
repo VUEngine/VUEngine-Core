@@ -51,9 +51,13 @@ __CLASS_DEFINITION(MSprite);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void MSprinte_releaseTextures(MSprite this);
+static void MSprite_releaseTextures(MSprite this);
 static void MSprite_loadTextures(MSprite this);
 static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefinition);
+static void MSprite_calculateSizeMultiplier(MSprite this);
+static void MSprite_calculateSize(MSprite this);
+static Point MSprite_capPosition(MSprite this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -69,9 +73,19 @@ void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinitio
 	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(&mSpriteDefinition->spriteDefinition));
 	
 	this->mSpriteDefinition = mSpriteDefinition;
-	this->texture = NULL;
 
+	ASSERT(!this->texture, "MSprite::constructor: texture alrea");
+	this->textures = NULL;
 	MSprite_loadTextures(this);
+	
+	// assume looping
+	this->size.x = 0;
+	this->size.y = 0;
+
+	this->sizeMultiplier.x = 1;
+	this->sizeMultiplier.y = 1;
+	
+	MSprite_calculateSize(this);
 }
 
 // class's destructor
@@ -79,15 +93,18 @@ void MSprite_destructor(MSprite this)
 {
 	ASSERT(this, "MSprite::destructor: null this");
 
-	MSprinte_releaseTextures(this);
+	MSprite_releaseTextures(this);
+	this->texture = NULL;
 
 	// destroy the super object
 	__DESTROY_BASE(Sprite);
 }
 
 // release loaded textures
-static void MSprinte_releaseTextures(MSprite this)
+static void MSprite_releaseTextures(MSprite this)
 {
+	ASSERT(this, "MSprite::releaseTextures: null this");
+
 	if(this->textures)
 	{
 		VirtualNode node = VirtualList_begin(this->textures);
@@ -100,6 +117,7 @@ static void MSprinte_releaseTextures(MSprite this)
 		
 		__DELETE(this->textures);
 		this->textures = NULL;
+		this->texture = NULL;
 	}
 }
 
@@ -110,7 +128,7 @@ static void MSprite_loadTextures(MSprite this)
 
 	if (this->mSpriteDefinition)
 	{
-		MSprinte_releaseTextures(this);
+		MSprite_releaseTextures(this);
 		this->textures = __NEW(VirtualList);
 		
 		int i = 0;
@@ -119,6 +137,8 @@ static void MSprite_loadTextures(MSprite this)
 	    {
 			MSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
 		}
+		
+		this->texture = (Texture)VirtualList_front(this->textures);
 	}
 }
 
@@ -135,19 +155,10 @@ static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefiniti
 		
 		ASSERT(texture, "MSprite::loadTexture: texture not loaded");
 		
-		if(texture)
+		if(texture && this->textures)
 		{
 			VirtualList_pushBack(this->textures, texture);
 		}
-		/*
-		Printing_hex(Printing_getInstance(), &TEST_BG_1_TX, 1, 6, NULL);
-		Printing_hex(Printing_getInstance(), textureDefinition, 10, 6, NULL);
-		Printing_int(Printing_getInstance(), TEST_BG_1_TX.cols, 1, 7, NULL);
-		Printing_int(Printing_getInstance(), textureDefinition->cols, 10, 7, NULL);
-		Printing_int(Printing_getInstance(), TEST_BG_1_TX.rows, 1, 7, NULL);
-		Printing_int(Printing_getInstance(), textureDefinition->rows, 10, 7, NULL);
-		NM_ASSERT(false, "break");
-*/
 	}
 }
 
@@ -158,17 +169,22 @@ void MSprite_setPosition(MSprite this, const VBVec3D* const position)
 
 	// normalize the position to screen coordinates
 	VBVec3D position3D = Optics_normalizePosition(position);
-
-	ASSERT(this->texture, "MSprite::setPosition: null texture");
-
 	position3D.x -= this->halfWidth;
 	position3D.y -= this->halfHeight;
-
+	
 	fix19_13 previousZPosition = this->drawSpec.position.z;
 
+	VBVec3D position2D;
+	
 	// project position to 2D space
-	Optics_projectTo2D(&this->drawSpec.position, &position3D);
+	Optics_projectTo2D(&position2D, &position3D);
+	
+	this->drawSpec.position.x = 0;
+	this->drawSpec.position.y = 0;
 
+	this->drawSpec.textureSource.mx = FIX19_13TOI(-position2D.x);
+	this->drawSpec.textureSource.my = FIX19_13TOI(-position2D.y);
+		
 	if (previousZPosition != this->drawSpec.position.z)
 	{
 		this->drawSpec.position.z = position->z;
@@ -179,84 +195,152 @@ void MSprite_setPosition(MSprite this, const VBVec3D* const position)
 		SpriteManager_spriteChangedPosition(SpriteManager_getInstance());
 	}
 
-	this->renderFlag |= __UPDATE_G;
+	this->renderFlag |= __UPDATE_G | __UPDATE_M;
+	
+	Point axisCapped = MSprite_capPosition(this);
+	
+	if(axisCapped.x && !this->mSpriteDefinition->xLoop)
+	{
+		this->drawSpec.position.x = ITOFIX19_13(-axisCapped.x);
+	}
+	
+	if(axisCapped.y && !this->mSpriteDefinition->yLoop)
+	{
+		this->drawSpec.position.y = ITOFIX19_13(-axisCapped.y);
+	}
+
+	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? Texture_getYOffset(this->texture) << 3: 0;
 }
 
-// render a world layer with the map's information
-void MSprite_render(MSprite this)
+// calculate the size multiplier
+static void MSprite_calculateSizeMultiplier(MSprite this)
 {
-	ASSERT(this, "MSprite::render: null this");
-	/*
-#define	WRLD_1x1	0x0000
-#define	WRLD_1x2	0x0100
-#define	WRLD_1x4	0x0200
-#define	WRLD_1x8	0x0300
-#define	WRLD_2x1	0x0400
-#define	WRLD_2x2	0x0500
-#define	WRLD_2x4	0x0600
-#define	WRLD_4x2	0x0900
-#define	WRLD_4x1	0x0800
-#define	WRLD_8x1	0x0C00
-*/
-	static int x = 0;
-	
-	Printing_int(Printing_getInstance(), x, 1, 10, NULL);
-	//if render flag is set
-	if (this->renderFlag)
+	ASSERT(this, "MSprite::calculateSizeMultiplier: null this");
+
+	switch(this->mSpriteDefinition->scValue)
 	{
-		DrawSpec drawSpec = this->drawSpec;
-		WORLD* worldPointer = &WA[this->worldLayer];
-		
-		//create an independant of software variable to point XPSTTS register
-		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+		case WRLD_1x1:
+			
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 1;
+			break;
 
-		//wait for screen to idle
-		while (*xpstts & XPBSYR);
+		case WRLD_1x2:
+			
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 2;
+			break;
 
-		// if head is modified, render everything
-		if (__UPDATE_HEAD == this->renderFlag)
-		{
-			//create an independant of software variable to point XPSTTS register
-			unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
+		case WRLD_1x4:
+			
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 4;
+			break;
+			
+		case WRLD_1x8:
+			
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 8;
+			break;
 
-			//wait for screen to idle
-			while (*xpstts & XPBSYR);
+		case WRLD_2x1:
+			
+			this->sizeMultiplier.x = 2;
+			this->sizeMultiplier.y = 1;
+			break;
+			
+		case WRLD_2x2:
+			
+			this->sizeMultiplier.x = 2;
+			this->sizeMultiplier.y = 2;
+			break;
 
-			worldPointer->head = this->head | WRLD_2x1 | this->mSpriteDefinition->scValue | Texture_getBgmapSegment((Texture)VirtualList_front(this->textures));
-			worldPointer->mx = x++;
-			worldPointer->mp = 0;
-			worldPointer->my = this->texturePosition.y << 3;
-			worldPointer->gx = 0;
-			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
-			worldPointer->gy = 0;
+		case WRLD_2x4:
+			
+			this->sizeMultiplier.x = 2;
+			this->sizeMultiplier.y = 4;
+			break;
 
-			worldPointer->w = __SCREEN_WIDTH;
-			worldPointer->h = __SCREEN_HEIGHT;
+		case WRLD_4x1:
+			
+			this->sizeMultiplier.x = 4;
+			this->sizeMultiplier.y = 1;
+			break;
 
-			this->renderFlag = false;
-
-			return;
-		}
-
-		//set the world screen position
-		if (this->renderFlag & __UPDATE_G )
-		{
-			worldPointer->mx = x++;
-			worldPointer->mp = 0;
-			worldPointer->my = this->texturePosition.y << 3;
-			worldPointer->gx = 0;
-			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
-			worldPointer->gy = 0;
-		}
-
-		if (this->renderFlag & __UPDATE_SIZE)
-		{
-			worldPointer->w = __SCREEN_WIDTH;
-			worldPointer->h = __SCREEN_HEIGHT;
-		}
-
-		// make sure to not render again
-		this->renderFlag = false;
+		case WRLD_4x2:
+			
+			this->sizeMultiplier.x = 4;
+			this->sizeMultiplier.y = 2;
+			break;
+			
+		case WRLD_8x1:
+			
+			this->sizeMultiplier.x = 8;
+			this->sizeMultiplier.y = 1;
+			break;
 	}
+}
+
+// calculate total sprite's size
+static void MSprite_calculateSize(MSprite this)
+{
+	ASSERT(this, "MSprite::calculateSize: null this");
+
+	MSprite_calculateSizeMultiplier(this);
+	
+	Texture texture = (Texture)VirtualList_front(this->textures);
+	
+	if(!this->mSpriteDefinition->xLoop)
+	{
+		this->size.x = 64 * 8 * this->sizeMultiplier.x;
+	}
+
+	if(!this->mSpriteDefinition->yLoop)
+	{
+		this->size.y = (texture? Texture_getRows(texture): 64) * 8 * this->sizeMultiplier.x;
+	}
+}
+
+// calculate the position
+static Point MSprite_capPosition(MSprite this)
+{
+	ASSERT(this, "MSprite::capPosition: null this");
+
+	Point axisCapped = 
+	{
+		0, 0
+	};
+
+	if(!this->mSpriteDefinition->xLoop)
+	{
+		if(this->drawSpec.textureSource.mx > this->size.x - __SCREEN_WIDTH)
+		{
+			axisCapped.x = this->drawSpec.textureSource.mx - (this->size.x - __SCREEN_WIDTH);
+			this->drawSpec.textureSource.mx = this->size.x - __SCREEN_WIDTH;
+		}
+		else if(0 > this->drawSpec.textureSource.mx)
+		{
+			axisCapped.x = this->drawSpec.textureSource.mx;
+			this->drawSpec.textureSource.mx = 0;
+		}
+	}
+
+	if(!this->mSpriteDefinition->yLoop)
+	{
+		int height = Texture_getRows(this->texture) << 3;
+		
+		if(this->drawSpec.textureSource.my > this->size.y - height)
+		{
+			axisCapped.y = this->drawSpec.textureSource.my - (this->size.y - height);
+			this->drawSpec.textureSource.my = this->size.y - height;
+		}
+		else if(0 > this->drawSpec.textureSource.my)
+		{
+			axisCapped.y = this->drawSpec.textureSource.my;
+			this->drawSpec.textureSource.my = 0;
+		}
+	}
+
+	return axisCapped;
 }
 

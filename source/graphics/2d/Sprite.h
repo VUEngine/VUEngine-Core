@@ -69,9 +69,6 @@
 	/* 3d world position */														\
 	DrawSpec drawSpec;															\
 																				\
-	/* location of texture in graphic memory */									\
-	Point texturePosition;														\
-																				\
 	/* texture's half width */													\
 	fix19_13 halfWidth;															\
 																				\

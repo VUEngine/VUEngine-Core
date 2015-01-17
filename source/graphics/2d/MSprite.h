@@ -46,7 +46,6 @@
 // declare the virtual methods which are redefined
 #define MSprite_SET_VTABLE(ClassName)											\
 		Sprite_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, MSprite, render);								\
 		__VIRTUAL_SET(ClassName, MSprite, setPosition);							\
 
 #define MSprite_ATTRIBUTES														\
@@ -59,7 +58,12 @@
 																				\
 	/* pinter to definition */													\
 	const MSpriteDefinition* mSpriteDefinition;									\
-
+																				\
+	/* total size of the bgmap, used for loop/not loop */						\
+	Point size;																	\
+																				\
+	/* fot total size of the bgmap calculation */								\
+	Point sizeMultiplier;																	\
 
 // declare a MSprite, which holds a texture and a drawing specification
 __CLASS(MSprite);
@@ -80,6 +84,12 @@ typedef struct MSpriteDefinition
 	// SCX/SCY value
 	u16 scValue;
 
+	// flag to loop the x axis
+	u8 xLoop;
+
+	// flag to loop the y axis
+	u8 yLoop;
+
 } MSpriteDefinition;
 
 typedef const MSpriteDefinition MSpriteROMDef;
@@ -94,7 +104,6 @@ __CLASS_NEW_DECLARE(MSprite, __PARAMETERS(const MSpriteDefinition* mSpriteDefini
 void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
 void MSprite_destructor(MSprite this);
 void MSprite_setPosition(MSprite this, const VBVec3D* const position);
-void MSprite_render(MSprite this);
 
 
 #endif

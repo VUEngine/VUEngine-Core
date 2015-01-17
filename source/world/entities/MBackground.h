@@ -40,9 +40,6 @@
 #define MBackground_SET_VTABLE(ClassName)										\
 		Entity_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, MBackground, isVisible);						\
-		__VIRTUAL_SET(ClassName, MBackground, transform);						\
-		__VIRTUAL_SET(ClassName, MBackground, initialTransform);				\
-		__VIRTUAL_SET(ClassName, MBackground, updateSpritePosition);			\
 
 // A MBackground which represent a generic object inside a Stage
 #define MBackground_ATTRIBUTES													\
@@ -72,10 +69,7 @@ __CLASS_NEW_DECLARE(MBackground, __PARAMETERS(MBackgroundDefinition* mBackground
 
 void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id);
 void MBackground_destructor(MBackground this);
-void MBackground_initialTransform(MBackground this, Transformation* environmentTransform);
-void MBackground_transform(MBackground this, Transformation* environmentTransform);
 int MBackground_isVisible(MBackground this, int pad);
-int MBackground_updateSpritePosition(MBackground this);
 
 
 #endif

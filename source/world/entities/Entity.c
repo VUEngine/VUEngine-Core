@@ -79,7 +79,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
 	// initialize sprites
 	if (entityDefinition)
 	{
-		Entity_addSprites(this, entityDefinition->spritesDefinitions);
+		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 	}
 }
 
@@ -451,7 +451,10 @@ u16 Entity_getWidth(Entity this)
 		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 		Texture texture = Sprite_getTexture(sprite);
 
-		this->size.x = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
+		if(texture)
+		{
+			this->size.x = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x));
+		}
 	}
 
 	// must calculate based on the scale because not affine Container must be enlarged
@@ -467,9 +470,11 @@ u16 Entity_getHeight(Entity this)
 	{
 		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 		Texture texture = Sprite_getTexture(sprite);
-		ASSERT(texture, "Entity::getHeight: null texture");
 
-		this->size.y = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
+		if(texture)
+		{
+			this->size.y = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y));
+		}
 	}
 
 	return this->size.y;

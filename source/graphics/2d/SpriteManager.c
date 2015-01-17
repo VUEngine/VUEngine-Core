@@ -356,6 +356,8 @@ void SpriteManager_render(SpriteManager this)
 	{
 		__VIRTUAL_CALL(void, Sprite, render, (Sprite)VirtualNode_getData(node));
 	}
+	
+	SpriteManager_setLastLayer(this);
 }
 
 // retrieve free layer
