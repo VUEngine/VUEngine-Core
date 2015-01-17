@@ -232,6 +232,8 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 				// scale now
 				Sprite_scale(sprite);
 
+				__VIP_WAIT;
+
 				// render now
 				__VIRTUAL_CALL(void, Sprite, render, sprite);
 

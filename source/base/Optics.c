@@ -57,26 +57,6 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 	return FIX19_13TOI(rightEjeGx - leftEjeGx) / __PARALLAX_CORRECTION_FACTOR;
 }
 
-// project a 3d point to 2d space
-inline void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* const position3D)
-{
-	position2D->x = position3D->x + (FIX19_13_MULT(_optical->horizontalViewPointCenter - position3D->x, position3D->z) >> __MAX_VIEW_DISTANCE_POW);
-	position2D->y = position3D->y - (FIX19_13_MULT(position3D->y - _optical->verticalViewPointCenter, position3D->z) >> __MAX_VIEW_DISTANCE_POW);
-}
-
-//normalize a point to the screen's current position
-inline  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D)
-{
-	VBVec3D position =
-	{
-		position3D->x - _screenPosition->x,
-		position3D->y - _screenPosition->y,
-		position3D->z - _screenPosition->z
-	};
-
-	return position;
-}
-
 // calculate the size of a given magnitud, being it a 8 pixel multiple
 inline u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
 {
@@ -88,6 +68,7 @@ inline u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
 	return magnitude;
 }
 
+
 //determine if a point is visible
 inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad)
 {
@@ -97,10 +78,10 @@ inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int para
 	VBVec2D position2D;
 
 	//normalize position
-	position3D = Optics_normalizePosition(&position3D);
+	__OPTICS_NORMALIZE(position3D);
 
 	//project the position to 2d space
-	Optics_projectTo2D(&position2D, &position3D);
+	__OPTICS_PRJECT_TO_2D(position3D, position2D);
 
 	width >>= 1;
 	height >>= 1;
@@ -121,22 +102,6 @@ inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int para
 	}
 
 	return true;
-}
-
-// determine if a point is out of the game
-inline int vbjInsideGame(VBVec3D position3D, int width, int height)
-{
-	/*
-	if (!vbjOutsideGame(position3D, width, height))
-	{
-		if (!vbjIsVisible(position3D, width, height, 50))
-		{
-			return true;
-		}
-
-	}
-*/
-	return false;
 }
 
 // determine the squared length of a given vector

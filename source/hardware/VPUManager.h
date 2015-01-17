@@ -129,6 +129,9 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 
 #define WORLD_SPACER(n,x,o)		WAM[(n << 4) + 11+x] = o
 
+#define __VIP_WAIT														\
+	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];	\
+	while (*xpstts & XPBSYR);
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

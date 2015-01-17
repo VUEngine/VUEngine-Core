@@ -36,7 +36,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STREAM_CYCLE	(__TARGET_FPS >> 2)
+#define __STREAM_CYCLE	(__TARGET_FPS >> 1)
 #define __STREAM_UNLOAD_CYCLE	(0)
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2

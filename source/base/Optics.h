@@ -31,11 +31,25 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+// these improve performance in the real machine
+#define __OPTICS_NORMALIZE(Vector)					\
+	Vector.x -= _screenPosition->x;					\
+	Vector.y -= _screenPosition->y;					\
+	Vector.z -= _screenPosition->z;
+
+#define __OPTICS_PRJECT_TO_2D(Vector3D, Vector2D)																								\
+		Vector2D.x = Vector3D.x + (FIX19_13_MULT(_optical->horizontalViewPointCenter - Vector3D.x, Vector3D.z) >> __MAX_VIEW_DISTANCE_POW);		\
+		Vector2D.y = Vector3D.y - (FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter, Vector3D.z) >> __MAX_VIEW_DISTANCE_POW);		\
+		Vector2D.z = Vector3D.z;
+
+//---------------------------------------------------------------------------------------------------------
 // 												3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
 extern int Optics_calculateParallax(fix19_13 x, fix19_13 z);
-extern void Optics_projectTo2D(VBVec2D* const position2D, const VBVec3D* const position3D);
 extern  VBVec3D Optics_normalizePosition(const VBVec3D* const position3D);
 extern u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale);
 extern bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad);

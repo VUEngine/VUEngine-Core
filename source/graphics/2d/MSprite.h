@@ -103,7 +103,7 @@ __CLASS_NEW_DECLARE(MSprite, __PARAMETERS(const MSpriteDefinition* mSpriteDefini
 
 void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
 void MSprite_destructor(MSprite this);
-void MSprite_setPosition(MSprite this, const VBVec3D* const position);
+void MSprite_setPosition(MSprite this, VBVec3D position3D);
 
 
 #endif

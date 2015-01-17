@@ -162,9 +162,11 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(otherSprite, worldLayer1);
 
+				__VIP_WAIT;
+
 			    // must render inmediately 
-//				__VIRTUAL_CALL(void, Sprite, render, sprite);
-//				__VIRTUAL_CALL(void, Sprite, render, otherSprite);
+				__VIRTUAL_CALL(void, Sprite, render, sprite);
+				__VIRTUAL_CALL(void, Sprite, render, otherSprite);
 
 				// swap array entries
 				VirtualNode_swapData(this->node, this->otherNode);
@@ -274,6 +276,8 @@ static bool SpriteManager_processFreedLayers(SpriteManager this)
 				// previous sprite in the list
 			    this->freedLayer--;
 			    
+				__VIP_WAIT;
+
 			    // must render inmediately 
 				__VIRTUAL_CALL(void, Sprite, render, (Sprite)VirtualNode_getData(node));
 
@@ -318,16 +322,12 @@ static void SpriteManager_setLastLayer(SpriteManager this)
 	NM_ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
+	__VIP_WAIT;
+
 	Printing_render(Printing_getInstance(), this->freeLayer);
 
 	if (0 < this->freeLayer)
 	{
-		//create an independent of software variable to point XPSTTS register
-		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-		//wait for screen to idle
-		while (*xpstts & XPBSYR);
-
 		WA[this->freeLayer - 1].head = WRLD_OFF;
 		WA[this->freeLayer - 1].w = 0;
 		WA[this->freeLayer - 1].h = 0;
@@ -345,7 +345,9 @@ void SpriteManager_render(SpriteManager this)
 
 	// recover layers
 	SpriteManager_processFreedLayers(this);
-		
+
+	__VIP_WAIT;
+
 	// render from WORLD 31 to the lowes active one
 	// reverse this order when a new sprite was added
 	// to make effective its visual properties as quick as

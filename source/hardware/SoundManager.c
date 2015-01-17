@@ -167,6 +167,10 @@ __CLASS_DEFINITION(SoundManager);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+// globals
+extern const VBVec3D* _screenPosition;
+extern const Optical* _optical;
+
 // class constructor
 static void SoundManager_constructor(SoundManager this);
 
@@ -487,10 +491,10 @@ int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position)
 		this->fxSound[i] = fxSound;
 
 		// set position inside screen coordinates
-		position = Optics_normalizePosition(&position);
+		__OPTICS_NORMALIZE(position);
 
 		// save position for 3d sound
-		Optics_projectTo2D(&this->fxPosition[i], &position);
+		__OPTICS_PRJECT_TO_2D(position, this->fxPosition[i]);
 		return true;
 	}
 

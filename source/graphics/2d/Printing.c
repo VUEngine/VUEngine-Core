@@ -123,11 +123,6 @@ void Printing_render(Printing this, int textLayer)
 		return;
 	}
 	
-	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-	// wait for screen to idle
-	while (*xpstts & XPBSYR);
-
 	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()));
 	WA[textLayer].mx = 0;
 	WA[textLayer].mp = 0;

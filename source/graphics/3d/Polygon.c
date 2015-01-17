@@ -40,6 +40,10 @@ __CLASS_DEFINITION(Polygon);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+// globals
+extern const VBVec3D* _screenPosition;
+extern const Optical* _optical;
+
 // class's constructor
 static void Polygon_constructor(Polygon this);
 
@@ -128,12 +132,14 @@ void Polygon_draw(Polygon this, int calculateParallax)
 		for (; toNode ; fromNode = VirtualNode_getNext(fromNode), toNode = VirtualNode_getNext(toNode))
 		{
 			// normalize vertice to screen coordinates
-			fromVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
-			toVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(toNode));
+			fromVertice3D = *((VBVec3D*)VirtualNode_getData(fromNode));
+			toVertice3D = *((VBVec3D*)VirtualNode_getData(toNode));
+			__OPTICS_NORMALIZE(fromVertice3D);
+			__OPTICS_NORMALIZE(toVertice3D);
 
 			// project to 2d coordinates
-			Optics_projectTo2D(&fromVertice2D, &fromVertice3D);
-			Optics_projectTo2D(&toVertice2D, &toVertice3D);
+			__OPTICS_PRJECT_TO_2D(fromVertice3D, fromVertice2D);
+			__OPTICS_PRJECT_TO_2D(toVertice3D, toVertice2D);
 
 			// calculate parallax
 			if (calculateParallax)
@@ -149,13 +155,14 @@ void Polygon_draw(Polygon this, int calculateParallax)
 
 		if (2 < VirtualList_getSize(this->vertices))
 		{
-			// close the polygon by drawing a line from the last node to the first one
-			fromVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(fromNode));
-			toVertice3D = Optics_normalizePosition((VBVec3D*)VirtualNode_getData(VirtualList_begin(this->vertices)));
+			fromVertice3D = *((VBVec3D*)VirtualNode_getData(fromNode));
+			toVertice3D = *((VBVec3D*)VirtualNode_getData(toNode));
+			__OPTICS_NORMALIZE(fromVertice3D);
+			__OPTICS_NORMALIZE(toVertice3D);
 
-			// project to 2d
-			Optics_projectTo2D(&fromVertice2D, &fromVertice3D);
-			Optics_projectTo2D(&toVertice2D, &toVertice3D);
+			// project to 2d coordinates
+			__OPTICS_PRJECT_TO_2D(fromVertice3D, fromVertice2D);
+			__OPTICS_PRJECT_TO_2D(toVertice3D, toVertice2D);
 
 			// calculate parallax
 			if (calculateParallax)

@@ -317,7 +317,7 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 			if (updateSpritePosition)
 		    {
 				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, __ARGUMENTS(&this->transform.globalPosition));
+				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, __ARGUMENTS(this->transform.globalPosition));
 			}
 		}
 	}
@@ -519,13 +519,32 @@ bool Entity_isVisible(Entity this, int pad)
 		return true;
 	}
 
-	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+	static Sprite sprite = NULL;
+	sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
 
-	return sprite ? Optics_isVisible(this->transform.globalPosition,
-			Entity_getWidth(this),
-			Entity_getHeight(this),
-			Sprite_getDrawSpec(sprite).position.parallax,
-			pad) : true;
+	ASSERT(sprite, "Entity:isVisible: null sprite");
+	
+	DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
+
+	int lowLimit = 0 - drawSpec.position.parallax - pad;
+	int highLimit = __SCREEN_WIDTH + drawSpec.position.parallax + pad;
+
+	// check x visibility
+	if (FIX19_13TOI(drawSpec.position.x) + this->size.x < lowLimit || FIX19_13TOI(drawSpec.position.x) > highLimit)
+	{
+		return false;
+	}
+
+	lowLimit = - pad;
+	highLimit = __SCREEN_HEIGHT + pad;
+
+	// check y visibility
+	if (FIX19_13TOI(drawSpec.position.y) + this->size.y < lowLimit || FIX19_13TOI(drawSpec.position.y) > highLimit)
+	{
+		return false;
+	}
+	
+	return true;
 }
 
 // check if must update sprite's position

@@ -49,6 +49,7 @@ enum ScrollSprites
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+extern const Optical* _optical;
 extern const VBVec3D * _screenPosition;
 extern const VBVec3D* _screenDisplacement;
 
@@ -175,8 +176,9 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	int factor = 1;
 	int displacement = 0;
 
-	// project position to 2D
-	Optics_projectTo2D(&screenPosition, &position3D);
+	// project to 2d coordinates
+	__OPTICS_PRJECT_TO_2D(position3D, screenPosition);
+
 
 	// get the number of "screens" from the beginnig of the world
 	// to the actual screen's position

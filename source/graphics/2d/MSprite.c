@@ -163,12 +163,18 @@ static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefiniti
 }
 
 // set sprite's position
-void MSprite_setPosition(MSprite this, const VBVec3D* const position)
+void MSprite_setPosition(MSprite this, VBVec3D position3D)
 {
+	extern const VBVec3D* _screenPosition;
+	extern Optical* _optical;
+
 	ASSERT(this, "MSprite::setPosition: null this");
 
+	CACHE_ENABLE;
+	
 	// normalize the position to screen coordinates
-	VBVec3D position3D = Optics_normalizePosition(position);
+	__OPTICS_NORMALIZE(position3D);
+
 	position3D.x -= this->halfWidth;
 	position3D.y -= this->halfHeight;
 	
@@ -177,7 +183,7 @@ void MSprite_setPosition(MSprite this, const VBVec3D* const position)
 	VBVec3D position2D;
 	
 	// project position to 2D space
-	Optics_projectTo2D(&position2D, &position3D);
+	__OPTICS_PRJECT_TO_2D(position3D, position2D);
 	
 	this->drawSpec.position.x = 0;
 	this->drawSpec.position.y = 0;
@@ -187,7 +193,7 @@ void MSprite_setPosition(MSprite this, const VBVec3D* const position)
 		
 	if (previousZPosition != this->drawSpec.position.z)
 	{
-		this->drawSpec.position.z = position->z;
+		this->drawSpec.position.z = position3D.z;
 
 		// calculate sprite's parallax
 		Sprite_calculateParallax((Sprite)this, this->drawSpec.position.z);
@@ -209,6 +215,8 @@ void MSprite_setPosition(MSprite this, const VBVec3D* const position)
 	}
 
 	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? Texture_getYOffset(this->texture) << 3: 0;
+
+	CACHE_DISABLE;
 }
 
 // calculate the size multiplier

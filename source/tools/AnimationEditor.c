@@ -652,7 +652,7 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 
 	this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((SpriteDefinition*)&_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]), (void*)this);
 
-	Sprite_setPosition((Sprite)this->animatedSprite, &position);
+	Sprite_setPosition((Sprite)this->animatedSprite, position);
 	SpriteManager_render(SpriteManager_getInstance());
 
 	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));

@@ -135,7 +135,7 @@ Scale Sprite_getScale(Sprite this);
 void Sprite_scale(Sprite this);
 void Sprite_setDirection(Sprite this, int axis, int direction);
 void Sprite_calculateScale(Sprite this, fix19_13 z);
-void Sprite_setPosition(Sprite this, const VBVec3D* const position);
+void Sprite_setPosition(Sprite this, VBVec3D position);
 void Sprite_calculateParallax(Sprite this, fix19_13 z);
 Texture Sprite_getTexture(Sprite this);
 DrawSpec Sprite_getDrawSpec(Sprite this);

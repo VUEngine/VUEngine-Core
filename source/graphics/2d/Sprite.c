@@ -53,6 +53,7 @@ __CLASS_DEFINITION(Sprite);
 
 // global
 extern const VBVec3D* _screenPosition;
+extern const Optical* _optical;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -238,12 +239,12 @@ void Sprite_roundDrawSpec(Sprite this)
 	this->drawSpec.position.z &= 0xFFFFE000;
 }
 
-void Sprite_setPosition(Sprite this, const VBVec3D* const position)
+void Sprite_setPosition(Sprite this, VBVec3D position3D)
 {
 	ASSERT(this, "Sprite::setPosition: null this");
 
 	// normalize the position to screen coordinates
-	VBVec3D position3D = Optics_normalizePosition(position);
+	__OPTICS_NORMALIZE(position3D);
 
 	ASSERT(this->texture, "Sprite::setPosition: null texture");
 
@@ -253,11 +254,11 @@ void Sprite_setPosition(Sprite this, const VBVec3D* const position)
 	fix19_13 previousZPosition = this->drawSpec.position.z;
 
 	// project position to 2D space
-	Optics_projectTo2D(&this->drawSpec.position, &position3D);
+	__OPTICS_PRJECT_TO_2D(position3D, this->drawSpec.position);
 
 	if (previousZPosition != this->drawSpec.position.z)
 	{
-		this->drawSpec.position.z = position->z;
+		this->drawSpec.position.z = position3D.z;
 	}
 
 	this->renderFlag |= __UPDATE_G;
@@ -326,14 +327,6 @@ void Sprite_render(Sprite this)
 		DrawSpec drawSpec = this->drawSpec;
 		WORLD* worldPointer = &WA[this->worldLayer];
 		
-		// create an independant of software variable to point XPSTTS register
-		unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-		// wait for screen to idle
-		// I, placed right here, am the result of many many hours of testing, 
-		// so, don't move me again!
-		while (*xpstts & XPBSYR);
-
 		// if head is modified, render everything
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
@@ -384,6 +377,8 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
+				//while (*xpstts & XPBSYR);
+
 				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
