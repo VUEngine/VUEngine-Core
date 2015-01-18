@@ -138,8 +138,8 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			__OPTICS_NORMALIZE(toVertice3D);
 
 			// project to 2d coordinates
-			__OPTICS_PRJECT_TO_2D(fromVertice3D, fromVertice2D);
-			__OPTICS_PRJECT_TO_2D(toVertice3D, toVertice2D);
+			__OPTICS_PROJECT_TO_2D(fromVertice3D, fromVertice2D);
+			__OPTICS_PROJECT_TO_2D(toVertice3D, toVertice2D);
 
 			// calculate parallax
 			if (calculateParallax)
@@ -161,8 +161,8 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			__OPTICS_NORMALIZE(toVertice3D);
 
 			// project to 2d coordinates
-			__OPTICS_PRJECT_TO_2D(fromVertice3D, fromVertice2D);
-			__OPTICS_PRJECT_TO_2D(toVertice3D, toVertice2D);
+			__OPTICS_PROJECT_TO_2D(fromVertice3D, fromVertice2D);
+			__OPTICS_PROJECT_TO_2D(toVertice3D, toVertice2D);
 
 			// calculate parallax
 			if (calculateParallax)

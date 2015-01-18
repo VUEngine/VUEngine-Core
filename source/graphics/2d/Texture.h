@@ -48,10 +48,10 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* char group to use int this texture */									\
-	CharSet charSet;														\
+	CharSet charSet;															\
 																				\
 	/* pointer to ROM definition */												\
-	TextureROMDef* textureDefinition;											\
+	TextureDefinition* textureDefinition;										\
 																				\
 	/* texture's id */															\
 	u16 id;																		\
@@ -85,6 +85,9 @@ typedef struct TextureDefinition
 	// y size, 1 row represents 8 pixeles
 	u8 rows;
 
+	// number of frames
+	u8 numberOfFrames;
+
 	// palette index to use
 	u8 palette;
 
@@ -110,6 +113,7 @@ u8 Texture_getYOffset(Texture this);
 u8 Texture_getTotalCols(Texture this);
 u8 Texture_getTotalRows(Texture this);
 u8 Texture_getBgmapSegment(Texture this);
+u8 Texture_getNumberOfFrames(Texture this);
 CharSet Texture_getCharSet(Texture this);
 BYTE* Texture_getBgmapDef(Texture this);
 void Texture_setPallet(Texture this, u8 palette);

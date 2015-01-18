@@ -296,6 +296,14 @@ u8 Texture_getYOffset(Texture this)
 	return abs(TextureManager_getYOffset(TextureManager_getInstance(), this->id));
 }
 
+// get texture's definition
+TextureDefinition* Texture_getTextureDefinition(Texture this)
+{
+	ASSERT(this, "Texture::getTextureDefinition: null this");
+
+	return this->textureDefinition;
+}
+
 // get texture's cols
 u8 Texture_getTotalCols(Texture this)
 {
@@ -311,9 +319,11 @@ u8 Texture_getTotalCols(Texture this)
 			break;
 
 		case __ANIMATED_SHARED:
-
-			// return the total number of chars
-			return CharSet_getNumberOfChars(this->charSet) / this->textureDefinition->rows;
+			{
+				// return the total number of chars
+				int totalCols = this->textureDefinition->numberOfFrames * this->textureDefinition->cols;
+				return 64 >= totalCols? totalCols: 64;
+			}
 			break;
 
 		case __NO_ANIMATED:
@@ -331,7 +341,31 @@ u8 Texture_getTotalRows(Texture this)
 {
 	ASSERT(this, "Texture::getTotalRows: null this");
 
-	return this->textureDefinition? this->textureDefinition->rows: 0;
+	// determine the allocation type
+	switch (CharSet_getAllocationType(this->charSet))
+	{
+		case __ANIMATED:
+
+			// just return the cols
+			return this->textureDefinition->rows;
+			break;
+
+		case __ANIMATED_SHARED:
+			{
+				// return the total number of chars
+				int totalCols = Texture_getTotalCols(this);
+				return this->textureDefinition->rows + this->textureDefinition->rows * ((int)(totalCols / 64));
+			}
+			break;
+
+		case __NO_ANIMATED:
+
+			// just return the cols
+			return this->textureDefinition->rows;
+			break;
+	}
+
+	return 0;
 }
 
 //get texture's bgmap segment
@@ -340,6 +374,14 @@ u8 Texture_getBgmapSegment(Texture this)
 	ASSERT(this, "Texture::getBgmapSegment: null this");
 
 	return TextureManager_getBgmapSegment(TextureManager_getInstance(), this->id);
+}
+
+// get number of frames of animation
+u8 Texture_getNumberOfFrames(Texture this)
+{
+	ASSERT(this, "Texture::getNumberOfFrames: null this");
+
+	return this->textureDefinition->numberOfFrames;
 }
 
 //get texture's charset

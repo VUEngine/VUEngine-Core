@@ -81,7 +81,7 @@ inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int para
 	__OPTICS_NORMALIZE(position3D);
 
 	//project the position to 2d space
-	__OPTICS_PRJECT_TO_2D(position3D, position2D);
+	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 	width >>= 1;
 	height >>= 1;

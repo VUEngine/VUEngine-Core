@@ -76,6 +76,8 @@ void Affine_setAll(u16 param, PDx_ST * pdx, s16 max)
 
 void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
 {
+	CACHE_ENABLE;
+
 	PDx_ST pdx;
 
 	if (zoomX < 0)
@@ -115,7 +117,6 @@ void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16
 	}
 	
 	int i = 0;
-	CACHE_ENABLE;
 	for (; i < totalRows; i++) 
 	{
 		// not sure why don't need following line

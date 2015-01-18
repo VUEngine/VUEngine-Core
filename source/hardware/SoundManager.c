@@ -494,7 +494,7 @@ int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position)
 		__OPTICS_NORMALIZE(position);
 
 		// save position for 3d sound
-		__OPTICS_PRJECT_TO_2D(position, this->fxPosition[i]);
+		__OPTICS_PROJECT_TO_2D(position, this->fxPosition[i]);
 		return true;
 	}
 

@@ -68,6 +68,9 @@
 	/* who owns the animated sprite */											\
 	Object owner;																\
 																				\
+	/* bgmap's source coordinates */											\
+	TextureSource originalTextureSource;										\
+																				\
 	/* actual animation's frame to show */										\
 	s8 actualFrame;																\
 																				\
@@ -79,9 +82,6 @@
 																				\
 	/* frame delay increment update cycle */									\
 	s8 frameDelayDelta;															\
-																				\
-	/* orignal position of the bgmap definition in ROM */						\
-	int originalTextureXOffset;													\
 																				\
 	/* a pointer to the animation function being played */						\
 	AnimationFunction* animationFunction;										\
@@ -128,9 +128,6 @@ typedef const AnimationFunction AnimationFunctionROMDef;
 // an animation definition
 typedef struct AnimationDescription
 {
-	// total number of frames
-	int numberOfFrames;
-
 	// animation functions
 	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
 

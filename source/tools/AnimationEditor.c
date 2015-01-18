@@ -189,10 +189,8 @@ void AnimationEditor_update(AnimationEditor this)
 	{
 		AnimatedSprite_update(this->animatedSprite, Game_getClock(Game_getInstance()));
 
-		// TODO
-		// fix me, I don't belong here
-		// but otherwise other layers are shown
-		SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
+		// must scale since there is no entity to do so
+		Sprite_scale((Sprite)this->animatedSprite);
 	}
 }
 
@@ -552,12 +550,20 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 		switch (selectedProperty)
 		{
 			case kFrames:
-
-				if (this->animationDescription->numberOfFrames < ++this->animationFunction.frames[selectedFrame])
 				{
-					this->animationFunction.frames[selectedFrame] = this->animationDescription->numberOfFrames;
-				}
+					NM_ASSERT(this->animatedSprite, "AnimationEditor::selectAnimation: null animatedSprite");
 
+					Texture texture = Sprite_getTexture((Sprite)this->animatedSprite);
+					NM_ASSERT(texture, "AnimationEditor::selectAnimation: null texture");
+					
+					TextureDefinition* textureDefinition = Texture_getTextureDefinition(texture);
+					NM_ASSERT(textureDefinition, "AnimationEditor::selectAnimation: null textureDefinition");
+
+					if (textureDefinition->numberOfFrames < ++this->animationFunction.frames[selectedFrame])
+					{
+						this->animationFunction.frames[selectedFrame] = textureDefinition->numberOfFrames;
+					}
+				}
 				break;
 		}
 	}
@@ -650,12 +656,14 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 	position.z += 0;
 
-	this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((SpriteDefinition*)&_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]), (void*)this);
+	this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((SpriteDefinition*)_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]), (void*)this);
+	ASSERT(this->animatedSprite, "AnimationEditor::createAnimatedSprite: null animatedSprite");
+	ASSERT(Sprite_getTexture(this->animatedSprite), "AnimationEditor::createAnimatedSprite: null texture");
 
 	Sprite_setPosition((Sprite)this->animatedSprite, position);
-	SpriteManager_render(SpriteManager_getInstance());
-
+	Sprite_scale((Sprite)this->animatedSprite);
 	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
+	__VIRTUAL_CALL(void, Sprite, render, (Sprite)this->animatedSprite);
 }
 
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this)

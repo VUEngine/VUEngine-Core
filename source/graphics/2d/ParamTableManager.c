@@ -143,7 +143,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
 	// add one row as padding to make sure not ovewriting take place
-	return (((int)Texture_getTotalRows(Sprite_getTexture(sprite)) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
+	return (((int)Texture_getRows(Sprite_getTexture(sprite)) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite

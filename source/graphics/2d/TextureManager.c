@@ -152,7 +152,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	int aux = 0;
 
 	u8 cols = Texture_getTotalCols(texture);
-	u8 rows = Texture_getRows(texture);
+	u8 rows = Texture_getTotalRows(texture);
 	
 	cols += cols < 64? 1: 0;
 	rows += rows < 64? 1: 0;
@@ -160,7 +160,6 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	u16 area = rows * cols;
 
 	//if texture already defined, don't allocate
-	CACHE_ENABLE;
 	if (Texture_getNumberOfChars(texture))
 	{
 		for (i = 0; i < this->availableBgmapSegments; i++)
@@ -224,8 +223,6 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 									this->freeBgmapSegment = i + 1;
 								}
 
-								CACHE_DISABLE;
-
 								//if there is a free bgmap segment
 								return true;
 							}
@@ -249,7 +246,6 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 		//throw an exception if there is no enough space to allocate the bgmap definition
 		NM_ASSERT(false, "TextureManager::allocate: bgmap segments depleted");
 	}
-	CACHE_DISABLE;
 
 	//through exception if texture has 0 chars
 	ASSERT(false, "TextureManager::allocate: map has 0 chars");

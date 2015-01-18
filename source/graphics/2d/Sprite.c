@@ -74,8 +74,6 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 
 	if(this->texture)
 	{
-		ASSERT(this->texture, "Sprite::constructor: texture not allocated");
-	
 		// set texture position
 		this->drawSpec.textureSource.mx = Texture_getXOffset(this->texture) << 3;
 		this->drawSpec.textureSource.my = Texture_getYOffset(this->texture) << 3;
@@ -254,7 +252,7 @@ void Sprite_setPosition(Sprite this, VBVec3D position3D)
 	fix19_13 previousZPosition = this->drawSpec.position.z;
 
 	// project position to 2D space
-	__OPTICS_PRJECT_TO_2D(position3D, this->drawSpec.position);
+	__OPTICS_PROJECT_TO_2D(position3D, this->drawSpec.position);
 
 	if (previousZPosition != this->drawSpec.position.z)
 	{
@@ -312,7 +310,7 @@ void Sprite_show(Sprite this)
 void Sprite_hide(Sprite this)
 {
     WORLD_SIZE(this->worldLayer, 0, 0);
-//	WORLD_GSET(this->worldLayer, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
+	WORLD_GSET(this->worldLayer, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
 }
 
 // render a world layer with the map's information
@@ -377,8 +375,6 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				//while (*xpstts & XPBSYR);
-
 				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;

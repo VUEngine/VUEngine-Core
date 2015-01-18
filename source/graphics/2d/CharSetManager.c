@@ -404,7 +404,6 @@ void CharSetManager_allocate(CharSetManager this, CharSet charSet)
 
 	// if char is defined as part of an animation frame allocate
 	// space for it
-	CACHE_ENABLE;
 	for (; i < __CHAR_SEGMENTS ; i++)
 	{
 		u16 offset = CharSetManager_getNextFreeOffset(this, i, numberOfChars);
@@ -426,13 +425,10 @@ void CharSetManager_allocate(CharSetManager this, CharSet charSet)
 			// register charSet
 			VirtualList_pushBack(this->charSets, charSet);
 
-			CACHE_DISABLE;
-
 			// stop processing
 			return;
 		}
 	}
-	CACHE_DISABLE;
 
 	// if there isn't enough memory trown an exception
 	ASSERT(false, "CharSetManager::allocate: char mem depleted");

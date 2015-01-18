@@ -183,7 +183,7 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 	VBVec3D position2D;
 	
 	// project position to 2D space
-	__OPTICS_PRJECT_TO_2D(position3D, position2D);
+	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 	
 	this->drawSpec.position.x = 0;
 	this->drawSpec.position.y = 0;

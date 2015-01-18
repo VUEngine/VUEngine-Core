@@ -61,7 +61,8 @@ static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefiniti
 	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(spriteDefinition));
 
 	// since the offset will be moved during animation, must save it
-	this->originalTextureXOffset = abs(Texture_getXOffset(this->texture));
+	this->originalTextureSource.mx = abs(Texture_getXOffset(this->texture)) << 3;
+	this->originalTextureSource.my = abs(Texture_getYOffset(this->texture)) << 3;
 
 	// set the owner
 	this->owner = owner;
@@ -133,19 +134,13 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this)
 			break;
 
 		case __ANIMATED_SHARED:
-
-			// shared animations are updated writing the param table values
-			this->drawSpec.textureSource.mx = (this->originalTextureXOffset + Texture_getCols(this->texture)
-										* this->animationFunction->frames[this->actualFrame]) << 3;
-
-			// must retrieve the owner scale first (to allow for flips)
-			Sprite_invalidateParamTable((Sprite)this);
-
-			break;
-
-		case __ANIMATED_SHARED_2:
-
-			// TODO: for expansions
+			{
+				int totalColumns = 64 - (this->originalTextureSource.mx >> 3); 
+				int frameColumn = Texture_getCols(this->texture) * this->animationFunction->frames[this->actualFrame];
+				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
+				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
+			}
+			this->renderFlag |= __UPDATE_M;
 
 			break;
 	}
@@ -426,5 +421,6 @@ void AnimatedSprite_write(AnimatedSprite this)
 	Texture_write(this->texture);
 
 	// save the original offset
-	this->originalTextureXOffset = abs(Texture_getXOffset(this->texture));
+	this->originalTextureSource.mx = abs(Texture_getXOffset(this->texture)) << 3;
+	this->originalTextureSource.my = abs(Texture_getYOffset(this->texture)) << 3;
 }

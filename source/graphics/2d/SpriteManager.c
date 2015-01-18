@@ -162,12 +162,6 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(otherSprite, worldLayer1);
 
-				__VIP_WAIT;
-
-			    // must render inmediately 
-				__VIRTUAL_CALL(void, Sprite, render, sprite);
-				__VIRTUAL_CALL(void, Sprite, render, otherSprite);
-
 				// swap array entries
 				VirtualNode_swapData(this->node, this->otherNode);
 
@@ -194,12 +188,15 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::addSprite: null this");
-	
+
+#ifdef __DEBUG
 	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
+	
 	ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::addSprite: sprite already registered");
 
 	if(!alreadyLoadedSpriteNode)
 	{
+#endif
 		// add to the front: last element corresponde to the 31 WORLD
 		VirtualList_pushFront(this->sprites, sprite);
 	
@@ -216,7 +213,9 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		// first of the new sprite
 		this->node = NULL;
 		this->otherNode = NULL;
+#ifdef __DEBUG		
 	}
+#endif
 }
 
 // remove sprite

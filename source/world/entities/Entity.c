@@ -160,8 +160,10 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 	{
 		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
 
-		Container_setName((Container)entity, positionedEntity->name);
-		
+		if(positionedEntity->name)
+		{
+			Container_setName((Container)entity, positionedEntity->name);
+		}
 		if(entity)
 		{
 			VBVec3D position3D =
@@ -175,8 +177,11 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position3D));
 	
 			// add children if defined
-			Entity_addChildren(entity, positionedEntity->childrenDefinitions, environmentTransform);
-	
+			if (positionedEntity->childrenDefinitions)
+			{
+				Entity_addChildren(entity, positionedEntity->childrenDefinitions, environmentTransform);
+			}	
+			
 			// apply transformations
 			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(environmentTransform));
 

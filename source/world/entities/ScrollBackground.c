@@ -177,7 +177,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	int displacement = 0;
 
 	// project to 2d coordinates
-	__OPTICS_PRJECT_TO_2D(position3D, screenPosition);
+	__OPTICS_PROJECT_TO_2D(position3D, screenPosition);
 
 
 	// get the number of "screens" from the beginnig of the world

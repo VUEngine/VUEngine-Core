@@ -36,11 +36,11 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STREAM_CYCLE	(__TARGET_FPS >> 1)
+//#define __STREAM_CYCLE	(__TARGET_FPS >> 1)
+#define __STREAM_CYCLE	(18)
 #define __STREAM_UNLOAD_CYCLE	(0)
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -62,6 +62,8 @@ typedef struct StageEntityDescription
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+// global
+extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 void Container_processRemovedChildren(Container this);
 
@@ -155,20 +157,45 @@ void Stage_setupObjActor(Stage this, int *actor,int x,int y, int z)
 }
 
 // determine if a point is visible
-inline static int Stage_inLoadRange(Stage this, VBVec3D* position3D, u8 width, u8 height)
+inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, fix19_13 halfWidth, fix19_13 halfHeight)
 {
 	ASSERT(this, "Stage::inLoadRange: null this");
 
 	Scale scale;
 
 	scale.x = scale.y = FIX19_13TOFIX7_9(ITOFIX19_13(1) -
-		       FIX19_13_DIV(position3D->z , _optical->maximunViewDistance));
+		       FIX19_13_DIV(position3D.z , _optical->maximunViewDistance));
 
-	return Optics_isVisible(*position3D,
-			Optics_calculateRealSize(((u16)width), WRLD_BGMAP, scale.x),
-			Optics_calculateRealSize(((u16)height), WRLD_BGMAP, scale.y),
-			Optics_calculateParallax(position3D->x, position3D->z),
-			__ENTITY_LOAD_PAD);
+#define __MAXIMUM_PARALLAX		10
+#define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)
+#define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + __ENTITY_LOAD_PAD)
+#define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- __ENTITY_LOAD_PAD)
+#define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + __ENTITY_LOAD_PAD)
+	
+	VBVec2D position2D;
+
+	//normalize position
+	__OPTICS_NORMALIZE(position3D);
+
+	//project the position to 2d space
+	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+	halfWidth = FIX19_13_DIV(halfWidth, FIX7_9TOFIX19_13(scale.x)) >> 1;
+	halfHeight = FIX19_13_DIV(halfHeight, FIX7_9TOFIX19_13(scale.y)) >> 1;
+
+	// check x visibility
+	if (position2D.x + halfWidth < __LOAD_LOW_X_LIMIT || position2D.x - halfWidth > __LOAD_HIGHT_X_LIMIT)
+	{
+		return false;
+	}
+
+	// check y visibility
+	if (position2D.y + halfHeight < __LOAD_LOW_Y_LIMIT || position2D.y - halfHeight > __LOAD_HIGHT_Y_LIMIT)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 // load stage's entites
@@ -303,7 +330,18 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 
 	if (positionedEntity)
 	{
-		Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+		// static to avoid call to memcpy
+		static Transformation environmentTransform =
+		{
+				// local position
+				{0, 0, 0},
+				// global position
+				{0, 0, 0},
+				// scale
+				{1, 1},
+				// rotation
+				{0, 0, 0}
+		};
 
 		Entity entity = Entity_loadFromDefinition(positionedEntity, &environmentTransform, this->nextEntityId++);
 
@@ -312,12 +350,12 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 			// create the entity and add it to the world
 			Container_addChild((Container)this, (Container)entity);
 		}
-
+/*
 		if (permanent)
 		{
 			// TODO
 		}
-		
+*/		
 		return entity;
 	}
 
@@ -492,6 +530,8 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
+	CACHE_ENABLE;
+
 	VBVec3D focusEntityPosition = Container_getGlobalPosition((Container)this->focusEntity);
 	focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
 	focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
@@ -559,11 +599,11 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 			};
 			
 			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0] && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition? true: false;
-			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 3: __SCREEN_WIDTH;
-			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 3: __SCREEN_HEIGHT;
+			fix19_13 halfWidth = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2: __SCREEN_WIDTH);
+			fix19_13 halfHeight = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2: __SCREEN_HEIGHT);
 
 			// if entity in load range
-			if (!loadOnlyInRangeEntities || Stage_inLoadRange(this, &position3D, width, height))
+			if (Stage_inLoadRange(this, position3D, halfWidth, halfHeight) || !loadOnlyInRangeEntities)
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
@@ -590,6 +630,8 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 	}
 
 	previousFocusEntityDistance = focusEntityDistance;
+
+	CACHE_DISABLE;
 }
 
 // load all visible entities
@@ -614,11 +656,11 @@ static void Stage_loadInRangeEntities(Stage this)
 			};
 
 			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0] && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition? true: false;
-			u8 width = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 3: __SCREEN_WIDTH;
-			u8 height = hasSprites? stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 3: __SCREEN_HEIGHT;
+			fix19_13 halfWidth = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2: __SCREEN_WIDTH);
+			fix19_13 halfHeight = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2: __SCREEN_HEIGHT);
 
 			// if entity in load range
-			if (Stage_inLoadRange(this, &position3D, width, height))
+			if (Stage_inLoadRange(this, position3D, halfWidth, halfHeight))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
