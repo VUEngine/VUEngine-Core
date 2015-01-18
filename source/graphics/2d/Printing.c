@@ -63,7 +63,6 @@ __CLASS_DEFINITION(Printing);
 extern FontDefinition VBJAE_DEFAULT_FONT;
 
 static void Printing_constructor(Printing this);
-FontSize Printing_getFontSize(Printing this, u8 fontSizeDefine);
 
 
 //---------------------------------------------------------------------------------------------------------

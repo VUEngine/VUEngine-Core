@@ -1035,14 +1035,54 @@
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>ASSERT & others</h3>
+            <h4>ASSERT</h4>
+
+            <p>
+                The engine provides two kinds of ASSERT macros, which check a given statement and throw an exception
+                with a given error message if this statement returns false.
+                These macros should be used thoughout the code to make debugging easier.
+                Since the engine relies on heavy pointer usage, it can happen easily to get a bad pointer and get lost.
+            </p>
+
+            <h5>ASSERT</h5>
+
+            <p>
+                Only inserted when compiling under debug. It is used at the start of most of the
+                engine's methods to check that the "this" pointer is not NULL.
+                Since the MemoryPool writes a 0 in the first byte of a deleted pointer, this helps to
+                assure that any memory slot within the MemoryPool's pools has a 0 when it has been deleted.
+            </p>
+
+            <h5>NM_ASSERT</h5>
+
+            <p>
+                Inserted under any compilation type (NM stands for "non maskerable").
+                This macro is meant to be placed in sensible parts of the code.
+                Here's a few examples of usage in the VBJaEngine:
+            </p>
+
+            <ul>
+                <li>
+                    <b>MemoryPool allocation</b><br>
+                    To let you know that the memory is full, otherwise very hard bugs occur which are extremely hard to track
+                </li>
+                <li>
+                    <b>SpriteManager, registering a new Sprite</b><br>
+                    To let you know that there are no more WORLDs available
+                </li>
+                <li>
+                    <b>ParamTableManager, registering a new Sprite</b><br>
+                    To  let you know that param memory is depleted
+                </li>
+            </ul>
+
 
 
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h2>Pre-processing</h2>
+            <h2>Post-processing</h2>
 
 
 
