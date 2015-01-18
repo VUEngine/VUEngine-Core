@@ -68,6 +68,8 @@ __SINGLETON(I18n);
 // class's constructor
 static void I18n_constructor(I18n this)
 {
+	ASSERT(this, "I18n::constructor: null this");
+
 	this->languageCount = 0;
 	this->ActiveLanguage = 0;
 
@@ -77,6 +79,8 @@ static void I18n_constructor(I18n this)
 // class's destructor
 void I18n_destructor(I18n this)
 {
+	ASSERT(this, "I18n::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY(Object);
 }
@@ -84,18 +88,24 @@ void I18n_destructor(I18n this)
 // get localized string
 char* I18n_getText(I18n this, int string)
 {
+	ASSERT(this, "I18n::getText: null this");
+
 	return this->languages[this->ActiveLanguage]->language[string];
 }
 
 // set the language
 void I18n_setActiveLanguage(I18n this, u8 languageId)
 {
+	ASSERT(this, "I18n::setActiveLanguage: null this");
+
     this->ActiveLanguage = languageId;
 }
 
 // set the language by language name
 void I18n_setActiveLanguageByName(I18n this, const char* lang)
 {
+	ASSERT(this, "I18n::setActiveLanguageByName: null this");
+
     u8 i;
 
     for (i = 0; i < this->languageCount; i++)
@@ -111,29 +121,39 @@ void I18n_setActiveLanguageByName(I18n this, const char* lang)
 // register a languages
 void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition)
 {
+	ASSERT(this, "I18n::registerLanguage: null this");
+
 	this->languages[this->languageCount++] = langDefinition;
 }
 
 // get all registered languages
 LangDefinition * I18n_getLanguages(I18n this)
 {
+	ASSERT(this, "I18n::getLanguages: null this");
+
     return (LangDefinition *)this->languages;
 }
 
 // get the total number of registered languages
 u8 I18n_getLanguageCount(I18n this)
 {
+	ASSERT(this, "I18n::getLanguageCount: null this");
+
     return this->languageCount;
 }
 
 // get the id of the currently active language
 u8 I18n_getActiveLanguage(I18n this)
 {
+	ASSERT(this, "I18n::getActiveLanguage: null this");
+
     return this->ActiveLanguage;
 }
 
 // get the name of the currently active language
 char* I18n_getActiveLanguageName(I18n this)
 {
+	ASSERT(this, "I18n::getActiveLanguageName: null this");
+
     return (char*)this->languages[this->ActiveLanguage]->name;
 }
