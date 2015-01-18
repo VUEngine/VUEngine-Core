@@ -70,10 +70,12 @@ h2 {
     padding: 15px 0 0;
 }
 h3 {
+    font-weight: bold;
     margin-top: 5px 0 25px;
     padding: 15px 0 0;
 }
 h4, h5, h6 {
+    font-weight: bold;
     padding-top: 15px;
 }
 
@@ -141,7 +143,7 @@ footer {
 }
 
 #jae-sidebar-toc > li > a {
-    padding: 0 15px;
+    padding: 0 10px;
 }
 
 #jae-sidebar-toc > li.active > a {

@@ -100,9 +100,9 @@
 
             <ul>
                 <li>Particle system</li>
-                <li>Polygon based engine</li>
+                <li>Polygons</li>
                 <li>Tile based collision detection</li>
-                <li>BGMAP defragmentation<li>
+                <li>BGMAP defragmentation</li>
                 <li>More collision shapes: spheres, complex polyhedrons, etc.</li>
                 <li>Object based entities (instead of Texture based as they currently are)</li>
 
@@ -346,20 +346,29 @@
             <h5>Animation allocation types</h5>
 
             <p>
-                Since there can be Characters with many frames of animations like Hero, and Characters with simple animations like Koopas, there is a need to allocate each kind in different ways.
+                Since there can be Characters with many frames of animations like the game's hero on one hand, and
+                Characters with simple animations like enemies on the other hand, there is a need to allocate each
+                kind in different ways. There are three ways to allocate animations in memory:
             </p>
+            <b>__ANIMATED:</b>
             <p>
-                There are three ways to allocate animations in memory:
+                Each Character has its dedicated Char and BGMap memory. On each animation frame change, the char
+                definition is rewritten with the next.
+                Since this kind of texture is the most expensive one performance-wise, it is recommended to use it
+                only for either Characters with lots of animations, or when the number of chars for all the frames of
+                animation is too large to be be allocated as <code>__ANIMATED_SHARED</code>
+                (that'd be more than 511 chars, 1 is always reserved by the engine for each CharSet).
             </p>
-            <pre><code class="language-c">__ANIMATED:</code></pre>
+            <b>__ANIMATED_SHARED:</b>
             <p>
-                Each Character has its dedicated char and bgmap memory. On each animation frame change, the char definition is rewritten with the next. Use this method for character with tons of animations.
+                Both the Char and BGMap definitions are shared between Characters of the same type. All animation
+                frames are allocated in both memories, so in order to display each animation frame, the world layer
+                window is moved to the proper frame in case of BGMap mode being used, or the param table is rewritten in
+                the case of affine mode.
+                This is useful for example for an enemy Character which has few chars and few animation frames and when
+                there are  lot of the same Character on screen.
             </p>
-            <pre><code class="language-c">__ANIMATED_SHARED:</code></pre>
-            <p>
-                Each Character has its dedicated char and bgmap memory. On each animation frame change, the char definition is rewritten with the next. Use this method for character with tons of animations.
-            </p>
-            <pre><code class="language-c">__NO_ANIMATED:</code></pre>
+            <b>__NO_ANIMATED:</b>
             <p>
                 Used with static images like backgrounds, logos, etc.
             </p>
@@ -432,47 +441,102 @@
 
             <h3>Container</h3>
 
+            <p>
+                A generic container for parenting purposes. Eases translation, rotation, scaling etc. of several entites
+                at once.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Entity</h3>
 
+            <p>
+                A <code>Container</code> with a list of Sprites. It is the base class for any visual object.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>InGameEntity</h3>
 
+            <p>
+                Interactive entities in the levels, in general, they have a collision cuboid which Actors' cuboids test
+                against for collisions.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>AnimatedInGameEntity</h3>
 
+            <p>
+                An entity with animated sprites.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>Actor</h3>
+            <h4>Actor</h4>
 
+            <p>
+                AnimatedInGameEntity with a physical body. It coordinates the collisions and the way the body must react
+                to them. This class is designed to handle movable entities.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>InanimatedInGameEntity</h3>
 
+            <p>
+                InGameEntity with physical properties (friction, elasticity, etc.). In general, it is not supposed to move.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Image</h3>
 
+            <p>
+                Just a handy entity for non-interactive images.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>MBackground</h3>
+            <h3>Backgrounds</h3>
+
+            <p>
+                There are two ways to create repeating backgrounds.
+            </p>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h4>ScrollBackground</h4>
+
+            <p>
+                Simple class to create infinitely loop images out of two Textures, either different ones
+                or two times the same one. It supports looping over the X axis only.
+                It is easier to use than the <code>MBackground</code>, but is quite imperformant and should therefore be
+                avoided if possible.
+            </p>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
+            <h4>MBackground</h4>
+
+            <p>
+                An infinitely looping background that is composed of a variable number of up to 8 BGMaps.
+            </p>
+
+            <p>
+                This makes use of MSprite, which can be quite complex to use. Texture allocation must be planned ahead
+                with texture preloading to work with multiple segments.
+            </p>
+
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -1035,14 +1099,55 @@
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>ASSERT & others</h3>
+            <h4>ASSERT</h4>
+
+            <p>
+                The engine provides two kinds of ASSERT macros, which check a given statement and throw an exception
+                with a given error message if this statement returns false.
+                These macros should be used thoughout the code to make debugging easier.
+                Since the engine relies on heavy pointer usage, it can happen easily to get a bad pointer and get lost.
+            </p>
+
+            <h5>ASSERT</h5>
+
+            <p>
+                Only inserted when compiling under debug. It is used at the start of most of the
+                engine's methods to check that the "this" pointer is not NULL.
+                Since the MemoryPool writes a 0 in the first byte of a deleted pointer, this helps to
+                assure that any memory slot within the MemoryPool's pools has a 0 when it has been deleted.
+            </p>
+
+            <h5>NM_ASSERT</h5>
+
+            <p>
+                Inserted under any compilation type (NM stands for "non maskerable").
+                This macro is meant to be placed in sensible parts of the code.
+                Here's a few examples of usage in the VBJaEngine:
+            </p>
+
+            <ul>
+                <li>
+                    <b>MemoryPool allocation</b><br>
+                    To let you know that the memory is full, otherwise very hard bugs occur which are extremely hard to
+                    track
+                </li>
+                <li>
+                    <b>SpriteManager, registering a new Sprite</b><br>
+                    To let you know that there are no more WORLDs available
+                </li>
+                <li>
+                    <b>ParamTableManager, registering a new Sprite</b><br>
+                    To  let you know that param memory is depleted
+                </li>
+            </ul>
+
 
 
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h2>Pre-processing</h2>
+            <h2>Post-processing</h2>
 
 
 

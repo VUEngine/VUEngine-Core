@@ -7,8 +7,8 @@ $("h2,h3,h4,h5,h6", ".documentation").each(function() {
     var newId = currentLabel.toLowerCase();
     newId = replaceAll(' ', '-', newId);
     newId = replaceAll("'", '', newId);
-    newId = replaceAll("&amp;", 'and', newId);
-    newId = replaceAll("&", 'and', newId);
+    newId = replaceAll('&amp;', 'and', newId);
+    newId = replaceAll('&', 'and', newId);
 
     $this.attr('id', newId);
 
