@@ -645,12 +645,13 @@ static void AnimationEditor_loadAnimationFunction(AnimationEditor this)
 	this->animationFunction.loop = animationFunction->loop;
 	this->animationFunction.onAnimationComplete = &AnimationEditor_onAnimationComplete;
 }
+extern const VBVec3D* _screenPosition;
 
 static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 {
 	AnimationEditor_removePreviousAnimatedSprite(this);
 
-	VBVec3D position = Screen_getPosition(Screen_getInstance());
+	VBVec3D position = *_screenPosition;
 
 	position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
 	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
@@ -660,7 +661,13 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 	ASSERT(this->animatedSprite, "AnimationEditor::createAnimatedSprite: null animatedSprite");
 	ASSERT(Sprite_getTexture(this->animatedSprite), "AnimationEditor::createAnimatedSprite: null texture");
 
-	Sprite_setPosition((Sprite)this->animatedSprite, position);
+	DrawSpec drawSpec = Sprite_getDrawSpec((Sprite)this->animatedSprite);
+	drawSpec.position.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture((Sprite)this->animatedSprite)) << 2));
+	drawSpec.position.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture((Sprite)this->animatedSprite)) << 2));
+	drawSpec.position.z = 0;
+		
+	Sprite_setDrawSpec((Sprite)this->animatedSprite, &drawSpec);
+
 	Sprite_scale((Sprite)this->animatedSprite);
 	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
 	__VIRTUAL_CALL(void, Sprite, render, (Sprite)this->animatedSprite);

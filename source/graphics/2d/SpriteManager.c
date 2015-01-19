@@ -352,6 +352,11 @@ void SpriteManager_render(SpriteManager this)
 	// to make effective its visual properties as quick as
 	// possible
 	VirtualNode node = VirtualList_begin(this->sprites);
+	
+	if(!node)
+	{
+		SpriteManager_setLastLayer(this);
+	}
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
