@@ -1099,6 +1099,15 @@
 
             <!--------------------------------------------------------------------------------------------------------->
 
+            <h4>__GET_CLASS_NAME</h4>
+
+            <p>
+                Get the class of an object using this macro.
+            </p>
+
+
+            <!--------------------------------------------------------------------------------------------------------->
+
             <h4>ASSERT</h4>
 
             <p>
@@ -1116,6 +1125,13 @@
                 Since the MemoryPool writes a 0 in the first byte of a deleted pointer, this helps to
                 assure that any memory slot within the MemoryPool's pools has a 0 when it has been deleted.
             </p>
+
+            <p>
+                Another good usecase for this would be to check an object's class name against the expected class as
+                shown below.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">ASSERT(!strcmp(__GET_CLASS_NAME(someObject), SomeClass_getClassName()), "Wrong object class");</code></pre>
 
             <h5>NM_ASSERT</h5>
 
