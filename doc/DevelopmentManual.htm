@@ -871,13 +871,98 @@ u8 energy;</code></pre>
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>The printing layer</h3>
+            <h3>The Printing Layer</h3>
 
+            <p>
+                Out of the VB's 32 available Worlds, the VBJaEngine reserves the highest one for text output.
+                It provides methods to output different variable types to this so-called Printing Layer.
+            </p>
+
+            <ul>
+                <li><code>Printing_text</code></li>
+                <li><code>Printing_int</code></li>
+                <li><code>Printing_float</code></li>
+                <li><code>Printing_hex</code></li>
+            </ul>
+
+            <p>
+                Here's an example that outputs the string "Hello, World!" at position {10, 0} using a custom font
+                registered under the name "CustomFont".
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">Printing_text(
+    Printing_getInstance(), // Printing instance
+    "Hello, World!", // text
+    10, // x position
+    0, // y position
+    "CustomFont", // font name
+);</code></pre>
+
+            <p>
+                The whole printing layer can be cleared with the <code>Printing_clear</code> method.
+            </p>
+
+            <p>
+                Some aspects of the Printing Layer can be modified in your projects's <code>config.h</code> file.
+
+                The palette for printing can be set to one of the 4 avaiable one with the
+                <code>__PRINTING_PALETTE</code> setting.
+
+                An offset of the printing layer can be defined using the
+                <code>__PRINTING_BGMAP_X_OFFSET</code>, <code>__PRINTING_BGMAP_Y_OFFSET</code> and
+                <code>__PRINTING_BGMAP_Z_OFFSET</code> settings.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Font management</h3>
+
+            <p>
+                The VBJaEngine comes with a default font for writing to the Printing Layer, but you can also define
+                one or more custom fonts. To do so, create a FontROMDef for each font, as shown in the example below.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">extern BYTE font8x16Tiles[];
+FontROMDef FONT_8x16 =
+{
+    // pointer to the respective character definition
+    font8x16Tiles,
+
+    // number of characters in font
+    96,
+
+    // character number at which the font starts, allows you to
+    // skip the control characters for example
+    32,
+
+    // size of a single character (in chars) ({width, height})
+    {1, 2},
+
+    // font's name
+    "Font8x16",
+};</code></pre>
+
+            <p>
+                To make your custom fonts known to the engine, register each one using the
+                <code>Printing_registerFont</code> method during the initialization phase of your game.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">Printing_registerFont(Printing_getInstance(), &FONT_8x16);</code></pre>
+
+            <p>
+                The first registered font is always the default one, and is used when no font name is explicitly given
+                to the various Printing methods.
+            </p>
+
+            <p>
+                The engine's default font will only be available when no custom fonts are registered. If you still want
+                to use it, you have to register it manually as shown below. It will then be useable under the name
+                "VBJaEngineFont". Since the first registered font is always the default one, you probably want to
+                register it first, before your custom fonts.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">Printing_registerFont(Printing_getInstance(), &VBJAENGINE_DEFAULT_FONT);</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -898,9 +983,9 @@ u8 energy;</code></pre>
             </p>
 
             <pre class="line-numbers"><code class="language-c">enum {
-                STR_HELLO,
-                STR_VBJAENGINE_ROCKS
-                };</code></pre>
+    STR_HELLO,
+    STR_VBJAENGINE_ROCKS
+};</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -908,25 +993,29 @@ u8 energy;</code></pre>
             <h3>Languages files</h3>
 
             <p>
-                For each language, define an array of strings. Make sure to keep the string order as defined in the enum
+                For each language, create a LangROMDef, which consists of a language name string and an array of
+                strings. Make sure to keep the string order as defined in the enum
                 above. You'll want to create one file per language definition.
                 Ensure these files are encoded in ANSI for special characters ("umlauts") to work.
             </p>
 
             <p>
-                The following gives an example for an English language definition file.
+                The following gives an example for an English language definition.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">static char* Lang_EN[] =
-                {
+            <pre class="line-numbers"><code class="language-c">LangROMDef LANG_EN =
+{
+    // Language Name
+    "English",
 
-                // STR_HELLO
-                "Hello",
+    {
+        // STR_HELLO
+        "Hello",
 
-                // STR_VBJAENGINE_ROCKS
-                "The VBJaEngine rocks!",
-
-                };</code></pre>
+        // STR_VBJAENGINE_ROCKS
+        "The VBJaEngine rocks! :-)",
+    },
+};</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -938,7 +1027,7 @@ u8 energy;</code></pre>
                 each one using the <code>I18n_registerLanguage</code> method.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">I18n_registerLanguage(I18n_getInstance(), Lang_EN);</code></pre>
+            <pre class="line-numbers"><code class="language-c">I18n_registerLanguage(I18n_getInstance(), &LANG_EN);</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -946,29 +1035,20 @@ u8 energy;</code></pre>
             <h3>Setting active language</h3>
 
             <p>
-                You can set the active language using the <code>I18n_setActiveLanguage</code> method. Each registered language
-                is identified by an integer in the order they were registered, starting with 0. By default, the first
-                registered language is used.
+                You can set the active language using the <code>I18n_setActiveLanguage</code> method. Each registered
+                language is identified by an integer in the order they were registered, starting with 0. By default,
+                the first registered language is used.
             </p>
 
             <pre class="line-numbers"><code class="language-c">I18n_setActiveLanguage(I18n_getInstance(), 0);</code></pre>
 
             <p>
-                For easier identification of your registered languages, you'll want to creating an enum with string
-                identificators in the same order you register the languages with the engine. For example:
+                Alternatively, you can also use the
+                <code>I18n_setActiveLanguageByName</code> method to set the active language by one of the language names
+                defined in your LangROMDefs.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">enum {
-                LANGUAGE_EN,
-                LANGUAGE_DE
-                };</code></pre>
-
-            <p>
-                If you made languages accessible through these, a call to change the language to German would look like
-                the following.
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">I18n_setActiveLanguage(I18n_getInstance(), LANGUAGE_DE);</code></pre>
+            <pre class="line-numbers"><code class="language-c">I18n_setActiveLanguageByName(I18n_getInstance(), "English");</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -980,7 +1060,7 @@ u8 energy;</code></pre>
                 language.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">I18n_getText(I18n_getInstance(), STR_HELLO)</code></pre>
+            <pre class="line-numbers"><code class="language-c">I18n_getText(I18n_getInstance(), STR_HELLO);</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -1040,23 +1120,65 @@ u8 energy;</code></pre>
 
             <h2>Defaults</h2>
 
+            <p>
+                The VBJaEngine includes defaults for common Virtual Boy software features.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Splash screens</h3>
 
+            <p>
+                Default versions of common screens are shipped with the VBJaEngine. Those can easily be directly used,
+                modified, replaced and/or reordered and eliminate the need to create those by hand.
+            </p>
 
+            <ol>
+                <li>Adjustment screen</li>
+                <li>Precaution screen</li>
+                <li>Automatic Pause selection screen</li>
+                <li>Language selection screen</li>
+                <li>VBJaEngine splash screen</li>
+                <li>Automatic Pause screen</li>
+            </ol>
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h3>Low Battery Indicator</h3>
+            <h3>Low Battery indicator</h3>
 
+            <p>
+                When the Virtual Boy's batteries are low, a flashing low battery indicator is shown on screen. By
+                default, it is shown in the top right corner at position {45, 1}.
+            </p>
+
+            <p>
+                The indicator's position can be changed through the <code>__LOWBAT_POS_X</code> and
+                <code>__LOWBAT_POS_Y</code> settings. The feature can be completely disabled through the
+                <code>__LOWBAT_SHOW</code> setting.
+                All settings can be made in your projects's <code>config.h</code> file.
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Automatic Pause</h3>
+
+            <p>
+                An Automatic Pause screen is shown after approximately 30 minutes of gameplay.
+            </p>
+
+            <p>
+                The amount of time after which the Automatic Pause screen is shown can be changed through the
+                <code>__AUTO_PAUSE_DELAY</code> setting, to be made in your projects's <code>config.h</code> file.
+            </p>
+
+            <p>
+                You can also set your own state to be used for the Automatic Pause screen using the
+                <code>Game_setAutomaticPauseState</code> function. Here's an example:
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">Game_setAutomaticPauseState(Game_getInstance(), (GameState)CustomAutoPauseScreenState_getInstance());</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->
