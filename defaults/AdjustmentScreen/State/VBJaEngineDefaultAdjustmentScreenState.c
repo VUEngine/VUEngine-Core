@@ -28,7 +28,7 @@
 #include <Screen.h>
 #include <MessageDispatcher.h>
 #include <VBJaEngineDefaultAdjustmentScreenState.h>
-//#include <PrecautionScreenState.h>
+#include <VBJaEngineDefaultPrecautionScreenState.h>
 
 extern StageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 
@@ -63,7 +63,7 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultAdjustmentScreenState);
 // class's constructor
 static void VBJaEngineDefaultAdjustmentScreenState_constructor(VBJaEngineDefaultAdjustmentScreenState this)
 {
-//	VBJaEngineDefaultAdjustmentScreenState_setNextstate(this, (GameState)PrecautionScreenState_getInstance());
+	VBJaEngineDefaultAdjustmentScreenState_setNextstate(this, (GameState)VBJaEngineDefaultPrecautionScreenState_getInstance());
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 
 	__CONSTRUCT_BASE(GameState);
