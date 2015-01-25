@@ -181,22 +181,22 @@
 
                 <pre class="line-numbers"><code class="language-c">#define Hero_ATTRIBUTES						        	\
                     \
-                    /* it is derivated from */					    		\
-                    Character_ATTRIBUTES							    	\
-                    \
-                    /* hero has energy	*/							        \
-                    u8 energy;</code></pre>
+/* it is derivated from */					    		\
+Character_ATTRIBUTES							    	\
+														\
+/* hero has energy	*/							        \
+u8 energy;</code></pre>
 
             <p>
                 Notice that all of these macros have a backslash ("\") at the end of each line, you must be careful and
-                always be sure that there are not blank or tab spaces after them. The reason to declare the class's
+                always be sure that there are no blank or tab spaces after them. The reason to declare the class's
                 attributes this way is because this allows to inherit methods/attributes, and at the same time allows to
-                make the attributes private. Notice that in order for Hero to inherit Character's attributes it includes
-                in <code>Hero_ATTRIBUTES</code> the <code>Character_ATTRIBUTES</code>.
+                make the attributes private. Notice that in order for Hero to inherit Character's attributes to include
+                <code>Character_ATTRIBUTES</code> in <code>Hero_ATTRIBUTES</code>.
             </p>
 
             <p>
-                The last thing to be done in the header file is to declare the next methods:
+                The last thing to be done in the header file is to declare the following methods:
             </p>
 
             <p>

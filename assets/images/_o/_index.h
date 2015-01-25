@@ -1,0 +1,7 @@
+#include "VBJaEngineDefaultAdjustmentScreenBG.c"  
+#include "VBJaEngineDefaultAdjustmentScreenIcon.c"  
+#include "VBJaEngineDefaultAdjustmentScreenLogo.c"  
+#include "VBJaEngineDefaultSplashScreenBG.c"  
+#include "VBJaEngineDefaultSplashScreenBGLight.c"  
+#include "VBJaEngineDefaultSplashScreenLogo.c"  
+#include "VBJaEngineDefaultSplashScreenLogoOutline.c"  

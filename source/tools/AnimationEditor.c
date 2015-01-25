@@ -33,6 +33,7 @@
 #include <Screen.h>
 #include <string.h>
 #include <OptionsSelector.h>
+#include <Texture.h>
 
 
 //---------------------------------------------------------------------------------------------------------

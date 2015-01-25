@@ -110,6 +110,7 @@ void Texture_writeHBiasMode(Texture this);
 int Texture_getNumberOfChars(Texture this);
 u8 Texture_getXOffset(Texture this);
 u8 Texture_getYOffset(Texture this);
+TextureDefinition* Texture_getTextureDefinition(Texture this);
 u8 Texture_getTotalCols(Texture this);
 u8 Texture_getTotalRows(Texture this);
 u8 Texture_getBgmapSegment(Texture this);

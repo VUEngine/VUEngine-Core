@@ -1,9 +1,9 @@
-#ifndef FONT_H_
-#define FONT_H_
+#ifndef VBJAENGINE_DEFAULT_FONT_DEFINITION_H_
+#define VBJAENGINE_DEFAULT_FONT_DEFINITION_H_
 
 
 extern BYTE VBJaEngineDefaultFontTiles[];
-FontROMDef VBJAE_DEFAULT_FONT =
+FontROMDef VBJAENGINE_DEFAULT_FONT =
 {
     // font chars definition pointer
 	(BYTE*)VBJaEngineDefaultFontTiles,

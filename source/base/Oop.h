@@ -185,7 +185,6 @@
 	}
 
 
-
 // retrieve virtual method's address
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, Object, ...)				\
 																				\
