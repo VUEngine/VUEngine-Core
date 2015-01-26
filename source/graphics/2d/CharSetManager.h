@@ -60,7 +60,7 @@ void CharSetManager_free(CharSetManager this, CharSet charSet);
 void CharSetManager_print(CharSetManager this, int x, int y);
 int CharSetManager_allocateShared(CharSetManager this, CharSet charSet);
 void CharSetManager_allocate(CharSetManager this, CharSet charSet);
-void CharSetManager_setChars(CharSetManager  this, int charSet, int numberOfChars);
+void CharSetManager_setChars(CharSetManager  this, int charSetSegment, int numberOfChars);
 void CharSetManager_defragmentProgressively(CharSetManager this);
 
 

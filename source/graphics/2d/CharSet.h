@@ -60,7 +60,7 @@
 #define CharSet_SET_VTABLE(ClassName)											\
 		Object_SET_VTABLE(ClassName)											\
 
-#define CharSet_ATTRIBUTES													\
+#define CharSet_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
@@ -69,7 +69,7 @@
 	u16 offset;																	\
 																				\
 	/* memory segment */														\
-	u8 charset: 2;																\
+	u8 segment: 2;																\
 																				\
 	/* allocation type */														\
 	u8 allocationType: 3;														\
@@ -126,8 +126,8 @@ BYTE* CharSet_getCharDefinition(CharSet this);
 void CharSet_setCharDefinition(CharSet this, void *charDefinition);
 void CharSet_setNumberOfChars(CharSet this, int numberOfChars);
 int CharSet_getNumberOfChars(CharSet this);
-int CharSet_getCharSet(CharSet this);
-void CharSet_setCharSet(CharSet this, int charSet);
+int CharSet_getSegment(CharSet this);
+void CharSet_setSegment(CharSet this, int segment);
 void CharSet_copy(CharSet this, CharSet source);
 void CharSet_write(CharSet this);
 void CharSet_rewrite(CharSet this);

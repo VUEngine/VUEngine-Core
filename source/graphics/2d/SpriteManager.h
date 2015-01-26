@@ -60,6 +60,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively);
 void SpriteManager_spriteChangedPosition(SpriteManager this);
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite);
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite);
+void SpriteManager_setLastLayer(SpriteManager this);
 void SpriteManager_render(SpriteManager this);
 int SpriteManager_getFreeLayer(SpriteManager this);
 void SpriteManager_showLayer(SpriteManager this, u8 layer);

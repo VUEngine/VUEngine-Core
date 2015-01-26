@@ -73,7 +73,8 @@ static int CharSetManager_searchCharDefinition(CharSetManager this, CharSet char
 static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, u16 offset);
 static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u16 numberOfChars);
 static void CharSetManager_deallocate(CharSetManager this, CharSet charSet);
-static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 offset, u16 numberOfChars);
+static void CharSetManager_markFreedChars(CharSetManager this, int segment, u16 offset, u16 numberOfChars);
+static void CharSetManager_markUsedChars(CharSetManager this, int segment, int offset, int numberOfChars);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -195,12 +196,12 @@ void CharSetManager_free(CharSetManager this, CharSet charSet)
 }
 
 // set number of chars used in a given segment
-void CharSetManager_setChars(CharSetManager this, int charSet, int numberOfChars)
+void CharSetManager_setChars(CharSetManager this, int segment, int numberOfChars)
 {
 	ASSERT(this, "CharSetManager::setChars: null this");
 
 	// set the number of chars of the given charset
-	this->segment[charSet][0] = numberOfChars;
+	this->segment[segment][0] = numberOfChars;
 }
 
 // print class's attributes's states
@@ -213,15 +214,15 @@ void CharSetManager_print(CharSetManager this, int x, int y)
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->charSets), x + 12, y++, NULL);
 	y++;
 
-	int charSet = 0;
+	int segment = 0;
 	int i = 0;
-	for (; charSet < 4; charSet++)
+	for (; segment < 4; segment++)
 	{
 		Printing_text(Printing_getInstance(), "CharSeg", x, y, NULL);
-		Printing_int(Printing_getInstance(), charSet, x + 8, y, NULL);
+		Printing_int(Printing_getInstance(), segment, x + 8, y, NULL);
 		for (i = 0; i < __CHAR_GRP_PER_SEG && (y + i + 1) < 28; i++)
 		{
-			Printing_hex(Printing_getInstance(), this->segment[charSet][i], x, y + i + 1, NULL);
+			Printing_hex(Printing_getInstance(), this->segment[segment][i], x, y + i + 1, NULL);
 		}
 
 		x += 12;
@@ -351,7 +352,7 @@ static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u1
 }
 
 // register the used chars
-void CharSetManager_markUsedChars(CharSetManager this, int charSeg, int offset, int numberOfChars)
+static void CharSetManager_markUsedChars(CharSetManager this, int segment, int offset, int numberOfChars)
 {
 	ASSERT(this, "CharSetManager::markUsedChars: null this");
 
@@ -377,7 +378,7 @@ void CharSetManager_markUsedChars(CharSetManager this, int charSeg, int offset, 
 	// mark segmant mask's used slots
 	while (numberOfChars--)
 	{
-		this->segment[charSeg][auxJ] |= index;
+		this->segment[segment][auxJ] |= index;
 
 		index >>= 1;
 
@@ -417,7 +418,7 @@ void CharSetManager_allocate(CharSetManager this, CharSet charSet)
 			CharSetManager_setCharDefinition(this, CharSet_getCharDefinition(charSet), offset);
 
 			// set charset's segment
-			CharSet_setCharSet(charSet, i);
+			CharSet_setSegment(charSet, i);
 
 			// register the used chars
 			CharSetManager_markUsedChars(this, i, offset, numberOfChars);
@@ -439,13 +440,13 @@ static void CharSetManager_deallocate(CharSetManager this, CharSet charSet)
 {
 	ASSERT(this, "CharSetManager::deallocate: null this");
 
-	CharSetManager_markFreedChars(this, CharSet_getCharSet(charSet), CharSet_getOffset(charSet), CharSet_getNumberOfChars(charSet) + 1);
+	CharSetManager_markFreedChars(this, CharSet_getSegment(charSet), CharSet_getOffset(charSet), CharSet_getNumberOfChars(charSet) + 1);
 
 	VirtualList_removeElement(this->charSets, charSet);
 }
 
 // free char graphic memory
-static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 offset, u16 numberOfChars)
+static void CharSetManager_markFreedChars(CharSetManager this, int segment, u16 offset, u16 numberOfChars)
 {
 	ASSERT(this, "CharSetManager::markFreedChars: null this");
 
@@ -476,7 +477,7 @@ static void CharSetManager_markFreedChars(CharSetManager this, int charSet, u16 
 	CACHE_ENABLE;
 	while (numberOfChars--)
 	{
-		this->segment[charSet][j] &= index;
+		this->segment[segment][j] &= index;
 
 		index >>= 1;
 
@@ -502,10 +503,10 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 		return;
 	}
 
-	int charSet = 0;
-	for (; charSet < __CHAR_SEGMENTS ; charSet++)
+	int segment = 0;
+	for (; segment < __CHAR_SEGMENTS ; segment++)
 	{
-		u16 freeOffset = CharSetManager_getNextFreeOffset(this, charSet, 1);
+		u16 freeOffset = CharSetManager_getNextFreeOffset(this, segment, 1);
 
 		if (0 < freeOffset)
 		{
@@ -518,7 +519,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 			{
 				CharSet charSet = (CharSet)VirtualNode_getData(charSetNode);
 
-				if (CharSet_getCharSet(charSet) != charSet)
+				if (CharSet_getSegment(charSet) != segment)
 				{
 					continue;
 				}
@@ -543,8 +544,8 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 				CharSet_setOffset(charSetToRewrite, freeOffset);
 
 				// register the used chars
-				CharSetManager_markUsedChars(this, CharSet_getCharSet(charSetToRewrite), freeOffset, CharSet_getNumberOfChars(charSetToRewrite));
-				CharSetManager_markFreedChars(this, CharSet_getCharSet(charSetToRewrite), freeOffset + CharSet_getNumberOfChars(charSetToRewrite), previousOffset - freeOffset);
+				CharSetManager_markUsedChars(this, CharSet_getSegment(charSetToRewrite), freeOffset, CharSet_getNumberOfChars(charSetToRewrite));
+				CharSetManager_markFreedChars(this, CharSet_getSegment(charSetToRewrite), freeOffset + CharSet_getNumberOfChars(charSetToRewrite), previousOffset - freeOffset);
 
 				BYTE* charDefinition = CharSet_getCharDefinition(charSetToRewrite);
 
@@ -554,7 +555,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 					if (charDefinition == this->charDefinition[i])
 					{
 						this->offset[i] = CharSet_getOffset(charSetToRewrite);
-						ASSERT(0 <= this->offset[charSet], "CharSetManager::defragmentProgressively: offset less than 0")
+						ASSERT(0 <= this->offset[segment], "CharSetManager::defragmentProgressively: offset less than 0")
 						break;
 					}
 				}

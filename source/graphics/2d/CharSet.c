@@ -158,19 +158,19 @@ int CharSet_getNumberOfChars(CharSet this)
 }
 
 // get charset's segment
-int CharSet_getCharSet(CharSet this)
+int CharSet_getSegment(CharSet this)
 {
 	ASSERT(this, "CharSet::getCharSet: null this");
 
-	return this->charset;
+	return this->segment;
 }
 
 // set charset's char segment
-void CharSet_setCharSet(CharSet this, int charSet)
+void CharSet_setSegment(CharSet this, int segment)
 {
 	ASSERT(this, "CharSet::setCharSet: null this");
 
-	this->charset = charSet;
+	this->segment = segment;
 }
 
 //copy a charset
@@ -182,7 +182,7 @@ void CharSet_copy(CharSet this,CharSet source)
 	this->charDefinition = source->charDefinition;
 
 	// copy the configuration
-	this->charset = source->charset;
+	this->segment = source->segment;
 	this->offset = source->offset;
 	this->allocationType = source->allocationType;
 	this->numberOfChars = source->numberOfChars;
@@ -206,7 +206,7 @@ void CharSet_write(CharSet this)
 			}
 
 			//write to char memory
-			Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4), (u8*)(this->charDefinition + this->charDefinitionDisplacement), (int)(this->numberOfChars + 1) << 4);
+			Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4), (u8*)(this->charDefinition + this->charDefinitionDisplacement), (int)(this->numberOfChars + 1) << 4);
 
 			break;
 
@@ -220,13 +220,13 @@ void CharSet_write(CharSet this)
 				if (CharSetManager_allocateShared(CharSetManager_getInstance(), this))
 				{
 					//write to char memory
-					Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
+					Mem_copy((u8*)CharSegs(this->segment)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 				}
 			}
 			else
 			{
 				//write to char memory
-				Mem_copy((u8*)CharSegs(this->charset)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
+				Mem_copy((u8*)CharSegs(this->segment)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 			}
 			break;
 
@@ -265,7 +265,7 @@ void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar)
 
 	if(newChar && charToReplace < this->numberOfChars)
 	{
-		Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
+		Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
 	}
 }
 
@@ -288,11 +288,11 @@ void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE
 			0x00, 0x00,
 		};
 
-		Mem_copy(auxChar, (u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), (int)(1 << 4));
+		Mem_copy(auxChar, (u8*)CharSegs(this->segment) + (this->offset << 4) + (charToReplace << 4), (int)(1 << 4));
 
 		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
-		Mem_copy((u8*)CharSegs(this->charset) + (this->offset << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
+		Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
 	}
 }

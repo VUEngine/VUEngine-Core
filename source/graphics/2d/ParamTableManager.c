@@ -160,7 +160,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 	int size = ParamTableManager_calculateSize(this, sprite);
 	
 	//if there is space in the param table, allocate
-	if (__PARAM_DISPLACEMENT(this->used + size) < __PARAM_TABLE_END)
+	if (__PARAM_DISPLACEMENT((this->used + size)) < (__PARAM_TABLE_END))
 	{
 		//set sprite param
 		Sprite_setParam(sprite, this->used);

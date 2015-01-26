@@ -91,7 +91,7 @@ static void Texture_writeAnimated(Texture this)
 	int bgmapSegment = Texture_getBgmapSegment(this);
 	int palette = Texture_getPallet(this) << 14;
 
-	int charLocation = (CharSet_getCharSet(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
 	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
@@ -121,7 +121,7 @@ static void Texture_writeNoAnimated(Texture this)
 	int bgmapSegment = Texture_getBgmapSegment(this);
 	int palette = Texture_getPallet(this) << 14;
 
-	int charLocation = (CharSet_getCharSet(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
 	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
@@ -153,7 +153,7 @@ static void Texture_writeAnimatedShared(Texture this)
 
 	// determine the number of frames the map had
 	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
-	int charLocation = (CharSet_getCharSet(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int frames = CharSet_getNumberOfChars(this->charSet) / area;
 
 	int i = this->textureDefinition->rows;

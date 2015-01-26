@@ -146,6 +146,7 @@ void Sprite_invalidateParamTable(Sprite this);
 void Sprite_rewrite(Sprite this);
 void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec);
 fix19_13 Sprite_getParamTableRow(Sprite this);
+u32 Sprite_getRenderFlag(Sprite this);
 u32 Sprite_getParam(Sprite this);
 void Sprite_setParam(Sprite this, u32 param);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);

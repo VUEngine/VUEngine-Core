@@ -117,7 +117,7 @@ fix19_13 Affine_scale(u16 param, fix19_13 paramTableRow, fix7_9 zoomX, fix7_9 zo
 	int affineEntry = FIX19_13TOI(i);
 	int counter = 0;
 
-	for (; counter < 8 && i < totalRows; i += 0b10000000000000, affineEntry ++, counter++) 
+	for (; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i += 0b10000000000000, affineEntry ++, counter++) 
 	{
 		/*
 		 * 0b10000000000000

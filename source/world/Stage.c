@@ -485,11 +485,10 @@ static void Stage_registerEntities(Stage this)
 		u8 width = 0;
 		u8 height = 0;
 
-		/*
 		int i = 0;
-		for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i].allocator; i++)
+		for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i]->allocator; i++)
 		{
-			const SpriteDefinition* spriteDefinition = &stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i];
+			const SpriteDefinition* spriteDefinition = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i];
 
 			if (spriteDefinition)
 			{
@@ -507,7 +506,6 @@ static void Stage_registerEntities(Stage this)
 				}
 			}
 		}
-		*/
 
 		stageEntityDescription->distance = (stageEntityDescription->positionedEntity->position.x - (width >> 1)) * (stageEntityDescription->positionedEntity->position.x - (width >> 1)) +
 		(stageEntityDescription->positionedEntity->position.y - (height >> 1)) * (stageEntityDescription->positionedEntity->position.y - (height >> 1)) +

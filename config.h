@@ -191,10 +191,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 // param table for affine and hbias render
-#define __PARAM_TABLE_END 			0x0003D800
+#define __PARAM_TABLE_END 							0x0003D800
 
 // maximum possible scale: affects param table allocation space
-#define __MAXIMUM_SCALE				2
+#define __MAXIMUM_SCALE								2
+
+// maximum number of rows to write on each call to affine calculation functions
+#define __MAXIMUM_AFFINE_ROWS_PER_CALL				16
 
 
 //---------------------------------------------------------------------------------------------------------
