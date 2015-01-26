@@ -59,7 +59,10 @@ typedef struct ParamTableFreeData
 																				\
 	/* user for defragmentation */												\
 	ParamTableFreeData paramTableFreeData;										\
-
+																				\
+	/* user for defragmentation */												\
+	Sprite previouslyMovedSprite;												\
+	
 __CLASS_DEFINITION(ParamTableManager);
 
 
@@ -84,6 +87,7 @@ static void ParamTableManager_constructor(ParamTableManager this)
 
 	this->sprites = __NEW(VirtualList);
 	this->removedSpritesSizes = __NEW(VirtualList);
+	this->previouslyMovedSprite = NULL;
 	
 	ParamTableManager_reset(this);
 }
@@ -131,6 +135,7 @@ void ParamTableManager_reset(ParamTableManager this)
 	
 	this->paramTableFreeData.param = 0;
 	this->paramTableFreeData.recoveredSize = 0;
+	this->previouslyMovedSprite = NULL;
 }
 
 // calculate size of param table
@@ -186,6 +191,11 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 
 	VirtualList_removeElement(this->sprites, sprite);
 
+	if(this->previouslyMovedSprite == sprite)
+	{
+		this->previouslyMovedSprite = NULL;
+	}
+	
 	// accounted for
 	if(this->paramTableFreeData.param && this->paramTableFreeData.param <= Sprite_getParam(sprite))
 	{
@@ -203,8 +213,6 @@ void ParamTableManager_free(ParamTableManager this, Sprite sprite)
 bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
-	
-	static Sprite previouslyMovedSprite = NULL;
 	
 	if(this->paramTableFreeData.param)
 	{
@@ -227,7 +235,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 					break;
 				}
 				
-				if(previouslyMovedSprite && 0 < Sprite_getParamTableRow(previouslyMovedSprite))
+				if(this->previouslyMovedSprite && this->previouslyMovedSprite && 0 < Sprite_getParamTableRow(this->previouslyMovedSprite))
 				{
 					break;
 				}
@@ -246,7 +254,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 				// set the new param to move on the next cycle
 				this->paramTableFreeData.param += size;
 				
-				previouslyMovedSprite = sprite;
+				this->previouslyMovedSprite = sprite;
 				
 				break;
 			}
@@ -261,7 +269,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 			this->paramTableFreeData.param = 0;
 			this->paramTableFreeData.recoveredSize = 0;
 			
-			previouslyMovedSprite = NULL;
+			this->previouslyMovedSprite = NULL;
 			
 			return true;
 		}

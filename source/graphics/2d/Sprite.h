@@ -135,7 +135,6 @@ __CLASS_NEW_DECLARE(Sprite, __PARAMETERS(const SpriteDefinition* spriteDefinitio
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition);
 void Sprite_destructor(Sprite this);
 Scale Sprite_getScale(Sprite this);
-void Sprite_scale(Sprite this);
 void Sprite_setDirection(Sprite this, int axis, int direction);
 void Sprite_calculateScale(Sprite this, fix19_13 z);
 void Sprite_setPosition(Sprite this, VBVec3D position);
@@ -146,6 +145,7 @@ u16 Sprite_getMode(Sprite this);
 void Sprite_invalidateParamTable(Sprite this);
 void Sprite_rewrite(Sprite this);
 void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec);
+fix19_13 Sprite_getParamTableRow(Sprite this);
 u32 Sprite_getParam(Sprite this);
 void Sprite_setParam(Sprite this, u32 param);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);

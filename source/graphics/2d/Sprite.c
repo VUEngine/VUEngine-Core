@@ -506,6 +506,11 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
 	this->drawSpec.scale.y = drawSpec->scale.y;
 }
 
+// retrieve param table current row
+fix19_13 Sprite_getParamTableRow(Sprite this)
+{
+	return this->paramTableRow;
+}
 
 //---------------------------------------------------------------------------------------------------------
 // 										MAP FXs
@@ -559,11 +564,7 @@ static void Sprite_doScale(Sprite this)
 	}
 }
 
-fix19_13 Sprite_getParamTableRow(Sprite this)
-{
-	return this->paramTableRow;
-}
-
+// scale sprite
 void Sprite_scale(Sprite this)
 {
 	ASSERT(this, "Sprite::scale: null this");
@@ -573,7 +574,6 @@ void Sprite_scale(Sprite this)
 	
 	Sprite_doScale(this);
 }
-
 
 void Sprite_rotate(Sprite this, int angle)
 {
