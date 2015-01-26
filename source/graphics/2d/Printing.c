@@ -28,6 +28,8 @@
 #include <HardwareManager.h>
 #include <Utilities.h>
 
+#include <VBJaEngineDefaultFontDefinition.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
@@ -60,9 +62,8 @@ __CLASS_DEFINITION(Printing);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern FontDefinition VBJAE_DEFAULT_FONT;
-
 static void Printing_constructor(Printing this);
+void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, ...);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -100,7 +101,7 @@ void Printing_loadFonts(Printing this)
 	// register vbjaengine default font if there's no custom font registered
 	if (this->fonts[0] == NULL)
 	{
-		Printing_registerFont(Printing_getInstance(), &VBJAE_DEFAULT_FONT);
+		Printing_registerFont(Printing_getInstance(), &VBJAENGINE_DEFAULT_FONT);
 	}
 
     // load registered fonts to (end of) char memory
@@ -142,11 +143,16 @@ void Printing_clear(Printing this)
 }
 
 // direct printing out method
-void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
+void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, ...)
 {
 	u16 i = 0, pos = 0, col = x, fontStart = 2048;
 	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
-
+    const char* font = NULL;
+/*
+    va_list args;
+    va_start(args, bplt);
+    font = va_arg(args, char*);
+*/
     // iterate over registered fonts to find memory offset of font to use
     for (j = 0; j < this->fontsDefinitionCount; j++)
     {
@@ -156,6 +162,7 @@ void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16
             break;
         }
     }
+    va_end(args);
 
     // print text
 	while (string[i])

@@ -288,10 +288,22 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										MISCELLANEOUS
+// 										AUTOMATIC PAUSE
 //---------------------------------------------------------------------------------------------------------
 
-#define __EXCEPTION_COLUMN	1
+// amount of time after which to show auto pause (in milliseconds)
+#define __AUTO_PAUSE_DELAY			(30 * 60 * 1000)
+
+// the automatic pause state is not pushed until there is only one state in the game's stack.
+// the following defines the time between checks whether the condition is met (in milliseconds)
+#define __AUTO_PAUSE_RECHECK_DELAY	(60 * 1000)
+
+
+//---------------------------------------------------------------------------------------------------------
+// 											EXCEPTIONS
+//---------------------------------------------------------------------------------------------------------
+
+#define __EXCEPTION_COLUMN	0
 #define __EXCEPTION_LINE	0
 
 
