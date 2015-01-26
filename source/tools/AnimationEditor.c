@@ -191,7 +191,8 @@ void AnimationEditor_update(AnimationEditor this)
 		AnimatedSprite_update(this->animatedSprite, Game_getClock(Game_getInstance()));
 
 		// must scale since there is no entity to do so
-		Sprite_scale((Sprite)this->animatedSprite);
+//		Sprite_invalidateParamTable((Sprite)this->animatedSprite);
+		//Sprite_scale((Sprite)this->animatedSprite);
 	}
 }
 

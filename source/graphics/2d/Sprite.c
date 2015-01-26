@@ -570,9 +570,12 @@ void Sprite_scale(Sprite this)
 	ASSERT(this, "Sprite::scale: null this");
 	ASSERT(this->texture, "Sprite::scale: null texture");
 
-	this->paramTableRow = 0;
-	
-	Sprite_doScale(this);
+	if (this->param)
+	{
+		this->paramTableRow = 0;
+		
+		Sprite_doScale(this);
+	}
 }
 
 void Sprite_rotate(Sprite this, int angle)
