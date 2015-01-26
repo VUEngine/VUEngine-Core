@@ -170,8 +170,6 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 
 	ASSERT(this, "MSprite::setPosition: null this");
 
-	CACHE_ENABLE;
-	
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
@@ -187,7 +185,7 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 	
 	this->drawSpec.position.x = 0;
 	this->drawSpec.position.y = 0;
-
+	
 	this->drawSpec.textureSource.mx = FIX19_13TOI(-position2D.x);
 	this->drawSpec.textureSource.my = FIX19_13TOI(-position2D.y);
 		
@@ -199,24 +197,23 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 		Sprite_calculateParallax((Sprite)this, this->drawSpec.position.z);
 	}
 
-	this->renderFlag |= __UPDATE_M;
 	Point axisCapped = MSprite_capPosition(this);
 	
-	if(axisCapped.x && !this->mSpriteDefinition->xLoop)
+	if(axisCapped.x)
 	{
 		this->drawSpec.position.x = ITOFIX19_13(-axisCapped.x);
 		this->renderFlag |= __UPDATE_G;
 	}
 	
-	if(axisCapped.y && !this->mSpriteDefinition->yLoop)
+	if(axisCapped.y)
 	{
 		this->drawSpec.position.y = ITOFIX19_13(-axisCapped.y);
 		this->renderFlag |= __UPDATE_G;
 	}
+	
+	this->renderFlag |= __UPDATE_M;
 
 	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? Texture_getYOffset(this->texture) << 3: 0;
-
-	CACHE_DISABLE;
 }
 
 // calculate the size multiplier

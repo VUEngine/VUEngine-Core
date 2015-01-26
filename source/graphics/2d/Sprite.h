@@ -78,6 +78,9 @@
 	/* param table offset */													\
 	u32 param;																	\
 																				\
+	/* param table offset */													\
+	fix19_13 paramTableRow;														\
+																				\
 	/* head definition for world entry setup */									\
 	u16 head;																	\
 																				\

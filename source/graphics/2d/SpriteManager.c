@@ -59,7 +59,6 @@ __CLASS_DEFINITION(SpriteManager);
 //---------------------------------------------------------------------------------------------------------
 
 static void SpriteManager_constructor(SpriteManager this);
-static void SpriteManager_setLastLayer(SpriteManager this);
 static bool SpriteManager_processFreedLayers(SpriteManager this);
 
 //---------------------------------------------------------------------------------------------------------
@@ -133,7 +132,6 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 {
 	ASSERT(this, "SpriteManager::sortLayers: null this");
 
-	CACHE_ENABLE;
 	this->node = progressively && this->node ? this->otherNode ? this->node : VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
 
 	for (; this->node; this->node = VirtualNode_getNext(this->node))
@@ -181,8 +179,6 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 			break;
 		}
 	}
-
-	CACHE_DISABLE;
 }
 
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
@@ -304,7 +300,7 @@ static bool SpriteManager_processFreedLayers(SpriteManager this)
 }
 
 // set free layers off
-static void SpriteManager_setLastLayer(SpriteManager this)
+void SpriteManager_setLastLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
@@ -345,23 +341,28 @@ void SpriteManager_render(SpriteManager this)
 	// recover layers
 	SpriteManager_processFreedLayers(this);
 
-	__VIP_WAIT;
-
 	// render from WORLD 31 to the lowes active one
 	// reverse this order when a new sprite was added
 	// to make effective its visual properties as quick as
 	// possible
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
-	if(!node)
+	// look for the first sprite to render
+	for (; node; node = VirtualNode_getNext(node))
 	{
-		SpriteManager_setLastLayer(this);
+		Sprite sprite = (Sprite)VirtualNode_getData(node);
+		if(Sprite_getRenderFlag(sprite)) 
+		{
+			__VIP_WAIT;
+			break;
+		}
 	}
-
+	
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		__VIRTUAL_CALL(void, Sprite, render, (Sprite)VirtualNode_getData(node));
 	}
+
 }
 
 // retrieve free layer

@@ -366,6 +366,9 @@ static void Game_setNextState(Game this, GameState state)
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
 
+	// make sure printing layer is set
+	SpriteManager_setLastLayer(this->spriteManager);
+
 	// start physical simulation again
 	PhysicalWorld_start(this->physicalWorld);
 

@@ -133,6 +133,9 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];	\
 	while (*xpstts & XPBSYR);
 
+#define	__PARAM_BASE	(__PARAM_TABLE_END - 0x00002000 * (__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - TextureManager_getAvailableBgmapSegments(TextureManager_getInstance())) - __PRINTABLE_BGMAP_AREA)
+#define	__PARAM_DISPLACEMENT(param)	(__PARAM_BASE + (param & 0xFFF0))
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -168,8 +171,6 @@ void VPUManager_displayHide(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this);
-u32 VPUManager_getParamBase(VPUManager this);
-u32 VPUManager_getParamDisplacement(VPUManager this, int value);
 
 
 #endif

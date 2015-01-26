@@ -196,8 +196,8 @@ void FrameRate_print(FrameRate this, int col, int row)
 
 	Printing printing = Printing_getInstance();
 	Printing_text(printing, "FPS", col, row++, NULL);
-//	Printing_text(printing, "Raw             ", col, row, NULL);
-//	Printing_int(printing, this->rawFPS, col + 8, row++, NULL);
+	Printing_text(printing, "Raw             ", col, row, NULL);
+	Printing_int(printing, this->rawFPS, col + 8, row++, NULL);
 	Printing_text(printing, "Render", col, row, NULL);
 	Printing_int(printing, this->renderFPS, col + 8, row++, NULL);
 	Printing_text(printing, "Logic", col, row, NULL);

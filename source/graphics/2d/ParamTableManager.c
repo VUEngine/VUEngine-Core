@@ -122,10 +122,9 @@ void ParamTableManager_reset(ParamTableManager this)
 	VirtualList_clear(this->removedSpritesSizes);
 		
 	// set the size of the paramtable
-	int paramTableBase = (int)VPUManager_getParamBase(VPUManager_getInstance());
-	this->size = __PARAM_TABLE_END - paramTableBase;
+	this->size = __PARAM_TABLE_END - __PARAM_BASE;
 
-	NM_ASSERT(0 < __PARAM_TABLE_END - paramTableBase, "ParamTableManager::reset: param table size is negative");
+	NM_ASSERT(0 < __PARAM_TABLE_END - __PARAM_BASE, "ParamTableManager::reset: param table size is negative");
 
 	// all the memory is free
 	this->used = 1;
@@ -156,7 +155,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 	int size = ParamTableManager_calculateSize(this, sprite);
 	
 	//if there is space in the param table, allocate
-	if (VPUManager_getParamDisplacement(VPUManager_getInstance(), this->used + size) < __PARAM_TABLE_END)
+	if (__PARAM_DISPLACEMENT(this->used + size) < __PARAM_TABLE_END)
 	{
 		//set sprite param
 		Sprite_setParam(sprite, this->used);
@@ -172,7 +171,7 @@ int ParamTableManager_allocate(ParamTableManager this, Sprite sprite)
 	}
 
 	Printing_text(Printing_getInstance(), "Total size: ", 20, 7, NULL);
-	Printing_int(Printing_getInstance(), __PARAM_TABLE_END - (int)VPUManager_getParamBase(VPUManager_getInstance()), 20 + 19, 7, NULL);
+	Printing_int(Printing_getInstance(), __PARAM_TABLE_END - (int)__PARAM_BASE, 20 + 19, 7, NULL);
 	
 	NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 
@@ -205,6 +204,8 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 	
+	static Sprite previouslyMovedSprite = NULL;
+	
 	if(this->paramTableFreeData.param)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
@@ -226,19 +227,26 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 					break;
 				}
 				
+				if(previouslyMovedSprite && 0 < Sprite_getParamTableRow(previouslyMovedSprite))
+				{
+					break;
+				}
+				
 				//move back paramSize bytes
 				Sprite_setParam(sprite, this->paramTableFreeData.param);
 	
 				// scale now
 				Sprite_scale(sprite);
 
-				__VIP_WAIT;
+				//__VIP_WAIT;
 
 				// render now
-				__VIRTUAL_CALL(void, Sprite, render, sprite);
+				//__VIRTUAL_CALL(void, Sprite, render, sprite);
 
 				// set the new param to move on the next cycle
 				this->paramTableFreeData.param += size;
+				
+				previouslyMovedSprite = sprite;
 				
 				break;
 			}
@@ -252,6 +260,8 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 			
 			this->paramTableFreeData.param = 0;
 			this->paramTableFreeData.recoveredSize = 0;
+			
+			previouslyMovedSprite = NULL;
 			
 			return true;
 		}
@@ -275,7 +285,7 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 	Printing_int(Printing_getInstance(), this->used, x + xDisplacement, y, NULL);
 
 	Printing_text(Printing_getInstance(), "ParamBase:          ", x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), VPUManager_getParamBase(VPUManager_getInstance()), x + xDisplacement, y, NULL);
+	Printing_hex(Printing_getInstance(), __PARAM_BASE, x + xDisplacement, y, NULL);
 	Printing_text(Printing_getInstance(), "ParamEnd:           ", x, ++y, NULL);
 	Printing_hex(Printing_getInstance(), __PARAM_TABLE_END, x + xDisplacement, y, NULL);
 

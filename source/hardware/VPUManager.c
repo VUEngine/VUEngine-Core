@@ -240,15 +240,3 @@ void VPUManager_setupColumnTable(VPUManager this)
 		CLMN_TBL[i + 0x0180] = columnTable[127 - i];
 	}
 }
-
-// retrieve param base
-u32 VPUManager_getParamBase(VPUManager this)
-{
-	return (__PARAM_TABLE_END - 0x00002000 * (__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - TextureManager_getAvailableBgmapSegments(TextureManager_getInstance())) - __PRINTABLE_BGMAP_AREA);
-}
-
-// retrieve param displacement
-u32 VPUManager_getParamDisplacement(VPUManager this, int value)
-{
-	return VPUManager_getParamBase(this) + (value & 0xFFF0);
-}

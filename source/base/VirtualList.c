@@ -438,8 +438,6 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node)
 {
 	ASSERT(this, "VirtualList::removeNode: null this");
 
-	CACHE_ENABLE;
-
 	//if node isn't null
 	if (node)
 	{
@@ -487,8 +485,6 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node)
 		return true;
 	}
 
-	CACHE_DISABLE;
-
 	return false;
 }
 
@@ -499,9 +495,7 @@ VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
 
 	VirtualNode node = this->head;
 
-	CACHE_ENABLE;
 	for (; node && VirtualNode_getData(node) !=  (void*)dataPointer; node = VirtualNode_getNext(node));
-	CACHE_DISABLE;
 
 	return node;
 }

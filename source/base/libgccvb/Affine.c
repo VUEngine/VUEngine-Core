@@ -60,7 +60,7 @@ void Affine_setAll(u16 param, PDx_ST * pdx, s16 max)
 {
 	s16 i;
 	AFFINE_ST *affine;
-	affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
+	affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
 	CACHE_ENABLE;
 	for (i = 0; i < max; i++)
 	{
@@ -74,29 +74,25 @@ void Affine_setAll(u16 param, PDx_ST * pdx, s16 max)
 	CACHE_DISABLE;
 }
 
-void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
+fix19_13 Affine_scale(u16 param, fix19_13 paramTableRow, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
 {
-	CACHE_ENABLE;
-
-	PDx_ST pdx;
-
 	if (zoomX < 0)
 	{
 		fg_x *= (-1);
 	}
 
-	pdx.pa  = FIX7_9_DIV(ITOFIX7_9(1), zoomX);
-	pdx.pb  = ITOFIX13_3(0);
-	pdx.pc  = ITOFIX7_9(0);
-	//pdx.pd  = FIX7_9TOFIX13_3(FIX7_9_DIV(ITOFIX7_9(1), zoomY));
-	pdx.pd  = FIX19_13_DIV(ITOFIX19_13(1), FIX7_9TOFIX19_13(zoomY));
+	PDx_ST pdx = 
+	{
+		FIX7_9_DIV(ITOFIX7_9(1), zoomX),
+		0,
+		0,
+		FIX19_13_DIV(ITOFIX19_13(1), FIX7_9TOFIX19_13(zoomY)),
+		ITOFIX13_3(bg_x - (/*abs(FIX7_9TOI(pdx.pa)) **/ fg_x/* + FIX13_3TOI(pdx.pb) * fg_y*/)),
+		ITOFIX13_3(bg_y-(/*FIX7_9TOI(pdx.pc) * fg_x + FIX13_3TOI(pdx.pd) * */fg_y)),
+		0x0000
+	};
 
-	pdx.dx = ITOFIX13_3(bg_x - (/*abs(FIX7_9TOI(pdx.pa)) **/ fg_x/* + FIX13_3TOI(pdx.pb) * fg_y*/));
-	pdx.dy = ITOFIX13_3(bg_y-(/*FIX7_9TOI(pdx.pc) * fg_x + FIX13_3TOI(pdx.pd) * */fg_y));
-
-	pdx.paralax = 0x0000;
-	
-	AFFINE_ST* affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
+	AFFINE_ST* affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
 
 	AFFINE_ST source = 
 	{
@@ -108,26 +104,58 @@ void Affine_scale(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16
 	};
 
 	// add one row for cleaning up
-	int totalRows = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(fg_y << 1), FIX7_9TOFIX19_13(zoomY))) + 1;
-	//int i = FIX7_9TOF(zoomY) * (fg_y << 1) + 2;
+	fix19_13 totalRows = FIX19_13_MULT(ITOFIX19_13(fg_y << 1), FIX7_9TOFIX19_13(zoomY)) + ITOFIX19_13(1);
 	
 	if (0 > totalRows)
 	{
 		totalRows *= -1;
 	}
 	
-	int i = 0;
-	for (; i < totalRows; i++) 
+	CACHE_ENABLE;
+
+	fix19_13 i = 0 <= paramTableRow? paramTableRow: 0;
+	int affineEntry = FIX19_13TOI(i);
+	int counter = 0;
+
+	for (; counter < 8 && i < totalRows; i += 0b10000000000000, affineEntry ++, counter++) 
 	{
-		// not sure why don't need following line
-		//source.pb_y = FIX13_3_MULT(iFix, pdx.pb) + pdx.dx;
-		
-		//source.pd_y = FIX13_3_MULT(iFix, pdx.pd) + pdx.dy;
-		source.pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), pdx.pd)) + pdx.dy;
-		
-		affine[i] = source;
+		/*
+		 * 0b10000000000000
+		 * 0b100000000000000
+		 * 0b110000000000000
+		 * 0b1000000000000000
+		 * 0b1010000000000000
+		 * 0b1100000000000000
+		 * 0b1110000000000000
+		 */
+		source.pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(i, pdx.pd)) + pdx.dy;
+		affine[affineEntry] = source;
+/*
+		affine[affineEntry + 1] = source;
+		affine[affineEntry + 1].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b10000000000000, pd));
+
+		affine[affineEntry + 2] = source;
+		affine[affineEntry + 2].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b100000000000000, pd));
+
+		affine[affineEntry + 3] = source;
+		affine[affineEntry + 3].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b110000000000000, pd));
+
+		affine[affineEntry + 4] = source;
+		affine[affineEntry + 4].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1000000000000000, pd));
+
+		affine[affineEntry + 5] = source;
+		affine[affineEntry + 5].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1010000000000000, pd));
+
+		affine[affineEntry + 6] = source;
+		affine[affineEntry + 6].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1100000000000000, pd));
+
+		affine[affineEntry + 7] = source;
+		affine[affineEntry + 7].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1110000000000000, pd));
+		*/
 	}
 	CACHE_DISABLE;
+	
+	return i < totalRows? i: -1;
 }
 
 //***FixMe, modify theas to update GX,GY to fit the image
@@ -158,7 +186,7 @@ void Affine_rotateZ(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s
 	pdx.paralax = 0x0000;
 
 	{
-		AFFINE_ST* affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
+		AFFINE_ST* affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
 
 		AFFINE_ST source =
 	{
@@ -243,7 +271,7 @@ void Affine_rotateY(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16
 void affineSetAll0(u16 param, PDx_ST * pdx,s16 max,int  i)
 {
 	AFFINE_ST *affine;
-	affine = (AFFINE_ST*)VPUManager_getParamDisplacement(VPUManager_getInstance(), param);
+	affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
 	affine[i].pb_y    = FTOFIX13_3(i*pdx->pb+pdx->dx);
 	affine[i].paralax = pdx->paralax;
 	affine[i].pd_y    = FTOFIX13_3(i*pdx->pd+pdx->dy);

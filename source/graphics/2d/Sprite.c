@@ -56,6 +56,8 @@ extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 
 
+static void Sprite_doScale(Sprite this);
+
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -98,6 +100,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	this->parallaxDisplacement = spriteDefinition->parallaxDisplacement;
 
 	this->param = 0;
+	this->paramTableRow = -1;
 
 	//this->head = spriteDefinition->display | WRLD_BGMAP;
 	//set world layer's head acording to map's render mode
@@ -339,7 +342,7 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
+				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
@@ -349,7 +352,7 @@ void Sprite_render(Sprite this)
 				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
 			}
 
-			this->renderFlag = false;
+			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 
 			return;
 		}
@@ -375,7 +378,14 @@ void Sprite_render(Sprite this)
 			//set the world size according to the zoom
 			if (WRLD_AFFINE & this->head)
 			{
-				worldPointer->param = ((VPUManager_getParamDisplacement(VPUManager_getInstance(), this->param) - 0x20000) >> 1) & 0xFFF0;
+				if(0 < this->paramTableRow)
+				{
+					Sprite_doScale(this);
+					this->renderFlag = __UPDATE_SIZE;
+					return;
+				}
+
+				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
@@ -389,6 +399,14 @@ void Sprite_render(Sprite this)
 		// make sure to not render again
 		this->renderFlag = false;
 	}
+}
+
+// get render flag
+u32 Sprite_getRenderFlag(Sprite this)
+{
+	ASSERT(this, "Sprite::getRenderFlag: null this");
+
+	return this->renderFlag;
 }
 
 // get map's param table address
@@ -524,23 +542,38 @@ void Sprite_noAFX(Sprite this, int direction)
 	ASSERT(this, "Sprite::noAFX: null this");
 }
 
-void Sprite_scale(Sprite this)
+static void Sprite_doScale(Sprite this)
 {
 	ASSERT(this, "Sprite::scale: null this");
 	ASSERT(this->texture, "Sprite::scale: null texture");
 
-	// put the map into memory calculating the number of chars for each reference
 	if (this->param)
 	{
 		int cols = (int)Texture_getCols(this->texture) << 2;
 		int rows = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
 
-		Affine_scale(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y,
+		this->paramTableRow = Affine_scale(this->param, this->paramTableRow, this->drawSpec.scale.x, this->drawSpec.scale.y,
 				   this->drawSpec.textureSource.mx + cols,
 				   this->drawSpec.textureSource.my + rows,
 				   cols, rows);
 	}
 }
+
+fix19_13 Sprite_getParamTableRow(Sprite this)
+{
+	return this->paramTableRow;
+}
+
+void Sprite_scale(Sprite this)
+{
+	ASSERT(this, "Sprite::scale: null this");
+	ASSERT(this->texture, "Sprite::scale: null texture");
+
+	this->paramTableRow = 0;
+	
+	Sprite_doScale(this);
+}
+
 
 void Sprite_rotate(Sprite this, int angle)
 {

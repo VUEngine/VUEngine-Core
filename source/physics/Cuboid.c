@@ -205,7 +205,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
-	CACHE_ENABLE;
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
 
 	VBVec3D displacementIncrement =
@@ -243,6 +242,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	int numberOfAxis = 0;
 	int axisOfCollision = 0;
 	int passes = 0;
+
+	CACHE_ENABLE;
 
 	do
 	{
