@@ -157,3 +157,21 @@ void Object_fireEvent(Object this,  char* eventName)
 		}
 	}
 }
+
+// cast object to base class
+Object Object_upcast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void))
+{
+	ASSERT(this, "Object::upcast: null this");
+
+	if(!baseClassGetClassMethod || (Object_getBaseClass == baseClassGetClassMethod && Object_getBaseClass != targetClassGetClassMethod))
+	{
+		return NULL;
+	}
+
+	if(targetClassGetClassMethod == baseClassGetClassMethod)
+	{
+		return this;
+	}
+	
+	return Object_upcast((Object)this, targetClassGetClassMethod, (void* (*)(void))baseClassGetClassMethod());
+}	

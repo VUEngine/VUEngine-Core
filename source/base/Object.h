@@ -76,6 +76,6 @@ bool Object_handleMessage(Object this, void* owner, void* telegram);
 void Object_addEventListener(Object this, Object listener, void (*method)(Object, Object), char* eventName);
 void Object_removeEventListener(Object this, Object listener, void (*method)(Object, Object), char* eventName);
 void Object_fireEvent(Object this, char* eventName);
-
+Object Object_upcast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void));
 
 #endif

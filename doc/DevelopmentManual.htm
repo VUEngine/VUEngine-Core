@@ -233,17 +233,17 @@ u8 energy;</code></pre>
             </p>
 
                 <pre class="line-numbers"><code class="language-c">// always call these to macros next to each other
-                    __CLASS_NEW_DEFINITION(Hero, __PARAMETERS(CharacterDefinition* characterDefinition, int ID))
-                    __CLASS_NEW_END(Hero, __ARGUMENTS(this, characterDefinition, ID));</code></pre>
+                    __CLASS_NEW_DEFINITION(Hero, ActorDefinition* actorDefinition, int ID)
+                    __CLASS_NEW_END(Hero, this, actorDefinition, ID);</code></pre>
 
             <p>
                 Define the constructor: must always call the parent class's constructor to properly initialize the object.
             </p>
 
                 <pre class="line-numbers"><code class="language-c">// class's constructor
-                    void Hero_constructor(Hero this, CharacterDefinition* characterDefinition, int ID){
+                    void Hero_constructor(Hero this, ActorDefinition* actorDefinition, int ID){
 
-                    __CONSTRUCT_BASE(Character, __ARGUMENTS(this, characterDefinition, ID));
+                    __CONSTRUCT_BASE(this, actorDefinition, ID);
 
                     this->energy = 1;
 
@@ -261,7 +261,7 @@ u8 energy;</code></pre>
                     // free space allocated here
 
                     // delete the super object
-                    __DEALLOCATE(Character);
+                    __DEALLOCATE;
                     } </code></pre>
 
 
@@ -314,7 +314,18 @@ u8 energy;</code></pre>
                 Trying to instantiate an abstract Entity will result in an exception in <code>__DEBUG</code> mode.
             </p>
 
+            <!--------------------------------------------------------------------------------------------------------->
 
+            <h3>Friend classes</h3>
+
+            <p>
+                To define an abstract class, simply omit the <code>__VIRTUAL_SET</code> definition.
+            </p>
+
+            <p>
+                Trying to instantiate an abstract Entity will result in an exception in <code>__DEBUG</code> mode.
+            </p>
+            
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Singletons</h3>

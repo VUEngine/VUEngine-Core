@@ -74,6 +74,7 @@ Features:
 		* Polymorphism
 		* Encapsulation
 		* Friend classes support
+		* Runtime type checking
 	� Rendering:
 		* Automatic char memory allocation
 		* Real time char memory defragmentation

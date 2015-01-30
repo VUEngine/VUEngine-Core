@@ -136,10 +136,10 @@
 
 
 // like delete in C++ (calls virtual destructor)
-#define __DELETE(Object)																\
+#define __DELETE(object)																\
 																						\
 	/* since the destructor is the first element in the virtual table */				\
-	((void (*)(void*))((void***)Object)[0][0])(Object);
+	((void (*)(void*))((void***)object)[0][0])(object);
 
 
 // like new in C++
@@ -151,10 +151,10 @@
 
 
 // like delete in C++ (calls virtual destructor)
-#define __DELETE_BASIC(Object)															\
+#define __DELETE_BASIC(object)															\
 																						\
 	/* free the memory */																\
-	MemoryPool_free(MemoryPool_getInstance(), (void*)Object)
+	MemoryPool_free(MemoryPool_getInstance(), (void*)object)
 
 
 // construct the base object
@@ -180,21 +180,21 @@
 
 
 // retrieve virtual method's address
-#define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, Object, ...)						\
+#define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object, ...)						\
 																						\
 	/* call derived implementation */													\
-	(((struct ClassName ## _vTable*)((*((void**)Object))))->MethodName)
+	(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
 #ifdef __DEBUG
-#define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, Object, ...)					\
+#define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, object, ...)					\
 		(																				\
-			(__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, Object, ...))?				\
+			(__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object, ...))?				\
 			/* call derived implementation */											\
 			((ReturnType (*)(ClassName, ...))											\
-			(((struct ClassName ## _vTable*)((*((void**)Object))))->MethodName))		\
+			(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))		\
 				(																		\
-						Object, ##__VA_ARGS__											\
+						object, ##__VA_ARGS__											\
 				):																		\
 			/* call base implementation */												\
 			(ReturnType)Error_triggerException(Error_getInstance(),						\
@@ -203,39 +203,51 @@
 
 
 #else
-#define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, Object, ...)					\
+#define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, object, ...)					\
 		/* release implementation */													\
 		((ReturnType (*)(ClassName, ...))												\
-		(((struct ClassName ## _vTable*)((*((void**)Object))))->MethodName))			\
+		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))			\
 			(																			\
-					Object, ##__VA_ARGS__												\
+					object, ##__VA_ARGS__												\
 			)																			\
 
 #endif
 
-#define __VIRTUAL_CALL_UNSAFE(ReturnType, ClassName, MethodName, Object, ...)			\
+#define __VIRTUAL_CALL_UNSAFE(ReturnType, ClassName, MethodName, object, ...)			\
 		/* to bypass checking on DEBUG */												\
 		((ReturnType (*)(ClassName, ...))												\
-		(((struct ClassName ## _vTable*)((*((void**)Object))))->MethodName))			\
+		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))			\
 			(																			\
-					Object, ##__VA_ARGS__												\
+					object, ##__VA_ARGS__												\
 			)																			\
 
 // cast macro
-#define __GET_CAST(ClassName, Object)													\
+#define __GET_CAST(ClassName, object)													\
 		(																				\
 			/* check if object's destructor matches class' destructor */				\
-			((void*)ClassName ## _destructor == 										\
-							((void (*)(void*))((void***)Object)[0][0]))?				\
+			object && ((void*)ClassName ## _destructor == 								\
+							((void (*)(void*))((void***)object)[0][0]))?				\
 																						\
 			/* cast is safe */															\
-			(ClassName)Object															\
+			(ClassName)object															\
 																						\
 			/* otherwise */																\
 			:																			\
 			/* cast is null */															\
 			NULL																		\
 		)
+
+#ifdef __DEBUG
+#define __UPCAST(ClassName, object)														\
+																						\
+	/* cast object to the given class */												\
+	__GET_CAST(ClassName, object)? 														\
+		(ClassName)object:																\
+	(ClassName)Object_upcast((Object)object, ClassName ## _getBaseClass, 				\
+			__VIRTUAL_CALL(void*, Object, getBaseClass, (Object)object))
+#else	
+#define __UPCAST(ClassName, object) (ClassName)object
+#endif
 
 
 // declare a virtual method

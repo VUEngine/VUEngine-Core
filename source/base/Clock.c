@@ -55,6 +55,8 @@ __CLASS_NEW_END(Clock);
 // class's constructor
 static void Clock_constructor(Clock this)
 {
+	ASSERT(this, "Clock::constructor: null this");
+
 	__CONSTRUCT_BASE();
 
 	// initialize time
@@ -73,6 +75,8 @@ static void Clock_constructor(Clock this)
 // class's destructor
 void Clock_destructor(Clock this)
 {
+	ASSERT(this, "Clock::destructor: null this");
+
 	// unregister the clock
 	ClockManager_unregister(ClockManager_getInstance(), this);
 
