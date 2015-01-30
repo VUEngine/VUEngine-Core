@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Polygon
-__CLASS_DEFINITION(Polygon);
+__CLASS_DEFINITION(Polygon, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ __CLASS_NEW_END(Polygon);
 static void Polygon_constructor(Polygon this)
 {
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// don't create the list yet
 	this->vertices = NULL;
@@ -84,7 +84,7 @@ void Polygon_destructor(Polygon this)
 	}
 
 	// destroy the super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // add a vertice

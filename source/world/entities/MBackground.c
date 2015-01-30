@@ -36,7 +36,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the MBackground
-__CLASS_DEFINITION(MBackground);
+__CLASS_DEFINITION(MBackground, Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,8 +49,8 @@ __CLASS_DEFINITION(MBackground);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MBackground, __PARAMETERS(MBackgroundDefinition* mBackgroundDefinition, s16 id))
-__CLASS_NEW_END(MBackground, __ARGUMENTS(mBackgroundDefinition, id));
+__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id)
+__CLASS_NEW_END(MBackground, mBackgroundDefinition, id);
 
 // class's constructor
 void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id)
@@ -59,7 +59,7 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS((EntityDefinition*)mBackgroundDefinition, id));
+	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id);
 	
 	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
 	
@@ -74,7 +74,7 @@ void MBackground_destructor(MBackground this)
 	ASSERT(this, "MBackground::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(Entity);
+	__DESTROY_BASE;
 }
 
 // whether it is visible

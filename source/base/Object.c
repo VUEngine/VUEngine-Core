@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // it is the base class for everything.. so it does derivates from nothing but itself
-__CLASS_DEFINITION(Object);
+__CLASS_DEFINITION(Object, Object);
 
 typedef struct Event
 {
@@ -51,8 +51,6 @@ typedef struct Event
 // class's constructor
 void Object_constructor(Object this)
 {
-	__SET_CLASS(Object);
-
 	this->dynamic = false;
 	this->events = NULL;
 }

@@ -55,7 +55,7 @@ void VBJaEngineDefaultLanguageSelectionScreenState_setTitleString(VBJaEngineDefa
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultLanguageSelectionScreenState);
+__CLASS_DEFINITION(VBJaEngineDefaultLanguageSelectionScreenState, GameState);
 __SINGLETON_DYNAMIC(VBJaEngineDefaultLanguageSelectionScreenState);
 
 
@@ -66,14 +66,16 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultLanguageSelectionScreenState);
 // class's constructor
 static void VBJaEngineDefaultLanguageSelectionScreenState_constructor(VBJaEngineDefaultLanguageSelectionScreenState this)
 {
+	__CONSTRUCT_BASE();
+
 	VBJaEngineDefaultLanguageSelectionScreenState_setNextstate(this, (GameState)VBJaEngineDefaultSplashScreenState_getInstance());
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
 	this->titleString = "Language Selection";
 
     u8 activeLanguage = I18n_getActiveLanguage(I18n_getInstance());
-	this->languageSelector = __NEW(OptionsSelector, __ARGUMENTS(1, 8, "\x10", kString));
+	this->languageSelector = OptionsSelector_new(1, 8, "\x10", kString);
 
-	VirtualList languageNames = __NEW(VirtualList);
+	VirtualList languageNames = VirtualList_new();
 
 	int i = 0;
 	for (;  i < I18n_getLanguageCount(I18n_getInstance()); i++)
@@ -86,8 +88,6 @@ static void VBJaEngineDefaultLanguageSelectionScreenState_constructor(VBJaEngine
 
     OptionsSelector_setOptions(this->languageSelector, languageNames);
 	__DELETE(languageNames);
-
-	__CONSTRUCT_BASE(GameState);
 }
 
 // class's destructor
@@ -99,7 +99,7 @@ static void VBJaEngineDefaultLanguageSelectionScreenState_destructor(VBJaEngineD
 	}
 
 	// destroy base
-	__SINGLETON_DESTROY(GameState);
+	__SINGLETON_DESTROY;
 }
 
 // state's enter

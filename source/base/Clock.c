@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Clock
-__CLASS_DEFINITION(Clock);
+__CLASS_DEFINITION(Clock, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ __CLASS_NEW_END(Clock);
 // class's constructor
 static void Clock_constructor(Clock this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// initialize time
 	this->milliSeconds = 0;
@@ -77,7 +77,7 @@ void Clock_destructor(Clock this)
 	ClockManager_unregister(ClockManager_getInstance(), this);
 
 	// destroy the super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // time delay

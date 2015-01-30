@@ -63,14 +63,14 @@ typedef struct ParamTableFreeData
 	/* user for defragmentation */												\
 	Sprite previouslyMovedSprite;												\
 	
-__CLASS_DEFINITION(ParamTableManager);
+__CLASS_DEFINITION(ParamTableManager, Object);
 
 
 // ---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 // ---------------------------------------------------------------------------------------------------------
 
-static void ParamTableManager_constructor(ParamTableManager this);
+void ParamTableManager_constructor(ParamTableManager this);
 static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite);
 
 // ---------------------------------------------------------------------------------------------------------
@@ -81,9 +81,9 @@ static int ParamTableManager_calculateSize(ParamTableManager this, Sprite sprite
 __SINGLETON(ParamTableManager);
 
 //class constructor
-static void ParamTableManager_constructor(ParamTableManager this)
+void ParamTableManager_constructor(ParamTableManager this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->sprites = __NEW(VirtualList);
 	this->removedSpritesSizes = __NEW(VirtualList);
@@ -104,9 +104,9 @@ void ParamTableManager_destructor(ParamTableManager this)
 	
 	__DELETE(this->removedSpritesSizes);
 	this->removedSpritesSizes = NULL;
-
+	
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // reset

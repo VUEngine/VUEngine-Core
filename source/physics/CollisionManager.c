@@ -51,7 +51,7 @@
 	VirtualList	removedShapes;													\
 
 // define the CollisionManager
-__CLASS_DEFINITION(CollisionManager);
+__CLASS_DEFINITION(CollisionManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ static void CollisionManager_constructor(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// create the shape list
 	this->shapes = __NEW(VirtualList);
@@ -107,7 +107,7 @@ void CollisionManager_destructor(CollisionManager this)
 	__DELETE(this->removedShapes);
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 
@@ -128,12 +128,12 @@ Shape CollisionManager_registerShape(CollisionManager this, Entity owner, int sh
 	{
 		case kCircle:
 
-			//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, __ARGUMENTS(owner)));
+			//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, owner));
 			break;
 
 		case kCuboid:
 
-			VirtualList_pushFront(this->shapes, (void*)__NEW(Cuboid, __ARGUMENTS(owner)));
+			VirtualList_pushFront(this->shapes, (void*)__NEW(Cuboid, owner));
 			break;
 	}
 
@@ -244,7 +244,7 @@ int CollisionManager_update(CollisionManager this)
 			if (shape != shapeToCheck && !Shape_isChecked(shapeToCheck))
 			{
 				// check if shapes overlap
-				collisionResult = __VIRTUAL_CALL(bool, Shape, overlaps, shape, __ARGUMENTS(shapeToCheck));
+				collisionResult = __VIRTUAL_CALL(bool, Shape, overlaps, shape, shapeToCheck);
 
 				if (collisionResult)
 				{

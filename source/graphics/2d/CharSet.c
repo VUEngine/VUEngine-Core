@@ -44,7 +44,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(CharSet);
+__CLASS_DEFINITION(CharSet, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,13 +60,13 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(CharSet, __PARAMETERS(CharSetDefinition* charSetDefinition, Object owner))
-__CLASS_NEW_END(CharSet, __ARGUMENTS(charSetDefinition, owner))
+__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition, Object owner)
+__CLASS_NEW_END(CharSet, charSetDefinition, owner)
 
 // class's constructor
 static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, Object owner)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// save definition
 	this->charDefinition = charSetDefinition->charDefinition;
@@ -97,7 +97,7 @@ void CharSet_destructor(CharSet this)
 	}
 
 	// free processor memory
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // retrieve charset's allocation type

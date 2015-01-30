@@ -39,7 +39,7 @@
 	Container_ATTRIBUTES;														\
 
 // define the UI
-__CLASS_DEFINITION(UI);
+__CLASS_DEFINITION(UI, Container);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,8 +54,8 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(UI, __PARAMETERS(UIDefinition* uiDefinition))
-__CLASS_NEW_END(UI, __ARGUMENTS(uiDefinition));
+__CLASS_NEW_DEFINITION(UI, UIDefinition* uiDefinition)
+__CLASS_NEW_END(UI, uiDefinition);
 
 // class's constructor
 static void UI_constructor(UI this, UIDefinition* uiDefinition)
@@ -63,10 +63,10 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition)
 	ASSERT(this, "UI::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Container, __ARGUMENTS(-1));
+	__CONSTRUCT_BASE(-1);
 
 	// add entities in the definition
-	__VIRTUAL_CALL(void, UI, addEntities, this, __ARGUMENTS(uiDefinition->entities));
+	__VIRTUAL_CALL(void, UI, addEntities, this, uiDefinition->entities);
 }
 
 // class's destructor
@@ -75,7 +75,7 @@ void UI_destructor(UI this)
 	ASSERT(this, "UI::destructor: null this");
 
 	// destroy base
-	__DESTROY_BASE(Container);
+	__DESTROY_BASE;
 }
 
 // add entities
@@ -86,7 +86,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 
 	static int ID = 0;
 	int i = 0;
-	for (;entities[i].entityDefinition; i++)
+	for (;entities && entities[i].entityDefinition; i++)
 	{
 		Entity entity = Entity_load(entities[i].entityDefinition, ID++, entities[i].extraInfo);
 
@@ -100,7 +100,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 		};
 
 		// set spatial position
-		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
 	}
 }
 

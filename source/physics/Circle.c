@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Circle
-__CLASS_DEFINITION(Circle);
+__CLASS_DEFINITION(Circle, Shape);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,15 +47,15 @@ static void Circle_constructor(Circle this, Entity owner);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Circle, __PARAMETERS(Entity owner))
-__CLASS_NEW_END(Circle, __ARGUMENTS(owner));
+__CLASS_NEW_DEFINITION(Circle, Entity owner)
+__CLASS_NEW_END(Circle, owner);
 
 // class's constructor
 static void Circle_constructor(Circle this, Entity owner)
 {
 	ASSERT(this, "Circle::constructor: null this");
 
-	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
+	__CONSTRUCT_BASE(owner);
 
 	// TODO
 	this->radious = 1;
@@ -67,5 +67,5 @@ void Circle_destructor(Circle this)
 	ASSERT(this, "Circle::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(Shape);
+	__DESTROY_BASE;
 }

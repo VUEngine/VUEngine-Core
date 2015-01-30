@@ -41,7 +41,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(Actor);
+__CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,8 +64,8 @@ static void Actor_updateSourroundingFriction(Actor this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 id))
-__CLASS_NEW_END(Actor, __ARGUMENTS(actorDefinition, id));
+__CLASS_NEW_DEFINITION(Actor, ActorDefinition* actorDefinition, s16 id)
+__CLASS_NEW_END(Actor, actorDefinition, id);
 
 // class's constructor
 void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 id)
@@ -73,10 +73,10 @@ void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 id)
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedInGameEntity, __ARGUMENTS((AnimatedInGameEntityDefinition*)&actorDefinition->inGameEntityDefinition, id));
+	__CONSTRUCT_BASE((AnimatedInGameEntityDefinition*)&actorDefinition->inGameEntityDefinition, id);
 
 	// construct the game state machine
-	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
+	this->stateMachine = __NEW(StateMachine, this);
 
 	this->lastCollidingEntity[kXAxis] = NULL;
 	this->lastCollidingEntity[kYAxis] = NULL;
@@ -104,7 +104,7 @@ void Actor_destructor(Actor this)
 	__DELETE(this->stateMachine);
 
 	// destroy the super object
-	__DESTROY_BASE(InGameEntity);
+	__DESTROY_BASE;
 }
 
 //set class's local position
@@ -399,7 +399,7 @@ bool Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 					kZAxis == i ? 0 < acceleration->z? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0
 				};
 
-				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, this->shape, __ARGUMENTS(this->lastCollidingEntity[i], displacement));
+				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, this->shape, this->lastCollidingEntity[i], displacement);
 			}
 		}
 	}
@@ -624,7 +624,7 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 	for (; node && !axisOfCollision; node = VirtualNode_getNext(node))
 	{
 		collidingEntity = VirtualNode_getData(node);
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, __ARGUMENTS(collidingEntity, displacement));
+		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, collidingEntity, displacement);
 		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
 	}
 
@@ -645,7 +645,7 @@ static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEn
 	
 	if(collidingEntityShape)
 	{
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, collidingEntityShape, __ARGUMENTS((Entity)this, collidingEntityLastDisplacement));
+		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, collidingEntityShape, (Entity)this, collidingEntityLastDisplacement);
 		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
 		Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
 	}

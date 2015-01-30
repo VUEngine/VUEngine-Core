@@ -18,13 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-
-//---------------------------------------------------------------------------------------------------------
-// 											VIRTUAL NODE
-//---------------------------------------------------------------------------------------------------------
-
-#ifndef VIRTUALNODE_H_
-#define VIRTUALNODE_H_
+#ifndef VIRTUAL_LIST_H_
+#define VIRTUAL_LIST_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,41 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-#define VirtualNode_METHODS														\
-		Object_METHODS															\
-
-
-#define VirtualNode_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
-
-__CLASS(VirtualNode);
-
-//---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(VirtualNode, __PARAMETERS(const void* const data));
-
-void* VirtualNode_getData(VirtualNode this);
-VirtualNode VirtualNode_getNext(VirtualNode this);
-VirtualNode VirtualNode_getPrevious(VirtualNode this);
-void VirtualNode_swapData(VirtualNode this, VirtualNode node);
-
-#endif
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											VIRTUAL LIST
-//---------------------------------------------------------------------------------------------------------
-
-#ifndef VIRTUALLIST_H_
-#define VIRTUALLIST_H_
+#include <VirtualNode.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,7 +40,6 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node);
 #define VirtualList_SET_VTABLE(ClassName)										\
 	Object_SET_VTABLE(ClassName);												\
 
-// A texture which has the logic to be allocated in graphic memory
 __CLASS(VirtualList);
 
 

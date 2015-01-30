@@ -50,7 +50,7 @@ static void VBJaEngineDefaultSplashScreenState_processInput(VBJaEngineDefaultSpl
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultSplashScreenState);
+__CLASS_DEFINITION(VBJaEngineDefaultSplashScreenState, GameState);
 __SINGLETON_DYNAMIC(VBJaEngineDefaultSplashScreenState);
 
 
@@ -61,16 +61,16 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultSplashScreenState);
 // class's constructor
 static void VBJaEngineDefaultSplashScreenState_constructor(VBJaEngineDefaultSplashScreenState this)
 {
-	this->stageDefinition = (StageDefinition*)&VBJAENGINE_SPLASH_SCREEN_ST;
+	__CONSTRUCT_BASE();
 
-	__CONSTRUCT_BASE(GameState);
+	this->stageDefinition = (StageDefinition*)&VBJAENGINE_SPLASH_SCREEN_ST;
 }
 
 // class's destructor
 static void VBJaEngineDefaultSplashScreenState_destructor(VBJaEngineDefaultSplashScreenState this)
 {
 	// destroy base
-	__SINGLETON_DESTROY(GameState);
+	__SINGLETON_DESTROY;
 }
 
 // state's enter

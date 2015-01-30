@@ -18,53 +18,60 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef IMAGE_H_
-#define IMAGE_H_
+
+//---------------------------------------------------------------------------------------------------------
+// 											VIRTUAL NODE
+//---------------------------------------------------------------------------------------------------------
+
+#ifndef VIRTUAL_NODE_H_
+#define VIRTUAL_NODE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
+#include <Object.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Image_METHODS															\
-		Entity_METHODS															\
-
-#define Image_SET_VTABLE(ClassName)												\
-		Entity_SET_VTABLE(ClassName)											\
-
-// A Image which represent a generic object inside a Stage
-#define Image_ATTRIBUTES														\
-		Entity_ATTRIBUTES														\
-
-__CLASS(Image);
+#define VirtualNode_METHODS														\
+		Object_METHODS															\
 
 
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
+#define VirtualNode_SET_VTABLE(ClassName)										\
+		Object_SET_VTABLE(ClassName)											\
 
-// defines a Image
-typedef EntityDefinition ImageDefinition;
+#define VirtualNode_ATTRIBUTES													\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* pointer to next node */													\
+	VirtualNode next;															\
+																				\
+	/* pointer to previos node */												\
+	VirtualNode previous;														\
+																				\
+	/* pointer to the data */													\
+	void* data;																	\
 
-// defines a Image in ROM memory
-typedef const EntityDefinition ImageROMDef;
-
+__CLASS(VirtualNode);
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Image, ImageDefinition* imageDefinition, s16 id);
+__CLASS_NEW_DECLARE(VirtualNode, const void* const data);
 
-void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 id);
-void Image_destructor(Image this);
-
+void* VirtualNode_getData(VirtualNode this);
+VirtualNode VirtualNode_getNext(VirtualNode this);
+VirtualNode VirtualNode_getPrevious(VirtualNode this);
+void VirtualNode_swapData(VirtualNode this, VirtualNode node);
 
 #endif
+
+

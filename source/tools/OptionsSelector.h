@@ -65,7 +65,7 @@ enum OptionTypes
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OptionsSelector, __PARAMETERS(int cols, int rows, char* mark, int type));
+__CLASS_NEW_DECLARE(OptionsSelector, int cols, int rows, char* mark, int type);
 
 void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type);
 void OptionsSelector_destructor(OptionsSelector this);

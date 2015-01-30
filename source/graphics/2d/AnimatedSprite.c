@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the AnimatedSprite
-__CLASS_DEFINITION(AnimatedSprite);
+__CLASS_DEFINITION(AnimatedSprite, Sprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,14 +51,14 @@ static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefiniti
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedSprite, __PARAMETERS(const SpriteDefinition* spriteDefinition, Object owner))
-__CLASS_NEW_END(AnimatedSprite, __ARGUMENTS(spriteDefinition, owner));
+__CLASS_NEW_DEFINITION(AnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
+__CLASS_NEW_END(AnimatedSprite, spriteDefinition, owner);
 
 // class's constructor
 static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
 {
 	// construct base object
-	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(spriteDefinition));
+	__CONSTRUCT_BASE(spriteDefinition);
 
 	// since the offset will be moved during animation, must save it
 	this->originalTextureSource.mx = abs(Texture_getXOffset(this->texture)) << 3;
@@ -91,7 +91,7 @@ void AnimatedSprite_destructor(AnimatedSprite this)
 	ASSERT(this, "AnimatedSprite::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(Sprite);
+	__DESTROY_BASE;
 }
 
 // retrieve frame allocation type

@@ -59,7 +59,7 @@
 	u8 availableBgmapSegments;														\
 
 // define the TextureManager
-__CLASS_DEFINITION(TextureManager);
+__CLASS_DEFINITION(TextureManager, Object);
 
 enum OffsetIndex
 {
@@ -87,7 +87,7 @@ __SINGLETON(TextureManager);
 // class's constructor
 static void TextureManager_constructor(TextureManager this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	TextureManager_reset(this);
 }
@@ -98,7 +98,7 @@ void TextureManager_destructor(TextureManager this)
 	ASSERT(this, "TextureManager::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // reset
@@ -359,7 +359,7 @@ static Texture TextureManager_writeTexture(TextureManager this, TextureDefinitio
 		if (!this->texture[i])
 		{
 			// create new texture and register it
-			this->texture[i] = __NEW(Texture, __ARGUMENTS(textureDefinition, i));
+			this->texture[i] = __NEW(Texture, textureDefinition, i);
 
 			//if not, then allocate
 			TextureManager_allocate(this, this->texture[i]);

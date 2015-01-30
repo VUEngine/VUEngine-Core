@@ -65,7 +65,7 @@ volatile u16* VIP_REGS = (u16*)0x0005F800;
 	Object_ATTRIBUTES;															\
 
 // define the VPUManager
-__CLASS_DEFINITION(VPUManager);
+__CLASS_DEFINITION(VPUManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ static void VPUManager_constructor(VPUManager this)
 {
 	ASSERT(this, "VPUManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 }
 
 // class's destructor
@@ -96,7 +96,7 @@ void VPUManager_destructor(VPUManager this)
 	ASSERT(this, "VPUManager::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // wait frame

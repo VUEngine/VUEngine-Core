@@ -42,7 +42,7 @@
 	u16 previousKey;															\
 
 // define the KeypadManager
-__CLASS_DEFINITION(KeypadManager);
+__CLASS_DEFINITION(KeypadManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ static void KeypadManager_constructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->currentKey = 0;
 }
@@ -75,7 +75,7 @@ void KeypadManager_destructor(KeypadManager this)
 	ASSERT(this, "KeypadManager::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // enable keypad reads

@@ -31,7 +31,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(Texture);
+__CLASS_DEFINITION(Texture, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,14 +49,14 @@ static void Texture_writeAnimatedShared(Texture this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Texture, __PARAMETERS(TextureDefinition* textureDefinition, u16 id))
-__CLASS_NEW_END(Texture, __ARGUMENTS(textureDefinition, id));
+__CLASS_NEW_DEFINITION(Texture, TextureDefinition* textureDefinition, u16 id)
+__CLASS_NEW_END(Texture, textureDefinition, id);
 
 // class's constructor
 static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id)
 {
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// set id
 	this->id = id;
@@ -65,7 +65,7 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 	this->textureDefinition = textureDefinition;
 
 	// if the char definition is NULL, it must be a text
-	this->charSet = __NEW(CharSet, __ARGUMENTS((CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this));
+	this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this);
 
 	// set the palette
 	this->palette = textureDefinition->palette;
@@ -79,7 +79,7 @@ void Texture_destructor(Texture this)
 	Texture_freeCharMemory(this);
 
 	// destroy the super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 //extern void addmem1 (u8* dest, const u8* src, u16 num, u16 offset);
 
@@ -206,7 +206,7 @@ void Texture_write(Texture this)
 	if (!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
-		this->charSet = __NEW(CharSet, __ARGUMENTS((CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this));
+		this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this);
 	}
 
 	//write char group

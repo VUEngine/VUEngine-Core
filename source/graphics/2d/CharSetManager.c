@@ -58,10 +58,10 @@
 	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];							\
 																				\
 	/* defragmentation flag */													\
-	bool needsDefrag;																\
+	bool needsDefrag;															\
 
 // define the CharSetManager
-__CLASS_DEFINITION(CharSetManager);
+__CLASS_DEFINITION(CharSetManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ __SINGLETON(CharSetManager);
 // class's constructor
 static void CharSetManager_constructor(CharSetManager this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->charSets = NULL;
 	this->needsDefrag = false;
@@ -102,7 +102,7 @@ void CharSetManager_destructor(CharSetManager this)
 	__DELETE(this->charSets);
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // reset

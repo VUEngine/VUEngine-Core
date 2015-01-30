@@ -50,7 +50,7 @@
 	u8*  hwRegisters;															\
 
 // define the HardwareManager
-__CLASS_DEFINITION(HardwareManager);
+__CLASS_DEFINITION(HardwareManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ static void HardwareManager_constructor(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// set ROM waiting to 1 cycle
 	HW_REGS[WCR] |= 0x0001;
@@ -104,7 +104,7 @@ void HardwareManager_destructor(HardwareManager this)
 	ASSERT(this, "HardwareManager::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // timer's interrupt handler

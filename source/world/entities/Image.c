@@ -32,7 +32,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Image
-__CLASS_DEFINITION(Image);
+__CLASS_DEFINITION(Image, Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,15 +40,15 @@ __CLASS_DEFINITION(Image);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Image, __PARAMETERS(ImageDefinition* imageDefinition, s16 id))
-__CLASS_NEW_END(Image, __ARGUMENTS(imageDefinition, id));
+__CLASS_NEW_DEFINITION(Image, ImageDefinition* imageDefinition, s16 id)
+__CLASS_NEW_END(Image, imageDefinition, id);
 
 // class's constructor
 void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 id)
 {
 	ASSERT(this, "Image::constructor: null this");
 
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(imageDefinition, id));
+	__CONSTRUCT_BASE(imageDefinition, id);
 }
 
 // class's destructor
@@ -57,5 +57,5 @@ void Image_destructor(Image this)
 	ASSERT(this, "Image::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(Entity);
+	__DESTROY_BASE;
 }

@@ -94,7 +94,7 @@ __CLASS(Body);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Body, __PARAMETERS(Object owner, fix19_13 weight));
+__CLASS_NEW_DECLARE(Body, Object owner, fix19_13 weight);
 
 void Body_destructor(Body this);
 void Body_setOwner(Body this, Object owner);

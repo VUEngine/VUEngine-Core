@@ -23,128 +23,9 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <VirtualNode.h>
 #include <VirtualList.h>
 
-
-//---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static void VirtualNode_constructor(VirtualNode this, const void* const data);
-static void VirtualNode_destructor(VirtualNode this);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-#define VirtualNode_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* pointer to next node */													\
-	VirtualNode next;															\
-																				\
-	/* pointer to previos node */												\
-	VirtualNode previous;														\
-																				\
-	/* pointer to the data */													\
-	void* data;																	\
-
-__CLASS_DEFINITION(VirtualNode);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DEFINITION(VirtualNode, __PARAMETERS(const void* const data))
-__CLASS_NEW_END(VirtualNode, __ARGUMENTS(data));
-
-// class's constructor
-static void VirtualNode_constructor(VirtualNode this, const void* const data)
-{
-	__CONSTRUCT_BASE(Object);
-
-	// initialize members
-	this->next = NULL;
-	this->previous = NULL;
-	this->data = (void*)data;
-}
-
-// class's destructor
-static void VirtualNode_destructor(VirtualNode this)
-{
-	ASSERT(this, "VirtualNode::destructor: null this");
-
-	// destroy the super object
-	__DESTROY_BASE(Object);
-}
-
-// set node's data pointer
-void VirtualNode_setData(VirtualNode this, const void* const data)
-{
-	ASSERT(this, "VirtualNode::destructor: null this");
-
-	this->data = (void*)data;
-}
-
-// retrieve data pointer
-void* VirtualNode_getData(VirtualNode this)
-{
-	ASSERT(this, "VirtualNode::getData: null this");
-
-	return this->data;
-}
-
-// get next node's address
-VirtualNode VirtualNode_getNext(VirtualNode this)
-{
-	ASSERT(this, "VirtualNode::getNext: null this");
-
-	return this->next;
-}
-
-// set node's next node's address
-void VirtualNode_setNext(VirtualNode this, VirtualNode next)
-{
-	ASSERT(this, "VirtualNode::setNext: null this");
-
-	this->next = next;
-}
-
-// set node's previous node's address
-VirtualNode VirtualNode_getPrevious(VirtualNode this)
-{
-	ASSERT(this, "VirtualNode::getPrevious: null this");
-
-	return this->previous;
-}
-
-// set node's previous node's address
-void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
-{
-	ASSERT(this, "VirtualNode::setPrevious: null this");
-
-	this->previous = previous;
-}
-
-// swap the data between two nodes
-void VirtualNode_swapData(VirtualNode this, VirtualNode node)
-{
-	ASSERT(this, "VirtualNode::swapData: null this");
-
-	// check that both nodes are valid and are not the same
-	if (!(this && node && (this != node)))
-	{
-		return;
-	}
-
-	void* auxData = this->data;
-	this->data = node->data;
-	node->data = auxData;
-}
 
 //---------------------------------------------------------------------------------------------------------
 // 											 CLASS'S MACROS
@@ -168,8 +49,10 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node)
 	/* a pointer to the tail of the list */										\
 	VirtualNode tail;															\
 
-__CLASS_DEFINITION(VirtualList);
 
+__CLASS_DEFINITION(VirtualList, Object);
+
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -183,13 +66,14 @@ static void VirtualList_constructor(VirtualList this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+
 __CLASS_NEW_DEFINITION(VirtualList)
 __CLASS_NEW_END(VirtualList);
 
 // class's constructor
 static void VirtualList_constructor(VirtualList this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// set members' default values
 	this->head = NULL;
@@ -205,7 +89,7 @@ void VirtualList_destructor(VirtualList this)
 	VirtualList_clear(this);
 
 	// destroy super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // remove all nodes from the list
@@ -244,7 +128,7 @@ int VirtualList_pushFront(VirtualList this, const void* const data)
 {
 	ASSERT(this, "VirtualList::pushFront: null this");
 
-	VirtualNode newNode = __NEW(VirtualNode, __ARGUMENTS(data));
+	VirtualNode newNode = __NEW(VirtualNode, data);
 
 	//set previous if list isn't empty
 	if (this->head)
@@ -300,7 +184,7 @@ int VirtualList_pushBack(VirtualList this, const void* const data)
 {
 	ASSERT(this, "VirtualList::pushBack: null this");
 
-	VirtualNode newNode = __NEW(VirtualNode, __ARGUMENTS(data));
+	VirtualNode newNode = __NEW(VirtualNode, data);
 
 	ASSERT(data, "VirtualList::pushBack: null data");
 
@@ -579,7 +463,7 @@ VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const vo
 	}
 	else
 	{
-		newNode = __NEW(VirtualNode, __ARGUMENTS(data));
+		newNode = __NEW(VirtualNode, data);
 
 		if (!newNode)
 		{
@@ -617,7 +501,7 @@ VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const v
 	}
 	else
 	{
-		newNode = __NEW(VirtualNode, __ARGUMENTS(data));
+		newNode = __NEW(VirtualNode, data);
 
 		if (!newNode)
 		{

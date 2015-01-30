@@ -50,7 +50,7 @@
 	/* who is to receive this telegram */										\
 	void* receiver;
 
-__CLASS_DEFINITION(Telegram);
+__CLASS_DEFINITION(Telegram, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,14 +66,14 @@ static void Telegram_constructor(Telegram this, u32 dispatchTime, void* sender, 
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Telegram, __PARAMETERS(u32 dispatchTime, void* sender, void* receiver, int message, void* extraInfo))
-__CLASS_NEW_END(Telegram, __ARGUMENTS(dispatchTime, sender, receiver, message, extraInfo));
+__CLASS_NEW_DEFINITION(Telegram, u32 dispatchTime, void* sender, void* receiver, int message, void* extraInfo)
+__CLASS_NEW_END(Telegram, dispatchTime, sender, receiver, message, extraInfo);
 
 // class's constructor
 static void Telegram_constructor(Telegram this, u32 delay, void* sender, void* receiver, int message, void* extraInfo)
 {
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// set the attributes
 	this->delay = delay;
@@ -93,7 +93,7 @@ void Telegram_destructor(Telegram this)
 	ASSERT(this, "Telegram::destructor: null this");
 
 	// free the memory
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // retrieve sender

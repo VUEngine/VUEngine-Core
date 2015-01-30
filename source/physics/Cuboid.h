@@ -85,7 +85,7 @@ __CLASS(Cuboid);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Cuboid, __PARAMETERS(Entity owner));
+__CLASS_NEW_DECLARE(Cuboid, Entity owner);
 
 void Cuboid_destructor(Cuboid this);
 bool Cuboid_overlaps(Cuboid this, Shape shape);

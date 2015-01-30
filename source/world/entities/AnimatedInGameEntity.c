@@ -42,7 +42,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(AnimatedInGameEntity);
+__CLASS_DEFINITION(AnimatedInGameEntity, InGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Objec
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedInGameEntity, __PARAMETERS(AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id))
-__CLASS_NEW_END(AnimatedInGameEntity, __ARGUMENTS(animatedInGameEntityDefinition, id));
+__CLASS_NEW_DEFINITION(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id)
+__CLASS_NEW_END(AnimatedInGameEntity, animatedInGameEntityDefinition, id);
 
 // AnimatedInGameEntity.c
 // class's constructor
@@ -71,7 +71,7 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	ASSERT(this, "AnimatedInGameEntity::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&animatedInGameEntityDefinition->inGameEntityDefinition, id));
+	__CONSTRUCT_BASE(&animatedInGameEntityDefinition->inGameEntityDefinition, id);
 
 	// save ROM definition
 	this->animatedInGameEntityDefinition = animatedInGameEntityDefinition;
@@ -101,7 +101,7 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 	AnimatedInGameEntity_removeListeners(this);
 
 	// destroy the super object
-	__DESTROY_BASE(InGameEntity);
+	__DESTROY_BASE;
 }
 
 // add listeners to sprites

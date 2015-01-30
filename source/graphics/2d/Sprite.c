@@ -44,7 +44,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Sprite
-__CLASS_DEFINITION(Sprite);
+__CLASS_DEFINITION(Sprite, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,13 +63,13 @@ static void Sprite_doScale(Sprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Sprite, __PARAMETERS(const SpriteDefinition* spriteDefinition))
-__CLASS_NEW_END(Sprite, __ARGUMENTS(spriteDefinition));
+__CLASS_NEW_DEFINITION(Sprite, const SpriteDefinition* spriteDefinition)
+__CLASS_NEW_END(Sprite, spriteDefinition);
 
 // class's constructor
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// create the texture
 	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
@@ -164,7 +164,7 @@ void Sprite_destructor(Sprite this)
 	this->texture = NULL;
 
 	// destroy the super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 Scale Sprite_getScale(Sprite this)

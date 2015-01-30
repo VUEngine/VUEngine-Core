@@ -33,7 +33,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(GameState);
+__CLASS_DEFINITION(GameState, State);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,11 +45,7 @@ void GameState_constructor(GameState this)
 {
 	ASSERT(this, "GameState::constructor: null this");
 
-	// this is an abstract class so must initialize the vtable here
-	// since this class does not have an allocator
-	__SET_CLASS(GameState);
-
-	__CONSTRUCT_BASE(State);
+	__CONSTRUCT_BASE();
 
 	// construct the stage
 	this->stage = NULL;
@@ -77,7 +73,7 @@ void GameState_destructor(GameState this)
 	}
 
 	// destroy the super object
-	__DESTROY_BASE(State);
+	__DESTROY_BASE;
 }
 
 // state's enter
@@ -227,7 +223,7 @@ void GameState_transform(GameState this)
 	};
 
 	// then transform loaded entities
-	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, __ARGUMENTS(&environmentTransform));
+	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, &environmentTransform);
 }
 
 // propagate message to all entities in the level

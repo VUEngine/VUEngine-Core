@@ -57,7 +57,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Stage
-__CLASS_DEFINITION(Stage);
+__CLASS_DEFINITION(Stage, Container);
 
 typedef struct StageEntityDescription
 {
@@ -102,7 +102,7 @@ static void Stage_constructor(Stage this)
 	ASSERT(this, "Stage::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Container, __ARGUMENTS(-1));
+	__CONSTRUCT_BASE(-1);
 
 	this->stageEntities = NULL;
 	this->stageEntitiesToTest = NULL;
@@ -156,7 +156,7 @@ void Stage_destructor(Stage this)
 	}
 	
 	// destroy the super object
-	__DESTROY_BASE(Container);
+	__DESTROY_BASE;
 }
 
 // place holder for objects designed around OBJECTS in the VB hardware
@@ -276,7 +276,7 @@ static void Stage_setupUI(Stage this)
 	if (this->stageDefinition->uiDefinition.allocator)
 	{
 		// call the appropiate allocator to support inheritance!
-		this->ui = (UI)((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(0, &this->stageDefinition->uiDefinition);
+		this->ui = (UI)((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(&this->stageDefinition->uiDefinition);
 		ASSERT(this->ui, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
@@ -294,7 +294,7 @@ static void Stage_setupUI(Stage this)
 					{0, 0, 0}
 			};
 
-			__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
+			__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, &environmentTransform);
 		}
 	}
 }
@@ -316,10 +316,10 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 			Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
 	
 			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position));
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
 	
 			// apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(&environmentTransform));
+			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, &environmentTransform);
 	
 			if (permanent)
 			{
@@ -711,7 +711,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		Entity entity = (Entity)VirtualNode_getData(node);
 
 		// if the entity isn't visible inside the view field, unload it
-		if (!__VIRTUAL_CALL(bool, Entity, isVisible, entity, __ARGUMENTS(__ENTITY_UNLOAD_PAD)))
+		if (!__VIRTUAL_CALL(bool, Entity, isVisible, entity, __ENTITY_UNLOAD_PAD))
 		{
 			s16 id = Container_getId((Container)entity);
 
@@ -865,6 +865,6 @@ void Stage_resume(Stage this)
 				{0, 0, 0}
 		};
 
-		__VIRTUAL_CALL(void, Container, transform, (Container)this->ui, __ARGUMENTS(&environmentTransform));
+		__VIRTUAL_CALL(void, Container, transform, (Container)this->ui, &environmentTransform);
 	}
 }

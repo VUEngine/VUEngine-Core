@@ -100,7 +100,7 @@ typedef const TextureDefinition TextureROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Texture, __PARAMETERS(TextureDefinition* textureDefinition, u16 id));
+__CLASS_NEW_DECLARE(Texture, TextureDefinition* textureDefinition, u16 id);
 
 void Texture_destructor(Texture this);
 void Texture_freeCharMemory(Texture this);

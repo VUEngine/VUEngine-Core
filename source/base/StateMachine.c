@@ -49,7 +49,7 @@
 	/* stack of states */														\
 	VirtualList stateStack;														\
 
-__CLASS_DEFINITION(StateMachine);
+__CLASS_DEFINITION(StateMachine, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,14 +57,14 @@ __CLASS_DEFINITION(StateMachine);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(StateMachine, __PARAMETERS(void* owner))
-__CLASS_NEW_END(StateMachine, __ARGUMENTS(owner));
+__CLASS_NEW_DEFINITION(StateMachine, void* owner)
+__CLASS_NEW_END(StateMachine, owner);
 
 // allocate memory and call the constructor
 void StateMachine_constructor(StateMachine this, void* owner)
 {
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// set pointers
 	this->owner = owner;
@@ -97,7 +97,7 @@ void StateMachine_destructor(StateMachine this)
 	__DELETE(this->stateStack);
 
 	// free processor memory
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // update state
@@ -107,7 +107,7 @@ void StateMachine_update(StateMachine this)
 
 	if (this->currentState)
 	{
-		__VIRTUAL_CALL(void, State, execute, this->currentState, __ARGUMENTS(this->owner));
+		__VIRTUAL_CALL(void, State, execute, this->currentState, this->owner);
 	}
 }
 
@@ -127,7 +127,7 @@ void StateMachine_swapState(StateMachine this, State newState)
 		this->previousState = this->currentState;
 
 		// call the exit method from current state
-		__VIRTUAL_CALL(void, State, exit, this->currentState, __ARGUMENTS(this->owner));
+		__VIRTUAL_CALL(void, State, exit, this->currentState, this->owner);
 	}
 
 	this->currentState = newState;
@@ -136,7 +136,7 @@ void StateMachine_swapState(StateMachine this, State newState)
 	VirtualList_pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// call enter method from new state
-	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
+	__VIRTUAL_CALL(void, State, enter, this->currentState, this->owner);
 }
 
 // push a state in the stack
@@ -153,7 +153,7 @@ void StateMachine_pushState(StateMachine this, State newState)
 	if (this->currentState)
 	{
 		// call the pause method from current state
-		__VIRTUAL_CALL(void, State, pause, this->currentState, __ARGUMENTS(this->owner));
+		__VIRTUAL_CALL(void, State, pause, this->currentState, this->owner);
 	}
 
 	// set new state
@@ -165,7 +165,7 @@ void StateMachine_pushState(StateMachine this, State newState)
 	VirtualList_pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// call enter method from new state
-	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
+	__VIRTUAL_CALL(void, State, enter, this->currentState, this->owner);
 }
 
 // pop a state fromt the stack
@@ -182,7 +182,7 @@ void StateMachine_popState(StateMachine this)
 	if (this->currentState)
 	{
 		// call the exit method from current state
-		__VIRTUAL_CALL(void, State, exit, this->currentState, __ARGUMENTS(this->owner));
+		__VIRTUAL_CALL(void, State, exit, this->currentState, this->owner);
 	}
 
 	// update current state
@@ -191,7 +191,7 @@ void StateMachine_popState(StateMachine this)
 	ASSERT(this->currentState, "StateMachine::popState: null currentState");
 
 	// call resume method from new state
-	__VIRTUAL_CALL(void, State, resume, this->currentState, __ARGUMENTS(this->owner));
+	__VIRTUAL_CALL(void, State, resume, this->currentState, this->owner);
 }
 
 // return to previous state
@@ -203,7 +203,7 @@ void StateMachine_returnToPreviousState(StateMachine this)
 	{
 		if (this->currentState)
 		{
-			__VIRTUAL_CALL(void, State, exit, this->currentState, __ARGUMENTS(this->owner));
+			__VIRTUAL_CALL(void, State, exit, this->currentState, this->owner);
 		}
 
 		this->currentState = this->previousState;
@@ -223,14 +223,14 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
 	}
 	if (this->currentState)
 	{
-		__VIRTUAL_CALL(void, State, pause, this->currentState, __ARGUMENTS(this->owner));
+		__VIRTUAL_CALL(void, State, pause, this->currentState, this->owner);
 
 		this->previousState = this->currentState;
 	}
 
 	this->currentState = globalState;
 
-	__VIRTUAL_CALL(void, State, enter, this->currentState, __ARGUMENTS(this->owner));
+	__VIRTUAL_CALL(void, State, enter, this->currentState, this->owner);
 }
 
 // return to previous state
@@ -240,7 +240,7 @@ bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 
 	if (this->currentState )
 	{
-		return __VIRTUAL_CALL(bool, State, handleMessage, this->currentState, __ARGUMENTS(this->owner, telegram));
+		return __VIRTUAL_CALL(bool, State, handleMessage, this->currentState, this->owner, telegram);
 	}
 
 	return false;

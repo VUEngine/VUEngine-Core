@@ -48,7 +48,7 @@
 	u8 ActiveLanguage;															\
 
 // define the I18n
-__CLASS_DEFINITION(I18n);
+__CLASS_DEFINITION(I18n, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,11 +69,10 @@ __SINGLETON(I18n);
 static void I18n_constructor(I18n this)
 {
 	ASSERT(this, "I18n::constructor: null this");
+	__CONSTRUCT_BASE();
 
 	this->languageCount = 0;
 	this->ActiveLanguage = 0;
-
-	__CONSTRUCT_BASE(Object);
 }
 
 // class's destructor
@@ -82,7 +81,7 @@ void I18n_destructor(I18n this)
 	ASSERT(this, "I18n::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // get localized string

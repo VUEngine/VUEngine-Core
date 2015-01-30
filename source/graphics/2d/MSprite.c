@@ -44,7 +44,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the MSprite
-__CLASS_DEFINITION(MSprite);
+__CLASS_DEFINITION(MSprite, Sprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,13 +64,13 @@ static Point MSprite_capPosition(MSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MSprite, __PARAMETERS(const MSpriteDefinition* mSpriteDefinition))
-__CLASS_NEW_END(MSprite, __ARGUMENTS(mSpriteDefinition));
+__CLASS_NEW_DEFINITION(MSprite, const MSpriteDefinition* mSpriteDefinition)
+__CLASS_NEW_END(MSprite, mSpriteDefinition);
 
 // class's constructor
 void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition)
 {
-	__CONSTRUCT_BASE(Sprite, __ARGUMENTS(&mSpriteDefinition->spriteDefinition));
+	__CONSTRUCT_BASE(&mSpriteDefinition->spriteDefinition);
 	
 	this->mSpriteDefinition = mSpriteDefinition;
 
@@ -97,7 +97,7 @@ void MSprite_destructor(MSprite this)
 	this->texture = NULL;
 
 	// destroy the super object
-	__DESTROY_BASE(Sprite);
+	__DESTROY_BASE;
 }
 
 // release loaded textures

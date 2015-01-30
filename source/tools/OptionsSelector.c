@@ -115,7 +115,7 @@
 	int type;																	\
 
 // define the OptionsSelector
-__CLASS_DEFINITION(OptionsSelector);
+__CLASS_DEFINITION(OptionsSelector, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -131,15 +131,15 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OptionsSelector, __PARAMETERS(int cols, int rows, char* mark, int type))
-__CLASS_NEW_END(OptionsSelector, __ARGUMENTS(cols, rows, mark, type));
+__CLASS_NEW_DEFINITION(OptionsSelector, int cols, int rows, char* mark, int type)
+__CLASS_NEW_END(OptionsSelector, cols, rows, mark, type);
 
 // class's constructor
 void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type)
 {
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->pages = NULL;
 	this->currentPage = NULL;
@@ -163,7 +163,7 @@ void OptionsSelector_destructor(OptionsSelector this)
 	OptionsSelector_flushPages(this);
 
 	// allow a new construct
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 static void OptionsSelector_flushPages(OptionsSelector this)

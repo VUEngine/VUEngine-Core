@@ -86,7 +86,7 @@
 	int mode;																	\
 
 // define the AnimationEditor
-__CLASS_DEFINITION(AnimationEditor);
+__CLASS_DEFINITION(AnimationEditor, Object);
 
 enum Modes
 {
@@ -140,7 +140,7 @@ static void AnimationEditor_constructor(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->animatedSprite = NULL;
 	this->gameState = NULL;
@@ -178,7 +178,7 @@ void AnimationEditor_destructor(AnimationEditor this)
 	}
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // update
@@ -209,7 +209,7 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
 
-	this->actorsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16, __OPTION_MARK, kString));
+	this->actorsSelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString);
 
 	VirtualList actorsNames = __NEW(VirtualList);
 
@@ -659,9 +659,9 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 	position.z += 0;
 
-	this->animatedSprite = __NEW(AnimatedSprite, __ARGUMENTS((SpriteDefinition*)_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0]), (void*)this);
+	this->animatedSprite = __NEW(AnimatedSprite, (SpriteDefinition*)_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0], (void*)this);
 	ASSERT(this->animatedSprite, "AnimationEditor::createAnimatedSprite: null animatedSprite");
-	ASSERT(Sprite_getTexture(this->animatedSprite), "AnimationEditor::createAnimatedSprite: null texture");
+	ASSERT(Sprite_getTexture((Sprite)this->animatedSprite), "AnimationEditor::createAnimatedSprite: null texture");
 
 	DrawSpec drawSpec = Sprite_getDrawSpec((Sprite)this->animatedSprite);
 	drawSpec.position.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture((Sprite)this->animatedSprite)) << 2));
@@ -686,7 +686,7 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 			__DELETE(this->animationsSelector);
 		}
 
-		this->animationsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 16, __OPTION_MARK, kString));
+		this->animationsSelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString);
 
 		VirtualList animationsNames = __NEW(VirtualList);
 
@@ -712,7 +712,7 @@ static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this)
 		__DELETE(this->animationEditionSelector);
 	}
 
-	this->animationEditionSelector = __NEW(OptionsSelector, __ARGUMENTS(1, 4, __OPTION_MARK, kString));
+	this->animationEditionSelector = __NEW(OptionsSelector, 1, 4, __OPTION_MARK, kString);
 
 	VirtualList optionsNames = __NEW(VirtualList);
 
@@ -734,7 +734,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 		__DELETE(this->frameEditionSelector);
 	}
 
-	this->frameEditionSelector = __NEW(OptionsSelector, __ARGUMENTS((__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION / 2, __FRAME_OPTION_MARK, kInt));
+	this->frameEditionSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION / 2, __FRAME_OPTION_MARK, kInt);
 
 	VirtualList framesIndexes = __NEW(VirtualList);
 

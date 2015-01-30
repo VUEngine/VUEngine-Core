@@ -66,7 +66,7 @@ enum Screens
 	/* inherits */																	\
 	GameState_ATTRIBUTES															\
 
-__CLASS_DEFINITION(DebugState);
+__CLASS_DEFINITION(DebugState, GameState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,14 +79,14 @@ __SINGLETON(DebugState);
 // class's constructor
 static void DebugState_constructor(DebugState this)
 {
-	__CONSTRUCT_BASE(GameState);
+	__CONSTRUCT_BASE();
 }
 
 // class's destructor
 static void DebugState_destructor(DebugState this)
 {
 	// destroy base
-	__SINGLETON_DESTROY(GameState);
+	__SINGLETON_DESTROY;
 }
 
 // state's enter

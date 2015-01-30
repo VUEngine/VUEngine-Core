@@ -47,7 +47,7 @@
 	u32 ticks;
 
 // define the manager
-__CLASS_DEFINITION(ClockManager);
+__CLASS_DEFINITION(ClockManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ __SINGLETON(ClockManager);
 // class's constructor
 static void ClockManager_constructor(ClockManager this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// create the clock list
 	this->clocks = NULL;
@@ -93,7 +93,7 @@ void ClockManager_destructor(ClockManager this)
 	VirtualList_clear(this->clocks);
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 

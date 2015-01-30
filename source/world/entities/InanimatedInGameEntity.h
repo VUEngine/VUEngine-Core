@@ -81,7 +81,7 @@ typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id));
+__CLASS_NEW_DECLARE(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id);
 
 void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id);
 void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);

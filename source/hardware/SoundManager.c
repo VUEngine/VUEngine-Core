@@ -160,7 +160,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 	float zFactor;																\
 
 
-__CLASS_DEFINITION(SoundManager);
+__CLASS_DEFINITION(SoundManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ static void SoundManager_constructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	{
 		int i = 0;
@@ -221,7 +221,7 @@ void SoundManager_destructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::destructor: null this");
 
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // load wave form data in the VB memory

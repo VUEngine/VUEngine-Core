@@ -117,7 +117,7 @@ typedef const ActorDefinition ActorROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Actor, __PARAMETERS(ActorDefinition* actorDefinition, s16 id));
+__CLASS_NEW_DECLARE(Actor, ActorDefinition* actorDefinition, s16 id);
 
 void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 id);
 void Actor_destructor(Actor this);

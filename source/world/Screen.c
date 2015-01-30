@@ -53,7 +53,7 @@
 	Size stageSize;																\
 
 // define the Screen
-__CLASS_DEFINITION(Screen);
+__CLASS_DEFINITION(Screen, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ static void Screen_constructor(Screen this)
 	ASSERT(this, "Screen::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// initialize world's screen's position
 	this->position.x = 0;
@@ -117,7 +117,7 @@ void Screen_destructor(Screen this)
 	ASSERT(this, "Screen::destructor: null this");
 
 	// destroy base
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // center world's screen in function of focus actor's position

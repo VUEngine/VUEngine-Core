@@ -56,7 +56,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 	/* delayed messages */														\
 	VirtualList delayedMessages;												\
 
-__CLASS_DEFINITION(MessageDispatcher);
+__CLASS_DEFINITION(MessageDispatcher, Object);
 
 typedef struct DelayedMessage
 {
@@ -79,7 +79,7 @@ __SINGLETON(MessageDispatcher);
 // class's constructor
 static void MessageDispatcher_constructor(MessageDispatcher this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->delayedMessages = __NEW(VirtualList);
 }
@@ -92,7 +92,7 @@ void MessageDispatcher_destructor(MessageDispatcher this)
 	__DELETE(this->delayedMessages);
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // dispatch a telegram
@@ -112,10 +112,10 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 	if (0 >= delay)
 	{
 		//create the telegram
-		Telegram telegram = __NEW(Telegram, __ARGUMENTS(0, sender, receiver, message, extraInfo));
+		Telegram telegram = __NEW(Telegram, 0, sender, receiver, message, extraInfo);
 
 		//send the telegram to the recipient
-		bool result = __VIRTUAL_CALL(bool, Object, handleMessage, receiver, __ARGUMENTS(telegram));
+		bool result = __VIRTUAL_CALL(bool, Object, handleMessage, receiver, telegram);
 
 		__DELETE(telegram);
 		return result;
@@ -134,7 +134,7 @@ void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay,
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
 
 	//create the telegram
-	Telegram telegram = __NEW(Telegram, __ARGUMENTS(delay, sender, receiver, message, extraInfo));
+	Telegram telegram = __NEW(Telegram, delay, sender, receiver, message, extraInfo);
 
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 
@@ -179,7 +179,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			// check if sender and receiver are still alive
 			if (Telegram_getSender(telegram) && Telegram_getReceiver(telegram))
 			{
-				__VIRTUAL_CALL(bool, Object, handleMessage, Telegram_getReceiver(telegram), __ARGUMENTS(telegram));
+				__VIRTUAL_CALL(bool, Object, handleMessage, Telegram_getReceiver(telegram), telegram);
 			}
 		}
 

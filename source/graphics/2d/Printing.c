@@ -55,7 +55,7 @@
 	u8 fontsDefinitionCount;													\
 
 // define the Printing
-__CLASS_DEFINITION(Printing);
+__CLASS_DEFINITION(Printing, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,14 +75,14 @@ __SINGLETON(Printing);
 // class's constructor
 static void Printing_constructor(Printing this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 }
 
 // class's destructor
 void Printing_destructor(Printing this)
 {
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // setup the bgmap and char memory with printing data

@@ -116,7 +116,7 @@
 	void (*update)(void *);														\
 
 // define the Debug
-__CLASS_DEFINITION(Debug);
+__CLASS_DEFINITION(Debug, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ static void Debug_constructor(Debug this)
 {
 	ASSERT(this, "Debug::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->pages = __NEW(VirtualList);
 	this->subPages = __NEW(VirtualList);
@@ -200,7 +200,7 @@ void Debug_destructor(Debug this)
 	ASSERT(this, "Debug::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // setup pages

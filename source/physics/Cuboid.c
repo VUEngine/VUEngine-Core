@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Cuboid
-__CLASS_DEFINITION(Cuboid);
+__CLASS_DEFINITION(Cuboid, Shape);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,8 +54,8 @@ Shape Entity_getShape(Entity this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Cuboid, __PARAMETERS(Entity owner))
-__CLASS_NEW_END(Cuboid, __ARGUMENTS(owner));
+__CLASS_NEW_DEFINITION(Cuboid, Entity owner)
+__CLASS_NEW_END(Cuboid, owner);
 
 
 // class's constructor
@@ -63,7 +63,7 @@ static void Cuboid_constructor(Cuboid this, Entity owner)
 {
 	ASSERT(this, "Cuboid::constructor: null this");
 
-	__CONSTRUCT_BASE(Shape, __ARGUMENTS(owner));
+	__CONSTRUCT_BASE(owner);
 
 	this->polygon = NULL;
 }
@@ -76,7 +76,7 @@ void Cuboid_destructor(Cuboid this)
 	Cuboid_deleteDirectDrawData(this);
 
 	// destroy the super object
-	__DESTROY_BASE(Shape);
+	__DESTROY_BASE;
 }
 
 // check if two rects overlap

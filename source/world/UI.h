@@ -70,7 +70,7 @@ typedef struct UIDefinition
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(UI, __PARAMETERS(UIDefinition* uiDefinition));
+__CLASS_NEW_DECLARE(UI, UIDefinition* uiDefinition);
 
 void UI_destructor(UI this);
 void UI_addEntities(UI this, PositionedEntity* entities);

@@ -31,7 +31,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(Container);
+__CLASS_DEFINITION(Container, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,8 +49,8 @@ static void Container_applyTransform(Container this, Transformation* environment
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Container, __PARAMETERS(s16 id))
-__CLASS_NEW_END(Container, __ARGUMENTS(id));
+__CLASS_NEW_DEFINITION(Container, s16 id)
+__CLASS_NEW_END(Container, id);
 
 // class's constructor
 void Container_constructor(Container this, s16 id)
@@ -58,7 +58,7 @@ void Container_constructor(Container this, s16 id)
 	ASSERT(this, "Container::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// set ID
 	this->id = id;
@@ -141,7 +141,7 @@ void Container_destructor(Container this)
 	}
 
 	// destroy the super Container
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // safe call to delete entities within a normal stage
@@ -369,11 +369,11 @@ static void Container_applyTransform(Container this, Transformation* environment
 
 			if (isInitialTransform)
 			{
-				__VIRTUAL_CALL(void, Container, initialTransform, child, __ARGUMENTS(&environmentTransformCopy));
+				__VIRTUAL_CALL(void, Container, initialTransform, child, &environmentTransformCopy);
 			}
 			else
 			{
-				__VIRTUAL_CALL(void, Container, transform, child, __ARGUMENTS(&environmentTransformCopy));
+				__VIRTUAL_CALL(void, Container, transform, child, &environmentTransformCopy);
 			}
 		}
 	}
@@ -506,7 +506,7 @@ int Container_onMessage(Container this, va_list args)
 	ASSERT(this, "Container::onKeyHold: null this");
 
 	int message = va_arg(args, int);
-	return __VIRTUAL_CALL(int, Container, doMessage, this, __ARGUMENTS(message));
+	return __VIRTUAL_CALL(int, Container, doMessage, this, message);
 }
 
 // process message

@@ -49,7 +49,7 @@ static bool VBJaEngineDefaultAutomaticPauseScreenState_handleMessage(VBJaEngineD
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultAutomaticPauseScreenState);
+__CLASS_DEFINITION(VBJaEngineDefaultAutomaticPauseScreenState, GameState);
 __SINGLETON(VBJaEngineDefaultAutomaticPauseScreenState);
 
 
@@ -60,14 +60,14 @@ __SINGLETON(VBJaEngineDefaultAutomaticPauseScreenState);
 // class's constructor
 static void VBJaEngineDefaultAutomaticPauseScreenState_constructor(VBJaEngineDefaultAutomaticPauseScreenState this)
 {
-	__CONSTRUCT_BASE(GameState);
+	__CONSTRUCT_BASE();
 }
 
 // class's destructor
 static void VBJaEngineDefaultAutomaticPauseScreenState_destructor(VBJaEngineDefaultAutomaticPauseScreenState this)
 {
 	// destroy base
-	__SINGLETON_DESTROY(GameState);
+	__SINGLETON_DESTROY;
 }
 
 // state's enter

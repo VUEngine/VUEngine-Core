@@ -67,7 +67,7 @@ enum Screens
 	/* inherits */																	\
 	GameState_ATTRIBUTES															\
 
-__CLASS_DEFINITION(StageEditorState);
+__CLASS_DEFINITION(StageEditorState, GameState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,14 +80,14 @@ __SINGLETON(StageEditorState);
 // class's constructor
 static void StageEditorState_constructor(StageEditorState this)
 {
-	__CONSTRUCT_BASE(GameState);
+	__CONSTRUCT_BASE();
 }
 
 // class's destructor
 static void StageEditorState_destructor(StageEditorState this)
 {
 	// destroy base
-	__SINGLETON_DESTROY(GameState);
+	__SINGLETON_DESTROY;
 }
 
 // state's enter

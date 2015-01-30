@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Mass
-__CLASS_DEFINITION(Mass);
+__CLASS_DEFINITION(Mass, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -39,15 +39,15 @@ __CLASS_DEFINITION(Mass);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Mass, __PARAMETERS(fix19_13 weight))
-__CLASS_NEW_END(Mass, __ARGUMENTS(weight));
+__CLASS_NEW_DEFINITION(Mass, fix19_13 weight)
+__CLASS_NEW_END(Mass, weight);
 
 // class's constructor
 void Mass_constructor(Mass this, fix19_13 weight)
 {
 	ASSERT(this, "Mass::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->weight = weight;
 }
@@ -58,7 +58,7 @@ void Mass_destructor(Mass this)
 	ASSERT(this, "Mass::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // retrieve weight

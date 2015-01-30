@@ -130,7 +130,7 @@ typedef const SpriteDefinition SpriteROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Sprite, __PARAMETERS(const SpriteDefinition* spriteDefinition));
+__CLASS_NEW_DECLARE(Sprite, const SpriteDefinition* spriteDefinition);
 
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition);
 void Sprite_destructor(Sprite this);

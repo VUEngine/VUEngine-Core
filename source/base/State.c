@@ -30,7 +30,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(State);
+__CLASS_DEFINITION(State, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ __CLASS_NEW_END(State);
 void State_constructor(State this)
 {
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 }
 
 // class's destructor
@@ -54,7 +54,7 @@ void State_destructor(State this)
 	ASSERT(this, "State::destructor: null this");
 
 	// free processor's memory
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // state's enter

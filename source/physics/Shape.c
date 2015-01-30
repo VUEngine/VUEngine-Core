@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Shape
-__CLASS_DEFINITION(Shape);
+__CLASS_DEFINITION(Shape, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,12 +43,8 @@ void Shape_constructor(Shape this, Entity owner)
 {
 	ASSERT(this, "Shape::constructor: null this");
 
-	// this is an abstract class so must initialize the vtable here
-	// since this class does not have an allocator
-	__SET_CLASS(Shape);
-
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// set the owner
 	this->owner = owner;
@@ -74,7 +70,7 @@ void Shape_destructor(Shape this)
 	ASSERT(this, "Shape::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // retrieve owner

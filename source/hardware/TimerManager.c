@@ -40,7 +40,7 @@
 	u8 tcrValue;																\
 
 // define the TimerManager
-__CLASS_DEFINITION(TimerManager);
+__CLASS_DEFINITION(TimerManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ static void TimerManager_constructor(TimerManager this)
 {
 	ASSERT(this, "TimerManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->tcrValue = 0;
 }
@@ -73,7 +73,7 @@ void TimerManager_destructor(TimerManager this)
 	ASSERT(this, "TimerManager::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // enable interruptions

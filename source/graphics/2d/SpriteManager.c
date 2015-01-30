@@ -51,7 +51,7 @@
 	s8 freedLayer;																\
 	s8 freedLayersCount;														\
 
-__CLASS_DEFINITION(SpriteManager);
+__CLASS_DEFINITION(SpriteManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ __SINGLETON(SpriteManager);
 static void SpriteManager_constructor(SpriteManager this)
 {
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->node = NULL;
 	this->otherNode = NULL;
@@ -95,7 +95,7 @@ void SpriteManager_destructor(SpriteManager this)
 	}
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // reset

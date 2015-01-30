@@ -35,7 +35,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the InGameEntity
-__CLASS_DEFINITION(InGameEntity);
+__CLASS_DEFINITION(InGameEntity, Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ __CLASS_DEFINITION(InGameEntity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(InGameEntity, __PARAMETERS(InGameEntityDefinition* inGameEntityDefinition, s16 id))
-__CLASS_NEW_END(InGameEntity, __ARGUMENTS(inGameEntityDefinition, id));
+__CLASS_NEW_DEFINITION(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id)
+__CLASS_NEW_END(InGameEntity, inGameEntityDefinition, id);
 
 // class's constructor
 void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id)
@@ -52,7 +52,7 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 	ASSERT(this, "InGameEntity::constructor: null this");
 	ASSERT(inGameEntityDefinition, "InGameEntity::constructor: null definition");
 
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(&inGameEntityDefinition->entityDefinition, id));
+	__CONSTRUCT_BASE(&inGameEntityDefinition->entityDefinition, id);
 
 	this->inGameEntityDefinition = inGameEntityDefinition;
 
@@ -75,7 +75,7 @@ void InGameEntity_destructor(InGameEntity this)
 	ASSERT(this, "InGameEntity::destructor: null this");
 
 	// destroy the super objectdirection
-	__DESTROY_BASE(Entity);
+	__DESTROY_BASE;
 }
 
 // retrieve gap

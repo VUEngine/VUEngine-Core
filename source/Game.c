@@ -127,7 +127,7 @@ enum StateOperations
 	u8 lowbatLastCheckSeconds;													\
 	
 
-__CLASS_DEFINITION(Game);
+__CLASS_DEFINITION(Game, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ static void Game_constructor(Game this)
 	ASSERT(this, "Game::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();
@@ -183,7 +183,7 @@ static void Game_constructor(Game this)
 	this->inGameClock = __NEW(Clock);
 
 	// construct the game's state machine
-	this->stateMachine = __NEW(StateMachine, __ARGUMENTS(this));
+	this->stateMachine = __NEW(StateMachine, this);
 
 	this->nextState = NULL;
 	this->automaticPauseState = NULL;
@@ -247,7 +247,7 @@ void Game_destructor(Game this)
 
 	__DELETE(this->stateMachine);
 
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // setup engine paramenters

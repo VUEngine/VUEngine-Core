@@ -55,7 +55,7 @@
 
 
 // define the DirectDraw
-__CLASS_DEFINITION(DirectDraw);
+__CLASS_DEFINITION(DirectDraw, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ __SINGLETON(DirectDraw);
 // class's constructor
 static void DirectDraw_constructor(DirectDraw this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->fps = 0;
 }
@@ -88,7 +88,7 @@ static void DirectDraw_constructor(DirectDraw this)
 void DirectDraw_destructor(DirectDraw this)
 {
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // draw a pixel on the screen (DirectDraw)

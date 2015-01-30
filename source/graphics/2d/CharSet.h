@@ -116,7 +116,7 @@ typedef const CharSetDefinition CharSetROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(CharSet, __PARAMETERS(CharSetDefinition* charSetDefinition, Object owner));
+__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, Object owner);
 
 void CharSet_destructor(CharSet this);
 int CharSet_getAllocationType(CharSet this);

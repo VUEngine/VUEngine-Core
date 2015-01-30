@@ -55,7 +55,7 @@ void VBJaEngineDefaultPrecautionScreenState_setPrecautionString(VBJaEngineDefaul
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultPrecautionScreenState);
+__CLASS_DEFINITION(VBJaEngineDefaultPrecautionScreenState, GameState);
 __SINGLETON_DYNAMIC(VBJaEngineDefaultPrecautionScreenState);
 
 
@@ -66,18 +66,18 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultPrecautionScreenState);
 // class's constructor
 static void VBJaEngineDefaultPrecautionScreenState_constructor(VBJaEngineDefaultPrecautionScreenState this)
 {
+	__CONSTRUCT_BASE();
+
 	VBJaEngineDefaultPrecautionScreenState_setNextstate(this, (GameState)VBJaEngineDefaultAutomaticPauseSelectionScreenState_getInstance());
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
     this->precautionString = "           Important:\n\nRead Instruction and Precaution\n\n   Booklets before operating";
-
-	__CONSTRUCT_BASE(GameState);
 }
 
 // class's destructor
 static void VBJaEngineDefaultPrecautionScreenState_destructor(VBJaEngineDefaultPrecautionScreenState this)
 {
 	// destroy base
-	__SINGLETON_DESTROY(GameState);
+	__SINGLETON_DESTROY;
 }
 
 // state's enter

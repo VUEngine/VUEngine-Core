@@ -140,7 +140,7 @@ typedef const AnimationDescription AnimationDescriptionROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(AnimatedSprite, __PARAMETERS(const SpriteDefinition* spriteDefinition, Object owner));
+__CLASS_NEW_DECLARE(AnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
 
 void AnimatedSprite_destructor(AnimatedSprite this);
 int AnimatedSprite_getType(AnimatedSprite this);

@@ -35,7 +35,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Entity
-__CLASS_DEFINITION(Entity);
+__CLASS_DEFINITION(Entity, Container);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,12 +57,8 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
 {
 	ASSERT(this, "Entity::constructor: null this");
 
-	// this is an abstract class so must initialize the vtable here
-	// since this class does not have an allocator
-	__SET_CLASS(Entity);
-
 	// construct base Container
-	__CONSTRUCT_BASE(Container, __ARGUMENTS(id));
+	__CONSTRUCT_BASE(id);
 
 	// save definition
 	this->entityDefinition = entityDefinition;
@@ -97,7 +93,7 @@ void Entity_destructor(Entity this)
 	Entity_releaseSprites(this);
 
 	// destroy the super Container
-	__DESTROY_BASE(Container);
+	__DESTROY_BASE;
 }
 
 // release sprites
@@ -133,7 +129,7 @@ Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extra
 	if (entityDefinition->allocator)
 	{
 		// call the appropiate allocator to support inheritance!
-		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(0, entityDefinition, ID);
+		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(entityDefinition, ID);
 
 		// setup entity if allocated and constructed
 		if (entity)
@@ -141,7 +137,7 @@ Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extra
 			// process extra info
 			if (extraInfo)
 	        {
-				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, __ARGUMENTS(extraInfo));
+				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, extraInfo);
 			}
 
 			return entity;
@@ -174,7 +170,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 			};
 	
 			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, __ARGUMENTS(position3D));
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position3D);
 	
 			// add children if defined
 			if (positionedEntity->childrenDefinitions)
@@ -183,7 +179,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 			}	
 			
 			// apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, __ARGUMENTS(environmentTransform));
+			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, environmentTransform);
 
 			return entity;
 		}
@@ -270,7 +266,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 	if (spriteDefinition->allocator)
 	{
 		// call the appropiate allocator to support inheritance!
-		sprite = (Sprite)((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)(0, spriteDefinition, this);
+		sprite = (Sprite)((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)(spriteDefinition, this);
 	}
 
 	if (sprite)
@@ -322,7 +318,7 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 			if (updateSpritePosition)
 		    {
 				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, __ARGUMENTS(this->transform.globalPosition));
+				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, this->transform.globalPosition);
 			}
 		}
 	}

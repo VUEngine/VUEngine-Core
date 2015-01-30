@@ -40,7 +40,7 @@
 	Object_ATTRIBUTES;															\
 
 // define the Error
-__CLASS_DEFINITION(Error);
+__CLASS_DEFINITION(Error, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,13 +64,13 @@ __SINGLETON(Error);
 // class's constructor
 static void Error_constructor(Error this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 }
 
 // class's destructor
 void Error_destructor(Error this)
 {
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // setup the error message and lock program here

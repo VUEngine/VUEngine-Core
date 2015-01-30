@@ -99,7 +99,7 @@ typedef const MSpriteDefinition MSpriteROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MSprite, __PARAMETERS(const MSpriteDefinition* mSpriteDefinition));
+__CLASS_NEW_DECLARE(MSprite, const MSpriteDefinition* mSpriteDefinition);
 
 void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
 void MSprite_destructor(MSprite this);

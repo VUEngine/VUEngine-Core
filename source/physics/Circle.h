@@ -56,7 +56,7 @@ __CLASS(Circle);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Circle, __PARAMETERS(Entity owner));
+__CLASS_NEW_DECLARE(Circle, Entity owner);
 
 void Circle_destructor(Circle this);
 

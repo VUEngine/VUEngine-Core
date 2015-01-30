@@ -36,7 +36,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the ScrollBackground
-__CLASS_DEFINITION(ScrollBackground);
+__CLASS_DEFINITION(ScrollBackground, Entity);
 
 enum ScrollSprites
 {
@@ -62,8 +62,8 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ScrollBackground, __PARAMETERS(ScrollBackgroundDefinition* backgroundDefinition, s16 id))
-__CLASS_NEW_END(ScrollBackground, __ARGUMENTS(backgroundDefinition, id));
+__CLASS_NEW_DEFINITION(ScrollBackground, ScrollBackgroundDefinition* backgroundDefinition, s16 id)
+__CLASS_NEW_END(ScrollBackground, backgroundDefinition, id);
 
 // class's constructor
 void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 id)
@@ -72,7 +72,7 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 	ASSERT(scrollBackgroundDefinition, "ScrollBackground::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, __ARGUMENTS(scrollBackgroundDefinition, id));
+	__CONSTRUCT_BASE(scrollBackgroundDefinition, id);
 
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 
@@ -101,7 +101,7 @@ void ScrollBackground_destructor(ScrollBackground this)
 	ASSERT(this, "ScrollBackground::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(Entity);
+	__DESTROY_BASE;
 }
 
 // get the sprites so I can manipulate them

@@ -69,7 +69,7 @@ typedef const MassDefinition MassROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Mass, __PARAMETERS(fix19_13 weight));
+__CLASS_NEW_DECLARE(Mass, fix19_13 weight);
 
 void Mass_constructor(Mass this, fix19_13 weight);
 void Mass_destructor(Mass this);

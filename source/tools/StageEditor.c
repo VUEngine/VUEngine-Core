@@ -83,7 +83,7 @@
 	int translationStepSize;													\
 
 // define the StageEditor
-__CLASS_DEFINITION(StageEditor);
+__CLASS_DEFINITION(StageEditor, Object);
 
 enum Modes
 {
@@ -140,7 +140,7 @@ static void StageEditor_constructor(StageEditor this)
 {
 	ASSERT(this, "StageEditor::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->currentEntityNode = NULL;
 
@@ -148,7 +148,7 @@ static void StageEditor_constructor(StageEditor this)
 
 	this->mode = kFirstMode + 1;
 
-	this->userObjectsSelector = __NEW(OptionsSelector, __ARGUMENTS(2, 12, "\x0B", kString));
+	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, "\x0B", kString);
 
 	VirtualList userObjects = __NEW(VirtualList);
 
@@ -175,7 +175,7 @@ void StageEditor_destructor(StageEditor this)
 	}
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // update
@@ -346,12 +346,12 @@ static void StageEditor_getShape(StageEditor this)
 	    {
 			case kCircle:
 
-				//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, __ARGUMENTS(owner)));
+				//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, owner));
 				break;
 
 			case kCuboid:
 
-				this->shape = (Shape)__NEW(Cuboid, __ARGUMENTS(entity));
+				this->shape = (Shape)__NEW(Cuboid, entity);
 				break;
 		}
 	}
@@ -678,7 +678,7 @@ static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D transl
 		localPosition.y += translation.y;
 		localPosition.z += translation.z;
 
-		__VIRTUAL_CALL(void, Container, setLocalPosition, container, __ARGUMENTS(localPosition));
+		__VIRTUAL_CALL(void, Container, setLocalPosition, container, localPosition);
 		Container_invalidateGlobalPosition(container);
 
 		// this hack forces the Entity to recalculate its sprites' value.
@@ -730,7 +730,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
 		GameState_transform(this->gameState);
-		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, __ARGUMENTS(position));
+		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, position);
 
 		VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
 		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;

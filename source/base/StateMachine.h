@@ -51,7 +51,7 @@ __CLASS(StateMachine);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(StateMachine, __PARAMETERS(void* owner));
+__CLASS_NEW_DECLARE(StateMachine, void* owner);
 
 void StateMachine_constructor(StateMachine this, void* owner);
 void StateMachine_destructor(StateMachine this);

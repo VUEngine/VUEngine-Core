@@ -59,7 +59,7 @@ void VBJaEngineDefaultAutomaticPauseSelectionScreenState_setOffString(VBJaEngine
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultAutomaticPauseSelectionScreenState);
+__CLASS_DEFINITION(VBJaEngineDefaultAutomaticPauseSelectionScreenState, GameState);
 __SINGLETON_DYNAMIC(VBJaEngineDefaultAutomaticPauseSelectionScreenState);
 
 
@@ -70,6 +70,8 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultAutomaticPauseSelectionScreenState);
 // class's constructor
 static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_constructor(VBJaEngineDefaultAutomaticPauseSelectionScreenState this)
 {
+	__CONSTRUCT_BASE();
+
 	VBJaEngineDefaultAutomaticPauseSelectionScreenState_setNextstate(this, (GameState)VBJaEngineDefaultLanguageSelectionScreenState_getInstance());
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
     this->selection = true;
@@ -77,14 +79,13 @@ static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_constructor(VBJa
     this->explanationString = "The Automatic Pause feature will\nremind you to take a break from\nplaying approx. every 30 minutes.";
     this->onString = "On";
     this->offString = "Off";
-
-	__CONSTRUCT_BASE(GameState);
 }
 
 // class's destructor
 static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_destructor(VBJaEngineDefaultAutomaticPauseSelectionScreenState this)
-{	// destroy base
-	__SINGLETON_DESTROY(GameState);
+{	
+	// destroy base
+	__SINGLETON_DESTROY;
 }
 
 // state's enter

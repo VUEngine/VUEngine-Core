@@ -49,7 +49,7 @@ __CLASS(Telegram);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Telegram, __PARAMETERS(u32 delay, void* sender, void* receiver, int message, void* extraInfo));
+__CLASS_NEW_DECLARE(Telegram, u32 delay, void* sender, void* receiver, int message, void* extraInfo);
 
 void Telegram_destructor(Telegram this);
 void* Telegram_getSender(Telegram this);

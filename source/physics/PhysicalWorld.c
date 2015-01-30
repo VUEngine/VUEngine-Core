@@ -69,7 +69,7 @@
 	Clock clock;																\
 
 // define the PhysicalWorld
-__CLASS_DEFINITION(PhysicalWorld);
+__CLASS_DEFINITION(PhysicalWorld, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ static void PhysicalWorld_constructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	// create the shape list
 	this->bodies = __NEW(VirtualList);
@@ -128,7 +128,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	__DELETE(this->removedBodies);
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // register a body
@@ -144,7 +144,7 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Actor owner, fix19_13 weight
 		return body;
 	}
 
-	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __ARGUMENTS((Object)owner, weight)));
+	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, (Object)owner, weight));
 
 	// return created shape
 	return (Body)VirtualList_front(this->bodies);

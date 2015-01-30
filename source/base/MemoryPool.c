@@ -66,7 +66,8 @@
 	/* pool's size and pool's block size */										\
 	int poolSizes[__MEMORY_POOLS][2];											\
 
-__CLASS_DEFINITION(MemoryPool);
+
+__CLASS_DEFINITION(MemoryPool, Object);
 
 enum MemoryPoolSizes
 {
@@ -90,13 +91,14 @@ static void MemoryPool_reset(MemoryPool this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+
 // a singleton
 __SINGLETON(MemoryPool);
 
 // class constructor
 static void MemoryPool_constructor(MemoryPool this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	MemoryPool_reset(this);
 }
@@ -107,7 +109,7 @@ void MemoryPool_destructor(MemoryPool this)
 	ASSERT(this, "MemoryPool::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // allocate memory for data

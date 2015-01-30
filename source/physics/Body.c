@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the Body
-__CLASS_DEFINITION(Body);
+__CLASS_DEFINITION(Body, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,19 +76,19 @@ enum CollidingObjectIndexes
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Body, __PARAMETERS(Object owner, fix19_13 weight))
-__CLASS_NEW_END(Body, __ARGUMENTS(owner, weight));
+__CLASS_NEW_DEFINITION(Body, Object owner, fix19_13 weight)
+__CLASS_NEW_END(Body, owner, weight);
 
 // class's constructor
 static void Body_constructor(Body this, Object owner, fix19_13 weight)
 {
 	ASSERT(this, "Body::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->owner = owner;
 
-	this->mass = __NEW(Mass, __ARGUMENTS(weight));
+	this->mass = __NEW(Mass, weight);
 
 	this->awake = false;
 
@@ -128,7 +128,7 @@ void Body_destructor(Body this)
 	__DELETE(this->mass);
 
 	// destroy the super object
-	__DESTROY_BASE(Object);
+	__DESTROY_BASE;
 }
 
 // set game entity

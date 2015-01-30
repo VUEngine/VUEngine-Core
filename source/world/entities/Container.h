@@ -105,7 +105,7 @@ __CLASS(Container);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Container, __PARAMETERS(s16 id));
+__CLASS_NEW_DECLARE(Container, s16 id);
 
 void Container_constructor(Container this, s16 id);
 void Container_destructor(Container this);

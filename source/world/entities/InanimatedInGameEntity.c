@@ -34,7 +34,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the InanimatedInGameEntity
-__CLASS_DEFINITION(InanimatedInGameEntity);
+__CLASS_DEFINITION(InanimatedInGameEntity, InGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -42,8 +42,8 @@ __CLASS_DEFINITION(InanimatedInGameEntity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(InanimatedInGameEntity, __PARAMETERS(InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id))
-__CLASS_NEW_END(InanimatedInGameEntity, __ARGUMENTS(inanimatedInGameEntityDefinition, id));
+__CLASS_NEW_DEFINITION(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id)
+__CLASS_NEW_END(InanimatedInGameEntity, inanimatedInGameEntityDefinition, id);
 
 // class's constructor
 void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id)
@@ -52,7 +52,7 @@ void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedI
 	ASSERT(inanimatedInGameEntityDefinition, "InanimatedInGameEntity::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, __ARGUMENTS(&inanimatedInGameEntityDefinition->inGameEntityDefinition, id));
+	__CONSTRUCT_BASE(&inanimatedInGameEntityDefinition->inGameEntityDefinition, id);
 
 	// check if register for collision detection
 	if (inanimatedInGameEntityDefinition->registerShape)
@@ -72,7 +72,7 @@ void InanimatedInGameEntity_destructor(InanimatedInGameEntity this)
 	ASSERT(this, "InanimatedInGameEntity::destructor: null this");
 
 	// destroy the super object
-	__DESTROY_BASE(InGameEntity);
+	__DESTROY_BASE;
 }
 
 // get elasticiy

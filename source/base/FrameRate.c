@@ -60,7 +60,7 @@
 	u16 lastPhysicsFPS;															\
 
 // define the FrameRate
-__CLASS_DEFINITION(FrameRate);
+__CLASS_DEFINITION(FrameRate, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ __SINGLETON(FrameRate);
 // class's constructor
 static void FrameRate_constructor(FrameRate this)
 {
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE();
 
 	this->rawFPS = 0;
 	this->renderFPS = 0;
@@ -99,7 +99,7 @@ void FrameRate_destructor(FrameRate this)
 	ASSERT(this, "FrameRate::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY(Object);
+	__SINGLETON_DESTROY;
 }
 
 // reset internal values
