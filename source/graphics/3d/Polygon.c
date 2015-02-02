@@ -114,7 +114,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 	int palette = 0x03;
 
 	// if I have some vertex, draw them
-	if (this->vertices)
+	if (this->vertices && 2 < VirtualList_getSize(this->vertices))
 	{
 		// the node's which hold the vertices
 		VirtualNode fromNode = VirtualList_begin(this->vertices);
@@ -153,7 +153,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, palette);
 		}
 
-		if (2 < VirtualList_getSize(this->vertices))
+		if (fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
 		{
 			fromVertice3D = *((VBVec3D*)VirtualNode_getData(fromNode));
 			toVertice3D = *((VBVec3D*)VirtualNode_getData(toNode));

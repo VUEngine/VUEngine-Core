@@ -239,7 +239,6 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName)
 {
 	ASSERT(this, "AnimatedInGameEntity::playAnimation: null this");
-	ASSERT(this->sprites, "AnimatedInGameEntity::playAnimation: null sprites");
 
 	if (this->sprites && animationName)
 	{

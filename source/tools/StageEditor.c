@@ -423,7 +423,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 	StageEditor_releaseShape(this);
 
 	VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
-
+	
 	if (!this->currentEntityNode)
 	{
 		this->currentEntityNode = stageEntities ? VirtualList_begin(stageEntities) : NULL;
