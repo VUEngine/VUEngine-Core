@@ -116,7 +116,7 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 	    {
 			Sprite sprite = (Sprite)VirtualNode_getData(node);
 	
-			function((Object)sprite, (Object)this, (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
+			function(__UPCAST(Object, sprite), __UPCAST(Object, this), (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
 		}
 	}
 }
@@ -165,7 +165,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::update: null this");
 
 	// call base
-	Container_update((Container)this);
+	Container_update(__UPCAST(Container, this));
 
 	// if direction changed
 	if (this->direction.x != this->previousDirection.x)

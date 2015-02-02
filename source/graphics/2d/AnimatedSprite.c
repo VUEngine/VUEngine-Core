@@ -143,7 +143,7 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this)
 			break;
 	}
 	
-	Sprite_scale((Sprite)this);
+	Sprite_scale(__UPCAST(Sprite, this));
 	this->renderFlag |= __UPDATE_M | (WRLD_AFFINE & this->head? __UPDATE_SIZE: 0);
 }
 
@@ -245,7 +245,7 @@ void AnimatedSprite_animate(AnimatedSprite this)
 		// the last frame has been reached
 		if (this->animationFunction->onAnimationComplete)
 		{
-			Object_fireEvent((Object)this, __EVENT_ANIMATION_COMPLETE);
+			Object_fireEvent(__UPCAST(Object, this), __EVENT_ANIMATION_COMPLETE);
 		}
 
 		// rewind to first frame
@@ -274,7 +274,7 @@ void AnimatedSprite_animate(AnimatedSprite this)
 		// has changed
 		this->previousFrame = this->actualFrame;
 		
-		Object_fireEvent((Object)this, __EVENT_ANIMATION_FRAME_CHANGED);
+		Object_fireEvent(__UPCAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
 	}
 
 	this->frameDelay += this->frameDelayDelta;
@@ -334,7 +334,7 @@ void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction
 	this->animationFunction = animationFunction;
 
 	// register event callback
-	Object_addEventListener((Object)this, this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+	Object_addEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 
 	// force frame writing in the next update
 	this->previousFrame = -1;
@@ -366,7 +366,7 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 			this->animationFunction = animationDescription->animationFunctions[i];
 
 			// register event callback
-			Object_addEventListener((Object)this, this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+			Object_addEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 
 			// force frame writing in the next update
 			this->previousFrame = -1;

@@ -92,7 +92,7 @@ void GameState_execute(GameState this, void* owner)
 	Stage_stream(this->stage);
 
 	// update the stage
-	__VIRTUAL_CALL(void, Container, update, (Container)this->stage);
+	__VIRTUAL_CALL(void, Container, update, this->stage);
 }
 
 // state's exit
@@ -133,7 +133,7 @@ void GameState_pause(GameState this, void* owner)
 
 	if(this->stage)
 	{
-		__VIRTUAL_CALL(void, Container, suspend, (Container)this->stage);
+		__VIRTUAL_CALL(void, Container, suspend, this->stage);
 	}
 	
 #ifdef __DEBUG_TOOLS
@@ -173,7 +173,8 @@ void GameState_resume(GameState this, void* owner)
 	if(this->stage)
 	{
 		Game_reset(Game_getInstance());
-		__VIRTUAL_CALL(void, Container, resume, (Container)this->stage);
+		// update the stage
+		__VIRTUAL_CALL(void, Container, resume, this->stage);
 	}
 	
 	// transform everything before showing up
@@ -200,7 +201,7 @@ bool GameState_handleMessage(GameState this, void* owner, Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
-	return Container_propagateEvent((Container)this->stage, Container_onMessage, Telegram_getMessage(telegram));
+	return Container_propagateEvent(__UPCAST(Container, this->stage), Container_onMessage, Telegram_getMessage(telegram));
 }
 
 // update level entities' positions
@@ -223,13 +224,13 @@ void GameState_transform(GameState this)
 	};
 
 	// then transform loaded entities
-	__VIRTUAL_CALL(void, Container, transform, (Container)this->stage, &environmentTransform);
+	__VIRTUAL_CALL(void, Container, transform, this->stage, &environmentTransform);
 }
 
 // propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message)
 {
-	return Container_propagateEvent((Container)this->stage, Container_onMessage, message);
+	return Container_propagateEvent(__UPCAST(Container, this->stage), Container_onMessage, message);
 }
 
 // process user input

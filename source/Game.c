@@ -381,7 +381,7 @@ static void Game_setNextState(Game this, GameState state)
 		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock_getTime(this->clock) - this->lastAutoPauseCheckTime);
 		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
 		
-		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, (Object)this, (Object)this, kAutoPause, NULL);
+		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, __UPCAST(Object, this), __UPCAST(Object, this), kAutoPause, NULL);
 		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 	}
 
@@ -630,19 +630,19 @@ static void Game_handleInput(Game this)
 	if (pressedKey)
 	{
 		// inform the game about the pressed key
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyPressed, &pressedKey);
+		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyPressed, &pressedKey);
 	}
 
 	if (releasedKey)
 	{
 		// inform the game about the released key
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyUp, &releasedKey);
+		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyUp, &releasedKey);
 	}
 
 	if (holdKey)
 	{
 		// inform the game about the hold key
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->stateMachine, kKeyHold, &holdKey);
+		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
 
     // check for low battery and show indicator, if appropriate
@@ -1051,7 +1051,7 @@ void Game_unpause(Game this, GameState pauseState)
 		
 		if(Game_getCurrentState(this) == this->automaticPauseState)
 		{
-			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, (Object)this, (Object)this, kAutoPause, NULL);
+			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kAutoPause, NULL);
 			this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 		}
 	}
@@ -1079,7 +1079,7 @@ static void Game_autoPause(Game this)
 		else 
 		{
 			// otherwise just wait a minute to check again
-			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, (Object)this, (Object)this, kAutoPause, NULL);
+			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kAutoPause, NULL);
 		}
 	}
 }

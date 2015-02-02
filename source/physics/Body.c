@@ -456,12 +456,12 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 		 	// if stopped on any axis
 		 	if (axisStopedMovement)
 			{
-	 			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, &axisStopedMovement);
+	 			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyStoped, &axisStopedMovement);
 		 	}
 
 		 	if (axisOfChangeOfMovement)
 			{
-		 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyChangedDirection, &axisOfChangeOfMovement);
+		 		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyChangedDirection, &axisOfChangeOfMovement);
 		 	}
 
 		 	// clear any force so the next update does not get influenced
@@ -646,7 +646,7 @@ void Body_stopMovement(Body this, int axis)
 	if (!Body_isMoving(this))
 	{
 		Body_sleep(this);
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStoped, NULL);
+		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyStoped, NULL);
 	}
 }
 
@@ -769,7 +769,7 @@ static void Body_awake(Body this, int axisStartedMovement)
 
 	if (dispatchMessage)
 	{
-		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyStartedMoving, &axisStartedMovement);
+		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyStartedMoving, &axisStartedMovement);
 	}
 }
 
@@ -782,7 +782,7 @@ void Body_sleep(Body this)
 
 	PhysicalWorld_bodySleep(PhysicalWorld_getInstance(), this);
 
-	MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodySleep, NULL);
+	MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodySleep, NULL);
 }
 
 // is it moving?
@@ -864,7 +864,7 @@ void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity)
 
 	if (axisOnWhichBounced)
 	{
- 		MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this->owner, kBodyBounced, &axisOnWhichBounced);
+ 		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyBounced, &axisOnWhichBounced);
 	}
 }
 

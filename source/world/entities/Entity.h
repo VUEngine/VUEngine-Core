@@ -52,6 +52,7 @@
 		__VIRTUAL_DEC(moves);													\
 		__VIRTUAL_DEC(getPreviousPosition);										\
 		__VIRTUAL_DEC(getShape);												\
+		__VIRTUAL_DEC(canMoveOverAxis);											\
 
 #define Entity_SET_VTABLE(ClassName)											\
 		Container_SET_VTABLE(ClassName)											\
@@ -75,6 +76,7 @@
 		__VIRTUAL_SET(ClassName, Entity, getShape);								\
 		__VIRTUAL_SET(ClassName, Entity, suspend);								\
 		__VIRTUAL_SET(ClassName, Entity, resume);								\
+		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);						\
 
 #define Entity_ATTRIBUTES														\
 																				\
@@ -178,6 +180,7 @@ void Entity_show(Entity this);
 void Entity_hide(Entity this);
 void Entity_suspend(Entity this);
 void Entity_resume(Entity this);
+bool Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
 
 
 #endif

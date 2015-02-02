@@ -220,7 +220,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 		
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 	
 			u32 spriteParam = Sprite_getParam(sprite);
 			

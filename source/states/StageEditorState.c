@@ -119,7 +119,7 @@ static bool StageEditorState_handleMessage(StageEditorState this, void* owner, T
 	{
 		case kKeyPressed:
 			{
-				MessageDispatcher_dispatchMessage(0, (Object)this, (Object)StageEditor_getInstance(), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
+				MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, StageEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
 			}
 			break;
 	}

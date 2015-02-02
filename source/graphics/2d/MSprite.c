@@ -194,7 +194,7 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 		this->drawSpec.position.z = position3D.z;
 
 		// calculate sprite's parallax
-		Sprite_calculateParallax((Sprite)this, this->drawSpec.position.z);
+		Sprite_calculateParallax(__UPCAST(Sprite, this), this->drawSpec.position.z);
 	}
 
 	Point axisCapped = MSprite_capPosition(this);

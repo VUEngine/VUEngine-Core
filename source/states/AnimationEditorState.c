@@ -119,7 +119,7 @@ static bool AnimationEditorState_handleMessage(AnimationEditorState this, void* 
 	{
 		case kKeyPressed:
 			{
-				MessageDispatcher_dispatchMessage(0, (Object)this, (Object)AnimationEditor_getInstance(), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
+				MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, AnimationEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
 			}
 			break;
 	}

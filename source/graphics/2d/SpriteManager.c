@@ -136,14 +136,14 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 
 	for (; this->node; this->node = VirtualNode_getNext(this->node))
 	{
-		Sprite sprite = (Sprite)VirtualNode_getData(this->node);
+		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(this->node));
 		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
 
 		this->otherNode = progressively && this->otherNode ? VirtualNode_getNext(this->otherNode) : VirtualNode_getNext(this->node);
 
 		for (; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
 		{
-			Sprite otherSprite = (Sprite)VirtualNode_getData(this->otherNode);
+			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(this->otherNode));
 			DrawSpec otherDrawSpec = Sprite_getDrawSpec(otherSprite);
 
 			// check if z positions are swaped
@@ -256,7 +256,7 @@ static bool SpriteManager_processFreedLayers(SpriteManager this)
 
 		for (; node; node = VirtualNode_getPrevious(node))
 		{
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 			u8 spriteLayer = Sprite_getWorldLayer(sprite);
 			
 			// search for the next sprite with the closest 
@@ -274,8 +274,8 @@ static bool SpriteManager_processFreedLayers(SpriteManager this)
 				__VIP_WAIT;
 
 			    // must render inmediately 
-				__VIRTUAL_CALL(void, Sprite, render, (Sprite)VirtualNode_getData(node));
-
+				__VIRTUAL_CALL(void, Sprite, render, sprite);
+				
 				// and hide old layer, otherwise,
 				// there will be flickering
 			    WORLD_SIZE(spriteLayer, 0, 0);
@@ -350,7 +350,7 @@ void SpriteManager_render(SpriteManager this)
 	// look for the first sprite to render
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		Sprite sprite = (Sprite)VirtualNode_getData(node);
+		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		if(Sprite_getRenderFlag(sprite)) 
 		{
 			__VIP_WAIT;
@@ -384,11 +384,11 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 	{
 		if (Sprite_getWorldLayer((Sprite)VirtualNode_getData(node)) != layer)
 		{
-			Sprite_hide((Sprite)VirtualNode_getData(node));
+			Sprite_hide(__UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 		else
 		{
-			Sprite_show((Sprite)VirtualNode_getData(node));
+			Sprite_show(__UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -401,7 +401,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	VirtualNode node = VirtualList_end(this->sprites);
 	for (; node; node = VirtualNode_getPrevious(node))
 	{
-		Sprite_show((Sprite)VirtualNode_getData(node));
+		Sprite_show(__UPCAST(Sprite, VirtualNode_getData(node)));
 	}
 }
 
@@ -424,7 +424,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		Sprite sprite = (Sprite)VirtualNode_getData(node);
+		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 
 		Printing_text(Printing_getInstance(), "Sprite: ", auxX, auxY, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX + 8, auxY, NULL);

@@ -194,7 +194,7 @@
 			((ReturnType (*)(ClassName, ...))											\
 			(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))		\
 				(																		\
-						object, ##__VA_ARGS__											\
+						__UPCAST(ClassName, object), ##__VA_ARGS__						\
 				):																		\
 			/* call base implementation */												\
 			(ReturnType)Error_triggerException(Error_getInstance(),						\
@@ -208,7 +208,7 @@
 		((ReturnType (*)(ClassName, ...))												\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))			\
 			(																			\
-					object, ##__VA_ARGS__												\
+				__UPCAST(ClassName, object), ##__VA_ARGS__								\
 			)																			\
 
 #endif
@@ -240,11 +240,8 @@
 #ifdef __DEBUG
 #define __UPCAST(ClassName, object)														\
 																						\
-	/* cast object to the given class */												\
-	__GET_CAST(ClassName, object)? 														\
-		(ClassName)object:																\
-	(ClassName)Object_upcast((Object)object, ClassName ## _getBaseClass, 				\
-			__VIRTUAL_CALL(void*, Object, getBaseClass, (Object)object))
+		/* try to up cast object */														\
+		(ClassName)Object_upcast((Object)object, ClassName ## _getBaseClass, NULL)
 #else	
 #define __UPCAST(ClassName, object) (ClassName)object
 #endif

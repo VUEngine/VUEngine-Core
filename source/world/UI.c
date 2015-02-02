@@ -90,7 +90,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	{
 		Entity entity = Entity_load(entities[i].entityDefinition, ID++, entities[i].extraInfo);
 
-		Container_addChild((Container)this, (Container)entity);
+		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 
 		VBVec3D position =
 		{
@@ -131,7 +131,7 @@ void UI_transform(UI this, Transformation* environmentTransform)
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 
-	Container_transform((Container)this, environmentTransform);
+	Container_transform(__UPCAST(Container, this), environmentTransform);
 	
 	if(screen)
 	{
@@ -167,7 +167,7 @@ void UI_initialTransform(UI this, Transformation* environmentTransform)
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 
-	Container_initialTransform((Container)this, environmentTransform);
+	Container_initialTransform(__UPCAST(Container, this), environmentTransform);
 	
 	if(screen)
 	{

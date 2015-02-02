@@ -121,7 +121,7 @@ static void Entity_releaseSprites(Entity this)
 }
 
 // create an entity in gameengine's memory
-Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo)
+Entity Entity_load(const EntityDefinition* entityDefinition, int id, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -129,7 +129,7 @@ Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extra
 	if (entityDefinition->allocator)
 	{
 		// call the appropiate allocator to support inheritance!
-		Entity entity = (Entity)((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)(entityDefinition, ID);
+		Entity entity = ((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id);
 
 		// setup entity if allocated and constructed
 		if (entity)
@@ -158,7 +158,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 
 		if(positionedEntity->name)
 		{
-			Container_setName((Container)entity, positionedEntity->name);
+			Container_setName(__UPCAST(Container, entity), positionedEntity->name);
 		}
 		if(entity)
 		{
@@ -179,8 +179,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 			}	
 			
 			// apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, environmentTransform);
-
+		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 			return entity;
 		}
 	}
@@ -200,10 +199,10 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 		//go through n sprites in entity's definition
 		for (; childrenDefinitions[i].entityDefinition; i++)
 	    {
-			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], environmentTransform, this->id + Container_getChildCount((Container)this));
+			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], environmentTransform, this->id + Container_getChildCount(__UPCAST(Container, this)));
 
 			// create the entity and add it to the world
-			Container_addChild((Container)this, (Container)entity);
+			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 		}
 	}	
 }
@@ -220,13 +219,13 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		extraInfo
 	};
 
-	Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 	
     // create the hint entity and add it to the hero as a child entity
-	Entity childEntity = Entity_loadFromDefinition(&positionedEntityDefinition, &environmentTransform, 0 > id? id: this->id + Container_getChildCount((Container)this));
+	Entity childEntity = Entity_loadFromDefinition(&positionedEntityDefinition, &environmentTransform, 0 > id? id: this->id + Container_getChildCount(__UPCAST(Container, this)));
 
 	// create the entity and add it to the world
-	Container_addChild((Container)this, (Container)childEntity);
+	Container_addChild(__UPCAST(Container, this), __UPCAST(Container, childEntity));
 
 	return childEntity;
 }
@@ -266,7 +265,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 	if (spriteDefinition->allocator)
 	{
 		// call the appropiate allocator to support inheritance!
-		sprite = (Sprite)((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)(spriteDefinition, this);
+		sprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
 	}
 
 	if (sprite)
@@ -338,7 +337,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
 
 	// call base class's transform method
-	Container_initialTransform((Container)this, environmentTransform);
+	Container_initialTransform(__UPCAST(Container, this), environmentTransform);
 
 	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
 
@@ -363,7 +362,7 @@ void Entity_transform(Entity this, Transformation* environmentTransform)
 	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
 
 	// call base class's transform method
-	Container_transform((Container)this, environmentTransform);
+	Container_transform(__UPCAST(Container, this), environmentTransform);
 
 	// update graphical representation
 	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
@@ -407,7 +406,7 @@ Scale Entity_getScale(Entity this)
 // set local position
 void Entity_setLocalPosition(Entity this, VBVec3D position)
 {
-	Container_setLocalPosition((Container)this, position);
+	Container_setLocalPosition(__UPCAST(Container, this), position);
 }
 
 // retrieve position
@@ -655,7 +654,7 @@ void Entity_suspend(Entity this)
 {
 	ASSERT(this, "Entity::suspend: null this");
 
-	Container_suspend((Container)this);
+	Container_suspend(__UPCAST(Container, this));
 	Entity_releaseSprites(this);
 }
 
@@ -664,11 +663,17 @@ void Entity_resume(Entity this)
 {
 	ASSERT(this, "Entity::resume: null this");
 
-	Container_resume((Container)this);
+	Container_resume(__UPCAST(Container, this));
 
 	// initialize sprites
 	if (this->entityDefinition)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 	}
+}
+
+// defaults to true
+bool Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration)
+{
+	return true;
 }

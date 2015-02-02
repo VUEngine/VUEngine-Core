@@ -265,7 +265,7 @@ int CollisionManager_update(CollisionManager this)
 			thereWhereCollisions = true;
 
 			// inform the owner about the collision
-			MessageDispatcher_dispatchMessage(0, (Object)shape, (Object)Shape_getOwner(shape), kCollision, (void*)collidingObjects);
+			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, shape), __UPCAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
 
 			__DELETE(collidingObjects);
 		}

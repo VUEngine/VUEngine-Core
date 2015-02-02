@@ -162,12 +162,27 @@ void Object_fireEvent(Object this,  char* eventName)
 Object Object_upcast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void))
 {
 	ASSERT(this, "Object::upcast: null this");
+	
+	if(!this)
+	{
+		return NULL;
+	}
+	
+	if(!baseClassGetClassMethod)
+	{
+		if(targetClassGetClassMethod == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
+		{
+			return this;
+		}
 
+		baseClassGetClassMethod = __VIRTUAL_CALL_UNSAFE(void*, Object, getBaseClass, this);
+	}
+	
 	if(!baseClassGetClassMethod || (Object_getBaseClass == baseClassGetClassMethod && Object_getBaseClass != targetClassGetClassMethod))
 	{
 		return NULL;
 	}
-
+	
 	if(targetClassGetClassMethod == baseClassGetClassMethod)
 	{
 		return this;

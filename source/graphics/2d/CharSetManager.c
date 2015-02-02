@@ -517,7 +517,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 
 			for (; charSetNode; charSetNode = VirtualNode_getNext(charSetNode))
 			{
-				CharSet charSet = (CharSet)VirtualNode_getData(charSetNode);
+				CharSet charSet = __UPCAST(CharSet, VirtualNode_getData(charSetNode));
 
 				if (CharSet_getSegment(charSet) != segment)
 				{

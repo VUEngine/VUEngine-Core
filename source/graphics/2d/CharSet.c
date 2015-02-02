@@ -247,7 +247,7 @@ void CharSet_rewrite(CharSet this)
 	CharSet_write(this);
 
 	// inform my owner
-	MessageDispatcher_dispatchMessage(0, (Object)this, this->owner, kCharSetRewritten, NULL);
+	MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), this->owner, kCharSetRewritten, NULL);
 }
 
 // set charDefinitionDisplacement

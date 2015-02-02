@@ -85,6 +85,7 @@ typedef struct GeneralAxisFlag
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);							\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);							\
 		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);					\
+		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);						\
 
 
 #define Actor_ATTRIBUTES														\

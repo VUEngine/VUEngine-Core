@@ -98,7 +98,7 @@ void Actor_destructor(Actor this)
 	Screen_focusEntityDeleted(Screen_getInstance(), (InGameEntity)this);
 
 	// remove a body
-	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), this);
+	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(Entity, this));
 
 	// destroy state machine
 	__DELETE(this->stateMachine);
@@ -112,11 +112,11 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 {
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
-	Container_setLocalPosition((Container)this, position);
+	Container_setLocalPosition(__UPCAST(Container, this), position);
 
 	if (this->body)
     {
-		VBVec3D globalPosition = Container_getGlobalPosition((Container)this);
+		VBVec3D globalPosition = Container_getGlobalPosition(__UPCAST(Container, this));
 
 		Transformation environmentTransform =
         {
@@ -146,7 +146,7 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 		this->lastCollidingEntity[kYAxis] = NULL;
 		this->lastCollidingEntity[kZAxis] = NULL;
 
-		Body_setPosition(this->body, &globalPosition, (Object)this);
+		Body_setPosition(this->body, &globalPosition, __UPCAST(Object, this));
 	}
 }
 
@@ -155,7 +155,7 @@ static void Actor_syncPositionWithBody(Actor this)
 	// save previous position
 	this->previousGlobalPosition = this->transform.globalPosition;
 
-	Container_setLocalPosition((Container) this, Body_getPosition(this->body));
+	Container_setLocalPosition(__UPCAST(Container, this), Body_getPosition(this->body));
 }
 
 // updates the animation attributes
@@ -432,7 +432,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 			Object sender = Telegram_getSender(telegram);
 			Actor atherActor = __GET_CAST(Actor, sender);
 
-			if (true || sender == (Object)this || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
+			if (true || (sender == __UPCAST(Object, this)) || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
 	        {
 				switch (message)
 	            {
@@ -595,11 +595,11 @@ static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, in
 
 		if (!(axisOfCollision & Body_isMoving(this->body)))
 	    {
-			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyStoped, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kBodyStoped, &axisOfCollision);
 		}
 		else
 	    {
-			MessageDispatcher_dispatchMessage(0, (Object)this, (Object)this, kBodyBounced, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kBodyBounced, &axisOfCollision);
 		}
 	}
 }
@@ -758,11 +758,11 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	if (this->body)
 	{
 		// force position
-		Body_setPosition(this->body, &this->transform.localPosition, (Object)this);
+		Body_setPosition(this->body, &this->transform.localPosition, __UPCAST(Object, this));
 		Actor_syncPositionWithBody(this);
 	}
 
-	Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 	Actor_transform((Actor)this, &environmentTransform);
 
 	__VIRTUAL_CALL(void, Shape, positione, this->shape);

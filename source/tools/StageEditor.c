@@ -394,7 +394,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 {
 	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
+	VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
 
 	if (!this->currentEntityNode)
 	{
@@ -422,7 +422,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 {
 	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
+	VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
 
 	if (!this->currentEntityNode)
 	{
@@ -671,7 +671,7 @@ static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D transl
 {
 	if (this->currentEntityNode && this->shape)
 	{
-		Container container = (Container)VirtualNode_getData(this->currentEntityNode);
+		Container container = __UPCAST(Container, VirtualNode_getData(this->currentEntityNode));
 		VBVec3D localPosition = Container_getLocalPosition(container);
 
 		localPosition.x += translation.x;
@@ -730,9 +730,8 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
 		GameState_transform(this->gameState);
-		__VIRTUAL_CALL(void, Container, setLocalPosition, (Container)entity, position);
-
-		VirtualList stageEntities = Container_getChildren((Container)GameState_getStage(this->gameState));
+		__VIRTUAL_CALL(void, Container, setLocalPosition, entity, position);
+		VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
 		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 
 		// select the added entity
@@ -753,7 +752,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 
 	if (this->currentEntityNode)
 	{
-		Container container = (Container)VirtualNode_getData(this->currentEntityNode);
+		Container container = __UPCAST(Container, VirtualNode_getData(this->currentEntityNode));
 		VBVec3D globalPosition = Container_getGlobalPosition(container);
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);

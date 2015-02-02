@@ -184,7 +184,7 @@ void HardwareManager_setInterruptLevel(HardwareManager this, u8 level)
 }
 
 // get interruption level
-inline int HardwareManager_getInterruptLevel(HardwareManager this)
+int HardwareManager_getInterruptLevel(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::geInterruptLevel: null this");
 
@@ -230,6 +230,20 @@ int HardwareManager_getStackPointer(HardwareManager this)
 	: "=r" (sp) // Output
 	);
 	return sp;
+}
+
+// get stack pointer
+int HardwareManager_getLPointer(HardwareManager this)
+{
+	ASSERT(this, "HardwareManager::getStackPointer: null this");
+
+	int lp;
+	asm(" \
+		mov		lp,%0  \
+		"
+	: "=r" (lp) // Output
+	);
+	return lp;
 }
 
 // initialize timer

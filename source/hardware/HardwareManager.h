@@ -85,6 +85,9 @@ HardwareManager HardwareManager_getInstance();
 void HardwareManager_destructor(HardwareManager this);
 void HardwareManager_setInterruptVectors(HardwareManager this);
 void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
+int HardwareManager_getPSW(HardwareManager this);
+int HardwareManager_getStackPointer(HardwareManager this);
+int HardwareManager_getLPointer(HardwareManager this);
 void HardwareManager_initializeTimer(HardwareManager this);
 void HardwareManager_clearScreen(HardwareManager this);
 void HardwareManager_displayOn(HardwareManager this);
@@ -97,6 +100,5 @@ void HardwareManager_enableKeypad(HardwareManager this);
 void HardwareManager_disableKeypad(HardwareManager this);
 u16 HardwareManager_readKeypad(HardwareManager this);
 void HardwareManager_print(HardwareManager this, int x, int y);
-
 
 #endif

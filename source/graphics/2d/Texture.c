@@ -65,7 +65,7 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 	this->textureDefinition = textureDefinition;
 
 	// if the char definition is NULL, it must be a text
-	this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this);
+	this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, __UPCAST(Object, this));
 
 	// set the palette
 	this->palette = textureDefinition->palette;
@@ -206,7 +206,7 @@ void Texture_write(Texture this)
 	if (!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
-		this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, (Object)this);
+		this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, __UPCAST(Object, this));
 	}
 
 	//write char group
