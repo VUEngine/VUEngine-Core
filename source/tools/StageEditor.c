@@ -351,7 +351,7 @@ static void StageEditor_getShape(StageEditor this)
 
 			case kCuboid:
 
-				this->shape = (Shape)__NEW(Cuboid, entity);
+				this->shape = __UPCAST(Shape, __NEW(Cuboid, entity));
 				break;
 		}
 	}

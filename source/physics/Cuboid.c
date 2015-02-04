@@ -86,7 +86,7 @@ bool Cuboid_overlaps(Cuboid this, Shape shape)
 
 	if (__GET_CAST(Cuboid, shape))
 	{
-		return Cuboid_overlapsCuboid(this, (Cuboid)shape);
+		return Cuboid_overlapsCuboid(this, __UPCAST(Cuboid, shape));
 	}
 
 	return false;
@@ -194,7 +194,7 @@ int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displ
 
 	if (__GET_CAST(Cuboid, shape))
 	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, (Cuboid)shape, displacement);
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), displacement);
 	}
 
 	return 0;
@@ -382,7 +382,7 @@ int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displace
 
 	if (__GET_CAST(Cuboid, shape))
     {
-		return Cuboid_testIfCollisionWithCuboid(this, (Cuboid)shape, __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, collidingEntity), displacement);
+		return Cuboid_testIfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, collidingEntity), displacement);
 	}
 
 	return false;

@@ -97,7 +97,7 @@ void CollisionManager_destructor(CollisionManager this)
 	// delete all shapes registered
 	for (;node; node = VirtualNode_getNext(node))
 	{
-		__DELETE((Shape)VirtualNode_getData(node));
+		__DELETE(VirtualNode_getData(node));
 	}
 
 	// delete lists
@@ -138,7 +138,7 @@ Shape CollisionManager_registerShape(CollisionManager this, Entity owner, int sh
 	}
 
 	// return created shape
-	return (Shape)VirtualList_front(this->shapes);
+	return __UPCAST(Shape, VirtualList_front(this->shapes));
 }
 
 // remove a shape
@@ -163,7 +163,10 @@ Shape CollisionManager_getShape(CollisionManager this, Entity owner)
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
-	return (Shape)VirtualList_find(this->shapes, (const void* const)Entity_getShape(owner));
+	VirtualNode node = VirtualList_find(this->shapes, (const void* const)Entity_getShape(owner));
+	
+
+	return node? __UPCAST(Shape, VirtualNode_getData(node)): NULL;
 }
 
 // process removed shapes
@@ -178,7 +181,7 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 	{
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Shape shape = (Shape)VirtualNode_getData(node);
+			Shape shape = __UPCAST(Shape, VirtualNode_getData(node));
 
 			// remove from the list
 			VirtualList_removeElement(this->shapes, (BYTE*) shape);
@@ -207,7 +210,7 @@ int CollisionManager_update(CollisionManager this)
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		// current to check shape's rectangle
-		__VIRTUAL_CALL(void, Shape, positione, (Shape)VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Shape, positione, __UPCAST(Shape, VirtualNode_getData(node)));
 	}
 
 	// check the shapes
@@ -215,7 +218,7 @@ int CollisionManager_update(CollisionManager this)
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		// load the current shape
-		Shape shape = (Shape)VirtualNode_getData(node);
+		Shape shape = __UPCAST(Shape, VirtualNode_getData(node));
 
 		if (!Shape_checkForCollisions(shape))
 		{
@@ -236,7 +239,7 @@ int CollisionManager_update(CollisionManager this)
 		for (; nodeForActiveShapes; nodeForActiveShapes = VirtualNode_getNext(nodeForActiveShapes))
 		{	
 			// load the current shape to check against
-			Shape shapeToCheck = (Shape)VirtualNode_getData(nodeForActiveShapes);
+			Shape shapeToCheck = __UPCAST(Shape, VirtualNode_getData(nodeForActiveShapes));
 
 			// don't compare with current movable shape,
 			// when the shape already has been checked
@@ -290,7 +293,7 @@ void CollisionManager_reset(CollisionManager this)
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		// delete it
-		__DELETE((Shape)VirtualNode_getData(node));
+		__DELETE(VirtualNode_getData(node));
 	}
 
 	// empty the lists
@@ -363,7 +366,7 @@ void CollisionManager_drawShapes(CollisionManager this)
 	// check the shapes
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		__VIRTUAL_CALL(void, Shape, draw, (Shape)VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Shape, draw, VirtualNode_getData(node));
 	}
 }
 
@@ -379,7 +382,7 @@ void CollisionManager_flushShapesDirectDrawData(CollisionManager this)
 	// check the shapes
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, (Shape)VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, VirtualNode_getData(node));
 	}
 }
 

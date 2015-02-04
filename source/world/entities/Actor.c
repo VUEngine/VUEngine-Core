@@ -182,12 +182,12 @@ void Actor_transform(Actor this, Transformation* environmentTransform)
 		};
 
 		// call base
-		AnimatedInGameEntity_transform((AnimatedInGameEntity)this, &environmentAgnosticTransform);
+		AnimatedInGameEntity_transform(__UPCAST(AnimatedInGameEntity, this), &environmentAgnosticTransform);
 	}
 	else
 	{
 		// call base
-		AnimatedInGameEntity_transform((AnimatedInGameEntity)this, environmentTransform);
+		AnimatedInGameEntity_transform(__UPCAST(AnimatedInGameEntity, this), environmentTransform);
 	}
 }
 
@@ -197,7 +197,7 @@ void Actor_update(Actor this)
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	AnimatedInGameEntity_update((AnimatedInGameEntity)this);
+	AnimatedInGameEntity_update(__UPCAST(AnimatedInGameEntity, this));
 
 	if (this->stateMachine)
 	{
@@ -536,7 +536,7 @@ int Actor_updateSpriteScale(Actor this)
 		return true;
 	}
 	
-	return AnimatedInGameEntity_updateSpriteScale((AnimatedInGameEntity)this);
+	return AnimatedInGameEntity_updateSpriteScale(__UPCAST(AnimatedInGameEntity, this));
 }
 
 // stop movement completelty
@@ -658,7 +658,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	ASSERT(this->sprites, "Actor::alignTo: null sprites");
 
 	// retrieve the colliding entity's position and gap
-	VBVec3D otherPosition = Container_getGlobalPosition((Container) entity);
+	VBVec3D otherPosition = Container_getGlobalPosition(__UPCAST(Container, entity));
 	Gap otherGap = InGameEntity_getGap(entity);
 
 	// pointers to the dimensions to affect
@@ -763,7 +763,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	}
 
 	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
-	Actor_transform((Actor)this, &environmentTransform);
+	Actor_transform(this, &environmentTransform);
 
 	__VIRTUAL_CALL(void, Shape, positione, this->shape);
 	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
@@ -814,9 +814,9 @@ void Actor_addForce(Actor this, const Force* force)
 
 	Force effectiveForceToApply =
 	{
-		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis((Actor)this, &acceleration)))? force->x: 0,
-		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis((Actor)this, &acceleration)))? force->y: 0,
-		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis((Actor)this, &acceleration)))? force->z: 0
+		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis(this, &acceleration)))? force->x: 0,
+		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis(this, &acceleration)))? force->y: 0,
+		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis(this, &acceleration)))? force->z: 0
 	};
 
 	Body_addForce(this->body, &effectiveForceToApply);

@@ -413,11 +413,11 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 
 	Printing_text(Printing_getInstance(), "STAGE'S STATUS", 20, y + 3, NULL);
 	Printing_text(Printing_getInstance(), "Entities: ", 20, ++y + 3, NULL);
-	Printing_int(Printing_getInstance(), Container_getChildCount((Container)GameState_getStage(this->gameState)), 34, y + 3, NULL);
+	Printing_int(Printing_getInstance(), Container_getChildCount(__UPCAST(Container, GameState_getStage(this->gameState))), 34, y + 3, NULL);
 	Printing_text(Printing_getInstance(), "UI Entities: ", 20, ++y + 3, NULL);
 
 	UI ui = Stage_getUI(GameState_getStage(this->gameState));
-	Printing_int(Printing_getInstance(), ui ? Container_getChildCount((Container)ui) : 0, 34, y + 3, NULL);
+	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__UPCAST(Container, ui)) : 0, 34, y + 3, NULL);
 }
 
 static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)

@@ -295,7 +295,7 @@ static void Stage_setupUI(Stage this)
 					{0, 0, 0}
 			};
 
-			__VIRTUAL_CALL(void, Container, initialTransform, (Container)this->ui, &environmentTransform);
+			__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 		}
 	}
 }
@@ -312,15 +312,15 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 		if(entity)
 		{
 			// create the entity and add it to the world
-			Container_addChild((Container)this, (Container)entity);
+			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 	
-			Transformation environmentTransform = Container_getEnvironmentTransform((Container)this);
+			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 	
 			// set spatial position
 			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
 	
 			// apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, (Container)entity, &environmentTransform);
+			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
 	
 			if (permanent)
 			{
@@ -359,7 +359,7 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 		if(entity)
 		{
 			// create the entity and add it to the world
-			Container_addChild((Container)this, (Container)entity);
+			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 		}
 /*
 		if (permanent)
@@ -387,11 +387,11 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent)
 	// hide until effectively deleted
 	Entity_hide(entity);
 
-	Container_deleteMyself((Container)entity);
+	Container_deleteMyself(__UPCAST(Container, entity));
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
-	s16 id = Container_getId((Container)entity);
+	s16 id = Container_getId(__UPCAST(Container, entity));
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
@@ -539,7 +539,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
-	VBVec3D focusEntityPosition = Container_getGlobalPosition((Container)this->focusEntity);
+	VBVec3D focusEntityPosition = Container_getGlobalPosition(__UPCAST(Container, this->focusEntity));
 	focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
 	focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
 	focusEntityPosition.z = FIX19_13TOI(focusEntityPosition.z);
@@ -618,7 +618,7 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 				if(entity)
 				{
-					stageEntityDescription->id = Container_getId((Container)entity);
+					stageEntityDescription->id = Container_getId(__UPCAST(Container, entity));
 	
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 	
@@ -673,7 +673,7 @@ static void Stage_loadInRangeEntities(Stage this)
 
 				if(entity) 
 				{
-					stageEntityDescription->id = Container_getId((Container)entity);
+					stageEntityDescription->id = Container_getId(__UPCAST(Container, entity));
 	
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 				}
@@ -714,7 +714,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		// if the entity isn't visible inside the view field, unload it
 		if (!__VIRTUAL_CALL(bool, Entity, isVisible, entity, __ENTITY_UNLOAD_PAD))
 		{
-			s16 id = Container_getId((Container)entity);
+			s16 id = Container_getId(__UPCAST(Container, entity));
 
 			VirtualNode auxNode = VirtualList_begin(this->loadedStageEntities);
 
@@ -732,7 +732,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 			}
 
 			// delete it
-			Container_deleteMyself((Container)entity);
+			Container_deleteMyself(__UPCAST(Container, entity));
 		}
 	}
 
@@ -744,11 +744,11 @@ void Stage_update(Stage this)
 {
 	ASSERT(this, "Stage::update: null this");
 
-	Container_update((Container)this);
+	Container_update(__UPCAST(Container, this));
 
 	if (this->ui)
 	{
-		Container_update((Container)this->ui);
+		Container_update(__UPCAST(Container, this->ui));
 	}
 }
 
@@ -770,7 +770,7 @@ void Stage_stream(Stage this)
 	{
 		if (this->removedChildren && VirtualList_getSize(this->removedChildren))
 		{
-			Container_processRemovedChildren((Container)this);
+			Container_processRemovedChildren(__UPCAST(Container, this));
 		}
 		else if (this->focusEntity)
 		{
@@ -791,7 +791,7 @@ void Stage_streamAll(Stage this)
 	ASSERT(this, "Stage::streamAll: null this");
 
 	// must make sure there are not pending entities for removal
-	Container_processRemovedChildren((Container)this);
+	Container_processRemovedChildren(__UPCAST(Container, this));
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
 }
@@ -833,11 +833,11 @@ void Stage_suspend(Stage this)
 {
 	ASSERT(this, "Stage::suspend: null this");
 
-	Container_suspend((Container)this);
+	Container_suspend(__UPCAST(Container, this));
 	
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, suspend, (Container)this->ui);
+		__VIRTUAL_CALL(void, Container, suspend, __UPCAST(Container, this->ui));
 	}
 }
 
@@ -849,11 +849,11 @@ void Stage_resume(Stage this)
 	// reload textures
 	Stage_loadTextures(this);
 	
-	Container_resume((Container)this);
+	Container_resume(__UPCAST(Container, this));
 
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, resume, (Container)this->ui);
+		__VIRTUAL_CALL(void, Container, resume, __UPCAST(Container, this->ui));
 		
 		Transformation environmentTransform =
 		{
@@ -867,6 +867,6 @@ void Stage_resume(Stage this)
 				{0, 0, 0}
 		};
 
-		__VIRTUAL_CALL(void, Container, transform, (Container)this->ui, &environmentTransform);
+		__VIRTUAL_CALL(void, Container, transform, this->ui, &environmentTransform);
 	}
 }
