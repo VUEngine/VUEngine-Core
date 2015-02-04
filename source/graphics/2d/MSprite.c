@@ -112,7 +112,7 @@ static void MSprite_releaseTextures(MSprite this)
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			// free the texture
-			TextureManager_free(TextureManager_getInstance(), (Texture)VirtualNode_getData(node));
+			TextureManager_free(TextureManager_getInstance(), __UPCAST(Texture, VirtualNode_getData(node)));
 		}
 		
 		__DELETE(this->textures);
@@ -138,7 +138,7 @@ static void MSprite_loadTextures(MSprite this)
 			MSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
 		}
 		
-		this->texture = (Texture)VirtualList_front(this->textures);
+		this->texture = __UPCAST(Texture, VirtualList_front(this->textures));
 	}
 }
 
@@ -292,7 +292,7 @@ static void MSprite_calculateSize(MSprite this)
 
 	MSprite_calculateSizeMultiplier(this);
 	
-	Texture texture = (Texture)VirtualList_front(this->textures);
+	Texture texture = __UPCAST(Texture, VirtualList_front(this->textures));
 	
 	if(!this->mSpriteDefinition->xLoop)
 	{

@@ -189,10 +189,6 @@ void AnimationEditor_update(AnimationEditor this)
 	if (this->gameState && this->animatedSprite)
 	{
 		AnimatedSprite_update(this->animatedSprite, Game_getClock(Game_getInstance()));
-
-		// must scale since there is no entity to do so
-//		Sprite_invalidateParamTable((Sprite)this->animatedSprite);
-		//Sprite_scale((Sprite)this->animatedSprite);
 	}
 }
 
@@ -555,7 +551,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 				{
 					NM_ASSERT(this->animatedSprite, "AnimationEditor::selectAnimation: null animatedSprite");
 
-					Texture texture = Sprite_getTexture((Sprite)this->animatedSprite);
+					Texture texture = Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite));
 					NM_ASSERT(texture, "AnimationEditor::selectAnimation: null texture");
 					
 					TextureDefinition* textureDefinition = Texture_getTextureDefinition(texture);
@@ -661,18 +657,18 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 
 	this->animatedSprite = __NEW(AnimatedSprite, (SpriteDefinition*)_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0], (void*)this);
 	ASSERT(this->animatedSprite, "AnimationEditor::createAnimatedSprite: null animatedSprite");
-	ASSERT(Sprite_getTexture((Sprite)this->animatedSprite), "AnimationEditor::createAnimatedSprite: null texture");
+	ASSERT(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite)), "AnimationEditor::createAnimatedSprite: null texture");
 
-	DrawSpec drawSpec = Sprite_getDrawSpec((Sprite)this->animatedSprite);
-	drawSpec.position.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture((Sprite)this->animatedSprite)) << 2));
-	drawSpec.position.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture((Sprite)this->animatedSprite)) << 2));
+	DrawSpec drawSpec = Sprite_getDrawSpec(__UPCAST(Sprite, this->animatedSprite));
+	drawSpec.position.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite))) << 2));
+	drawSpec.position.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite))) << 2));
 	drawSpec.position.z = 0;
 		
-	Sprite_setDrawSpec((Sprite)this->animatedSprite, &drawSpec);
+	Sprite_setDrawSpec(__UPCAST(Sprite, this->animatedSprite), &drawSpec);
 
-	Sprite_scale((Sprite)this->animatedSprite);
-	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer((Sprite)this->animatedSprite));
-	__VIRTUAL_CALL(void, Sprite, render, (Sprite)this->animatedSprite);
+	Sprite_scale(__UPCAST(Sprite, this->animatedSprite));
+	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer(__UPCAST(Sprite, this->animatedSprite)));
+	__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, this->animatedSprite));
 }
 
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this)

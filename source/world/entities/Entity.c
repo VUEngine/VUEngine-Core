@@ -108,7 +108,7 @@ static void Entity_releaseSprites(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 
 			__DELETE(sprite);
 		}
@@ -295,7 +295,7 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 		{
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 	
 			// update scale if needed
 			if (updateSpriteScale)
@@ -400,7 +400,7 @@ Scale Entity_getScale(Entity this)
 		return scale;
 	}
 	
-	return Sprite_getScale((Sprite)VirtualNode_getData(VirtualList_begin(this->sprites)));
+	return Sprite_getScale(__UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
 }
 
 // set local position
@@ -448,7 +448,7 @@ u16 Entity_getWidth(Entity this)
 
 	if (!this->size.x && this->sprites)
 	{
-		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 		Texture texture = Sprite_getTexture(sprite);
 
 		if(texture)
@@ -468,7 +468,7 @@ u16 Entity_getHeight(Entity this)
 
 	if (!this->size.y && this->sprites)
 	{
-		Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 		Texture texture = Sprite_getTexture(sprite);
 
 		if(texture)
@@ -520,7 +520,7 @@ bool Entity_isVisible(Entity this, int pad)
 	}
 
 	static Sprite sprite = NULL;
-	sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+	sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
 	ASSERT(sprite, "Entity:isVisible: null sprite");
 	
@@ -574,7 +574,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 
 			if (sprite)
 	        {
@@ -617,7 +617,7 @@ void Entity_show(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 
 			if (sprite)
 	        {
@@ -639,7 +639,7 @@ void Entity_hide(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 
 			if (sprite)
 	        {

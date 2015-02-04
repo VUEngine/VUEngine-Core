@@ -306,7 +306,7 @@ void SpriteManager_setLastLayer(SpriteManager this)
 
 	if (VirtualList_getSize(this->sprites))
 	{
-		this->freeLayer = Sprite_getWorldLayer((Sprite)VirtualList_front(this->sprites)) - 1;
+		this->freeLayer = Sprite_getWorldLayer(__UPCAST(Sprite, VirtualList_front(this->sprites))) - 1;
 	}
 	else 
 	{
@@ -360,7 +360,7 @@ void SpriteManager_render(SpriteManager this)
 	
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		__VIRTUAL_CALL(void, Sprite, render, (Sprite)VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Sprite, render, VirtualNode_getData(node));
 	}
 
 }
@@ -382,7 +382,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 	for (; node; node = VirtualNode_getPrevious(node))
 	{
-		if (Sprite_getWorldLayer((Sprite)VirtualNode_getData(node)) != layer)
+		if (Sprite_getWorldLayer(__UPCAST(Sprite, VirtualNode_getData(node))) != layer)
 		{
 			Sprite_hide(__UPCAST(Sprite, VirtualNode_getData(node)));
 		}

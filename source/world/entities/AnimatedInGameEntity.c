@@ -114,7 +114,7 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 		// setup listeners
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
+			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 	
 			function(__UPCAST(Object, sprite), __UPCAST(Object, this), (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
 		}
@@ -173,7 +173,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 		ASSERT(this->sprites, "AnimatedInGameEntity::update: null sprites");
 
 		// calculate gap again
-		InGameEntity_setGap((InGameEntity)this);
+		InGameEntity_setGap(__UPCAST(InGameEntity, this));
 	}
 
 	if (this->sprites)
@@ -191,10 +191,8 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 	// move each child to a temporary list
 	for (; node ; node = VirtualNode_getNext(node))
 	{
-		Sprite sprite = (Sprite)VirtualNode_getData(node);
-
 		// first animate the frame
-		AnimatedSprite_update((AnimatedSprite)sprite, this->clock);
+		AnimatedSprite_update(__UPCAST(AnimatedSprite, VirtualNode_getData(node)), this->clock);
 	}
 }
 
@@ -204,7 +202,7 @@ Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::getScale: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::getScale: null sprites");
 
-	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+	Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
 	// get sprite's scale
 	Scale scale = Sprite_getScale(sprite);
@@ -228,9 +226,7 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-			AnimatedSprite_pause((AnimatedSprite)sprite, pause);
+			AnimatedSprite_pause(__UPCAST(AnimatedSprite, VirtualNode_getData(node)), pause);
 		}
 	}
 }
@@ -249,9 +245,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = (Sprite)VirtualNode_getData(node);
-
-			AnimatedSprite_play((AnimatedSprite)sprite, this->animationDescription, animationName);
+			AnimatedSprite_play(__UPCAST(AnimatedSprite, VirtualNode_getData(node)), this->animationDescription, animationName);
 		}
 	}
 }
@@ -262,7 +256,7 @@ bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::isPlayingAnimation: null sprites");
 
-	AnimatedSprite sprite = (AnimatedSprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+	AnimatedSprite sprite = __UPCAST(AnimatedSprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
 	return AnimatedSprite_isPlaying(sprite);
 }
@@ -273,9 +267,9 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 	ASSERT(this, "AnimatedInGameEntity::isAnimationLoaded: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::isAnimationLoaded: null sprites");
 
-	Sprite sprite = (Sprite)VirtualNode_getData(VirtualList_begin(this->sprites));
+	Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
-	return AnimatedSprite_isPlayingFunction((AnimatedSprite)sprite, this->animationDescription, functionName);
+	return AnimatedSprite_isPlayingFunction(__UPCAST(AnimatedSprite, sprite), this->animationDescription, functionName);
 }
 
 // get animation definition

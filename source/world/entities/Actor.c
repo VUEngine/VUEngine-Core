@@ -95,7 +95,7 @@ void Actor_destructor(Actor this)
 	ASSERT(this, "Actor::destructor: null this");
 
 	// inform the screen I'm being removed
-	Screen_focusEntityDeleted(Screen_getInstance(), (InGameEntity)this);
+	Screen_focusEntityDeleted(Screen_getInstance(), __UPCAST(InGameEntity, this));
 
 	// remove a body
 	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(Entity, this));
@@ -438,13 +438,13 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 	            {
 					case kCollision:
 
-						Actor_resolveCollision(this, (VirtualList)Telegram_getExtraInfo(telegram));
+						Actor_resolveCollision(this, __UPCAST(VirtualList, Telegram_getExtraInfo(telegram)));
 						return true;
 						break;
 						
 					case kCollisionWithYou:
 
-						Actor_resolveCollisionAgainstMe(this, (InGameEntity)Telegram_getSender(telegram), (VBVec3D*)Telegram_getExtraInfo(telegram));
+						Actor_resolveCollisionAgainstMe(this, __UPCAST(InGameEntity, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
@@ -677,7 +677,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	int myHighGap = 0;
 
 	// calculate gap again (scale, etc)
-	InGameEntity_setGap((InGameEntity)this);
+	InGameEntity_setGap(__UPCAST(InGameEntity, this));
 
 	// select the axis to affect
 	switch (axis)
@@ -795,7 +795,7 @@ fix19_13 Actor_getElasticity(Actor this)
 {
 	ASSERT(this, "Actor::getElasticity: null this");
 
-	return this->body ? Body_getElasticity(this->body) : InGameEntity_getElasticity((InGameEntity)this);
+	return this->body ? Body_getElasticity(this->body) : InGameEntity_getElasticity(__UPCAST(InGameEntity, this));
 }
 
 void Actor_addForce(Actor this, const Force* force)

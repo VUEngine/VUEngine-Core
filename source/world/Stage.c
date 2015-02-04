@@ -107,7 +107,7 @@ static void Stage_constructor(Stage this)
 	this->stageEntities = NULL;
 	this->stageEntitiesToTest = NULL;
 	this->loadedStageEntities = NULL;
-	this->removedEntities = NULL;//__NEW(VirtualList);
+	this->removedEntities = NULL;
 
 	this->ui = NULL;
 	this->stageDefinition = NULL;
