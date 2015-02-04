@@ -277,7 +277,7 @@ static void Stage_setupUI(Stage this)
 	if (this->stageDefinition->uiDefinition.allocator)
 	{
 		// call the appropiate allocator to support inheritance!
-		this->ui = (UI)((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(&this->stageDefinition->uiDefinition);
+		this->ui = ((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(&this->stageDefinition->uiDefinition);
 		ASSERT(this->ui, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
