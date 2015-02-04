@@ -87,9 +87,22 @@ enum MessagesTypes
 	#define ASSERT( STATEMENT, ... )
 
 #else
-	#define ASSERT( STATEMENT, MESSAGE )											\
+#define ASSERT( STATEMENT, MESSAGE )												\
 	if (!(STATEMENT)) 																\
 	{																				\
+		int sp;																		\
+		asm(" mov sp,%0  ": "=r" (sp));												\
+		int lp;																		\
+		asm(" mov lp,%0  ": "=r" (lp));												\
+		int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2 ? 			\
+				__EXCEPTION_COLUMN : 0;												\
+		int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? 					\
+				__EXCEPTION_LINE : 0;												\
+		Printing_text(Printing_getInstance(), "SP:" , x, y + 3, NULL);				\
+		Printing_hex(Printing_getInstance(), sp, x + 6, y + 3, NULL);				\
+		Printing_text(Printing_getInstance(), "LP:" , x, y + 4, NULL);				\
+		Printing_hex(Printing_getInstance(), lp, x + 6, y + 4, NULL);				\
+																					\
 		/* thrown exception */														\
 		Error_triggerException(Error_getInstance(), MESSAGE);						\
 	}

@@ -161,23 +161,6 @@ void Object_fireEvent(Object this,  char* eventName)
 // cast object to base class
 Object Object_upcast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void))
 {
-#undef ASSERT
-#define ASSERT( STATEMENT, MESSAGE )											\
-if (!(STATEMENT)) 																\
-{																				\
-	int sp;																		\
-	asm(" mov sp,%0  ": "=r" (sp));												\
-	int lp;																		\
-	asm(" mov lp,%0  ": "=r" (lp));												\
-	Printing_text(Printing_getInstance(), "SP:" , 1, 20, NULL);					\
-	Printing_hex(Printing_getInstance(), sp, 6, 20, NULL);						\
-	Printing_text(Printing_getInstance(), "LP:" , 1, 21, NULL);					\
-	Printing_hex(Printing_getInstance(), lp, 6, 21, NULL);						\
-																				\
-	/* thrown exception */														\
-	Error_triggerException(Error_getInstance(), MESSAGE);						\
-}
-
 	ASSERT(this, "Object::upcast: null this");
 	
 	if(!this)
