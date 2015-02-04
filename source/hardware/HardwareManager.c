@@ -344,6 +344,14 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 
 	int auxY = y;
 	int xDisplacement = 6;
+	
+	// print registries' status to know the call source
+	Printing_text(Printing_getInstance(), "PSW:" , x, ++auxY, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(this), x + 5, auxY, NULL);
+	Printing_text(Printing_getInstance(), "SP:" , x, ++auxY, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getStackPointer(this), x + 5, auxY, NULL);
+	Printing_text(Printing_getInstance(), "LP:" , x, ++auxY, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getLPointer(this), x + 5, auxY, NULL);
 
 	Printing_text(Printing_getInstance(), "   HW_REGS", x, ++auxY, NULL);
 	Printing_text(Printing_getInstance(), "WCR:", x, ++auxY, NULL);

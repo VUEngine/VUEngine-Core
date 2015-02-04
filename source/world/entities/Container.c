@@ -258,7 +258,7 @@ void Container_update(Container this)
 		// update each child
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-		__VIRTUAL_CALL(void, Container, update, VirtualNode_getData(node));
+			__VIRTUAL_CALL(void, Container, update, VirtualNode_getData(node));
 		}
 	}
 }

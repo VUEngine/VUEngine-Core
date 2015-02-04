@@ -68,7 +68,7 @@ static void VBJaEngineDefaultLanguageSelectionScreenState_constructor(VBJaEngine
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEngineDefaultLanguageSelectionScreenState_setNextstate(this, (GameState)VBJaEngineDefaultSplashScreenState_getInstance());
+	VBJaEngineDefaultLanguageSelectionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEngineDefaultSplashScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
 	this->titleString = "Language Selection";
 
@@ -105,7 +105,7 @@ static void VBJaEngineDefaultLanguageSelectionScreenState_destructor(VBJaEngineD
 // state's enter
 static void VBJaEngineDefaultLanguageSelectionScreenState_enter(VBJaEngineDefaultLanguageSelectionScreenState this, void* owner)
 {
-	GameState_loadStage((GameState)this, this->stageDefinition, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
 	VBJaEngineDefaultLanguageSelectionScreenState_print(this);
 	
@@ -116,7 +116,7 @@ static void VBJaEngineDefaultLanguageSelectionScreenState_enter(VBJaEngineDefaul
 static void VBJaEngineDefaultLanguageSelectionScreenState_execute(VBJaEngineDefaultLanguageSelectionScreenState this, void* owner)
 {
  	// call base
-	GameState_execute((GameState)this, owner);
+	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
@@ -131,7 +131,7 @@ static void VBJaEngineDefaultLanguageSelectionScreenState_exit(VBJaEngineDefault
 // state's resume
 static void VBJaEngineDefaultLanguageSelectionScreenState_resume(VBJaEngineDefaultLanguageSelectionScreenState this, void* owner)
 {
-	GameState_resume((GameState)this, owner);
+	GameState_resume(__UPCAST(GameState, this), owner);
 	
 #ifdef __DEBUG_TOOLS
 	if (!Game_isExitingSpecialMode(Game_getInstance()))
@@ -192,7 +192,7 @@ static void VBJaEngineDefaultLanguageSelectionScreenState_processInput(VBJaEngin
 	else if (pressedKey & K_A)
 	{
 	    I18n_setActiveLanguage(I18n_getInstance(), OptionsSelector_getSelectedOption(this->languageSelector));
-	    Game_changeState(Game_getInstance(), (GameState)this->nextState);
+	    Game_changeState(Game_getInstance(), __UPCAST(GameState, this->nextState));
 	}
 }
 

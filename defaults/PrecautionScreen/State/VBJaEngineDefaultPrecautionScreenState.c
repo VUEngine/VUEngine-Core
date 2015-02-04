@@ -68,7 +68,7 @@ static void VBJaEngineDefaultPrecautionScreenState_constructor(VBJaEngineDefault
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEngineDefaultPrecautionScreenState_setNextstate(this, (GameState)VBJaEngineDefaultAutomaticPauseSelectionScreenState_getInstance());
+	VBJaEngineDefaultPrecautionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEngineDefaultAutomaticPauseSelectionScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
     this->precautionString = "           Important:\n\nRead Instruction and Precaution\n\n   Booklets before operating";
 }
@@ -83,7 +83,7 @@ static void VBJaEngineDefaultPrecautionScreenState_destructor(VBJaEngineDefaultP
 // state's enter
 static void VBJaEngineDefaultPrecautionScreenState_enter(VBJaEngineDefaultPrecautionScreenState this, void* owner)
 {
-	GameState_loadStage((GameState)this, this->stageDefinition, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
     VBJaEngineDefaultPrecautionScreenState_print(this);
 
@@ -94,7 +94,7 @@ static void VBJaEngineDefaultPrecautionScreenState_enter(VBJaEngineDefaultPrecau
 static void VBJaEngineDefaultPrecautionScreenState_execute(VBJaEngineDefaultPrecautionScreenState this, void* owner)
 {
  	// call base
-	GameState_execute((GameState)this, owner);
+	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
@@ -109,7 +109,7 @@ static void VBJaEngineDefaultPrecautionScreenState_exit(VBJaEngineDefaultPrecaut
 // state's resume
 static void VBJaEngineDefaultPrecautionScreenState_resume(VBJaEngineDefaultPrecautionScreenState this, void* owner)
 {
-	GameState_resume((GameState)this, owner);
+	GameState_resume(__UPCAST(GameState, this), owner);
 	
 #ifdef __DEBUG_TOOLS
 	if (!Game_isExitingSpecialMode(Game_getInstance()))

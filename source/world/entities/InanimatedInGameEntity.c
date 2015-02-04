@@ -58,7 +58,7 @@ void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedI
 	if (inanimatedInGameEntityDefinition->registerShape)
 	{
 		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), (Entity)this, kCuboid);
+		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __UPCAST(Entity, this), kCuboid);
 
 		ASSERT(this->shape, "InanimatedInGameEntity::constructor: shape not created");
 	}

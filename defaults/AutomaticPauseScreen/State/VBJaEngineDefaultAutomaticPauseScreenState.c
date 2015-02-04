@@ -78,7 +78,7 @@ static void VBJaEngineDefaultAutomaticPauseScreenState_enter(VBJaEngineDefaultAu
 	Game_setOptical(Game_getInstance(), optical);
 
 	//load stage
-	GameState_loadStage((GameState)this, (StageDefinition*)&EMPTY_ST, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)&EMPTY_ST, true, true);
 
     Printing_text(Printing_getInstance(), "                                                ", 0, 26, NULL);
     Printing_text(Printing_getInstance(), "REST FOR A WHILE!", ((__SCREEN_WIDTH >> 3) >> 1) - 3, 20, NULL);
@@ -106,7 +106,7 @@ static bool VBJaEngineDefaultAutomaticPauseScreenState_handleMessage(VBJaEngineD
 				// check direction
 				if (K_STA & releasedKey)
 				{
-					Game_unpause(Game_getInstance(), (GameState)this);
+					Game_unpause(Game_getInstance(), __UPCAST(GameState, this));
 				}
 			}
 			return true;

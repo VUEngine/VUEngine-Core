@@ -145,7 +145,7 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 			this->lastDisplacement = this->position;
 
 			//get focusInGameEntity's position
-			this->position = Entity_getPosition((Entity)this->focusInGameEntity);
+			this->position = Entity_getPosition(__UPCAST(Entity, this->focusInGameEntity));
 			this->position.x += this->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
 			this->position.y += this->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 			this->position.z += this->focusEntityPositionDisplacement.z;

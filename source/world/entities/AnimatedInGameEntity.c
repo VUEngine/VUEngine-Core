@@ -149,14 +149,14 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* e
 	if (this->direction.x != this->previousDirection.x)
 	{
 		// change sprite's direction
-		Entity_setSpritesDirection((Entity)this, __XAXIS, this->direction.x);
+		Entity_setSpritesDirection(__UPCAST(Entity, this), __XAXIS, this->direction.x);
 
 		// save current direction
 		this->previousDirection = this->direction;
 	}
 
 	// call base
-	Entity_transform((Entity)this, environmentTransform);
+	Entity_transform(__UPCAST(Entity, this), environmentTransform);
 }
 
 // execute character's logic
@@ -307,9 +307,9 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::resume: null this");
 
-	Entity_resume((Entity)this);
+	Entity_resume(__UPCAST(Entity, this));
 
-	Entity_setSpritesDirection((Entity)this, __XAXIS, this->direction.x);
+	Entity_setSpritesDirection(__UPCAST(Entity, this), __XAXIS, this->direction.x);
 
 	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
 	
@@ -319,5 +319,5 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 // check if must update sprite's scale
 int AnimatedInGameEntity_updateSpriteScale(AnimatedInGameEntity this)
 {
-	return this->animationFrameChanged || Entity_updateSpriteScale((Entity)this);
+	return this->animationFrameChanged || Entity_updateSpriteScale(__UPCAST(Entity, this));
 }

@@ -126,7 +126,7 @@ void ScrollBackground_initialTransform(ScrollBackground this, Transformation* en
 	ASSERT(this, "ScrollBackground::transform: null this");
 
 	// call base class's transform method
-	Entity_transform((Entity)this, environmentTransform);
+	Entity_transform(__UPCAST(Entity, this), environmentTransform);
 
 	ScrollBackground_updateScrolling(this);
 }
@@ -141,7 +141,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 #ifdef __STAGE_EDITOR
 	if (Game_isInSpecialMode(Game_getInstance()))
 	{
-		Entity_transform((Entity)this, environmentTransform);
+		Entity_transform(__UPCAST(Entity, this), environmentTransform);
 	}
 #endif
 
@@ -257,7 +257,7 @@ void ScrollBackground_suspend(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::suspend: null this");
 
-	Entity_suspend((Entity)this);
+	Entity_suspend(__UPCAST(Entity, this));
 
 	int i = 0;
 
@@ -271,9 +271,9 @@ void ScrollBackground_resume(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::resume: null this");
 
-	Entity_resume((Entity)this);
+	Entity_resume(__UPCAST(Entity, this));
 
 	ScrollBackground_retrieveSprites(this);
 	
-	Entity_translateSprites((Entity)this, true, true);
+	Entity_translateSprites(__UPCAST(Entity, this), true, true);
 }

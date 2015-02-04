@@ -318,9 +318,9 @@ static void StageEditor_releaseShape(StageEditor this)
 {
 	if (this->currentEntityNode)
 	{
-		Entity entity = (Entity)VirtualNode_getData(this->currentEntityNode);
+		Entity entity = __UPCAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-		if (this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, (Entity)entity))
+		if (this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, entity))
 	    {
 			__DELETE(this->shape);
 		}
@@ -336,9 +336,9 @@ static void StageEditor_getShape(StageEditor this)
 		return;
 	}
 
-	Entity entity = (Entity)VirtualNode_getData(this->currentEntityNode);
+	Entity entity = __UPCAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-	this->shape = __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, (Entity)entity);
+	this->shape = __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, entity);
 
 	if (!this->shape)
 	{
@@ -364,7 +364,7 @@ static void StageEditor_positioneShape(StageEditor this)
 		return;
 	}
 
-	Entity entity = (Entity)VirtualNode_getData(this->currentEntityNode);
+	Entity entity = __UPCAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
 	__VIRTUAL_CALL(void, Shape, setup, this->shape);
 

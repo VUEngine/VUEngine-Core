@@ -95,7 +95,7 @@ static void AnimationEditorState_enter(AnimationEditorState this, void* owner)
 {
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
 
-	AnimationEditor_start(AnimationEditor_getInstance(), (GameState)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
+	AnimationEditor_start(AnimationEditor_getInstance(), __UPCAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute

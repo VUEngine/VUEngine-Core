@@ -65,7 +65,7 @@ static void VBJaEngineDefaultAdjustmentScreenState_constructor(VBJaEngineDefault
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEngineDefaultAdjustmentScreenState_setNextstate(this, (GameState)VBJaEngineDefaultPrecautionScreenState_getInstance());
+	VBJaEngineDefaultAdjustmentScreenState_setNextstate(this, __UPCAST(GameState, VBJaEngineDefaultPrecautionScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 }
 
@@ -79,7 +79,7 @@ static void VBJaEngineDefaultAdjustmentScreenState_destructor(VBJaEngineDefaultA
 // state's enter
 static void VBJaEngineDefaultAdjustmentScreenState_enter(VBJaEngineDefaultAdjustmentScreenState this, void* owner)
 {
-	GameState_loadStage((GameState)this, this->stageDefinition, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }
@@ -88,7 +88,7 @@ static void VBJaEngineDefaultAdjustmentScreenState_enter(VBJaEngineDefaultAdjust
 static void VBJaEngineDefaultAdjustmentScreenState_execute(VBJaEngineDefaultAdjustmentScreenState this, void* owner)
 {
  	// call base
-	GameState_execute((GameState)this, owner);
+	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
@@ -103,7 +103,7 @@ static void VBJaEngineDefaultAdjustmentScreenState_exit(VBJaEngineDefaultAdjustm
 // state's resume
 static void VBJaEngineDefaultAdjustmentScreenState_resume(VBJaEngineDefaultAdjustmentScreenState this, void* owner)
 {
-	GameState_resume((GameState)this, owner);
+	GameState_resume(__UPCAST(GameState, this), owner);
 	
 #ifdef __DEBUG_TOOLS
 	if (!Game_isExitingSpecialMode(Game_getInstance()))

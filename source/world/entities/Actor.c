@@ -515,7 +515,7 @@ VBVec3D Actor_getPosition(Actor this)
 		return Body_getPosition(this->body);
 	}
 
-	return Entity_getPosition((Entity)this);
+	return Entity_getPosition(__UPCAST(Entity, this));
 }
 
 // check if must update sprite's position
@@ -555,7 +555,7 @@ void Actor_stopMovement(Actor this)
 // align to colliding entity
 static void Actor_alignToCollidingEntity(Actor this, InGameEntity collidingEntity, int axisOfCollision)
 {
-	Scale scale = Entity_getScale((Entity) this);
+	Scale scale = Entity_getScale(__UPCAST(Entity,  this));
 	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(1), scale.y));
 
 	if (1 > alignThreshold)
@@ -639,13 +639,13 @@ static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEn
 
 	int axisOfCollision = 0;
 	
-	Shape collidingEntityShape = __VIRTUAL_CALL(Shape, Entity, getShape, (Entity)collidingEntity);
+	Shape collidingEntityShape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
 
 	ASSERT(collidingEntityShape, "Actor::resolveCollision: null shape");
 	
 	if(collidingEntityShape)
 	{
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, collidingEntityShape, (Entity)this, collidingEntityLastDisplacement);
+		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, collidingEntityShape, this, collidingEntityLastDisplacement);
 		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
 		Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
 	}
@@ -688,8 +688,8 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 			myPositionAxis = &this->transform.localPosition.x;
 			otherPositionAxis = &otherPosition.x;
 
-			myHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, (Entity)this) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, (Entity)entity) >> 1;
+			myHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, this) >> 1;
+			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, entity) >> 1;
 
 			otherLowGap = otherGap.left;
 			otherHighGap = otherGap.right;
@@ -703,8 +703,8 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 			myPositionAxis = &this->transform.localPosition.y;
 			otherPositionAxis = &otherPosition.y;
 
-			myHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, (Entity)this) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, (Entity)entity) >> 1;
+			myHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, this) >> 1;
+			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, entity) >> 1;
 
 			otherLowGap = otherGap.up;
 			otherHighGap = otherGap.down;
@@ -721,13 +721,13 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 			// TODO: must make deep work as the width and high
 			if (this->transform.globalPosition.z < otherPosition.z)
 			{
-				myHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, (Entity)this);
+				myHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, this);
 				otherHalfSize = 0;
 			}
 			else
 			{
 				myHalfSize = 0;
-				otherHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, (Entity)entity);
+				otherHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, entity);
 			}
 			
 			myLowGap = 0;

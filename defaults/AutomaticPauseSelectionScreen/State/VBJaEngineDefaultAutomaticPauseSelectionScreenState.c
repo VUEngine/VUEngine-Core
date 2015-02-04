@@ -72,7 +72,7 @@ static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_constructor(VBJa
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEngineDefaultAutomaticPauseSelectionScreenState_setNextstate(this, (GameState)VBJaEngineDefaultLanguageSelectionScreenState_getInstance());
+	VBJaEngineDefaultAutomaticPauseSelectionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEngineDefaultLanguageSelectionScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
     this->selection = true;
     this->titleString = "Automatic Pause";
@@ -91,7 +91,7 @@ static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_destructor(VBJaE
 // state's enter
 static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_enter(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, void* owner)
 {
-	GameState_loadStage((GameState)this, this->stageDefinition, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
 	VBJaEngineDefaultAutomaticPauseSelectionScreenState_print(this);
 
@@ -102,7 +102,7 @@ static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_enter(VBJaEngine
 static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_execute(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, void* owner)
 {
  	// call base
-	GameState_execute((GameState)this, owner);
+	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
@@ -117,7 +117,7 @@ static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_exit(VBJaEngineD
 // state's resume
 static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_resume(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, void* owner)
 {
-	GameState_resume((GameState)this, owner);
+	GameState_resume(__UPCAST(GameState, this), owner);
 	
 	VBJaEngineDefaultAutomaticPauseSelectionScreenState_print(this);
 }
@@ -186,7 +186,7 @@ static void VBJaEngineDefaultAutomaticPauseSelectionScreenState_processInput(VBJ
 	}
 	else if ((pressedKey & K_A) || (pressedKey & K_STA))
 	{
-		Game_setAutomaticPauseState(Game_getInstance(), this->selection ? (GameState)VBJaEngineDefaultAutomaticPauseScreenState_getInstance() : NULL);
+		Game_setAutomaticPauseState(Game_getInstance(), this->selection ? __UPCAST(GameState, VBJaEngineDefaultAutomaticPauseScreenState_getInstance()): NULL);
 	    Game_changeState(Game_getInstance(), this->nextState);
 	}
 }

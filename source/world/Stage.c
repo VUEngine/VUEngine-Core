@@ -238,7 +238,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	Stage_loadInRangeEntities(this);
 
 	// retrieve focus entity for streaming
-	this->focusEntity = (Entity)Screen_getFocusInGameEntity(Screen_getInstance());
+	InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
+	this->focusEntity = focusInGameEntity? __UPCAST(Entity, focusInGameEntity): NULL;
 
 	// setup ui
 	Stage_setupUI(this);
@@ -708,7 +709,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		// get next entity
-		Entity entity = (Entity)VirtualNode_getData(node);
+		Entity entity = __UPCAST(Entity, VirtualNode_getData(node));
 
 		// if the entity isn't visible inside the view field, unload it
 		if (!__VIRTUAL_CALL(bool, Entity, isVisible, entity, __ENTITY_UNLOAD_PAD))
@@ -778,7 +779,8 @@ void Stage_stream(Stage this)
 		}
 		else
 		{
-			this->focusEntity = (Entity)Screen_getFocusInGameEntity(Screen_getInstance());
+			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
+			this->focusEntity = focusInGameEntity? __UPCAST(Entity, focusInGameEntity): NULL;
 		}
 	}
 }

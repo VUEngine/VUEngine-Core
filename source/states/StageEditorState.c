@@ -95,7 +95,7 @@ static void StageEditorState_enter(StageEditorState this, void* owner)
 {
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
 
-	StageEditor_start(StageEditor_getInstance(), (GameState)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
+	StageEditor_start(StageEditor_getInstance(), __UPCAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute

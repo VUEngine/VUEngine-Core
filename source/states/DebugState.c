@@ -94,7 +94,7 @@ static void DebugState_enter(DebugState this, void* owner)
 {
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
 
-	Debug_show(Debug_getInstance(), (GameState)StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())));
+	Debug_show(Debug_getInstance(), __UPCAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute

@@ -109,6 +109,7 @@ int Error_triggerException(Error this, char* string)
 	Printing_text(Printing_getInstance(), string, x, y + 2, NULL);
 	
 	// print registries' status to know the call source
+	/*
 	Printing_text(Printing_getInstance(), "PSW:" , x, y + 4, NULL);
 	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(HardwareManager_getInstance()), x + 5, y + 4, NULL);
 	Printing_text(Printing_getInstance(), "SP:" , x, y + 5, NULL);
@@ -116,6 +117,7 @@ int Error_triggerException(Error this, char* string)
 	Printing_text(Printing_getInstance(), "LP:" , x, y + 6, NULL);
 	Printing_hex(Printing_getInstance(), HardwareManager_getLPointer(HardwareManager_getInstance()), x + 5, y + 6, NULL);
 
+*/
 	if (y < 26)
 	{
 		Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);

@@ -523,7 +523,7 @@ static void Game_handleInput(Game this)
 	{
 		if (Game_isInDebugMode(this))
 		{
-			this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
+			this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -531,12 +531,12 @@ static void Game_handleInput(Game this)
 		{
 			if (Game_isInSpecialMode(this))
 			{
-				this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
+				this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = (GameState)DebugState_getInstance();
+			this->nextState = __UPCAST(GameState, DebugState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -552,7 +552,7 @@ static void Game_handleInput(Game this)
 	{
 		if (Game_isInStageEditor(this))
 		{
-			this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
+			this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -560,12 +560,12 @@ static void Game_handleInput(Game this)
 		{
 			if (Game_isInSpecialMode(this))
 			{
-				this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
+				this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = (GameState)StageEditorState_getInstance();
+			this->nextState = __UPCAST(GameState, StageEditorState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -582,7 +582,7 @@ static void Game_handleInput(Game this)
 	{
 		if (Game_isInAnimationEditor(this))
 		{
-			this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
+			this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -590,12 +590,12 @@ static void Game_handleInput(Game this)
 		{
 			if (Game_isInSpecialMode(this))
 			{
-				this->nextState = (GameState)StateMachine_getCurrentState(this->stateMachine);
+				this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = (GameState)AnimationEditorState_getInstance();
+			this->nextState = __UPCAST(GameState, AnimationEditorState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -745,7 +745,7 @@ static void Game_updateRendering(Game this)
 	if (!Game_isInSpecialMode(this))
 #endif
 	// apply world transformations
-	GameState_transform((GameState)StateMachine_getCurrentState(this->stateMachine));
+	GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 #ifdef __DEBUG
 	this->lastProcessName = "render";
 #endif
@@ -956,13 +956,13 @@ bool Game_isEnteringSpecialMode(Game this)
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= (GameState)DebugState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= __UPCAST(GameState, DebugState_getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= (GameState)StageEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= __UPCAST(GameState, StageEditorState_getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= (GameState)AnimationEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= __UPCAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -975,13 +975,13 @@ bool Game_isExitingSpecialMode(Game this)
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= (GameState)DebugState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= __UPCAST(GameState, DebugState_getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= (GameState)StageEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= __UPCAST(GameState, StageEditorState_getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= (GameState)AnimationEditorState_getInstance() == this->nextState;
+	isEnteringSpecialMode |= __UPCAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -999,7 +999,7 @@ Stage Game_getStage(Game this)
 {
 	ASSERT(this, "Game::getStage: null this");
 
-	return GameState_getStage((GameState)StateMachine_getCurrentState(this->stateMachine));
+	return GameState_getStage(__UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 // retrieve current state
@@ -1007,7 +1007,7 @@ GameState Game_getCurrentState(Game this)
 {
 	ASSERT(this, "Game::getCurrentState: null this");
 
-	return (GameState)StateMachine_getCurrentState(this->stateMachine);
+	return __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 }
 
 // print low battery indicator

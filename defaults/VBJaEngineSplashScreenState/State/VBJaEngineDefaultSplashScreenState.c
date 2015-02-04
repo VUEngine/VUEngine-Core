@@ -76,7 +76,7 @@ static void VBJaEngineDefaultSplashScreenState_destructor(VBJaEngineDefaultSplas
 // state's enter
 static void VBJaEngineDefaultSplashScreenState_enter(VBJaEngineDefaultSplashScreenState this, void* owner)
 {
-	GameState_loadStage((GameState)this, this->stageDefinition, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }
@@ -94,7 +94,7 @@ static void VBJaEngineDefaultSplashScreenState_execute(VBJaEngineDefaultSplashSc
     Screen_move(Screen_getInstance(), translation, false);
 
  	// call base
-	GameState_execute((GameState)this, owner);
+	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
@@ -109,7 +109,7 @@ static void VBJaEngineDefaultSplashScreenState_exit(VBJaEngineDefaultSplashScree
 // state's resume
 static void VBJaEngineDefaultSplashScreenState_resume(VBJaEngineDefaultSplashScreenState this, void* owner)
 {
-	GameState_resume((GameState)this, owner);
+	GameState_resume(__UPCAST(GameState, this), owner);
 	
 #ifdef __DEBUG_TOOLS
 	if (!Game_isExitingSpecialMode(Game_getInstance()))
@@ -157,7 +157,7 @@ static bool VBJaEngineDefaultSplashScreenState_handleMessage(VBJaEngineDefaultSp
 
 static void VBJaEngineDefaultSplashScreenState_processInput(VBJaEngineDefaultSplashScreenState this, u16 pressedKey)
 {
-	Game_changeState(Game_getInstance(), (GameState)this->nextState);
+	Game_changeState(Game_getInstance(), __UPCAST(GameState, this->nextState));
 }
 
 void VBJaEngineDefaultSplashScreenState_setNextstate(VBJaEngineDefaultSplashScreenState this, GameState nextState)
