@@ -97,5 +97,6 @@ int MBackground_isVisible(MBackground this, int pad)
 {
 	ASSERT(this, "MBackground::isVisible: null this");
 
+	// TODO: add support for MSprites
 	return Entity_isVisible(__UPCAST(Entity, this), pad);
 }

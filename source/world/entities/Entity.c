@@ -179,7 +179,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 			}	
 			
 			// apply transformations
-		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
+			__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 			return entity;
 		}
 	}
@@ -517,9 +517,22 @@ bool Entity_isVisible(Entity this, int pad)
 {
 	ASSERT(this, "Entity::isVisible: null this");
 
+	if(this->children)
+	{
+		VirtualNode childNode = VirtualList_begin(this->children);
+		
+		for(; childNode; childNode = VirtualNode_getNext(childNode))
+		{
+			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad))
+			{
+				return true;
+			}
+		}
+	}
+	
 	if (!this->sprites)
 	{
-		return true;
+		return false;
 	}
 
 	static Sprite sprite = NULL;
