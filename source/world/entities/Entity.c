@@ -311,6 +311,9 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 	
 				// reset size so it is recalculated
 				this->size.x = this->size.y = 0;
+				__VIRTUAL_CALL(u16, Entity, getWidth, this);
+				__VIRTUAL_CALL(u16, Entity, getHeight, this);
+				__VIRTUAL_CALL(u16, Entity, getDeep, this);
 			}
 
 			//if screen is moving
