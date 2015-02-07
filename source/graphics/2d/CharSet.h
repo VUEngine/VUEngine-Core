@@ -123,7 +123,7 @@ int CharSet_getAllocationType(CharSet this);
 u16 CharSet_getOffset(CharSet this);
 void CharSet_setOffset(CharSet this, u16 offset);
 BYTE* CharSet_getCharDefinition(CharSet this);
-void CharSet_setCharDefinition(CharSet this, void *charDefinition);
+void CharSet_setCharDefinition(CharSet this, BYTE* charDefinition);
 void CharSet_setNumberOfChars(CharSet this, int numberOfChars);
 int CharSet_getNumberOfChars(CharSet this);
 int CharSet_getSegment(CharSet this);

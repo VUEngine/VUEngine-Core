@@ -29,6 +29,7 @@
 #include <Shape.h>
 #include <Prototypes.h>
 #include <Game.h>
+#include <MBackgroundManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,6 +58,11 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 {
 	ASSERT(this, "MBackground::constructor: null this");
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
+	ASSERT(mBackgroundDefinition->spritesDefinitions[0], "MBackground::constructor: null sprite definition");
+	ASSERT(mBackgroundDefinition->spritesDefinitions[0]->textureDefinition, "MBackground::constructor: null texture definition");
+	
+	// first register with the manager so it handles the texture loading process
+	MBackgroundManager_registerMBackground(MBackgroundManager_getInstance(), this, mBackgroundDefinition->spritesDefinitions[0]->textureDefinition);
 
 	// construct base object
 	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id);
@@ -73,14 +79,23 @@ void MBackground_destructor(MBackground this)
 {
 	ASSERT(this, "MBackground::destructor: null this");
 
+	MBackgroundManager_removeMBackground(MBackgroundManager_getInstance(), this);
+
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
-// whether it is visible
+// retrieve texture
+Texture MBackground_getTexture(MBackground this)
+{
+	ASSERT(this, "MBackground::getTexture: null this");
+
+	return !this->sprites? NULL: Sprite_getTexture(__UPCAST(Sprite, VirtualList_front(this->sprites)));
+}
+
 int MBackground_isVisible(MBackground this, int pad)
 {
 	ASSERT(this, "MBackground::isVisible: null this");
 
-	return true;
+	return Entity_isVisible(__UPCAST(Entity, this), pad);
 }

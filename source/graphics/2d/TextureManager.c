@@ -336,7 +336,7 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
 	// try to find a texture with the same bgmap definition
 	for (; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if (this->texture[i] && Texture_getBgmapDef(this->texture[i]) == textureDefinition->bgmapDefinition)
+		if (this->texture[i] && Texture_getBgmapDefinition(this->texture[i]) == textureDefinition->bgmapDefinition)
 		{
 			// return if found
 			return this->texture[i];

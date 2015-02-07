@@ -81,7 +81,17 @@ void Texture_destructor(Texture this)
 	// destroy the super object
 	__DESTROY_BASE;
 }
-//extern void addmem1 (u8* dest, const u8* src, u16 num, u16 offset);
+
+// write an animated map
+void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
+{
+	this->textureDefinition = textureDefinition;
+}
+
+TextureDefinition* Texture_getDefinition(Texture this)
+{
+	return this->textureDefinition;
+}
 
 // write an animated map
 static void Texture_writeAnimated(Texture this)
@@ -393,11 +403,11 @@ CharSet Texture_getCharSet(Texture this)
 }
 
 //get texture's bgmap definition
-BYTE* Texture_getBgmapDef(Texture this)
+BYTE* Texture_getBgmapDefinition(Texture this)
 {
 	ASSERT(this, "Texture::getBgmapDef: null this");
 
-	return this->textureDefinition->bgmapDefinition;
+	return this->textureDefinition? this->textureDefinition->bgmapDefinition: NULL;
 }
 
 // set the palette

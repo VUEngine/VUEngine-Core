@@ -184,6 +184,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::addSprite: null this");
+	ASSERT(__UPCAST(Sprite, sprite), "SpriteManager::addSprite: adding no sprite");
 
 #ifdef __DEBUG
 	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
@@ -218,6 +219,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::removeSprite: null this");
+	ASSERT(__UPCAST(Sprite, sprite), "SpriteManager::removeSprite: removing no sprite");
 
 	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::removeSprite: sprite not found");
 
@@ -236,6 +238,10 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		// need to know the number of free layers so new sprites
 		// don't override other sprites' layers
 		this->freedLayersCount++;
+
+		// sorting needs to restart
+		this->node = NULL;
+		this->otherNode = NULL;
 	}
 	else 
 	{
@@ -334,6 +340,8 @@ void SpriteManager_setLastLayer(SpriteManager this)
 void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
+
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->sprites), 30, 2, NULL);
 
 	// sort layers
 	SpriteManager_sortLayers(this, true);

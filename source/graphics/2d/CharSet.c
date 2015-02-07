@@ -134,7 +134,7 @@ BYTE* CharSet_getCharDefinition(CharSet this)
 }
 
 // set charset's char definition
-void CharSet_setCharDefinition(CharSet this, void *charDefinition)
+void CharSet_setCharDefinition(CharSet this, BYTE* charDefinition)
 {
 	ASSERT(this, "CharSet::setCharDefinition: null this");
 

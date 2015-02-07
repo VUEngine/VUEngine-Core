@@ -18,59 +18,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef M_BACKGROUND_H_
-#define M_BACKGROUND_H_
+#ifndef MBACKGROUND_MANAGER_H_
+#define MBACKGROUND_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
-#include <MSprite.h>
-
+#include <MBackground.h>
+#include <Texture.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackground_METHODS														\
-		Entity_METHODS															\
+#define MBackgroundManager_METHODS												\
+	Object_METHODS;																\
+	
+#define MBackgroundManager_SET_VTABLE(ClassName)								\
+	Object_SET_VTABLE(ClassName);												\
 
-#define MBackground_SET_VTABLE(ClassName)										\
-		Entity_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, MBackground, isVisible);						\
-
-// A MBackground which represent a generic object inside a Stage
-#define MBackground_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Entity_ATTRIBUTES;															\
-
-__CLASS(MBackground);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-// defines a Scrolling background
-typedef EntityDefinition MBackgroundDefinition;
-
-// defines a Scrolling background in ROM memory
-typedef const EntityDefinition MBackgroundROMDef;
+__CLASS(MBackgroundManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id);
+MBackgroundManager MBackgroundManager_getInstance();
 
-void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id);
-void MBackground_destructor(MBackground this);
-Texture MBackground_getTexture(MBackground this);
-int MBackground_isVisible(MBackground this, int pad);
+void MBackgroundManager_destructor(MBackgroundManager this);
+void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground mBackground, TextureDefinition* textureDefinition);
+void MBackgroundManager_removeMBackground(MBackgroundManager this, MBackground mBackground);
 
 
 #endif

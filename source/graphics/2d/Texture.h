@@ -103,6 +103,8 @@ typedef const TextureDefinition TextureROMDef;
 __CLASS_NEW_DECLARE(Texture, TextureDefinition* textureDefinition, u16 id);
 
 void Texture_destructor(Texture this);
+void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition);
+TextureDefinition* Texture_getDefinition(Texture this);
 void Texture_freeCharMemory(Texture this);
 void Texture_write(Texture this);
 void Texture_rewrite(Texture this);
@@ -116,7 +118,7 @@ u8 Texture_getTotalRows(Texture this);
 u8 Texture_getBgmapSegment(Texture this);
 u8 Texture_getNumberOfFrames(Texture this);
 CharSet Texture_getCharSet(Texture this);
-BYTE* Texture_getBgmapDef(Texture this);
+BYTE* Texture_getBgmapDefinition(Texture this);
 void Texture_setPallet(Texture this, u8 palette);
 u8 Texture_getPallet(Texture this);
 u8 Texture_getRows(Texture this);
