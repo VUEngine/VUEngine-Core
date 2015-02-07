@@ -370,7 +370,7 @@ void Screen_FXFadeOut(Screen this, int wait)
 		if (wait)
 		{
 			//create time delay
-			Clock_delay(Game_getClock((Game)Game_getInstance()), wait);
+			Clock_delay(Game_getClock(Game_getInstance()), wait);
 		}
 		//decrease bright
 		SET_BRIGHT(i, i*2, i);
