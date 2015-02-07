@@ -341,8 +341,6 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->sprites), 30, 2, NULL);
-
 	// sort layers
 	SpriteManager_sortLayers(this, true);
 
