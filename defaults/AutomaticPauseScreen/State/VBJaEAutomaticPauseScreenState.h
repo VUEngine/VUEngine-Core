@@ -18,83 +18,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#ifndef VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SCREEN_STATE_H_
+#define VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SCREEN_STATE_H_
+
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Image.h>
+#include <GameState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
+// 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaEngineDefaultAdjustmentScreenLogoTiles[];
-extern BYTE VBJaEngineDefaultAdjustmentScreenLogoMap[];
+// declare the virtual methods
+#define VBJaEAutomaticPauseScreenState_METHODS											\
+	GameState_METHODS;												    			\
+
+// declare the virtual methods which are redefined
+#define VBJaEAutomaticPauseScreenState_SET_VTABLE(ClassName)								\
+	GameState_SET_VTABLE(ClassName)								    				\
+	__VIRTUAL_SET(ClassName, VBJaEAutomaticPauseScreenState, enter);						\
+	__VIRTUAL_SET(ClassName, VBJaEAutomaticPauseScreenState, exit);						\
+	__VIRTUAL_SET(ClassName, VBJaEAutomaticPauseScreenState, handleMessage);				\
+
+__CLASS(VBJaEAutomaticPauseScreenState);
+
+#define VBJaEAutomaticPauseScreenState_ATTRIBUTES							        			\
+														            				\
+	/* inherits */																	\
+	GameState_ATTRIBUTES															\
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DEFINITIONS
+// 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_TX =
-{
-    {
-        // number of chars, depending on allocation type:
-        // __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
-        // __ANIMATED_SHARED: sum of chars of all animation frames
-        // __NO_ANIMATED: number of chars of whole image
-        66,
+VBJaEAutomaticPauseScreenState VBJaEAutomaticPauseScreenState_getInstance(void);
 
-        // allocation type
-        __NO_ANIMATED,
 
-        // char definition
-        VBJaEngineDefaultAdjustmentScreenLogoTiles,
-    },
-
-    // bgmap definition
-    VBJaEngineDefaultAdjustmentScreenLogoMap,
-
-    // cols (max 48)
-    27,
-
-    // rows (max 28)
-    5,
-
-    // number of frames
-    1,
-
-    // palette number
-    1,
-};
-
-SpriteROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITE =
-{
-	// sprite's type
-	__TYPE(Sprite),
-
-	// texture definition
-	(TextureDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_TX,
-	
-	// LOGOmap mode ( LOGOMAP, AFFINE, H-BIAS)
-	WRLD_BGMAP,
-	
-	// display mode
-	WRLD_ON,
-
-	// parallax displacement
-	0		
-};
-
-SpriteROMDef* VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITES[] =
-{
-	&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITE,
-	NULL
-};
-
-ImageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM =
-{
-	__TYPE(Image),
-	VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITES,
-};
+#endif

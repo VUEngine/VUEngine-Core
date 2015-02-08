@@ -27,7 +27,7 @@
 #include <Game.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
-#include <VBJaEngineDefaultSplashScreenState.h>
+#include <VBJaESplashScreenState.h>
 
 extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
 
@@ -36,22 +36,22 @@ extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VBJaEngineDefaultSplashScreenState_destructor(VBJaEngineDefaultSplashScreenState this);
-static void VBJaEngineDefaultSplashScreenState_constructor(VBJaEngineDefaultSplashScreenState this);
-static void VBJaEngineDefaultSplashScreenState_enter(VBJaEngineDefaultSplashScreenState this, void* owner);
-static void VBJaEngineDefaultSplashScreenState_execute(VBJaEngineDefaultSplashScreenState this, void* owner);
-static void VBJaEngineDefaultSplashScreenState_exit(VBJaEngineDefaultSplashScreenState this, void* owner);
-static void VBJaEngineDefaultSplashScreenState_resume(VBJaEngineDefaultSplashScreenState this, void* owner);
-static bool VBJaEngineDefaultSplashScreenState_handleMessage(VBJaEngineDefaultSplashScreenState this, void* owner, Telegram telegram);
-static void VBJaEngineDefaultSplashScreenState_processInput(VBJaEngineDefaultSplashScreenState this, u16 pressedKey);
+static void VBJaESplashScreenState_destructor(VBJaESplashScreenState this);
+static void VBJaESplashScreenState_constructor(VBJaESplashScreenState this);
+static void VBJaESplashScreenState_enter(VBJaESplashScreenState this, void* owner);
+static void VBJaESplashScreenState_execute(VBJaESplashScreenState this, void* owner);
+static void VBJaESplashScreenState_exit(VBJaESplashScreenState this, void* owner);
+static void VBJaESplashScreenState_resume(VBJaESplashScreenState this, void* owner);
+static bool VBJaESplashScreenState_handleMessage(VBJaESplashScreenState this, void* owner, Telegram telegram);
+static void VBJaESplashScreenState_processInput(VBJaESplashScreenState this, u16 pressedKey);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultSplashScreenState, GameState);
-__SINGLETON_DYNAMIC(VBJaEngineDefaultSplashScreenState);
+__CLASS_DEFINITION(VBJaESplashScreenState, GameState);
+__SINGLETON_DYNAMIC(VBJaESplashScreenState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultSplashScreenState);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-static void VBJaEngineDefaultSplashScreenState_constructor(VBJaEngineDefaultSplashScreenState this)
+static void VBJaESplashScreenState_constructor(VBJaESplashScreenState this)
 {
 	__CONSTRUCT_BASE();
 
@@ -67,14 +67,14 @@ static void VBJaEngineDefaultSplashScreenState_constructor(VBJaEngineDefaultSpla
 }
 
 // class's destructor
-static void VBJaEngineDefaultSplashScreenState_destructor(VBJaEngineDefaultSplashScreenState this)
+static void VBJaESplashScreenState_destructor(VBJaESplashScreenState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
 // state's enter
-static void VBJaEngineDefaultSplashScreenState_enter(VBJaEngineDefaultSplashScreenState this, void* owner)
+static void VBJaESplashScreenState_enter(VBJaESplashScreenState this, void* owner)
 {
 	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
@@ -82,7 +82,7 @@ static void VBJaEngineDefaultSplashScreenState_enter(VBJaEngineDefaultSplashScre
 }
 
 // state's execute
-static void VBJaEngineDefaultSplashScreenState_execute(VBJaEngineDefaultSplashScreenState this, void* owner)
+static void VBJaESplashScreenState_execute(VBJaESplashScreenState this, void* owner)
 {
     VBVec3D translation =
     {
@@ -98,7 +98,7 @@ static void VBJaEngineDefaultSplashScreenState_execute(VBJaEngineDefaultSplashSc
 }
 
 // state's exit
-static void VBJaEngineDefaultSplashScreenState_exit(VBJaEngineDefaultSplashScreenState this, void* owner)
+static void VBJaESplashScreenState_exit(VBJaESplashScreenState this, void* owner)
 {
 	Screen_FXFadeOut(Screen_getInstance(), 16);
 
@@ -107,7 +107,7 @@ static void VBJaEngineDefaultSplashScreenState_exit(VBJaEngineDefaultSplashScree
 }
 
 // state's resume
-static void VBJaEngineDefaultSplashScreenState_resume(VBJaEngineDefaultSplashScreenState this, void* owner)
+static void VBJaESplashScreenState_resume(VBJaESplashScreenState this, void* owner)
 {
 	GameState_resume(__UPCAST(GameState, this), owner);
 	
@@ -139,7 +139,7 @@ static void VBJaEngineDefaultSplashScreenState_resume(VBJaEngineDefaultSplashScr
 }
 
 // state's on message
-static bool VBJaEngineDefaultSplashScreenState_handleMessage(VBJaEngineDefaultSplashScreenState this, void* owner, Telegram telegram)
+static bool VBJaESplashScreenState_handleMessage(VBJaESplashScreenState this, void* owner, Telegram telegram)
 {
 	switch (Telegram_getMessage(telegram))
 	{
@@ -147,7 +147,7 @@ static bool VBJaEngineDefaultSplashScreenState_handleMessage(VBJaEngineDefaultSp
 		{
             u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaEngineDefaultSplashScreenState_processInput(VBJaEngineDefaultSplashScreenState_getInstance(), pressedKey);
+            VBJaESplashScreenState_processInput(VBJaESplashScreenState_getInstance(), pressedKey);
         }
         break;
 	}
@@ -155,12 +155,12 @@ static bool VBJaEngineDefaultSplashScreenState_handleMessage(VBJaEngineDefaultSp
 	return false;
 }
 
-static void VBJaEngineDefaultSplashScreenState_processInput(VBJaEngineDefaultSplashScreenState this, u16 pressedKey)
+static void VBJaESplashScreenState_processInput(VBJaESplashScreenState this, u16 pressedKey)
 {
 	Game_changeState(Game_getInstance(), __UPCAST(GameState, this->nextState));
 }
 
-void VBJaEngineDefaultSplashScreenState_setNextstate(VBJaEngineDefaultSplashScreenState this, GameState nextState)
+void VBJaESplashScreenState_setNextstate(VBJaESplashScreenState this, GameState nextState)
 {
     this->nextState = nextState;
 }

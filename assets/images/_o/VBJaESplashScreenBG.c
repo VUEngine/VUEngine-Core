@@ -1,9 +1,9 @@
 
-//{{BLOCK(VBJaEngineDefaultSplashScreenBG)
+//{{BLOCK(VBJaESplashScreenBG)
 
 //======================================================================
 //
-//	VBJaEngineDefaultSplashScreenBG, 384x224@2, 
+//	VBJaESplashScreenBG, 384x224@2,
 //	+ 101 tiles (t|f reduced) not compressed
 //	+ regular map (flat), not compressed, 48x28 
 //	Total size: 1616 + 2688 = 4304
@@ -14,7 +14,7 @@
 //
 //======================================================================
 
-const unsigned int VBJaEngineDefaultSplashScreenBGTiles[404] __attribute__((aligned(4)))=
+const unsigned int VBJaESplashScreenBGTiles[404] __attribute__((aligned(4)))=
 {
 	0x00000000,0x00000000,0x00000000,0x00000000,0x00010000,0x00010000,0x00010000,0x00010000,
 	0x00104040,0x11004040,0x11004040,0x11000400,0x01010400,0x01000400,0x01000400,0x11004400,
@@ -75,7 +75,7 @@ const unsigned int VBJaEngineDefaultSplashScreenBGTiles[404] __attribute__((alig
 	0x10004440,0x10004000,0x11104440,0x00100040,
 };
 
-const unsigned short VBJaEngineDefaultSplashScreenBGMap[1344] __attribute__((aligned(4)))=
+const unsigned short VBJaESplashScreenBGMap[1344] __attribute__((aligned(4)))=
 {
 	0x0001,0x0000,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,
 	0x0008,0x0009,0x000A,0x000B,0x000C,0x000D,0x000E,0x000F,
@@ -267,4 +267,4 @@ const unsigned short VBJaEngineDefaultSplashScreenBGMap[1344] __attribute__((ali
 	0x0049,0x0011,0x0011,0x004A,0x004B,0x0011,0x0011,0x0011,
 };
 
-//}}BLOCK(VBJaEngineDefaultSplashScreenBG)
+//}}BLOCK(VBJaESplashScreenBG)

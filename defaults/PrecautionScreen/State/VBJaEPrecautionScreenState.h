@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SCREEN_STATE_H_
+#ifndef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_STATE_H_
+#define VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,29 +34,43 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define VBJaEngineDefaultAutomaticPauseScreenState_METHODS											\
-	GameState_METHODS;												    			\
+#define VBJaEPrecautionScreenState_METHODS													\
+	GameState_METHODS;											    					\
 
 // declare the virtual methods which are redefined
-#define VBJaEngineDefaultAutomaticPauseScreenState_SET_VTABLE(ClassName)								\
-	GameState_SET_VTABLE(ClassName)								    				\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseScreenState, enter);						\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseScreenState, exit);						\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseScreenState, handleMessage);				\
+#define VBJaEPrecautionScreenState_SET_VTABLE(ClassName)										\
+	GameState_SET_VTABLE(ClassName)								    					\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, enter);								\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, exit);								\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, execute);							\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, resume);							\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, handleMessage);						\
 
-__CLASS(VBJaEngineDefaultAutomaticPauseScreenState);
 
-#define VBJaEngineDefaultAutomaticPauseScreenState_ATTRIBUTES							        			\
-														            				\
-	/* inherits */																	\
-	GameState_ATTRIBUTES															\
+__CLASS(VBJaEPrecautionScreenState);
+
+#define VBJaEPrecautionScreenState_ATTRIBUTES								   				\
+														            					\
+	/* inherits */																		\
+	GameState_ATTRIBUTES																\
+														            					\
+	/* state to enter after this one */													\
+	GameState nextState;																\
+														            					\
+	char* precautionString;																\
+														            					\
+	/* definition of screen's stage */													\
+	StageDefinition* stageDefinition;													\
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-VBJaEngineDefaultAutomaticPauseScreenState VBJaEngineDefaultAutomaticPauseScreenState_getInstance(void);
+VBJaEPrecautionScreenState VBJaEPrecautionScreenState_getInstance(void);
+
+void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState);
+void VBJaEPrecautionScreenState_setPrecautionString(VBJaEPrecautionScreenState this, char* string);
 
 
 #endif

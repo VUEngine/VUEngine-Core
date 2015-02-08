@@ -29,8 +29,8 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaEngineDefaultAdjustmentScreenBGTiles[];
-extern BYTE VBJaEngineDefaultAdjustmentScreenBGMap[];
+extern BYTE VBJaEAdjustmentScreenBGTiles[];
+extern BYTE VBJaEAdjustmentScreenBGMap[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,16 +50,16 @@ TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_BG_TX =
         __NO_ANIMATED,
 
         // char definition
-        VBJaEngineDefaultAdjustmentScreenBGTiles,
+        VBJaEAdjustmentScreenBGTiles,
     },
 
     // bgmap definition
-    VBJaEngineDefaultAdjustmentScreenBGMap,
+    VBJaEAdjustmentScreenBGMap,
 
-    // cols (max 48)
+    // cols (max 64)
     12,
 
-    // rows (max 28)
+    // rows (max 64)
     12,
 
     // number of frames

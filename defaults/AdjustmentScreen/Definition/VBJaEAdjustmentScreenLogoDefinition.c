@@ -29,100 +29,72 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaEngineDefaultAdjustmentScreenIconTiles[];
-extern BYTE VBJaEngineDefaultAdjustmentScreenIconMap[];
+extern BYTE VBJaEAdjustmentScreenLogoTiles[];
+extern BYTE VBJaEAdjustmentScreenLogoMap[];
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_TX =
+TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_TX =
 {
     {
-        // number of chars,
-        5,
+        // number of chars, depending on allocation type:
+        // __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
+        // __ANIMATED_SHARED: sum of chars of all animation frames
+        // __NO_ANIMATED: number of chars of whole image
+        66,
 
         // allocation type
         __NO_ANIMATED,
 
         // char definition
-        VBJaEngineDefaultAdjustmentScreenIconTiles,
+        VBJaEAdjustmentScreenLogoTiles,
     },
 
-    // ICONmap definition
-    VBJaEngineDefaultAdjustmentScreenIconMap,
+    // bgmap definition
+    VBJaEAdjustmentScreenLogoMap,
 
-    // cols (max 48)
-    2,
+    // cols (max 64)
+    27,
 
-    // rows (max 28)
-    2,
+    // rows (max 64)
+    5,
 
     // number of frames
     1,
 
     // palette number
-    0,
+    1,
 };
 
-SpriteROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE =
+SpriteROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITE =
 {
 	// sprite's type
 	__TYPE(Sprite),
 
 	// texture definition
-	(TextureDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_TX,
+	(TextureDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_TX,
 	
-	// ICONmap mode ( ICONMAP, AFFINE, H-BIAS)
+	// LOGOmap mode ( LOGOMAP, AFFINE, H-BIAS)
 	WRLD_BGMAP,
 	
 	// display mode
-	WRLD_LON,
+	WRLD_ON,
 
 	// parallax displacement
 	0		
 };
 
-SpriteROMDef* VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITES[] =
+SpriteROMDef* VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITES[] =
 {
-	&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE,
+	&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITE,
 	NULL
 };
 
-SpriteROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE =
-{
-	// sprite's type
-	__TYPE(Sprite),
-
-	// texture definition
-	(TextureDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_TX,
-	
-	// ICONmap mode ( ICONMAP, AFFINE, H-BIAS)
-	WRLD_BGMAP,
-	
-	// display mode
-	WRLD_RON,
-
-	// parallax displacement
-	0		
-};
-
-SpriteROMDef* VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITES[] =
-{
-	&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE,
-	NULL
-
-};
-
-ImageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L =
+ImageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM =
 {
 	__TYPE(Image),
-	VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITES,
-};
-
-ImageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R =
-{
-	__TYPE(Image),
-	VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITES,
+	VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_IM_SPRITES,
 };

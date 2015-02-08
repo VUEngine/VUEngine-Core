@@ -28,7 +28,7 @@
 #include <HardwareManager.h>
 #include <Utilities.h>
 
-#include <VBJaEngineDefaultFontDefinition.h>
+#include <VBJaEFontDefinition.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -22,45 +22,46 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ScrollBackground.h>
+#include <Image.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaEngineDefaultSplashScreenBGTiles[];
-extern BYTE VBJaEngineDefaultSplashScreenBGMap[];
+extern BYTE VBJaEPrecautionScreenJapaneseTiles[];
+extern BYTE VBJaEPrecautionScreenJapaneseMap[];
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-TextureROMDef VBJAENGINE_BG_TX =
+
+TextureROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX =
 {
     {
         // number of chars, depending on allocation type:
         // __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
         // __ANIMATED_SHARED: sum of chars of all animation frames
         // __NO_ANIMATED: number of chars of whole image
-        148,
+        47,
 
         // allocation type
         __NO_ANIMATED,
 
         // char definition
-        VBJaEngineDefaultSplashScreenBGTiles,
+        VBJaEPrecautionScreenJapaneseTiles,
     },
 
     // bgmap definition
-    VBJaEngineDefaultSplashScreenBGMap,
+    VBJaEPrecautionScreenJapaneseMap,
 
-    // cols (max 48)
-    48,
+    // cols (max 64)
+    25,
 
-    // rows (max 28)
-    28,
+    // rows (max 64)
+    5,
 
     // number of frames
     1,
@@ -69,13 +70,13 @@ TextureROMDef VBJAENGINE_BG_TX =
     0,
 };
 
-SpriteROMDef VBJAENGINE_BG_SB_SPRITE =
+SpriteROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITE =
 {
 	// sprite's type
 	__TYPE(Sprite),
 
 	// texture definition
-	(TextureDefinition*)&VBJAENGINE_BG_TX,
+	(TextureDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX,
 	
 	// bgmap mode (BGMAP, AFFINE or H-BIAS)
 	WRLD_BGMAP,
@@ -87,15 +88,14 @@ SpriteROMDef VBJAENGINE_BG_SB_SPRITE =
 	0		
 };
 
-SpriteROMDef* VBJAENGINE_BG_SB_SPRITES[] =
+SpriteROMDef* VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITES[] =
 {
-	&VBJAENGINE_BG_SB_SPRITE,
-	&VBJAENGINE_BG_SB_SPRITE,
+	&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITE,
 	NULL
 };
 
-ScrollBackgroundROMDef VBJAENGINE_BG_SB =
+ImageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM =
 {
-	__TYPE(ScrollBackground),
-	VBJAENGINE_BG_SB_SPRITES,
+	__TYPE(Image),
+	VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITES,
 };
