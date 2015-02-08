@@ -52,6 +52,11 @@
 // since there are 32 layers, that's the theoretical limit of entities to display
 #define __STREAMING_AMPLITUDE		32
 
+#define __MAXIMUM_PARALLAX		10
+#define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)
+#define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + __ENTITY_LOAD_PAD)
+#define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- __ENTITY_LOAD_PAD)
+#define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + __ENTITY_LOAD_PAD)
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -62,6 +67,7 @@ __CLASS_DEFINITION(Stage, Container);
 typedef struct StageEntityDescription
 {
 	PositionedEntity* positionedEntity;
+	SmallRightcuboid smallRightcuboid;
 	s16 id;
 	long distance;
 
@@ -167,21 +173,10 @@ void Stage_setupObjActor(Stage this, int *actor,int x,int y, int z)
 }
 
 // determine if a point is visible
-inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, fix19_13 halfWidth, fix19_13 halfHeight)
+inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallRightcuboid* smallRightcuboid)
 {
 	ASSERT(this, "Stage::inLoadRange: null this");
 
-	Scale scale;
-
-	scale.x = scale.y = FIX19_13TOFIX7_9(ITOFIX19_13(1) -
-		       FIX19_13_DIV(position3D.z , _optical->maximunViewDistance));
-
-#define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)
-#define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + __ENTITY_LOAD_PAD)
-#define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- __ENTITY_LOAD_PAD)
-#define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + __ENTITY_LOAD_PAD)
-	
 	VBVec2D position2D;
 
 	//normalize position
@@ -190,17 +185,14 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, fix19_13 hal
 	//project the position to 2d space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-	halfWidth = FIX19_13_DIV(halfWidth, FIX7_9TOFIX19_13(scale.x)) >> 1;
-	halfHeight = FIX19_13_DIV(halfHeight, FIX7_9TOFIX19_13(scale.y)) >> 1;
-
 	// check x visibility
-	if (position2D.x + halfWidth < __LOAD_LOW_X_LIMIT || position2D.x - halfWidth > __LOAD_HIGHT_X_LIMIT)
+	if (position2D.x + ITOFIX19_13(smallRightcuboid->x1) < __LOAD_LOW_X_LIMIT || position2D.x - ITOFIX19_13(smallRightcuboid->x0) > __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if (position2D.y + halfHeight < __LOAD_LOW_Y_LIMIT || position2D.y - halfHeight > __LOAD_HIGHT_Y_LIMIT)
+	if (position2D.y + ITOFIX19_13(smallRightcuboid->y1) < __LOAD_LOW_Y_LIMIT || position2D.y - ITOFIX19_13(smallRightcuboid->y0) > __LOAD_HIGHT_Y_LIMIT)
 	{
 		return false;
 	}
@@ -445,6 +437,9 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 	stageEntityDescription->id = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
 
+	VBVec3D environmentPosition3D = {0, 0, 0};
+	stageEntityDescription->smallRightcuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, environmentPosition3D);
+
 	return stageEntityDescription;
 }
 
@@ -534,6 +529,8 @@ static void Stage_registerEntities(Stage this)
 	}
 }
 
+
+			
 // load entities on demand (if they aren't loaded and are visible)
 static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively)
 {
@@ -605,12 +602,8 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
 			};
 			
-			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0] && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition? true: false;
-			fix19_13 halfWidth = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2: __SCREEN_WIDTH);
-			fix19_13 halfHeight = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2: __SCREEN_HEIGHT);
-
 			// if entity in load range
-			if (Stage_inLoadRange(this, position3D, halfWidth, halfHeight) || !loadOnlyInRangeEntities)
+			if (Stage_inLoadRange(this, position3D, &stageEntityDescription->smallRightcuboid) || !loadOnlyInRangeEntities)
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
@@ -660,12 +653,8 @@ static void Stage_loadInRangeEntities(Stage this)
 					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
 			};
 
-			u8 hasSprites = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0] && stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition? true: false;
-			fix19_13 halfWidth = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2: __SCREEN_WIDTH);
-			fix19_13 halfHeight = ITOFIX19_13(hasSprites? (int)stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2: __SCREEN_HEIGHT);
-
 			// if entity in load range
-			if (Stage_inLoadRange(this, position3D, halfWidth, halfHeight))
+			if (Stage_inLoadRange(this, position3D, &stageEntityDescription->smallRightcuboid))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 

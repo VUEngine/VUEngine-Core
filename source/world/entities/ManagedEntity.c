@@ -111,7 +111,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 				// eliminate fractions to avoid rounding problems later
 				drawSpec.position.x &= 0xFFFFE000;
 				drawSpec.position.y &= 0xFFFFE000;
-				drawSpec.position.z &= 0xFFFFE000;
+				// don't round z coordinate since it is used for layer sorting
 				Sprite_setDrawSpec(sprite, &drawSpec);
 			}
 		}
@@ -152,9 +152,9 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 	ASSERT(this, "ManagedEntity::transform: null this");
 
 	int updateSpritePosition = Entity_updateSpritePosition(__UPCAST(Entity, this));
-	//int updateSpriteScale = Entity_updateSpriteScale(__UPCAST(Entity, this));
 	
-//	Entity_transform(__UPCAST(Entity, this), environmentTransform);
+	// TODO: take into account scaling
+	//int updateSpriteScale = Entity_updateSpriteScale(__UPCAST(Entity, this));
 
 	if(updateSpritePosition)
 	{

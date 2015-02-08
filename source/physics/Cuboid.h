@@ -49,19 +49,6 @@
 		__VIRTUAL_SET(ClassName, Cuboid, draw);									\
 		__VIRTUAL_SET(ClassName, Cuboid, print);								\
 
-typedef struct Rightcuboid
-{
-	/* left upper corner */
-	fix19_13 x0;
-	fix19_13 y0;
-	fix19_13 z0;
-
-	/* right down corner */
-	fix19_13 x1;
-	fix19_13 y1;
-	fix19_13 z1;
-
-} Rightcuboid;
 
 #define Cuboid_ATTRIBUTES														\
 																				\

@@ -274,4 +274,32 @@ typedef struct Transformation
 
 } Transformation;
 
+typedef struct Rightcuboid
+{
+	/* left upper corner */
+	fix19_13 x0;
+	fix19_13 y0;
+	fix19_13 z0;
+
+	/* right down corner */
+	fix19_13 x1;
+	fix19_13 y1;
+	fix19_13 z1;
+
+} Rightcuboid;
+
+typedef struct SmallRightcuboid
+{
+	/* left upper corner */
+	s16 x0;
+	s16 y0;
+	s16 z0;
+
+	/* right down corner */
+	s16 x1;
+	s16 y1;
+	s16 z1;
+
+} SmallRightcuboid;
+
 #endif
