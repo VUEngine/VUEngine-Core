@@ -56,10 +56,10 @@ TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_BG_TX =
     // bgmap definition
     VBJaEAdjustmentScreenBGMap,
 
-    // cols (max 48)
+    // cols (max 64)
     12,
 
-    // rows (max 28)
+    // rows (max 64)
     12,
 
     // number of frames

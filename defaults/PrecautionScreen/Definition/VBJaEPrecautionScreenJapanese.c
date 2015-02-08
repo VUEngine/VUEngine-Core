@@ -57,10 +57,10 @@ TextureROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX =
     // bgmap definition
     VBJaEPrecautionScreenJapaneseMap,
 
-    // cols (max 48)
+    // cols (max 64)
     25,
 
-    // rows (max 28)
+    // rows (max 64)
     5,
 
     // number of frames

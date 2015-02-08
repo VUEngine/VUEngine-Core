@@ -58,10 +58,10 @@ TextureROMDef VBJAENGINE_LOGO_3D_TX =
     // bgmap definition
     VBJaESplashScreenLogoMap,
 
-    // cols (max 48)
+    // cols (max 64)
     8,
 
-    // rows (max 28)
+    // rows (max 64)
     9,
 
     // number of frames
@@ -90,10 +90,10 @@ TextureROMDef VBJAENGINE_LOGO_OUTLINE_TX =
     // bgmap definition
     VBJaESplashScreenLogoOutlineMap,
 
-    // cols (max 48)
+    // cols (max 64)
     19,
 
-    // rows (max 28)
+    // rows (max 64)
     9,
 
     // number of frames

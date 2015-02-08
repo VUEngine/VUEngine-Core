@@ -56,10 +56,10 @@ TextureROMDef VBJAENGINE_BG_TX =
     // bgmap definition
     VBJaESplashScreenBGMap,
 
-    // cols (max 48)
+    // cols (max 64)
     48,
 
-    // rows (max 28)
+    // rows (max 64)
     28,
 
     // number of frames

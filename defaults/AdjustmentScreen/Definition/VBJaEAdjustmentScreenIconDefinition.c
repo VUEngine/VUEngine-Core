@@ -53,10 +53,10 @@ TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_TX =
     // ICONmap definition
     VBJaEAdjustmentScreenIconMap,
 
-    // cols (max 48)
+    // cols (max 64)
     2,
 
-    // rows (max 28)
+    // rows (max 64)
     2,
 
     // number of frames
