@@ -28,8 +28,8 @@
 #include <Printing.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
-#include <VBJaEngineDefaultPrecautionScreenState.h>
-#include <VBJaEngineDefaultAutomaticPauseSelectionScreenState.h>
+#include <VBJaEPrecautionScreenState.h>
+#include <VBJaEAutomaticPauseSelectionScreenState.h>
 
 extern StageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
 
@@ -38,25 +38,25 @@ extern StageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VBJaEngineDefaultPrecautionScreenState_destructor(VBJaEngineDefaultPrecautionScreenState this);
-static void VBJaEngineDefaultPrecautionScreenState_constructor(VBJaEngineDefaultPrecautionScreenState this);
-static void VBJaEngineDefaultPrecautionScreenState_enter(VBJaEngineDefaultPrecautionScreenState this, void* owner);
-static void VBJaEngineDefaultPrecautionScreenState_execute(VBJaEngineDefaultPrecautionScreenState this, void* owner);
-static void VBJaEngineDefaultPrecautionScreenState_exit(VBJaEngineDefaultPrecautionScreenState this, void* owner);
-static void VBJaEngineDefaultPrecautionScreenState_resume(VBJaEngineDefaultPrecautionScreenState this, void* owner);
-static bool VBJaEngineDefaultPrecautionScreenState_handleMessage(VBJaEngineDefaultPrecautionScreenState this, void* owner, Telegram telegram);
-static void VBJaEngineDefaultPrecautionScreenState_processInput(VBJaEngineDefaultPrecautionScreenState this, u16 pressedKey);
-static void VBJaEngineDefaultPrecautionScreenState_print(VBJaEngineDefaultPrecautionScreenState this);
-void VBJaEngineDefaultPrecautionScreenState_setNextstate(VBJaEngineDefaultPrecautionScreenState this, GameState nextState);
-void VBJaEngineDefaultPrecautionScreenState_setPrecautionString(VBJaEngineDefaultPrecautionScreenState this, char* string);
+static void VBJaEPrecautionScreenState_destructor(VBJaEPrecautionScreenState this);
+static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState this);
+static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, void* owner);
+static void VBJaEPrecautionScreenState_execute(VBJaEPrecautionScreenState this, void* owner);
+static void VBJaEPrecautionScreenState_exit(VBJaEPrecautionScreenState this, void* owner);
+static void VBJaEPrecautionScreenState_resume(VBJaEPrecautionScreenState this, void* owner);
+static bool VBJaEPrecautionScreenState_handleMessage(VBJaEPrecautionScreenState this, void* owner, Telegram telegram);
+static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState this, u16 pressedKey);
+static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this);
+void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState);
+void VBJaEPrecautionScreenState_setPrecautionString(VBJaEPrecautionScreenState this, char* string);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultPrecautionScreenState, GameState);
-__SINGLETON_DYNAMIC(VBJaEngineDefaultPrecautionScreenState);
+__CLASS_DEFINITION(VBJaEPrecautionScreenState, GameState);
+__SINGLETON_DYNAMIC(VBJaEPrecautionScreenState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,41 +64,41 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultPrecautionScreenState);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-static void VBJaEngineDefaultPrecautionScreenState_constructor(VBJaEngineDefaultPrecautionScreenState this)
+static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState this)
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEngineDefaultPrecautionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEngineDefaultAutomaticPauseSelectionScreenState_getInstance()));
+	VBJaEPrecautionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEAutomaticPauseSelectionScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
     this->precautionString = "           Important:\n\nRead Instruction and Precaution\n\n   Booklets before operating";
 }
 
 // class's destructor
-static void VBJaEngineDefaultPrecautionScreenState_destructor(VBJaEngineDefaultPrecautionScreenState this)
+static void VBJaEPrecautionScreenState_destructor(VBJaEPrecautionScreenState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
 // state's enter
-static void VBJaEngineDefaultPrecautionScreenState_enter(VBJaEngineDefaultPrecautionScreenState this, void* owner)
+static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, void* owner)
 {
 	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
-    VBJaEngineDefaultPrecautionScreenState_print(this);
+    VBJaEPrecautionScreenState_print(this);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }
 
 // state's execute
-static void VBJaEngineDefaultPrecautionScreenState_execute(VBJaEngineDefaultPrecautionScreenState this, void* owner)
+static void VBJaEPrecautionScreenState_execute(VBJaEPrecautionScreenState this, void* owner)
 {
  	// call base
 	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
-static void VBJaEngineDefaultPrecautionScreenState_exit(VBJaEngineDefaultPrecautionScreenState this, void* owner)
+static void VBJaEPrecautionScreenState_exit(VBJaEPrecautionScreenState this, void* owner)
 {
 	Screen_FXFadeOut(Screen_getInstance(), 16);
 
@@ -107,7 +107,7 @@ static void VBJaEngineDefaultPrecautionScreenState_exit(VBJaEngineDefaultPrecaut
 }
 
 // state's resume
-static void VBJaEngineDefaultPrecautionScreenState_resume(VBJaEngineDefaultPrecautionScreenState this, void* owner)
+static void VBJaEPrecautionScreenState_resume(VBJaEPrecautionScreenState this, void* owner)
 {
 	GameState_resume(__UPCAST(GameState, this), owner);
 	
@@ -137,11 +137,11 @@ static void VBJaEngineDefaultPrecautionScreenState_resume(VBJaEngineDefaultPreca
 	}
 #endif
 
-    VBJaEngineDefaultPrecautionScreenState_print(this);
+    VBJaEPrecautionScreenState_print(this);
 }
 
 // state's on message
-static bool VBJaEngineDefaultPrecautionScreenState_handleMessage(VBJaEngineDefaultPrecautionScreenState this, void* owner, Telegram telegram)
+static bool VBJaEPrecautionScreenState_handleMessage(VBJaEPrecautionScreenState this, void* owner, Telegram telegram)
 {
 	switch (Telegram_getMessage(telegram))
 	{
@@ -149,7 +149,7 @@ static bool VBJaEngineDefaultPrecautionScreenState_handleMessage(VBJaEngineDefau
 		{
             u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaEngineDefaultPrecautionScreenState_processInput(VBJaEngineDefaultPrecautionScreenState_getInstance(), pressedKey);
+            VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState_getInstance(), pressedKey);
         }
         break;
 	}
@@ -157,22 +157,22 @@ static bool VBJaEngineDefaultPrecautionScreenState_handleMessage(VBJaEngineDefau
 	return false;
 }
 
-static void VBJaEngineDefaultPrecautionScreenState_processInput(VBJaEngineDefaultPrecautionScreenState this, u16 pressedKey)
+static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState this, u16 pressedKey)
 {
 	Game_changeState(Game_getInstance(), this->nextState);
 }
 
-static void VBJaEngineDefaultPrecautionScreenState_print(VBJaEngineDefaultPrecautionScreenState this)
+static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this)
 {
     Printing_text(Printing_getInstance(), this->precautionString, 8, 6, NULL);
 }
 
-void VBJaEngineDefaultPrecautionScreenState_setNextstate(VBJaEngineDefaultPrecautionScreenState this, GameState nextState)
+void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState)
 {
 	this->nextState = nextState;
 }
 
-void VBJaEngineDefaultPrecautionScreenState_setPrecautionString(VBJaEngineDefaultPrecautionScreenState this, char* string)
+void VBJaEPrecautionScreenState_setPrecautionString(VBJaEPrecautionScreenState this, char* string)
 {
     this->precautionString = string;
 }

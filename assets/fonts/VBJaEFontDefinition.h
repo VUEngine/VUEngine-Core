@@ -2,11 +2,11 @@
 #define VBJAENGINE_DEFAULT_FONT_DEFINITION_H_
 
 
-extern BYTE VBJaEngineDefaultFontTiles[];
+extern BYTE VBJaEFontTiles[];
 FontROMDef VBJAENGINE_DEFAULT_FONT =
 {
     // font chars definition pointer
-	(BYTE*)VBJaEngineDefaultFontTiles,
+	(BYTE*)VBJaEFontTiles,
 
 	// number of characters in font
 	256,

@@ -29,39 +29,35 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaEngineDefaultPrecautionScreenJapaneseTiles[];
-extern BYTE VBJaEngineDefaultPrecautionScreenJapaneseMap[];
+extern BYTE VBJaEAdjustmentScreenIconTiles[];
+extern BYTE VBJaEAdjustmentScreenIconMap[];
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-
-TextureROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX =
+TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_TX =
 {
     {
-        // number of chars, depending on allocation type:
-        // __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
-        // __ANIMATED_SHARED: sum of chars of all animation frames
-        // __NO_ANIMATED: number of chars of whole image
-        47,
+        // number of chars,
+        5,
 
         // allocation type
         __NO_ANIMATED,
 
         // char definition
-        VBJaEngineDefaultPrecautionScreenJapaneseTiles,
+        VBJaEAdjustmentScreenIconTiles,
     },
 
-    // bgmap definition
-    VBJaEngineDefaultPrecautionScreenJapaneseMap,
+    // ICONmap definition
+    VBJaEAdjustmentScreenIconMap,
 
     // cols (max 48)
-    25,
+    2,
 
     // rows (max 28)
-    5,
+    2,
 
     // number of frames
     1,
@@ -70,32 +66,63 @@ TextureROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX =
     0,
 };
 
-SpriteROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITE =
+SpriteROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE =
 {
 	// sprite's type
 	__TYPE(Sprite),
 
 	// texture definition
-	(TextureDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX,
+	(TextureDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_TX,
 	
-	// bgmap mode (BGMAP, AFFINE or H-BIAS)
+	// ICONmap mode ( ICONMAP, AFFINE, H-BIAS)
 	WRLD_BGMAP,
 	
 	// display mode
-	WRLD_ON,
+	WRLD_LON,
 
 	// parallax displacement
 	0		
 };
 
-SpriteROMDef* VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITES[] =
+SpriteROMDef* VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITES[] =
 {
-	&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITE,
+	&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE,
 	NULL
 };
 
-ImageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM =
+SpriteROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE =
+{
+	// sprite's type
+	__TYPE(Sprite),
+
+	// texture definition
+	(TextureDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_TX,
+	
+	// ICONmap mode ( ICONMAP, AFFINE, H-BIAS)
+	WRLD_BGMAP,
+	
+	// display mode
+	WRLD_RON,
+
+	// parallax displacement
+	0		
+};
+
+SpriteROMDef* VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITES[] =
+{
+	&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE,
+	NULL
+
+};
+
+ImageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L =
 {
 	__TYPE(Image),
-	VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITES,
+	VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITES,
+};
+
+ImageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R =
+{
+	__TYPE(Image),
+	VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITES,
 };

@@ -27,8 +27,8 @@
 #include <Game.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
-#include <VBJaEngineDefaultAdjustmentScreenState.h>
-#include <VBJaEngineDefaultPrecautionScreenState.h>
+#include <VBJaEAdjustmentScreenState.h>
+#include <VBJaEPrecautionScreenState.h>
 
 extern StageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 
@@ -37,23 +37,23 @@ extern StageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VBJaEngineDefaultAdjustmentScreenState_destructor(VBJaEngineDefaultAdjustmentScreenState this);
-static void VBJaEngineDefaultAdjustmentScreenState_constructor(VBJaEngineDefaultAdjustmentScreenState this);
-static void VBJaEngineDefaultAdjustmentScreenState_enter(VBJaEngineDefaultAdjustmentScreenState this, void* owner);
-static void VBJaEngineDefaultAdjustmentScreenState_execute(VBJaEngineDefaultAdjustmentScreenState this, void* owner);
-static void VBJaEngineDefaultAdjustmentScreenState_exit(VBJaEngineDefaultAdjustmentScreenState this, void* owner);
-static void VBJaEngineDefaultAdjustmentScreenState_resume(VBJaEngineDefaultAdjustmentScreenState this, void* owner);
-static bool VBJaEngineDefaultAdjustmentScreenState_handleMessage(VBJaEngineDefaultAdjustmentScreenState this, void* owner, Telegram telegram);
-static void VBJaEngineDefaultAdjustmentScreenState_processInput(VBJaEngineDefaultAdjustmentScreenState this, u16 pressedKey);
-void VBJaEngineDefaultAdjustmentScreenState_setNextstate(VBJaEngineDefaultAdjustmentScreenState this, GameState nextState);
+static void VBJaEAdjustmentScreenState_destructor(VBJaEAdjustmentScreenState this);
+static void VBJaEAdjustmentScreenState_constructor(VBJaEAdjustmentScreenState this);
+static void VBJaEAdjustmentScreenState_enter(VBJaEAdjustmentScreenState this, void* owner);
+static void VBJaEAdjustmentScreenState_execute(VBJaEAdjustmentScreenState this, void* owner);
+static void VBJaEAdjustmentScreenState_exit(VBJaEAdjustmentScreenState this, void* owner);
+static void VBJaEAdjustmentScreenState_resume(VBJaEAdjustmentScreenState this, void* owner);
+static bool VBJaEAdjustmentScreenState_handleMessage(VBJaEAdjustmentScreenState this, void* owner, Telegram telegram);
+static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 pressedKey);
+void VBJaEAdjustmentScreenState_setNextstate(VBJaEAdjustmentScreenState this, GameState nextState);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEngineDefaultAdjustmentScreenState, GameState);
-__SINGLETON_DYNAMIC(VBJaEngineDefaultAdjustmentScreenState);
+__CLASS_DEFINITION(VBJaEAdjustmentScreenState, GameState);
+__SINGLETON_DYNAMIC(VBJaEAdjustmentScreenState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,23 +61,23 @@ __SINGLETON_DYNAMIC(VBJaEngineDefaultAdjustmentScreenState);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-static void VBJaEngineDefaultAdjustmentScreenState_constructor(VBJaEngineDefaultAdjustmentScreenState this)
+static void VBJaEAdjustmentScreenState_constructor(VBJaEAdjustmentScreenState this)
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEngineDefaultAdjustmentScreenState_setNextstate(this, __UPCAST(GameState, VBJaEngineDefaultPrecautionScreenState_getInstance()));
+	VBJaEAdjustmentScreenState_setNextstate(this, __UPCAST(GameState, VBJaEPrecautionScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 }
 
 // class's destructor
-static void VBJaEngineDefaultAdjustmentScreenState_destructor(VBJaEngineDefaultAdjustmentScreenState this)
+static void VBJaEAdjustmentScreenState_destructor(VBJaEAdjustmentScreenState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
 // state's enter
-static void VBJaEngineDefaultAdjustmentScreenState_enter(VBJaEngineDefaultAdjustmentScreenState this, void* owner)
+static void VBJaEAdjustmentScreenState_enter(VBJaEAdjustmentScreenState this, void* owner)
 {
 	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
@@ -85,14 +85,14 @@ static void VBJaEngineDefaultAdjustmentScreenState_enter(VBJaEngineDefaultAdjust
 }
 
 // state's execute
-static void VBJaEngineDefaultAdjustmentScreenState_execute(VBJaEngineDefaultAdjustmentScreenState this, void* owner)
+static void VBJaEAdjustmentScreenState_execute(VBJaEAdjustmentScreenState this, void* owner)
 {
  	// call base
 	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
-static void VBJaEngineDefaultAdjustmentScreenState_exit(VBJaEngineDefaultAdjustmentScreenState this, void* owner)
+static void VBJaEAdjustmentScreenState_exit(VBJaEAdjustmentScreenState this, void* owner)
 {
 	Screen_FXFadeOut(Screen_getInstance(), 16);
 
@@ -101,7 +101,7 @@ static void VBJaEngineDefaultAdjustmentScreenState_exit(VBJaEngineDefaultAdjustm
 }
 
 // state's resume
-static void VBJaEngineDefaultAdjustmentScreenState_resume(VBJaEngineDefaultAdjustmentScreenState this, void* owner)
+static void VBJaEAdjustmentScreenState_resume(VBJaEAdjustmentScreenState this, void* owner)
 {
 	GameState_resume(__UPCAST(GameState, this), owner);
 	
@@ -133,7 +133,7 @@ static void VBJaEngineDefaultAdjustmentScreenState_resume(VBJaEngineDefaultAdjus
 }
 
 // state's on message
-static bool VBJaEngineDefaultAdjustmentScreenState_handleMessage(VBJaEngineDefaultAdjustmentScreenState this, void* owner, Telegram telegram)
+static bool VBJaEAdjustmentScreenState_handleMessage(VBJaEAdjustmentScreenState this, void* owner, Telegram telegram)
 {
 	switch (Telegram_getMessage(telegram))
 	{
@@ -141,7 +141,7 @@ static bool VBJaEngineDefaultAdjustmentScreenState_handleMessage(VBJaEngineDefau
 		{
             u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaEngineDefaultAdjustmentScreenState_processInput(VBJaEngineDefaultAdjustmentScreenState_getInstance(), pressedKey);
+            VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState_getInstance(), pressedKey);
         }
         break;
 	}
@@ -149,12 +149,12 @@ static bool VBJaEngineDefaultAdjustmentScreenState_handleMessage(VBJaEngineDefau
 	return false;
 }
 
-static void VBJaEngineDefaultAdjustmentScreenState_processInput(VBJaEngineDefaultAdjustmentScreenState this, u16 pressedKey)
+static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 pressedKey)
 {
 	Game_changeState(Game_getInstance(), this->nextState);
 }
 
-void VBJaEngineDefaultAdjustmentScreenState_setNextstate(VBJaEngineDefaultAdjustmentScreenState this, GameState nextState)
+void VBJaEAdjustmentScreenState_setNextstate(VBJaEAdjustmentScreenState this, GameState nextState)
 {
 	this->nextState = nextState;
 }

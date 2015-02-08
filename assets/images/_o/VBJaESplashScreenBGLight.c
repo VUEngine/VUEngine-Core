@@ -1,20 +1,20 @@
 
-//{{BLOCK(VBJaEngineDefaultSplashScreenBGLight)
+//{{BLOCK(VBJaESplashScreenBGLight)
 
 //======================================================================
 //
-//	VBJaEngineDefaultSplashScreenBGLight, 384x224@2, 
+//	VBJaESplashScreenBGLight, 384x224@2, 
 //	+ 97 tiles (t|f reduced) not compressed
 //	+ regular map (flat), not compressed, 48x28 
 //	Total size: 1552 + 2688 = 4240
 //
-//	Time-stamp: 2015-01-25, 19:32:48
+//	Time-stamp: 2015-02-08, 20:32:21
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.6
 //	( http://www.coranac.com/projects/#grit )
 //
 //======================================================================
 
-const unsigned int VBJaEngineDefaultSplashScreenBGLightTiles[388] __attribute__((aligned(4)))=
+const unsigned int VBJaESplashScreenBGLightTiles[388] __attribute__((aligned(4)))=
 {
 	0x00000000,0x00000000,0x00000000,0x00000000,0x00010000,0x00010001,0x00010001,0x00010001,
 	0x40504050,0x51404050,0x51405140,0x15001500,0x05010501,0x05000501,0x05000500,0x55005500,
@@ -73,7 +73,7 @@ const unsigned int VBJaEngineDefaultSplashScreenBGLightTiles[388] __attribute__(
 	0x50005550,0x50005000,0x55505550,0x00500050,
 };
 
-const unsigned short VBJaEngineDefaultSplashScreenBGLightMap[1344] __attribute__((aligned(4)))=
+const unsigned short VBJaESplashScreenBGLightMap[1344] __attribute__((aligned(4)))=
 {
 	0x0001,0x0000,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,
 	0x0008,0x0009,0x000A,0x000B,0x000C,0x000D,0x000E,0x000F,
@@ -265,4 +265,4 @@ const unsigned short VBJaEngineDefaultSplashScreenBGLightMap[1344] __attribute__
 	0x2012,0x0011,0x0011,0x0046,0x0047,0x0011,0x0011,0x0011,
 };
 
-//}}BLOCK(VBJaEngineDefaultSplashScreenBGLight)
+//}}BLOCK(VBJaESplashScreenBGLight)

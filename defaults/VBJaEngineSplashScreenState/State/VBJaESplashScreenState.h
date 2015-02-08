@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_STATE_H_
+#ifndef VBJAENGINE_DEFAULT_SPLASH_SCREEN_STATE_H_
+#define VBJAENGINE_DEFAULT_SPLASH_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,22 +34,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define VBJaEngineDefaultAdjustmentScreenState_METHODS									\
+#define VBJaESplashScreenState_METHODS												\
 	GameState_METHODS;											    					\
 
 // declare the virtual methods which are redefined
-#define VBJaEngineDefaultAdjustmentScreenState_SET_VTABLE(ClassName)					\
+#define VBJaESplashScreenState_SET_VTABLE(ClassName)								\
 	GameState_SET_VTABLE(ClassName)								    					\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAdjustmentScreenState, enter);			\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAdjustmentScreenState, exit);				\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAdjustmentScreenState, execute);			\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAdjustmentScreenState, resume);			\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAdjustmentScreenState, handleMessage);	\
+	__VIRTUAL_SET(ClassName, VBJaESplashScreenState, enter);						\
+	__VIRTUAL_SET(ClassName, VBJaESplashScreenState, exit);						\
+	__VIRTUAL_SET(ClassName, VBJaESplashScreenState, execute);						\
+	__VIRTUAL_SET(ClassName, VBJaESplashScreenState, resume);						\
+	__VIRTUAL_SET(ClassName, VBJaESplashScreenState, handleMessage);				\
 
 
-__CLASS(VBJaEngineDefaultAdjustmentScreenState);
+__CLASS(VBJaESplashScreenState);
 
-#define VBJaEngineDefaultAdjustmentScreenState_ATTRIBUTES								\
+#define VBJaESplashScreenState_ATTRIBUTES								   			\
 														            					\
 	/* inherits */																		\
 	GameState_ATTRIBUTES																\
@@ -65,8 +65,9 @@ __CLASS(VBJaEngineDefaultAdjustmentScreenState);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-VBJaEngineDefaultAdjustmentScreenState VBJaEngineDefaultAdjustmentScreenState_getInstance(void);
+VBJaESplashScreenState VBJaESplashScreenState_getInstance(void);
 
-void VBJaEngineDefaultAdjustmentScreenState_setNextstate(VBJaEngineDefaultAdjustmentScreenState this, GameState nextState);
+void VBJaESplashScreenState_setNextstate(VBJaESplashScreenState this, GameState nextState);
+
 
 #endif

@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_STATE_H_
+#ifndef VBJAENGINE_DEFAULT_LANGUAGE_SELECTION_SCREEN_STATE_H_
+#define VBJAENGINE_DEFAULT_LANGUAGE_SELECTION_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
+#include <OptionsSelector.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,22 +35,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define VBJaEngineDefaultPrecautionScreenState_METHODS													\
+#define VBJaELanguageSelectionScreenState_METHODS											\
 	GameState_METHODS;											    					\
 
 // declare the virtual methods which are redefined
-#define VBJaEngineDefaultPrecautionScreenState_SET_VTABLE(ClassName)										\
+#define VBJaELanguageSelectionScreenState_SET_VTABLE(ClassName)								\
 	GameState_SET_VTABLE(ClassName)								    					\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultPrecautionScreenState, enter);								\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultPrecautionScreenState, exit);								\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultPrecautionScreenState, execute);							\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultPrecautionScreenState, resume);							\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultPrecautionScreenState, handleMessage);						\
+	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, enter);						\
+	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, exit);						\
+	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, execute);					\
+	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, resume);						\
+	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, handleMessage);				\
 
 
-__CLASS(VBJaEngineDefaultPrecautionScreenState);
+__CLASS(VBJaELanguageSelectionScreenState);
 
-#define VBJaEngineDefaultPrecautionScreenState_ATTRIBUTES								   				\
+#define VBJaELanguageSelectionScreenState_ATTRIBUTES								   			\
 														            					\
 	/* inherits */																		\
 	GameState_ATTRIBUTES																\
@@ -57,20 +58,22 @@ __CLASS(VBJaEngineDefaultPrecautionScreenState);
 	/* state to enter after this one */													\
 	GameState nextState;																\
 														            					\
-	char* precautionString;																\
+	char* titleString;																	\
 														            					\
 	/* definition of screen's stage */													\
 	StageDefinition* stageDefinition;													\
+																						\
+	OptionsSelector languageSelector;													\
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-VBJaEngineDefaultPrecautionScreenState VBJaEngineDefaultPrecautionScreenState_getInstance(void);
+VBJaELanguageSelectionScreenState VBJaELanguageSelectionScreenState_getInstance(void);
 
-void VBJaEngineDefaultPrecautionScreenState_setNextstate(VBJaEngineDefaultPrecautionScreenState this, GameState nextState);
-void VBJaEngineDefaultPrecautionScreenState_setPrecautionString(VBJaEngineDefaultPrecautionScreenState this, char* string);
+void VBJaELanguageSelectionScreenState_setNextstate(VBJaELanguageSelectionScreenState this, GameState nextState);
+void VBJaELanguageSelectionScreenState_setTitleString(VBJaELanguageSelectionScreenState this, char* string);
 
 
 #endif

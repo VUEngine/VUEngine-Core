@@ -1,20 +1,20 @@
 
-//{{BLOCK(VBJaEngineDefaultPrecautionScreenJapanese)
+//{{BLOCK(VBJaEPrecautionScreenJapanese)
 
 //======================================================================
 //
-//	VBJaEngineDefaultPrecautionScreenJapanese, 200x40@2, 
+//	VBJaEPrecautionScreenJapanese, 200x40@2, 
 //	+ 36 tiles (t|f reduced) not compressed
 //	+ regular map (flat), not compressed, 25x5 
 //	Total size: 576 + 252 = 828
 //
-//	Time-stamp: 2015-01-25, 23:19:50
+//	Time-stamp: 2015-02-08, 20:32:21
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.6
 //	( http://www.coranac.com/projects/#grit )
 //
 //======================================================================
 
-const unsigned int VBJaEngineDefaultPrecautionScreenJapaneseTiles[144] __attribute__((aligned(4)))=
+const unsigned int VBJaEPrecautionScreenJapaneseTiles[144] __attribute__((aligned(4)))=
 {
 	0x00000000,0x00000000,0x00000000,0x00000000,0x330C0000,0x000C330C,0x000C000C,0x03F00C0C,
 	0x00000000,0x03CC00C0,0x0CCC0CFC,0x003003C0,0x03F00000,0x0FC00000,0x3000303C,0x03F00C00,
@@ -38,7 +38,7 @@ const unsigned int VBJaEngineDefaultPrecautionScreenJapaneseTiles[144] __attribu
 	0xCC30CC00,0x00300FFF,0x000C3F30,0x3F0300CC,0x0CC00000,0x030003FC,0x00000C00,0x0FF0000C,
 };
 
-const unsigned short VBJaEngineDefaultPrecautionScreenJapaneseMap[126] __attribute__((aligned(4)))=
+const unsigned short VBJaEPrecautionScreenJapaneseMap[126] __attribute__((aligned(4)))=
 {
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,
 	0x0000,0x0000,0x0001,0x0002,0x0003,0x0004,0x0003,0x0005,
@@ -59,4 +59,4 @@ const unsigned short VBJaEngineDefaultPrecautionScreenJapaneseMap[126] __attribu
 	0x0020,0x0021,0x0022,0x0023,0x0011,0x0000,
 };
 
-//}}BLOCK(VBJaEngineDefaultPrecautionScreenJapanese)
+//}}BLOCK(VBJaEPrecautionScreenJapanese)

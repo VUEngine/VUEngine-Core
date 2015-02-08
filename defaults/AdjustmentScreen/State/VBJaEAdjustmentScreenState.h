@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
+#ifndef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_STATE_H_
+#define VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,22 +34,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define VBJaEngineDefaultAutomaticPauseSelectionScreenState_METHODS										\
+#define VBJaEAdjustmentScreenState_METHODS									\
 	GameState_METHODS;											    					\
 
 // declare the virtual methods which are redefined
-#define VBJaEngineDefaultAutomaticPauseSelectionScreenState_SET_VTABLE(ClassName)						\
+#define VBJaEAdjustmentScreenState_SET_VTABLE(ClassName)					\
 	GameState_SET_VTABLE(ClassName)								    					\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseSelectionScreenState, enter);				\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseSelectionScreenState, exit);					\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseSelectionScreenState, execute);				\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseSelectionScreenState, resume);				\
-	__VIRTUAL_SET(ClassName, VBJaEngineDefaultAutomaticPauseSelectionScreenState, handleMessage);		\
+	__VIRTUAL_SET(ClassName, VBJaEAdjustmentScreenState, enter);			\
+	__VIRTUAL_SET(ClassName, VBJaEAdjustmentScreenState, exit);				\
+	__VIRTUAL_SET(ClassName, VBJaEAdjustmentScreenState, execute);			\
+	__VIRTUAL_SET(ClassName, VBJaEAdjustmentScreenState, resume);			\
+	__VIRTUAL_SET(ClassName, VBJaEAdjustmentScreenState, handleMessage);	\
 
 
-__CLASS(VBJaEngineDefaultAutomaticPauseSelectionScreenState);
+__CLASS(VBJaEAdjustmentScreenState);
 
-#define VBJaEngineDefaultAutomaticPauseSelectionScreenState_ATTRIBUTES							   		\
+#define VBJaEAdjustmentScreenState_ATTRIBUTES								\
 														            					\
 	/* inherits */																		\
 	GameState_ATTRIBUTES																\
@@ -59,28 +59,14 @@ __CLASS(VBJaEngineDefaultAutomaticPauseSelectionScreenState);
 														            					\
 	/* definition of screen's stage */													\
 	StageDefinition* stageDefinition;													\
-																						\
-	bool selection;																		\
-																						\
-	char* titleString;																	\
-																						\
-	char* explanationString;															\
-																						\
-	char* onString;																		\
-																						\
-	char* offString;																	\
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-VBJaEngineDefaultAutomaticPauseSelectionScreenState VBJaEngineDefaultAutomaticPauseSelectionScreenState_getInstance(void);
+VBJaEAdjustmentScreenState VBJaEAdjustmentScreenState_getInstance(void);
 
-void VBJaEngineDefaultAutomaticPauseSelectionScreenState_setNextstate(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, GameState nextState);
-void VBJaEngineDefaultAutomaticPauseSelectionScreenState_setExplanationString(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, char* string);
-void VBJaEngineDefaultAutomaticPauseSelectionScreenState_setTitleString(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, char* string);
-void VBJaEngineDefaultAutomaticPauseSelectionScreenState_setOnString(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, char* string);
-void VBJaEngineDefaultAutomaticPauseSelectionScreenState_setOffString(VBJaEngineDefaultAutomaticPauseSelectionScreenState this, char* string);
+void VBJaEAdjustmentScreenState_setNextstate(VBJaEAdjustmentScreenState this, GameState nextState);
 
 #endif
