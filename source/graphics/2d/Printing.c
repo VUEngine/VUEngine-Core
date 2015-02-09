@@ -223,6 +223,21 @@ void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16
 	}
 }
 
+void Printing_intVar(Printing this, int value, int x, int y)
+{
+	va_list args;
+    va_start(args, y);
+    const char* font = (const char*)args;
+    Printing_int(this, value, x, y, font);
+    va_end(args);
+    
+    // usage
+	// Printing_intVar(Printing_getInstance(), Clock_getTime(this->clock), 20, 20);
+	// Printing_intVar(Printing_getInstance(), Clock_getTime(this->clock), 20, 20, NULL);
+	// Printing_intVar(Printing_getInstance(), Clock_getTime(this->clock), 20, 20, myCustomFontPointer);
+}
+
+
 void Printing_int(Printing this, int value, int x, int y, const char* font)
 {
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
