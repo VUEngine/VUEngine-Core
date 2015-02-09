@@ -45,7 +45,7 @@
 	/* 4 segments, each one with 512 bits  of mask */							\
 	u32 segment[__CHAR_SEGMENTS][__CHAR_SEGMENT_SIZE];							\
 																				\
-	/* charsets defined */													\
+	/* charsets defined */														\
 	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];					\
 																				\
 	/* set whether a definition can be dropped or not */						\

@@ -137,7 +137,9 @@
 // 										CHAR MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
-#define __CHAR_SEGMENTS					4
+// the fourth segment is used for text allocation
+// chaging this value to 4 may cause text corruption
+#define __CHAR_SEGMENTS					3
 
 // number of charsets per char segment
 #define __CHAR_GRP_PER_SEG				32
