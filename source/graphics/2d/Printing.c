@@ -36,8 +36,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // horizontal tab size in chars
-#define TAB_SIZE 4
-
+#define TAB_SIZE 					4
+#define MAGIC_STACK_CLEAR_NUMBER 	0xFFFFFFE
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -158,13 +158,18 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
     for (j = 0; j < this->fontsDefinitionCount; j++)
     {
         fontStart -= (this->fonts[j]->characterCount * this->fonts[j]->fontSize.x * this->fonts[j]->fontSize.y);
-        if ((font == NULL) || (0 == strcmp(this->fonts[j]->name, font)))
+        if ((font == NULL) || ((u32)font == MAGIC_STACK_CLEAR_NUMBER) || (0 == strcmp(this->fonts[j]->name, font)))
         {
-        	this->previousFontFound = true;
+        	this->previousFontFound = (u32)font != MAGIC_STACK_CLEAR_NUMBER;
             break;
         }
     }
     
+    if(!this->previousFontFound && 0 < this->fontsDefinitionCount)
+    {
+        fontStart = 2048 - (this->fonts[0]->characterCount * this->fonts[0]->fontSize.x * this->fonts[0]->fontSize.y);
+        j = 0;
+    }
     // print text
 	while (string[i])
 	{
@@ -248,7 +253,7 @@ void Printing_int(Printing this, int value, int x, int y, ...)
 	
 	if(this->previousFontFound)
 	{
-		*fontArgument = 0xFFFFFFF;
+		*fontArgument = (char*)MAGIC_STACK_CLEAR_NUMBER;
 	}
 
     va_end(args);
@@ -277,7 +282,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, ...)
 
 	if(this->previousFontFound)
 	{
-		*fontArgument = 0xFFFFFFF;
+		*fontArgument = (char*)MAGIC_STACK_CLEAR_NUMBER;
 	}
 
 	va_end(args);
@@ -337,7 +342,7 @@ void Printing_float(Printing this, float value, int x, int y, ...)
 
 	if(this->previousFontFound)
 	{
-		*fontArgument = 0xFFFFFFF;
+		*fontArgument = (char*)MAGIC_STACK_CLEAR_NUMBER;
 	}
 
 	va_end(args);
@@ -356,7 +361,7 @@ void Printing_text(Printing this, char* string, int x, int y, ...)
 
 	if(this->previousFontFound)
 	{
-		*fontArgument = 0xFFFFFFF;
+		*fontArgument = (char*)MAGIC_STACK_CLEAR_NUMBER;
 	}
 	
 	va_end(args);
