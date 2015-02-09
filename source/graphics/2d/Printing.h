@@ -94,10 +94,10 @@ void Printing_render(Printing this, int textLayer);
 void Printing_registerFont(Printing this, const FontDefinition* fontDefinition);
 void Printing_loadFonts(Printing this);
 void Printing_clear(Printing this);
-void Printing_int(Printing this, int value, int x, int y, const char* font);
-void Printing_hex(Printing this, WORD value, int x, int y, const char* font);
-void Printing_float(Printing this, float value, int x, int y, const char* font);
-void Printing_text(Printing this, char *string, int x, int y, const char* font);
+void Printing_int(Printing this, int value, int x, int y, ...);
+void Printing_hex(Printing this, WORD value, int x, int y, ...);
+void Printing_float(Printing this, float value, int x, int y, ...);
+void Printing_text(Printing this, char *string, int x, int y, ...);
 
 
 #endif
