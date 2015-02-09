@@ -63,7 +63,7 @@ __CLASS_DEFINITION(Printing, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void Printing_constructor(Printing this);
-void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, ...);
+static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -143,17 +143,12 @@ void Printing_clear(Printing this)
 }
 
 // direct printing out method
-void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, ...)
+static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
 	u16 i = 0, pos = 0, col = x, fontStart = 2048;
 	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
-    const char* font = NULL;
-/*
-    va_list args;
-    va_start(args, bplt);
-    font = va_arg(args, char*);
-*/
-    // iterate over registered fonts to find memory offset of font to use
+	
+	// iterate over registered fonts to find memory offset of font to use
     for (j = 0; j < this->fontsDefinitionCount; j++)
     {
         fontStart -= (this->fonts[j]->characterCount * this->fonts[j]->fontSize.x * this->fonts[j]->fontSize.y);
@@ -162,7 +157,6 @@ void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16
             break;
         }
     }
-    va_end(args);
 
     // print text
 	while (string[i])
@@ -227,7 +221,7 @@ void Printing_int(Printing this, int value, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
-    const char* font = (const char*)args;
+    const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 	
@@ -251,7 +245,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
-    const char* font = (const char*)args;
+    const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 
@@ -274,7 +268,7 @@ void Printing_float(Printing this, float value, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
-    const char* font = (const char*)args;
+    const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 
@@ -328,7 +322,7 @@ void Printing_text(Printing this, char *string, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
-    const char* font = (const char*)args;
+    const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 
