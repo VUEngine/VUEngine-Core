@@ -53,6 +53,9 @@
 																				\
 	/* total number of registered fonts */										\
 	u8 fontsDefinitionCount;													\
+																				\
+	/* total number of registered fonts */										\
+	bool previousFontFound;														\
 
 // define the Printing
 __CLASS_DEFINITION(Printing, Object);
@@ -76,6 +79,8 @@ __SINGLETON(Printing);
 static void Printing_constructor(Printing this)
 {
 	__CONSTRUCT_BASE();
+	
+	this->previousFontFound = false;
 }
 
 // class's destructor
@@ -147,6 +152,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 {
 	u16 i = 0, pos = 0, col = x, fontStart = 2048;
 	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
+	this->previousFontFound = false;
 	
 	// iterate over registered fonts to find memory offset of font to use
     for (j = 0; j < this->fontsDefinitionCount; j++)
@@ -154,9 +160,12 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
         fontStart -= (this->fonts[j]->characterCount * this->fonts[j]->fontSize.x * this->fonts[j]->fontSize.y);
         if ((font == NULL) || (0 == strcmp(this->fonts[j]->name, font)))
         {
+        	this->previousFontFound = true;
             break;
         }
     }
+    
+    j = this->previousFontFound? j: 0;
 
     // print text
 	while (string[i])
@@ -221,6 +230,7 @@ void Printing_int(Printing this, int value, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
+    char** fontArgument = (char**)args;
     const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
@@ -238,6 +248,11 @@ void Printing_int(Printing this, int value, int x, int y, ...)
 		Printing_out(this, printingBgmap, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
 	}
 	
+	if(this->previousFontFound)
+	{
+		*fontArgument = NULL;
+	}
+
     va_end(args);
 }
 
@@ -245,6 +260,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
+    char** fontArgument = (char**)args;
     const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
@@ -261,6 +277,11 @@ void Printing_hex(Printing this, WORD value, int x, int y, ...)
 		Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
 	}
 
+	if(this->previousFontFound)
+	{
+		*fontArgument = NULL;
+	}
+
 	va_end(args);
 }
 
@@ -268,6 +289,7 @@ void Printing_float(Printing this, float value, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
+    char** fontArgument = (char**)args;
     const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
@@ -315,18 +337,29 @@ void Printing_float(Printing this, float value, int x, int y, ...)
 
 	Printing_out(this, printingBgmap, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
 
+	if(this->previousFontFound)
+	{
+		*fontArgument = NULL;
+	}
+
 	va_end(args);
 }
 
-void Printing_text(Printing this, char *string, int x, int y, ...)
+void Printing_text(Printing this, char* string, int x, int y, ...)
 {
 	va_list args;
     va_start(args, y);
+    char** fontArgument = (char**)args;
     const char* font = va_arg(args, char*);
 
 	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 
 	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
+
+	if(this->previousFontFound)
+	{
+		*fontArgument = NULL;
+	}
 	
 	va_end(args);
 }
