@@ -165,8 +165,6 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
         }
     }
     
-    j = this->previousFontFound? j: 0;
-
     // print text
 	while (string[i])
 	{
@@ -250,7 +248,7 @@ void Printing_int(Printing this, int value, int x, int y, ...)
 	
 	if(this->previousFontFound)
 	{
-		*fontArgument = NULL;
+		*fontArgument = 0xFFFFFFF;
 	}
 
     va_end(args);
@@ -279,7 +277,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, ...)
 
 	if(this->previousFontFound)
 	{
-		*fontArgument = NULL;
+		*fontArgument = 0xFFFFFFF;
 	}
 
 	va_end(args);
@@ -339,7 +337,7 @@ void Printing_float(Printing this, float value, int x, int y, ...)
 
 	if(this->previousFontFound)
 	{
-		*fontArgument = NULL;
+		*fontArgument = 0xFFFFFFF;
 	}
 
 	va_end(args);
@@ -358,7 +356,7 @@ void Printing_text(Printing this, char* string, int x, int y, ...)
 
 	if(this->previousFontFound)
 	{
-		*fontArgument = NULL;
+		*fontArgument = 0xFFFFFFF;
 	}
 	
 	va_end(args);
