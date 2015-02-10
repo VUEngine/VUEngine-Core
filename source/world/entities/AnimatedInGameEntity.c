@@ -208,7 +208,8 @@ Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this)
 	Scale scale = Sprite_getScale(sprite);
 
 	// change direction
-	scale.x = fabsf(scale.x) * this->direction.x;
+//	scale.x = fabsf(scale.x) * this->direction.x;
+	scale.x = abs((int)scale.x) * this->direction.x;
 
 	return scale;
 }
