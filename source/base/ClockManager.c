@@ -149,7 +149,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
     		bool printFrameRate = !Game_isInSpecialMode(Game_getInstance());
     		int y = 0;
 #ifdef __DEBUG
-    		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, 0);
+    		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, 0, NULL);
     		y = 1;
 #endif 	    		
 	    	if (printFrameRate)
