@@ -39,7 +39,7 @@ endif
 
 ifeq ($(TYPE), release)
 LDPARAM =  
-CCPARAM = -nodefaultlibs -mv810 -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS = NDEBUG
 endif
 
