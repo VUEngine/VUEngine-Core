@@ -1,20 +1,20 @@
 
-//{{BLOCK(VBJaEAdjustmentScreenLogo)
+//{{BLOCK(AdjustmentScreenLogo)
 
 //======================================================================
 //
-//	VBJaEAdjustmentScreenLogo, 216x40@2, 
+//	AdjustmentScreenLogo, 216x40@2, 
 //	+ 63 tiles (t|f reduced) not compressed
 //	+ regular map (flat), not compressed, 27x5 
 //	Total size: 1008 + 272 = 1280
 //
-//	Time-stamp: 2015-02-09, 19:50:07
+//	Time-stamp: 2015-01-25, 18:39:23
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.6
 //	( http://www.coranac.com/projects/#grit )
 //
 //======================================================================
 
-const unsigned int VBJaEAdjustmentScreenLogoTiles[252] __attribute__((aligned(4)))=
+const unsigned int AdjustmentScreenLogoTiles[252] __attribute__((aligned(4)))=
 {
 	0x00000000,0x00000000,0x00000000,0x00000000,0x5557FFFF,0x55575557,0x55575557,0x55575557,
 	0x5555FFFF,0x55555555,0x55555555,0x55555555,0x55575557,0x55575557,0x55575557,0x55575557,
@@ -53,7 +53,7 @@ const unsigned int VBJaEAdjustmentScreenLogoTiles[252] __attribute__((aligned(4)
 	0x55555555,0x55555555,0x55555555,0x0000FFFF,
 };
 
-const unsigned short VBJaEAdjustmentScreenLogoMap[136] __attribute__((aligned(4)))=
+const unsigned short AdjustmentScreenLogoMap[136] __attribute__((aligned(4)))=
 {
 	0x0001,0x0002,0x0002,0x0002,0x0002,0x0002,0x0002,0x0002,
 	0x0002,0x0002,0x0002,0x0002,0x0002,0x0002,0x0002,0x0002,
@@ -76,4 +76,4 @@ const unsigned short VBJaEAdjustmentScreenLogoMap[136] __attribute__((aligned(4)
 	0x003E,0x003E,0x003E,0x003E,0x003E,0x003E,0x203D,0x0000,
 };
 
-//}}BLOCK(VBJaEAdjustmentScreenLogo)
+//}}BLOCK(AdjustmentScreenLogo)

@@ -208,7 +208,7 @@ static void SoundManager_constructor(SoundManager this)
 			this->fxPosition[i].parallax = -10000;
 		}
 
-		//determine the step for each sound level according to the maximun view distance
+		//determine the step for each sound level according to the maximum view distance
 		this->zFactor = __MAX_VIEW_DISTANCE / 15;
 
 		//divide here to multiply in runtime
@@ -345,7 +345,7 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 	int maxOutputLevel = 15;
 	int output = 0x00;
 
-	/* The maximun sound level for each side is 0xF
+	/* The maximum sound level for each side is 0xF
 	 * In the center position the output level is the one
 	 * defined in the sound's definition */
 	if (-10000 != this->fxPosition[fxS].parallax )

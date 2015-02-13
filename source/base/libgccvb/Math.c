@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // retrieve the square root
-// this code was taken from the Doom's engine
+// this code was taken from the Doom engine
 float Math_squareRoot(float number)
 {
     long i;

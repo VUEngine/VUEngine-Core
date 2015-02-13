@@ -211,8 +211,8 @@ static void Game_constructor(Game this)
 	// set optical value
 	this->optical.distanceEyeScreen = 0;
 
-	// maximun distance from the screen's position to the horizon
-	this->optical.maximunViewDistance = 0;
+	// maximum distance from the screen's position to the horizon
+	this->optical.maximumViewDistance = 0;
 
 	// distance from left to right eye (deep sensation)
 	this->optical.baseDistance = 0;
@@ -488,12 +488,12 @@ static void Game_setOpticalGlobals(Game this)
 {
 	ASSERT(this, "Game::setOpticalGlobals: null this");
 
-	// accounts for the phisical (real) space between the eyes and
+	// accounts for the physical (real) space between the eyes and
 	// the VB's screens, whose virtual representation is the Screen instance
 	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
 
-	// maximun distance from the _SC to the infinite
-	this->optical.maximunViewDistance = ITOFIX19_13(__MAX_VIEW_DISTANCE);
+	// maximum distance from the _SC to the infinite
+	this->optical.maximumViewDistance = ITOFIX19_13(__MAX_VIEW_DISTANCE);
 
 	// distance from left to right eye (deep sensation)
 	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);

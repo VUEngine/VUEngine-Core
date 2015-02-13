@@ -239,7 +239,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 				WRLD_AFFINE == positionedEntity->entityDefinition->spritesDefinitions[0]->bgmapMode)
 		{
 			fix7_9 scale = FIX19_13TOFIX7_9(ITOFIX19_13(1) -
-				       FIX19_13_DIV(FTOFIX19_13(positionedEntity->position.z), _optical->maximunViewDistance));
+				       FIX19_13_DIV(FTOFIX19_13(positionedEntity->position.z), _optical->maximumViewDistance));
 		
 			halfWidth = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfWidth), FIX7_9TOFIX19_13(scale)));
 			halfHeight = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfHeight), FIX7_9TOFIX19_13(scale)));
@@ -755,7 +755,7 @@ bool Entity_isVisible(Entity this, int pad)
 	}
 
 	lowLimit = 0;
-	highLimit = _optical->maximunViewDistance;
+	highLimit = _optical->maximumViewDistance;
 
 	// check y visibility
 	if (z + this->size.z < lowLimit || z > highLimit)

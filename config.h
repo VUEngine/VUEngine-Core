@@ -39,9 +39,9 @@
 // distance from player's eyes to the virtual screen
 #define __DISTANCE_EYE_SCREEN					384
 
-// maximun view distance (deep)
+// maximum view distance (deep)
 #define __MAX_VIEW_DISTANCE						512
-// always use a power of 2 as the maximun view distance, and update
+// always use a power of 2 as the maximum view distance, and update
 // the number of bits to make projection faster
 #define __MAX_VIEW_DISTANCE_POW					9
 
@@ -72,8 +72,7 @@
 #define __TIMER_RESOLUTION				10
 
 // target frames per second
-// must be a muliple of 50 to being able to use a timer resolution
-// greater than 1
+// must be a muliple of 50 to being able to use a timer resolution greater than 1
 // if finer control is needed, change timer resolution to 1
 #define __TARGET_FPS 					50
 
@@ -85,8 +84,7 @@
 
 #define __MILLISECONDS_IN_SECOND			1000
 
-// set animation delays as if they are 60 FPS,
-// and multiply by this factor
+// set animation delays as if they are 60 FPS, and multiply by this factor
 #define __FPS_ANIM_FACTOR 	(__TARGET_FPS / (float)__OPTIMUM_FPS)
 
 // seconds that must elapse to call rest state... in seconds (15 minutes)

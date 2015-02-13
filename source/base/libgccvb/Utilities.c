@@ -31,8 +31,7 @@
 // 											DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-static const char numbers[17]="0123456789ABCDEF";
-
+static const char numbers[17] = "0123456789ABCDEF";
 
 int Utilities_intLength(int value)
 {
@@ -49,28 +48,26 @@ int Utilities_intLength(int value)
 	return length;
 }
 
-
 WORD Utilities_rotateBits(WORD invalue, int places, int direction)
 {
 	WORD outvalue;
 
-    /*  Rotating left or right?   */
+    // Rotating left or right?
     if (__ROT_LEFT == direction)
 	{
-        /*  First a normal shift  */
+        // First a normal shift
         outvalue = invalue << (places & ((sizeof(int) << 3) - 1));
         outvalue |= invalue >> ((sizeof(int) << 3) - (places & ((sizeof(int) << 3) - 1)));
     }
     else
 	{
-        /*  First a normal shift  */
+        // First a normal shift
         outvalue = invalue >> (places & ((sizeof(int) << 3) - 1));
-        /*  Then place the part that's shifted off the screen at the end  */
+        // Then place the part that's shifted off the screen at the end
         outvalue |= invalue << ((sizeof(int) << 3) - (places & ((sizeof(int) << 3) - 1)));
     }
     return outvalue;
 }
-
 
 char* Utilities_itoa(u32 num, u8 base, u8 digits)
 {
@@ -103,41 +100,59 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 	return rev+i;
 }
 
+/*
+ * When run at startup gets a random number based on the changing CTA
+ */
 long Utilities_randomSeed()
 {
-	/* When run at startup gets a random number based on the changing CTA */
 	long random = 1;
 	int	rand, prevnum = 0,	count = 1;
 
-	//while (count < 30000)	//repeat through many times to make more random and to allow the CTA value to change multiple times
-	while (count < 30)	//repeat through many times to make more random and to allow the CTA value to change multiple times
+	// repeat through many times to make more random and to allow the CTA value to change multiple times
+	while (count < 30)
 	{
-		//rand = VIP_REGS[CTA];						//CTA = (*(BYTE*)(0x0005F830));
+		// rand = VIP_REGS[CTA]; // CTA = (*(BYTE*)(0x0005F830));
 		rand = (HW_REGS[TLR] | (HW_REGS[THR] << 8));
-		if (random == 0) random = 1;				//prevent % by zero
 
-		random += ((rand*count) + (count%random) + (prevnum / rand));	//just randomly doing stuff to the number
-
-		if (rand == prevnum)						//if the CTA value doesnt change then count up
+		// prevent division by zero
+		if (random == 0)
 		{
+		    random = 1;
+        }
+
+		// just randomly doing stuff to the number
+		random += ((rand*count) + (count%random) + (prevnum / rand));
+
+		if (rand == prevnum)
+		{
+			// if the CTA value doesnt change then count up
 			count++;
 		}
 		else
 		{
-			count = 0;								//if the number does change then restart the counter
+			// if the number does change then restart the counter
+			count = 0;
 		}
-		prevnum = rand;								//keep track of the last number
+
+		// keep track of the last number
+		prevnum = rand;
 	}
-	return random;									//returns the random seed
+
+	// returns the random seed
+	return random;
 }
 
+/*
+ * Returns a random number in the requested range from the random seed
+ */
 int Utilities_random(long seed, int randnums)
 {
-/* Returns a random number in the requested range from the random seed */
-	return (seed%randnums);							//returns the random number
+	return (seed % randnums);
 }
 
-// return true if 2 numbers have equal sign
+/*
+ * Check if 2 numbers have an equal sign
+ */
 int Utilities_equalSign(int a, int b)
 {
 	return ((a & (1 << sizeof(int))) ==  (b & (1 << sizeof(int))));
@@ -151,7 +166,6 @@ int Utilities_getDigitCount(int value)
 	{
 		value /= 10;
 		size++;
-
 	}
 	while (value);
 

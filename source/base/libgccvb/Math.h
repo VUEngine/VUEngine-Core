@@ -11,51 +11,51 @@ extern int abs(int);
 extern float fabsf(float);
 
 // fixed point macros
-#define fix7_9				s16
-#define fix13_3				s16
-#define fix13_3				s16
-#define fix19_13			s32
-#define fix15_17			s32
+#define fix7_9					s16
+#define fix13_3					s16
+#define fix13_3					s16
+#define fix19_13				s32
+#define fix15_17				s32
 
 // round functions
 #define FIX19_13_ROUNDTOI(n)	((FIX19_13TOI(n)) + (((n) & 0x000001FF) >> 8))
-#define F_ROUND(n)			(int)((n) + 0.5f)
-#define F_FLOOR(n)			(int) ((n)-0.5f)
-#define F_CEIL(n)			(int)((n)+0.5f)
+#define F_ROUND(n)				(int)((n) + 0.5f)
+#define F_FLOOR(n)				(int)((n) - 0.5f)
+#define F_CEIL(n)				(int)((n) + 0.5f)
 
 // convert a float to fixed point and back
-#define FTOFIX7_9(n)		(fix7_9) ((n) * 512.0f+0.5f)
-#define FTOFIX13_3(n)		(fix13_3)((n) *   8.0f+0.5f)
-#define FTOFIX19_13(n)		(fix19_13)((n) * 8192.0f+0.5f)
-#define FTOFIX15_17(n)		(fix15_17)((n) * 131072.0f+0.5f)
+#define FTOFIX7_9(n)			(fix7_9)((n) * 512.0f + 0.5f)
+#define FTOFIX13_3(n)			(fix13_3)((n) * 8.0f + 0.5f)
+#define FTOFIX19_13(n)			(fix19_13)((n) * 8192.0f + 0.5f)
+#define FTOFIX15_17(n)			(fix15_17)((n) * 131072.0f + 0.5f)
 
-#define FIX7_9TOF(n)		(float)  ((n) / 512.0f)
-#define FIX13_3TOF(n)		(float)  ((n) /   8.0f)
-#define FIX19_13TOF(n)		(float)  ((n) / 8192.0f)
-#define FIX15_17TOF(n)		(float)  ((n) / 131072.0f)
+#define FIX7_9TOF(n)			(float)((n) / 512.0f)
+#define FIX13_3TOF(n)			(float)((n) / 8.0f)
+#define FIX19_13TOF(n)			(float)((n) / 8192.0f)
+#define FIX15_17TOF(n)			(float)((n) / 131072.0f)
 
 // convert an int to fixed point and back
-#define ITOFIX7_9(n)		(fix7_9) ((n)<<9)
-#define ITOFIX13_3(n)		(fix13_3)((n)<<3)
-#define ITOFIX19_13(n)		(fix19_13)((n)<<13)
-#define ITOFIX15_17(n)		(fix15_17)((n)<<17)
+#define ITOFIX7_9(n)			(fix7_9) ((n)<<9)
+#define ITOFIX13_3(n)			(fix13_3)((n)<<3)
+#define ITOFIX19_13(n)			(fix19_13)((n)<<13)
+#define ITOFIX15_17(n)			(fix15_17)((n)<<17)
 
-#define FIX7_9TOI(n)		(s16)    ((n)>>9)
-#define FIX13_3TOI(n)		(s16)    ((n)>>3)
-#define FIX19_13TOI(n)		(s32)    ((n)>>13)
-#define FIX15_17TOI(n)		(s32)    ((n)>>17)
+#define FIX7_9TOI(n)			(s16)((n)>>9)
+#define FIX13_3TOI(n)			(s16)((n)>>3)
+#define FIX19_13TOI(n)			(s32)((n)>>13)
+#define FIX15_17TOI(n)			(s32)((n)>>17)
 
-#define FIX19_13TOFIX7_9(n)	(fix7_9)((n)>>4)
+#define FIX19_13TOFIX7_9(n)		(fix7_9)((n)>>4)
 #define FIX19_13TOFIX13_3(n)	(fix13_3)((n)>>10)
 #define FIX19_13TOFIX15_17(n)	(fix15_17)((n)<<4)
-#define FIX13_3TOFIX7_9(n)	(fix7_9) ((n)<<6)
-#define FIX7_9TOFIX13_3(n)	(fix13_3)((n)>>6)
-#define FIX7_9TOFIX19_13(n)	(fix19_13)((n)<<4)
+#define FIX13_3TOFIX7_9(n)		(fix7_9) ((n)<<6)
+#define FIX7_9TOFIX13_3(n)		(fix13_3)((n)>>6)
+#define FIX7_9TOFIX19_13(n)		(fix19_13)((n)<<4)
 #define FIX15_17TOFIX19_13(n)	(fix15_17)((n)>>4)
 
 // return fractional part of fixed
-#define FIX7_9_FRAC(n)		((n)&0x01FF)
-#define FIX13_3_FRAC(n)		((n)&0x0007)
+#define FIX7_9_FRAC(n)			((n)&0x01FF)
+#define FIX13_3_FRAC(n)			((n)&0x0007)
 //#define FIX23_9_FRAC(n)		((n)&0x01FF)
 
 // fixed multiplication, what a mess of brackets
@@ -136,7 +136,8 @@ static const s16 SINLUT[] =
 -195, -190, -184, -178, -172, -166, -160, -154, //61
 -148, -142, -136, -130, -124, -118, -112, -106, //62
  -99,  -93,  -87,  -81,  -75,  -68,  -62,  -56, //63
- -50,  -43,  -37,  -31,  -25,  -18,  -12,   -6 };//64
+ -50,  -43,  -37,  -31,  -25,  -18,  -12,   -6  //64
+};
 
 #define COS(x) SINLUT[((x)+128)&0x1FF]
 #define SIN(x) SINLUT[(x)&0x1FF]
