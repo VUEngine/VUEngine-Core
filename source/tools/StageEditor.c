@@ -119,8 +119,8 @@ static void StageEditor_selectNextEntity(StageEditor this);
 static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey);
 static void StageEditor_moveScreen(StageEditor this, u16 pressedKey);
 static void StageEditor_changeProjection(StageEditor this, u16 pressedKey);
-static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D translation);
-static void StageEditor_applyTraslationToScreen(StageEditor this, VBVec3D translation);
+static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D translation);
+static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation);
 static void StageEditor_printEntityPosition(StageEditor this);
 static void StageEditor_printScreenPosition(StageEditor this);
 static void StageEditor_printProjectionValues(StageEditor this);
@@ -458,7 +458,7 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTranslationToScreen(this, translation);
 	}
 	else if (pressedKey & K_LR)
 	{
@@ -469,7 +469,7 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTranslationToScreen(this, translation);
 	}
 	else if (pressedKey & K_LU)
 	{
@@ -480,7 +480,7 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTranslationToScreen(this, translation);
 	}
 	else if (pressedKey & K_LD)
 	{
@@ -491,7 +491,7 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTranslationToScreen(this, translation);
 	}
 	else if (pressedKey & K_RU)
 	{
@@ -502,7 +502,7 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
             ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
 		};
 
-		StageEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTranslationToScreen(this, translation);
 	}
 	else if (pressedKey & K_RD)
 	{
@@ -513,7 +513,7 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
             ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
 		};
 
-		StageEditor_applyTraslationToScreen(this, translation);
+		StageEditor_applyTranslationToScreen(this, translation);
 	}
 }
 
@@ -582,7 +582,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTranslationToEntity(this, translation);
 	}
 	else if (pressedKey & K_LR)
 	{
@@ -593,7 +593,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTranslationToEntity(this, translation);
 	}
 	else if (pressedKey & K_LU)
 	{
@@ -604,7 +604,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTranslationToEntity(this, translation);
 	}
 	else if (pressedKey & K_LD)
 	{
@@ -615,7 +615,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
             0
 		};
 
-		StageEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTranslationToEntity(this, translation);
 	}
 	else if (pressedKey & K_RR)
 	{
@@ -644,7 +644,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
             ITOFIX19_13(this->translationStepSize),
 		};
 
-		StageEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTranslationToEntity(this, translation);
 	}
 	else if (pressedKey & K_RD)
 	{
@@ -655,7 +655,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
             ITOFIX19_13(-this->translationStepSize),
 		};
 
-		StageEditor_applyTraslationToEntity(this, translation);
+		StageEditor_applyTranslationToEntity(this, translation);
 	}
 	else if (pressedKey & K_LT)
 	{
@@ -667,7 +667,7 @@ static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
 	}
 }
 
-static void StageEditor_applyTraslationToEntity(StageEditor this, VBVec3D translation)
+static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D translation)
 {
 	if (this->currentEntityNode && this->shape)
 	{
@@ -767,7 +767,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 }
 
 
-static void StageEditor_applyTraslationToScreen(StageEditor this, VBVec3D translation)
+static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation)
 {
 	Screen_move(Screen_getInstance(), translation, true);
 	GameState_transform(this->gameState);

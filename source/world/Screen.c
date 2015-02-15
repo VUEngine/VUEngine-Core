@@ -26,6 +26,7 @@
 #include <Screen.h>
 #include <Optics.h>
 #include <Game.h>
+#include <MessageDispatcher.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -46,6 +47,12 @@
 	/* actor to center the screen around */										\
 	InGameEntity focusInGameEntity;												\
 																				\
+	/* last offset set by shake function */										\
+	VBVec3D lastShakeOffset;													\
+																				\
+	/* time left in current shaking effect (in milliseconds) */					\
+	u16 shakeTimeLeft;															\
+																				\
 	/* world's screen's last displacement */									\
 	VBVec3D lastDisplacement;													\
 																				\
@@ -63,10 +70,10 @@ __CLASS_DEFINITION(Screen, Object);
 // global
 const VBVec3D* _screenDisplacement = NULL;
 
-//class's constructor
 static void Screen_constructor(Screen this);
-
+bool Screen_handleMessage(Screen this, Telegram telegram);
 static void Screen_capPosition(Screen this);
+void Screen_onScreenShake(Screen this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -144,7 +151,7 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 			// save last position
 			this->lastDisplacement = this->position;
 
-			//get focusInGameEntity's position
+			// get focusInGameEntity's position
 			this->position = Entity_getPosition(__UPCAST(Entity, this->focusInGameEntity));
 			this->position.x += this->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
 			this->position.y += this->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
@@ -337,23 +344,38 @@ void Screen_forceDisplacement(Screen this, int flag)
 	this->lastDisplacement.z = flag ? 1 : 0;
 }
 
+// state's on message
+bool Screen_handleMessage(Screen this, Telegram telegram)
+{
+	switch (Telegram_getMessage(telegram))
+	{
+		case kScreenShake:
+		{
+            Screen_onScreenShake(this);
+        }
+        break;
+	}
+
+	return false;
+}
+
 // create a fade delay
 void Screen_FXFadeIn(Screen this, int wait)
 {
 	ASSERT(this, "Screen::FXFadeIn: null this");
 
 	int i = 0;
-	//create the delay
+	// create the delay
 	for (; i <= 32; i += 2)
 	{
 		if (wait)
 		{
-			//create time delay
+			// create time delay
 			Clock_delay(Game_getClock(Game_getInstance()), wait);
 		}
 
-		//increase bright
-		SET_BRIGHT(i, i*2, i);
+		// increase brightness
+		SET_BRIGHT(i, i << 1, i);
 	}
 }
 
@@ -364,15 +386,77 @@ void Screen_FXFadeOut(Screen this, int wait)
 
 	int i = 32;
 
-	//create the delay
+	// create the delay
 	for (; i >= 0; i-=2)
 	{
 		if (wait)
 		{
-			//create time delay
+			// create time delay
 			Clock_delay(Game_getClock(Game_getInstance()), wait);
 		}
-		//decrease bright
-		SET_BRIGHT(i, i*2, i);
+		// decrease brightness
+		SET_BRIGHT(i, i << 1, i);
 	}
+}
+
+// start shaking the screen
+void Screen_FXShakeStart(Screen this, u16 duration)
+{
+	ASSERT(this, "Screen::FXShakeStart: null this");
+
+    this->shakeTimeLeft = duration;
+    MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kScreenShake, NULL);
+}
+
+// stop shaking the screen
+void Screen_FXShakeStop(Screen this)
+{
+	ASSERT(this, "Screen::FXShakeStop: null this");
+
+    this->shakeTimeLeft = 0;
+}
+
+// shake the screen
+void Screen_onScreenShake(Screen this)
+{
+	ASSERT(this, "Screen::onScreenShake: null this");
+
+    // stop if no shaking time left
+    if (this->shakeTimeLeft == 0)
+    {
+        return;
+    }
+
+    // substract time until next shake
+    if (this->shakeTimeLeft <= SHAKE_DELAY)
+    {
+        this->shakeTimeLeft = 0;
+    }
+    else
+    {
+        this->shakeTimeLeft -= SHAKE_DELAY;
+    }
+
+    // next shake offset
+    VBVec3D nextOffset = {0, 0, 0};
+
+    if (this->lastShakeOffset.x == 0 && this->lastShakeOffset.y == 0)
+    {
+        // new offset
+        // TODO: use random number(s) or pre-defined shaking pattern
+        nextOffset.x = this->lastShakeOffset.x = ITOFIX19_13(2);
+    }
+    else
+    {
+        // undo last offset
+        nextOffset.x = -this->lastShakeOffset.x;
+        this->lastShakeOffset.x = 0;
+    }
+
+    // apply screen offset
+    Screen_move(Screen_getInstance(), nextOffset, false);
+    GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(Game_getStateMachine(Game_getInstance()))));
+
+    // send message for next screen movement
+	MessageDispatcher_dispatchMessage(SHAKE_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kScreenShake, NULL);
 }

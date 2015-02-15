@@ -106,16 +106,16 @@ typedef struct MovementType
 
 } MovementType;
 
-// alignement flag vector
-typedef struct Alignement
+// alignment flag vector
+typedef struct Alignment
 {
 	u8 x;
 	u8 y;
 	u8 z;
 
-} Alignement;
+} Alignment;
 
-// alignement flag vector
+// alignment flag vector
 typedef struct GravitySensibleAxis
 {
 	u8 x;

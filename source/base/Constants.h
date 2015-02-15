@@ -44,12 +44,13 @@
 // messages
 enum MessagesTypes
 {
-	// general porpuse messages
+	// general purpose messages
 	kHighFPS = 0,
 	kAutoPause,
 
 	// graphic system's messages
 	kCharSetRewritten,
+	kScreenShake,
 
 	// physics messages
 	kNoCollision,

@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <Telegram.h>
 #include <InGameEntity.h>
 
 
@@ -34,9 +35,12 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-//state of movement
+// state of movement
 #define __ACTIVE 		(int)0x1
 #define __PASSIVE		(int)0x0
+
+// delay between screen movements during shaking effect (in ms)
+#define SHAKE_DELAY		100
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -44,12 +48,13 @@
 
 // declare the virtual methods
 #define Screen_METHODS															\
-		Object_METHODS															\
+    Object_METHODS																\
 
 
 // declare the virtual methods which are redefined
 #define Screen_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
+    Object_SET_VTABLE(ClassName)												\
+    __VIRTUAL_SET(ClassName, Screen, handleMessage);							\
 
 // declare a Screen, which holds the objects in a game world
 __CLASS(Screen);
@@ -63,6 +68,7 @@ Screen Screen_getInstance();
 
 void Screen_destructor(Screen this);
 void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving);
+bool Screen_handleMessage(Screen this, Telegram telegram);
 void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity);
 InGameEntity Screen_getFocusInGameEntity(Screen this);
 void Screen_focusEntityDeleted(Screen this, InGameEntity actor);
@@ -76,5 +82,8 @@ void Screen_setStageSize(Screen this, Size size);
 void Screen_forceDisplacement(Screen this, int flag);
 void Screen_FXFadeIn(Screen this, int wait);
 void Screen_FXFadeOut(Screen this, int wait);
+void Screen_FXShakeStart(Screen this, u16 duration);
+void Screen_FXShakeStop(Screen this);
+
 
 #endif
