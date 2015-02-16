@@ -135,6 +135,7 @@ __CLASS_DEFINITION(Game, Object);
 //---------------------------------------------------------------------------------------------------------
 
 Optical* _optical = NULL;
+extern void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 
 static void Game_constructor(Game this);
 static void Game_initialize(Game this);
@@ -320,7 +321,7 @@ static void Game_setNextState(Game this, GameState state)
     ASSERT(state, "Game::setState: setting NULL state");
 
     // discard delayed messages
-    MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance());
+    MessageDispatcher_discardAllDelayedMessages(MessageDispatcher_getInstance());
 
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
@@ -430,7 +431,7 @@ void Game_reset(Game this)
 {
 	ASSERT(this, "Game::reset: null this");
 
-	MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance());
+	MessageDispatcher_discardAllDelayedMessages(MessageDispatcher_getInstance());
 	
 	// setup the display
     HardwareManager_clearScreen(this->hardwareManager);

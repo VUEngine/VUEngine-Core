@@ -42,6 +42,9 @@ static void MessageDispatcher_destructor(MessageDispatcher this);
 static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
 		Object receiver, int message, void* extraInfo);
 
+// discart delayed messages
+void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -201,7 +204,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 }
 
 // discard delayed messages
-void MessageDispatcher_discardDelayedMessages(MessageDispatcher this)
+void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
 
@@ -217,4 +220,40 @@ void MessageDispatcher_discardDelayedMessages(MessageDispatcher this)
 	}
 
 	VirtualList_clear(this->delayedMessages);
+}
+
+// discard delayed messages of an specific type
+void MessageDispatcher_discardDelayedMessages(MessageDispatcher this, int message)
+{
+	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
+
+	VirtualNode node = VirtualList_begin(this->delayedMessages);
+
+	VirtualList delayedMessagesToDiscard = __NEW(VirtualList);
+	
+	for (; node; node = VirtualNode_getNext(node))
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
+		Telegram telegram = delayedMessage->telegram;
+
+		if(Telegram_getMessage(telegram) == message)
+		{
+			VirtualList_pushBack(delayedMessagesToDiscard, delayedMessage);
+		}
+	}
+
+	node = VirtualList_begin(delayedMessagesToDiscard);
+	
+	for (; node; node = VirtualNode_getNext(node))
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
+		Telegram telegram = delayedMessage->telegram;
+
+		VirtualList_removeElement(this->delayedMessages, delayedMessage);
+
+		__DELETE(telegram);
+		__DELETE_BASIC(delayedMessage);
+	}
+
+	__DELETE(delayedMessagesToDiscard);
 }
