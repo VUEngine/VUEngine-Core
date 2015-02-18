@@ -108,7 +108,7 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	ASSERT(this, "Clock::print: null this");
 
 	int minutes = Clock_getMinutes(this);
-	int seconds = Clock_getSeconds(this) - minutes * 60;
+	int seconds = (Clock_getSeconds(this) - minutes * 60) % 60;
 
 	int minutesPosition = col;
 	int secondsPosition = col + 3;
@@ -166,7 +166,6 @@ void Clock_update(Clock this, u32 ticks)
 	}
 }
 
-
 // reset clock's attributes
 void Clock_reset(Clock this)
 {
@@ -186,20 +185,20 @@ u32 Clock_getMilliSeconds(Clock this)
 	return this->milliSeconds;
 }
 
+//retrieve clock's seconds
+u16 Clock_getSeconds(Clock this)
+{
+	ASSERT(this, "Clock::getSeconds: null this");
+
+	return (u16)(this->milliSeconds / 1000);
+}
+
 // retrieve clock's minutes
 u8 Clock_getMinutes(Clock this)
 {
 	ASSERT(this, "Clock::getMinutes: null this");
 
 	return (u8)(this->milliSeconds / (1000 * 60));
-}
-
-//retrieve clock's seconds
-u8 Clock_getSeconds(Clock this)
-{
-	ASSERT(this, "Clock::getSeconds: null this");
-
-	return (u8)(this->milliSeconds / 1000);
 }
 
 // retrieve clock's total elapsed time in seconds
