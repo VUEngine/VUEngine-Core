@@ -143,6 +143,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->previous2DPosition);
 	
+	VirtualList_clear(this->managedSprites);
 	ManagedEntity_registerSprites(this, __UPCAST(Entity, this));
 }
 
@@ -192,6 +193,7 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
+		position2D.parallax = 0;
 		
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
@@ -201,6 +203,7 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 	
 		VirtualNode spriteNode = VirtualList_begin(this->managedSprites);
 		
+		Printing_int(Printing_getInstance(), VirtualList_getSize(this->managedSprites), 1, 10, NULL);
 		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
 			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
@@ -221,4 +224,3 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 		Entity_transform(__UPCAST(Entity, this), environmentTransform);
 	}
 }
-
