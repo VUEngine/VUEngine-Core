@@ -203,7 +203,6 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 	
 		VirtualNode spriteNode = VirtualList_begin(this->managedSprites);
 		
-		Printing_int(Printing_getInstance(), VirtualList_getSize(this->managedSprites), 1, 10, NULL);
 		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
 			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
