@@ -95,7 +95,7 @@ void Actor_destructor(Actor this)
 	ASSERT(this, "Actor::destructor: null this");
 
 	// inform the screen I'm being removed
-	Screen_focusEntityDeleted(Screen_getInstance(), __UPCAST(InGameEntity, this));
+	Screen_onFocusEntityDeleted(Screen_getInstance(), __UPCAST(InGameEntity, this));
 
 	// remove a body
 	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(Entity, this));

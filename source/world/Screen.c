@@ -47,10 +47,13 @@
 	/* actor to center the screen around */										\
 	InGameEntity focusInGameEntity;												\
 																				\
+	/* temporary variable to hold the focus entity during shaking fx */			\
+	InGameEntity tempFocusInGameEntity;											\
+																				\
 	/* last offset set by shake function */										\
 	VBVec3D lastShakeOffset;													\
 																				\
-	/* time left in current shaking effect (in milliseconds) */					\
+	/* time left in current shaking fx (in ms) */								\
 	u16 shakeTimeLeft;															\
 																				\
 	/* world's screen's last displacement */									\
@@ -142,10 +145,10 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	if (!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
-	//if focusInGameEntity is defined
+	// if focusInGameEntity is defined
 	if (this->focusInGameEntity)
 	{
-		//get focusInGameEntity is moving
+		// get focusInGameEntity is moving
 		if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 		{
 			// save last position
@@ -203,6 +206,18 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity)
 	Screen_forceDisplacement(this, true);
 }
 
+// unset the focus entity
+void Screen_unsetFocusInGameEntity(Screen this)
+{
+	ASSERT(this, "Screen::unsetFocusInGameEntity: null this");
+
+	this->focusInGameEntity = NULL;
+
+	this->lastDisplacement.x = 0;
+	this->lastDisplacement.y = 0;
+	this->lastDisplacement.z = 0;
+}
+
 // retrieve focus entity
 InGameEntity Screen_getFocusInGameEntity(Screen this)
 {
@@ -212,17 +227,13 @@ InGameEntity Screen_getFocusInGameEntity(Screen this)
 }
 
 // an actor has been deleted
-void Screen_focusEntityDeleted(Screen this, InGameEntity actor)
+void Screen_onFocusEntityDeleted(Screen this, InGameEntity actor)
 {
 	ASSERT(this, "Screen::focusEntityDeleted: null this");
 
 	if (this->focusInGameEntity == actor)
 	{
-		this->focusInGameEntity = NULL;
-
-		this->lastDisplacement.x = 0;
-		this->lastDisplacement.y = 0;
-		this->lastDisplacement.z = 0;
+		Screen_unsetFocusInGameEntity(this);
 	}
 }
 
@@ -230,7 +241,7 @@ void Screen_focusEntityDeleted(Screen this, InGameEntity actor)
 // translate screen
 void Screen_move(Screen this, VBVec3D translation, int cap)
 {
-	ASSERT(this, "Screen::setPosition: null this");
+	ASSERT(this, "Screen::move: null this");
 
 	this->lastDisplacement = translation;
 
@@ -247,6 +258,8 @@ void Screen_move(Screen this, VBVec3D translation, int cap)
 // translate screen
 static void Screen_capPosition(Screen this)
 {
+	ASSERT(this, "Screen::capPosition: null this");
+
 	if (this->position.x < 0)
 	{
 		this->position.x = 0;
@@ -281,6 +294,8 @@ static void Screen_capPosition(Screen this)
 // get screen's position
 VBVec3D Screen_getPosition(Screen this)
 {
+	ASSERT(this, "Screen::getPosition: null this");
+
 	return this->position;
 }
 
@@ -339,6 +354,8 @@ void Screen_setStageSize(Screen this, Size size)
 // force values as if screen is moving
 void Screen_forceDisplacement(Screen this, int flag)
 {
+	ASSERT(this, "Screen::forceDisplacement: null this");
+
 	this->lastDisplacement.x = flag ? 1 : 0;
 	this->lastDisplacement.y = flag ? 1 : 0;
 	this->lastDisplacement.z = flag ? 1 : 0;
@@ -350,16 +367,14 @@ bool Screen_handleMessage(Screen this, Telegram telegram)
 	switch (Telegram_getMessage(telegram))
 	{
 		case kScreenShake:
-		{
             Screen_onScreenShake(this);
-        }
-        break;
+            break;
 	}
 
 	return false;
 }
 
-// create a fade delay
+// fade in the screen
 void Screen_FXFadeIn(Screen this, int wait)
 {
 	ASSERT(this, "Screen::FXFadeIn: null this");
@@ -379,7 +394,7 @@ void Screen_FXFadeIn(Screen this, int wait)
 	}
 }
 
-// create a fade delay
+// fade out the screen
 void Screen_FXFadeOut(Screen this, int wait)
 {
 	ASSERT(this, "Screen::FXFadeOut: null this");
@@ -404,7 +419,13 @@ void Screen_FXShakeStart(Screen this, u16 duration)
 {
 	ASSERT(this, "Screen::FXShakeStart: null this");
 
+    // set desired fx duration
     this->shakeTimeLeft = duration;
+
+    // discard pending screen shake messages from previously started shake fx
+    MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance(), kScreenShake);
+
+    // instantly send shake message to myself to start fx
     MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kScreenShake, NULL);
 }
 
@@ -424,37 +445,40 @@ void Screen_onScreenShake(Screen this)
     // stop if no shaking time left
     if (this->shakeTimeLeft == 0)
     {
+        // if needed, undo last offset
+        if (this->lastShakeOffset.x != 0 || this->lastShakeOffset.y != 0)
+        {
+            Screen_setFocusInGameEntity(this, this->tempFocusInGameEntity);
+            this->lastShakeOffset.x = 0;
+            GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(Game_getStateMachine(Game_getInstance()))));
+        }
+
         return;
     }
 
     // substract time until next shake
-    if (this->shakeTimeLeft <= SHAKE_DELAY)
-    {
-        this->shakeTimeLeft = 0;
-    }
-    else
-    {
-        this->shakeTimeLeft -= SHAKE_DELAY;
-    }
-
-    // next shake offset
-    VBVec3D nextOffset = {0, 0, 0};
+    this->shakeTimeLeft = (this->shakeTimeLeft <= SHAKE_DELAY) ? 0 : this->shakeTimeLeft - SHAKE_DELAY;
 
     if (this->lastShakeOffset.x == 0 && this->lastShakeOffset.y == 0)
     {
         // new offset
         // TODO: use random number(s) or pre-defined shaking pattern
-        nextOffset.x = this->lastShakeOffset.x = ITOFIX19_13(2);
+        this->lastShakeOffset.x = ITOFIX19_13(2);
+
+        this->tempFocusInGameEntity = Screen_getFocusInGameEntity(this);
+		Screen_unsetFocusInGameEntity(this);
+
+        // move screen a bit
+        Screen_move(this, this->lastShakeOffset, false);
     }
     else
     {
         // undo last offset
-        nextOffset.x = -this->lastShakeOffset.x;
+        Screen_setFocusInGameEntity(this, this->tempFocusInGameEntity);
         this->lastShakeOffset.x = 0;
     }
 
     // apply screen offset
-    Screen_move(Screen_getInstance(), nextOffset, false);
     GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(Game_getStateMachine(Game_getInstance()))));
 
     // send message for next screen movement
