@@ -28,7 +28,7 @@
 #include <Screen.h>
 #include <Printing.h>
 #include <MessageDispatcher.h>
-#include <VBJaELanguageSelectionScreenState.h>
+#include <VBJaELangSelectScreenState.h>
 #include <VBJaESplashScreenState.h>
 #include <I18n.h>
 
@@ -39,24 +39,24 @@ extern StageROMDef EMPTY_ST;
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VBJaELanguageSelectionScreenState_destructor(VBJaELanguageSelectionScreenState this);
-static void VBJaELanguageSelectionScreenState_constructor(VBJaELanguageSelectionScreenState this);
-static void VBJaELanguageSelectionScreenState_enter(VBJaELanguageSelectionScreenState this, void* owner);
-static void VBJaELanguageSelectionScreenState_execute(VBJaELanguageSelectionScreenState this, void* owner);
-static void VBJaELanguageSelectionScreenState_exit(VBJaELanguageSelectionScreenState this, void* owner);
-static void VBJaELanguageSelectionScreenState_resume(VBJaELanguageSelectionScreenState this, void* owner);
-static bool VBJaELanguageSelectionScreenState_handleMessage(VBJaELanguageSelectionScreenState this, void* owner, Telegram telegram);
-static void VBJaELanguageSelectionScreenState_processInput(VBJaELanguageSelectionScreenState this, u16 pressedKey);
-static void VBJaELanguageSelectionScreenState_print(VBJaELanguageSelectionScreenState this);
-void VBJaELanguageSelectionScreenState_setTitleString(VBJaELanguageSelectionScreenState this, char* string);
+static void VBJaELangSelectScreenState_destructor(VBJaELangSelectScreenState this);
+static void VBJaELangSelectScreenState_constructor(VBJaELangSelectScreenState this);
+static void VBJaELangSelectScreenState_enter(VBJaELangSelectScreenState this, void* owner);
+static void VBJaELangSelectScreenState_execute(VBJaELangSelectScreenState this, void* owner);
+static void VBJaELangSelectScreenState_exit(VBJaELangSelectScreenState this, void* owner);
+static void VBJaELangSelectScreenState_resume(VBJaELangSelectScreenState this, void* owner);
+static bool VBJaELangSelectScreenState_handleMessage(VBJaELangSelectScreenState this, void* owner, Telegram telegram);
+static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 pressedKey);
+static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this);
+void VBJaELangSelectScreenState_setTitleString(VBJaELangSelectScreenState this, char* string);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaELanguageSelectionScreenState, GameState);
-__SINGLETON_DYNAMIC(VBJaELanguageSelectionScreenState);
+__CLASS_DEFINITION(VBJaELangSelectScreenState, GameState);
+__SINGLETON_DYNAMIC(VBJaELangSelectScreenState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,11 +64,11 @@ __SINGLETON_DYNAMIC(VBJaELanguageSelectionScreenState);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-static void VBJaELanguageSelectionScreenState_constructor(VBJaELanguageSelectionScreenState this)
+static void VBJaELangSelectScreenState_constructor(VBJaELangSelectScreenState this)
 {
 	__CONSTRUCT_BASE();
 
-	VBJaELanguageSelectionScreenState_setNextstate(this, __UPCAST(GameState, VBJaESplashScreenState_getInstance()));
+	VBJaELangSelectScreenState_setNextstate(this, __UPCAST(GameState, VBJaESplashScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
 	this->titleString = "Language Selection";
 
@@ -91,7 +91,7 @@ static void VBJaELanguageSelectionScreenState_constructor(VBJaELanguageSelection
 }
 
 // class's destructor
-static void VBJaELanguageSelectionScreenState_destructor(VBJaELanguageSelectionScreenState this)
+static void VBJaELangSelectScreenState_destructor(VBJaELangSelectScreenState this)
 {
 	if (this->languageSelector)
 	{
@@ -103,24 +103,24 @@ static void VBJaELanguageSelectionScreenState_destructor(VBJaELanguageSelectionS
 }
 
 // state's enter
-static void VBJaELanguageSelectionScreenState_enter(VBJaELanguageSelectionScreenState this, void* owner)
+static void VBJaELangSelectScreenState_enter(VBJaELangSelectScreenState this, void* owner)
 {
 	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
-	VBJaELanguageSelectionScreenState_print(this);
+	VBJaELangSelectScreenState_print(this);
 	
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }
 
 // state's execute
-static void VBJaELanguageSelectionScreenState_execute(VBJaELanguageSelectionScreenState this, void* owner)
+static void VBJaELangSelectScreenState_execute(VBJaELangSelectScreenState this, void* owner)
 {
  	// call base
 	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
-static void VBJaELanguageSelectionScreenState_exit(VBJaELanguageSelectionScreenState this, void* owner)
+static void VBJaELangSelectScreenState_exit(VBJaELangSelectScreenState this, void* owner)
 {
 	Screen_FXFadeOut(Screen_getInstance(), 16);
 
@@ -129,7 +129,7 @@ static void VBJaELanguageSelectionScreenState_exit(VBJaELanguageSelectionScreenS
 }
 
 // state's resume
-static void VBJaELanguageSelectionScreenState_resume(VBJaELanguageSelectionScreenState this, void* owner)
+static void VBJaELangSelectScreenState_resume(VBJaELangSelectScreenState this, void* owner)
 {
 	GameState_resume(__UPCAST(GameState, this), owner);
 	
@@ -159,11 +159,11 @@ static void VBJaELanguageSelectionScreenState_resume(VBJaELanguageSelectionScree
 	}
 #endif
 	
-	VBJaELanguageSelectionScreenState_print(this);
+	VBJaELangSelectScreenState_print(this);
 }
 
 // state's on message
-static bool VBJaELanguageSelectionScreenState_handleMessage(VBJaELanguageSelectionScreenState this, void* owner, Telegram telegram)
+static bool VBJaELangSelectScreenState_handleMessage(VBJaELangSelectScreenState this, void* owner, Telegram telegram)
 {
 	switch (Telegram_getMessage(telegram))
 	{
@@ -171,7 +171,7 @@ static bool VBJaELanguageSelectionScreenState_handleMessage(VBJaELanguageSelecti
 		{
             u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaELanguageSelectionScreenState_processInput(VBJaELanguageSelectionScreenState_getInstance(), pressedKey);
+            VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState_getInstance(), pressedKey);
         }
         break;
 	}
@@ -179,7 +179,7 @@ static bool VBJaELanguageSelectionScreenState_handleMessage(VBJaELanguageSelecti
 	return false;
 }
 
-static void VBJaELanguageSelectionScreenState_processInput(VBJaELanguageSelectionScreenState this, u16 pressedKey)
+static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 pressedKey)
 {
 	if (pressedKey & K_LU)
 	{
@@ -196,7 +196,7 @@ static void VBJaELanguageSelectionScreenState_processInput(VBJaELanguageSelectio
 	}
 }
 
-static void VBJaELanguageSelectionScreenState_print(VBJaELanguageSelectionScreenState this)
+static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this)
 {
     u8 strHeaderXPos = (48 - strlen(this->titleString)) >> 1;
 
@@ -205,12 +205,12 @@ static void VBJaELanguageSelectionScreenState_print(VBJaELanguageSelectionScreen
 	OptionsSelector_showOptions(this->languageSelector, strHeaderXPos, 11);
 }
 
-void VBJaELanguageSelectionScreenState_setNextstate(VBJaELanguageSelectionScreenState this, GameState nextState)
+void VBJaELangSelectScreenState_setNextstate(VBJaELangSelectScreenState this, GameState nextState)
 {
     this->nextState = nextState;
 }
 
-void VBJaELanguageSelectionScreenState_setTitleString(VBJaELanguageSelectionScreenState this, char* string)
+void VBJaELangSelectScreenState_setTitleString(VBJaELangSelectScreenState this, char* string)
 {
     this->titleString = string;
 }

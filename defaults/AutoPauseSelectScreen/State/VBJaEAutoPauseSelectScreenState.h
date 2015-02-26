@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_LANGUAGE_SELECTION_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_LANGUAGE_SELECTION_SCREEN_STATE_H_
+#ifndef VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
+#define VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -27,7 +27,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
-#include <OptionsSelector.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,22 +34,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define VBJaELanguageSelectionScreenState_METHODS											\
+#define VBJaEAutoPauseSelectScreenState_METHODS										\
 	GameState_METHODS;											    					\
 
 // declare the virtual methods which are redefined
-#define VBJaELanguageSelectionScreenState_SET_VTABLE(ClassName)								\
+#define VBJaEAutoPauseSelectScreenState_SET_VTABLE(ClassName)						\
 	GameState_SET_VTABLE(ClassName)								    					\
-	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, enter);						\
-	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, exit);						\
-	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, execute);					\
-	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, resume);						\
-	__VIRTUAL_SET(ClassName, VBJaELanguageSelectionScreenState, handleMessage);				\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, enter);				\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, exit);					\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, execute);				\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, resume);				\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, handleMessage);		\
 
 
-__CLASS(VBJaELanguageSelectionScreenState);
+__CLASS(VBJaEAutoPauseSelectScreenState);
 
-#define VBJaELanguageSelectionScreenState_ATTRIBUTES								   			\
+#define VBJaEAutoPauseSelectScreenState_ATTRIBUTES							   		\
 														            					\
 	/* inherits */																		\
 	GameState_ATTRIBUTES																\
@@ -58,22 +57,30 @@ __CLASS(VBJaELanguageSelectionScreenState);
 	/* state to enter after this one */													\
 	GameState nextState;																\
 														            					\
-	char* titleString;																	\
-														            					\
 	/* definition of screen's stage */													\
 	StageDefinition* stageDefinition;													\
 																						\
-	OptionsSelector languageSelector;													\
+	bool selection;																		\
+																						\
+	char* titleString;																	\
+																						\
+	char* explanationString;															\
+																						\
+	char* onString;																		\
+																						\
+	char* offString;																	\
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-VBJaELanguageSelectionScreenState VBJaELanguageSelectionScreenState_getInstance(void);
+VBJaEAutoPauseSelectScreenState VBJaEAutoPauseSelectScreenState_getInstance(void);
 
-void VBJaELanguageSelectionScreenState_setNextstate(VBJaELanguageSelectionScreenState this, GameState nextState);
-void VBJaELanguageSelectionScreenState_setTitleString(VBJaELanguageSelectionScreenState this, char* string);
-
+void VBJaEAutoPauseSelectScreenState_setNextstate(VBJaEAutoPauseSelectScreenState this, GameState nextState);
+void VBJaEAutoPauseSelectScreenState_setExplanationString(VBJaEAutoPauseSelectScreenState this, char* string);
+void VBJaEAutoPauseSelectScreenState_setTitleString(VBJaEAutoPauseSelectScreenState this, char* string);
+void VBJaEAutoPauseSelectScreenState_setOnString(VBJaEAutoPauseSelectScreenState this, char* string);
+void VBJaEAutoPauseSelectScreenState_setOffString(VBJaEAutoPauseSelectScreenState this, char* string);
 
 #endif

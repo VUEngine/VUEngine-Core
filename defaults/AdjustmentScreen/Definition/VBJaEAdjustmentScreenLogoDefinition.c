@@ -44,7 +44,7 @@ TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_TX =
         // __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
         // __ANIMATED_SHARED: sum of chars of all animation frames
         // __NO_ANIMATED: number of chars of whole image
-        66,
+        65,
 
         // allocation type
         __NO_ANIMATED,
@@ -57,7 +57,7 @@ TextureROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_LOGO_TX =
     VBJaEAdjustmentScreenLogoMap,
 
     // cols (max 64)
-    27,
+    26,
 
     // rows (max 64)
     5,

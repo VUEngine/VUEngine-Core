@@ -29,7 +29,7 @@
 #include <Screen.h>
 #include <MessageDispatcher.h>
 #include <VBJaEPrecautionScreenState.h>
-#include <VBJaEAutomaticPauseSelectionScreenState.h>
+#include <VBJaEAdjustmentScreenState.h>
 
 extern StageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
 
@@ -68,9 +68,9 @@ static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState th
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEPrecautionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEAutomaticPauseSelectionScreenState_getInstance()));
+	VBJaEPrecautionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEAdjustmentScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
-    this->precautionString = "           Important:\n\nRead Instruction and Precaution\n\n   Booklets before operating";
+    this->precautionString = "     IMPORTANT:\n\nREAD INSTRUCTION AND\n\nPRECAUTION BOOKLETS\n\n  BEFORE OPERATING";
 }
 
 // class's destructor
@@ -164,7 +164,7 @@ static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState t
 
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this)
 {
-    Printing_text(Printing_getInstance(), this->precautionString, 8, 6, NULL);
+    Printing_text(Printing_getInstance(), this->precautionString, 14, 6, NULL);
 }
 
 void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState)

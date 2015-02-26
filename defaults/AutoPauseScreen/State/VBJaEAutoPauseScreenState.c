@@ -29,7 +29,7 @@
 #include <Printing.h>
 #include <MessageDispatcher.h>
 #include <PhysicalWorld.h>
-#include <VBJaEAutomaticPauseScreenState.h>
+#include <VBJaEAutoPauseScreenState.h>
 
 extern StageROMDef EMPTY_ST;
 
@@ -38,19 +38,19 @@ extern StageROMDef EMPTY_ST;
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VBJaEAutomaticPauseScreenState_destructor(VBJaEAutomaticPauseScreenState this);
-static void VBJaEAutomaticPauseScreenState_constructor(VBJaEAutomaticPauseScreenState this);
-static void VBJaEAutomaticPauseScreenState_enter(VBJaEAutomaticPauseScreenState this, void* owner);
-static void VBJaEAutomaticPauseScreenState_exit(VBJaEAutomaticPauseScreenState this, void* owner);
-static bool VBJaEAutomaticPauseScreenState_handleMessage(VBJaEAutomaticPauseScreenState this, void* owner, Telegram telegram);
+static void VBJaEAutoPauseScreenState_destructor(VBJaEAutoPauseScreenState this);
+static void VBJaEAutoPauseScreenState_constructor(VBJaEAutoPauseScreenState this);
+static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void* owner);
+static void VBJaEAutoPauseScreenState_exit(VBJaEAutoPauseScreenState this, void* owner);
+static bool VBJaEAutoPauseScreenState_handleMessage(VBJaEAutoPauseScreenState this, void* owner, Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEAutomaticPauseScreenState, GameState);
-__SINGLETON(VBJaEAutomaticPauseScreenState);
+__CLASS_DEFINITION(VBJaEAutoPauseScreenState, GameState);
+__SINGLETON(VBJaEAutoPauseScreenState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,20 +58,20 @@ __SINGLETON(VBJaEAutomaticPauseScreenState);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-static void VBJaEAutomaticPauseScreenState_constructor(VBJaEAutomaticPauseScreenState this)
+static void VBJaEAutoPauseScreenState_constructor(VBJaEAutoPauseScreenState this)
 {
 	__CONSTRUCT_BASE();
 }
 
 // class's destructor
-static void VBJaEAutomaticPauseScreenState_destructor(VBJaEAutomaticPauseScreenState this)
+static void VBJaEAutoPauseScreenState_destructor(VBJaEAutoPauseScreenState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
 // state's enter
-static void VBJaEAutomaticPauseScreenState_enter(VBJaEAutomaticPauseScreenState this, void* owner)
+static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void* owner)
 {
 	Optical optical = Game_getOptical(Game_getInstance());
 	optical.verticalViewPointCenter = ITOFIX19_13(112 + 112/2);
@@ -87,14 +87,14 @@ static void VBJaEAutomaticPauseScreenState_enter(VBJaEAutomaticPauseScreenState 
 }
 
 // state's exit
-static void VBJaEAutomaticPauseScreenState_exit(VBJaEAutomaticPauseScreenState this, void* owner)
+static void VBJaEAutoPauseScreenState_exit(VBJaEAutoPauseScreenState this, void* owner)
 {
 	// make a fade out
 	Screen_FXFadeOut(Screen_getInstance(), 16 >> 1);
 }
 
 // state's on message
-static bool VBJaEAutomaticPauseScreenState_handleMessage(VBJaEAutomaticPauseScreenState this, void* owner, Telegram telegram)
+static bool VBJaEAutoPauseScreenState_handleMessage(VBJaEAutoPauseScreenState this, void* owner, Telegram telegram)
 {
 	// process message
 	switch (Telegram_getMessage(telegram))

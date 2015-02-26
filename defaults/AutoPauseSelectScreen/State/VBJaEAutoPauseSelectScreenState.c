@@ -28,9 +28,9 @@
 #include <Screen.h>
 #include <Printing.h>
 #include <MessageDispatcher.h>
-#include <VBJaEAutomaticPauseSelectionScreenState.h>
-#include <VBJaEAutomaticPauseScreenState.h>
-#include <VBJaELanguageSelectionScreenState.h>
+#include <VBJaEAutoPauseSelectScreenState.h>
+#include <VBJaEAutoPauseScreenState.h>
+#include <VBJaELangSelectScreenState.h>
 
 extern StageROMDef EMPTY_ST;
 
@@ -39,28 +39,28 @@ extern StageROMDef EMPTY_ST;
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VBJaEAutomaticPauseSelectionScreenState_destructor(VBJaEAutomaticPauseSelectionScreenState this);
-static void VBJaEAutomaticPauseSelectionScreenState_constructor(VBJaEAutomaticPauseSelectionScreenState this);
-static void VBJaEAutomaticPauseSelectionScreenState_enter(VBJaEAutomaticPauseSelectionScreenState this, void* owner);
-static void VBJaEAutomaticPauseSelectionScreenState_execute(VBJaEAutomaticPauseSelectionScreenState this, void* owner);
-static void VBJaEAutomaticPauseSelectionScreenState_exit(VBJaEAutomaticPauseSelectionScreenState this, void* owner);
-static void VBJaEAutomaticPauseSelectionScreenState_resume(VBJaEAutomaticPauseSelectionScreenState this, void* owner);
-static bool VBJaEAutomaticPauseSelectionScreenState_handleMessage(VBJaEAutomaticPauseSelectionScreenState this, void* owner, Telegram telegram);
-static void VBJaEAutomaticPauseSelectionScreenState_print(VBJaEAutomaticPauseSelectionScreenState this);
-static void VBJaEAutomaticPauseSelectionScreenState_renderSelection(VBJaEAutomaticPauseSelectionScreenState this);
-static void VBJaEAutomaticPauseSelectionScreenState_processInput(VBJaEAutomaticPauseSelectionScreenState this, u16 pressedKey);
-void VBJaEAutomaticPauseSelectionScreenState_setExplanationString(VBJaEAutomaticPauseSelectionScreenState this, char* string);
-void VBJaEAutomaticPauseSelectionScreenState_setTitleString(VBJaEAutomaticPauseSelectionScreenState this, char* string);
-void VBJaEAutomaticPauseSelectionScreenState_setOnString(VBJaEAutomaticPauseSelectionScreenState this, char* string);
-void VBJaEAutomaticPauseSelectionScreenState_setOffString(VBJaEAutomaticPauseSelectionScreenState this, char* string);
+static void VBJaEAutoPauseSelectScreenState_destructor(VBJaEAutoPauseSelectScreenState this);
+static void VBJaEAutoPauseSelectScreenState_constructor(VBJaEAutoPauseSelectScreenState this);
+static void VBJaEAutoPauseSelectScreenState_enter(VBJaEAutoPauseSelectScreenState this, void* owner);
+static void VBJaEAutoPauseSelectScreenState_execute(VBJaEAutoPauseSelectScreenState this, void* owner);
+static void VBJaEAutoPauseSelectScreenState_exit(VBJaEAutoPauseSelectScreenState this, void* owner);
+static void VBJaEAutoPauseSelectScreenState_resume(VBJaEAutoPauseSelectScreenState this, void* owner);
+static bool VBJaEAutoPauseSelectScreenState_handleMessage(VBJaEAutoPauseSelectScreenState this, void* owner, Telegram telegram);
+static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this);
+static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelectScreenState this);
+static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 pressedKey);
+void VBJaEAutoPauseSelectScreenState_setExplanationString(VBJaEAutoPauseSelectScreenState this, char* string);
+void VBJaEAutoPauseSelectScreenState_setTitleString(VBJaEAutoPauseSelectScreenState this, char* string);
+void VBJaEAutoPauseSelectScreenState_setOnString(VBJaEAutoPauseSelectScreenState this, char* string);
+void VBJaEAutoPauseSelectScreenState_setOffString(VBJaEAutoPauseSelectScreenState this, char* string);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(VBJaEAutomaticPauseSelectionScreenState, GameState);
-__SINGLETON_DYNAMIC(VBJaEAutomaticPauseSelectionScreenState);
+__CLASS_DEFINITION(VBJaEAutoPauseSelectScreenState, GameState);
+__SINGLETON_DYNAMIC(VBJaEAutoPauseSelectScreenState);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -68,45 +68,45 @@ __SINGLETON_DYNAMIC(VBJaEAutomaticPauseSelectionScreenState);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-static void VBJaEAutomaticPauseSelectionScreenState_constructor(VBJaEAutomaticPauseSelectionScreenState this)
+static void VBJaEAutoPauseSelectScreenState_constructor(VBJaEAutoPauseSelectScreenState this)
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEAutomaticPauseSelectionScreenState_setNextstate(this, __UPCAST(GameState, VBJaELanguageSelectionScreenState_getInstance()));
+	VBJaEAutoPauseSelectScreenState_setNextstate(this, __UPCAST(GameState, VBJaELangSelectScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
     this->selection = true;
     this->titleString = "Automatic Pause";
-    this->explanationString = "The Automatic Pause feature will\nremind you to take a break from\nplaying approx. every 30 minutes.";
+    this->explanationString = "The Automatic Pause feature will\nremind you to take a break from\nplaying approx. every 30 minutes";
     this->onString = "On";
     this->offString = "Off";
 }
 
 // class's destructor
-static void VBJaEAutomaticPauseSelectionScreenState_destructor(VBJaEAutomaticPauseSelectionScreenState this)
+static void VBJaEAutoPauseSelectScreenState_destructor(VBJaEAutoPauseSelectScreenState this)
 {	
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
 // state's enter
-static void VBJaEAutomaticPauseSelectionScreenState_enter(VBJaEAutomaticPauseSelectionScreenState this, void* owner)
+static void VBJaEAutoPauseSelectScreenState_enter(VBJaEAutoPauseSelectScreenState this, void* owner)
 {
 	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
 
-	VBJaEAutomaticPauseSelectionScreenState_print(this);
+	VBJaEAutoPauseSelectScreenState_print(this);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }
 
 // state's execute
-static void VBJaEAutomaticPauseSelectionScreenState_execute(VBJaEAutomaticPauseSelectionScreenState this, void* owner)
+static void VBJaEAutoPauseSelectScreenState_execute(VBJaEAutoPauseSelectScreenState this, void* owner)
 {
  	// call base
 	GameState_execute(__UPCAST(GameState, this), owner);
 }
 
 // state's exit
-static void VBJaEAutomaticPauseSelectionScreenState_exit(VBJaEAutomaticPauseSelectionScreenState this, void* owner)
+static void VBJaEAutoPauseSelectScreenState_exit(VBJaEAutoPauseSelectScreenState this, void* owner)
 {
 	Screen_FXFadeOut(Screen_getInstance(), 16);
 
@@ -115,15 +115,15 @@ static void VBJaEAutomaticPauseSelectionScreenState_exit(VBJaEAutomaticPauseSele
 }
 
 // state's resume
-static void VBJaEAutomaticPauseSelectionScreenState_resume(VBJaEAutomaticPauseSelectionScreenState this, void* owner)
+static void VBJaEAutoPauseSelectScreenState_resume(VBJaEAutoPauseSelectScreenState this, void* owner)
 {
 	GameState_resume(__UPCAST(GameState, this), owner);
 	
-	VBJaEAutomaticPauseSelectionScreenState_print(this);
+	VBJaEAutoPauseSelectScreenState_print(this);
 }
 
 // state's on message
-static bool VBJaEAutomaticPauseSelectionScreenState_handleMessage(VBJaEAutomaticPauseSelectionScreenState this, void* owner, Telegram telegram)
+static bool VBJaEAutoPauseSelectScreenState_handleMessage(VBJaEAutoPauseSelectScreenState this, void* owner, Telegram telegram)
 {
 	switch (Telegram_getMessage(telegram))
 	{
@@ -131,7 +131,7 @@ static bool VBJaEAutomaticPauseSelectionScreenState_handleMessage(VBJaEAutomatic
 		{
             u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaEAutomaticPauseSelectionScreenState_processInput(VBJaEAutomaticPauseSelectionScreenState_getInstance(), pressedKey);
+            VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState_getInstance(), pressedKey);
         }
         break;
 	}
@@ -139,17 +139,17 @@ static bool VBJaEAutomaticPauseSelectionScreenState_handleMessage(VBJaEAutomatic
 	return false;
 }
 
-static void VBJaEAutomaticPauseSelectionScreenState_print(VBJaEAutomaticPauseSelectionScreenState this)
+static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this)
 {
     u8 strHeaderXPos = (48 - strlen(this->titleString)) >> 1;
     Printing_text(Printing_getInstance(), this->titleString, strHeaderXPos, 8, NULL);
 
     Printing_text(Printing_getInstance(), this->explanationString, 8, 11, NULL);
 
-    VBJaEAutomaticPauseSelectionScreenState_renderSelection(this);
+    VBJaEAutoPauseSelectScreenState_renderSelection(this);
 }
 
-static void VBJaEAutomaticPauseSelectionScreenState_renderSelection(VBJaEAutomaticPauseSelectionScreenState this)
+static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelectScreenState this)
 {
     // get strings and determine lengths
     u8 strOnLength = strlen(this->onString);
@@ -177,41 +177,41 @@ static void VBJaEAutomaticPauseSelectionScreenState_renderSelection(VBJaEAutomat
     Printing_text(Printing_getInstance(), "\x05               ", optionEnd, 18, NULL);
 }
 
-static void VBJaEAutomaticPauseSelectionScreenState_processInput(VBJaEAutomaticPauseSelectionScreenState this, u16 pressedKey)
+static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 pressedKey)
 {
 	if ((pressedKey & K_LL) || (pressedKey & K_LR))
 	{
 	    this->selection = !this->selection;
-	    VBJaEAutomaticPauseSelectionScreenState_renderSelection(this);
+	    VBJaEAutoPauseSelectScreenState_renderSelection(this);
 	}
 	else if ((pressedKey & K_A) || (pressedKey & K_STA))
 	{
-		Game_setAutomaticPauseState(Game_getInstance(), this->selection ? __UPCAST(GameState, VBJaEAutomaticPauseScreenState_getInstance()): NULL);
+		Game_setAutomaticPauseState(Game_getInstance(), this->selection ? __UPCAST(GameState, VBJaEAutoPauseScreenState_getInstance()): NULL);
 	    Game_changeState(Game_getInstance(), this->nextState);
 	}
 }
 
-void VBJaEAutomaticPauseSelectionScreenState_setNextstate(VBJaEAutomaticPauseSelectionScreenState this, GameState nextState)
+void VBJaEAutoPauseSelectScreenState_setNextstate(VBJaEAutoPauseSelectScreenState this, GameState nextState)
 {
     this->nextState = nextState;
 }
 
-void VBJaEAutomaticPauseSelectionScreenState_setExplanationString(VBJaEAutomaticPauseSelectionScreenState this, char* string)
+void VBJaEAutoPauseSelectScreenState_setExplanationString(VBJaEAutoPauseSelectScreenState this, char* string)
 {
     this->explanationString = string;
 }
 
-void VBJaEAutomaticPauseSelectionScreenState_setTitleString(VBJaEAutomaticPauseSelectionScreenState this, char* string)
+void VBJaEAutoPauseSelectScreenState_setTitleString(VBJaEAutoPauseSelectScreenState this, char* string)
 {
     this->titleString = string;
 }
 
-void VBJaEAutomaticPauseSelectionScreenState_setOnString(VBJaEAutomaticPauseSelectionScreenState this, char* string)
+void VBJaEAutoPauseSelectScreenState_setOnString(VBJaEAutoPauseSelectScreenState this, char* string)
 {
     this->onString = string;
 }
 
-void VBJaEAutomaticPauseSelectionScreenState_setOffString(VBJaEAutomaticPauseSelectionScreenState this, char* string)
+void VBJaEAutoPauseSelectScreenState_setOffString(VBJaEAutoPauseSelectScreenState this, char* string)
 {
     this->offString = string;
 }

@@ -28,7 +28,7 @@
 #include <Screen.h>
 #include <MessageDispatcher.h>
 #include <VBJaEAdjustmentScreenState.h>
-#include <VBJaEPrecautionScreenState.h>
+#include <VBJaEAutoPauseSelectScreenState.h>
 
 extern StageROMDef VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 
@@ -65,7 +65,7 @@ static void VBJaEAdjustmentScreenState_constructor(VBJaEAdjustmentScreenState th
 {
 	__CONSTRUCT_BASE();
 
-	VBJaEAdjustmentScreenState_setNextstate(this, __UPCAST(GameState, VBJaEPrecautionScreenState_getInstance()));
+	VBJaEAdjustmentScreenState_setNextstate(this, __UPCAST(GameState, VBJaEAutoPauseSelectScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_ADJUSTMENT_SCREEN_ST;
 }
 

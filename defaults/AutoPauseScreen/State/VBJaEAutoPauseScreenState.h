@@ -34,19 +34,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define VBJaEAutomaticPauseScreenState_METHODS											\
+#define VBJaEAutoPauseScreenState_METHODS											\
 	GameState_METHODS;												    			\
 
 // declare the virtual methods which are redefined
-#define VBJaEAutomaticPauseScreenState_SET_VTABLE(ClassName)								\
+#define VBJaEAutoPauseScreenState_SET_VTABLE(ClassName)								\
 	GameState_SET_VTABLE(ClassName)								    				\
-	__VIRTUAL_SET(ClassName, VBJaEAutomaticPauseScreenState, enter);						\
-	__VIRTUAL_SET(ClassName, VBJaEAutomaticPauseScreenState, exit);						\
-	__VIRTUAL_SET(ClassName, VBJaEAutomaticPauseScreenState, handleMessage);				\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseScreenState, enter);						\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseScreenState, exit);						\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseScreenState, handleMessage);				\
 
-__CLASS(VBJaEAutomaticPauseScreenState);
+__CLASS(VBJaEAutoPauseScreenState);
 
-#define VBJaEAutomaticPauseScreenState_ATTRIBUTES							        			\
+#define VBJaEAutoPauseScreenState_ATTRIBUTES							        			\
 														            				\
 	/* inherits */																	\
 	GameState_ATTRIBUTES															\
@@ -56,7 +56,7 @@ __CLASS(VBJaEAutomaticPauseScreenState);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-VBJaEAutomaticPauseScreenState VBJaEAutomaticPauseScreenState_getInstance(void);
+VBJaEAutoPauseScreenState VBJaEAutoPauseScreenState_getInstance(void);
 
 
 #endif
