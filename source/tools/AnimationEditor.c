@@ -557,9 +557,9 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 					TextureDefinition* textureDefinition = Texture_getTextureDefinition(texture);
 					NM_ASSERT(textureDefinition, "AnimationEditor::selectAnimation: null textureDefinition");
 
-					if (textureDefinition->numberOfFrames < ++this->animationFunction.frames[selectedFrame])
+					if (++this->animationFunction.frames[selectedFrame] >= textureDefinition->numberOfFrames)
 					{
-						this->animationFunction.frames[selectedFrame] = textureDefinition->numberOfFrames;
+						this->animationFunction.frames[selectedFrame] = textureDefinition->numberOfFrames - 1;
 					}
 				}
 				break;
