@@ -59,7 +59,7 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 friction);
 static void Body_setMovementType(Body this, int movementType, int axis);
 static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity);
-static bool Body_isMovingInternal(Body this);
+static u8 Body_isMovingInternal(Body this);
 static Force Body_calculateFriction(Body this, int axisOfMovement);
 
 enum CollidingObjectIndexes
@@ -786,11 +786,11 @@ void Body_sleep(Body this)
 }
 
 // is it moving?
-bool Body_isMoving(Body this)
+u8 Body_isMoving(Body this)
 {
 	ASSERT(this, "Body::isMoving: null this");
 
-	int result = 0;
+	u8 result = 0;
 
 	result |= ((int)FIX19_13TOI(this->velocity.x) || this->acceleration.x) ? __XAXIS : 0;
 	result |= ((int)FIX19_13TOI(this->velocity.y) || this->acceleration.y) ? __YAXIS : 0;
@@ -800,7 +800,7 @@ bool Body_isMoving(Body this)
 }
 
 // is it moving?
-static bool Body_isMovingInternal(Body this)
+static u8 Body_isMovingInternal(Body this)
 {
 	ASSERT(this, "Body::isMovingInternal: null this");
 

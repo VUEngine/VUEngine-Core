@@ -42,8 +42,8 @@ __CLASS_DEFINITION(Cuboid, Shape);
 
 static void Cuboid_constructor(Cuboid this, Entity owner);
 static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
-static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement);
-static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
+static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement);
+static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
 static void Cuboid_configurePolygon(Cuboid this, int renew);
 
 Shape Entity_getShape(Entity this);
@@ -80,7 +80,7 @@ void Cuboid_destructor(Cuboid this)
 }
 
 // check if two rects overlap
-bool Cuboid_overlaps(Cuboid this, Shape shape)
+u8 Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
@@ -186,7 +186,7 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this)
 }
 
 // determine axis of collision
-int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
+u8 Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
 
@@ -201,7 +201,7 @@ int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displ
 }
 
 // determine axis of collision
-static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
+static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
@@ -240,7 +240,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	};
 
 	int numberOfAxis = 0;
-	int axisOfCollision = 0;
+	u8 axisOfCollision = 0;
 	int passes = 0;
 
 	CACHE_ENABLE;
@@ -310,8 +310,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition->y - ITOFIX19_13(gap.down);
 			positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition->z - displacement.z;
 		}
-
 	}
+	
 	while (0 == numberOfAxis && ++passes < 10);
 
 	if (__XAXIS & axisOfCollision)
@@ -374,7 +374,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 }
 
 // test if collision with the entity give the displacement
-int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
+u8 Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
@@ -389,7 +389,7 @@ int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displace
 }
 
 // test if collision with the entity give the displacement
-static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement)
+static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 
@@ -413,7 +413,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 		cuboid->positionedRightcuboid.z1
 	};
 		
-	int axisOfPossibleCollision = 0;
+	u8 axisOfPossibleCollision = 0;
 
 	if (displacement.x)
     {

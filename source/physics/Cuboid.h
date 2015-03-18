@@ -75,13 +75,13 @@ __CLASS(Cuboid);
 __CLASS_NEW_DECLARE(Cuboid, Entity owner);
 
 void Cuboid_destructor(Cuboid this);
-bool Cuboid_overlaps(Cuboid this, Shape shape);
+u8 Cuboid_overlaps(Cuboid this, Shape shape);
 void Cuboid_setup(Cuboid this);
 void Cuboid_positione(Cuboid this);
 Rightcuboid Cuboid_getRightcuboid(Cuboid this);
 Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
-int Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
-int Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
+u8 Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
+u8 Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement);
 void Cuboid_draw(Cuboid this);
 void Cuboid_deleteDirectDrawData(Cuboid this);
 void Cuboid_print(Cuboid this, int x, int y);

@@ -55,7 +55,7 @@ static void Actor_alignToCollidingEntity(Actor this, InGameEntity collidingEntit
 static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, int axisOfCollision);
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEntity, VBVec3D* collidingEntityLastDisplacement);
-static void Actor_updateCollisionStatus(Actor this, int movementAxis);
+static void Actor_updateCollisionStatus(Actor this, u8 movementAxis);
 static void Actor_updateSourroundingFriction(Actor this);
 
 
@@ -211,7 +211,7 @@ void Actor_update(Actor this)
 }
 
 // update colliding entities
-static void Actor_updateCollisionStatus(Actor this, int movementAxis)
+static void Actor_updateCollisionStatus(Actor this, u8 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 	ASSERT(this->body, "Actor::updateCollisionStatus: null body");
@@ -374,13 +374,13 @@ bool Actor_isInsideGame(Actor this)
 }
 
 // check if gravity must apply to this actor
-bool Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
+u8 Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 {
 	ASSERT(this, "Actor::canMoveOverAxis: null this");
 
-	bool axisFreeForMovement = __VIRTUAL_CALL(bool, Actor, getAxisFreeForMovement, this);
+	u8 axisFreeForMovement = __VIRTUAL_CALL(bool, Actor, getAxisFreeForMovement, this);
 
-	int axisOfCollision = 0;
+	u8 axisOfCollision = 0;
 
 	if (axisFreeForMovement)
 	{
@@ -408,12 +408,12 @@ bool Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 }
 
 // retrieve axis free for movement
-int Actor_getAxisFreeForMovement(Actor this)
+u8 Actor_getAxisFreeForMovement(Actor this)
 {
 	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
 
-	bool movingState = Body_isMoving(this->body);
-
+	u8 movingState = Body_isMoving(this->body);
+	
 	return ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 }
 
@@ -451,7 +451,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 					case kBodyStartedMoving:
 
 						CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
-						Actor_updateCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
+						Actor_updateCollisionStatus(this, *(u8*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
@@ -498,7 +498,7 @@ bool Actor_moves(Actor this)
 }
 
 // is it moving?
-bool Actor_isMoving(Actor this)
+u8 Actor_isMoving(Actor this)
 {
 	ASSERT(this, "Actor::isMoving: null this");
 

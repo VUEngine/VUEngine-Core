@@ -125,7 +125,7 @@ Gap InGameEntity_getGap(InGameEntity this);
 void InGameEntity_setGap(InGameEntity this);
 u16 InGameEntity_getInGameType(InGameEntity this);
 bool InGameEntity_moves(InGameEntity this);
-bool InGameEntity_isMoving(InGameEntity this);
+u8 InGameEntity_isMoving(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
 Direction InGameEntity_getDirection(InGameEntity this);
 void InGameEntity_setShapeState(InGameEntity this, bool state);

@@ -115,7 +115,7 @@ void Body_clearForce(Body this);
 void Body_applyForce(Body this, const Force* force, int clear);
 void Body_applyGravity(Body this, const Acceleration* gravity);
 void Body_addForce(Body this, const Force* force);
-bool Body_isMoving(Body this);
+u8 Body_isMoving(Body this);
 Velocity Body_getVelocity(Body this);
 Acceleration Body_getAcceleration(Body this);
 MovementType Body_getMovementType(Body this);

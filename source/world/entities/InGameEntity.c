@@ -138,7 +138,7 @@ bool InGameEntity_moves(InGameEntity this)
 }
 
 // is it moving?
-bool InGameEntity_isMoving(InGameEntity this)
+u8 InGameEntity_isMoving(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::isMoving: null this");
 
