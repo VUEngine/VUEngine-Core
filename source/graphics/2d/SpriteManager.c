@@ -164,14 +164,15 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 
 				this->node = this->otherNode;
 
-				if (!progressively)
+				if (progressively)
+				{
+					return;
+				}
+				else
 				{
 					// make sure sort is complete
 					this->node = VirtualList_begin(this->sprites);
 					break;
-				}
-				{
-					return;
 				}
 			}
 		}
