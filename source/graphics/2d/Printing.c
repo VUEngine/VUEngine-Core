@@ -122,6 +122,7 @@ void Printing_render(Printing this, int textLayer)
 		return;
 	}
 	
+	__VIP_WAIT;
 	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()));
 	WA[textLayer].mx = 0;
 	WA[textLayer].mp = 0;
@@ -131,6 +132,7 @@ void Printing_render(Printing this, int textLayer)
 	WA[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
 	WA[textLayer].w = __SCREEN_WIDTH;
 	WA[textLayer].h = __SCREEN_HEIGHT;
+	
 }
 
 // clear printing area

@@ -241,8 +241,6 @@ void CharSet_rewrite(CharSet this)
 {
 	ASSERT(this, "CharSet::rewrite: null this");
 
-	VPUManager_waitForFrame(VPUManager_getInstance());
-
 	// write again
 	CharSet_write(this);
 

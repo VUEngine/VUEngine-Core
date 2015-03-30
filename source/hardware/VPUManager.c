@@ -99,21 +99,6 @@ void VPUManager_destructor(VPUManager this)
 	__SINGLETON_DESTROY;
 }
 
-// wait frame
-void VPUManager_waitForFrame(VPUManager this)
-{
-	ASSERT(this, "VPUManager::waitForFrame: null this");
-
-	// disable interrupt
-	VPUManager_disableInterrupt(this);
-
-	//create an independent of software variable to point XPSTTS register
-	unsigned int volatile *xpstts =	(unsigned int *)&VIP_REGS[XPSTTS];
-
-	//wait for screen to idle
-	while (*xpstts & XPBSYR);
-}
-
 // disable interrupt
 void VPUManager_disableInterrupt(VPUManager this)
 {

@@ -156,8 +156,8 @@ void Sprite_setRenderFlag(Sprite this, bool renderFlag);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 void Sprite_update(Sprite this);
+void Sprite_preRender(Sprite this);
 void Sprite_render(Sprite this);
-
 
 //---------------------------------------------------------------------------------------------------------
 // 										Sprites FXs

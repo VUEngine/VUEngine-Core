@@ -140,11 +140,12 @@ void AnimatedSprite_writeAnimation(AnimatedSprite this)
 				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}
+			
+			//Sprite_scale(__UPCAST(Sprite, this));
+			this->renderFlag |= __UPDATE_M;// | (WRLD_AFFINE & this->head? __UPDATE_SIZE: 0);
+
 			break;
 	}
-	
-	Sprite_scale(__UPCAST(Sprite, this));
-	this->renderFlag |= __UPDATE_M | (WRLD_AFFINE & this->head? __UPDATE_SIZE: 0);
 }
 
 // if true, the frame's screen position will be calculated in the

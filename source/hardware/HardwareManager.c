@@ -26,7 +26,7 @@
 #include <HardwareManager.h>
 #include <Game.h>
 #include <ClockManager.h>
-
+#include <SpriteManager.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -146,9 +146,7 @@ void HardwareManager_vpuInterruptHandler(void)
 {
 	// don't use these interrupt, they introduce a strange behavior in the machine
 	VPUManager_disableInterrupt(VPUManager_getInstance());
-
-	Printing_text(Printing_getInstance(), "VPU interrupt", 48 - 13, 0, NULL);
-
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 // setup interrupt vectors
@@ -295,6 +293,7 @@ void HardwareManager_enableRendering(HardwareManager this)
 
 	// turn on display
 	VPUManager_displayOn(this->vpuManager);
+	//VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 // make sure the brigtness is ok

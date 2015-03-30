@@ -160,7 +160,6 @@ __CLASS(VPUManager);
 VPUManager VPUManager_getInstance();
 
 void VPUManager_destructor(VPUManager this);
-void VPUManager_waitForFrame(VPUManager this);
 void VPUManager_disableInterrupt(VPUManager this);
 void VPUManager_enableInterrupt(VPUManager this);
 void VPUManager_displayOn(VPUManager this);

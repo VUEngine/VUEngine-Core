@@ -37,7 +37,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 //#define __STREAM_CYCLE	(__TARGET_FPS >> 1)
-#define __STREAM_CYCLE	(24)
+#define __STREAM_CYCLE	(27)
 #define __STREAM_UNLOAD_CYCLE	(0)
 #define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3
 #define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2
@@ -50,7 +50,8 @@
 
 
 // since there are 32 layers, that's the theoretical limit of entities to display
-#define __STREAMING_AMPLITUDE		32
+#undef __STREAMING_AMPLITUDE
+#define __STREAMING_AMPLITUDE		24
 
 #define __MAXIMUM_PARALLAX		10
 #define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)
@@ -438,7 +439,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	VBVec3D environmentPosition3D = {0, 0, 0};
-	stageEntityDescription->smallRightcuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, environmentPosition3D);
+	stageEntityDescription->smallRightcuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
 	return stageEntityDescription;
 }
@@ -503,9 +504,9 @@ static void Stage_registerEntities(Stage this)
 			}
 		}
 
-		stageEntityDescription->distance = (stageEntityDescription->positionedEntity->position.x - (width >> 1)) * (stageEntityDescription->positionedEntity->position.x - (width >> 1)) +
-		(stageEntityDescription->positionedEntity->position.y - (height >> 1)) * (stageEntityDescription->positionedEntity->position.y - (height >> 1)) +
-		stageEntityDescription->positionedEntity->position.z * stageEntityDescription->positionedEntity->position.z;
+		stageEntityDescription->distance = (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) +
+		(FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) +
+		FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) * FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
 
 		VirtualNode auxNode = VirtualList_begin(this->stageEntities);
 
@@ -595,15 +596,8 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 
 		if (0 > stageEntityDescription->id)
 		{
-			VBVec3D position3D =
-			{
-					FTOFIX19_13(stageEntityDescription->positionedEntity->position.x),
-					FTOFIX19_13(stageEntityDescription->positionedEntity->position.y),
-					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
-			};
-			
 			// if entity in load range
-			if (Stage_inLoadRange(this, position3D, &stageEntityDescription->smallRightcuboid) || !loadOnlyInRangeEntities)
+			if (Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid) || !loadOnlyInRangeEntities)
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
@@ -646,15 +640,8 @@ static void Stage_loadInRangeEntities(Stage this)
 
 		if (-1 == stageEntityDescription->id)
 		{
-			VBVec3D position3D =
-			{
-					FTOFIX19_13(stageEntityDescription->positionedEntity->position.x),
-					FTOFIX19_13(stageEntityDescription->positionedEntity->position.y),
-					FTOFIX19_13(stageEntityDescription->positionedEntity->position.z)
-			};
-
 			// if entity in load range
-			if (Stage_inLoadRange(this, position3D, &stageEntityDescription->smallRightcuboid))
+			if (Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 

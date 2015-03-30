@@ -212,16 +212,16 @@ void Entity_calculateSize(Entity this)
 	this->size.z = rightcuboid.z0 + rightcuboid.z1;
 }
 
-static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, VBVec3D environmentPosition, SmallRightcuboid* rightcuboid)
+static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightcuboid* rightcuboid)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
 	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
 
 	VBVec3D globalPosition3D =
 	{
-		environmentPosition.x + FTOFIX19_13(positionedEntity->position.x),
-		environmentPosition.y + FTOFIX19_13(positionedEntity->position.y),
-		environmentPosition.z + FTOFIX19_13(positionedEntity->position.z)
+		environmentPosition->x + positionedEntity->position.x,
+		environmentPosition->y + positionedEntity->position.y,
+		environmentPosition->z + positionedEntity->position.z
 	};
 
 	s16 halfWidth = 0;
@@ -239,7 +239,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 				WRLD_AFFINE == positionedEntity->entityDefinition->spritesDefinitions[0]->bgmapMode)
 		{
 			fix7_9 scale = FIX19_13TOFIX7_9(ITOFIX19_13(1) -
-				       FIX19_13_DIV(FTOFIX19_13(positionedEntity->position.z), _optical->maximumViewDistance));
+				       FIX19_13_DIV(positionedEntity->position.z, _optical->maximumViewDistance));
 		
 			halfWidth = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfWidth), FIX7_9TOFIX19_13(scale)));
 			halfHeight = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfHeight), FIX7_9TOFIX19_13(scale)));
@@ -291,22 +291,22 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		int i = 0;
 		for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
 		{
-			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], globalPosition3D, rightcuboid);
+			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &globalPosition3D, rightcuboid);
 		}
 	}
 }
 
 // calculate total size from definition
-SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, VBVec3D environmentPosition)
+SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition)
 {
 	SmallRightcuboid rightcuboid = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromDefinition(positionedEntity, environmentPosition, &rightcuboid);
+	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightcuboid);
 
-	rightcuboid.x0 = (s16)positionedEntity->position.x - rightcuboid.x0;
-	rightcuboid.x1 = rightcuboid.x1 - (s16)positionedEntity->position.x;
-	rightcuboid.y0 = (s16)positionedEntity->position.y - rightcuboid.y0;
-	rightcuboid.y1 = rightcuboid.y1 - (s16)positionedEntity->position.y;
+	rightcuboid.x0 = (s16)FIX19_13TOI(positionedEntity->position.x) - rightcuboid.x0;
+	rightcuboid.x1 = rightcuboid.x1 - (s16)FIX19_13TOI(positionedEntity->position.x);
+	rightcuboid.y0 = (s16)FIX19_13TOI(positionedEntity->position.y) - rightcuboid.y0;
+	rightcuboid.y1 = rightcuboid.y1 - (s16)FIX19_13TOI(positionedEntity->position.y);
 
 	return rightcuboid;
 }
@@ -353,15 +353,8 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 		}
 		if(entity)
 		{
-			VBVec3D position3D =
-			{
-					FTOFIX19_13(positionedEntity->position.x),
-					FTOFIX19_13(positionedEntity->position.y),
-					FTOFIX19_13(positionedEntity->position.z)
-			};
-	
 			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position3D);
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, positionedEntity->position);
 	
 			// add children if defined
 			if (positionedEntity->childrenDefinitions)
@@ -400,7 +393,7 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 }
 
 // add child from definition
-Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3DReal* position, void* extraInfo)
+Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
 {
 	PositionedEntity positionedEntityDefinition = 
 	{

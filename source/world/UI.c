@@ -92,15 +92,8 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 
 		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 
-		VBVec3D position =
-		{
-				FTOFIX19_13(entities[i].position.x),
-				FTOFIX19_13(entities[i].position.y),
-				FTOFIX19_13(entities[i].position.z)
-		};
-
 		// set spatial position
-		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
+		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, entities[i].position);
 	}
 }
 
