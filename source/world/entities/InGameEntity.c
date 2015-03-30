@@ -66,6 +66,10 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 	this->direction.y = __DOWN;
 	this->direction.z = __FAR;
 
+	this->directionChange.x = false;
+	this->directionChange.y = false;
+	this->directionChange.z = false;
+	
 	this->shape = NULL;
 }
 
@@ -153,6 +157,30 @@ void InGameEntity_setDirection(InGameEntity this, Direction direction)
 	this->direction = direction;
 }
 
+void InGameEntity_setDirectionOnAxis(InGameEntity this, int axis, int value)
+{
+	ASSERT(this, "InGameEntity::setDirection: null this");
+
+	if (__XAXIS & axis)
+	{
+		this->directionChange.x = value != this->direction.x;
+		this->direction.x = value;
+	}
+
+	if (__YAXIS & axis)
+	{
+		this->directionChange.y = value != this->direction.y;
+		this->direction.y = value;
+	}
+
+	if (__ZAXIS & axis)
+	{
+		this->directionChange.z = value != this->direction.z;
+		this->direction.z = value;
+	}
+}
+
+
 // get direction
 Direction InGameEntity_getDirection(InGameEntity this)
 {
@@ -194,4 +222,12 @@ const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this)
 	ASSERT(this, "InGameEntity::getPreviousPosition: null this");
 
 	return &this->transform.globalPosition;
+}
+
+// check if must update sprite's scale
+bool InGameEntity_updateSpriteScale(InGameEntity this)
+{
+	bool result = this->directionChange.x || this->directionChange.y || this->directionChange.z;
+	this->directionChange.x = this->directionChange.y = this->directionChange.z = false;
+	return result || Entity_updateSpriteScale(__UPCAST(Entity, this));
 }

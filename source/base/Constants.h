@@ -49,7 +49,6 @@ enum MessagesTypes
 	kAutoPause,
 
 	// graphic system's messages
-	kCharSetRewritten,
 	kScreenShake,
 
 	// physics messages

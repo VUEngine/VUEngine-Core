@@ -30,6 +30,12 @@
 #include <CharSet.h>
 #include <Telegram.h>
 
+//---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __EVENT_TEXTURE_REWRITTEN				"textureRewritten"
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -40,7 +46,6 @@
 
 #define Texture_SET_VTABLE(ClassName)											\
 		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, Texture, handleMessage);
 
 #define Texture_ATTRIBUTES														\
 																				\
@@ -124,7 +129,6 @@ u8 Texture_getPallet(Texture this);
 u8 Texture_getRows(Texture this);
 u8 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
-bool Texture_handleMessage(Texture this, Telegram telegram);
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
 void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 

@@ -138,9 +138,9 @@ typedef struct Angle
 // spacial direction vector
 typedef struct Direction
 {
-	int x: 2;
-	int y: 2;
-	int z: 2;
+	s8 x: 2;
+	s8 y: 2;
+	s8 z: 2;
 
 	/*
 	//angle between vector and X axis
@@ -152,6 +152,14 @@ typedef struct Direction
 	*/
 
 } Direction;
+
+typedef struct DirectionChange
+{
+	s8 x: 2;
+	s8 y: 2;
+	s8 z: 2;
+
+} DirectionChange;
 
 // engine's optical values structure
 typedef struct Optical

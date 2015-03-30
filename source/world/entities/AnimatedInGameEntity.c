@@ -310,9 +310,3 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 	
 	AnimatedInGameEntity_addListeners(this);
 }
-
-// check if must update sprite's scale
-int AnimatedInGameEntity_updateSpriteScale(AnimatedInGameEntity this)
-{
-	return this->animationFrameChanged || Entity_updateSpriteScale(__UPCAST(Entity, this));
-}

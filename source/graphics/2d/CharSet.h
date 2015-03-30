@@ -46,6 +46,9 @@
 #define __ANIMATED_SHARED_2	0x04
 
 
+// event
+#define __EVENT_CHARSET_REWRITTEN				"charSetRewritten"
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -82,9 +85,6 @@
 																				\
 	/* array definition of the charSet */										\
 	u16 charDefinitionDisplacement;												\
-																				\
-	/* owner */																	\
-	Object owner;																\
 
 __CLASS(CharSet);
 
@@ -116,7 +116,7 @@ typedef const CharSetDefinition CharSetROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, Object owner);
+__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition);
 
 void CharSet_destructor(CharSet this);
 int CharSet_getAllocationType(CharSet this);

@@ -51,7 +51,7 @@
 
 // since there are 32 layers, that's the theoretical limit of entities to display
 #undef __STREAMING_AMPLITUDE
-#define __STREAMING_AMPLITUDE		24
+#define __STREAMING_AMPLITUDE		28
 
 #define __MAXIMUM_PARALLAX		10
 #define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)

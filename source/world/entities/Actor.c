@@ -519,7 +519,7 @@ VBVec3D Actor_getPosition(Actor this)
 }
 
 // check if must update sprite's position
-int Actor_updateSpritePosition(Actor this)
+bool Actor_updateSpritePosition(Actor this)
 {
 	ASSERT(this, "Actor::updateSpritePosition: null this");
 
@@ -527,16 +527,17 @@ int Actor_updateSpritePosition(Actor this)
 }
 
 // check if must update sprite's scale
-int Actor_updateSpriteScale(Actor this)
+bool Actor_updateSpriteScale(Actor this)
 {
 	ASSERT(this, "Actor::updateSpriteScale: null this");
 
 	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
 	{
+		Printing_hex(Printing_getInstance(), Body_getVelocity(this->body).z, 1, 10, NULL);
 		return true;
 	}
 	
-	return AnimatedInGameEntity_updateSpriteScale(__UPCAST(AnimatedInGameEntity, this));
+	return InGameEntity_updateSpriteScale(__UPCAST(AnimatedInGameEntity, this));
 }
 
 // stop movement completelty

@@ -403,6 +403,7 @@ void SpriteManager_render(SpriteManager this)
 		//Printing_int(Printing_getInstance(), Sprite_getDrawSpec(sprite).position.z, 30, i++, NULL);
 		if(Sprite_getHead(sprite))
 		{
+			node = VirtualNode_getNext(node);
 			__VIP_WAIT;
 			Sprite_render(sprite);
 			break;

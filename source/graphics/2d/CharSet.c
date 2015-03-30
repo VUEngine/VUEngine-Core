@@ -52,7 +52,7 @@ __CLASS_DEFINITION(CharSet, Object);
 //---------------------------------------------------------------------------------------------------------
 
 //class's constructor
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, Object owner);
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,17 +60,16 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition, Object owner)
-__CLASS_NEW_END(CharSet, charSetDefinition, owner)
+__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition)
+__CLASS_NEW_END(CharSet, charSetDefinition)
 
 // class's constructor
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, Object owner)
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition)
 {
 	__CONSTRUCT_BASE();
 
 	// save definition
 	this->charDefinition = charSetDefinition->charDefinition;
-	this->owner = owner;
 
 	// set number of chars
 	CharSet_setNumberOfChars(this, charSetDefinition->numberOfChars);
@@ -241,11 +240,13 @@ void CharSet_rewrite(CharSet this)
 {
 	ASSERT(this, "CharSet::rewrite: null this");
 
+	__VIP_WAIT;
+
 	// write again
 	CharSet_write(this);
 
-	// inform my owner
-	MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), this->owner, kCharSetRewritten, NULL);
+	// propagate event
+	Object_fireEvent(__UPCAST(Object, this), __EVENT_CHARSET_REWRITTEN);
 }
 
 // set charDefinitionDisplacement

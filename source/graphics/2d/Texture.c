@@ -42,6 +42,7 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 static void Texture_writeAnimated(Texture this);
 static void Texture_writeNoAnimated(Texture this);
 static void Texture_writeAnimatedShared(Texture this);
+static void Texture_onCharSetRewritten(Texture this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,8 +66,13 @@ static void Texture_constructor(Texture this, TextureDefinition* textureDefiniti
 	this->textureDefinition = textureDefinition;
 
 	// if the char definition is NULL, it must be a text
-	this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, __UPCAST(Object, this));
-
+	this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+	
+	if(this->charSet)
+	{
+		Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+	}
+	
 	// set the palette
 	this->palette = textureDefinition->palette;
 }
@@ -201,6 +207,8 @@ void Texture_freeCharMemory(Texture this)
 
 	if (this->charSet)
 	{
+		Object_removeEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+
 		//destroy the charset
 		__DELETE(this->charSet);
 
@@ -216,7 +224,12 @@ void Texture_write(Texture this)
 	if (!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
-		this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition, __UPCAST(Object, this));
+		this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+
+		if(this->charSet)
+		{
+			Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+		}
 	}
 
 	//write char group
@@ -450,21 +463,13 @@ u16 Texture_getId(Texture this)
 	return this->id;
 }
 
-// process a telegram
-bool Texture_handleMessage(Texture this, Telegram telegram)
+// process event
+static void Texture_onCharSetRewritten(Texture this, Object eventFirer)
 {
-	ASSERT(this, "Texture::handleMessage: null this");
+	Texture_write(this);
 
-	switch (Telegram_getMessage(telegram))
-	{
-		case kCharSetRewritten:
-
-			Texture_write(this);
-			return true;
-			break;
-	}
-
-	return false;
+	// propagate event
+	Object_fireEvent(__UPCAST(Object, this), __EVENT_TEXTURE_REWRITTEN);
 }
 
 // write directly to texture

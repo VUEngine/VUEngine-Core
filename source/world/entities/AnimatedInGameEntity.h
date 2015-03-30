@@ -65,7 +65,6 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);				\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, getScale);				\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, resume);					\
-		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, updateSpriteScale);		\
 
 #define AnimatedInGameEntity_ATTRIBUTES											\
 																				\
@@ -113,6 +112,5 @@ AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGam
 void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
 void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock);
 void AnimatedInGameEntity_resume(AnimatedInGameEntity this);
-int AnimatedInGameEntity_updateSpriteScale(AnimatedInGameEntity this);
 
 #endif

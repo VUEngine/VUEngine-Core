@@ -469,7 +469,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 }
 
 // transform sprites
-void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSpritePosition)
+void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpritePosition)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -493,7 +493,7 @@ void Entity_translateSprites(Entity this, int updateSpriteScale, int updateSprit
 
 				// calculate sprite's parallax
 				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
-			}
+		    }
 
 			//if screen is moving
 			if (updateSpritePosition)
@@ -515,8 +515,8 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	this->invalidateGlobalPosition.z = true;
 
 	// call base
-	int updateSpritePosition = __VIRTUAL_CALL(int, Entity, updateSpritePosition, this);
-	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
+	bool updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
+	bool updateSpriteScale = __VIRTUAL_CALL(bool, Entity, updateSpriteScale, this);
 
 	// call base class's transform method
 	Container_initialTransform(__UPCAST(Container, this), environmentTransform);
@@ -540,23 +540,14 @@ void Entity_transform(Entity this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
 
-	int updateSpritePosition = __VIRTUAL_CALL(int, Entity, updateSpritePosition, this);
-	int updateSpriteScale = __VIRTUAL_CALL(int, Entity, updateSpriteScale, this);
+	bool updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
+	bool updateSpriteScale = __VIRTUAL_CALL(bool, Entity, updateSpriteScale, this);
 
 	// call base class's transform method
 	Container_transform(__UPCAST(Container, this), environmentTransform);
 
 	// update graphical representation
 	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
-	
-	/*
-	// update shape if needed
-	if (updateSpritePosition && this->shape && !__VIRTUAL_CALL(int, Entity, moves, this))
-	{
-		// setup shape
-		__VIRTUAL_CALL(void, Shape, setup, this->shape);
-	}
-	*/
 }
 
 // retrieve EntityDefinition
@@ -760,14 +751,14 @@ bool Entity_isVisible(Entity this, int pad)
 }
 
 // check if must update sprite's position
-int Entity_updateSpritePosition(Entity this)
+bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 	return ((_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
 }
 
 // check if must update sprite's scale
-int Entity_updateSpriteScale(Entity this)
+bool Entity_updateSpriteScale(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 

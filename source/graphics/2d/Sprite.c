@@ -55,7 +55,7 @@ __CLASS_DEFINITION(Sprite, Object);
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 
-
+static void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 static void Sprite_doScale(Sprite this);
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,6 +76,8 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 
 	if(this->texture)
 	{
+		Object_addEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
+
 		// set texture position
 		this->drawSpec.textureSource.mx = Texture_getXOffset(this->texture) << 3;
 		this->drawSpec.textureSource.my = Texture_getYOffset(this->texture) << 3;
@@ -159,6 +161,7 @@ void Sprite_destructor(Sprite this)
 	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
 
 	// free the texture
+	Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
 	TextureManager_free(TextureManager_getInstance(), this->texture);
 
 	this->texture = NULL;
@@ -499,6 +502,16 @@ void Sprite_rewrite(Sprite this)
 		// write it in graphical memory
 		Texture_rewrite(this->texture);
 	}
+	
+	// raise flag to render again
+	Sprite_show(this);
+}
+
+// process event
+static void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
+{
+	// scale again
+	Sprite_scale(this);
 	
 	// raise flag to render again
 	Sprite_show(this);
