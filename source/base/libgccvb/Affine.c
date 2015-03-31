@@ -117,7 +117,7 @@ fix19_13 Affine_scale(u16 param, fix19_13 paramTableRow, fix7_9 zoomX, fix7_9 zo
 	int affineEntry = FIX19_13TOI(i);
 	int counter = 0;
 #undef __MAXIMUM_AFFINE_ROWS_PER_CALL
-#define __MAXIMUM_AFFINE_ROWS_PER_CALL				8
+#define __MAXIMUM_AFFINE_ROWS_PER_CALL				12
 //	for (; i < totalRows; i += 0b10000000000000, affineEntry ++) 
 
 	for (; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i += 0b10000000000000, affineEntry ++, counter++) 
@@ -133,28 +133,6 @@ fix19_13 Affine_scale(u16 param, fix19_13 paramTableRow, fix7_9 zoomX, fix7_9 zo
 		 */
 		source.pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(i, pdx.pd)) + pdx.dy;
 		affine[affineEntry] = source;
-/*
-		affine[affineEntry + 1] = source;
-		affine[affineEntry + 1].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b10000000000000, pd));
-
-		affine[affineEntry + 2] = source;
-		affine[affineEntry + 2].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b100000000000000, pd));
-
-		affine[affineEntry + 3] = source;
-		affine[affineEntry + 3].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b110000000000000, pd));
-
-		affine[affineEntry + 4] = source;
-		affine[affineEntry + 4].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1000000000000000, pd));
-
-		affine[affineEntry + 5] = source;
-		affine[affineEntry + 5].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1010000000000000, pd));
-
-		affine[affineEntry + 6] = source;
-		affine[affineEntry + 6].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1100000000000000, pd));
-
-		affine[affineEntry + 7] = source;
-		affine[affineEntry + 7].pd_y += FIX19_13TOFIX13_3(FIX19_13_MULT(i + 0b1110000000000000, pd));
-		*/
 	}
 	CACHE_DISABLE;
 	

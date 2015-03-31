@@ -331,6 +331,12 @@ void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction
 {
 	ASSERT(this, "AnimatedSprite::playAnimation: null this");
 
+	// remove previous listeners
+	if(this->animationFunction && this->animationFunction->onAnimationComplete)
+	{
+		Object_removeEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+	}
+	
 	// setup animation frame
 	this->animationFunction = animationFunction;
 
@@ -363,6 +369,12 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 		// compare function's names
 		if (!strcmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name))
 		{
+			// remove previous listeners
+			if(this->animationFunction && this->animationFunction->onAnimationComplete)
+			{
+				Object_removeEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+			}
+
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
 

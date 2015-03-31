@@ -533,11 +533,10 @@ bool Actor_updateSpriteScale(Actor this)
 
 	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
 	{
-		Printing_hex(Printing_getInstance(), Body_getVelocity(this->body).z, 1, 10, NULL);
 		return true;
 	}
 	
-	return InGameEntity_updateSpriteScale(__UPCAST(AnimatedInGameEntity, this));
+	return InGameEntity_updateSpriteScale(__UPCAST(InGameEntity, this));
 }
 
 // stop movement completelty
