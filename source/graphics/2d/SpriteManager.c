@@ -164,16 +164,16 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 
 				this->node = this->otherNode;
 
-				if (progressively)
-				{
-					return;
-				}
-				else
+				if (!progressively)
 				{
 					// make sure sort is complete
 					this->node = VirtualList_begin(this->sprites);
 					break;
 				}
+			}
+			if (progressively)
+			{
+				return;
 			}
 		}
 
@@ -396,23 +396,20 @@ void SpriteManager_render(SpriteManager this)
 	// possible
 	VirtualNode node = VirtualList_begin(this->sprites);
 
+	int counter = 0;
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
-		//Printing_int(Printing_getInstance(), Sprite_getDrawSpec(sprite).position.z, 30, i++, NULL);
-		if(Sprite_getHead(sprite))
+		if(Sprite_getRenderFlag(sprite))
 		{
-			node = VirtualNode_getNext(node);
-			__VIP_WAIT;
+			if(0 == counter++ % 4)
+			{
+				__VIP_WAIT;
+			}
+			
 			Sprite_render(sprite);
-			break;
 		}
-	}
-
-	for (; node; node = VirtualNode_getNext(node))
-	{
-		Sprite_render(__UPCAST(Sprite, VirtualNode_getData(node)));
 	}
 
 	// recover layers

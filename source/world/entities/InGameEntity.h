@@ -63,7 +63,6 @@ struct Shape_str;
 		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, updateSpriteScale);				\
 		
 #define InGameEntity_ATTRIBUTES													\
 																				\
@@ -75,9 +74,6 @@ struct Shape_str;
 																				\
 	/* direction */																\
 	Direction direction;														\
-																				\
-	/* direction status*/														\
-	DirectionChange directionChange;											\
 																				\
 	/* Gap to calculate collisions */											\
 	Gap gap;																	\
@@ -131,7 +127,6 @@ u16 InGameEntity_getInGameType(InGameEntity this);
 bool InGameEntity_moves(InGameEntity this);
 u8 InGameEntity_isMoving(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
-void InGameEntity_setDirectionOnAxis(InGameEntity this, int axis, int value);
 Direction InGameEntity_getDirection(InGameEntity this);
 void InGameEntity_setShapeState(InGameEntity this, bool state);
 fix19_13 InGameEntity_getElasticity(InGameEntity this);

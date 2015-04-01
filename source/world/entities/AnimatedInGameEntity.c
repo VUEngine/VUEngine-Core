@@ -310,3 +310,4 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 	
 	AnimatedInGameEntity_addListeners(this);
 }
+

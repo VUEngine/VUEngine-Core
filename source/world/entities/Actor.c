@@ -536,7 +536,7 @@ bool Actor_updateSpriteScale(Actor this)
 		return true;
 	}
 	
-	return InGameEntity_updateSpriteScale(__UPCAST(InGameEntity, this));
+	return Entity_updateSpriteScale(__UPCAST(Entity, this));
 }
 
 // stop movement completelty

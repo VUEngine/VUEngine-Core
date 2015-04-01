@@ -71,33 +71,36 @@ WORD Utilities_rotateBits(WORD invalue, int places, int direction)
 
 char* Utilities_itoa(u32 num, u8 base, u8 digits)
 {
-	int i;
-	static char rev[11];
-	int flag=false;
+#define __CHAR_HOLDER_SIZE		11
+	int i = 0;
+	static char rev[__CHAR_HOLDER_SIZE];
+	int flag = false;
 //	static char sign='-';
 
-	if ((int)num<0)
+	if ((int)num < 0)
 	{
-		flag=true;
+		flag = true;
 //		num*=(-1);
 	}
-	for (i = 0; i < 10; i++)
+	
+	for (; i < __CHAR_HOLDER_SIZE - 1; i++)
 	{
-		rev[9-i] = numbers[num%base];
+		rev[__CHAR_HOLDER_SIZE - 2 - i] = numbers[num % base];
 		num /= base;
 	}
-	i=0;
+	
+	i = 0;
 	while (rev[i] == '0')
 	{
 		i++;
 	}
-	if (i >= (10-digits))
+	if (i >= (__CHAR_HOLDER_SIZE - 1 - digits))
 	{
-		i=(10-digits);
+		i = __CHAR_HOLDER_SIZE - 1 - digits;
 	}
 
-	rev[10] = 0;
-	return rev+i;
+	rev[__CHAR_HOLDER_SIZE - 1] = 0;
+	return rev + i;
 }
 
 /*
@@ -169,5 +172,5 @@ int Utilities_getDigitCount(int value)
 	}
 	while (value);
 
-	return (size) ? size : 1;
+	return (size)? size: 1;
 }

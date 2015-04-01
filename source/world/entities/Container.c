@@ -41,7 +41,6 @@ __CLASS_DEFINITION(Container, Object);
 static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args);
 void Container_invalidateGlobalPosition(Container this);
 void Container_processRemovedChildren(Container this);
-static void Container_applyTransform(Container this, Transformation* environmentTransform, int isInitialTransform);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -316,11 +315,11 @@ void Container_concatenateTransform(Transformation *environmentTransform, Transf
 	environmentTransform->rotation.z += transform->rotation.z;
 }
 
-// apply transformations
-static void Container_applyTransform(Container this, Transformation* environmentTransform, int isInitialTransform)
+// initial transform
+void Container_initialTransform(Container this, Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::transform: null this");
-
+	ASSERT(this, "Container::initialTransform: null this");
+	
 	// concatenate environment transform
 	Transformation environmentTransformCopy =
 	{
@@ -367,14 +366,65 @@ static void Container_applyTransform(Container this, Transformation* environment
 
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
 
-			if (isInitialTransform)
-			{
-				__VIRTUAL_CALL(void, Container, initialTransform, child, &environmentTransformCopy);
-			}
-			else
-			{
-				__VIRTUAL_CALL(void, Container, transform, child, &environmentTransformCopy);
-			}
+			__VIRTUAL_CALL(void, Container, initialTransform, child, &environmentTransformCopy);
+		}
+	}
+
+	Container_invalidateGlobalPosition(this);
+}
+
+// initial transform
+void Container_transform(Container this, Transformation* environmentTransform)
+{
+	ASSERT(this, "Container::transform: null this");
+
+	// concatenate environment transform
+	Transformation environmentTransformCopy =
+	{
+		// local position
+		{
+			0,
+			0,
+			0
+		},
+		// global position
+		{
+			environmentTransform->globalPosition.x + this->transform.localPosition.x,
+			environmentTransform->globalPosition.y + this->transform.localPosition.y,
+			environmentTransform->globalPosition.z + this->transform.localPosition.z
+		},
+		// scale
+		{
+			environmentTransform->scale.x * this->transform.scale.x,
+			environmentTransform->scale.y * this->transform.scale.y
+		},
+		// rotation
+		{
+			environmentTransform->rotation.x + this->transform.rotation.x,
+			environmentTransform->rotation.y + this->transform.rotation.y,
+			environmentTransform->rotation.z + this->transform.rotation.z
+		}
+	};
+
+	// save new global position
+	this->transform.globalPosition = environmentTransformCopy.globalPosition;
+
+	// if I have children
+	if (this->children)
+	{
+		// first remove children
+		//Container_processRemovedChildren(this);
+
+		VirtualNode node = VirtualList_begin(this->children);
+
+		// update each child
+		for (; node; node = VirtualNode_getNext(node))
+		{
+			Container child = __UPCAST(Container, VirtualNode_getData(node));
+
+			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
+
+			__VIRTUAL_CALL(void, Container, transform, child, &environmentTransformCopy);
 		}
 	}
 
@@ -382,24 +432,6 @@ static void Container_applyTransform(Container this, Transformation* environment
 	this->invalidateGlobalPosition.x = false;
 	this->invalidateGlobalPosition.y = false;
 	this->invalidateGlobalPosition.z = false;
-}
-
-// initial transform
-void Container_initialTransform(Container this, Transformation* environmentTransform)
-{
-	ASSERT(this, "Container::initialTransform: null this");
-
-	Container_applyTransform(this, environmentTransform, true);
-	
-	Container_invalidateGlobalPosition(this);
-}
-
-// initial transform
-void Container_transform(Container this, Transformation* environmentTransform)
-{
-	ASSERT(this, "Container::initialTransform: null this");
-
-	Container_applyTransform(this, environmentTransform, false);
 }
 
 // retrieve global position
@@ -418,6 +450,28 @@ VBVec3D Container_getLocalPosition(Container this)
 	return this->transform.localPosition;
 }
 
+// invalidate global position
+static void Container_propagateInvalidateGlobalPosition(Container this)
+{
+	if (this->children)
+	{
+		VirtualNode node = VirtualList_begin(this->children);
+
+		// update each child
+		for (; node; node = VirtualNode_getNext(node))
+		{
+			Container child = __UPCAST(Container, VirtualNode_getData(node));
+
+			child->invalidateGlobalPosition.x |= this->invalidateGlobalPosition.x;
+			child->invalidateGlobalPosition.y |= this->invalidateGlobalPosition.y;
+			child->invalidateGlobalPosition.z |= this->invalidateGlobalPosition.z;
+
+			// make sure children recalculates its global position
+			Container_propagateInvalidateGlobalPosition(child);
+		}
+	}
+}
+
 //set class's local position
 void Container_setLocalPosition(Container this, VBVec3D position)
 {
@@ -429,8 +483,15 @@ void Container_setLocalPosition(Container this, VBVec3D position)
 	this->invalidateGlobalPosition.z = this->transform.localPosition.z != position.z;
 
 	this->transform.localPosition = position;
-	
-	// if I have children
+
+	Container_propagateInvalidateGlobalPosition(this);
+}
+
+// invalidate global position
+void Container_invalidateGlobalPosition(Container this)
+{
+	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
+
 	if (this->children)
 	{
 		VirtualNode node = VirtualList_begin(this->children);
@@ -438,18 +499,10 @@ void Container_setLocalPosition(Container this, VBVec3D position)
 		// update each child
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
-			
 			// make sure children recalculates its global position
-			Container_invalidateGlobalPosition(__UPCAST(Container, child));
+			Container_invalidateGlobalPosition(__UPCAST(Container, VirtualNode_getData(node)));
 		}
 	}
-}
-
-// invalidate global position
-void Container_invalidateGlobalPosition(Container this)
-{
-	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
 }
 
 // propagate an event to the children wrapper

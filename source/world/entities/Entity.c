@@ -110,9 +110,7 @@ static void Entity_releaseSprites(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-
-			__DELETE(sprite);
+			__DELETE(__UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 
 		// delete the sprites
@@ -186,6 +184,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 	if(this->children)
 	{
 		VirtualNode node = VirtualList_begin(this->children);
+		
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			Entity_getSizeFromChildren(__UPCAST(Entity, VirtualNode_getData(node)), rightcuboid);
@@ -476,7 +475,50 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 	if (this->sprites)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
+
+		if(updateSpriteScale && updateSpritePosition)
+		{
+			// move each child to a temporary list
+			for (; node ; node = VirtualNode_getNext(node))
+			{
+				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+		
+				// calculate the scale
+				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
 	
+				// calculate sprite's parallax
+				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+
+				//update sprite's 2D position
+				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, this->transform.globalPosition);
+			}
+		}
+		else if(!updateSpriteScale && updateSpritePosition)
+		{
+			// move each child to a temporary list
+			for (; node ; node = VirtualNode_getNext(node))
+			{
+				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+		
+				//update sprite's 2D position
+				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, this->transform.globalPosition);
+			}
+		}
+		else if(updateSpriteScale && !updateSpritePosition)
+		{
+			// move each child to a temporary list
+			for (; node ; node = VirtualNode_getNext(node))
+			{
+				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+		
+				// calculate the scale
+				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
+	
+				// calculate sprite's parallax
+				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+			}
+		}
+		/*
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 		{
@@ -488,9 +530,6 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				// calculate the scale
 				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
 	
-				// scale the sprite
-				Sprite_scale(sprite);
-
 				// calculate sprite's parallax
 				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
 		    }
@@ -502,6 +541,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, this->transform.globalPosition);
 			}
 		}
+		*/
 	}
 }
 
@@ -543,11 +583,22 @@ void Entity_transform(Entity this, Transformation* environmentTransform)
 	bool updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
 	bool updateSpriteScale = __VIRTUAL_CALL(bool, Entity, updateSpriteScale, this);
 
-	// call base class's transform method
-	Container_transform(__UPCAST(Container, this), environmentTransform);
+	if (this->invalidateGlobalPosition.x ||
+		this->invalidateGlobalPosition.y ||
+		this->invalidateGlobalPosition.z ||
+		this->children || 
+		__VIRTUAL_CALL(int, Entity, moves, this)
+		)
+	{
+		// call base class's transform method
+		Container_transform(__UPCAST(Container, this), environmentTransform);
+	}
 
-	// update graphical representation
-	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
+	if(updateSpritePosition || updateSpriteScale)
+	{
+		// update graphical representation
+		Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
+	}
 }
 
 // retrieve EntityDefinition
@@ -557,7 +608,6 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
 
 	return this->entityDefinition;
 }
-
 
 // retrieve class's scale
 Scale Entity_getScale(Entity this)
@@ -774,15 +824,9 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 
-		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-
-			if (sprite)
-	        {
-				Sprite_setDirection(sprite, axis, direction);
-			}
+			Sprite_setDirection(__UPCAST(Sprite, VirtualNode_getData(node)), axis, direction);
 		}
 	}
 }
@@ -820,12 +864,7 @@ void Entity_show(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-
-			if (sprite)
-	        {
-				Sprite_show(sprite);
-			}
+			Sprite_show(__UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -842,12 +881,7 @@ void Entity_hide(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-
-			if (sprite)
-	        {
-				Sprite_hide(sprite);
-			}
+			Sprite_hide(__UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }

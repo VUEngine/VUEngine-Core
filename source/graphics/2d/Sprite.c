@@ -319,23 +319,22 @@ void Sprite_preRender(Sprite this)
 	ASSERT(this, "Sprite::preRender: null this");
 	ASSERT(this->texture, "Sprite::preRender: null texture");
 
-	DrawSpec drawSpec = this->drawSpec;
 	WORLD* worldPointer = &WA[this->worldLayer];
 	ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::preRender: freeLayer >= this->worldLayer");
 
 	worldPointer->mx = this->drawSpec.textureSource.mx;
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 	worldPointer->my = this->drawSpec.textureSource.my;
-	worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
-	worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
-	worldPointer->gy = FIX19_13TOI(drawSpec.position.y);
+	worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
+	worldPointer->gp = this->drawSpec.position.parallax + this->parallaxDisplacement;
+	worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 
 	//set the world size according to the zoom
 	if (WRLD_AFFINE & this->head)
 	{
 		worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-		worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-		worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+		worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+		worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 	}
 	else
 	{
@@ -368,8 +367,6 @@ void Sprite_render(Sprite this)
 			return;
 		}
 		
-		DrawSpec drawSpec = this->drawSpec;
-
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_M)
 		{
@@ -381,9 +378,9 @@ void Sprite_render(Sprite this)
 		//set the world screen position
 		if (this->renderFlag & __UPDATE_G)
 		{
-			worldPointer->gx = FIX19_13TOI(drawSpec.position.x);
-			worldPointer->gp = drawSpec.position.parallax + this->parallaxDisplacement;
-			worldPointer->gy = FIX19_13TOI(drawSpec.position.y);
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
+			worldPointer->gp = this->drawSpec.position.parallax + this->parallaxDisplacement;
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 		}
 
 		if (this->renderFlag & __UPDATE_SIZE)
@@ -403,8 +400,8 @@ void Sprite_render(Sprite this)
 				}
 
 				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
 			}
 			else
 			{
@@ -417,7 +414,6 @@ void Sprite_render(Sprite this)
 		this->renderFlag = false;
 	}
 }
-
 
 // get render flag
 u32 Sprite_getRenderFlag(Sprite this)
@@ -451,7 +447,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 {
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
-	if (0 <= worldLayer && this->worldLayer != worldLayer)
+	if (this->worldLayer != worldLayer)
 	{
 		this->worldLayer = worldLayer;
 	
@@ -490,6 +486,8 @@ void Sprite_invalidateParamTable(Sprite this)
 	ASSERT(this, "Sprite::invalidateParamTable: null this");
 
 	this->renderFlag |= __UPDATE_SIZE;
+	
+	Sprite_scale(this);
 }
 
 // reload the sprite in bgmap memory

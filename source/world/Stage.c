@@ -45,13 +45,12 @@
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
 
-#define __ENTITY_LOAD_PAD 			48
-#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 24)
-
+#define __ENTITY_LOAD_PAD 			64
+#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
 // since there are 32 layers, that's the theoretical limit of entities to display
 #undef __STREAMING_AMPLITUDE
-#define __STREAMING_AMPLITUDE		28
+#define __STREAMING_AMPLITUDE		32
 
 #define __MAXIMUM_PARALLAX		10
 #define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)

@@ -243,12 +243,6 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 				//move back paramSize bytes
 				Sprite_setParam(sprite, this->paramTableFreeData.param);
 	
-				// scale now
-				Sprite_scale(sprite);
-
-				// render now
-				//Sprite_render(__UPCAST(Sprite, VirtualNode_getData(node)));
-
 				// set the new param to move on the next cycle
 				this->paramTableFreeData.param += size;
 				

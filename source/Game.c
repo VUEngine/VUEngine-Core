@@ -730,6 +730,7 @@ static void Game_updateRendering(Game this)
 #ifdef __DEBUG
 	this->lastProcessName = "move screen";
 #endif
+
 	// position the screen
 	Screen_positione(this->screen, true);
 
@@ -747,6 +748,7 @@ static void Game_updateRendering(Game this)
 #endif
 	// apply world transformations
 	GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+
 #ifdef __DEBUG
 	this->lastProcessName = "render";
 #endif
@@ -786,42 +788,43 @@ void Game_update(Game this)
 	ASSERT(this, "Game::update: null this");
 
 	u32 currentTime = 0;
-	u32 lastSubSystemTime = 0;
+	u32 mainLogicTime = 0;
 	u32 cleanUpTime = 0;
 	
+
 #ifdef __DEBUG
 	char* previousLastProcessName = NULL;
 #endif
-	
+
 	while (true)
 	{
 #ifdef __DEBUG
-		currentTime = __CAP_FPS ? Clock_getTime(this->clock) : lastSubSystemTime + 1000 + __TIMER_RESOLUTION;
+		currentTime = __CAP_FPS ? Clock_getTime(this->clock) : mainLogicTime + 1000 + __TIMER_RESOLUTION;
 		previousLastProcessName = this->lastProcessName;
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
-		if (currentTime - lastSubSystemTime >= __FPS_BASED_SECONDS)
+		if (currentTime - mainLogicTime >= __FPS_BASED_SECONDS)
 		{
 			// check if new state available
 			if (this->nextState)
 			{
 #ifdef __DEBUG
-			this->lastProcessName = "setting next state";
+				this->lastProcessName = "setting next state";
 #endif		
 				Game_setNextState(this, this->nextState);
 #ifdef __DEBUG
-			this->lastProcessName = "setting next state done";
+				this->lastProcessName = "setting next state done";
 #endif		
 			}
 
 			// update each subsystem
 			Game_updatePhysics(this);
-			Game_updateRendering(this);
 			Game_updateLogic(this);
-
+			Game_updateRendering(this);
+			
 			// record time
-			lastSubSystemTime = currentTime;
+			mainLogicTime = currentTime;
 		}
 		// do some clean up at the half of the second, to don't interfere
 		// with the game' normal flow
@@ -832,8 +835,6 @@ void Game_update(Game this)
 			// record time
 			cleanUpTime = currentTime;
 		}
-
-		FrameRate_increaseRawFPS(this->frameRate);
 
 #ifdef __DEBUG
 		if(previousLastProcessName != this->lastProcessName)
