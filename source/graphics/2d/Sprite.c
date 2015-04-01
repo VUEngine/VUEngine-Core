@@ -355,6 +355,8 @@ void Sprite_render(Sprite this)
 	//if render flag is set
 	if (this->renderFlag)
 	{
+		__VIP_WAIT;
+
 		WORLD* worldPointer = &WA[this->worldLayer];
 
 		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::render: freeLayer >= this->worldLayer");

@@ -36,16 +36,18 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-//#define __STREAM_CYCLE	(__TARGET_FPS >> 1)
-#define __STREAM_CYCLE	(27)
+#define __STREAM_CYCLE_DURATION	(20)
+#define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
-#define __STREAM_LOAD_CYCLE_1	__STREAM_CYCLE / 3
-#define __STREAM_LOAD_CYCLE_2	(__STREAM_CYCLE / 3) * 2
+#define __STREAM_PRELOAD	__STREAM_CYCLE_DURATION / __TOTAL_CYCLES
+#define __STREAM_LOAD_CYCLE	(__STREAM_CYCLE_DURATION / __TOTAL_CYCLES) * 2
+#define __STREAM_INITIALIZE_CYCLE	(__STREAM_CYCLE_DURATION / __TOTAL_CYCLES) * 3
+
 
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
 
-#define __ENTITY_LOAD_PAD 			64
+#define __ENTITY_LOAD_PAD 			128
 #define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
 // since there are 32 layers, that's the theoretical limit of entities to display
@@ -73,6 +75,12 @@ typedef struct StageEntityDescription
 
 } StageEntityDescription;
 
+typedef struct StageEntityToInitialize
+{
+	PositionedEntity* positionedEntity;
+	Entity entity;
+
+} StageEntityToInitialize;
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -87,7 +95,7 @@ static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
 static void Stage_registerEntities(Stage this);
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
+static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
 static void Stage_loadTextures(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
@@ -102,6 +110,10 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 __CLASS_NEW_DEFINITION(Stage)
 __CLASS_NEW_END(Stage);
 
+
+VirtualList entitiesToLoad = NULL;
+VirtualList entitiesToInitialize = NULL;
+
 // class's constructor
 static void Stage_constructor(Stage this)
 {
@@ -114,7 +126,9 @@ static void Stage_constructor(Stage this)
 	this->stageEntitiesToTest = NULL;
 	this->loadedStageEntities = NULL;
 	this->removedEntities = NULL;
-
+	entitiesToLoad = __NEW(VirtualList);
+	entitiesToInitialize = __NEW(VirtualList);
+	
 	this->ui = NULL;
 	this->stageDefinition = NULL;
 
@@ -159,6 +173,18 @@ void Stage_destructor(Stage this)
 	{
 		__DELETE(this->loadedStageEntities);
 		this->loadedStageEntities = NULL;
+	}
+	
+	if (entitiesToLoad)
+	{
+		__DELETE(entitiesToLoad);
+		entitiesToLoad = NULL;
+	}
+	
+	if (entitiesToInitialize)
+	{
+		__DELETE(entitiesToInitialize);
+		entitiesToInitialize = NULL;
 	}
 	
 	// destroy the super object
@@ -348,6 +374,9 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 
 		Entity entity = Entity_loadFromDefinition(positionedEntity, &environmentTransform, this->nextEntityId++);
 
+		// apply transformations
+		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
+
 		if(entity)
 		{
 			// create the entity and add it to the world
@@ -529,10 +558,10 @@ static void Stage_registerEntities(Stage this)
 	}
 }
 
-
+#include <Clock.h>
 			
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively)
+static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
@@ -598,31 +627,99 @@ static void Stage_loadEntities(Stage this, int loadOnlyInRangeEntities, int load
 			// if entity in load range
 			if (Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid) || !loadOnlyInRangeEntities)
 			{
-				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
-
-				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
-
-				if(entity)
-				{
-					stageEntityDescription->id = Container_getId(__UPCAST(Container, entity));
-	
-					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-	
-					entityLoaded = true;
-				}
-				else 
-				{
-					// can't load this entity, so remove its definition
-					VirtualList_removeElement(this->stageEntities, stageEntityDescription);
-					
-					__DELETE_BASIC(stageEntityDescription);
-					break;
-				}
+				stageEntityDescription->id = 0x7FFF;
+				VirtualList_pushBack(entitiesToLoad, stageEntityDescription);
+				entityLoaded = true;
 			}
 		}
 	}
 
 	previousFocusEntityDistance = focusEntityDistance;
+}
+
+static void Stage_loadEntities(Stage this)
+{
+	VirtualNode node = VirtualList_begin(entitiesToLoad);
+	
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+
+		Entity entity = Entity_loadFromDefinitionWithoutInitilization(stageEntityDescription->positionedEntity, this->nextEntityId++);
+
+		if(entity)
+		{
+			StageEntityToInitialize* stageEntityToInitialize = __NEW_BASIC(StageEntityToInitialize);
+			stageEntityToInitialize->positionedEntity = stageEntityDescription->positionedEntity;
+			stageEntityToInitialize->entity = entity;
+			VirtualList_pushBack(entitiesToInitialize, stageEntityToInitialize);
+			stageEntityDescription->id = Container_getId(__UPCAST(Container, entity));
+			VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
+			
+			VirtualList_removeElement(entitiesToLoad, stageEntityDescription);
+			break;
+		}
+		else 
+		{
+			// can't load this entity, so remove its definition
+			VirtualList_removeElement(this->stageEntities, stageEntityDescription);
+			
+			__DELETE_BASIC(stageEntityDescription);
+		}
+	}
+
+	/*
+	Printing_text(Printing_getInstance(), "  ", 20, 9, NULL);
+	Clock clock = Game_getClock(Game_getInstance());
+	u32 startTime = Clock_getTime(clock);
+
+	ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
+	Printing_int(Printing_getInstance(), Clock_getTime(clock) - startTime, 20, 9, NULL);
+*/
+}
+
+
+static void Stage_initializeEntities(Stage this)
+{
+	VirtualNode node = VirtualList_begin(entitiesToInitialize);
+	
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)VirtualNode_getData(node);
+
+		static Transformation environmentTransform =
+		{
+				// local position
+				{0, 0, 0},
+				// global position
+				{0, 0, 0},
+				// scale
+				{1, 1},
+				// rotation
+				{0, 0, 0}
+		};
+
+		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity, stageEntityToInitialize->positionedEntity, &environmentTransform);
+		
+		// create the entity and add it to the world
+		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, stageEntityToInitialize->entity));
+		
+		// apply transformations
+		__VIRTUAL_CALL(void, Container, initialTransform, stageEntityToInitialize->entity, &environmentTransform);
+
+		VirtualList_removeElement(entitiesToInitialize, stageEntityToInitialize);
+		__DELETE_BASIC(stageEntityToInitialize);
+		break;
+	}
+
+	/*
+	Printing_text(Printing_getInstance(), "  ", 20, 9, NULL);
+	Clock clock = Game_getClock(Game_getInstance());
+	u32 startTime = Clock_getTime(clock);
+
+	ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
+	Printing_int(Printing_getInstance(), Clock_getTime(clock) - startTime, 20, 9, NULL);
+*/
 }
 
 // load all visible entities
@@ -733,15 +830,16 @@ void Stage_stream(Stage this)
 	ASSERT(this, "Stage::stream: null this");
 
 	// if the screen is moving
-	static int load = __STREAM_CYCLE;
-	if (!--load)
+	static int streamCycle = __STREAM_CYCLE_DURATION;
+	
+	if (!--streamCycle)
 	{
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
 
-		load = __STREAM_CYCLE;
+		streamCycle = __STREAM_CYCLE_DURATION;
 	}
-	else if (__STREAM_LOAD_CYCLE_1 == load || __STREAM_LOAD_CYCLE_2 == load)
+	else if (__STREAM_PRELOAD == streamCycle)
 	{
 		if (this->removedChildren && VirtualList_getSize(this->removedChildren))
 		{
@@ -750,13 +848,21 @@ void Stage_stream(Stage this)
 		else if (this->focusEntity)
 		{
 			// load visible objects
-			Stage_loadEntities(this, true, true);
+			Stage_preloadEntities(this, true, true);
 		}
 		else
 		{
 			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
 			this->focusEntity = focusInGameEntity? __UPCAST(Entity, focusInGameEntity): NULL;
 		}
+	}
+	else if(__STREAM_LOAD_CYCLE == streamCycle)
+	{
+		Stage_loadEntities(this);
+	}
+	else if(__STREAM_INITIALIZE_CYCLE == streamCycle)
+	{
+		Stage_initializeEntities(this);
 	}
 }
 

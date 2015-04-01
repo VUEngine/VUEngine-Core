@@ -87,10 +87,6 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 
 	this->currentAnimationName = NULL;
 	this->animationFrameChanged = false;
-	
-	AnimatedInGameEntity_playAnimation(this, animatedInGameEntityDefinition->initialAnimation);
-
-	AnimatedInGameEntity_addListeners(this);
 }
 
 // class's destructor
@@ -102,6 +98,16 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 
 	// destroy the super object
 	__DESTROY_BASE;
+}
+
+// initialize method
+void AnimatedInGameEntity_initialize(AnimatedInGameEntity this, const PositionedEntity* positionedEntity, const Transformation* environmentTransform)
+{
+	Entity_initialize(__UPCAST(Entity, this), positionedEntity, environmentTransform);
+
+	AnimatedInGameEntity_addListeners(this);
+
+	AnimatedInGameEntity_playAnimation(this, this->animatedInGameEntityDefinition->initialAnimation);
 }
 
 // add listeners to sprites

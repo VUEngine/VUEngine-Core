@@ -73,12 +73,6 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
 	this->size.x = 0;
 	this->size.y = 0;
 	this->size.z = 0;
-
-	// initialize sprites
-	if (entityDefinition)
-	{
-		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
-	}
 }
 
 // class's destructor
@@ -346,10 +340,6 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 	{
 		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
 
-		if(positionedEntity->name)
-		{
-			Container_setName(__UPCAST(Container, entity), positionedEntity->name);
-		}
 		if(entity)
 		{
 			// set spatial position
@@ -361,14 +351,96 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 				Entity_addChildren(entity, positionedEntity->childrenDefinitions, environmentTransform);
 			}	
 			
-			// apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
+			__VIRTUAL_CALL(void, Entity, initialize, entity, positionedEntity, environmentTransform);
 			
 			return entity;
 		}
 	}
 
 	return NULL;
+}
+
+// load children
+void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity* childrenDefinitions)
+{
+	ASSERT(this, "Entity::loadChildren: null this");
+
+	if (childrenDefinitions)
+	{
+		int i = 0;
+
+		//go through n sprites in entity's definition
+		for (; childrenDefinitions[i].entityDefinition; i++)
+	    {
+			Entity entity = Entity_loadFromDefinitionWithoutInitilization(&childrenDefinitions[i], this->id + Container_getChildCount(__UPCAST(Container, this)));
+
+			// create the entity and add it to the world
+			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
+		}
+	}	
+}
+
+// load an entity from a PositionedEntity definition
+Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* positionedEntity, s16 id)
+{
+	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
+	
+	if (positionedEntity)
+	{
+		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
+		
+		// add children if defined
+		if (positionedEntity->childrenDefinitions)
+		{
+			Entity_addChildrenWithoutInitilization(entity, positionedEntity->childrenDefinitions);
+		}	
+		return entity;
+	}
+
+	return NULL;
+}
+
+// initialize from definition
+void Entity_initialize(Entity this, const PositionedEntity* positionedEntity, const Transformation* environmentTransform)
+{
+	ASSERT(this, "Entity::initialize: null this");
+	
+	if (!this->sprites)
+	{
+		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
+	}
+	
+	if(positionedEntity->name)
+	{
+		Container_setName(__UPCAST(Container, this), positionedEntity->name);
+	}
+
+	// set spatial position
+	__VIRTUAL_CALL(void, Entity, setLocalPosition, this, positionedEntity->position);
+
+	if(this->children)
+	{
+		VirtualNode node = VirtualList_begin(this->children);
+		
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			int i = 0;
+			for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
+			{
+				Entity child = __UPCAST(Entity, VirtualNode_getData(node));
+				
+				if(positionedEntity->childrenDefinitions[i].entityDefinition ==  child->entityDefinition)
+				{
+					__VIRTUAL_CALL(void, Entity, initialize, child, &positionedEntity->childrenDefinitions[i], &environmentTransform);
+				}
+			}
+		}
+	}
+	
+	if(this->shape)
+	{
+		Shape_setActive(this->shape, true);
+	}
 }
 
 // load children

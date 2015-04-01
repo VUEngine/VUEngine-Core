@@ -171,6 +171,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 					break;
 				}
 			}
+			
 			if (progressively)
 			{
 				return;
@@ -395,21 +396,19 @@ void SpriteManager_render(SpriteManager this)
 	// to make effective its visual properties as quick as
 	// possible
 	VirtualNode node = VirtualList_begin(this->sprites);
-
-	int counter = 0;
+/*
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-		
-		if(Sprite_getRenderFlag(sprite))
+		if(Sprite_getRenderFlag(__UPCAST(Sprite, VirtualNode_getData(node))))
 		{
-			if(0 == counter++ % 4)
-			{
-				__VIP_WAIT;
-			}
-			
-			Sprite_render(sprite);
+			__VIP_WAIT;
+			break;
 		}
+	}
+*/
+	for (; node; node = VirtualNode_getNext(node))
+	{
+		Sprite_render(__UPCAST(Sprite, VirtualNode_getData(node)));
 	}
 
 	// recover layers

@@ -61,7 +61,7 @@ void Shape_constructor(Shape this, Entity owner)
 	// set flag
 	this->checkForCollisions = true;
 
-	Shape_setActive(this, true);
+	Shape_setActive(this, false);
 }
 
 // class's destructor
