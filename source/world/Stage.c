@@ -110,10 +110,6 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 __CLASS_NEW_DEFINITION(Stage)
 __CLASS_NEW_END(Stage);
 
-
-VirtualList entitiesToLoad = NULL;
-VirtualList entitiesToInitialize = NULL;
-
 // class's constructor
 static void Stage_constructor(Stage this)
 {
@@ -126,8 +122,8 @@ static void Stage_constructor(Stage this)
 	this->stageEntitiesToTest = NULL;
 	this->loadedStageEntities = NULL;
 	this->removedEntities = NULL;
-	entitiesToLoad = __NEW(VirtualList);
-	entitiesToInitialize = __NEW(VirtualList);
+	this->entitiesToLoad = __NEW(VirtualList);
+	this->entitiesToInitialize = __NEW(VirtualList);
 	
 	this->ui = NULL;
 	this->stageDefinition = NULL;
@@ -175,16 +171,26 @@ void Stage_destructor(Stage this)
 		this->loadedStageEntities = NULL;
 	}
 	
-	if (entitiesToLoad)
+	if (this->entitiesToLoad)
 	{
-		__DELETE(entitiesToLoad);
-		entitiesToLoad = NULL;
+		__DELETE(this->entitiesToLoad);
+		this->entitiesToLoad = NULL;
 	}
 	
-	if (entitiesToInitialize)
+	if (this->entitiesToInitialize)
 	{
-		__DELETE(entitiesToInitialize);
-		entitiesToInitialize = NULL;
+		VirtualNode node = VirtualList_begin(this->entitiesToInitialize);
+		
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)VirtualNode_getData(node);
+
+			__DELETE(stageEntityToInitialize->entity);
+			__DELETE_BASIC(stageEntityToInitialize);
+		}
+		
+		__DELETE(this->entitiesToInitialize);
+		this->entitiesToInitialize = NULL;
 	}
 	
 	// destroy the super object
@@ -334,9 +340,6 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 	
 			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 	
-			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
-	
 			PositionedEntity positionedEntity = 
 			{
 					entityDefinition,
@@ -370,26 +373,29 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 
 	if (positionedEntity)
 	{
-		// static to avoid call to memcpy
-		static Transformation environmentTransform =
-		{
-				// local position
-				{0, 0, 0},
-				// global position
-				{0, 0, 0},
-				// scale
-				{1, 1},
-				// rotation
-				{0, 0, 0}
-		};
-
 		Entity entity = Entity_loadFromDefinition(positionedEntity, this->nextEntityId++);
-
-		// apply transformations
-		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 
 		if(entity)
 		{
+			// must initialize after adding the children
+			__VIRTUAL_CALL(void, Entity, initialize, entity, positionedEntity);
+
+			// static to avoid call to memcpy
+			static Transformation environmentTransform =
+			{
+					// local position
+					{0, 0, 0},
+					// global position
+					{0, 0, 0},
+					// scale
+					{1, 1},
+					// rotation
+					{0, 0, 0}
+			};
+			
+			// apply transformations
+			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
+
 			// create the entity and add it to the world
 			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 		}
@@ -637,7 +643,7 @@ static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int l
 			if (Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid) || !loadOnlyInRangeEntities)
 			{
 				stageEntityDescription->id = 0x7FFF;
-				VirtualList_pushBack(entitiesToLoad, stageEntityDescription);
+				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
 				entityLoaded = true;
 			}
 		}
@@ -648,7 +654,7 @@ static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int l
 
 static void Stage_loadEntities(Stage this)
 {
-	VirtualNode node = VirtualList_begin(entitiesToLoad);
+	VirtualNode node = VirtualList_begin(this->entitiesToLoad);
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
@@ -661,11 +667,11 @@ static void Stage_loadEntities(Stage this)
 			StageEntityToInitialize* stageEntityToInitialize = __NEW_BASIC(StageEntityToInitialize);
 			stageEntityToInitialize->positionedEntity = stageEntityDescription->positionedEntity;
 			stageEntityToInitialize->entity = entity;
-			VirtualList_pushBack(entitiesToInitialize, stageEntityToInitialize);
+			VirtualList_pushBack(this->entitiesToInitialize, stageEntityToInitialize);
 			stageEntityDescription->id = Container_getId(__UPCAST(Container, entity));
 			VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 			
-			VirtualList_removeElement(entitiesToLoad, stageEntityDescription);
+			VirtualList_removeElement(this->entitiesToLoad, stageEntityDescription);
 			break;
 		}
 		else 
@@ -690,7 +696,7 @@ static void Stage_loadEntities(Stage this)
 
 static void Stage_initializeEntities(Stage this)
 {
-	VirtualNode node = VirtualList_begin(entitiesToInitialize);
+	VirtualNode node = VirtualList_begin(this->entitiesToInitialize);
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
@@ -716,7 +722,7 @@ static void Stage_initializeEntities(Stage this)
 		// apply transformations
 		__VIRTUAL_CALL(void, Container, initialTransform, stageEntityToInitialize->entity, &environmentTransform);
 
-		VirtualList_removeElement(entitiesToInitialize, stageEntityToInitialize);
+		VirtualList_removeElement(this->entitiesToInitialize, stageEntityToInitialize);
 		__DELETE_BASIC(stageEntityToInitialize);
 		break;
 	}
@@ -936,6 +942,28 @@ void Stage_resume(Stage this)
 {
 	ASSERT(this, "Stage::resume: null this");
 
+	// clean up streaming lists
+	VirtualNode node = VirtualList_begin(this->entitiesToLoad);
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+
+		stageEntityDescription->id = -1;
+	}
+	
+	VirtualList_clear(this->entitiesToLoad);
+	
+	node = VirtualList_begin(this->entitiesToInitialize);
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)VirtualNode_getData(node);
+
+		__DELETE(stageEntityToInitialize->entity);
+		__DELETE_BASIC(stageEntityToInitialize);
+	}
+	
+	VirtualList_clear(this->entitiesToInitialize);
+	
 	// reload textures
 	Stage_loadTextures(this);
 	

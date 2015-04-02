@@ -422,7 +422,9 @@ void Container_transform(Container this, Transformation* environmentTransform)
 		{
 			Container child = __UPCAST(Container, VirtualNode_getData(node));
 
-			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
+			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
+			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
+			child->invalidateGlobalPosition.z = child->invalidateGlobalPosition.z || this->invalidateGlobalPosition.z;
 
 			__VIRTUAL_CALL(void, Container, transform, child, &environmentTransformCopy);
 		}

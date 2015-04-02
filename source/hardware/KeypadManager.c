@@ -111,7 +111,8 @@ u16 KeypadManager_read(KeypadManager this)
 
 	KeypadManager_disable(this);
 
-	static unsigned int volatile *readingStatus =	(unsigned int *)&HW_REGS[SCR];
+	static unsigned int volatile *readingStatus = NULL;
+	readingStatus = (unsigned int *)&HW_REGS[SCR];
 
 	//wait for screen to idle
 	while (*readingStatus & S_STAT);

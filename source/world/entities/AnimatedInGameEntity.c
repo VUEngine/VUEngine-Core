@@ -272,11 +272,15 @@ bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName)
 {
 	ASSERT(this, "AnimatedInGameEntity::isAnimationLoaded: null this");
-	ASSERT(this->sprites, "AnimatedInGameEntity::isAnimationLoaded: null sprites");
 
-	Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
+	if(this->sprites)
+	{
+		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
-	return AnimatedSprite_isPlayingFunction(__UPCAST(AnimatedSprite, sprite), this->animationDescription, functionName);
+		return AnimatedSprite_isPlayingFunction(__UPCAST(AnimatedSprite, sprite), this->animationDescription, functionName);
+	}
+	
+	return false;
 }
 
 // get animation definition

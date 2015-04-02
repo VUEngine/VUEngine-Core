@@ -73,11 +73,17 @@
 	/* the removed entities */ 													\
 	VirtualList removedEntities;												\
 																				\
+	/* streaming's preloaded entities */ 										\
+	VirtualList entitiesToLoad;													\
+																				\
+	/* streaming's uninitialized entities */ 									\
+	VirtualList entitiesToInitialize;											\
+																				\
 	/* the UI */ 																\
 	UI ui;																		\
 																				\
 	/* flag to know if the stage must flush unused char groups */				\
-	int flushCharSets;														\
+	int flushCharSets;															\
 																				\
 	/* focus entity: needed for streaming */									\
 	Entity focusEntity;															\

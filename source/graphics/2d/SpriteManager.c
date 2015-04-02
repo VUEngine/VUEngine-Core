@@ -113,6 +113,7 @@ void SpriteManager_reset(SpriteManager this)
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 	this->freedLayer = 0;
+	this->tempFreedLayer = 0;
 
 	this->node = NULL;
 	this->otherNode = NULL;
@@ -328,10 +329,6 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 				// move the sprite to the freed layer
 				Sprite_setWorldLayer(sprite, this->freedLayer);
 				
-				// prerredner it so is is shown in the next cycle
-				//Sprite_preRender(sprite);
-				//Sprite_show(sprite);
-
 				// register previous sprite's layer
 				// to avoid flicker and gosthing
 				this->tempFreedLayer = spriteLayer;

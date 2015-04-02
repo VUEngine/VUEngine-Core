@@ -147,6 +147,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 void Sprite_destructor(Sprite this)
 {
 	ASSERT(this, "Sprite::destructor: null this");
+	ASSERT(__UPCAST(Sprite, this), "Sprite::destructor: null cast");
 
 	Sprite_hide(this);
 
@@ -161,11 +162,13 @@ void Sprite_destructor(Sprite this)
 	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
 
 	// free the texture
-	Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
-	TextureManager_free(TextureManager_getInstance(), this->texture);
-
-	this->texture = NULL;
-
+	if(this->texture)
+	{
+		Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
+		TextureManager_free(TextureManager_getInstance(), this->texture);
+		this->texture = NULL;
+	}
+	
 	// destroy the super object
 	__DESTROY_BASE;
 }

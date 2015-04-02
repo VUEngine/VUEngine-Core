@@ -61,13 +61,10 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	ASSERT(mBackgroundDefinition->spritesDefinitions[0], "MBackground::constructor: null sprite definition");
 	ASSERT(mBackgroundDefinition->spritesDefinitions[0]->textureDefinition, "MBackground::constructor: null texture definition");
 	
-	// first register with the manager so it handles the texture loading process
-	MBackgroundManager_registerMBackground(MBackgroundManager_getInstance(), this, mBackgroundDefinition->spritesDefinitions[0]->textureDefinition);
-
 	// construct base object
 	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id);
-	
-	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
+
+	this->mBackgroundDefinition = mBackgroundDefinition;
 	
 	this->size.x = __SCREEN_WIDTH;
 	this->size.y = __SCREEN_HEIGHT;
@@ -83,6 +80,17 @@ void MBackground_destructor(MBackground this)
 
 	// destroy the super object
 	__DESTROY_BASE;
+}
+
+// initialize method
+void MBackground_initialize(MBackground this, const PositionedEntity* positionedEntity)
+{
+	Entity_initialize(__UPCAST(Entity, this), positionedEntity);
+
+	// first register with the manager so it handles the texture loading process
+	MBackgroundManager_registerMBackground(MBackgroundManager_getInstance(), this, this->mBackgroundDefinition->spritesDefinitions[0]->textureDefinition);
+
+	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
 }
 
 // retrieve texture

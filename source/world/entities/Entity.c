@@ -351,8 +351,6 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 i
 				Entity_addChildren(entity, positionedEntity->childrenDefinitions);
 			}	
 			
-			__VIRTUAL_CALL(void, Entity, initialize, entity, positionedEntity);
-			
 			return entity;
 		}
 	}
@@ -389,12 +387,24 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* pos
 	{
 		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
 		
-		// add children if defined
-		if (positionedEntity->childrenDefinitions)
+		if(entity)
 		{
-			Entity_addChildrenWithoutInitilization(entity, positionedEntity->childrenDefinitions);
-		}	
-		return entity;
+			if(positionedEntity->name)
+			{
+				Container_setName(__UPCAST(Container, entity), positionedEntity->name);
+			}
+
+			// set spatial position
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, positionedEntity->position);
+			
+			// add children if defined
+			if (positionedEntity->childrenDefinitions)
+			{
+				Entity_addChildrenWithoutInitilization(entity, positionedEntity->childrenDefinitions);
+			}	
+		
+			return entity;
+		}
 	}
 
 	return NULL;
@@ -409,31 +419,14 @@ void Entity_initialize(Entity this, const PositionedEntity* positionedEntity)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 	}
-	
-	if(positionedEntity->name)
-	{
-		Container_setName(__UPCAST(Container, this), positionedEntity->name);
-	}
-
-	// set spatial position
-	__VIRTUAL_CALL(void, Entity, setLocalPosition, this, positionedEntity->position);
 
 	if(this->children)
 	{
 		VirtualNode node = VirtualList_begin(this->children);
-		
+
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			int i = 0;
-			for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
-			{
-				Entity child = __UPCAST(Entity, VirtualNode_getData(node));
-				
-				if(positionedEntity->childrenDefinitions[i].entityDefinition ==  child->entityDefinition)
-				{
-					__VIRTUAL_CALL(void, Entity, initialize, child, &positionedEntity->childrenDefinitions[i]);
-				}
-			}
+			__VIRTUAL_CALL(void, Entity, initialize, __UPCAST(Entity, VirtualNode_getData(node)), NULL);
 		}
 	}
 	
@@ -466,7 +459,7 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 // add child from definition
 Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
 {
-	PositionedEntity positionedEntityDefinition = 
+	PositionedEntity positionedEntity = 
 	{
 		(EntityDefinition*)entityDefinition, 
 		{position->x, position->y, position->z}, 
@@ -475,16 +468,22 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		extraInfo
 	};
 
-	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
-	
     // create the hint entity and add it to the hero as a child entity
-	Entity childEntity = Entity_loadFromDefinition(&positionedEntityDefinition, 0 > id? id: this->id + Container_getChildCount(__UPCAST(Container, this)));
+	Entity childEntity = Entity_loadFromDefinition(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__UPCAST(Container, this)));
 
-	// create the entity and add it to the world
-	Container_addChild(__UPCAST(Container, this), __UPCAST(Container, childEntity));
+	if(childEntity)
+	{
+		// must initialize after adding the children
+		__VIRTUAL_CALL(void, Entity, initialize, childEntity, positionedEntity);
+	
+		Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 
-	// apply transformations
-	__VIRTUAL_CALL(void, Container, initialTransform, childEntity, environmentTransform);
+		// apply transformations
+		__VIRTUAL_CALL(void, Container, initialTransform, childEntity, &environmentTransform);
+
+		// create the entity and add it to the world
+		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, childEntity));
+	}
 
 	return childEntity;
 }
@@ -661,9 +660,7 @@ void Entity_transform(Entity this, Transformation* environmentTransform)
 	if (this->invalidateGlobalPosition.x ||
 		this->invalidateGlobalPosition.y ||
 		this->invalidateGlobalPosition.z ||
-		this->children || 
-		__VIRTUAL_CALL(int, Entity, moves, this)
-		)
+		this->children)
 	{
 		// call base class's transform method
 		Container_transform(__UPCAST(Container, this), environmentTransform);

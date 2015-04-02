@@ -41,6 +41,7 @@
 #include <SpriteManager.h>
 #include <CharSetManager.h>
 #include <SoundManager.h>
+#include <MBackgroundManager.h>
 #include <StateMachine.h>
 #include <Screen.h>
 #include <VPUManager.h>
@@ -443,7 +444,8 @@ void Game_reset(Game this)
 	TextureManager_reset(this->bgmapManager);
 	ParamTableManager_reset(this->paramTableManager);
 	SpriteManager_reset(this->spriteManager);
-
+	MBackgroundManager_reset(MBackgroundManager_getInstance());
+	
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
 

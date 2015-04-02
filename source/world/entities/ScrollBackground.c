@@ -74,13 +74,30 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 	// construct base object
 	__CONSTRUCT_BASE(scrollBackgroundDefinition, id);
 
-	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
-
-	ScrollBackground_retrieveSprites(this);
-	
 	this->size.x = __SCREEN_WIDTH;
 	this->size.y = __SCREEN_HEIGHT;
 	this->size.z = 1;
+}
+
+// class's destructor
+void ScrollBackground_destructor(ScrollBackground this)
+{
+	ASSERT(this, "ScrollBackground::destructor: null this");
+
+	// destroy the super object
+	__DESTROY_BASE;
+}
+
+// initialize from definition
+void ScrollBackground_initialize(ScrollBackground this, const PositionedEntity* positionedEntity)
+{
+	ASSERT(this, "ScrollBackground::initialize: null this");
+
+	Entity_initialize(__UPCAST(Entity, this), positionedEntity);
+
+	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
+
+	ScrollBackground_retrieveSprites(this);
 
 	Sprite sprite = this->scrollSprites[kRightSprite];
 	
@@ -93,15 +110,6 @@ void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinit
 			this->size.y = (u16)Texture_getRows(texture) << 3;
 		}
 	}
-}
-
-// class's destructor
-void ScrollBackground_destructor(ScrollBackground this)
-{
-	ASSERT(this, "ScrollBackground::destructor: null this");
-
-	// destroy the super object
-	__DESTROY_BASE;
 }
 
 // get the sprites so I can manipulate them

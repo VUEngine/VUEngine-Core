@@ -127,7 +127,7 @@ void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground
 	}
 }
 
-// remove coin
+// remove background
 void MBackgroundManager_removeMBackground(MBackgroundManager this, MBackground mBackground)
 {
 	ASSERT(this, "MBackgroundManager::removeMBackground: null this");
@@ -142,4 +142,12 @@ void MBackgroundManager_removeMBackground(MBackgroundManager this, MBackground m
 	}
 	
 	VirtualList_removeElement(this->mBackgrounds, mBackground);
+}
+
+// remove texture
+void MBackgroundManager_reset(MBackgroundManager this)
+{
+	ASSERT(this, "MBackgroundManager::reset: null this");
+
+	VirtualList_clear(this->textures);
 }

@@ -39,6 +39,7 @@
 
 #define MBackground_SET_VTABLE(ClassName)										\
 		Entity_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, MBackground, initialize);						\
 		__VIRTUAL_SET(ClassName, MBackground, isVisible);						\
 
 // A MBackground which represent a generic object inside a Stage
@@ -46,6 +47,9 @@
 																				\
 	/* super's attributes */													\
 	Entity_ATTRIBUTES;															\
+																				\
+	/* ROM definition */														\
+	MBackgroundDefinition* mBackgroundDefinition;								\
 
 __CLASS(MBackground);
 
@@ -69,6 +73,7 @@ __CLASS_NEW_DECLARE(MBackground, MBackgroundDefinition* mBackgroundDefinition, s
 
 void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id);
 void MBackground_destructor(MBackground this);
+void MBackground_initialize(MBackground this, const PositionedEntity* positionedEntity);
 Texture MBackground_getTexture(MBackground this);
 int MBackground_isVisible(MBackground this, int pad);
 
