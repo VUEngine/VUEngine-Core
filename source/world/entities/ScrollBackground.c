@@ -89,11 +89,11 @@ void ScrollBackground_destructor(ScrollBackground this)
 }
 
 // initialize from definition
-void ScrollBackground_initialize(ScrollBackground this, const PositionedEntity* positionedEntity)
+void ScrollBackground_initialize(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::initialize: null this");
 
-	Entity_initialize(__UPCAST(Entity, this), positionedEntity);
+	Entity_initialize(__UPCAST(Entity, this));
 
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 

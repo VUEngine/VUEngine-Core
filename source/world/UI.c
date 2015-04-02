@@ -104,7 +104,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	{
 		Entity entity = Entity_loadFromDefinition(&entities[i], ID++);
 
-		__VIRTUAL_CALL(void, Entity, initialize, entity, NULL);
+		__VIRTUAL_CALL(void, Entity, initialize, entity);
 
 		// apply transformations
 		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);

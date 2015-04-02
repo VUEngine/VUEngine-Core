@@ -411,7 +411,7 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* pos
 }
 
 // initialize from definition
-void Entity_initialize(Entity this, const PositionedEntity* positionedEntity)
+void Entity_initialize(Entity this)
 {
 	ASSERT(this, "Entity::initialize: null this");
 	
@@ -426,7 +426,7 @@ void Entity_initialize(Entity this, const PositionedEntity* positionedEntity)
 
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			__VIRTUAL_CALL(void, Entity, initialize, __UPCAST(Entity, VirtualNode_getData(node)), NULL);
+			__VIRTUAL_CALL(void, Entity, initialize, __UPCAST(Entity, VirtualNode_getData(node)));
 		}
 	}
 	
@@ -474,7 +474,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 	if(childEntity)
 	{
 		// must initialize after adding the children
-		__VIRTUAL_CALL(void, Entity, initialize, childEntity, positionedEntity);
+		__VIRTUAL_CALL(void, Entity, initialize, childEntity);
 	
 		Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 
@@ -592,30 +592,6 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
 			}
 		}
-		/*
-		// move each child to a temporary list
-		for (; node ; node = VirtualNode_getNext(node))
-		{
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-	
-			// update scale if needed
-			if (updateSpriteScale)
-		    {
-				// calculate the scale
-				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
-	
-				// calculate sprite's parallax
-				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
-		    }
-
-			//if screen is moving
-			if (updateSpritePosition)
-		    {
-				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, this->transform.globalPosition);
-			}
-		}
-		*/
 	}
 }
 

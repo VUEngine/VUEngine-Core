@@ -47,7 +47,7 @@
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
 
-#define __ENTITY_LOAD_PAD 			128
+#define __ENTITY_LOAD_PAD 			196
 #define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
 // since there are 32 layers, that's the theoretical limit of entities to display
@@ -349,7 +349,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 					NULL
 			};
 			
-			__VIRTUAL_CALL(void, Entity, initialize, entity, &positionedEntity);
+			__VIRTUAL_CALL(void, Entity, initialize, entity);
 
 			// apply transformations
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
@@ -378,7 +378,7 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 		if(entity)
 		{
 			// must initialize after adding the children
-			__VIRTUAL_CALL(void, Entity, initialize, entity, positionedEntity);
+			__VIRTUAL_CALL(void, Entity, initialize, entity);
 
 			// static to avoid call to memcpy
 			static Transformation environmentTransform =
@@ -714,7 +714,7 @@ static void Stage_initializeEntities(Stage this)
 				{0, 0, 0}
 		};
 
-		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity, stageEntityToInitialize->positionedEntity);
+		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity);
 		
 		// create the entity and add it to the world
 		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, stageEntityToInitialize->entity));

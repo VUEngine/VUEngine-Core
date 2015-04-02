@@ -150,7 +150,7 @@ SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo);
 Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 id);
 Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* positionedEntity, s16 id);
-void Entity_initialize(Entity this, const PositionedEntity* positionedEntity);
+void Entity_initialize(Entity this);
 void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity* childrenDefinitions);
 Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo);

@@ -77,7 +77,7 @@ __CLASS_NEW_DECLARE(ScrollBackground, ScrollBackgroundDefinition* backgroundDefi
 
 void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 id);
 void ScrollBackground_destructor(ScrollBackground this);
-void ScrollBackground_initialize(ScrollBackground this, const PositionedEntity* positionedEntity);
+void ScrollBackground_initialize(ScrollBackground this);
 void ScrollBackground_initialTransform(ScrollBackground this, Transformation* environmentTransform);
 void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform);
 bool ScrollBackground_isVisible(ScrollBackground this, int pad);

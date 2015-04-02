@@ -101,7 +101,7 @@ __CLASS_NEW_DECLARE(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animat
 
 void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id);
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
-void AnimatedInGameEntity_initialize(AnimatedInGameEntity this, const PositionedEntity* positionedEntity);
+void AnimatedInGameEntity_initialize(AnimatedInGameEntity this);
 void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* environmentTransform);
 void AnimatedInGameEntity_update(AnimatedInGameEntity this);
 Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this);

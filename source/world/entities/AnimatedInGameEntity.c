@@ -101,9 +101,9 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 }
 
 // initialize method
-void AnimatedInGameEntity_initialize(AnimatedInGameEntity this, const PositionedEntity* positionedEntity)
+void AnimatedInGameEntity_initialize(AnimatedInGameEntity this)
 {
-	Entity_initialize(__UPCAST(Entity, this), positionedEntity);
+	Entity_initialize(__UPCAST(Entity, this));
 
 	AnimatedInGameEntity_addListeners(this);
 
