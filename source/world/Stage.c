@@ -340,7 +340,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 			PositionedEntity positionedEntity = 
 			{
 					entityDefinition,
-					position,
+					*position,
 					NULL,
 					NULL,
 					NULL
