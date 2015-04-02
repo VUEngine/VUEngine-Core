@@ -148,10 +148,10 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID)
 void Entity_destructor(Entity this);
 SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
 Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo);
-Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const Transformation* environmentTransform, s16 id);
+Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 id);
 Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* positionedEntity, s16 id);
-void Entity_initialize(Entity this, const PositionedEntity* positionedEntity, const Transformation* environmentTransform);
-void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions, const Transformation* environmentTransform);
+void Entity_initialize(Entity this, const PositionedEntity* positionedEntity);
+void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity* childrenDefinitions);
 Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo);
 void Entity_setExtraInfo(Entity this, void* extraInfo);

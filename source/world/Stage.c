@@ -337,6 +337,17 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 			// set spatial position
 			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
 	
+			PositionedEntity positionedEntity = 
+			{
+					entityDefinition,
+					position,
+					NULL,
+					NULL,
+					NULL
+			};
+			
+			__VIRTUAL_CALL(void, Entity, initialize, entity, &positionedEntity);
+
 			// apply transformations
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
 	
@@ -372,7 +383,7 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 				{0, 0, 0}
 		};
 
-		Entity entity = Entity_loadFromDefinition(positionedEntity, &environmentTransform, this->nextEntityId++);
+		Entity entity = Entity_loadFromDefinition(positionedEntity, this->nextEntityId++);
 
 		// apply transformations
 		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
@@ -558,8 +569,6 @@ static void Stage_registerEntities(Stage this)
 	}
 }
 
-#include <Clock.h>
-			
 // load entities on demand (if they aren't loaded and are visible)
 static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively)
 {
@@ -699,7 +708,7 @@ static void Stage_initializeEntities(Stage this)
 				{0, 0, 0}
 		};
 
-		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity, stageEntityToInitialize->positionedEntity, &environmentTransform);
+		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity, stageEntityToInitialize->positionedEntity);
 		
 		// create the entity and add it to the world
 		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, stageEntityToInitialize->entity));

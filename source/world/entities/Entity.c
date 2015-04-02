@@ -332,7 +332,7 @@ Entity Entity_load(const EntityDefinition* entityDefinition, int id, void* extra
 }
 
 // load an entity from a PositionedEntity definition
-Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const Transformation* environmentTransform, s16 id)
+Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 	
@@ -348,10 +348,10 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, const
 			// add children if defined
 			if (positionedEntity->childrenDefinitions)
 			{
-				Entity_addChildren(entity, positionedEntity->childrenDefinitions, environmentTransform);
+				Entity_addChildren(entity, positionedEntity->childrenDefinitions);
 			}	
 			
-			__VIRTUAL_CALL(void, Entity, initialize, entity, positionedEntity, environmentTransform);
+			__VIRTUAL_CALL(void, Entity, initialize, entity, positionedEntity);
 			
 			return entity;
 		}
@@ -401,7 +401,7 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* pos
 }
 
 // initialize from definition
-void Entity_initialize(Entity this, const PositionedEntity* positionedEntity, const Transformation* environmentTransform)
+void Entity_initialize(Entity this, const PositionedEntity* positionedEntity)
 {
 	ASSERT(this, "Entity::initialize: null this");
 	
@@ -431,7 +431,7 @@ void Entity_initialize(Entity this, const PositionedEntity* positionedEntity, co
 				
 				if(positionedEntity->childrenDefinitions[i].entityDefinition ==  child->entityDefinition)
 				{
-					__VIRTUAL_CALL(void, Entity, initialize, child, &positionedEntity->childrenDefinitions[i], &environmentTransform);
+					__VIRTUAL_CALL(void, Entity, initialize, child, &positionedEntity->childrenDefinitions[i]);
 				}
 			}
 		}
@@ -444,7 +444,7 @@ void Entity_initialize(Entity this, const PositionedEntity* positionedEntity, co
 }
 
 // load children
-void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions, const Transformation* environmentTransform)
+void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions)
 {
 	ASSERT(this, "Entity::loadChildren: null this");
 
@@ -455,7 +455,7 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 		//go through n sprites in entity's definition
 		for (; childrenDefinitions[i].entityDefinition; i++)
 	    {
-			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], environmentTransform, this->id + Container_getChildCount(__UPCAST(Container, this)));
+			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], this->id + Container_getChildCount(__UPCAST(Container, this)));
 
 			// create the entity and add it to the world
 			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
@@ -478,10 +478,13 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 	
     // create the hint entity and add it to the hero as a child entity
-	Entity childEntity = Entity_loadFromDefinition(&positionedEntityDefinition, &environmentTransform, 0 > id? id: this->id + Container_getChildCount(__UPCAST(Container, this)));
+	Entity childEntity = Entity_loadFromDefinition(&positionedEntityDefinition, 0 > id? id: this->id + Container_getChildCount(__UPCAST(Container, this)));
 
 	// create the entity and add it to the world
 	Container_addChild(__UPCAST(Container, this), __UPCAST(Container, childEntity));
+
+	// apply transformations
+	__VIRTUAL_CALL(void, Container, initialTransform, childEntity, environmentTransform);
 
 	return childEntity;
 }

@@ -102,12 +102,15 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 
 	for (;entities && entities[i].entityDefinition; i++)
 	{
-		Entity entity = Entity_loadFromDefinition(&entities[i], &environmentTransform, ID++);
+		Entity entity = Entity_loadFromDefinition(&entities[i], ID++);
 
 		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 
 		// set spatial position
 		__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, entities[i].position);
+
+		// apply transformations
+		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 	}
 }
 
