@@ -432,7 +432,6 @@ void Game_reset(Game this)
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
 
-
 	// TODO
 	//SoundManager_getInstance();
 }

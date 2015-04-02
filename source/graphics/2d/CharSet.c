@@ -240,8 +240,6 @@ void CharSet_rewrite(CharSet this)
 {
 	ASSERT(this, "CharSet::rewrite: null this");
 
-	__VIP_WAIT;
-
 	// write again
 	CharSet_write(this);
 

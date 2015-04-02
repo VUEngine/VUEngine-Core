@@ -80,6 +80,8 @@ static void VPUManager_constructor(VPUManager this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+__attribute((sda)) unsigned int volatile *xpstts =	NULL;
+
 __SINGLETON(VPUManager);
 
 // class's constructor
@@ -88,6 +90,8 @@ static void VPUManager_constructor(VPUManager this)
 	ASSERT(this, "VPUManager::constructor: null this");
 
 	__CONSTRUCT_BASE();
+	
+	xpstts = (unsigned int *)&VIP_REGS[XPSTTS];
 }
 
 // class's destructor

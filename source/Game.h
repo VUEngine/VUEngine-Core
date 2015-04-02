@@ -84,6 +84,7 @@ bool Game_isInStageEditor(Game this);
 #endif
 #ifdef __ANIMATION_EDITOR
 bool Game_isInAnimationEditor(Game this);
-
 #endif
+
+
 #endif

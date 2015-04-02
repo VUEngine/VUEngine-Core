@@ -337,10 +337,11 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 		{
 			// create the entity and add it to the world
 			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
-	
-			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
-	
+
+			// initialize now
 			__VIRTUAL_CALL(void, Entity, initialize, entity);
+
+			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 
 			// apply transformations
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
@@ -928,9 +929,15 @@ void Stage_suspend(Stage this)
 	}
 }
 
+void Stag_tes()
+{
+	__VIRTUAL_CALL(void, Container, suspend, NULL);
+}
+
 // resume after pause
 void Stage_resume(Stage this)
 {
+	Stag_tes();
 	ASSERT(this, "Stage::resume: null this");
 
 	// clean up streaming lists

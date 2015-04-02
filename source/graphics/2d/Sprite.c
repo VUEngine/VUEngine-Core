@@ -358,7 +358,8 @@ void Sprite_render(Sprite this)
 	//if render flag is set
 	if (this->renderFlag)
 	{
-		__VIP_WAIT;
+		extern unsigned int volatile *xpstts;
+		while (*xpstts & XPBSYR);
 
 		WORLD* worldPointer = &WA[this->worldLayer];
 
