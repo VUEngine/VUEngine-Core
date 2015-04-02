@@ -58,29 +58,14 @@ void Game_start(Game this, GameState state);
 void Game_changeState(Game this, GameState state);
 void Game_disableHardwareInterrupts(Game this);
 void Game_enableHardwareInterrupts(Game this);
-void Game_recoverGraphicMemory(Game this);
 void Game_reset(Game this);
-void Game_saveState(Game this);
-void Game_recoverState(Game this);
-void Game_render(Game this);
-void Game_update(Game this);
 bool Game_handleMessage(Game this, Telegram telegram);
-void Game_setRestFlag(Game this, bool flag);
 Clock Game_getClock(Game this);
 Clock Game_getInGameClock(Game this);
 void Game_printClassSizes(int x, int y);
 char* Game_getLastProcessName(Game this);
 Optical Game_getOptical(Game this);
 void Game_setOptical(Game this, Optical optical);
-#ifdef __DEBUG_TOOLS
-bool Game_isInDebugMode(Game this);
-#endif
-#ifdef __STAGE_EDITOR
-bool Game_isInStageEditor(Game this);
-#endif
-#ifdef __ANIMATION_EDITOR
-bool Game_isInAnimationEditor(Game this);
-#endif
 bool Game_isInSpecialMode(Game this);
 bool Game_isEnteringSpecialMode(Game this);
 bool Game_isExitingSpecialMode(Game this);
@@ -91,4 +76,14 @@ void Game_pause(Game this, GameState pauseState);
 void Game_unpause(Game this, GameState pauseState);
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
 
+#ifdef __DEBUG_TOOLS
+bool Game_isInDebugMode(Game this);
+#endif
+#ifdef __STAGE_EDITOR
+bool Game_isInStageEditor(Game this);
+#endif
+#ifdef __ANIMATION_EDITOR
+bool Game_isInAnimationEditor(Game this);
+
+#endif
 #endif

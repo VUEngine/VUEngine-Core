@@ -3,11 +3,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 							  VBJAENGINE'S CUSTOM CONFIGURATION
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 										DEBUGGING TOOLS
 //---------------------------------------------------------------------------------------------------------
 
@@ -15,6 +10,10 @@
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
 #define __ANIMATION_EDITOR
+
+#undef __DEBUG_TOOLS
+#undef __STAGE_EDITOR
+#undef __ANIMATION_EDITOR
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,12 +39,12 @@
 #define __DISTANCE_EYE_SCREEN					384
 
 // maximum view distance (deep)
-#define __MAX_VIEW_DISTANCE						512
+#define __MAX_VIEW_DISTANCE						256
 // always use a power of 2 as the maximum view distance, and update
 // the number of bits to make projection faster
-#define __MAX_VIEW_DISTANCE_POW					9
+#define __MAX_VIEW_DISTANCE_POW					8
 
-//distance between eyes
+// distance between eyes
 #define __BASE_FACTOR							768
 
 // player's eyes's horizontal position
@@ -69,7 +68,7 @@
 #define __CAP_FPS						1
 
 // clock resolution
-#define __TIMER_RESOLUTION				10
+#define __TIMER_RESOLUTION				1
 
 // target frames per second
 // must be a muliple of 50 to being able to use a timer resolution greater than 1
@@ -82,7 +81,7 @@
 // target frames per second
 #define __MINIMUM_GOOD_FPS 				(__TARGET_FPS - 0)
 
-#define __MILLISECONDS_IN_SECOND			1000
+#define __MILLISECONDS_IN_SECOND		1000
 
 // set animation delays as if they are 60 FPS, and multiply by this factor
 #define __FPS_ANIM_FACTOR 	(__TARGET_FPS / (float)__OPTIMUM_FPS)
@@ -116,17 +115,8 @@
 #define __POOL_80B_SIZE 	(__BLOCK_80B * 48)
 #define __POOL_48B_SIZE 	(__BLOCK_48B * 32)
 #define __POOL_32B_SIZE 	(__BLOCK_32B * 128)
-
-#ifndef __DEBUG_TOOLS
-#define __POOL_28B_SIZE 	(__BLOCK_28B * 512)
-// make sure that the n value in  __BLOCK_16B * n is greater than the number
-// of entities in your biggest stage's definition
-#define __POOL_16B_SIZE 	(__BLOCK_16B * 128)
-#else
 #define __POOL_28B_SIZE 	(__BLOCK_28B * 640)
 #define __POOL_16B_SIZE 	(__BLOCK_16B * 256)
-#endif
-
 
 #define __MIN_BLOCK 		__BLOCK_16B
 
@@ -201,14 +191,27 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										WORLD'S CAPACITY
+// 										    STREAMING
 //---------------------------------------------------------------------------------------------------------
 
-// padd to determine if a character must be loaded/unloaded load pad must always be lower than unload pad!
-// too close values will put under heavy load the streaming!
-#define __ENTITY_LOAD_PAD 			48
-#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 24)
+// the number of total calls to the streaming method which completes a cycle
+// there are 4 parts for the streaming algorithm:
+// 1) unload entities
+// 2) select the next entity to load
+// 3) create the selected entity
+// 4) initialize the loaded entity
+// if __STREAM_CYCLE_DURATION = 20 and __TARGET_FPS = 50, each one of the previous items will be called
+// called every 100 milliseconds
+#define __STREAM_CYCLE_DURATION	(20)
 
+// pad to determine if an entity must be loaded/unloaded 
+// load pad must always be lower than unload pad!
+// too close values will put under heavy usage the streaming!
+#define __ENTITY_LOAD_PAD 			196
+#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
+
+// the number of entities in the stage's definition to check for streaming in on each 
+// preload cycle
 // since there are 32 layers, that's the theoretical limit of entities to display
 #define __STREAMING_AMPLITUDE		32
 

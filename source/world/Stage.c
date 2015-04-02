@@ -340,15 +340,6 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 	
 			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 	
-			PositionedEntity positionedEntity = 
-			{
-					entityDefinition,
-					*position,
-					NULL,
-					NULL,
-					NULL
-			};
-			
 			__VIRTUAL_CALL(void, Entity, initialize, entity);
 
 			// apply transformations

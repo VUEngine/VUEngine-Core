@@ -110,7 +110,7 @@ enum StateOperations
 	Screen screen;																\
 																				\
 	/* game's next state */														\
-	GameState nextState;															\
+	GameState nextState;														\
 																				\
 	/* game's next state operation */											\
 	int nextStateOperation; 													\
@@ -143,6 +143,7 @@ static void Game_initialize(Game this);
 static void Game_setOpticalGlobals(Game this);
 static void Game_setNextState(Game this, GameState state);
 static void Game_handleInput(Game this);
+static void Game_update(Game this);
 static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
 static void Game_updateRendering(Game this);
@@ -409,24 +410,6 @@ void Game_enableHardwareInterrupts(Game this)
 	HardwareManager_enableRendering(this->hardwareManager);
 }
 
-// recover graphics memory
-void Game_recoverGraphicMemory(Game this)
-{
-	ASSERT(this, "Game::recoverGraphicMemory: null this");
-
-	//initialize graphic class managers
-	CharSetManager_destructor(this->charSetManager);
-	this->charSetManager = CharSetManager_getInstance();
-
-	TextureManager_destructor(this->bgmapManager);
-	this->bgmapManager = TextureManager_getInstance();
-
-	ParamTableManager_destructor(this->paramTableManager);
-	this->paramTableManager = ParamTableManager_getInstance();
-
-	HardwareManager_setupColumnTable(this->hardwareManager);
-}
-
 // erase engine's current status
 void Game_reset(Game this)
 {
@@ -452,38 +435,6 @@ void Game_reset(Game this)
 
 	// TODO
 	//SoundManager_getInstance();
-}
-
-// backup engine's current status
-void Game_saveState(Game this)
-{
-	ASSERT(this, "Game::saveState: null this");
-
-	// TODO
-	// save gameworld's object's current state
-	//Stage_copy(this->auxStage, this->stage);
-
-	// save engine's state
-	// this->previousLogic = this->currentLogic;
-	//his->previousState=this->currentState;
-}
-
-// reload engine's current status
-void Game_recoverState(Game this)
-{
-	ASSERT(this, "Game::recoverState: null this");
-
-	// TODO
-
-	//reload graphics
-	Game_recoverGraphicMemory(this);
-
-	//recover background music
-	//SoundManager_loadBGM(this->soundManager, Stage_getBGM(this->stage));
-
-	//recover engine's state
-	//this->currentLogic = this->previousLogic;
-	//this->currentState = this->previousState;
 }
 
 // initialize optic paramenters
@@ -517,9 +468,10 @@ static void Game_handleInput(Game this)
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
-	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 
 #ifdef __DEBUG_TOOLS
+
+	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 
 	// check code to access special feature
 	if ((previousKey & K_SEL) && (pressedKey & K_RU))
@@ -785,7 +737,7 @@ static void Game_cleanUp(Game this)
 }
 
 // update game's subsystems
-void Game_update(Game this)
+static void Game_update(Game this)
 {
 	ASSERT(this, "Game::update: null this");
 
