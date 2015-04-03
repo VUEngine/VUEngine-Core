@@ -393,16 +393,7 @@ void SpriteManager_render(SpriteManager this)
 	// to make effective its visual properties as quick as
 	// possible
 	VirtualNode node = VirtualList_begin(this->sprites);
-/*
-	for (; node; node = VirtualNode_getNext(node))
-	{
-		if(Sprite_getRenderFlag(__UPCAST(Sprite, VirtualNode_getData(node))))
-		{
-			__VIP_WAIT;
-			break;
-		}
-	}
-*/
+
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		Sprite_render(__UPCAST(Sprite, VirtualNode_getData(node)));

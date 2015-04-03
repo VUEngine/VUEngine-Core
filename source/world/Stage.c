@@ -36,6 +36,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#undef __STREAM_CYCLE_DURATION
 #define __STREAM_CYCLE_DURATION	(20)
 #define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
