@@ -120,7 +120,6 @@ static void Stage_constructor(Stage this)
 	__CONSTRUCT_BASE(-1);
 
 	this->stageEntities = NULL;
-	this->stageEntitiesToTest = NULL;
 	this->loadedStageEntities = NULL;
 	this->removedEntities = NULL;
 	this->entitiesToLoad = __NEW(VirtualList);
@@ -158,12 +157,6 @@ void Stage_destructor(Stage this)
 		__DELETE(this->stageEntities);
 
 		this->stageEntities = NULL;
-	}
-
-	if (this->stageEntitiesToTest)
-	{
-		__DELETE(this->stageEntitiesToTest);
-		this->stageEntitiesToTest = NULL;
 	}
 
 	if (this->loadedStageEntities)
@@ -420,9 +413,9 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent)
 
 	Container_deleteMyself(__UPCAST(Container, entity));
 
-	VirtualNode node = VirtualList_begin(this->stageEntities);
-
 	s16 id = Container_getId(__UPCAST(Container, entity));
+
+	VirtualNode node = VirtualList_begin(this->stageEntities);
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
@@ -440,6 +433,8 @@ void Stage_removeEntity(Stage this, Entity entity, int permanent)
 		ASSERT(entity, "Stage::removeEntity: null node");
 
 		VirtualList_removeElement(this->stageEntities, VirtualNode_getData(node));
+		VirtualList_removeElement(this->loadedStageEntities, VirtualNode_getData(node));
+		__DELETE_BASIC(VirtualNode_getData(node));
 	}
 }
 
@@ -493,13 +488,6 @@ static void Stage_registerEntities(Stage this)
 	}
 
 	this->stageEntities = __NEW(VirtualList);
-
-	if (this->stageEntitiesToTest)
-	{
-		__DELETE(this->stageEntitiesToTest);
-	}
-
-	this->stageEntitiesToTest = __NEW(VirtualList);
 
 	if (this->loadedStageEntities)
 	{
@@ -840,7 +828,7 @@ void Stage_stream(Stage this)
 	// if the screen is moving
 	static int streamCycle = __STREAM_CYCLE_DURATION;
 	
-	if (!--streamCycle)
+	if(!--streamCycle)
 	{
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
