@@ -759,8 +759,6 @@ static void Game_update(Game this)
 #endif		
 		if (currentTime - mainLogicTime >= __FPS_BASED_SECONDS)
 		{
-			MemoryPool_printMemUsage(MemoryPool_getInstance(), 1, 6);
-
 			// check if new state available
 			if (this->nextState)
 			{

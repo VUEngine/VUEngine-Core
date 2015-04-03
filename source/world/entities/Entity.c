@@ -604,14 +604,11 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	this->invalidateGlobalPosition.y = true;
 	this->invalidateGlobalPosition.z = true;
 
-	// call base
-	bool updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
-	bool updateSpriteScale = __VIRTUAL_CALL(bool, Entity, updateSpriteScale, this);
-
 	// call base class's transform method
 	Container_initialTransform(__UPCAST(Container, this), environmentTransform);
 
-	Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
+	// force sprite translation
+	Entity_translateSprites(this, true, true);
 
 	if (this->shape)
 	{
@@ -827,7 +824,7 @@ bool Entity_isVisible(Entity this, int pad)
 		return false;
 	}
 
-	lowLimit = - pad;
+	lowLimit = -pad;
 	highLimit = __SCREEN_HEIGHT + pad;
 
 	// check y visibility
@@ -836,8 +833,8 @@ bool Entity_isVisible(Entity this, int pad)
 		return false;
 	}
 
-	lowLimit = 0;
-	highLimit = _optical->maximumViewDistance;
+	lowLimit = -pad;
+	highLimit = _optical->maximumViewDistance + pad;
 
 	// check y visibility
 	if (z + this->size.z < lowLimit || z > highLimit)

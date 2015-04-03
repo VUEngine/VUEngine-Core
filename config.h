@@ -200,7 +200,7 @@
 // 4) initialize the loaded entity
 // if __STREAM_CYCLE_DURATION = 20 and __TARGET_FPS = 50, each one of the previous items will be called
 // called every 100 milliseconds
-#define __STREAM_CYCLE_DURATION	(20)
+#define __STREAM_CYCLE_DURATION	(1000 / __TARGET_FPS)
 
 // pad to determine if an entity must be loaded/unloaded 
 // load pad must always be lower than unload pad!
@@ -212,9 +212,6 @@
 // preload cycle
 // since there are 32 layers, that's the theoretical limit of entities to display
 #define __STREAMING_AMPLITUDE		32
-
-// number of sprites per entity
-#define __MAX_SPRITES_PER_ENTITY 	4
 
 
 //---------------------------------------------------------------------------------------------------------

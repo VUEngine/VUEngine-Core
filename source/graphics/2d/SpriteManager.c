@@ -226,14 +226,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 
 		this->node = NULL;
 		this->otherNode = NULL;
-		SpriteManager_sortLayers(this, true);
-
-		if(layer != Sprite_getWorldLayer(sprite))
-		{
-			layer = Sprite_getWorldLayer(sprite);
-	
-			Sprite_render(__UPCAST(Sprite, VirtualList_front(this->sprites)));
-		}
 
 		if(this->tempFreedLayer > layer)
 		{
@@ -464,9 +456,16 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 
+		/*
 		Printing_text(Printing_getInstance(), "Sprite: ", auxX, auxY, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX + 8, auxY, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(sprite), auxX + 11, auxY, NULL);
+*/
+		Printing_text(Printing_getInstance(), "  : ", auxX, auxY, NULL);
+		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX, auxY, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.x), auxX + 3, auxY, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.y), auxX + 8, auxY, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.z), auxX + 13, auxY, NULL);
 
 		if (28 <= ++auxY)
 		{
