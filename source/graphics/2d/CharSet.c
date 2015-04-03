@@ -240,8 +240,8 @@ void CharSet_rewrite(CharSet this)
 {
 	ASSERT(this, "CharSet::rewrite: null this");
 
-	extern unsigned int volatile *xpstts;
-	while (*xpstts & XPBSYR);
+	extern unsigned int volatile* _xpstts;
+	while (*_xpstts & XPBSYR);
 
 	// write again
 	CharSet_write(this);

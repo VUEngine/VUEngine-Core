@@ -930,15 +930,9 @@ void Stage_suspend(Stage this)
 	}
 }
 
-void Stag_tes()
-{
-	__VIRTUAL_CALL(void, Container, suspend, NULL);
-}
-
 // resume after pause
 void Stage_resume(Stage this)
 {
-	Stag_tes();
 	ASSERT(this, "Stage::resume: null this");
 
 	// clean up streaming lists

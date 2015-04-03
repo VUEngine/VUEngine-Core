@@ -169,14 +169,15 @@ void GameState_resume(GameState this, void* owner)
 	// set screen to its previous position
 	Screen_setStageSize(Screen_getInstance(), Stage_getSize(this->stage));
 	Screen_setPosition(Screen_getInstance(), this->screenPosition);
-	
+
 	if(this->stage)
 	{
 		Game_reset(Game_getInstance());
+		
 		// update the stage
 		__VIRTUAL_CALL(void, Container, resume, this->stage);
 	}
-	
+
 	// transform everything before showing up
 	GameState_transform(this);
 

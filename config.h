@@ -6,14 +6,12 @@
 // 										DEBUGGING TOOLS
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __DEBUG
 #define __PRINT_FRAMERATE
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
 #define __ANIMATION_EDITOR
-
-#undef __DEBUG_TOOLS
-#undef __STAGE_EDITOR
-#undef __ANIMATION_EDITOR
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -68,7 +66,7 @@
 #define __CAP_FPS						1
 
 // clock resolution
-#define __TIMER_RESOLUTION				1
+#define __TIMER_RESOLUTION				10
 
 // target frames per second
 // must be a muliple of 50 to being able to use a timer resolution greater than 1

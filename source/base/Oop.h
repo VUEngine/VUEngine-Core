@@ -321,9 +321,9 @@
 																						\
 		/* insert class's virtual methods names */										\
 		ClassName ## _METHODS;															\
-	};																					\
+																						\
 	/* create the vtable instance */													\
-	__attribute((sda)) struct ClassName ## _vTable ClassName ## _vTable;				\
+	}ClassName ## _vTable;																\
 
 
 // declare a class
@@ -369,8 +369,8 @@
 		/* end definition */															\
 	} ClassName ## _str;																\
 																						\
-	__attribute((sda)) static void (*_baseConstructor)(void*, ...) = NULL;				\
-	__attribute((sda)) static void (*_baseDestructor)(void*) = NULL;					\
+	static void (*_baseConstructor)(void*, ...) = NULL;									\
+	static void (*_baseDestructor)(void*) = NULL;										\
 																						\
 	/* define class's getSize method */													\
 	int ClassName ## _getObjectSize()													\
@@ -412,7 +412,7 @@
 #define __SINGLETON(ClassName)															\
 																						\
 	/* declare the static instance */													\
-	__attribute((sda)) static ClassName ## _str _instance ## ClassName;					\
+	static ClassName ## _str _instance ## ClassName;									\
 																						\
 	/* a flag to know when to allow constructs */										\
 	static s8 _singletonConstructed = -1;												\
@@ -460,7 +460,7 @@
 #define __SINGLETON_DYNAMIC(ClassName)													\
 																						\
 	/* declare the static pointer to instance */										\
-	__attribute((sda)) static ClassName _instance ## ClassName;							\
+	static ClassName _instance ## ClassName;											\
 																						\
 	/* define allocator */																\
 	__CLASS_NEW_DEFINITION(ClassName);													\
