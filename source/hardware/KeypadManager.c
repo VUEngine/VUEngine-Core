@@ -56,7 +56,7 @@ static void KeypadManager_constructor(KeypadManager this);
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-static unsigned int volatile* _readingStatus = NULL;
+static unsigned int volatile* readingStatus = NULL;
 
 __SINGLETON(KeypadManager);
 
@@ -69,7 +69,7 @@ static void KeypadManager_constructor(KeypadManager this)
 
 	this->currentKey = 0;
 	
-	_readingStatus = (unsigned int *)&HW_REGS[SCR];
+	readingStatus = (unsigned int *)&HW_REGS[SCR];
 }
 
 // class's destructor
@@ -115,7 +115,7 @@ u16 KeypadManager_read(KeypadManager this)
 	KeypadManager_disable(this);
 
 	//wait for screen to idle
-	while (*_readingStatus & S_STAT);
+	while (*readingStatus & S_STAT);
 
 	// now read the key
 	this->previousKey = this->currentKey;

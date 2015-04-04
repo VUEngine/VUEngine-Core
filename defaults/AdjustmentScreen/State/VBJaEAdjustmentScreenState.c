@@ -79,7 +79,7 @@ static void VBJaEAdjustmentScreenState_destructor(VBJaEAdjustmentScreenState thi
 // state's enter
 static void VBJaEAdjustmentScreenState_enter(VBJaEAdjustmentScreenState this, void* owner)
 {
-	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false, false);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }

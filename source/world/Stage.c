@@ -93,7 +93,7 @@ void Container_processRemovedChildren(Container this);
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
-static void Stage_registerEntities(Stage this);
+static void Stage_registerEntities(Stage this, bool enableStreaming);
 static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
 static void Stage_loadTextures(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
@@ -225,7 +225,7 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallR
 }
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities)
+void Stage_load(Stage this, StageDefinition* stageDefinition, bool enableStreaming)
 {
 	ASSERT(this, "Stage::load: null this");
 
@@ -248,7 +248,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRang
 	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
 
 	// register all the entities in the stage's definition
-	Stage_registerEntities(this);
+	Stage_registerEntities(this, enableStreaming);
 
 	// load entities
 	Stage_loadInRangeEntities(this);
@@ -351,7 +351,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 }
 
 // add entity to the stage
-Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, int permanent)
+Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, bool permanent)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
@@ -396,7 +396,7 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 }
 
 // add entity to the stage
-void Stage_removeEntity(Stage this, Entity entity, int permanent)
+void Stage_removeEntity(Stage this, Entity entity, bool permanent)
 {
 	ASSERT(this, "Stage::removeEntity: null this");
 	ASSERT(entity, "Stage::removeEntity: null entity");
@@ -476,7 +476,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 }
 
 // register the stage's definition entities in the streaming list
-static void Stage_registerEntities(Stage this)
+static void Stage_registerEntities(Stage this, bool enableStreaming)
 {
 	ASSERT(this, "Stage::registerEntities: null this");
 
@@ -503,51 +503,58 @@ static void Stage_registerEntities(Stage this)
 	{
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities[i]);
 
-		u8 width = 0;
-		u8 height = 0;
-
-		int i = 0;
-		for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i]->allocator; i++)
+		if(enableStreaming)
 		{
-			const SpriteDefinition* spriteDefinition = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[i];
-
-			if (spriteDefinition)
+			u8 width = 0;
+			u8 height = 0;
+	
+			int j = 0;
+			for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j]->allocator; j++)
 			{
-				if (spriteDefinition->textureDefinition)
+				const SpriteDefinition* spriteDefinition = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j];
+	
+				if (spriteDefinition)
 				{
-					if (width < spriteDefinition->textureDefinition->cols << 3)
+					if (spriteDefinition->textureDefinition)
 					{
-						width = spriteDefinition->textureDefinition->cols << 3;
-					}
-
-					if (height < spriteDefinition->textureDefinition->rows << 3)
-					{
-						height = spriteDefinition->textureDefinition->rows << 3;
+						if (width < spriteDefinition->textureDefinition->cols << 3)
+						{
+							width = spriteDefinition->textureDefinition->cols << 3;
+						}
+	
+						if (height < spriteDefinition->textureDefinition->rows << 3)
+						{
+							height = spriteDefinition->textureDefinition->rows << 3;
+						}
 					}
 				}
 			}
-		}
-
-		stageEntityDescription->distance = (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) +
-		(FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) +
-		FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) * FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
-
-		VirtualNode auxNode = VirtualList_begin(this->stageEntities);
-
-		for (; auxNode; auxNode = VirtualNode_getNext(auxNode))
-		{
-			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
-
-			if (stageEntityDescription->distance + weightIncrement * i > auxStageEntityDescription->distance)
+	
+			stageEntityDescription->distance = (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) +
+			(FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) +
+			FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) * FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
+	
+			VirtualNode auxNode = VirtualList_begin(this->stageEntities);
+	
+			for (; auxNode; auxNode = VirtualNode_getNext(auxNode))
 			{
-				continue;
+				StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
+	
+				if (stageEntityDescription->distance + weightIncrement * i > auxStageEntityDescription->distance)
+				{
+					continue;
+				}
+	
+				VirtualList_insertBefore(this->stageEntities, auxNode, stageEntityDescription);
+				break;
 			}
-
-			VirtualList_insertBefore(this->stageEntities, auxNode, stageEntityDescription);
-			break;
+	
+			if (!auxNode)
+			{
+				VirtualList_pushBack(this->stageEntities, stageEntityDescription);
+			}
 		}
-
-		if (!auxNode)
+		else 
 		{
 			VirtualList_pushBack(this->stageEntities, stageEntityDescription);
 		}
@@ -874,7 +881,7 @@ void Stage_streamAll(Stage this)
 // if set to false, the char set memory is flushed when  a char defintion is no longer used
 // only useful to false when preloading textures
 // otherwise it doesn't have any effect add flushing is the default behvior
-void Stage_setFlushCharSets(Stage this, int flushCharSets)
+void Stage_setFlushCharSets(Stage this, bool flushCharSets)
 {
 	ASSERT(this, "Stage::setFlushCharSets: null this");
 

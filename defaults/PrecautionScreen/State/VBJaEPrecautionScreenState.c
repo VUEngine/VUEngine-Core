@@ -83,7 +83,7 @@ static void VBJaEPrecautionScreenState_destructor(VBJaEPrecautionScreenState thi
 // state's enter
 static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, void* owner)
 {
-	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false, false);
 
     VBJaEPrecautionScreenState_print(this);
 

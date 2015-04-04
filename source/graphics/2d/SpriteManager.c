@@ -172,7 +172,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 					break;
 				}
 			}
-			
+
 			if (progressively)
 			{
 				return;
@@ -199,7 +199,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 	if(!alreadyLoadedSpriteNode)
 	{
 #endif
-
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
 		u8 layer = __TOTAL_LAYERS - 1;
@@ -208,7 +207,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		{
 			layer = Sprite_getWorldLayer(__UPCAST(Sprite, VirtualList_front(this->sprites))) - 1;
 			
-			if(layer == this->tempFreedLayer)
+			if(this->tempFreedLayer && layer == this->tempFreedLayer)
 			{
 				layer--;
 			}
@@ -233,7 +232,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 
 			WORLD_HEAD(layer, 0x0000);
 		}
-
 #ifdef __DEBUG		
 	}
 #endif

@@ -78,7 +78,7 @@ static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void
 	Game_setOptical(Game_getInstance(), optical);
 
 	//load stage
-	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)&EMPTY_ST, true, true);
+	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)&EMPTY_ST, false, false);
 
     Printing_text(Printing_getInstance(), "                                                ", 0, 26, NULL);
     Printing_text(Printing_getInstance(), "REST FOR A WHILE!", ((__SCREEN_WIDTH >> 3) >> 1) - 3, 20, NULL);

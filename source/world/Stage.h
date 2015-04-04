@@ -82,14 +82,14 @@
 	/* the UI */ 																\
 	UI ui;																		\
 																				\
-	/* flag to know if the stage must flush unused char groups */				\
-	int flushCharSets;															\
-																				\
 	/* focus entity: needed for streaming */									\
 	Entity focusEntity;															\
 																				\
 	/* next entity's id */														\
 	s16 nextEntityId;															\
+																				\
+	/* flag to know if the stage must flush unused char groups */				\
+	bool flushCharSets;															\
 
 
 // declare a Stage, which holds the objects in a game world
@@ -139,15 +139,15 @@ typedef const StageDefinition StageROMDef;
 __CLASS_NEW_DECLARE(Stage);
 
 void Stage_destructor(Stage this);
-void Stage_load(Stage this, StageDefinition* stageDefinition, int loadOnlyInRangeEntities);
+void Stage_load(Stage this, StageDefinition* stageDefinition, bool enableStreaming);
 Size Stage_getSize(Stage this);
-Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, int permanent);
+Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, bool permanent);
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, int permanent);
-void Stage_removeEntity(Stage this, Entity entity, int permanent);
+void Stage_removeEntity(Stage this, Entity entity, bool permanent);
 void Stage_update(Stage this);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
-void Stage_setFlushCharSets(Stage this, int flushCharSets);
+void Stage_setFlushCharSets(Stage this, bool flushCharSets);
 UI Stage_getUI(Stage this);
 void Stage_suspend(Stage this);
 void Stage_resume(Stage this);
