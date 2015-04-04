@@ -38,7 +38,7 @@
 
 #define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
-#define __STREAM_PRELOAD	__STREAM_CYCLE_DURATION / __TOTAL_CYCLES
+#define __STREAM_SELECT_ENTITIES_IN_LOAD_RANGE	__STREAM_CYCLE_DURATION / __TOTAL_CYCLES
 #define __STREAM_LOAD_CYCLE	(__STREAM_CYCLE_DURATION / __TOTAL_CYCLES) * 2
 #define __STREAM_INITIALIZE_CYCLE	(__STREAM_CYCLE_DURATION / __TOTAL_CYCLES) * 3
 
@@ -93,8 +93,8 @@ void Container_processRemovedChildren(Container this);
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
-static void Stage_registerEntities(Stage this, bool enableStreaming);
-static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively);
+static void Stage_registerEntities(Stage this);
+static void Stage_selectEntitiesInLoadRange(Stage this);
 static void Stage_loadTextures(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
@@ -225,7 +225,7 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallR
 }
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition, bool enableStreaming)
+void Stage_load(Stage this, StageDefinition* stageDefinition)
 {
 	ASSERT(this, "Stage::load: null this");
 
@@ -248,7 +248,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, bool enableStreami
 	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
 
 	// register all the entities in the stage's definition
-	Stage_registerEntities(this, enableStreaming);
+	Stage_registerEntities(this);
 
 	// load entities
 	Stage_loadInRangeEntities(this);
@@ -317,7 +317,7 @@ static void Stage_setupUI(Stage this)
 }
 
 // 
-Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, int permanent)
+Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, bool permanent)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
@@ -476,7 +476,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 }
 
 // register the stage's definition entities in the streaming list
-static void Stage_registerEntities(Stage this, bool enableStreaming)
+static void Stage_registerEntities(Stage this)
 {
 	ASSERT(this, "Stage::registerEntities: null this");
 
@@ -503,58 +503,51 @@ static void Stage_registerEntities(Stage this, bool enableStreaming)
 	{
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities[i]);
 
-		if(enableStreaming)
+		u8 width = 0;
+		u8 height = 0;
+
+		int j = 0;
+		for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j]->allocator; j++)
 		{
-			u8 width = 0;
-			u8 height = 0;
-	
-			int j = 0;
-			for (; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j]->allocator; j++)
+			const SpriteDefinition* spriteDefinition = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j];
+
+			if (spriteDefinition)
 			{
-				const SpriteDefinition* spriteDefinition = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j];
-	
-				if (spriteDefinition)
+				if (spriteDefinition->textureDefinition)
 				{
-					if (spriteDefinition->textureDefinition)
+					if (width < spriteDefinition->textureDefinition->cols << 3)
 					{
-						if (width < spriteDefinition->textureDefinition->cols << 3)
-						{
-							width = spriteDefinition->textureDefinition->cols << 3;
-						}
-	
-						if (height < spriteDefinition->textureDefinition->rows << 3)
-						{
-							height = spriteDefinition->textureDefinition->rows << 3;
-						}
+						width = spriteDefinition->textureDefinition->cols << 3;
+					}
+
+					if (height < spriteDefinition->textureDefinition->rows << 3)
+					{
+						height = spriteDefinition->textureDefinition->rows << 3;
 					}
 				}
 			}
-	
-			stageEntityDescription->distance = (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) +
-			(FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) +
-			FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) * FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
-	
-			VirtualNode auxNode = VirtualList_begin(this->stageEntities);
-	
-			for (; auxNode; auxNode = VirtualNode_getNext(auxNode))
-			{
-				StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
-	
-				if (stageEntityDescription->distance + weightIncrement * i > auxStageEntityDescription->distance)
-				{
-					continue;
-				}
-	
-				VirtualList_insertBefore(this->stageEntities, auxNode, stageEntityDescription);
-				break;
-			}
-	
-			if (!auxNode)
-			{
-				VirtualList_pushBack(this->stageEntities, stageEntityDescription);
-			}
 		}
-		else 
+
+		stageEntityDescription->distance = (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) +
+		(FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) +
+		FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) * FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
+
+		VirtualNode auxNode = VirtualList_begin(this->stageEntities);
+
+		for (; auxNode; auxNode = VirtualNode_getNext(auxNode))
+		{
+			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
+
+			if (stageEntityDescription->distance + weightIncrement * i > auxStageEntityDescription->distance)
+			{
+				continue;
+			}
+
+			VirtualList_insertBefore(this->stageEntities, auxNode, stageEntityDescription);
+			break;
+		}
+
+		if (!auxNode)
 		{
 			VirtualList_pushBack(this->stageEntities, stageEntityDescription);
 		}
@@ -562,7 +555,7 @@ static void Stage_registerEntities(Stage this, bool enableStreaming)
 }
 
 // load entities on demand (if they aren't loaded and are visible)
-static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int loadProgressively)
+static void Stage_selectEntitiesInLoadRange(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
@@ -613,7 +606,7 @@ static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int l
 			}
 		}
 
-		if (loadProgressively && entityLoaded)
+		if (entityLoaded)
 		{
 			if (savedNode)
 			{
@@ -626,7 +619,7 @@ static void Stage_preloadEntities(Stage this, int loadOnlyInRangeEntities, int l
 		if (0 > stageEntityDescription->id)
 		{
 			// if entity in load range
-			if (Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid) || !loadOnlyInRangeEntities)
+			if (Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid))
 			{
 				stageEntityDescription->id = 0x7FFF;
 				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
@@ -840,7 +833,7 @@ void Stage_stream(Stage this)
 
 		streamCycle = __STREAM_CYCLE_DURATION;
 	}
-	else if (__STREAM_PRELOAD == streamCycle)
+	else if (__STREAM_SELECT_ENTITIES_IN_LOAD_RANGE == streamCycle)
 	{
 		if (this->removedChildren && VirtualList_getSize(this->removedChildren))
 		{
@@ -849,7 +842,7 @@ void Stage_stream(Stage this)
 		else if (this->focusEntity)
 		{
 			// load visible objects
-			Stage_preloadEntities(this, true, true);
+			Stage_selectEntitiesInLoadRange(this);
 		}
 		else
 		{

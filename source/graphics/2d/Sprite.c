@@ -544,6 +544,14 @@ fix19_13 Sprite_getParamTableRow(Sprite this)
 	return this->paramTableRow;
 }
 
+// get render flag
+u8 Sprite_getParallaxDisplacement(Sprite this)
+{
+	ASSERT(this, "Sprite::getRenderFlag: null this");
+
+	return this->parallaxDisplacement;
+}
+
 //---------------------------------------------------------------------------------------------------------
 // 										MAP FXs
 //---------------------------------------------------------------------------------------------------------

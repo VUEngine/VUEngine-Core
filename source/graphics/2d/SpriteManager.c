@@ -132,14 +132,59 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 {
 	ASSERT(this, "SpriteManager::sortLayers: null this");
 
-	this->node = progressively && this->node ? this->otherNode ? this->node : VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
+	VirtualNode node = VirtualList_end(this->sprites);
+
+	for (; node; node = VirtualNode_getPrevious(node))
+	{
+		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
+
+		VirtualNode otherNode = VirtualNode_getPrevious(node);
+
+		if(otherNode)
+		{
+			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(otherNode));
+			DrawSpec otherDrawSpec = Sprite_getDrawSpec(otherSprite);
+	
+			// check if z positions are swaped
+			if (otherDrawSpec.position.z > drawSpec.position.z)
+			{
+				// get each entity's layer
+				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
+				u8 worldLayer2 = Sprite_getWorldLayer(otherSprite);
+	
+				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
+				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
+	
+				// swap layers
+				Sprite_setWorldLayer(sprite, worldLayer2);
+				Sprite_setWorldLayer(otherSprite, worldLayer1);
+	
+				// swap array entries
+				VirtualNode_swapData(node, otherNode);
+	
+				node = otherNode;
+	
+				// make sure sort is complete
+				node = VirtualList_end(this->sprites);
+			}
+		}
+	}
+}
+
+// check if any entity must be assigned another world layer
+void SpriteManager_sortLayersProgressively(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
+
+	this->node = this->node ? this->otherNode ? this->node : VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
 
 	for (; this->node; this->node = VirtualNode_getNext(this->node))
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(this->node));
 		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
 
-		this->otherNode = progressively && this->otherNode ? VirtualNode_getNext(this->otherNode) : VirtualNode_getNext(this->node);
+		this->otherNode = this->otherNode ? VirtualNode_getNext(this->otherNode) : VirtualNode_getNext(this->node);
 
 		for (; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
 		{
@@ -164,24 +209,14 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				VirtualNode_swapData(this->node, this->otherNode);
 
 				this->node = this->otherNode;
-
-				if (!progressively)
-				{
-					// make sure sort is complete
-					this->node = VirtualList_begin(this->sprites);
-					break;
-				}
 			}
 
-			if (progressively)
-			{
-				return;
-			}
+			return;
 		}
 
-		if (progressively && !this->otherNode)
+		if (!this->otherNode)
 		{
-			break;
+			return;
 		}
 	}
 }
@@ -376,7 +411,7 @@ void SpriteManager_render(SpriteManager this)
 	ASSERT(this, "SpriteManager::render: null this");
 
 	// sort layers
-	SpriteManager_sortLayers(SpriteManager_getInstance(), true);
+	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 
 	// render from WORLD 31 to the lowes active one
 	// reverse this order when a new sprite was added
