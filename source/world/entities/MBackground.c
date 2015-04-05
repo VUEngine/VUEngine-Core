@@ -85,10 +85,10 @@ void MBackground_destructor(MBackground this)
 // initialize method
 void MBackground_initialize(MBackground this)
 {
-	Entity_initialize(__UPCAST(Entity, this));
-
 	// first register with the manager so it handles the texture loading process
 	MBackgroundManager_registerMBackground(MBackgroundManager_getInstance(), this, this->mBackgroundDefinition->spritesDefinitions[0]->textureDefinition);
+
+	Entity_initialize(__UPCAST(Entity, this));
 
 	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
 }

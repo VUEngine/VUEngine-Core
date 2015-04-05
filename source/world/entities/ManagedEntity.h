@@ -61,7 +61,7 @@ __CLASS(ManagedEntity);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef const EntityDefinition ManagedEntityDefinition;
+typedef EntityDefinition ManagedEntityDefinition;
 typedef const ManagedEntityDefinition ManagedEntityROMDef;
 
 //---------------------------------------------------------------------------------------------------------
