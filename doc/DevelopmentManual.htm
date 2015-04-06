@@ -886,7 +886,7 @@ u8 energy;</code></pre>
 
             <p>
                 Out of the VB's 32 available Worlds, the VBJaEngine reserves the highest one for text output.
-                It provides methods to output different variable types to this so-called Printing Layer.
+                It provides methods to output different variable types to this so-called <i>Printing Layer</i>.
             </p>
 
             <ul>
@@ -930,50 +930,58 @@ u8 energy;</code></pre>
             <h3>Font management</h3>
 
             <p>
-                The VBJaEngine comes with a default font for writing to the Printing Layer, but you can also define
-                one or more custom fonts. To do so, create a FontROMDef for each font, as shown in the example below.
+                The VBJaEngine comes with a default font for writing to the Printing Layer, but you can replace it with
+                any number of custom fonts. To tell the engine to ignore the default font and load your custom
+                font(s) instead, you have to define the <code>__CUSTOM_FONTS</code> macro in your
+                game's <code>config.h</code> file.
             </p>
 
-            <pre class="line-numbers"><code class="language-c">extern BYTE font8x16Tiles[];
-FontROMDef FONT_8x16 =
+            <pre><code class="language-c">#define __CUSTOM_FONTS</code></pre>
+
+            <p>
+                With that macro defined, the engine expects you to define a <i>NULL-terminated</i> array of pointers to
+                <code>FontROMDef</code> definitions called <code>__FONTS</code>. The following example defines a
+                single 8x8 pixel font as a direct replacement for the built-in default font.
+            </p>
+
+            <pre class="line-numbers"><code class="language-c">extern BYTE font8x8Tiles[];
+
+FontROMDef FONT_8x8 =
 {
-    // pointer to the respective character definition
-    font8x16Tiles,
+    // font chars definition pointer
+    font8x8Tiles,
 
     // number of characters in font
-    96,
+    256,
 
-    // character number at which the font starts, allows you to
-    // skip the control characters for example
-    32,
+    // character number at which the font starts, allows you to skip the control characters for example
+    0,
 
     // size of a single character (in chars) ({width, height})
-    {1, 2},
+    {1, 1},
 
     // font's name
-    "Font8x16",
+    "Font8x8",
+};
+
+const FontROMDef* __FONTS[] =
+{
+    &FONT_8x8,
+    NULL
 };</code></pre>
 
             <p>
-                To make your custom fonts known to the engine, register each one using the
-                <code>Printing_registerFont</code> method during the initialization phase of your game.
-            </p>
-
-            <pre class="line-numbers"><code class="language-c">Printing_registerFont(Printing_getInstance(), &FONT_8x16);</code></pre>
-
-            <p>
-                The first registered font is always the default one, and is used when no font name is explicitly given
-                to the various Printing methods.
+                Note that the first font in the <code>__FONTS</code> array is always the default one, and is used when
+                <code>NULL</code> is passed to the various Printing methods instead of a font name.
             </p>
 
             <p>
-                The engine's default font will only be available when no custom fonts are registered. If you still want
-                to use it, you have to register it manually as shown below. It will then be useable under the name
-                "VBJaEngineFont". Since the first registered font is always the default one, you probably want to
-                register it first, before your custom fonts.
+                The engine's default font will not be loaded when custom fonts are enabled. If you still want to use it,
+                simply add <code>&VBJAENGINE_DEFAULT_FONT</code> to your <code>__FONTS</code> array.
+                It will then be accessible under the name "VBJaEngineFont".
+                Don't forget to also declare it as extern in your font definition file, like so:
+                <code>extern FontROMDef VBJAENGINE_DEFAULT_FONT;</code>.
             </p>
-
-            <pre class="line-numbers"><code class="language-c">Printing_registerFont(Printing_getInstance(), &VBJAENGINE_DEFAULT_FONT);</code></pre>
 
 
             <!--------------------------------------------------------------------------------------------------------->

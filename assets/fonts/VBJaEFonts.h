@@ -1,22 +1,35 @@
 #ifndef __CUSTOM_FONTS
-#ifndef VBJAENGINE_DEFAULT_FONT_DEFINITION_H_
-#define VBJAENGINE_DEFAULT_FONT_DEFINITION_H_
+#ifndef VBJAE_FONTS_H_
+#define VBJAE_FONTS_H_
 
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
 
 extern BYTE VBJaEFontTiles[];
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
 FontROMDef VBJAENGINE_DEFAULT_FONT =
 {
     // font chars definition pointer
-	(BYTE*)VBJaEFontTiles,
+	VBJaEFontTiles,
 
 	// number of characters in font
 	256,
 
-	// at which character number the font starts
+    // character number at which the font starts, allows you to skip the control characters for example
 	0,
 
-	// size of a single character in chars) ({width, height})
+	// size of a single character (in chars) ({width, height})
 	{1, 1},
+
+	// font's name
+    "VBJaEngineFont",
 };
 
 const FontROMDef* __FONTS[] =
