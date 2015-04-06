@@ -76,7 +76,7 @@ static void VBJaESplashScreenState_destructor(VBJaESplashScreenState this)
 // state's enter
 static void VBJaESplashScreenState_enter(VBJaESplashScreenState this, void* owner)
 {
-	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false, false);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }

@@ -105,7 +105,7 @@ static void VBJaELangSelectScreenState_destructor(VBJaELangSelectScreenState thi
 // state's enter
 static void VBJaELangSelectScreenState_enter(VBJaELangSelectScreenState this, void* owner)
 {
-	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false, false);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false);
 
 	VBJaELangSelectScreenState_print(this);
 	

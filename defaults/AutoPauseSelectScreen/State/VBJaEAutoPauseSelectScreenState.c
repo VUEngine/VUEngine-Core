@@ -91,7 +91,7 @@ static void VBJaEAutoPauseSelectScreenState_destructor(VBJaEAutoPauseSelectScree
 // state's enter
 static void VBJaEAutoPauseSelectScreenState_enter(VBJaEAutoPauseSelectScreenState this, void* owner)
 {
-	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false, false);
+	GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false);
 
 	VBJaEAutoPauseSelectScreenState_print(this);
 
