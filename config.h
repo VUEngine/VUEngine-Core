@@ -45,16 +45,16 @@
 // distance between eyes
 #define __BASE_FACTOR							768
 
-// player's eyes's horizontal position
+// player's eyes horizontal position
 #define __HVPC									192
 
-// player's eyes's vertical position
+// player's eyes vertical position
 #define __VVPC									112
 
 // zoom factor to distortoine zooming
 #define __ZOOM_FACTOR							0.2f
 
-// parallax values are divide by this factor to control it's strenght
+// parallax values are divides by this factor to control its strength
 #define __PARALLAX_CORRECTION_FACTOR			20
 
 
@@ -92,7 +92,7 @@
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-#define __MEMORY_POOLS	9
+#define __MEMORY_POOLS		9
 
 //each block size
 #define __BLOCK_512B 		512
@@ -208,8 +208,7 @@
 #define __ENTITY_LOAD_PAD 			196
 #define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
-// the number of entities in the stage's definition to check for streaming in on each 
-// preload cycle
+// the number of entities in the stage's definition to check for streaming in on each preload cycle
 // since there are 32 layers, that's the theoretical limit of entities to display
 #define __STREAMING_AMPLITUDE		32
 
@@ -298,6 +297,14 @@
 // the automatic pause state is not pushed until there is only one state in the game's stack.
 // the following defines the time between checks whether the condition is met (in milliseconds)
 #define __AUTO_PAUSE_RECHECK_DELAY	(60 * 1000)
+
+
+//---------------------------------------------------------------------------------------------------------
+// 											FONTS
+//---------------------------------------------------------------------------------------------------------
+
+// when this is defined, custom fonts are being used by the Printing class instead of the default ones
+//#define __CUSTOM_FONTS
 
 
 //---------------------------------------------------------------------------------------------------------

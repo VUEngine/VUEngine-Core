@@ -91,7 +91,6 @@ Printing Printing_getInstance();
 
 void Printing_destructor(Printing this);
 void Printing_render(Printing this, int textLayer);
-void Printing_registerFont(Printing this, const FontDefinition* fontDefinition);
 void Printing_loadFonts(Printing this);
 void Printing_clear(Printing this);
 void Printing_int(Printing this, int value, int x, int y, const char* font);

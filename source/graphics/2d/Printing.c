@@ -28,7 +28,14 @@
 #include <HardwareManager.h>
 #include <Utilities.h>
 
-#include <VBJaEFontDefinition.h>
+#include <VBJaEFonts.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern FontROMDef* __FONTS[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -36,7 +43,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // horizontal tab size in chars
-#define TAB_SIZE 					4
+#define TAB_SIZE	4
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -46,12 +54,6 @@
 																				\
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
-																				\
-	/* array of registered fonts */												\
-	const FontDefinition* fonts[8];												\
-																				\
-	/* total number of registered fonts */										\
-	u8 fontsDefinitionCount;													\
 
 // define the Printing
 __CLASS_DEFINITION(Printing, Object);
@@ -84,12 +86,6 @@ void Printing_destructor(Printing this)
 	__SINGLETON_DESTROY;
 }
 
-// setup the bgmap and char memory with printing data
-void Printing_registerFont(Printing this, const FontDefinition* fontDefinition)
-{
-	this->fonts[this->fontsDefinitionCount++] = fontDefinition;
-}
-
 // load font data to char memory
 void Printing_loadFonts(Printing this)
 {
@@ -97,19 +93,17 @@ void Printing_loadFonts(Printing this)
     u16 numCharsToAdd = 0;
     u8 i = 0;
 
-	// register vbjaengine default font if there's no custom font registered
-	if (this->fonts[0] == NULL)
-	{
-		Printing_registerFont(Printing_getInstance(), &VBJAENGINE_DEFAULT_FONT);
-	}
-
     // load registered fonts to (end of) char memory
-    for (i = 0; i < this->fontsDefinitionCount; i++)
+    for (i = 0; i < 256; i++)
     {
-        numCharsToAdd = (this->fonts[i]->characterCount * this->fonts[i]->fontSize.x * this->fonts[i]->fontSize.y) << 4;
+        if (__FONTS[i] == NULL) {
+            break;
+        }
+
+        numCharsToAdd = (__FONTS[i]->characterCount * __FONTS[i]->fontSize.x * __FONTS[i]->fontSize.y) << 4;
         lastFontDefEndPos -= numCharsToAdd;
 
-	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(this->fonts[i]->fontCharDefinition), numCharsToAdd);
+	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(__FONTS[i]->fontCharDefinition), numCharsToAdd);
     }
 }
 
@@ -134,7 +128,6 @@ void Printing_render(Printing this, int textLayer)
 	WA[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
 	WA[textLayer].w = __SCREEN_WIDTH;
 	WA[textLayer].h = __SCREEN_HEIGHT;
-	
 }
 
 // clear printing area
@@ -150,12 +143,16 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 {
 	u16 i = 0, pos = 0, col = x, fontStart = 2048;
 	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
-	
+
 	// iterate over registered fonts to find memory offset of font to use
-    for (j = 0; j < this->fontsDefinitionCount; j++)
+    for (j = 0; j < 255; j++)
     {
-        fontStart -= (this->fonts[j]->characterCount * this->fonts[j]->fontSize.x * this->fonts[j]->fontSize.y);
-        if ((font == NULL) || (0 == strcmp(this->fonts[j]->name, font)))
+        if (__FONTS[j] == NULL) {
+            break;
+        }
+
+        fontStart -= (__FONTS[j]->characterCount * __FONTS[j]->fontSize.x * __FONTS[j]->fontSize.y);
+        if ((font == NULL) || (0 == strcmp(__FONTS[j]->name, font)))
         {
             break;
         }
@@ -174,20 +171,20 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 
 			case 9: // Horizontal Tab
 
-				x = (x / TAB_SIZE + 1) * TAB_SIZE * this->fonts[j]->fontSize.x;
+				x = (x / TAB_SIZE + 1) * TAB_SIZE * __FONTS[j]->fontSize.x;
 				break;
 
 			case 10: // Carriage Return
 
-				y += this->fonts[j]->fontSize.y;
+				y += __FONTS[j]->fontSize.y;
 				x = col;
 				break;
 
 			default:
 
-                for (charOffsetX = 0; charOffsetX < this->fonts[j]->fontSize.x; charOffsetX++)
+                for (charOffsetX = 0; charOffsetX < __FONTS[j]->fontSize.x; charOffsetX++)
                 {
-                    for (charOffsetY = 0; charOffsetY < this->fonts[j]->fontSize.y; charOffsetY++)
+                    for (charOffsetY = 0; charOffsetY < __FONTS[j]->fontSize.y; charOffsetY++)
                     {
                         BGMM[(0x1000 * bgmap) + pos + charOffsetX + (charOffsetY << 6)] =
                             (
@@ -195,10 +192,10 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
                                 fontStart +
 
                                 // top left char of letter
-                                ((u8)(string[i] - this->fonts[j]->offset) * this->fonts[j]->fontSize.x) +
+                                ((u8)(string[i] - __FONTS[j]->offset) * __FONTS[j]->fontSize.x) +
 
                                 // skip lower chars of multi-char fonts with y > 1
-                                ((((u8)(string[i] - this->fonts[j]->offset) * this->fonts[j]->fontSize.x) >> 5) * ((this->fonts[j]->fontSize.y - 1)) << 5) +
+                                ((((u8)(string[i] - __FONTS[j]->offset) * __FONTS[j]->fontSize.x) >> 5) * ((__FONTS[j]->fontSize.y - 1)) << 5) +
 
                                 // respective char of letter in multi-char fonts
                                 charOffsetX + (charOffsetY << 5)
@@ -207,10 +204,10 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
                     }
                 }
 
-                x += this->fonts[j]->fontSize.x;
+                x += __FONTS[j]->fontSize.x;
 				if (x >= 64)
 				{
-				    y += this->fonts[j]->fontSize.y;
+				    y += __FONTS[j]->fontSize.y;
 					x = col;
 				}
 
