@@ -94,15 +94,10 @@ void Printing_loadFonts(Printing this)
     u8 i = 0;
 
     // load registered fonts to (end of) char memory
-    for (i = 0; i < 256; i++)
+    for (; __FONTS[i]; i++)
     {
-        if (__FONTS[i] == NULL) {
-            break;
-        }
-
         numCharsToAdd = (__FONTS[i]->characterCount * __FONTS[i]->fontSize.x * __FONTS[i]->fontSize.y) << 4;
         lastFontDefEndPos -= numCharsToAdd;
-
 	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(__FONTS[i]->fontCharDefinition), numCharsToAdd);
     }
 }
@@ -133,7 +128,7 @@ void Printing_render(Printing this, int textLayer)
 // clear printing area
 void Printing_clear(Printing this)
 {
-	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+	u8 printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 
 	VPUManager_clearBgmap(VPUManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
@@ -145,12 +140,8 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
 
 	// iterate over registered fonts to find memory offset of font to use
-    for (j = 0; j < 255; j++)
+    for (; __FONTS[j]; j++)
     {
-        if (__FONTS[j] == NULL) {
-            break;
-        }
-
         fontStart -= (__FONTS[j]->characterCount * __FONTS[j]->fontSize.x * __FONTS[j]->fontSize.y);
         if ((font == NULL) || (0 == strcmp(__FONTS[j]->name, font)))
         {
@@ -219,14 +210,13 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 
 void Printing_int(Printing this, int value, int x, int y, const char* font)
 {
-	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+	u8 printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 	
 	if (value < 0)
 	{
 		value *= -1;
 
 		Printing_out(this, printingBgmap, x++, y, "-", 0, font);
-
 		Printing_out(this, printingBgmap, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
 	}
 	else
@@ -237,7 +227,7 @@ void Printing_int(Printing this, int value, int x, int y, const char* font)
 
 void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 {
-	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+	u8 printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 
 	if (0 && value<0)
 	{
@@ -254,7 +244,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 
 void Printing_float(Printing this, float value, int x, int y, const char* font)
 {
-	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
+	u8 printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 
 	int sign = 1;
 	int i = 0;
@@ -268,7 +258,6 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 	if (value < 0)
 	{
 		sign = -1;
-
 		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
 	}
 
@@ -302,7 +291,6 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 
 void Printing_text(Printing this, char* string, int x, int y, const char* font)
 {
-	int printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
-
+	u8 printingBgmap = TextureManager_getPrintingBgmapSegment(TextureManager_getInstance());
 	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
 }
