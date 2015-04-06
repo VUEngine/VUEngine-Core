@@ -47,8 +47,9 @@ enum MessagesTypes
 	// general purpose messages
 	kHighFPS = 0,
 	kAutoPause,
+	kLowBatteryIndicator,
 
-	// graphic system's messages
+	// graphic system messages
 	kScreenShake,
 
 	// physics messages

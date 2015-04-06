@@ -268,7 +268,7 @@ void AnimationEditor_stop(AnimationEditor this)
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
 	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
-	Printing_text(Printing_getInstance(), "\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07", 0, 0, NULL);
+	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing_text(Printing_getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
 	Printing_text(Printing_getInstance(), " Accept \x13  ", 38, 1, NULL);
 	Printing_text(Printing_getInstance(), " Cancel \x14  ", 38, 2, NULL);

@@ -118,14 +118,14 @@ enum StateOperations
 	/* last process' name */													\
 	char* lastProcessName;														\
 																				\
-	/* auto pause state  */											 			\
+	/* auto pause state */											 			\
 	GameState automaticPauseState;												\
 																				\
-	/* auto pause state  */											 			\
+	/* auto pause last checked time */											\
 	u32 lastAutoPauseCheckTime;													\
 																				\
-	/* seconds the battery status was last checked */							\
-	u8 lowbatLastCheckSeconds;													\
+	/* low battery indicator showing flag */									\
+	bool isShowingLowBatteryIndicator;											\
 	
 
 __CLASS_DEFINITION(Game, Object);
@@ -148,7 +148,10 @@ static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
 static void Game_updateRendering(Game this);
 static void Game_cleanUp(Game this);
-static void Game_showLowBatteryIndicator(Game this);
+#ifdef __LOW_BATTERY_INDICATOR
+static void Game_checkLowBattery(Game this, u16 keyPressed);
+static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
+#endif
 static void Game_autoPause(Game this);
 
 
@@ -191,6 +194,7 @@ static void Game_constructor(Game this)
 	this->nextState = NULL;
 	this->automaticPauseState = NULL;
 	this->lastAutoPauseCheckTime = 0;
+	this->isShowingLowBatteryIndicator = false;
 
 	// make sure all managers are initialized now
 	this->frameRate  = FrameRate_getInstance();
@@ -229,9 +233,6 @@ static void Game_constructor(Game this)
 	// setup global pointers
 	// need globals to speed up critical processes
 	_optical = &this->optical;
-
-    // init low battery last check
-    this->lowbatLastCheckSeconds = 0;
     
     this->nextStateOperation = kSwapState;
 
@@ -599,12 +600,9 @@ static void Game_handleInput(Game this)
 		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
 
-    // check for low battery and show indicator, if appropriate
-	// TODO: check if this actually works in hardware
-	if (__LOWBAT_SHOW && (holdKey & K_PWR))
-	{
-	    Game_showLowBatteryIndicator(this);
-	}
+#ifdef __LOW_BATTERY_INDICATOR
+    Game_checkLowBattery(this, holdKey);
+#endif
 }
 
 // update game's logic subsystem
@@ -715,7 +713,6 @@ static void Game_updateRendering(Game this)
 #endif
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // do defragmentation, memory recovy, etc
 static void Game_cleanUp(Game this)
 {
@@ -810,6 +807,12 @@ bool Game_handleMessage(Game this, Telegram telegram)
 		case kAutoPause:
 			
 			Game_autoPause(this);
+			return true;
+			break;
+
+		case kLowBatteryIndicator:
+
+			Game_printLowBatteryIndicator(this, ((bool)Telegram_getExtraInfo(telegram)));
 			return true;
 			break;
 	}
@@ -965,19 +968,39 @@ GameState Game_getCurrentState(Game this)
 	return __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 }
 
-// print low battery indicator
-static void Game_showLowBatteryIndicator(Game this)
+#ifdef __LOW_BATTERY_INDICATOR
+// low battery indicator check
+static void Game_checkLowBattery(Game this, u16 keypad)
 {
-	ASSERT(this, "Game::showLowBatteryIndicator: null this");
+	ASSERT(this, "Game::checkLowBatteryIndicator: null this");
 
-    u8 currentSecond = Clock_getSeconds(Game_getInGameClock(Game_getInstance()));
-    // write only if one second has passed
-    if (currentSecond != this->lowbatLastCheckSeconds)
+    // TODO: check if K_PWR actually works
+    if (keypad & K_PWR)
     {
-        Printing_text(Printing_getInstance(), (currentSecond & 1) ? "\x00\x01" : "  ", __LOWBAT_POS_X, __LOWBAT_POS_Y, NULL);
-        this->lowbatLastCheckSeconds = currentSecond;
+        if (!this->isShowingLowBatteryIndicator) {
+            MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kLowBatteryIndicator, (bool*)true);
+            this->isShowingLowBatteryIndicator = true;
+        }
+    }
+    else
+    {
+         if (this->isShowingLowBatteryIndicator) {
+            MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance(), kLowBatteryIndicator);
+            Printing_text(Printing_getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
+            this->isShowingLowBatteryIndicator = false;
+         }
     }
 }
+
+// print low battery indicator
+static void Game_printLowBatteryIndicator(Game this, bool showIndicator)
+{
+	ASSERT(this, "Game::printLowBatteryIndicator: null this");
+
+    Printing_text(Printing_getInstance(), (showIndicator) ? "\x01\x02" : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
+    MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
+}
+#endif
 
 // pause
 void Game_pause(Game this, GameState pauseState)

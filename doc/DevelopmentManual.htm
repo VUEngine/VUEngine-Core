@@ -1167,15 +1167,18 @@ const FontROMDef* __FONTS[] =
             <h3>Low Battery indicator</h3>
 
             <p>
-                When the Virtual Boy's batteries are low, a flashing low battery indicator is shown on screen. By
-                default, it is shown in the top right corner at position {45, 1}.
+                When the Virtual Boy's batteries are low, a flashing low battery indicator is shown on screen. To
+                enable this feature, define the <code>__LOW_BATTERY_INDICATOR</code> macro in your game's
+                <code>config.h</code> file.
             </p>
 
             <p>
-                The indicator's position can be changed through the <code>__LOWBAT_POS_X</code> and
-                <code>__LOWBAT_POS_Y</code> settings. The feature can be completely disabled through the
-                <code>__LOWBAT_SHOW</code> setting.
-                All settings can be made in your projects's <code>config.h</code> file.
+                The indicator's default position {45, 1}. It can be changed through the
+                <code>__LOW_BATTERY_INDICATOR_POS_X</code> and <code>__LOW_BATTERY_INDICATOR_POS_Y</code> macros.
+                You can furthermore change the initial delay of the low battery indicator through the
+                <code>__LOW_BATTERY_INDICATOR_INITIAL_DELAY</code> macro as well as the blinking delay through the
+                <code>__LOW_BATTERY_INDICATOR_BLINK_DELAY</code> macro in your game's
+                <code>config.h</code> file.
             </p>
 
 

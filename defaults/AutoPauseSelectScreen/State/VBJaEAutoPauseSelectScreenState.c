@@ -169,12 +169,12 @@ static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelect
     // print selector
     u8 optionStart = this->selection ? selectionStart - 1 : selectionStart - 1 + optionsGap + strOnLength;
     u8 optionEnd = this->selection ? optionStart + 1 + strOnLength : optionStart + 1 + strOffLength;
-    Printing_text(Printing_getInstance(), "\x02\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07", optionStart, 16, NULL);
-    Printing_text(Printing_getInstance(), "\x03               ", optionEnd, 16, NULL);
-    Printing_text(Printing_getInstance(), "\x06", optionStart, 17, NULL);
-    Printing_text(Printing_getInstance(), "\x06", optionEnd, 17, NULL);
-    Printing_text(Printing_getInstance(), "\x04\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07\x07", optionStart, 18, NULL);
-    Printing_text(Printing_getInstance(), "\x05               ", optionEnd, 18, NULL);
+    Printing_text(Printing_getInstance(), "\x02\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", optionStart, 16, NULL);
+    Printing_text(Printing_getInstance(), "\x04               ", optionEnd, 16, NULL);
+    Printing_text(Printing_getInstance(), "\x07", optionStart, 17, NULL);
+    Printing_text(Printing_getInstance(), "\x07", optionEnd, 17, NULL);
+    Printing_text(Printing_getInstance(), "\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", optionStart, 18, NULL);
+    Printing_text(Printing_getInstance(), "\x06               ", optionEnd, 18, NULL);
 }
 
 static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 pressedKey)
