@@ -54,6 +54,7 @@ __CLASS_DEFINITION(Sprite, Object);
 // global
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
+extern unsigned int volatile* _xpstts;
 
 static void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 static void Sprite_doScale(Sprite this);
@@ -358,16 +359,34 @@ void Sprite_render(Sprite this)
 	//if render flag is set
 	if (this->renderFlag)
 	{
-		extern unsigned int volatile* _xpstts;
-		while (*_xpstts & XPBSYR);
-
-		WORLD* worldPointer = &WA[this->worldLayer];
+		static WORLD* worldPointer = NULL;
+		worldPointer = &WA[this->worldLayer];
 
 		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::render: freeLayer >= this->worldLayer");
 
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
-			Sprite_preRender(this);
+			worldPointer->mx = this->drawSpec.textureSource.mx;
+			worldPointer->mp = this->drawSpec.textureSource.mp;
+			worldPointer->my = this->drawSpec.textureSource.my;
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
+			worldPointer->gp = this->drawSpec.position.parallax + this->parallaxDisplacement;
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
+
+			//set the world size according to the zoom
+			if (WRLD_AFFINE & this->head)
+			{
+				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+			}
+			else
+			{
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3);
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
+			}
+
+			// make sure to not render again
 			worldPointer->head = this->head | Texture_getBgmapSegment(this->texture);
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;

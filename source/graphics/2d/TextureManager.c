@@ -390,7 +390,7 @@ Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textu
 		case __ANIMATED:
 
 			// load a new texture
-			texture = TextureManager_writeTexture(this, textureDefinition, isPreload);
+			texture = TextureManager_writeTexture(this, textureDefinition, false);
 
 			ASSERT(texture, "TextureManager::get: (animated) texture no allocated");
 			break;

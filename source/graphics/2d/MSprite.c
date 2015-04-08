@@ -51,12 +51,16 @@ __CLASS_DEFINITION(MSprite, Sprite);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+// globals
+extern const VBVec3D* _screenPosition;
+extern Optical* _optical;
+
 static void MSprite_releaseTextures(MSprite this);
 static void MSprite_loadTextures(MSprite this);
 static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefinition);
 static void MSprite_calculateSizeMultiplier(MSprite this);
 static void MSprite_calculateSize(MSprite this);
-static Point MSprite_capPosition(MSprite this);
+static const Point* const MSprite_capPosition(MSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -165,9 +169,6 @@ static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefiniti
 // set sprite's position
 void MSprite_setPosition(MSprite this, VBVec3D position3D)
 {
-	extern const VBVec3D* _screenPosition;
-	extern Optical* _optical;
-
 	ASSERT(this, "MSprite::setPosition: null this");
 
 	// normalize the position to screen coordinates
@@ -197,17 +198,17 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 		Sprite_calculateParallax(__UPCAST(Sprite, this), this->drawSpec.position.z);
 	}
 
-	Point axisCapped = MSprite_capPosition(this);
+	const Point* const axisCapped = MSprite_capPosition(this);
 	
-	if(axisCapped.x)
+	if(axisCapped->x)
 	{
-		this->drawSpec.position.x = ITOFIX19_13(-axisCapped.x);
+		this->drawSpec.position.x = ITOFIX19_13(-axisCapped->x);
 		this->renderFlag |= __UPDATE_G;
 	}
 	
-	if(axisCapped.y)
+	if(axisCapped->y)
 	{
-		this->drawSpec.position.y = ITOFIX19_13(-axisCapped.y);
+		this->drawSpec.position.y = ITOFIX19_13(-axisCapped->y);
 		this->renderFlag |= __UPDATE_G;
 	}
 	
@@ -306,14 +307,17 @@ static void MSprite_calculateSize(MSprite this)
 }
 
 // calculate the position
-static Point MSprite_capPosition(MSprite this)
+static const Point* const MSprite_capPosition(MSprite this)
 {
 	ASSERT(this, "MSprite::capPosition: null this");
 
-	Point axisCapped = 
+	static Point axisCapped = 
 	{
 		0, 0
 	};
+	
+	axisCapped.x = 0;
+	axisCapped.y = 0;
 
 	if(!this->mSpriteDefinition->xLoop)
 	{
@@ -345,6 +349,6 @@ static Point MSprite_capPosition(MSprite this)
 		}
 	}
 
-	return axisCapped;
+	return &axisCapped;
 }
 

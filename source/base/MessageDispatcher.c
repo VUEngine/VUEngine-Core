@@ -153,7 +153,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
 	ASSERT(this->delayedMessages, "MessageDispatcher::reset: null delayedMessages");
 
-	if (0 < VirtualList_getSize(this->delayedMessages))
+	if (VirtualList_begin(this->delayedMessages))
 	{
 		VirtualList telegramsToDispatch = __NEW(VirtualList);
 

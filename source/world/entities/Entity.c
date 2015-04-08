@@ -134,7 +134,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 			halfDeep = 10;
 		}
 	}
-	else if(!this->children || 0 == VirtualList_getSize(this->children))
+	else if(!this->children || !VirtualList_begin(this->children))
 	{
 		halfWidth = __SCREEN_WIDTH >> 1;
 		halfHeight = __SCREEN_HEIGHT >> 1;
