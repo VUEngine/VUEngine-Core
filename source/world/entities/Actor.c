@@ -203,15 +203,10 @@ void Actor_update(Actor this)
 	{
 		StateMachine_update(this->stateMachine);
 	}
-
-	if (this->body)
-	{
-		Actor_updateCollisionStatus(this, Body_isMoving(this->body));
-	}
 }
 
 // update colliding entities
-static void Actor_updateCollisionStatus(Actor this, u8 movementAxis)
+void Actor_updateCollisionStatus(Actor this, u8 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 	ASSERT(this->body, "Actor::updateCollisionStatus: null body");
@@ -228,8 +223,6 @@ static void Actor_updateCollisionStatus(Actor this, u8 movementAxis)
 	{
 		this->lastCollidingEntity[kZAxis] = NULL;
 	}
-
-	Actor_updateSourroundingFriction(this);
 }
 
 // retrieve friction of colliding objects
@@ -611,6 +604,8 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 	ASSERT(this->body, "Actor::resolveCollision: null body");
 	ASSERT(collidingEntities, "Actor::resolveCollision: collidingEntities");
 
+	Actor_updateCollisionStatus(this, Body_isMoving(this->body));
+
 	int axisOfCollision = 0;
 
 	// get last physical displacement
@@ -629,6 +624,8 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
 	}
 
 	Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
+	
+	Actor_updateSourroundingFriction(this);
 }
 
 // resolve collision against me entities
@@ -636,6 +633,8 @@ static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEn
 {
 	ASSERT(this, "Actor::resolveCollisionAgainstMe: null this");
 	ASSERT(this->body, "Actor::resolveCollisionAgainstMe: null body");
+
+	Actor_updateCollisionStatus(this, Body_isMoving(this->body));
 
 	int axisOfCollision = 0;
 	
@@ -649,6 +648,8 @@ static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEn
 		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
 		Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
 	}
+	
+	Actor_updateSourroundingFriction(this);
 }
 
 // align character to other entity on collision
@@ -820,4 +821,7 @@ void Actor_addForce(Actor this, const Force* force)
 	};
 
 	Body_addForce(this->body, &effectiveForceToApply);
+	
+	Actor_updateCollisionStatus(this, Body_isMoving(this->body));
+	Actor_updateSourroundingFriction(this);
 }

@@ -108,7 +108,7 @@ int KeypadManager_isEnabled(KeypadManager this)
 }
 
 // read keypad
-u16 KeypadManager_read(KeypadManager this)
+void KeypadManager_read(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
@@ -118,11 +118,17 @@ u16 KeypadManager_read(KeypadManager this)
 	while (*readingStatus & S_STAT);
 
 	// now read the key
-	this->previousKey = this->currentKey;
-	this->currentKey = (((HW_REGS[SDHR] << 8)) | HW_REGS[SDLR]) & 0xFFFC;
-
-	return this->currentKey;
+	this->currentKey |= (((HW_REGS[SDHR] << 8)) | HW_REGS[SDLR]) & 0xFFFC;
 }
+
+// clear previous saved key
+void KeypadManager_clear(KeypadManager this)
+{
+	this->previousKey = this->currentKey;
+
+	this->currentKey = 0;
+}
+
 
 // get pressed key
 u16 KeypadManager_getPressedKey(KeypadManager this)

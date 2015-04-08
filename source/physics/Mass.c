@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Body.h>
+#include <PhysicalWorld.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -39,17 +40,17 @@ __CLASS_DEFINITION(Mass, Object);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Mass, fix19_13 weight)
-__CLASS_NEW_END(Mass, weight);
+__CLASS_NEW_DEFINITION(Mass, fix19_13 value)
+__CLASS_NEW_END(Mass, value);
 
 // class's constructor
-void Mass_constructor(Mass this, fix19_13 weight)
+void Mass_constructor(Mass this, fix19_13 value)
 {
 	ASSERT(this, "Mass::constructor: null this");
 
 	__CONSTRUCT_BASE();
 
-	this->weight = weight;
+	this->value = value;
 }
 
 // class's destructor
@@ -61,10 +62,10 @@ void Mass_destructor(Mass this)
 	__DESTROY_BASE;
 }
 
-// retrieve weight
-fix19_13 Mass_getWeight(Mass this)
+// retrieve value
+fix19_13 Mass_getValue(Mass this)
 {
 	ASSERT(this, "Mass::getWeight: null this");
 
-	return this->weight;
+	return this->value;
 }

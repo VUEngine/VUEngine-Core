@@ -49,7 +49,7 @@
 	MassDefinition* massDefinition;												\
 																				\
 	/* radious */																\
-	fix19_13 weight;															\
+	fix19_13 value;																\
 
 // A Mass which represent a generic object inside a Stage
 __CLASS(Mass);
@@ -58,7 +58,7 @@ __CLASS(Mass);
 typedef struct MassDefinition
 {
 	// the sprite
-	fix19_13 weight;
+	fix19_13 value;
 
 } MassDefinition;
 
@@ -69,11 +69,11 @@ typedef const MassDefinition MassROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Mass, fix19_13 weight);
+__CLASS_NEW_DECLARE(Mass, fix19_13 value);
 
-void Mass_constructor(Mass this, fix19_13 weight);
+void Mass_constructor(Mass this, fix19_13 value);
 void Mass_destructor(Mass this);
-fix19_13 Mass_getWeight(Mass this);
+fix19_13 Mass_getValue(Mass this);
 
 
 #endif

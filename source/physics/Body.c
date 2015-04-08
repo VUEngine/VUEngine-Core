@@ -47,20 +47,20 @@ __CLASS_DEFINITION(Body, Object);
 #define CHANGED_DIRECTION	2
 
 //#define THRESHOLD FTOFIX19_13(0.5f * (60.0f / __TARGET_FPS))
-#define THRESHOLD ITOFIX19_13(1)
+#define THRESHOLD FTOFIX19_13(0.1f)
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Body_constructor(Body this, Object owner, fix19_13 weight);
+static void Body_constructor(Body this, Object owner, fix19_13 mass);
 static void Body_awake(Body this, int axisStartedMovement);
-static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity, fix19_13 friction);
-static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 friction);
+static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 appliedForce, fix19_13 frictionForce);
+static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 frictionForce);
 static void Body_setMovementType(Body this, int movementType, int axis);
 static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity);
 static u8 Body_isMovingInternal(Body this);
-static Force Body_calculateFriction(Body this, int axisOfMovement);
+static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovement, const Acceleration* const gravity);
 
 enum CollidingObjectIndexes
 {
@@ -76,11 +76,11 @@ enum CollidingObjectIndexes
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Body, Object owner, fix19_13 weight)
-__CLASS_NEW_END(Body, owner, weight);
+__CLASS_NEW_DEFINITION(Body, Object owner, fix19_13 mass)
+__CLASS_NEW_END(Body, owner, mass);
 
 // class's constructor
-static void Body_constructor(Body this, Object owner, fix19_13 weight)
+static void Body_constructor(Body this, Object owner, fix19_13 mass)
 {
 	ASSERT(this, "Body::constructor: null this");
 
@@ -88,7 +88,7 @@ static void Body_constructor(Body this, Object owner, fix19_13 weight)
 
 	this->owner = owner;
 
-	this->mass = __NEW(Mass, weight);
+	this->mass = mass;
 
 	this->awake = false;
 
@@ -100,6 +100,10 @@ static void Body_constructor(Body this, Object owner, fix19_13 weight)
 	this->appliedForce.x = 0;
 	this->appliedForce.y = 0;
 	this->appliedForce.z = 0;
+
+	this->friction.x = 0;
+	this->friction.y = 0;
+	this->friction.z = 0;
 
 	// clear movement type
 	this->movementType.x = __UNIFORM_MOVEMENT;
@@ -123,9 +127,6 @@ static void Body_constructor(Body this, Object owner, fix19_13 weight)
 void Body_destructor(Body this)
 {
 	ASSERT(this, "Body::destructor: null this");
-
-	// destroy the mass
-	__DELETE(this->mass);
 
 	// destroy the super object
 	__DESTROY_BASE;
@@ -210,6 +211,29 @@ static void Body_setMovementType(Body this, int movementType, int axis)
 	}
 }
 
+void Body_clearAcceleration(Body this, int axis)
+{
+	ASSERT(this, "Body::moveAccelerated: null this");
+
+	if (__XAXIS & axis)
+	{
+		this->acceleration.x = 0;
+		this->appliedForce.x = 0;
+	}
+
+	if (__YAXIS & axis)
+	{
+		this->acceleration.y = 0;
+		this->appliedForce.y = 0;
+	}
+
+	if (__ZAXIS & axis)
+	{
+		this->acceleration.z = 0;
+		this->appliedForce.z = 0;
+	}
+}
+
 // set movement type to accelerated
 void Body_moveAccelerated(Body this, int axis)
 {
@@ -273,8 +297,6 @@ void Body_applyForce(Body this, const Force* force, int clearAxis)
 {
 	ASSERT(this, "Body::applyForce: null this");
 
-	fix19_13 weight = Mass_getWeight(this->mass);
-
 	if (__XAXIS & clearAxis)
 	{
 		this->velocity.x = 0;
@@ -296,10 +318,12 @@ void Body_applyForce(Body this, const Force* force, int clearAxis)
 	this->appliedForce.x = force->x;
 	this->appliedForce.y = force->y;
 	this->appliedForce.z = force->z;
+	
+	const VBVec3D* const gravity = PhysicalWorld_getGravity(PhysicalWorld_getInstance());
 
-	this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, weight);
-	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, weight);
-	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, weight);
+	this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, (gravity->z? FIX19_13_MULT(gravity->x, this->mass): this->mass));
+	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, (gravity->z? FIX19_13_MULT(gravity->y, this->mass): this->mass));
+	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, (gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass));
 
 	int axisStartedMovement = 0;
 
@@ -368,7 +392,7 @@ void Body_addForce(Body this, const Force* force)
 	ASSERT(this, "Body::addForce: null this");
 	ASSERT(force, "Body::addForce: null force");
 
-	Body_applyForce(this, force, !Body_isMovingInternal(this));
+	Body_applyForce(this, force, ~Body_isMoving(this));
 }
 
 // update movement
@@ -399,12 +423,12 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 				axisOfMovement |= __ZAXIS;
 		 	}
 
-			Force friction = Body_calculateFriction(this, axisOfMovement);
+			const Force* const frictionForce = Body_calculateFrictionForce(this, axisOfMovement, gravity);
 
 			// update each axis
 	 	 	if (__XAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, friction.x);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, frictionForce->x);
 
 	 	 		if (movementStatus)
 				{
@@ -421,7 +445,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 
 	 	 	if (__YAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, friction.y);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, frictionForce->y);
 
 	 	 		if (movementStatus)
 				{
@@ -438,7 +462,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 
 	 	 	if (__ZAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, friction.z);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, frictionForce->z);
 
 	 	 		if (movementStatus)
 				{
@@ -471,24 +495,73 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 }
 
 // update force
-static Force Body_calculateFriction(Body this, int axisOfMovement)
+static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovement, const Acceleration* const gravity)
 {
 	ASSERT(this, "Body::calculateFriction: null this");
 
 	// get friction fBody from the game world
-	fix19_13 worldFriction = PhysicalWorld_getFriction(PhysicalWorld_getInstance());
+	fix19_13 worldFriction = PhysicalWorld_getFriction(PhysicalWorld_getInstance()) * 2;
 
-	Force friction;
+	static Force frictionForce = 
+	{
+		0, 0, 0
+	};
+	
+	frictionForce.x = 0;
+	frictionForce.y = 0;
+	frictionForce.z = 0;
+	
+	if((__XAXIS & axisOfMovement))
+	{
+		fix19_13 weight = gravity->x? FIX19_13_MULT(gravity->x, this->mass): this->mass;
 
-	friction.x = __XAXIS & axisOfMovement ? 0 < this->velocity.x ? -(this->friction.x + worldFriction) : this->friction.x + worldFriction : 0;
-	friction.y = __YAXIS & axisOfMovement ? 0 < this->velocity.y ? -(this->friction.y + worldFriction) : this->friction.y +  worldFriction : 0;
-	friction.z = __ZAXIS & axisOfMovement ? 0 < this->velocity.z ? -(this->friction.z + worldFriction) : this->friction.z +  worldFriction : 0;
+		if(this->appliedForce.x)
+		{
+			frictionForce.x = (0 < this->appliedForce.x)? -FIX19_13_MULT((this->friction.x + worldFriction), weight): FIX19_13_MULT((this->friction.x + worldFriction), weight);
+		}
+		else if(this->velocity.x)
+		{
+			frictionForce.x = (0 < this->velocity.x)? -FIX19_13_MULT((this->friction.x + worldFriction), weight): FIX19_13_MULT((this->friction.x + worldFriction), weight);
+		}
+	}
 
-	return friction;
+	if((__YAXIS & axisOfMovement))
+	{
+		fix19_13 weight = gravity->y? FIX19_13_MULT(gravity->y, this->mass): this->mass;
+
+		if(this->appliedForce.y)
+		{
+			frictionForce.y = (0 < this->appliedForce.y)? -FIX19_13_MULT((this->friction.y + worldFriction), weight): FIX19_13_MULT((this->friction.y + worldFriction), weight);
+		}
+		else if(this->velocity.y)
+		{
+			frictionForce.y = (0 < this->velocity.y)? -FIX19_13_MULT((this->friction.y + worldFriction), weight): FIX19_13_MULT((this->friction.y + worldFriction), weight);
+		}
+	}
+
+	if((__ZAXIS & axisOfMovement))
+	{
+		fix19_13 weight = gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass;
+
+		if(this->appliedForce.z)
+		{
+			frictionForce.z = (0 < this->appliedForce.z)? -FIX19_13_MULT((this->friction.z + worldFriction), weight): FIX19_13_MULT((this->friction.z + worldFriction), weight);
+		}
+		else if(this->velocity.z)
+		{
+			frictionForce.z = (0 < this->velocity.z)? -FIX19_13_MULT((this->friction.z + worldFriction), weight): FIX19_13_MULT((this->friction.z + worldFriction), weight);
+		}
+	}
+
+//	Printing_int(Printing_getInstance(), (this->friction.x), 40,15, NULL);
+//	Printing_int(Printing_getInstance(), (worldFriction), 40,16, NULL);
+//	Printing_int(Printing_getInstance(), (friction.x), 40,17, NULL);
+	
+	return &frictionForce;
 }
 
 // update force
-static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 velocity, fix19_13 friction)
+static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 appliedForce, fix19_13 frictionForce)
 {
 	ASSERT(this, "Body::updateAcceleration: null this");
 
@@ -508,7 +581,19 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 		*acceleration += FIX19_13_MULT(gravity, elapsedTime);
 	}
 
-	*acceleration += friction;
+	fix19_13 frictionAcceleration = FIX19_13_DIV(frictionForce, this->mass);
+
+	if(appliedForce)
+	{
+		if(abs(frictionAcceleration) < abs(*acceleration))
+		{
+			*acceleration += frictionAcceleration;
+		}
+	}
+	else
+	{
+		*acceleration += frictionAcceleration;
+	}
 }
 
 // retrieve last displacement
@@ -528,7 +613,7 @@ VBVec3D Body_getLastDisplacement(Body this)
 }
 
 // udpdate movement over axis
-static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 friction)
+static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 frictionForce)
 {
 	ASSERT(this, "Body::updateMovement: null this");
 
@@ -541,7 +626,7 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 	// calculate displacement based in velocity, time and acceleration
  	if (__ACCELERATED_MOVEMENT == movementType)
 	{
- 		Body_updateAcceleration(this, elapsedTime, gravity, acceleration, *velocity, friction);
+ 		Body_updateAcceleration(this, elapsedTime, gravity, acceleration, appliedForce, frictionForce);
 
  		fix19_13 previousVelocity = *velocity;
 
@@ -552,12 +637,15 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 			FIX19_13_MULT(*velocity, elapsedTime)
 			+ FIX19_13_DIV(FIX19_13_MULT(*acceleration, FIX19_13_MULT(elapsedTime, elapsedTime)), ITOFIX19_13(2));
 
-
- 		if (!gravity && (!appliedForce && (THRESHOLD > abs(displacement) || THRESHOLD > abs(*velocity))))
+		if(!gravity)
 		{
- 			*velocity = 0;
- 			*acceleration = 0;
- 		}
+			if((0 < previousVelocity && 0 > *velocity) || (0 > previousVelocity && 0 < *velocity))
+			{
+	 			*velocity = 0;
+	 			*acceleration = 0;
+	 			displacement = 0;
+			}
+		}
 
  		if (!appliedForce && !*velocity)
 		{
@@ -598,17 +686,19 @@ void Body_printPhysics(Body this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "X             Y             Z", x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "X             Y             Z", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Position", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "                             ", x, y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(this->position.x ), x, y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(this->position.y), x+14, y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(this->position.z), x+14*2, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Velocity", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "                             ", x, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->velocity.x), x, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->velocity.y), x+14, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->velocity.z), x+14*2, y++, NULL);
 	Printing_text(Printing_getInstance(), "Acceleration", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "                             ", x, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->acceleration.x), x, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->acceleration.y), x+14, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->acceleration.z), x+14*2, y++, NULL);

@@ -328,14 +328,6 @@ void HardwareManager_disableKeypad(HardwareManager this)
 	KeypadManager_disable(this->keypadManager);
 }
 
-// read keypad
-u16 HardwareManager_readKeypad(HardwareManager this)
-{
-	ASSERT(this, "HardwareManager::readKeypad: null this");
-
-	return KeypadManager_read(this->keypadManager);
-}
-
 // print hardware's states
 void HardwareManager_print(HardwareManager this, int x, int y)
 {

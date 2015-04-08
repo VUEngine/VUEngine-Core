@@ -464,7 +464,6 @@ static void Game_handleInput(Game this)
 {
 	ASSERT(this, "Game::handleInput: null this");
 
-	KeypadManager_read(this->keypadManager);
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
@@ -599,6 +598,8 @@ static void Game_handleInput(Game this)
 		// inform the game about the hold key
 		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
+
+	KeypadManager_clear(this->keypadManager);
 
 #ifdef __LOW_BATTERY_INDICATOR
     Game_checkLowBattery(this, holdKey);
@@ -769,8 +770,8 @@ static void Game_update(Game this)
 			}
 
 			// update each subsystem
-			Game_updatePhysics(this);
 			Game_updateLogic(this);
+			Game_updatePhysics(this);
 			Game_updateRendering(this);
 			
 			// record time
@@ -785,6 +786,9 @@ static void Game_update(Game this)
 			// record time
 			cleanUpTime = currentTime;
 		}
+		
+		// accumulate user's input until next logic cycle
+		KeypadManager_read(this->keypadManager);
 
 #ifdef __DEBUG
 		if(previousLastProcessName != this->lastProcessName)

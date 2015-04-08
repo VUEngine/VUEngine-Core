@@ -54,7 +54,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* mass */																	\
-	Mass mass;																	\
+	fix19_13 mass;																\
 																				\
 	/* owner */																	\
 	Object owner;																\
@@ -94,7 +94,7 @@ __CLASS(Body);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Body, Object owner, fix19_13 weight);
+__CLASS_NEW_DECLARE(Body, Object owner, fix19_13 mass);
 
 void Body_destructor(Body this);
 void Body_setOwner(Body this, Object owner);
@@ -119,6 +119,7 @@ u8 Body_isMoving(Body this);
 Velocity Body_getVelocity(Body this);
 Acceleration Body_getAcceleration(Body this);
 MovementType Body_getMovementType(Body this);
+void Body_clearAcceleration(Body this, int axis);
 void Body_moveAccelerated(Body this, int axis);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_printPhysics(Body this, int x, int y);

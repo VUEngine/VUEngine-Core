@@ -37,7 +37,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #undef __STREAM_CYCLE_DURATION
-#define __STREAM_CYCLE_DURATION	(24)
+#define __STREAM_CYCLE_DURATION	(28)
 
 #define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
