@@ -978,7 +978,6 @@ static void Game_checkLowBattery(Game this, u16 keypad)
 {
 	ASSERT(this, "Game::checkLowBatteryIndicator: null this");
 
-    // TODO: check if K_PWR actually works
     if (keypad & K_PWR)
     {
         if (!this->isShowingLowBatteryIndicator) {
