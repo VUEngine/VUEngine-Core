@@ -553,10 +553,13 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 		}
 	}
 
-//	Printing_int(Printing_getInstance(), (this->friction.x), 40,15, NULL);
-//	Printing_int(Printing_getInstance(), (worldFriction), 40,16, NULL);
-//	Printing_int(Printing_getInstance(), (friction.x), 40,17, NULL);
-	
+/*	Printing_text(Printing_getInstance(), "    ", 40,15, NULL);
+	Printing_text(Printing_getInstance(), "    ", 40,16, NULL);
+	Printing_text(Printing_getInstance(), "    ", 40,17, NULL);
+	Printing_int(Printing_getInstance(), (this->friction.x), 40,15, NULL);
+	Printing_int(Printing_getInstance(), (worldFriction), 40,16, NULL);
+	Printing_int(Printing_getInstance(), (frictionForce.x), 40,17, NULL);
+	*/
 	return &frictionForce;
 }
 

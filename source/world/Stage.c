@@ -817,7 +817,7 @@ void Stage_stream(Stage this)
 
 	// if the screen is moving
 	static int streamCycle = 0;
-	
+
 	switch(streamCycle)
 	{
 		case __STREAM_UNLOAD_CYCLE:
@@ -859,12 +859,12 @@ void Stage_stream(Stage this)
 				break;
 			}
 
-			streamCycle = __STREAM_UNLOAD_CYCLE + 1;
+			streamCycle = __STREAM_CYCLE_DURATION;
 	}
 	
 	if(++streamCycle >= __STREAM_CYCLE_DURATION)
 	{
-		streamCycle  = 0;
+		streamCycle  = __STREAM_UNLOAD_CYCLE;
 	}
 }
 
