@@ -37,7 +37,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #undef __STREAM_CYCLE_DURATION
-#define __STREAM_CYCLE_DURATION	(28)
+#define __STREAM_CYCLE_DURATION	(24)
 
 #define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
@@ -49,7 +49,7 @@
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
 
-#define __ENTITY_LOAD_PAD 			192
+#define __ENTITY_LOAD_PAD 			(128 + 64)
 #define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
 // since there are 32 layers, that's the theoretical limit of entities to display

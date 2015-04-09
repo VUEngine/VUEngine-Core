@@ -53,7 +53,7 @@ __CLASS(PhysicalWorld);
 PhysicalWorld PhysicalWorld_getInstance();
 
 void PhysicalWorld_destructor(PhysicalWorld this);
-Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 weight);
+Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 mass);
 void PhysicalWorld_unregisterBody(PhysicalWorld this, Entity owner);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 void PhysicalWorld_start(PhysicalWorld this);

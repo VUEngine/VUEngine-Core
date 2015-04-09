@@ -79,9 +79,10 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 
 	//set the direction
 	this->direction.x = __RIGHT;
-	this->previousDirection.x = __LEFT;
 	this->direction.y = __DOWN;
 	this->direction.z = __FAR;
+
+	this->previousDirection = this->direction;
 
 	this->clock = Game_getInGameClock(Game_getInstance());
 

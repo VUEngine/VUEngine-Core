@@ -424,11 +424,11 @@ void SpriteManager_render(SpriteManager this)
 	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 
 	// render from WORLD 31 to the lowest active one
-	VirtualNode node = VirtualList_end(this->sprites);
+	VirtualNode node = VirtualList_begin(this->sprites);
 
 	while (*_xpstts & XPBSYR);
 
-	for (; node; node = VirtualNode_getPrevious(node))
+	for (; node; node = VirtualNode_getNext(node))
 	{
 		Sprite_render(__UPCAST(Sprite, VirtualNode_getData(node)));
 	}

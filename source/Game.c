@@ -464,6 +464,8 @@ static void Game_handleInput(Game this)
 {
 	ASSERT(this, "Game::handleInput: null this");
 
+	KeypadManager_read(this->keypadManager);
+
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
@@ -788,7 +790,7 @@ static void Game_update(Game this)
 		}
 		
 		// accumulate user's input until next logic cycle
-		KeypadManager_read(this->keypadManager);
+//		KeypadManager_read(this->keypadManager);
 
 #ifdef __DEBUG
 		if(previousLastProcessName != this->lastProcessName)

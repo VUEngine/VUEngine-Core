@@ -132,7 +132,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 }
 
 // register a body
-Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 weight)
+Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 mass)
 {
 	ASSERT(this, "PhysicalWorld::registerBody: null this");
 
@@ -144,7 +144,7 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 weigh
 		return body;
 	}
 
-	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __UPCAST(Object, owner), weight));
+	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __UPCAST(Object, owner), mass));
 
 	// return created shape
 	return __UPCAST(Body, VirtualList_front(this->bodies));
