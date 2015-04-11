@@ -379,9 +379,25 @@ VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
 
 	VirtualNode node = this->head;
 
-	for (; node && VirtualNode_getData(node) !=  (void*)dataPointer; node = VirtualNode_getNext(node));
+	for (; node && VirtualNode_getData(node) != (void*)dataPointer; node = VirtualNode_getNext(node));
 
 	return node;
+}
+
+// get position of node in the list
+int VirtualList_getNodePosition(VirtualList this, const void* const dataPointer)
+{
+	ASSERT(this, "VirtualList::removeElement: null this");
+
+	VirtualNode node = this->head;
+    int position = 0;
+
+	for (; node && VirtualNode_getData(node) != (void*)dataPointer; node = VirtualNode_getNext(node))
+	{
+	    position++;
+	}
+
+	return position;
 }
 
 // remove a node from the list
@@ -470,7 +486,7 @@ VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const vo
 			return false;
 		}
 
-		//set previous if list isn't empty
+		// set previous if list isn't empty
 		newNode->next = node->next;
 
 		if (node->next)
@@ -508,7 +524,7 @@ VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const v
 			return false;
 		}
 
-		//set previous if list isn't empty
+		// set previous if list isn't empty
 		newNode->next = node;
 		newNode->previous = node->previous;
 		node->previous->next = newNode;
