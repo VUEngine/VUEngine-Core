@@ -24,16 +24,21 @@
 
 #include <Stage.h>
 
-extern EntityDefinition VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM;
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern EntityDefinition VBJAENGINE_PRECAUTION_SCREEN_JAPANESE_IM;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												 ASSETS
 //---------------------------------------------------------------------------------------------------------
 
-PositionedEntityROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST_ENTITIES[] =
+PositionedEntityROMDef VBJAENGINE_PRECAUTION_SCREEN_ST_ENTITIES[] =
 {
-	{&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM, {FTOFIX19_13(188), FTOFIX19_13(148), FTOFIX19_13(0)}, NULL, NULL, NULL},
+	{&VBJAENGINE_PRECAUTION_SCREEN_JAPANESE_IM, {FTOFIX19_13(188), FTOFIX19_13(148), FTOFIX19_13(0)}, NULL, NULL, NULL},
 	{NULL,{0,0,0}, NULL, NULL, NULL},
 };
 
@@ -42,7 +47,7 @@ PositionedEntityROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST_ENTITIES[] =
 // 											STAGE DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-StageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST =
+StageROMDef VBJAENGINE_PRECAUTION_SCREEN_ST =
 {
     // size
     {
@@ -74,7 +79,7 @@ StageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST =
     },
 
     //entities
-    VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST_ENTITIES,
+    VBJAENGINE_PRECAUTION_SCREEN_ST_ENTITIES,
 
     //background music
     NULL,

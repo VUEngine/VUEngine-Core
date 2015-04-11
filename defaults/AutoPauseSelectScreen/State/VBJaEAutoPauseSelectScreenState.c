@@ -28,9 +28,16 @@
 #include <Screen.h>
 #include <Printing.h>
 #include <MessageDispatcher.h>
+#include <I18n.h>
+#include <LanguagesDefault.h>
 #include <VBJaEAutoPauseSelectScreenState.h>
 #include <VBJaEAutoPauseScreenState.h>
 #include <VBJaELangSelectScreenState.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
 
 extern StageROMDef EMPTY_ST;
 
@@ -49,10 +56,6 @@ static bool VBJaEAutoPauseSelectScreenState_handleMessage(VBJaEAutoPauseSelectSc
 static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this);
 static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelectScreenState this);
 static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 pressedKey);
-void VBJaEAutoPauseSelectScreenState_setExplanationString(VBJaEAutoPauseSelectScreenState this, char* string);
-void VBJaEAutoPauseSelectScreenState_setTitleString(VBJaEAutoPauseSelectScreenState this, char* string);
-void VBJaEAutoPauseSelectScreenState_setOnString(VBJaEAutoPauseSelectScreenState this, char* string);
-void VBJaEAutoPauseSelectScreenState_setOffString(VBJaEAutoPauseSelectScreenState this, char* string);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,10 +78,6 @@ static void VBJaEAutoPauseSelectScreenState_constructor(VBJaEAutoPauseSelectScre
 	VBJaEAutoPauseSelectScreenState_setNextstate(this, __UPCAST(GameState, VBJaELangSelectScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
     this->selection = true;
-    this->titleString = "Automatic Pause";
-    this->explanationString = "The Automatic Pause feature will\nremind you to take a break from\nplaying approx. every 30 minutes";
-    this->onString = "On";
-    this->offString = "Off";
 }
 
 // class's destructor
@@ -141,19 +140,25 @@ static bool VBJaEAutoPauseSelectScreenState_handleMessage(VBJaEAutoPauseSelectSc
 
 static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this)
 {
-    u8 strHeaderXPos = (48 - strlen(this->titleString)) >> 1;
-    Printing_text(Printing_getInstance(), this->titleString, strHeaderXPos, 8, NULL);
+    char* strAutomaticPause = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE);
+    char* strAutomaticPauseExplanation = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE_EXPLANATION);
 
-    Printing_text(Printing_getInstance(), this->explanationString, 8, 11, NULL);
+    u8 strHeaderXPos = (48 - strlen(strAutomaticPause)) >> 1;
+    Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 8, NULL);
+
+    Printing_text(Printing_getInstance(), strAutomaticPauseExplanation, 8, 11, NULL);
 
     VBJaEAutoPauseSelectScreenState_renderSelection(this);
 }
 
 static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelectScreenState this)
 {
+    char* strOn = I18n_getText(I18n_getInstance(), STR_ON);
+    char* strOff = I18n_getText(I18n_getInstance(), STR_OFF);
+
     // get strings and determine lengths
-    u8 strOnLength = strlen(this->onString);
-    u8 strOffLength = strlen(this->offString);
+    u8 strOnLength = strlen(strOn);
+    u8 strOffLength = strlen(strOff);
     u8 optionsGap = 3;
     u8 selectionStart = (48 - (strOnLength + optionsGap + strOffLength)) >> 1;
 
@@ -163,13 +168,13 @@ static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelect
     Printing_text(Printing_getInstance(), "                                                ", 0, 18, NULL);
 
     // print options
-    Printing_text(Printing_getInstance(), this->onString, selectionStart, 17, NULL);
-    Printing_text(Printing_getInstance(), this->offString, selectionStart + 3 + strOnLength, 17, NULL);
+    Printing_text(Printing_getInstance(), strOn, selectionStart, 17, NULL);
+    Printing_text(Printing_getInstance(), strOff, selectionStart + 3 + strOnLength, 17, NULL);
 
     // print selector
     u8 optionStart = this->selection ? selectionStart - 1 : selectionStart - 1 + optionsGap + strOnLength;
     u8 optionEnd = this->selection ? optionStart + 1 + strOnLength : optionStart + 1 + strOffLength;
-    Printing_text(Printing_getInstance(), "\x02\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", optionStart, 16, NULL);
+    Printing_text(Printing_getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", optionStart, 16, NULL);
     Printing_text(Printing_getInstance(), "\x04               ", optionEnd, 16, NULL);
     Printing_text(Printing_getInstance(), "\x07", optionStart, 17, NULL);
     Printing_text(Printing_getInstance(), "\x07", optionEnd, 17, NULL);
@@ -194,24 +199,4 @@ static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScr
 void VBJaEAutoPauseSelectScreenState_setNextstate(VBJaEAutoPauseSelectScreenState this, GameState nextState)
 {
     this->nextState = nextState;
-}
-
-void VBJaEAutoPauseSelectScreenState_setExplanationString(VBJaEAutoPauseSelectScreenState this, char* string)
-{
-    this->explanationString = string;
-}
-
-void VBJaEAutoPauseSelectScreenState_setTitleString(VBJaEAutoPauseSelectScreenState this, char* string)
-{
-    this->titleString = string;
-}
-
-void VBJaEAutoPauseSelectScreenState_setOnString(VBJaEAutoPauseSelectScreenState this, char* string)
-{
-    this->onString = string;
-}
-
-void VBJaEAutoPauseSelectScreenState_setOffString(VBJaEAutoPauseSelectScreenState this, char* string)
-{
-    this->offString = string;
 }

@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_STATE_H_
+#ifndef VBJAENGINE_PRECAUTION_SCREEN_STATE_H_
+#define VBJAENGINE_PRECAUTION_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,30 +34,28 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define VBJaEPrecautionScreenState_METHODS													\
+#define VBJaEPrecautionScreenState_METHODS												\
 	GameState_METHODS;											    					\
 
 // declare the virtual methods which are redefined
-#define VBJaEPrecautionScreenState_SET_VTABLE(ClassName)										\
+#define VBJaEPrecautionScreenState_SET_VTABLE(ClassName)								\
 	GameState_SET_VTABLE(ClassName)								    					\
-	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, enter);								\
-	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, exit);								\
-	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, execute);							\
-	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, resume);							\
-	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, handleMessage);						\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, enter);						\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, exit);							\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, execute);						\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, resume);						\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, handleMessage);				\
 
 
 __CLASS(VBJaEPrecautionScreenState);
 
-#define VBJaEPrecautionScreenState_ATTRIBUTES								   				\
+#define VBJaEPrecautionScreenState_ATTRIBUTES								   			\
 														            					\
 	/* inherits */																		\
 	GameState_ATTRIBUTES																\
 														            					\
 	/* state to enter after this one */													\
 	GameState nextState;																\
-														            					\
-	char* precautionString;																\
 														            					\
 	/* definition of screen's stage */													\
 	StageDefinition* stageDefinition;													\
@@ -70,7 +68,6 @@ __CLASS(VBJaEPrecautionScreenState);
 VBJaEPrecautionScreenState VBJaEPrecautionScreenState_getInstance(void);
 
 void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState);
-void VBJaEPrecautionScreenState_setPrecautionString(VBJaEPrecautionScreenState this, char* string);
 
 
 #endif

@@ -29,7 +29,14 @@
 #include <Printing.h>
 #include <MessageDispatcher.h>
 #include <PhysicalWorld.h>
+#include <I18n.h>
+#include <LanguagesDefault.h>
 #include <VBJaEAutoPauseScreenState.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
 
 extern StageROMDef EMPTY_ST;
 
@@ -77,11 +84,18 @@ static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void
 	optical.verticalViewPointCenter = ITOFIX19_13(112 + 112/2);
 	Game_setOptical(Game_getInstance(), optical);
 
-	//load stage
+	// load stage
 	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)&EMPTY_ST, false);
 
-    Printing_text(Printing_getInstance(), "                                                ", 0, 26, NULL);
-    Printing_text(Printing_getInstance(), "REST FOR A WHILE!", ((__SCREEN_WIDTH >> 3) >> 1) - 3, 20, NULL);
+    // print text
+    char* strAutomaticPause = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE);
+    char* strAutomaticPauseText = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE_TEXT);
+
+    u8 strHeaderXPos = (48 - strlen(strAutomaticPause)) >> 1;
+    Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 10, NULL);
+
+    u8 strTextXPos = (48 - strlen(strAutomaticPauseText)) >> 1;
+    Printing_text(Printing_getInstance(), strAutomaticPauseText, strTextXPos, 13, NULL);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16 >> 1);
 }

@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
+#ifndef VBJAENGINE_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
+#define VBJAENGINE_AUTOMATIC_PAUSE_SELECTION_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,14 +61,6 @@ __CLASS(VBJaEAutoPauseSelectScreenState);
 	StageDefinition* stageDefinition;													\
 																						\
 	bool selection;																		\
-																						\
-	char* titleString;																	\
-																						\
-	char* explanationString;															\
-																						\
-	char* onString;																		\
-																						\
-	char* offString;																	\
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -78,9 +70,6 @@ __CLASS(VBJaEAutoPauseSelectScreenState);
 VBJaEAutoPauseSelectScreenState VBJaEAutoPauseSelectScreenState_getInstance(void);
 
 void VBJaEAutoPauseSelectScreenState_setNextstate(VBJaEAutoPauseSelectScreenState this, GameState nextState);
-void VBJaEAutoPauseSelectScreenState_setExplanationString(VBJaEAutoPauseSelectScreenState this, char* string);
-void VBJaEAutoPauseSelectScreenState_setTitleString(VBJaEAutoPauseSelectScreenState this, char* string);
-void VBJaEAutoPauseSelectScreenState_setOnString(VBJaEAutoPauseSelectScreenState this, char* string);
-void VBJaEAutoPauseSelectScreenState_setOffString(VBJaEAutoPauseSelectScreenState this, char* string);
+
 
 #endif

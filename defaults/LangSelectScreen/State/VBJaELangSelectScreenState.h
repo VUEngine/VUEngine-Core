@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_DEFAULT_LANGUAGE_SELECTION_SCREEN_STATE_H_
-#define VBJAENGINE_DEFAULT_LANGUAGE_SELECTION_SCREEN_STATE_H_
+#ifndef VBJAENGINE_LANGUAGE_SELECTION_SCREEN_STATE_H_
+#define VBJAENGINE_LANGUAGE_SELECTION_SCREEN_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,8 +58,6 @@ __CLASS(VBJaELangSelectScreenState);
 	/* state to enter after this one */													\
 	GameState nextState;																\
 														            					\
-	char* titleString;																	\
-														            					\
 	/* definition of screen's stage */													\
 	StageDefinition* stageDefinition;													\
 																						\
@@ -73,7 +71,6 @@ __CLASS(VBJaELangSelectScreenState);
 VBJaELangSelectScreenState VBJaELangSelectScreenState_getInstance(void);
 
 void VBJaELangSelectScreenState_setNextstate(VBJaELangSelectScreenState this, GameState nextState);
-void VBJaELangSelectScreenState_setTitleString(VBJaELangSelectScreenState this, char* string);
 
 
 #endif
