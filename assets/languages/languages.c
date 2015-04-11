@@ -18,84 +18,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#ifndef __CUSTOM_LANGUAGES
+
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Image.h>
+#include <I18n.h>
+#include <LanguagesDefault.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaEPrecautionScreenJapaneseTiles[];
-extern BYTE VBJaEPrecautionScreenJapaneseMap[];
+extern LangROMDef LANGUAGE_EN;
+extern LangROMDef LANGUAGE_DE;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-
-TextureROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX =
+const LangROMDef* __LANGUAGES[] =
 {
-    {
-        // number of chars, depending on allocation type:
-        // __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
-        // __ANIMATED_SHARED: sum of chars of all animation frames
-        // __NO_ANIMATED: number of chars of whole image
-        47,
-
-        // allocation type
-        __NO_ANIMATED,
-
-        // char definition
-        VBJaEPrecautionScreenJapaneseTiles,
-    },
-
-    // bgmap definition
-    VBJaEPrecautionScreenJapaneseMap,
-
-    // cols (max 64)
-    25,
-
-    // rows (max 64)
-    5,
-
-    // number of frames
-    1,
-
-    // palette number
-    0,
+    &LANGUAGE_EN,
+    &LANGUAGE_DE,
+    NULL
 };
 
-SpriteROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITE =
-{
-	// sprite's type
-	__TYPE(Sprite),
 
-	// texture definition
-	(TextureDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_TX,
-	
-	// bgmap mode (BGMAP, AFFINE or H-BIAS)
-	WRLD_BGMAP,
-	
-	// display mode
-	WRLD_ON,
-
-	// parallax displacement
-	0		
-};
-
-SpriteROMDef* const VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITES[] =
-{
-	&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITE,
-	NULL
-};
-
-ImageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM =
-{
-	__TYPE(Image),
-	(SpriteROMDef**)VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_JAPANESE_IM_SPRITES,
-};
+#endif

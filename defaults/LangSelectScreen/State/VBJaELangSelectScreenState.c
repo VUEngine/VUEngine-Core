@@ -28,11 +28,18 @@
 #include <Screen.h>
 #include <Printing.h>
 #include <MessageDispatcher.h>
+#include <I18n.h>
+#include <LanguagesDefault.h>
 #include <VBJaELangSelectScreenState.h>
 #include <VBJaESplashScreenState.h>
-#include <I18n.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
 
 extern StageROMDef EMPTY_ST;
+extern LangROMDef* __LANGUAGES[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,7 +55,6 @@ static void VBJaELangSelectScreenState_resume(VBJaELangSelectScreenState this, v
 static bool VBJaELangSelectScreenState_handleMessage(VBJaELangSelectScreenState this, void* owner, Telegram telegram);
 static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 pressedKey);
 static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this);
-void VBJaELangSelectScreenState_setTitleString(VBJaELangSelectScreenState this, char* string);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -70,15 +76,14 @@ static void VBJaELangSelectScreenState_constructor(VBJaELangSelectScreenState th
 
 	VBJaELangSelectScreenState_setNextstate(this, __UPCAST(GameState, VBJaESplashScreenState_getInstance()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
-	this->titleString = "Language Selection";
 
     u8 activeLanguage = I18n_getActiveLanguage(I18n_getInstance());
-	this->languageSelector = OptionsSelector_new(1, 8, "\x10", kString);
+	this->languageSelector = OptionsSelector_new(1, 8, "\xB", kString);
 
 	VirtualList languageNames = VirtualList_new();
 
 	int i = 0;
-	for (;  i < I18n_getLanguageCount(I18n_getInstance()); i++)
+	for (; __LANGUAGES[i]; i++)
 	{
 		I18n_setActiveLanguage(I18n_getInstance(), i);
 		VirtualList_pushBack(languageNames, I18n_getActiveLanguageName(I18n_getInstance()));
@@ -198,9 +203,11 @@ static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState t
 
 static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this)
 {
-    u8 strHeaderXPos = (48 - strlen(this->titleString)) >> 1;
+    char* strLanguageSelect = I18n_getText(I18n_getInstance(), STR_LANGUAGE_SELECT);
 
-    Printing_text(Printing_getInstance(), this->titleString, strHeaderXPos, 8, NULL);
+    u8 strHeaderXPos = (48 - strlen(strLanguageSelect)) >> 1;
+
+    Printing_text(Printing_getInstance(), strLanguageSelect, strHeaderXPos, 8, NULL);
 
 	OptionsSelector_showOptions(this->languageSelector, strHeaderXPos, 11);
 }
@@ -208,9 +215,4 @@ static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this)
 void VBJaELangSelectScreenState_setNextstate(VBJaELangSelectScreenState this, GameState nextState)
 {
     this->nextState = nextState;
-}
-
-void VBJaELangSelectScreenState_setTitleString(VBJaELangSelectScreenState this, char* string)
-{
-    this->titleString = string;
 }

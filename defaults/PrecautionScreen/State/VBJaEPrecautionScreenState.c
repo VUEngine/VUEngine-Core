@@ -28,10 +28,17 @@
 #include <Printing.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
+#include <I18n.h>
+#include <LanguagesDefault.h>
 #include <VBJaEPrecautionScreenState.h>
 #include <VBJaEAdjustmentScreenState.h>
 
-extern StageROMDef VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern StageROMDef EMPTY_ST;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,7 +55,6 @@ static bool VBJaEPrecautionScreenState_handleMessage(VBJaEPrecautionScreenState 
 static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState this, u16 pressedKey);
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this);
 void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState);
-void VBJaEPrecautionScreenState_setPrecautionString(VBJaEPrecautionScreenState this, char* string);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,8 +75,7 @@ static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState th
 	__CONSTRUCT_BASE();
 
 	VBJaEPrecautionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEAdjustmentScreenState_getInstance()));
-	this->stageDefinition = (StageDefinition*)&VBJAENGINE_DEFAULT_PRECAUTION_SCREEN_ST;
-    this->precautionString = "     IMPORTANT:\n\nREAD INSTRUCTION AND\n\nPRECAUTION BOOKLETS\n\n  BEFORE OPERATING";
+	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
 }
 
 // class's destructor
@@ -164,15 +169,10 @@ static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState t
 
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this)
 {
-    Printing_text(Printing_getInstance(), this->precautionString, 14, 6, NULL);
+    Printing_text(Printing_getInstance(), I18n_getText(I18n_getInstance(), STR_PRECAUTION_SCREEN), 14, 10, NULL);
 }
 
 void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState)
 {
 	this->nextState = nextState;
-}
-
-void VBJaEPrecautionScreenState_setPrecautionString(VBJaEPrecautionScreenState this, char* string)
-{
-    this->precautionString = string;
 }

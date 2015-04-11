@@ -28,8 +28,6 @@
 #include <HardwareManager.h>
 #include <Utilities.h>
 
-#include <VBJaEFonts.h>
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												DECLARATIONS

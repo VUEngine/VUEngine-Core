@@ -18,45 +18,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef VBJAENGINE_AUTOMATIC_PAUSE_SCREEN_STATE_H_
-#define VBJAENGINE_AUTOMATIC_PAUSE_SCREEN_STATE_H_
+#ifndef __CUSTOM_LANGUAGES
+
+/*
+ * IMPORTANT: Ensure that this file is encoded in Windows-1252 or ISO-8859-1 ("ANSI") to enable usage
+ * of the full extended ASCII character including special characters of European languages.
+ */
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <GameState.h>
+#include <I18n.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+// 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define VBJaEAutoPauseScreenState_METHODS											\
-	GameState_METHODS;												    			\
+const LangROMDef LANGUAGE_DE =
+{
+    // Language Name
+    "Deutsch",
 
-// declare the virtual methods which are redefined
-#define VBJaEAutoPauseScreenState_SET_VTABLE(ClassName)								\
-	GameState_SET_VTABLE(ClassName)								    				\
-	__VIRTUAL_SET(ClassName, VBJaEAutoPauseScreenState, enter);						\
-	__VIRTUAL_SET(ClassName, VBJaEAutoPauseScreenState, exit);						\
-	__VIRTUAL_SET(ClassName, VBJaEAutoPauseScreenState, handleMessage);				\
-
-__CLASS(VBJaEAutoPauseScreenState);
-
-#define VBJaEAutoPauseScreenState_ATTRIBUTES							        			\
-														            				\
-	/* inherits */																	\
-	GameState_ATTRIBUTES															\
-
-
-//---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-VBJaEAutoPauseScreenState VBJaEAutoPauseScreenState_getInstance(void);
+    // Strings
+    {
+        /* Splash Screens */
+        "            Wichtig:\n\n  Lesen Sie vor dem Spielen die\n\nAnleitung und Sicherheitshinweise", //STR_PRECAUTION_SCREEN
+        "Automatische Pause", //STR_AUTOMATIC_PAUSE
+        " Die Automatische Pause Funktion\nerinnert dich daran, das Spiel ca.\n  alle 30 Minuten zu pausieren", //STR_AUTOMATIC_PAUSE_EXPLANATION
+        "Bitte mache eine Pause!", //STR_AUTOMATIC_PAUSE_TEXT
+        "An", //STR_ON
+        "Aus", //STR_OFF
+        "Sprachauswahl", //STR_LANGUAGE_SELECT
+    },
+};
 
 
 #endif

@@ -29,6 +29,11 @@
 #include <MessageDispatcher.h>
 #include <VBJaESplashScreenState.h>
 
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
 extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
 
 

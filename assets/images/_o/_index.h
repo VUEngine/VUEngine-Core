@@ -1,8 +1,0 @@
-#include "VBJaEAdjustmentScreenBG.c"  
-#include "VBJaEAdjustmentScreenIcon.c"  
-#include "VBJaEAdjustmentScreenLogo.c"  
-#include "VBJaEPrecautionScreenJapanese.c"  
-#include "VBJaESplashScreenBG.c"  
-#include "VBJaESplashScreenBGLight.c"  
-#include "VBJaESplashScreenLogo.c"  
-#include "VBJaESplashScreenLogoOutline.c"  

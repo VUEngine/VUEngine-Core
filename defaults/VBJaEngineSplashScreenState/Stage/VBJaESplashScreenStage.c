@@ -24,6 +24,11 @@
 
 #include <Stage.h>
 
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
 extern TextureDefinition VBJAENGINE_BG_TX;
 extern TextureDefinition VBJAENGINE_LOGO_3D_TX;
 extern TextureDefinition VBJAENGINE_LOGO_OUTLINE_TX;

@@ -1,5 +1,15 @@
 /.make-*/
 /.idea/
 /.settings/
+/old/
+.cdtproject
+.cproject
+.project
+cproject
 *.a
+*.vb
+*.elf
 *.ram
+*.lnk
+*.asm
+sections.txt
