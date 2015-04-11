@@ -37,7 +37,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #undef __STREAM_CYCLE_DURATION
-#define __STREAM_CYCLE_DURATION	(24)
+#define __STREAM_CYCLE_DURATION	(12)
 
 #define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
@@ -49,12 +49,12 @@
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
 
-#define __ENTITY_LOAD_PAD 			(128 + 64)
+#define __ENTITY_LOAD_PAD 			(64)
 #define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
 // since there are 32 layers, that's the theoretical limit of entities to display
 #undef __STREAMING_AMPLITUDE
-#define __STREAMING_AMPLITUDE		32
+#define __STREAMING_AMPLITUDE		12
 
 #define __MAXIMUM_PARALLAX		10
 #define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)
@@ -582,7 +582,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 
 	for (; node && counter < __STREAMING_AMPLITUDE / 4; node = direction ? VirtualNode_getPrevious(node) : VirtualNode_getNext(node), counter++);
 
-	node = node ? node: direction ? VirtualList_begin(this->stageEntities) : VirtualList_end(this->stageEntities);
+	node = node ? node : direction ? VirtualList_begin(this->stageEntities) : VirtualList_end(this->stageEntities);
 	savedNode = NULL;
 
 	int entityLoaded = false;

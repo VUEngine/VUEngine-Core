@@ -163,7 +163,7 @@ void FrameRate_increaseRawFPS(FrameRate this)
 {
 	ASSERT(this, "FrameRate::increaseRawFPS: null this");
 
-	//this->rawFPS++;
+	this->rawFPS++;
 }
 
 // increase the update raw renderFPS count
@@ -196,8 +196,8 @@ void FrameRate_print(FrameRate this, int col, int row)
 
 	Printing printing = Printing_getInstance();
 	Printing_text(printing, "FPS", col, row++, NULL);
-	//Printing_text(printing, "Raw             ", col, row, NULL);
-	//Printing_int(printing, this->rawFPS, col + 8, row++, NULL);
+	Printing_text(printing, "Raw        ", col, row, NULL);
+	Printing_int(printing, this->rawFPS, col + 4, row++, NULL);
 	Printing_text(printing, "R", col, row, NULL);
 	Printing_int(printing, this->renderFPS, col + 2, row++, NULL);
 	Printing_text(printing, "L", col, row, NULL);

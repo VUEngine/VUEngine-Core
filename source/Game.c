@@ -789,6 +789,9 @@ static void Game_update(Game this)
 			cleanUpTime = currentTime;
 		}
 		
+		// increase the frame rate
+		FrameRate_increaseRawFPS(this->frameRate);
+
 		// accumulate user's input until next logic cycle
 //		KeypadManager_read(this->keypadManager);
 
