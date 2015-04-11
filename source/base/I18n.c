@@ -30,6 +30,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern LangROMDef* __LANGUAGES[];
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -37,12 +44,6 @@
 																				\
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
-																				\
-	/* array of pointers to registered languages' definitions */				\
-	const LangDefinition *languages[__MAX_LANGUAGES];							\
-																				\
-	/* total number of registered languages */									\
-	u8 languageCount;															\
 																				\
 	/* currently active language */												\
 	u8 ActiveLanguage;															\
@@ -69,9 +70,9 @@ __SINGLETON(I18n);
 static void I18n_constructor(I18n this)
 {
 	ASSERT(this, "I18n::constructor: null this");
+
 	__CONSTRUCT_BASE();
 
-	this->languageCount = 0;
 	this->ActiveLanguage = 0;
 }
 
@@ -89,7 +90,7 @@ char* I18n_getText(I18n this, int string)
 {
 	ASSERT(this, "I18n::getText: null this");
 
-	return this->languages[this->ActiveLanguage]->language[string];
+	return __LANGUAGES[this->ActiveLanguage]->language[string];
 }
 
 // set the language
@@ -105,11 +106,10 @@ void I18n_setActiveLanguageByName(I18n this, const char* lang)
 {
 	ASSERT(this, "I18n::setActiveLanguageByName: null this");
 
-    u8 i;
-
-    for (i = 0; i < this->languageCount; i++)
+    u8 i = 0;
+	for (; __LANGUAGES[i]; i++)
     {
-        if (0 == strcmp(this->languages[i]->name, lang))
+        if (0 == strcmp(__LANGUAGES[i]->name, lang))
         {
             I18n_setActiveLanguage(I18n_getInstance(), i);
 	        break;
@@ -117,28 +117,12 @@ void I18n_setActiveLanguageByName(I18n this, const char* lang)
     }
 }
 
-// register a languages
-void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition)
-{
-	ASSERT(this, "I18n::registerLanguage: null this");
-
-	this->languages[this->languageCount++] = langDefinition;
-}
-
 // get all registered languages
 LangDefinition * I18n_getLanguages(I18n this)
 {
 	ASSERT(this, "I18n::getLanguages: null this");
 
-    return (LangDefinition *)this->languages;
-}
-
-// get the total number of registered languages
-u8 I18n_getLanguageCount(I18n this)
-{
-	ASSERT(this, "I18n::getLanguageCount: null this");
-
-    return this->languageCount;
+    return (LangDefinition *)__LANGUAGES;
 }
 
 // get the id of the currently active language
@@ -154,5 +138,5 @@ char* I18n_getActiveLanguageName(I18n this)
 {
 	ASSERT(this, "I18n::getActiveLanguageName: null this");
 
-    return (char*)this->languages[this->ActiveLanguage]->name;
+    return (char*)__LANGUAGES[this->ActiveLanguage]->name;
 }

@@ -32,7 +32,13 @@
 #include <VBJaESplashScreenState.h>
 #include <I18n.h>
 
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
 extern StageROMDef EMPTY_ST;
+extern LangROMDef* __LANGUAGES[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -78,7 +84,7 @@ static void VBJaELangSelectScreenState_constructor(VBJaELangSelectScreenState th
 	VirtualList languageNames = VirtualList_new();
 
 	int i = 0;
-	for (;  i < I18n_getLanguageCount(I18n_getInstance()); i++)
+	for (; __LANGUAGES[i]; i++)
 	{
 		I18n_setActiveLanguage(I18n_getInstance(), i);
 		VirtualList_pushBack(languageNames, I18n_getActiveLanguageName(I18n_getInstance()));

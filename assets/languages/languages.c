@@ -18,67 +18,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef I18N_H_
-#define I18N_H_
+#ifndef __CUSTOM_LANGUAGES
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include "Object.h"
+#include <I18n.h>
+#include <Languages.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DEFINES
+// 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-// max length of a font's name
-#define __MAX_LANGUAGE_NAME_LENGTH	32
+extern LangROMDef LANGUAGE_EN;
+extern LangROMDef LANGUAGE_DE;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+// 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define I18n_METHODS															\
-		Object_METHODS															\
-
-// declare the virtual methods which are redefined
-#define I18n_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)											\
-
-// declare a I18n
-__CLASS(I18n);
-
-typedef struct LangDefinition
+const LangROMDef* __LANGUAGES[] =
 {
-	// language name
-	char name[__MAX_LANGUAGE_NAME_LENGTH];
-
-    // language strings
-	char* language[];
-
-} LangDefinition;
-
-typedef const LangDefinition LangROMDef;
-
-
-//---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-I18n I18n_getInstance();
-
-void I18n_destructor(I18n this);
-char* I18n_getText(I18n this, int string);
-void I18n_setActiveLanguage(I18n this, u8 languageId);
-void I18n_setActiveLanguageByName(I18n this, const char* lang);
-void I18n_registerLanguage(I18n this, const LangDefinition* langDefinition);
-LangDefinition * I18n_getLanguages(I18n this);
-u8 I18n_getActiveLanguage(I18n this);
-char* I18n_getActiveLanguageName(I18n this);
+    &LANGUAGE_EN,
+    &LANGUAGE_DE,
+    NULL
+};
 
 
 #endif
