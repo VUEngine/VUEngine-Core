@@ -277,7 +277,7 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 
 	int xDisplacement = 11;
 	
-	Printing_text(Printing_getInstance(), "PARAM TABLE'S STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "PARAM TABLE STATUS", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Size:              ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->size, x + xDisplacement, y, NULL);
 	

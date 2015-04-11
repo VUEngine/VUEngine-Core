@@ -41,10 +41,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_ACTOR_SHOW_ROW 	6
-#define __OPTION_MARK	"\x0B"
-#define __FRAME_OPTION_MARK	"*"
+#define __OPTION_MARK	        "\x0B"
+#define __FRAME_OPTION_MARK	    "\x0B"
 
-#define __TRANSLATION_STEP	8
+#define __TRANSLATION_STEP	    8
 #define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
@@ -572,14 +572,14 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 
 static void AnimationEditor_printUserActors(AnimationEditor this)
 {
-	Printing_text(Printing_getInstance(), "User's actors  ", 1, 2, NULL);
+	Printing_text(Printing_getInstance(), "ACTORS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
 	OptionsSelector_showOptions(this->actorsSelector, 1, 4);
 }
 
 static void AnimationEditor_printActorAnimations(AnimationEditor this)
 {
-	Printing_text(Printing_getInstance(), "Actor's animations ", 1, 2, NULL);
+	Printing_text(Printing_getInstance(), "ACTOR'S ANIMATIONS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
 	OptionsSelector_showOptions(this->animationsSelector, 1, 4);
 }

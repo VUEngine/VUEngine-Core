@@ -339,20 +339,20 @@ u16 HardwareManager_readKeypad(HardwareManager this)
 // print hardware's states
 void HardwareManager_print(HardwareManager this, int x, int y)
 {
-	Printing_text(Printing_getInstance(), "HARDWARE'S STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
 	int auxY = y;
 	int xDisplacement = 6;
 	
 	// print registries' status to know the call source
 	Printing_text(Printing_getInstance(), "PSW:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(this), x + 5, auxY, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(this), x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "SP:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getStackPointer(this), x + 5, auxY, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getStackPointer(this), x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "LP:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getLPointer(this), x + 5, auxY, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getLPointer(this), x + xDisplacement, auxY++, NULL);
 
-	Printing_text(Printing_getInstance(), "   HW_REGS", x, ++auxY, NULL);
+	Printing_text(Printing_getInstance(), "HW_REGS", x, ++auxY, NULL);
 	Printing_text(Printing_getInstance(), "WCR:", x, ++auxY, NULL);
 	Printing_hex(Printing_getInstance(), HW_REGS[WCR], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "CCR:", x, ++auxY, NULL);
@@ -396,7 +396,7 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 	x += 17;
 	xDisplacement = 8;
 
-	Printing_text(Printing_getInstance(), "   VIP_REGS", x, ++auxY, NULL);
+	Printing_text(Printing_getInstance(), "VIP_REGS", x, ++auxY, NULL);
 	Printing_text(Printing_getInstance(), "INTPND:", x, ++auxY, NULL);
 	Printing_hex(Printing_getInstance(), VIP_REGS[INTPND], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "INTENB:", x, ++auxY, NULL);
