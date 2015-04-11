@@ -48,9 +48,10 @@ const LangROMDef LANGUAGE_DE =
         "            Wichtig:\n\n  Lesen Sie vor dem Spielen die\n\nAnleitung und Sicherheitshinweise", //STR_PRECAUTION_SCREEN
         "Automatische Pause", //STR_AUTOMATIC_PAUSE
         " Die Automatische Pause Funktion\nerinnert dich daran, das Spiel ca.\n  alle 30 Minuten zu pausieren", //STR_AUTOMATIC_PAUSE_EXPLANATION
-        "Sprachauswahl", //STR_LANGUAGE_SELECT
+        "Bitte mache eine Pause!", //STR_AUTOMATIC_PAUSE_TEXT
         "An", //STR_ON
         "Aus", //STR_OFF
+        "Sprachauswahl", //STR_LANGUAGE_SELECT
     },
 };
 

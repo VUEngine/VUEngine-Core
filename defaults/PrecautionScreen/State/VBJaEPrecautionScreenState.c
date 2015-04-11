@@ -38,7 +38,7 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern StageROMDef VBJAENGINE_PRECAUTION_SCREEN_ST;
+extern StageROMDef EMPTY_ST;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState th
 	__CONSTRUCT_BASE();
 
 	VBJaEPrecautionScreenState_setNextstate(this, __UPCAST(GameState, VBJaEAdjustmentScreenState_getInstance()));
-	this->stageDefinition = (StageDefinition*)&VBJAENGINE_PRECAUTION_SCREEN_ST;
+	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
 }
 
 // class's destructor
@@ -169,7 +169,7 @@ static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState t
 
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this)
 {
-    Printing_text(Printing_getInstance(), I18n_getText(I18n_getInstance(), STR_PRECAUTION_SCREEN), 14, 6, NULL);
+    Printing_text(Printing_getInstance(), I18n_getText(I18n_getInstance(), STR_PRECAUTION_SCREEN), 14, 10, NULL);
 }
 
 void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState)

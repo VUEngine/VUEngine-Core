@@ -32,7 +32,7 @@ extern BYTE VBJaEFontTiles[];
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-FontROMDef VBJAENGINE_DEFAULT_FONT =
+FontROMDef VBJAENGINE_FONT =
 {
     // font chars definition pointer
 	VBJaEFontTiles,
@@ -52,7 +52,7 @@ FontROMDef VBJAENGINE_DEFAULT_FONT =
 
 const FontROMDef* __FONTS[] =
 {
-    &VBJAENGINE_DEFAULT_FONT,
+    &VBJAENGINE_FONT,
     NULL
 };
 
