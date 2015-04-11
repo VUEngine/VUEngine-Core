@@ -334,18 +334,31 @@ void Debug_showNextSubPage(Debug this)
 	Debug_showSubPage(this, 1);
 }
 
+// print header
+static void Debug_printHeader(Debug this)
+{
+	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+    Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+    Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->pages, VirtualNode_getData(this->currentPage)) + 1, 17, 0, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
+}
+
 // show page
 static void Debug_showPage(Debug this, int increment)
 {
 	if (this->currentPage && VirtualNode_getData(this->currentPage))
 	{
 		this->update = NULL;
+
 		VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+
+        Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
+
 		Debug_dimmGame(this);
+
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 2);
 	}
 }
@@ -356,10 +369,12 @@ static void Debug_showSubPage(Debug this, int increment)
 	if (this->currentSubPage && VirtualNode_getData(this->currentSubPage))
 	{
 		this->update = NULL;
+
 		VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
-		Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+
+        Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
+
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 2);
 	}
 }
