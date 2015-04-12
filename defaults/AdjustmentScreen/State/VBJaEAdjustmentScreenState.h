@@ -69,4 +69,5 @@ VBJaEAdjustmentScreenState VBJaEAdjustmentScreenState_getInstance(void);
 
 void VBJaEAdjustmentScreenState_setNextstate(VBJaEAdjustmentScreenState this, GameState nextState);
 
+
 #endif

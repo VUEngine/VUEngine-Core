@@ -48,7 +48,7 @@ static void VBJaESplashScreenState_execute(VBJaESplashScreenState this, void* ow
 static void VBJaESplashScreenState_exit(VBJaESplashScreenState this, void* owner);
 static void VBJaESplashScreenState_resume(VBJaESplashScreenState this, void* owner);
 static bool VBJaESplashScreenState_handleMessage(VBJaESplashScreenState this, void* owner, Telegram telegram);
-static void VBJaESplashScreenState_processInput(VBJaESplashScreenState this, u16 pressedKey);
+static void VBJaESplashScreenState_processInput(VBJaESplashScreenState this, u16 releasedKey);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -148,11 +148,11 @@ static bool VBJaESplashScreenState_handleMessage(VBJaESplashScreenState this, vo
 {
 	switch (Telegram_getMessage(telegram))
 	{
-		case kKeyPressed:
+		case kKeyUp:
 		{
-            u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+            u16 releasedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaESplashScreenState_processInput(VBJaESplashScreenState_getInstance(), pressedKey);
+            VBJaESplashScreenState_processInput(VBJaESplashScreenState_getInstance(), releasedKey);
         }
         break;
 	}
@@ -160,7 +160,7 @@ static bool VBJaESplashScreenState_handleMessage(VBJaESplashScreenState this, vo
 	return false;
 }
 
-static void VBJaESplashScreenState_processInput(VBJaESplashScreenState this, u16 pressedKey)
+static void VBJaESplashScreenState_processInput(VBJaESplashScreenState this, u16 releasedKey)
 {
 	Game_changeState(Game_getInstance(), __UPCAST(GameState, this->nextState));
 }

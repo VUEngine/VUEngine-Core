@@ -55,7 +55,7 @@ static void VBJaEAutoPauseSelectScreenState_resume(VBJaEAutoPauseSelectScreenSta
 static bool VBJaEAutoPauseSelectScreenState_handleMessage(VBJaEAutoPauseSelectScreenState this, void* owner, Telegram telegram);
 static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this);
 static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelectScreenState this);
-static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 pressedKey);
+static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 releasedKey);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -126,11 +126,11 @@ static bool VBJaEAutoPauseSelectScreenState_handleMessage(VBJaEAutoPauseSelectSc
 {
 	switch (Telegram_getMessage(telegram))
 	{
-		case kKeyPressed:
+		case kKeyUp:
 		{
-            u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+            u16 releasedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState_getInstance(), pressedKey);
+            VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState_getInstance(), releasedKey);
         }
         break;
 	}
@@ -182,14 +182,14 @@ static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelect
     Printing_text(Printing_getInstance(), "\x06               ", optionEnd, 18, NULL);
 }
 
-static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 pressedKey)
+static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 releasedKey)
 {
-	if ((pressedKey & K_LL) || (pressedKey & K_LR))
+	if ((releasedKey & K_LL) || (releasedKey & K_LR))
 	{
 	    this->selection = !this->selection;
 	    VBJaEAutoPauseSelectScreenState_renderSelection(this);
 	}
-	else if ((pressedKey & K_A) || (pressedKey & K_STA))
+	else if ((releasedKey & K_A) || (releasedKey & K_STA))
 	{
 		Game_setAutomaticPauseState(Game_getInstance(), this->selection ? __UPCAST(GameState, VBJaEAutoPauseScreenState_getInstance()): NULL);
 	    Game_changeState(Game_getInstance(), this->nextState);

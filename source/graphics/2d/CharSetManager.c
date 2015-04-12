@@ -209,7 +209,7 @@ void CharSetManager_print(CharSetManager this, int x, int y)
 {
 	ASSERT(this, "CharSetManager::print: null this");
 
-	Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "CHARACTER MEMORY", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "CharSets: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->charSets), x + 12, y++, NULL);
 	y++;

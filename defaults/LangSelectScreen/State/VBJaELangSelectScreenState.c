@@ -53,7 +53,7 @@ static void VBJaELangSelectScreenState_execute(VBJaELangSelectScreenState this, 
 static void VBJaELangSelectScreenState_exit(VBJaELangSelectScreenState this, void* owner);
 static void VBJaELangSelectScreenState_resume(VBJaELangSelectScreenState this, void* owner);
 static bool VBJaELangSelectScreenState_handleMessage(VBJaELangSelectScreenState this, void* owner, Telegram telegram);
-static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 pressedKey);
+static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 releasedKey);
 static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this);
 
 
@@ -172,11 +172,11 @@ static bool VBJaELangSelectScreenState_handleMessage(VBJaELangSelectScreenState 
 {
 	switch (Telegram_getMessage(telegram))
 	{
-		case kKeyPressed:
+		case kKeyUp:
 		{
-            u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+            u16 releasedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState_getInstance(), pressedKey);
+            VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState_getInstance(), releasedKey);
         }
         break;
 	}
@@ -184,17 +184,17 @@ static bool VBJaELangSelectScreenState_handleMessage(VBJaELangSelectScreenState 
 	return false;
 }
 
-static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 pressedKey)
+static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 releasedKey)
 {
-	if (pressedKey & K_LU)
+	if ((releasedKey & K_LU) || (releasedKey & K_RU))
 	{
 		OptionsSelector_selectPrevious(this->languageSelector);
 	}
-	else if (pressedKey & K_LD)
+    else if ((releasedKey & K_LD) || (releasedKey & K_RD))
 	{
 		OptionsSelector_selectNext(this->languageSelector);
 	}
-	else if (pressedKey & K_A)
+	else if ((releasedKey & K_A) || (releasedKey & K_STA))
 	{
 	    I18n_setActiveLanguage(I18n_getInstance(), OptionsSelector_getSelectedOption(this->languageSelector));
 	    Game_changeState(Game_getInstance(), __UPCAST(GameState, this->nextState));

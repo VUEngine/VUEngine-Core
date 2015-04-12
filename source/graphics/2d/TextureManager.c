@@ -502,7 +502,7 @@ void TextureManager_print(TextureManager this, int x, int y)
 	int textureCount = 0;
 	for (;this->texture[textureCount] && textureCount < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; textureCount++);
 
-	Printing_text(Printing_getInstance(), "TEXTURES' USAGE", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "TEXTURES", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Texture count: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), textureCount, x + 15, y, NULL);
 }

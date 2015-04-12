@@ -269,12 +269,21 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 	return true;
 }
 
+// print header
+static void StageEditor_printHeader(StageEditor this)
+{
+	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+    Printing_text(Printing_getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
+    Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
+    Printing_int(Printing_getInstance(), this->mode, 17, 0, NULL);
+    Printing_int(Printing_getInstance(), kLastMode - 1, 19, 0, NULL);
+}
+
 // print title
 static void StageEditor_setupMode(StageEditor this)
 {
 	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
-	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-	Printing_text(Printing_getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
+    StageEditor_printHeader(this);
 
 	switch (this->mode)
 	{

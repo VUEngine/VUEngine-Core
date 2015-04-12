@@ -480,11 +480,11 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 {
 	ASSERT(this, "SpriteManager::print: null this");
 
-	Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "SPRITES USAGE", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Last free layer: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->freeLayer, x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), this->freeLayer, x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Free layers: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __TOTAL_LAYERS - 1 - VirtualList_getSize(this->sprites), x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), __TOTAL_LAYERS - 1 - VirtualList_getSize(this->sprites), x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Sprites count: ", x, ++y, NULL);
 
 	int auxY = y + 2;
@@ -514,5 +514,5 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 		}
 	}
 
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->sprites), x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->sprites), x + 17, y, NULL);
 }

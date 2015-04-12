@@ -311,10 +311,10 @@ void MemoryPool_printMemUsage(MemoryPool this, int x, int y)
 	int pool;
 	int displacement = 0;
 
-	Printing_text(Printing_getInstance(), "MEMORY'S STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "MEMORY STATUS", x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Pool's size: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), MemoryPool_getPoolSize(MemoryPool_getInstance()), x + 13, y++, NULL);
+	Printing_text(Printing_getInstance(), "Pool size: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), MemoryPool_getPoolSize(MemoryPool_getInstance()), x + 11, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Pool", x, ++y, NULL);
 	Printing_text(Printing_getInstance(), "Free", x + 7, y, NULL);

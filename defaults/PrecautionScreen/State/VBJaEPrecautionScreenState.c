@@ -52,7 +52,7 @@ static void VBJaEPrecautionScreenState_execute(VBJaEPrecautionScreenState this, 
 static void VBJaEPrecautionScreenState_exit(VBJaEPrecautionScreenState this, void* owner);
 static void VBJaEPrecautionScreenState_resume(VBJaEPrecautionScreenState this, void* owner);
 static bool VBJaEPrecautionScreenState_handleMessage(VBJaEPrecautionScreenState this, void* owner, Telegram telegram);
-static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState this, u16 pressedKey);
+static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState this, u16 releasedKey);
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this);
 void VBJaEPrecautionScreenState_setNextstate(VBJaEPrecautionScreenState this, GameState nextState);
 
@@ -93,6 +93,9 @@ static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, vo
     VBJaEPrecautionScreenState_print(this);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
+
+    // show this screen for at least 2 seconds, as defined by Nintendo in the official development manual
+	Clock_delay(Game_getClock(Game_getInstance()), 2000);
 }
 
 // state's execute
@@ -150,11 +153,11 @@ static bool VBJaEPrecautionScreenState_handleMessage(VBJaEPrecautionScreenState 
 {
 	switch (Telegram_getMessage(telegram))
 	{
-		case kKeyPressed:
+		case kKeyUp:
 		{
-            u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+            u16 releasedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState_getInstance(), pressedKey);
+            VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState_getInstance(), releasedKey);
         }
         break;
 	}
@@ -162,7 +165,7 @@ static bool VBJaEPrecautionScreenState_handleMessage(VBJaEPrecautionScreenState 
 	return false;
 }
 
-static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState this, u16 pressedKey)
+static void VBJaEPrecautionScreenState_processInput(VBJaEPrecautionScreenState this, u16 releasedKey)
 {
 	Game_changeState(Game_getInstance(), this->nextState);
 }

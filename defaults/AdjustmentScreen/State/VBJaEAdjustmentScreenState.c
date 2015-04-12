@@ -49,7 +49,7 @@ static void VBJaEAdjustmentScreenState_execute(VBJaEAdjustmentScreenState this, 
 static void VBJaEAdjustmentScreenState_exit(VBJaEAdjustmentScreenState this, void* owner);
 static void VBJaEAdjustmentScreenState_resume(VBJaEAdjustmentScreenState this, void* owner);
 static bool VBJaEAdjustmentScreenState_handleMessage(VBJaEAdjustmentScreenState this, void* owner, Telegram telegram);
-static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 pressedKey);
+static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 releasedKey);
 void VBJaEAdjustmentScreenState_setNextstate(VBJaEAdjustmentScreenState this, GameState nextState);
 
 
@@ -142,11 +142,11 @@ static bool VBJaEAdjustmentScreenState_handleMessage(VBJaEAdjustmentScreenState 
 {
 	switch (Telegram_getMessage(telegram))
 	{
-		case kKeyPressed:
+		case kKeyUp:
 		{
-            u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+            u16 releasedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-            VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState_getInstance(), pressedKey);
+            VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState_getInstance(), releasedKey);
         }
         break;
 	}
@@ -154,9 +154,14 @@ static bool VBJaEAdjustmentScreenState_handleMessage(VBJaEAdjustmentScreenState 
 	return false;
 }
 
-static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 pressedKey)
+static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 releasedKey)
 {
-	Game_changeState(Game_getInstance(), this->nextState);
+    // TODO: replace this ugly hack with a proper Game_isPaused check or something similar
+    if (this->nextState == NULL) {
+        Game_unpause(Game_getInstance(), __UPCAST(GameState, this));
+    } else {
+	    Game_changeState(Game_getInstance(), this->nextState);
+    }
 }
 
 void VBJaEAdjustmentScreenState_setNextstate(VBJaEAdjustmentScreenState this, GameState nextState)

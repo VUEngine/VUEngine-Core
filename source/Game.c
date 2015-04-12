@@ -380,7 +380,7 @@ static void Game_setNextState(Game this, GameState state)
 	HardwareManager_enableRendering(this->hardwareManager);
 
 	// if automatic pause function is in place
-	if(this->automaticPauseState) 
+	if (this->automaticPauseState)
 	{
 		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock_getTime(this->clock) - this->lastAutoPauseCheckTime);
 		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
@@ -796,7 +796,7 @@ static void Game_update(Game this)
 //		KeypadManager_read(this->keypadManager);
 
 #ifdef __DEBUG
-		if(previousLastProcessName != this->lastProcessName)
+		if (previousLastProcessName != this->lastProcessName)
 		{
 			Printing_text(Printing_getInstance(), ":                              ", 10, 0, NULL);
 			Printing_text(Printing_getInstance(), this->lastProcessName, 12, 0, NULL);
@@ -1016,7 +1016,7 @@ void Game_pause(Game this, GameState pauseState)
 	ASSERT(this, "Game::pause: null this");
 	ASSERT(pauseState, "Game::pause: null pauseState");
 
-	if(pauseState)
+	if (pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPushState;
@@ -1030,12 +1030,12 @@ void Game_unpause(Game this, GameState pauseState)
 	ASSERT(pauseState, "Game::unpause: null pauseState");
 	ASSERT(pauseState == Game_getCurrentState(this), "Game::unpause: null pauseState sent is not the current one");
 
-	if(pauseState && Game_getCurrentState(this) == pauseState)
+	if (pauseState && Game_getCurrentState(this) == pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
 		
-		if(Game_getCurrentState(this) == this->automaticPauseState)
+		if (Game_getCurrentState(this) == this->automaticPauseState)
 		{
 			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kAutoPause, NULL);
 			this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
@@ -1055,10 +1055,10 @@ static void Game_autoPause(Game this)
 {
 	ASSERT(this, "Game::autoPause: null this");
 
-	if(this->automaticPauseState)
+	if (this->automaticPauseState)
 	{
 		// only pause if no more than one state is active
-		if(1 == StateMachine_getStackSize(this->stateMachine))
+		if (1 == StateMachine_getStackSize(this->stateMachine))
 		{
 			Game_pause(this, this->automaticPauseState);
 		}

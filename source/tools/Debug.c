@@ -334,18 +334,31 @@ void Debug_showNextSubPage(Debug this)
 	Debug_showSubPage(this, 1);
 }
 
+// print header
+static void Debug_printHeader(Debug this)
+{
+	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+    Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+    Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->pages, VirtualNode_getData(this->currentPage)) + 1, 17, 0, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
+}
+
 // show page
 static void Debug_showPage(Debug this, int increment)
 {
 	if (this->currentPage && VirtualNode_getData(this->currentPage))
 	{
 		this->update = NULL;
+
 		VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+
+        Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
+
 		Debug_dimmGame(this);
+
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 2);
 	}
 }
@@ -356,10 +369,12 @@ static void Debug_showSubPage(Debug this, int increment)
 	if (this->currentSubPage && VirtualNode_getData(this->currentSubPage))
 	{
 		this->update = NULL;
+
 		VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
-		Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-		Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+
+        Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
+
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 2);
 	}
 }
@@ -405,13 +420,13 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 {
 	Debug_removeSubPages(this);
 	Printing_text(Printing_getInstance(), "GENERAL STATUS", 1, y++, NULL);
-	Printing_text(Printing_getInstance(), "General clock's time: ", 1, ++y, NULL);
-	Clock_print(Game_getClock(Game_getInstance()), 23, y, NULL);
-	Printing_text(Printing_getInstance(), "In game clock's time: ", 1, ++y, NULL);
-	Clock_print(Game_getInGameClock(Game_getInstance()), 23, y, NULL);
+	Printing_text(Printing_getInstance(), "General clock time: ", 1, ++y, NULL);
+	Clock_print(Game_getClock(Game_getInstance()), 21, y, NULL);
+	Printing_text(Printing_getInstance(), "In game clock time: ", 1, ++y, NULL);
+	Clock_print(Game_getInGameClock(Game_getInstance()), 21, y, NULL);
 	FrameRate_printLastRecord(FrameRate_getInstance(), 1, y + 3);
 
-	Printing_text(Printing_getInstance(), "STAGE'S STATUS", 20, y + 3, NULL);
+	Printing_text(Printing_getInstance(), "STAGE STATUS", 20, y + 3, NULL);
 	Printing_text(Printing_getInstance(), "Entities: ", 20, ++y + 3, NULL);
 	Printing_int(Printing_getInstance(), Container_getChildCount(__UPCAST(Container, GameState_getStage(this->gameState))), 34, y + 3, NULL);
 	Printing_text(Printing_getInstance(), "UI Entities: ", 20, ++y + 3, NULL);
@@ -520,7 +535,7 @@ static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y)
 	}
 	else if (__CHAR_SEGMENTS > this->charSeg)
 	{
-		Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
+		Printing_text(Printing_getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
 		Printing_text(Printing_getInstance(), "Char segment: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), this->charSeg + 1, x + 14, y, NULL);
 
@@ -723,7 +738,7 @@ static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int 
 {
 	int columnIncrement = 20;
 
-	Printing_text(Printing_getInstance(), "CLASSES' MEMORY USAGE (B) ", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "CLASSES MEMORY USAGE (B) ", x, y++, NULL);
 
 	if (message)
 	{
