@@ -469,12 +469,12 @@ static void Game_handleInput(Game this)
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
 
-#ifdef __DEBUG_TOOLS
-
 	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 
+#ifdef __DEBUG_TOOLS
+
 	// check code to access special feature
-	if ((previousKey & K_SEL) && (pressedKey & K_RU))
+	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & (K_RU | K_RL)))
 	{
 		if (Game_isInDebugMode(this))
 		{
@@ -503,7 +503,7 @@ static void Game_handleInput(Game this)
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if ((previousKey & K_SEL) && (pressedKey & K_RD))
+	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RD))
 	{
 		if (Game_isInStageEditor(this))
 		{
@@ -533,7 +533,7 @@ static void Game_handleInput(Game this)
 #ifdef __ANIMATION_EDITOR
 
 	// check code to access special feature
-	if ((previousKey & K_SEL) && (pressedKey & K_RR))
+	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RR))
 	{
 		if (Game_isInAnimationEditor(this))
 		{
