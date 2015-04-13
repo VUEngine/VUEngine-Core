@@ -30,7 +30,7 @@
 // game world limit to unload entities
 #define __Z_GAME_LIMIT							__ZZERO - 30
 
-// lower posible z coordinate
+// lowest possible z coordinate
 #define __ZLOWLIMIT 							-200
 
 // distance from player's eyes to the virtual screen
