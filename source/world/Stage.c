@@ -667,8 +667,6 @@ static void Stage_loadEntities(Stage this)
 			__DELETE_BASIC(stageEntityDescription);
 		}
 	}
-
-	ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 }
 
 // intialize loaded entities
