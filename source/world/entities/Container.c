@@ -580,6 +580,15 @@ s16 Container_getId(Container this)
 	return this->id;
 }
 
+// retrieve parent
+Container Container_getParent(Container this)
+{	
+	ASSERT(this, "Container::getParent: null this");
+
+	return this->parent;
+}
+
+
 // retrieve child count
 int Container_getChildCount(Container this)
 {	

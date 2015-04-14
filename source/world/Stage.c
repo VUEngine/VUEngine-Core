@@ -54,7 +54,7 @@
 
 // since there are 32 layers, that's the theoretical limit of entities to display
 #undef __STREAMING_AMPLITUDE
-#define __STREAMING_AMPLITUDE		12
+#define __STREAMING_AMPLITUDE		16
 
 #define __MAXIMUM_PARALLAX		10
 #define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)
@@ -973,5 +973,16 @@ void Stage_resume(Stage this)
 		__VIRTUAL_CALL(void, Container, resume, __UPCAST(Container, this->ui));
 		
 		__VIRTUAL_CALL(void, Container, transform, this->ui, &environmentTransform);
+	}
+}
+
+void Stage_transformFocusEntity(Stage this)
+{
+	if(this->focusEntity)
+	{
+		Transformation environmentTransform = Container_getEnvironmentTransform(Container_getParent(__UPCAST(Container, this->focusEntity)));
+
+		// apply transformations
+		__VIRTUAL_CALL(void, Container, transform, this->focusEntity, &environmentTransform);
 	}
 }

@@ -109,9 +109,6 @@ void Printing_render(Printing this, int textLayer)
 		return;
 	}
 	
-	extern unsigned int volatile* _xpstts;
-	while (*_xpstts & XPBSYR);
-
 	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()));
 	WA[textLayer].mx = 0;
 	WA[textLayer].mp = 0;
