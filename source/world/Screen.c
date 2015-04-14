@@ -148,53 +148,58 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	// if focusInGameEntity is defined
 	if (this->focusInGameEntity)
 	{
-		// transform focus entity
-		Transformation environmentTransform = Container_getEnvironmentTransform(Container_getParent(__UPCAST(Container, this->focusInGameEntity)));
-
-		// apply transformations
-		__VIRTUAL_CALL(void, Container, transform, this->focusInGameEntity, &environmentTransform);
-
-		// get focusInGameEntity is moving
-		if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
+		Container focusInGameEntityParent = Container_getParent(__UPCAST(Container, this->focusInGameEntity));
+		
+		if(focusInGameEntityParent)
 		{
-			// save last position
-			this->lastDisplacement = this->position;
-
-			// get focusInGameEntity's position
-			this->position = Entity_getPosition(__UPCAST(Entity, this->focusInGameEntity));
-			
-			this->position.x += this->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
-			this->position.y += this->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
-			this->position.z += this->focusEntityPositionDisplacement.z;
-
-			if (0 > this->position.x)
+			// transform focus entity
+			Transformation environmentTransform = Container_getEnvironmentTransform(focusInGameEntityParent);
+	
+			// apply transformations
+			__VIRTUAL_CALL(void, Container, transform, this->focusInGameEntity, &environmentTransform);
+	
+			// get focusInGameEntity is moving
+			if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 			{
-				this->position.x = 0;
+				// save last position
+				this->lastDisplacement = this->position;
+	
+				// get focusInGameEntity's position
+				this->position = Entity_getPosition(__UPCAST(Entity, this->focusInGameEntity));
+				
+				this->position.x += this->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
+				this->position.y += this->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
+				this->position.z += this->focusEntityPositionDisplacement.z;
+	
+				if (0 > this->position.x)
+				{
+					this->position.x = 0;
+				}
+				else if (ITOFIX19_13(this->stageSize.x) < this->position.x + ITOFIX19_13(__SCREEN_WIDTH))
+				{
+					this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
+				}
+	
+				if (0 > this->position.y)
+				{
+					this->position.y = 0;
+				}
+				else if (ITOFIX19_13(this->stageSize.y) < this->position.y + ITOFIX19_13(__SCREEN_HEIGHT))
+				{
+					this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
+				}
+	
+				this->lastDisplacement.x = this->position.x - this->lastDisplacement.x;
+				this->lastDisplacement.y = this->position.y - this->lastDisplacement.y;
+				this->lastDisplacement.z = this->position.z - this->lastDisplacement.z;
 			}
-			else if (ITOFIX19_13(this->stageSize.x) < this->position.x + ITOFIX19_13(__SCREEN_WIDTH))
+			else
 			{
-				this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
+				// not moving
+				this->lastDisplacement.x = 0;
+				this->lastDisplacement.y = 0;
+				this->lastDisplacement.z = 0;
 			}
-
-			if (0 > this->position.y)
-			{
-				this->position.y = 0;
-			}
-			else if (ITOFIX19_13(this->stageSize.y) < this->position.y + ITOFIX19_13(__SCREEN_HEIGHT))
-			{
-				this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
-			}
-
-			this->lastDisplacement.x = this->position.x - this->lastDisplacement.x;
-			this->lastDisplacement.y = this->position.y - this->lastDisplacement.y;
-			this->lastDisplacement.z = this->position.z - this->lastDisplacement.z;
-		}
-		else
-		{
-			// not moving
-			this->lastDisplacement.x = 0;
-			this->lastDisplacement.y = 0;
-			this->lastDisplacement.z = 0;
 		}
 	}
 }
