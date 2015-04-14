@@ -13,6 +13,7 @@
 #define __ANIMATION_EDITOR
 #endif
 
+#define __PRINT_FRAMERATE
 
 //---------------------------------------------------------------------------------------------------------
 // 										OPTICS / PROJECTION
@@ -45,16 +46,16 @@
 // distance between eyes
 #define __BASE_FACTOR							768
 
-// player's eyes horizontal position
+// player's eyes's horizontal position
 #define __HVPC									192
 
-// player's eyes vertical position
+// player's eyes's vertical position
 #define __VVPC									112
 
 // zoom factor to distortoine zooming
 #define __ZOOM_FACTOR							0.2f
 
-// parallax values are divides by this factor to control its strength
+// parallax values are divide by this factor to control it's strenght
 #define __PARALLAX_CORRECTION_FACTOR			20
 
 
@@ -71,7 +72,7 @@
 // target frames per second
 // must be a muliple of 50 to being able to use a timer resolution greater than 1
 // if finer control is needed, change timer resolution to 1
-#define __TARGET_FPS 					50
+#define __TARGET_FPS 					60
 
 // target frames per second
 #define __OPTIMUM_FPS 					__TARGET_FPS
@@ -87,6 +88,11 @@
 // seconds that must elapse to call rest state... in seconds (15 minutes)
 #define __REST_DELAY 		900
 
+// if defined, user input is only read in the Game's update logic cycle;
+// otherwise, it is read on each pass of the Game's main update loop, ensuring
+// that no user's input is lost, but introducing a considerable lost of loop's 
+// passes because of the delay needed to read the keypad
+#undef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 
 //---------------------------------------------------------------------------------------------------------
 // 										MEMORY POOL
@@ -124,7 +130,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // the fourth segment is used for text allocation
-// chaging this value to 4 may cause text corruption
+// changing this value to 4 may cause text corruption
 #define __CHAR_SEGMENTS					3
 
 // number of charsets per char segment
@@ -198,14 +204,12 @@
 // 2) select the next entity to load
 // 3) create the selected entity
 // 4) initialize the loaded entity
-// if __STREAM_CYCLE_DURATION = 20 and __TARGET_FPS = 50, each one of the previous items will be called
-// called every 100 milliseconds
-#define __STREAM_CYCLE_DURATION	(1000 / __TARGET_FPS)
+#define __STREAM_CYCLE_DURATION	12
 
 // pad to determine if an entity must be loaded/unloaded 
 // load pad must always be lower than unload pad!
 // too close values will put under heavy usage the streaming!
-#define __ENTITY_LOAD_PAD 			196
+#define __ENTITY_LOAD_PAD 			64
 #define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
 // the number of entities in the stage's definition to check for streaming in on each preload cycle
@@ -311,7 +315,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // when this is defined, custom language files are loaded instead of the default ones
-//#define __CUSTOM_LANGUAGES
+#define __CUSTOM_LANGUAGES
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -319,7 +323,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // when this is defined, custom fonts are loaded instead of the default ones
-//#define __CUSTOM_FONTS
+#define __CUSTOM_FONTS
 
 
 //---------------------------------------------------------------------------------------------------------

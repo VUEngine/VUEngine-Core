@@ -126,7 +126,7 @@ static bool VBJaEAutoPauseSelectScreenState_handleMessage(VBJaEAutoPauseSelectSc
 {
 	switch (Telegram_getMessage(telegram))
 	{
-		case kKeyUp:
+		case kKeyReleased:
 		{
             u16 releasedKey = *((u16*)Telegram_getExtraInfo(telegram));
 

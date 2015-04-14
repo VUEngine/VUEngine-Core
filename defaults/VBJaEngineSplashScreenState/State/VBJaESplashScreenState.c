@@ -148,7 +148,7 @@ static bool VBJaESplashScreenState_handleMessage(VBJaESplashScreenState this, vo
 {
 	switch (Telegram_getMessage(telegram))
 	{
-		case kKeyUp:
+		case kKeyPressed:
 		{
             u16 releasedKey = *((u16*)Telegram_getExtraInfo(telegram));
 

@@ -464,8 +464,9 @@ static void Game_handleInput(Game this)
 {
 	ASSERT(this, "Game::handleInput: null this");
 
+#ifdef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 	KeypadManager_read(this->keypadManager);
-
+#endif
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
@@ -475,7 +476,7 @@ static void Game_handleInput(Game this)
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
-	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & (K_RU | K_RL)))
+	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RU))
 	{
 		if (Game_isInDebugMode(this))
 		{
@@ -497,6 +498,7 @@ static void Game_handleInput(Game this)
 			this->nextState = NULL;
 		}
 
+		KeypadManager_clear(this->keypadManager);
 		return;
 	}
 #endif
@@ -526,9 +528,9 @@ static void Game_handleInput(Game this)
 			this->nextState = NULL;
 		}
 
+		KeypadManager_clear(this->keypadManager);
 		return;
 	}
-
 #endif
 
 #ifdef __ANIMATION_EDITOR
@@ -556,6 +558,7 @@ static void Game_handleInput(Game this)
 			this->nextState = NULL;
 		}
 
+		KeypadManager_clear(this->keypadManager);
 		return;
 	}
 
@@ -564,6 +567,7 @@ static void Game_handleInput(Game this)
 #ifdef __DEBUG_TOOLS
 	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
 	{
+		KeypadManager_clear(this->keypadManager);
 		return;
 	}
 #endif
@@ -571,6 +575,7 @@ static void Game_handleInput(Game this)
 #ifdef __STAGE_EDITOR
 	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
 	{
+		KeypadManager_clear(this->keypadManager);
 		return;
 	}
 #endif
@@ -578,6 +583,7 @@ static void Game_handleInput(Game this)
 #ifdef __ANIMATION_EDITOR
 	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
 	{
+		KeypadManager_clear(this->keypadManager);
 		return;
 	}
 #endif
@@ -592,7 +598,7 @@ static void Game_handleInput(Game this)
 	if (releasedKey)
 	{
 		// inform the game about the released key
-		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyUp, &releasedKey);
+		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyReleased, &releasedKey);
 	}
 
 	if (holdKey)
@@ -601,8 +607,10 @@ static void Game_handleInput(Game this)
 		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
 
+#ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 	KeypadManager_clear(this->keypadManager);
-
+#endif
+	
 #ifdef __LOW_BATTERY_INDICATOR
     Game_checkLowBattery(this, holdKey);
 #endif
@@ -793,7 +801,7 @@ static void Game_update(Game this)
 		FrameRate_increaseRawFPS(this->frameRate);
 
 		// accumulate user's input until next logic cycle
-//		KeypadManager_read(this->keypadManager);
+		KeypadManager_read(this->keypadManager);
 
 #ifdef __DEBUG
 		if (previousLastProcessName != this->lastProcessName)

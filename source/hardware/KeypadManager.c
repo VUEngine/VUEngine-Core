@@ -131,7 +131,6 @@ void KeypadManager_clear(KeypadManager this)
 	this->currentKey = 0;
 }
 
-
 // get pressed key
 u16 KeypadManager_getPressedKey(KeypadManager this)
 {
@@ -145,7 +144,7 @@ u16 KeypadManager_getReleasedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
-	return this->currentKey != this->previousKey ? this->previousKey & ~this->currentKey : 0;
+	return this->previousKey & ~this->currentKey;
 }
 
 // get hold key
@@ -153,7 +152,7 @@ u16 KeypadManager_getHoldKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getHoldKey: null this");
 
-	return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
+	return this->currentKey & this->previousKey;
 }
 
 // get previous key
@@ -161,5 +160,6 @@ u16 KeypadManager_getPreviousKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPreviousKey: null this");
 
-	return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
+	return this->previousKey;
+	//return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
 }
