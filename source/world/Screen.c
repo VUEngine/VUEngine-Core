@@ -148,6 +148,12 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	// if focusInGameEntity is defined
 	if (this->focusInGameEntity)
 	{
+		// transform focus entity
+		Transformation environmentTransform = Container_getEnvironmentTransform(Container_getParent(__UPCAST(Container, this->focusInGameEntity)));
+
+		// apply transformations
+		__VIRTUAL_CALL(void, Container, transform, this->focusInGameEntity, &environmentTransform);
+
 		// get focusInGameEntity is moving
 		if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 		{

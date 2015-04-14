@@ -127,6 +127,7 @@ int Container_doKeyUp(Container this, int pressedKey);
 int Container_doKeyHold(Container this, int pressedKey);
 int Container_doMessage(Container this, int message);
 s16 Container_getId(Container this);
+Container Container_getParent(Container this);
 int Container_getChildCount(Container this);
 VirtualList Container_getChildren(Container this);
 void Container_setName(Container this, char* name);

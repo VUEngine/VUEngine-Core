@@ -693,9 +693,6 @@ static void Game_updateRendering(Game this)
 	this->lastProcessName = "move screen";
 #endif
 
-	// transform focus entity
-	Stage_transformFocusEntity(Game_getStage(this));
-	
 	// position the screen
 	Screen_positione(this->screen, true);
 

@@ -975,14 +975,3 @@ void Stage_resume(Stage this)
 		__VIRTUAL_CALL(void, Container, transform, this->ui, &environmentTransform);
 	}
 }
-
-void Stage_transformFocusEntity(Stage this)
-{
-	if(this->focusEntity)
-	{
-		Transformation environmentTransform = Container_getEnvironmentTransform(Container_getParent(__UPCAST(Container, this->focusEntity)));
-
-		// apply transformations
-		__VIRTUAL_CALL(void, Container, transform, this->focusEntity, &environmentTransform);
-	}
-}
