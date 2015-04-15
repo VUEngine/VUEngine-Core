@@ -470,7 +470,6 @@ static void Game_handleInput(Game this)
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
-
 	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 
 #ifdef __DEBUG_TOOLS

@@ -68,7 +68,8 @@ static void KeypadManager_constructor(KeypadManager this)
 	__CONSTRUCT_BASE();
 
 	this->currentKey = 0;
-	
+	this->previousKey = 0;
+
 	readingStatus = (unsigned int *)&HW_REGS[SCR];
 }
 
