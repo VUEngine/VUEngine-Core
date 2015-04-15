@@ -217,8 +217,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 				this->node = this->otherNode;
 			}
-
-			return;
 		}
 
 		if (!this->otherNode)
