@@ -565,7 +565,7 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
+	if (!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
 		return;
@@ -573,7 +573,7 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
+	if (!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
 		return;
@@ -581,7 +581,7 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(this) && (pressedKey & K_SEL))
+	if (!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
 		return;

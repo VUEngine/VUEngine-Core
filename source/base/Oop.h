@@ -55,7 +55,7 @@
 		{																				\
 			/* check each entry */														\
 			NM_ASSERT(((void**)&ClassName ## _vTable)[i],								\
-					ClassName ## is abstract);											\
+					ClassName ##  is abstract);											\
 		}																				\
 	}
 
