@@ -208,7 +208,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(otherSprite, worldLayer1);
 
-				while (*_xpstts & XPBSYR);
 				// render inmediately
 				Sprite_render(sprite);
 				Sprite_render(otherSprite);
@@ -352,8 +351,6 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 			if (spriteLayer < this->freedLayer)
 			{
 				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processRemovedSprites:1 this->freeLayer >= this->freedLayer");
-
-				while (*_xpstts & XPBSYR);
 
 				// render last position before using new layer
 				Sprite_render(sprite);

@@ -32,6 +32,9 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#undef __TARGET_FPS
+#define __TARGET_FPS 50
+
 #define __CHECK_GRAVITY_CYCLE	(__TARGET_FPS >> 3)
 
 
@@ -282,7 +285,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 #endif
 
 	// get the elapsed time
-	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILLISECONDS_IN_SECOND / 10));
+	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
 	if (0 == this->elapsedTime)
 	{
