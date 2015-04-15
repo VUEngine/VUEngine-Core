@@ -32,9 +32,6 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#undef __TARGET_FPS
-#define __TARGET_FPS 50
-
 #define __CHECK_GRAVITY_CYCLE	(__TARGET_FPS >> 3)
 
 
