@@ -144,8 +144,10 @@ void HardwareManager_communicationInterruptHandler(void)   // Link Port Interrup
 // vpu's interrupt handler
 void HardwareManager_vpuInterruptHandler(void)
 {
-	// don't use these interrupt, they introduce a strange behavior in the machine
 	VPUManager_disableInterrupt(VPUManager_getInstance());
+	
+	// put your code here
+	
 	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 

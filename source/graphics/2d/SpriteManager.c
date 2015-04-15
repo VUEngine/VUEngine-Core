@@ -422,6 +422,9 @@ void SpriteManager_render(SpriteManager this)
 	// recover layers
 	SpriteManager_processFreedLayers(this);
 
+	// sort layers
+	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_begin(this->sprites);
 
@@ -431,9 +434,6 @@ void SpriteManager_render(SpriteManager this)
 	{
 		Sprite_render(__UPCAST(Sprite, VirtualNode_getData(node)));
 	}
-
-	// sort layers
-	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 }
 
 // retrieve free layer

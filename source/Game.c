@@ -607,9 +607,7 @@ static void Game_handleInput(Game this)
 		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
 
-#ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 	KeypadManager_clear(this->keypadManager);
-#endif
 	
 #ifdef __LOW_BATTERY_INDICATOR
     Game_checkLowBattery(this, holdKey);
@@ -800,9 +798,11 @@ static void Game_update(Game this)
 		// increase the frame rate
 		FrameRate_increaseRawFPS(this->frameRate);
 
+#ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 		// accumulate user's input until next logic cycle
 		KeypadManager_read(this->keypadManager);
-
+#endif
+		
 #ifdef __DEBUG
 		if (previousLastProcessName != this->lastProcessName)
 		{
