@@ -33,34 +33,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Screen_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* screen position */														\
-	VBVec3D position;															\
-																				\
-	/* screen position displacement */											\
-	VBVec3D focusEntityPositionDisplacement;									\
-																				\
-	/* actor to center the screen around */										\
-	InGameEntity focusInGameEntity;												\
-																				\
-	/* temporary variable to hold the focus entity during shaking fx */			\
-	InGameEntity tempFocusInGameEntity;											\
-																				\
-	/* last offset set by shake function */										\
-	VBVec3D lastShakeOffset;													\
-																				\
-	/* time left in current shaking fx (in ms) */								\
-	u16 shakeTimeLeft;															\
-																				\
-	/* world's screen's last displacement */									\
-	VBVec3D lastDisplacement;													\
-																				\
-	/* stage's size in pixels */												\
-	Size stageSize;																\
 
 // define the Screen
 __CLASS_DEFINITION(Screen, Object);
@@ -105,6 +77,8 @@ static void Screen_constructor(Screen this)
 	this->position.x = 0;
 	this->position.y = 0;
 	this->position.z = 0;
+	
+	this->screenMovementManager = NULL;
 
 	this->focusEntityPositionDisplacement.x = 0;
 	this->focusEntityPositionDisplacement.y = 0;
@@ -130,6 +104,20 @@ void Screen_destructor(Screen this)
 	__SINGLETON_DESTROY;
 }
 
+// set the movement manager
+void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager)
+{
+	ASSERT(this, "Screen::setScreenMovementManager: null this");
+	
+	if(this->screenMovementManager)
+	{
+		__DELETE(this->screenMovementManager);
+	}
+	
+	this->screenMovementManager = screenMovementManager;
+
+}
+
 // center world's screen in function of focus actor's position
 void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 {
@@ -145,62 +133,9 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	if (!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
-	// if focusInGameEntity is defined
-	if (this->focusInGameEntity)
+	if(this->screenMovementManager)
 	{
-		Container focusInGameEntityParent = Container_getParent(__UPCAST(Container, this->focusInGameEntity));
-		
-		if(focusInGameEntityParent)
-		{
-			// transform focus entity
-			Transformation environmentTransform = Container_getEnvironmentTransform(focusInGameEntityParent);
-	
-			// apply transformations
-			__VIRTUAL_CALL(void, Container, transform, this->focusInGameEntity, &environmentTransform);
-	
-			// get focusInGameEntity is moving
-			if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, this->focusInGameEntity) || !checkIfFocusEntityIsMoving)
-			{
-				// save last position
-				this->lastDisplacement = this->position;
-	
-				// get focusInGameEntity's position
-				this->position = Entity_getPosition(__UPCAST(Entity, this->focusInGameEntity));
-				
-				this->position.x += this->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
-				this->position.y += this->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
-				this->position.z += this->focusEntityPositionDisplacement.z;
-	
-				if (0 > this->position.x)
-				{
-					this->position.x = 0;
-				}
-				else if (ITOFIX19_13(this->stageSize.x) < this->position.x + ITOFIX19_13(__SCREEN_WIDTH))
-				{
-					this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
-				}
-	
-				if (0 > this->position.y)
-				{
-					this->position.y = 0;
-				}
-				else if (ITOFIX19_13(this->stageSize.y) < this->position.y + ITOFIX19_13(__SCREEN_HEIGHT))
-				{
-					this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
-				}
-	
-				this->lastDisplacement.x = this->position.x - this->lastDisplacement.x;
-				this->lastDisplacement.y = this->position.y - this->lastDisplacement.y;
-				this->lastDisplacement.z = this->position.z - this->lastDisplacement.z;
-			}
-			else
-			{
-				// not moving
-				this->lastDisplacement.x = 0;
-				this->lastDisplacement.y = 0;
-				this->lastDisplacement.z = 0;
-			}
-		}
+		__VIRTUAL_CALL(void, ScreenMovementManager, positione, this->screenMovementManager, checkIfFocusEntityIsMoving);
 	}
 }
 

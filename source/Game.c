@@ -44,6 +44,7 @@
 #include <MBackgroundManager.h>
 #include <StateMachine.h>
 #include <Screen.h>
+#include <ScreenMovementManager.h>
 #include <VPUManager.h>
 #include <Printing.h>
 #include <I18n.h>
@@ -212,6 +213,9 @@ static void Game_constructor(Game this)
 	this->i18n = I18n_getInstance();
 	this->screen = Screen_getInstance();
 
+	// set the default screen movement manager
+	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
+	
 	// to make debugging easier
 	this->lastProcessName = "starting up";
 

@@ -29,6 +29,7 @@
 #include <Object.h>
 #include <Telegram.h>
 #include <InGameEntity.h>
+#include <ScreenMovementManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,7 +57,39 @@
     Object_SET_VTABLE(ClassName)												\
     __VIRTUAL_SET(ClassName, Screen, handleMessage);							\
 
-// declare a Screen, which holds the objects in a game world
+#define Screen_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Object_ATTRIBUTES;															\
+																				\
+	/* screen position */														\
+	VBVec3D position;															\
+																				\
+	/* screen position displacement manager */									\
+	ScreenMovementManager screenMovementManager;								\
+																				\
+	/* screen position displacement */											\
+	VBVec3D focusEntityPositionDisplacement;									\
+																				\
+	/* actor to center the screen around */										\
+	InGameEntity focusInGameEntity;												\
+																				\
+	/* temporary variable to hold the focus entity during shaking fx */			\
+	InGameEntity tempFocusInGameEntity;											\
+																				\
+	/* last offset set by shake function */										\
+	VBVec3D lastShakeOffset;													\
+																				\
+	/* time left in current shaking fx (in ms) */								\
+	u16 shakeTimeLeft;															\
+																				\
+	/* world's screen's last displacement */									\
+	VBVec3D lastDisplacement;													\
+																				\
+	/* stage's size in pixels */												\
+	Size stageSize;																\
+
+// declare a Screen
 __CLASS(Screen);
 
 
@@ -67,6 +100,7 @@ __CLASS(Screen);
 Screen Screen_getInstance();
 
 void Screen_destructor(Screen this);
+void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager);
 void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving);
 bool Screen_handleMessage(Screen this, Telegram telegram);
 void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity);

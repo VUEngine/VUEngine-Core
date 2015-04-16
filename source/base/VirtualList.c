@@ -32,7 +32,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define a limit to prevent, and detect looped lists
-#define LISTMAXSIZE 1000
+#define LIST_MAX_SIZE 1000
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -228,7 +228,7 @@ int VirtualList_getSize(VirtualList this)
 		++counter;
 
 		//increment counter
-		ASSERT(counter < LISTMAXSIZE, "VirtualList::getSize: endless list getting size");
+		ASSERT(counter < LIST_MAX_SIZE, "VirtualList::getSize: endless list getting size");
 
 	}
 
@@ -428,7 +428,7 @@ void VirtualList_copy(VirtualList this, VirtualList sourceList)
 		//move to next node
 		node = node->next;
 
-		ASSERT(++counter < LISTMAXSIZE, "VirtualList::copy: endless list copying");
+		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::copy: endless list copying");
 	}
 }
 
