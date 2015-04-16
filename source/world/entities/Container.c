@@ -486,7 +486,6 @@ void Container_setLocalPosition(Container this, VBVec3D position)
 
 	this->transform.localPosition = position;
 
-	Container_invalidateGlobalPosition(this);
 	Container_propagateInvalidateGlobalPosition(this);
 }
 
