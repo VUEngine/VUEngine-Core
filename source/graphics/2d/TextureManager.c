@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -463,15 +462,8 @@ u8 TextureManager_getBgmapSegment(TextureManager this, int id)
 u8 TextureManager_getAvailableBgmapSegments(TextureManager this)
 {
 	ASSERT(this, "TextureManager::print: null this");
-	return this->availableBgmapSegments;
-}
-
-// retrieve available bgmap segments
-void TextureManager_setAvailableBgmapSegments(TextureManager this, u8 availableBgmapSegments)
-{
-	ASSERT(this, "TextureManager::print: null this");
 	
-	this->availableBgmapSegments = 0 < availableBgmapSegments && availableBgmapSegments <= __MAX_NUMBER_OF_BGMAPS_SEGMENTS? availableBgmapSegments: this->availableBgmapSegments; 
+	return this->availableBgmapSegments;
 }
 
 // retrieve available bgmap segments
@@ -479,13 +471,13 @@ u8 TextureManager_getPrintingBgmapSegment(TextureManager this)
 {
 	ASSERT(this, "TextureManager::print: null this");
 	
-	return this->freeBgmapSegment;
+	return this->freeBgmapSegment + __NUMBER_OF_BGMAPS_SEGMENTS_ROOM;
 }
 
 // calculate the available bgmap segments based on usage
 void TextureManager_calculateAvailableBgmapSegments(TextureManager this)
 {
-	this->availableBgmapSegments = this->freeBgmapSegment;
+	this->availableBgmapSegments = this->freeBgmapSegment + __NUMBER_OF_BGMAPS_SEGMENTS_ROOM;
 }
 
 // set the available bgmap segments based to maximum defined
