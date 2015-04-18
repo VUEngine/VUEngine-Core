@@ -29,9 +29,8 @@
 #include <Printing.h>
 #include <MessageDispatcher.h>
 #include <I18n.h>
-#include <LanguagesDefault.h>
 #include <VBJaELangSelectScreenState.h>
-#include <VBJaESplashScreenState.h>
+#include <DefaultScreenConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,11 +70,11 @@ static void VBJaELangSelectScreenState_constructor(VBJaELangSelectScreenState th
 {
 	__CONSTRUCT_BASE();
 
-	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, VBJaESplashScreenState_getInstance()));
+	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __LANGUAGE_SELECT_SCREEN_NEXT_STATE()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
 
     u8 activeLanguage = I18n_getActiveLanguage(I18n_getInstance());
-	this->languageSelector = OptionsSelector_new(1, 8, "\xB", kString);
+	this->languageSelector = OptionsSelector_new(1, 8, __LANGUAGE_SELECT_SCREEN_LIST_SELECTOR, kString);
 
 	VirtualList languageNames = VirtualList_new();
 
@@ -139,11 +138,11 @@ void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u1
 
 static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this)
 {
-    char* strLanguageSelect = I18n_getText(I18n_getInstance(), STR_LANGUAGE_SELECT);
+    char* strLanguageSelect = I18n_getText(I18n_getInstance(), __LANGUAGE_SELECT_SCREEN_TITLE);
 
     u8 strHeaderXPos = (48 - strlen(strLanguageSelect)) >> 1;
 
-    Printing_text(Printing_getInstance(), strLanguageSelect, strHeaderXPos, 8, NULL);
+    Printing_text(Printing_getInstance(), strLanguageSelect, strHeaderXPos, 8, __LANGUAGE_SELECT_SCREEN_TITLE_FONT);
 
 	OptionsSelector_showOptions(this->languageSelector, strHeaderXPos, 11);
 }

@@ -23,15 +23,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <string.h>
-
 #include <Game.h>
 #include <Printing.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
 #include <I18n.h>
-#include <LanguagesDefault.h>
 #include <VBJaEPrecautionScreenState.h>
-#include <VBJaEAdjustmentScreenState.h>
+#include <DefaultScreenConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,7 +67,7 @@ static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState th
 {
 	__CONSTRUCT_BASE();
 
-	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, VBJaEAdjustmentScreenState_getInstance()));
+	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __PRECAUTION_SCREEN_NEXT_STATE()));
 	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
 }
 
@@ -89,8 +87,8 @@ static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, vo
 
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 
-    // show this screen for at least 2 seconds, as defined by Nintendo in the official development manual
-	Clock_delay(Game_getClock(Game_getInstance()), 2000);
+    // show this screen for at least (2) seconds, as defined by Nintendo in the official development manual
+	Clock_delay(Game_getClock(Game_getInstance()), __PRECAUTION_SCREEN_INITIAL_DELAY);
 }
 
 // state's resume
@@ -103,6 +101,7 @@ static void VBJaEPrecautionScreenState_resume(VBJaEPrecautionScreenState this, v
 
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this)
 {
-    Printing_text(Printing_getInstance(), I18n_getText(I18n_getInstance(), STR_PRECAUTION_SCREEN), 14, 10, NULL);
+    // TODO: Automatically center text
+    Printing_text(Printing_getInstance(), I18n_getText(I18n_getInstance(), __PRECAUTION_SCREEN_TEXT), 14, 10, __PRECAUTION_SCREEN_TEXT_FONT);
 }
 

@@ -18,42 +18,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef __CUSTOM_LANGUAGES
-
-/*
- * IMPORTANT: Ensure that this file is encoded in Windows-1252 or ISO-8859-1 ("ANSI") to make use
- * of the full extended ASCII character set including special characters of European languages.
- */
-
-
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <I18n.h>
+#include <LanguagesDefault.h>
+#include <VBJaEAdjustmentScreenState.h>
+#include <VBJaEAutoPauseSelectScreenState.h>
+#include <VBJaESplashScreenState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------
 
-const LangROMDef LANGUAGE_DE =
-{
-    // Language Name
-    "Deutsch",
+// Precaution screen
+VBJaEAdjustmentScreenState   (*__PRECAUTION_SCREEN_NEXT_STATE)() =        VBJaEAdjustmentScreenState_getInstance;
+const int     __PRECAUTION_SCREEN_INITIAL_DELAY =        2000;
+const int     __PRECAUTION_SCREEN_TEXT =                 STR_PRECAUTION_SCREEN;
+const char*   __PRECAUTION_SCREEN_TEXT_FONT =            NULL;
 
-    // Strings
-    {
-        /* Splash Screens */
-        "            Wichtig:\n\n  Lesen Sie vor dem Spielen die\n\nAnleitung und Sicherheitshinweise", //STR_PRECAUTION_SCREEN
-        "Automatische Pause", //STR_AUTOMATIC_PAUSE
-        " Die Automatische Pause Funktion\nerinnert dich daran, das Spiel ca.\n  alle 30 Minuten zu pausieren", //STR_AUTOMATIC_PAUSE_EXPLANATION
-        "Bitte mache eine Pause!", //STR_AUTOMATIC_PAUSE_TEXT
-        "An", //STR_ON
-        "Aus", //STR_OFF
-        "Sprachauswahl", //STR_LANGUAGE_SELECT
-    },
-};
+// Adjustment screen
+VBJaEAutoPauseSelectScreenState   (*__ADJUSTMENT_SCREEN_NEXT_STATE)() =        VBJaEAutoPauseSelectScreenState_getInstance;
 
+// Language selection screen
+VBJaESplashScreenState   (*__LANGUAGE_SELECT_SCREEN_NEXT_STATE)() =   VBJaESplashScreenState_getInstance;
+char*         __LANGUAGE_SELECT_SCREEN_LIST_SELECTOR =   "\xB";
+const int     __LANGUAGE_SELECT_SCREEN_TITLE =           STR_LANGUAGE_SELECT;
+const char*   __LANGUAGE_SELECT_SCREEN_TITLE_FONT =      NULL;
 
-#endif
+// VBJaEngine splash screen
+VBJaESplashScreenState   (*__VBJAENGINE_SPLASH_SCREEN_NEXT_STATE)() = VBJaESplashScreenState_getInstance;

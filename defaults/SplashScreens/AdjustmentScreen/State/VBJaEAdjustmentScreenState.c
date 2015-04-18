@@ -28,7 +28,7 @@
 #include <Screen.h>
 #include <MessageDispatcher.h>
 #include <VBJaEAdjustmentScreenState.h>
-#include <VBJaEAutoPauseSelectScreenState.h>
+#include <DefaultScreenConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ static void VBJaEAdjustmentScreenState_constructor(VBJaEAdjustmentScreenState th
 {
 	__CONSTRUCT_BASE();
 
-	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, VBJaEAutoPauseSelectScreenState_getInstance()));
+	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __ADJUSTMENT_SCREEN_NEXT_STATE));
 	this->stageDefinition = (StageDefinition*)&VBJAENGINE_ADJUSTMENT_SCREEN_ST;
 }
 

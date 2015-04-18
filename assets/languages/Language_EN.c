@@ -21,8 +21,8 @@
 #ifndef __CUSTOM_LANGUAGES
 
 /*
- * IMPORTANT: Ensure that this file is encoded in Windows-1252 or ISO-8859-1 ("ANSI") to enable usage
- * of the full extended ASCII character including special characters of European languages.
+ * IMPORTANT: Ensure that this file is encoded in Windows-1252 or ISO-8859-1 ("ANSI") to make use
+ * of the full extended ASCII character set including special characters of European languages.
  */
 
 
