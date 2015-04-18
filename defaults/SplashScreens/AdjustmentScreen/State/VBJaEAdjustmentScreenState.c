@@ -32,13 +32,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
-//---------------------------------------------------------------------------------------------------------
-
-extern StageROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ST;
-
-
-//---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
@@ -64,8 +57,8 @@ static void VBJaEAdjustmentScreenState_constructor(VBJaEAdjustmentScreenState th
 {
 	__CONSTRUCT_BASE();
 
-	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __ADJUSTMENT_SCREEN_NEXT_STATE));
-	this->stageDefinition = (StageDefinition*)&VBJAENGINE_ADJUSTMENT_SCREEN_ST;
+	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __ADJUSTMENT_SCREEN_NEXT_STATE()));
+	this->stageDefinition = (StageDefinition*)__ADJUSTMENT_SCREEN_STAGE;
 }
 
 // class's destructor

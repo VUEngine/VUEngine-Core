@@ -32,13 +32,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
-
-
-//---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
@@ -65,7 +58,7 @@ static void VBJaESplashScreenState_constructor(VBJaESplashScreenState this)
 	__CONSTRUCT_BASE();
 
 	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __VBJAENGINE_SPLASH_SCREEN_NEXT_STATE()));
-	this->stageDefinition = (StageDefinition*)&VBJAENGINE_SPLASH_SCREEN_ST;
+	this->stageDefinition = (StageDefinition*)__VBJAENGINE_SPLASH_SCREEN_STAGE;
 }
 
 // class's destructor

@@ -23,9 +23,20 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <LanguagesDefault.h>
+#include <VBJaEPrecautionScreenState.h>
 #include <VBJaEAdjustmentScreenState.h>
 #include <VBJaEAutoPauseSelectScreenState.h>
+#include <VBJaELangSelectScreenState.h>
 #include <VBJaESplashScreenState.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern StageROMDef EMPTY_ST;
+extern StageROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ST;
+extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -33,19 +44,36 @@
 // ---------------------------------------------------------------------------------------------------------
 
 // Precaution screen
-VBJaEAdjustmentScreenState   (*__PRECAUTION_SCREEN_NEXT_STATE)() =        VBJaEAdjustmentScreenState_getInstance;
-const int     __PRECAUTION_SCREEN_INITIAL_DELAY =        2000;
-const int     __PRECAUTION_SCREEN_TEXT =                 STR_PRECAUTION_SCREEN;
-const char*   __PRECAUTION_SCREEN_TEXT_FONT =            NULL;
+GameState   (*__PRECAUTION_SCREEN_NEXT_STATE)() =           VBJaEAdjustmentScreenState_getInstance;
+StageROMDef*  __PRECAUTION_SCREEN_STAGE =                   &EMPTY_ST;
+const int     __PRECAUTION_SCREEN_INITIAL_DELAY =           2000;
+const int     __PRECAUTION_SCREEN_TEXT =                    STR_PRECAUTION_SCREEN;
+const char*   __PRECAUTION_SCREEN_TEXT_FONT =               NULL;
 
 // Adjustment screen
-VBJaEAutoPauseSelectScreenState   (*__ADJUSTMENT_SCREEN_NEXT_STATE)() =        VBJaEAutoPauseSelectScreenState_getInstance;
+GameState   (*__ADJUSTMENT_SCREEN_NEXT_STATE)() =           VBJaEAutoPauseSelectScreenState_getInstance;
+StageROMDef*  __ADJUSTMENT_SCREEN_STAGE =                   &VBJAENGINE_ADJUSTMENT_SCREEN_ST;
+
+// Auto Pause selection screen
+GameState   (*__AUTO_PAUSE_SELECT_SCREEN_NEXT_STATE)() =    VBJaELangSelectScreenState_getInstance;
+StageROMDef*  __AUTO_PAUSE_SELECT_SCREEN_STAGE =            &EMPTY_ST;
+const int     __AUTO_PAUSE_SELECT_SCREEN_TITLE =            STR_AUTOMATIC_PAUSE;
+const char*   __AUTO_PAUSE_SELECT_SCREEN_TITLE_FONT =       NULL;
+const int     __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION =      STR_AUTOMATIC_PAUSE_EXPLANATION;
+const char*   __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT = NULL;
+const int     __AUTO_PAUSE_SELECT_SCREEN_ON =               STR_ON;
+const char*   __AUTO_PAUSE_SELECT_SCREEN_ON_FONT =          NULL;
+const int     __AUTO_PAUSE_SELECT_SCREEN_OFF =              STR_OFF;
+const char*   __AUTO_PAUSE_SELECT_SCREEN_OFF_FONT =         NULL;
+
 
 // Language selection screen
-VBJaESplashScreenState   (*__LANGUAGE_SELECT_SCREEN_NEXT_STATE)() =   VBJaESplashScreenState_getInstance;
-char*         __LANGUAGE_SELECT_SCREEN_LIST_SELECTOR =   "\xB";
-const int     __LANGUAGE_SELECT_SCREEN_TITLE =           STR_LANGUAGE_SELECT;
-const char*   __LANGUAGE_SELECT_SCREEN_TITLE_FONT =      NULL;
+GameState   (*__LANGUAGE_SELECT_SCREEN_NEXT_STATE)() =      VBJaESplashScreenState_getInstance;
+StageROMDef*  __LANGUAGE_SELECT_SCREEN_STAGE =              &EMPTY_ST;
+char*         __LANGUAGE_SELECT_SCREEN_LIST_SELECTOR =      "\xB";
+const int     __LANGUAGE_SELECT_SCREEN_TITLE =              STR_LANGUAGE_SELECT;
+const char*   __LANGUAGE_SELECT_SCREEN_TITLE_FONT =         NULL;
 
 // VBJaEngine splash screen
-VBJaESplashScreenState   (*__VBJAENGINE_SPLASH_SCREEN_NEXT_STATE)() = VBJaESplashScreenState_getInstance;
+GameState   (*__VBJAENGINE_SPLASH_SCREEN_NEXT_STATE)() =    VBJaELangSelectScreenState_getInstance;
+StageROMDef*  __VBJAENGINE_SPLASH_SCREEN_STAGE =            &VBJAENGINE_SPLASH_SCREEN_ST;

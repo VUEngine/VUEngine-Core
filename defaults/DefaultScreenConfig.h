@@ -18,16 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef DEFAULT_SCREEN_STATE_H_
-#define DEFAULT_SCREEN_STATE_H_
-
-//---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
-//---------------------------------------------------------------------------------------------------------
-
-#include <VBJaEAdjustmentScreenState.h>
-#include <VBJaEAutoPauseSelectScreenState.h>
-#include <VBJaESplashScreenState.h>
+#ifndef DEFAULT_SCREEN_CONFIG_H_
+#define DEFAULT_SCREEN_CONFIG_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,22 +27,38 @@
 //---------------------------------------------------------------------------------------------------------
 
 // Precaution screen
-extern VBJaEAdjustmentScreenState   *__PRECAUTION_SCREEN_NEXT_STATE();
+extern GameState   (*__PRECAUTION_SCREEN_NEXT_STATE)();
 extern const int     __PRECAUTION_SCREEN_INITIAL_DELAY;
 extern const int     __PRECAUTION_SCREEN_TEXT;
 extern const char*   __PRECAUTION_SCREEN_TEXT_FONT;
+extern StageROMDef*  __PRECAUTION_SCREEN_STAGE;
 
 // Adjustment screen
-extern VBJaEAutoPauseSelectScreenState   (*__ADJUSTMENT_SCREEN_NEXT_STATE)();
+extern GameState   (*__ADJUSTMENT_SCREEN_NEXT_STATE)();
+extern StageROMDef*  __ADJUSTMENT_SCREEN_STAGE;
+
+// Auto Pause selection screen
+extern GameState   (*__AUTO_PAUSE_SELECT_SCREEN_NEXT_STATE)();
+extern const int     __AUTO_PAUSE_SELECT_SCREEN_TITLE;
+extern const char*   __AUTO_PAUSE_SELECT_SCREEN_TITLE_FONT;
+extern const int     __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION;
+extern const char*   __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT;
+extern const int     __AUTO_PAUSE_SELECT_SCREEN_ON;
+extern const char*   __AUTO_PAUSE_SELECT_SCREEN_ON_FONT;
+extern const int     __AUTO_PAUSE_SELECT_SCREEN_OFF;
+extern const char*   __AUTO_PAUSE_SELECT_SCREEN_OFF_FONT;
+extern StageROMDef*  __AUTO_PAUSE_SELECT_SCREEN_STAGE;
 
 // Language selection screen
-extern VBJaESplashScreenState   (*__LANGUAGE_SELECT_SCREEN_NEXT_STATE)();
+extern GameState   (*__LANGUAGE_SELECT_SCREEN_NEXT_STATE)();
+extern StageROMDef*  __LANGUAGE_SELECT_SCREEN_STAGE;
 extern char*         __LANGUAGE_SELECT_SCREEN_LIST_SELECTOR;
 extern const int     __LANGUAGE_SELECT_SCREEN_TITLE;
 extern const char*   __LANGUAGE_SELECT_SCREEN_TITLE_FONT;
 
 // VBJaEngine splash screen
-extern VBJaESplashScreenState   (*__VBJAENGINE_SPLASH_SCREEN_NEXT_STATE)();
+extern GameState   (*__VBJAENGINE_SPLASH_SCREEN_NEXT_STATE)();
+extern StageROMDef*  __VBJAENGINE_SPLASH_SCREEN_STAGE;
 
 
 #endif

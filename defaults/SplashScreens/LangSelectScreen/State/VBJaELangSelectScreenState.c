@@ -37,7 +37,6 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern StageROMDef EMPTY_ST;
 extern LangROMDef* __LANGUAGES[];
 
 
@@ -71,7 +70,7 @@ static void VBJaELangSelectScreenState_constructor(VBJaELangSelectScreenState th
 	__CONSTRUCT_BASE();
 
 	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __LANGUAGE_SELECT_SCREEN_NEXT_STATE()));
-	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
+	this->stageDefinition = (StageDefinition*)__LANGUAGE_SELECT_SCREEN_STAGE;
 
     u8 activeLanguage = I18n_getActiveLanguage(I18n_getInstance());
 	this->languageSelector = OptionsSelector_new(1, 8, __LANGUAGE_SELECT_SCREEN_LIST_SELECTOR, kString);

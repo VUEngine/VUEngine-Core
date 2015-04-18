@@ -33,13 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-extern StageROMDef EMPTY_ST;
-
-
-//---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
@@ -68,7 +61,7 @@ static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState th
 	__CONSTRUCT_BASE();
 
 	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __PRECAUTION_SCREEN_NEXT_STATE()));
-	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
+	this->stageDefinition = (StageDefinition*)__PRECAUTION_SCREEN_STAGE;
 }
 
 // class's destructor
