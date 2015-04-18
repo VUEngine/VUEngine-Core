@@ -32,13 +32,7 @@
 #include <I18n.h>
 #include <LanguagesDefault.h>
 #include <VBJaEAutoPauseScreenState.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-extern StageROMDef EMPTY_ST;
+#include <DefaultScreenConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,17 +79,17 @@ static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void
 	Game_setOptical(Game_getInstance(), optical);
 
 	// load stage
-	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)&EMPTY_ST, false);
+	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)__AUTO_PAUSE_SCREEN_STAGE, false);
 
     // print text
-    char* strAutomaticPause = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE);
-    char* strAutomaticPauseText = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE_TEXT);
+    char* strAutomaticPause = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SCREEN_TITLE);
+    char* strAutomaticPauseText = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SCREEN_TEXT);
 
     u8 strHeaderXPos = (48 - strlen(strAutomaticPause)) >> 1;
-    Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 10, NULL);
+    Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 10, __AUTO_PAUSE_SCREEN_TITLE_FONT);
 
     u8 strTextXPos = (48 - strlen(strAutomaticPauseText)) >> 1;
-    Printing_text(Printing_getInstance(), strAutomaticPauseText, strTextXPos, 13, NULL);
+    Printing_text(Printing_getInstance(), strAutomaticPauseText, strTextXPos, 13, __AUTO_PAUSE_SCREEN_TEXT_FONT);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16 >> 1);
 }

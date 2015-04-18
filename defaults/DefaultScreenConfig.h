@@ -60,5 +60,12 @@ extern const char*         __LANGUAGE_SELECT_SCREEN_TITLE_FONT;
 extern GameState         (*__VBJAENGINE_SPLASH_SCREEN_NEXT_STATE)();
 extern const StageROMDef*  __VBJAENGINE_SPLASH_SCREEN_STAGE;
 
+// Auto Pause screen
+extern const StageROMDef*  __AUTO_PAUSE_SCREEN_STAGE;
+extern const int           __AUTO_PAUSE_SCREEN_TITLE;
+extern const char*         __AUTO_PAUSE_SCREEN_TITLE_FONT;
+extern const int           __AUTO_PAUSE_SCREEN_TEXT;
+extern const char*         __AUTO_PAUSE_SCREEN_TEXT_FONT;
+
 
 #endif
