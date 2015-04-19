@@ -18,85 +18,66 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef PRINTING_H_
-#define	PRINTING_H_
+#ifndef B_TEXTURE_H_
+#define B_TEXTURE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
-#include <CharSetManager.h>
-#include <BTextureManager.h>
-
+#include <Texture.h>
+#include <CharSet.h>
+#include <Telegram.h>
 
 //---------------------------------------------------------------------------------------------------------
-// 												DEFINES
+// 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct FontSize
-{
-	u8 x;
-	u8 y;
-
-} FontSize;
-
-// max length of a font's name
-#define __MAX_FONT_NAME_LENGTH	16
+#define __EVENT_TEXTURE_REWRITTEN				"textureRewritten"
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Printing_METHODS														\
-		Object_METHODS															\
+#define BTexture_METHODS														\
+	Texture_METHODS																\
 
-// declare the virtual methods which are redefined
-#define Printing_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
+#define BTexture_SET_VTABLE(ClassName)											\
+	Texture_SET_VTABLE(ClassName)												\
+	__VIRTUAL_SET(ClassName, BTexture, write);									\
 
-// declare Printing class
-__CLASS(Printing);
+#define BTexture_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Texture_ATTRIBUTES;															\
 
-typedef struct FontDefinition
-{
-    // font chars definition pointer
-	BYTE* fontCharDefinition;
+// A texture which has the logic to be allocated in graphic memory
+__CLASS(BTexture);
 
-	// number of characters in font
-	u16 characterCount;
-
-	// at which character number the font starts
-	s16 offset;
-
-	// size of a single character (in chars) ({width, height})
-	FontSize fontSize;
-
-	// font's name
-	char name[__MAX_FONT_NAME_LENGTH];
-
-} FontDefinition;
-
-typedef const FontDefinition FontROMDef;
+//use a BTexture when you want to show a static background or a character that must be scaled according
+//its deep on the screen so there exists consistency between the deep and the size of the character
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+// 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-Printing Printing_getInstance();
+typedef const TextureDefinition BTextureDefinition;
+typedef const BTextureDefinition BTextureROMDef;
 
-void Printing_destructor(Printing this);
-void Printing_render(Printing this, int textLayer);
-void Printing_loadFonts(Printing this);
-void Printing_clear(Printing this);
-void Printing_int(Printing this, int value, int x, int y, const char* font);
-void Printing_hex(Printing this, WORD value, int x, int y, const char* font);
-void Printing_float(Printing this, float value, int x, int y, const char* font);
-void Printing_text(Printing this, char *string, int x, int y, const char* font);
 
+//---------------------------------------------------------------------------------------------------------
+// 										PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
+
+__CLASS_NEW_DECLARE(BTexture, BTextureDefinition* bTextureDefinition, u16 id);
+
+void BTexture_destructor(BTexture this);
+void BTexture_write(BTexture this);
+u8 BTexture_getXOffset(BTexture this);
+u8 BTexture_getYOffset(BTexture this);
+u8 BTexture_getBgmapSegment(BTexture this);
 
 #endif

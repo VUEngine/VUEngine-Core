@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef SPRITE_H_
-#define SPRITE_H_
+#ifndef BSPRITE_H_
+#define BSPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <Sprite.h>
 #include <MiscStructs.h>
 #include <Texture.h>
 
@@ -47,33 +47,29 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Sprite_METHODS															\
-	Object_METHODS																\
-	__VIRTUAL_DEC(render);														\
-	__VIRTUAL_DEC(setPosition);													\
+#define BSprite_METHODS															\
+	Sprite_METHODS																\
 
 // declare the virtual methods which are redefined
-#define Sprite_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, Sprite, render);								\
-		__VIRTUAL_SET(ClassName, Sprite, setPosition);							\
+#define BSprite_SET_VTABLE(ClassName)											\
+	Sprite_SET_VTABLE(ClassName)												\
+	__VIRTUAL_SET(ClassName, BSprite, render);									\
+	__VIRTUAL_SET(ClassName, BSprite, getPosition);								\
+	__VIRTUAL_SET(ClassName, BSprite, setPosition);								\
+	__VIRTUAL_SET(ClassName, BSprite, synchronizePosition);						\
+	__VIRTUAL_SET(ClassName, BSprite, getScale);								\
+	__VIRTUAL_SET(ClassName, BSprite, setDirection);							\
+	__VIRTUAL_SET(ClassName, BSprite, scale);									\
+	__VIRTUAL_SET(ClassName, BSprite, resize);									\
+	__VIRTUAL_SET(ClassName, BSprite, calculateParallax);						\
 
-#define Sprite_ATTRIBUTES														\
+#define BSprite_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* this is our texture */													\
-	Texture texture;															\
+	Sprite_ATTRIBUTES;															\
 																				\
 	/* 3d world position */														\
 	DrawSpec drawSpec;															\
-																				\
-	/* texture's half width */													\
-	fix19_13 halfWidth;															\
-																				\
-	/* texture's half height */													\
-	fix19_13 halfHeight;														\
 																				\
 	/* param table offset */													\
 	u32 param;																	\
@@ -81,30 +77,19 @@
 	/* param table offset */													\
 	fix19_13 paramTableRow;														\
 																				\
-	/* head definition for world entry setup */									\
-	u16 head;																	\
-																				\
-	/* world layer where to render the texture */								\
-	u8 worldLayer;																\
-																				\
 	/* h-bias max amplitude */													\
 	/* int hbiasAmplitude; */													\
-																				\
-	bool renderFlag;															\
-																				\
-	/* parallax modifier to achieve better control over display */				\
-	s8 parallaxDisplacement;													\
 
 
-// declare a Sprite, which holds a texture and a drawing specification
-__CLASS(Sprite);
+// declare a BSprite, which holds a texture and a drawing specification
+__CLASS(BSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct SpriteDefinition
+typedef struct BSpriteDefinition
 {
 	// the class type
 	void* allocator;
@@ -121,60 +106,51 @@ typedef struct SpriteDefinition
 	// parallax modifier to achieve better control over display
 	s8 parallaxDisplacement;
 
-} SpriteDefinition;
+} BSpriteDefinition;
 
-typedef const SpriteDefinition SpriteROMDef;
+typedef const BSpriteDefinition BSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Sprite, const SpriteDefinition* spriteDefinition);
+__CLASS_NEW_DECLARE(BSprite, const BSpriteDefinition* bSpriteDefinition);
 
-void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition);
-void Sprite_destructor(Sprite this);
-Scale Sprite_getScale(Sprite this);
-void Sprite_setDirection(Sprite this, int axis, int direction);
-void Sprite_calculateScale(Sprite this, fix19_13 z);
-void Sprite_setPosition(Sprite this, VBVec3D position);
-void Sprite_calculateParallax(Sprite this, fix19_13 z);
-Texture Sprite_getTexture(Sprite this);
-DrawSpec Sprite_getDrawSpec(Sprite this);
-u16 Sprite_getMode(Sprite this);
-void Sprite_invalidateParamTable(Sprite this);
-void Sprite_rewrite(Sprite this);
-void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec);
-fix19_13 Sprite_getParamTableRow(Sprite this);
-u32 Sprite_getRenderFlag(Sprite this);
-u32 Sprite_getParam(Sprite this);
-void Sprite_setParam(Sprite this, u32 param);
-void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
-u8 Sprite_getWorldLayer(Sprite this);
-u16 Sprite_getHead(Sprite this);
-void Sprite_setRenderFlag(Sprite this, bool renderFlag);
-void Sprite_show(Sprite this);
-void Sprite_hide(Sprite this);
-void Sprite_update(Sprite this);
-void Sprite_preRender(Sprite this);
-void Sprite_render(Sprite this);
+void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinition);
+void BSprite_destructor(BSprite this);
+Scale BSprite_getScale(BSprite this);
+void BSprite_setDirection(BSprite this, int axis, int direction);
+void BSprite_resize(BSprite this, fix19_13 z);
+VBVec2D BSprite_getPosition(BSprite this);
+void BSprite_setPosition(BSprite this, VBVec2D position);
+void BSprite_synchronizePosition(BSprite this, VBVec3D position3D);
+void BSprite_calculateParallax(BSprite this, fix19_13 z);
+DrawSpec BSprite_getDrawSpec(BSprite this);
+void BSprite_invalidateParamTable(BSprite this);
+void BSprite_setDrawSpec(BSprite this, const DrawSpec* const drawSpec);
+fix19_13 BSprite_getParamTableRow(BSprite this);
+u32 BSprite_getParam(BSprite this);
+void BSprite_setParam(BSprite this, u32 param);
+void BSprite_render(BSprite this);
+
 
 //---------------------------------------------------------------------------------------------------------
-// 										Sprites FXs
+// 										BSprites FXs
 //---------------------------------------------------------------------------------------------------------
 
 // direct draw
-void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);
-void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
+void BSprite_putChar(BSprite this, Point* texturePixel, BYTE* newChar);
+void BSprite_putPixel(BSprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
 // Affine FX
-void Sprite_scale(Sprite this);
-void Sprite_rotate(Sprite this, int angle);
+void BSprite_scale(BSprite this);
+void BSprite_rotate(BSprite this, int angle);
 
 // H-Bias FX
-void Sprite_squeezeXHFX(Sprite this);
-void Sprite_fireHFX(Sprite this);
-void Sprite_waveHFX(Sprite this);
+void BSprite_squeezeXHFX(BSprite this);
+void BSprite_fireHFX(BSprite this);
+void BSprite_waveHFX(BSprite this);
 
 
 #endif

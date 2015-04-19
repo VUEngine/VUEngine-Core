@@ -25,7 +25,6 @@
 #include <Entity.h>
 #include <Prototypes.h>
 #include <Optics.h>
-#include <AnimatedSprite.h>
 #include <Shape.h>
 #include <CollisionManager.h>
 
@@ -129,8 +128,8 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 
 		if(texture)
 		{
-			halfWidth = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).x)) >> 1;
-			halfHeight = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(Sprite_getScale(sprite).y)) >> 1;
+			halfWidth = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
+			halfHeight = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
 			halfDeep = 10;
 		}
 	}
@@ -226,7 +225,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		halfWidth = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2;
 		halfHeight = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2;
 		halfDeep = 10;
-
+/*
 		if(positionedEntity->entityDefinition->spritesDefinitions && 
 				positionedEntity->entityDefinition->spritesDefinitions[0] && 
 				WRLD_AFFINE == positionedEntity->entityDefinition->spritesDefinitions[0]->bgmapMode)
@@ -237,6 +236,8 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 			halfWidth = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfWidth), FIX7_9TOFIX19_13(scale)));
 			halfHeight = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfHeight), FIX7_9TOFIX19_13(scale)));
 		}
+		
+		*/
 	}
 	else if(!positionedEntity->childrenDefinitions)
 	{
@@ -475,7 +476,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 	{
 		// must initialize after adding the children
 		__VIRTUAL_CALL(void, Entity, initialize, childEntity);
-	
+
 		Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 
 		// apply transformations
@@ -558,13 +559,13 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
 				// calculate the scale
-				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalPosition.z);
 	
 				// calculate sprite's parallax
-				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
-
-				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+				
+				// update sprite's 2D position
+				__VIRTUAL_CALL(void, Sprite, synchronizePosition, sprite, this->transform.globalPosition);
 			}
 		}
 		else if(!updateSpriteScale && updateSpritePosition)
@@ -575,7 +576,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
 				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, synchronizePosition, sprite, this->transform.globalPosition);
 			}
 		}
 		else if(updateSpriteScale && !updateSpritePosition)
@@ -586,10 +587,10 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
 				// calculate the scale
-				Sprite_calculateScale(sprite, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalPosition.z);
 	
 				// calculate sprite's parallax
-				Sprite_calculateParallax(sprite, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 			}
 		}
 	}
@@ -670,7 +671,7 @@ Scale Entity_getScale(Entity this)
 		return scale;
 	}
 	
-	return Sprite_getScale(__UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
+	return __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
 }
 
 // set local position
@@ -798,12 +799,12 @@ bool Entity_isVisible(Entity this, int pad)
 
 		ASSERT(sprite, "Entity:isVisible: null sprite");
 		
-		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
-		lowLimit -= drawSpec.position.parallax;
-		highLimit += drawSpec.position.parallax;
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+//		lowLimit -= drawSpec.position.parallax;
+//		highLimit += drawSpec.position.parallax;
 		
-		x = FIX19_13TOI(drawSpec.position.x);
-		y = FIX19_13TOI(drawSpec.position.y);
+		x = FIX19_13TOI(spritePosition.x);
+		y = FIX19_13TOI(spritePosition.y);
 		z = FIX19_13TOI(this->transform.globalPosition.z - _screenPosition->z);
 	}
 	else 
@@ -871,7 +872,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite_setDirection(__UPCAST(Sprite, VirtualNode_getData(node)), axis, direction);
+			__VIRTUAL_CALL(void, Sprite, setDirection, __UPCAST(Sprite, VirtualNode_getData(node)), axis, direction);
 		}
 	}
 }

@@ -1,0 +1,421 @@
+/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+ *
+ * Copyright (C) 2007 Jorge Eremiev
+ * jorgech3@gmail.com
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ */
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#include <Sprite.h>
+#include <SpriteManager.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 											 CLASS'S MACROS
+//---------------------------------------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DEFINITION
+//---------------------------------------------------------------------------------------------------------
+
+// define the Sprite
+__CLASS_DEFINITION(Sprite, Object);
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
+
+void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
+
+//---------------------------------------------------------------------------------------------------------
+// 												CLASS'S METHODS
+//---------------------------------------------------------------------------------------------------------
+
+// class's constructor
+void Sprite_constructor(Sprite this)
+{
+	__CONSTRUCT_BASE();
+
+	// clear values
+	this->worldLayer = 0;
+	this->head = 0;
+	this->renderFlag = 0;
+	this->halfWidth = 0;
+	this->halfHeight = 0;
+	this->animationController = NULL;
+
+	// register with sprite manager
+	SpriteManager_addSprite(SpriteManager_getInstance(), this);
+}
+
+// class's destructor
+void Sprite_destructor(Sprite this)
+{
+	ASSERT(this, "Sprite::destructor: null this");
+	ASSERT(__UPCAST(Sprite, this), "Sprite::destructor: null cast");
+
+	Sprite_hide(this);
+
+	if(this->animationController)
+	{
+		__DELETE(this->animationController);
+		this->animationController = NULL;
+	}
+	
+	// remove from sprite manager
+	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
+
+	// destroy the super object
+	__DESTROY_BASE;
+}
+
+Scale Sprite_getScale(Sprite this)
+{
+	ASSERT(this, "Sprite::getScale: null this");
+
+	Scale scale =
+	{
+			1, 1
+	};
+	
+	//  return the scale
+	return scale;
+}
+
+// calculate zoom scaling factor
+void Sprite_resize(Sprite this, fix19_13 z)
+{
+	ASSERT(this, "Sprite::resize: null this");
+
+	this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+	this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+}
+
+// retrieve the texture
+Texture Sprite_getTexture(Sprite this)
+{
+	ASSERT(this, "Sprite::getTexture: null this");
+
+	return this->texture;
+}
+
+// set to true to allow render
+void Sprite_setRenderFlag(Sprite this, bool renderFlag)
+{
+	ASSERT(this, "Sprite::setRenderFlag: null this");
+
+	// do not override the whole world entry, or will be updated in the
+	// next render
+	if (__UPDATE_HEAD != this->renderFlag || !renderFlag)
+	{
+		this->renderFlag = !renderFlag ? 0 : this->renderFlag | renderFlag;
+	}
+}
+
+// show
+void Sprite_show(Sprite this)
+{
+	this->renderFlag = __UPDATE_HEAD;
+}
+
+// hide
+void Sprite_hide(Sprite this)
+{
+	ASSERT(this, "Sprite::hide: null this");
+	ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::hide: freeLayer >= this->worldLayer");
+
+	WORLD_HEAD(this->worldLayer, 0x0000);
+}
+
+// get render flag
+u32 Sprite_getRenderFlag(Sprite this)
+{
+	ASSERT(this, "Sprite::getRenderFlag: null this");
+
+	return this->renderFlag;
+}
+
+// set map's world layer
+void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
+{
+	ASSERT(this, "Sprite::setWorldLayer: null this");
+
+	if (this->worldLayer != worldLayer)
+	{
+		this->worldLayer = worldLayer;
+	
+		// make sure everything is setup in the next render cycle
+		this->renderFlag = __UPDATE_HEAD;
+	}
+}
+
+//get map's world layer
+u8 Sprite_getWorldLayer(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldLayer: null this");
+
+	return this->worldLayer;
+}
+
+// get sprite's render head
+u16 Sprite_getHead(Sprite this)
+{
+	ASSERT(this, "Sprite::getHead: null this");
+
+	return this->head;
+}
+
+// get map's render mode
+u16 Sprite_getMode(Sprite this)
+{
+	ASSERT(this, "Sprite::getMode: null this");
+
+	return this->head & 0x3000;
+}
+
+// reload the sprite in bgmap memory
+void Sprite_rewrite(Sprite this)
+{
+	ASSERT(this, "Sprite::reload: null this");
+
+	if(this->texture)
+	{
+		// write it in graphical memory
+		Texture_rewrite(this->texture);
+	}
+	
+	// raise flag to render again
+	Sprite_show(this);
+}
+
+// process event
+void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
+{
+	// scale again
+	__VIRTUAL_CALL(void, Sprite, scale, this);
+	
+	// raise flag to render again
+	Sprite_show(this);
+}
+
+// get render flag
+u8 Sprite_getParallaxDisplacement(Sprite this)
+{
+	ASSERT(this, "Sprite::getRenderFlag: null this");
+
+	return this->parallaxDisplacement;
+}
+
+
+//---------------------------------------------------------------------------------------------------------
+// 										Animation
+//---------------------------------------------------------------------------------------------------------
+void Sprite_update(Sprite this, Clock clock)
+{
+	ASSERT(this, "Sprite::update: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		if(AnimationController_animate(this->animationController))
+		{
+			__VIRTUAL_CALL(void, Sprite, writeAnimation, this);
+		}
+	}
+}
+
+void Sprite_pause(Sprite this, bool pause)
+{
+	ASSERT(this, "Sprite::pause: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		AnimationController_pause(this->animationController, pause);
+	}
+}
+
+void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName)
+{
+	ASSERT(this, "Sprite::play: null this");
+	ASSERT(animationDescription, "Sprite::play: null animationDescription");
+	ASSERT(functionName, "Sprite::play: null functionName");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		AnimationController_play(this->animationController, animationDescription, functionName);
+
+		__VIRTUAL_CALL(void, Sprite, writeAnimation, this);
+	}
+}
+
+bool Sprite_isPlaying(Sprite this)
+{
+	ASSERT(this, "Sprite::isPlaying: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		return AnimationController_isPlaying(this->animationController);
+	}
+	
+	return false;
+}
+
+bool Sprite_isPlayingFunction(Sprite this, AnimationDescription* animationDescription, char* functionName)
+{
+	ASSERT(this, "Sprite::isPlayingFunction: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		return AnimationController_isPlayingFunction(this->animationController, animationDescription, functionName);
+	}
+	
+	return false;
+}
+
+void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta)
+{
+	ASSERT(this, "Sprite::setFrameDelayDelta: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		AnimationController_setFrameDelayDelta(this->animationController, frameDelayDelta);
+	}
+}
+
+s8 Sprite_getActualFrame(Sprite this)
+{
+	ASSERT(this, "Sprite::getActualFrame: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		return AnimationController_getActualFrame(this->animationController);
+	}
+	
+	return -1;	
+}
+
+void Sprite_setActualFrame(Sprite this, s8 actualFrame)
+{
+	ASSERT(this, "Sprite::setActualFrame: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		AnimationController_setActualFrame(this->animationController, actualFrame);
+	}
+}
+
+s8 Sprite_getFrameDelay(Sprite this)
+{
+	ASSERT(this, "Sprite::getFrameDelay: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		return AnimationController_getFrameDelay(this->animationController);
+	}
+	
+	return -1;	
+}
+
+void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
+{
+	ASSERT(this, "Sprite::setFrameDelay: null this");
+
+	if (this->animationController)
+	{
+		// first animate the frame
+		AnimationController_setFrameDelay(this->animationController, frameDelay);
+	}
+}
+
+void Sprite_writeAnimation(Sprite this)
+{
+	ASSERT(this, "Sprite::writeAnimation: null this");
+}
+
+
+//---------------------------------------------------------------------------------------------------------
+// 										FXs
+//---------------------------------------------------------------------------------------------------------
+
+// write directly to texture
+void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
+{
+	ASSERT(this, "Sprite::putChar: null this");
+
+	if(this->texture && newChar && texturePixel)
+	{
+		Texture_putChar(this->texture, texturePixel, newChar);
+	}
+}
+
+// write directly to texture
+void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
+{
+	ASSERT(this, "Sprite::putPixel: null this");
+
+	if(this->texture)
+	{
+		Texture_putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
+	}
+}
+
+/*
+ * Affine FX
+ */
+
+void Sprite_noAFX(Sprite this, int direction)
+{
+	ASSERT(this, "Sprite::noAFX: null this");
+}
+
+void Sprite_scale(Sprite this)
+{
+	ASSERT(this, "Sprite::scale: null this");
+}
+
+void Sprite_rotate(Sprite this, int angle)
+{
+	ASSERT(this, "Sprite::rotate: null this");
+}
+
+void Sprite_squeezeXHFX(Sprite this)
+{
+	ASSERT(this, "Sprite::squezeXHFX: null this");
+}
+
+void Sprite_fireHFX(Sprite this)
+{
+	ASSERT(this, "Sprite::fireHFX: null this");
+}
+
+void Sprite_waveHFX(Sprite this)
+{
+	ASSERT(this, "Sprite::waveHFX: null this");
+}

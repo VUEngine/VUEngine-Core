@@ -35,7 +35,7 @@
 #include <HardwareManager.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
-#include <TextureManager.h>
+#include <BTextureManager.h>
 #include <ParamTableManager.h>
 #include <VPUManager.h>
 #include <PhysicalWorld.h>
@@ -48,7 +48,6 @@
 #include <StateMachine.h>
 #include <Telegram.h>
 #include <VirtualList.h>
-#include <AnimatedSprite.h>
 #include <CharSet.h>
 #include <Sprite.h>
 #include <Texture.h>

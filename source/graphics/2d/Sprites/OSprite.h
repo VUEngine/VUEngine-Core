@@ -18,59 +18,69 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef TEXTURE_MANAGER_H_
-#define TEXTURE_MANAGER_H_
+#ifndef OSPRITE_H_
+#define OSPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <Sprite.h>
+#include <MiscStructs.h>
 #include <Texture.h>
 
+
+//---------------------------------------------------------------------------------------------------------
+// 											 MACROS
+//---------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
 // declare the virtual methods
-#define TextureManager_METHODS									\
-		Object_METHODS											\
-
+#define OSprite_METHODS															\
+	Sprite_METHODS																\
 
 // declare the virtual methods which are redefined
-#define TextureManager_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)							\
+#define OSprite_SET_VTABLE(ClassName)											\
+	Sprite_SET_VTABLE(ClassName)												\
+
+#define OSprite_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	Sprite_ATTRIBUTES;															\
+
+// declare a OSprite, which holds a texture and a drawing specification
+__CLASS(OSprite);
 
 
-__CLASS(TextureManager);
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S ROM DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+typedef struct OSpriteDefinition
+{
+	// the normal sprite definition
+	SpriteDefinition spriteDefinition;
+	
+	// texture to use with the sprite
+	TextureDefinition** textureDefinitions;
+
+} OSpriteDefinition;
+
+typedef const OSpriteDefinition OSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-TextureManager TextureManager_getInstance();
+__CLASS_NEW_DECLARE(OSprite, const OSpriteDefinition* oSpriteDefinition);
 
-void TextureManager_destructor(TextureManager this);
-void TextureManager_reset(TextureManager this);
-void TextureManager_free(TextureManager this, Texture texture);
-void TextureManager_allocateText(TextureManager this, Texture texture);
-Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition);
-s8 TextureManager_getXOffset(TextureManager this, int id);
-s8 TextureManager_getYOffset(TextureManager this, int id);
-u8 TextureManager_getBgmapSegment(TextureManager this, int id);
-u8 TextureManager_getAvailableBgmapSegments(TextureManager this);
-void TextureManager_setAvailableBgmapSegments(TextureManager this, u8 availableBgmapSegments);
-void TextureManager_calculateAvailableBgmapSegments(TextureManager this);
-void TextureManager_resetAvailableBgmapSegments(TextureManager this);
-u8 TextureManager_getPrintingBgmapSegment(TextureManager this);
-
-void TextureManager_print(TextureManager this, int x, int y);
+void OSprite_constructor(OSprite this, const OSpriteDefinition* oSpriteDefinition);
+void OSprite_destructor(OSprite this);
 
 
 #endif

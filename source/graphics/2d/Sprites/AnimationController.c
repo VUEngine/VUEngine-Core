@@ -23,8 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <AnimatedSprite.h>
-#include <Game.h>
+#include <AnimationController.h>
 #include <string.h>
 
 
@@ -32,8 +31,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the AnimatedSprite
-__CLASS_DEFINITION(AnimatedSprite, Sprite);
+// define the AnimationController
+__CLASS_DEFINITION(AnimationController, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -42,27 +41,19 @@ __CLASS_DEFINITION(AnimatedSprite, Sprite);
 
 extern int strcmp(const char *, const char *);
 
-// class's constructor
-static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
-__CLASS_NEW_END(AnimatedSprite, spriteDefinition, owner);
+__CLASS_NEW_DEFINITION(AnimationController, Object owner)
+__CLASS_NEW_END(AnimationController, owner);
 
 // class's constructor
-static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
+void AnimationController_constructor(AnimationController this, Object owner)
 {
-	// construct base object
-	__CONSTRUCT_BASE(spriteDefinition);
-
-	// since the offset will be moved during animation, must save it
-	this->originalTextureSource.mx = abs(Texture_getXOffset(this->texture)) << 3;
-	this->originalTextureSource.my = abs(Texture_getYOffset(this->texture)) << 3;
+	__CONSTRUCT_BASE();
 
 	// set the owner
 	this->owner = owner;
@@ -75,9 +66,6 @@ static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefiniti
 	this->frameDelay = 0;
 	this->frameDelayDelta = -1;
 
-	// don't project position
-	this->calculatePositionFlag = true;
-
 	// intialize animation function
 	this->animationFunction = NULL;
 
@@ -86,158 +74,103 @@ static void AnimatedSprite_constructor(AnimatedSprite this, const SpriteDefiniti
 }
 
 //destructor
-void AnimatedSprite_destructor(AnimatedSprite this)
+void AnimationController_destructor(AnimationController this)
 {
-	ASSERT(this, "AnimatedSprite::destructor: null this");
+	ASSERT(this, "AnimationController::destructor: null this");
 
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
-// retrieve frame allocation type
-int AnimatedSprite_getType(AnimatedSprite this)
-{
-	ASSERT(this, "AnimatedSprite::getType: null this");
-
-	return CharSet_getAllocationType(Texture_getCharSet(this->texture));
-}
-
-// retrieve frame's map
-Texture AnimatedSprite_getTexture(AnimatedSprite this)
-{
-	ASSERT(this, "AnimatedSprite::getTexture: null this");
-
-	return this->texture;
-}
-
-// write char animation frame to char memory
-void AnimatedSprite_writeAnimation(AnimatedSprite this)
-{
-	ASSERT(this, "AnimatedSprite::writeAnimation: null this");
-
-	// write according to the allocation type
-	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
-	{
-		case __ANIMATED:
-
-			{
-				CharSet charSet = Texture_getCharSet(this->texture);
-
-				// move charset's charset's definition to the next frame chars
-				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
-						(this->animationFunction->frames[this->actualFrame] << 4));
-
-				//write charset
-				CharSet_write(charSet);
-			}
-
-			break;
-
-		case __ANIMATED_SHARED:
-			{
-				int totalColumns = 64 - (this->originalTextureSource.mx >> 3); 
-				int frameColumn = Texture_getCols(this->texture) * this->animationFunction->frames[this->actualFrame];
-				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
-				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
-			}
-			
-			Sprite_invalidateParamTable(__UPCAST(Sprite, this));
-			this->renderFlag |= __UPDATE_M;
-
-			break;
-	}
-}
-
-// if true, the frame's screen position will be calculated in the
-// next render cicle
-void AnimatedSprite_setCalculatePositionFlag(AnimatedSprite this, int calculatePositionFlag)
-{
-	ASSERT(this, "AnimatedSprite::setCalculatePositionFlag: null this");
-
-	this->calculatePositionFlag = calculatePositionFlag;
-}
-
 // retrieve actual frame index of animation
-s8 AnimatedSprite_getActualFrame(AnimatedSprite this)
+s8 AnimationController_getActualFrameIndex(AnimationController this)
 {
-	ASSERT(this, "AnimatedSprite::getActualAnimatedSprite: null this");
+	ASSERT(this, "AnimationController::getActualAnimationController: null this");
+
+	return this->animationFunction? this->animationFunction->frames[this->actualFrame]: 0;
+}
+
+// retrieve actual frame of animation
+s8 AnimationController_getActualFrame(AnimationController this)
+{
+	ASSERT(this, "AnimationController::getActualAnimationController: null this");
 
 	return this->actualFrame;
 }
 
 // retrieve previous frame index of animation
-s8 AnimatedSprite_getPreviousFrame(AnimatedSprite this)
+s8 AnimationController_getPreviousFrame(AnimationController this)
 {
-	ASSERT(this, "AnimatedSprite::getPreviousAnimatedSprite: null this");
+	ASSERT(this, "AnimationController::getPreviousAnimationController: null this");
 
 	return this->previousFrame;
 }
 
 // set actual frame of animation
-void AnimatedSprite_setActualFrame(AnimatedSprite this, s8 actualFrame)
+void AnimationController_setActualFrame(AnimationController this, s8 actualFrame)
 {
-	ASSERT(this, "AnimatedSprite::setActualAnimatedSprite: null this");
+	ASSERT(this, "AnimationController::setActualAnimationController: null this");
 
 	this->actualFrame = actualFrame;
 }
 
 // set previous frame index of animation
-void AnimatedSprite_setPreviousFrame(AnimatedSprite this, s8 previousFrame)
+void AnimationController_setPreviousFrame(AnimationController this, s8 previousFrame)
 {
-	ASSERT(this, "AnimatedSprite::setPreviousFrame: null this");
+	ASSERT(this, "AnimationController::setPreviousFrame: null this");
 
 	// TODO: this method should not exist
 	this->previousFrame = previousFrame;
 }
 
 // retrieve frame delay
-s8 AnimatedSprite_getFrameDelay(AnimatedSprite this)
+s8 AnimationController_getFrameDelay(AnimationController this)
 {
-	ASSERT(this, "AnimatedSprite::getFrameDelay: null this");
+	ASSERT(this, "AnimationController::getFrameDelay: null this");
 
 	return this->frameDelay;
 }
 
 // set frame cicle
-void AnimatedSprite_setFrameDelay(AnimatedSprite this, u8 frameDelay)
+void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay)
 {
-	ASSERT(this, "AnimatedSprite::setFrameDelay: null this");
+	ASSERT(this, "AnimationController::setFrameDelay: null this");
 
 	this->frameDelay = frameDelay;
 }
 
 // retrieve frame delay delta
-u8 AnimatedSprite_geFrameDelayDelta(AnimatedSprite this)
+u8 AnimationController_geFrameDelayDelta(AnimationController this)
 {
-	ASSERT(this, "AnimatedSprite::getAnimatedSpriteCicleDelta: null this");
+	ASSERT(this, "AnimationController::getAnimationControllerCicleDelta: null this");
 
 	return this->frameDelayDelta;
 }
 
 // set frame delay delta
-void AnimatedSprite_setFrameDelayDelta(AnimatedSprite this, u8 frameDelayDelta)
+void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDelayDelta)
 {
-	ASSERT(this, "AnimatedSprite::setAnimatedSpriteCicleDelta: null this");
+	ASSERT(this, "AnimationController::setAnimationControllerCicleDelta: null this");
 
 	this->frameDelayDelta = frameDelayDelta;
 }
 
 // animate the frame
-void AnimatedSprite_animate(AnimatedSprite this)
+bool AnimationController_animate(AnimationController this)
 {
-	ASSERT(this, "AnimatedSprite::animate: null this");
+	ASSERT(this, "AnimationController::animate: null this");
 
 	// first check for a valid animation function
 	if (!this->animationFunction)
 	{
-		return;
+		return false;
 	}
 
 	// if the actual frame was set to -1
 	// it means that a not loop animation has been completed
 	if (-1 == this->actualFrame)
 	{
-		return;
+		return false;
 	}
 
 	// show the next frame
@@ -261,15 +194,17 @@ void AnimatedSprite_animate(AnimatedSprite this)
 			// invalidate animation
 			this->actualFrame = -1;
 
-			return;
+			return false;
 		}
 	}
 
+	bool animateFrameChanged = false;
+	
 	// if the frame has changed
 	if (this->actualFrame != this->previousFrame)
 	{
 		// write the new frame of animation
-		AnimatedSprite_writeAnimation(this);
+		animateFrameChanged = true;
 
 		// don't write animation each time, only when the animation
 		// has changed
@@ -296,40 +231,29 @@ void AnimatedSprite_animate(AnimatedSprite this)
 			this->frameDelay = Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
 	}
+	
+	return animateFrameChanged;
 }
 
 // render frame
-void AnimatedSprite_update(AnimatedSprite this, Clock clock)
+bool AnimationController_update(AnimationController this, Clock clock)
 {
-	ASSERT(this, "AnimatedSprite::update: null this");
+	ASSERT(this, "AnimationController::update: null this");
 
 	if (this->playing && !Clock_isPaused(clock))
 	{
 		// first animate the frame
-		AnimatedSprite_animate(this);
+		return AnimationController_animate(this);
 	}
-}
-
-// retrieve frame's map's height
-u8 AnimatedSprite_getRows(AnimatedSprite this)
-{
-	ASSERT(this, "AnimatedSprite::getRows: null this");
-
-	return Texture_getRows(this->texture);
-}
-
-// retrieve frame's map's width
-u8 AnimatedSprite_getCols(AnimatedSprite this)
-{
-	ASSERT(this, "AnimatedSprite::getCols: null this");
-
-	return Texture_getCols(this->texture);
+	
+	return false;
 }
 
 // play animation
-void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction)
+void AnimationController_playAnimationFunction(AnimationController this, AnimationFunction* animationFunction)
 {
-	ASSERT(this, "AnimatedSprite::playAnimation: null this");
+	ASSERT(this, "AnimationController::playAnimation: null this");
+	ASSERT(animationFunction, "AnimationController::playAnimation: null animationFunction");
 
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
@@ -344,7 +268,7 @@ void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction
 	Object_addEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 
 	// force frame writing in the next update
-	this->previousFrame = -1;
+	this->previousFrame = 0;
 
 	// reset frame to play
 	this->actualFrame = 0;
@@ -356,10 +280,13 @@ void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction
 	// it's playing now
 	this->playing = true;
 }
+
 // play animation
-void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName)
+void AnimationController_play(AnimationController this, AnimationDescription* animationDescription, char* functionName)
 {
-	ASSERT(this, "AnimatedSprite::play: null this");
+	ASSERT(this, "AnimationController::play: null this");
+	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
+	ASSERT(functionName, "AnimationController::play: null functionName");
 
 	int i = 0;
 
@@ -382,7 +309,7 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 			Object_addEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 
 			// force frame writing in the next update
-			this->previousFrame = -1;
+			this->previousFrame = 0;
 
 			// reset frame to play
 			this->actualFrame = 0;
@@ -398,26 +325,26 @@ void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDes
 }
 
 // is play animation
-bool AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName)
+bool AnimationController_isPlayingFunction(AnimationController this, AnimationDescription* animationDescription, char* functionName)
 {
-	ASSERT(this, "AnimatedSprite::isPlayingFunction: null this");
+	ASSERT(this, "AnimationController::isPlayingFunction: null this");
 
 	// compare function's names
 	return !strcmp((const char *)functionName, (const char *)this->animationFunction->name);
 }
 
 // is playing animation
-bool AnimatedSprite_isPlaying(AnimatedSprite this)
+bool AnimationController_isPlaying(AnimationController this)
 {
-	ASSERT(this, "AnimatedSprite::isPlaying: null this");
+	ASSERT(this, "AnimationController::isPlaying: null this");
 
 	return this->playing;
 }
 
 // pause animation
-void AnimatedSprite_pause(AnimatedSprite this, int pause)
+void AnimationController_pause(AnimationController this, bool pause)
 {
-	ASSERT(this, "AnimatedSprite::pause: null this");
+	ASSERT(this, "AnimationController::pause: null this");
 	this->playing = !pause;
 
 	if (-1 == this->actualFrame)
@@ -426,15 +353,3 @@ void AnimatedSprite_pause(AnimatedSprite this, int pause)
 	}
 }
 
-// write sprite to graphic memory
-void AnimatedSprite_write(AnimatedSprite this)
-{
-	ASSERT(this, "AnimatedSprite::write: null this");
-
-	// write the texture
-	Texture_write(this->texture);
-
-	// save the original offset
-	this->originalTextureSource.mx = abs(Texture_getXOffset(this->texture)) << 3;
-	this->originalTextureSource.my = abs(Texture_getYOffset(this->texture)) << 3;
-}

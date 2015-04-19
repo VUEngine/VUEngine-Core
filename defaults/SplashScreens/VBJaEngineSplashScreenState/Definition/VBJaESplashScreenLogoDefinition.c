@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Image.h>
+#include <BSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -103,10 +104,10 @@ TextureROMDef VBJAENGINE_LOGO_OUTLINE_TX =
     0,
 };
 
-SpriteROMDef VBJAENGINE_LOGO_3D_IM_SPRITE =
+BSpriteROMDef VBJAENGINE_LOGO_3D_IM_SPRITE =
 {
 	// sprite's type
-	__TYPE(Sprite),
+	__TYPE(BSprite),
 
 	// texture definition
 	(TextureDefinition*)&VBJAENGINE_LOGO_3D_TX,
@@ -121,16 +122,16 @@ SpriteROMDef VBJAENGINE_LOGO_3D_IM_SPRITE =
 	0		
 };
 
-SpriteROMDef* const VBJAENGINE_LOGO_3D_IM_SPRITES[] =
+BSpriteROMDef* const VBJAENGINE_LOGO_3D_IM_SPRITES[] =
 {
 	&VBJAENGINE_LOGO_3D_IM_SPRITE,
 	NULL
 };
 
-SpriteROMDef VBJAENGINE_LOGO_OUTLINE_IM_SPRITE =
+BSpriteROMDef VBJAENGINE_LOGO_OUTLINE_IM_SPRITE =
 {
 	// sprite's type
-	__TYPE(Sprite),
+	__TYPE(BSprite),
 
 	// texture definition
 	(TextureDefinition*)&VBJAENGINE_LOGO_OUTLINE_TX,
@@ -145,7 +146,7 @@ SpriteROMDef VBJAENGINE_LOGO_OUTLINE_IM_SPRITE =
 	0		
 };
 
-SpriteROMDef* VBJAENGINE_LOGO_OUTLINE_IM_SPRITES[] =
+BSpriteROMDef* VBJAENGINE_LOGO_OUTLINE_IM_SPRITES[] =
 {
 	&VBJAENGINE_LOGO_OUTLINE_IM_SPRITE,
 	NULL

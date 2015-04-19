@@ -53,7 +53,7 @@
 	Entity_ATTRIBUTES;															\
 																				\
 	/* sprites for scrolling */													\
-	Sprite scrollSprites[2];													\
+	BSprite scrollBSprites[2];													\
 
 __CLASS(ScrollBackground);
 

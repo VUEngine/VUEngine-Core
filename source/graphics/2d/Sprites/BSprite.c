@@ -23,12 +23,10 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Sprite.h>
+#include <BSprite.h>
 #include <Game.h>
-#include <SpriteManager.h>
 #include <Optics.h>
 #include <ParamTableManager.h>
-#include <HardwareManager.h>
 #include <Screen.h>
 
 
@@ -43,8 +41,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Sprite
-__CLASS_DEFINITION(Sprite, Object);
+// define the BSprite
+__CLASS_DEFINITION(BSprite, Sprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,32 +54,36 @@ extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 extern unsigned int volatile* _xpstts;
 
-static void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
-static void Sprite_doScale(Sprite this);
+void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
+
+static void BSprite_doScale(BSprite this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Sprite, const SpriteDefinition* spriteDefinition)
-__CLASS_NEW_END(Sprite, spriteDefinition);
+__CLASS_NEW_DEFINITION(BSprite, const BSpriteDefinition* bSpriteDefinition)
+__CLASS_NEW_END(BSprite, bSpriteDefinition);
 
 // class's constructor
-void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
+void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinition)
 {
 	__CONSTRUCT_BASE();
 
 	// create the texture
-	this->texture = TextureManager_get(TextureManager_getInstance(), spriteDefinition->textureDefinition);
-
+	if(bSpriteDefinition->textureDefinition)
+	{
+		this->texture = __UPCAST(Texture, BTextureManager_get(BTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+	}
+	
 	if(this->texture)
 	{
 		Object_addEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = Texture_getXOffset(this->texture) << 3;
-		this->drawSpec.textureSource.my = Texture_getYOffset(this->texture) << 3;
+		this->drawSpec.textureSource.mx = BTexture_getXOffset(__UPCAST(BTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.my = BTexture_getYOffset(__UPCAST(BTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 	}
 	else
@@ -100,26 +102,26 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 	this->drawSpec.scale.x = ITOFIX7_9(1);
 	this->drawSpec.scale.y = ITOFIX7_9(1);
 
-	this->parallaxDisplacement = spriteDefinition->parallaxDisplacement;
+	this->parallaxDisplacement = bSpriteDefinition->parallaxDisplacement;
 
 	this->param = 0;
 	this->paramTableRow = -1;
 
-	//this->head = spriteDefinition->display | WRLD_BGMAP;
+	//this->head = bSpriteDefinition->display | WRLD_BGMAP;
 	//set world layer's head acording to map's render mode
-	switch (spriteDefinition->bgmapMode)
+	switch (bSpriteDefinition->bgmapMode)
 	{
 		case WRLD_BGMAP:
 
 			//set map head
-			this->head = spriteDefinition->display | WRLD_BGMAP;
+			this->head = bSpriteDefinition->display | WRLD_BGMAP;
 
 			break;
 
 		case WRLD_AFFINE:
 
 			//set map head
-			this->head = spriteDefinition->display | WRLD_AFFINE | WRLD_OVR;
+			this->head = bSpriteDefinition->display | WRLD_AFFINE | WRLD_OVR;
 
 			//allocate param table space
 			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
@@ -129,28 +131,17 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition)
 		case WRLD_HBIAS:
 
 			//set map head
-			this->head = spriteDefinition->display | WRLD_HBIAS | WRLD_OVR;
+			this->head = bSpriteDefinition->display | WRLD_HBIAS | WRLD_OVR;
 
 			break;
 	}
-
-	// set the default layer
-	this->worldLayer = 0;
-
-	// set the render flag
-	this->renderFlag = 0;
-
-	// register with sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), this);
 }
 
 // class's destructor
-void Sprite_destructor(Sprite this)
+void BSprite_destructor(BSprite this)
 {
-	ASSERT(this, "Sprite::destructor: null this");
-	ASSERT(__UPCAST(Sprite, this), "Sprite::destructor: null cast");
-
-	Sprite_hide(this);
+	ASSERT(this, "BSprite::destructor: null this");
+	ASSERT(__UPCAST(BSprite, this), "BSprite::destructor: null cast");
 
 	//if affine or bgmap
 	if (WRLD_AFFINE & this->head)
@@ -159,14 +150,11 @@ void Sprite_destructor(Sprite this)
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
 	}
 
-	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
-
 	// free the texture
 	if(this->texture)
 	{
 		Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
-		TextureManager_free(TextureManager_getInstance(), this->texture);
+		BTextureManager_free(BTextureManager_getInstance(), __UPCAST(BTexture, this->texture));
 		this->texture = NULL;
 	}
 	
@@ -174,18 +162,18 @@ void Sprite_destructor(Sprite this)
 	__DESTROY_BASE;
 }
 
-Scale Sprite_getScale(Sprite this)
+Scale BSprite_getScale(BSprite this)
 {
-	ASSERT(this, "Sprite::getScale: null this");
+	ASSERT(this, "BSprite::getScale: null this");
 
 	//  return the scale
 	return this->drawSpec.scale;
 }
 
 // set the direction
-void Sprite_setDirection(Sprite this, int axis, int direction)
+void BSprite_setDirection(BSprite this, int axis, int direction)
 {
-	ASSERT(this, "Sprite::setDirection: null this");
+	ASSERT(this, "BSprite::setDirection: null this");
 
 	switch (axis)
 	{
@@ -202,13 +190,13 @@ void Sprite_setDirection(Sprite this, int axis, int direction)
 	}
 
 	// scale the texture in the next render cycle
-	Sprite_invalidateParamTable(this);
+	BSprite_invalidateParamTable(this);
 }
 
 // calculate zoom scaling factor
-void Sprite_calculateScale(Sprite this, fix19_13 z)
+void BSprite_resize(BSprite this, fix19_13 z)
 {
-	ASSERT(this, "Sprite::calculateScale: null this");
+	ASSERT(this, "BSprite::resize: null this");
 
 	z -= _screenPosition->z;
 	
@@ -222,7 +210,7 @@ void Sprite_calculateScale(Sprite this, fix19_13 z)
 	
 	if(this->texture)
 	{
-		if (WRLD_AFFINE == Sprite_getMode(this))
+		if (WRLD_AFFINE == Sprite_getMode(__UPCAST(Sprite, this)))
 		{
 			this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 			this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
@@ -234,26 +222,33 @@ void Sprite_calculateScale(Sprite this, fix19_13 z)
 		}
 	}
 
-	Sprite_invalidateParamTable(this);
+	BSprite_invalidateParamTable(this);
 }
 
-void Sprite_roundDrawSpec(Sprite this)
+VBVec2D BSprite_getPosition(BSprite this)
 {
-	ASSERT(this, "Sprite::roundDrawSpec: null this");
+	ASSERT(this, "BSprite::getPosition: null this");
 
-	this->drawSpec.position.x &= 0xFFFFE000;
-	this->drawSpec.position.y &= 0xFFFFE000;
-	this->drawSpec.position.z &= 0xFFFFE000;
+	return this->drawSpec.position;
 }
 
-void Sprite_setPosition(Sprite this, VBVec3D position3D)
+void BSprite_setPosition(BSprite this, VBVec2D position)
 {
-	ASSERT(this, "Sprite::setPosition: null this");
+	ASSERT(this, "BSprite::setPosition: null this");
+
+	this->drawSpec.position.x = position.x;
+	this->drawSpec.position.y = position.y;
+	this->drawSpec.position.z = position.z;
+}
+
+void BSprite_synchronizePosition(BSprite this, VBVec3D position3D)
+{
+	ASSERT(this, "BSprite::synchronizePosition: null this");
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
-	ASSERT(this->texture, "Sprite::setPosition: null texture");
+	ASSERT(this->texture, "BSprite::setPosition: null texture");
 
 	position3D.x -= this->halfWidth;
 	position3D.y -= this->halfHeight;
@@ -265,96 +260,27 @@ void Sprite_setPosition(Sprite this, VBVec3D position3D)
 }
 
 // calculate the parallax
-void Sprite_calculateParallax(Sprite this, fix19_13 z)
+void BSprite_calculateParallax(BSprite this, fix19_13 z)
 {
-	ASSERT(this, "Sprite::calculateParallax: null this");
+	ASSERT(this, "BSprite::calculateParallax: null this");
 
 	this->drawSpec.position.z = z - _screenPosition->z;
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 
-// retrieve the texture
-Texture Sprite_getTexture(Sprite this)
-{
-	ASSERT(this, "Sprite::getTexture: null this");
-
-	return this->texture;
-}
-
 // retrieve drawspec
-DrawSpec Sprite_getDrawSpec(Sprite this)
+DrawSpec BSprite_getDrawSpec(BSprite this)
 {
-	ASSERT(this, "Sprite::getDrawSpec: null this");
+	ASSERT(this, "BSprite::getDrawSpec: null this");
 
 	return this->drawSpec;
 }
 
-// set to true to allow render
-void Sprite_setRenderFlag(Sprite this, bool renderFlag)
-{
-	ASSERT(this, "Sprite::setRenderFlag: null this");
-
-	// do not override the whole world entry, or will be updated in the
-	// next render
-	if (__UPDATE_HEAD != this->renderFlag || !renderFlag)
-	{
-		this->renderFlag = !renderFlag ? 0 : this->renderFlag | renderFlag;
-	}
-}
-
-// show
-void Sprite_show(Sprite this)
-{
-	this->renderFlag = __UPDATE_HEAD;
-}
-
-// hide
-void Sprite_hide(Sprite this)
-{
-	ASSERT(this, "Sprite::hide: null this");
-	ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::hide: freeLayer >= this->worldLayer");
-
-	WORLD_HEAD(this->worldLayer, 0x0000);
-}
-
-// preset the WORLD values before showing it by settings its head attribute
-void Sprite_preRender(Sprite this)
-{
-	ASSERT(this, "Sprite::preRender: null this");
-	ASSERT(this->texture, "Sprite::preRender: null texture");
-
-	WORLD* worldPointer = &WA[this->worldLayer];
-	ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::preRender: freeLayer >= this->worldLayer");
-
-	worldPointer->mx = this->drawSpec.textureSource.mx;
-	worldPointer->mp = this->drawSpec.textureSource.mp;
-	worldPointer->my = this->drawSpec.textureSource.my;
-	worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
-	worldPointer->gp = this->drawSpec.position.parallax + this->parallaxDisplacement;
-	worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
-
-	//set the world size according to the zoom
-	if (WRLD_AFFINE & this->head)
-	{
-		worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-		worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-		worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-	}
-	else
-	{
-		worldPointer->w = (((int)Texture_getCols(this->texture))<< 3);
-		worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
-	}
-
-	// make sure to not render again
-	this->renderFlag = false;
-}
-
 // render a world layer with the map's information
-void Sprite_render(Sprite this)
+void BSprite_render(BSprite this)
 {
-	ASSERT(this, "Sprite::render: null this");
-	ASSERT(this->texture, "Sprite::render: null texture");
+	ASSERT(this, "BSprite::render: null this");
+	ASSERT(this->texture, "BSprite::render: null texture");
 
 	//if render flag is set
 	if (this->renderFlag)
@@ -362,7 +288,7 @@ void Sprite_render(Sprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::render: freeLayer >= this->worldLayer");
+//		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BSprite::render: freeLayer >= this->worldLayer");
 
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
@@ -387,7 +313,7 @@ void Sprite_render(Sprite this)
 			}
 
 			// make sure to not render again
-			worldPointer->head = this->head | Texture_getBgmapSegment(this->texture);
+			worldPointer->head = this->head | BTexture_getBgmapSegment(__UPCAST(BTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
 		}
@@ -415,7 +341,7 @@ void Sprite_render(Sprite this)
 			{
 				if(0 < this->paramTableRow)
 				{
-					Sprite_doScale(this);
+					BSprite_doScale(this);
 					
 					if(0 < this->paramTableRow)
 					{
@@ -440,110 +366,39 @@ void Sprite_render(Sprite this)
 	}
 }
 
-// get render flag
-u32 Sprite_getRenderFlag(Sprite this)
-{
-	ASSERT(this, "Sprite::getRenderFlag: null this");
-
-	return this->renderFlag;
-}
-
 // get map's param table address
-u32 Sprite_getParam(Sprite this)
+u32 BSprite_getParam(BSprite this)
 {
-	ASSERT(this, "Sprite::getParam: null this");
+	ASSERT(this, "BSprite::getParam: null this");
 
 	return this->param;
 }
 
 // set map's param table address
-void Sprite_setParam(Sprite this, u32 param)
+void BSprite_setParam(BSprite this, u32 param)
 {
-	ASSERT(this, "Sprite::setParam: null this");
+	ASSERT(this, "BSprite::setParam: null this");
 
 	this->param = param;
 
 	// set flag to rewrite texture's param table
-	Sprite_invalidateParamTable(this);
-}
-
-// set map's world layer
-void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
-{
-	ASSERT(this, "Sprite::setWorldLayer: null this");
-
-	if (this->worldLayer != worldLayer)
-	{
-		this->worldLayer = worldLayer;
-	
-		// make sure everything is setup in the next render cycle
-		this->renderFlag = __UPDATE_HEAD;
-	}
-}
-
-//get map's world layer
-u8 Sprite_getWorldLayer(Sprite this)
-{
-	ASSERT(this, "Sprite::getWorldLayer: null this");
-
-	return this->worldLayer;
-}
-
-// get sprite's render head
-u16 Sprite_getHead(Sprite this)
-{
-	ASSERT(this, "Sprite::getHead: null this");
-
-	return this->head;
-}
-
-// get map's render mode
-u16 Sprite_getMode(Sprite this)
-{
-	ASSERT(this, "Sprite::getMode: null this");
-
-	return this->head & 0x3000;
+	BSprite_invalidateParamTable(this);
 }
 
 // force refresh param table in the next render
-void Sprite_invalidateParamTable(Sprite this)
+void BSprite_invalidateParamTable(BSprite this)
 {
-	ASSERT(this, "Sprite::invalidateParamTable: null this");
+	ASSERT(this, "BSprite::invalidateParamTable: null this");
 
 	this->renderFlag |= __UPDATE_SIZE;
 	
-	Sprite_scale(this);
-}
-
-// reload the sprite in bgmap memory
-void Sprite_rewrite(Sprite this)
-{
-	ASSERT(this, "Sprite::reload: null this");
-
-	if(this->texture)
-	{
-		// write it in graphical memory
-		Texture_rewrite(this->texture);
-	}
-	
-	// raise flag to render again
-	Sprite_show(this);
-}
-
-// process event
-static void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
-{
-	// scale again
-	Sprite_scale(this);
-	
-	// raise flag to render again
-	Sprite_show(this);
+	BSprite_scale(this);
 }
 
 // set drawspec
-void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
+void BSprite_setDrawSpec(BSprite this, const DrawSpec* const drawSpec)
 {
-	ASSERT(this, "Sprite::setDrawSpec: null this");
+	ASSERT(this, "BSprite::setDrawSpec: null this");
 
 	this->drawSpec.position.x = drawSpec->position.x;
 	this->drawSpec.position.y = drawSpec->position.y;
@@ -558,58 +413,28 @@ void Sprite_setDrawSpec(Sprite this, const DrawSpec* const drawSpec)
 }
 
 // retrieve param table current row
-fix19_13 Sprite_getParamTableRow(Sprite this)
+fix19_13 BSprite_getParamTableRow(BSprite this)
 {
 	return this->paramTableRow;
-}
-
-// get render flag
-u8 Sprite_getParallaxDisplacement(Sprite this)
-{
-	ASSERT(this, "Sprite::getRenderFlag: null this");
-
-	return this->parallaxDisplacement;
 }
 
 //---------------------------------------------------------------------------------------------------------
 // 										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
-// write directly to texture
-void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
-{
-	ASSERT(this, "Sprite::putChar: null this");
-
-	if(this->texture && newChar && texturePixel)
-	{
-		Texture_putChar(this->texture, texturePixel, newChar);
-	}
-}
-
-// write directly to texture
-void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
-{
-	ASSERT(this, "Sprite::putPixel: null this");
-
-	if(this->texture)
-	{
-		Texture_putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
-	}
-}
-
 /*
  * Affine FX
  */
 
-void Sprite_noAFX(Sprite this, int direction)
+void BSprite_noAFX(BSprite this, int direction)
 {
-	ASSERT(this, "Sprite::noAFX: null this");
+	ASSERT(this, "BSprite::noAFX: null this");
 }
 
-static void Sprite_doScale(Sprite this)
+static void BSprite_doScale(BSprite this)
 {
-	ASSERT(this, "Sprite::scale: null this");
-	ASSERT(this->texture, "Sprite::scale: null texture");
+	ASSERT(this, "BSprite::scale: null this");
+	ASSERT(this->texture, "BSprite::scale: null texture");
 
 	if (this->param)
 	{
@@ -624,23 +449,23 @@ static void Sprite_doScale(Sprite this)
 }
 
 // scale sprite
-void Sprite_scale(Sprite this)
+void BSprite_scale(BSprite this)
 {
-	ASSERT(this, "Sprite::scale: null this");
-	ASSERT(this->texture, "Sprite::scale: null texture");
+	ASSERT(this, "BSprite::scale: null this");
+	ASSERT(this->texture, "BSprite::scale: null texture");
 
 	if (this->param)
 	{
 		this->paramTableRow = 0;
 		
-		Sprite_doScale(this);
+		BSprite_doScale(this);
 	}
 }
 
-void Sprite_rotate(Sprite this, int angle)
+void BSprite_rotate(BSprite this, int angle)
 {
-	ASSERT(this, "Sprite::rotate: null this");
-	ASSERT(this->texture, "Sprite::rotate: null texture");
+	ASSERT(this, "BSprite::rotate: null this");
+	ASSERT(this->texture, "BSprite::rotate: null texture");
 
 	// TODO
 	if (this->param)
@@ -667,7 +492,7 @@ void Sprite_rotate(Sprite this, int angle)
 
 		}
 		// put down the flag
-		Sprite_setUpdateParamTableFlag(this, false);
+		BSprite_setUpdateParamTableFlag(this, false);
 
 	}
 	*/
@@ -677,22 +502,22 @@ void Sprite_rotate(Sprite this, int angle)
  * H-Bias FX
  */
 
-void Sprite_squeezeXHFX(Sprite this)
+void BSprite_squeezeXHFX(BSprite this)
 {
-	ASSERT(this, "Sprite::squezeXHFX: null this");
+	ASSERT(this, "BSprite::squezeXHFX: null this");
 
 	// TODO
 }
 
-void Sprite_fireHFX(Sprite this)
+void BSprite_fireHFX(BSprite this)
 {
-	ASSERT(this, "Sprite::fireHFX: null this");
+	ASSERT(this, "BSprite::fireHFX: null this");
 
 	// TODO
 }
 
-void Sprite_waveHFX(Sprite this){
-	ASSERT(this, "Sprite::waveHFX: null this");
+void BSprite_waveHFX(BSprite this){
+	ASSERT(this, "BSprite::waveHFX: null this");
 
 	// TODO
 }

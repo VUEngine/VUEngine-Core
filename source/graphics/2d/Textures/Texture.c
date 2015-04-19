@@ -38,10 +38,6 @@ __CLASS_DEFINITION(Texture, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id);
-static void Texture_writeAnimated(Texture this);
-static void Texture_writeNoAnimated(Texture this);
-static void Texture_writeAnimatedShared(Texture this);
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer);
 
 
@@ -54,7 +50,7 @@ __CLASS_NEW_DEFINITION(Texture, TextureDefinition* textureDefinition, u16 id)
 __CLASS_NEW_END(Texture, textureDefinition, id);
 
 // class's constructor
-static void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id)
+void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id)
 {
 	// construct base object
 	__CONSTRUCT_BASE();
@@ -99,106 +95,6 @@ TextureDefinition* Texture_getDefinition(Texture this)
 	return this->textureDefinition;
 }
 
-// write an animated map
-static void Texture_writeAnimated(Texture this)
-{
-	ASSERT(this, "Texture::writeAnimated: null this");
-
-	int bgmapSegment = Texture_getBgmapSegment(this);
-	int palette = Texture_getPallet(this) << 14;
-
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
-	int i = this->textureDefinition->rows;
-
-	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
-	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
-
-	if (0 > xOffset || 0 > yOffset)
-	{
-		return;
-	}
-
-	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
-	{
-		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
-				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
-				this->textureDefinition->cols,
-				(palette) | (charLocation));
-
-	}
-}
-
-// write an inanimated map
-static void Texture_writeNoAnimated(Texture this)
-{
-	ASSERT(this, "Texture::writeNoAnimated: null this");
-
-	int bgmapSegment = Texture_getBgmapSegment(this);
-	int palette = Texture_getPallet(this) << 14;
-
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
-	int i = this->textureDefinition->rows;
-
-	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
-	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
-
-	if (0 > xOffset || 0 > yOffset)
-	{
-		return;
-	}
-	
-	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
-	{
-		//specifying the char displacement inside the char mem
-		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
-				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
-				this->textureDefinition->cols,
-				(palette) | (charLocation));
-	}
-}
-
-// write an animated and shared map
-static void Texture_writeAnimatedShared(Texture this)
-{
-	ASSERT(this, "Texture::writeAnimatedShared: null this");
-
-	int bgmapSegment = Texture_getBgmapSegment(this);
-	int palette = Texture_getPallet(this) << 14;
-
-	// determine the number of frames the map had
-	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
-	int frames = CharSet_getNumberOfChars(this->charSet) / area;
-
-	int i = this->textureDefinition->rows;
-
-	int xOffset = (int)TextureManager_getXOffset(TextureManager_getInstance(), this->id);
-	int yOffset = (int)TextureManager_getYOffset(TextureManager_getInstance(), this->id);
-
-	if (0 > xOffset || 0 > yOffset)
-	{
-		return;
-	}
-
-	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
-	{
-		int j = 1;
-		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
-		//specifying the char displacement inside the char mem
-		for (; j <= frames; j++)
-		{
-			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
-					(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
-					this->textureDefinition->cols,
-					(palette) | (charLocation + area * (j - 1)));
-
-		}
-	}
-
-}
 
 // free char memory
 void Texture_freeCharMemory(Texture this)
@@ -234,35 +130,6 @@ void Texture_write(Texture this)
 
 	//write char group
 	CharSet_write(this->charSet);
-
-	//determine the allocation type
-	switch (CharSet_getAllocationType(this->charSet))
-	{
-		case __ANIMATED:
-
-			// write the definition to graphic memory
-			Texture_writeAnimated(this);
-
-			break;
-
-		case __ANIMATED_SHARED:
-
-			// write the definition to graphic memory
-			Texture_writeAnimatedShared(this);
-
-			break;
-
-		case __NO_ANIMATED:
-
-			// write the definition to graphic memory
-			Texture_writeNoAnimated(this);
-
-			break;
-
-		default:
-
-			ASSERT(false, "Texture::write: no allocation type");
-	}
 }
 
 // write into memory the chars and this
@@ -272,7 +139,7 @@ void Texture_rewrite(Texture this)
 
 	CharSet_rewrite(this->charSet);
 	
-	Texture_write(this);
+	__VIRTUAL_CALL(void, Texture, write, this);
 }
 
 // write map in hbias mode
@@ -303,21 +170,6 @@ int Texture_getNumberOfChars(Texture this)
 	return CharSet_getNumberOfChars(this->charSet);
 }
 
-// get texture's x offset within bgmap mem
-u8 Texture_getXOffset(Texture this)
-{
-	ASSERT(this, "Texture::getXOffset: null this");
-
-	return abs(TextureManager_getXOffset(TextureManager_getInstance(), this->id));
-}
-
-// get texture's y offset within bgmap mem
-u8 Texture_getYOffset(Texture this)
-{
-	ASSERT(this, "Texture::getYOffset: null this");
-
-	return abs(TextureManager_getYOffset(TextureManager_getInstance(), this->id));
-}
 
 // get texture's definition
 TextureDefinition* Texture_getTextureDefinition(Texture this)
@@ -391,14 +243,6 @@ u8 Texture_getTotalRows(Texture this)
 	return 0;
 }
 
-//get texture's bgmap segment
-u8 Texture_getBgmapSegment(Texture this)
-{
-	ASSERT(this, "Texture::getBgmapSegment: null this");
-
-	return TextureManager_getBgmapSegment(TextureManager_getInstance(), this->id);
-}
-
 // get number of frames of animation
 u8 Texture_getNumberOfFrames(Texture this)
 {
@@ -466,7 +310,7 @@ u16 Texture_getId(Texture this)
 // process event
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer)
 {
-	Texture_write(this);
+	__VIRTUAL_CALL(void, Texture, write, this);
 
 	// propagate event
 	Object_fireEvent(__UPCAST(Object, this), __EVENT_TEXTURE_REWRITTEN);

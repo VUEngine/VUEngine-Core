@@ -24,11 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MSprite.h>
-#include <Game.h>
-#include <SpriteManager.h>
 #include <Optics.h>
-#include <ParamTableManager.h>
-#include <HardwareManager.h>
 #include <Screen.h>
 
 
@@ -44,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the MSprite
-__CLASS_DEFINITION(MSprite, Sprite);
+__CLASS_DEFINITION(MSprite, BSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,7 +70,7 @@ __CLASS_NEW_END(MSprite, mSpriteDefinition);
 // class's constructor
 void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition)
 {
-	__CONSTRUCT_BASE(&mSpriteDefinition->spriteDefinition);
+	__CONSTRUCT_BASE(&mSpriteDefinition->bSpriteDefinition);
 	
 	this->mSpriteDefinition = mSpriteDefinition;
 
@@ -116,7 +112,7 @@ static void MSprite_releaseTextures(MSprite this)
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			// free the texture
-			TextureManager_free(TextureManager_getInstance(), __UPCAST(Texture, VirtualNode_getData(node)));
+			BTextureManager_free(BTextureManager_getInstance(), __UPCAST(BTexture, VirtualNode_getData(node)));
 		}
 		
 		__DELETE(this->textures);
@@ -155,19 +151,19 @@ static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefiniti
 
 	if (textureDefinition)
 	{
-		Texture texture = TextureManager_get(TextureManager_getInstance(), textureDefinition);
+		BTexture bTexture = BTextureManager_get(BTextureManager_getInstance(), textureDefinition);
 		
-		ASSERT(texture, "MSprite::loadTexture: texture not loaded");
+		ASSERT(bTexture, "MSprite::loadTexture: texture not loaded");
 		
-		if(texture && this->textures)
+		if(bTexture && this->textures)
 		{
-			VirtualList_pushBack(this->textures, texture);
+			VirtualList_pushBack(this->textures, bTexture);
 		}
 	}
 }
 
 // set sprite's position
-void MSprite_setPosition(MSprite this, VBVec3D position3D)
+void MSprite_synchronizePosition(MSprite this, VBVec3D position3D)
 {
 	ASSERT(this, "MSprite::setPosition: null this");
 
@@ -195,7 +191,7 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 		this->drawSpec.position.z = position3D.z;
 
 		// calculate sprite's parallax
-		Sprite_calculateParallax(__UPCAST(Sprite, this), this->drawSpec.position.z);
+		__VIRTUAL_CALL(void, Sprite, calculateParallax, __UPCAST(Sprite, this), this->drawSpec.position.z);
 	}
 
 	const Point* const axisCapped = MSprite_capPosition(this);
@@ -214,7 +210,7 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 	
 	this->renderFlag |= __UPDATE_M;
 
-	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? Texture_getYOffset(this->texture) << 3: 0;
+	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BTexture_getYOffset(__UPCAST(BTexture, this->texture)) << 3: 0;
 }
 
 // calculate the size multiplier

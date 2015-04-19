@@ -18,92 +18,61 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MSPRITE_H_
-#define MSPRITE_H_
+#ifndef B_ANIMATED_SPRITE_H_
+#define B_ANIMATED_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Sprite.h>
-#include <MiscStructs.h>
-#include <Texture.h>
+#include <BSprite.h>
+#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 MACROS
+// 												MACROS
 //---------------------------------------------------------------------------------------------------------
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MSprite_METHODS															\
-	Sprite_METHODS																\
+#define BAnimatedSprite_METHODS													\
+	BSprite_METHODS																\
 
 // declare the virtual methods which are redefined
-#define MSprite_SET_VTABLE(ClassName)											\
-		Sprite_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, MSprite, setPosition);							\
+#define BAnimatedSprite_SET_VTABLE(ClassName)									\
+	BSprite_SET_VTABLE(ClassName)												\
+	__VIRTUAL_SET(ClassName, BAnimatedSprite, writeAnimation);					\
 
-#define MSprite_ATTRIBUTES														\
+#define BAnimatedSprite_ATTRIBUTES												\
 																				\
 	/* super's attributes */													\
-	Sprite_ATTRIBUTES;															\
+	BSprite_ATTRIBUTES;															\
 																				\
-	/* this is our texture */													\
-	VirtualList textures;														\
-																				\
-	/* pinter to definition */													\
-	const MSpriteDefinition* mSpriteDefinition;									\
-																				\
-	/* total size of the bgmap, used for loop/not loop */						\
-	Point size;																	\
-																				\
-	/* fot total size of the bgmap calculation */								\
-	Point sizeMultiplier;																	\
+	/* bgmap's source coordinates */											\
+	TextureSource originalTextureSource;										\
 
-// declare a MSprite, which holds a texture and a drawing specification
-__CLASS(MSprite);
+// declare a Sprite, which holds a texture and a drawing specification
+__CLASS(BAnimatedSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct MSpriteDefinition
-{
-	// the normal sprite definition
-	SpriteDefinition spriteDefinition;
-	
-	// texture to use with the sprite
-	TextureDefinition** textureDefinitions;
-
-	// SCX/SCY value
-	u16 scValue;
-
-	// flag to loop the x axis
-	u8 xLoop;
-
-	// flag to loop the y axis
-	u8 yLoop;
-
-} MSpriteDefinition;
-
-typedef const MSpriteDefinition MSpriteROMDef;
-
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MSprite, const MSpriteDefinition* mSpriteDefinition);
+__CLASS_NEW_DECLARE(BAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
 
-void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
-void MSprite_destructor(MSprite this);
-void MSprite_setPosition(MSprite this, VBVec3D position3D);
+void BAnimatedSprite_destructor(BAnimatedSprite this);
+void BAnimatedSprite_writeAnimation(BAnimatedSprite this);
 
 
 #endif

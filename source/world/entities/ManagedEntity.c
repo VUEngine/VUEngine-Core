@@ -25,7 +25,6 @@
 #include <ManagedEntity.h>
 #include <Prototypes.h>
 #include <Optics.h>
-#include <AnimatedSprite.h>
 #include <Shape.h>
 #include <CollisionManager.h>
 
@@ -106,13 +105,14 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 			{
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
 				VirtualList_pushBack(this->managedSprites, sprite);
-				DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
+				VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 				
 				// eliminate fractions to avoid rounding problems later
-				drawSpec.position.x &= 0xFFFFE000;
-				drawSpec.position.y &= 0xFFFFE000;
+				position.x &= 0xFFFFE000;
+				position.y &= 0xFFFFE000;
+				
 				// don't round z coordinate since it is used for layer sorting
-				Sprite_setDrawSpec(sprite, &drawSpec);
+				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, position);
 			}
 		}
 		
@@ -215,12 +215,16 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
 			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
-			DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
-			drawSpec.position.x += position2D.x - this->previous2DPosition.x;
-			drawSpec.position.y += position2D.y - this->previous2DPosition.y;
-			drawSpec.position.z += position2D.z - this->previous2DPosition.z;
+			
+			VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+			
+			position.x += position2D.x - this->previous2DPosition.x;
+			position.y += position2D.y - this->previous2DPosition.y;
+//			position.z += position2D.z - this->previous2DPosition.z;
 	
-			Sprite_setDrawSpec(sprite, &drawSpec);
+			// don't round z coordinate since it is used for layer sorting
+			__VIRTUAL_CALL(void, Sprite, setPosition, sprite, position);
+			
 			Sprite_setRenderFlag(sprite, __UPDATE_G);
 		}
 		
