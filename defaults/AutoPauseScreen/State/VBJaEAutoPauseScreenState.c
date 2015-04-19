@@ -111,7 +111,6 @@ static bool VBJaEAutoPauseScreenState_handleMessage(VBJaEAutoPauseScreenState th
 			{
 				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 		
-				// check direction
 				if (K_STA & pressedKey)
 				{
 					Game_unpause(Game_getInstance(), __UPCAST(GameState, this));

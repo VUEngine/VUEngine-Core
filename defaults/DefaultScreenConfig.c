@@ -44,6 +44,7 @@ extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
 // ---------------------------------------------------------------------------------------------------------
 
 // Precaution screen
+VBJaEPrecautionScreenState      (*__INITIAL_SPLASH_SCREEN_STATE)() =            VBJaEPrecautionScreenState_getInstance;
 VBJaEAdjustmentScreenState      (*__PRECAUTION_SCREEN_NEXT_STATE)() =           VBJaEAdjustmentScreenState_getInstance;
 const StageROMDef*                __PRECAUTION_SCREEN_STAGE =                   &EMPTY_ST;
 const int                         __PRECAUTION_SCREEN_INITIAL_DELAY =           2000;
