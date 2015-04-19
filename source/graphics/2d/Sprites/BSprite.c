@@ -72,8 +72,11 @@ void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinitio
 	__CONSTRUCT_BASE();
 
 	// create the texture
-	this->texture = __UPCAST(Texture, BTextureManager_get(BTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
-
+	if(bSpriteDefinition->textureDefinition)
+	{
+		this->texture = __UPCAST(Texture, BTextureManager_get(BTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+	}
+	
 	if(this->texture)
 	{
 		Object_addEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
