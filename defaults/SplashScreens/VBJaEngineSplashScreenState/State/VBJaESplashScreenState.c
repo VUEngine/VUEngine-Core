@@ -28,13 +28,7 @@
 #include <Screen.h>
 #include <MessageDispatcher.h>
 #include <VBJaESplashScreenState.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
+#include <DefaultScreenConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +57,8 @@ static void VBJaESplashScreenState_constructor(VBJaESplashScreenState this)
 {
 	__CONSTRUCT_BASE();
 
-	this->stageDefinition = (StageDefinition*)&VBJAENGINE_SPLASH_SCREEN_ST;
+	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __VBJAENGINE_SPLASH_SCREEN_NEXT_STATE()));
+	this->stageDefinition = (StageDefinition*)__VBJAENGINE_SPLASH_SCREEN_STAGE;
 }
 
 // class's destructor

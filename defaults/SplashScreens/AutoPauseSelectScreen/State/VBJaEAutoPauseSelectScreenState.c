@@ -32,14 +32,7 @@
 #include <LanguagesDefault.h>
 #include <VBJaEAutoPauseSelectScreenState.h>
 #include <VBJaEAutoPauseScreenState.h>
-#include <VBJaELangSelectScreenState.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-extern StageROMDef EMPTY_ST;
+#include <DefaultScreenConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,8 +65,8 @@ static void VBJaEAutoPauseSelectScreenState_constructor(VBJaEAutoPauseSelectScre
 {
 	__CONSTRUCT_BASE();
 
-	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, VBJaELangSelectScreenState_getInstance()));
-	this->stageDefinition = (StageDefinition*)&EMPTY_ST;
+	SplashScreenState_setNextstate(__UPCAST(SplashScreenState, this), __UPCAST(GameState, __AUTO_PAUSE_SELECT_SCREEN_NEXT_STATE()));
+	this->stageDefinition = (StageDefinition*)__AUTO_PAUSE_SELECT_SCREEN_STAGE;
     this->selection = true;
 }
 
@@ -102,21 +95,21 @@ static void VBJaEAutoPauseSelectScreenState_resume(VBJaEAutoPauseSelectScreenSta
 
 static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this)
 {
-    char* strAutomaticPause = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE);
-    char* strAutomaticPauseExplanation = I18n_getText(I18n_getInstance(), STR_AUTOMATIC_PAUSE_EXPLANATION);
+    char* strAutomaticPause = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SELECT_SCREEN_TITLE);
+    char* strAutomaticPauseExplanation = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION);
 
     u8 strHeaderXPos = (48 - strlen(strAutomaticPause)) >> 1;
-    Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 8, NULL);
+    Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 8, __AUTO_PAUSE_SELECT_SCREEN_TITLE_FONT);
 
-    Printing_text(Printing_getInstance(), strAutomaticPauseExplanation, 8, 11, NULL);
+    Printing_text(Printing_getInstance(), strAutomaticPauseExplanation, 8, 11, __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT);
 
     VBJaEAutoPauseSelectScreenState_renderSelection(this);
 }
 
 static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelectScreenState this)
 {
-    char* strOn = I18n_getText(I18n_getInstance(), STR_ON);
-    char* strOff = I18n_getText(I18n_getInstance(), STR_OFF);
+    char* strOn = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SELECT_SCREEN_ON);
+    char* strOff = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SELECT_SCREEN_OFF);
 
     // get strings and determine lengths
     u8 strOnLength = strlen(strOn);
@@ -130,8 +123,8 @@ static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelect
     Printing_text(Printing_getInstance(), "                                                ", 0, 18, NULL);
 
     // print options
-    Printing_text(Printing_getInstance(), strOn, selectionStart, 17, NULL);
-    Printing_text(Printing_getInstance(), strOff, selectionStart + 3 + strOnLength, 17, NULL);
+    Printing_text(Printing_getInstance(), strOn, selectionStart, 17, __AUTO_PAUSE_SELECT_SCREEN_ON_FONT);
+    Printing_text(Printing_getInstance(), strOff, selectionStart + 3 + strOnLength, 17, __AUTO_PAUSE_SELECT_SCREEN_OFF_FONT);
 
     // print selector
     u8 optionStart = this->selection ? selectionStart - 1 : selectionStart - 1 + optionsGap + strOnLength;
