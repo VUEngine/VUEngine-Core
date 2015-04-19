@@ -139,7 +139,7 @@ static void BTexture_writeNoAnimated(BTexture this)
 	ASSERT(this, "BTexture::writeNoAnimated: null this");
 
 	int bgmapSegment = BTexture_getBgmapSegment(this);
-	int palette = Texture_getPallet(this) << 14;
+	int palette = this->palette << 14;
 
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;

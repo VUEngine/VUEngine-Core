@@ -210,7 +210,7 @@ void MSprite_synchronizePosition(MSprite this, VBVec3D position3D)
 	
 	this->renderFlag |= __UPDATE_M;
 
-	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BTexture_getYOffset(this->texture) << 3: 0;
+	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BTexture_getYOffset(__UPCAST(BTexture, this->texture)) << 3: 0;
 }
 
 // calculate the size multiplier
