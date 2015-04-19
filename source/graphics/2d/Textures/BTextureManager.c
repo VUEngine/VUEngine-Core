@@ -22,13 +22,13 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <TextureManager.h>
+#include <BTextureManager.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define TextureManager_ATTRIBUTES													\
+#define BTextureManager_ATTRIBUTES													\
 																					\
 	/* super's attributes */														\
 	Object_ATTRIBUTES;																\
@@ -49,7 +49,7 @@
 	u8 freeBgmapSegment;																	\
 																					\
 	/* the textures allocated */													\
-	Texture texture[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];	\
+	BTexture bTexture[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];	\
 																					\
 	/* texture usage count */														\
 	u8 textureUsageCount[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];\
@@ -57,8 +57,8 @@
 	/* number of available bgmap segments */										\
 	u8 availableBgmapSegments;														\
 
-// define the TextureManager
-__CLASS_DEFINITION(TextureManager, Object);
+// define the BTextureManager
+__CLASS_DEFINITION(BTextureManager, Object);
 
 enum OffsetIndex
 {
@@ -72,38 +72,40 @@ enum OffsetIndex
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void TextureManager_constructor(TextureManager this);
-static int TextureManager_allocate(TextureManager this, Texture texture);
-static Texture TextureManager_findTexture(TextureManager this, TextureDefinition* textureDefinition);
+static void BTextureManager_constructor(BTextureManager this);
+static int BTextureManager_allocate(BTextureManager this, BTexture bTexture);
+static BTexture BTextureManager_findTexture(BTextureManager this, BTextureDefinition* bTextureDefinition);
+static BTexture BTextureManager_writeTexture(BTextureManager this, BTextureDefinition* bTextureDefinition, int isPreload);
+BTexture BTextureManager_loadTexture(BTextureManager this, BTextureDefinition* bTextureDefinition, int isPreload);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__SINGLETON(TextureManager);
+__SINGLETON(BTextureManager);
 
 // class's constructor
-static void TextureManager_constructor(TextureManager this)
+static void BTextureManager_constructor(BTextureManager this)
 {
 	__CONSTRUCT_BASE();
 
-	TextureManager_reset(this);
+	BTextureManager_reset(this);
 }
 
 // class's destructor
-void TextureManager_destructor(TextureManager this)
+void BTextureManager_destructor(BTextureManager this)
 {
-	ASSERT(this, "TextureManager::destructor: null this");
+	ASSERT(this, "BTextureManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
 
 // reset
-void TextureManager_reset(TextureManager this)
+void BTextureManager_reset(BTextureManager this)
 {
-	ASSERT(this, "TextureManager::reset: null this");
+	ASSERT(this, "BTextureManager::reset: null this");
 
 	this->availableBgmapSegments = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
 
@@ -129,12 +131,12 @@ void TextureManager_reset(TextureManager this)
 		this->offset[i][kYOffset] = -1;
 		this->offset[i][kBgmapSegment] = -1;
 
-		if (this->texture[i])
+		if (this->bTexture[i])
 		{
-			__DELETE(this->texture[i]);
+			__DELETE(this->bTexture[i]);
 		}
 		
-		this->texture[i] = NULL;
+		this->bTexture[i] = NULL;
 		this->textureUsageCount[i] = 0;
 	}
 
@@ -142,16 +144,16 @@ void TextureManager_reset(TextureManager this)
 }
 
 // allocate texture in bgmap graphic memory
-static int TextureManager_allocate(TextureManager this, Texture texture)
+static int BTextureManager_allocate(BTextureManager this, BTexture bTexture)
 {
-	ASSERT(this, "TextureManager::allocate: null this");
+	ASSERT(this, "BTextureManager::allocate: null this");
 
 	int i = 0;
 	int j = 0;
 	int aux = 0;
 
-	u8 cols = Texture_getTotalCols(texture);
-	u8 rows = Texture_getTotalRows(texture);
+	u8 cols = Texture_getTotalCols(__UPCAST(Texture, bTexture));
+	u8 rows = Texture_getTotalRows(__UPCAST(Texture, bTexture));
 	
 	cols += cols < 64? 1: 0;
 	rows += rows < 64? 1: 0;
@@ -159,7 +161,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 	u16 area = rows * cols;
 
 	//if texture already defined, don't allocate
-	if (Texture_getNumberOfChars(texture))
+	if (Texture_getNumberOfChars(__UPCAST(Texture, bTexture)))
 	{
 		for (i = 0; i < this->availableBgmapSegments; i++)
 		{
@@ -188,7 +190,7 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 						{
 							if (cols <= 64 - this->xOffset[i][j])
 							{
-								u16 id = Texture_getId(texture);
+								u16 id = Texture_getId(__UPCAST(Texture, bTexture));
 
 								//registry bgmap definition
 								this->offset[id][kXOffset] = this->xOffset[i][j];
@@ -243,11 +245,11 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 		}
 
 		//throw an exception if there is no enough space to allocate the bgmap definition
-		NM_ASSERT(false, "TextureManager::allocate: bgmap segments depleted");
+		NM_ASSERT(false, "BTextureManager::allocate: bgmap segments depleted");
 	}
 
 	//through exception if texture has 0 chars
-	ASSERT(false, "TextureManager::allocate: map has 0 chars");
+	ASSERT(false, "BTextureManager::allocate: map has 0 chars");
 
 	return false;
 }
@@ -255,15 +257,15 @@ static int TextureManager_allocate(TextureManager this, Texture texture)
 // retrieve free bgmap segment number
 // allocate bgmap text boxes
 // this bgmap segment is handled as one only bgmap defined inside so, only
-// TextureManager.xOffset[textbgmap][0] is used
-void TextureManager_allocateText(TextureManager this, Texture texture)
+// BTextureManager.xOffset[textbgmap][0] is used
+void BTextureManager_allocateText(BTextureManager this, BTexture bTexture)
 {
-	ASSERT(this, "TextureManager::allocateText: null this");
+	ASSERT(this, "BTextureManager::allocateText: null this");
 
 	int xDisplacement = 0;
 	int yDisplacement = 0;
 
-	u8 length = Texture_getCols(texture);
+	u8 length = Texture_getCols(__UPCAST(Texture, bTexture));
 
 	//if there is space in the first row
 	//calculate y displacement
@@ -285,21 +287,21 @@ void TextureManager_allocateText(TextureManager this, Texture texture)
 	//Texture_setBgmapSegment(texture, this->freeBgmapSegment);
 
 	//if there are no more rows in the segment... thrown and exception
-	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 4096, "TextureManager::allocateText: mem depleted (TextBox)");
+	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 4096, "BTextureManager::allocateText: mem depleted (TextBox)");
 }
 
 // deallocate texture from bgmap graphic memory
-void TextureManager_free(TextureManager this, Texture texture)
+void BTextureManager_free(BTextureManager this, BTexture bTexture)
 {
-	ASSERT(this, "TextureManager::free: null this");
+	ASSERT(this, "BTextureManager::free: null this");
 
 	// if no one is using the texture anymore
-	if (texture && !(--this->textureUsageCount[Texture_getId(texture)]))
+	if (bTexture && !(--this->textureUsageCount[Texture_getId(__UPCAST(Texture, bTexture))]))
 	{
-		int allocationType = CharSet_getAllocationType(Texture_getCharSet(texture));
+		int allocationType = CharSet_getAllocationType(Texture_getCharSet(__UPCAST(Texture, bTexture)));
 
 		// free char memory
-		Texture_freeCharMemory(texture);
+		Texture_freeCharMemory(__UPCAST(Texture, bTexture));
 
 		//determine the allocation type
 		switch (allocationType)
@@ -311,11 +313,11 @@ void TextureManager_free(TextureManager this, Texture texture)
 					// try to find a texture with the same bgmap definition
 					for (; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 					{
-						if (this->texture[i] == texture)
+						if (this->bTexture[i] == bTexture)
 						{
-							this->textureUsageCount[Texture_getId(texture)] = 0;
-							this->texture[i] = NULL;
-							__DELETE(texture);
+							this->textureUsageCount[Texture_getId(__UPCAST(Texture, bTexture))] = 0;
+							this->bTexture[i] = NULL;
+							__DELETE(bTexture);
 							break;
 						}
 					}
@@ -326,19 +328,19 @@ void TextureManager_free(TextureManager this, Texture texture)
 }
 
 // retrieve a texture previuosly loaded
-static Texture TextureManager_findTexture(TextureManager this, TextureDefinition* textureDefinition)
+static BTexture BTextureManager_findTexture(BTextureManager this, BTextureDefinition* bTextureDefinition)
 {
-	ASSERT(this, "TextureManager::findTexture: null this");
+	ASSERT(this, "BTextureManager::findTexture: null this");
 
 	int i = 0;
 
 	// try to find a texture with the same bgmap definition
 	for (; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if (this->texture[i] && Texture_getBgmapDefinition(this->texture[i]) == textureDefinition->bgmapDefinition)
+		if (this->bTexture[i] && Texture_getBgmapDefinition(__UPCAST(Texture, this->bTexture[i])) == bTextureDefinition->bgmapDefinition)
 		{
 			// return if found
-			return this->texture[i];
+			return this->bTexture[i];
 		}
 	}
 
@@ -346,30 +348,30 @@ static Texture TextureManager_findTexture(TextureManager this, TextureDefinition
 }
 
 // load a texture
-static Texture TextureManager_writeTexture(TextureManager this, TextureDefinition* textureDefinition, int isPreload)
+static BTexture BTextureManager_writeTexture(BTextureManager this, BTextureDefinition* bTextureDefinition, int isPreload)
 {
-	ASSERT(this, "TextureManager::writeTexture: null this");
+	ASSERT(this, "BTextureManager::writeTexture: null this");
 
 	int i = 0;
 
 	// find and empty slot
 	for (; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if (!this->texture[i])
+		if (!this->bTexture[i])
 		{
 			// create new texture and register it
-			this->texture[i] = __NEW(Texture, textureDefinition, i);
+			this->bTexture[i] = __NEW(BTexture, bTextureDefinition, i);
 
 			//if not, then allocate
-			TextureManager_allocate(this, this->texture[i]);
+			BTextureManager_allocate(this, this->bTexture[i]);
 
 			// write texture to graphic memory
-			Texture_write(this->texture[i]);
+			BTexture_write(this->bTexture[i]);
 
 			// set texture usage
 			this->textureUsageCount[i] = isPreload ? 0 : 1;
 
-			return this->texture[i];
+			return this->bTexture[i];
 		}
 	}
 
@@ -377,122 +379,122 @@ static Texture TextureManager_writeTexture(TextureManager this, TextureDefinitio
 }
 
 // load and retrieve a texture
-Texture TextureManager_loadTexture(TextureManager this, TextureDefinition* textureDefinition, int isPreload)
+BTexture BTextureManager_loadTexture(BTextureManager this, BTextureDefinition* bTextureDefinition, int isPreload)
 {
-	ASSERT(this, "TextureManager::loadTexture: null this");
+	ASSERT(this, "BTextureManager::loadTexture: null this");
 
-	Texture texture = NULL;
+	BTexture bTexture = NULL;
 
 	//determine the allocation type
-	switch (textureDefinition->charSetDefinition.allocationType)
+	switch (bTextureDefinition->charSetDefinition.allocationType)
 	{
 		case __ANIMATED:
 
 			// load a new texture
-			texture = TextureManager_writeTexture(this, textureDefinition, false);
+			bTexture = BTextureManager_writeTexture(this, bTextureDefinition, false);
 
-			ASSERT(texture, "TextureManager::get: (animated) texture no allocated");
+			ASSERT(bTexture, "BTextureManager::get: (animated) texture no allocated");
 			break;
 
 		case __ANIMATED_SHARED:
 		case __NO_ANIMATED:
 
 			// first try to find an already created texture
-			texture = TextureManager_findTexture(this, textureDefinition);
+			bTexture = BTextureManager_findTexture(this, bTextureDefinition);
 
 			// if couldn't find the texture
-			if (!texture)
+			if (!bTexture)
 			{
 				// load it
-				texture = TextureManager_writeTexture(this, textureDefinition, isPreload);
+				bTexture = BTextureManager_writeTexture(this, bTextureDefinition, isPreload);
 			}
 			else
 			{
 				// if no using texture yet
-				if (!this->textureUsageCount[Texture_getId(texture)])
+				if (!this->textureUsageCount[Texture_getId(__UPCAST(Texture, bTexture))])
 				{
 					// write texture to graphic memory
-					Texture_write(texture);
+					BTexture_write(bTexture);
 				}
 
 				// increase texture usage count
-				this->textureUsageCount[Texture_getId(texture)]++;
+				this->textureUsageCount[Texture_getId(__UPCAST(Texture, bTexture))]++;
 			}
 
-			ASSERT(texture, "TextureManager::get: (shared) texture no allocated");
+			ASSERT(bTexture, "BTextureManager::get: (shared) texture no allocated");
 			break;
 	}
 
-	return texture;
+	return bTexture;
 }
 
 // load and retrieve a texture
-Texture TextureManager_get(TextureManager this, TextureDefinition* textureDefinition)
+BTexture BTextureManager_get(BTextureManager this, BTextureDefinition* bTextureDefinition)
 {
-	ASSERT(this, "TextureManager::get: null this");
+	ASSERT(this, "BTextureManager::get: null this");
 
-	return textureDefinition? TextureManager_loadTexture(this, textureDefinition, false): NULL;
+	return bTextureDefinition? BTextureManager_loadTexture(this, bTextureDefinition, false): NULL;
 }
 
 // retrieve x offset
-s8 TextureManager_getXOffset(TextureManager this, int id)
+s8 BTextureManager_getXOffset(BTextureManager this, int id)
 {
-	ASSERT(this, "TextureManager::getXOffset: null this");
+	ASSERT(this, "BTextureManager::getXOffset: null this");
 
 	return this->offset[id][kXOffset];
 }
 
 // retrieve y offset
-s8 TextureManager_getYOffset(TextureManager this, int id)
+s8 BTextureManager_getYOffset(BTextureManager this, int id)
 {
-	ASSERT(this, "TextureManager::getYOffset: null this");
+	ASSERT(this, "BTextureManager::getYOffset: null this");
 
 	return this->offset[id][kYOffset];
 }
 
 // retrieve bgmap segment
-u8 TextureManager_getBgmapSegment(TextureManager this, int id)
+u8 BTextureManager_getBgmapSegment(BTextureManager this, int id)
 {
-	ASSERT(this, "TextureManager::getBgmapSegment: null this");
+	ASSERT(this, "BTextureManager::getBgmapSegment: null this");
 
 	return this->offset[id][kBgmapSegment];
 }
 
 // retrieve available bgmap segments
-u8 TextureManager_getAvailableBgmapSegments(TextureManager this)
+u8 BTextureManager_getAvailableBgmapSegments(BTextureManager this)
 {
-	ASSERT(this, "TextureManager::print: null this");
+	ASSERT(this, "BTextureManager::print: null this");
 	
 	return this->availableBgmapSegments;
 }
 
 // retrieve available bgmap segments
-u8 TextureManager_getPrintingBgmapSegment(TextureManager this)
+u8 BTextureManager_getPrintingBgmapSegment(BTextureManager this)
 {
-	ASSERT(this, "TextureManager::print: null this");
+	ASSERT(this, "BTextureManager::print: null this");
 	
 	return this->freeBgmapSegment + __NUMBER_OF_BGMAPS_SEGMENTS_ROOM;
 }
 
 // calculate the available bgmap segments based on usage
-void TextureManager_calculateAvailableBgmapSegments(TextureManager this)
+void BTextureManager_calculateAvailableBgmapSegments(BTextureManager this)
 {
 	this->availableBgmapSegments = this->freeBgmapSegment + __NUMBER_OF_BGMAPS_SEGMENTS_ROOM;
 }
 
 // set the available bgmap segments based to maximum defined
-void TextureManager_resetAvailableBgmapSegments(TextureManager this)
+void BTextureManager_resetAvailableBgmapSegments(BTextureManager this)
 {
 	this->availableBgmapSegments = __MAX_NUMBER_OF_BGMAPS_SEGMENTS;
 }
 
 // print status
-void TextureManager_print(TextureManager this, int x, int y)
+void BTextureManager_print(BTextureManager this, int x, int y)
 {
-	ASSERT(this, "TextureManager::print: null this");
+	ASSERT(this, "BTextureManager::print: null this");
 
 	int textureCount = 0;
-	for (;this->texture[textureCount] && textureCount < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; textureCount++);
+	for (;this->bTexture[textureCount] && textureCount < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; textureCount++);
 
 	Printing_text(Printing_getInstance(), "TEXTURES", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Texture count: ", x, ++y, NULL);

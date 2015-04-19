@@ -33,7 +33,7 @@
 #include <MiscStructs.h>
 #include <FrameRate.h>
 #include <Clock.h>
-#include <TextureManager.h>
+#include <BTextureManager.h>
 #include <GameState.h>
 #include <MessageDispatcher.h>
 #include <Stage.h>
@@ -97,7 +97,7 @@ enum StateOperations
 	/* managers */																\
 	HardwareManager hardwareManager;											\
 	FrameRate frameRate;														\
-	TextureManager bgmapManager;												\
+	BTextureManager bTextureManager;												\
 	CharSetManager charSetManager;												\
 	SoundManager soundManager;													\
 	ParamTableManager paramTableManager;										\
@@ -200,7 +200,7 @@ static void Game_constructor(Game this)
 	// make sure all managers are initialized now
 	this->frameRate  = FrameRate_getInstance();
 	this->hardwareManager = HardwareManager_getInstance();
-	this->bgmapManager = TextureManager_getInstance();
+	this->bTextureManager = BTextureManager_getInstance();
 	this->paramTableManager =  ParamTableManager_getInstance();
 	this->charSetManager = CharSetManager_getInstance();
 	this->soundManager = SoundManager_getInstance();
@@ -429,7 +429,7 @@ void Game_reset(Game this)
 
 	// reset managers
 	CharSetManager_reset(this->charSetManager);
-	TextureManager_reset(this->bgmapManager);
+	BTextureManager_reset(this->bTextureManager);
 	ParamTableManager_reset(this->paramTableManager);
 	SpriteManager_reset(this->spriteManager);
 	MBackgroundManager_reset(MBackgroundManager_getInstance());

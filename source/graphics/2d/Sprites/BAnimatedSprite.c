@@ -63,8 +63,8 @@ static void BAnimatedSprite_constructor(BAnimatedSprite this, const SpriteDefini
 	this->animationController = __NEW(AnimationController, owner);
 	
 	// since the offset will be moved during animation, must save it
-	this->originalTextureSource.mx = abs(Texture_getXOffset(this->texture)) << 3;
-	this->originalTextureSource.my = abs(Texture_getYOffset(this->texture)) << 3;
+	this->originalTextureSource.mx = abs(BTexture_getXOffset(this->texture)) << 3;
+	this->originalTextureSource.my = abs(BTexture_getYOffset(this->texture)) << 3;
 }
 
 //destructor

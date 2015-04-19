@@ -72,15 +72,15 @@ void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinitio
 	__CONSTRUCT_BASE();
 
 	// create the texture
-	this->texture = TextureManager_get(TextureManager_getInstance(), bSpriteDefinition->textureDefinition);
+	this->texture = BTextureManager_get(BTextureManager_getInstance(), bSpriteDefinition->textureDefinition);
 
 	if(this->texture)
 	{
 		Object_addEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = Texture_getXOffset(this->texture) << 3;
-		this->drawSpec.textureSource.my = Texture_getYOffset(this->texture) << 3;
+		this->drawSpec.textureSource.mx = BTexture_getXOffset(this->texture) << 3;
+		this->drawSpec.textureSource.my = BTexture_getYOffset(this->texture) << 3;
 		this->drawSpec.textureSource.mp = 0;
 	}
 	else
@@ -151,7 +151,7 @@ void BSprite_destructor(BSprite this)
 	if(this->texture)
 	{
 		Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
-		TextureManager_free(TextureManager_getInstance(), this->texture);
+		BTextureManager_free(BTextureManager_getInstance(), this->texture);
 		this->texture = NULL;
 	}
 	
@@ -310,7 +310,7 @@ void BSprite_render(BSprite this)
 			}
 
 			// make sure to not render again
-			worldPointer->head = this->head | Texture_getBgmapSegment(this->texture);
+			worldPointer->head = this->head | BTexture_getBgmapSegment(this->texture);
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
 		}

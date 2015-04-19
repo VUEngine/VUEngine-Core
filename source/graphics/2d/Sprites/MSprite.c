@@ -112,7 +112,7 @@ static void MSprite_releaseTextures(MSprite this)
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			// free the texture
-			TextureManager_free(TextureManager_getInstance(), __UPCAST(Texture, VirtualNode_getData(node)));
+			BTextureManager_free(BTextureManager_getInstance(), __UPCAST(BTexture, VirtualNode_getData(node)));
 		}
 		
 		__DELETE(this->textures);
@@ -151,13 +151,13 @@ static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefiniti
 
 	if (textureDefinition)
 	{
-		Texture texture = TextureManager_get(TextureManager_getInstance(), textureDefinition);
+		BTexture bTexture = BTextureManager_get(BTextureManager_getInstance(), textureDefinition);
 		
-		ASSERT(texture, "MSprite::loadTexture: texture not loaded");
+		ASSERT(bTexture, "MSprite::loadTexture: texture not loaded");
 		
-		if(texture && this->textures)
+		if(bTexture && this->textures)
 		{
-			VirtualList_pushBack(this->textures, texture);
+			VirtualList_pushBack(this->textures, bTexture);
 		}
 	}
 }
@@ -210,7 +210,7 @@ void MSprite_synchronizePosition(MSprite this, VBVec3D position3D)
 	
 	this->renderFlag |= __UPDATE_M;
 
-	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? Texture_getYOffset(this->texture) << 3: 0;
+	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BTexture_getYOffset(this->texture) << 3: 0;
 }
 
 // calculate the size multiplier

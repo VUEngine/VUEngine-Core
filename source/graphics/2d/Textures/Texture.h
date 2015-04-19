@@ -42,10 +42,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Texture_METHODS															\
-		Object_METHODS															\
+	Object_METHODS																\
+	__VIRTUAL_DEC(write);														\
 
 #define Texture_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
+	Object_SET_VTABLE(ClassName)												\
+	__VIRTUAL_SET(ClassName, Texture, write);									\
 
 #define Texture_ATTRIBUTES														\
 																				\
@@ -105,8 +107,7 @@ typedef const TextureDefinition TextureROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Texture, TextureDefinition* textureDefinition, u16 id);
-
+void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id);
 void Texture_destructor(Texture this);
 void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition);
 TextureDefinition* Texture_getDefinition(Texture this);
@@ -115,12 +116,9 @@ void Texture_write(Texture this);
 void Texture_rewrite(Texture this);
 void Texture_writeHBiasMode(Texture this);
 int Texture_getNumberOfChars(Texture this);
-u8 Texture_getXOffset(Texture this);
-u8 Texture_getYOffset(Texture this);
 TextureDefinition* Texture_getTextureDefinition(Texture this);
 u8 Texture_getTotalCols(Texture this);
 u8 Texture_getTotalRows(Texture this);
-u8 Texture_getBgmapSegment(Texture this);
 u8 Texture_getNumberOfFrames(Texture this);
 CharSet Texture_getCharSet(Texture this);
 BYTE* Texture_getBgmapDefinition(Texture this);
