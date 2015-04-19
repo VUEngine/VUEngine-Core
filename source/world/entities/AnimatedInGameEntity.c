@@ -25,7 +25,6 @@
 
 #include <AnimatedInGameEntity.h>
 #include <Clock.h>
-#include <AnimatedSprite.h>
 #include <MessageDispatcher.h>
 #include <CollisionManager.h>
 #include <Optics.h>
@@ -104,6 +103,9 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 // initialize method
 void AnimatedInGameEntity_initialize(AnimatedInGameEntity this)
 {
+	ASSERT(this, "AnimatedInGameEntity::initialize: null this");
+	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::initialize: null animatedInGameEntityDefinition");
+
 	Entity_initialize(__UPCAST(Entity, this));
 
 	AnimatedInGameEntity_addListeners(this);
@@ -199,7 +201,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 	for (; node ; node = VirtualNode_getNext(node))
 	{
 		// first animate the frame
-		AnimatedSprite_update(__UPCAST(AnimatedSprite, VirtualNode_getData(node)), this->clock);
+		Sprite_update(__UPCAST(Sprite, VirtualNode_getData(node)), this->clock);
 	}
 }
 
@@ -212,10 +214,9 @@ Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this)
 	Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
 	// get sprite's scale
-	Scale scale = Sprite_getScale(sprite);
+	Scale scale = __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite);
 
 	// change direction
-//	scale.x = fabsf(scale.x) * this->direction.x;
 	scale.x = abs((int)scale.x) * this->direction.x;
 
 	return scale;
@@ -234,7 +235,7 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			AnimatedSprite_pause(__UPCAST(AnimatedSprite, VirtualNode_getData(node)), pause);
+			Sprite_pause(__UPCAST(Sprite, VirtualNode_getData(node)), pause);
 		}
 	}
 }
@@ -253,7 +254,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			AnimatedSprite_play(__UPCAST(AnimatedSprite, VirtualNode_getData(node)), this->animationDescription, animationName);
+			Sprite_play(__UPCAST(Sprite, VirtualNode_getData(node)), this->animationDescription, animationName);
 		}
 	}
 }
@@ -264,9 +265,7 @@ bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::isPlayingAnimation: null sprites");
 
-	AnimatedSprite sprite = __UPCAST(AnimatedSprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
-
-	return AnimatedSprite_isPlaying(sprite);
+	return Sprite_isPlaying(__UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
 }
 
 // is animation selected
@@ -278,9 +277,9 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
-		return AnimatedSprite_isPlayingFunction(__UPCAST(AnimatedSprite, sprite), this->animationDescription, functionName);
+		return Sprite_isPlayingFunction(__UPCAST(Sprite, sprite), this->animationDescription, functionName);
 	}
-	
+
 	return false;
 }
 

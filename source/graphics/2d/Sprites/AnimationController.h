@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef ANIMATEDSPRITE_H_
-#define ANIMATEDSPRITE_H_
+#ifndef ANIMATION_CONTROLLER_H_
+#define ANIMATION_CONTROLLER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Sprite.h>
+#include <Object.h>
 #include <Clock.h>
 
 
@@ -53,23 +53,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimatedSprite_METHODS													\
-		Sprite_METHODS															\
+#define AnimationController_METHODS												\
 
 // declare the virtual methods which are redefined
-#define AnimatedSprite_SET_VTABLE(ClassName)									\
-		Sprite_SET_VTABLE(ClassName)											\
+#define AnimationController_SET_VTABLE(CsName)									\
 
-#define AnimatedSprite_ATTRIBUTES												\
+#define AnimationController_ATTRIBUTES											\
 																				\
 	/* super's attributes */													\
-	Sprite_ATTRIBUTES;															\
+	Object_ATTRIBUTES;															\
 																				\
 	/* who owns the animated sprite */											\
 	Object owner;																\
-																				\
-	/* bgmap's source coordinates */											\
-	TextureSource originalTextureSource;										\
 																				\
 	/* actual animation's frame to show */										\
 	s8 actualFrame;																\
@@ -86,14 +81,11 @@
 	/* a pointer to the animation function being played */						\
 	AnimationFunction* animationFunction;										\
 																				\
-	/* flag to project 3d to 2d position if needed */							\
-	int calculatePositionFlag: 1;												\
-																				\
 	/* flag to know if playing an animation */									\
 	int playing: 1;																\
 
 // declare a Sprite, which holds a texture and a drawing specification
-__CLASS(AnimatedSprite);
+__CLASS(AnimationController);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -140,33 +132,32 @@ typedef const AnimationDescription AnimationDescriptionROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(AnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
+__CLASS_NEW_DECLARE(AnimationController, Object owner);
 
-void AnimatedSprite_destructor(AnimatedSprite this);
-int AnimatedSprite_getType(AnimatedSprite this);
-Texture AnimatedSprite_getTexture(AnimatedSprite this);
-void AnimatedSprite_writeAnimation(AnimatedSprite this);
-void AnimatedSprite_setCalculatePositionFlag(AnimatedSprite this, int calculatePositionFlag);
-s8 AnimatedSprite_getActualFrame(AnimatedSprite this);
-s8 AnimatedSprite_getPreviousFrame(AnimatedSprite this);
-void AnimatedSprite_setActualFrame(AnimatedSprite this, s8 actualFrame);
-void AnimatedSprite_setPreviousFrame(AnimatedSprite this, s8 previousFrame);
-s8 AnimatedSprite_getFrameDelay(AnimatedSprite this);
-void AnimatedSprite_setFrameDelay(AnimatedSprite this, u8 frameDelay);
-u8 AnimatedSprite_geFrameDelayDelta(AnimatedSprite this);
-void AnimatedSprite_setFrameDelayDelta(AnimatedSprite this, u8 frameDelayDelta);
-void AnimatedSprite_animate(AnimatedSprite this);
-void AnimatedSprite_fx(AnimatedSprite this);
-void AnimatedSprite_update(AnimatedSprite this, Clock clock);
-u8 AnimatedSprite_getRows(AnimatedSprite this);
-u8 AnimatedSprite_getCols(AnimatedSprite this);
-int AnimatedSprite_getMapType(AnimatedSprite this);
-void AnimatedSprite_playAnimationFunction(AnimatedSprite this, AnimationFunction* animationFunction);
-void AnimatedSprite_play(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
-bool AnimatedSprite_isPlayingFunction(AnimatedSprite this, AnimationDescription* animationDescription, char* functionName);
-bool AnimatedSprite_isPlaying(AnimatedSprite this);
-void AnimatedSprite_write(AnimatedSprite this);
-void AnimatedSprite_pause(AnimatedSprite this, int pause);
+void AnimationController_constructor(AnimationController this, Object owner);
+void AnimationController_destructor(AnimationController this);
+void AnimationController_writeAnimation(AnimationController this);
+s8 AnimationController_getActualFrameIndex(AnimationController this);
+s8 AnimationController_getActualFrame(AnimationController this);
+s8 AnimationController_getPreviousFrame(AnimationController this);
+void AnimationController_setActualFrame(AnimationController this, s8 actualFrame);
+void AnimationController_setPreviousFrame(AnimationController this, s8 previousFrame);
+s8 AnimationController_getFrameDelay(AnimationController this);
+void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay);
+u8 AnimationController_geFrameDelayDelta(AnimationController this);
+void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDelayDelta);
+bool AnimationController_animate(AnimationController this);
+void AnimationController_fx(AnimationController this);
+bool AnimationController_update(AnimationController this, Clock clock);
+u8 AnimationController_getRows(AnimationController this);
+u8 AnimationController_getCols(AnimationController this);
+int AnimationController_getMapType(AnimationController this);
+void AnimationController_playAnimationFunction(AnimationController this, AnimationFunction* animationFunction);
+void AnimationController_play(AnimationController this, AnimationDescription* animationDescription, char* functionName);
+bool AnimationController_isPlayingFunction(AnimationController this, AnimationDescription* animationDescription, char* functionName);
+bool AnimationController_isPlaying(AnimationController this);
+void AnimationController_write(AnimationController this);
+void AnimationController_pause(AnimationController this, bool pause);
 
 
 #endif

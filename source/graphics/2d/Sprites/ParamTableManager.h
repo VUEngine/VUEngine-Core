@@ -18,83 +18,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+#ifndef PARAMTABLE_H_
+#define PARAMTABLE_H_
+
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Image.h>
+#include <Object.h>
+#include <BSprite.h>
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#define __PARAM_TABLE_PADDING	1
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+// declare the virtual methods
+#define ParamTableManager_METHODS												\
+		Object_METHODS															\
+
+// declare the virtual methods which are redefined
+#define ParamTableManager_SET_VTABLE(ClassName)									\
+		Object_SET_VTABLE(ClassName)											\
+
+// declare a Sprite, which holds a texture and a drawing specification
+__CLASS(ParamTableManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
+// 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaEAdjustmentScreenBGTiles[];
-extern BYTE VBJaEAdjustmentScreenBGMap[];
+ParamTableManager ParamTableManager_getInstance();
+
+void ParamTableManager_destructor(ParamTableManager this);
+void ParamTableManager_reset(ParamTableManager this);
+int ParamTableManager_allocate(ParamTableManager this, BSprite bsprite);
+void ParamTableManager_free(ParamTableManager this, BSprite bsprite);
+bool ParamTableManager_processRemovedSprites(ParamTableManager this);
+void ParamTableManager_print(ParamTableManager this,int x, int y);
 
 
-//---------------------------------------------------------------------------------------------------------
-// 												DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
-TextureROMDef VBJAENGINE_ADJUSTMENT_SCREEN_BG_TX =
-{
-    {
-        // number of chars, depending on allocation type:
-        // __ANIMATED: number of chars of a single animation frame (cols * rows of this texture)
-        // __ANIMATED_SHARED: sum of chars of all animation frames
-        // __NO_ANIMATED: number of chars of whole image
-        32,
-
-        // allocation type
-        __NO_ANIMATED,
-
-        // char definition
-        VBJaEAdjustmentScreenBGTiles,
-    },
-
-    // bgmap definition
-    VBJaEAdjustmentScreenBGMap,
-
-    // cols (max 64)
-    14,
-
-    // rows (max 64)
-    14,
-
-    // number of frames
-    1,
-
-    // palette number
-    0,
-};
-
-BSpriteROMDef VBJAENGINE_ADJUSTMENT_SCREEN_BG_IM_SPRITE =
-{
-	// sprite's type
-	__TYPE(BSprite),
-
-	// texture definition
-	(TextureDefinition*)&VBJAENGINE_ADJUSTMENT_SCREEN_BG_TX,
-	
-	// bgmap mode (BGMAP, AFFINE or H-BIAS)
-	WRLD_BGMAP,
-	
-	// display mode
-	WRLD_ON,
-
-	// parallax displacement
-	0		
-};
-
-BSpriteROMDef* const VBJAENGINE_ADJUSTMENT_SCREEN_BG_IM_SPRITES[] =
-{
-	&VBJAENGINE_ADJUSTMENT_SCREEN_BG_IM_SPRITE,
-	NULL
-};
-
-ImageROMDef VBJAENGINE_ADJUSTMENT_SCREEN_BG_IM =
-{
-	__TYPE(Image),
-	(BSpriteROMDef**)VBJAENGINE_ADJUSTMENT_SCREEN_BG_IM_SPRITES,
-};
+#endif

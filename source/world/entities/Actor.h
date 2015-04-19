@@ -27,7 +27,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimatedInGameEntity.h>
-#include <AnimatedSprite.h>
 #include <Body.h>
 #include <Clock.h>
 

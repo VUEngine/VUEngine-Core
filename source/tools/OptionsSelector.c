@@ -48,7 +48,6 @@
 #include <StateMachine.h>
 #include <Telegram.h>
 #include <VirtualList.h>
-#include <AnimatedSprite.h>
 #include <CharSet.h>
 #include <Sprite.h>
 #include <Texture.h>

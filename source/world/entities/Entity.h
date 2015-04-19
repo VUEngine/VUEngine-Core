@@ -30,7 +30,8 @@
 #include <Sprite.h>
 #include <StateMachine.h>
 #include <Telegram.h>
-
+// TODO: remove me
+#include <BSPrite.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

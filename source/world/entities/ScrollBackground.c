@@ -163,7 +163,7 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 static void ScrollBackground_updateScrolling(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::updateScrolling: null this");
-
+/*
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
 	DrawSpec drawSpec0 = Sprite_getDrawSpec(this->scrollSprites[kRightSprite]);
@@ -243,6 +243,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 
 	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);
 	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATE_G);
+	*/
 }
 
 // whether it is visible

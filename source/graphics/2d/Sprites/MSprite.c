@@ -24,11 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MSprite.h>
-#include <Game.h>
-#include <SpriteManager.h>
 #include <Optics.h>
-#include <ParamTableManager.h>
-#include <HardwareManager.h>
 #include <Screen.h>
 
 
@@ -44,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // define the MSprite
-__CLASS_DEFINITION(MSprite, Sprite);
+__CLASS_DEFINITION(MSprite, BSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,7 +70,7 @@ __CLASS_NEW_END(MSprite, mSpriteDefinition);
 // class's constructor
 void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition)
 {
-	__CONSTRUCT_BASE(&mSpriteDefinition->spriteDefinition);
+	__CONSTRUCT_BASE(&mSpriteDefinition->bSpriteDefinition);
 	
 	this->mSpriteDefinition = mSpriteDefinition;
 
@@ -167,7 +163,7 @@ static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefiniti
 }
 
 // set sprite's position
-void MSprite_setPosition(MSprite this, VBVec3D position3D)
+void MSprite_synchronizePosition(MSprite this, VBVec3D position3D)
 {
 	ASSERT(this, "MSprite::setPosition: null this");
 
@@ -195,7 +191,7 @@ void MSprite_setPosition(MSprite this, VBVec3D position3D)
 		this->drawSpec.position.z = position3D.z;
 
 		// calculate sprite's parallax
-		Sprite_calculateParallax(__UPCAST(Sprite, this), this->drawSpec.position.z);
+		__VIRTUAL_CALL(void, Sprite, calculateParallax, __UPCAST(Sprite, this), this->drawSpec.position.z);
 	}
 
 	const Point* const axisCapped = MSprite_capPosition(this);

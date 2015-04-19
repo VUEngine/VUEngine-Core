@@ -18,51 +18,90 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef PARAMTABLE_H_
-#define PARAMTABLE_H_
+#ifndef MSPRITE_H_
+#define MSPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
-#include <Sprite.h>
+#include <BSprite.h>
+
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+// 											 MACROS
 //---------------------------------------------------------------------------------------------------------
-
-#define __PARAM_TABLE_PADDING	1
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ParamTableManager_METHODS												\
-		Object_METHODS															\
+#define MSprite_METHODS															\
+	BSprite_METHODS																\
 
 // declare the virtual methods which are redefined
-#define ParamTableManager_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)											\
+#define MSprite_SET_VTABLE(ClassName)											\
+	BSprite_SET_VTABLE(ClassName)												\
+	__VIRTUAL_SET(ClassName, MSprite, synchronizePosition);						\
 
-// declare a Sprite, which holds a texture and a drawing specification
-__CLASS(ParamTableManager);
+#define MSprite_ATTRIBUTES														\
+																				\
+	/* super's attributes */													\
+	BSprite_ATTRIBUTES;															\
+																				\
+	/* this is our texture */													\
+	VirtualList textures;														\
+																				\
+	/* pinter to definition */													\
+	const MSpriteDefinition* mSpriteDefinition;									\
+																				\
+	/* total size of the bgmap, used for loop/not loop */						\
+	Point size;																	\
+																				\
+	/* fot total size of the bgmap calculation */								\
+	Point sizeMultiplier;																	\
+
+// declare a MSprite, which holds a texture and a drawing specification
+__CLASS(MSprite);
+
+
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S ROM DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+typedef struct MSpriteDefinition
+{
+	// the normal sprite definition
+	BSpriteDefinition bSpriteDefinition;
+	
+	// texture to use with the sprite
+	TextureDefinition** textureDefinitions;
+
+	// SCX/SCY value
+	u16 scValue;
+
+	// flag to loop the x axis
+	u8 xLoop;
+
+	// flag to loop the y axis
+	u8 yLoop;
+
+} MSpriteDefinition;
+
+typedef const MSpriteDefinition MSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-ParamTableManager ParamTableManager_getInstance();
+__CLASS_NEW_DECLARE(MSprite, const MSpriteDefinition* mSpriteDefinition);
 
-void ParamTableManager_destructor(ParamTableManager this);
-void ParamTableManager_reset(ParamTableManager this);
-int ParamTableManager_allocate(ParamTableManager this, Sprite sprite);
-void ParamTableManager_free(ParamTableManager this, Sprite sprite);
-bool ParamTableManager_processRemovedSprites(ParamTableManager this);
-void ParamTableManager_print(ParamTableManager this,int x, int y);
+void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
+void MSprite_destructor(MSprite this);
+void MSprite_synchronizePosition(MSprite this, VBVec3D position3D);
 
 
 #endif

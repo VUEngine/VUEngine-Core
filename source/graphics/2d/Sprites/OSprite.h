@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MSPRITE_H_
-#define MSPRITE_H_
+#ifndef OSPRITE_H_
+#define OSPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,40 +40,27 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MSprite_METHODS															\
+#define OSprite_METHODS															\
 	Sprite_METHODS																\
 
 // declare the virtual methods which are redefined
-#define MSprite_SET_VTABLE(ClassName)											\
-		Sprite_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, MSprite, setPosition);							\
+#define OSprite_SET_VTABLE(ClassName)											\
+	Sprite_SET_VTABLE(ClassName)												\
 
-#define MSprite_ATTRIBUTES														\
+#define OSprite_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
 	Sprite_ATTRIBUTES;															\
-																				\
-	/* this is our texture */													\
-	VirtualList textures;														\
-																				\
-	/* pinter to definition */													\
-	const MSpriteDefinition* mSpriteDefinition;									\
-																				\
-	/* total size of the bgmap, used for loop/not loop */						\
-	Point size;																	\
-																				\
-	/* fot total size of the bgmap calculation */								\
-	Point sizeMultiplier;																	\
 
-// declare a MSprite, which holds a texture and a drawing specification
-__CLASS(MSprite);
+// declare a OSprite, which holds a texture and a drawing specification
+__CLASS(OSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct MSpriteDefinition
+typedef struct OSpriteDefinition
 {
 	// the normal sprite definition
 	SpriteDefinition spriteDefinition;
@@ -81,29 +68,19 @@ typedef struct MSpriteDefinition
 	// texture to use with the sprite
 	TextureDefinition** textureDefinitions;
 
-	// SCX/SCY value
-	u16 scValue;
+} OSpriteDefinition;
 
-	// flag to loop the x axis
-	u8 xLoop;
-
-	// flag to loop the y axis
-	u8 yLoop;
-
-} MSpriteDefinition;
-
-typedef const MSpriteDefinition MSpriteROMDef;
+typedef const OSpriteDefinition OSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MSprite, const MSpriteDefinition* mSpriteDefinition);
+__CLASS_NEW_DECLARE(OSprite, const OSpriteDefinition* oSpriteDefinition);
 
-void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
-void MSprite_destructor(MSprite this);
-void MSprite_setPosition(MSprite this, VBVec3D position3D);
+void OSprite_constructor(OSprite this, const OSpriteDefinition* oSpriteDefinition);
+void OSprite_destructor(OSprite this);
 
 
 #endif

@@ -140,17 +140,17 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	for (; node; node = VirtualNode_getPrevious(node))
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
+		VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 
 		VirtualNode otherNode = VirtualNode_getPrevious(node);
 
 		if(otherNode)
 		{
 			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(otherNode));
-			DrawSpec otherDrawSpec = Sprite_getDrawSpec(otherSprite);
+			VBVec2D otherPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, otherSprite);
 	
 			// check if z positions are swaped
-			if (otherDrawSpec.position.z > drawSpec.position.z)
+			if (otherPosition.z > position.z)
 			{
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
@@ -185,17 +185,17 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 	for (; this->node; this->node = VirtualNode_getNext(this->node))
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(this->node));
-		DrawSpec drawSpec = Sprite_getDrawSpec(sprite);
+		VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 
 		this->otherNode = this->otherNode ? VirtualNode_getNext(this->otherNode) : VirtualNode_getNext(this->node);
 
 		for (; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
 		{
 			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(this->otherNode));
-			DrawSpec otherDrawSpec = Sprite_getDrawSpec(otherSprite);
+			VBVec2D otherPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, otherSprite);
 
 			// check if z positions are swaped
-			if (otherDrawSpec.position.z < drawSpec.position.z)
+			if (otherPosition.z < position.z)
 			{
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
@@ -209,8 +209,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(otherSprite, worldLayer1);
 
 				// render inmediately
-				Sprite_render(sprite);
-				Sprite_render(otherSprite);
+				__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, sprite));
+				__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, otherSprite));
 
 				// swap array entries
 				VirtualNode_swapData(this->node, this->otherNode);
@@ -351,7 +351,7 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processRemovedSprites:1 this->freeLayer >= this->freedLayer");
 
 				// render last position before using new layer
-				Sprite_render(sprite);
+				__VIRTUAL_CALL(void, Sprite, render, sprite);
 
 				// move the sprite to the freed layer
 				Sprite_setWorldLayer(sprite, this->freedLayer);
@@ -380,6 +380,14 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 	}
 }
 
+void Print_obj(s32 objectNumber, u16 header, u16 charNumber, u16 x, u16 y, u16 parallax)
+{
+	OAM[ objectNumber << 2] =		x;
+	OAM[(objectNumber << 2) + 1] =	(header & 0xC000) | (parallax & 0x3FFF);
+	OAM[(objectNumber << 2) + 2] =	y;
+	OAM[(objectNumber << 2) + 3] =	((header << 2) & 0xC000) | (charNumber & 0x7FF);
+}
+
 // set free layers off
 void SpriteManager_setLastLayer(SpriteManager this)
 {
@@ -403,6 +411,23 @@ void SpriteManager_setLastLayer(SpriteManager this)
 	
 	Printing_render(Printing_getInstance(), this->freeLayer);
 	
+/*
+	int i = 0;
+	for(; i < 10; i++)
+	{
+		Print_obj(i, 0xC000, 5 + i, i * 8, 224/2, 0);
+	}
+	WA[this->freeLayer - 1].head = WRLD_OBJ | WRLD_ON;
+	WA[this->freeLayer - 2].head = WRLD_OBJ | WRLD_ON;
+	WA[this->freeLayer - 3].head = WRLD_OBJ | WRLD_ON;
+	WA[this->freeLayer - 4].head = WRLD_OBJ | WRLD_ON;
+
+	VIP_REGS[SPT3] = 3;
+	VIP_REGS[SPT2] = 3;
+	VIP_REGS[SPT1] = 3;
+	VIP_REGS[SPT0] = 1;
+	*/
+	
 	if (0 < this->freeLayer)
 	{
 		WA[this->freeLayer - 1].head = WRLD_OFF;
@@ -424,7 +449,7 @@ void SpriteManager_render(SpriteManager this)
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
-		Sprite_render(__UPCAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, VirtualNode_getData(node)));
 	}
 
 	// sort layers
@@ -499,9 +524,9 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 */
 		Printing_text(Printing_getInstance(), "  : ", auxX, auxY, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX, auxY, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.x), auxX + 3, auxY, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.y), auxX + 8, auxY, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.z), auxX + 13, auxY, NULL);
+//		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.x), auxX + 3, auxY, NULL);
+//		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.y), auxX + 8, auxY, NULL);
+//		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.z), auxX + 13, auxY, NULL);
 
 		if (28 <= ++auxY)
 		{
