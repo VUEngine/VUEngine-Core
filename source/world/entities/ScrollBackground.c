@@ -99,15 +99,15 @@ void ScrollBackground_initialize(ScrollBackground this)
 
 	ScrollBackground_retrieveSprites(this);
 
-	Sprite sprite = this->scrollSprites[kRightSprite];
+	BSprite bSprite = this->scrollBSprites[kRightSprite];
 	
-	if(sprite)
+	if(bSprite)
 	{
-		Texture texture = Sprite_getTexture(sprite);
+		BTexture bTtexture = __UPCAST(BTexture, Sprite_getTexture(__UPCAST(Sprite, bSprite)));
 
-		if(texture)
+		if(bTtexture)
 		{
-			this->size.y = (u16)Texture_getRows(texture) << 3;
+			this->size.y = (u16)Texture_getRows(__UPCAST(Texture, bTtexture)) << 3;
 		}
 	}
 }
@@ -122,9 +122,9 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this)
 
 	for (; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
 	{
-		this->scrollSprites[i] = VirtualNode_getData(node);
+		this->scrollBSprites[i] = VirtualNode_getData(node);
 
-		ASSERT(__GET_CAST(Sprite, this->scrollSprites[i]), "ScrollBackground::constructor: no sprite added to list")
+		ASSERT(__GET_CAST(BSprite, this->scrollBSprites[i]), "ScrollBackground::constructor: no sprite added to list")
 	}
 }
 
@@ -163,10 +163,10 @@ void ScrollBackground_transform(ScrollBackground this, Transformation* environme
 static void ScrollBackground_updateScrolling(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::updateScrolling: null this");
-/*
+
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
-	DrawSpec drawSpec0 = Sprite_getDrawSpec(this->scrollSprites[kRightSprite]);
+	DrawSpec drawSpec0 = BSprite_getDrawSpec(this->scrollBSprites[kRightSprite]);
 	drawSpec0.position.z = this->transform.globalPosition.z;
 
 	DrawSpec drawSpec1 = drawSpec0;
@@ -231,19 +231,18 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	}
 
 	// now move the drawspec in order to render the texture in the center
-	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(this->scrollSprites[kLeftSprite])) << 2);
-	drawSpec0.position.parallax = drawSpec1.position.parallax = Sprite_getDrawSpec(this->scrollSprites[kLeftSprite]).position.parallax;
+	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(__UPCAST(Sprite, this->scrollBSprites[kLeftSprite]))) << 2);
+	drawSpec0.position.parallax = drawSpec1.position.parallax = BSprite_getDrawSpec(this->scrollBSprites[kLeftSprite]).position.parallax;
 
 	// set map's position
-	ASSERT(this->scrollSprites[kLeftSprite], "ScrollBackground::updateScrolling: null kLeftSprite sprite");
-	ASSERT(this->scrollSprites[kRightSprite], "ScrollBackground::updateScrolling: null kRightSprite sprite");
+	ASSERT(this->scrollBSprites[kLeftSprite], "ScrollBackground::updateScrolling: null kLeftSprite sprite");
+	ASSERT(this->scrollBSprites[kRightSprite], "ScrollBackground::updateScrolling: null kRightSprite sprite");
 
-	Sprite_setDrawSpec(this->scrollSprites[kRightSprite], &drawSpec0);
-	Sprite_setRenderFlag(this->scrollSprites[kRightSprite], __UPDATE_G);
+	BSprite_setDrawSpec(this->scrollBSprites[kRightSprite], &drawSpec0);
+	Sprite_setRenderFlag(__UPCAST(Sprite, this->scrollBSprites[kRightSprite]), __UPDATE_G);
 
-	Sprite_setDrawSpec(this->scrollSprites[kLeftSprite], &drawSpec1);
-	Sprite_setRenderFlag(this->scrollSprites[kLeftSprite], __UPDATE_G);
-	*/
+	BSprite_setDrawSpec(this->scrollBSprites[kLeftSprite], &drawSpec1);
+	Sprite_setRenderFlag(__UPCAST(Sprite, this->scrollBSprites[kLeftSprite]), __UPDATE_G);
 }
 
 // whether it is visible
@@ -272,7 +271,7 @@ void ScrollBackground_suspend(ScrollBackground this)
 
 	for (; i <= kRightSprite ; i++)
 	{
-		this->scrollSprites[i] = NULL;
+		this->scrollBSprites[i] = NULL;
 	}
 }
 
