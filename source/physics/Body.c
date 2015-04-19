@@ -58,7 +58,6 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 frictionForce);
 static void Body_setMovementType(Body this, int movementType, int axis);
 static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity);
-static u8 Body_isMovingInternal(Body this);
 static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovement, const Acceleration* const gravity);
 
 enum CollidingObjectIndexes
@@ -887,20 +886,6 @@ u8 Body_isMoving(Body this)
 	result |= ((int)FIX19_13TOI(this->velocity.x) || this->acceleration.x) ? __XAXIS : 0;
 	result |= ((int)FIX19_13TOI(this->velocity.y) || this->acceleration.y) ? __YAXIS : 0;
 	result |= ((int)FIX19_13TOI(this->velocity.z) || this->acceleration.z) ? __ZAXIS : 0;
-
-	return this->awake && this->active ? result : 0;
-}
-
-// is it moving?
-static u8 Body_isMovingInternal(Body this)
-{
-	ASSERT(this, "Body::isMovingInternal: null this");
-
-	int result = 0;
-
-	result |= (this->velocity.x) ? __XAXIS : 0;
-	result |= (this->velocity.y) ? __YAXIS : 0;
-	result |= (this->velocity.z) ? __ZAXIS : 0;
 
 	return this->awake && this->active ? result : 0;
 }

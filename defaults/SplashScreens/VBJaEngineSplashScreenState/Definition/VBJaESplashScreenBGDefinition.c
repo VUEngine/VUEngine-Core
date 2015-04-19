@@ -97,5 +97,5 @@ BSpriteROMDef* const VBJAENGINE_BG_SB_SPRITES[] =
 ScrollBackgroundROMDef VBJAENGINE_BG_SB =
 {
 	__TYPE(ScrollBackground),
-	(BSpriteROMDef**)VBJAENGINE_BG_SB_SPRITES,
+	(SpriteROMDef**)VBJAENGINE_BG_SB_SPRITES,
 };
