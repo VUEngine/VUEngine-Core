@@ -41,7 +41,7 @@
 #define VBJaEPrecautionScreenState_SET_VTABLE(ClassName)						\
 	SplashScreenState_SET_VTABLE(ClassName)								    	\
 	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, enter);				\
-	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, resume);				\
+	__VIRTUAL_SET(ClassName, VBJaEPrecautionScreenState, print);				\
 
 
 __CLASS(VBJaEPrecautionScreenState);

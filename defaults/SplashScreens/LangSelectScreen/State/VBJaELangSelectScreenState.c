@@ -22,8 +22,6 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <Game.h>
 #include <Screen.h>
 #include <Printing.h>
@@ -46,8 +44,6 @@ extern LangROMDef* __LANGUAGES[];
 
 static void VBJaELangSelectScreenState_destructor(VBJaELangSelectScreenState this);
 static void VBJaELangSelectScreenState_constructor(VBJaELangSelectScreenState this);
-static void VBJaELangSelectScreenState_enter(VBJaELangSelectScreenState this, void* owner);
-static void VBJaELangSelectScreenState_resume(VBJaELangSelectScreenState this, void* owner);
 static void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 releasedKey);
 static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this);
 
@@ -102,22 +98,6 @@ static void VBJaELangSelectScreenState_destructor(VBJaELangSelectScreenState thi
 	__SINGLETON_DESTROY;
 }
 
-// state's enter
-static void VBJaELangSelectScreenState_enter(VBJaELangSelectScreenState this, void* owner)
-{
-	SplashScreenState_enter(__UPCAST(SplashScreenState, this), owner);
-
-	VBJaELangSelectScreenState_print(this);
-}
-
-// state's resume
-static void VBJaELangSelectScreenState_resume(VBJaELangSelectScreenState this, void* owner)
-{
-	SplashScreenState_resume(__UPCAST(SplashScreenState, this), owner);
-	
-	VBJaELangSelectScreenState_print(this);
-}
-
 void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u16 releasedKey)
 {
 	if ((releasedKey & K_LU) || (releasedKey & K_RU))
@@ -138,11 +118,12 @@ void VBJaELangSelectScreenState_processInput(VBJaELangSelectScreenState this, u1
 static void VBJaELangSelectScreenState_print(VBJaELangSelectScreenState this)
 {
     char* strLanguageSelect = I18n_getText(I18n_getInstance(), __LANGUAGE_SELECT_SCREEN_TITLE);
+    Size size = Printing_getTextSize(Printing_getInstance(), strLanguageSelect, __LANGUAGE_SELECT_SCREEN_TITLE_FONT);
 
-    u8 strHeaderXPos = (48 - strlen(strLanguageSelect)) >> 1;
+    u8 strHeaderXPos = (__SCREEN_WIDTH >> 4) - (size.x >> 1);
 
     Printing_text(Printing_getInstance(), strLanguageSelect, strHeaderXPos, 8, __LANGUAGE_SELECT_SCREEN_TITLE_FONT);
 
-	OptionsSelector_showOptions(this->languageSelector, strHeaderXPos, 11);
+	OptionsSelector_showOptions(this->languageSelector, strHeaderXPos, 9 + size.y);
 }
 

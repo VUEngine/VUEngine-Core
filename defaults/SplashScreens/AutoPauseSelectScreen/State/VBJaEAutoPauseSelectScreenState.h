@@ -40,8 +40,7 @@
 // declare the virtual methods which are redefined
 #define VBJaEAutoPauseSelectScreenState_SET_VTABLE(ClassName)					\
 	SplashScreenState_SET_VTABLE(ClassName)										\
-	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, enter);			\
-	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, resume);			\
+	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, print);			\
 	__VIRTUAL_SET(ClassName, VBJaEAutoPauseSelectScreenState, processInput);	\
 
 

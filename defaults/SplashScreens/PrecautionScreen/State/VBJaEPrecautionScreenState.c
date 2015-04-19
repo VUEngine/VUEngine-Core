@@ -22,7 +22,6 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
 #include <Game.h>
 #include <Printing.h>
 #include <Screen.h>
@@ -39,7 +38,6 @@
 static void VBJaEPrecautionScreenState_destructor(VBJaEPrecautionScreenState this);
 static void VBJaEPrecautionScreenState_constructor(VBJaEPrecautionScreenState this);
 static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, void* owner);
-static void VBJaEPrecautionScreenState_resume(VBJaEPrecautionScreenState this, void* owner);
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this);
 
 
@@ -76,25 +74,22 @@ static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, vo
 {
     SplashScreenState_enter(__UPCAST(SplashScreenState, this), owner);
 
-    VBJaEPrecautionScreenState_print(this);
-
-	Screen_FXFadeIn(Screen_getInstance(), 16);
-
     // show this screen for at least (2) seconds, as defined by Nintendo in the official development manual
 	Clock_delay(Game_getClock(Game_getInstance()), __PRECAUTION_SCREEN_INITIAL_DELAY);
 }
 
-// state's resume
-static void VBJaEPrecautionScreenState_resume(VBJaEPrecautionScreenState this, void* owner)
-{
-    SplashScreenState_resume(__UPCAST(SplashScreenState, this), owner);
-
-    VBJaEPrecautionScreenState_print(this);
-}
 
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this)
 {
-    // TODO: Automatically center text
-    Printing_text(Printing_getInstance(), I18n_getText(I18n_getInstance(), __PRECAUTION_SCREEN_TEXT), 14, 10, __PRECAUTION_SCREEN_TEXT_FONT);
+    char* strPrecaution = I18n_getText(I18n_getInstance(), __PRECAUTION_SCREEN_TEXT);
+    Size size = Printing_getTextSize(Printing_getInstance(), strPrecaution, __PRECAUTION_SCREEN_TEXT_FONT);
+
+    Printing_text(
+        Printing_getInstance(),
+        strPrecaution,
+        (__SCREEN_WIDTH >> 4) - (size.x >> 1),
+        (__SCREEN_HEIGHT >> 4) - (size.y >> 1),
+        __PRECAUTION_SCREEN_TEXT_FONT
+    );
 }
 

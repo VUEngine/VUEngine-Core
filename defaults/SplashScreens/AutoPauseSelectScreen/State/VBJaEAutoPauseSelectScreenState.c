@@ -41,8 +41,6 @@
 
 static void VBJaEAutoPauseSelectScreenState_destructor(VBJaEAutoPauseSelectScreenState this);
 static void VBJaEAutoPauseSelectScreenState_constructor(VBJaEAutoPauseSelectScreenState this);
-static void VBJaEAutoPauseSelectScreenState_enter(VBJaEAutoPauseSelectScreenState this, void* owner);
-static void VBJaEAutoPauseSelectScreenState_resume(VBJaEAutoPauseSelectScreenState this, void* owner);
 static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this);
 static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelectScreenState this);
 static void VBJaEAutoPauseSelectScreenState_processInput(VBJaEAutoPauseSelectScreenState this, u16 releasedKey);
@@ -77,31 +75,18 @@ static void VBJaEAutoPauseSelectScreenState_destructor(VBJaEAutoPauseSelectScree
 	__SINGLETON_DESTROY;
 }
 
-// state's enter
-static void VBJaEAutoPauseSelectScreenState_enter(VBJaEAutoPauseSelectScreenState this, void* owner)
-{
-    SplashScreenState_enter(__UPCAST(SplashScreenState, this), owner);
-
-	VBJaEAutoPauseSelectScreenState_print(this);
-}
-
-// state's resume
-static void VBJaEAutoPauseSelectScreenState_resume(VBJaEAutoPauseSelectScreenState this, void* owner)
-{
-    SplashScreenState_resume(__UPCAST(SplashScreenState, this), owner);
-	
-	VBJaEAutoPauseSelectScreenState_print(this);
-}
-
 static void VBJaEAutoPauseSelectScreenState_print(VBJaEAutoPauseSelectScreenState this)
 {
     char* strAutomaticPause = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SELECT_SCREEN_TITLE);
     char* strAutomaticPauseExplanation = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION);
+    Size strAutomaticPauseSize = Printing_getTextSize(Printing_getInstance(), strAutomaticPause, __AUTO_PAUSE_SELECT_SCREEN_TITLE_FONT);
+    Size strAutomaticPauseExplanationSize = Printing_getTextSize(Printing_getInstance(), strAutomaticPauseExplanation, __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT);
 
-    u8 strHeaderXPos = (48 - strlen(strAutomaticPause)) >> 1;
+    u8 strHeaderXPos = (__SCREEN_WIDTH >> 4) - (strAutomaticPauseSize.x >> 1);
     Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 8, __AUTO_PAUSE_SELECT_SCREEN_TITLE_FONT);
 
-    Printing_text(Printing_getInstance(), strAutomaticPauseExplanation, 8, 11, __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT);
+    u8 strExplanationXPos = (__SCREEN_WIDTH >> 4) - (strAutomaticPauseExplanationSize.x >> 1);
+    Printing_text(Printing_getInstance(), strAutomaticPauseExplanation, strExplanationXPos, 9 + strAutomaticPauseSize.y, __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT);
 
     VBJaEAutoPauseSelectScreenState_renderSelection(this);
 }
@@ -112,6 +97,9 @@ static void VBJaEAutoPauseSelectScreenState_renderSelection(VBJaEAutoPauseSelect
     char* strOff = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SELECT_SCREEN_OFF);
 
     // get strings and determine lengths
+    // TODO: refactor to use Printing_getTextSize instead of strlen
+//    Size strOnSize = Printing_getTextSize(Printing_getInstance(), strOn, __AUTO_PAUSE_SELECT_SCREEN_ON_FONT);
+//    Size strOffSize = Printing_getTextSize(Printing_getInstance(), strOff, __AUTO_PAUSE_SELECT_SCREEN_OFF_FONT);
     u8 strOnLength = strlen(strOn);
     u8 strOffLength = strlen(strOff);
     u8 optionsGap = 3;

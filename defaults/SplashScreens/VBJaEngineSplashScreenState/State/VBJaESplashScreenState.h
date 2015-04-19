@@ -40,6 +40,7 @@
 // declare the virtual methods which are redefined
 #define VBJaESplashScreenState_SET_VTABLE(ClassName)							\
 	SplashScreenState_SET_VTABLE(ClassName)							    		\
+	__VIRTUAL_SET(ClassName, VBJaESplashScreenState, print);					\
 	__VIRTUAL_SET(ClassName, VBJaESplashScreenState, execute);					\
 
 

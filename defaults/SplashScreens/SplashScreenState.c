@@ -22,8 +22,6 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <Game.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
@@ -31,20 +29,10 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(SplashScreenState, GameState);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -73,6 +61,8 @@ void SplashScreenState_enter(SplashScreenState this, void* owner)
 	{
 		GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, false);
 	}
+
+    __VIRTUAL_CALL(void, SplashScreenState, print, this);
 	
 	Screen_FXFadeIn(Screen_getInstance(), 16);
 }
@@ -97,6 +87,8 @@ void SplashScreenState_exit(SplashScreenState this, void* owner)
 void SplashScreenState_resume(SplashScreenState this, void* owner)
 {
 	GameState_resume(__UPCAST(GameState, this), owner);
+
+	__VIRTUAL_CALL(void, SplashScreenState, print, this);
 	
 #ifdef __DEBUG_TOOLS
 	if (!Game_isExitingSpecialMode(Game_getInstance()))
@@ -110,7 +102,7 @@ void SplashScreenState_resume(SplashScreenState this, void* owner)
 	if (!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
-	
+
 	// make a fade in
 	Screen_FXFadeIn(Screen_getInstance(), 16 >> 1);
 
@@ -145,6 +137,10 @@ bool SplashScreenState_handleMessage(SplashScreenState this, void* owner, Telegr
 void SplashScreenState_processInput(SplashScreenState this, u16 releasedKey)
 {
 	Game_changeState(Game_getInstance(), this->nextState);
+}
+
+void SplashScreenState_print(SplashScreenState this)
+{
 }
 
 void SplashScreenState_setNextstate(SplashScreenState this, GameState nextState)

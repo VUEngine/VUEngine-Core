@@ -22,8 +22,6 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <Game.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
@@ -37,6 +35,7 @@
 
 static void VBJaEAdjustmentScreenState_destructor(VBJaEAdjustmentScreenState this);
 static void VBJaEAdjustmentScreenState_constructor(VBJaEAdjustmentScreenState this);
+static void VBJaEAdjustmentScreenState_print(VBJaEAdjustmentScreenState this);
 static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 releasedKey);
 
 
@@ -66,6 +65,10 @@ static void VBJaEAdjustmentScreenState_destructor(VBJaEAdjustmentScreenState thi
 {
 	// destroy base
 	__SINGLETON_DESTROY;
+}
+
+static void VBJaEAdjustmentScreenState_print(VBJaEAdjustmentScreenState this)
+{
 }
 
 static void VBJaEAdjustmentScreenState_processInput(VBJaEAdjustmentScreenState this, u16 releasedKey)
