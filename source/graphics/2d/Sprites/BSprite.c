@@ -71,6 +71,9 @@ void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinitio
 {
 	__CONSTRUCT_BASE();
 
+	// register with sprite manager
+	SpriteManager_addSprite(SpriteManager_getInstance(), this);
+
 	// create the texture
 	if(bSpriteDefinition->textureDefinition)
 	{
@@ -158,6 +161,9 @@ void BSprite_destructor(BSprite this)
 		this->texture = NULL;
 	}
 	
+	// remove from sprite manager
+	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
+
 	// destroy the super object
 	__DESTROY_BASE;
 }

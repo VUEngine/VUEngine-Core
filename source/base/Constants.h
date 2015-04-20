@@ -41,6 +41,15 @@
 #define __YAXIS 		0x02
 #define __ZAXIS 		0x04
 
+// direction
+#define __LEFT		 ((int)-1)
+#define __RIGHT		 ((int)1)
+#define __UP		 ((int)-1)
+#define __DOWN		 ((int)1)
+#define __NEAR		 ((int)-1)
+#define __FAR		 ((int)1)
+
+
 // messages
 enum MessagesTypes
 {

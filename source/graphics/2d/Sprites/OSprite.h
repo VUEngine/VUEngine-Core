@@ -46,12 +46,30 @@
 // declare the virtual methods which are redefined
 #define OSprite_SET_VTABLE(ClassName)											\
 	Sprite_SET_VTABLE(ClassName)												\
-
+	__VIRTUAL_SET(ClassName, OSprite, render);									\
+	__VIRTUAL_SET(ClassName, OSprite, getPosition);								\
+	__VIRTUAL_SET(ClassName, OSprite, setPosition);								\
+	__VIRTUAL_SET(ClassName, OSprite, synchronizePosition);						\
+	__VIRTUAL_SET(ClassName, OSprite, setDirection);							\
+	__VIRTUAL_SET(ClassName, OSprite, calculateParallax);						\
+	
 #define OSprite_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
 	Sprite_ATTRIBUTES;															\
-
+																				\
+	/* parent sprite */															\
+	OMegaSprite oMegaSprite;													\
+																				\
+	/* positioning */															\
+	VBVec2D position;															\
+																				\
+	/* object index */															\
+	int objectIndex;															\
+																				\
+	/* number of objects */														\
+	u8 totalObjects;															\
+	
 // declare a OSprite, which holds a texture and a drawing specification
 __CLASS(OSprite);
 
@@ -62,11 +80,20 @@ __CLASS(OSprite);
 
 typedef struct OSpriteDefinition
 {
-	// the normal sprite definition
-	SpriteDefinition spriteDefinition;
-	
+	// the class type
+	void* allocator;
+
 	// texture to use with the sprite
-	TextureDefinition** textureDefinitions;
+	TextureDefinition* textureDefinition;
+
+	// the display mode (BGMAP, AFFINE, H-BIAS)
+	u16 bgmapMode;
+
+	// flag to indicate in which display to show the bg texture
+	u16 display;
+
+	// parallax modifier to achieve better control over display
+	s8 parallaxDisplacement;
 
 } OSpriteDefinition;
 
@@ -81,6 +108,12 @@ __CLASS_NEW_DECLARE(OSprite, const OSpriteDefinition* oSpriteDefinition);
 
 void OSprite_constructor(OSprite this, const OSpriteDefinition* oSpriteDefinition);
 void OSprite_destructor(OSprite this);
-
+void OSprite_setDirection(OSprite this, int axis, int direction);
+VBVec2D OSprite_getPosition(OSprite this);
+void OSprite_setPosition(OSprite this, VBVec2D position);
+void OSprite_synchronizePosition(OSprite this, VBVec3D position3D);
+void OSprite_calculateParallax(OSprite this, fix19_13 z);
+void OSprite_render(OSprite this);
+int OSprite_getObjectIndex(OSprite this);
 
 #endif

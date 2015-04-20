@@ -62,9 +62,6 @@ void Sprite_constructor(Sprite this)
 	this->halfWidth = 0;
 	this->halfHeight = 0;
 	this->animationController = NULL;
-
-	// register with sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), this);
 }
 
 // class's destructor
@@ -81,9 +78,6 @@ void Sprite_destructor(Sprite this)
 		this->animationController = NULL;
 	}
 	
-	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
-
 	// destroy the super object
 	__DESTROY_BASE;
 }
@@ -94,7 +88,7 @@ Scale Sprite_getScale(Sprite this)
 
 	Scale scale =
 	{
-			1, 1
+			ITOFIX7_9(1), ITOFIX7_9(1)
 	};
 	
 	//  return the scale

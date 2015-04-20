@@ -380,14 +380,6 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 	}
 }
 
-void Print_obj(s32 objectNumber, u16 header, u16 charNumber, u16 x, u16 y, u16 parallax)
-{
-	OAM[ objectNumber << 2] =		x;
-	OAM[(objectNumber << 2) + 1] =	(header & 0xC000) | (parallax & 0x3FFF);
-	OAM[(objectNumber << 2) + 2] =	y;
-	OAM[(objectNumber << 2) + 3] =	((header << 2) & 0xC000) | (charNumber & 0x7FF);
-}
-
 // set free layers off
 void SpriteManager_setLastLayer(SpriteManager this)
 {
@@ -410,23 +402,6 @@ void SpriteManager_setLastLayer(SpriteManager this)
 	while (*_xpstts & XPBSYR);
 	
 	Printing_render(Printing_getInstance(), this->freeLayer);
-	
-/*
-	int i = 0;
-	for(; i < 10; i++)
-	{
-		Print_obj(i, 0xC000, 5 + i, i * 8, 224/2, 0);
-	}
-	WA[this->freeLayer - 1].head = WRLD_OBJ | WRLD_ON;
-	WA[this->freeLayer - 2].head = WRLD_OBJ | WRLD_ON;
-	WA[this->freeLayer - 3].head = WRLD_OBJ | WRLD_ON;
-	WA[this->freeLayer - 4].head = WRLD_OBJ | WRLD_ON;
-
-	VIP_REGS[SPT3] = 3;
-	VIP_REGS[SPT2] = 3;
-	VIP_REGS[SPT1] = 3;
-	VIP_REGS[SPT0] = 1;
-	*/
 	
 	if (0 < this->freeLayer)
 	{

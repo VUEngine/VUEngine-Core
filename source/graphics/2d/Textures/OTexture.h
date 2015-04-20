@@ -18,90 +18,67 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef M_SPRITE_H_
-#define M_SPRITE_H_
+#ifndef O_TEXTURE_H_
+#define O_TEXTURE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BSprite.h>
-
+#include <Texture.h>
+#include <CharSet.h>
+#include <Telegram.h>
 
 //---------------------------------------------------------------------------------------------------------
-// 											 MACROS
+// 												MACROS
 //---------------------------------------------------------------------------------------------------------
+
+#define __EVENT_TEXTURE_REWRITTEN				"textureRewritten"
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define MSprite_METHODS															\
-	BSprite_METHODS																\
+#define OTexture_METHODS														\
+	Texture_METHODS																\
 
-// declare the virtual methods which are redefined
-#define MSprite_SET_VTABLE(ClassName)											\
-	BSprite_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, MSprite, synchronizePosition);						\
+#define OTexture_SET_VTABLE(ClassName)											\
+	Texture_SET_VTABLE(ClassName)												\
+	__VIRTUAL_SET(ClassName, OTexture, write);									\
 
-#define MSprite_ATTRIBUTES														\
+#define OTexture_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
-	BSprite_ATTRIBUTES;															\
+	Texture_ATTRIBUTES;															\
 																				\
-	/* this is our texture */													\
-	VirtualList textures;														\
-																				\
-	/* pinter to definition */													\
-	const MSpriteDefinition* mSpriteDefinition;									\
-																				\
-	/* total size of the bgmap, used for loop/not loop */						\
-	Point size;																	\
-																				\
-	/* fot total size of the bgmap calculation */								\
-	Point sizeMultiplier;																	\
+	/* object index */															\
+	int objectIndex;															\
 
-// declare a MSprite, which holds a texture and a drawing specification
-__CLASS(MSprite);
+// A texture which has the logic to be allocated in graphic memory
+__CLASS(OTexture);
+
+//use a OTexture when you want to show a static background or a character that must be scaled according
+//its deep on the screen so there exists consistency between the deep and the size of the character
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct MSpriteDefinition
-{
-	// the normal sprite definition
-	BSpriteDefinition bSpriteDefinition;
-	
-	// texture to use with the sprite
-	TextureDefinition** textureDefinitions;
-
-	// SCX/SCY value
-	u16 scValue;
-
-	// flag to loop the x axis
-	u8 xLoop;
-
-	// flag to loop the y axis
-	u8 yLoop;
-
-} MSpriteDefinition;
-
-typedef const MSpriteDefinition MSpriteROMDef;
+typedef const TextureDefinition OTextureDefinition;
+typedef const OTextureDefinition OTextureROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MSprite, const MSpriteDefinition* mSpriteDefinition);
+__CLASS_NEW_DECLARE(OTexture, OTextureDefinition* oTextureDefinition, u16 id);
 
-void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
-void MSprite_destructor(MSprite this);
-void MSprite_synchronizePosition(MSprite this, VBVec3D position3D);
-
+void OTexture_destructor(OTexture this);
+void OTexture_write(OTexture this);
+void OTexture_setObjectIndex(OTexture this, int objectIndex);
 
 #endif

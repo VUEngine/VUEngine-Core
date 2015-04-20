@@ -18,15 +18,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef M_SPRITE_H_
-#define M_SPRITE_H_
+#ifndef O_MEGA_SPRITE_MANAGER_H_
+#define O_MEGA_SPRITE_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BSprite.h>
+#include <OMegaSprite.h>
+#include <OTexture.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -38,70 +39,27 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MSprite_METHODS															\
-	BSprite_METHODS																\
+#define OMegaSpriteManager_METHODS															\
+	Object_METHODS																\
 
 // declare the virtual methods which are redefined
-#define MSprite_SET_VTABLE(ClassName)											\
-	BSprite_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, MSprite, synchronizePosition);						\
-
-#define MSprite_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	BSprite_ATTRIBUTES;															\
-																				\
-	/* this is our texture */													\
-	VirtualList textures;														\
-																				\
-	/* pinter to definition */													\
-	const MSpriteDefinition* mSpriteDefinition;									\
-																				\
-	/* total size of the bgmap, used for loop/not loop */						\
-	Point size;																	\
-																				\
-	/* fot total size of the bgmap calculation */								\
-	Point sizeMultiplier;																	\
-
-// declare a MSprite, which holds a texture and a drawing specification
-__CLASS(MSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-typedef struct MSpriteDefinition
-{
-	// the normal sprite definition
-	BSpriteDefinition bSpriteDefinition;
+#define OMegaSpriteManager_SET_VTABLE(ClassName)											\
+	Object_SET_VTABLE(ClassName)												\
 	
-	// texture to use with the sprite
-	TextureDefinition** textureDefinitions;
 
-	// SCX/SCY value
-	u16 scValue;
-
-	// flag to loop the x axis
-	u8 xLoop;
-
-	// flag to loop the y axis
-	u8 yLoop;
-
-} MSpriteDefinition;
-
-typedef const MSpriteDefinition MSpriteROMDef;
+// declare a OMegaSpriteManager, which holds a texture and a drawing specification
+__CLASS(OMegaSpriteManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MSprite, const MSpriteDefinition* mSpriteDefinition);
+OMegaSpriteManager OMegaSpriteManager_getInstance();
 
-void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition);
-void MSprite_destructor(MSprite this);
-void MSprite_synchronizePosition(MSprite this, VBVec3D position3D);
+void OMegaSpriteManager_destructor(OMegaSpriteManager this);
+void OMegaSpriteManager_reset(OMegaSpriteManager this);
+OMegaSprite OMegaSpriteManager_getOMegaSprite(OMegaSpriteManager this, int numberOfObjects);
 
 
 #endif
