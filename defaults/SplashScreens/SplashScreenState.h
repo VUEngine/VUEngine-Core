@@ -36,6 +36,7 @@
 // declare the virtual methods
 #define SplashScreenState_METHODS												\
 	GameState_METHODS;											    			\
+	__VIRTUAL_DEC(print);														\
 	__VIRTUAL_DEC(processInput);												\
 
 // declare the virtual methods which are redefined
@@ -75,6 +76,7 @@ void SplashScreenState_exit(SplashScreenState this, void* owner);
 void SplashScreenState_resume(SplashScreenState this, void* owner);
 bool SplashScreenState_handleMessage(SplashScreenState this, void* owner, Telegram telegram);
 void SplashScreenState_processInput(SplashScreenState this, u16 releasedKey);
+void SplashScreenState_print(SplashScreenState this);
 void SplashScreenState_setNextstate(SplashScreenState this, GameState nextState);
 
 

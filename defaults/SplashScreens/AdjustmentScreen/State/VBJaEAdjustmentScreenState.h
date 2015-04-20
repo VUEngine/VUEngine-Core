@@ -40,6 +40,7 @@
 // declare the virtual methods which are redefined
 #define VBJaEAdjustmentScreenState_SET_VTABLE(ClassName)						\
 	SplashScreenState_SET_VTABLE(ClassName)										\
+	__VIRTUAL_SET(ClassName, VBJaEAdjustmentScreenState, print);				\
 	__VIRTUAL_SET(ClassName, VBJaEAdjustmentScreenState, processInput);			\
 
 
@@ -48,7 +49,7 @@ __CLASS(VBJaEAdjustmentScreenState);
 #define VBJaEAdjustmentScreenState_ATTRIBUTES									\
 														            			\
 	/* inherits */																\
-	SplashScreenState_ATTRIBUTES																\
+	SplashScreenState_ATTRIBUTES												\
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,8 +57,6 @@ __CLASS(VBJaEAdjustmentScreenState);
 //---------------------------------------------------------------------------------------------------------
 
 VBJaEAdjustmentScreenState VBJaEAdjustmentScreenState_getInstance(void);
-
-void VBJaEAdjustmentScreenState_setNextstate(VBJaEAdjustmentScreenState this, GameState nextState);
 
 
 #endif

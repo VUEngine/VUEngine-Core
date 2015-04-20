@@ -84,12 +84,14 @@ static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void
     // print text
     char* strAutomaticPause = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SCREEN_TITLE);
     char* strAutomaticPauseText = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SCREEN_TEXT);
+    Size strAutomaticPauseSize = Printing_getTextSize(Printing_getInstance(), strAutomaticPause, __AUTO_PAUSE_SCREEN_TITLE_FONT);
+    Size strAutomaticPauseTextSize = Printing_getTextSize(Printing_getInstance(), strAutomaticPauseText, __AUTO_PAUSE_SCREEN_TEXT_FONT);
 
-    u8 strHeaderXPos = (48 - strlen(strAutomaticPause)) >> 1;
+    u8 strHeaderXPos = ((__SCREEN_WIDTH >> 4) - (strAutomaticPauseSize.x >> 1));
     Printing_text(Printing_getInstance(), strAutomaticPause, strHeaderXPos, 10, __AUTO_PAUSE_SCREEN_TITLE_FONT);
 
-    u8 strTextXPos = (48 - strlen(strAutomaticPauseText)) >> 1;
-    Printing_text(Printing_getInstance(), strAutomaticPauseText, strTextXPos, 13, __AUTO_PAUSE_SCREEN_TEXT_FONT);
+    u8 strTextXPos = (__SCREEN_WIDTH >> 4) - (strAutomaticPauseTextSize.x >> 1);
+    Printing_text(Printing_getInstance(), strAutomaticPauseText, strTextXPos, 11 + strAutomaticPauseSize.y, __AUTO_PAUSE_SCREEN_TEXT_FONT);
 
 	Screen_FXFadeIn(Screen_getInstance(), 16 >> 1);
 }
@@ -111,7 +113,6 @@ static bool VBJaEAutoPauseScreenState_handleMessage(VBJaEAutoPauseScreenState th
 			{
 				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 		
-				// check direction
 				if (K_STA & pressedKey)
 				{
 					Game_unpause(Game_getInstance(), __UPCAST(GameState, this));

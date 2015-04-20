@@ -26,6 +26,8 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
+extern GameState         (*__INITIAL_SPLASH_SCREEN_STATE)();
+
 // Precaution screen
 extern GameState         (*__PRECAUTION_SCREEN_NEXT_STATE)();
 extern const int           __PRECAUTION_SCREEN_INITIAL_DELAY;

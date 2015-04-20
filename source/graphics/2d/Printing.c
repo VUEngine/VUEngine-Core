@@ -35,6 +35,12 @@
 
 extern FontROMDef* __FONTS[];
 
+typedef struct FontData
+{
+	const struct FontDefinition * fontDefinition;
+    u16 memoryOffset;
+} FontData;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
@@ -128,21 +134,35 @@ void Printing_clear(Printing this)
 	VPUManager_clearBgmap(VPUManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
-// direct printing out method
-static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
+// get font definition and starting position in character memory
+static FontData Printing_getFontByName(Printing this, const char* font)
 {
-	u16 i = 0, pos = 0, col = x, fontStart = 2048;
-	u8 j = 0, charOffsetX = 0, charOffsetY = 0;
+    FontData fontData = {NULL, 2048};
 
 	// iterate over registered fonts to find memory offset of font to use
+	u8 j = 0;
     for (; __FONTS[j]; j++)
     {
-        fontStart -= (__FONTS[j]->characterCount * __FONTS[j]->fontSize.x * __FONTS[j]->fontSize.y);
-        if ((font == NULL) || (0 == strcmp(__FONTS[j]->name, font)))
+        fontData.fontDefinition = __FONTS[j];
+        fontData.memoryOffset -= (fontData.fontDefinition->characterCount * fontData.fontDefinition->fontSize.x * fontData.fontDefinition->fontSize.y);
+
+        if ((font == NULL) || (0 == strcmp(fontData.fontDefinition->name, font)))
         {
             break;
         }
     }
+
+    return fontData;
+}
+
+// direct printing out method
+static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
+{
+    FontData fontData;
+	u16 i = 0, pos = 0, col = x;
+	u8 charOffsetX = 0, charOffsetY = 0;
+
+    fontData = Printing_getFontByName(this, font);
     
     // print text
 	while (string[i])
@@ -157,31 +177,31 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 
 			case 9: // Horizontal Tab
 
-				x = (x / TAB_SIZE + 1) * TAB_SIZE * __FONTS[j]->fontSize.x;
+				x = (x / TAB_SIZE + 1) * TAB_SIZE * fontData.fontDefinition->fontSize.x;
 				break;
 
 			case 10: // Carriage Return
 
-				y += __FONTS[j]->fontSize.y;
+				y += fontData.fontDefinition->fontSize.y;
 				x = col;
 				break;
 
 			default:
 
-                for (charOffsetX = 0; charOffsetX < __FONTS[j]->fontSize.x; charOffsetX++)
+                for (charOffsetX = 0; charOffsetX < fontData.fontDefinition->fontSize.x; charOffsetX++)
                 {
-                    for (charOffsetY = 0; charOffsetY < __FONTS[j]->fontSize.y; charOffsetY++)
+                    for (charOffsetY = 0; charOffsetY < fontData.fontDefinition->fontSize.y; charOffsetY++)
                     {
                         BGMM[(0x1000 * bgmap) + pos + charOffsetX + (charOffsetY << 6)] =
                             (
                                 // start at correct font
-                                fontStart +
+                                fontData.memoryOffset +
 
                                 // top left char of letter
-                                ((u8)(string[i] - __FONTS[j]->offset) * __FONTS[j]->fontSize.x) +
+                                ((u8)(string[i] - fontData.fontDefinition->offset) * fontData.fontDefinition->fontSize.x) +
 
                                 // skip lower chars of multi-char fonts with y > 1
-                                ((((u8)(string[i] - __FONTS[j]->offset) * __FONTS[j]->fontSize.x) >> 5) * ((__FONTS[j]->fontSize.y - 1)) << 5) +
+                                ((((u8)(string[i] - fontData.fontDefinition->offset) * fontData.fontDefinition->fontSize.x) >> 5) * ((fontData.fontDefinition->fontSize.y - 1)) << 5) +
 
                                 // respective char of letter in multi-char fonts
                                 charOffsetX + (charOffsetY << 5)
@@ -190,10 +210,10 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
                     }
                 }
 
-                x += __FONTS[j]->fontSize.x;
+                x += fontData.fontDefinition->fontSize.x;
 				if (x >= 64)
 				{
-				    y += __FONTS[j]->fontSize.y;
+				    y += fontData.fontDefinition->fontSize.y;
 					x = col;
 				}
 
@@ -288,4 +308,54 @@ void Printing_text(Printing this, char* string, int x, int y, const char* font)
 {
 	u8 printingBgmap = BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance());
 	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
+}
+
+Size Printing_getTextSize(Printing this, const char* string, const char* font)
+{
+    Size size = {0, 0};
+    FontData fontData;
+	u16 i = 0, currentLineLength = 0;
+
+    fontData = Printing_getFontByName(this, font);
+    size.y =  fontData.fontDefinition->fontSize.y;
+
+	while (string[i])
+	{
+		switch (string[i])
+		{
+			case 13: // Line Feed
+
+				break;
+
+			case 9: // Horizontal Tab
+
+				currentLineLength += (currentLineLength / TAB_SIZE + 1) * TAB_SIZE * fontData.fontDefinition->fontSize.x;
+				break;
+
+			case 10: // Carriage Return
+
+				size.y += fontData.fontDefinition->fontSize.y;
+				currentLineLength = 0;
+				break;
+
+			default:
+
+                currentLineLength += fontData.fontDefinition->fontSize.x;
+				if (currentLineLength >= 64)
+				{
+                    size.y += fontData.fontDefinition->fontSize.y;
+                    currentLineLength = 0;
+				}
+
+				break;
+		}
+
+        if (currentLineLength > size.x) {
+            size.x = currentLineLength;
+        }
+
+		i++;
+	}
+
+	return size;
 }

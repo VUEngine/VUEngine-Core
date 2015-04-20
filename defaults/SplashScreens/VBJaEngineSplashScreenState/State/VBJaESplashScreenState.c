@@ -22,8 +22,6 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
 #include <Game.h>
 #include <Screen.h>
 #include <MessageDispatcher.h>
@@ -37,6 +35,7 @@
 
 static void VBJaESplashScreenState_destructor(VBJaESplashScreenState this);
 static void VBJaESplashScreenState_constructor(VBJaESplashScreenState this);
+static void VBJaESplashScreenState_print(VBJaESplashScreenState this);
 static void VBJaESplashScreenState_execute(VBJaESplashScreenState this, void* owner);
 
 
@@ -66,6 +65,10 @@ static void VBJaESplashScreenState_destructor(VBJaESplashScreenState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
+}
+
+static void VBJaESplashScreenState_print(VBJaESplashScreenState this)
+{
 }
 
 // state's execute

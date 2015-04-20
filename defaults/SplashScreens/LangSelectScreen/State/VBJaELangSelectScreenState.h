@@ -41,8 +41,7 @@
 // declare the virtual methods which are redefined
 #define VBJaELangSelectScreenState_SET_VTABLE(ClassName)						\
 	SplashScreenState_SET_VTABLE(ClassName)				    					\
-	__VIRTUAL_SET(ClassName, VBJaELangSelectScreenState, enter);				\
-	__VIRTUAL_SET(ClassName, VBJaELangSelectScreenState, resume);				\
+	__VIRTUAL_SET(ClassName, VBJaELangSelectScreenState, print);				\
 	__VIRTUAL_SET(ClassName, VBJaELangSelectScreenState, processInput);			\
 
 __CLASS(VBJaELangSelectScreenState);

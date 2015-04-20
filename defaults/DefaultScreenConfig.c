@@ -44,9 +44,10 @@ extern StageROMDef VBJAENGINE_SPLASH_SCREEN_ST;
 // ---------------------------------------------------------------------------------------------------------
 
 // Precaution screen
+VBJaEPrecautionScreenState      (*__INITIAL_SPLASH_SCREEN_STATE)() =            VBJaEPrecautionScreenState_getInstance;
 VBJaEAdjustmentScreenState      (*__PRECAUTION_SCREEN_NEXT_STATE)() =           VBJaEAdjustmentScreenState_getInstance;
 const StageROMDef*                __PRECAUTION_SCREEN_STAGE =                   &EMPTY_ST;
-const int                         __PRECAUTION_SCREEN_INITIAL_DELAY =           2000;
+const int                         __PRECAUTION_SCREEN_INITIAL_DELAY =           2000; // 2 seconds, as defined by Nintendo
 const int                         __PRECAUTION_SCREEN_TEXT =                    STR_PRECAUTION_SCREEN;
 const char*                       __PRECAUTION_SCREEN_TEXT_FONT =               NULL;
 

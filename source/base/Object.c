@@ -23,8 +23,9 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
 #include <string.h>
+
+#include <Object.h>
 #include <VirtualList.h>
 
 
