@@ -30,7 +30,7 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __TOTAL_OBJECT_GROUPS 	4
+#define __TOTAL_OBJECT_SEGMENTS 	4
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -42,7 +42,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* object groups */															\
-	OMegaSprite oMegaSprites[__TOTAL_OBJECT_GROUPS];							\
+	OMegaSprite oMegaSprites[__TOTAL_OBJECT_SEGMENTS];							\
 
 // define the OMegaSprite
 __CLASS_DEFINITION(OMegaSpriteManager, Object);
@@ -71,7 +71,12 @@ void OMegaSpriteManager_constructor(OMegaSpriteManager this)
 {
 	__CONSTRUCT_BASE();
 
-	OMegaSpriteManager_reset(this);
+	int i = 0;
+	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	{
+		this->oMegaSprites[i] = NULL;
+		VIP_REGS[SPT3 - i] = 0;
+	}
 }
 
 // class destructor
@@ -91,20 +96,7 @@ void OMegaSpriteManager_reset(OMegaSpriteManager this)
 	ASSERT(this, "OMegaSpriteManager::reset: null this");
 	
 	int i = 0;
-	for(; i < __TOTAL_OBJECT_GROUPS; i++)
-	{
-		this->oMegaSprites[i] = NULL;
-		VIP_REGS[SPT3 - i] = 0;
-	}
-}
-
-// reset
-void OMegaSpriteManager_destroyOMegaSprites(OMegaSpriteManager this)
-{
-	ASSERT(this, "OMegaSpriteManager::reset: null this");
-	
-	int i = 0;
-	for(; i < __TOTAL_OBJECT_GROUPS; i++)
+	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		if(this->oMegaSprites[i])
 		{
@@ -115,13 +107,13 @@ void OMegaSpriteManager_destroyOMegaSprites(OMegaSpriteManager this)
 	}
 }
 
-// reset
+// retrieve a mega sprite
 OMegaSprite OMegaSpriteManager_getOMegaSprite(OMegaSpriteManager this, int numberOfObjects)
 {
 	ASSERT(this, "OMegaSpriteManager::getOMegaSprite: null this");
 	
 	int i = 0;
-	for(; i < __TOTAL_OBJECT_GROUPS; i++)
+	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		if(!this->oMegaSprites[i])
 		{

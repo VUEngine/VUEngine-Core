@@ -170,15 +170,11 @@ void OSprite_setPosition(OSprite this, VBVec2D position)
 void OSprite_synchronizePosition(OSprite this, VBVec3D position3D)
 {
 	ASSERT(this, "OSprite::synchronizePosition: null this");
-	Printing_int(Printing_getInstance(), FIX19_13TOI(position3D.y), 10, 8, NULL);
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
 	ASSERT(this->texture, "OSprite::setPosition: null texture");
-
-	//position3D.x -= this->halfWidth * xDirection;
-	//position3D.y -= this->halfHeight * yDirection;
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);

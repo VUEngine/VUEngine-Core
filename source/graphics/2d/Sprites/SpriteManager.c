@@ -23,7 +23,9 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+
 #include <SpriteManager.h>
+#include <OMegaSpriteManager.h>
 #include <VPUManager.h>
 #include <Screen.h>
 
@@ -105,6 +107,9 @@ void SpriteManager_destructor(SpriteManager this)
 void SpriteManager_reset(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::reset: null this");
+
+	// must reset the OMegaSpriteManager before the SpriteManager!
+	OMegaSpriteManager_reset(OMegaSpriteManager_getInstance());
 
 	if (this->sprites)
 	{

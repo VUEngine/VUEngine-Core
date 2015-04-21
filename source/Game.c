@@ -34,7 +34,6 @@
 #include <FrameRate.h>
 #include <Clock.h>
 #include <BTextureManager.h>
-#include <OMegaSpriteManager.h>
 #include <GameState.h>
 #include <MessageDispatcher.h>
 #include <Stage.h>
@@ -213,8 +212,6 @@ static void Game_constructor(Game this)
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
 	this->screen = Screen_getInstance();
-	OMegaSpriteManager_getInstance();
-
 
 	// set the default screen movement manager
 	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
