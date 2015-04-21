@@ -35,6 +35,8 @@
 
 extern LangROMDef LANGUAGE_EN;
 extern LangROMDef LANGUAGE_DE;
+extern LangROMDef LANGUAGE_ES;
+extern LangROMDef LANGUAGE_FR;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,6 +47,8 @@ const LangROMDef* __LANGUAGES[] =
 {
     &LANGUAGE_EN,
     &LANGUAGE_DE,
+    &LANGUAGE_ES,
+    &LANGUAGE_FR,
     NULL
 };
 

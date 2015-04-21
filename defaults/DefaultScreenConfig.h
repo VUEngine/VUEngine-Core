@@ -31,6 +31,8 @@ extern GameState         (*__INITIAL_SPLASH_SCREEN_STATE)();
 // Precaution screen
 extern GameState         (*__PRECAUTION_SCREEN_NEXT_STATE)();
 extern const int           __PRECAUTION_SCREEN_INITIAL_DELAY;
+extern const int           __PRECAUTION_SCREEN_TITLE;
+extern const char*         __PRECAUTION_SCREEN_TITLE_FONT;
 extern const int           __PRECAUTION_SCREEN_TEXT;
 extern const char*         __PRECAUTION_SCREEN_TEXT_FONT;
 extern const StageROMDef*  __PRECAUTION_SCREEN_STAGE;
@@ -46,9 +48,8 @@ extern const char*         __AUTO_PAUSE_SELECT_SCREEN_TITLE_FONT;
 extern const int           __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION;
 extern const char*         __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT;
 extern const int           __AUTO_PAUSE_SELECT_SCREEN_ON;
-extern const char*         __AUTO_PAUSE_SELECT_SCREEN_ON_FONT;
 extern const int           __AUTO_PAUSE_SELECT_SCREEN_OFF;
-extern const char*         __AUTO_PAUSE_SELECT_SCREEN_OFF_FONT;
+extern const char*         __AUTO_PAUSE_SELECT_SCREEN_OPTIONS_FONT;
 extern const StageROMDef*  __AUTO_PAUSE_SELECT_SCREEN_STAGE;
 
 // Language selection screen

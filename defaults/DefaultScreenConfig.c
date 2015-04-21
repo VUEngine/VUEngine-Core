@@ -48,7 +48,9 @@ VBJaEPrecautionScreenState      (*__INITIAL_SPLASH_SCREEN_STATE)() =            
 VBJaEAdjustmentScreenState      (*__PRECAUTION_SCREEN_NEXT_STATE)() =           VBJaEAdjustmentScreenState_getInstance;
 const StageROMDef*                __PRECAUTION_SCREEN_STAGE =                   &EMPTY_ST;
 const int                         __PRECAUTION_SCREEN_INITIAL_DELAY =           2000; // 2 seconds, as defined by Nintendo
-const int                         __PRECAUTION_SCREEN_TEXT =                    STR_PRECAUTION_SCREEN;
+const int                         __PRECAUTION_SCREEN_TITLE =                   STR_PRECAUTION_SCREEN_TITLE;
+const char*                       __PRECAUTION_SCREEN_TITLE_FONT =              NULL;
+const int                         __PRECAUTION_SCREEN_TEXT =                    STR_PRECAUTION_SCREEN_TEXT;
 const char*                       __PRECAUTION_SCREEN_TEXT_FONT =               NULL;
 
 // Adjustment screen
@@ -63,9 +65,8 @@ const char*                       __AUTO_PAUSE_SELECT_SCREEN_TITLE_FONT =       
 const int                         __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION =      STR_AUTOMATIC_PAUSE_EXPLANATION;
 const char*                       __AUTO_PAUSE_SELECT_SCREEN_EXPLANATION_FONT = NULL;
 const int                         __AUTO_PAUSE_SELECT_SCREEN_ON =               STR_ON;
-const char*                       __AUTO_PAUSE_SELECT_SCREEN_ON_FONT =          NULL;
 const int                         __AUTO_PAUSE_SELECT_SCREEN_OFF =              STR_OFF;
-const char*                       __AUTO_PAUSE_SELECT_SCREEN_OFF_FONT =         NULL;
+const char*                       __AUTO_PAUSE_SELECT_SCREEN_OPTIONS_FONT =     NULL;
 
 // Language selection screen
 VBJaESplashScreenState          (*__LANGUAGE_SELECT_SCREEN_NEXT_STATE)() =      VBJaESplashScreenState_getInstance;

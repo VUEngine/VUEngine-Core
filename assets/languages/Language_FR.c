@@ -37,31 +37,31 @@
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-const LangROMDef LANGUAGE_DE =
+const LangROMDef LANGUAGE_FR =
 {
     // Language Name
-    "Deutsch",
+    "Français",
 
     // Strings
     {
         /* Splash Screens */
 
         //STR_PRECAUTION_SCREEN_TITLE:
-        "WICHTIG:",
+        "IMPORTANT:",
         //STR_PRECAUTION_SCREEN_TEXT:
-        "LESEN SIE VOR DEM SPIELEN\n    DIE ANLEITUNG UND\n   SICHERHEITSHINWEISE",
+        " PRENEZ CONAISSANCE\n DE LA NOTICE ET DES\nPRÉCAUTIONS A PRENDRE\n   AVANT DE JOUER",
         //STR_AUTOMATIC_PAUSE:
-        "Automatische Pause",
+        "Pause Automatique",
         //STR_AUTOMATIC_PAUSE_EXPLANATION:
-        " Die Automatische Pause Funktion\nerinnert dich daran, das Spiel ca.\n  alle 30 Minuten zu pausieren",
+        "  La fonction Pause automatique va\n vous rappeler de prendre une pause\nde jeu Environ toutes les 30 minutes",
         //STR_AUTOMATIC_PAUSE_TEXT:
-        "Bitte mache eine Pause!",
+        "Se il vous plaît prendre un repos!",
         //STR_ON:
-        "An",
+        "Activé",
         //STR_OFF:
-        "Aus",
+        "Desactivé",
         //STR_LANGUAGE_SELECT:
-        "Sprachauswahl",
+        "Choix de la langue",
     },
 };
 

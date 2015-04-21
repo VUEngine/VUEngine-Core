@@ -81,14 +81,26 @@ static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, vo
 
 static void VBJaEPrecautionScreenState_print(VBJaEPrecautionScreenState this)
 {
-    char* strPrecaution = I18n_getText(I18n_getInstance(), __PRECAUTION_SCREEN_TEXT);
-    Size size = Printing_getTextSize(Printing_getInstance(), strPrecaution, __PRECAUTION_SCREEN_TEXT_FONT);
+    char* strPrecautionTitle = I18n_getText(I18n_getInstance(), __PRECAUTION_SCREEN_TITLE);
+    char* strPrecautionText = I18n_getText(I18n_getInstance(), __PRECAUTION_SCREEN_TEXT);
+    Size titleSize = Printing_getTextSize(Printing_getInstance(), strPrecautionTitle, __PRECAUTION_SCREEN_TITLE_FONT);
+    Size textSize = Printing_getTextSize(Printing_getInstance(), strPrecautionText, __PRECAUTION_SCREEN_TEXT_FONT);
+
+    u8 totalHeight = titleSize.y + 1 + textSize.y;
 
     Printing_text(
         Printing_getInstance(),
-        strPrecaution,
-        (__SCREEN_WIDTH >> 4) - (size.x >> 1),
-        (__SCREEN_HEIGHT >> 4) - (size.y >> 1),
+        strPrecautionTitle,
+        (__SCREEN_WIDTH >> 4) - (titleSize.x >> 1),
+        (__SCREEN_HEIGHT >> 4) - (totalHeight >> 1),
+        __PRECAUTION_SCREEN_TITLE_FONT
+    );
+
+    Printing_text(
+        Printing_getInstance(),
+        strPrecautionText,
+        (__SCREEN_WIDTH >> 4) - (textSize.x >> 1),
+        (__SCREEN_HEIGHT >> 4) - (totalHeight >> 1) + titleSize.y + 1,
         __PRECAUTION_SCREEN_TEXT_FONT
     );
 }
