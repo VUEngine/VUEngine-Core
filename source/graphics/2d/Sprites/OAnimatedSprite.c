@@ -78,7 +78,7 @@ void OAnimatedSprite_destructor(OAnimatedSprite this)
 void OAnimatedSprite_writeAnimation(OAnimatedSprite this)
 {
 	ASSERT(this, "OAnimatedSprite::writeAnimation: null this");
-
+	
 	// write according to the allocation type
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
@@ -93,17 +93,15 @@ void OAnimatedSprite_writeAnimation(OAnimatedSprite this)
 
 				//write charset
 				CharSet_write(charSet);
-				
-//				OTexture_write(this->texture);
 			}
 
 			break;
 
 		case __ANIMATED_SHARED:
-			{
-			}
-			
-			this->renderFlag |= __UPDATE_M;
+
+			OTexture_addBgmapDisplacement(__UPCAST(OTexture, this->texture), AnimationController_getActualFrameIndex(this->animationController));
+			OTexture_write(__UPCAST(OTexture, this->texture));
+			OTexture_resetBgmapDisplacement(__UPCAST(OTexture, this->texture));
 			break;
 	}
 }

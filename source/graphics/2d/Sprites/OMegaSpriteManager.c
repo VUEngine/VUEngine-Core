@@ -94,6 +94,7 @@ void OMegaSpriteManager_reset(OMegaSpriteManager this)
 	for(; i < __TOTAL_OBJECT_GROUPS; i++)
 	{
 		this->oMegaSprites[i] = NULL;
+		VIP_REGS[SPT3 - i] = 0;
 	}
 }
 

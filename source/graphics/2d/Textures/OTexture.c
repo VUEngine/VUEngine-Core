@@ -60,6 +60,7 @@ static void OTexture_constructor(OTexture this, OTextureDefinition* oTextureDefi
 	__CONSTRUCT_BASE((TextureDefinition*)oTextureDefinition, id);
 	
 	this->objectIndex = -1;
+	this->bgmapDisplacement = 0;
 }
 
 // class's destructor
@@ -114,7 +115,8 @@ static void OTexture_writeAnimated(OTexture this)
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;
 	int cols = this->textureDefinition->cols;
-
+	BYTE* framePointer = this->textureDefinition->bgmapDefinition;
+	
 	int i = 0;
 	for (; i < rows; i++)
 	{
@@ -123,11 +125,8 @@ static void OTexture_writeAnimated(OTexture this)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = objectIndex * 2;
-			u16 charNumber = this->textureDefinition->bgmapDefinition[charNumberIndex] | (this->textureDefinition->bgmapDefinition[charNumberIndex + 1] << 8);
+			u16 charNumber = framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8);
 			charNumber += charLocation;
-			OAM[ objectIndex << 2] = 0;
-			OAM[(objectIndex << 2) + 1] = 0;
-			OAM[(objectIndex << 2) + 2] = 0;
 			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
 		}
 	}
@@ -137,71 +136,50 @@ static void OTexture_writeAnimated(OTexture this)
 static void OTexture_writeNoAnimated(OTexture this)
 {
 	ASSERT(this, "OTexture::writeNoAnimated: null this");
-/*
-	int bgmapSegment = OTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
-
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
-	int i = this->textureDefinition->rows;
+	int rows = this->textureDefinition->rows;
+	int cols = this->textureDefinition->cols;
+	BYTE* framePointer = this->textureDefinition->bgmapDefinition;
 
-	int xOffset = (int)OTextureManager_getXOffset(OTextureManager_getInstance(), this->id);
-	int yOffset = (int)OTextureManager_getYOffset(OTextureManager_getInstance(), this->id);
-
-	if (0 > xOffset || 0 > yOffset)
+	int i = 0;
+	for (; i < rows; i++)
 	{
-		return;
+		int j = 0;
+		for (; j < cols; j++)
+		{
+			s32 objectIndex = this->objectIndex + i * cols + j;
+			s32 charNumberIndex = (i * cols + j) << 1;
+			u16 charNumber = framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8);
+			charNumber += charLocation;
+			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
+		}
 	}
-	
-	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
-	{
-		//specifying the char displacement inside the char mem
-		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
-				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
-				this->textureDefinition->cols,
-				(palette) | (charLocation));
-	}
-	*/
 }
 
 // write an animated and shared map
 static void OTexture_writeAnimatedShared(OTexture this)
 {
 	ASSERT(this, "OTexture::writeAnimatedShared: null this");
-/*
-	int bgmapSegment = OTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
-
-	// determine the number of frames the map had
-	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
-	int frames = CharSet_getNumberOfChars(this->charSet) / area;
+	int rows = this->textureDefinition->rows;
+	int cols = this->textureDefinition->cols;
+	BYTE* framePointer = this->textureDefinition->bgmapDefinition + this->bgmapDisplacement;
 
-	int i = this->textureDefinition->rows;
-
-	int xOffset = (int)OTextureManager_getXOffset(OTextureManager_getInstance(), this->id);
-	int yOffset = (int)OTextureManager_getYOffset(OTextureManager_getInstance(), this->id);
-
-	if (0 > xOffset || 0 > yOffset)
+	int i = 0;
+	for (; i < rows; i++)
 	{
-		return;
-	}
-
-	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
-	{
-		int j = 1;
-		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
-		//specifying the char displacement inside the char mem
-		for (; j <= frames; j++)
+		int j = 0;
+		for (; j < cols; j++)
 		{
-			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
-					(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
-					this->textureDefinition->cols,
-					(palette) | (charLocation + area * (j - 1)));
+			s32 objectIndex = this->objectIndex + i * cols + j;
+			s32 charNumberIndex = (i * cols + j) << 1;
+			u16 charNumber = framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8);
+			charNumber += charLocation;
+			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
 		}
 	}
-	*/
 }
 
 void OTexture_setObjectIndex(OTexture this, int objectIndex)
@@ -212,5 +190,20 @@ void OTexture_setObjectIndex(OTexture this, int objectIndex)
 	{
 		this->objectIndex = objectIndex;
 	}
+}
+
+void OTexture_resetBgmapDisplacement(OTexture this)
+{
+	ASSERT(this, "OTexture::resetBgmapDisplacement: null this");
+	
+	this->bgmapDisplacement = 0;
+}
+
+void OTexture_addBgmapDisplacement(OTexture this, int frame)
+{
+	ASSERT(this, "OTexture::setBgmapDisplacement: null this");
+	ASSERT(0 <= frame, "OTexture::setBgmapDisplacement: negative frame");
+
+	this->bgmapDisplacement = (this->textureDefinition->cols * this->textureDefinition->rows) * frame << 1;
 }
 

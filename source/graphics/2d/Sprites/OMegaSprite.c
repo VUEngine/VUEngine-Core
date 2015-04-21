@@ -190,5 +190,4 @@ void OMegaSprite_render(OMegaSprite this)
 	{
 		OSprite_render(__UPCAST(OSprite, VirtualNode_getData(node)));
 	}
-
 }
