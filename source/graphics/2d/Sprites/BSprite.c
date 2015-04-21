@@ -26,6 +26,7 @@
 #include <BSprite.h>
 #include <Game.h>
 #include <Optics.h>
+#include <SpriteManager.h>
 #include <ParamTableManager.h>
 #include <Screen.h>
 
@@ -72,7 +73,7 @@ void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinitio
 	__CONSTRUCT_BASE();
 
 	// register with sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), this);
+	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
 
 	// create the texture
 	if(bSpriteDefinition->textureDefinition)
@@ -162,7 +163,7 @@ void BSprite_destructor(BSprite this)
 	}
 	
 	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), this);
+	SpriteManager_removeSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
 
 	// destroy the super object
 	__DESTROY_BASE;

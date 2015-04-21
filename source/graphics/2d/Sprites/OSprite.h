@@ -52,7 +52,8 @@
 	__VIRTUAL_SET(ClassName, OSprite, synchronizePosition);						\
 	__VIRTUAL_SET(ClassName, OSprite, setDirection);							\
 	__VIRTUAL_SET(ClassName, OSprite, calculateParallax);						\
-	
+	__VIRTUAL_SET(ClassName, OSprite, hide);									\
+
 #define OSprite_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
@@ -115,5 +116,6 @@ void OSprite_synchronizePosition(OSprite this, VBVec3D position3D);
 void OSprite_calculateParallax(OSprite this, fix19_13 z);
 void OSprite_render(OSprite this);
 int OSprite_getObjectIndex(OSprite this);
+void OSprite_hide(OSprite this);
 
 #endif

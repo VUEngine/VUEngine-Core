@@ -62,7 +62,7 @@
 	GameState gameState;														\
 																				\
 	/* current animated sprite */												\
-	AnimatedSprite animatedSprite;												\
+	Sprite animatedSprite;														\
 																				\
 	/* current animation description */											\
 	AnimationDescription* animationDescription;									\
@@ -118,11 +118,11 @@ static void AnimationEditor_printUserActors(AnimationEditor this);
 static void AnimationEditor_printActorAnimations(AnimationEditor this);
 static void AnimationEditor_printAnimationConfig(AnimationEditor this);
 static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey);
-static void AnimationEditor_removePreviousAnimatedSprite(AnimationEditor this);
+static void AnimationEditor_removePreviousSprite(AnimationEditor this);
 static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_loadAnimationFunction(AnimationEditor this);
-static void AnimationEditor_createAnimatedSprite(AnimationEditor this);
+static void AnimationEditor_createSprite(AnimationEditor this);
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
@@ -232,9 +232,9 @@ void AnimationEditor_stop(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::stop: null this");
 
-	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
-	AnimationEditor_removePreviousAnimatedSprite(this);
+	AnimationEditor_removePreviousSprite(this);
 
 	if (this->actorsSelector)
 	{
@@ -267,7 +267,7 @@ void AnimationEditor_stop(AnimationEditor this)
 // print title
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
-	VPUManager_clearBgmap(VPUManager_getInstance(), TextureManager_getPrintingBgmapSegment(TextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing_text(Printing_getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
 	Printing_text(Printing_getInstance(), " Accept \x13  ", 38, 1, NULL);
@@ -282,9 +282,9 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 
 		case kSelectAnimation:
 
-			AnimationEditor_createAnimatedSprite(this);
+			AnimationEditor_createSprite(this);
 			AnimationEditor_createAnimationsSelector(this);
-			AnimatedSprite_pause(this->animatedSprite, true);
+			Sprite_pause(this->animatedSprite, true);
 			AnimationEditor_printActorAnimations(this);
 			break;
 
@@ -293,9 +293,9 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 			AnimationEditor_loadAnimationFunction(this);
 			AnimationEditor_createAnimationEditionSelector(this);
 			AnimationEditor_createFrameEditionSelector(this);
-			AnimatedSprite_playAnimationFunction(this->animatedSprite, &this->animationFunction);
-			AnimatedSprite_pause(this->animatedSprite, true);
-			AnimatedSprite_pause(this->animatedSprite, false);
+			AnimationController_playAnimationFunction(Sprite_getAnimationController(this->animatedSprite), &this->animationFunction);
+			Sprite_pause(this->animatedSprite, true);
+			Sprite_pause(this->animatedSprite, false);
 			AnimationEditor_printAnimationConfig(this);
 			break;
 	}
@@ -377,7 +377,7 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
 	}
 }
 
-static void AnimationEditor_removePreviousAnimatedSprite(AnimationEditor this)
+static void AnimationEditor_removePreviousSprite(AnimationEditor this)
 {
 	if (this->animatedSprite)
 	{
@@ -412,14 +412,14 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 {
 	if (pressedKey & K_A)
 	{
-		if (AnimatedSprite_isPlaying(this->animatedSprite))
+		if (Sprite_isPlaying(this->animatedSprite))
 		{
-			AnimatedSprite_pause(this->animatedSprite, true);
+			Sprite_pause(this->animatedSprite, true);
 
 		}
 		else
 		{
-			AnimatedSprite_pause(this->animatedSprite, false);
+			Sprite_pause(this->animatedSprite, false);
 		}
 	}
 	else if ((pressedKey & K_LU))
@@ -600,7 +600,7 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	OptionsSelector_showOptions(this->frameEditionSelector, x, ++y + 1);
 
 	Printing_text(Printing_getInstance(), " Cancel   \x14 ", 36, 1, NULL);
-	if (!AnimatedSprite_isPlaying(this->animatedSprite))
+	if (!Sprite_isPlaying(this->animatedSprite))
 	{
 		Printing_text(Printing_getInstance(), " Play     \x13 ", 36, 2, NULL);
 	}
@@ -645,9 +645,9 @@ static void AnimationEditor_loadAnimationFunction(AnimationEditor this)
 }
 extern const VBVec3D* _screenPosition;
 
-static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
+static void AnimationEditor_createSprite(AnimationEditor this)
 {
-	AnimationEditor_removePreviousAnimatedSprite(this);
+	AnimationEditor_removePreviousSprite(this);
 
 	VBVec3D position = *_screenPosition;
 
@@ -655,9 +655,10 @@ static void AnimationEditor_createAnimatedSprite(AnimationEditor this)
 	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 	position.z += 0;
 
-	this->animatedSprite = __NEW(BAnimatedSprite, (SpriteDefinition*)_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0], (void*)this);
-	ASSERT(this->animatedSprite, "AnimationEditor::createAnimatedSprite: null animatedSprite");
-	ASSERT(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite)), "AnimationEditor::createAnimatedSprite: null texture");
+	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userActors[OptionsSelector_getSelectedOption(this->actorsSelector)].actorDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0];
+	this->animatedSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
+	ASSERT(this->animatedSprite, "AnimationEditor::createSprite: null animatedSprite");
+	ASSERT(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite)), "AnimationEditor::createSprite: null texture");
 
 	VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __UPCAST(Sprite, this->animatedSprite));
 	spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite))) << 2));

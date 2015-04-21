@@ -165,6 +165,8 @@ void OSprite_setPosition(OSprite this, VBVec2D position)
 	this->position.x = position.x;
 	this->position.y = position.y;
 	this->position.z = position.z;
+
+	this->renderFlag |= __UPDATE_G;
 }
 
 void OSprite_synchronizePosition(OSprite this, VBVec3D position3D)
@@ -214,7 +216,7 @@ void OSprite_render(OSprite this)
 			for (; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
-				OAM[ objectIndex << 2] = x + (8 * j)  * xDirection;
+				OAM[objectIndex << 2] = x + (8 * j)  * xDirection;
 				OAM[(objectIndex << 2) + 1] = (this->head & 0xC000) | (this->position.parallax & 0x3FFF);
 				OAM[(objectIndex << 2) + 2] = y + (8 * i)  * yDirection;
 				OAM[(objectIndex << 2) + 3] = (OAM[(objectIndex << 2) + 3] & 0xCFFF) | (this->head & 0x3000);
@@ -231,4 +233,25 @@ int OSprite_getObjectIndex(OSprite this)
 	ASSERT(this, "OSprite::getObjectIndex: null this");
 
 	return this->objectIndex;
+}
+
+// hide
+void OSprite_hide(OSprite this)
+{
+	ASSERT(this, "OSprite::hide: null this");
+
+	int cols = Texture_getCols(__UPCAST(Texture, this->texture));
+	int rows = Texture_getRows(__UPCAST(Texture, this->texture));
+
+	int i = 0;
+	for (; i < rows; i++)
+	{
+		int j = 0;
+		for (; j < cols; j++)
+		{
+			s32 objectIndex = this->objectIndex + i * cols + j;
+			OAM[objectIndex << 2] -= __SCREEN_WIDTH;
+			OAM[(objectIndex << 2) + 2] -= __SCREEN_HEIGHT;
+		}
+	}
 }

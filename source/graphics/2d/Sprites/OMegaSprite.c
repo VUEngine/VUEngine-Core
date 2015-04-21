@@ -109,6 +109,8 @@ s32 OMegaSprite_addOSprite(OMegaSprite this, OSprite oSprite, int numberOfObject
 		this->availableObjects -= numberOfObjects;
 		this->nextAvailableObject += numberOfObjects;
 		
+		this->renderFlag = __UPDATE_HEAD;
+
 		return this->nextAvailableObject - numberOfObjects;
 	}
 	
@@ -170,15 +172,11 @@ void OMegaSprite_render(OMegaSprite this)
 {
 	ASSERT(this, "OMegaSprite::render: null this");
 
-	this->renderFlag = __UPDATE_HEAD;
 	//if render flag is set
 	if (this->renderFlag)
 	{
-		if (__UPDATE_HEAD == this->renderFlag)
-		{
-			// make sure to not render again
-			WA[this->worldLayer].head = this->head;
-		}
+		// make sure to not render again
+		WA[this->worldLayer].head = this->head | WRLD_OVR;
 		
 		// make sure to not render again
 		this->renderFlag = false;

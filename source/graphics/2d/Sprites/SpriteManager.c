@@ -289,7 +289,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	if (VirtualList_removeElement(this->sprites, sprite))
 	{
 		// hide it
-		Sprite_hide(sprite);
+		__VIRTUAL_CALL(void, Sprite, hide, sprite);
 
 		// calculate the freed layer
 		// if there is already a higher layer being freed
@@ -455,7 +455,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 	{
 		if (Sprite_getWorldLayer(__UPCAST(Sprite, VirtualNode_getData(node))) != layer)
 		{
-			Sprite_hide(__UPCAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 		else
 		{

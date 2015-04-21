@@ -70,7 +70,7 @@ void Sprite_destructor(Sprite this)
 	ASSERT(this, "Sprite::destructor: null this");
 	ASSERT(__UPCAST(Sprite, this), "Sprite::destructor: null cast");
 
-	Sprite_hide(this);
+	__VIRTUAL_CALL(void, Sprite, hide, this);
 
 	if(this->animationController)
 	{
@@ -135,10 +135,19 @@ void Sprite_show(Sprite this)
 void Sprite_hide(Sprite this)
 {
 	ASSERT(this, "Sprite::hide: null this");
-//	ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::hide: freeLayer >= this->worldLayer");
+	ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::hide: freeLayer >= this->worldLayer");
 
 	WORLD_HEAD(this->worldLayer, 0x0000);
 }
+
+// retrieve animation controller
+const AnimationController const Sprite_getAnimationController(Sprite this)
+{
+	ASSERT(this, "Sprite::hide: getAnimationController this");
+
+	return this->animationController;
+}
+
 
 // get render flag
 u32 Sprite_getRenderFlag(Sprite this)

@@ -60,6 +60,7 @@
 	__VIRTUAL_DEC(resize);														\
 	__VIRTUAL_DEC(calculateParallax);											\
 	__VIRTUAL_DEC(writeAnimation);												\
+	__VIRTUAL_DEC(hide);														\
 
 // declare the virtual methods which are redefined
 #define Sprite_SET_VTABLE(ClassName)											\
@@ -68,6 +69,7 @@
 	__VIRTUAL_SET(ClassName, Sprite, scale);									\
 	__VIRTUAL_SET(ClassName, Sprite, resize);									\
 	__VIRTUAL_SET(ClassName, Sprite, writeAnimation);							\
+	__VIRTUAL_SET(ClassName, Sprite, hide);										\
 
 #define Sprite_ATTRIBUTES														\
 																				\
@@ -139,6 +141,7 @@ u16 Sprite_getHead(Sprite this);
 void Sprite_setRenderFlag(Sprite this, bool renderFlag);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
+const AnimationController const Sprite_getAnimationController(Sprite this);
 
 //---------------------------------------------------------------------------------------------------------
 // 										Animation

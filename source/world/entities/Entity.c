@@ -928,7 +928,7 @@ void Entity_hide(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite_hide(__UPCAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
