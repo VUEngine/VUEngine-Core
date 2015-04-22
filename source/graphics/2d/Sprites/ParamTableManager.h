@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <BSprite.h>
+#include <BgmapSprite.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
@@ -59,8 +59,8 @@ ParamTableManager ParamTableManager_getInstance();
 
 void ParamTableManager_destructor(ParamTableManager this);
 void ParamTableManager_reset(ParamTableManager this);
-int ParamTableManager_allocate(ParamTableManager this, BSprite bsprite);
-void ParamTableManager_free(ParamTableManager this, BSprite bsprite);
+int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bsprite);
+void ParamTableManager_free(ParamTableManager this, BgmapSprite bsprite);
 bool ParamTableManager_processRemovedSprites(ParamTableManager this);
 void ParamTableManager_print(ParamTableManager this,int x, int y);
 

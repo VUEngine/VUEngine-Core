@@ -99,11 +99,11 @@ void ScrollBackground_initialize(ScrollBackground this)
 
 	ScrollBackground_retrieveSprites(this);
 
-	BSprite bSprite = this->scrollBSprites[kRightSprite];
+	BgmapSprite bSprite = this->scrollBgmapSprites[kRightSprite];
 	
 	if(bSprite)
 	{
-		BTexture bTtexture = __UPCAST(BTexture, Sprite_getTexture(__UPCAST(Sprite, bSprite)));
+		BgmapTexture bTtexture = __UPCAST(BgmapTexture, Sprite_getTexture(__UPCAST(Sprite, bSprite)));
 
 		if(bTtexture)
 		{
@@ -122,9 +122,9 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this)
 
 	for (; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
 	{
-		this->scrollBSprites[i] = VirtualNode_getData(node);
+		this->scrollBgmapSprites[i] = VirtualNode_getData(node);
 
-		ASSERT(__GET_CAST(BSprite, this->scrollBSprites[i]), "ScrollBackground::constructor: no sprite added to list")
+		ASSERT(__GET_CAST(BgmapSprite, this->scrollBgmapSprites[i]), "ScrollBackground::constructor: no sprite added to list")
 	}
 }
 
@@ -166,7 +166,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 
 	// TODO: add proper comments
 	// TODO: this needs serious improvements
-	DrawSpec drawSpec0 = BSprite_getDrawSpec(this->scrollBSprites[kRightSprite]);
+	DrawSpec drawSpec0 = BgmapSprite_getDrawSpec(this->scrollBgmapSprites[kRightSprite]);
 	drawSpec0.position.z = this->transform.globalPosition.z;
 
 	DrawSpec drawSpec1 = drawSpec0;
@@ -231,18 +231,18 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	}
 
 	// now move the drawspec in order to render the texture in the center
-	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(__UPCAST(Sprite, this->scrollBSprites[kLeftSprite]))) << 2);
-	drawSpec0.position.parallax = drawSpec1.position.parallax = BSprite_getDrawSpec(this->scrollBSprites[kLeftSprite]).position.parallax;
+	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(__UPCAST(Sprite, this->scrollBgmapSprites[kLeftSprite]))) << 2);
+	drawSpec0.position.parallax = drawSpec1.position.parallax = BgmapSprite_getDrawSpec(this->scrollBgmapSprites[kLeftSprite]).position.parallax;
 
 	// set map's position
-	ASSERT(this->scrollBSprites[kLeftSprite], "ScrollBackground::updateScrolling: null kLeftSprite sprite");
-	ASSERT(this->scrollBSprites[kRightSprite], "ScrollBackground::updateScrolling: null kRightSprite sprite");
+	ASSERT(this->scrollBgmapSprites[kLeftSprite], "ScrollBackground::updateScrolling: null kLeftSprite sprite");
+	ASSERT(this->scrollBgmapSprites[kRightSprite], "ScrollBackground::updateScrolling: null kRightSprite sprite");
 
-	BSprite_setDrawSpec(this->scrollBSprites[kRightSprite], &drawSpec0);
-	Sprite_setRenderFlag(__UPCAST(Sprite, this->scrollBSprites[kRightSprite]), __UPDATE_G);
+	BgmapSprite_setDrawSpec(this->scrollBgmapSprites[kRightSprite], &drawSpec0);
+	Sprite_setRenderFlag(__UPCAST(Sprite, this->scrollBgmapSprites[kRightSprite]), __UPDATE_G);
 
-	BSprite_setDrawSpec(this->scrollBSprites[kLeftSprite], &drawSpec1);
-	Sprite_setRenderFlag(__UPCAST(Sprite, this->scrollBSprites[kLeftSprite]), __UPDATE_G);
+	BgmapSprite_setDrawSpec(this->scrollBgmapSprites[kLeftSprite], &drawSpec1);
+	Sprite_setRenderFlag(__UPCAST(Sprite, this->scrollBgmapSprites[kLeftSprite]), __UPDATE_G);
 }
 
 // whether it is visible
@@ -271,7 +271,7 @@ void ScrollBackground_suspend(ScrollBackground this)
 
 	for (; i <= kRightSprite ; i++)
 	{
-		this->scrollBSprites[i] = NULL;
+		this->scrollBgmapSprites[i] = NULL;
 	}
 }
 

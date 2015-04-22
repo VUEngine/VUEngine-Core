@@ -27,11 +27,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
-#include <Sprite.h>
+#include <BgmapSprite.h>
+#include <ObjectSprite.h>
 #include <StateMachine.h>
 #include <Telegram.h>
-// TODO: remove me
-#include <BSPrite.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

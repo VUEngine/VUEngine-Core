@@ -23,9 +23,9 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OAnimatedSprite.h>
-#include <OMegaSprite.h>
-#include <OTexture.h>
+#include <ObjectAnimatedSprite.h>
+#include <ObjectSpriteContainer.h>
+#include <ObjectTexture.h>
 #include <Game.h>
 #include <string.h>
 
@@ -34,8 +34,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the OAnimatedSprite
-__CLASS_DEFINITION(OAnimatedSprite, OSprite);
+// define the ObjectAnimatedSprite
+__CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ __CLASS_DEFINITION(OAnimatedSprite, OSprite);
 extern int strcmp(const char *, const char *);
 
 // class's constructor
-static void OAnimatedSprite_constructor(OAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
+static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,11 +53,11 @@ static void OAnimatedSprite_constructor(OAnimatedSprite this, const SpriteDefini
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
-__CLASS_NEW_END(OAnimatedSprite, spriteDefinition, owner);
+__CLASS_NEW_DEFINITION(ObjectAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
+__CLASS_NEW_END(ObjectAnimatedSprite, spriteDefinition, owner);
 
 // class's constructor
-static void OAnimatedSprite_constructor(OAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
+static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
 {
 	// construct base object
 	__CONSTRUCT_BASE(spriteDefinition);
@@ -66,18 +66,18 @@ static void OAnimatedSprite_constructor(OAnimatedSprite this, const SpriteDefini
 }
 
 //destructor
-void OAnimatedSprite_destructor(OAnimatedSprite this)
+void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 {
-	ASSERT(this, "OAnimatedSprite::destructor: null this");
+	ASSERT(this, "ObjectAnimatedSprite::destructor: null this");
 
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
 // write char animation frame to char memory
-void OAnimatedSprite_writeAnimation(OAnimatedSprite this)
+void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 {
-	ASSERT(this, "OAnimatedSprite::writeAnimation: null this");
+	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");
 	
 	// write according to the allocation type
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
@@ -99,9 +99,9 @@ void OAnimatedSprite_writeAnimation(OAnimatedSprite this)
 
 		case __ANIMATED_SHARED:
 
-			OTexture_addBgmapDisplacement(__UPCAST(OTexture, this->texture), AnimationController_getActualFrameIndex(this->animationController));
-			OTexture_write(__UPCAST(OTexture, this->texture));
-			OTexture_resetBgmapDisplacement(__UPCAST(OTexture, this->texture));
+			ObjectTexture_addBgmapDisplacement(__UPCAST(ObjectTexture, this->texture), AnimationController_getActualFrameIndex(this->animationController));
+			ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+			ObjectTexture_resetBgmapDisplacement(__UPCAST(ObjectTexture, this->texture));
 			break;
 	}
 }

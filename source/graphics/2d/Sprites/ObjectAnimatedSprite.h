@@ -18,73 +18,61 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef O_TEXTURE_H_
-#define O_TEXTURE_H_
+#ifndef OBJECT_ANIMATED_SPRITE_H_
+#define OBJECT_ANIMATED_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Texture.h>
-#include <CharSet.h>
-#include <Telegram.h>
+#include <ObjectSprite.h>
+#include <Clock.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
-
-#define __EVENT_TEXTURE_REWRITTEN				"textureRewritten"
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define OTexture_METHODS														\
-	Texture_METHODS																\
+// declare the virtual methods
+#define ObjectAnimatedSprite_METHODS											\
+	ObjectSprite_METHODS														\
 
-#define OTexture_SET_VTABLE(ClassName)											\
-	Texture_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, OTexture, write);									\
+// declare the virtual methods which are redefined
+#define ObjectAnimatedSprite_SET_VTABLE(ClassName)								\
+	ObjectSprite_SET_VTABLE(ClassName)											\
+	__VIRTUAL_SET(ClassName, ObjectAnimatedSprite, writeAnimation);				\
 
-#define OTexture_ATTRIBUTES														\
+#define ObjectAnimatedSprite_ATTRIBUTES											\
 																				\
 	/* super's attributes */													\
-	Texture_ATTRIBUTES;															\
+	ObjectSprite_ATTRIBUTES;													\
 																				\
-	/* object index */															\
-	int objectIndex;															\
-																				\
-	/* bgmap displacement */													\
-	int bgmapDisplacement;														\
+	/* bgmap's source coordinates */											\
+	TextureSource originalTextureSource;										\
 
-// A texture which has the logic to be allocated in graphic memory
-__CLASS(OTexture);
-
-//use a OTexture when you want to show a static background or a character that must be scaled according
-//its deep on the screen so there exists consistency between the deep and the size of the character
+// declare a Sprite, which holds a texture and a drawing specification
+__CLASS(ObjectAnimatedSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef const TextureDefinition OTextureDefinition;
-typedef const OTextureDefinition OTextureROMDef;
-
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OTexture, OTextureDefinition* oTextureDefinition, u16 id);
+__CLASS_NEW_DECLARE(ObjectAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
 
-void OTexture_destructor(OTexture this);
-void OTexture_write(OTexture this);
-void OTexture_setObjectIndex(OTexture this, int objectIndex);
-void OTexture_resetBgmapDisplacement(OTexture this);
-void OTexture_addBgmapDisplacement(OTexture this, int frame);
+void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this);
+void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this);
 
 
 #endif

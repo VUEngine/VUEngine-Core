@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef B_SPRITE_H_
-#define B_SPRITE_H_
+#ifndef BGMAP_SPRITE_H_
+#define BGMAP_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,23 +47,23 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define BSprite_METHODS															\
+#define BgmapSprite_METHODS														\
 	Sprite_METHODS																\
 
 // declare the virtual methods which are redefined
-#define BSprite_SET_VTABLE(ClassName)											\
+#define BgmapSprite_SET_VTABLE(ClassName)										\
 	Sprite_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, BSprite, render);									\
-	__VIRTUAL_SET(ClassName, BSprite, getPosition);								\
-	__VIRTUAL_SET(ClassName, BSprite, setPosition);								\
-	__VIRTUAL_SET(ClassName, BSprite, synchronizePosition);						\
-	__VIRTUAL_SET(ClassName, BSprite, getScale);								\
-	__VIRTUAL_SET(ClassName, BSprite, setDirection);							\
-	__VIRTUAL_SET(ClassName, BSprite, scale);									\
-	__VIRTUAL_SET(ClassName, BSprite, resize);									\
-	__VIRTUAL_SET(ClassName, BSprite, calculateParallax);						\
+	__VIRTUAL_SET(ClassName, BgmapSprite, render);								\
+	__VIRTUAL_SET(ClassName, BgmapSprite, getPosition);							\
+	__VIRTUAL_SET(ClassName, BgmapSprite, setPosition);							\
+	__VIRTUAL_SET(ClassName, BgmapSprite, synchronizePosition);					\
+	__VIRTUAL_SET(ClassName, BgmapSprite, getScale);							\
+	__VIRTUAL_SET(ClassName, BgmapSprite, setDirection);						\
+	__VIRTUAL_SET(ClassName, BgmapSprite, scale);								\
+	__VIRTUAL_SET(ClassName, BgmapSprite, resize);								\
+	__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);					\
 
-#define BSprite_ATTRIBUTES														\
+#define BgmapSprite_ATTRIBUTES													\
 																				\
 	/* super's attributes */													\
 	Sprite_ATTRIBUTES;															\
@@ -81,15 +81,15 @@
 	/* int hbiasAmplitude; */													\
 
 
-// declare a BSprite, which holds a texture and a drawing specification
-__CLASS(BSprite);
+// declare a BgmapSprite, which holds a texture and a drawing specification
+__CLASS(BgmapSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct BSpriteDefinition
+typedef struct BgmapSpriteDefinition
 {
 	// the class type
 	void* allocator;
@@ -106,51 +106,51 @@ typedef struct BSpriteDefinition
 	// parallax modifier to achieve better control over display
 	s8 parallaxDisplacement;
 
-} BSpriteDefinition;
+} BgmapSpriteDefinition;
 
-typedef const BSpriteDefinition BSpriteROMDef;
+typedef const BgmapSpriteDefinition BgmapSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(BSprite, const BSpriteDefinition* bSpriteDefinition);
+__CLASS_NEW_DECLARE(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition);
 
-void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinition);
-void BSprite_destructor(BSprite this);
-Scale BSprite_getScale(BSprite this);
-void BSprite_setDirection(BSprite this, int axis, int direction);
-void BSprite_resize(BSprite this, fix19_13 z);
-VBVec2D BSprite_getPosition(BSprite this);
-void BSprite_setPosition(BSprite this, VBVec2D position);
-void BSprite_synchronizePosition(BSprite this, VBVec3D position3D);
-void BSprite_calculateParallax(BSprite this, fix19_13 z);
-DrawSpec BSprite_getDrawSpec(BSprite this);
-void BSprite_invalidateParamTable(BSprite this);
-void BSprite_setDrawSpec(BSprite this, const DrawSpec* const drawSpec);
-fix19_13 BSprite_getParamTableRow(BSprite this);
-u32 BSprite_getParam(BSprite this);
-void BSprite_setParam(BSprite this, u32 param);
-void BSprite_render(BSprite this);
+void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition);
+void BgmapSprite_destructor(BgmapSprite this);
+Scale BgmapSprite_getScale(BgmapSprite this);
+void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
+void BgmapSprite_resize(BgmapSprite this, fix19_13 z);
+VBVec2D BgmapSprite_getPosition(BgmapSprite this);
+void BgmapSprite_setPosition(BgmapSprite this, VBVec2D position);
+void BgmapSprite_synchronizePosition(BgmapSprite this, VBVec3D position3D);
+void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z);
+DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);
+void BgmapSprite_invalidateParamTable(BgmapSprite this);
+void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec);
+fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this);
+u32 BgmapSprite_getParam(BgmapSprite this);
+void BgmapSprite_setParam(BgmapSprite this, u32 param);
+void BgmapSprite_render(BgmapSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										BSprites FXs
+// 										BgmapSprites FXs
 //---------------------------------------------------------------------------------------------------------
 
 // direct draw
-void BSprite_putChar(BSprite this, Point* texturePixel, BYTE* newChar);
-void BSprite_putPixel(BSprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
+void BgmapSprite_putChar(BgmapSprite this, Point* texturePixel, BYTE* newChar);
+void BgmapSprite_putPixel(BgmapSprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
 // Affine FX
-void BSprite_scale(BSprite this);
-void BSprite_rotate(BSprite this, int angle);
+void BgmapSprite_scale(BgmapSprite this);
+void BgmapSprite_rotate(BgmapSprite this, int angle);
 
 // H-Bias FX
-void BSprite_squeezeXHFX(BSprite this);
-void BSprite_fireHFX(BSprite this);
-void BSprite_waveHFX(BSprite this);
+void BgmapSprite_squeezeXHFX(BgmapSprite this);
+void BgmapSprite_fireHFX(BgmapSprite this);
+void BgmapSprite_waveHFX(BgmapSprite this);
 
 
 #endif

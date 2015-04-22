@@ -23,7 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OMegaSpriteManager.h>
+#include <ObjectSpriteContainerManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -36,26 +36,26 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define OMegaSpriteManager_ATTRIBUTES														\
+#define ObjectSpriteContainerManager_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
 																				\
 	/* object groups */															\
-	OMegaSprite oMegaSprites[__TOTAL_OBJECT_SEGMENTS];							\
+	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
 
-// define the OMegaSprite
-__CLASS_DEFINITION(OMegaSpriteManager, Object);
+// define the ObjectSpriteContainer
+__CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OMegaSprite, u8 spt);
+__CLASS_NEW_DECLARE(ObjectSpriteContainer, u8 spt);
 
 
-static void OMegaSpriteManager_constructor(OMegaSpriteManager this);
+static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,71 +64,71 @@ static void OMegaSpriteManager_constructor(OMegaSpriteManager this);
 
 
 // a singleton
-__SINGLETON(OMegaSpriteManager);
+__SINGLETON(ObjectSpriteContainerManager);
 
 //class constructor
-void OMegaSpriteManager_constructor(OMegaSpriteManager this)
+void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
 {
 	__CONSTRUCT_BASE();
 
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		this->oMegaSprites[i] = NULL;
+		this->objectSpriteContainers[i] = NULL;
 		VIP_REGS[SPT3 - i] = 0;
 	}
 }
 
 // class destructor
-void OMegaSpriteManager_destructor(OMegaSpriteManager this)
+void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 {
-	ASSERT(this, "OMegaSpriteManager::destructor: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::destructor: null this");
 
-	OMegaSpriteManager_reset(this);
+	ObjectSpriteContainerManager_reset(this);
 	
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
 
 // reset
-void OMegaSpriteManager_reset(OMegaSpriteManager this)
+void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 {
-	ASSERT(this, "OMegaSpriteManager::reset: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::reset: null this");
 	
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		if(this->oMegaSprites[i])
+		if(this->objectSpriteContainers[i])
 		{
-			__DELETE(this->oMegaSprites[i]);
+			__DELETE(this->objectSpriteContainers[i]);
 		}
 		
-		this->oMegaSprites[i] = NULL;
+		this->objectSpriteContainers[i] = NULL;
 	}
 }
 
 // retrieve a mega sprite
-OMegaSprite OMegaSpriteManager_getOMegaSprite(OMegaSpriteManager this, int numberOfObjects)
+ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects)
 {
-	ASSERT(this, "OMegaSpriteManager::getOMegaSprite: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
 	
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		if(!this->oMegaSprites[i])
+		if(!this->objectSpriteContainers[i])
 		{
-			this->oMegaSprites[i] = __NEW(OMegaSprite, SPT3 - i);
+			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, SPT3 - i);
 			
-			return this->oMegaSprites[i];
+			return this->objectSpriteContainers[i];
 		}
 		
-		if(OMegaSprite_hasRoomFor(this->oMegaSprites[i], numberOfObjects))
+		if(ObjectSpriteContainer_hasRoomFor(this->objectSpriteContainers[i], numberOfObjects))
 		{
-			return this->oMegaSprites[i];
+			return this->objectSpriteContainers[i];
 		}		
 	}
 	
-	NM_ASSERT(this, "OMegaSpriteManager::getOMegaSprite: no OMegaSprites available");
+	NM_ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
 
 	return NULL;
 }

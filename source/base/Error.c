@@ -89,6 +89,7 @@ int Error_triggerException(Error this, char* string)
 
 	// turn on the display
     HardwareManager_displayOn(HardwareManager_getInstance());
+   // Screen_FXFadeIn(Screen_getInstance(), 0);
 
 	// make sure the brigtness is ok
     HardwareManager_upBrightness(HardwareManager_getInstance());
@@ -112,9 +113,11 @@ int Error_triggerException(Error this, char* string)
 	{
 		Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 	}
+//	Printing_int(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()), 5, 10, NULL);
 	
 	// error display message
-	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
+//	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
+	Printing_render(Printing_getInstance(), 31);
 
 	//trap the game here
 	while (true);

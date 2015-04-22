@@ -37,7 +37,7 @@
 #include <HardwareManager.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
-#include <BTextureManager.h>
+#include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
 #include <VPUManager.h>
 #include <PhysicalWorld.h>
@@ -253,7 +253,7 @@ void Debug_update(Debug this)
 // show debug screens
 void Debug_show(Debug this, GameState gameState)
 {
-	VPUManager_clearBgmap(VPUManager_getInstance(), BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 	this->gameState = gameState;
@@ -266,7 +266,7 @@ void Debug_show(Debug this, GameState gameState)
 void Debug_hide(Debug this)
 {
 	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
-	VPUManager_clearBgmap(VPUManager_getInstance(), BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_lightUpGame(this);
 }
@@ -350,7 +350,7 @@ static void Debug_showPage(Debug this, int increment)
 	{
 		this->update = NULL;
 
-		VPUManager_clearBgmap(VPUManager_getInstance(), BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+		VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 
         Debug_printHeader(this);
@@ -369,7 +369,7 @@ static void Debug_showSubPage(Debug this, int increment)
 	{
 		this->update = NULL;
 
-		VPUManager_clearBgmap(VPUManager_getInstance(), BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+		VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
         Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
@@ -570,7 +570,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
 	//put the map into memory calculating the number of char for each reference
 	for (i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 64; i++)
 	{
-		Mem_add((u8*)BGMap(BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
+		Mem_add((u8*)BGMap(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
 				(const u8*)CHAR_MEMORY_MP,
 				__SCREEN_WIDTH >> 3,
 				(this->charSeg << 9) + i * (__SCREEN_WIDTH >> 3));
@@ -620,18 +620,18 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 
 	if (-1 > this->currentBgmap)
 	{
-		this->currentBgmap = BTextureManager_getAvailableBgmapSegments(BTextureManager_getInstance()) - 1;
+		this->currentBgmap = BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) - 1;
 	}
 
 	if (-1 == this->currentBgmap)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		BTextureManager_print(BTextureManager_getInstance(), x, y);
+		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
 
 		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
 		Debug_dimmGame(this);
 	}
-	else if (BTextureManager_getAvailableBgmapSegments(BTextureManager_getInstance()) > this->currentBgmap)
+	else if (BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) > this->currentBgmap)
 	{
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing_text(Printing_getInstance(), "Bgmap: ", x, y, NULL);
@@ -649,7 +649,7 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 	{
 		this->currentBgmap = -1;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		BTextureManager_print(BTextureManager_getInstance(), x, y);
+		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
 		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
 		Debug_dimmGame(this);
 	}

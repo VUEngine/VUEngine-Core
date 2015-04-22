@@ -18,61 +18,90 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef B_ANIMATED_SPRITE_H_
-#define B_ANIMATED_SPRITE_H_
+#ifndef M_BGMAP_SPRITE_H_
+#define M_BGMAP_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BSprite.h>
-#include <Clock.h>
+#include <BgmapSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+// 											 MACROS
 //---------------------------------------------------------------------------------------------------------
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define BAnimatedSprite_METHODS													\
-	BSprite_METHODS																\
+#define MBgmapSprite_METHODS													\
+	BgmapSprite_METHODS															\
 
 // declare the virtual methods which are redefined
-#define BAnimatedSprite_SET_VTABLE(ClassName)									\
-	BSprite_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, BAnimatedSprite, writeAnimation);					\
+#define MBgmapSprite_SET_VTABLE(ClassName)										\
+	BgmapSprite_SET_VTABLE(ClassName)											\
+	__VIRTUAL_SET(ClassName, MBgmapSprite, synchronizePosition);				\
 
-#define BAnimatedSprite_ATTRIBUTES												\
+#define MBgmapSprite_ATTRIBUTES													\
 																				\
 	/* super's attributes */													\
-	BSprite_ATTRIBUTES;															\
+	BgmapSprite_ATTRIBUTES;														\
 																				\
-	/* bgmap's source coordinates */											\
-	TextureSource originalTextureSource;										\
+	/* this is our texture */													\
+	VirtualList textures;														\
+																				\
+	/* pinter to definition */													\
+	const MBgmapSpriteDefinition* mSpriteDefinition;							\
+																				\
+	/* total size of the bgmap, used for loop/not loop */						\
+	Point size;																	\
+																				\
+	/* fot total size of the bgmap calculation */								\
+	Point sizeMultiplier;																	\
 
-// declare a Sprite, which holds a texture and a drawing specification
-__CLASS(BAnimatedSprite);
+// declare a MBgmapSprite, which holds a texture and a drawing specification
+__CLASS(MBgmapSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct MBgmapSpriteDefinition
+{
+	// the normal sprite definition
+	BgmapSpriteDefinition bSpriteDefinition;
+	
+	// texture to use with the sprite
+	TextureDefinition** textureDefinitions;
+
+	// SCX/SCY value
+	u16 scValue;
+
+	// flag to loop the x axis
+	u8 xLoop;
+
+	// flag to loop the y axis
+	u8 yLoop;
+
+} MBgmapSpriteDefinition;
+
+typedef const MBgmapSpriteDefinition MBgmapSpriteROMDef;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(BAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
+__CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition);
 
-void BAnimatedSprite_destructor(BAnimatedSprite this);
-void BAnimatedSprite_writeAnimation(BAnimatedSprite this);
+void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition);
+void MBgmapSprite_destructor(MBgmapSprite this);
+void MBgmapSprite_synchronizePosition(MBgmapSprite this, VBVec3D position3D);
 
 
 #endif

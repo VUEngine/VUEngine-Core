@@ -23,8 +23,8 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OMegaSprite.h>
-#include <OTexture.h>
+#include <ObjectSpriteContainer.h>
+#include <ObjectTexture.h>
 #include <Optics.h>
 #include <Screen.h>
 #include <SpriteManager.h>
@@ -41,8 +41,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the OMegaSprite
-__CLASS_DEFINITION(OMegaSprite, Sprite);
+// define the ObjectSpriteContainer
+__CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,11 +60,11 @@ extern Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OMegaSprite, u8 spt)
-__CLASS_NEW_END(OMegaSprite, spt);
+__CLASS_NEW_DEFINITION(ObjectSpriteContainer, u8 spt)
+__CLASS_NEW_END(ObjectSpriteContainer, spt);
 
 // class's constructor
-void OMegaSprite_constructor(OMegaSprite this, u8 spt)
+void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 {
 	__CONSTRUCT_BASE();
 
@@ -81,9 +81,9 @@ void OMegaSprite_constructor(OMegaSprite this, u8 spt)
 }
 
 // class's destructor
-void OMegaSprite_destructor(OMegaSprite this)
+void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 {
-	ASSERT(this, "OMegaSprite::destructor: null this");
+	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 
 	// remove from sprite manager
 	SpriteManager_removeSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
@@ -97,10 +97,10 @@ void OMegaSprite_destructor(OMegaSprite this)
 	__DESTROY_BASE;
 }
 
-s32 OMegaSprite_addOSprite(OMegaSprite this, OSprite oSprite, int numberOfObjects)
+s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite oSprite, int numberOfObjects)
 {
-	ASSERT(this, "OMegaSprite::addOSprite: null this");
-	ASSERT(oSprite, "OMegaSprite::addOSprite: null oSprite");
+	ASSERT(this, "ObjectSpriteContainer::addObjectSprite: null this");
+	ASSERT(oSprite, "ObjectSpriteContainer::addObjectSprite: null oSprite");
 	
 	if(oSprite)
 	{
@@ -117,10 +117,10 @@ s32 OMegaSprite_addOSprite(OMegaSprite this, OSprite oSprite, int numberOfObject
 	return -1;
 }
 
-void OMegaSprite_removeOSprite(OMegaSprite this, OSprite oSprite, int numberOfObjects)
+void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite oSprite, int numberOfObjects)
 {
-	ASSERT(this, "OMegaSprite::removeOSprite: null this");
-	ASSERT(VirtualList_find(this->oSprites, oSprite), "OMegaSprite::removeOSprite: not found");
+	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
+	ASSERT(VirtualList_find(this->oSprites, oSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 	
 	if(oSprite)
 	{
@@ -128,21 +128,21 @@ void OMegaSprite_removeOSprite(OMegaSprite this, OSprite oSprite, int numberOfOb
 	}
 }
 
-bool OMegaSprite_hasRoomFor(OMegaSprite this, int numberOfObjects)
+bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, int numberOfObjects)
 {
-	ASSERT(this, "OMegaSprite::removeOSprite: null this");
+	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 
 	return this->availableObjects >= numberOfObjects;
 }
 
-void OMegaSprite_setDirection(OMegaSprite this, int axis, int direction)
+void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction)
 {
-	ASSERT(this, "OMegaSprite::setDirection: null this");
+	ASSERT(this, "ObjectSpriteContainer::setDirection: null this");
 }
 
-VBVec2D OMegaSprite_getPosition(OMegaSprite this)
+VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 {
-	ASSERT(this, "OMegaSprite::getPosition: null this");
+	ASSERT(this, "ObjectSpriteContainer::getPosition: null this");
 
 	VBVec2D position =
 	{
@@ -152,25 +152,25 @@ VBVec2D OMegaSprite_getPosition(OMegaSprite this)
 	return position;
 }
 
-void OMegaSprite_setPosition(OMegaSprite this, VBVec2D position)
+void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, VBVec2D position)
 {
-	ASSERT(this, "OMegaSprite::setPosition: null this");
+	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
 }
 
-void OMegaSprite_synchronizePosition(OMegaSprite this, VBVec3D position3D)
+void ObjectSpriteContainer_synchronizePosition(ObjectSpriteContainer this, VBVec3D position3D)
 {
-	ASSERT(this, "OMegaSprite::synchronizePosition: null this");
+	ASSERT(this, "ObjectSpriteContainer::synchronizePosition: null this");
 }
 
-void OMegaSprite_calculateParallax(OMegaSprite this, fix19_13 z)
+void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z)
 {
-	ASSERT(this, "OMegaSprite::calculateParallax: null this");
+	ASSERT(this, "ObjectSpriteContainer::calculateParallax: null this");
 }
 
 // render a world layer with the map's information
-void OMegaSprite_render(OMegaSprite this)
+void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 {
-	ASSERT(this, "OMegaSprite::render: null this");
+	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
 	//if render flag is set
 	if (this->renderFlag)
@@ -186,6 +186,6 @@ void OMegaSprite_render(OMegaSprite this)
 
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		OSprite_render(__UPCAST(OSprite, VirtualNode_getData(node)));
+		ObjectSprite_render(__UPCAST(ObjectSprite, VirtualNode_getData(node)));
 	}
 }

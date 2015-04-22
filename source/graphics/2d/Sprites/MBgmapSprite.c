@@ -23,7 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MSprite.h>
+#include <MBgmapSprite.h>
 #include <Optics.h>
 #include <Screen.h>
 
@@ -39,8 +39,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the MSprite
-__CLASS_DEFINITION(MSprite, BSprite);
+// define the MBgmapSprite
+__CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,12 +51,12 @@ __CLASS_DEFINITION(MSprite, BSprite);
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
 
-static void MSprite_releaseTextures(MSprite this);
-static void MSprite_loadTextures(MSprite this);
-static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefinition);
-static void MSprite_calculateSizeMultiplier(MSprite this);
-static void MSprite_calculateSize(MSprite this);
-static const Point* const MSprite_capPosition(MSprite this);
+static void MBgmapSprite_releaseTextures(MBgmapSprite this);
+static void MBgmapSprite_loadTextures(MBgmapSprite this);
+static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);
+static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this);
+static void MBgmapSprite_calculateSize(MBgmapSprite this);
+static const Point* const MBgmapSprite_capPosition(MBgmapSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,19 +64,19 @@ static const Point* const MSprite_capPosition(MSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MSprite, const MSpriteDefinition* mSpriteDefinition)
-__CLASS_NEW_END(MSprite, mSpriteDefinition);
+__CLASS_NEW_DEFINITION(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition)
+__CLASS_NEW_END(MBgmapSprite, mSpriteDefinition);
 
 // class's constructor
-void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinition)
+void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition)
 {
 	__CONSTRUCT_BASE(&mSpriteDefinition->bSpriteDefinition);
 	
 	this->mSpriteDefinition = mSpriteDefinition;
 
-	ASSERT(!this->texture, "MSprite::constructor: texture alrea");
+	ASSERT(!this->texture, "MBgmapSprite::constructor: texture alrea");
 	this->textures = NULL;
-	MSprite_loadTextures(this);
+	MBgmapSprite_loadTextures(this);
 	
 	// assume looping
 	this->size.x = 0;
@@ -85,15 +85,15 @@ void MSprite_constructor(MSprite this, const MSpriteDefinition* mSpriteDefinitio
 	this->sizeMultiplier.x = 1;
 	this->sizeMultiplier.y = 1;
 	
-	MSprite_calculateSize(this);
+	MBgmapSprite_calculateSize(this);
 }
 
 // class's destructor
-void MSprite_destructor(MSprite this)
+void MBgmapSprite_destructor(MBgmapSprite this)
 {
-	ASSERT(this, "MSprite::destructor: null this");
+	ASSERT(this, "MBgmapSprite::destructor: null this");
 
-	MSprite_releaseTextures(this);
+	MBgmapSprite_releaseTextures(this);
 	this->texture = NULL;
 
 	// destroy the super object
@@ -101,9 +101,9 @@ void MSprite_destructor(MSprite this)
 }
 
 // release loaded textures
-static void MSprite_releaseTextures(MSprite this)
+static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 {
-	ASSERT(this, "MSprite::releaseTextures: null this");
+	ASSERT(this, "MBgmapSprite::releaseTextures: null this");
 
 	if(this->textures)
 	{
@@ -112,7 +112,7 @@ static void MSprite_releaseTextures(MSprite this)
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			// free the texture
-			BTextureManager_free(BTextureManager_getInstance(), __UPCAST(BTexture, VirtualNode_getData(node)));
+			BgmapTextureManager_free(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, VirtualNode_getData(node)));
 		}
 		
 		__DELETE(this->textures);
@@ -122,20 +122,20 @@ static void MSprite_releaseTextures(MSprite this)
 }
 
 // load textures
-static void MSprite_loadTextures(MSprite this)
+static void MBgmapSprite_loadTextures(MBgmapSprite this)
 {
-	ASSERT(this, "MSprite::loadTextures: null this");
+	ASSERT(this, "MBgmapSprite::loadTextures: null this");
 
 	if (this->mSpriteDefinition)
 	{
-		MSprite_releaseTextures(this);
+		MBgmapSprite_releaseTextures(this);
 		this->textures = __NEW(VirtualList);
 		
 		int i = 0;
 		
 		for (; this->mSpriteDefinition->textureDefinitions[i]; i++)
 	    {
-			MSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
+			MBgmapSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
 		}
 		
 		this->texture = __UPCAST(Texture, VirtualList_front(this->textures));
@@ -143,29 +143,29 @@ static void MSprite_loadTextures(MSprite this)
 }
 
 // load texture
-static void MSprite_loadTexture(MSprite this, TextureDefinition* textureDefinition)
+static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition)
 {
-	ASSERT(this, "MSprite::loadTexture: null this");
+	ASSERT(this, "MBgmapSprite::loadTexture: null this");
 
-	ASSERT(textureDefinition, "MSprite::loadTexture: no sprite allocator defined");
+	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: no sprite allocator defined");
 
 	if (textureDefinition)
 	{
-		BTexture bTexture = BTextureManager_get(BTextureManager_getInstance(), textureDefinition);
+		BgmapTexture bgmapTexture = BgmapTextureManager_get(BgmapTextureManager_getInstance(), textureDefinition);
 		
-		ASSERT(bTexture, "MSprite::loadTexture: texture not loaded");
+		ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 		
-		if(bTexture && this->textures)
+		if(bgmapTexture && this->textures)
 		{
-			VirtualList_pushBack(this->textures, bTexture);
+			VirtualList_pushBack(this->textures, bgmapTexture);
 		}
 	}
 }
 
 // set sprite's position
-void MSprite_synchronizePosition(MSprite this, VBVec3D position3D)
+void MBgmapSprite_synchronizePosition(MBgmapSprite this, VBVec3D position3D)
 {
-	ASSERT(this, "MSprite::setPosition: null this");
+	ASSERT(this, "MBgmapSprite::setPosition: null this");
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -194,7 +194,7 @@ void MSprite_synchronizePosition(MSprite this, VBVec3D position3D)
 		__VIRTUAL_CALL(void, Sprite, calculateParallax, __UPCAST(Sprite, this), this->drawSpec.position.z);
 	}
 
-	const Point* const axisCapped = MSprite_capPosition(this);
+	const Point* const axisCapped = MBgmapSprite_capPosition(this);
 	
 	if(axisCapped->x)
 	{
@@ -210,13 +210,13 @@ void MSprite_synchronizePosition(MSprite this, VBVec3D position3D)
 	
 	this->renderFlag |= __UPDATE_M;
 
-	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BTexture_getYOffset(__UPCAST(BTexture, this->texture)) << 3: 0;
+	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture)) << 3: 0;
 }
 
 // calculate the size multiplier
-static void MSprite_calculateSizeMultiplier(MSprite this)
+static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 {
-	ASSERT(this, "MSprite::calculateSizeMultiplier: null this");
+	ASSERT(this, "MBgmapSprite::calculateSizeMultiplier: null this");
 
 	switch(this->mSpriteDefinition->scValue)
 	{
@@ -283,11 +283,11 @@ static void MSprite_calculateSizeMultiplier(MSprite this)
 }
 
 // calculate total sprite's size
-static void MSprite_calculateSize(MSprite this)
+static void MBgmapSprite_calculateSize(MBgmapSprite this)
 {
-	ASSERT(this, "MSprite::calculateSize: null this");
+	ASSERT(this, "MBgmapSprite::calculateSize: null this");
 
-	MSprite_calculateSizeMultiplier(this);
+	MBgmapSprite_calculateSizeMultiplier(this);
 	
 	Texture texture = __UPCAST(Texture, VirtualList_front(this->textures));
 	
@@ -303,9 +303,9 @@ static void MSprite_calculateSize(MSprite this)
 }
 
 // calculate the position
-static const Point* const MSprite_capPosition(MSprite this)
+static const Point* const MBgmapSprite_capPosition(MBgmapSprite this)
 {
-	ASSERT(this, "MSprite::capPosition: null this");
+	ASSERT(this, "MBgmapSprite::capPosition: null this");
 
 	static Point axisCapped = 
 	{

@@ -24,7 +24,6 @@
 
 #include <Image.h>
 
-
 //---------------------------------------------------------------------------------------------------------
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
@@ -66,10 +65,10 @@ TextureROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ICON_TX =
     0,
 };
 
-BSpriteROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE =
+BgmapSpriteROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE =
 {
 	// sprite's type
-	__TYPE(BSprite),
+	__TYPE(BgmapSprite),
 
 	// texture definition
 	(TextureDefinition*)&VBJAENGINE_ADJUSTMENT_SCREEN_ICON_TX,
@@ -84,16 +83,16 @@ BSpriteROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE =
 	0		
 };
 
-BSpriteROMDef* const VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITES[] =
+BgmapSpriteROMDef* const VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITES[] =
 {
 	&VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_L_SPRITE,
 	NULL
 };
 
-BSpriteROMDef const VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE =
+BgmapSpriteROMDef const VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE =
 {
 	// sprite's type
-	__TYPE(BSprite),
+	__TYPE(BgmapSprite),
 
 	// texture definition
 	(TextureDefinition*)&VBJAENGINE_ADJUSTMENT_SCREEN_ICON_TX,
@@ -108,7 +107,7 @@ BSpriteROMDef const VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE =
 	0		
 };
 
-BSpriteROMDef* VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITES[] =
+BgmapSpriteROMDef* VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITES[] =
 {
 	&VBJAENGINE_ADJUSTMENT_SCREEN_ICON_IM_R_SPRITE,
 	NULL

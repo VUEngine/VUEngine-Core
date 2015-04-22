@@ -23,10 +23,10 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OSprite.h>
-#include <OMegaSprite.h>
-#include <OMegaSpriteManager.h>
-#include <OTexture.h>
+#include <ObjectSprite.h>
+#include <ObjectSpriteContainer.h>
+#include <ObjectSpriteContainerManager.h>
+#include <ObjectTexture.h>
 #include <Optics.h>
 #include <Screen.h>
 
@@ -42,8 +42,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the OSprite
-__CLASS_DEFINITION(OSprite, Sprite);
+// define the ObjectSprite
+__CLASS_DEFINITION(ObjectSprite, Sprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,19 +61,19 @@ extern Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OSprite, const OSpriteDefinition* mSpriteDefinition)
-__CLASS_NEW_END(OSprite, mSpriteDefinition);
+__CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* mSpriteDefinition)
+__CLASS_NEW_END(ObjectSprite, mSpriteDefinition);
 
 // class's constructor
-void OSprite_constructor(OSprite this, const OSpriteDefinition* oSpriteDefinition)
+void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition)
 {
-	ASSERT(this, "OSprite::constructor: null this");
+	ASSERT(this, "ObjectSprite::constructor: null this");
 
 	__CONSTRUCT_BASE();
 
 	this->head = oSpriteDefinition->display;
 	this->objectIndex = -1;
-	this->oMegaSprite = NULL;
+	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
 	
 	// clear position
@@ -82,41 +82,41 @@ void OSprite_constructor(OSprite this, const OSpriteDefinition* oSpriteDefinitio
 	this->position.z = 0;
 	this->position.parallax = 0;
 
-	ASSERT(oSpriteDefinition->textureDefinition, "OSprite::constructor: null textureDefinition");
+	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
 	if(oSpriteDefinition->textureDefinition)
 	{
-		this->texture = __UPCAST(Texture, __NEW(OTexture, oSpriteDefinition->textureDefinition, 0));
+		this->texture = __UPCAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
 		
 		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 
 		this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
-		this->oMegaSprite = OMegaSpriteManager_getOMegaSprite(OMegaSpriteManager_getInstance(), this->totalObjects);
+		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects);
 		
-		this->objectIndex = OMegaSprite_addOSprite(this->oMegaSprite, this, this->totalObjects);
-		OTexture_setObjectIndex(__UPCAST(OTexture, this->texture), this->objectIndex);
-		OTexture_write(__UPCAST(OTexture, this->texture));
+		this->objectIndex = ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
+		ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
+		ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
 	}
 }
 
 // class's destructor
-void OSprite_destructor(OSprite this)
+void ObjectSprite_destructor(ObjectSprite this)
 {
-	ASSERT(this, "OSprite::destructor: null this");
+	ASSERT(this, "ObjectSprite::destructor: null this");
 
-	if(this->oMegaSprite)
+	if(this->objectSpriteContainer)
 	{
-		OMegaSprite_removeOSprite(this->oMegaSprite, this, this->totalObjects);
+		ObjectSpriteContainer_removeObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
-void OSprite_setDirection(OSprite this, int axis, int direction)
+void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 {
-	ASSERT(this, "OSprite::setDirection: null this");
+	ASSERT(this, "ObjectSprite::setDirection: null this");
 
 	switch (axis)
 	{
@@ -146,9 +146,9 @@ void OSprite_setDirection(OSprite this, int axis, int direction)
 	}
 }
 
-VBVec2D OSprite_getPosition(OSprite this)
+VBVec2D ObjectSprite_getPosition(ObjectSprite this)
 {
-	ASSERT(this, "OSprite::getPosition: null this");
+	ASSERT(this, "ObjectSprite::getPosition: null this");
 
 	VBVec2D position =
 	{
@@ -158,9 +158,9 @@ VBVec2D OSprite_getPosition(OSprite this)
 	return position;
 }
 
-void OSprite_setPosition(OSprite this, VBVec2D position)
+void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position)
 {
-	ASSERT(this, "OSprite::setPosition: null this");
+	ASSERT(this, "ObjectSprite::setPosition: null this");
 
 	this->position.x = position.x;
 	this->position.y = position.y;
@@ -169,14 +169,14 @@ void OSprite_setPosition(OSprite this, VBVec2D position)
 	this->renderFlag |= __UPDATE_G;
 }
 
-void OSprite_synchronizePosition(OSprite this, VBVec3D position3D)
+void ObjectSprite_synchronizePosition(ObjectSprite this, VBVec3D position3D)
 {
-	ASSERT(this, "OSprite::synchronizePosition: null this");
+	ASSERT(this, "ObjectSprite::synchronizePosition: null this");
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
-	ASSERT(this->texture, "OSprite::setPosition: null texture");
+	ASSERT(this->texture, "ObjectSprite::setPosition: null texture");
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);
@@ -184,19 +184,19 @@ void OSprite_synchronizePosition(OSprite this, VBVec3D position3D)
 	this->renderFlag |= __UPDATE_G;
 }
 
-void OSprite_calculateParallax(OSprite this, fix19_13 z)
+void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z)
 {
-	ASSERT(this, "OSprite::calculateParallax: null this");
+	ASSERT(this, "ObjectSprite::calculateParallax: null this");
 
 	this->position.z = z - _screenPosition->z;
 	this->position.parallax = Optics_calculateParallax(this->position.x, z);
 }
 
 // render a world layer with the map's information
-void OSprite_render(OSprite this)
+void ObjectSprite_render(ObjectSprite this)
 {
-	ASSERT(this, "OSprite::render: null this");
-	ASSERT(this->texture, "OSprite::render: null texture");
+	ASSERT(this, "ObjectSprite::render: null this");
+	ASSERT(this->texture, "ObjectSprite::render: null texture");
 
 	//if render flag is set
 	if (this->renderFlag)
@@ -228,17 +228,17 @@ void OSprite_render(OSprite this)
 	}
 }
 
-int OSprite_getObjectIndex(OSprite this)
+int ObjectSprite_getObjectIndex(ObjectSprite this)
 {
-	ASSERT(this, "OSprite::getObjectIndex: null this");
+	ASSERT(this, "ObjectSprite::getObjectIndex: null this");
 
 	return this->objectIndex;
 }
 
 // hide
-void OSprite_hide(OSprite this)
+void ObjectSprite_hide(ObjectSprite this)
 {
-	ASSERT(this, "OSprite::hide: null this");
+	ASSERT(this, "ObjectSprite::hide: null this");
 
 	int cols = Texture_getCols(__UPCAST(Texture, this->texture));
 	int rows = Texture_getRows(__UPCAST(Texture, this->texture));

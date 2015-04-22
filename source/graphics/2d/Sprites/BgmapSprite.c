@@ -23,7 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BSprite.h>
+#include <BgmapSprite.h>
 #include <Game.h>
 #include <Optics.h>
 #include <SpriteManager.h>
@@ -42,8 +42,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the BSprite
-__CLASS_DEFINITION(BSprite, Sprite);
+// define the BgmapSprite
+__CLASS_DEFINITION(BgmapSprite, Sprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,18 +57,18 @@ extern unsigned int volatile* _xpstts;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
-static void BSprite_doScale(BSprite this);
+static void BgmapSprite_doScale(BgmapSprite this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BSprite, const BSpriteDefinition* bSpriteDefinition)
-__CLASS_NEW_END(BSprite, bSpriteDefinition);
+__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition)
+__CLASS_NEW_END(BgmapSprite, bSpriteDefinition);
 
 // class's constructor
-void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinition)
+void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition)
 {
 	__CONSTRUCT_BASE();
 
@@ -78,7 +78,7 @@ void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinitio
 	// create the texture
 	if(bSpriteDefinition->textureDefinition)
 	{
-		this->texture = __UPCAST(Texture, BTextureManager_get(BTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+		this->texture = __UPCAST(Texture, BgmapTextureManager_get(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
 	}
 	
 	if(this->texture)
@@ -86,8 +86,8 @@ void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinitio
 		Object_addEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = BTexture_getXOffset(__UPCAST(BTexture, this->texture)) << 3;
-		this->drawSpec.textureSource.my = BTexture_getYOffset(__UPCAST(BTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.mx = BgmapTexture_getXOffset(__UPCAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 	}
 	else
@@ -142,10 +142,10 @@ void BSprite_constructor(BSprite this, const BSpriteDefinition* bSpriteDefinitio
 }
 
 // class's destructor
-void BSprite_destructor(BSprite this)
+void BgmapSprite_destructor(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::destructor: null this");
-	ASSERT(__UPCAST(BSprite, this), "BSprite::destructor: null cast");
+	ASSERT(this, "BgmapSprite::destructor: null this");
+	ASSERT(__UPCAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
 	//if affine or bgmap
 	if (WRLD_AFFINE & this->head)
@@ -158,7 +158,7 @@ void BSprite_destructor(BSprite this)
 	if(this->texture)
 	{
 		Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
-		BTextureManager_free(BTextureManager_getInstance(), __UPCAST(BTexture, this->texture));
+		BgmapTextureManager_free(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, this->texture));
 		this->texture = NULL;
 	}
 	
@@ -169,18 +169,18 @@ void BSprite_destructor(BSprite this)
 	__DESTROY_BASE;
 }
 
-Scale BSprite_getScale(BSprite this)
+Scale BgmapSprite_getScale(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::getScale: null this");
+	ASSERT(this, "BgmapSprite::getScale: null this");
 
 	//  return the scale
 	return this->drawSpec.scale;
 }
 
 // set the direction
-void BSprite_setDirection(BSprite this, int axis, int direction)
+void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 {
-	ASSERT(this, "BSprite::setDirection: null this");
+	ASSERT(this, "BgmapSprite::setDirection: null this");
 
 	switch (axis)
 	{
@@ -197,13 +197,13 @@ void BSprite_setDirection(BSprite this, int axis, int direction)
 	}
 
 	// scale the texture in the next render cycle
-	BSprite_invalidateParamTable(this);
+	BgmapSprite_invalidateParamTable(this);
 }
 
 // calculate zoom scaling factor
-void BSprite_resize(BSprite this, fix19_13 z)
+void BgmapSprite_resize(BgmapSprite this, fix19_13 z)
 {
-	ASSERT(this, "BSprite::resize: null this");
+	ASSERT(this, "BgmapSprite::resize: null this");
 
 	z -= _screenPosition->z;
 	
@@ -229,33 +229,33 @@ void BSprite_resize(BSprite this, fix19_13 z)
 		}
 	}
 
-	BSprite_invalidateParamTable(this);
+	BgmapSprite_invalidateParamTable(this);
 }
 
-VBVec2D BSprite_getPosition(BSprite this)
+VBVec2D BgmapSprite_getPosition(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::getPosition: null this");
+	ASSERT(this, "BgmapSprite::getPosition: null this");
 
 	return this->drawSpec.position;
 }
 
-void BSprite_setPosition(BSprite this, VBVec2D position)
+void BgmapSprite_setPosition(BgmapSprite this, VBVec2D position)
 {
-	ASSERT(this, "BSprite::setPosition: null this");
+	ASSERT(this, "BgmapSprite::setPosition: null this");
 
 	this->drawSpec.position.x = position.x;
 	this->drawSpec.position.y = position.y;
 	this->drawSpec.position.z = position.z;
 }
 
-void BSprite_synchronizePosition(BSprite this, VBVec3D position3D)
+void BgmapSprite_synchronizePosition(BgmapSprite this, VBVec3D position3D)
 {
-	ASSERT(this, "BSprite::synchronizePosition: null this");
+	ASSERT(this, "BgmapSprite::synchronizePosition: null this");
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
-	ASSERT(this->texture, "BSprite::setPosition: null texture");
+	ASSERT(this->texture, "BgmapSprite::setPosition: null texture");
 
 	position3D.x -= this->halfWidth;
 	position3D.y -= this->halfHeight;
@@ -267,27 +267,27 @@ void BSprite_synchronizePosition(BSprite this, VBVec3D position3D)
 }
 
 // calculate the parallax
-void BSprite_calculateParallax(BSprite this, fix19_13 z)
+void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z)
 {
-	ASSERT(this, "BSprite::calculateParallax: null this");
+	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
 	this->drawSpec.position.z = z - _screenPosition->z;
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 
 // retrieve drawspec
-DrawSpec BSprite_getDrawSpec(BSprite this)
+DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::getDrawSpec: null this");
+	ASSERT(this, "BgmapSprite::getDrawSpec: null this");
 
 	return this->drawSpec;
 }
 
 // render a world layer with the map's information
-void BSprite_render(BSprite this)
+void BgmapSprite_render(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::render: null this");
-	ASSERT(this->texture, "BSprite::render: null texture");
+	ASSERT(this, "BgmapSprite::render: null this");
+	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
 	//if render flag is set
 	if (this->renderFlag)
@@ -295,7 +295,7 @@ void BSprite_render(BSprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-//		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BSprite::render: freeLayer >= this->worldLayer");
+//		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BgmapSprite::render: freeLayer >= this->worldLayer");
 
 		if (__UPDATE_HEAD == this->renderFlag)
 		{
@@ -320,7 +320,7 @@ void BSprite_render(BSprite this)
 			}
 
 			// make sure to not render again
-			worldPointer->head = this->head | BTexture_getBgmapSegment(__UPCAST(BTexture, this->texture));
+			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__UPCAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
 		}
@@ -348,7 +348,7 @@ void BSprite_render(BSprite this)
 			{
 				if(0 < this->paramTableRow)
 				{
-					BSprite_doScale(this);
+					BgmapSprite_doScale(this);
 					
 					if(0 < this->paramTableRow)
 					{
@@ -374,38 +374,38 @@ void BSprite_render(BSprite this)
 }
 
 // get map's param table address
-u32 BSprite_getParam(BSprite this)
+u32 BgmapSprite_getParam(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::getParam: null this");
+	ASSERT(this, "BgmapSprite::getParam: null this");
 
 	return this->param;
 }
 
 // set map's param table address
-void BSprite_setParam(BSprite this, u32 param)
+void BgmapSprite_setParam(BgmapSprite this, u32 param)
 {
-	ASSERT(this, "BSprite::setParam: null this");
+	ASSERT(this, "BgmapSprite::setParam: null this");
 
 	this->param = param;
 
 	// set flag to rewrite texture's param table
-	BSprite_invalidateParamTable(this);
+	BgmapSprite_invalidateParamTable(this);
 }
 
 // force refresh param table in the next render
-void BSprite_invalidateParamTable(BSprite this)
+void BgmapSprite_invalidateParamTable(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::invalidateParamTable: null this");
+	ASSERT(this, "BgmapSprite::invalidateParamTable: null this");
 
 	this->renderFlag |= __UPDATE_SIZE;
 	
-	BSprite_scale(this);
+	BgmapSprite_scale(this);
 }
 
 // set drawspec
-void BSprite_setDrawSpec(BSprite this, const DrawSpec* const drawSpec)
+void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
 {
-	ASSERT(this, "BSprite::setDrawSpec: null this");
+	ASSERT(this, "BgmapSprite::setDrawSpec: null this");
 
 	this->drawSpec.position.x = drawSpec->position.x;
 	this->drawSpec.position.y = drawSpec->position.y;
@@ -420,7 +420,7 @@ void BSprite_setDrawSpec(BSprite this, const DrawSpec* const drawSpec)
 }
 
 // retrieve param table current row
-fix19_13 BSprite_getParamTableRow(BSprite this)
+fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
 {
 	return this->paramTableRow;
 }
@@ -433,15 +433,15 @@ fix19_13 BSprite_getParamTableRow(BSprite this)
  * Affine FX
  */
 
-void BSprite_noAFX(BSprite this, int direction)
+void BgmapSprite_noAFX(BgmapSprite this, int direction)
 {
-	ASSERT(this, "BSprite::noAFX: null this");
+	ASSERT(this, "BgmapSprite::noAFX: null this");
 }
 
-static void BSprite_doScale(BSprite this)
+static void BgmapSprite_doScale(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::scale: null this");
-	ASSERT(this->texture, "BSprite::scale: null texture");
+	ASSERT(this, "BgmapSprite::scale: null this");
+	ASSERT(this->texture, "BgmapSprite::scale: null texture");
 
 	if (this->param)
 	{
@@ -456,23 +456,23 @@ static void BSprite_doScale(BSprite this)
 }
 
 // scale sprite
-void BSprite_scale(BSprite this)
+void BgmapSprite_scale(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::scale: null this");
-	ASSERT(this->texture, "BSprite::scale: null texture");
+	ASSERT(this, "BgmapSprite::scale: null this");
+	ASSERT(this->texture, "BgmapSprite::scale: null texture");
 
 	if (this->param)
 	{
 		this->paramTableRow = 0;
 		
-		BSprite_doScale(this);
+		BgmapSprite_doScale(this);
 	}
 }
 
-void BSprite_rotate(BSprite this, int angle)
+void BgmapSprite_rotate(BgmapSprite this, int angle)
 {
-	ASSERT(this, "BSprite::rotate: null this");
-	ASSERT(this->texture, "BSprite::rotate: null texture");
+	ASSERT(this, "BgmapSprite::rotate: null this");
+	ASSERT(this->texture, "BgmapSprite::rotate: null texture");
 
 	// TODO
 	if (this->param)
@@ -499,7 +499,7 @@ void BSprite_rotate(BSprite this, int angle)
 
 		}
 		// put down the flag
-		BSprite_setUpdateParamTableFlag(this, false);
+		BgmapSprite_setUpdateParamTableFlag(this, false);
 
 	}
 	*/
@@ -509,22 +509,22 @@ void BSprite_rotate(BSprite this, int angle)
  * H-Bias FX
  */
 
-void BSprite_squeezeXHFX(BSprite this)
+void BgmapSprite_squeezeXHFX(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::squezeXHFX: null this");
+	ASSERT(this, "BgmapSprite::squezeXHFX: null this");
 
 	// TODO
 }
 
-void BSprite_fireHFX(BSprite this)
+void BgmapSprite_fireHFX(BgmapSprite this)
 {
-	ASSERT(this, "BSprite::fireHFX: null this");
+	ASSERT(this, "BgmapSprite::fireHFX: null this");
 
 	// TODO
 }
 
-void BSprite_waveHFX(BSprite this){
-	ASSERT(this, "BSprite::waveHFX: null this");
+void BgmapSprite_waveHFX(BgmapSprite this){
+	ASSERT(this, "BgmapSprite::waveHFX: null this");
 
 	// TODO
 }

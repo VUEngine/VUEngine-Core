@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef OSPRITE_H_
-#define OSPRITE_H_
+#ifndef OBJECT_SPRITE_H_
+#define OBJECT_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,27 +40,27 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define OSprite_METHODS															\
+#define ObjectSprite_METHODS													\
 	Sprite_METHODS																\
 
 // declare the virtual methods which are redefined
-#define OSprite_SET_VTABLE(ClassName)											\
+#define ObjectSprite_SET_VTABLE(ClassName)										\
 	Sprite_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, OSprite, render);									\
-	__VIRTUAL_SET(ClassName, OSprite, getPosition);								\
-	__VIRTUAL_SET(ClassName, OSprite, setPosition);								\
-	__VIRTUAL_SET(ClassName, OSprite, synchronizePosition);						\
-	__VIRTUAL_SET(ClassName, OSprite, setDirection);							\
-	__VIRTUAL_SET(ClassName, OSprite, calculateParallax);						\
-	__VIRTUAL_SET(ClassName, OSprite, hide);									\
+	__VIRTUAL_SET(ClassName, ObjectSprite, render);								\
+	__VIRTUAL_SET(ClassName, ObjectSprite, getPosition);						\
+	__VIRTUAL_SET(ClassName, ObjectSprite, setPosition);						\
+	__VIRTUAL_SET(ClassName, ObjectSprite, synchronizePosition);				\
+	__VIRTUAL_SET(ClassName, ObjectSprite, setDirection);						\
+	__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);					\
+	__VIRTUAL_SET(ClassName, ObjectSprite, hide);								\
 
-#define OSprite_ATTRIBUTES														\
+#define ObjectSprite_ATTRIBUTES													\
 																				\
 	/* super's attributes */													\
 	Sprite_ATTRIBUTES;															\
 																				\
 	/* parent sprite */															\
-	OMegaSprite oMegaSprite;													\
+	ObjectSpriteContainer objectSpriteContainer;								\
 																				\
 	/* positioning */															\
 	VBVec2D position;															\
@@ -71,15 +71,15 @@
 	/* number of objects */														\
 	u8 totalObjects;															\
 	
-// declare a OSprite, which holds a texture and a drawing specification
-__CLASS(OSprite);
+// declare a ObjectSprite, which holds a texture and a drawing specification
+__CLASS(ObjectSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct OSpriteDefinition
+typedef struct ObjectSpriteDefinition
 {
 	// the class type
 	void* allocator;
@@ -96,26 +96,26 @@ typedef struct OSpriteDefinition
 	// parallax modifier to achieve better control over display
 	s8 parallaxDisplacement;
 
-} OSpriteDefinition;
+} ObjectSpriteDefinition;
 
-typedef const OSpriteDefinition OSpriteROMDef;
+typedef const ObjectSpriteDefinition ObjectSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OSprite, const OSpriteDefinition* oSpriteDefinition);
+__CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinition);
 
-void OSprite_constructor(OSprite this, const OSpriteDefinition* oSpriteDefinition);
-void OSprite_destructor(OSprite this);
-void OSprite_setDirection(OSprite this, int axis, int direction);
-VBVec2D OSprite_getPosition(OSprite this);
-void OSprite_setPosition(OSprite this, VBVec2D position);
-void OSprite_synchronizePosition(OSprite this, VBVec3D position3D);
-void OSprite_calculateParallax(OSprite this, fix19_13 z);
-void OSprite_render(OSprite this);
-int OSprite_getObjectIndex(OSprite this);
-void OSprite_hide(OSprite this);
+void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition);
+void ObjectSprite_destructor(ObjectSprite this);
+void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
+VBVec2D ObjectSprite_getPosition(ObjectSprite this);
+void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position);
+void ObjectSprite_synchronizePosition(ObjectSprite this, VBVec3D position3D);
+void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
+void ObjectSprite_render(ObjectSprite this);
+int ObjectSprite_getObjectIndex(ObjectSprite this);
+void ObjectSprite_hide(ObjectSprite this);
 
 #endif

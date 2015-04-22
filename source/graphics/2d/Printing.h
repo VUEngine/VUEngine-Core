@@ -28,7 +28,7 @@
 
 #include <Object.h>
 #include <CharSetManager.h>
-#include <BTextureManager.h>
+#include <BgmapTextureManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

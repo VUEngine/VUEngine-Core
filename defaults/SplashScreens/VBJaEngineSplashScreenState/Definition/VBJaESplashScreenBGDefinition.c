@@ -69,10 +69,10 @@ TextureROMDef VBJAENGINE_BG_TX =
     0,
 };
 
-BSpriteROMDef VBJAENGINE_BG_SB_SPRITE =
+BgmapSpriteROMDef VBJAENGINE_BG_SB_SPRITE =
 {
 	// sprite's type
-	__TYPE(BSprite),
+	__TYPE(BgmapSprite),
 
 	// texture definition
 	(TextureDefinition*)&VBJAENGINE_BG_TX,
@@ -87,7 +87,7 @@ BSpriteROMDef VBJAENGINE_BG_SB_SPRITE =
 	0		
 };
 
-BSpriteROMDef* const VBJAENGINE_BG_SB_SPRITES[] =
+BgmapSpriteROMDef* const VBJAENGINE_BG_SB_SPRITES[] =
 {
 	&VBJAENGINE_BG_SB_SPRITE,
 	&VBJAENGINE_BG_SB_SPRITE,

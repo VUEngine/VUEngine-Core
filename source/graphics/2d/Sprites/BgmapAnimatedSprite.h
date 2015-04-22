@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef O_ANIMATED_SPRITE_H_
-#define O_ANIMATED_SPRITE_H_
+#ifndef BGMAP_ANIMATED_SPRITE_H_
+#define BGMAP_ANIMATED_SPRITE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OSprite.h>
+#include <BgmapSprite.h>
 #include <Clock.h>
 
 
@@ -40,24 +40,24 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define OAnimatedSprite_METHODS													\
-	OSprite_METHODS																\
+#define BgmapAnimatedSprite_METHODS												\
+	BgmapSprite_METHODS															\
 
 // declare the virtual methods which are redefined
-#define OAnimatedSprite_SET_VTABLE(ClassName)									\
-	OSprite_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, OAnimatedSprite, writeAnimation);					\
+#define BgmapAnimatedSprite_SET_VTABLE(ClassName)								\
+	BgmapSprite_SET_VTABLE(ClassName)											\
+	__VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);				\
 
-#define OAnimatedSprite_ATTRIBUTES												\
+#define BgmapAnimatedSprite_ATTRIBUTES											\
 																				\
 	/* super's attributes */													\
-	OSprite_ATTRIBUTES;															\
+	BgmapSprite_ATTRIBUTES;														\
 																				\
 	/* bgmap's source coordinates */											\
 	TextureSource originalTextureSource;										\
 
 // declare a Sprite, which holds a texture and a drawing specification
-__CLASS(OAnimatedSprite);
+__CLASS(BgmapAnimatedSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,10 +69,10 @@ __CLASS(OAnimatedSprite);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
+__CLASS_NEW_DECLARE(BgmapAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
 
-void OAnimatedSprite_destructor(OAnimatedSprite this);
-void OAnimatedSprite_writeAnimation(OAnimatedSprite this);
+void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this);
+void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this);
 
 
 #endif

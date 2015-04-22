@@ -35,7 +35,7 @@
 #include <HardwareManager.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
-#include <BTextureManager.h>
+#include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
 #include <VPUManager.h>
 #include <PhysicalWorld.h>

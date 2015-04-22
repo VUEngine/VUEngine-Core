@@ -18,59 +18,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef B_TEXTURE_MANAGER_H_
-#define B_TEXTURE_MANAGER_H_
+#ifndef OBJECT_SPRITE_CONTAINER_MANAGER_H_
+#define OBJECT_SPRITE_CONTAINER_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
-#include <BTexture.h>
+#include <ObjectSpriteContainer.h>
+#include <ObjectTexture.h>
 
+
+//---------------------------------------------------------------------------------------------------------
+// 											 MACROS
+//---------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
 // declare the virtual methods
-#define BTextureManager_METHODS									\
-		Object_METHODS											\
-
+#define ObjectSpriteContainerManager_METHODS									\
+	Object_METHODS																\
 
 // declare the virtual methods which are redefined
-#define BTextureManager_SET_VTABLE(ClassName)					\
-		Object_SET_VTABLE(ClassName)							\
+#define ObjectSpriteContainerManager_SET_VTABLE(ClassName)						\
+	Object_SET_VTABLE(ClassName)												\
+	
 
-
-__CLASS(BTextureManager);
+// declare a ObjectSpriteContainerManager, which holds a texture and a drawing specification
+__CLASS(ObjectSpriteContainerManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-BTextureManager BTextureManager_getInstance();
+ObjectSpriteContainerManager ObjectSpriteContainerManager_getInstance();
 
-void BTextureManager_destructor(BTextureManager this);
-void BTextureManager_reset(BTextureManager this);
-void BTextureManager_free(BTextureManager this, BTexture bTexture);
-void BTextureManager_allocateText(BTextureManager this, BTexture bTexture);
-BTexture BTextureManager_get(BTextureManager this, BTextureDefinition* bTextureDefinition);
-s8 BTextureManager_getXOffset(BTextureManager this, int id);
-s8 BTextureManager_getYOffset(BTextureManager this, int id);
-u8 BTextureManager_getBgmapSegment(BTextureManager this, int id);
-u8 BTextureManager_getAvailableBgmapSegments(BTextureManager this);
-void BTextureManager_setAvailableBgmapSegments(BTextureManager this, u8 availableBgmapSegments);
-void BTextureManager_calculateAvailableBgmapSegments(BTextureManager this);
-void BTextureManager_resetAvailableBgmapSegments(BTextureManager this);
-u8 BTextureManager_getPrintingBgmapSegment(BTextureManager this);
-
-void BTextureManager_print(BTextureManager this, int x, int y);
+void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this);
+void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this);
+ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects);
 
 
 #endif

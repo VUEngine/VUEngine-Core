@@ -33,7 +33,7 @@
 #include <MiscStructs.h>
 #include <FrameRate.h>
 #include <Clock.h>
-#include <BTextureManager.h>
+#include <BgmapTextureManager.h>
 #include <GameState.h>
 #include <MessageDispatcher.h>
 #include <Stage.h>
@@ -97,7 +97,7 @@ enum StateOperations
 	/* managers */																\
 	HardwareManager hardwareManager;											\
 	FrameRate frameRate;														\
-	BTextureManager bTextureManager;											\
+	BgmapTextureManager bgmapTextureManager;											\
 	CharSetManager charSetManager;												\
 	SoundManager soundManager;													\
 	ParamTableManager paramTableManager;										\
@@ -200,7 +200,7 @@ static void Game_constructor(Game this)
 	// make sure all managers are initialized now
 	this->frameRate  = FrameRate_getInstance();
 	this->hardwareManager = HardwareManager_getInstance();
-	this->bTextureManager = BTextureManager_getInstance();
+	this->bgmapTextureManager = BgmapTextureManager_getInstance();
 	this->paramTableManager =  ParamTableManager_getInstance();
 	this->charSetManager = CharSetManager_getInstance();
 	this->soundManager = SoundManager_getInstance();
@@ -212,7 +212,7 @@ static void Game_constructor(Game this)
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
 	this->screen = Screen_getInstance();
-
+	
 	// set the default screen movement manager
 	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
 	
@@ -429,11 +429,12 @@ void Game_reset(Game this)
 
 	// reset managers
 	CharSetManager_reset(this->charSetManager);
-	BTextureManager_reset(this->bTextureManager);
+	BgmapTextureManager_reset(this->bgmapTextureManager);
 	ParamTableManager_reset(this->paramTableManager);
+	ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager_getInstance());
 	SpriteManager_reset(this->spriteManager);
 	MBackgroundManager_reset(MBackgroundManager_getInstance());
-	
+
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
 

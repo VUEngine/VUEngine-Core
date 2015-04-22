@@ -23,7 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OTexture.h>
+#include <ObjectTexture.h>
 #include <Optics.h>
 
 
@@ -31,18 +31,18 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(OTexture, Texture);
+__CLASS_DEFINITION(ObjectTexture, Texture);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void OTexture_constructor(OTexture this, OTextureDefinition* oTextureDefinition, u16 id);
-static void OTexture_writeAnimated(OTexture this);
-static void OTexture_writeNoAnimated(OTexture this);
-static void OTexture_writeNoAnimated(OTexture this);
-static void OTexture_writeAnimatedShared(OTexture this);
+static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id);
+static void ObjectTexture_writeAnimated(ObjectTexture this);
+static void ObjectTexture_writeNoAnimated(ObjectTexture this);
+static void ObjectTexture_writeNoAnimated(ObjectTexture this);
+static void ObjectTexture_writeAnimatedShared(ObjectTexture this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,32 +50,32 @@ static void OTexture_writeAnimatedShared(OTexture this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OTexture, OTextureDefinition* oTextureDefinition, u16 id)
-__CLASS_NEW_END(OTexture, oTextureDefinition, id);
+__CLASS_NEW_DEFINITION(ObjectTexture, ObjectTextureDefinition* objectTextureDefinition, u16 id)
+__CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
 
 // class's constructor
-static void OTexture_constructor(OTexture this, OTextureDefinition* oTextureDefinition, u16 id)
+static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {
 	// construct base object
-	__CONSTRUCT_BASE((TextureDefinition*)oTextureDefinition, id);
+	__CONSTRUCT_BASE((TextureDefinition*)objectTextureDefinition, id);
 	
 	this->objectIndex = -1;
 	this->bgmapDisplacement = 0;
 }
 
 // class's destructor
-void OTexture_destructor(OTexture this)
+void ObjectTexture_destructor(ObjectTexture this)
 {
-	ASSERT(this, "OTexture::destructor: null this");
+	ASSERT(this, "ObjectTexture::destructor: null this");
 
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
 // write into memory the chars and this
-void OTexture_write(OTexture this)
+void ObjectTexture_write(ObjectTexture this)
 {
-	ASSERT(this, "OTexture::write: null this");
+	ASSERT(this, "ObjectTexture::write: null this");
 
 	Texture_write(__UPCAST(Texture, this));
 	
@@ -85,19 +85,19 @@ void OTexture_write(OTexture this)
 		case __ANIMATED:
 
 			// write the definition to graphic memory
-			OTexture_writeAnimated(this);
+			ObjectTexture_writeAnimated(this);
 			break;
 
 		case __ANIMATED_SHARED:
 
 			// write the definition to graphic memory
-			OTexture_writeAnimatedShared(this);
+			ObjectTexture_writeAnimatedShared(this);
 			break;
 
 		case __NO_ANIMATED:
 
 			// write the definition to graphic memory
-			OTexture_writeNoAnimated(this);
+			ObjectTexture_writeNoAnimated(this);
 			break;
 
 		default:
@@ -107,9 +107,9 @@ void OTexture_write(OTexture this)
 }
 
 // write an animated map
-static void OTexture_writeAnimated(OTexture this)
+static void ObjectTexture_writeAnimated(ObjectTexture this)
 {
-	ASSERT(this, "OTexture::writeAnimated: null this");
+	ASSERT(this, "ObjectTexture::writeAnimated: null this");
 
 	int palette = this->palette << 14;
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
@@ -133,9 +133,9 @@ static void OTexture_writeAnimated(OTexture this)
 }
 
 // write an inanimated map
-static void OTexture_writeNoAnimated(OTexture this)
+static void ObjectTexture_writeNoAnimated(ObjectTexture this)
 {
-	ASSERT(this, "OTexture::writeNoAnimated: null this");
+	ASSERT(this, "ObjectTexture::writeNoAnimated: null this");
 	int palette = this->palette << 14;
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;
@@ -158,9 +158,9 @@ static void OTexture_writeNoAnimated(OTexture this)
 }
 
 // write an animated and shared map
-static void OTexture_writeAnimatedShared(OTexture this)
+static void ObjectTexture_writeAnimatedShared(ObjectTexture this)
 {
-	ASSERT(this, "OTexture::writeAnimatedShared: null this");
+	ASSERT(this, "ObjectTexture::writeAnimatedShared: null this");
 	int palette = this->palette << 14;
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;
@@ -182,9 +182,9 @@ static void OTexture_writeAnimatedShared(OTexture this)
 	}
 }
 
-void OTexture_setObjectIndex(OTexture this, int objectIndex)
+void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
 {
-	ASSERT(this, "OTexture::setObjectIndex: null this");
+	ASSERT(this, "ObjectTexture::setObjectIndex: null this");
 	
 	if(0 <= objectIndex && objectIndex < 1024)
 	{
@@ -192,17 +192,17 @@ void OTexture_setObjectIndex(OTexture this, int objectIndex)
 	}
 }
 
-void OTexture_resetBgmapDisplacement(OTexture this)
+void ObjectTexture_resetBgmapDisplacement(ObjectTexture this)
 {
-	ASSERT(this, "OTexture::resetBgmapDisplacement: null this");
+	ASSERT(this, "ObjectTexture::resetBgmapDisplacement: null this");
 	
 	this->bgmapDisplacement = 0;
 }
 
-void OTexture_addBgmapDisplacement(OTexture this, int frame)
+void ObjectTexture_addBgmapDisplacement(ObjectTexture this, int frame)
 {
-	ASSERT(this, "OTexture::setBgmapDisplacement: null this");
-	ASSERT(0 <= frame, "OTexture::setBgmapDisplacement: negative frame");
+	ASSERT(this, "ObjectTexture::setBgmapDisplacement: null this");
+	ASSERT(0 <= frame, "ObjectTexture::setBgmapDisplacement: negative frame");
 
 	this->bgmapDisplacement = (this->textureDefinition->cols * this->textureDefinition->rows) * frame << 1;
 }

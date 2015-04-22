@@ -18,48 +18,59 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef O_MEGA_SPRITE_MANAGER_H_
-#define O_MEGA_SPRITE_MANAGER_H_
+#ifndef BGMAP_TEXTURE_MANAGER_H_
+#define BGMAP_TEXTURE_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <OMegaSprite.h>
-#include <OTexture.h>
+#include <Object.h>
+#include <BgmapTexture.h>
 
-
-//---------------------------------------------------------------------------------------------------------
-// 											 MACROS
-//---------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/* Defines as a pointer to a structure that
+ * is not defined here and so is not accessible to the outside world
+ */
 // declare the virtual methods
-#define OMegaSpriteManager_METHODS															\
-	Object_METHODS																\
+#define BgmapTextureManager_METHODS												\
+		Object_METHODS															\
+
 
 // declare the virtual methods which are redefined
-#define OMegaSpriteManager_SET_VTABLE(ClassName)											\
-	Object_SET_VTABLE(ClassName)												\
-	
+#define BgmapTextureManager_SET_VTABLE(ClassName)								\
+		Object_SET_VTABLE(ClassName)											\
 
-// declare a OMegaSpriteManager, which holds a texture and a drawing specification
-__CLASS(OMegaSpriteManager);
+
+__CLASS(BgmapTextureManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-OMegaSpriteManager OMegaSpriteManager_getInstance();
+BgmapTextureManager BgmapTextureManager_getInstance();
 
-void OMegaSpriteManager_destructor(OMegaSpriteManager this);
-void OMegaSpriteManager_reset(OMegaSpriteManager this);
-OMegaSprite OMegaSpriteManager_getOMegaSprite(OMegaSpriteManager this, int numberOfObjects);
+void BgmapTextureManager_destructor(BgmapTextureManager this);
+void BgmapTextureManager_reset(BgmapTextureManager this);
+void BgmapTextureManager_free(BgmapTextureManager this, BgmapTexture bgmapTexture);
+void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture);
+BgmapTexture BgmapTextureManager_get(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
+s8 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id);
+s8 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id);
+u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id);
+u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this);
+void BgmapTextureManager_setAvailableBgmapSegments(BgmapTextureManager this, u8 availableBgmapSegments);
+void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this);
+void BgmapTextureManager_resetAvailableBgmapSegments(BgmapTextureManager this);
+u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this);
+
+void BgmapTextureManager_print(BgmapTextureManager this, int x, int y);
 
 
 #endif

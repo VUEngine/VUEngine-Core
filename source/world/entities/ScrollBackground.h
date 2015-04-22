@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
+#include <BgmapSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,7 +54,7 @@
 	Entity_ATTRIBUTES;															\
 																				\
 	/* sprites for scrolling */													\
-	BSprite scrollBSprites[2];													\
+	BgmapSprite scrollBgmapSprites[2];													\
 
 __CLASS(ScrollBackground);
 

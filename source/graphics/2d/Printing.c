@@ -115,7 +115,7 @@ void Printing_render(Printing this, int textLayer)
 		return;
 	}
 	
-	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance()));
+	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
 	WA[textLayer].mx = 0;
 	WA[textLayer].mp = 0;
 	WA[textLayer].my = 0;
@@ -129,7 +129,7 @@ void Printing_render(Printing this, int textLayer)
 // clear printing area
 void Printing_clear(Printing this)
 {
-	u8 printingBgmap = BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance());
+	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	VPUManager_clearBgmap(VPUManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
@@ -225,7 +225,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 
 void Printing_int(Printing this, int value, int x, int y, const char* font)
 {
-	u8 printingBgmap = BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance());
+	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 	
 	if (value < 0)
 	{
@@ -242,7 +242,7 @@ void Printing_int(Printing this, int value, int x, int y, const char* font)
 
 void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 {
-	u8 printingBgmap = BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance());
+	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	if (0 && value<0)
 	{
@@ -259,7 +259,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 
 void Printing_float(Printing this, float value, int x, int y, const char* font)
 {
-	u8 printingBgmap = BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance());
+	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	int sign = 1;
 	int i = 0;
@@ -306,7 +306,7 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 
 void Printing_text(Printing this, char* string, int x, int y, const char* font)
 {
-	u8 printingBgmap = BTextureManager_getPrintingBgmapSegment(BTextureManager_getInstance());
+	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
 }
 

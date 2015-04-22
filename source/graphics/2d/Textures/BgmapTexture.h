@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef B_TEXTURE_H_
-#define B_TEXTURE_H_
+#ifndef BGMAP_TEXTURE_H_
+#define BGMAP_TEXTURE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -41,22 +41,22 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define BTexture_METHODS														\
+#define BgmapTexture_METHODS													\
 	Texture_METHODS																\
 
-#define BTexture_SET_VTABLE(ClassName)											\
+#define BgmapTexture_SET_VTABLE(ClassName)										\
 	Texture_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, BTexture, write);									\
+	__VIRTUAL_SET(ClassName, BgmapTexture, write);								\
 
-#define BTexture_ATTRIBUTES														\
+#define BgmapTexture_ATTRIBUTES													\
 																				\
 	/* super's attributes */													\
 	Texture_ATTRIBUTES;															\
 
 // A texture which has the logic to be allocated in graphic memory
-__CLASS(BTexture);
+__CLASS(BgmapTexture);
 
-//use a BTexture when you want to show a static background or a character that must be scaled according
+//use a BgmapTexture when you want to show a static background or a character that must be scaled according
 //its deep on the screen so there exists consistency between the deep and the size of the character
 
 
@@ -64,20 +64,20 @@ __CLASS(BTexture);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef const TextureDefinition BTextureDefinition;
-typedef const BTextureDefinition BTextureROMDef;
+typedef const TextureDefinition BgmapTextureDefinition;
+typedef const BgmapTextureDefinition BgmapTextureROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(BTexture, BTextureDefinition* bTextureDefinition, u16 id);
+__CLASS_NEW_DECLARE(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
 
-void BTexture_destructor(BTexture this);
-void BTexture_write(BTexture this);
-u8 BTexture_getXOffset(BTexture this);
-u8 BTexture_getYOffset(BTexture this);
-u8 BTexture_getBgmapSegment(BTexture this);
+void BgmapTexture_destructor(BgmapTexture this);
+void BgmapTexture_write(BgmapTexture this);
+u8 BgmapTexture_getXOffset(BgmapTexture this);
+u8 BgmapTexture_getYOffset(BgmapTexture this);
+u8 BgmapTexture_getBgmapSegment(BgmapTexture this);
 
 #endif

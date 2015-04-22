@@ -101,7 +101,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this);
 static void Stage_loadTextures(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
-BTexture BTextureManager_loadTexture(BTextureManager this, BTextureDefinition* bTextureDefinition, int isPreload);
+BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -448,17 +448,17 @@ static void Stage_loadTextures(Stage this)
 
 	for (; this->stageDefinition->textures[i]; i++)
 	{
-		BTextureManager_loadTexture(BTextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharSets);
+		BgmapTextureManager_loadTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharSets);
 	}
 	
 	if(0 < i)
 	{
-		BTextureManager_calculateAvailableBgmapSegments(BTextureManager_getInstance());
+		BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
 		ParamTableManager_reset(ParamTableManager_getInstance());
 	}
 	else 
 	{
-		BTextureManager_resetAvailableBgmapSegments(BTextureManager_getInstance());
+		BgmapTextureManager_resetAvailableBgmapSegments(BgmapTextureManager_getInstance());
 	}
 }
 

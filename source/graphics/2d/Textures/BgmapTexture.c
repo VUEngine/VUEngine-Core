@@ -23,7 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BTexture.h>
+#include <BgmapTexture.h>
 #include <Optics.h>
 
 
@@ -31,18 +31,18 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(BTexture, Texture);
+__CLASS_DEFINITION(BgmapTexture, Texture);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void BTexture_constructor(BTexture this, BTextureDefinition* bTextureDefinition, u16 id);
-static void BTexture_writeAnimated(BTexture this);
-static void BTexture_writeNoAnimated(BTexture this);
-static void BTexture_writeNoAnimated(BTexture this);
-static void BTexture_writeAnimatedShared(BTexture this);
+static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
+static void BgmapTexture_writeAnimated(BgmapTexture this);
+static void BgmapTexture_writeNoAnimated(BgmapTexture this);
+static void BgmapTexture_writeNoAnimated(BgmapTexture this);
+static void BgmapTexture_writeAnimatedShared(BgmapTexture this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,29 +50,29 @@ static void BTexture_writeAnimatedShared(BTexture this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BTexture, BTextureDefinition* bTextureDefinition, u16 id)
-__CLASS_NEW_END(BTexture, bTextureDefinition, id);
+__CLASS_NEW_DEFINITION(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
+__CLASS_NEW_END(BgmapTexture, bgmapTextureDefinition, id);
 
 // class's constructor
-static void BTexture_constructor(BTexture this, BTextureDefinition* bTextureDefinition, u16 id)
+static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
 {
 	// construct base object
-	__CONSTRUCT_BASE((TextureDefinition*)bTextureDefinition, id);
+	__CONSTRUCT_BASE((TextureDefinition*)bgmapTextureDefinition, id);
 }
 
 // class's destructor
-void BTexture_destructor(BTexture this)
+void BgmapTexture_destructor(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::destructor: null this");
+	ASSERT(this, "BgmapTexture::destructor: null this");
 
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
 // write into memory the chars and this
-void BTexture_write(BTexture this)
+void BgmapTexture_write(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::write: null this");
+	ASSERT(this, "BgmapTexture::write: null this");
 
 	Texture_write(__UPCAST(Texture, this));
 	
@@ -82,19 +82,19 @@ void BTexture_write(BTexture this)
 		case __ANIMATED:
 
 			// write the definition to graphic memory
-			BTexture_writeAnimated(this);
+			BgmapTexture_writeAnimated(this);
 			break;
 
 		case __ANIMATED_SHARED:
 
 			// write the definition to graphic memory
-			BTexture_writeAnimatedShared(this);
+			BgmapTexture_writeAnimatedShared(this);
 			break;
 
 		case __NO_ANIMATED:
 
 			// write the definition to graphic memory
-			BTexture_writeNoAnimated(this);
+			BgmapTexture_writeNoAnimated(this);
 			break;
 
 		default:
@@ -104,18 +104,18 @@ void BTexture_write(BTexture this)
 }
 
 // write an animated map
-static void BTexture_writeAnimated(BTexture this)
+static void BgmapTexture_writeAnimated(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::writeAnimated: null this");
+	ASSERT(this, "BgmapTexture::writeAnimated: null this");
 
-	int bgmapSegment = BTexture_getBgmapSegment(this);
+	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
 
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
-	int xOffset = (int)BTextureManager_getXOffset(BTextureManager_getInstance(), this->id);
-	int yOffset = (int)BTextureManager_getYOffset(BTextureManager_getInstance(), this->id);
+	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
+	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
 	if (0 > xOffset || 0 > yOffset)
 	{
@@ -134,18 +134,18 @@ static void BTexture_writeAnimated(BTexture this)
 }
 
 // write an inanimated map
-static void BTexture_writeNoAnimated(BTexture this)
+static void BgmapTexture_writeNoAnimated(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::writeNoAnimated: null this");
+	ASSERT(this, "BgmapTexture::writeNoAnimated: null this");
 
-	int bgmapSegment = BTexture_getBgmapSegment(this);
+	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
 
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
-	int xOffset = (int)BTextureManager_getXOffset(BTextureManager_getInstance(), this->id);
-	int yOffset = (int)BTextureManager_getYOffset(BTextureManager_getInstance(), this->id);
+	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
+	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
 	if (0 > xOffset || 0 > yOffset)
 	{
@@ -164,11 +164,11 @@ static void BTexture_writeNoAnimated(BTexture this)
 }
 
 // write an animated and shared map
-static void BTexture_writeAnimatedShared(BTexture this)
+static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::writeAnimatedShared: null this");
+	ASSERT(this, "BgmapTexture::writeAnimatedShared: null this");
 
-	int bgmapSegment = BTexture_getBgmapSegment(this);
+	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
 
 	// determine the number of frames the map had
@@ -178,8 +178,8 @@ static void BTexture_writeAnimatedShared(BTexture this)
 
 	int i = this->textureDefinition->rows;
 
-	int xOffset = (int)BTextureManager_getXOffset(BTextureManager_getInstance(), this->id);
-	int yOffset = (int)BTextureManager_getYOffset(BTextureManager_getInstance(), this->id);
+	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
+	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
 	if (0 > xOffset || 0 > yOffset)
 	{
@@ -203,25 +203,25 @@ static void BTexture_writeAnimatedShared(BTexture this)
 }
 
 // get texture's x offset within bgmap mem
-u8 BTexture_getXOffset(BTexture this)
+u8 BgmapTexture_getXOffset(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::getXOffset: null this");
+	ASSERT(this, "BgmapTexture::getXOffset: null this");
 
-	return abs(BTextureManager_getXOffset(BTextureManager_getInstance(), this->id));
+	return abs(BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id));
 }
 
 // get texture's y offset within bgmap mem
-u8 BTexture_getYOffset(BTexture this)
+u8 BgmapTexture_getYOffset(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::getYOffset: null this");
+	ASSERT(this, "BgmapTexture::getYOffset: null this");
 
-	return abs(BTextureManager_getYOffset(BTextureManager_getInstance(), this->id));
+	return abs(BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id));
 }
 
 //get texture's bgmap segment
-u8 BTexture_getBgmapSegment(BTexture this)
+u8 BgmapTexture_getBgmapSegment(BgmapTexture this)
 {
-	ASSERT(this, "BTexture::getBgmapSegment: null this");
+	ASSERT(this, "BgmapTexture::getBgmapSegment: null this");
 
-	return BTextureManager_getBgmapSegment(BTextureManager_getInstance(), this->id);
+	return BgmapTextureManager_getBgmapSegment(BgmapTextureManager_getInstance(), this->id);
 }

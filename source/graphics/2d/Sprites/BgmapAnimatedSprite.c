@@ -23,7 +23,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BAnimatedSprite.h>
+#include <BgmapAnimatedSprite.h>
 #include <Game.h>
 #include <string.h>
 
@@ -32,8 +32,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the BAnimatedSprite
-__CLASS_DEFINITION(BAnimatedSprite, BSprite);
+// define the BgmapAnimatedSprite
+__CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ __CLASS_DEFINITION(BAnimatedSprite, BSprite);
 extern int strcmp(const char *, const char *);
 
 // class's constructor
-static void BAnimatedSprite_constructor(BAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,11 +51,11 @@ static void BAnimatedSprite_constructor(BAnimatedSprite this, const SpriteDefini
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
-__CLASS_NEW_END(BAnimatedSprite, spriteDefinition, owner);
+__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
+__CLASS_NEW_END(BgmapAnimatedSprite, spriteDefinition, owner);
 
 // class's constructor
-static void BAnimatedSprite_constructor(BAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
 {
 	// construct base object
 	__CONSTRUCT_BASE(spriteDefinition);
@@ -63,23 +63,23 @@ static void BAnimatedSprite_constructor(BAnimatedSprite this, const SpriteDefini
 	this->animationController = __NEW(AnimationController, owner);
 	
 	// since the offset will be moved during animation, must save it
-	this->originalTextureSource.mx = abs(BTexture_getXOffset(__UPCAST(BTexture, this->texture))) << 3;
-	this->originalTextureSource.my = abs(BTexture_getYOffset(__UPCAST(BTexture, this->texture))) << 3;
+	this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
+	this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
 }
 
 //destructor
-void BAnimatedSprite_destructor(BAnimatedSprite this)
+void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 {
-	ASSERT(this, "BAnimatedSprite::destructor: null this");
+	ASSERT(this, "BgmapAnimatedSprite::destructor: null this");
 
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
 // write char animation frame to char memory
-void BAnimatedSprite_writeAnimation(BAnimatedSprite this)
+void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 {
-	ASSERT(this, "BAnimatedSprite::writeAnimation: null this");
+	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");
 
 	// write according to the allocation type
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
@@ -107,7 +107,7 @@ void BAnimatedSprite_writeAnimation(BAnimatedSprite this)
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}
 			
-			BSprite_invalidateParamTable(__UPCAST(BSprite, this));
+			BgmapSprite_invalidateParamTable(__UPCAST(BgmapSprite, this));
 			this->renderFlag |= __UPDATE_M;
 			break;
 	}

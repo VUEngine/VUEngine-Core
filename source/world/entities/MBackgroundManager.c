@@ -111,8 +111,8 @@ void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground
 		if(!node)
 		{
 			// texture not found, must load it
-			BTexture bTexture = BTextureManager_get(BTextureManager_getInstance(), textureDefinition);
-			VirtualList_pushBack(this->textures, bTexture);
+			BgmapTexture bgmapTexture = BgmapTextureManager_get(BgmapTextureManager_getInstance(), textureDefinition);
+			VirtualList_pushBack(this->textures, bgmapTexture);
 		}
 		else 
 		{
