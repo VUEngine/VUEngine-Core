@@ -343,6 +343,10 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 i
 
 		if(entity)
 		{
+			if(positionedEntity->name)
+			{
+				Container_setName(__UPCAST(Container, entity), positionedEntity->name);
+			}
 			
 			// set spatial position
 			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, positionedEntity->position);

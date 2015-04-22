@@ -39,10 +39,10 @@ __CLASS_DEFINITION(BgmapTexture, Texture);
 //---------------------------------------------------------------------------------------------------------
 
 static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
-static void BgmapTexture_writeAnimated(BgmapTexture this);
-static void BgmapTexture_writeNoAnimated(BgmapTexture this);
-static void BgmapTexture_writeNoAnimated(BgmapTexture this);
-static void BgmapTexture_writeAnimatedShared(BgmapTexture this);
+static void BgmapTexture_writeAnimatedSingle(BgmapTexture this);
+static void BgmapTexture_writeNotAnimated(BgmapTexture this);
+static void BgmapTexture_writeNotAnimated(BgmapTexture this);
+static void BgmapTexture_writeAnimatedMulti(BgmapTexture this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,32 +79,37 @@ void BgmapTexture_write(BgmapTexture this)
 	//determine the allocation type
 	switch (CharSet_getAllocationType(this->charSet))
 	{
-		case __ANIMATED:
+		case __ANIMATED_SINGLE:
 
 			// write the definition to graphic memory
-			BgmapTexture_writeAnimated(this);
+			BgmapTexture_writeAnimatedSingle(this);
+			break;
+
+		case __ANIMATED_MULTI:
+
+			// write the definition to graphic memory
+			BgmapTexture_writeAnimatedMulti(this);
+			break;
+
+		case __NOT_ANIMATED:
+
+			// write the definition to graphic memory
+			BgmapTexture_writeNotAnimated(this);
 			break;
 
 		case __ANIMATED_SHARED:
 
-			// write the definition to graphic memory
-			BgmapTexture_writeAnimatedShared(this);
-			break;
-
-		case __NO_ANIMATED:
-
-			// write the definition to graphic memory
-			BgmapTexture_writeNoAnimated(this);
+			ASSERT(false, "BgmapTexture::write: __ANIMATED_SHARED");
 			break;
 
 		default:
 
-			ASSERT(false, "Texture::write: no allocation type");
+			ASSERT(false, "BgmapTexture::write: no allocation type");
 	}
 }
 
 // write an animated map
-static void BgmapTexture_writeAnimated(BgmapTexture this)
+static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeAnimated: null this");
 
@@ -134,7 +139,7 @@ static void BgmapTexture_writeAnimated(BgmapTexture this)
 }
 
 // write an inanimated map
-static void BgmapTexture_writeNoAnimated(BgmapTexture this)
+static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeNoAnimated: null this");
 
@@ -164,7 +169,7 @@ static void BgmapTexture_writeNoAnimated(BgmapTexture this)
 }
 
 // write an animated and shared map
-static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
+static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeAnimatedShared: null this");
 

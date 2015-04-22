@@ -52,7 +52,7 @@
 	u8 charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
 																				\
 	/* registered char groups */												\
-	VirtualList charSets	;													\
+	VirtualList charSets;														\
 																				\
 	/* register every offset */													\
 	u16 offset[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];							\
@@ -149,7 +149,7 @@ static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefi
 	// search where to register the char definition
 	for (; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG && this->charDefinition[i]; i++);
 
-	ASSERT(i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG, "CharSetManager::setCharDefinition: no char definitions slots left");
+	NM_ASSERT(i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG, "CharSetManager::setCharDefinition: no char definitions slots left");
 
 	// save char definition
 	this->charDefinition[i] = charDefinition;
@@ -235,7 +235,7 @@ static int CharSetManager_searchCharDefinition(CharSetManager this, CharSet char
 	ASSERT(this, "CharSetManager::searchCharDefinition: null this");
 
 	int i = 0;
-	//
+	
 	BYTE* charDef = CharSet_getCharDefinition(charSet);
 
 	ASSERT(charDef, "CharSetManager::searchCharDefinition: null chardef in charset");
@@ -265,6 +265,15 @@ int CharSetManager_allocateShared(CharSetManager this, CharSet charSet)
 	// verify that the char's definition is not already defined
 	if (0 <= i)
 	{
+		BYTE* charDef = CharSet_getCharDefinition(charSet);
+		VirtualNode node = VirtualList_begin(this->charSets);
+		
+		for (; node && charDef != CharSet_getCharDefinition(__UPCAST(CharSet, VirtualNode_getData(node))); node = VirtualNode_getNext(node));
+
+		NM_ASSERT(node, "CharSetManager::allocateShared: lists unsynchronized");
+
+		CharSet_setSegment(charSet, CharSet_getSegment(__UPCAST(CharSet, VirtualNode_getData(node))));
+
 		// make charset point to it
 		CharSet_setOffset(charSet, this->offset[i]);
 

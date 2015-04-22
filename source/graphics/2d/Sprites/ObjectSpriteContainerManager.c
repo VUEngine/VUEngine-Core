@@ -54,7 +54,6 @@ __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 
 __CLASS_NEW_DECLARE(ObjectSpriteContainer, u8 spt);
 
-
 static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this);
 
 
@@ -69,6 +68,8 @@ __SINGLETON(ObjectSpriteContainerManager);
 //class constructor
 void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
 {
+	ASSERT(this, "ObjectSpriteContainerManager::constructor: null this");
+
 	__CONSTRUCT_BASE();
 
 	int i = 0;
@@ -87,7 +88,7 @@ void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 	ObjectSpriteContainerManager_reset(this);
 	
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	//__SINGLETON_DESTROY;
 }
 
 // reset

@@ -76,6 +76,7 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 
 	// set the offset
 	this->offset = __CH_NOT_ALLOCATED;
+	this->segment = 0;
 
 	// set the allocation type
 	this->allocationType = charSetDefinition->allocationType;
@@ -171,7 +172,7 @@ void CharSet_setSegment(CharSet this, int segment)
 
 	this->segment = segment;
 }
-
+/*
 //copy a charset
 void CharSet_copy(CharSet this,CharSet source)
 {
@@ -186,6 +187,7 @@ void CharSet_copy(CharSet this,CharSet source)
 	this->allocationType = source->allocationType;
 	this->numberOfChars = source->numberOfChars;
 }
+*/
 
 // write char on memory
 void CharSet_write(CharSet this)
@@ -195,7 +197,7 @@ void CharSet_write(CharSet this)
 	// determine allocation type
 	switch (this->allocationType)
 	{
-		case __ANIMATED:
+		case __ANIMATED_SINGLE:
 
 			//if not allocated
 			if (__CH_NOT_ALLOCATED == (int)this->offset)
@@ -206,27 +208,31 @@ void CharSet_write(CharSet this)
 
 			//write to char memory
 			Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4), (u8*)(this->charDefinition + this->charDefinitionDisplacement), (int)(this->numberOfChars + 1) << 4);
-
 			break;
 
 		case __ANIMATED_SHARED:
-		case __NO_ANIMATED:
-
+			
 			//if not allocated
 			if (__CH_NOT_ALLOCATED == (int)this->offset)
 			{
 				// ask for allocation
-				if (CharSetManager_allocateShared(CharSetManager_getInstance(), this))
-				{
-					//write to char memory
-					Mem_copy((u8*)CharSegs(this->segment)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
-				}
+				CharSetManager_allocateShared(CharSetManager_getInstance(), this);
 			}
-			else
+
+			Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4), (u8*)(this->charDefinition + this->charDefinitionDisplacement), (int)(this->numberOfChars + 1) << 4);
+			break;
+			
+		case __ANIMATED_MULTI:
+		case __NOT_ANIMATED:
+
+			//if not allocated
+			if (__CH_NOT_ALLOCATED == (int)this->offset)
 			{
-				//write to char memory
-				Mem_copy((u8*)CharSegs(this->segment)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
+				CharSetManager_allocateShared(CharSetManager_getInstance(), this);
 			}
+			
+			//write to char memory
+			Mem_copy((u8*)CharSegs(this->segment)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
 			break;
 
 		default:

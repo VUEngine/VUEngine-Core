@@ -442,13 +442,20 @@ void Stage_removeEntity(Stage this, Entity entity, bool permanent)
 // preload textures
 static void Stage_loadTextures(Stage this)
 {
-	ASSERT(this, "Entity::loadTextures: null this");
+	ASSERT(this, "Stage::loadTextures: null this");
 
 	int i = 0;
 
 	for (; this->stageDefinition->textures[i]; i++)
 	{
-		BgmapTextureManager_loadTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharSets);
+		if(__ANIMATED_SHARED != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
+		{
+			BgmapTextureManager_loadTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharSets);
+		}
+		else
+		{
+			ASSERT(this, "Stage::loadTextures: loading an Object texture");
+		}
 	}
 	
 	if(0 < i)

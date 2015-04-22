@@ -63,6 +63,8 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Sp
 	__CONSTRUCT_BASE(spriteDefinition);
 
 	this->animationController = __NEW(AnimationController, owner);
+	
+	ObjectAnimatedSprite_writeAnimation(this);
 }
 
 //destructor
@@ -82,8 +84,8 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 	// write according to the allocation type
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
-		case __ANIMATED:
-
+		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
 			{
 				CharSet charSet = Texture_getCharSet(this->texture);
 
@@ -97,11 +99,12 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 
 			break;
 
-		case __ANIMATED_SHARED:
+		case __ANIMATED_MULTI:
 
 			ObjectTexture_addBgmapDisplacement(__UPCAST(ObjectTexture, this->texture), AnimationController_getActualFrameIndex(this->animationController));
 			ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
 			ObjectTexture_resetBgmapDisplacement(__UPCAST(ObjectTexture, this->texture));
 			break;
+			
 	}
 }

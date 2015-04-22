@@ -34,16 +34,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 // definition of a charset of an animated character or background
-#define __ANIMATED			0x01
+#define __ANIMATED_SINGLE					0x01
 
 // definition of a charset of an unanimated character or background
-#define __NO_ANIMATED		0x02
+#define __NOT_ANIMATED				0x02
 
 // definition of a charset of an animated character of which all frames are written to memory and shared
-#define __ANIMATED_SHARED	0x03
+#define __ANIMATED_MULTI			0x03
 
 // future expansion
-#define __ANIMATED_SHARED_2	0x04
+#define __ANIMATED_SHARED		0x04
 
 
 // event
@@ -96,9 +96,9 @@ __CLASS(CharSet);
 typedef struct CharSetDefinition
 {
 	// number of chars, depending on allocationType:
-	// __ANIMATED: number of chars of a single animation frame
-	// __ANIMATED_SHARED: sum of chars of all animation frames
-	// __NO_ANIMATED: number of chars of whole image
+	// __ANIMATED_SINGLE: number of chars of a single animation frame
+	// __ANIMATED_MULTI: sum of chars of all animation frames
+	// __NOT_ANIMATED: number of chars of whole image
 	u16 numberOfChars;
 
 	// the way its chars and bgtexture will be allocated in graphic memory

@@ -187,12 +187,13 @@ u8 Texture_getTotalCols(Texture this)
 	// determine the allocation type
 	switch (CharSet_getAllocationType(this->charSet))
 	{
-		case __ANIMATED:
+		case __ANIMATED_SINGLE:
 
 			// just return the cols
 			return this->textureDefinition->cols;
 			break;
 
+		case __ANIMATED_MULTI:
 		case __ANIMATED_SHARED:
 			{
 				// return the total number of chars
@@ -201,7 +202,7 @@ u8 Texture_getTotalCols(Texture this)
 			}
 			break;
 
-		case __NO_ANIMATED:
+		case __NOT_ANIMATED:
 
 			// just return the cols
 			return this->textureDefinition->cols;
@@ -219,12 +220,13 @@ u8 Texture_getTotalRows(Texture this)
 	// determine the allocation type
 	switch (CharSet_getAllocationType(this->charSet))
 	{
-		case __ANIMATED:
+		case __ANIMATED_SINGLE:
 
 			// just return the cols
 			return this->textureDefinition->rows;
 			break;
 
+		case __ANIMATED_MULTI:
 		case __ANIMATED_SHARED:
 			{
 				// return the total number of chars
@@ -233,7 +235,7 @@ u8 Texture_getTotalRows(Texture this)
 			}
 			break;
 
-		case __NO_ANIMATED:
+		case __NOT_ANIMATED:
 
 			// just return the cols
 			return this->textureDefinition->rows;

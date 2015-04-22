@@ -43,7 +43,7 @@ TextureROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ICON_TX =
         5,
 
         // allocation type
-        __NO_ANIMATED,
+        __NOT_ANIMATED,
 
         // char definition
         VBJaEAdjustmentScreenIconTiles,

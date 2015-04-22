@@ -431,7 +431,6 @@ void Game_reset(Game this)
 	CharSetManager_reset(this->charSetManager);
 	BgmapTextureManager_reset(this->bgmapTextureManager);
 	ParamTableManager_reset(this->paramTableManager);
-	ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager_getInstance());
 	SpriteManager_reset(this->spriteManager);
 	MBackgroundManager_reset(MBackgroundManager_getInstance());
 

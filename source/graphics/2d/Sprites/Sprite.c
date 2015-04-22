@@ -62,6 +62,7 @@ void Sprite_constructor(Sprite this)
 	this->halfWidth = 0;
 	this->halfHeight = 0;
 	this->animationController = NULL;
+	this->texture = NULL;
 }
 
 // class's destructor

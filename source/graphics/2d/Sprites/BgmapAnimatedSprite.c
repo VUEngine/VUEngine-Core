@@ -62,9 +62,12 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Spri
 
 	this->animationController = __NEW(AnimationController, owner);
 	
-	// since the offset will be moved during animation, must save it
-	this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
-	this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
+	if(this->texture)
+	{
+		// since the offset will be moved during animation, must save it
+		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
+		this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
+	}
 }
 
 //destructor
@@ -84,7 +87,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 	// write according to the allocation type
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
-		case __ANIMATED:
+		case __ANIMATED_SINGLE:
 
 			{
 				CharSet charSet = Texture_getCharSet(this->texture);
@@ -99,7 +102,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 
 			break;
 
-		case __ANIMATED_SHARED:
+		case __ANIMATED_MULTI:
 			{
 				int totalColumns = 64 - (this->originalTextureSource.mx >> 3); 
 				int frameColumn = Texture_getCols(this->texture) * AnimationController_getActualFrameIndex(this->animationController);

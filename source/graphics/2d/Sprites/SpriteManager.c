@@ -109,7 +109,7 @@ void SpriteManager_reset(SpriteManager this)
 	ASSERT(this, "SpriteManager::reset: null this");
 
 	// must reset the ObjectSpriteContainerManager before the SpriteManager!
-//	ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager_getInstance());
+	ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager_getInstance());
 
 	if (this->sprites)
 	{

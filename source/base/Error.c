@@ -113,7 +113,6 @@ int Error_triggerException(Error this, char* string)
 	{
 		Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 	}
-//	Printing_int(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()), 5, 10, NULL);
 	
 	// error display message
 //	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));

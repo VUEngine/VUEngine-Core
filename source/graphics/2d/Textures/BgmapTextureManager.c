@@ -306,7 +306,7 @@ void BgmapTextureManager_free(BgmapTextureManager this, BgmapTexture bgmapTextur
 		//determine the allocation type
 		switch (allocationType)
 		{
-			case __ANIMATED:
+			case __ANIMATED_SINGLE:
 				{
 					int i = 0;
 
@@ -388,7 +388,7 @@ BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapText
 	//determine the allocation type
 	switch (bgmapTextureDefinition->charSetDefinition.allocationType)
 	{
-		case __ANIMATED:
+		case __ANIMATED_SINGLE:
 
 			// load a new texture
 			bgmapTexture = BgmapTextureManager_writeTexture(this, bgmapTextureDefinition, false);
@@ -396,8 +396,8 @@ BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapText
 			ASSERT(bgmapTexture, "BgmapTextureManager::get: (animated) texture no allocated");
 			break;
 
-		case __ANIMATED_SHARED:
-		case __NO_ANIMATED:
+		case __ANIMATED_MULTI:
+		case __NOT_ANIMATED:
 
 			// first try to find an already created texture
 			bgmapTexture = BgmapTextureManager_findTexture(this, bgmapTextureDefinition);
@@ -422,6 +422,11 @@ BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapText
 			}
 
 			ASSERT(bgmapTexture, "BgmapTextureManager::get: (shared) texture no allocated");
+			break;
+			
+		case __ANIMATED_SHARED:
+
+			NM_ASSERT(false, "BgmapTextureManager::get: __ANIMATED_SHARED");
 			break;
 	}
 
