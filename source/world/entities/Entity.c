@@ -915,7 +915,7 @@ void Entity_show(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite_show(__UPCAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, show, __UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }

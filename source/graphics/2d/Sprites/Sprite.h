@@ -60,6 +60,7 @@
 	__VIRTUAL_DEC(resize);														\
 	__VIRTUAL_DEC(calculateParallax);											\
 	__VIRTUAL_DEC(writeAnimation);												\
+	__VIRTUAL_DEC(show);														\
 	__VIRTUAL_DEC(hide);														\
 
 // declare the virtual methods which are redefined
@@ -69,6 +70,7 @@
 	__VIRTUAL_SET(ClassName, Sprite, scale);									\
 	__VIRTUAL_SET(ClassName, Sprite, resize);									\
 	__VIRTUAL_SET(ClassName, Sprite, writeAnimation);							\
+	__VIRTUAL_SET(ClassName, Sprite, show);										\
 	__VIRTUAL_SET(ClassName, Sprite, hide);										\
 
 #define Sprite_ATTRIBUTES														\

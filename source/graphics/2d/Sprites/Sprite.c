@@ -129,6 +129,8 @@ void Sprite_setRenderFlag(Sprite this, bool renderFlag)
 // show
 void Sprite_show(Sprite this)
 {
+	ASSERT(this, "Sprite::show: null this");
+
 	this->renderFlag = __UPDATE_HEAD;
 }
 

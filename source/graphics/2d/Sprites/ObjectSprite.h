@@ -52,6 +52,7 @@
 	__VIRTUAL_SET(ClassName, ObjectSprite, synchronizePosition);				\
 	__VIRTUAL_SET(ClassName, ObjectSprite, setDirection);						\
 	__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);					\
+	__VIRTUAL_SET(ClassName, ObjectSprite, show);								\
 	__VIRTUAL_SET(ClassName, ObjectSprite, hide);								\
 
 #define ObjectSprite_ATTRIBUTES													\
@@ -118,6 +119,7 @@ void ObjectSprite_render(ObjectSprite this);
 u8 ObjectSprite_getTotalObjects(ObjectSprite this);
 int ObjectSprite_getObjectIndex(ObjectSprite this);
 void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex);
+void ObjectSprite_show(ObjectSprite this);
 void ObjectSprite_hide(ObjectSprite this);
 
 #endif

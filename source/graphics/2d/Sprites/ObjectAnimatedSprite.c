@@ -63,8 +63,6 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Sp
 	__CONSTRUCT_BASE(spriteDefinition);
 
 	this->animationController = __NEW(AnimationController, owner);
-	
-	ObjectAnimatedSprite_writeAnimation(this);
 }
 
 //destructor
@@ -81,6 +79,18 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");
 	
+	if(0 > this->objectIndex)
+	{
+		return;
+	}
+	
+	int animationFrame = (int)AnimationController_getActualFrameIndex(this->animationController);
+	
+	if(0 > animationFrame)
+	{
+		return;
+	}
+	
 	// write according to the allocation type
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
@@ -91,7 +101,7 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 
 				// move charset's charset's definition to the next frame chars
 				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
-						(AnimationController_getActualFrameIndex(this->animationController) << 4));
+						(animationFrame << 4));
 
 				//write charset
 				CharSet_write(charSet);
@@ -101,10 +111,9 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 
 		case __ANIMATED_MULTI:
 
-			ObjectTexture_addBgmapDisplacement(__UPCAST(ObjectTexture, this->texture), AnimationController_getActualFrameIndex(this->animationController));
-			ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
 			ObjectTexture_resetBgmapDisplacement(__UPCAST(ObjectTexture, this->texture));
+			ObjectTexture_addBgmapDisplacement(__UPCAST(ObjectTexture, this->texture), animationFrame);
+			ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
 			break;
-			
 	}
 }

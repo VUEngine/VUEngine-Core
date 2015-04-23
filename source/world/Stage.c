@@ -233,10 +233,13 @@ static void Stage_setObjectSpritesContainers(Stage this)
 	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
 
 	u8 i = 0;
-	
+	fix19_13 previousZ = this->stageDefinition->objectSpritesContainersZPosition[0];
+
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
+		NM_ASSERT(this->stageDefinition->objectSpritesContainersZPosition[i] >= previousZ, "Stage::setObjectSpritesContainers: wrong z");
 		ObjectSpriteContainerManager_setObjectSpriteContainerZPosition(ObjectSpriteContainerManager_getInstance(), i, this->stageDefinition->objectSpritesContainersZPosition[i]);
+		previousZ = this->stageDefinition->objectSpritesContainersZPosition[i];
 	}
 }
 

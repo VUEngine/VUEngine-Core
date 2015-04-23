@@ -88,7 +88,6 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 		this->texture = __UPCAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
 		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
-
 		this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
 	}
 }
@@ -172,7 +171,6 @@ void ObjectSprite_synchronizePosition(ObjectSprite this, VBVec3D position3D)
 	if(0 > this->objectIndex)
 	{
 		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
-		
 		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
 	}
 	
@@ -192,9 +190,10 @@ void ObjectSprite_render(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
+	ASSERT(0 <= this->objectIndex, "ObjectSprite::render: 0 > this->objectIndex");
 
 	//if render flag is set
-	if (this->renderFlag)
+	if (this->renderFlag && 0 <= this->objectIndex)
 	{
 		int cols = Texture_getCols(__UPCAST(Texture, this->texture));
 		int rows = Texture_getRows(__UPCAST(Texture, this->texture));
@@ -248,12 +247,24 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 	
 	this->objectIndex = objectIndex;
 
-	// rewrite texture
-	ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
-	ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+	if(0 <= this->objectIndex)
+	{
+		// rewrite texture
+		ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
+		ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+	
+		// force rendering 
+		this->renderFlag = true;
+	}
+}
 
-	// force rendering 
-	this->renderFlag = true;
+void ObjectSprite_show(ObjectSprite this)
+{
+	ASSERT(this, "ObjectSprite::show: null this");
+	
+	Sprite_show(__UPCAST(Sprite, this));
+
+	ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
 }
 
 // hide
@@ -271,8 +282,7 @@ void ObjectSprite_hide(ObjectSprite this)
 		for (; j < cols; j++)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
-			OAM[objectIndex << 2] -= __SCREEN_WIDTH;
-			OAM[(objectIndex << 2) + 2] -= __SCREEN_HEIGHT;
+			OAM[(objectIndex << 2) + 3] = 0;
 		}
 	}
 }

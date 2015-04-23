@@ -459,7 +459,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 		}
 		else
 		{
-			Sprite_show(__UPCAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, show, __UPCAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -472,7 +472,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	VirtualNode node = VirtualList_end(this->sprites);
 	for (; node; node = VirtualNode_getPrevious(node))
 	{
-		Sprite_show(__UPCAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, show, __UPCAST(Sprite, VirtualNode_getData(node)));
 	}
 }
 

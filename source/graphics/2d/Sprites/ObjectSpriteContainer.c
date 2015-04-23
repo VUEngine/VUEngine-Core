@@ -84,6 +84,13 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	// register to sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
 
+	// clear OBJ memory
+	int i = 0;
+	for(i = 0; i < __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
+	{
+		OAM[((this->nextAvailableObject + i) << 2) + 3] = 0;
+	}
+
 	VIP_REGS[SPT0 + this->spt] = (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
 }
 
@@ -216,8 +223,11 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 
 	// get the next sprite to move
 	ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
+	
 	// save its index for the next sprite to move
 	int objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
+	ASSERT(0 <= objectIndexFreed, "ObjectSpriteContainer::defragment: 0 > objectIndexFreed");
+	
 	ObjectSprite_setObjectIndex(objectSprite, this->objectIndexFreed);
 	this->objectIndexFreed = objectIndexFreed;
 
