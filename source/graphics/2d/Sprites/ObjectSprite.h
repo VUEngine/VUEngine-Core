@@ -115,7 +115,9 @@ void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position);
 void ObjectSprite_synchronizePosition(ObjectSprite this, VBVec3D position3D);
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
 void ObjectSprite_render(ObjectSprite this);
+u8 ObjectSprite_getTotalObjects(ObjectSprite this);
 int ObjectSprite_getObjectIndex(ObjectSprite this);
+void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex);
 void ObjectSprite_hide(ObjectSprite this);
 
 #endif

@@ -93,9 +93,7 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 		this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
 		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects);
 		
-		this->objectIndex = ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
-		ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
-		ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
 	}
 }
 
@@ -149,12 +147,7 @@ VBVec2D ObjectSprite_getPosition(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getPosition: null this");
 
-	VBVec2D position =
-	{
-			0, 0
-	};
-	
-	return position;
+	return this->position;
 }
 
 void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position)
@@ -227,11 +220,37 @@ void ObjectSprite_render(ObjectSprite this)
 	}
 }
 
+u8 ObjectSprite_getTotalObjects(ObjectSprite this)
+{
+	ASSERT(this, "ObjectSprite::getTotalObjects: null this");
+
+	return this->totalObjects;
+}
+
 int ObjectSprite_getObjectIndex(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getObjectIndex: null this");
 
 	return this->objectIndex;
+}
+
+void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
+{
+	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
+
+	if(0 <= this->objectIndex)
+	{
+		ObjectSprite_hide(this);
+	}
+	
+	this->objectIndex = objectIndex;
+
+	// rewrite texture
+	ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
+	ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+
+	// force rendering 
+	this->renderFlag = true;
 }
 
 // hide

@@ -53,7 +53,7 @@ __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
 
-
+static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -71,8 +71,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	this->head = WRLD_OBJ | WRLD_ON;
 	this->availableObjects = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE;
 	this->nextAvailableObject = 0;
-	this->oSprites = __NEW(VirtualList);
+	this->objectSprites = __NEW(VirtualList);
 	this->spt = spt;
+	this->objectSpriteToDefragment = NULL;
+	this->objectIndexFreed = 0;
 	
 	VIP_REGS[this->spt] = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE;
 
@@ -88,23 +90,23 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	// remove from sprite manager
 	SpriteManager_removeSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
 
-	if(this->oSprites)
+	if(this->objectSprites)
 	{
-		__DELETE(this->oSprites);
-		this->oSprites = NULL;
+		__DELETE(this->objectSprites);
+		this->objectSprites = NULL;
 	}
 	// destroy the super object
 	__DESTROY_BASE;
 }
 
-s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite oSprite, int numberOfObjects)
+s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::addObjectSprite: null this");
-	ASSERT(oSprite, "ObjectSpriteContainer::addObjectSprite: null oSprite");
+	ASSERT(objectSprite, "ObjectSpriteContainer::addObjectSprite: null objectSprite");
 	
-	if(oSprite)
+	if(objectSprite)
 	{
-		VirtualList_pushBack(this->oSprites, oSprite);
+		VirtualList_pushBack(this->objectSprites, objectSprite);
 		
 		this->availableObjects -= numberOfObjects;
 		this->nextAvailableObject += numberOfObjects;
@@ -117,14 +119,46 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 	return -1;
 }
 
-void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite oSprite, int numberOfObjects)
+void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
-	ASSERT(VirtualList_find(this->oSprites, oSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
+	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 	
-	if(oSprite)
+	if(objectSprite)
 	{
-		VirtualList_removeElement(this->oSprites, oSprite);
+		if(this->objectSpriteToDefragment)
+		{
+			int objectSpritePosition = VirtualList_getNodePosition(this->objectSprites, objectSprite);
+			int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
+			
+			if(objectSpritePosition < objectSpriteToDefragmentPosition)
+			{
+				this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
+				this->objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
+			}
+		}
+		else
+		{
+			// find the node to remove to defragment object memory
+			this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
+			this->objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
+	
+			ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
+		}
+		
+		// move forward before deframenting
+		this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
+
+		// if was the last node
+		if(!this->objectSpriteToDefragment)
+		{
+			// just update the measures
+			this->availableObjects += numberOfObjects;
+			this->nextAvailableObject = this->objectIndexFreed;
+			this->objectIndexFreed = 0;
+		}
+		
+		VirtualList_removeElement(this->objectSprites, objectSprite);
 	}
 }
 
@@ -167,11 +201,51 @@ void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_1
 	ASSERT(this, "ObjectSpriteContainer::calculateParallax: null this");
 }
 
+static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::defragment: null this");
+	ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteToDefragment");
+
+	// get the next sprite to move
+	ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
+	// save its index for the next sprite to move
+	int objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
+	ObjectSprite_setObjectIndex(objectSprite, this->objectIndexFreed);
+	this->objectIndexFreed = objectIndexFreed;
+
+	// move to the next sprite to move
+	this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);	
+
+	if(!this->objectSpriteToDefragment)
+	{
+		this->objectIndexFreed = 0;
+
+		VirtualNode node = VirtualList_end(this->objectSprites);
+		
+		if(node)
+		{
+			ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(node));
+			this->nextAvailableObject = ObjectSprite_getObjectIndex(objectSprite) + ObjectSprite_getTotalObjects(objectSprite);
+			this->availableObjects = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE - this->nextAvailableObject;
+		}
+		else
+		{
+			this->availableObjects = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE;
+			this->nextAvailableObject = 0;
+		}
+	}
+}
+
 // render a world layer with the map's information
 void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
-
+	
+	if(this->objectSpriteToDefragment)
+	{
+		ObjectSpriteContainer_defragment(this);
+	}
+	
 	//if render flag is set
 	if (this->renderFlag)
 	{
@@ -182,7 +256,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		this->renderFlag = false;
 	}
 	
-	VirtualNode node = VirtualList_begin(this->oSprites);
+	VirtualNode node = VirtualList_begin(this->objectSprites);
 
 	for(; node; node = VirtualNode_getNext(node))
 	{

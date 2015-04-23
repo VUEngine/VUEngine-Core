@@ -142,7 +142,7 @@ void CharSet_setCharDefinition(CharSet this, BYTE* charDefinition)
 }
 
 // set charset's number of chars
-void CharSet_setNumberOfChars(CharSet this, int numberOfChars)
+void CharSet_setNumberOfChars(CharSet this, u16 numberOfChars)
 {
 	ASSERT(this, "CharSet::setNumberOfChars: null this");
 
@@ -150,7 +150,7 @@ void CharSet_setNumberOfChars(CharSet this, int numberOfChars)
 }
 
 // retrieve chargrop's number of chars
-int CharSet_getNumberOfChars(CharSet this)
+u16 CharSet_getNumberOfChars(CharSet this)
 {
 	ASSERT(this, "CharSet::getNumberOfChars: null this");
 
@@ -158,7 +158,7 @@ int CharSet_getNumberOfChars(CharSet this)
 }
 
 // get charset's segment
-int CharSet_getSegment(CharSet this)
+u8 CharSet_getSegment(CharSet this)
 {
 	ASSERT(this, "CharSet::getCharSet: null this");
 
@@ -166,7 +166,7 @@ int CharSet_getSegment(CharSet this)
 }
 
 // set charset's char segment
-void CharSet_setSegment(CharSet this, int segment)
+void CharSet_setSegment(CharSet this, u8 segment)
 {
 	ASSERT(this, "CharSet::setCharSet: null this");
 

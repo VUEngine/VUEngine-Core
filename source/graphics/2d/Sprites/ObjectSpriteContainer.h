@@ -58,10 +58,16 @@
 	/* super's attributes */													\
 	Sprite_ATTRIBUTES;															\
 																				\
-	/* o sprites */																\
-	VirtualList oSprites;														\
+	/* object sprites */														\
+	VirtualList objectSprites;													\
 																				\
-	/* o sprites */																\
+	/* next object sprite to defragment */										\
+	VirtualNode objectSpriteToDefragment;										\
+																				\
+	/* used for defragmentation */												\
+	int objectIndexFreed;														\
+																				\
+	/* OBJs available */														\
 	u16 availableObjects;														\
 																				\
 	/* o sprites */																\
@@ -80,8 +86,8 @@ __CLASS(ObjectSpriteContainer);
 
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt);
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
-s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite oSprite, int numberOfObjects);
-void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite oSprite, int numberOfObjects);
+s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
+void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, int numberOfObjects);
 void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction);
 VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
