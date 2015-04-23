@@ -938,29 +938,6 @@ void Stage_suspend(Stage this)
 	{
 		__VIRTUAL_CALL(void, Container, suspend, __UPCAST(Container, this->ui));
 	}
-
-	// clean up streaming lists
-	VirtualNode node = VirtualList_begin(this->entitiesToLoad);
-	
-	for(; node; node = VirtualNode_getNext(node))
-	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
-
-		stageEntityDescription->id = -1;
-	}
-	
-	VirtualList_clear(this->entitiesToLoad);
-	
-	node = VirtualList_begin(this->entitiesToInitialize);
-	for(; node; node = VirtualNode_getNext(node))
-	{
-		StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)VirtualNode_getData(node);
-
-		__DELETE(stageEntityToInitialize->entity);
-		__DELETE_BASIC(stageEntityToInitialize);
-	}
-	
-	VirtualList_clear(this->entitiesToInitialize);
 }
 
 // resume after pause
