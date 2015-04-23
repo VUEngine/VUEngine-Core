@@ -63,6 +63,7 @@ void Sprite_constructor(Sprite this)
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
+	this->parallaxDisplacement = 0;
 }
 
 // class's destructor

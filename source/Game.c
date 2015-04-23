@@ -428,6 +428,7 @@ void Game_reset(Game this)
     HardwareManager_displayOn(this->hardwareManager);
 
 	// reset managers
+    Screen_setFocusInGameEntity(this->screen, NULL);
 	CharSetManager_reset(this->charSetManager);
 	BgmapTextureManager_reset(this->bgmapTextureManager);
 	ParamTableManager_reset(this->paramTableManager);

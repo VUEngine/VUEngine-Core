@@ -142,21 +142,22 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 
 	VirtualNode node = VirtualList_end(this->sprites);
 
-	for (; node; )
+	for (; node;)
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 
 		VirtualNode otherNode = VirtualNode_getPrevious(node);
 
-//		for(; otherNode; otherNode = VirtualNode_getPrevious(node))
-		if(otherNode)
+		for(; otherNode; otherNode = VirtualNode_getPrevious(otherNode))
 		{
 			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(otherNode));
 			VBVec2D otherPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, otherSprite);
 	
 			// check if z positions are swaped
-			if (otherPosition.z > position.z)
+			if (otherPosition.z > position.z ||
+					(otherPosition.z == position.z && Sprite_getParallaxDisplacement(otherSprite) > Sprite_getParallaxDisplacement(sprite))
+			)
 			{
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
@@ -174,11 +175,14 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	
 				// make sure sort is complete
 				node = VirtualList_end(this->sprites);
-				continue;
+				break;
 			}
 		}
 		
-		node = VirtualNode_getPrevious(node);
+		if(!otherNode)
+		{
+			node = VirtualNode_getPrevious(node);
+		}
 	}
 }
 
@@ -202,7 +206,9 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			VBVec2D otherPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, otherSprite);
 
 			// check if z positions are swaped
-			if (otherPosition.z < position.z)
+			if (otherPosition.z < position.z ||
+					(otherPosition.z == position.z && Sprite_getParallaxDisplacement(otherSprite) < Sprite_getParallaxDisplacement(sprite))
+			)
 			{
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);

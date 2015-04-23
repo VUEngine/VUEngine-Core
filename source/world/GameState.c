@@ -177,6 +177,9 @@ void GameState_resume(GameState this, void* owner)
 		__VIRTUAL_CALL(void, Container, resume, this->stage);
 	}
 
+	// move the screen to its previous position
+	Screen_positione(Screen_getInstance(), true);
+
 	// transform everything before showing up
 	GameState_transform(this);
 

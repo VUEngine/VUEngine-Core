@@ -973,7 +973,10 @@ void Stage_resume(Stage this)
 
 	// reload textures
 	Stage_loadTextures(this);
-	
+
+	// recover focus entity
+    Screen_setFocusInGameEntity(Screen_getInstance(), __UPCAST(InGameEntity, this->focusEntity));
+
 	Container_resume(__UPCAST(Container, this));
 
 	Transformation environmentTransform =
