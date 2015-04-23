@@ -72,6 +72,14 @@ StageROMDef VBJAENGINE_SPLASH_SCREEN_ST =
         1
     },
 
+	// OBJs segments z coordinates (SPT0 to SPT3)
+    {
+    	ITOFIX19_13(0), 
+		ITOFIX19_13(0), 
+		ITOFIX19_13(0), 
+		ITOFIX19_13(0)
+    },
+
     //initial screen position
     {
         // x

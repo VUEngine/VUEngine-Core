@@ -64,6 +64,9 @@
 	/* next object sprite to defragment */										\
 	VirtualNode objectSpriteToDefragment;										\
 																				\
+	/* for WORLD sorting */														\
+	fix19_13 z;																	\
+																				\
 	/* used for defragmentation */												\
 	int objectIndexFreed;														\
 																				\

@@ -30,7 +30,6 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __TOTAL_OBJECT_SEGMENTS 	4
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -113,12 +112,12 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
 	
-	int i = 0;
-	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	int i = __TOTAL_OBJECT_SEGMENTS;
+	for(; i--; )
 	{
 		if(!this->objectSpriteContainers[i])
 		{
-			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, SPT3 - i);
+			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i);
 			
 			return this->objectSpriteContainers[i];
 		}
@@ -132,4 +131,22 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 	NM_ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
 
 	return NULL;
+}
+
+void ObjectSpriteContainerManager_setObjectSpriteContainerZPosition(ObjectSpriteContainerManager this, u8 spt, fix19_13 z)
+{
+	ASSERT(this, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: no ObjectSpriteContainers available");
+	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: bad spt");
+
+	if(!this->objectSpriteContainers[spt])
+	{
+		this->objectSpriteContainers[spt] = __NEW(ObjectSpriteContainer, spt);
+	}
+
+	VBVec2D position =
+	{
+			0, 0, z, 0
+	};
+
+	ObjectSpriteContainer_setPosition(this->objectSpriteContainers[spt], position);
 }

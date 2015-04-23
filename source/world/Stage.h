@@ -30,6 +30,7 @@
 #include <Entity.h>
 #include <Texture.h>
 #include <UI.h>
+#include <ObjectSpriteContainerManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -105,6 +106,9 @@ typedef struct StageDefinition
 {
 	// world's size over each axis in pixels
 	Size size;
+
+	// OBJs segments z coordinates (SPT0 to SPT3)
+	fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 	// initial screen's position inside the game world
 	VBVec3D screenPosition;

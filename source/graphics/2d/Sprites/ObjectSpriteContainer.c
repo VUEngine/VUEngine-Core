@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSpriteContainer.h>
+#include <ObjectSpriteContainerManager.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Screen.h>
@@ -34,7 +35,7 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE	256
+#define __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER	256
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,17 +67,21 @@ __CLASS_NEW_END(ObjectSpriteContainer, spt);
 // class's constructor
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 {
+	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
+	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
+
 	__CONSTRUCT_BASE();
 
 	this->head = WRLD_OBJ | WRLD_ON;
-	this->availableObjects = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE;
-	this->nextAvailableObject = 0;
-	this->objectSprites = __NEW(VirtualList);
 	this->spt = spt;
+	this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+	this->nextAvailableObject = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+	this->objectSprites = __NEW(VirtualList);
 	this->objectSpriteToDefragment = NULL;
 	this->objectIndexFreed = 0;
+	this->z = 0;
 	
-	VIP_REGS[this->spt] = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE;
+	VIP_REGS[SPT0 + this->spt] = (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
 
 	// register to sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
@@ -180,15 +185,18 @@ VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 
 	VBVec2D position =
 	{
-			0, 0
+		0, 0, this->z, 0
 	};
-	
+
 	return position;
 }
 
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, VBVec2D position)
 {
 	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
+
+	this->z = position.z;
+	this->renderFlag |= __UPDATE_G;
 }
 
 void ObjectSpriteContainer_synchronizePosition(ObjectSpriteContainer this, VBVec3D position3D)
@@ -226,12 +234,12 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		{
 			ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(node));
 			this->nextAvailableObject = ObjectSprite_getObjectIndex(objectSprite) + ObjectSprite_getTotalObjects(objectSprite);
-			this->availableObjects = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE - this->nextAvailableObject;
+			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - this->nextAvailableObject;
 		}
 		else
 		{
-			this->availableObjects = __AVAILABLE_OBJECTS_PER_O_MEGA_SPRITE;
-			this->nextAvailableObject = 0;
+			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+			this->nextAvailableObject = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
 		}
 	}
 }

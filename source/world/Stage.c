@@ -98,6 +98,7 @@ static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
 static void Stage_registerEntities(Stage this);
 static void Stage_selectEntitiesInLoadRange(Stage this);
+static void Stage_setObjectSpritesContainers(Stage this);
 static void Stage_loadTextures(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
@@ -227,6 +228,18 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallR
 	return true;
 }
 
+static void Stage_setObjectSpritesContainers(Stage this)
+{
+	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
+
+	u8 i = 0;
+	
+	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	{
+		ObjectSpriteContainerManager_setObjectSpriteContainerZPosition(ObjectSpriteContainerManager_getInstance(), i, this->stageDefinition->objectSpritesContainersZPosition[i]);
+	}
+}
+
 // load stage's entites
 void Stage_load(Stage this, StageDefinition* stageDefinition)
 {
@@ -244,6 +257,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition)
 	// set screen's position
 	Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
 
+	// set OBJs' z position
+	Stage_setObjectSpritesContainers(this);
+	
 	// preload textures
 	Stage_loadTextures(this);
 
@@ -956,6 +972,9 @@ void Stage_resume(Stage this)
 	
 	VirtualList_clear(this->entitiesToInitialize);
 	
+	// set OBJs' z position
+	Stage_setObjectSpritesContainers(this);
+
 	// reload textures
 	Stage_loadTextures(this);
 	

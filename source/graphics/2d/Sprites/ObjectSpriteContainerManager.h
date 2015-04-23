@@ -34,6 +34,9 @@
 // 											 MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#define __TOTAL_OBJECT_SEGMENTS 	4
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -60,6 +63,6 @@ ObjectSpriteContainerManager ObjectSpriteContainerManager_getInstance();
 void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this);
 void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this);
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects);
-
+void ObjectSpriteContainerManager_setObjectSpriteContainerZPosition(ObjectSpriteContainerManager this, u8 spt, fix19_13 z);
 
 #endif
