@@ -136,7 +136,6 @@ void Sprite_show(Sprite this)
 void Sprite_hide(Sprite this)
 {
 	ASSERT(this, "Sprite::hide: null this");
-	ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "Sprite::hide: freeLayer >= this->worldLayer");
 
 	WORLD_HEAD(this->worldLayer, 0x0000);
 }

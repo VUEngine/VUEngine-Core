@@ -81,10 +81,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	this->objectIndexFreed = 0;
 	this->z = 0;
 	
-	VIP_REGS[SPT0 + this->spt] = (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
-
 	// register to sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
+
+	VIP_REGS[SPT0 + this->spt] = (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
 }
 
 // class's destructor

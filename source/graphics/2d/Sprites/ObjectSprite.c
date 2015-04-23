@@ -86,14 +86,10 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	if(oSpriteDefinition->textureDefinition)
 	{
 		this->texture = __UPCAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
-		
 		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 
 		this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
-		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects);
-		
-		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
 	}
 }
 
@@ -173,6 +169,13 @@ void ObjectSprite_synchronizePosition(ObjectSprite this, VBVec3D position3D)
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);
 
+	if(0 > this->objectIndex)
+	{
+		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
+		
+		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
+	}
+	
 	this->renderFlag |= __UPDATE_G;
 }
 

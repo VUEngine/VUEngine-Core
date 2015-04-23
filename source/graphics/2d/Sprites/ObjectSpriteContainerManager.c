@@ -87,7 +87,7 @@ void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 	ObjectSpriteContainerManager_reset(this);
 	
 	// allow a new construct
-	//__SINGLETON_DESTROY;
+	__SINGLETON_DESTROY;
 }
 
 // reset
@@ -108,29 +108,45 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 }
 
 // retrieve a mega sprite
-ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects)
+ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix19_13 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
 	
+	// check if there is need to build the containers
 	int i = __TOTAL_OBJECT_SEGMENTS;
 	for(; i--; )
 	{
 		if(!this->objectSpriteContainers[i])
 		{
 			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i);
-			
-			return this->objectSpriteContainers[i];
 		}
-		
+	}
+
+	// search for the container with the closes z position and room to 
+	// hold the sprite
+	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
+	
+	for(i = __TOTAL_OBJECT_SEGMENTS; i--; )
+	{
 		if(ObjectSpriteContainer_hasRoomFor(this->objectSpriteContainers[i], numberOfObjects))
 		{
-			return this->objectSpriteContainers[i];
-		}		
+			if(!suitableObjectSpriteContainer)
+			{
+				suitableObjectSpriteContainer = this->objectSpriteContainers[i];
+			}
+			else
+			{
+				if(abs(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z) < abs(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z))
+				{
+					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
+				}
+			}
+		}	
 	}
 	
-	NM_ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
+	NM_ASSERT(suitableObjectSpriteContainer, "ObjectSpriteContainerManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
 
-	return NULL;
+	return suitableObjectSpriteContainer;
 }
 
 void ObjectSpriteContainerManager_setObjectSpriteContainerZPosition(ObjectSpriteContainerManager this, u8 spt, fix19_13 z)
