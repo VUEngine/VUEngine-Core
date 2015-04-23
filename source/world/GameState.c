@@ -178,7 +178,7 @@ void GameState_resume(GameState this, void* owner)
 	}
 
 	// move the screen to its previous position
-	Screen_positione(Screen_getInstance(), true);
+	Screen_positione(Screen_getInstance(), false);
 
 	// transform everything before showing up
 	GameState_transform(this);
