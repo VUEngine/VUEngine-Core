@@ -373,6 +373,69 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	Container_invalidateGlobalPosition(this);
 }
 
+// initial transform but don't call the virtual method
+void Container_transformNonVirtual(Container this, Transformation* environmentTransform)
+{
+	ASSERT(this, "Container::transform: null this");
+
+	// concatenate environment transform
+	Transformation environmentTransformCopy =
+	{
+		// local position
+		{
+			0,
+			0,
+			0
+		},
+		// global position
+		{
+			environmentTransform->globalPosition.x + this->transform.localPosition.x,
+			environmentTransform->globalPosition.y + this->transform.localPosition.y,
+			environmentTransform->globalPosition.z + this->transform.localPosition.z
+		},
+		// scale
+		{
+			environmentTransform->scale.x * this->transform.scale.x,
+			environmentTransform->scale.y * this->transform.scale.y
+		},
+		// rotation
+		{
+			environmentTransform->rotation.x + this->transform.rotation.x,
+			environmentTransform->rotation.y + this->transform.rotation.y,
+			environmentTransform->rotation.z + this->transform.rotation.z
+		}
+	};
+
+	// save new global position
+	this->transform.globalPosition = environmentTransformCopy.globalPosition;
+
+	// if I have children
+	if (this->children)
+	{
+		// first remove children
+		//Container_processRemovedChildren(this);
+
+		VirtualNode node = VirtualList_begin(this->children);
+
+		// update each child
+		for (; node; node = VirtualNode_getNext(node))
+		{
+			Container child = __UPCAST(Container, VirtualNode_getData(node));
+
+			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
+			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
+			child->invalidateGlobalPosition.z = child->invalidateGlobalPosition.z || this->invalidateGlobalPosition.z;
+
+			Container_transformNonVirtual(child, &environmentTransformCopy);
+		}
+	}
+
+	// don't update position on next transform cycle
+	this->invalidateGlobalPosition.x = false;
+	this->invalidateGlobalPosition.y = false;
+	this->invalidateGlobalPosition.z = false;
+}
+
 // initial transform
 void Container_transform(Container this, Transformation* environmentTransform)
 {

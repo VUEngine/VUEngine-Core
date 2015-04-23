@@ -165,7 +165,7 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 			this->children)
 		{
 			// call base class's transform method
-			Container_transform(__UPCAST(Container, this), environmentTransform);
+			Container_transformNonVirtual(__UPCAST(Container, this), environmentTransform);
 		}
 
 		// concatenate environment transform
