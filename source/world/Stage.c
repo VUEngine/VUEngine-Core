@@ -232,15 +232,7 @@ static void Stage_setObjectSpritesContainers(Stage this)
 {
 	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
 
-	u8 i = 0;
-	fix19_13 previousZ = this->stageDefinition->objectSpritesContainersZPosition[0];
-
-	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		NM_ASSERT(this->stageDefinition->objectSpritesContainersZPosition[i] >= previousZ, "Stage::setObjectSpritesContainers: wrong z");
-		ObjectSpriteContainerManager_setObjectSpriteContainerZPosition(ObjectSpriteContainerManager_getInstance(), i, this->stageDefinition->objectSpritesContainersZPosition[i]);
-		previousZ = this->stageDefinition->objectSpritesContainersZPosition[i];
-	}
+	ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->objectSpritesContainersZPosition);
 }
 
 // load stage's entites
@@ -946,15 +938,10 @@ void Stage_suspend(Stage this)
 	{
 		__VIRTUAL_CALL(void, Container, suspend, __UPCAST(Container, this->ui));
 	}
-}
-
-// resume after pause
-void Stage_resume(Stage this)
-{
-	ASSERT(this, "Stage::resume: null this");
 
 	// clean up streaming lists
 	VirtualNode node = VirtualList_begin(this->entitiesToLoad);
+	
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
@@ -974,7 +961,13 @@ void Stage_resume(Stage this)
 	}
 	
 	VirtualList_clear(this->entitiesToInitialize);
-	
+}
+
+// resume after pause
+void Stage_resume(Stage this)
+{
+	ASSERT(this, "Stage::resume: null this");
+
 	// set OBJs' z position
 	Stage_setObjectSpritesContainers(this);
 

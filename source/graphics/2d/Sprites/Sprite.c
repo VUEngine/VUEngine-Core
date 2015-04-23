@@ -73,12 +73,6 @@ void Sprite_destructor(Sprite this)
 
 	__VIRTUAL_CALL(void, Sprite, hide, this);
 
-	if(this->animationController)
-	{
-		__DELETE(this->animationController);
-		this->animationController = NULL;
-	}
-	
 	// destroy the super object
 	__DESTROY_BASE;
 }

@@ -149,20 +149,30 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 	return suitableObjectSpriteContainer;
 }
 
-void ObjectSpriteContainerManager_setObjectSpriteContainerZPosition(ObjectSpriteContainerManager this, u8 spt, fix19_13 z)
+void ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSpriteContainerManager this, fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: no ObjectSpriteContainers available");
-	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: bad spt");
+	
+	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 
-	if(!this->objectSpriteContainers[spt])
+	// must add them from SPT3 to SPT0
+	// so each they start presorted in the WORLDS
+	int i = __TOTAL_OBJECT_SEGMENTS;
+	for(; i--; )
 	{
-		this->objectSpriteContainers[spt] = __NEW(ObjectSpriteContainer, spt);
+		NM_ASSERT(z[i] <= previousZ, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: wrong z");
+
+		if(!this->objectSpriteContainers[i])
+		{
+			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i);
+		}
+
+		VBVec2D position =
+		{
+				0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
+		};
+
+		ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], position);
+		previousZ = z[i];
 	}
-
-	VBVec2D position =
-	{
-			0, 0, z, 0
-	};
-
-	ObjectSpriteContainer_setPosition(this->objectSpriteContainers[spt], position);
 }

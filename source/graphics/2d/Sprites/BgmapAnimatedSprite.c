@@ -75,6 +75,12 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::destructor: null this");
 
+	if(this->animationController)
+	{
+		__DELETE(this->animationController);
+		this->animationController = NULL;
+	}
+
 	// destroy the super object
 	__DESTROY_BASE;
 }

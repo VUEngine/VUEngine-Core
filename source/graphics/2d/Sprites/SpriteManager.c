@@ -142,13 +142,14 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 
 	VirtualNode node = VirtualList_end(this->sprites);
 
-	for (; node; node = VirtualNode_getPrevious(node))
+	for (; node; )
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 
 		VirtualNode otherNode = VirtualNode_getPrevious(node);
 
+//		for(; otherNode; otherNode = VirtualNode_getPrevious(node))
 		if(otherNode)
 		{
 			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(otherNode));
@@ -171,12 +172,13 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				// swap array entries
 				VirtualNode_swapData(node, otherNode);
 	
-				node = otherNode;
-	
 				// make sure sort is complete
 				node = VirtualList_end(this->sprites);
+				continue;
 			}
 		}
+		
+		node = VirtualNode_getPrevious(node);
 	}
 }
 

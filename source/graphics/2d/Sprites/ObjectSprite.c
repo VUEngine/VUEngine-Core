@@ -102,6 +102,11 @@ void ObjectSprite_destructor(ObjectSprite this)
 		ObjectSpriteContainer_removeObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 
+	if(this->texture)
+	{
+		__DELETE(this->texture);
+	}
+
 	// destroy the super object
 	__DESTROY_BASE;
 }
@@ -282,6 +287,8 @@ void ObjectSprite_hide(ObjectSprite this)
 		for (; j < cols; j++)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
+			OAM[objectIndex << 2] = __SCREEN_WIDTH;
+			OAM[(objectIndex << 2) + 2] = __SCREEN_HEIGHT;
 			OAM[(objectIndex << 2) + 3] = 0;
 		}
 	}
