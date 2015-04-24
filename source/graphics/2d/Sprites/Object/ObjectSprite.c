@@ -36,7 +36,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
-
+#define __SHOW_MASK						0xC000
+#define __HIDE_MASK						0x3FFF
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -217,21 +218,22 @@ void ObjectSprite_render(ObjectSprite this)
 				s32 objectIndex = this->objectIndex + i * cols + j;
 				int finalX = x + (8 * j)  * xDirection;
 				
+				// hide the object if ouside screen's bounds
 				if((unsigned)finalX > __SCREEN_WIDTH)
 				{
-					OAM[(objectIndex << 2) + 1] &= 0x3FFFF;
+					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
 					continue;
 				}
 
 				int finalY = y + (8 * i)  * yDirection;
 				if((unsigned)finalY > __SCREEN_HEIGHT)
 				{
-					OAM[(objectIndex << 2) + 1] &= 0x3FFFF;
+					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
 					continue;
 				}
 
 				OAM[objectIndex << 2] = finalX;
-				OAM[(objectIndex << 2) + 1] = (this->head & 0xC000) | (this->position.parallax & 0x3FFF);
+				OAM[(objectIndex << 2) + 1] = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
 				OAM[(objectIndex << 2) + 2] = finalY;
 				OAM[(objectIndex << 2) + 3] = (OAM[(objectIndex << 2) + 3] & 0xCFFF) | (this->head & 0x3000);
 			}
@@ -299,7 +301,7 @@ void ObjectSprite_show(ObjectSprite this)
 		for (; j < cols; j++)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
-			OAM[(objectIndex << 2) + 1] |= 0xC000;
+			OAM[(objectIndex << 2) + 1] |= __SHOW_MASK;
 		}
 	}
 }
@@ -319,7 +321,7 @@ void ObjectSprite_hide(ObjectSprite this)
 		for (; j < cols; j++)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
-			OAM[(objectIndex << 2) + 1] &= 0x3FFFF;
+			OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
 		}
 	}
 }

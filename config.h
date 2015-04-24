@@ -72,7 +72,7 @@
 // target frames per second
 // must be a muliple of 50 to being able to use a timer resolution greater than 1
 // if finer control is needed, change timer resolution to 1
-#define __TARGET_FPS 					60
+#define __TARGET_FPS 					50
 
 // target frames per second
 #define __OPTIMUM_FPS 					__TARGET_FPS
@@ -113,7 +113,7 @@
 #define __BLOCK_16B 		16
 #define __POOL_512B_SIZE 	(__BLOCK_512B * 0)
 #define __POOL_256B_SIZE 	(__BLOCK_256B * 1)
-#define __POOL_192B_SIZE 	(__BLOCK_192B * 10)
+#define __POOL_192B_SIZE 	(__BLOCK_192B * 12)
 #define __POOL_128B_SIZE 	(__BLOCK_128B * 24)
 #define __POOL_100B_SIZE 	(__BLOCK_100B * 64)
 #define __POOL_80B_SIZE 	(__BLOCK_80B * 48)
@@ -266,15 +266,15 @@
 
 #define __PRINTING_PALETTE		3
 
-#define __GPLT0VALUE  			0xE4	// 11 10 01 00
-#define __GPLT1VALUE  			0xE0	// 11 10 00 00
-#define __GPLT2VALUE  			0xD0	// 11 01 00 00
-#define __GPLT3VALUE  			0xE0	// 11 10 00 00
+#define __GPLT0_VALUE  			0xE4	// 11 10 01 00
+#define __GPLT1_VALUE  			0xE0	// 11 10 00 00
+#define __GPLT2_VALUE  			0xD0	// 11 01 00 00
+#define __GPLT3_VALUE  			0xE0	// 11 10 00 00
 
-#define __JPLT0VALUE  			0xE4	// 11 10 01 00
-#define __JPLT1VALUE  			0xE4	// 11 10 01 00
-#define __JPLT2VALUE  			0xE4	// 11 10 01 00
-#define __JPLT3VALUE  			0xE4	// 11 10 01 00
+#define __JPLT0_VALUE  			0xE4	// 11 10 01 00
+#define __JPLT1_VALUE  			0xE0	// 11 10 00 00
+#define __JPLT2_VALUE  			0xD0	// 11 01 00 00
+#define __JPLT3_VALUE  			0xE0	// 11 10 00 00
 
 #define	__BKCOL					0x00
 
