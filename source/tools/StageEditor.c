@@ -733,7 +733,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 
 		position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
 		position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
-		position.z += ITOFIX19_13(__SCREEN_WIDTH >> 2);
+		position.z += ITOFIX19_13(0);
 
 		Entity entity = Stage_addEntity(GameState_getStage(this->gameState), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
 		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
