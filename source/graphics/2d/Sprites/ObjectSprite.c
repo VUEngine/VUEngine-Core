@@ -215,9 +215,24 @@ void ObjectSprite_render(ObjectSprite this)
 			for (; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
-				OAM[objectIndex << 2] = x + (8 * j)  * xDirection;
+				int finalX = x + (8 * j)  * xDirection;
+				
+				if((unsigned)finalX > __SCREEN_WIDTH)
+				{
+					OAM[(objectIndex << 2) + 1] &= 0x3FFFF;
+					continue;
+				}
+
+				int finalY = y + (8 * i)  * yDirection;
+				if((unsigned)finalY > __SCREEN_HEIGHT)
+				{
+					OAM[(objectIndex << 2) + 1] &= 0x3FFFF;
+					continue;
+				}
+
+				OAM[objectIndex << 2] = finalX;
 				OAM[(objectIndex << 2) + 1] = (this->head & 0xC000) | (this->position.parallax & 0x3FFF);
-				OAM[(objectIndex << 2) + 2] = y + (8 * i)  * yDirection;
+				OAM[(objectIndex << 2) + 2] = finalY;
 				OAM[(objectIndex << 2) + 3] = (OAM[(objectIndex << 2) + 3] & 0xCFFF) | (this->head & 0x3000);
 			}
 		}
@@ -263,13 +278,30 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 	}
 }
 
+static void ObjectSprite_mask(ObjectSprite this, u16 mask)
+{
+	ASSERT(this, "ObjectSprite::mask: null this");
+}
+
 void ObjectSprite_show(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::show: null this");
 	
 	Sprite_show(__UPCAST(Sprite, this));
 
-	ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+	int cols = Texture_getCols(__UPCAST(Texture, this->texture));
+	int rows = Texture_getRows(__UPCAST(Texture, this->texture));
+
+	int i = 0;
+	for (; i < rows; i++)
+	{
+		int j = 0;
+		for (; j < cols; j++)
+		{
+			s32 objectIndex = this->objectIndex + i * cols + j;
+			OAM[(objectIndex << 2) + 1] |= 0xC000;
+		}
+	}
 }
 
 // hide
@@ -287,9 +319,7 @@ void ObjectSprite_hide(ObjectSprite this)
 		for (; j < cols; j++)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
-			OAM[objectIndex << 2] = __SCREEN_WIDTH;
-			OAM[(objectIndex << 2) + 2] = __SCREEN_HEIGHT;
-			OAM[(objectIndex << 2) + 3] = 0;
+			OAM[(objectIndex << 2) + 1] &= 0x3FFFF;
 		}
 	}
 }
