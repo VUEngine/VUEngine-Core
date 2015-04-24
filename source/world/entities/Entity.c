@@ -767,12 +767,6 @@ Gap Entity_getGap(Entity this)
 	return gap;
 }
 
-// get entity's shape type
-int Entity_getShapeType(Entity this)
-{
-	return kCuboid;
-}
-
 // whether it is visible
 bool Entity_isVisible(Entity this, int pad)
 {
@@ -880,12 +874,6 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 			__VIRTUAL_CALL(void, Sprite, setDirection, __UPCAST(Sprite, VirtualNode_getData(node)), axis, direction);
 		}
 	}
-}
-
-// does it moves?
-bool Entity_moves(Entity this)
-{
-	return false;
 }
 
 // retrieve previous position

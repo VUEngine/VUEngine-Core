@@ -160,6 +160,7 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame);
 s8 Sprite_getFrameDelay(Sprite this);
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
 void Sprite_writeAnimation(Sprite this);
+u8 Sprite_getParallaxDisplacement(Sprite this);
 
 //---------------------------------------------------------------------------------------------------------
 // 										Sprites FXs

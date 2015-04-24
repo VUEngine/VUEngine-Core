@@ -28,7 +28,7 @@
 
 #include <Object.h>
 #include <Body.h>
-#include <Entity.h>
+#include <SpatialObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,14 +53,14 @@ __CLASS(PhysicalWorld);
 PhysicalWorld PhysicalWorld_getInstance();
 
 void PhysicalWorld_destructor(PhysicalWorld this);
-Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 mass);
-void PhysicalWorld_unregisterBody(PhysicalWorld this, Entity owner);
+Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_13 mass);
+void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 void PhysicalWorld_start(PhysicalWorld this);
 void PhysicalWorld_update(PhysicalWorld this);
 void PhysicalWorld_reset(PhysicalWorld this);
-bool PhysicalWorld_isEntityRegistered(PhysicalWorld this, Entity owner);
-Body PhysicalWorld_getBody(PhysicalWorld this, Entity owner);
+bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
+Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
 void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body);

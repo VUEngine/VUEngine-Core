@@ -27,7 +27,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <stdarg.h>
-#include <Object.h>
+#include <SpatialObject.h>
+#include <Shape.h>
 #include <HardwareManager.h>
 #include <MiscStructs.h>
 #include <VirtualList.h>
@@ -46,7 +47,7 @@
 
 // declare the virtual methods
 #define Container_METHODS														\
-		Object_METHODS															\
+		SpatialObject_METHODS													\
 		__VIRTUAL_DEC(update);													\
 		__VIRTUAL_DEC(transform);												\
 		__VIRTUAL_DEC(initialTransform);										\
@@ -58,7 +59,7 @@
 
 // define the virtual methods
 #define Container_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
+		SpatialObject_SET_VTABLE(ClassName)										\
 		__VIRTUAL_SET(ClassName, Container, update);							\
 		__VIRTUAL_SET(ClassName, Container, transform);							\
 		__VIRTUAL_SET(ClassName, Container, initialTransform);					\
@@ -71,7 +72,7 @@
 #define Container_ATTRIBUTES													\
 																				\
 	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
+	SpatialObject_ATTRIBUTES;													\
 																				\
 	/* children list */															\
 	VirtualList children;														\
@@ -100,6 +101,13 @@
 
 __CLASS(Container);
 
+
+//---------------------------------------------------------------------------------------------------------
+// 										MISC
+//---------------------------------------------------------------------------------------------------------
+
+// needed because of interdependency between Shape's and SpatialObject's headers
+Shape SpatialObject_getShape(SpatialObject this);
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE

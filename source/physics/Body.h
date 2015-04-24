@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <SpatialObject.h>
 #include <Mass.h>
 
 
@@ -57,7 +58,7 @@
 	fix19_13 mass;																\
 																				\
 	/* owner */																	\
-	Object owner;																\
+	SpatialObject owner;														\
 																				\
 	/* direction */																\
 	Force appliedForce;															\
@@ -94,17 +95,17 @@ __CLASS(Body);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Body, Object owner, fix19_13 mass);
+__CLASS_NEW_DECLARE(Body, SpatialObject owner, fix19_13 mass);
 
 void Body_destructor(Body this);
-void Body_setOwner(Body this, Object owner);
-Object Body_getOwner(Body this);
+void Body_setOwner(Body this, SpatialObject owner);
+SpatialObject Body_getOwner(Body this);
 void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
 VBVec3D Body_getLastDisplacement(Body this);
 void Body_setActive(Body this, bool active);
 bool Body_isActive(Body this);
 VBVec3D Body_getPosition(Body this);
-void Body_setPosition(Body this, const VBVec3D* position, Object caller);
+void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller);
 fix19_13 Body_getElasticity(Body this);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 Force Body_getFriction(Body this);

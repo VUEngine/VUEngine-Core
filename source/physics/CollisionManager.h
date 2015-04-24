@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <SpatialObject.h>
 #include <Shape.h>
 
 
@@ -52,9 +53,9 @@ __CLASS(CollisionManager);
 CollisionManager CollisionManager_getInstance();
 
 void CollisionManager_destructor(CollisionManager this);
-Shape CollisionManager_registerShape(CollisionManager this, Entity owner, int shapeType);
+Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner, int shapeType);
 void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
-Shape CollisionManager_getShape(CollisionManager this, Entity owner);
+Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner);
 void CollisionManager_processRemovedShapes(CollisionManager this);
 int CollisionManager_update(CollisionManager this);
 void CollisionManager_reset(CollisionManager this);

@@ -280,11 +280,6 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 	}
 }
 
-static void ObjectSprite_mask(ObjectSprite this, u16 mask)
-{
-	ASSERT(this, "ObjectSprite::mask: null this");
-}
-
 void ObjectSprite_show(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::show: null this");

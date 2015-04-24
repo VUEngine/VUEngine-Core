@@ -40,13 +40,13 @@ __CLASS_DEFINITION(Cuboid, Shape);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Cuboid_constructor(Cuboid this, Entity owner);
+static void Cuboid_constructor(Cuboid this, SpatialObject owner);
 static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
 static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement);
 static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
 static void Cuboid_configurePolygon(Cuboid this, int renew);
 
-Shape Entity_getShape(Entity this);
+Shape SpatialObject_getShape(SpatialObject this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,12 +54,12 @@ Shape Entity_getShape(Entity this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Cuboid, Entity owner)
+__CLASS_NEW_DEFINITION(Cuboid, SpatialObject owner)
 __CLASS_NEW_END(Cuboid, owner);
 
 
 // class's constructor
-static void Cuboid_constructor(Cuboid this, Entity owner)
+static void Cuboid_constructor(Cuboid this, SpatialObject owner)
 {
 	ASSERT(this, "Cuboid::constructor: null this");
 
@@ -117,9 +117,9 @@ void Cuboid_setup(Cuboid this)
 	ASSERT(this, "Cuboid::setup: null this");
 
 	// cuboid's center if placed on P(0, 0, 0)
-	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, Entity, getWidth, this->owner) >> 1);
-	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, Entity, getHeight, this->owner) >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, Entity, getDeep, this->owner) >> 0);
+	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, SpatialObject, getWidth, this->owner) >> 1);
+	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, SpatialObject, getHeight, this->owner) >> 1);
+	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, SpatialObject, getDeep, this->owner) >> 0);
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
@@ -129,8 +129,8 @@ void Cuboid_setup(Cuboid this)
 	if (!this->moves)
 	{
 		// position the shape to avoid in real time calculation
-		VBVec3D ownerPosition = Entity_getPosition(__UPCAST(Entity, this->owner));
-		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
+		VBVec3D ownerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, SpatialObject, getPosition, this->owner);
+		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
 
 		// calculate gap on each side of the rightCuboid
 		this->rightCuboid.x0 += ownerPosition.x + ITOFIX19_13(ownerGap.left);
@@ -152,10 +152,10 @@ void Cuboid_positione(Cuboid this)
 {
 	ASSERT(this, "Cuboid::positione: null this");
 
-	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
+	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
 
 	// get owner's position
-	VBVec3D myOwnerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, Entity, getPosition, this->owner);
+	VBVec3D myOwnerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, SpatialObject, getPosition, this->owner);
 
 	// calculate positioned rightCuboid	
 	this->positionedRightcuboid.x0 = this->rightCuboid.x0 + myOwnerPosition.x + ITOFIX19_13(gap.left);
@@ -186,11 +186,11 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this)
 }
 
 // determine axis of collision
-u8 Cuboid_getAxisOfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
+u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
 
-	Shape shape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
+	Shape shape = __VIRTUAL_CALL(Shape, SpatialObject, getShape, collidingSpatialObject);
 
 	if (__GET_CAST(Cuboid, shape))
 	{
@@ -205,7 +205,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
-	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, this->owner);
+	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
 
 	VBVec3D displacementIncrement =
 	{
@@ -225,7 +225,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 		cuboid->positionedRightcuboid.z1
 	};
 		
-	const VBVec3D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, Entity, getPreviousPosition, this->owner);
+	const VBVec3D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPreviousPosition, this->owner);
 
 	// setup a cuboid representing the previous position
 	Rightcuboid positionedRightCuboid =
@@ -374,15 +374,15 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 }
 
 // test if collision with the entity give the displacement
-u8 Cuboid_testIfCollision(Cuboid this, Entity collidingEntity, VBVec3D displacement)
+u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
-	Shape shape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
+	Shape shape = __VIRTUAL_CALL(Shape, SpatialObject, getShape, collidingSpatialObject);
 
 	if (__GET_CAST(Cuboid, shape))
     {
-		return Cuboid_testIfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, Entity, getGap, collidingEntity), displacement);
+		return Cuboid_testIfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement);
 	}
 
 	return false;

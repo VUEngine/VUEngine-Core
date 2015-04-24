@@ -98,7 +98,7 @@ void Actor_destructor(Actor this)
 	Screen_onFocusEntityDeleted(Screen_getInstance(), __UPCAST(InGameEntity, this));
 
 	// remove a body
-	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(Entity, this));
+	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(SpatialObject, this));
 
 	// destroy state machine
 	__DELETE(this->stateMachine);
@@ -146,7 +146,7 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 		this->lastCollidingEntity[kYAxis] = NULL;
 		this->lastCollidingEntity[kZAxis] = NULL;
 
-		Body_setPosition(this->body, &globalPosition, __UPCAST(Object, this));
+		Body_setPosition(this->body, &globalPosition, __UPCAST(SpatialObject, this));
 	}
 }
 
@@ -759,7 +759,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	if (this->body)
 	{
 		// force position
-		Body_setPosition(this->body, &this->transform.localPosition, __UPCAST(Object, this));
+		Body_setPosition(this->body, &this->transform.localPosition, __UPCAST(SpatialObject, this));
 		Actor_syncPositionWithBody(this);
 	}
 

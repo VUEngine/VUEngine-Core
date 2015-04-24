@@ -351,7 +351,7 @@ static void StageEditor_getShape(StageEditor this)
 
 	if (!this->shape)
 	{
-		switch (__VIRTUAL_CALL(int, Entity, getShapeType, entity))
+		switch (__VIRTUAL_CALL(int, SpatialObject, getShapeType, entity))
 	    {
 			case kCircle:
 
@@ -360,7 +360,7 @@ static void StageEditor_getShape(StageEditor this)
 
 			case kCuboid:
 
-				this->shape = __UPCAST(Shape, __NEW(Cuboid, entity));
+				this->shape = __UPCAST(Shape, __NEW(Cuboid, __UPCAST(SpatialObject, entity)));
 				break;
 		}
 	}

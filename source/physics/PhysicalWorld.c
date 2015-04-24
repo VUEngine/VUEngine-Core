@@ -132,7 +132,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 }
 
 // register a body
-Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 mass)
+Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_13 mass)
 {
 	ASSERT(this, "PhysicalWorld::registerBody: null this");
 
@@ -144,14 +144,14 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, Entity owner, fix19_13 mass)
 		return body;
 	}
 
-	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __UPCAST(Object, owner), mass));
+	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __UPCAST(SpatialObject, owner), mass));
 
 	// return created shape
 	return __UPCAST(Body, VirtualList_front(this->bodies));
 }
 
 // remove a body
-void PhysicalWorld_unregisterBody(PhysicalWorld this, Entity owner)
+void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::unregisterBody: null this");
 
@@ -170,7 +170,7 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, Entity owner)
 }
 
 // find a body given an owner
-Body PhysicalWorld_getBody(PhysicalWorld this, Entity owner)
+Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
@@ -182,7 +182,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, Entity owner)
 		Body body = __UPCAST(Body, VirtualNode_getData(node));
 
 		// check if current shape's owner is the same as the entity calling this method
-		if (__UPCAST(Object, owner) == Body_getOwner(body) && Body_isActive(body))
+		if (owner == Body_getOwner(body) && Body_isActive(body))
 		{
 			return body;
 		}
@@ -234,7 +234,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		Body body = __UPCAST(Body, VirtualNode_getData(node));
 
 		// check if must apply gravity
-		bool gravitySensibleAxis = __VIRTUAL_CALL(bool, Entity, canMoveOverAxis, Body_getOwner(body), &this->gravity);
+		bool gravitySensibleAxis = __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, Body_getOwner(body), &this->gravity);
 
 		if (gravitySensibleAxis)
 		{
@@ -330,10 +330,10 @@ void PhysicalWorld_reset(PhysicalWorld this)
 }
 
 // check if an entity has been registered
-bool PhysicalWorld_isEntityRegistered(PhysicalWorld this, Entity owner)
+bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner)
 {
-	ASSERT(this, "PhysicalWorld::isEntityRegistered: null this");
-	ASSERT(this->bodies, "PhysicalWorld::isEntityRegistered: null bodies");
+	ASSERT(this, "PhysicalWorld::isSpatialObjectRegistered: null this");
+	ASSERT(this->bodies, "PhysicalWorld::isSpatialObjectRegistered: null bodies");
 
 	VirtualNode node = VirtualList_begin(this->bodies);
 
@@ -343,7 +343,7 @@ bool PhysicalWorld_isEntityRegistered(PhysicalWorld this, Entity owner)
 		Body body = __UPCAST(Body, VirtualNode_getData(node));
 
 		// check if current body's owner is the same as the entity calling this method
-		if (__UPCAST(Object, owner) == Body_getOwner(body))
+		if (__UPCAST(SpatialObject, owner) == Body_getOwner(body))
 		{
 			// check if body is active.... maybe a body must be removed
 			// and a new entity has been loaded in the same memory location

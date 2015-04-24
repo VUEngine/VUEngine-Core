@@ -52,7 +52,7 @@ __CLASS_DEFINITION(Body, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Body_constructor(Body this, Object owner, fix19_13 mass);
+static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass);
 static void Body_awake(Body this, int axisStartedMovement);
 static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 appliedForce, fix19_13 frictionForce);
 static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 frictionForce);
@@ -74,11 +74,11 @@ enum CollidingObjectIndexes
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Body, Object owner, fix19_13 mass)
+__CLASS_NEW_DEFINITION(Body, SpatialObject owner, fix19_13 mass)
 __CLASS_NEW_END(Body, owner, mass);
 
 // class's constructor
-static void Body_constructor(Body this, Object owner, fix19_13 mass)
+static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 {
 	ASSERT(this, "Body::constructor: null this");
 
@@ -131,7 +131,7 @@ void Body_destructor(Body this)
 }
 
 // set game entity
-void Body_setOwner(Body this, Object owner)
+void Body_setOwner(Body this, SpatialObject owner)
 {
 	ASSERT(this, "Body::setOwner: null this");
 
@@ -139,7 +139,7 @@ void Body_setOwner(Body this, Object owner)
 }
 
 // get game entity
-Object Body_getOwner(Body this)
+SpatialObject Body_getOwner(Body this)
 {
 	ASSERT(this, "Body::getOwner: null this");
 
@@ -767,7 +767,7 @@ VBVec3D Body_getPosition(Body this)
 }
 
 // retrieve position
-void Body_setPosition(Body this, const VBVec3D* position, Object caller)
+void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller)
 {
 	ASSERT(this, "Body::setPosition: null this");
 

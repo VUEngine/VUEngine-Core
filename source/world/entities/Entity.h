@@ -43,16 +43,6 @@
 		__VIRTUAL_DEC(setExtraInfo);											\
 		__VIRTUAL_DEC(updateSpritePosition);									\
 		__VIRTUAL_DEC(updateSpriteScale);										\
-		__VIRTUAL_DEC(getPosition);												\
-		__VIRTUAL_DEC(getWidth);												\
-		__VIRTUAL_DEC(getHeight);												\
-		__VIRTUAL_DEC(getDeep);													\
-		__VIRTUAL_DEC(getGap);													\
-		__VIRTUAL_DEC(getShapeType);											\
-		__VIRTUAL_DEC(moves);													\
-		__VIRTUAL_DEC(getPreviousPosition);										\
-		__VIRTUAL_DEC(getShape);												\
-		__VIRTUAL_DEC(canMoveOverAxis);											\
 		__VIRTUAL_DEC(initialize);												\
 
 #define Entity_SET_VTABLE(ClassName)											\
@@ -71,10 +61,8 @@
 		__VIRTUAL_SET(ClassName, Entity, getHeight);							\
 		__VIRTUAL_SET(ClassName, Entity, getDeep);								\
 		__VIRTUAL_SET(ClassName, Entity, getGap);								\
-		__VIRTUAL_SET(ClassName, Entity, getShapeType);							\
-		__VIRTUAL_SET(ClassName, Entity, moves);								\
-		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);					\
 		__VIRTUAL_SET(ClassName, Entity, getShape);								\
+		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);					\
 		__VIRTUAL_SET(ClassName, Entity, suspend);								\
 		__VIRTUAL_SET(ClassName, Entity, resume);								\
 		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);						\
@@ -174,13 +162,11 @@ u16 Entity_getWidth(Entity this);
 u16 Entity_getHeight(Entity this);
 u16 Entity_getDeep(Entity this);
 Gap Entity_getGap(Entity this);
-int Entity_getShapeType(Entity this);
 int Entity_doesMove(Entity this);
 bool Entity_isVisible(Entity this, int pad);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteScale(Entity this);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
-bool Entity_moves(Entity this);
 const VBVec3D* Entity_getPreviousPosition(Entity this);
 void Entity_show(Entity this);
 void Entity_hide(Entity this);

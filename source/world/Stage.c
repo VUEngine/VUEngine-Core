@@ -61,6 +61,9 @@
 #define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + __ENTITY_LOAD_PAD)
 #define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- __ENTITY_LOAD_PAD)
 #define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + __ENTITY_LOAD_PAD)
+
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -84,6 +87,7 @@ typedef struct StageEntityToInitialize
 
 } StageEntityToInitialize;
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
@@ -92,6 +96,7 @@ typedef struct StageEntityToInitialize
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 void Container_processRemovedChildren(Container this);
+Shape SpatialObject_getShape(SpatialObject this);
 
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);

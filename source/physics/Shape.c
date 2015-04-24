@@ -39,7 +39,7 @@ __CLASS_DEFINITION(Shape, Object);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Shape_constructor(Shape this, Entity owner)
+void Shape_constructor(Shape this, SpatialObject owner)
 {
 	ASSERT(this, "Shape::constructor: null this");
 
@@ -50,7 +50,7 @@ void Shape_constructor(Shape this, Entity owner)
 	this->owner = owner;
 
 	// do I move?
-	this->moves = __VIRTUAL_CALL(bool, Entity, moves, owner);
+	this->moves = __VIRTUAL_CALL(bool, SpatialObject, moves, owner);
 
 	// not checked yet
 	this->checked = false;
@@ -74,7 +74,7 @@ void Shape_destructor(Shape this)
 }
 
 // retrieve owner
-Entity Shape_getOwner(Shape this)
+SpatialObject Shape_getOwner(Shape this)
 {
 	ASSERT(this, "Shape::getOwner: null this");
 

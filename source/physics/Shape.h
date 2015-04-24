@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <Entity.h>
+#include <SpatialObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@
 	Object_ATTRIBUTES;															\
 																				\
 	/* the entity to which the shape belongs */									\
-	Entity owner;																\
+	SpatialObject owner;														\
 																				\
 	/* flag to know if the shapes below to an entity which moves */				\
 	bool moves: true;															\
@@ -82,9 +82,9 @@ enum ShapeTypes
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void Shape_constructor(Shape this, Entity owner);
+void Shape_constructor(Shape this, SpatialObject owner);
 void Shape_destructor(Shape this);
-Entity Shape_getOwner(Shape this);
+SpatialObject Shape_getOwner(Shape this);
 void Shape_setActive(Shape this, bool active);
 bool Shape_isActive(Shape this);
 bool Shape_moves(Shape this);

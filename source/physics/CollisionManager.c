@@ -62,7 +62,7 @@ __CLASS_DEFINITION(CollisionManager, Object);
 static void CollisionManager_constructor(CollisionManager this);
 
 // retrieve shape
-Shape Entity_getShape(Entity this);
+Shape SpatialObject_getShape(SpatialObject this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ void CollisionManager_destructor(CollisionManager this)
 
 
 // register a shape
-Shape CollisionManager_registerShape(CollisionManager this, Entity owner, int shapeType)
+Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner, int shapeType)
 {
 	ASSERT(this, "CollisionManager::registerShape: null this");
 
@@ -158,13 +158,12 @@ void CollisionManager_unregisterShape(CollisionManager this, Shape shape)
 }
 
 // find a shape given an owner
-Shape CollisionManager_getShape(CollisionManager this, Entity owner)
+Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 {
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
-	VirtualNode node = VirtualList_find(this->shapes, (const void* const)Entity_getShape(owner));
-	
+	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL_UNSAFE(const void* const, SpatialObject, getShape, owner));
 
 	return node? __UPCAST(Shape, VirtualNode_getData(node)): NULL;
 }

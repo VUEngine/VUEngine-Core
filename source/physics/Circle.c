@@ -39,7 +39,7 @@ __CLASS_DEFINITION(Circle, Shape);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-static void Circle_constructor(Circle this, Entity owner);
+static void Circle_constructor(Circle this, SpatialObject owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,11 +47,11 @@ static void Circle_constructor(Circle this, Entity owner);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Circle, Entity owner)
+__CLASS_NEW_DEFINITION(Circle, SpatialObject owner)
 __CLASS_NEW_END(Circle, owner);
 
 // class's constructor
-static void Circle_constructor(Circle this, Entity owner)
+static void Circle_constructor(Circle this, SpatialObject owner)
 {
 	ASSERT(this, "Circle::constructor: null this");
 
