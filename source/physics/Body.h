@@ -86,6 +86,9 @@
 																				\
 	/* raise flag to update body's physices */									\
 	bool awake: true;															\
+																				\
+	/* raise flag to update body's physices */									\
+	u8 axisSubjectToGravity;													\
 
 // A Body which represent a generic object inside a Stage
 __CLASS(Body);
@@ -102,6 +105,8 @@ void Body_setOwner(Body this, SpatialObject owner);
 SpatialObject Body_getOwner(Body this);
 void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
 VBVec3D Body_getLastDisplacement(Body this);
+u8 Body_getAxisSubjectToGravity(Body this);
+void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity);
 void Body_setActive(Body this, bool active);
 bool Body_isActive(Body this);
 VBVec3D Body_getPosition(Body this);

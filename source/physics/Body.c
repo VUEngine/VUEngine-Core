@@ -89,6 +89,7 @@ static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 	this->mass = mass;
 
 	this->awake = false;
+	this->axisSubjectToGravity = __XAXIS | __YAXIS | __ZAXIS;
 
 	// set position
 	this->position.x = 0;
@@ -317,11 +318,9 @@ void Body_applyForce(Body this, const Force* force, int clearAxis)
 	this->appliedForce.y = force->y;
 	this->appliedForce.z = force->z;
 	
-	const VBVec3D* const gravity = PhysicalWorld_getGravity(PhysicalWorld_getInstance());
-
-	this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, (gravity->z? FIX19_13_MULT(gravity->x, this->mass): this->mass));
-	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, (gravity->z? FIX19_13_MULT(gravity->y, this->mass): this->mass));
-	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, (gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass));
+	this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, this->mass);
+	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, this->mass);
+	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, this->mass);
 
 	int axisStartedMovement = 0;
 
@@ -426,7 +425,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 			// update each axis
 	 	 	if (__XAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->x, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, frictionForce->x);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __XAXIS & this->axisSubjectToGravity? gravity->x: 0, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, frictionForce->x);
 
 	 	 		if (movementStatus)
 				{
@@ -443,7 +442,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 
 	 	 	if (__YAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->y, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, frictionForce->y);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __YAXIS & this->axisSubjectToGravity? gravity->y: 0, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, frictionForce->y);
 
 	 	 		if (movementStatus)
 				{
@@ -460,7 +459,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 
 	 	 	if (__ZAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, gravity->z, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, frictionForce->z);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __ZAXIS & this->axisSubjectToGravity? gravity->z: 0, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, frictionForce->z);
 
 	 	 		if (movementStatus)
 				{
@@ -511,7 +510,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 	
 	if((__XAXIS & axisOfMovement))
 	{
-		fix19_13 weight = gravity->x? FIX19_13_MULT(gravity->x, this->mass): this->mass;
+		fix19_13 weight = (__XAXIS & this->axisSubjectToGravity) && gravity->x? FIX19_13_MULT(gravity->x, this->mass): this->mass;
 
 		if(this->appliedForce.x)
 		{
@@ -525,7 +524,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 
 	if((__YAXIS & axisOfMovement))
 	{
-		fix19_13 weight = gravity->y? FIX19_13_MULT(gravity->y, this->mass): this->mass;
+		fix19_13 weight = (__YAXIS & this->axisSubjectToGravity) && gravity->y? FIX19_13_MULT(gravity->y, this->mass): this->mass;
 
 		if(this->appliedForce.y)
 		{
@@ -539,7 +538,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 
 	if((__ZAXIS & axisOfMovement))
 	{
-		fix19_13 weight = gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass;
+		fix19_13 weight = (__ZAXIS & this->axisSubjectToGravity) && gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass;
 
 		if(this->appliedForce.z)
 		{
@@ -739,6 +738,22 @@ void Body_stopMovement(Body this, int axis)
 		Body_sleep(this);
 		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyStoped, NULL);
 	}
+}
+
+// set axis subjet to gravity
+u8 Body_getAxisSubjectToGravity(Body this)
+{
+	ASSERT(this, "Body::getAxisSubjectToGravity: null this");
+
+	return this->axisSubjectToGravity;
+}
+
+// set axis subjet to gravity
+void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity)
+{
+	ASSERT(this, "Body::setAxisSubjectToGravity: null this");
+
+	this->axisSubjectToGravity = axisSubjectToGravity;
 }
 
 // set active

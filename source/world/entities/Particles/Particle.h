@@ -72,7 +72,6 @@
 	/* miliseconds */															\
 	int lifeSpan;																\
 
-
 __CLASS(Particle);
 
 
@@ -97,7 +96,10 @@ typedef struct ParticleDefinition
 
 	// particle's maximum life mass
 	fix19_13 maximumMass;
-	
+
+	// axis subject to gravity
+	u8 axisSubjectToGravity;
+
 	// function pointer to control particle's behavior
 	void (* behavior)(Particle particle);
 

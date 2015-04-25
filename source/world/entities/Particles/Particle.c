@@ -70,7 +70,8 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 
 	this->lifeSpan = lifeSpan;
 	this->body = PhysicalWorld_registerBody(PhysicalWorld_getInstance(), __UPCAST(SpatialObject, this), mass);
-
+	Body_setAxisSubjectToGravity(this->body, particleDefinition->axisSubjectToGravity);
+	
 	this->objectSprite = NULL;
 	Particle_addSprite(this, spriteDefinition);
 	
@@ -209,6 +210,5 @@ u8 Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration)
 {
 	ASSERT(this, "Particle::canMoveOverAxis: null this");
 
-	return false;
-	return __XAXIS | __YAXIS | __ZAXIS;
+	return Body_getAxisSubjectToGravity(this->body);
 }

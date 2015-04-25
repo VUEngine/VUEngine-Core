@@ -194,15 +194,15 @@ static void ParticleSystem_spawnParticle(ParticleSystem this)
 	
 	Particle_setPosition(particle, &position);
 
-	x = this->particleSystemDefinition->minimumForce.x + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x));
-	y = this->particleSystemDefinition->minimumForce.y + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y));
-	z = this->particleSystemDefinition->minimumForce.z + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z));
+	x = ITOFIX19_13(this->particleSystemDefinition->minimumForce.x + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x)));
+	y = ITOFIX19_13(this->particleSystemDefinition->minimumForce.y + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y)));
+	z = ITOFIX19_13(this->particleSystemDefinition->minimumForce.z + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z)));
 
 	Force force =
     {
-    	ITOFIX19_13(x),
-        ITOFIX19_13(y),
-        ITOFIX19_13(z)
+    	x,
+        y,
+        z
     };
 
 	Particle_addForce(particle, &force);
