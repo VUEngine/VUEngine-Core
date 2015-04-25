@@ -86,15 +86,6 @@ typedef struct ParticleSystemDefinition
 	// It has an Entity at the beggining
 	EntityDefinition entityDefinition;
 
-	// minimum random distance from the center of the system for spanw
-	VBVec3D minimumSpanDistance;
-
-	// minimum relative spawn position
-	VBVec3D minimumRelativeSpanPosition;
-
-	// maximum relative spawn position
-	VBVec3D maximumRelativeSpanPosition;
-
 	// minimun generation delay in miliseconds
 	u16 minimumSpawnDelay;
 
@@ -113,6 +104,21 @@ typedef struct ParticleSystemDefinition
 	// particle's definition
 	ParticleDefinition* particleDefinition;
 	
+	// minimum random distance from the center of the system for spanw
+	VBVec3D minimumSpanDistance;
+
+	// minimum relative spawn position
+	VBVec3D minimumRelativeSpanPosition;
+
+	// maximum relative spawn position
+	VBVec3D maximumRelativeSpanPosition;
+	
+	// minimum force to apply (use int values in the definition to avoid overflow)
+	VBVec3D minimumForce;
+
+	// maximum force to apply (use int values in the definition to avoid overflow)
+	VBVec3D maximumForce;
+
 } ParticleSystemDefinition;
 
 typedef const ParticleSystemDefinition ParticleSystemROMDef;

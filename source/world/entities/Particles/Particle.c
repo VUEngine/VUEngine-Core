@@ -25,6 +25,7 @@
 #include <Particle.h>
 #include <PhysicalWorld.h>
 #include <ObjectAnimatedSprite.h>
+#include <Game.h>
 #include <Clock.h>
 
 
@@ -41,10 +42,6 @@ __CLASS_DEFINITION(Particle, SpatialObject);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenPosition;
-const extern VBVec3D* _screenDisplacement;
-extern const Optical* _optical;
-
 static Clock _gameClock = NULL;
 
 static void Particle_addSprite(Particle this, const SpriteDefinition* spriteDefinition);
@@ -112,12 +109,17 @@ static void Particle_addSprite(Particle this, const SpriteDefinition* spriteDefi
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
 }
 
-void Particle_update(Particle this, u16 timeElapsed)
+void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "Particle::update: null this");
 
 	this->lifeSpan -= timeElapsed;
 	Sprite_update(__UPCAST(Sprite, this->objectSprite), _gameClock);
+	
+	if(behavior)
+	{
+		behavior(this);
+	}
 	
 	if(0 > this->lifeSpan)
 	{
@@ -141,6 +143,13 @@ void Particle_transform(Particle this)
 		// update sprite's 2D position
 		__VIRTUAL_CALL(void, Sprite, synchronizePosition, this->objectSprite, position);
     }
+}
+
+void Particle_addForce(Particle this, const Force* force)
+{
+	ASSERT(this, "Particle::position: null this");
+	
+	Body_addForce(this->body, force);
 }
 
 void Particle_setPosition(Particle this, VBVec3D* position)
@@ -200,5 +209,6 @@ u8 Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration)
 {
 	ASSERT(this, "Particle::canMoveOverAxis: null this");
 
+	return false;
 	return __XAXIS | __YAXIS | __ZAXIS;
 }

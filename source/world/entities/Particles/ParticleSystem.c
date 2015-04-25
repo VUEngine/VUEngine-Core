@@ -104,7 +104,6 @@ void ParticleSystem_destructor(ParticleSystem this)
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Object_removeEventListener(__UPCAST(Object, VirtualNode_getData(node)), __UPCAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
 			__DELETE(VirtualNode_getData(node));
 		}
 		
@@ -148,14 +147,15 @@ void ParticleSystem_update(ParticleSystem this)
 	{
 		u32 timeElapsed = Clock_getTime(this->clock) - this->lastUpdateTime;
 		
+		// update each particle
 		VirtualNode node = VirtualList_begin(this->particles);
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			__VIRTUAL_CALL(void, Particle, update, VirtualNode_getData(node), timeElapsed);
+			__VIRTUAL_CALL(void, Particle, update, VirtualNode_getData(node), timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
 		}
 		
-		
+		// check if it is time to spwn new particles
 		this->lastUpdateTime = Clock_getTime(this->clock);
 		
 		if(this->lastUpdateTime > this->nextSpawnTime)
@@ -187,12 +187,25 @@ static void ParticleSystem_spawnParticle(ParticleSystem this)
 
 	VBVec3D position = 
 	{
-		x + this->transform.globalPosition.x,
-		y + this->transform.globalPosition.y,
-		z + this->transform.globalPosition.z
+		x + this->transform.globalPosition.x + (0 < x? this->particleSystemDefinition->minimumSpanDistance.x: -this->particleSystemDefinition->minimumSpanDistance.x),
+		y + this->transform.globalPosition.y + (0 < x? this->particleSystemDefinition->minimumSpanDistance.y: -this->particleSystemDefinition->minimumSpanDistance.y),
+		z + this->transform.globalPosition.z + (0 < x? this->particleSystemDefinition->minimumSpanDistance.z: -this->particleSystemDefinition->minimumSpanDistance.z)
 	};
 	
 	Particle_setPosition(particle, &position);
+
+	x = this->particleSystemDefinition->minimumForce.x + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x));
+	y = this->particleSystemDefinition->minimumForce.y + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y));
+	z = this->particleSystemDefinition->minimumForce.z + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z));
+
+	Force force =
+    {
+    	ITOFIX19_13(x),
+        ITOFIX19_13(y),
+        ITOFIX19_13(z)
+    };
+
+	Particle_addForce(particle, &force);
 
 	Object_addEventListener(__UPCAST(Object, particle), __UPCAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
 
@@ -265,7 +278,6 @@ void ParticleSystem_suspend(ParticleSystem this)
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		Object_removeEventListener(__UPCAST(Object, VirtualNode_getData(node)), __UPCAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
 		__DELETE(VirtualNode_getData(node));
 	}
 }

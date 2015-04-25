@@ -97,6 +97,9 @@ typedef struct ParticleDefinition
 
 	// particle's maximum life mass
 	fix19_13 maximumMass;
+	
+	// function pointer to control particle's behavior
+	void (* behavior)(Particle particle);
 
 	// animation's name to play if
 	// sprite is animated
@@ -119,8 +122,9 @@ __CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, cons
 
 void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void Particle_destructor(Particle this);
-void Particle_update(Particle this, u16 timeElapsed);
+void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle particle));
 void Particle_transform(Particle this);
+void Particle_addForce(Particle this, const Force* force);
 void Particle_show(Particle this);
 void Particle_hide(Particle this);
 bool Particle_moves(Particle this);

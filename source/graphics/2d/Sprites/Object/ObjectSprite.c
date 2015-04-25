@@ -289,18 +289,10 @@ void ObjectSprite_show(ObjectSprite this)
 	
 	Sprite_show(__UPCAST(Sprite, this));
 
-	int cols = Texture_getCols(__UPCAST(Texture, this->texture));
-	int rows = Texture_getRows(__UPCAST(Texture, this->texture));
-
 	int i = 0;
-	for (; i < rows; i++)
+	for (; i < this->totalObjects; i++)
 	{
-		int j = 0;
-		for (; j < cols; j++)
-		{
-			s32 objectIndex = this->objectIndex + i * cols + j;
-			OAM[(objectIndex << 2) + 1] |= __SHOW_MASK;
-		}
+		OAM[((this->objectIndex + i) << 2) + 1] |= __SHOW_MASK;
 	}
 }
 
@@ -310,20 +302,9 @@ void ObjectSprite_hide(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::hide: null this");
 
 	// must check for the texture since it can be already be deleted
-	if(this->texture)
+	int i = 0;
+	for (; i < this->totalObjects; i++)
 	{
-		int cols = Texture_getCols(__UPCAST(Texture, this->texture));
-		int rows = Texture_getRows(__UPCAST(Texture, this->texture));
-	
-		int i = 0;
-		for (; i < rows; i++)
-		{
-			int j = 0;
-			for (; j < cols; j++)
-			{
-				s32 objectIndex = this->objectIndex + i * cols + j;
-				OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
-			}
-		}
+		OAM[((this->objectIndex + i) << 2) + 1] &= __HIDE_MASK;
 	}
 }
