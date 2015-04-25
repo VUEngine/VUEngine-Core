@@ -79,6 +79,7 @@ Features:
 		* Automatic char memory allocation
 		* Real time char memory defragmentation
 		* Automatic BGMap memory allocation
+		* Automatic OBJ memory allocation
 		* Automatic world layer assignment based on the objects' z position
 		* Preloading textures
 		* Automatic char memory defragmentation
@@ -97,6 +98,8 @@ Features:
 		* Friction
 		* Bouncing
 		* Automatic collision detection and notification
+	� Particles:
+		* Phisically based
 	� Stages:
 		* 3D stages
 		* Level streaming
