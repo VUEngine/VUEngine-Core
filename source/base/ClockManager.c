@@ -54,6 +54,9 @@ __CLASS_DEFINITION(ClockManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+// extern
+void SoundManager_playSounds(SoundManager this);
+
 //class's constructor
 static void ClockManager_constructor(ClockManager this);
 
@@ -164,11 +167,8 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	    	this->ticks = 0;
     }	
 
-    // Play background music
-    SoundManager_playBGM(SoundManager_getInstance());
-
-    // Play sound effects
-    SoundManager_playFxSounds(SoundManager_getInstance());
+    // update sounds
+    SoundManager_playSounds(SoundManager_getInstance());
 }
 
 // update clocks

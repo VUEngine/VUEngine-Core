@@ -101,7 +101,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
-static void Stage_registerEntities(Stage this);
+static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore);
 static void Stage_selectEntitiesInLoadRange(Stage this);
 static void Stage_setObjectSpritesContainers(Stage this);
 static void Stage_loadTextures(Stage this);
@@ -241,7 +241,7 @@ static void Stage_setObjectSpritesContainers(Stage this)
 }
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition)
+void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore)
 {
 	ASSERT(this, "Stage::load: null this");
 
@@ -267,7 +267,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition)
 	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
 
 	// register all the entities in the stage's definition
-	Stage_registerEntities(this);
+	Stage_registerEntities(this, entityNamesToIgnore);
 
 	// load entities
 	Stage_loadInRangeEntities(this);
@@ -281,7 +281,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition)
 
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
-	SoundManager_loadBGM(SoundManager_getInstance(), (u16 (*)[6])stageDefinition->bgm);
+	SoundManager_playBGM(SoundManager_getInstance(), (u16 (*)[6])stageDefinition->bgm);
 
 	//setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
@@ -502,7 +502,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 }
 
 // register the stage's definition entities in the streaming list
-static void Stage_registerEntities(Stage this)
+static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 {
 	ASSERT(this, "Stage::registerEntities: null this");
 
@@ -527,6 +527,25 @@ static void Stage_registerEntities(Stage this)
 	int i = 0;
 	for (;this->stageDefinition->entities[i].entityDefinition; i++)
 	{
+		if(this->stageDefinition->entities[i].name && entityNamesToIgnore)
+		{
+			VirtualNode node = VirtualList_begin(entityNamesToIgnore);
+			
+			for(; node; node = VirtualNode_getNext(node))
+			{
+				const char* name = (char*)VirtualNode_getData(node);
+				if(!strncmp(name, this->stageDefinition->entities[i].name, __MAX_CONTAINER_NAME_LENGTH))
+				{
+					break;
+				}
+			}
+			
+			if(node)
+			{
+				continue;
+			}
+		}
+		
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities[i]);
 
 		u8 width = 0;

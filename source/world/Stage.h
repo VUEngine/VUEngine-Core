@@ -143,7 +143,7 @@ typedef const StageDefinition StageROMDef;
 __CLASS_NEW_DECLARE(Stage);
 
 void Stage_destructor(Stage this);
-void Stage_load(Stage this, StageDefinition* stageDefinition);
+void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore);
 Size Stage_getSize(Stage this);
 Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, bool permanent);
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, bool permanent);

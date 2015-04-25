@@ -243,7 +243,7 @@ void GameState_onMessage(GameState this, int message)
 
 }
 // load a stage
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, bool flushCharSets)
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool flushCharSets)
 {
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
@@ -269,7 +269,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, bool 
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
 	//load world entities
-	Stage_load(this->stage, stageDefinition);
+	Stage_load(this->stage, stageDefinition, entityNamesToIgnore);
 
 	// transform everything
 	GameState_transform(this);

@@ -148,10 +148,10 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 	BYTE noteWait[__TOTAL_SOUNDS];												\
 																				\
 	/* background music */														\
-	u16 (*bgm)[__BGM_CHANNELS];													\
+	const u16 (*bgm)[__BGM_CHANNELS];											\
 																				\
 	/* fx sound */																\
-	u16* fxSound[__FXS];														\
+	const u16* fxSound[__FXS];													\
 																				\
 	/* space position of each fx */												\
 	VBVec2D fxPosition[__FXS];													\
@@ -173,6 +173,8 @@ extern const Optical* _optical;
 
 // class constructor
 static void SoundManager_constructor(SoundManager this);
+static void SoundManager_continuePlayingBGM(SoundManager this);
+static void SoundManager_continuePlayingFxSounds(SoundManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -241,7 +243,7 @@ void SoundManager_setWaveForm(SoundManager this)
 }
 
 // load a bgm
-void SoundManager_loadBGM(SoundManager this, u16 (*bgm)[])
+void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
 {
 	ASSERT(this, "SoundManager::loadBGM: null this");
 
@@ -249,8 +251,16 @@ void SoundManager_loadBGM(SoundManager this, u16 (*bgm)[])
 	this->bgm = bgm;
 }
 
+void SoundManager_playSounds(SoundManager this)
+{
+	ASSERT(this, "SoundManager::playSounds: null this");
+
+	SoundManager_continuePlayingBGM(this);
+	SoundManager_continuePlayingFxSounds(this);
+}
+
 // play background song loaded
-void SoundManager_playBGM(SoundManager this)
+static void SoundManager_continuePlayingBGM(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playBGM: null this");
 
@@ -389,14 +399,14 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 }
 
 // play sound
-void SoundManager_playFxSounds(SoundManager this)
+void SoundManager_continuePlayingFxSounds(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playFxSounds: null this");
 
 	int note = 0;
-	int fxS;
+	int fxS = 0;
 
-	for (fxS = 0; fxS < __FXS; fxS++)
+	for (; fxS < __FXS; fxS++)
 	{
 		//only if fx defined
 		if (this->fxSound[fxS])
@@ -475,7 +485,7 @@ void SoundManager_playFxSounds(SoundManager this)
 
 // load a fx sound to be played
 // it is not guaranted that the sound has been loaded
-int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position)
+int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D  position)
 {
 	ASSERT(this, "SoundManager::loadFxSound: null this");
 
@@ -503,7 +513,7 @@ int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position)
 }
 
 // returns true if the sound is being played
-int SoundManager_playingSound(SoundManager this, u16* fxSound)
+int SoundManager_playingSound(SoundManager this, const u16* fxSound)
 {
 	ASSERT(this, "SoundManager::playingSound: null this");
 
@@ -539,13 +549,15 @@ void SoundManager_stopSound(SoundManager this, BYTE *sound)
 	SND_REGS[5].SxINT = 0x00;
 }
 
+/*
 // continue BGM play
-void SoundManager_continueBGM(SoundManager this,BYTE *sound)
+void SoundManager_continueBGM(SoundManager this, BYTE *sound)
 {
 	ASSERT(this, "SoundManager::continueBGM: null this");
 
 	// TODO:
 }
+*/
 
 // stop all playing sounds
 void SoundManager_stopAllSound(SoundManager this)

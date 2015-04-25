@@ -208,13 +208,10 @@ SoundManager SoundManager_getInstance();
 
 void SoundManager_destructor(SoundManager this);
 void SoundManager_setWaveForm(SoundManager this);
-void SoundManager_loadBGM(SoundManager this, u16 (*bgm)[]);
-void SoundManager_playBGM(SoundManager this);
-void SoundManager_playFxSounds(SoundManager this);
-int SoundManager_loadFxSound(SoundManager this, u16* fxSound, VBVec3D  position);
-int SoundManager_playingSound(SoundManager this, u16* fxSound);
+void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[]);
+int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D  position);
+int SoundManager_playingSound(SoundManager this, const u16* fxSound);
 void SoundManager_stopSound(SoundManager this, BYTE *sound);
-void SoundManager_continueBGM(SoundManager this,BYTE *sound);
 void SoundManager_stopAllSound(SoundManager this);
 
 
