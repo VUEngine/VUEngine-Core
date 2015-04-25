@@ -264,9 +264,9 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playBGM: null this");
 
-	int channel=0;
+	int channel = 0;
 
-	int note=0;
+	int note = 0;
 
 	int i;
 
@@ -352,39 +352,39 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
 
 	float zMinus = 0;
-	int maxOutputLevel = 15;
+	int maxOutputLevel = 0xF;
 	int output = 0x00;
 
 	/* The maximum sound level for each side is 0xF
 	 * In the center position the output level is the one
 	 * defined in the sound's definition */
-	if (-10000 != this->fxPosition[fxS].parallax )
+//	if (-10000 != this->fxPosition[fxS].parallax )
 	{
-		zMinus = this->fxPosition[fxS].parallax ;//* this->zFactor;
+		//zMinus = this->fxPosition[fxS].parallax ;//* this->zFactor;
 
 		maxOutputLevel -= zMinus;
 
 		if (maxOutputLevel > 0)
 		{
-			int leftDistance = abs(this->fxPosition[fxS].x - __LEFT_EAR_CENTER);
-			int rightDistance = abs(this->fxPosition[fxS].x- __RIGHT_EAR_CENTER);
+			int leftDistance = abs(FIX19_13TOI(this->fxPosition[fxS].x) - __LEFT_EAR_CENTER);
+			int rightDistance = abs(FIX19_13TOI(this->fxPosition[fxS].x) - __RIGHT_EAR_CENTER);
 			int leftMinus = 0, rightMinus = 0;
 			int leftOutput, rightOutput;
 
-			//calculate the amount of sound to rest for each ear
+			//calculate the amount of sound that reachs each ear
 			//xDistance / (384/15)
-			leftMinus = leftDistance / (384/15);
-			rightMinus = rightDistance / (384/15);
+			leftMinus = leftDistance / (__MAX_VIEW_DISTANCE / maxOutputLevel);
+			rightMinus = rightDistance / (__MAX_VIEW_DISTANCE / maxOutputLevel);
 
 			leftOutput = maxOutputLevel - leftMinus;
 			rightOutput = maxOutputLevel - rightMinus;
 
-			if (leftOutput > 0)
+			if (0 < leftOutput)
 			{
 				output |= (((int)leftOutput) << 4);
 			}
 
-			if (rightOutput > 0)
+			if (0 < rightOutput)
 			{
 				output|=(((int)rightOutput));
 			}
@@ -412,13 +412,13 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 		if (this->fxSound[fxS])
 		{
 			//check if note's length has been played
-			if (this->noteWait[fxS+1] > this->fxSound[fxS][1])
+			if (this->noteWait[fxS + 1] > this->fxSound[fxS][1])
 			{
 				//move to the next note
-				this->actualNote[fxS+1]++;
+				this->actualNote[fxS + 1]++;
 
 				//initialize this->noteWait[0]
-				this->noteWait[fxS+1] = 0;
+				this->noteWait[fxS + 1] = 0;
 
 				//if note if greater than song's length
 				if (this->actualNote[fxS+1] > this->fxSound[fxS][0])
@@ -426,14 +426,15 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 					//stop sound
 					this->fxSound[fxS] = NULL;
 					this->fxPosition[fxS].parallax = -10000;
-					this->noteWait[fxS+1] = 0;
-					this->actualNote[fxS+1] = 0;
-					SND_REGS[fxS+2].SxLRV = 0x00;
-					SND_REGS[fxS+2].SxINT = 0x00;
+					this->noteWait[fxS + 1] = 0;
+					this->actualNote[fxS + 1] = 0;
+					SND_REGS[fxS + 2].SxLRV = 0x00;
+					SND_REGS[fxS + 2].SxINT = 0x00;
 
 					continue;
 				}
 			}
+			
 			//if note has changed
 			if (!this->noteWait[fxS + 1])
 			{
@@ -442,7 +443,7 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 				 * SND_REGS 0 to not stop if not explicitly
 				 * done.
 				 */
-				SND_REGS[fxS+2].SxINT = 0x00;
+				SND_REGS[fxS + 2].SxINT = 0x00;
 
 				//grab note
 				note=this->fxSound[fxS][this->actualNote[fxS+1]+6];
@@ -451,33 +452,33 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 				if (note != 0)
 				{
 					//if sound is positioned
-					SND_REGS[fxS+2].SxLRV = SoundManager_calculateSoundPosition(this, fxS);
+					SND_REGS[fxS + 2].SxLRV = SoundManager_calculateSoundPosition(this, fxS);
 
 					//set note's frequency
-					SND_REGS[fxS+2].SxFQL = (note & 0xFF);
-					SND_REGS[fxS+2].SxFQH = (note >> 8);
+					SND_REGS[fxS + 2].SxFQL = (note & 0xFF);
+					SND_REGS[fxS + 2].SxFQH = (note >> 8);
 
 					//set note's envelope
-					SND_REGS[fxS+2].SxEV0 = this->fxSound[fxS][3];
+					SND_REGS[fxS + 2].SxEV0 = this->fxSound[fxS][3];
 
 					//set note's envelope mode
-					SND_REGS[fxS+2].SxEV1 = this->fxSound[fxS][4];
+					SND_REGS[fxS + 2].SxEV1 = this->fxSound[fxS][4];
 
 					//set waveform source
-					SND_REGS[fxS+2].SxRAM = this->fxSound[fxS][5];
+					SND_REGS[fxS + 2].SxRAM = this->fxSound[fxS][5];
 
 					//output note
-					SND_REGS[fxS+2].SxINT = 0x80;
+					SND_REGS[fxS + 2].SxINT = 0x80;
 				}
 			}
 
-			this->noteWait[fxS+1]++;
+			this->noteWait[fxS + 1]++;
 		}
 		else
 		{
-			SND_REGS[fxS+2].SxLRV = 0x00;
+			SND_REGS[fxS + 2].SxLRV = 0x00;
 
-			SND_REGS[fxS+2].SxINT = 0x00;
+			SND_REGS[fxS + 2].SxINT = 0x00;
 		}
 	}
 
