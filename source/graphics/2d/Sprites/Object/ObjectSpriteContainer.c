@@ -134,44 +134,44 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
+	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 	
-	if(objectSprite)
+	if(this->objectSpriteToDefragment)
 	{
-		if(this->objectSpriteToDefragment)
+		int objectSpritePosition = VirtualList_getNodePosition(this->objectSprites, objectSprite);
+		int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
+		
+		if(objectSpritePosition < objectSpriteToDefragmentPosition)
 		{
-			int objectSpritePosition = VirtualList_getNodePosition(this->objectSprites, objectSprite);
-			int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
-			
-			if(objectSpritePosition < objectSpriteToDefragmentPosition)
-			{
-				this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
-				this->objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
-			}
-		}
-		else
-		{
-			// find the node to remove to defragment object memory
 			this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
 			this->objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
-	
-			ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
 		}
-		
-		// move forward before deframenting
-		this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
-
-		// if was the last node
-		if(!this->objectSpriteToDefragment)
-		{
-			// just update the measures
-			this->availableObjects += numberOfObjects;
-			this->nextAvailableObject = this->objectIndexFreed;
-			this->objectIndexFreed = 0;
-		}
-		
-		VirtualList_removeElement(this->objectSprites, objectSprite);
 	}
+	else
+	{
+		// find the node to remove to defragment object memory
+		this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
+		this->objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
+
+		ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
+	}
+	
+	// move forward before deframenting
+	this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
+
+	VirtualList_removeElement(this->objectSprites, objectSprite);
+	
+	// if was the last node
+	if(!this->objectSpriteToDefragment || VirtualList_begin(this->objectSprites))
+	{
+		// just update the measures
+		this->objectSpriteToDefragment = NULL;
+		this->availableObjects += numberOfObjects;
+		this->nextAvailableObject = this->objectIndexFreed;
+		this->objectIndexFreed = 0;
+	}
+
 }
 
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, int numberOfObjects)
@@ -227,6 +227,9 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	// save its index for the next sprite to move
 	int objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
 	ASSERT(0 <= objectIndexFreed, "ObjectSpriteContainer::defragment: 0 > objectIndexFreed");
+
+	Printing_text(Printing_getInstance(), __GET_CLASS_NAME(objectSprite), 20, 16, NULL);
+	ASSERT(Sprite_getTexture(__UPCAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
 	
 	ObjectSprite_setObjectIndex(objectSprite, this->objectIndexFreed);
 	this->objectIndexFreed = objectIndexFreed;

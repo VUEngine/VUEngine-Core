@@ -107,6 +107,7 @@ void ObjectSprite_destructor(ObjectSprite this)
 	if(this->texture)
 	{
 		__DELETE(this->texture);
+		this->texture = NULL;
 	}
 
 	// destroy the super object
@@ -262,6 +263,7 @@ int ObjectSprite_getObjectIndex(ObjectSprite this)
 void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 {
 	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
+	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");
 
 	if(0 <= this->objectIndex)
 	{
@@ -307,17 +309,21 @@ void ObjectSprite_hide(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::hide: null this");
 
-	int cols = Texture_getCols(__UPCAST(Texture, this->texture));
-	int rows = Texture_getRows(__UPCAST(Texture, this->texture));
-
-	int i = 0;
-	for (; i < rows; i++)
+	// must check for the texture since it can be already be deleted
+	if(this->texture)
 	{
-		int j = 0;
-		for (; j < cols; j++)
+		int cols = Texture_getCols(__UPCAST(Texture, this->texture));
+		int rows = Texture_getRows(__UPCAST(Texture, this->texture));
+	
+		int i = 0;
+		for (; i < rows; i++)
 		{
-			s32 objectIndex = this->objectIndex + i * cols + j;
-			OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
+			int j = 0;
+			for (; j < cols; j++)
+			{
+				s32 objectIndex = this->objectIndex + i * cols + j;
+				OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
+			}
 		}
 	}
 }

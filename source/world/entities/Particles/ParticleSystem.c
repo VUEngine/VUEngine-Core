@@ -166,8 +166,6 @@ void ParticleSystem_update(ParticleSystem this)
 				this->nextSpawnTime = this->lastUpdateTime + this->particleSystemDefinition->minimumSpawnDelay + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumSpawnDelay - this->particleSystemDefinition->minimumSpawnDelay));
 			}
 		}
-		
-		Printing_int(Printing_getInstance(), VirtualList_getSize(this->particles), 1, 12, NULL);
 	}
 }
 
