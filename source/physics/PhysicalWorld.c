@@ -144,7 +144,8 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_1
 		return body;
 	}
 
-	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, __UPCAST(SpatialObject, owner), mass));
+	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, owner, mass));
+	ASSERT(__UPCAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::registerBody: bad class body");
 
 	// return created shape
 	return __UPCAST(Body, VirtualList_front(this->bodies));
@@ -157,6 +158,7 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
+	ASSERT(body, "PhysicalWorld::unregisterBody: body not found");
 
 	if (body)
 	{
@@ -174,12 +176,17 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
+	
+	// process removed bodies
+	PhysicalWorld_processRemovedBodies(this);
+
 	VirtualNode node = VirtualList_begin(this->bodies);
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		// current body
 		Body body = __UPCAST(Body, VirtualNode_getData(node));
+		ASSERT(body, "PhysicalWorld::getBody: null body");
 
 		// check if current shape's owner is the same as the entity calling this method
 		if (owner == Body_getOwner(body) && Body_isActive(body))
@@ -395,15 +402,18 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 // set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
 {
-	this->gravity.x = gravity.x;
-	this->gravity.y = gravity.y;
-	this->gravity.z = gravity.z;
+	this->gravity = gravity;
 }
 
 // retrieve gravity
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this)
 {
-	return (const VBVec3D*)&this->gravity.x;
+	static VBVec3D gravity;
+	gravity.x = this->gravity.x;
+	gravity.y = this->gravity.y;
+	gravity.z = this->gravity.z;
+
+	return (const VBVec3D*)&gravity;
 }
 
 // get last elapsed time

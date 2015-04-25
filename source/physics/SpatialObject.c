@@ -47,11 +47,11 @@ __CLASS_DEFINITION(SpatialObject, Object);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(SpatialObject, s16 id)
-__CLASS_NEW_END(SpatialObject, id);
+__CLASS_NEW_DEFINITION(SpatialObject)
+__CLASS_NEW_END(SpatialObject);
 
 // class's constructor
-void SpatialObject_constructor(SpatialObject this, s16 id)
+void SpatialObject_constructor(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::constructor: null this");
 
@@ -85,6 +85,8 @@ int SpatialObject_getShapeType(SpatialObject this)
 // does it move?
 bool SpatialObject_moves(SpatialObject this)
 {
+	ASSERT(this, "SpatialObject::moves: null this");
+
 	// not necessarily
 	return false;
 }
@@ -92,7 +94,9 @@ bool SpatialObject_moves(SpatialObject this)
 // defaults to true
 bool SpatialObject_canMoveOverAxis(SpatialObject this, const Acceleration* acceleration)
 {
-	return true;
+	ASSERT(this, "SpatialObject::canMoveOverAxis: null this");
+
+	return false;
 }
 
 u16 SpatialObject_getWidth(SpatialObject this)
@@ -115,6 +119,7 @@ u16 SpatialObject_getDeep(SpatialObject this)
 
 	return 0;
 }
+
 Gap SpatialObject_getGap(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::getGap: null this");

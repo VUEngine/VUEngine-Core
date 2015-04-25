@@ -132,7 +132,7 @@ typedef const PositionedEntity PositionedEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 ID);
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id);
 void Entity_destructor(Entity this);
 SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
 Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo);
@@ -162,7 +162,6 @@ u16 Entity_getWidth(Entity this);
 u16 Entity_getHeight(Entity this);
 u16 Entity_getDeep(Entity this);
 Gap Entity_getGap(Entity this);
-int Entity_doesMove(Entity this);
 bool Entity_isVisible(Entity this, int pad);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteScale(Entity this);

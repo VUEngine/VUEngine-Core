@@ -90,6 +90,7 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 		this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
+		ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 	}
 }
 

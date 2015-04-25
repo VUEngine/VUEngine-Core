@@ -83,9 +83,9 @@ __CLASS(SpatialObject);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(SpatialObject, s16 id);
+__CLASS_NEW_DECLARE(SpatialObject);
 
-void SpatialObject_constructor(SpatialObject this, s16 id);
+void SpatialObject_constructor(SpatialObject this);
 void SpatialObject_destructor(SpatialObject this);
 int SpatialObject_getShapeType(SpatialObject this);
 bool SpatialObject_moves(SpatialObject this);

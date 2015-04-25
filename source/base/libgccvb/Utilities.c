@@ -25,6 +25,8 @@
 
 #include <Utilities.h>
 #include <HardwareManager.h>
+#include <Clock.h>
+#include <Game.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -110,12 +112,18 @@ long Utilities_randomSeed()
 {
 	long random = 1;
 	int	rand, prevnum = 0,	count = 1;
+	extern unsigned int volatile* _xpstts;
+
+	Clock clock = Game_getClock(Game_getInstance());
+	rand = Clock_getTime(clock);
 
 	// repeat through many times to make more random and to allow the CTA value to change multiple times
-	while (count < 30)
+	while (count < 5)
 	{
+		rand |= * _xpstts;
+		//rand = * _xpstts;
 		// rand = VIP_REGS[CTA]; // CTA = (*(BYTE*)(0x0005F830));
-		rand = (HW_REGS[TLR] | (HW_REGS[THR] << 8));
+		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
 
 		// prevent division by zero
 		if (random == 0)
@@ -123,8 +131,13 @@ long Utilities_randomSeed()
 		    random = 1;
         }
 
+		if (rand == 0)
+		{
+			rand = 1;
+        }
+
 		// just randomly doing stuff to the number
-		random += ((rand*count) + (count%random) + (prevnum / rand));
+		random += ((rand * count) + (count % random) + (prevnum / rand));
 
 		if (rand == prevnum)
 		{
@@ -150,7 +163,7 @@ long Utilities_randomSeed()
  */
 int Utilities_random(long seed, int randnums)
 {
-	return (seed % randnums);
+	return randnums? (seed % randnums): 0;
 }
 
 /*

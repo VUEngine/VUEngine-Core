@@ -160,7 +160,7 @@ u16 CharSet_getNumberOfChars(CharSet this)
 // get charset's segment
 u8 CharSet_getSegment(CharSet this)
 {
-	ASSERT(this, "CharSet::getCharSet: null this");
+	ASSERT(this, "CharSet::getSegment: null this");
 
 	return this->segment;
 }

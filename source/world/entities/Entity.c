@@ -103,7 +103,7 @@ static void Entity_releaseSprites(Entity this)
 		// move each child to a temporary list
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			__DELETE(__UPCAST(Sprite, VirtualNode_getData(node)));
+			__DELETE(VirtualNode_getData(node));
 		}
 
 		// delete the sprites
@@ -879,6 +879,8 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 // retrieve previous position
 const VBVec3D* Entity_getPreviousPosition(Entity this)
 {
+	ASSERT(this, "Entity::getPreviousPosition: null this");
+
 	static VBVec3D position = {0, 0, 0};
 	return &position;
 }
@@ -894,7 +896,7 @@ Shape Entity_getShape(Entity this)
 // make it visible
 void Entity_show(Entity this)
 {
-	ASSERT(this, "Entity::hide: null this");
+	ASSERT(this, "Entity::show: null this");
 
 	if (this->sprites)
 	{
@@ -951,5 +953,5 @@ void Entity_resume(Entity this)
 // defaults to true
 bool Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration)
 {
-	return true;
+	return __XAXIS | __YAXIS | __ZAXIS;
 }

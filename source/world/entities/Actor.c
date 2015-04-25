@@ -689,8 +689,8 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 			myPositionAxis = &this->transform.localPosition.x;
 			otherPositionAxis = &otherPosition.x;
 
-			myHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, this) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getWidth, entity) >> 1;
+			myHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getWidth, this) >> 1;
+			otherHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getWidth, entity) >> 1;
 
 			otherLowGap = otherGap.left;
 			otherHighGap = otherGap.right;

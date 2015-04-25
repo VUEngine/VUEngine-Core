@@ -73,7 +73,8 @@ __CLASS(Shape);
 
 enum ShapeTypes
 {
-	kCircle = 0,
+	kNoShape = 0,
+	kCircle,
 	kCuboid,
 };
 
