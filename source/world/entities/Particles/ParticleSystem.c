@@ -50,6 +50,7 @@ extern const Optical* _optical;
 static void ParticleSystem_spawnParticle(ParticleSystem this);
 static void ParticleSystem_processExpiredParticles(ParticleSystem this);
 static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventFirer);
+int ParticleSystem_computeNextSpawnTime(ParticleSystem this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -84,8 +85,8 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	// retrieve clock
 	this->clock = Game_getInGameClock(Game_getInstance());
 	
-	this->lastUpdateTime = this->paused? 0: Clock_getTime(this->clock);
-	this->nextSpawnTime = this->paused? 0: this->lastUpdateTime + this->particleSystemDefinition->minimumSpawnDelay + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumSpawnDelay - this->particleSystemDefinition->minimumSpawnDelay));
+	this->lastUpdateTime = this->paused ? 0 : Clock_getTime(this->clock);
+	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
 	// calculate the numbe of sprite definitions
 	for(this->numberOfSpriteDefinitions = 0; 0 <= (int)this->numberOfSpriteDefinitions && this->particleSystemDefinition->objectSpriteDefinitions[this->numberOfSpriteDefinitions]; this->numberOfSpriteDefinitions++);
@@ -142,20 +143,20 @@ void ParticleSystem_update(ParticleSystem this)
 	Container_update(__UPCAST(Container, this));
 	
 	ParticleSystem_processExpiredParticles(this);
-	
+
+    u32 timeElapsed = Clock_getTime(this->clock) - this->lastUpdateTime;
+
+    // update each particle
+    VirtualNode node = VirtualList_begin(this->particles);
+
+    for(; node; node = VirtualNode_getNext(node))
+    {
+        __VIRTUAL_CALL(void, Particle, update, VirtualNode_getData(node), timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
+    }
+
 	if(!this->paused)
 	{
-		u32 timeElapsed = Clock_getTime(this->clock) - this->lastUpdateTime;
-		
-		// update each particle
-		VirtualNode node = VirtualList_begin(this->particles);
-		
-		for(; node; node = VirtualNode_getNext(node))
-		{
-			__VIRTUAL_CALL(void, Particle, update, VirtualNode_getData(node), timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
-		}
-		
-		// check if it is time to spwn new particles
+		// check if it is time to spawn new particles
 		this->lastUpdateTime = Clock_getTime(this->clock);
 		
 		if(this->lastUpdateTime > this->nextSpawnTime)
@@ -163,7 +164,7 @@ void ParticleSystem_update(ParticleSystem this)
 			if(VirtualList_getSize(this->particles) < this->particleSystemDefinition->maximumNumberOfAliveParticles)
 			{
 				ParticleSystem_spawnParticle(this);
-				this->nextSpawnTime = this->lastUpdateTime + this->particleSystemDefinition->minimumSpawnDelay + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumSpawnDelay - this->particleSystemDefinition->minimumSpawnDelay));
+				this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 			}
 		}
 	}
@@ -294,8 +295,7 @@ int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::computeNextSpawnTime: null this");
 
-	return
-	    this->lastUpdateTime +
+	return this->lastUpdateTime +
 	    this->particleSystemDefinition->minimumSpawnDelay +
 	    Utilities_random(
 	        Utilities_randomSeed(),
