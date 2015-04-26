@@ -290,12 +290,42 @@ static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventF
 	VirtualList_pushBack(this->expiredParticles, eventFirer);
 }
 
+int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
+{
+	ASSERT(this, "ParticleSystem::computeNextSpawnTime: null this");
+
+	return
+	    this->lastUpdateTime +
+	    this->particleSystemDefinition->minimumSpawnDelay +
+	    Utilities_random(
+	        Utilities_randomSeed(),
+	        abs(this->particleSystemDefinition->maximumSpawnDelay - this->particleSystemDefinition->minimumSpawnDelay)
+        );
+}
+
 void ParticleSystem_resume(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::resume: null this");
 
 	Entity_resume(__UPCAST(Entity, this));
-	
-	this->lastUpdateTime = this->paused? 0: Clock_getTime(this->clock);
-	this->nextSpawnTime = this->paused? 0: this->lastUpdateTime + this->particleSystemDefinition->minimumSpawnDelay + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumSpawnDelay - this->particleSystemDefinition->minimumSpawnDelay));
+
+	this->lastUpdateTime = this->paused ? 0 : Clock_getTime(this->clock);
+	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
+}
+
+void ParticleSystem_start(ParticleSystem this)
+{
+	ASSERT(this, "ParticleSystem::start: null this");
+
+	this->lastUpdateTime = Clock_getTime(this->clock);
+	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
+
+	this->paused = 0;
+}
+
+void ParticleSystem_pause(ParticleSystem this)
+{
+	ASSERT(this, "ParticleSystem::pause: null this");
+
+	this->paused = 1;
 }
