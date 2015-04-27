@@ -54,6 +54,10 @@ __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
 
+// external 
+void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this);
+
+// local
 static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this);
 
 //---------------------------------------------------------------------------------------------------------
