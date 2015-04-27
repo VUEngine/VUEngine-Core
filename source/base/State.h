@@ -39,7 +39,7 @@
 		__VIRTUAL_DEC(enter);													\
 		__VIRTUAL_DEC(execute);													\
 		__VIRTUAL_DEC(exit);													\
-		__VIRTUAL_DEC(pause);													\
+		__VIRTUAL_DEC(suspend);													\
 		__VIRTUAL_DEC(resume);													\
 
 // declare the virtual methods which are redefined
@@ -48,7 +48,7 @@
 		__VIRTUAL_SET(ClassName, State, enter);									\
 		__VIRTUAL_SET(ClassName, State, execute);								\
 		__VIRTUAL_SET(ClassName, State, exit);									\
-		__VIRTUAL_SET(ClassName, State, pause);									\
+		__VIRTUAL_SET(ClassName, State, suspend);								\
 		__VIRTUAL_SET(ClassName, State, resume);								\
 
 // a generic state
@@ -67,7 +67,7 @@ void State_destructor(State this);
 void State_enter(State this, void* owner);
 void State_execute(State this, void* owner);
 void State_exit(State this, void* owner);
-void State_pause(State this, void* owner);
+void State_suspend(State this, void* owner);
 void State_resume(State this, void* owner);
 
 

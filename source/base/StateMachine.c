@@ -153,7 +153,7 @@ void StateMachine_pushState(StateMachine this, State newState)
 	if (this->currentState)
 	{
 		// call the pause method from current state
-		__VIRTUAL_CALL(void, State, pause, this->currentState, this->owner);
+		__VIRTUAL_CALL(void, State, suspend, this->currentState, this->owner);
 	}
 
 	// set new state
@@ -223,7 +223,7 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
 	}
 	if (this->currentState)
 	{
-		__VIRTUAL_CALL(void, State, pause, this->currentState, this->owner);
+		__VIRTUAL_CALL(void, State, suspend, this->currentState, this->owner);
 
 		this->previousState = this->currentState;
 	}

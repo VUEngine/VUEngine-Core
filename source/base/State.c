@@ -75,10 +75,10 @@ void State_exit(State this, void* owner)
 	ASSERT(this, "State::exit: null this");
 }
 
-// state's pause
-void State_pause(State this, void* owner)
+// state's suspend
+void State_suspend(State this, void* owner)
 {
-	ASSERT(this, "State::pause: null this");
+	ASSERT(this, "State::suspend: null this");
 }
 
 // state's resume

@@ -46,7 +46,7 @@
 		__VIRTUAL_SET(ClassName, GameState, enter);								\
 		__VIRTUAL_SET(ClassName, GameState, execute);							\
 		__VIRTUAL_SET(ClassName, GameState, exit);								\
-		__VIRTUAL_SET(ClassName, GameState, pause);								\
+		__VIRTUAL_SET(ClassName, GameState, suspend);							\
 		__VIRTUAL_SET(ClassName, GameState, resume);							\
 		__VIRTUAL_SET(ClassName, GameState, handleMessage);						\
 		__VIRTUAL_SET(ClassName, GameState, transform);							\
@@ -78,7 +78,7 @@ void GameState_destructor(GameState this);
 void GameState_enter(GameState this, void* owner);
 void GameState_execute(GameState this, void* owner);
 void GameState_exit(GameState this, void* owner);
-void GameState_pause(GameState this, void* owner);
+void GameState_suspend(GameState this, void* owner);
 void GameState_resume(GameState this, void* owner);
 bool GameState_handleMessage(GameState this, void* owner, Telegram telegram);
 void GameState_transform(GameState this);

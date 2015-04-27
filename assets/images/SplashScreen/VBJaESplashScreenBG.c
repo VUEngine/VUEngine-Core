@@ -3,12 +3,12 @@
 
 //======================================================================
 //
-//	VBJaESplashScreenBG, 384x224@2,
+//	VBJaESplashScreenBG, 384x224@2, 
 //	+ 101 tiles (t|f reduced) not compressed
 //	+ regular map (flat), not compressed, 48x28 
 //	Total size: 1616 + 2688 = 4304
 //
-//	Time-stamp: 2015-01-25, 19:32:48
+//	Time-stamp: 2015-04-27, 21:18:56
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.6
 //	( http://www.coranac.com/projects/#grit )
 //
