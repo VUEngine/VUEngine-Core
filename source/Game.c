@@ -225,7 +225,7 @@ static void Game_constructor(Game this)
 	// maximum distance from the screen's position to the horizon
 	this->optical.maximumViewDistance = 0;
 
-	// distance from left to right eye (deep sensation)
+	// distance from left to right eye (depth sensation)
 	this->optical.baseDistance = 0;
 
 	// screen's vertical view point center
@@ -454,7 +454,7 @@ static void Game_setOpticalGlobals(Game this)
 	// maximum distance from the _SC to the infinite
 	this->optical.maximumViewDistance = ITOFIX19_13(__MAX_VIEW_DISTANCE);
 
-	// distance from left to right eye (deep sensation)
+	// distance from left to right eye (depth sensation)
 	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);
 
 	// horizontal view point center

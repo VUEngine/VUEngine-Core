@@ -51,7 +51,7 @@
 		__VIRTUAL_DEC(canMoveOverAxis);											\
 		__VIRTUAL_DEC(getWidth);												\
 		__VIRTUAL_DEC(getHeight);												\
-		__VIRTUAL_DEC(getDeep);													\
+		__VIRTUAL_DEC(getDepth);													\
 		__VIRTUAL_DEC(getGap);													\
 		__VIRTUAL_DEC(getPosition);												\
 		__VIRTUAL_DEC(getPreviousPosition);										\
@@ -65,7 +65,7 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, canMoveOverAxis);				\
 		__VIRTUAL_SET(ClassName, SpatialObject, getWidth);						\
 		__VIRTUAL_SET(ClassName, SpatialObject, getHeight);						\
-		__VIRTUAL_SET(ClassName, SpatialObject, getDeep);						\
+		__VIRTUAL_SET(ClassName, SpatialObject, getDepth);						\
 		__VIRTUAL_SET(ClassName, SpatialObject, getGap);						\
 		__VIRTUAL_SET(ClassName, SpatialObject, getPosition);					\
 		__VIRTUAL_SET(ClassName, SpatialObject, getPreviousPosition);			\
@@ -92,7 +92,7 @@ bool SpatialObject_moves(SpatialObject this);
 bool SpatialObject_canMoveOverAxis(SpatialObject this, const Acceleration* acceleration);
 u16 SpatialObject_getWidth(SpatialObject this);
 u16 SpatialObject_getHeight(SpatialObject this);
-u16 SpatialObject_getDeep(SpatialObject this);
+u16 SpatialObject_getDepth(SpatialObject this);
 Gap SpatialObject_getGap(SpatialObject this);
 const VBVec3D* SpatialObject_getPosition(SpatialObject this);
 const VBVec3D* SpatialObject_getPreviousPosition(SpatialObject this);

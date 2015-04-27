@@ -98,7 +98,7 @@ typedef struct InGameEntityDefinition
 	u16 height;
 
 	// object's size over the z axis
-	u16 deep;
+	u16 depth;
 
 } InGameEntityDefinition;
 

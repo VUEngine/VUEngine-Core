@@ -58,7 +58,7 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 
 	this->size.x = inGameEntityDefinition->width;
 	this->size.y = inGameEntityDefinition->height;
-	this->size.z = inGameEntityDefinition->deep;
+	this->size.z = inGameEntityDefinition->depth;
 
 	this->gap = this->inGameEntityDefinition->gap;
 

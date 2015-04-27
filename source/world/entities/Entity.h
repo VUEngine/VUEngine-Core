@@ -59,7 +59,7 @@
 		__VIRTUAL_SET(ClassName, Entity, getPosition);							\
 		__VIRTUAL_SET(ClassName, Entity, getWidth);								\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);							\
-		__VIRTUAL_SET(ClassName, Entity, getDeep);								\
+		__VIRTUAL_SET(ClassName, Entity, getDepth);								\
 		__VIRTUAL_SET(ClassName, Entity, getGap);								\
 		__VIRTUAL_SET(ClassName, Entity, getShape);								\
 		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);					\
@@ -160,7 +160,7 @@ VirtualList Entity_getSprites(Entity this);
 bool Entity_handleMessage(Entity this, Telegram telegram);
 u16 Entity_getWidth(Entity this);
 u16 Entity_getHeight(Entity this);
-u16 Entity_getDeep(Entity this);
+u16 Entity_getDepth(Entity this);
 Gap Entity_getGap(Entity this);
 bool Entity_isVisible(Entity this, int pad);
 bool Entity_updateSpritePosition(Entity this);

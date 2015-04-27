@@ -295,7 +295,7 @@ Transformation Container_getEnvironmentTransform(Container this)
 }
 
 // contatenate transform
-void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform)
+void Container_concatenateTransform(Transformation* environmentTransform, Transformation* transform)
 {
 	ASSERT(environmentTransform, "Container::concatenateTransform: null environmentTransform");
 	ASSERT(transform, "Container::concatenateTransform: null transform");

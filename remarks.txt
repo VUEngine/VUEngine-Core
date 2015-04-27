@@ -1,3 +1,10 @@
 Only one check of collision between two shapes is performed.
 If the first does nothing with the collision, the second 
 shape is not checked.
+
+
+LIMITATIONS
+
+Parenting:
+	1) Cannot add children during the initialization phase (initialize method)
+	2) 

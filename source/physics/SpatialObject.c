@@ -113,9 +113,9 @@ u16 SpatialObject_getHeight(SpatialObject this)
 	return 0;
 }
 
-u16 SpatialObject_getDeep(SpatialObject this)
+u16 SpatialObject_getDepth(SpatialObject this)
 {
-	ASSERT(this, "SpatialObject::getDeep: null this");
+	ASSERT(this, "SpatialObject::getDepth: null this");
 
 	return 0;
 }

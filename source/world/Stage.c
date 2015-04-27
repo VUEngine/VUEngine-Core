@@ -23,6 +23,8 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <Stage.h>
 #include <Optics.h>
 #include <SoundManager.h>
@@ -281,7 +283,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
-	SoundManager_playBGM(SoundManager_getInstance(), (u16 (*)[6])stageDefinition->bgm);
+	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])stageDefinition->bgm);
 
 	//setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());

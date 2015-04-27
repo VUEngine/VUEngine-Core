@@ -69,9 +69,11 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
 
 	this->shape = NULL;
 
-	this->size.x = 0;
-	this->size.y = 0;
-	this->size.z = 0;
+	// initialize to -1 for the engine to know that
+	// size must be set
+	this->size.x = -1;
+	this->size.y = -1;
+	this->size.z = -1;
 }
 
 // class's destructor
@@ -119,7 +121,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 
 	u16 halfWidth = 0;
 	u16 halfHeight = 0;
-	u16 halfDeep = 10;
+	u16 halfDepth = 10;
 
 	if (this->sprites)
 	{
@@ -130,14 +132,14 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 		{
 			halfWidth = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
 			halfHeight = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
-			halfDeep = 10;
+			halfDepth = 10;
 		}
 	}
 	else if(!this->children || !VirtualList_begin(this->children))
 	{
 		halfWidth = this->size.x >> 1;
 		halfHeight = this->size.y >> 1;
-		halfDeep = this->size.z >> 1;
+		halfDepth = this->size.z >> 1;
 	}
 	
 	int x = FIX19_13TOI(this->transform.globalPosition.x);
@@ -164,12 +166,12 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 		rightcuboid->y0 = y - halfHeight;
 	}
 
-	if(0 == rightcuboid->z1 || halfDeep + z > rightcuboid->z1)
+	if(0 == rightcuboid->z1 || halfDepth + z > rightcuboid->z1)
 	{
-		rightcuboid->z1 = halfDeep + z;
+		rightcuboid->z1 = halfDepth + z;
 	}
 	
-	if(0 == rightcuboid->z0 || z - halfDeep < rightcuboid->z0)
+	if(0 == rightcuboid->z0 || z - halfDepth < rightcuboid->z0)
 	{
 		rightcuboid->z0 = z - halfHeight;
 	}
@@ -218,13 +220,13 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 
 	s16 halfWidth = 0;
 	s16 halfHeight = 0;
-	s16 halfDeep = 10;
+	s16 halfDepth = 10;
 
 	if(positionedEntity->entityDefinition->spritesDefinitions && positionedEntity->entityDefinition->spritesDefinitions[0] && positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition)
 	{
 		halfWidth = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2;
 		halfHeight = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2;
-		halfDeep = 10;
+		halfDepth = 10;
 /*
 		if(positionedEntity->entityDefinition->spritesDefinitions && 
 				positionedEntity->entityDefinition->spritesDefinitions[0] && 
@@ -241,9 +243,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	}
 	else if(!positionedEntity->childrenDefinitions)
 	{
-		halfWidth = __SCREEN_WIDTH >> 1;
-		halfHeight = __SCREEN_HEIGHT >> 1;
-		halfDeep = 10;
+		halfWidth = 1;
+		halfHeight = 1;
+		halfDepth = 1;
 	}
 
 	int x = FIX19_13TOI(globalPosition3D.x);
@@ -270,12 +272,12 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		rightcuboid->y0 = y - halfHeight;
 	}
 
-	if(0 == rightcuboid->z1 || halfDeep + z > rightcuboid->z1)
+	if(0 == rightcuboid->z1 || halfDepth + z > rightcuboid->z1)
 	{
-		rightcuboid->z1 = halfDeep + z;
+		rightcuboid->z1 = halfDepth + z;
 	}
 	
-	if(0 == rightcuboid->z0 || z - halfDeep < rightcuboid->z0)
+	if(0 == rightcuboid->z0 || z - halfDepth < rightcuboid->z0)
 	{
 		rightcuboid->z0 = z - halfHeight;
 	}
@@ -441,8 +443,11 @@ void Entity_initialize(Entity this)
 		Shape_setActive(this->shape, true);
 	}
 	
-	// must force size calculation now
-	Entity_calculateSize(this);
+	if(0 > this->size.x || 0 > this->size.y || 0 > this->size.z)
+	{
+		// must force size calculation now
+		Entity_calculateSize(this);
+	}
 }
 
 // load children
@@ -485,11 +490,15 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		// must initialize after adding the children
 		__VIRTUAL_CALL(void, Entity, initialize, childEntity);
 
-		Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
-
-		// apply transformations
-		__VIRTUAL_CALL(void, Container, initialTransform, childEntity, &environmentTransform);
-
+		// if already initialized
+		if(0 <= this->size.x && 0 <= this->size.y && 0 <= this->size.z)
+		{
+			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
+	
+			 // apply transformations
+			__VIRTUAL_CALL(void, Container, initialTransform, childEntity, &environmentTransform);
+		}
+		
 		// create the entity and add it to the world
 		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, childEntity));
 	}
@@ -725,7 +734,7 @@ u16 Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
 
-	if (!this->size.x)
+	if (0 > this->size.x)
 	{
 		Entity_calculateSize(this);
 	}
@@ -739,7 +748,7 @@ u16 Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
 
-	if (!this->size.y)
+	if (0 > this->size.y)
 	{
 		Entity_calculateSize(this);
 	}
@@ -747,12 +756,12 @@ u16 Entity_getHeight(Entity this)
 	return this->size.y;
 }
 
-// get deep
-u16 Entity_getDeep(Entity this)
+// get depth
+u16 Entity_getDepth(Entity this)
 {
-	ASSERT(this, "Entity::getDeep: null this");
+	ASSERT(this, "Entity::getDepth: null this");
 
-	if (!this->size.z)
+	if (0 > this->size.z)
 	{
 		Entity_calculateSize(this);
 	}

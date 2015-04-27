@@ -63,7 +63,7 @@
 __CLASS(ObjectTexture);
 
 //use a ObjectTexture when you want to show a static background or a character that must be scaled according
-//its deep on the screen so there exists consistency between the deep and the size of the character
+//its depth on the screen so there exists consistency between the depth and the size of the character
 
 
 //---------------------------------------------------------------------------------------------------------

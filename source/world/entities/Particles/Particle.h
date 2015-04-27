@@ -132,7 +132,7 @@ void Particle_hide(Particle this);
 bool Particle_moves(Particle this);
 u8 Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration);
 u16 Particle_getHeight(Particle this);
-u16 Particle_getDeep(Particle this);
+u16 Particle_getDepth(Particle this);
 Gap Particle_getGap(Particle this);
 void Particle_setPosition(Particle this, VBVec3D* position);
 const VBVec3D* Particle_getPosition(Particle this);

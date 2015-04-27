@@ -119,7 +119,7 @@ void Cuboid_setup(Cuboid this)
 	// cuboid's center if placed on P(0, 0, 0)
 	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, SpatialObject, getWidth, this->owner) >> 1);
 	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, SpatialObject, getHeight, this->owner) >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, SpatialObject, getDeep, this->owner) >> 0);
+	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(u16, SpatialObject, getDepth, this->owner) >> 0);
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;

@@ -122,6 +122,7 @@ void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMo
 void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "Screen::update: null this");
+	ASSERT(this->screenMovementManager, "Screen::update: null screenMovementManager");
 
 #ifdef __DEBUG_TOOLS
 	if (!Game_isInSpecialMode(Game_getInstance()))
@@ -133,10 +134,7 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	if (!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
-	if(this->screenMovementManager)
-	{
-		__VIRTUAL_CALL(void, ScreenMovementManager, positione, this->screenMovementManager, checkIfFocusEntityIsMoving);
-	}
+	__VIRTUAL_CALL(void, ScreenMovementManager, positione, this->screenMovementManager, checkIfFocusEntityIsMoving);
 }
 
 // set the focus entity

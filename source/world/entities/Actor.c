@@ -423,7 +423,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 		if (this->body)
 	    {
 			Object sender = Telegram_getSender(telegram);
-			Actor atherActor = __GET_CAST(Actor, sender);
+			Actor otherActor = __GET_CAST(Actor, sender);
 
 			if (true || (sender == __UPCAST(Object, this)) || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
 	        {
@@ -463,9 +463,9 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 						break;
 				}
 			}
-			else if (atherActor)
+			else if (otherActor)
 	        {
-				__VIRTUAL_CALL(void, Actor, takeHitFrom, atherActor);
+				__VIRTUAL_CALL(void, Actor, takeHitFrom, otherActor);
 
 				return true;
 			}
@@ -667,7 +667,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 	fix19_13 *myPositionAxis = NULL;
 	fix19_13 *otherPositionAxis = NULL;
 
-	// used to the width, height or deep
+	// used to the width, height or depth
 	u16 myHalfSize = 0;
 	u16 otherHalfSize = 0;
 
@@ -719,16 +719,16 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
 			myPositionAxis = &this->transform.localPosition.z;
 			otherPositionAxis = &otherPosition.z;
 
-			// TODO: must make deep work as the width and high
+			// TODO: must make depth work as the width and high
 			if (this->transform.globalPosition.z < otherPosition.z)
 			{
-				myHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, this);
+				myHalfSize = __VIRTUAL_CALL(u16, Entity, getDepth, this);
 				otherHalfSize = 0;
 			}
 			else
 			{
 				myHalfSize = 0;
-				otherHalfSize = __VIRTUAL_CALL(u16, Entity, getDeep, entity);
+				otherHalfSize = __VIRTUAL_CALL(u16, Entity, getDepth, entity);
 			}
 			
 			myLowGap = 0;

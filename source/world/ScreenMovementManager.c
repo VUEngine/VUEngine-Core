@@ -92,7 +92,7 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 		{
 			// transform focus entity
 			Transformation environmentTransform = Container_getEnvironmentTransform(focusInGameEntityParent);
-	
+
 			// apply transformations
 			__VIRTUAL_CALL(void, Container, transform, screen->focusInGameEntity, &environmentTransform);
 	
@@ -107,7 +107,7 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 				
 				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
 				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
-				screen->position.z += screen->focusEntityPositionDisplacement.z;
+				screen->position.z += screen->focusEntityPositionDisplacement.z - ITOFIX19_13(__SCREEN_DEPTH >> 1);
 	
 				if (0 > screen->position.x)
 				{
