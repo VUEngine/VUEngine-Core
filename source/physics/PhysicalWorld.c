@@ -241,7 +241,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		Body body = __UPCAST(Body, VirtualNode_getData(node));
 
 		// check if must apply gravity
-		bool gravitySensibleAxis = __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, Body_getOwner(body), &this->gravity);
+		bool gravitySensibleAxis = Body_getAxisSubjectToGravity(body) & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, Body_getOwner(body), &this->gravity);
 
 		if (gravitySensibleAxis)
 		{

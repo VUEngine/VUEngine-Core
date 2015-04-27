@@ -135,9 +135,9 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 	}
 	else if(!this->children || !VirtualList_begin(this->children))
 	{
-		halfWidth = __SCREEN_WIDTH >> 1;
-		halfHeight = __SCREEN_HEIGHT >> 1;
-		halfDeep = 10;
+		halfWidth = this->size.x >> 1;
+		halfHeight = this->size.y >> 1;
+		halfDeep = this->size.z >> 1;
 	}
 	
 	int x = FIX19_13TOI(this->transform.globalPosition.x);
@@ -440,6 +440,9 @@ void Entity_initialize(Entity this)
 	{
 		Shape_setActive(this->shape, true);
 	}
+	
+	// must force size calculation now
+	Entity_calculateSize(this);
 }
 
 // load children
