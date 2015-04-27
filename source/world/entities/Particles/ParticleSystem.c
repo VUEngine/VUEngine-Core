@@ -213,13 +213,6 @@ static void ParticleSystem_spawnParticle(ParticleSystem this)
 	VirtualList_pushBack(this->particles, particle);
 }
 
-void ParticleSystem_initialize(ParticleSystem this)
-{
-	ASSERT(this, "ParticleSystem::initialize: null this");
-	
-	Entity_initialize(__UPCAST(Entity, this));
-}
-
 void ParticleSystem_transform(ParticleSystem this, Transformation* environmentTransform)
 {
 	ASSERT(this, "ParticleSystem::transform: null this");

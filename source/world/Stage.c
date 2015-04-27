@@ -364,6 +364,8 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 				// TODO
 			}
 			
+			__VIRTUAL_CALL(void, Entity, ready, entity);
+
 			return entity;
 		}
 	}
@@ -403,6 +405,8 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 
 			// create the entity and add it to the world
 			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
+			
+			__VIRTUAL_CALL(void, Entity, ready, entity);
 		}
 /*
 		if (permanent)
@@ -743,6 +747,8 @@ static void Stage_initializeEntities(Stage this)
 		
 		// apply transformations
 		__VIRTUAL_CALL(void, Container, initialTransform, stageEntityToInitialize->entity, &environmentTransform);
+
+		__VIRTUAL_CALL(void, Entity, ready, stageEntityToInitialize->entity);
 
 		VirtualList_removeElement(this->entitiesToInitialize, stageEntityToInitialize);
 		__DELETE_BASIC(stageEntityToInitialize);

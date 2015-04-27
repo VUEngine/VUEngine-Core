@@ -69,11 +69,11 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
 
 	this->shape = NULL;
 
-	// initialize to -1 for the engine to know that
+	// initialize to 0 for the engine to know that
 	// size must be set
-	this->size.x = -1;
-	this->size.y = -1;
-	this->size.z = -1;
+	this->size.x = 0;
+	this->size.y = 0;
+	this->size.z = 0;
 }
 
 // class's destructor
@@ -443,10 +443,27 @@ void Entity_initialize(Entity this)
 		Shape_setActive(this->shape, true);
 	}
 	
-	if(0 > this->size.x || 0 > this->size.y || 0 > this->size.z)
+	if(!this->size.x || !this->size.y || !this->size.z)
 	{
 		// must force size calculation now
 		Entity_calculateSize(this);
+	}
+}
+
+// entity is initialized
+void Entity_ready(Entity this)
+{
+	ASSERT(this, "Entity::initialize: null this");
+	
+	if(this->children)
+	{
+		// call ready method on children
+		VirtualNode node = VirtualList_begin(this->children);
+
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			__VIRTUAL_CALL(void, Entity, ready, __UPCAST(Entity, VirtualNode_getData(node)));
+		}
 	}
 }
 
@@ -501,6 +518,8 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		
 		// create the entity and add it to the world
 		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, childEntity));
+		
+		__VIRTUAL_CALL(void, Entity, ready, childEntity);
 	}
 
 	return childEntity;
@@ -734,7 +753,7 @@ u16 Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
 
-	if (0 > this->size.x)
+	if (!this->size.x)
 	{
 		Entity_calculateSize(this);
 	}
@@ -748,7 +767,7 @@ u16 Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
 
-	if (0 > this->size.y)
+	if (!this->size.y)
 	{
 		Entity_calculateSize(this);
 	}
@@ -761,7 +780,7 @@ u16 Entity_getDepth(Entity this)
 {
 	ASSERT(this, "Entity::getDepth: null this");
 
-	if (0 > this->size.z)
+	if (!this->size.z)
 	{
 		Entity_calculateSize(this);
 	}

@@ -44,6 +44,7 @@
 		__VIRTUAL_DEC(updateSpritePosition);									\
 		__VIRTUAL_DEC(updateSpriteScale);										\
 		__VIRTUAL_DEC(initialize);												\
+		__VIRTUAL_DEC(ready);													\
 
 #define Entity_SET_VTABLE(ClassName)											\
 		Container_SET_VTABLE(ClassName)											\
@@ -67,6 +68,7 @@
 		__VIRTUAL_SET(ClassName, Entity, resume);								\
 		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);						\
 		__VIRTUAL_SET(ClassName, Entity, initialize);							\
+		__VIRTUAL_SET(ClassName, Entity, ready);								\
 
 #define Entity_ATTRIBUTES														\
 																				\
@@ -139,6 +141,7 @@ Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extra
 Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 id);
 Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* positionedEntity, s16 id);
 void Entity_initialize(Entity this);
+void Entity_ready(Entity this);
 void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity* childrenDefinitions);
 Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo);

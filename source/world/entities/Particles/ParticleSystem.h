@@ -42,7 +42,6 @@
 		__VIRTUAL_SET(ClassName, ParticleSystem, update);						\
 		__VIRTUAL_SET(ClassName, ParticleSystem, transform);					\
 		__VIRTUAL_SET(ClassName, ParticleSystem, resume);						\
-		__VIRTUAL_SET(ClassName, ParticleSystem, initialize);					\
 
 #define ParticleSystem_ATTRIBUTES												\
 																				\
@@ -133,7 +132,6 @@ __CLASS_NEW_DECLARE(ParticleSystem, const ParticleSystemDefinition* particleSyst
 void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinition* particleSystemDefinition, s16 id);
 void ParticleSystem_destructor(ParticleSystem this);
 void ParticleSystem_update(ParticleSystem this);
-void ParticleSystem_initialize(ParticleSystem this);
 void ParticleSystem_transform(ParticleSystem this, Transformation* environmentTransform);
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);
 void ParticleSystem_show(ParticleSystem this);

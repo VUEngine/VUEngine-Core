@@ -49,7 +49,7 @@
 	BYTE *charDefinition[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];					\
 																				\
 	/* set whether a definition can be dropped or not */						\
-	u8 charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
+	s8 charDefUsage[__CHAR_SEGMENTS * __CHAR_GRP_PER_SEG];						\
 																				\
 	/* registered char groups */												\
 	VirtualList charSets;														\
@@ -70,7 +70,7 @@ __CLASS_DEFINITION(CharSetManager, Object);
 
 static void CharSetManager_constructor(CharSetManager this);
 static int CharSetManager_searchCharDefinition(CharSetManager this, CharSet charSet);
-static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, u16 offset);
+static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, int segment, u16 offset);
 static u16 CharSetManager_getNextFreeOffset(CharSetManager this, int charSeg, u16 numberOfChars);
 static void CharSetManager_deallocate(CharSetManager this, CharSet charSet);
 static void CharSetManager_markFreedChars(CharSetManager this, int segment, u16 offset, u16 numberOfChars);
@@ -140,16 +140,16 @@ void CharSetManager_reset(CharSetManager this)
 }
 
 // record an allocated char defintion
-static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, u16 offset)
+static void CharSetManager_setCharDefinition(CharSetManager this, BYTE *charDefinition, int segment, u16 offset)
 {
 	ASSERT(this, "CharSetManager::setCharDefinition: null this");
 
-	int i = 0;
+	int i = __CHAR_GRP_PER_SEG * segment;
 
 	// search where to register the char definition
-	for (; i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG && this->charDefinition[i]; i++);
+	for (; i < __CHAR_GRP_PER_SEG * (segment + 1) && this->charDefinition[i]; i++);
 
-	NM_ASSERT(i < __CHAR_SEGMENTS * __CHAR_GRP_PER_SEG, "CharSetManager::setCharDefinition: no char definitions slots left");
+	NM_ASSERT(i < __CHAR_GRP_PER_SEG * (segment + 1), "CharSetManager::setCharDefinition: no char definitions slots left");
 
 	// save char definition
 	this->charDefinition[i] = charDefinition;
@@ -169,17 +169,15 @@ void CharSetManager_free(CharSetManager this, CharSet charSet)
 	// retrieve index of char's defintion
 	int i = CharSetManager_searchCharDefinition(this, charSet);
 
-	// if char found
-	if (i >= 0)
-	{
-		//decrease char definition usage
-		this->charDefUsage[i]--;
+	// remove from char set list
+	VirtualList_removeElement(this->charSets, charSet);
 
-		// just make sure it is not going in a loop
-		if (0xFE < this->charDefUsage[i])
-		{
-			this->charDefUsage[i] = 0;
-		}
+	// if char definition found
+	if (0 <= i)
+	{
+		ASSERT(0 < this->charDefUsage[i], "CharSetManager::free: deallocating unused char");
+		
+		this->charDefUsage[i]--;
 
 		// if no other object uses the char defintion
 		if (!this->charDefUsage[i])
@@ -189,7 +187,7 @@ void CharSetManager_free(CharSetManager this, CharSet charSet)
 
 			// free char definition record
 			this->charDefinition[i] = NULL;
-
+			this->offset[i] = 0;
 			this->needsDefrag = true;
 		}
 	}
@@ -261,6 +259,9 @@ int CharSetManager_allocateShared(CharSetManager this, CharSet charSet)
 
 	// get the index if the charset is already defined
 	int i = CharSetManager_searchCharDefinition(this, charSet);
+
+	// register charSet
+	VirtualList_pushBack(this->charSets, charSet);
 
 	// verify that the char's definition is not already defined
 	if (0 <= i)
@@ -424,7 +425,7 @@ void CharSetManager_allocate(CharSetManager this, CharSet charSet)
 			CharSet_setOffset(charSet, offset);
 
 			// record char defintion
-			CharSetManager_setCharDefinition(this, CharSet_getCharDefinition(charSet), offset);
+			CharSetManager_setCharDefinition(this, CharSet_getCharDefinition(charSet), i, offset);
 
 			// set charset's segment
 			CharSet_setSegment(charSet, i);
@@ -432,16 +433,13 @@ void CharSetManager_allocate(CharSetManager this, CharSet charSet)
 			// register the used chars
 			CharSetManager_markUsedChars(this, i, offset, numberOfChars);
 
-			// register charSet
-			VirtualList_pushBack(this->charSets, charSet);
-
 			// stop processing
 			return;
 		}
 	}
 
 	// if there isn't enough memory trown an exception
-	ASSERT(false, "CharSetManager::allocate: char mem depleted");
+	NM_ASSERT(false, "CharSetManager::allocate: char mem depleted");
 }
 
 // free char graphic memory
@@ -450,8 +448,6 @@ static void CharSetManager_deallocate(CharSetManager this, CharSet charSet)
 	ASSERT(this, "CharSetManager::deallocate: null this");
 
 	CharSetManager_markFreedChars(this, CharSet_getSegment(charSet), CharSet_getOffset(charSet), CharSet_getNumberOfChars(charSet) + 1);
-
-	VirtualList_removeElement(this->charSets, charSet);
 }
 
 // free char graphic memory
