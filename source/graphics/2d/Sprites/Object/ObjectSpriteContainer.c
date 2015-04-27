@@ -148,7 +148,8 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 		
 		this->renderFlag = __UPDATE_HEAD;
 
-		return lastObjectIndex;
+		// TODO: remove the +1, without it, some graphics are corrupted
+		return lastObjectIndex + 1;
 	}
 	
 	return -1;
