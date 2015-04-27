@@ -79,10 +79,9 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	this->head = WRLD_OBJ | WRLD_ON;
 	this->spt = spt;
 	this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
-	this->nextAvailableObject = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
 	this->objectSprites = __NEW(VirtualList);
 	this->objectSpriteToDefragment = NULL;
-	this->objectIndexFreed = 0;
+	this->freedObjectIndex = 0;
 	this->z = 0;
 	
 	// register to sprite manager
@@ -92,7 +91,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	int i = 0;
 	for(i = 0; i < __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
 	{
-		OAM[((this->nextAvailableObject + i) << 2) + 3] = 0;
+		OAM[(i << 2) + 3] = 0;
 	}
 
 	VIP_REGS[SPT0 + this->spt] = (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
@@ -131,14 +130,25 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 	
 	if(objectSprite)
 	{
+		int lastObjectIndex = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+
+		if(VirtualList_getSize(this->objectSprites))
+		{
+			ObjectSprite lastObjectSprite = __UPCAST(ObjectSprite, VirtualList_back(this->objectSprites));
+			
+			ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
+			
+			lastObjectIndex = ObjectSprite_getObjectIndex(lastObjectSprite);
+			lastObjectIndex += ObjectSprite_getTotalObjects(lastObjectSprite);
+		}
+		
 		VirtualList_pushBack(this->objectSprites, objectSprite);
 		
 		this->availableObjects -= numberOfObjects;
-		this->nextAvailableObject += numberOfObjects;
 		
 		this->renderFlag = __UPDATE_HEAD;
 
-		return this->nextAvailableObject - numberOfObjects;
+		return lastObjectIndex;
 	}
 	
 	return -1;
@@ -155,24 +165,29 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		int objectSpritePosition = VirtualList_getNodePosition(this->objectSprites, objectSprite);
 		int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
 		
-		if(objectSpritePosition < objectSpriteToDefragmentPosition)
+		if(objectSpritePosition <= objectSpriteToDefragmentPosition)
 		{
 			this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
-			this->objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
+			this->freedObjectIndex = ObjectSprite_getObjectIndex(objectSprite);
+			
+			ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
+
+			// move forward before deframenting
+			this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
 		}
 	}
 	else
 	{
 		// find the node to remove to defragment object memory
 		this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
-		this->objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
+		this->freedObjectIndex = ObjectSprite_getObjectIndex(objectSprite);
 
 		ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
+
+		// move forward before deframenting
+		this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
 	}
 	
-	// move forward before deframenting
-	this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
-
 	VirtualList_removeElement(this->objectSprites, objectSprite);
 	
 	// if was the last node
@@ -181,8 +196,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		// just update the measures
 		this->objectSpriteToDefragment = NULL;
 		this->availableObjects += numberOfObjects;
-		this->nextAvailableObject = this->objectIndexFreed;
-		this->objectIndexFreed = 0;
+		this->freedObjectIndex = 0;
 	}
 }
 
@@ -237,34 +251,37 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
 	
 	// save its index for the next sprite to move
-	int objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
-	ASSERT(0 <= objectIndexFreed, "ObjectSpriteContainer::defragment: 0 > objectIndexFreed");
+	int freedObjectIndex = ObjectSprite_getObjectIndex(objectSprite);
+	
+//	Printing_text(Printing_getInstance(), __GET_CLASS_NAME(objectSprite), 1, 13, NULL);
+//	Printing_int(Printing_getInstance(), ObjectSprite_getObjectIndex(objectSprite), 1, 14, NULL);
+	ASSERT(0 <= freedObjectIndex, "ObjectSpriteContainer::defragment: 0 > freedObjectIndex");
 
 	ASSERT(Sprite_getTexture(__UPCAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
 	
-	ObjectSprite_setObjectIndex(objectSprite, this->objectIndexFreed);
-	this->objectIndexFreed = objectIndexFreed;
+	ObjectSprite_setObjectIndex(objectSprite, this->freedObjectIndex);
+	this->freedObjectIndex = freedObjectIndex;
 
 	// move to the next sprite to move
 	this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);	
-
+	
 	if(!this->objectSpriteToDefragment)
 	{
-		this->objectIndexFreed = 0;
+		this->freedObjectIndex = 0;
 
 		VirtualNode node = VirtualList_end(this->objectSprites);
 		
 		if(node)
 		{
-			ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(node));
-			this->nextAvailableObject = ObjectSprite_getObjectIndex(objectSprite) + ObjectSprite_getTotalObjects(objectSprite);
-			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - this->nextAvailableObject;
+			ObjectSprite lastObjectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(node));
+			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - (ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite));
 		}
 		else
 		{
 			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
-			this->nextAvailableObject = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
 		}
+		
+		return;
 	}
 }
 

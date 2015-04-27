@@ -38,6 +38,16 @@
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
+#define __POOL_512B_SIZE 	(__BLOCK_512B * 0)
+#define __POOL_256B_SIZE 	(__BLOCK_256B * 1)
+#define __POOL_192B_SIZE 	(__BLOCK_192B * 12)
+#define __POOL_128B_SIZE 	(__BLOCK_128B * 24)
+#define __POOL_100B_SIZE 	(__BLOCK_100B * 64)
+#define __POOL_80B_SIZE 	(__BLOCK_80B * 48)
+#define __POOL_48B_SIZE 	(__BLOCK_48B * 32)
+#define __POOL_32B_SIZE 	(__BLOCK_32B * 128)
+#define __POOL_28B_SIZE 	(__BLOCK_28B * 384*2)
+#define __POOL_16B_SIZE 	(__BLOCK_16B * 256)
 
 #define MemoryPool_ATTRIBUTES													\
 																				\

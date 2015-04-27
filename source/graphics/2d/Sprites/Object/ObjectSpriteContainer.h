@@ -68,13 +68,10 @@
 	fix19_13 z;																	\
 																				\
 	/* used for defragmentation */												\
-	int objectIndexFreed;														\
+	int freedObjectIndex;														\
 																				\
 	/* OBJs available */														\
 	u16 availableObjects;														\
-																				\
-	/* o sprites */																\
-	u16 nextAvailableObject;													\
 																				\
 	/* spt index */																\
 	u8 spt;																		\
