@@ -172,7 +172,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	VirtualList_removeElement(this->objectSprites, objectSprite);
 	
 	// if was the last node
-	if(!this->objectSpriteToDefragment || VirtualList_begin(this->objectSprites))
+	if(!this->objectSpriteToDefragment || !VirtualList_begin(this->objectSprites))
 	{
 		// just update the measures
 		this->objectSpriteToDefragment = NULL;
@@ -236,7 +236,6 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	int objectIndexFreed = ObjectSprite_getObjectIndex(objectSprite);
 	ASSERT(0 <= objectIndexFreed, "ObjectSpriteContainer::defragment: 0 > objectIndexFreed");
 
-	Printing_text(Printing_getInstance(), __GET_CLASS_NAME(objectSprite), 20, 16, NULL);
 	ASSERT(Sprite_getTexture(__UPCAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
 	
 	ObjectSprite_setObjectIndex(objectSprite, this->objectIndexFreed);
