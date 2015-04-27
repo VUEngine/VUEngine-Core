@@ -175,7 +175,7 @@ void CharSetManager_free(CharSetManager this, CharSet charSet)
 	// if char definition found
 	if (0 <= i)
 	{
-		ASSERT(0 < this->charDefUsage[i], "CharSetManager::free: deallocating unused char");
+		NM_ASSERT(0 < this->charDefUsage[i], "CharSetManager::free: deallocating unused char");
 		
 		this->charDefUsage[i]--;
 

@@ -132,7 +132,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 		{
 			halfWidth = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
 			halfHeight = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
-			halfDepth = 10;
+			halfDepth = this->size.z >> 1;
 		}
 	}
 	else if(!this->children || !VirtualList_begin(this->children))

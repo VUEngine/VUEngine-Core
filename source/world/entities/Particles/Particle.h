@@ -47,6 +47,8 @@
 		SpatialObject_METHODS													\
 		__VIRTUAL_DEC(update);													\
 		__VIRTUAL_DEC(transform);												\
+		__VIRTUAL_DEC(resume);													\
+		__VIRTUAL_DEC(suspend);													\
 
 // define the virtual methods
 #define Particle_SET_VTABLE(ClassName)											\
@@ -56,12 +58,20 @@
 		__VIRTUAL_SET(ClassName, Particle, moves);								\
 		__VIRTUAL_SET(ClassName, Particle, canMoveOverAxis);					\
 		__VIRTUAL_SET(ClassName, Particle, getPosition);						\
+		__VIRTUAL_SET(ClassName, Particle, resume);								\
+		__VIRTUAL_SET(ClassName, Particle, suspend);							\
 
 
 #define Particle_ATTRIBUTES														\
 																				\
 	/* super's attributes */													\
 	SpatialObject_ATTRIBUTES;													\
+																				\
+	/* definition */															\
+	const ParticleDefinition* particleDefinition;								\
+																				\
+	/* definition */															\
+	const SpriteDefinition* spriteDefinition;									\
 																				\
 	/* OBJ based sprite */														\
 	ObjectSprite objectSprite;													\
@@ -137,5 +147,7 @@ Gap Particle_getGap(Particle this);
 void Particle_setPosition(Particle this, VBVec3D* position);
 const VBVec3D* Particle_getPosition(Particle this);
 const VBVec3D* Particle_getPreviousPosition(Particle this);
+void Particle_resume(Particle this);
+void Particle_suspend(Particle this);
 
 #endif

@@ -84,14 +84,11 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 
 	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
-	if(oSpriteDefinition->textureDefinition)
-	{
-		this->texture = __UPCAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
-		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
-		this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
-		ASSERT(this->texture, "ObjectSprite::constructor: null texture");
-	}
+	this->texture = __UPCAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
+	this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+	this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+	this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
+	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
 
 // class's destructor
@@ -171,7 +168,7 @@ void ObjectSprite_synchronizePosition(ObjectSprite this, VBVec3D position3D)
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
-	ASSERT(this->texture, "ObjectSprite::setPosition: null texture");
+	ASSERT(this->texture, "ObjectSprite::synchronizePosition: null texture");
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);
@@ -307,4 +304,11 @@ void ObjectSprite_hide(ObjectSprite this)
 	{
 		OAM[((this->objectIndex + i) << 2) + 1] &= __HIDE_MASK;
 	}
+}
+
+void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this)
+{
+	ASSERT(this, "ObjectSprite::invalidateObjectSpriteContainer: null this");
+
+	this->objectSpriteContainer = NULL;
 }

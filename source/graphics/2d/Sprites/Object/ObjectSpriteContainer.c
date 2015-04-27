@@ -104,9 +104,18 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 
 	if(this->objectSprites)
 	{
+		VirtualNode node = VirtualList_begin(this->objectSprites);
+
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			ObjectSprite_invalidateObjectSpriteContainer(__UPCAST(ObjectSprite, VirtualNode_getData(node)));
+			__DELETE(VirtualNode_getData(node));
+		}
+
 		__DELETE(this->objectSprites);
 		this->objectSprites = NULL;
 	}
+	
 	// destroy the super object
 	__DESTROY_BASE;
 }
@@ -171,7 +180,6 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		this->nextAvailableObject = this->objectIndexFreed;
 		this->objectIndexFreed = 0;
 	}
-
 }
 
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, int numberOfObjects)

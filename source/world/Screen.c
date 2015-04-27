@@ -144,9 +144,6 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity)
 
 	this->focusInGameEntity = focusInGameEntity;
 
-	// center around the focus entity now
-	Screen_positione(this, false);
-	
 	// make sure that any other entity knows about the change
 	Screen_forceDisplacement(this, true);
 }
@@ -265,9 +262,6 @@ void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityP
 
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
 
-	// center around the focus entity now
-	Screen_positione(this, false);
-	
 	// make sure that any other entity knows about the change
 	Screen_forceDisplacement(this, true);
 }

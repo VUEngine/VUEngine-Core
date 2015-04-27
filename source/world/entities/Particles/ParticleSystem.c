@@ -262,17 +262,36 @@ void ParticleSystem_hide(ParticleSystem this)
 	}
 }
 
+void ParticleSystem_resume(ParticleSystem this)
+{
+	ASSERT(this, "ParticleSystem::resume: null this");
+
+	Entity_resume(__UPCAST(Entity, this));
+
+	VirtualNode node = VirtualList_begin(this->particles);
+	
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
+	}
+	
+	this->lastUpdateTime = this->paused ? 0 : Clock_getTime(this->clock);
+	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
+}
+
 void ParticleSystem_suspend(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::suspend: null this");
 
 	Entity_suspend(__UPCAST(Entity, this));
 
+	ParticleSystem_processExpiredParticles(this);
+	
 	VirtualNode node = VirtualList_begin(this->particles);
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		__DELETE(VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
 	}
 }
 
@@ -294,16 +313,6 @@ int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
 	        Utilities_randomSeed(),
 	        abs(this->particleSystemDefinition->maximumSpawnDelay - this->particleSystemDefinition->minimumSpawnDelay)
         );
-}
-
-void ParticleSystem_resume(ParticleSystem this)
-{
-	ASSERT(this, "ParticleSystem::resume: null this");
-
-	Entity_resume(__UPCAST(Entity, this));
-
-	this->lastUpdateTime = this->paused ? 0 : Clock_getTime(this->clock);
-	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 }
 
 void ParticleSystem_start(ParticleSystem this)

@@ -42,6 +42,7 @@
 		__VIRTUAL_SET(ClassName, ParticleSystem, update);						\
 		__VIRTUAL_SET(ClassName, ParticleSystem, transform);					\
 		__VIRTUAL_SET(ClassName, ParticleSystem, resume);						\
+		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);						\
 
 #define ParticleSystem_ATTRIBUTES												\
 																				\

@@ -970,6 +970,16 @@ void Stage_suspend(Stage this)
 	{
 		__VIRTUAL_CALL(void, Container, suspend, __UPCAST(Container, this->ui));
 	}
+	
+	// relinquish screen focus priority
+	if(this->focusEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
+	{
+		if(this->focusEntity == __UPCAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
+		{
+			// recover focus entity
+		    Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
+		}
+	}
 }
 
 // resume after pause
@@ -983,8 +993,11 @@ void Stage_resume(Stage this)
 	// reload textures
 	Stage_loadTextures(this);
 
-	// recover focus entity
-    Screen_setFocusInGameEntity(Screen_getInstance(), __UPCAST(InGameEntity, this->focusEntity));
+	if(this->focusEntity)
+	{
+		// recover focus entity
+	    Screen_setFocusInGameEntity(Screen_getInstance(), __UPCAST(InGameEntity, this->focusEntity));
+	}
 
 	Container_resume(__UPCAST(Container, this));
 
