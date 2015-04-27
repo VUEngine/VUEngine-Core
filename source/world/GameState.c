@@ -109,10 +109,10 @@ void GameState_exit(GameState this, void* owner)
 	this->stage = NULL;
 }
 
-// state's execute
-void GameState_pause(GameState this, void* owner)
+// state's suspend
+void GameState_suspend(GameState this, void* owner)
 {
-	ASSERT(this, "GameState::pause: null this");
+	ASSERT(this, "GameState::suspend: null this");
 
 #ifdef __DEBUG_TOOLS
 	if (!Game_isEnteringSpecialMode(Game_getInstance()))

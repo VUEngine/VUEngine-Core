@@ -46,7 +46,7 @@
 
 __CLASS(VBJaEAutoPauseScreenState);
 
-#define VBJaEAutoPauseScreenState_ATTRIBUTES							        			\
+#define VBJaEAutoPauseScreenState_ATTRIBUTES							        	\
 														            				\
 	/* inherits */																	\
 	GameState_ATTRIBUTES															\
