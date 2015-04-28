@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <Actor.h>
+#include <AnimatedInGameEntity.h>
 #include <GameState.h>
 
 
@@ -50,12 +50,12 @@
 __CLASS(AnimationEditor);
 
 // for animation
-typedef struct UserActor
+typedef struct UserAnimatedInGameEntity
 {
-	const ActorDefinition* actorDefinition;
+	const AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;
 	const char* name;
 
-} UserActor;
+} UserAnimatedInGameEntity;
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -440,6 +440,15 @@ void SpriteManager_render(SpriteManager this)
 		__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, VirtualNode_getData(node)));
 	}
 
+#ifdef __DEBUG_TOOLS
+	if (!Game_isInSpecialMode(Game_getInstance()))
+#endif
+#ifdef __STAGE_EDITOR
+	if (!Game_isInSpecialMode(Game_getInstance()))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if (!Game_isInSpecialMode(Game_getInstance()))
+#endif
 	// sort layers
 	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 }

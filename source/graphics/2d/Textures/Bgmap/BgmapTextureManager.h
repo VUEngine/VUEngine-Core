@@ -64,6 +64,7 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 s8 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id);
 s8 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id);
 u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id);
+u8 BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager this);
 u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this);
 void BgmapTextureManager_setAvailableBgmapSegments(BgmapTextureManager this, u8 availableBgmapSegments);
 void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this);

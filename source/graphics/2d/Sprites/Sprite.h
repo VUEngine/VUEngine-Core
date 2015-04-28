@@ -62,6 +62,7 @@
 	__VIRTUAL_DEC(writeAnimation);												\
 	__VIRTUAL_DEC(show);														\
 	__VIRTUAL_DEC(hide);														\
+	__VIRTUAL_DEC(getWorldLayer);												\
 
 // declare the virtual methods which are redefined
 #define Sprite_SET_VTABLE(ClassName)											\
@@ -72,6 +73,7 @@
 	__VIRTUAL_SET(ClassName, Sprite, writeAnimation);							\
 	__VIRTUAL_SET(ClassName, Sprite, show);										\
 	__VIRTUAL_SET(ClassName, Sprite, hide);										\
+	__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);							\
 
 #define Sprite_ATTRIBUTES														\
 																				\

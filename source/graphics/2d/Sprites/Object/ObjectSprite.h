@@ -54,6 +54,7 @@
 	__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);					\
 	__VIRTUAL_SET(ClassName, ObjectSprite, show);								\
 	__VIRTUAL_SET(ClassName, ObjectSprite, hide);								\
+	__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);							\
 
 #define ObjectSprite_ATTRIBUTES													\
 																				\
@@ -121,5 +122,6 @@ int ObjectSprite_getObjectIndex(ObjectSprite this);
 void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex);
 void ObjectSprite_show(ObjectSprite this);
 void ObjectSprite_hide(ObjectSprite this);
+u8 ObjectSprite_getWorldLayer(ObjectSprite this);
 
 #endif

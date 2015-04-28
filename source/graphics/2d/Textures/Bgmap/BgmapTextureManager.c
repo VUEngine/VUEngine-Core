@@ -435,6 +435,14 @@ u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
 }
 
 // retrieve available bgmap segments
+u8 BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager this)
+{
+	ASSERT(this, "getAvailableBgmapSegmentForParamTable::print: null this");
+	
+	return this->freeBgmapSegment + __NUMBER_OF_BGMAPS_SEGMENTS_ROOM;
+}
+
+// retrieve available bgmap segments
 u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::print: null this");

@@ -306,6 +306,14 @@ void ObjectSprite_hide(ObjectSprite this)
 	}
 }
 
+u8 ObjectSprite_getWorldLayer(ObjectSprite this)
+{
+	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
+
+	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, this->objectSpriteContainer): 0;
+}
+
+
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::invalidateObjectSpriteContainer: null this");

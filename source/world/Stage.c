@@ -319,18 +319,8 @@ static void Stage_setupUI(Stage this)
 		// setup ui if allocated and constructed
 		if (this->ui)
 		{
-			Transformation environmentTransform =
-			{
-					// local position
-					{0, 0, 0},
-					// global position
-					{0, 0, 0},
-					// scale
-					{1, 1},
-					// rotation
-					{0, 0, 0}
-			};
-
+			// apply transformations
+			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 			__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 		}
 	}
@@ -347,15 +337,17 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 
 		if(entity)
 		{
-			// create the entity and add it to the world
-			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
+			// set spatial position
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, *position);
 
 			// initialize now
 			__VIRTUAL_CALL(void, Entity, initialize, entity);
 
-			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
+			// create the entity and add it to the world
+			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
 
 			// apply transformations
+			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
 	
 			if (permanent)
@@ -386,24 +378,12 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 			// must initialize after adding the children
 			__VIRTUAL_CALL(void, Entity, initialize, entity);
 
-			// static to avoid call to memcpy
-			static Transformation environmentTransform =
-			{
-					// local position
-					{0, 0, 0},
-					// global position
-					{0, 0, 0},
-					// scale
-					{1, 1},
-					// rotation
-					{0, 0, 0}
-			};
-			
-			// apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
-
 			// create the entity and add it to the world
 			Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
+
+			// apply transformations
+			Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
+			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
 			
 			__VIRTUAL_CALL(void, Entity, ready, entity);
 		}
@@ -976,18 +956,8 @@ void Stage_resume(Stage this)
 
 	Container_resume(__UPCAST(Container, this));
 
-	Transformation environmentTransform =
-	{
-			// local position
-			{0, 0, 0},
-			// global position
-			{0, 0, 0},
-			// scale
-			{1, 1},
-			// rotation
-			{0, 0, 0}
-	};
-	
+	// apply transformations
+	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 	__VIRTUAL_CALL(void, Container, initialTransform, this, &environmentTransform);
 
 	if(this->ui)

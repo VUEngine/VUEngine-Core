@@ -735,11 +735,9 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 		position.z += ITOFIX19_13(0);
 
-		Entity entity = Stage_addEntity(GameState_getStage(this->gameState), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
+		Stage_addEntity(GameState_getStage(this->gameState), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
 		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
-		GameState_transform(this->gameState);
-		__VIRTUAL_CALL(void, Container, setLocalPosition, entity, position);
 		VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
 		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 
