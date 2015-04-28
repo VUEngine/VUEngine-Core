@@ -53,9 +53,9 @@ const LangROMDef LANGUAGE_FR =
         //STR_AUTOMATIC_PAUSE:
         "Pause Automatique",
         //STR_AUTOMATIC_PAUSE_EXPLANATION:
-        "  La fonction Pause automatique va\n vous rappeler de prendre une pause\nde jeu Environ toutes les 30 minutes",
+        "  La fonction Pause automatique va\n vous rappelerez de prendre une pause\nde jeu chaque 30 minutes environ",
         //STR_AUTOMATIC_PAUSE_TEXT:
-        "Se il vous plaît prendre un repos!",
+        "Se il vous plaît, prendre un repos!",
         //STR_ON:
         "Activé",
         //STR_OFF:

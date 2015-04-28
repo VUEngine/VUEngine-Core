@@ -40,7 +40,7 @@
 
 #define VirtualList_ATTRIBUTES													\
 																				\
-	/* it is derivated from*/													\
+	/* it is derivated from */													\
 	Object_ATTRIBUTES															\
 																				\
 	/* a pointer to the head of the list */ 									\
@@ -54,6 +54,7 @@ __CLASS_DEFINITION(VirtualList, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
@@ -65,7 +66,6 @@ static void VirtualList_constructor(VirtualList this);
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
 
 __CLASS_NEW_DEFINITION(VirtualList)
 __CLASS_NEW_END(VirtualList);
@@ -111,10 +111,10 @@ void VirtualList_clear(VirtualList this)
 			// call destructor
 			__DELETE(node);
 
-			//move the node to the head
+			// move the node to the head
 			node = this->head;
 
-			//move the head
+			// move the head
 			if (this->head)
 			{
 				this->head = this->head->next;
@@ -130,7 +130,7 @@ int VirtualList_pushFront(VirtualList this, const void* const data)
 
 	VirtualNode newNode = __NEW(VirtualNode, data);
 
-	//set previous if list isn't empty
+	// set previous if list isn't empty
 	if (this->head)
 	{
 		this->head->previous = newNode;
@@ -139,7 +139,7 @@ int VirtualList_pushFront(VirtualList this, const void* const data)
 	// assign the node to the head of the list
 	newNode->next = this->head;
 
-	//move the head
+	// move the head
 	this->head = newNode;
 
 	// set the tail
@@ -156,7 +156,7 @@ void VirtualList_popFront(VirtualList this)
 {
 	ASSERT(this, "VirtualList::popFront: null this");
 
-	//if head isn't null
+	// if head isn't null
 	if (this->head)
 	{
 		VirtualNode node = this->head;
@@ -165,16 +165,16 @@ void VirtualList_popFront(VirtualList this)
 		{
 			this->head = node->next;
 
-			//move head's previous pointer
+			// move head's previous pointer
 			this->head->previous=NULL;
 		}
 		else
 		{
-			//set head
+			// set head
 			this->head = NULL;
 		}
 
-		//free dynamic memory
+		// free dynamic memory
 		__DELETE(node);
 	}
 }
@@ -204,7 +204,7 @@ int VirtualList_pushBack(VirtualList this, const void* const data)
 		// assign the node to the head of the list
 		newNode->previous = this->tail;
 
-		//move the tail
+		// move the tail
 		this->tail = newNode;
 	}
 
@@ -222,12 +222,12 @@ int VirtualList_getSize(VirtualList this)
 
 	while (node)
 	{
-		//load next node
+		// load next node
 		node = node->next;
 
 		++counter;
 
-		//increment counter
+		// increment counter
 		ASSERT(counter < LIST_MAX_SIZE, "VirtualList::getSize: endless list getting size");
 
 	}
@@ -253,40 +253,40 @@ VirtualNode VirtualList_getNode(VirtualList this, int item)
 	ASSERT(this, "VirtualList::getNode: null this");
 
 	int counter=0;
-	//get list's size
+	// get list's size
 
 	int listSize = VirtualList_getSize(this);
-	//load head
+	// load head
 
 	VirtualNode node = this->head;
 
-	//if not null head
+	// if not null head
 	if (node)
 	{
-		//if item hasn't reached list's size
+		// if item hasn't reached list's size
 		if (item < listSize)
 		{
-			//increase counter while node hasn't reached list's end
-			//and counter hasn't reached the item requested
+			// increase counter while node hasn't reached list's end
+			// and counter hasn't reached the item requested
 			while ((node) && (counter < item))
 			{
-				//increase counter
+				// increase counter
 				counter++;
 
-				//load next node
+				// load next node
 				node = node->next;
 
-				//if item reached
+				// if item reached
 				if (counter == item)
 				{
-					//return node's data
+					// return node's data
 					return node;
 				}
 			}
-			//if item reached
+			// if item reached
 			if (counter == item)
 			{
-				//return node's data
+				// return node's data
 				return node;
 			}
 			return NULL;
@@ -308,7 +308,7 @@ void* VirtualList_getObject(VirtualList this, void* const dataPointer)
 		return NULL;
 	}
 
-	//locate node
+	// locate node
 	while (node && node->data != dataPointer)
 	{
 		node = node->next;
@@ -322,7 +322,7 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node)
 {
 	ASSERT(this, "VirtualList::removeNode: null this");
 
-	//if node isn't null
+	// if node isn't null
 	if (node)
 	{
 		// if the node is the head of the list
@@ -333,18 +333,18 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node)
 				// move head to next element
 				this->head = node->next;
 
-				//move head's previous pointer
+				// move head's previous pointer
 				this->head->previous = NULL;
 			}
 			else
 			{
-				//set head
+				// set head
 				this->head = this->tail = NULL;
 			}
 		}
 		else
 		{
-			//if node isn't the last in the list
+			// if node isn't the last in the list
 			if (node == this->tail)
 			{
 				// set the tail
@@ -354,14 +354,14 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node)
 			}
 			else
 			{
-				//join the previous and next nodes
+				// join the previous and next nodes
 				node->previous->next = node->next;
 
 				node->next->previous = node->previous;
 			}
 		}
 
-		//free dynamic memory
+		// free dynamic memory
 		__DELETE(node);
 
 		CACHE_DISABLE;
@@ -423,9 +423,9 @@ void VirtualList_copy(VirtualList this, VirtualList sourceList)
 
 	while (node)
 	{
-		//add next node
+		// add next node
 		VirtualList_pushBack(this, node->data);
-		//move to next node
+		// move to next node
 		node = node->next;
 
 		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::copy: endless list copying");
@@ -569,7 +569,7 @@ void* VirtualList_getObjectAtPosition(VirtualList this, int position)
 		return NULL;
 	}
 
-	//locate node
+	// locate node
 	for (; node && counter < position; node = node->next, counter++);
 
 	if (counter < VirtualList_getSize(this))

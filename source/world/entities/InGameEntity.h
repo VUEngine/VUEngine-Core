@@ -59,7 +59,7 @@ struct Shape_str;
 		
 #define InGameEntity_ATTRIBUTES													\
 																				\
-	/* it is derivated from*/													\
+	/* it is derivated from */													\
 	Entity_ATTRIBUTES															\
 																				\
 	/* pointer to the ROM definition */											\
