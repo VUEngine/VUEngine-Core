@@ -8,6 +8,9 @@ TARGET = libvbjae
 TYPE = release
 #TYPE = preprocessor
 
+# Don't build tools by default
+TOOLS = 0
+
 VBJAENGINE = $(VBDE)/libs/vbjaengine
 
 # Which directories contain source files
@@ -34,20 +37,32 @@ ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h				\
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding  
 CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -include $(CONFIG_FILE) $(ESSENTIALS) 
+ifeq ($(TOOLS),1)
+MACROS = __DEBUG __DEBUG_TOOLS __STAGE_EDITOR __ANIMATION_EDITOR
+else
 MACROS = __DEBUG
+endif
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =  
 CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = NDEBUG
+ifeq ($(TOOLS),1)
+MACROS = __DEBUG_TOOLS __STAGE_EDITOR __ANIMATION_EDITOR
+else
+MACROS =
+endif
 endif
 
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =  
 CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
+ifeq ($(TOOLS),1)
+MACROS = __DEBUG __DEBUG_TOOLS __STAGE_EDITOR __ANIMATION_EDITOR
+else
 MACROS = __DEBUG
+endif
 endif
 
 

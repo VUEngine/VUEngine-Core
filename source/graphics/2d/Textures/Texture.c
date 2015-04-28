@@ -61,13 +61,10 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	// save the bgmap definition's address
 	this->textureDefinition = textureDefinition;
 
-	// if the char definition is NULL, it must be a text
-	this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
-	
-	if(this->charSet)
-	{
-		Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
-	}
+	// if the char definition is NULL, it must be a text	
+	this->charSet = CharSetManager_get(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+	ASSERT(this->charSet, "Texture::destructor: null charSet");
+	Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 	
 	// set the palette
 	this->palette = textureDefinition->palette;
@@ -95,7 +92,6 @@ TextureDefinition* Texture_getDefinition(Texture this)
 	return this->textureDefinition;
 }
 
-
 // free char memory
 void Texture_freeCharMemory(Texture this)
 {
@@ -104,10 +100,7 @@ void Texture_freeCharMemory(Texture this)
 	if (this->charSet)
 	{
 		Object_removeEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
-
-		//destroy the charset
-		__DELETE(this->charSet);
-
+		CharSetManager_free(CharSetManager_getInstance(), this->charSet);
 		this->charSet = NULL;
 	}
 }
@@ -120,16 +113,13 @@ void Texture_write(Texture this)
 	if (!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
-		this->charSet = __NEW(CharSet, (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+		this->charSet = CharSetManager_get(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
 
 		if(this->charSet)
 		{
 			Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 		}
 	}
-
-	//write char group
-	CharSet_write(this->charSet);
 }
 
 // write into memory the chars and this

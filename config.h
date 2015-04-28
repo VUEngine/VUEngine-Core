@@ -25,6 +25,9 @@
 // screen height in pixels
 #define __SCREEN_HEIGHT							224
 
+// screen depth in pixels
+#define __SCREEN_DEPTH							0
+
 // z position of the screen
 #define __ZZERO									0
 
@@ -37,7 +40,7 @@
 // distance from player's eyes to the virtual screen
 #define __DISTANCE_EYE_SCREEN					384
 
-// maximum view distance (depth)
+// maximum view distance (Depth)
 #define __MAX_VIEW_DISTANCE						256
 // always use a power of 2 as the maximum view distance, and update
 // the number of bits to make projection faster
@@ -111,6 +114,7 @@
 #define __BLOCK_32B 		32		// Used mainly by CharSets
 #define __BLOCK_28B 		28		// Virtual nodes are 24 bytes long so a 32b block is too much
 #define __BLOCK_16B 		16
+
 #define __POOL_512B_SIZE 	(__BLOCK_512B * 0)
 #define __POOL_256B_SIZE 	(__BLOCK_256B * 1)
 #define __POOL_192B_SIZE 	(__BLOCK_192B * 12)
@@ -118,9 +122,9 @@
 #define __POOL_100B_SIZE 	(__BLOCK_100B * 64)
 #define __POOL_80B_SIZE 	(__BLOCK_80B * 48)
 #define __POOL_48B_SIZE 	(__BLOCK_48B * 32)
-#define __POOL_32B_SIZE 	(__BLOCK_32B * 128)
-#define __POOL_28B_SIZE 	(__BLOCK_28B * 640)
-#define __POOL_16B_SIZE 	(__BLOCK_16B * 256)
+#define __POOL_32B_SIZE 	(__BLOCK_32B * 96)
+#define __POOL_28B_SIZE 	(__BLOCK_28B * 768)
+#define __POOL_16B_SIZE 	(__BLOCK_16B * 48)
 
 #define __MIN_BLOCK 		__BLOCK_16B
 
@@ -132,12 +136,6 @@
 // the fourth segment is used for text allocation
 // changing this value to 4 may cause text corruption
 #define __CHAR_SEGMENTS					3
-
-// number of charsets per char segment
-#define __CHAR_GRP_PER_SEG				32
-
-// number of charsets per char segment
-#define __CHAR_SEGMENT_SIZE 			16
 
 // number of chars per char segment
 #define __CHAR_SEGMENT_TOTAL_CHARS 		512

@@ -45,6 +45,8 @@
 // future expansion
 #define __ANIMATED_SHARED		0x04
 
+// char memory room to add
+#define __CHAR_ROOM				1
 
 // event
 #define __EVENT_CHARSET_REWRITTEN				"charSetRewritten"
@@ -57,7 +59,7 @@
  * is not defined here and so is not accessible to the outside world
  */
 
-#define CharSet_METHODS														\
+#define CharSet_METHODS															\
 		Object_METHODS															\
 
 #define CharSet_SET_VTABLE(ClassName)											\
@@ -71,17 +73,14 @@
 	/* memory displacement */													\
 	u16 offset;																	\
 																				\
+	/* how many textures are using me */										\
+	u8 usageCount;																\
+																				\
 	/* memory segment */														\
 	u8 segment: 2;																\
 																				\
-	/* allocation type */														\
-	u8 allocationType: 3;														\
-																				\
-	/* number of chars */														\
-	u16 numberOfChars: 10;														\
-																				\
-	/* array definition of the charSet */										\
-	BYTE* charDefinition;														\
+	/* char set definition */													\
+	CharSetDefinition* charSetDefinition;										\
 																				\
 	/* array definition of the charSet */										\
 	u16 charDefinitionDisplacement;												\
@@ -116,19 +115,17 @@ typedef const CharSetDefinition CharSetROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition);
+__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, u8 segment, u16 offset);
 
 void CharSet_destructor(CharSet this);
+void CharSet_increaseUsageCoung(CharSet this);
+bool CharSet_decreaseUsageCoung(CharSet this);
 int CharSet_getAllocationType(CharSet this);
 u16 CharSet_getOffset(CharSet this);
 void CharSet_setOffset(CharSet this, u16 offset);
-BYTE* CharSet_getCharDefinition(CharSet this);
-void CharSet_setCharDefinition(CharSet this, BYTE* charDefinition);
-void CharSet_setNumberOfChars(CharSet this, u16 numberOfChars);
+CharSetDefinition* CharSet_getCharSetDefinition(CharSet this);
 u16 CharSet_getNumberOfChars(CharSet this);
 u8 CharSet_getSegment(CharSet this);
-void CharSet_setSegment(CharSet this, u8 segment);
-void CharSet_copy(CharSet this, CharSet source);
 void CharSet_write(CharSet this);
 void CharSet_rewrite(CharSet this);
 void CharSet_setCharDefinitionDisplacement(CharSet this, u16 charDefinitionDisplacement);

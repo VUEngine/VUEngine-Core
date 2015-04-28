@@ -32,13 +32,6 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define NUM_CHARS_MASK		(u32)0x000001FF
-#define OFFSET_MASK			(u32)0x0003FE00
-#define ALLOC_TYPE_MASK		(u32)0x003C0000
-#define CHARSET_MASK		(u32)0x00C00000
-
-#define __CH_NOT_ALLOCATED	0x200
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -52,7 +45,7 @@ __CLASS_DEFINITION(CharSet, Object);
 //---------------------------------------------------------------------------------------------------------
 
 //class's constructor
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition);
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,28 +53,22 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition)
-__CLASS_NEW_END(CharSet, charSetDefinition)
+__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition, u8 segment, u16 offset)
+__CLASS_NEW_END(CharSet, charSetDefinition, segment, offset)
 
 // class's constructor
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition)
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset)
 {
 	__CONSTRUCT_BASE();
 
 	// save definition
-	this->charDefinition = charSetDefinition->charDefinition;
-
-	// set number of chars
-	CharSet_setNumberOfChars(this, charSetDefinition->numberOfChars);
+	this->charSetDefinition = charSetDefinition;
+	this->charDefinitionDisplacement = 0;
 
 	// set the offset
-	this->offset = __CH_NOT_ALLOCATED;
-	this->segment = 0;
-
-	// set the allocation type
-	this->allocationType = charSetDefinition->allocationType;
-
-	this->charDefinitionDisplacement = 0;
+	this->offset = offset;
+	this->segment = segment;
+	this->usageCount = 1;
 }
 
 // class's destructor
@@ -89,23 +76,35 @@ void CharSet_destructor(CharSet this)
 {
 	ASSERT(this, "CharSet::destructor: null this");
 
-	// first check if the charset's definition is valid
-	if (this->charDefinition)
-	{
-		//free char graphic memory
-		CharSetManager_free(CharSetManager_getInstance(), this);
-	}
+	// make sure that I'm not destroyed again
+	this->usageCount = 0xFF;
 
 	// free processor memory
 	__DESTROY_BASE;
 }
+
+void CharSet_increaseUsageCoung(CharSet this)
+{
+	ASSERT(this, "CharSet::increaseUsageCoung: null this");
+	ASSERT(255 > (int)this->usageCount, "CharSet::increaseUsageCoung: null this");
+
+	this->usageCount++;
+}
+
+bool CharSet_decreaseUsageCoung(CharSet this)
+{
+	ASSERT(this, "CharSet::getAllocationType: null this");
+
+	return 0 == --this->usageCount;
+}
+
 
 // retrieve charset's allocation type
 int CharSet_getAllocationType(CharSet this)
 {
 	ASSERT(this, "CharSet::getAllocationType: null this");
 
-	return this->allocationType;
+	return this->charSetDefinition->allocationType;
 }
 
 // retrieve charset's offset within char segment
@@ -126,35 +125,20 @@ void CharSet_setOffset(CharSet this, u16 offset)
 }
 
 // get charset's char definition
-BYTE* CharSet_getCharDefinition(CharSet this)
+CharSetDefinition* CharSet_getCharSetDefinition(CharSet this)
 {
 	ASSERT(this, "CharSet::getCharDefinition: null this");
 
-	return this->charDefinition;
+	return this->charSetDefinition;
 }
 
-// set charset's char definition
-void CharSet_setCharDefinition(CharSet this, BYTE* charDefinition)
-{
-	ASSERT(this, "CharSet::setCharDefinition: null this");
-
-	this->charDefinition = charDefinition;
-}
-
-// set charset's number of chars
-void CharSet_setNumberOfChars(CharSet this, u16 numberOfChars)
-{
-	ASSERT(this, "CharSet::setNumberOfChars: null this");
-
-	this->numberOfChars = numberOfChars;
-}
 
 // retrieve chargrop's number of chars
 u16 CharSet_getNumberOfChars(CharSet this)
 {
 	ASSERT(this, "CharSet::getNumberOfChars: null this");
 
-	return this->numberOfChars;
+	return this->charSetDefinition->numberOfChars;
 }
 
 // get charset's segment
@@ -165,80 +149,13 @@ u8 CharSet_getSegment(CharSet this)
 	return this->segment;
 }
 
-// set charset's char segment
-void CharSet_setSegment(CharSet this, u8 segment)
-{
-	ASSERT(this, "CharSet::setCharSet: null this");
-
-	this->segment = segment;
-}
-/*
-//copy a charset
-void CharSet_copy(CharSet this,CharSet source)
-{
-	ASSERT(this, "CharSet::copy: null this");
-
-	// copy the definition
-	this->charDefinition = source->charDefinition;
-
-	// copy the configuration
-	this->segment = source->segment;
-	this->offset = source->offset;
-	this->allocationType = source->allocationType;
-	this->numberOfChars = source->numberOfChars;
-}
-*/
-
 // write char on memory
 void CharSet_write(CharSet this)
 {
 	ASSERT(this, "CharSet::write: null this");
 
-	// determine allocation type
-	switch (this->allocationType)
-	{
-		case __ANIMATED_SINGLE:
-
-			//if not allocated
-			if (__CH_NOT_ALLOCATED == (int)this->offset)
-			{
-				// ask for allocation
-				CharSetManager_allocate(CharSetManager_getInstance(), this);
-			}
-
-			//write to char memory
-			Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4), (u8*)(this->charDefinition + this->charDefinitionDisplacement), (int)(this->numberOfChars + 1) << 4);
-			break;
-
-		case __ANIMATED_SHARED:
-			
-			//if not allocated
-			if (__CH_NOT_ALLOCATED == (int)this->offset)
-			{
-				// ask for allocation
-				CharSetManager_allocateShared(CharSetManager_getInstance(), this);
-			}
-
-			Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4), (u8*)(this->charDefinition + this->charDefinitionDisplacement), (int)(this->numberOfChars + 1) << 4);
-			break;
-			
-		case __ANIMATED_MULTI:
-		case __NOT_ANIMATED:
-
-			//if not allocated
-			if (__CH_NOT_ALLOCATED == (int)this->offset)
-			{
-				CharSetManager_allocateShared(CharSetManager_getInstance(), this);
-			}
-			
-			//write to char memory
-			Mem_copy((u8*)CharSegs(this->segment)  + (this->offset << 4), (u8*)this->charDefinition, (int)(this->numberOfChars + 1) << 4);
-			break;
-
-		default:
-
-			ASSERT(false, "CharSet::write: with no allocation type");
-	}
+	//write to char memory
+	Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4), (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement), (int)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4);
 }
 
 // rewrite char on memory
@@ -269,7 +186,7 @@ void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar)
 {
 	ASSERT(this, "CharSet::putChar: null this");
 
-	if(newChar && charToReplace < this->numberOfChars)
+	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
 	{
 		Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
 	}
@@ -280,7 +197,7 @@ void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE
 {
 	ASSERT(this, "CharSet::putPixel: null this");
 
-	if(charSetPixel && charToReplace < this->numberOfChars && (unsigned)charSetPixel->x < 8 && (unsigned)charSetPixel->y < 8)
+	if(charSetPixel && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM && (unsigned)charSetPixel->x < 8 && (unsigned)charSetPixel->y < 8)
 	{
 		static BYTE auxChar[] = 
 		{

@@ -429,8 +429,8 @@ void Game_reset(Game this)
 
 	// reset managers
     Screen_setFocusInGameEntity(this->screen, NULL);
-	CharSetManager_reset(this->charSetManager);
 	BgmapTextureManager_reset(this->bgmapTextureManager);
+	CharSetManager_reset(this->charSetManager);
 	ParamTableManager_reset(this->paramTableManager);
 	SpriteManager_reset(this->spriteManager);
 	MBackgroundManager_reset(MBackgroundManager_getInstance());
