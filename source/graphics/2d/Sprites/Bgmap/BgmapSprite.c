@@ -78,7 +78,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 	// create the texture
 	if(bSpriteDefinition->textureDefinition)
 	{
-		this->texture = __UPCAST(Texture, BgmapTextureManager_get(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+		this->texture = __UPCAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
 	}
 	
 	if(this->texture)
@@ -158,7 +158,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 	if(this->texture)
 	{
 		Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
-		BgmapTextureManager_free(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, this->texture));
+		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, this->texture));
 		this->texture = NULL;
 	}
 	

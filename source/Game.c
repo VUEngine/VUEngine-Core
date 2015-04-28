@@ -733,7 +733,15 @@ static void Game_cleanUp(Game this)
 #ifdef __DEBUG
 	this->lastProcessName = "update param table";
 #endif
-
+#ifdef __DEBUG_TOOLS
+	if (!Game_isInSpecialMode(this))
+#endif
+#ifdef __STAGE_EDITOR
+	if (!Game_isInSpecialMode(this))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if (!Game_isInSpecialMode(this))
+#endif
 	if (!ParamTableManager_processRemovedSprites(this->paramTableManager))
 	{
 #ifdef __DEBUG

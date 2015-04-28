@@ -60,9 +60,8 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 
 	// save the bgmap definition's address
 	this->textureDefinition = textureDefinition;
-
 	// if the char definition is NULL, it must be a text	
-	this->charSet = CharSetManager_get(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
 	ASSERT(this->charSet, "Texture::destructor: null charSet");
 	Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 	
@@ -75,7 +74,7 @@ void Texture_destructor(Texture this)
 {
 	ASSERT(this, "Texture::destructor: null this");
 
-	Texture_freeCharMemory(this);
+	Texture_releaseCharSet(this);
 
 	// destroy the super object
 	__DESTROY_BASE;
@@ -93,14 +92,14 @@ TextureDefinition* Texture_getDefinition(Texture this)
 }
 
 // free char memory
-void Texture_freeCharMemory(Texture this)
+void Texture_releaseCharSet(Texture this)
 {
 	ASSERT(this, "Texture::freeCharMemory: null this");
 
 	if (this->charSet)
 	{
 		Object_removeEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
-		CharSetManager_free(CharSetManager_getInstance(), this->charSet);
+		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
 		this->charSet = NULL;
 	}
 }
@@ -113,7 +112,7 @@ void Texture_write(Texture this)
 	if (!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
-		this->charSet = CharSetManager_get(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+		this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
 
 		if(this->charSet)
 		{

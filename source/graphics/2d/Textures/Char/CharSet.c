@@ -83,7 +83,7 @@ void CharSet_destructor(CharSet this)
 	__DESTROY_BASE;
 }
 
-void CharSet_increaseUsageCoung(CharSet this)
+void CharSet_increaseUsageCount(CharSet this)
 {
 	ASSERT(this, "CharSet::increaseUsageCoung: null this");
 	ASSERT(255 > (int)this->usageCount, "CharSet::increaseUsageCoung: null this");
@@ -91,7 +91,7 @@ void CharSet_increaseUsageCoung(CharSet this)
 	this->usageCount++;
 }
 
-bool CharSet_decreaseUsageCoung(CharSet this)
+bool CharSet_decreaseUsageCount(CharSet this)
 {
 	ASSERT(this, "CharSet::getAllocationType: null this");
 

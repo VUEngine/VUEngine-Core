@@ -284,7 +284,6 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 
 			AnimationEditor_createSprite(this);
 			AnimationEditor_createAnimationsSelector(this);
-			Sprite_pause(this->animatedSprite, true);
 			AnimationEditor_printActorAnimations(this);
 			break;
 
@@ -668,6 +667,8 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	__VIRTUAL_CALL(void, Sprite, scale, __UPCAST(Sprite, this->animatedSprite));
 	SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer(__UPCAST(Sprite, this->animatedSprite)));
 	__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, this->animatedSprite));
+	
+	Sprite_pause(this->animatedSprite, true);
 }
 
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this)

@@ -61,8 +61,7 @@ __CLASS_DEFINITION(CharSetManager, Object);
 
 static void CharSetManager_constructor(CharSetManager this);
 static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-static CharSet CharSetManager_loadCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-static CharSet CharSetManager_allocate(CharSetManager this, CharSetDefinition* charSetDefinition);
+static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -168,14 +167,7 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 }
 
 // get charset
-CharSet CharSetManager_get(CharSetManager this, CharSetDefinition* charSetDefinition)
-{
-	ASSERT(this, "CharSetManager::get: null this");
-
-	return charSetDefinition? CharSetManager_loadCharSet(this, charSetDefinition): NULL;
-}
-
-static CharSet CharSetManager_loadCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
+CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSetManager::loadCharSet: null this");
 
@@ -186,7 +178,7 @@ static CharSet CharSetManager_loadCharSet(CharSetManager this, CharSetDefinition
 		case __ANIMATED_SINGLE:
 
 			// ask for allocation
-			charSet = CharSetManager_allocate(CharSetManager_getInstance(), charSetDefinition);
+			charSet = CharSetManager_allocateCharSet(CharSetManager_getInstance(), charSetDefinition);
 
 			break;
 
@@ -199,11 +191,11 @@ static CharSet CharSetManager_loadCharSet(CharSetManager this, CharSetDefinition
 
 			if (charSet)
 			{
-				CharSet_increaseUsageCoung(charSet);
+				CharSet_increaseUsageCount(charSet);
 			}
 			else
 			{
-				charSet = CharSetManager_allocate(CharSetManager_getInstance(), charSetDefinition);
+				charSet = CharSetManager_allocateCharSet(CharSetManager_getInstance(), charSetDefinition);
 			}
 
 			break;
@@ -218,11 +210,11 @@ static CharSet CharSetManager_loadCharSet(CharSetManager this, CharSetDefinition
 }
 
 // release char graphic memory
-void CharSetManager_free(CharSetManager this, CharSet charSet)
+void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 {
 	ASSERT(this, "CharSetManager::free: null this");
 
-	if(CharSet_decreaseUsageCoung(charSet))
+	if(CharSet_decreaseUsageCount(charSet))
 	{
 		u8 segment = CharSet_getSegment(charSet);
 		u16 offset = CharSet_getOffset(charSet);
@@ -241,11 +233,11 @@ void CharSetManager_free(CharSetManager this, CharSet charSet)
 }
 
 // allocate a char defintion within char graphic memory
-static CharSet CharSetManager_allocate(CharSetManager this, CharSetDefinition* charSetDefinition)
+static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "CharSetManager::allocate: null this");
+	ASSERT(this, "CharSetManager::allocateCharSet: null this");
 
-	ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocate: number of chars < 0");
+	ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 
 	int segment = 0;
 
@@ -274,7 +266,7 @@ static CharSet CharSetManager_allocate(CharSetManager this, CharSetDefinition* c
 	}
 
 	// if there isn't enough memory trown an exception
-	NM_ASSERT(false, "CharSetManager::allocate: char mem depleted");
+	NM_ASSERT(false, "CharSetManager::allocateCharSet: char mem depleted");
 	
 	return NULL;
 }

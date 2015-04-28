@@ -88,9 +88,6 @@
 																				\
 	/* next entity's id */														\
 	s16 nextEntityId;															\
-																				\
-	/* flag to know if the stage must flush unused char groups */				\
-	bool flushCharSets;															\
 
 
 // declare a Stage, which holds the objects in a game world
@@ -151,7 +148,6 @@ void Stage_removeEntity(Stage this, Entity entity, bool permanent);
 void Stage_update(Stage this);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
-void Stage_setFlushCharSets(Stage this, bool flushCharSets);
 UI Stage_getUI(Stage this);
 void Stage_suspend(Stage this);
 void Stage_resume(Stage this);

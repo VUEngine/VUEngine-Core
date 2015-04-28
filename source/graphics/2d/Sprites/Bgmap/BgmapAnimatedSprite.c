@@ -89,6 +89,7 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");
+	ASSERT(Texture_getCharSet(this->texture), "BgmapAnimatedSprite::writeAnimation: null charset");
 
 	// write according to the allocation type
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))

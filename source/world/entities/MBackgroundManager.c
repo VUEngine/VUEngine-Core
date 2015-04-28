@@ -111,7 +111,7 @@ void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground
 		if(!node)
 		{
 			// texture not found, must load it
-			BgmapTexture bgmapTexture = BgmapTextureManager_get(BgmapTextureManager_getInstance(), textureDefinition);
+			BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
 			VirtualList_pushBack(this->textures, bgmapTexture);
 		}
 		else 
@@ -119,7 +119,7 @@ void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground
 			// free texture found, so replace it
 			Texture texture = __UPCAST(Texture, VirtualNode_getData(node));
 			Texture_setDefinition(texture, textureDefinition);
-			Texture_freeCharMemory(texture);
+			Texture_releaseCharSet(texture);
 			Texture_write(texture);
 		}
 

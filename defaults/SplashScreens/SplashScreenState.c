@@ -59,7 +59,7 @@ void SplashScreenState_enter(SplashScreenState this, void* owner)
 {
 	if(this->stageDefinition)
 	{
-		GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, NULL, false);
+		GameState_loadStage(__UPCAST(GameState, this), this->stageDefinition, NULL);
 	}
 
     __VIRTUAL_CALL(void, SplashScreenState, print, this);

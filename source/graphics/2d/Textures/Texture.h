@@ -111,7 +111,7 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 void Texture_destructor(Texture this);
 void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition);
 TextureDefinition* Texture_getDefinition(Texture this);
-void Texture_freeCharMemory(Texture this);
+void Texture_releaseCharSet(Texture this);
 void Texture_write(Texture this);
 void Texture_rewrite(Texture this);
 void Texture_writeHBiasMode(Texture this);

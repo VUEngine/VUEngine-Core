@@ -243,7 +243,7 @@ void GameState_onMessage(GameState this, int message)
 
 }
 // load a stage
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool flushCharSets)
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore)
 {
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
@@ -262,9 +262,6 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// construct the stage
 	this->stage = __NEW(Stage);
-
-	// set char memory flushing config
-	Stage_setFlushCharSets(this->stage, flushCharSets);
 
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 

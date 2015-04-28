@@ -118,8 +118,8 @@ typedef const CharSetDefinition CharSetROMDef;
 __CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, u8 segment, u16 offset);
 
 void CharSet_destructor(CharSet this);
-void CharSet_increaseUsageCoung(CharSet this);
-bool CharSet_decreaseUsageCoung(CharSet this);
+void CharSet_increaseUsageCount(CharSet this);
+bool CharSet_decreaseUsageCount(CharSet this);
 int CharSet_getAllocationType(CharSet this);
 u16 CharSet_getOffset(CharSet this);
 void CharSet_setOffset(CharSet this, u16 offset);

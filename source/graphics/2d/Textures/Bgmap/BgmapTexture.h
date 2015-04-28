@@ -52,6 +52,9 @@
 																				\
 	/* super's attributes */													\
 	Texture_ATTRIBUTES;															\
+																				\
+	/* how many textures are using me */										\
+	u8 usageCount;																\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(BgmapTexture);
@@ -79,5 +82,7 @@ void BgmapTexture_write(BgmapTexture this);
 u8 BgmapTexture_getXOffset(BgmapTexture this);
 u8 BgmapTexture_getYOffset(BgmapTexture this);
 u8 BgmapTexture_getBgmapSegment(BgmapTexture this);
+void BgmapTexture_increaseUsageCount(BgmapTexture this);
+bool BgmapTexture_decreaseUsageCount(BgmapTexture this);
 
 #endif

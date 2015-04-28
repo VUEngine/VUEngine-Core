@@ -79,7 +79,7 @@ static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void
 	Game_setOptical(Game_getInstance(), optical);
 
 	// load stage
-	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)__AUTO_PAUSE_SCREEN_STAGE, NULL, false);
+	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)__AUTO_PAUSE_SCREEN_STAGE, NULL);
 
     // print text
     char* strAutomaticPause = I18n_getText(I18n_getInstance(), __AUTO_PAUSE_SCREEN_TITLE);

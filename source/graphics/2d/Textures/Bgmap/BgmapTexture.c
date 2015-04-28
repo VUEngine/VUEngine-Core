@@ -58,12 +58,17 @@ static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* 
 {
 	// construct base object
 	__CONSTRUCT_BASE((TextureDefinition*)bgmapTextureDefinition, id);
+	
+	this->usageCount = 1;
 }
 
 // class's destructor
 void BgmapTexture_destructor(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::destructor: null this");
+
+	// make sure that I'm not destroyed again
+	this->usageCount = 0xFF;
 
 	// destroy the super object
 	__DESTROY_BASE;
@@ -230,3 +235,26 @@ u8 BgmapTexture_getBgmapSegment(BgmapTexture this)
 
 	return BgmapTextureManager_getBgmapSegment(BgmapTextureManager_getInstance(), this->id);
 }
+
+u8 BgmapTexture_getUsageCount(BgmapTexture this)
+{
+	ASSERT(this, "BgmapTexture::getUsageCount: null this");
+
+	return this->usageCount;
+}
+
+void BgmapTexture_increaseUsageCount(BgmapTexture this)
+{
+	ASSERT(this, "BgmapTexture::increaseUsageCoung: null this");
+	ASSERT(255 > (int)this->usageCount, "BgmapTexture::increaseUsageCoung: null this");
+
+	this->usageCount++;
+}
+
+bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
+{
+	ASSERT(this, "BgmapTexture::decreaseUsageCoung: null this");
+
+	return 0 == --this->usageCount;
+}
+

@@ -58,9 +58,9 @@ BgmapTextureManager BgmapTextureManager_getInstance();
 
 void BgmapTextureManager_destructor(BgmapTextureManager this);
 void BgmapTextureManager_reset(BgmapTextureManager this);
-void BgmapTextureManager_free(BgmapTextureManager this, BgmapTexture bgmapTexture);
+void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture);
 void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture);
-BgmapTexture BgmapTextureManager_get(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
+BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
 s8 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id);
 s8 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id);
 u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id);

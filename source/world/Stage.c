@@ -137,7 +137,6 @@ static void Stage_constructor(Stage this)
 	this->ui = NULL;
 	this->stageDefinition = NULL;
 
-	this->flushCharSets = true;
 	this->focusEntity = NULL;
 	
 	this->nextEntityId = 0;
@@ -472,7 +471,7 @@ static void Stage_loadTextures(Stage this)
 	{
 		if(__ANIMATED_SHARED != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
 		{
-			BgmapTextureManager_loadTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i], this->flushCharSets);
+			BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
 		}
 		else
 		{
@@ -925,30 +924,6 @@ void Stage_streamAll(Stage this)
 	Container_processRemovedChildren(__UPCAST(Container, this));
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
-}
-
-// if set to false, the char set memory is flushed when  a char defintion is no longer used
-// only useful to false when preloading textures
-// otherwise it doesn't have any effect add flushing is the default behvior
-void Stage_setFlushCharSets(Stage this, bool flushCharSets)
-{
-	ASSERT(this, "Stage::setFlushCharSets: null this");
-
-	this->flushCharSets = flushCharSets;
-
-	/*
-	if (!flushCharSets)
-	{
-		if (this->stageDefinition->textures[0])
-		{
-			this->flushCharSets = flushCharSets;
-		}
-	}
-	else
-	{
-		this->flushCharSets = flushCharSets;
-	}
-	*/
 }
 
 // retrieve ui

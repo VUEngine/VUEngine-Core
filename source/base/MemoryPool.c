@@ -35,6 +35,10 @@
 // it is neccesary for the object to be aligned to 2 multiples
 #define __MEMORY_ALIGNMENT	4
 
+// TODO: remove me
+#undef __POOL_16B_SIZE
+#define __POOL_16B_SIZE 	(__BLOCK_16B * 256)
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------

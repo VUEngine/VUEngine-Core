@@ -112,7 +112,7 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			// free the texture
-			BgmapTextureManager_free(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, VirtualNode_getData(node)));
+			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, VirtualNode_getData(node)));
 		}
 		
 		__DELETE(this->textures);
@@ -151,7 +151,7 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 
 	if (textureDefinition)
 	{
-		BgmapTexture bgmapTexture = BgmapTextureManager_get(BgmapTextureManager_getInstance(), textureDefinition);
+		BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
 		
 		ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 		
