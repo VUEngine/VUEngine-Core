@@ -120,7 +120,7 @@ void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground
 			Texture texture = __UPCAST(Texture, VirtualNode_getData(node));
 			Texture_setDefinition(texture, textureDefinition);
 			Texture_releaseCharSet(texture);
-			Texture_write(texture);
+			Texture_rewrite(texture);
 		}
 
 		VirtualList_pushBack(this->mBackgrounds, mBackground);
