@@ -46,7 +46,7 @@
 
 #define ParticleSystem_ATTRIBUTES												\
 																				\
-	/* it is derivated from*/													\
+	/* it is derivated from */													\
 	Entity_ATTRIBUTES															\
 																				\
 	/* system's definition */													\

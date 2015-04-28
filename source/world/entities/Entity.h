@@ -72,7 +72,7 @@
 
 #define Entity_ATTRIBUTES														\
 																				\
-	/* it is derivated from*/													\
+	/* it is derivated from */													\
 	Container_ATTRIBUTES														\
 																				\
 	/* sprites' list */															\
