@@ -947,6 +947,10 @@ void Stage_resume(Stage this)
 {
 	ASSERT(this, "Stage::resume: null this");
 
+	// set physics
+	PhysicalWorld_setFriction(PhysicalWorld_getInstance(), stageDefinition->friction);
+	PhysicalWorld_setGravity(PhysicalWorld_getInstance(), stageDefinition->gravity);
+
 	// set OBJs' z position
 	Stage_setObjectSpritesContainers(this);
 
