@@ -103,6 +103,12 @@ typedef struct StageDefinition
 {
 	// world's size over each axis in pixels
 	Size size;
+	
+	// physical world's gravity
+	Acceleration gravity;
+	
+	// physical world's friction
+	fix19_13 friction;
 
 	// OBJs segments z coordinates (SPT0 to SPT3)
 	fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];

@@ -27,6 +27,7 @@
 
 #include <Stage.h>
 #include <Optics.h>
+#include <PhysicalWorld.h>
 #include <SoundManager.h>
 #include <Screen.h>
 #include <HardwareManager.h>
@@ -51,7 +52,7 @@
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
 
-#define __ENTITY_LOAD_PAD 			(64)
+#define __ENTITY_LOAD_PAD 			(96)
 #define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
 
 // since there are 32 layers, that's the theoretical limit of entities to display
@@ -279,6 +280,10 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// setup ui
 	Stage_setupUI(this);
+	
+	// set physics
+	PhysicalWorld_setFriction(PhysicalWorld_getInstance(), stageDefinition->friction);
+	PhysicalWorld_setGravity(PhysicalWorld_getInstance(), stageDefinition->gravity);
 
 	//load background music
 	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);

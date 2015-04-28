@@ -67,6 +67,16 @@ StageROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ST =
         1
     },
     
+    // gravity
+    {
+	    ITOFIX19_13(0),
+	    ITOFIX19_13(0),
+	    ITOFIX19_13(0)
+    },
+    
+    // friction
+    ITOFIX19_13(0),
+
 	// OBJs segments z coordinates (SPT0 to SPT3)
     {
     	ITOFIX19_13(0), 

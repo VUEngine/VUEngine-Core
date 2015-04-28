@@ -25,6 +25,7 @@
 
 
 #include <SpriteManager.h>
+#include <Game.h>
 #include <ObjectSpriteContainerManager.h>
 #include <VPUManager.h>
 #include <Screen.h>

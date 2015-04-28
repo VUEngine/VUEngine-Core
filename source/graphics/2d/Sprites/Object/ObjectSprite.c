@@ -310,7 +310,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
 
-	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, this->objectSpriteContainer): 0;
+	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __UPCAST(Sprite, this->objectSpriteContainer)): 0;
 }
 
 
