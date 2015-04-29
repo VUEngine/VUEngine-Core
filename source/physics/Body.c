@@ -507,10 +507,12 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 	frictionForce.x = 0;
 	frictionForce.y = 0;
 	frictionForce.z = 0;
-	
+
+	fix19_13 weight = this->mass;
+
 	if((__XAXIS & axisOfMovement))
 	{
-		fix19_13 weight = (__XAXIS & this->axisSubjectToGravity) && gravity->x? FIX19_13_MULT(gravity->x, this->mass): this->mass;
+//		fix19_13 weight = (__XAXIS & this->axisSubjectToGravity) && gravity->x? FIX19_13_MULT(gravity->x, this->mass): this->mass;
 
 		if(this->appliedForce.x)
 		{
@@ -524,7 +526,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 
 	if((__YAXIS & axisOfMovement))
 	{
-		fix19_13 weight = (__YAXIS & this->axisSubjectToGravity) && gravity->y? FIX19_13_MULT(gravity->y, this->mass): this->mass;
+//		fix19_13 weight = (__YAXIS & this->axisSubjectToGravity) && gravity->y? FIX19_13_MULT(gravity->y, this->mass): this->mass;
 
 		if(this->appliedForce.y)
 		{
@@ -538,7 +540,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 
 	if((__ZAXIS & axisOfMovement))
 	{
-		fix19_13 weight = (__ZAXIS & this->axisSubjectToGravity) && gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass;
+//		fix19_13 weight = (__ZAXIS & this->axisSubjectToGravity) && gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass;
 
 		if(this->appliedForce.z)
 		{
@@ -550,13 +552,6 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 		}
 	}
 
-/*	Printing_text(Printing_getInstance(), "    ", 40,15, NULL);
-	Printing_text(Printing_getInstance(), "    ", 40,16, NULL);
-	Printing_text(Printing_getInstance(), "    ", 40,17, NULL);
-	Printing_int(Printing_getInstance(), (this->friction.x), 40,15, NULL);
-	Printing_int(Printing_getInstance(), (worldFriction), 40,16, NULL);
-	Printing_int(Printing_getInstance(), (frictionForce.x), 40,17, NULL);
-	*/
 	return &frictionForce;
 }
 
