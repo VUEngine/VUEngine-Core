@@ -62,6 +62,9 @@
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
 																				\
+	/* optic values used in projection values */								\
+	Optical optical;															\
+																				\
 	/* screen position */														\
 	VBVec3D position;															\
 																				\
@@ -103,6 +106,8 @@ void Screen_destructor(Screen this);
 void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager);
 void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving);
 bool Screen_handleMessage(Screen this, Telegram telegram);
+Optical Screen_getOptical(Screen this);
+void Screen_setOptical(Screen this, Optical optical);
 void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity);
 void Screen_unsetFocusInGameEntity(Screen this);
 InGameEntity Screen_getFocusInGameEntity(Screen this);

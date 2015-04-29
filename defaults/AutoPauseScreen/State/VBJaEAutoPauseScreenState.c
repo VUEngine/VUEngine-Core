@@ -74,10 +74,6 @@ static void VBJaEAutoPauseScreenState_destructor(VBJaEAutoPauseScreenState this)
 // state's enter
 static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void* owner)
 {
-	Optical optical = Game_getOptical(Game_getInstance());
-	optical.verticalViewPointCenter = ITOFIX19_13(112 + 112/2);
-	Game_setOptical(Game_getInstance(), optical);
-
 	// load stage
 	GameState_loadStage(__UPCAST(GameState, this), (StageDefinition*)__AUTO_PAUSE_SCREEN_STAGE, NULL);
 

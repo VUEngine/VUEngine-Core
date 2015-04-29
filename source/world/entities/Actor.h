@@ -82,6 +82,7 @@ typedef struct GeneralAxisFlag
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);							\
 		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);				\
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);							\
+		__VIRTUAL_SET(ClassName, Actor, getFriction);							\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);							\
 		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);					\
 		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);						\
@@ -91,6 +92,9 @@ typedef struct GeneralAxisFlag
 																				\
 	/* super's attributes */													\
 	AnimatedInGameEntity_ATTRIBUTES;											\
+																				\
+	/* definition */															\
+	const ActorDefinition* actorDefinition;										\
 																				\
 	/* a state machine to handle entity's logic	*/								\
 	StateMachine stateMachine;													\
@@ -109,7 +113,22 @@ typedef struct GeneralAxisFlag
 
 __CLASS(Actor);
 
-typedef AnimatedInGameEntityDefinition ActorDefinition;
+typedef struct ActorDefinition
+{
+	// It has an InGameEntity at the beggining
+	AnimatedInGameEntityDefinition animatedInGameEntityDefinition;
+
+	// friction for physics
+	fix19_13 friction;
+
+	// elasticity for physics
+	fix19_13 elasticity;
+
+	// animation to play automatically
+	fix19_13 mass;
+
+} ActorDefinition;
+
 typedef const ActorDefinition ActorROMDef;
 
 
@@ -117,9 +136,9 @@ typedef const ActorDefinition ActorROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Actor, ActorDefinition* actorDefinition, s16 id);
+__CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id);
 
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 id);
+void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id);
 void Actor_destructor(Actor this);
 void Actor_setLocalPosition(Actor this, VBVec3D position);
 void Actor_transform(Actor this, Transformation* environmentTransform);
@@ -143,7 +162,7 @@ void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
 const Body Actor_getBody(Actor this);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
+fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force);
-
 
 #endif

@@ -91,9 +91,6 @@ enum StateOperations
 	/* timer to use in game */													\
 	Clock inGameClock;															\
 																				\
-	/* optic values used in projection values */								\
-	Optical optical;															\
-																				\
 	/* managers */																\
 	HardwareManager hardwareManager;											\
 	FrameRate frameRate;														\
@@ -136,12 +133,10 @@ __CLASS_DEFINITION(Game, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-Optical* _optical = NULL;
 extern void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 
 static void Game_constructor(Game this);
 static void Game_initialize(Game this);
-static void Game_setOpticalGlobals(Game this);
 static void Game_setNextState(Game this, GameState state);
 static void Game_handleInput(Game this);
 static void Game_update(Game this);
@@ -218,26 +213,6 @@ static void Game_constructor(Game this)
 	
 	// to make debugging easier
 	this->lastProcessName = "starting up";
-
-	// set optical value
-	this->optical.distanceEyeScreen = 0;
-
-	// maximum distance from the screen's position to the horizon
-	this->optical.maximumViewDistance = 0;
-
-	// distance from left to right eye (depth sensation)
-	this->optical.baseDistance = 0;
-
-	// screen's vertical view point center
-	this->optical.verticalViewPointCenter = 0;
-
-	// screen's horizontal view point center
-	this->optical.horizontalViewPointCenter = 0;
-
-	// setup global pointers
-	// need globals to speed up critical processes
-	_optical = &this->optical;
-    
     this->nextStateOperation = kSwapState;
 
 	// setup engine paramenters
@@ -268,9 +243,6 @@ void Game_initialize(Game this)
 
 	// make sure timer interrupts are enable
 	HardwareManager_initializeTimer(this->hardwareManager);
-
-	// initialize optical paramenters
-	Game_setOpticalGlobals(this);
 
     // set waveform data
     SoundManager_setWaveForm(this->soundManager);
@@ -440,28 +412,6 @@ void Game_reset(Game this)
 
 	// TODO
 	//SoundManager_getInstance();
-}
-
-// initialize optic paramenters
-static void Game_setOpticalGlobals(Game this)
-{
-	ASSERT(this, "Game::setOpticalGlobals: null this");
-
-	// accounts for the physical (real) space between the eyes and
-	// the VB's screens, whose virtual representation is the Screen instance
-	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
-
-	// maximum distance from the _SC to the infinite
-	this->optical.maximumViewDistance = ITOFIX19_13(__MAX_VIEW_DISTANCE);
-
-	// distance from left to right eye (depth sensation)
-	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);
-
-	// horizontal view point center
-	this->optical.horizontalViewPointCenter = ITOFIX19_13(__HVPC);
-
-	// vertical view point center
-	this->optical.verticalViewPointCenter = ITOFIX19_13(__VVPC);
 }
 
 // process input data according to the actual game status
@@ -871,22 +821,6 @@ char* Game_getLastProcessName(Game this)
 	ASSERT(this, "Game::getLastProcessName: null this");
 
 	return this->lastProcessName;
-}
-
-// retrieve optical config structure
-Optical Game_getOptical(Game this)
-{
-	ASSERT(this, "Game::getOptical: null this");
-
-	return this->optical;
-}
-
-// set optical config structure
-void Game_setOptical(Game this, Optical optical)
-{
-	ASSERT(this, "Game::setOptical: null this");
-
-	this->optical = optical;
 }
 
 #ifdef __DEBUG_TOOLS

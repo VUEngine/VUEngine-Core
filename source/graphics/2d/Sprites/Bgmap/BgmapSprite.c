@@ -207,8 +207,7 @@ void BgmapSprite_resize(BgmapSprite this, fix19_13 z)
 
 	z -= _screenPosition->z;
 	
-	Optical optical = Game_getOptical(Game_getInstance());
-	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - FIX19_13_DIV(z , optical.maximumViewDistance));
+	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - FIX19_13_DIV(z , _optical->maximumViewDistance));
 
 	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE): ratio;
 	

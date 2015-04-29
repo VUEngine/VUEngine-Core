@@ -64,17 +64,20 @@ static void Actor_updateSourroundingFriction(Actor this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Actor, ActorDefinition* actorDefinition, s16 id)
+__CLASS_NEW_DEFINITION(Actor, const ActorDefinition* actorDefinition, s16 id)
 __CLASS_NEW_END(Actor, actorDefinition, id);
 
 // class's constructor
-void Actor_constructor(Actor this, ActorDefinition* actorDefinition, s16 id)
+void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id)
 {
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE((AnimatedInGameEntityDefinition*)&actorDefinition->inGameEntityDefinition, id);
+	__CONSTRUCT_BASE((AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id);
 
+	// save definition
+	this->actorDefinition = actorDefinition;
+	
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, this);
 
@@ -231,24 +234,24 @@ static void Actor_updateSourroundingFriction(Actor this)
 	ASSERT(this, "Actor::updateSourroundingFriction: null this");
 	ASSERT(this->body, "Actor::updateSourroundingFriction: null body");
 
-	Force friction = {0, 0, 0};
+	Force friction = {this->actorDefinition->friction, this->actorDefinition->friction, this->actorDefinition->friction};
 
 	if (this->sensibleToFriction.x)
 	{
-		friction.x = this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
-		friction.x += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
+		friction.x = this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
+		friction.x += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
 	}
 
 	if (this->sensibleToFriction.y)
 	{
-		friction.y = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
-		friction.y += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
+		friction.y = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
+		friction.y += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
 	}
 
 	if (this->sensibleToFriction.z)
 	{
-		friction.z = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
-		friction.z += this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, InGameEntity, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
+		friction.z = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
+		friction.z += this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
 	}
 
 	Body_setFriction(this->body, friction);
@@ -584,7 +587,7 @@ static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, in
 	if (collidingEntity && axisOfCollision)
 	{
 		// bounce over axis
-		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, InGameEntity, getElasticity, collidingEntity));
+		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, SpatialObject, getElasticity, collidingEntity));
 
 		if (!(axisOfCollision & Body_isMoving(this->body)))
 	    {
@@ -796,7 +799,15 @@ fix19_13 Actor_getElasticity(Actor this)
 {
 	ASSERT(this, "Actor::getElasticity: null this");
 
-	return this->body ? Body_getElasticity(this->body) : InGameEntity_getElasticity(__UPCAST(InGameEntity, this));
+	return this->body ? Body_getElasticity(this->body) : this->actorDefinition->elasticity;
+}
+
+// get friction
+fix19_13 Actor_getFriction(Actor this)
+{
+	ASSERT(this, "Actor::getElasticity: null this");
+
+	return this->body ? Body_getFriction(this->body).x : this->actorDefinition->friction;
 }
 
 void Actor_addForce(Actor this, const Force* force)

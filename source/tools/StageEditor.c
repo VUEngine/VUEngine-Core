@@ -49,11 +49,11 @@
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 
-#define __HVPC_STEP						ITOFIX19_13(8)
-#define __VVPC_STEP						ITOFIX19_13(8)
-#define __DISTANCE_EYE_SCREEN_STEP		ITOFIX19_13(8)
-#define __MAXIMUM_VIEW_DISTACE_STEP		ITOFIX19_13(8)
-#define __BASE_DISTACE_STEP				ITOFIX19_13(8)
+#define __HVPC_STEP							ITOFIX19_13(8)
+#define __VERTICAL_VIEW_POINT_CENTER_STEP	ITOFIX19_13(8)
+#define __DISTANCE_EYE_SCREEN_STEP			ITOFIX19_13(8)
+#define __MAXIMUM_VIEW_DISTACE_STEP			ITOFIX19_13(8)
+#define __BASE_DISTACE_STEP					ITOFIX19_13(8)
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -539,11 +539,11 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
 	}
 	else if (pressedKey & K_LU)
 	{
-		_optical->verticalViewPointCenter -= __VVPC_STEP;
+		_optical->verticalViewPointCenter -= __VERTICAL_VIEW_POINT_CENTER_STEP;
 	}
 	else if (pressedKey & K_LD)
 	{
-		_optical->verticalViewPointCenter += __VVPC_STEP;
+		_optical->verticalViewPointCenter += __VERTICAL_VIEW_POINT_CENTER_STEP;
 	}
 	else if (pressedKey & K_RL)
 	{

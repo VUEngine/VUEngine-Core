@@ -247,11 +247,14 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 {
 	ASSERT(this, "Stage::load: null this");
 
-	// stop all sounds
-	SoundManager_stopAllSound(SoundManager_getInstance());
-
 	// set world's definition
 	this->stageDefinition = stageDefinition;
+
+	// set optical values
+	Screen_setOptical(Screen_getInstance(), this->stageDefinition->optical);
+
+	// stop all sounds
+	SoundManager_stopAllSound(SoundManager_getInstance());
 
 	// set world's limits
 	Screen_setStageSize(Screen_getInstance(), stageDefinition->size);
@@ -936,7 +939,7 @@ void Stage_suspend(Stage this)
 	{
 		if(this->focusEntity == __UPCAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
 		{
-			// recover focus entity
+			// relinquish focus entity
 		    Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
 		}
 	}
@@ -947,6 +950,9 @@ void Stage_resume(Stage this)
 {
 	ASSERT(this, "Stage::resume: null this");
 
+	// set back optical values
+	Screen_setOptical(Screen_getInstance(), this->stageDefinition->optical);
+	
 	// set physics
 	PhysicalWorld_setFriction(PhysicalWorld_getInstance(), this->stageDefinition->friction);
 	PhysicalWorld_setGravity(PhysicalWorld_getInstance(), this->stageDefinition->gravity);

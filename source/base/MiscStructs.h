@@ -167,8 +167,8 @@ typedef struct Optical
 	fix19_13 distanceEyeScreen;
 	fix19_13 maximumViewDistance;		// maximum distance from the screen to the infinite
 	fix19_13 baseDistance;				// distance from left to right eye (depth sensation)
-	fix19_13 verticalViewPointCenter;	// vertical View point center
 	fix19_13 horizontalViewPointCenter;	// horizontal View point center
+	fix19_13 verticalViewPointCenter;	// vertical View point center
 
 } Optical;
 

@@ -43,16 +43,12 @@ struct Shape_str;
 #define InGameEntity_METHODS													\
 		Entity_METHODS															\
 		__VIRTUAL_DEC(isMoving);												\
-		__VIRTUAL_DEC(getElasticity);											\
-		__VIRTUAL_DEC(getFriction);												\
 		__VIRTUAL_DEC(getInGameType);											\
 		
 #define InGameEntity_SET_VTABLE(ClassName)										\
 		Entity_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);						\
-		__VIRTUAL_SET(ClassName, InGameEntity, getElasticity);					\
-		__VIRTUAL_SET(ClassName, InGameEntity, getFriction);					\
 		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);					\
@@ -122,8 +118,6 @@ u8 InGameEntity_isMoving(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
 Direction InGameEntity_getDirection(InGameEntity this);
 void InGameEntity_setShapeState(InGameEntity this, bool state);
-fix19_13 InGameEntity_getElasticity(InGameEntity this);
-fix19_13 InGameEntity_getFriction(InGameEntity this);
 const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this);
 bool InGameEntity_updateSpriteScale(InGameEntity this);
 

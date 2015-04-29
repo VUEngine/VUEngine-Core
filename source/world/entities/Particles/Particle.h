@@ -146,7 +146,6 @@ u16 Particle_getDepth(Particle this);
 Gap Particle_getGap(Particle this);
 void Particle_setPosition(Particle this, VBVec3D* position);
 const VBVec3D* Particle_getPosition(Particle this);
-const VBVec3D* Particle_getPreviousPosition(Particle this);
 void Particle_resume(Particle this);
 void Particle_suspend(Particle this);
 

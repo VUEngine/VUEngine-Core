@@ -55,6 +55,8 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	// construct base Container
 	__CONSTRUCT_BASE(solidParticleDefinition->particleDefinition);
 
+	this->solidParticleDefinition = solidParticleDefinition;
+
 	// register a shape for collision detection
 	this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __UPCAST(SpatialObject, this), solidParticleDefinition->shapeType);
 }
@@ -73,11 +75,80 @@ void SolidParticle_destructor(SolidParticle this)
 	__DESTROY_BASE;
 }
 
+void SolidParticle_update(SolidParticle this, u16 timeElapsed, void (* behavior)(Particle particle))
+{
+	ASSERT(this, "SolidParticle::update: null this");
+
+	Particle_update(__UPCAST(Particle, this), timeElapsed, behavior);
+}
+
 // retrieve shape
 Shape SolidParticle_getShape(SolidParticle this)
 {
-	ASSERT(this, "Entity::getShape: null this");
+	ASSERT(this, "SolidParticle::getShape: null this");
 
 	return this->shape;
 }
 
+// get width
+u16 SolidParticle_getWidth(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::getWidth: null this");
+
+	return this->solidParticleDefinition->width;
+}
+
+// get height
+u16 SolidParticle_getHeight(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::getHeight: null this");
+
+	return this->solidParticleDefinition->height;
+}
+
+// get depth
+u16 SolidParticle_getDepth(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::getDepth: null this");
+
+	// must calculate based on the scale because not affine object must be enlarged
+	return this->solidParticleDefinition->depth;
+}
+
+// process a telegram
+bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
+{
+	ASSERT(this, "SolidParticle::handleMessage: null this");
+/*
+	switch (Telegram_getMessage(telegram))
+    {
+		case kCollision:
+
+			SolidParticle_resolveCollision(this, __UPCAST(VirtualList, Telegram_getExtraInfo(telegram)));
+			return true;
+			break;
+			
+		case kBodyStartedMoving:
+
+			CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
+			SolidParticle_updateCollisionStatus(this, *(u8*)Telegram_getExtraInfo(telegram));
+			return true;
+			break;
+
+		case kBodyStoped:
+
+			if (!Body_isMoving(this->body))
+            {
+				CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
+			}
+			break;
+
+		case kBodyBounced:
+
+			SolidParticle_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
+			return true;
+			break;
+	}
+*/
+	return false;
+}

@@ -131,7 +131,7 @@ static u8* const MODDATA =			(u8*)0x01000280;
 static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0;
 #define SSTOP					   *(u8*)0x01000580
 
-
+#define __MAXIMUM_OUTPUT_LEVEL		0xF
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ static void SoundManager_constructor(SoundManager this)
 		}
 
 		//determine the step for each sound level according to the maximum view distance
-		this->zFactor = __MAX_VIEW_DISTANCE / 15;
+		this->zFactor = __MAXIMUM_VIEW_DISTANCE / __MAXIMUM_OUTPUT_LEVEL;
 
 		//divide here to multiply in runtime
 		this->zFactor = 1 / this->zFactor;
@@ -352,8 +352,8 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
 
 	float zMinus = 0;
-	int maxOutputLevel = 0xF;
 	int output = 0x00;
+	int maxOutputLevel = __MAXIMUM_OUTPUT_LEVEL;
 
 	/* The maximum sound level for each side is 0xF
 	 * In the center position the output level is the one
@@ -373,8 +373,8 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 
 			//calculate the amount of sound that reachs each ear
 			//xDistance / (384/15)
-			leftMinus = leftDistance / (__MAX_VIEW_DISTANCE / maxOutputLevel);
-			rightMinus = rightDistance / (__MAX_VIEW_DISTANCE / maxOutputLevel);
+			leftMinus = leftDistance / (__MAXIMUM_VIEW_DISTANCE / maxOutputLevel);
+			rightMinus = rightDistance / (__MAXIMUM_VIEW_DISTANCE / maxOutputLevel);
 
 			leftOutput = maxOutputLevel - leftMinus;
 			rightOutput = maxOutputLevel - rightMinus;

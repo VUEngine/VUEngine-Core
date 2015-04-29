@@ -156,3 +156,18 @@ const VBVec3D* SpatialObject_getPreviousPosition(SpatialObject this)
 	return &position;
 }
 
+// get elasticiy
+fix19_13 SpatialObject_getElasticity(SpatialObject this)
+{
+	ASSERT(this, "SpatialObject::getElasticity: null this");
+
+	return 0;
+}
+
+// get friction
+fix19_13 SpatialObject_getFriction(SpatialObject this)
+{
+	ASSERT(this, "SpatialObject::getFriction: null this");
+
+	return 0;
+}

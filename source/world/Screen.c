@@ -42,9 +42,6 @@ __CLASS_DEFINITION(Screen, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
-const VBVec3D* _screenDisplacement = NULL;
-
 static void Screen_constructor(Screen this);
 bool Screen_handleMessage(Screen this, Telegram telegram);
 static void Screen_capPosition(Screen this);
@@ -55,7 +52,9 @@ void Screen_onScreenShake(Screen this);
 // 												GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
+const Optical* _optical = NULL;
 const VBVec3D* _screenPosition = NULL;
+const VBVec3D* _screenDisplacement = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,8 +90,26 @@ static void Screen_constructor(Screen this)
 	this->lastDisplacement.y = 0;
 	this->lastDisplacement.z = 0;
 
-	_screenDisplacement = &this->lastDisplacement;
+	// accounts for the physical (real) space between the eyes and
+	// the VB's screens, whose virtual representation is the Screen instance
+	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
+
+	// maximum distance from the _SC to the infinite
+	this->optical.maximumViewDistance = ITOFIX19_13(__MAXIMUM_VIEW_DISTANCE);
+
+	// distance from left to right eye (depth sensation)
+	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);
+
+	// horizontal view point center
+	this->optical.horizontalViewPointCenter = ITOFIX19_13(__HORIZONTAL_VIEW_POINT_CENTER);
+
+	// vertical view point center
+	this->optical.verticalViewPointCenter = ITOFIX19_13(__VERTICAL_VIEW_POINT_CENTER);
+	
+	// set global pointer to improve access to critical values
+	_optical = &this->optical;
 	_screenPosition = &this->position;
+	_screenDisplacement = &this->lastDisplacement;
 }
 
 // class's destructor
@@ -253,6 +270,22 @@ void Screen_setPosition(Screen this, VBVec3D position)
 	this->lastDisplacement.z = 0;
 
 	Screen_capPosition(this);
+}
+
+// retrieve optical config structure
+Optical Screen_getOptical(Screen this)
+{
+	ASSERT(this, "Screen::getOptical: null this");
+
+	return this->optical;
+}
+
+// set optical config structure
+void Screen_setOptical(Screen this, Optical optical)
+{
+	ASSERT(this, "Screen::setOptical: null this");
+
+	this->optical = optical;
 }
 
 // set screen's position displacement

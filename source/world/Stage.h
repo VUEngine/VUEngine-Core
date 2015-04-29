@@ -115,6 +115,9 @@ typedef struct StageDefinition
 
 	// initial screen's position inside the game world
 	VBVec3D screenPosition;
+	
+	// engine's optical values structure
+	Optical optical;
 
 	// each of the stage's entities
 	TextureDefinition** textures;

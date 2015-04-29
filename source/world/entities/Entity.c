@@ -792,7 +792,7 @@ u16 Entity_getDepth(Entity this)
 // retrieve gap
 Gap Entity_getGap(Entity this)
 {
-	ASSERT(this, "InGameEntity::getGap: null this");
+	ASSERT(this, "Entity::getGap: null this");
 
 	Gap gap = {0, 0, 0, 0};
 	return gap;

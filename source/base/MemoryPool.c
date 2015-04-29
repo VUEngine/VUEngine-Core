@@ -36,6 +36,9 @@
 #define __MEMORY_ALIGNMENT	4
 
 // TODO: remove me
+#undef __POOL_256B_SIZE
+#define __POOL_256B_SIZE 	(__BLOCK_256B * 2)
+
 #undef __POOL_16B_SIZE
 #define __POOL_16B_SIZE 	(__BLOCK_16B * 256)
 

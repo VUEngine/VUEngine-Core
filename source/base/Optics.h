@@ -41,8 +41,8 @@
 	Vector.z -= _screenPosition->z;
 
 #define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)																								\
-		Vector2D.x = Vector3D.x + (FIX19_13_MULT(_optical->horizontalViewPointCenter - Vector3D.x, Vector3D.z) >> __MAX_VIEW_DISTANCE_POW);		\
-		Vector2D.y = Vector3D.y - (FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter, Vector3D.z) >> __MAX_VIEW_DISTANCE_POW);		\
+		Vector2D.x = Vector3D.x + (FIX19_13_MULT(_optical->horizontalViewPointCenter - Vector3D.x, Vector3D.z) >> __MAXIMUM_VIEW_DISTANCE_POW);		\
+		Vector2D.y = Vector3D.y - (FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter, Vector3D.z) >> __MAXIMUM_VIEW_DISTANCE_POW);		\
 		Vector2D.z = Vector3D.z;
 
 //---------------------------------------------------------------------------------------------------------

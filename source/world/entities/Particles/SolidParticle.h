@@ -41,7 +41,14 @@
 // define the virtual methods
 #define SolidParticle_SET_VTABLE(ClassName)										\
 		Particle_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, SolidParticle, update);						\
 		__VIRTUAL_SET(ClassName, SolidParticle, getShape);						\
+		__VIRTUAL_SET(ClassName, SolidParticle, getWidth);						\
+		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);						\
+		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);						\
+		__VIRTUAL_SET(ClassName, SolidParticle, getShape);						\
+		__VIRTUAL_SET(ClassName, SolidParticle, getPreviousPosition);			\
+		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);					\
 
 #define SolidParticle_ATTRIBUTES												\
 																				\
@@ -50,6 +57,12 @@
 																				\
 	/* physical body */															\
 	Shape shape;																\
+																				\
+	/* shape for collision detection */											\
+	const SolidParticleDefinition* solidParticleDefinition;						\
+																				\
+	/* previous position for collision handling */								\
+	VBVec3D previousGlobalPosition;												\
 
 
 __CLASS(SolidParticle);
@@ -67,6 +80,18 @@ typedef struct SolidParticleDefinition
 
 	// shape's type
 	int shapeType;
+	
+	// object's size over the x axis
+	u16 width;
+
+	// object's size over the y axis
+	u16 height;
+
+	// object's size over the z axis
+	u16 depth;
+	
+	// body's mass
+	fix19_13 mass;
 
 } SolidParticleDefinition;
 
@@ -81,7 +106,13 @@ __CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* solidParticleD
 
 void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void SolidParticle_destructor(SolidParticle this);
+void SolidParticle_update(SolidParticle this, u16 timeElapsed, void (* behavior)(Particle particle));
 Shape SolidParticle_getShape(SolidParticle this);
+u16 SolidParticle_getWidth(SolidParticle this);
+u16 SolidParticle_getHeight(SolidParticle this);
+u16 SolidParticle_getDepth(SolidParticle this);
+const VBVec3D* SolidParticle_getPreviousPosition(SolidParticle this);
+bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 
 
 #endif

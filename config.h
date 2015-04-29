@@ -41,19 +41,16 @@
 #define __DISTANCE_EYE_SCREEN					384
 
 // maximum view distance (Depth)
-#define __MAX_VIEW_DISTANCE						256
-// always use a power of 2 as the maximum view distance, and update
-// the number of bits to make projection faster
-#define __MAX_VIEW_DISTANCE_POW					8
+#define __MAXIMUM_VIEW_DISTANCE					256
 
 // distance between eyes
 #define __BASE_FACTOR							768
 
 // player's eyes's horizontal position
-#define __HVPC									192
+#define __HORIZONTAL_VIEW_POINT_CENTER			192
 
 // player's eyes's vertical position
-#define __VVPC									112
+#define __VERTICAL_VIEW_POINT_CENTER			112
 
 // zoom factor to distortoine zooming
 #define __ZOOM_FACTOR							0.2f

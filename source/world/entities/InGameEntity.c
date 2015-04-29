@@ -172,22 +172,6 @@ void InGameEntity_setShapeState(InGameEntity this, bool state)
 	}
 }
 
-// get elasticiy
-fix19_13 InGameEntity_getElasticity(InGameEntity this)
-{
-	ASSERT(this, "InGameEntity::getElasticity: null this");
-
-	return 0;
-}
-
-// get friction
-fix19_13 InGameEntity_getFriction(InGameEntity this)
-{
-	ASSERT(this, "InGameEntity::getFriction: null this");
-
-	return 0;
-}
-
 // retrieve previous position
 const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this)
 {
