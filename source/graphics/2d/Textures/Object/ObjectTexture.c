@@ -68,6 +68,8 @@ void ObjectTexture_destructor(ObjectTexture this)
 {
 	ASSERT(this, "ObjectTexture::destructor: null this");
 
+	this->objectIndex = -1;
+
 	// destroy the super object
 	__DESTROY_BASE;
 }
@@ -77,6 +79,11 @@ void ObjectTexture_write(ObjectTexture this)
 {
 	ASSERT(this, "ObjectTexture::write: null this");
 
+	if(0 > this->objectIndex)
+	{
+		return;
+	}
+	
 	Texture_write(__UPCAST(Texture, this));
 	
 	//determine the allocation type

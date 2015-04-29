@@ -209,6 +209,9 @@ void ObjectSprite_render(ObjectSprite this)
 		int y = FIX19_13TOI(this->position.y) - FIX19_13TOI(this->halfHeight) * yDirection;
 		
 		int i = 0;
+		u16 secondWordValue = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
+		u16 fourthWordValue = (this->head & 0x3000);
+		
 		for (; i < rows; i++)
 		{
 			int j = 0;
@@ -232,9 +235,9 @@ void ObjectSprite_render(ObjectSprite this)
 				}
 
 				OAM[objectIndex << 2] = finalX;
-				OAM[(objectIndex << 2) + 1] = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
+				OAM[(objectIndex << 2) + 1] = secondWordValue;
 				OAM[(objectIndex << 2) + 2] = finalY;
-				OAM[(objectIndex << 2) + 3] = (OAM[(objectIndex << 2) + 3] & 0xCFFF) | (this->head & 0x3000);
+				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
 		
@@ -246,6 +249,7 @@ void ObjectSprite_render(ObjectSprite this)
 u8 ObjectSprite_getTotalObjects(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getTotalObjects: null this");
+	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
 
 	return this->totalObjects;
 }
@@ -262,10 +266,8 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
 	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");
 
-	if(0 <= this->objectIndex)
-	{
-		ObjectSprite_hide(this);
-	}
+	// relinquish previous OBJs
+	ObjectSprite_hide(this);
 	
 	this->objectIndex = objectIndex;
 
@@ -297,6 +299,11 @@ void ObjectSprite_show(ObjectSprite this)
 void ObjectSprite_hide(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::hide: null this");
+
+	if(0 > this->objectIndex)
+	{
+		return;
+	}
 
 	// must check for the texture since it can be already be deleted
 	int i = 0;

@@ -148,8 +148,7 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 		
 		this->renderFlag = __UPDATE_HEAD;
 
-		// TODO: remove the +1, without it, some graphics are corrupted
-		return lastObjectIndex + 1;
+		return lastObjectIndex;
 	}
 	
 	return -1;
@@ -198,6 +197,10 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		this->objectSpriteToDefragment = NULL;
 		this->availableObjects += numberOfObjects;
 		this->freedObjectIndex = 0;
+	}
+	else
+	{
+		ObjectSpriteContainer_defragment(this);
 	}
 }
 
@@ -251,17 +254,13 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	// get the next sprite to move
 	ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
 	
-	// save its index for the next sprite to move
-	int freedObjectIndex = ObjectSprite_getObjectIndex(objectSprite);
-	
-//	Printing_text(Printing_getInstance(), __GET_CLASS_NAME(objectSprite), 1, 13, NULL);
-//	Printing_int(Printing_getInstance(), ObjectSprite_getObjectIndex(objectSprite), 1, 14, NULL);
-	ASSERT(0 <= freedObjectIndex, "ObjectSpriteContainer::defragment: 0 > freedObjectIndex");
-
 	ASSERT(Sprite_getTexture(__UPCAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
 	
+	// move sprite back
 	ObjectSprite_setObjectIndex(objectSprite, this->freedObjectIndex);
-	this->freedObjectIndex = freedObjectIndex;
+	
+	// set new index to the end of the current sprite
+	this->freedObjectIndex += ObjectSprite_getTotalObjects(objectSprite);
 
 	// move to the next sprite to move
 	this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);	
