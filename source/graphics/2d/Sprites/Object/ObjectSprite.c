@@ -237,6 +237,7 @@ void ObjectSprite_render(ObjectSprite this)
 				OAM[objectIndex << 2] = finalX;
 				OAM[(objectIndex << 2) + 1] = secondWordValue;
 				OAM[(objectIndex << 2) + 2] = finalY;
+				ASSERT(OAM[(objectIndex << 2) + 3], "test");
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
@@ -266,9 +267,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
 	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");
 
-	// relinquish previous OBJs
-	ObjectSprite_hide(this);
-	
+	int previousObjectIndex = this->objectIndex;
 	this->objectIndex = objectIndex;
 
 	if(0 <= this->objectIndex)
@@ -276,9 +275,20 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 		// rewrite texture
 		ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
 		ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
-	
-		// force rendering 
+
+		// render in the new position to avoid flickering
 		this->renderFlag = true;
+		ObjectSprite_render(this);
+
+		// turn off previous OBJs' to avoid ghosting
+		if(0 <= previousObjectIndex)
+		{				
+			int i = 0;
+			for (; i < this->totalObjects; i++)
+			{
+				OAM[((previousObjectIndex + i) << 2) + 1] &= __HIDE_MASK;
+			}
+		}
 	}
 }
 

@@ -198,10 +198,6 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		this->availableObjects += numberOfObjects;
 		this->freedObjectIndex = 0;
 	}
-	else
-	{
-		ObjectSpriteContainer_defragment(this);
-	}
 }
 
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, int numberOfObjects)
