@@ -42,6 +42,9 @@
 
 // maximum view distance (Depth)
 #define __MAXIMUM_VIEW_DISTANCE					256
+// always use a power of 2 as the maximum view distance, and update
+// the number of bits to make projection faster
+#define __MAXIMUM_VIEW_DISTANCE_POW				8
 
 // distance between eyes
 #define __BASE_FACTOR							768
@@ -220,15 +223,12 @@
 // 										PHYSICS
 //---------------------------------------------------------------------------------------------------------
 
-// define it to make the collision system inform your entities if they can fall
-#define __GRAVITY_WORLD
-
 // physical friction
 #define __NO_FRICTION 				0.0f
 #define __FLOOR_FRICTION 			10.0f
 #define __AIR_FRICTION 				50.0f
 
-#define __GRAVITY					980
+#define __GRAVITY					9800
 
 #define __MAX_SHAPES_PER_LEVEL		32
 #define __MAX_BODIES_PER_LEVEL		32

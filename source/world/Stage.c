@@ -286,6 +286,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	
 	// set physics
 	PhysicalWorld_setFriction(PhysicalWorld_getInstance(), stageDefinition->friction);
+	
 	PhysicalWorld_setGravity(PhysicalWorld_getInstance(), stageDefinition->gravity);
 
 	//load background music

@@ -958,14 +958,33 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 {
 	ASSERT(this, "Body::bounceOnAxis: null this");
 
-	// TODO: still not sure it must be divided by 2 (<< deltaFactor)
-	int deltaFactor = 1;
-
 	// get the elapsed time
-	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
-
+	PhysicalWorld physicalWorld = PhysicalWorld_getInstance();
+	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(physicalWorld);
+	const VBVec3D* gravity = PhysicalWorld_getGravity(physicalWorld);
 	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;
+	
+	fix19_13 deltaFactor = 0;
+	
+	switch(axis)
+	{
+		case __XAXIS:
+			
+			deltaFactor = FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->x);
+			break;
+		
+		case __YAXIS:
+			
+			deltaFactor = FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->y);
+			break;
+			
+		case __ZAXIS:
+			
+			deltaFactor = FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->z);
+			break;
+	}
 
+	
 	if (ITOFIX19_13(1) < totalElasticity)
 	{
 		totalElasticity = ITOFIX19_13(1);
@@ -974,16 +993,16 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	fix19_13 bounceCoeficient = ITOFIX19_13(1) - totalElasticity;
 
 	fix19_13 velocityDelta = FIX19_13_MULT(*acceleration, elapsedTime);
+	velocityDelta = FIX19_13_MULT(velocityDelta, deltaFactor);
+	
+	*velocity += velocityDelta;
 
-	*velocity -= velocityDelta << deltaFactor;
-
-	*velocity = -*velocity;
-
-	*velocity = FIX19_13_MULT(*velocity, bounceCoeficient);
+	*velocity = FIX19_13_MULT(-*velocity, bounceCoeficient);
+	*velocity = FIX19_13_DIV(*velocity, deltaFactor);
 
 	*acceleration = 0;
 
-	return (THRESHOLD + (velocityDelta << deltaFactor) < abs(*velocity));
+	return ((velocityDelta) < abs(*velocity));
 }
 
 // take a hit

@@ -408,12 +408,9 @@ void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
 // retrieve gravity
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this)
 {
-	static VBVec3D gravity;
-	gravity.x = this->gravity.x;
-	gravity.y = this->gravity.y;
-	gravity.z = this->gravity.z;
+	ASSERT(this, "PhysicalWorld::getGravity: null this");
 
-	return (const VBVec3D*)&gravity;
+	return (const VBVec3D*)&this->gravity;
 }
 
 // get last elapsed time
