@@ -283,8 +283,8 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 		// turn off previous OBJs' to avoid ghosting
 		if(0 <= previousObjectIndex)
 		{				
-			int i = 0;
-			for (; i < this->totalObjects; i++)
+			int i = previousObjectIndex + this->totalObjects - 1;
+			for (; i >= this->objectIndex + this->totalObjects; i--)
 			{
 				OAM[((previousObjectIndex + i) << 2) + 1] &= __HIDE_MASK;
 			}
