@@ -286,7 +286,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 			int i = previousObjectIndex + this->totalObjects - 1;
 			for (; i >= this->objectIndex + this->totalObjects; i--)
 			{
-				OAM[((previousObjectIndex + i) << 2) + 1] &= __HIDE_MASK;
+				OAM[(i << 2) + 1] &= __HIDE_MASK;
 			}
 		}
 	}
