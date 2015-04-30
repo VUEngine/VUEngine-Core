@@ -141,7 +141,7 @@ int Container_getChildCount(Container this);
 VirtualList Container_getChildren(Container this);
 void Container_setName(Container this, char* name);
 char* Container_getName(Container this);
-Container Container_getChildByName(Container this, char* childName);
+Container Container_getChildByName(Container this, char* childName, bool recursive);
 Container Container_getChildById(Container this, s16 id);
 void Container_suspend(Container this);
 void Container_resume(Container this);
