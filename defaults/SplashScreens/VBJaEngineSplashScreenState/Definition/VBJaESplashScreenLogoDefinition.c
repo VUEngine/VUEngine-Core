@@ -46,8 +46,9 @@ TextureROMDef VBJAENGINE_LOGO_3D_TX =
         // number of chars, depending on allocation type:
         // __ANIMATED_SINGLE: number of chars of a single animation frame (cols * rows of this texture)
         // __ANIMATED_MULTI: sum of chars of all animation frames
+        // __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows of this texture)
         // __NOT_ANIMATED: number of chars of whole image
-        52,
+        54,
 
         // allocation type
         __NOT_ANIMATED,
@@ -78,8 +79,9 @@ TextureROMDef VBJAENGINE_LOGO_OUTLINE_TX =
         // number of chars, depending on allocation type:
         // __ANIMATED_SINGLE: number of chars of a single animation frame (cols * rows of this texture)
         // __ANIMATED_MULTI: sum of chars of all animation frames
+        // __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows of this texture)
         // __NOT_ANIMATED: number of chars of whole image
-        63,
+        57,
 
         // allocation type
         __NOT_ANIMATED,
@@ -92,7 +94,7 @@ TextureROMDef VBJAENGINE_LOGO_OUTLINE_TX =
     VBJaESplashScreenLogoOutlineMap,
 
     // cols (max 64)
-    19,
+    18,
 
     // rows (max 64)
     9,
@@ -101,7 +103,7 @@ TextureROMDef VBJAENGINE_LOGO_OUTLINE_TX =
     1,
 
     // palette number
-    0,
+    1,
 };
 
 BgmapSpriteROMDef VBJAENGINE_LOGO_3D_IM_SPRITE =

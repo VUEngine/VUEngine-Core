@@ -289,11 +289,10 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	
 	PhysicalWorld_setGravity(PhysicalWorld_getInstance(), stageDefinition->gravity);
 
-	//load background music
-	//SoundManager_loadBGM(SoundManager_getInstance(),(u16 (*)[6])this->bgm);
+	// load background music
 	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])stageDefinition->bgm);
 
-	//setup the column table
+	// setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
 }
 
@@ -969,6 +968,9 @@ void Stage_resume(Stage this)
 		// recover focus entity
 	    Screen_setFocusInGameEntity(Screen_getInstance(), __UPCAST(InGameEntity, this->focusEntity));
 	}
+
+	// load background music
+	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->bgm);
 
 	Container_resume(__UPCAST(Container, this));
 
