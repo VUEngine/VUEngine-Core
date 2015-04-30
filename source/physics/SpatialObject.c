@@ -132,7 +132,7 @@ Gap SpatialObject_getGap(SpatialObject this)
 	return gap;
 }
 
-const VBVec3D* SpatialObject_getPosition(SpatialObject this)
+VBVec3D SpatialObject_getPosition(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::getPosition: null this");
 	
@@ -141,19 +141,12 @@ const VBVec3D* SpatialObject_getPosition(SpatialObject this)
 		0, 0, 0
 	};
 	
-	return &position;
+	return position;
 }
 
-const VBVec3D* SpatialObject_getPreviousPosition(SpatialObject this)
+void SpatialObject_setPosition(SpatialObject this, VBVec3D position)
 {
-	ASSERT(this, "SpatialObject::getPreviousPosition: null this");
-	
-	static VBVec3D position = 
-	{
-		0, 0, 0
-	};
-	
-	return &position;
+	ASSERT(this, "SpatialObject::setPosition: null this");
 }
 
 // get elasticiy

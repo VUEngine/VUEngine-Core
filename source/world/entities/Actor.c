@@ -51,11 +51,9 @@ __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 // global
 const extern VBVec3D* _screenDisplacement;
 
-static void Actor_alignToCollidingEntity(Actor this, InGameEntity collidingEntity, int axisOfCollision);
-static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, int axisOfCollision);
+static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
-static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEntity, VBVec3D* collidingEntityLastDisplacement);
-static void Actor_updateCollisionStatus(Actor this, u8 movementAxis);
+static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
 static void Actor_updateSourroundingFriction(Actor this);
 
 
@@ -81,15 +79,8 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	// construct the game state machine
 	this->stateMachine = __NEW(StateMachine, this);
 
-	this->lastCollidingEntity[kXAxis] = NULL;
-	this->lastCollidingEntity[kYAxis] = NULL;
-	this->lastCollidingEntity[kZAxis] = NULL;
-
-	this->sensibleToFriction.x = true;
-	this->sensibleToFriction.y = true;
-	this->sensibleToFriction.z = true;
-
 	this->body = NULL;
+	this->collisionSolver = NULL;
 }
 
 // class's destructor
@@ -100,9 +91,19 @@ void Actor_destructor(Actor this)
 	// inform the screen I'm being removed
 	Screen_onFocusEntityDeleted(Screen_getInstance(), __UPCAST(InGameEntity, this));
 
-	// remove a body
-	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(SpatialObject, this));
-
+	if(this->body)
+	{
+		// remove a body
+		PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(SpatialObject, this));
+		this->body = NULL;
+	}
+	
+	if(this->collisionSolver)
+	{
+		__DELETE(this->collisionSolver);
+		this->collisionSolver = NULL;
+	}
+	
 	// destroy state machine
 	__DELETE(this->stateMachine);
 
@@ -145,18 +146,22 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 		globalPosition.y += position.y;
 		globalPosition.z += position.z;
 
-		this->lastCollidingEntity[kXAxis] = NULL;
-		this->lastCollidingEntity[kYAxis] = NULL;
-		this->lastCollidingEntity[kZAxis] = NULL;
+		if (this->collisionSolver)
+		{
+			CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __XAXIS | __YAXIS | __ZAXIS);
+		}
 
-		Body_setPosition(this->body, &globalPosition, __UPCAST(SpatialObject, this));
+		Body_setPosition(this->body, globalPosition, __UPCAST(SpatialObject, this));
 	}
 }
 
 static void Actor_syncPositionWithBody(Actor this)
 {
 	// save previous position
-	this->previousGlobalPosition = this->transform.globalPosition;
+	if(this->collisionSolver)
+	{
+		CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->transform.globalPosition);
+	}
 
 	Container_setLocalPosition(__UPCAST(Container, this), Body_getPosition(this->body));
 }
@@ -212,19 +217,10 @@ void Actor_update(Actor this)
 void Actor_updateCollisionStatus(Actor this, u8 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
-	ASSERT(this->body, "Actor::updateCollisionStatus: null body");
 
-	if (__XAXIS & movementAxis)
+	if (this->collisionSolver)
 	{
-		this->lastCollidingEntity[kXAxis] = NULL;
-	}
-	if (__YAXIS & movementAxis)
-	{
-		this->lastCollidingEntity[kYAxis] = NULL;
-	}
-	if (__ZAXIS & movementAxis)
-	{
-		this->lastCollidingEntity[kZAxis] = NULL;
+		CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, movementAxis);
 	}
 }
 
@@ -234,35 +230,17 @@ static void Actor_updateSourroundingFriction(Actor this)
 	ASSERT(this, "Actor::updateSourroundingFriction: null this");
 	ASSERT(this->body, "Actor::updateSourroundingFriction: null body");
 
-	Force friction = {this->actorDefinition->friction, this->actorDefinition->friction, this->actorDefinition->friction};
-
-	if (this->sensibleToFriction.x)
-	{
-		friction.x = this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
-		friction.x += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
-	}
-
-	if (this->sensibleToFriction.y)
-	{
-		friction.y = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
-		friction.y += this->lastCollidingEntity[kZAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kZAxis]) : 0;
-	}
-
-	if (this->sensibleToFriction.z)
-	{
-		friction.z = this->lastCollidingEntity[kXAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kXAxis]) : 0;
-		friction.z += this->lastCollidingEntity[kYAxis] ? __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, this->lastCollidingEntity[kYAxis]) : 0;
-	}
-
-	Body_setFriction(this->body, friction);
-}
-
-// retrieve previous position
-const VBVec3D* Actor_getPreviousPosition(Actor this)
-{
-	ASSERT(this, "Actor::getPreviousPosition: null this");
+	Force totalFriction = {this->actorDefinition->friction, this->actorDefinition->friction, this->actorDefinition->friction};
 	
-	return &this->previousGlobalPosition;
+	if(this->collisionSolver)
+	{
+		Force sourroundingFriction = CollisionSolver_getSourroundingFriction(this->collisionSolver);
+		totalFriction.x += sourroundingFriction.x;
+		totalFriction.y += sourroundingFriction.y;
+		totalFriction.z += sourroundingFriction.z;
+	}
+
+	Body_setFriction(this->body, totalFriction);
 }
 
 // change direction
@@ -360,15 +338,6 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	}
 }
 
-// true if inside the screen range
-bool Actor_isInsideGame(Actor this)
-{
-	ASSERT(this, "Actor::isInsideGame: null this");
-	//Texture map = Sprite_getTexture(this->sprite);
-
-	return 0;//!outsideScreenRange(this->transform.localPosition, Texture_getCols(map), Texture_getRows(map), __CHARACTERUNLOADPAD);
-}
-
 // check if gravity must apply to this actor
 u8 Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 {
@@ -376,31 +345,12 @@ u8 Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 
 	u8 axisFreeForMovement = __VIRTUAL_CALL(bool, Actor, getAxisFreeForMovement, this);
 
-	u8 axisOfCollision = 0;
-
-	if (axisFreeForMovement)
+	if(this->collisionSolver)
 	{
-		ASSERT(this->body, "Actor::resolveCollision: null body");
-
-		int i = 0;
-		// TODO: must still solve when there will be a collision with an object not yet in the list
-		for (; i <= kZAxis; i++)
-	    {
-			if (this->lastCollidingEntity[i])
-	        {
-				VBVec3D displacement =
-	            {
-					kXAxis == i ? 0 < acceleration->x? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
-					kYAxis == i ? 0 < acceleration->y? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
-					kZAxis == i ? 0 < acceleration->z? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0
-				};
-
-				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, this->shape, this->lastCollidingEntity[i], displacement);
-			}
-		}
+		return axisFreeForMovement & ~CollisionSolver_getAxisOfFutureCollision(this->collisionSolver, acceleration, this->shape);
 	}
 
-	return axisFreeForMovement & ~axisOfCollision;
+	return axisFreeForMovement;
 }
 
 // retrieve axis free for movement
@@ -440,7 +390,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 						
 					case kCollisionWithYou:
 
-						Actor_resolveCollisionAgainstMe(this, __UPCAST(InGameEntity, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
+						Actor_resolveCollisionAgainstMe(this, __UPCAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
@@ -501,6 +451,23 @@ u8 Actor_isMoving(Actor this)
 	return this->body ? Body_isMoving(this->body) : 0;
 }
 
+// set position
+void Actor_setPosition(Actor this, VBVec3D position)
+{
+	ASSERT(this, "Actor::setPosition: null this");
+
+	Actor_setLocalPosition(this, position);
+/*		
+	this->transform.localPosition = position;
+	
+	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
+	Actor_transform(this, &environmentTransform);
+
+	__VIRTUAL_CALL(void, Shape, positione, this->shape);
+	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
+	*/
+}
+
 // retrieve global position
 VBVec3D Actor_getPosition(Actor this)
 {
@@ -548,46 +515,16 @@ void Actor_stopMovement(Actor this)
 	}
 }
 
-// align to colliding entity
-static void Actor_alignToCollidingEntity(Actor this, InGameEntity collidingEntity, int axisOfCollision)
-{
-	Scale scale = Entity_getScale(__UPCAST(Entity,  this));
-	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(1), scale.y));
-
-	if (1 > alignThreshold)
-	{
-		alignThreshold = 1;
-	}
-	alignThreshold = 1;
-
-	if (__XAXIS & axisOfCollision)
-    {
-		Actor_alignTo(this, collidingEntity, __XAXIS, alignThreshold);
-		this->lastCollidingEntity[kXAxis] = collidingEntity;
-	}
-
-	if (__YAXIS & axisOfCollision)
-    {
-		Actor_alignTo(this, collidingEntity, __YAXIS, alignThreshold);
-		this->lastCollidingEntity[kYAxis] = collidingEntity;
-	}
-
-	if (__ZAXIS & axisOfCollision)
-    {
-		Actor_alignTo(this, collidingEntity, __ZAXIS, alignThreshold);
-		this->lastCollidingEntity[kZAxis] = collidingEntity;
-	}	
-}
-
 // start bouncing after collision with another inGameEntity
-static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, int axisOfCollision)
+static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 {
 	ASSERT(this, "Actor::bounce: null this");
 
-	if (collidingEntity && axisOfCollision)
+	if (axisOfCollision)
 	{
-		// bounce over axis
-		Body_bounce(this->body, axisOfCollision, __VIRTUAL_CALL(fix19_13, SpatialObject, getElasticity, collidingEntity));
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
+
+		Body_bounce(this->body, axisOfCollision, otherSpatialObjectsElasticity);
 
 		if (!(axisOfCollision & Body_isMoving(this->body)))
 	    {
@@ -601,39 +538,54 @@ static void Actor_checkIfMustBounce(Actor this, InGameEntity collidingEntity, in
 }
 
 // resolve collision against other entities
-static void Actor_resolveCollision(Actor this, VirtualList collidingEntities)
+static void Actor_resolveCollision(Actor this, VirtualList collidingSpatialObjects)
 {
 	ASSERT(this, "Actor::resolveCollision: null this");
 	ASSERT(this->body, "Actor::resolveCollision: null body");
-	ASSERT(collidingEntities, "Actor::resolveCollision: collidingEntities");
+	ASSERT(collidingSpatialObjects, "Actor::resolveCollision: collidingSpatialObjects");
 
-	Actor_updateCollisionStatus(this, Body_isMoving(this->body));
-
-	int axisOfCollision = 0;
-
-	// get last physical displacement
-	VBVec3D displacement = Body_getLastDisplacement(this->body);
-
-	VirtualNode node = VirtualList_begin(collidingEntities);
-
-	InGameEntity collidingEntity = NULL;
-
-	// TODO: solve when more than one entity has been touched
-	for (; node && !axisOfCollision; node = VirtualNode_getNext(node))
+	if(this->collisionSolver)
 	{
-		collidingEntity = VirtualNode_getData(node);
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, collidingEntity, displacement);
-		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
-	}
+		Scale scale = Entity_getScale(__UPCAST(Entity,  this));
 
-	Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
-	
-	Actor_updateSourroundingFriction(this);
+		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &scale);
+
+		Actor_checkIfMustBounce(this, axisOfCollision);
+		
+		Actor_updateSourroundingFriction(this);
+	}
 }
 
 // resolve collision against me entities
-static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEntity, VBVec3D* collidingEntityLastDisplacement)
+static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement)
 {
+	ASSERT(this, "Actor::resolveCollisionAgainstMe: null this");
+	ASSERT(this->body, "Actor::resolveCollisionAgainstMe: null body");
+	ASSERT(collidingSpatialObject, "Actor::resolveCollisionAgainstMe: collidingSpatialObject");
+
+	if(this->collisionSolver)
+	{
+		// TODO: must retrieve the scale of the other object
+		Scale scale = Entity_getScale(__UPCAST(Entity,  this));
+		VirtualList collidingSpatialObjects = __NEW(VirtualList);
+		VirtualList_pushBack(collidingSpatialObjects, collidingSpatialObject);
+		
+		VBVec3D fakeLastDisplacement =
+		{
+			-collidingSpatialObjectLastDisplacement->x,
+			-collidingSpatialObjectLastDisplacement->y,
+			-collidingSpatialObjectLastDisplacement->z,
+		};
+		
+		// invent the colliding object's displacement to simulate that it was me
+		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), fakeLastDisplacement, &scale);
+		__DELETE(collidingSpatialObjects);
+		
+		Actor_checkIfMustBounce(this, axisOfCollision);
+		
+		Actor_updateSourroundingFriction(this);
+	}
+	/*
 	ASSERT(this, "Actor::resolveCollisionAgainstMe: null this");
 	ASSERT(this->body, "Actor::resolveCollisionAgainstMe: null body");
 
@@ -653,124 +605,7 @@ static void Actor_resolveCollisionAgainstMe(Actor this, InGameEntity collidingEn
 	}
 	
 	Actor_updateSourroundingFriction(this);
-}
-
-// align character to other entity on collision
-void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad)
-{
-	ASSERT(this, "Actor::alignTo: null this");
-	ASSERT(this->sprites, "Actor::alignTo: null sprites");
-
-	// retrieve the colliding entity's position and gap
-	VBVec3D otherPosition = Container_getGlobalPosition(__UPCAST(Container, entity));
-	Gap otherGap = InGameEntity_getGap(entity);
-
-	// pointers to the dimensions to affect
-	fix19_13 *myPositionAxisToCheck = NULL;
-	fix19_13 *myPositionAxis = NULL;
-	fix19_13 *otherPositionAxis = NULL;
-
-	// used to the width, height or depth
-	u16 myHalfSize = 0;
-	u16 otherHalfSize = 0;
-
-	// gap to use based on the axis
-	int otherLowGap = 0;
-	int otherHighGap = 0;
-	int myLowGap = 0;
-	int myHighGap = 0;
-
-	// calculate gap again (scale, etc)
-	InGameEntity_setGap(__UPCAST(InGameEntity, this));
-
-	// select the axis to affect
-	switch (axis)
-	{
-		case __XAXIS:
-
-			myPositionAxisToCheck = &this->transform.globalPosition.x;
-			myPositionAxis = &this->transform.localPosition.x;
-			otherPositionAxis = &otherPosition.x;
-
-			myHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getWidth, this) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getWidth, entity) >> 1;
-
-			otherLowGap = otherGap.left;
-			otherHighGap = otherGap.right;
-			myLowGap = this->gap.left;
-			myHighGap = this->gap.right;
-			break;
-
-		case __YAXIS:
-
-			myPositionAxisToCheck = &this->transform.globalPosition.y;
-			myPositionAxis = &this->transform.localPosition.y;
-			otherPositionAxis = &otherPosition.y;
-
-			myHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, this) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(u16, Entity, getHeight, entity) >> 1;
-
-			otherLowGap = otherGap.up;
-			otherHighGap = otherGap.down;
-			myLowGap = this->gap.up;
-			myHighGap = this->gap.down;
-			break;
-
-		case __ZAXIS:
-
-			myPositionAxisToCheck = &this->transform.globalPosition.z;
-			myPositionAxis = &this->transform.localPosition.z;
-			otherPositionAxis = &otherPosition.z;
-
-			// TODO: must make depth work as the width and high
-			if (this->transform.globalPosition.z < otherPosition.z)
-			{
-				myHalfSize = __VIRTUAL_CALL(u16, Entity, getDepth, this);
-				otherHalfSize = 0;
-			}
-			else
-			{
-				myHalfSize = 0;
-				otherHalfSize = __VIRTUAL_CALL(u16, Entity, getDepth, entity);
-			}
-			
-			myLowGap = 0;
-			myHighGap = 0;
-
-			break;
-	}
-
-	// decide to which side of the entity align myself
-	if (*myPositionAxisToCheck > *otherPositionAxis)
-    {
-        // pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1) ? 1 : 0);
-		// align right / below / behind
-		*myPositionAxis = *otherPositionAxis +
-							ITOFIX19_13(otherHalfSize - otherHighGap
-							+ myHalfSize - myLowGap
-							+ pad);
-	}
-	else
-	{
-		// align left / over / in front
-		*myPositionAxis = *otherPositionAxis -
-							ITOFIX19_13(otherHalfSize - otherLowGap
-							+ myHalfSize - myHighGap
-							+ pad);
-	}
-
-	if (this->body)
-	{
-		// force position
-		Body_setPosition(this->body, &this->transform.localPosition, __UPCAST(SpatialObject, this));
-		Actor_syncPositionWithBody(this);
-	}
-
-	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
-	Actor_transform(this, &environmentTransform);
-
-	__VIRTUAL_CALL(void, Shape, positione, this->shape);
-	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
+	*/
 }
 
 // retrieve body

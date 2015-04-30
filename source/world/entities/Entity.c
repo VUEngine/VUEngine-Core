@@ -83,9 +83,12 @@ void Entity_destructor(Entity this)
 
 	// better to do it here than forget in other classes
 	// unregister the shape for collision detection
-	CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
-
-	this->shape = NULL;
+	if(this->shape)
+	{
+		CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
+	
+		this->shape = NULL;
+	}
 
 	Entity_releaseSprites(this);
 
@@ -905,15 +908,6 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 			__VIRTUAL_CALL(void, Sprite, setDirection, __UPCAST(Sprite, VirtualNode_getData(node)), axis, direction);
 		}
 	}
-}
-
-// retrieve previous position
-const VBVec3D* Entity_getPreviousPosition(Entity this)
-{
-	ASSERT(this, "Entity::getPreviousPosition: null this");
-
-	static VBVec3D position = {0, 0, 0};
-	return &position;
 }
 
 // retrieve shape

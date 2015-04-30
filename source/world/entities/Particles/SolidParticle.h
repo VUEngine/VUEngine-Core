@@ -47,7 +47,6 @@
 		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);						\
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);						\
 		__VIRTUAL_SET(ClassName, SolidParticle, getShape);						\
-		__VIRTUAL_SET(ClassName, SolidParticle, getPreviousPosition);			\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);					\
 
 #define SolidParticle_ATTRIBUTES												\
@@ -111,7 +110,6 @@ Shape SolidParticle_getShape(SolidParticle this);
 u16 SolidParticle_getWidth(SolidParticle this);
 u16 SolidParticle_getHeight(SolidParticle this);
 u16 SolidParticle_getDepth(SolidParticle this);
-const VBVec3D* SolidParticle_getPreviousPosition(SolidParticle this);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 
 

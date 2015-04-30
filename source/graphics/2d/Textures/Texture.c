@@ -126,6 +126,9 @@ void Texture_rewrite(Texture this)
 {
 	ASSERT(this, "Texture::rewrite: null this");
 
+	// make sure I have a char set
+	Texture_write(this);
+	
 	CharSet_rewrite(this->charSet);
 	
 	__VIRTUAL_CALL(void, Texture, write, this);

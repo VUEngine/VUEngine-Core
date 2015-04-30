@@ -158,7 +158,7 @@ void Particle_addForce(Particle this, const Force* force)
 	Body_addForce(this->body, force);
 }
 
-void Particle_setPosition(Particle this, VBVec3D* position)
+void Particle_setPosition(Particle this, VBVec3D position)
 {
 	ASSERT(this, "Particle::position: null this");
 	ASSERT(this->body, "Particle::position: null body");
@@ -169,19 +169,16 @@ void Particle_setPosition(Particle this, VBVec3D* position)
 	__VIRTUAL_CALL(void, Sprite, synchronizePosition, this->objectSprite, position);
 
 	// calculate sprite's parallax
-	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
+	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
 }
 
 // retrieve position
-const VBVec3D* Particle_getPosition(Particle this)
+VBVec3D Particle_getPosition(Particle this)
 {
 	ASSERT(this, "Particle::getPosition: null this");
 	ASSERT(this->body, "Particle::getPosition: null body");
 
-	static VBVec3D position;
-	position = Body_getPosition(this->body);
-	
-	return &position;
+	return Body_getPosition(this->body);
 }
 
 // make it visible

@@ -63,7 +63,6 @@
 		__VIRTUAL_SET(ClassName, Entity, getDepth);								\
 		__VIRTUAL_SET(ClassName, Entity, getGap);								\
 		__VIRTUAL_SET(ClassName, Entity, getShape);								\
-		__VIRTUAL_SET(ClassName, Entity, getPreviousPosition);					\
 		__VIRTUAL_SET(ClassName, Entity, suspend);								\
 		__VIRTUAL_SET(ClassName, Entity, resume);								\
 		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);						\
@@ -153,9 +152,9 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 void Entity_transform(Entity this, Transformation* environmentTransform);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
 Scale Entity_getScale(Entity this);
-void Entity_setLocalPosition(Entity this, VBVec3D position);
 VBVec3D Entity_getPosition(Entity this);
 VBVec3D Entity_getLocalPosition(Entity this);
+void Entity_setLocalPosition(Entity this, VBVec3D position);
 int Entity_getMapParallax(Entity this);
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
 int Entity_getInGameType(Entity this);
@@ -169,7 +168,6 @@ bool Entity_isVisible(Entity this, int pad);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteScale(Entity this);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
-const VBVec3D* Entity_getPreviousPosition(Entity this);
 void Entity_show(Entity this);
 void Entity_hide(Entity this);
 void Entity_suspend(Entity this);

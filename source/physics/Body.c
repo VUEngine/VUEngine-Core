@@ -210,7 +210,7 @@ static void Body_setMovementType(Body this, int movementType, int axis)
 	}
 }
 
-void Body_clearAcceleration(Body this, int axis)
+void Body_clearAcceleration(Body this, u8 axis)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
@@ -234,7 +234,7 @@ void Body_clearAcceleration(Body this, int axis)
 }
 
 // set movement type to accelerated
-void Body_moveAccelerated(Body this, int axis)
+void Body_moveAccelerated(Body this, u8 axis)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
@@ -292,7 +292,7 @@ void Body_clearForce(Body this)
 }
 
 // apply force
-void Body_applyForce(Body this, const Force* force, int clearAxis)
+void Body_applyForce(Body this, const Force* force, bool clearAxis)
 {
 	ASSERT(this, "Body::applyForce: null this");
 
@@ -700,7 +700,7 @@ void Body_printPhysics(Body this, int x, int y)
 }
 
 // stop movement over an axis
-void Body_stopMovement(Body this, int axis)
+void Body_stopMovement(Body this, u8 axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
@@ -777,16 +777,14 @@ VBVec3D Body_getPosition(Body this)
 }
 
 // retrieve position
-void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller)
+void Body_setPosition(Body this, VBVec3D position, SpatialObject caller)
 {
 	ASSERT(this, "Body::setPosition: null this");
 
 	if (this->owner == caller)
 	{
 		// set position
-		this->position.x = position->x;
-		this->position.y = position->y;
-		this->position.z = position->z;
+		this->position = position;
 	}
 }
 
@@ -901,7 +899,7 @@ u8 Body_isMoving(Body this)
 }
 
 // bounce back
-void Body_bounce(Body this, int axis, fix19_13 otherBodyElasticity)
+void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
 

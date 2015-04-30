@@ -59,6 +59,8 @@ void Object_constructor(Object this)
 // class's destructor
 void Object_destructor(Object this)
 {
+	Object_fireEvent(__UPCAST(Object, this), __EVENT_OBJECT_DESTROYED);
+
 	if (this->events)
 	{
 		VirtualNode node = VirtualList_begin(this->events);

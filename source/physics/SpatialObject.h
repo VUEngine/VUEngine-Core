@@ -54,7 +54,7 @@
 		__VIRTUAL_DEC(getDepth);												\
 		__VIRTUAL_DEC(getGap);													\
 		__VIRTUAL_DEC(getPosition);												\
-		__VIRTUAL_DEC(getPreviousPosition);										\
+		__VIRTUAL_DEC(setPosition);												\
 		__VIRTUAL_DEC(getElasticity);											\
 		__VIRTUAL_DEC(getFriction);												\
 
@@ -70,9 +70,9 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, getDepth);						\
 		__VIRTUAL_SET(ClassName, SpatialObject, getGap);						\
 		__VIRTUAL_SET(ClassName, SpatialObject, getPosition);					\
-		__VIRTUAL_SET(ClassName, SpatialObject, getPreviousPosition);			\
+		__VIRTUAL_SET(ClassName, SpatialObject, setPosition);					\
 		__VIRTUAL_SET(ClassName, SpatialObject, getElasticity);					\
-		__VIRTUAL_SET(ClassName, SpatialObject, getFriction);			\
+		__VIRTUAL_SET(ClassName, SpatialObject, getFriction);					\
 
 
 #define SpatialObject_ATTRIBUTES												\
@@ -98,8 +98,8 @@ u16 SpatialObject_getWidth(SpatialObject this);
 u16 SpatialObject_getHeight(SpatialObject this);
 u16 SpatialObject_getDepth(SpatialObject this);
 Gap SpatialObject_getGap(SpatialObject this);
-const VBVec3D* SpatialObject_getPosition(SpatialObject this);
-const VBVec3D* SpatialObject_getPreviousPosition(SpatialObject this);
+VBVec3D SpatialObject_getPosition(SpatialObject this);
+void SpatialObject_setPosition(SpatialObject this, VBVec3D position);
 fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
 

@@ -193,7 +193,7 @@ static void ParticleSystem_spawnParticle(ParticleSystem this)
 		z + this->transform.globalPosition.z + (0 < x? this->particleSystemDefinition->minimumSpanDistance.z: -this->particleSystemDefinition->minimumSpanDistance.z)
 	};
 	
-	Particle_setPosition(particle, &position);
+	Particle_setPosition(particle, position);
 
 	x = ITOFIX19_13(this->particleSystemDefinition->minimumForce.x + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x)));
 	y = ITOFIX19_13(this->particleSystemDefinition->minimumForce.y + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y)));

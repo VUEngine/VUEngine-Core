@@ -23,13 +23,19 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
 #include <Error.h>
 #include <Game.h>
 #include <SpriteManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
 
+//---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
 
+#define __DIMM_VALUE_1	0b01010100
+#define __DIMM_VALUE_2	0b01010000
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -79,22 +85,17 @@ int Error_triggerException(Error this, char* string)
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
-	//VPUManager_clearBgmap(VPUManager_getInstance(), __PRINTING_BGMAP, __PRINTABLE_BGMAP_AREA);
-
-	// clear screen
-    //HardwareManager_clearScreen(HardwareManager_getInstance());
+	// disable timers
+	TimerManager_enable(TimerManager_getInstance(), false);
 
 	// disable timer
 	TimerManager_setInterrupt(TimerManager_getInstance(), false);
 
 	// turn on the display
     HardwareManager_displayOn(HardwareManager_getInstance());
-   // Screen_FXFadeIn(Screen_getInstance(), 0);
 
 	// make sure the brigtness is ok
     HardwareManager_upBrightness(HardwareManager_getInstance());
-
-    TimerManager_enable(TimerManager_getInstance(), true);
 
 	Printing_loadFonts(Printing_getInstance());
 
@@ -104,12 +105,33 @@ int Error_triggerException(Error this, char* string)
 		Printing_text(Printing_getInstance(), "                                             ", x, y - 1, NULL);
 	}
 
-	Printing_text(Printing_getInstance(), "Game::lastProcess:", x, y, NULL);
-	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 19, y, NULL);
-	Printing_text(Printing_getInstance(), "Exception:" , x, y + 1, NULL);
-	Printing_text(Printing_getInstance(), string, x, y + 2, NULL);
+	Printing_text(Printing_getInstance(), "                   EXCEPTION                    " , x, y++, NULL);
+	Printing_text(Printing_getInstance(), "                                                " , x, y++, NULL);
+	Printing_text(Printing_getInstance(), " Last process:                                  ", x, y, NULL);
+	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y++, NULL);
 	
-	if (y < 26)
+	Printing_text(Printing_getInstance(), "                                                " , x, ++y + 1, NULL);
+	y += 2;
+	Printing_text(Printing_getInstance(), "                                                " , x, y++ + 1, NULL);
+	Printing_text(Printing_getInstance(), " Message:                                       " , x, y++, NULL);
+
+	int stringMaxLenght = __SCREEN_WIDTH / 8 - 2;
+	int rowsAvailable  = __SCREEN_HEIGHT / 8 - y;
+	int stringLength = strnlen(string, stringMaxLenght * rowsAvailable);
+	int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght? 1: 0);
+	int line = 0;
+	
+	for(; line < lines; line++, string += stringMaxLenght)
+	{
+		char messageLine[stringLength];
+		strncpy(messageLine, string, stringLength);
+		
+		// TODO: fix me, termination character not working
+		messageLine[stringLength - 1] = (char)0;
+		Printing_text(Printing_getInstance(), messageLine, x + 1, y++ + 2, NULL);
+	}
+	
+	if (y < __SCREEN_HEIGHT / 8 - 1)
 	{
 		Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 	}
@@ -117,6 +139,16 @@ int Error_triggerException(Error this, char* string)
 	// error display message
 //	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 	Printing_render(Printing_getInstance(), 31);
+
+	// dimm game
+	VIP_REGS[GPLT0] = __DIMM_VALUE_1;
+	VIP_REGS[GPLT1] = __DIMM_VALUE_2;
+	VIP_REGS[GPLT2] = __DIMM_VALUE_1;
+	VIP_REGS[GPLT3] = __GPLT3_VALUE;
+	VIP_REGS[JPLT0] = __DIMM_VALUE_1;
+	VIP_REGS[JPLT1] = __DIMM_VALUE_1;
+	VIP_REGS[JPLT2] = __DIMM_VALUE_1;
+	VIP_REGS[JPLT3] = __DIMM_VALUE_1;
 
 	//trap the game here
 	while (true);

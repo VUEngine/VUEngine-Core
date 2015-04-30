@@ -42,8 +42,8 @@ __CLASS_DEFINITION(Cuboid, Shape);
 
 static void Cuboid_constructor(Cuboid this, SpatialObject owner);
 static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
-static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement);
-static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
+static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition);
+static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement, VBVec3D previousPosition);
 static void Cuboid_configurePolygon(Cuboid this, int renew);
 
 Shape SpatialObject_getShape(SpatialObject this);
@@ -186,22 +186,23 @@ Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this)
 }
 
 // determine axis of collision
-u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement)
+u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
+	ASSERT(collidingSpatialObject, "Cuboid::getAxisOfCollision: null collidingSpatialObject");
 
 	Shape shape = __VIRTUAL_CALL(Shape, SpatialObject, getShape, collidingSpatialObject);
 
 	if (__GET_CAST(Cuboid, shape))
 	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), displacement);
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), displacement, previousPosition);
 	}
 
 	return 0;
 }
 
 // determine axis of collision
-static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
+static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
@@ -225,18 +226,16 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 		cuboid->positionedRightcuboid.z1
 	};
 		
-	const VBVec3D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPreviousPosition, this->owner);
-
 	// setup a cuboid representing the previous position
 	Rightcuboid positionedRightCuboid =
 	{
-        this->rightCuboid.x0 + previousPosition->x + ITOFIX19_13(gap.left),
-        this->rightCuboid.y0 + previousPosition->y + ITOFIX19_13(gap.up),
-        this->rightCuboid.z0 + previousPosition->z - displacement.z,
+        this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left),
+        this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up),
+        this->rightCuboid.z0 + previousPosition.z - displacement.z,
 
-        this->rightCuboid.x1 + previousPosition->x - ITOFIX19_13(gap.right),
-        this->rightCuboid.y1 + previousPosition->y - ITOFIX19_13(gap.down),
-        this->rightCuboid.z1 + previousPosition->z - displacement.z,
+        this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right),
+        this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down),
+        this->rightCuboid.z1 + previousPosition.z - displacement.z,
 	};
 
 	int numberOfAxis = 0;
@@ -303,12 +302,12 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 			displacement.y += displacementIncrement.y;
 			displacement.z += displacementIncrement.z;
 			
-			positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition->x + ITOFIX19_13(gap.left);
-			positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition->y + ITOFIX19_13(gap.up);
-			positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition->z - displacement.z;
-			positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition->x - ITOFIX19_13(gap.right);
-			positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition->y - ITOFIX19_13(gap.down);
-			positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition->z - displacement.z;
+			positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
+			positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
+			positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z - displacement.z;
+			positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
+			positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
+			positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
 		}
 	}
 	
@@ -369,12 +368,12 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 	}	
 	
 	CACHE_DISABLE;
-
+	
 	return axisOfCollision;
 }
 
 // test if collision with the entity give the displacement
-u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement)
+u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition)
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
@@ -382,14 +381,14 @@ u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBV
 
 	if (__GET_CAST(Cuboid, shape))
     {
-		return Cuboid_testIfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement);
+		return Cuboid_testIfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement, previousPosition);
 	}
 
 	return false;
 }
 
 // test if collision with the entity give the displacement
-static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement)
+static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement, VBVec3D previousPosition)
 {
 	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 

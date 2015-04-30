@@ -83,7 +83,7 @@ Gap InGameEntity_getGap(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::getGap: null this");
 
-	//InGameEntity_setGap(this);
+	InGameEntity_setGap(this);
 	return this->gap;
 }
 
@@ -170,12 +170,4 @@ void InGameEntity_setShapeState(InGameEntity this, bool state)
 	{
 		Shape_setActive(this->shape, state);
 	}
-}
-
-// retrieve previous position
-const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this)
-{
-	ASSERT(this, "InGameEntity::getPreviousPosition: null this");
-
-	return &this->transform.globalPosition;
 }

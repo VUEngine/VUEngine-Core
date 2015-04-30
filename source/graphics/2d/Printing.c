@@ -165,7 +165,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
     fontData = Printing_getFontByName(this, font);
     
     // print text
-	while (string[i])
+	while (string[i] && x < __SCREEN_WIDTH / 8)
 	{
 		pos = (y << 6) + x;
 

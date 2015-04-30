@@ -310,4 +310,14 @@ typedef struct SmallRightcuboid
 
 } SmallRightcuboid;
 
+//spacial state vector
+typedef struct GeneralAxisFlag
+{
+	int x: 2;
+	int y: 2;
+	int z: 2;
+
+} GeneralAxisFlag;
+
+
 #endif

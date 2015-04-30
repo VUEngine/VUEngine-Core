@@ -28,6 +28,7 @@
 
 #include <AnimatedInGameEntity.h>
 #include <Body.h>
+#include <CollisionSolver.h>
 #include <Clock.h>
 
 
@@ -39,23 +40,6 @@
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-enum Axes
-{
-	kXAxis = 0,
-	kYAxis,
-	kZAxis,
-	kLastAxis
-};
-
-// TODO: MOVE TO MISCSTRUCTS
-//spacial state vector
-typedef struct GeneralAxisFlag
-{
-	int x: 2;
-	int y: 2;
-	int z: 2;
-
-} GeneralAxisFlag;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -84,7 +68,7 @@ typedef struct GeneralAxisFlag
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);							\
 		__VIRTUAL_SET(ClassName, Actor, getFriction);							\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);							\
-		__VIRTUAL_SET(ClassName, Actor, getPreviousPosition);					\
+		__VIRTUAL_SET(ClassName, Actor, setPosition);							\
 		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);						\
 
 
@@ -102,14 +86,8 @@ typedef struct GeneralAxisFlag
 	/* a state machine to handle entity's logic	*/								\
 	Body body;																	\
 																				\
-	/* previous position for collision handling */								\
-	VBVec3D previousGlobalPosition;												\
-																				\
-	/* last collinding entity */												\
-	InGameEntity lastCollidingEntity[kLastAxis];								\
-																				\
-	/* flags to apply friction on each axis */									\
-	GeneralAxisFlag sensibleToFriction;											\
+	/* collision solver */														\
+	CollisionSolver collisionSolver;											\
 
 __CLASS(Actor);
 
@@ -143,7 +121,6 @@ void Actor_destructor(Actor this);
 void Actor_setLocalPosition(Actor this, VBVec3D position);
 void Actor_transform(Actor this, Transformation* environmentTransform);
 void Actor_update(Actor this);
-const VBVec3D* Actor_getPreviousPosition(Actor this);
 void Actor_moveOpositeDirecion(Actor this, int axis);
 int Actor_changedDirection(Actor this, int axis);
 void Actor_changeDirectionOnAxis(Actor this, int axis);
@@ -155,6 +132,7 @@ StateMachine Actor_getStateMachine(Actor this);
 bool Actor_moves(Actor this);
 u8 Actor_isMoving(Actor this);
 VBVec3D Actor_getPosition(Actor this);
+void Actor_setPosition(Actor this, VBVec3D position);
 bool Actor_updateSpritePosition(Actor this);
 bool Actor_updateSpriteScale(Actor this);
 void Actor_stopMovement(Actor this);

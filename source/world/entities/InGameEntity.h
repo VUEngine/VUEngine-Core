@@ -49,7 +49,6 @@ struct Shape_str;
 		Entity_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);						\
-		__VIRTUAL_SET(ClassName, InGameEntity, getPreviousPosition);			\
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);					\
 		
@@ -118,7 +117,6 @@ u8 InGameEntity_isMoving(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
 Direction InGameEntity_getDirection(InGameEntity this);
 void InGameEntity_setShapeState(InGameEntity this, bool state);
-const VBVec3D* InGameEntity_getPreviousPosition(InGameEntity this);
 bool InGameEntity_updateSpriteScale(InGameEntity this);
 
 
