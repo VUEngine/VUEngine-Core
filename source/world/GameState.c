@@ -220,10 +220,14 @@ void GameState_transform(GameState this)
 			{0, 0, 0},
 			// global position
 			{0, 0, 0},
-			// scale
-			{1, 1},
-			// rotation
-			{0, 0, 0}
+			// local rotation
+			{0, 0, 0},
+			// global rotation
+			{0, 0, 0},
+			// local scale
+			{ITOFIX7_9(1), ITOFIX7_9(1)},
+			// global scale
+			{ITOFIX7_9(1), ITOFIX7_9(1)},
 	};
 
 	// then transform loaded entities

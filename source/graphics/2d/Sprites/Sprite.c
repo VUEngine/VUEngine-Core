@@ -92,7 +92,7 @@ Scale Sprite_getScale(Sprite this)
 }
 
 // calculate zoom scaling factor
-void Sprite_resize(Sprite this, fix19_13 z)
+void Sprite_resize(Sprite this, Scale scale, fix19_13 z)
 {
 	ASSERT(this, "Sprite::resize: null this");
 
@@ -210,11 +210,11 @@ void Sprite_rewrite(Sprite this)
 // process event
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
 {
-	// scale again
-	__VIRTUAL_CALL(void, Sprite, scale, this);
-	
-	// raise flag to render again
-	Sprite_show(this);
+	ASSERT(this, "Sprite::onTextureRewritten: null this");
+
+	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, this);
+	__VIRTUAL_CALL(void, Sprite, applyHbiasTransformations, this);
+	__VIRTUAL_CALL(void, Sprite, show, this);
 }
 
 // get render flag
@@ -224,6 +224,12 @@ u8 Sprite_getParallaxDisplacement(Sprite this)
 
 	return this->parallaxDisplacement;
 }
+
+void Sprite_synchronizeRotation(Sprite this, Rotation rotation)
+{
+	ASSERT(this, "Sprite::synchronizeRotation: null this");
+}
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -390,32 +396,12 @@ void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE
  * Affine FX
  */
 
-void Sprite_noAFX(Sprite this, int direction)
+void Sprite_applyAffineTransformations(Sprite this)
 {
-	ASSERT(this, "Sprite::noAFX: null this");
+	ASSERT(this, "Sprite::applyAffineTransformations: null this");
 }
 
-void Sprite_scale(Sprite this)
+void Sprite_applyHbiasTransformations(Sprite this)
 {
-	ASSERT(this, "Sprite::scale: null this");
-}
-
-void Sprite_rotate(Sprite this, int angle)
-{
-	ASSERT(this, "Sprite::rotate: null this");
-}
-
-void Sprite_squeezeXHFX(Sprite this)
-{
-	ASSERT(this, "Sprite::squezeXHFX: null this");
-}
-
-void Sprite_fireHFX(Sprite this)
-{
-	ASSERT(this, "Sprite::fireHFX: null this");
-}
-
-void Sprite_waveHFX(Sprite this)
-{
-	ASSERT(this, "Sprite::waveHFX: null this");
+	ASSERT(this, "Sprite::applyHbiasTransformations: null this");
 }

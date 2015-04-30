@@ -582,7 +582,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 }
 
 // transform sprites
-void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpritePosition)
+void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -590,7 +590,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 
-		if(updateSpriteScale && updateSpritePosition)
+		if(updateSpriteTransformations && updateSpritePosition)
 		{
 			// move each child to a temporary list
 			for (; node ; node = VirtualNode_getNext(node))
@@ -598,16 +598,19 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
 				// calculate the scale
-				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalPosition.z);
-	
+				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+
 				// calculate sprite's parallax
 				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 				
 				// update sprite's 2D position
 				__VIRTUAL_CALL(void, Sprite, synchronizePosition, sprite, this->transform.globalPosition);
+
+				// update sprite's 2D rotation
+				__VIRTUAL_CALL(void, Sprite, synchronizeRotation, sprite, this->transform.globalRotation);
 			}
 		}
-		else if(!updateSpriteScale && updateSpritePosition)
+		else if(!updateSpriteTransformations && updateSpritePosition)
 		{
 			// move each child to a temporary list
 			for (; node ; node = VirtualNode_getNext(node))
@@ -616,9 +619,12 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 		
 				//update sprite's 2D position
 				__VIRTUAL_CALL(void, Sprite, synchronizePosition, sprite, this->transform.globalPosition);
+
+				// update sprite's 2D rotation
+				__VIRTUAL_CALL(void, Sprite, synchronizeRotation, sprite, this->transform.globalRotation);
 			}
 		}
-		else if(updateSpriteScale && !updateSpritePosition)
+		else if(updateSpriteTransformations && !updateSpritePosition)
 		{
 			// move each child to a temporary list
 			for (; node ; node = VirtualNode_getNext(node))
@@ -626,7 +632,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpr
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
 				// calculate the scale
-				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 	
 				// calculate sprite's parallax
 				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
@@ -668,7 +674,7 @@ void Entity_transform(Entity this, Transformation* environmentTransform)
 	ASSERT(this, "Entity::transform: null this");
 
 	bool updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
-	bool updateSpriteScale = __VIRTUAL_CALL(bool, Entity, updateSpriteScale, this);
+	bool updateSpriteTransformations = __VIRTUAL_CALL(bool, Entity, updateSpriteTransformations, this);
 
 	if (this->invalidateGlobalPosition.x ||
 		this->invalidateGlobalPosition.y ||
@@ -679,10 +685,10 @@ void Entity_transform(Entity this, Transformation* environmentTransform)
 		Container_transform(__UPCAST(Container, this), environmentTransform);
 	}
 
-	if(updateSpritePosition || updateSpriteScale)
+	if(updateSpritePosition || updateSpriteTransformations)
 	{
 		// update graphical representation
-		Entity_translateSprites(this, updateSpriteScale, updateSpritePosition);
+		Entity_translateSprites(this, updateSpriteTransformations, updateSpritePosition);
 	}
 }
 
@@ -694,45 +700,12 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
 	return this->entityDefinition;
 }
 
-// retrieve class's scale
-Scale Entity_getScale(Entity this)
-{
-	ASSERT(this, "Entity::getScale: null this");
-
-	if (!this->sprites)
-	{
-		Scale scale = 
-		{
-			1,
-			1
-		};
-		
-		return scale;
-	}
-	
-	return __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
-}
-
-// set local position
-void Entity_setLocalPosition(Entity this, VBVec3D position)
-{
-	Container_setLocalPosition(__UPCAST(Container, this), position);
-}
-
 // retrieve position
 VBVec3D Entity_getPosition(Entity this)
 {
 	ASSERT(this, "Entity::getPosition: null this");
 
 	return this->transform.globalPosition;
-}
-
-// retrieve local position
-VBVec3D Entity_getLocalPosition(Entity this)
-{
-	ASSERT(this, "Entity::getLocalPosition: null this");
-
-	return this->transform.localPosition;
 }
 
 // retrieve sprite
@@ -887,9 +860,9 @@ bool Entity_updateSpritePosition(Entity this)
 }
 
 // check if must update sprite's scale
-bool Entity_updateSpriteScale(Entity this)
+bool Entity_updateSpriteTransformations(Entity this)
 {
-	ASSERT(this, "Entity::updateSpriteScale: null this");
+	ASSERT(this, "Entity::updateSpriteTransformations: null this");
 
 	return (_screenDisplacement->z || this->invalidateGlobalPosition.z);
 }

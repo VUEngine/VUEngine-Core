@@ -666,7 +666,7 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite))) << 2));
 		
 	__VIRTUAL_CALL(void, Sprite, setPosition, __UPCAST(Sprite, this->animatedSprite), spritePosition);
-	__VIRTUAL_CALL(void, Sprite, scale, __UPCAST(Sprite, this->animatedSprite));
+	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __UPCAST(Sprite, this->animatedSprite));
 	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __UPCAST(Sprite, this->animatedSprite)));
 	__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, this->animatedSprite));
 }

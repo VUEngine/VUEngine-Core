@@ -38,11 +38,10 @@
 
 #define Entity_METHODS															\
 		Container_METHODS														\
-		__VIRTUAL_DEC(getScale);												\
 		__VIRTUAL_DEC(isVisible);												\
 		__VIRTUAL_DEC(setExtraInfo);											\
 		__VIRTUAL_DEC(updateSpritePosition);									\
-		__VIRTUAL_DEC(updateSpriteScale);										\
+		__VIRTUAL_DEC(updateSpriteTransformations);								\
 		__VIRTUAL_DEC(initialize);												\
 		__VIRTUAL_DEC(ready);													\
 
@@ -51,12 +50,10 @@
 		__VIRTUAL_SET(ClassName, Entity, initialTransform);						\
 		__VIRTUAL_SET(ClassName, Entity, transform);							\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);						\
-		__VIRTUAL_SET(ClassName, Entity, getScale);								\
 		__VIRTUAL_SET(ClassName, Entity, isVisible);							\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);							\
 		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);					\
-		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);					\
-		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);						\
+		__VIRTUAL_SET(ClassName, Entity, updateSpriteTransformations);			\
 		__VIRTUAL_SET(ClassName, Entity, getPosition);							\
 		__VIRTUAL_SET(ClassName, Entity, getWidth);								\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);							\
@@ -147,14 +144,11 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
-void Entity_translateSprites(Entity this, bool updateSpriteScale, bool updateSpritePosition);
+void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition);
 void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 void Entity_transform(Entity this, Transformation* environmentTransform);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
-Scale Entity_getScale(Entity this);
 VBVec3D Entity_getPosition(Entity this);
-VBVec3D Entity_getLocalPosition(Entity this);
-void Entity_setLocalPosition(Entity this, VBVec3D position);
 int Entity_getMapParallax(Entity this);
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
 int Entity_getInGameType(Entity this);
@@ -166,7 +160,7 @@ u16 Entity_getDepth(Entity this);
 Gap Entity_getGap(Entity this);
 bool Entity_isVisible(Entity this, int pad);
 bool Entity_updateSpritePosition(Entity this);
-bool Entity_updateSpriteScale(Entity this);
+bool Entity_updateSpriteTransformations(Entity this);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
 void Entity_show(Entity this);
 void Entity_hide(Entity this);

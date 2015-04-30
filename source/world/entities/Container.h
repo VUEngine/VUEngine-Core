@@ -130,6 +130,10 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 VBVec3D Container_getGlobalPosition(Container this);
 VBVec3D Container_getLocalPosition(Container this);
 void Container_setLocalPosition(Container this, VBVec3D position);
+Rotation Container_getLocalRotation(Container this);
+void Container_setLocalRotation(Container this, Rotation rotation);
+Scale Container_getLocalScale(Container this);
+void Container_setLocalScale(Container this, Scale scale);
 int Container_onMessage(Container this, va_list args);
 int Container_doKeyPressed(Container this, int pressedKey);
 int Container_doKeyUp(Container this, int pressedKey);

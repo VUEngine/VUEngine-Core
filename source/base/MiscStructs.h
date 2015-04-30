@@ -124,16 +124,18 @@ typedef struct GravitySensibleAxis
 
 } GravitySensibleAxis;
 
-typedef struct Angle
+typedef struct Rotation
 {
-	//angle between vector and XZ plane
-	//int degree;
-	//fix7_9 sin;
-	fix7_9 cos;
-	//fix7_9 sin;
-	//fix7_9 tan;
+	// arount x axis
+	s16 x;
 
-} Angle;
+	// arount y axis
+	s16 y;
+
+	// arount z axis
+	s16 z;
+
+} Rotation;
 
 // spacial direction vector
 typedef struct Direction
@@ -251,6 +253,9 @@ typedef struct DrawSpec
 	
 	// scale
 	Scale scale;
+	
+	// angle with respect to each axis (indexes for the SINLUT array)
+	Rotation rotation;
 
 } DrawSpec;
 
@@ -263,22 +268,17 @@ typedef struct Transformation
 	// spatial global position
 	VBVec3D globalPosition;
 
+	// local rotation
+	Rotation localRotation;
+	
+	// global rotation
+	Rotation globalRotation;
+
 	// scale
-	Scale scale;
+	Scale localScale;
 
-	// rotation
-	struct rotation
-	{
-		// arount x axis
-		fix7_9 x;
-
-		// arount y axis
-		fix7_9 y;
-
-		// arount z axis
-		fix7_9 z;
-
-	} rotation;
+	// scale
+	Scale globalScale;
 
 } Transformation;
 

@@ -169,35 +169,17 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 		}
 
 		// concatenate environment transform
-		Transformation environmentTransformCopy =
-		{
-			// local position
-			{
-				0,
-				0,
-				0
-			},
-			// global position
-			{
-				environmentTransform->globalPosition.x + this->transform.localPosition.x,
-				environmentTransform->globalPosition.y + this->transform.localPosition.y,
-				environmentTransform->globalPosition.z + this->transform.localPosition.z
-			},
-			// scale
-			{
-				environmentTransform->scale.x * this->transform.scale.x,
-				environmentTransform->scale.y * this->transform.scale.y
-			},
-			// rotation
-			{
-				environmentTransform->rotation.x + this->transform.rotation.x,
-				environmentTransform->rotation.y + this->transform.rotation.y,
-				environmentTransform->rotation.z + this->transform.rotation.z
-			}
-		};
+		Transformation environmentTransformCopy;
+		environmentTransformCopy.globalPosition = environmentTransform->globalPosition;
+		environmentTransformCopy.globalRotation = environmentTransform->globalRotation;
+		environmentTransformCopy.globalScale = environmentTransform->globalScale;
+
+		Container_concatenateTransform(&environmentTransformCopy, &this->transform);
 	
 		// save new global position
 		this->transform.globalPosition = environmentTransformCopy.globalPosition;
+		this->transform.globalRotation = environmentTransformCopy.globalRotation;
+		this->transform.globalScale = environmentTransformCopy.globalScale;
 	
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;

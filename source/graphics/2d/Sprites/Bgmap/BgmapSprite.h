@@ -57,9 +57,11 @@
 	__VIRTUAL_SET(ClassName, BgmapSprite, getPosition);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, setPosition);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, synchronizePosition);					\
+	__VIRTUAL_SET(ClassName, BgmapSprite, synchronizeRotation);					\
 	__VIRTUAL_SET(ClassName, BgmapSprite, getScale);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, setDirection);						\
-	__VIRTUAL_SET(ClassName, BgmapSprite, scale);								\
+	__VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);			\
+	__VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasTransformations);			\
 	__VIRTUAL_SET(ClassName, BgmapSprite, resize);								\
 	__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);					\
 
@@ -121,10 +123,11 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 void BgmapSprite_destructor(BgmapSprite this);
 Scale BgmapSprite_getScale(BgmapSprite this);
 void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
-void BgmapSprite_resize(BgmapSprite this, fix19_13 z);
+void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
 VBVec2D BgmapSprite_getPosition(BgmapSprite this);
 void BgmapSprite_setPosition(BgmapSprite this, VBVec2D position);
 void BgmapSprite_synchronizePosition(BgmapSprite this, VBVec3D position3D);
+void BgmapSprite_synchronizeRotation(BgmapSprite this, Rotation rotation);
 void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z);
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);
 void BgmapSprite_invalidateParamTable(BgmapSprite this);
@@ -144,13 +147,8 @@ void BgmapSprite_putChar(BgmapSprite this, Point* texturePixel, BYTE* newChar);
 void BgmapSprite_putPixel(BgmapSprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
 // Affine FX
-void BgmapSprite_scale(BgmapSprite this);
-void BgmapSprite_rotate(BgmapSprite this, int angle);
-
-// H-Bias FX
-void BgmapSprite_squeezeXHFX(BgmapSprite this);
-void BgmapSprite_fireHFX(BgmapSprite this);
-void BgmapSprite_waveHFX(BgmapSprite this);
+void BgmapSprite_applyAffineTransformations(BgmapSprite this);
+void BgmapSprite_applyHbiasTransformations(BgmapSprite this);
 
 
 #endif

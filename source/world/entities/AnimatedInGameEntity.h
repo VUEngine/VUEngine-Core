@@ -65,7 +65,6 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, initialize);				\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, update);					\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);				\
-		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, getScale);				\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, resume);					\
 
 #define AnimatedInGameEntity_ATTRIBUTES											\
@@ -105,7 +104,6 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
 void AnimatedInGameEntity_initialize(AnimatedInGameEntity this);
 void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* environmentTransform);
 void AnimatedInGameEntity_update(AnimatedInGameEntity this);
-Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this);
 void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause);
 void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName);
 bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);

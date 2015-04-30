@@ -117,7 +117,6 @@ u8 InGameEntity_isMoving(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
 Direction InGameEntity_getDirection(InGameEntity this);
 void InGameEntity_setShapeState(InGameEntity this, bool state);
-bool InGameEntity_updateSpriteScale(InGameEntity this);
 
 
 #endif

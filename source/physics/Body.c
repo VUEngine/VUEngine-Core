@@ -970,20 +970,19 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	{
 		case __XAXIS:
 			
-			deltaFactor = FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->x);
+			deltaFactor = gravity->x? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->x): ITOFIX19_13(1);
 			break;
 		
 		case __YAXIS:
 			
-			deltaFactor = FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->y);
+			deltaFactor = gravity->x? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->y): ITOFIX19_13(1);
 			break;
 			
 		case __ZAXIS:
 			
-			deltaFactor = FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->z);
+			deltaFactor = gravity->x? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->z): ITOFIX19_13(1);
 			break;
 	}
-
 	
 	if (ITOFIX19_13(1) < totalElasticity)
 	{
@@ -996,6 +995,8 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	velocityDelta = FIX19_13_MULT(velocityDelta, deltaFactor);
 	
 	*velocity += velocityDelta;
+	
+	ASSERT(deltaFactor, "Body::bounceOnAxis: null 0 deltaFactor");
 
 	*velocity = FIX19_13_MULT(-*velocity, bounceCoeficient);
 	*velocity = FIX19_13_DIV(*velocity, deltaFactor);

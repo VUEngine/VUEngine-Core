@@ -36,6 +36,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
+#define __TOTAL_SIN_ENTRIES				(sizeof(SINLUT) / sizeof(u16))
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,7 +58,8 @@ extern unsigned int volatile* _xpstts;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
-static void BgmapSprite_doScale(BgmapSprite this);
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
+static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -105,6 +107,10 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 
 	this->drawSpec.scale.x = ITOFIX7_9(1);
 	this->drawSpec.scale.y = ITOFIX7_9(1);
+
+	this->drawSpec.rotation.x = 0;
+	this->drawSpec.rotation.y = 0;
+	this->drawSpec.rotation.z = 0;
 
 	this->parallaxDisplacement = bSpriteDefinition->parallaxDisplacement;
 
@@ -201,7 +207,7 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 }
 
 // calculate zoom scaling factor
-void BgmapSprite_resize(BgmapSprite this, fix19_13 z)
+void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 {
 	ASSERT(this, "BgmapSprite::resize: null this");
 
@@ -211,8 +217,11 @@ void BgmapSprite_resize(BgmapSprite this, fix19_13 z)
 
 	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE): ratio;
 	
-	this->drawSpec.scale.x = ratio * (this->drawSpec.scale.x < 0 ? -1 : 1);
-	this->drawSpec.scale.y = ratio;
+	this->drawSpec.scale.x = FIX7_9_MULT(scale.x, ratio * (this->drawSpec.scale.x < 0 ? -1 : 1));
+	this->drawSpec.scale.y = FIX7_9_MULT(scale.y, ratio * (this->drawSpec.scale.y < 0 ? -1 : 1));
+
+	ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
+	ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
 	
 	if(this->texture)
 	{
@@ -223,7 +232,7 @@ void BgmapSprite_resize(BgmapSprite this, fix19_13 z)
 		}
 		else
 		{
-			this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
+			this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), abs((FIX7_9TOFIX19_13(this->drawSpec.scale.x))));
 			this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
 		}
 	}
@@ -263,6 +272,15 @@ void BgmapSprite_synchronizePosition(BgmapSprite this, VBVec3D position3D)
 	__OPTICS_PROJECT_TO_2D(position3D, this->drawSpec.position);
 
 	this->renderFlag |= __UPDATE_G;
+}
+
+void BgmapSprite_synchronizeRotation(BgmapSprite this, Rotation rotation)
+{
+	ASSERT(this, "BgmapSprite::synchronizeRotation: null this");
+
+	this->drawSpec.rotation.x = rotation.x % __TOTAL_SIN_ENTRIES; 
+	this->drawSpec.rotation.y = rotation.y % __TOTAL_SIN_ENTRIES; 
+	this->drawSpec.rotation.z = rotation.z % __TOTAL_SIN_ENTRIES; 
 }
 
 // calculate the parallax
@@ -347,7 +365,7 @@ void BgmapSprite_render(BgmapSprite this)
 			{
 				if(0 < this->paramTableRow)
 				{
-					BgmapSprite_doScale(this);
+					BgmapSprite_doApplyAffineTransformations(this);
 					
 					if(0 < this->paramTableRow)
 					{
@@ -398,7 +416,7 @@ void BgmapSprite_invalidateParamTable(BgmapSprite this)
 
 	this->renderFlag |= __UPDATE_SIZE;
 	
-	BgmapSprite_scale(this);
+	BgmapSprite_applyAffineTransformations(this);
 }
 
 // set drawspec
@@ -437,93 +455,56 @@ void BgmapSprite_noAFX(BgmapSprite this, int direction)
 	ASSERT(this, "BgmapSprite::noAFX: null this");
 }
 
-static void BgmapSprite_doScale(BgmapSprite this)
+
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
-	ASSERT(this, "BgmapSprite::scale: null this");
-	ASSERT(this->texture, "BgmapSprite::scale: null texture");
+	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
+	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
 	if (this->param)
 	{
-		int cols = (int)Texture_getCols(this->texture) << 2;
-		int rows = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
+		int halfWidth = (int)Texture_getCols(this->texture) << 2;
+		int halfHeight = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
 
-		this->paramTableRow = Affine_scale(this->param, this->paramTableRow, this->drawSpec.scale.x, this->drawSpec.scale.y,
-				   this->drawSpec.textureSource.mx + cols,
-				   this->drawSpec.textureSource.my + rows,
-				   cols, rows);
+		this->paramTableRow = Affine_applyAll(
+				this->param, 
+				this->paramTableRow, 
+				&this->drawSpec.scale, 
+				&this->drawSpec.rotation, 
+				&this->drawSpec.textureSource,
+				halfWidth,
+				halfHeight
+		);
 	}
 }
 
-// scale sprite
-void BgmapSprite_scale(BgmapSprite this)
+static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this)
 {
-	ASSERT(this, "BgmapSprite::scale: null this");
-	ASSERT(this->texture, "BgmapSprite::scale: null texture");
+	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
+}
+
+void BgmapSprite_applyAffineTransformations(BgmapSprite this)
+{
+	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
+	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
 
 	if (this->param)
 	{
 		this->paramTableRow = 0;
 		
-		BgmapSprite_doScale(this);
+		BgmapSprite_doApplyAffineTransformations(this);
 	}
 }
 
-void BgmapSprite_rotate(BgmapSprite this, int angle)
+void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
 {
-	ASSERT(this, "BgmapSprite::rotate: null this");
-	ASSERT(this->texture, "BgmapSprite::rotate: null texture");
+	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
+	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
 
-	// TODO
 	if (this->param)
 	{
-		int cols = Texture_getCols(this->texture) << 2;
-		int rows = Texture_getRows(this->texture) << 2;
-
-		Affine_rotateZ(this->param, this->drawSpec.scale.x, this->drawSpec.scale.y,
-				   this->drawSpec.textureSource.mx + cols,
-				   this->drawSpec.textureSource.my + rows,
-				   cols, rows, angle);
+		this->paramTableRow = 0;
+		
+		BgmapSprite_doApplyHbiasTransformations(this);
 	}
-}
-
-	// TODO
-	/*
-	static int alpha=0;
-	if (this->updateParamTable==true){
-		affineRotateY(this->param,alpha,this->scale.x,this->scale.y,
-		(this->xOffset<<3)+(this->cols<<2), (this->yOffset<<3)+(this->rows<<2),
-		(this->cols<<2),(this->rows<<2));
-		if (alpha++ >125){
-			alpha=125;
-
-		}
-		// put down the flag
-		BgmapSprite_setUpdateParamTableFlag(this, false);
-
-	}
-	*/
-	//delay(5);
-
-/*
- * H-Bias FX
- */
-
-void BgmapSprite_squeezeXHFX(BgmapSprite this)
-{
-	ASSERT(this, "BgmapSprite::squezeXHFX: null this");
-
-	// TODO
-}
-
-void BgmapSprite_fireHFX(BgmapSprite this)
-{
-	ASSERT(this, "BgmapSprite::fireHFX: null this");
-
-	// TODO
-}
-
-void BgmapSprite_waveHFX(BgmapSprite this){
-	ASSERT(this, "BgmapSprite::waveHFX: null this");
-
-	// TODO
 }

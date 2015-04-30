@@ -49,6 +49,7 @@ extern float fabsf(float);
 #define FIX19_13TOFIX13_3(n)	(fix13_3)((n)>>10)
 #define FIX19_13TOFIX15_17(n)	(fix15_17)((n)<<4)
 #define FIX13_3TOFIX7_9(n)		(fix7_9) ((n)<<6)
+#define FIX13_3TOTOFIX19_13(n)	(fix19_13) ((n)<<10)
 #define FIX7_9TOFIX13_3(n)		(fix13_3)((n)>>6)
 #define FIX7_9TOFIX19_13(n)		(fix19_13)((n)<<4)
 #define FIX15_17TOFIX19_13(n)	(fix15_17)((n)>>4)

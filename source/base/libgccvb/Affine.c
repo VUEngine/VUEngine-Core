@@ -30,7 +30,7 @@
 // 											DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct AFFINE_ST
+typedef struct AffineEntry
 {
     fix13_3	pb_y;		// *y+Dx /= 8.0
     s16		paralax;
@@ -38,9 +38,9 @@ typedef struct AFFINE_ST
     fix7_9	pa;			// /=512.0
     fix7_9	pc;			// /=512.0
     u16 spacer[3];		//unknown
-} AFFINE_ST ;
+} AffineEntry ;
 
-typedef struct PDx_ST
+typedef struct AffineMatrix
 {
 	fix7_9 pa;
 	fix13_3 pb;
@@ -49,234 +49,63 @@ typedef struct PDx_ST
 	fix13_3 dx;
 	fix13_3 dy;
 	s16   paralax;
-} PDx_ST ;
+} AffineMatrix ;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-void Affine_setAll(u16 param, PDx_ST * pdx, s16 max)
+
+fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const TextureSource* textureSource, s16 width, s16 height)
 {
-	s16 i;
-	AFFINE_ST *affine;
-	affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
 	CACHE_ENABLE;
-	for (i = 0; i < max; i++)
-	{
-		fix13_3 iFix = ITOFIX13_3(i);
-		affine[i].pb_y    = FIX13_3_MULT(iFix, pdx->pb) + pdx->dx;
-		affine[i].paralax = pdx->paralax;
-		affine[i].pd_y    = FIX13_3_MULT(iFix , pdx->pd) + pdx->dy;
-		affine[i].pa      = pdx->pa;
-		affine[i].pc      = pdx->pc;
-	}
-	CACHE_DISABLE;
-}
 
-fix19_13 Affine_scale(u16 param, fix19_13 paramTableRow, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
-{
-	if (zoomX < 0)
-	{
-		fg_x *= (-1);
-	}
+	AffineMatrix affineMatrix;
 
-	PDx_ST pdx = 
-	{
-		FIX7_9_DIV(ITOFIX7_9(1), zoomX),
-		0,
-		0,
-		FIX19_13_DIV(ITOFIX19_13(1), FIX7_9TOFIX19_13(zoomY)),
-		ITOFIX13_3(bg_x - (/*abs(FIX7_9TOI(pdx.pa)) **/ fg_x/* + FIX13_3TOI(pdx.pb) * fg_y*/)),
-		ITOFIX13_3(bg_y-(/*FIX7_9TOI(pdx.pc) * fg_x + FIX13_3TOI(pdx.pd) * */fg_y)),
-		0x0000
-	};
+	ASSERT(scale->x, "Affine::applyAll: 0 x scale");
+	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
+	affineMatrix.pa  = FIX7_9_DIV(COS(rotation->z), scale->x);
+	affineMatrix.pb  = -FIX7_9TOFIX13_3(FIX7_9_DIV(SIN(rotation->z), scale->x));
+	affineMatrix.pc  = FIX7_9_DIV(SIN(rotation->z), scale->y);
+	affineMatrix.pd  = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->y));
+	affineMatrix.dx = FTOFIX13_3((textureSource->mx + width) - (FIX7_9TOF(FIX7_9_DIV(COS(rotation->z), scale->x)) * width + FIX13_3TOF(affineMatrix.pb) * height));
+	affineMatrix.dy = FTOFIX13_3((textureSource->my + height) - (FIX7_9TOF(affineMatrix.pc) * width + FIX19_13TOF(affineMatrix.pd) * height));
+	affineMatrix.paralax = 0;
+	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);
 
-	AFFINE_ST* affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
-
-	AFFINE_ST source = 
+	AffineEntry affineEntrySource = 
 	{
-			pdx.dx,
-			pdx.paralax,
-			pdx.dy,
-			pdx.pa,
-			pdx.pc
+			affineMatrix.dx,
+			affineMatrix.paralax,
+			affineMatrix.dy,
+			affineMatrix.pa,
+			affineMatrix.pc
 	};
 
 	// add one row for cleaning up
-	fix19_13 totalRows = FIX19_13_MULT(ITOFIX19_13(fg_y << 1), FIX7_9TOFIX19_13(zoomY)) + ITOFIX19_13(1);
+	fix19_13 totalRows = FIX19_13_MULT(ITOFIX19_13(height << 1), FIX7_9TOFIX19_13(scale->y)) + ITOFIX19_13(1);
 	
 	if (0 > totalRows)
 	{
 		totalRows *= -1;
 	}
 	
-	CACHE_ENABLE;
-
 	fix19_13 i = 0 <= paramTableRow? paramTableRow: 0;
 	int affineEntry = FIX19_13TOI(i);
 	int counter = 0;
-#undef __MAXIMUM_AFFINE_ROWS_PER_CALL
-#define __MAXIMUM_AFFINE_ROWS_PER_CALL				8
-//	for (; i < totalRows; i += 0b10000000000000, affineEntry ++) 
-
+	
+	// prepare ahead of time to reduce computations
+	affineMatrix.pb = FIX13_3TOTOFIX19_13(affineMatrix.pb);
+	
 	for (; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i += 0b10000000000000, affineEntry ++, counter++) 
 	{
-		/*
-		 * 0b10000000000000
-		 * 0b100000000000000
-		 * 0b110000000000000
-		 * 0b1000000000000000
-		 * 0b1010000000000000
-		 * 0b1100000000000000
-		 * 0b1110000000000000
-		 */
-		source.pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(i, pdx.pd)) + pdx.dy;
-		affine[affineEntry] = source;
+		affineEntrySource.pb_y = FIX19_13TOFIX13_3(FIX19_13_MULT(i, affineMatrix.pb)) + affineMatrix.dx;
+		affineEntrySource.pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(i, affineMatrix.pd)) + affineMatrix.dy;
+		affine[affineEntry] = affineEntrySource;
 	}
 	CACHE_DISABLE;
 	
 	return i < totalRows? i: -1;
 }
 
-//***FixMe, modify theas to update GX,GY to fit the image
-// This means we need an image structure to contain the
-// dimentions of the image, also add a copy_map fn to
-// move a map into the map table and relocate the char pointer
-// as needed.
-
-void Affine_rotateZ(u16 param, fix7_9 zoomX, fix7_9 zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y, int alpha)
-{
-	PDx_ST pdx;
-
-	CACHE_ENABLE;
-
-	if (zoomX < 0)
-	{
-		fg_x *= (-1);
-	}
-
-	pdx.pa  = FIX7_9_DIV(COS(alpha), zoomX);
-	pdx.pb  = FIX7_9TOFIX13_3(FIX7_9_DIV(SIN(alpha), zoomY));
-	pdx.pc  = FIX7_9_DIV(SIN(alpha), zoomY);
-	pdx.pd  = abs(FIX7_9TOFIX13_3(pdx.pa));
-
-	pdx.dx = ITOFIX13_3(bg_x - (FIX7_9TOI(pdx.pa) * fg_x + FIX13_3TOI(pdx.pb) * fg_y));
-	pdx.dy = ITOFIX13_3(bg_y - (FIX7_9TOI(pdx.pc) * fg_x + FIX13_3TOI(pdx.pd) * fg_y));
-
-	pdx.paralax = 0x0000;
-
-	{
-		AFFINE_ST* affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
-
-		AFFINE_ST source =
-	{
-				pdx.dx,
-				pdx.paralax,
-				pdx.dy,
-				pdx.pa,
-				pdx.pc
-
-		};
-
-		int i = FIX7_9TOI(FIX7_9_MULT(ITOFIX7_9(fg_y << 1), zoomY)) + 2;
-
-		affine[0] = source;
-
-		for (; --i; )
-		{
-			fix13_3 iFix = ITOFIX13_3(i);
-			source.pb_y = FIX13_3_MULT(iFix, pdx.pb) + pdx.dx;
-			source.pd_y = FIX13_3_MULT(iFix, pdx.pd) + pdx.dy;
-			affine[i] = source;
-		}
-	}
-	CACHE_DISABLE;
-}
-
-void Affine_rotateScale(u8 world,s16 alpha, float zoom, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
-{
-	PDx_ST pdx;
-	pdx.pb  = 0.0f;
-
-	pdx.pa  = COSF(alpha)*(1.0f/zoom);
-	pdx.pb -= SINF(alpha)*(1.0f/zoom);
-	pdx.pc  = SINF(alpha)*(1.0f/zoom);
-	pdx.pd  = pdx.pa;
-
-	pdx.dx = bg_x-(pdx.pa*fg_x + pdx.pb*fg_y);
-	pdx.dy = bg_y-(pdx.pc*fg_x + pdx.pd*fg_y);
-
-	pdx.paralax = 0x00FF;
-
-	Affine_setAll(world,&pdx,fg_y);
-}
-
-//rotate over the y axis
-void affineRotateZ(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
-{
-	PDx_ST pdx;
-	pdx.pb  = 0.0f;
-
-	pdx.pa  = COSF(alpha)/(zoomX);
-	pdx.pb -= SINF(alpha);
-	pdx.pc  = SINF(alpha);
-	pdx.pd  = pdx.pa/(zoomY);
-
-	pdx.dx = bg_x-(pdx.pa*fg_x + pdx.pb*fg_y);
-	pdx.dy = bg_y-(pdx.pc*fg_x + pdx.pd*fg_y);
-
-	pdx.paralax = 0;
-
-	Affine_setAll(param,&pdx,fg_y<<1);
-}
-
-//rotate over the y axis
-void Affine_rotateY(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
-{
-	PDx_ST pdx;
-	int direction=1;
-	pdx.pa  = direction*COSF(alpha)*(fg_x/zoomX);
-	pdx.pb  = 0.0f;
-	pdx.pc  = 0.0f;
-	pdx.pd  = 1.0f;
-
-	pdx.dx = bg_x-(direction*pdx.pa*fg_x + 0);
-	pdx.dy = bg_y-(0           + fg_y);
-	pdx.paralax = 0;
-
-	//delay(10);
-	Affine_setAll(param,&pdx,(fg_y<<1)*zoomY);
-}
-
-void affineSetAll0(u16 param, PDx_ST * pdx,s16 max,int  i)
-{
-	AFFINE_ST *affine;
-	affine = (AFFINE_ST*)__PARAM_DISPLACEMENT(param);
-	affine[i].pb_y    = FTOFIX13_3(i*pdx->pb+pdx->dx);
-	affine[i].paralax = pdx->paralax;
-	affine[i].pd_y    = FTOFIX13_3(i*pdx->pd+pdx->dy);
-	affine[i].pa      = FTOFIX7_9(pdx->pa);
-	affine[i].pc      = FTOFIX7_9(pdx->pc);
-}
-
-void Affine_scaleProject(u16 param, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y, float zoomX, float zoomY, float inc)
-{
-	PDx_ST pdx;
-	u16 i;
-	//ent->map.zoom=1-((float)0.5/DES)*ent->gz;
-	float paralax=0;
-	for (i=0;i<fg_y*2;i++)
-	{
-		pdx.pa  = 1.0f/zoomX;
-		pdx.pb  = 0.0f;
-		pdx.pc  = 0.0f;
-		pdx.pd  = 1.0f/zoomY;
-		pdx.dx = bg_x-(fg_x + 0);
-		pdx.dy = bg_y-(0           + fg_y);
-		//zoomX-=0.0113f;
-		paralax+=inc;
-		pdx.paralax = paralax;
-		affineSetAll0(param,&pdx,1,i);
-	}
-}

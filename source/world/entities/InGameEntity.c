@@ -109,6 +109,9 @@ void InGameEntity_setGap(InGameEntity this)
 			this->gap.right = this->inGameEntityDefinition->gap.left;
 		}
 	
+		ASSERT(scale.x, "InGameEntity::setGap: 0 scale x");
+		ASSERT(scale.y, "InGameEntity::setGap: 0 scale y");
+
 		// scale gap if needed
 		if (WRLD_AFFINE != bgmapMode)
 		{

@@ -128,10 +128,14 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 				{0, 0, 0},
 				// global position
 				{0, 0, 0},
-				// scale
-				{1, 1},
-				// rotation
-				{0, 0, 0}
+				// local rotation
+				{0, 0, 0},
+				// global rotation
+				{0, 0, 0},
+				// local scale
+				{ITOFIX7_9(1), ITOFIX7_9(1)},
+				// global scale
+				{ITOFIX7_9(1), ITOFIX7_9(1)}
 		};
 
 		if (this->parent)
@@ -183,10 +187,14 @@ void Actor_transform(Actor this, Transformation* environmentTransform)
 				{0, 0, 0},
 				// global position
 				{0, 0, 0},
-				// scale
-				{environmentTransform->scale.x, environmentTransform->scale.y},
-				// rotation
-				{0, 0, 0}
+				// local ,rotation
+				{0, 0, 0},
+				// global rotation
+				{0, 0, 0},
+				// local scale
+				{environmentTransform->localScale.x, environmentTransform->localScale.y},
+				// global scale
+				{environmentTransform->globalScale.x, environmentTransform->globalScale.y},
 		};
 
 		// call base
@@ -457,15 +465,6 @@ void Actor_setPosition(Actor this, VBVec3D position)
 	ASSERT(this, "Actor::setPosition: null this");
 
 	Actor_setLocalPosition(this, position);
-/*		
-	this->transform.localPosition = position;
-	
-	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
-	Actor_transform(this, &environmentTransform);
-
-	__VIRTUAL_CALL(void, Shape, positione, this->shape);
-	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
-	*/
 }
 
 // retrieve global position
@@ -490,16 +489,16 @@ bool Actor_updateSpritePosition(Actor this)
 }
 
 // check if must update sprite's scale
-bool Actor_updateSpriteScale(Actor this)
+bool Actor_updateSpriteTransformations(Actor this)
 {
-	ASSERT(this, "Actor::updateSpriteScale: null this");
+	ASSERT(this, "Actor::updateSpriteTransformations: null this");
 
 	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
 	{
 		return true;
 	}
 	
-	return Entity_updateSpriteScale(__UPCAST(Entity, this));
+	return Entity_updateSpriteTransformations(__UPCAST(Entity, this));
 }
 
 // stop movement completelty
@@ -525,15 +524,6 @@ static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
 		Body_bounce(this->body, axisOfCollision, otherSpatialObjectsElasticity);
-
-		if (!(axisOfCollision & Body_isMoving(this->body)))
-	    {
-			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kBodyStoped, &axisOfCollision);
-		}
-		else
-	    {
-			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kBodyBounced, &axisOfCollision);
-		}
 	}
 }
 
@@ -546,11 +536,9 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingSpatialObjec
 
 	if(this->collisionSolver)
 	{
-		Scale scale = Entity_getScale(__UPCAST(Entity,  this));
+		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &this->transform.globalScale);
 
-		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &scale);
-
-		Actor_checkIfMustBounce(this, axisOfCollision);
+		Actor_checkIfMustBounce(this, axisOfAllignement);
 		
 		Actor_updateSourroundingFriction(this);
 	}
@@ -566,7 +554,6 @@ static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingS
 	if(this->collisionSolver)
 	{
 		// TODO: must retrieve the scale of the other object
-		Scale scale = Entity_getScale(__UPCAST(Entity,  this));
 		VirtualList collidingSpatialObjects = __NEW(VirtualList);
 		VirtualList_pushBack(collidingSpatialObjects, collidingSpatialObject);
 		
@@ -578,34 +565,13 @@ static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingS
 		};
 		
 		// invent the colliding object's displacement to simulate that it was me
-		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), fakeLastDisplacement, &scale);
+		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), fakeLastDisplacement, &this->transform.globalScale);
 		__DELETE(collidingSpatialObjects);
 		
 		Actor_checkIfMustBounce(this, axisOfCollision);
 		
 		Actor_updateSourroundingFriction(this);
 	}
-	/*
-	ASSERT(this, "Actor::resolveCollisionAgainstMe: null this");
-	ASSERT(this->body, "Actor::resolveCollisionAgainstMe: null body");
-
-	Actor_updateCollisionStatus(this, Body_isMoving(this->body));
-
-	int axisOfCollision = 0;
-	
-	Shape collidingEntityShape = __VIRTUAL_CALL(Shape, Entity, getShape, collidingEntity);
-
-	ASSERT(collidingEntityShape, "Actor::resolveCollision: null shape");
-	
-	if(collidingEntityShape)
-	{
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, collidingEntityShape, this, collidingEntityLastDisplacement);
-		Actor_alignToCollidingEntity(this, collidingEntity, axisOfCollision);
-		Actor_checkIfMustBounce(this, collidingEntity, axisOfCollision);
-	}
-	
-	Actor_updateSourroundingFriction(this);
-	*/
 }
 
 // retrieve body

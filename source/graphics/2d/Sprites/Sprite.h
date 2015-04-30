@@ -54,9 +54,11 @@
 	__VIRTUAL_DEC(getPosition);													\
 	__VIRTUAL_DEC(setPosition);													\
 	__VIRTUAL_DEC(synchronizePosition);											\
+	__VIRTUAL_DEC(synchronizeRotation);											\
 	__VIRTUAL_DEC(getScale);													\
 	__VIRTUAL_DEC(setDirection);												\
-	__VIRTUAL_DEC(scale);														\
+	__VIRTUAL_DEC(applyAffineTransformations);									\
+	__VIRTUAL_DEC(applyHbiasTransformations);									\
 	__VIRTUAL_DEC(resize);														\
 	__VIRTUAL_DEC(calculateParallax);											\
 	__VIRTUAL_DEC(writeAnimation);												\
@@ -68,12 +70,14 @@
 #define Sprite_SET_VTABLE(ClassName)											\
 	Object_SET_VTABLE(ClassName)												\
 	__VIRTUAL_SET(ClassName, Sprite, getScale);									\
-	__VIRTUAL_SET(ClassName, Sprite, scale);									\
+	__VIRTUAL_SET(ClassName, Sprite, applyAffineTransformations);				\
+	__VIRTUAL_SET(ClassName, Sprite, applyHbiasTransformations);				\
 	__VIRTUAL_SET(ClassName, Sprite, resize);									\
 	__VIRTUAL_SET(ClassName, Sprite, writeAnimation);							\
 	__VIRTUAL_SET(ClassName, Sprite, show);										\
 	__VIRTUAL_SET(ClassName, Sprite, hide);										\
 	__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);							\
+	__VIRTUAL_SET(ClassName, Sprite, synchronizeRotation);						\
 
 #define Sprite_ATTRIBUTES														\
 																				\
@@ -134,7 +138,7 @@ typedef const SpriteDefinition SpriteROMDef;
 void Sprite_constructor(Sprite this);
 void Sprite_destructor(Sprite this);
 Scale Sprite_getScale(Sprite this);
-void Sprite_resize(Sprite this, fix19_13 z);
+void Sprite_resize(Sprite this, Scale scale, fix19_13 z);
 Texture Sprite_getTexture(Sprite this);
 u16 Sprite_getMode(Sprite this);
 void Sprite_rewrite(Sprite this);
@@ -163,6 +167,8 @@ s8 Sprite_getFrameDelay(Sprite this);
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
 void Sprite_writeAnimation(Sprite this);
 u8 Sprite_getParallaxDisplacement(Sprite this);
+void Sprite_synchronizeRotation(Sprite this, Rotation rotation);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										Sprites FXs
@@ -173,12 +179,7 @@ void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);
 void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
 // Affine FX
-void Sprite_scale(Sprite this);
-void Sprite_rotate(Sprite this, int angle);
-
-// H-Bias FX
-void Sprite_squeezeXHFX(Sprite this);
-void Sprite_fireHFX(Sprite this);
-void Sprite_waveHFX(Sprite this);
+void Sprite_applyAffineTransformations(Sprite this);
+void Sprite_applyHbiasTransformations(Sprite this);
 
 #endif

@@ -173,12 +173,19 @@ static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this
 // align to colliding spatialObject
 static void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale)
 {
+	ASSERT(this, "CollisionSolver::alignToCollidingSpatialObject: null this");
+	ASSERT(scale->y, "CollisionSolver::alignToCollidingSpatialObject: 0 scale y");
+
+	/*
 	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(1), scale->y));
 
 	if (1 > alignThreshold)
 	{
 		alignThreshold = 1;
 	}
+	*/
+	int alignThreshold = 1;
+
 
 	if (__XAXIS & axisOfCollision)
     {

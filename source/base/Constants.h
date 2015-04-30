@@ -104,10 +104,11 @@ enum MessagesTypes
 				__EXCEPTION_COLUMN : 0;												\
 		int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? 					\
 				__EXCEPTION_LINE : 0;												\
-		Printing_text(Printing_getInstance(), "SP:" , x, y + 3, NULL);				\
-		Printing_hex(Printing_getInstance(), sp, x + 6, y + 3, NULL);				\
-		Printing_text(Printing_getInstance(), "LP:" , x, y + 4, NULL);				\
-		Printing_hex(Printing_getInstance(), lp, x + 6, y + 4, NULL);				\
+		y += 2; 																	\
+		Printing_text(Printing_getInstance(), " SP:" , x, y, NULL);					\
+		Printing_hex(Printing_getInstance(), sp, x + 7, y, NULL);					\
+		Printing_text(Printing_getInstance(), " LP:" , x, ++y, NULL);				\
+		Printing_hex(Printing_getInstance(), lp, x + 7, y, NULL);					\
 																					\
 		/* thrown exception */														\
 		Error_triggerException(Error_getInstance(), MESSAGE);						\

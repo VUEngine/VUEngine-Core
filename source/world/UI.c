@@ -88,17 +88,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	int i = 0;
 	
 	// static to avoid call to memcpy
-	Transformation environmentTransform =
-	{
-			// local position
-			{0, 0, 0},
-			// global position
-			{0, 0, 0},
-			// scale
-			{1, 1},
-			// rotation
-			{0, 0, 0}
-	};
+	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
 
 	for (;entities && entities[i].entityDefinition; i++)
 	{

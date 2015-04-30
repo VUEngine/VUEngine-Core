@@ -205,23 +205,6 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 	}
 }
 
-// retrieve character's scale
-Scale AnimatedInGameEntity_getScale(AnimatedInGameEntity this)
-{
-	ASSERT(this, "AnimatedInGameEntity::getScale: null this");
-	ASSERT(this->sprites, "AnimatedInGameEntity::getScale: null sprites");
-
-	Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
-
-	// get sprite's scale
-	Scale scale = __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite);
-
-	// change direction
-	scale.x = abs((int)scale.x) * this->direction.x;
-
-	return scale;
-}
-
 // pause animation
 void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 {
