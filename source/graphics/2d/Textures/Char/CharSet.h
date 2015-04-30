@@ -98,6 +98,7 @@ typedef struct CharSetDefinition
 	// number of chars, depending on allocationType:
 	// __ANIMATED_SINGLE: number of chars of a single animation frame
 	// __ANIMATED_MULTI: sum of chars of all animation frames
+    // __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows of this texture)
 	// __NOT_ANIMATED: number of chars of whole image
 	u16 numberOfChars;
 

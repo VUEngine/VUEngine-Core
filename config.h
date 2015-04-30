@@ -15,6 +15,7 @@
 
 #define __PRINT_FRAMERATE
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										OPTICS / PROJECTION
 //---------------------------------------------------------------------------------------------------------
@@ -93,6 +94,7 @@
 // that no user's input is lost, but introducing a considerable lost of loop's 
 // passes because of the delay needed to read the keypad
 #undef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										MEMORY POOL

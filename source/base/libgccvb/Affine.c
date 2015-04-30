@@ -213,7 +213,7 @@ void Affine_rotateScale(u8 world,s16 alpha, float zoom, s16 bg_x, s16 bg_y, s16 
 }
 
 //rotate over the y axis
-void affineRotateZ1(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
+void affineRotateZ(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
 {
 	PDx_ST pdx;
 	pdx.pb  = 0.0f;
@@ -231,7 +231,7 @@ void affineRotateZ1(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16
 	Affine_setAll(param,&pdx,fg_y<<1);
 }
 
-//rotate over the z axis
+//rotate over the y axis
 void Affine_rotateY(u16 param,s16 alpha, float zoomX, float zoomY, s16 bg_x, s16 bg_y, s16 fg_x, s16 fg_y)
 {
 	PDx_ST pdx;
