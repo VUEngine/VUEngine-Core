@@ -699,31 +699,56 @@ char* Container_getName(Container this)
 	return this->name;
 }
 
+// find child by name in given list
+Container Container_findChildByName(Container this, VirtualList children, char* childName, bool recursive)
+{
+    Container child, grandChild;
+    VirtualNode node = VirtualList_begin(children);
+
+    // first remove children
+    Container_processRemovedChildren(this);
+
+    // look through all children
+    for (; node ; node = VirtualNode_getNext(node))
+    {
+        child = __UPCAST(Container, VirtualNode_getData(node));
+
+        if (child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
+        {
+            return child;
+        }
+        else if (recursive && child->children)
+        {
+            grandChild = Container_findChildByName(this, child->children, childName, recursive);
+            if (grandChild) {
+                return grandChild;
+            }
+        }
+    }
+
+    return NULL;
+}
+
 // get child by name
-Container Container_getChildByName(Container this, char* childName)
+Container Container_getChildByName(Container this, char* childName, bool recursive)
 {
 	ASSERT(this, "Container::getChildByName: null this");
 
+    Container foundChild = NULL;
+
 	if (childName && this->children)
 	{
-		// first remove children
-		Container_processRemovedChildren(this);
+        // search through direct children
+		foundChild = Container_findChildByName(this, this->children, childName, false);
 
-		VirtualNode node = VirtualList_begin(this->children);
-
-		// update each child
-		for (; node ; node = VirtualNode_getNext(node))
+        // if no direct child could be found, do a recursive search, if applicable
+        if (!foundChild && recursive)
         {
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
-
-			if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
-			{
-				return child;
-			}
+            foundChild = Container_findChildByName(this, this->children, childName, true);
         }
 	}
-	
-	return NULL;
+
+	return foundChild;
 }
 
 // get child by id
@@ -738,7 +763,7 @@ Container Container_getChildById(Container this, s16 id)
 
 		VirtualNode node = VirtualList_begin(this->children);
 
-		// update each child
+		// look through all children
 		for (; node ; node = VirtualNode_getNext(node))
         {
 			Container child = __UPCAST(Container, VirtualNode_getData(node));
