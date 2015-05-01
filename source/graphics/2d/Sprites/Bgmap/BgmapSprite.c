@@ -131,7 +131,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 		case WRLD_AFFINE:
 
 			//set map head
-			this->head = bSpriteDefinition->display | WRLD_AFFINE | WRLD_OVR;
+			this->head = bSpriteDefinition->display | WRLD_AFFINE;
 
 			//allocate param table space
 			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
