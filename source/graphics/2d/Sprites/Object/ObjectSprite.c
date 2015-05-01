@@ -240,7 +240,6 @@ void ObjectSprite_render(ObjectSprite this)
 				OAM[objectIndex << 2] = finalX;
 				OAM[(objectIndex << 2) + 1] = secondWordValue;
 				OAM[(objectIndex << 2) + 2] = finalY;
-				ASSERT(OAM[(objectIndex << 2) + 3], "test");
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
