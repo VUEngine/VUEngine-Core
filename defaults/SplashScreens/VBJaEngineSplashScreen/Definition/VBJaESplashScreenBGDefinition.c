@@ -29,8 +29,8 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern BYTE VBJaESplashScreenBGLightTiles[];
-extern BYTE VBJaESplashScreenBGLightMap[];
+extern BYTE VBJaESplashScreenBGTiles[];
+extern BYTE VBJaESplashScreenBGMap[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,11 +51,11 @@ TextureROMDef VBJAENGINE_BG_TX =
         __NOT_ANIMATED,
 
         // char definition
-        VBJaESplashScreenBGLightTiles,
+        VBJaESplashScreenBGTiles,
     },
 
     // bgmap definition
-    VBJaESplashScreenBGLightMap,
+    VBJaESplashScreenBGMap,
 
     // cols (max 64)
     48,
