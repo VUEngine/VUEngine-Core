@@ -88,8 +88,9 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
 
 	// clear OBJ memory
-	int i = 0;
-	for(i = 0; i < __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
+	int i = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+
+	for(; i < (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
 	{
 		OAM[(i << 2) + 3] = 0;
 	}

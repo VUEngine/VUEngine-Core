@@ -135,7 +135,6 @@ fix19_13 Affine_applyAllLowPrecision(u16 param, fix19_13 paramTableRow, const Sc
 	affineMatrix.dy = FTOFIX13_3((textureSource->my + height) - (FIX7_9TOF(affineMatrix.pc) * width + FIX19_13TOF(affineMatrix.pd) * height));
 	affineMatrix.paralax = 0;
 
-	/*
 	fix19_13 prePa = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->x));
 	fix19_13 prePb = -FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->x));
 	fix19_13 prePc = FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->y));

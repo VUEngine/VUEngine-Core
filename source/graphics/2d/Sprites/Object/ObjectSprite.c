@@ -54,6 +54,7 @@ __CLASS_DEFINITION(ObjectSprite, Sprite);
 // globals
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
+extern unsigned int volatile* _xpstts;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -212,6 +213,8 @@ void ObjectSprite_render(ObjectSprite this)
 		u16 secondWordValue = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
 		
+		while (*_xpstts & XPBSYR);
+
 		for (; i < rows; i++)
 		{
 			int j = 0;
