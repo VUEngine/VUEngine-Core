@@ -493,6 +493,8 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 // add child from definition
 Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
 {
+	ASSERT(this, "Entity::addChildFromDefinition: null this");
+
 	PositionedEntity positionedEntity = 
 	{
 		(EntityDefinition*)entityDefinition, 

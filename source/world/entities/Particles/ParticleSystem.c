@@ -67,7 +67,7 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	ASSERT(this, "ParticleSystem::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(particleSystemDefinition->entityDefinition, id);
+	__CONSTRUCT_BASE(&particleSystemDefinition->entityDefinition, id);
 
 	// save definition
 	this->particleSystemDefinition = particleSystemDefinition;

@@ -268,9 +268,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	// preload textures
 	Stage_loadTextures(this);
 
-	//load Stage's bgm
-	//this->bgm = (u16 (*)[6])stageDefinition->bgm;
-
 	// register all the entities in the stage's definition
 	Stage_registerEntities(this, entityNamesToIgnore);
 
