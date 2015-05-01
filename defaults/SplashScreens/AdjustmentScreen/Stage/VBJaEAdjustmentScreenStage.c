@@ -122,11 +122,5 @@ StageROMDef VBJAENGINE_ADJUSTMENT_SCREEN_ST =
     VBJAENGINE_ADJUSTMENT_SCREEN_ST_ENTITIES,
 
     //background music
-    NULL,
-
-    //identifier
-    "",
-
-    //name
-    "",
+    NULL
 };

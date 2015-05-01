@@ -86,10 +86,10 @@ typedef struct TextureDefinition
 	// pointer to the bgtexture definition in ROM
 	BYTE* bgmapDefinition;
 
-	// x size, 1 column represents 8 pixeles
+	// x size, 1 column represents 8 pixels
 	u8 cols;
 
-	// y size, 1 row represents 8 pixeles
+	// y size, 1 row represents 8 pixels
 	u8 rows;
 
 	// number of frames

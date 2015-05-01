@@ -127,11 +127,5 @@ StageROMDef VBJAENGINE_SPLASH_SCREEN_ST =
     VBJAENGINE_SPLASH_SCREEN_ST_ENTITIES,
 
     //background music
-    NULL,
-
-    //identifier
-    "",
-
-    //name
-    "",
+    NULL
 };
