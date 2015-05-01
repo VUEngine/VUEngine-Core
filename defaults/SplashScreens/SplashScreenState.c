@@ -64,7 +64,7 @@ void SplashScreenState_enter(SplashScreenState this, void* owner)
 
     __VIRTUAL_CALL(void, SplashScreenState, print, this);
 	
-	Screen_FXFadeIn(Screen_getInstance(), 16);
+    Screen_startEffect(Screen_getInstance(), kFadeIn, 16);
 }
 
 // state's execute
@@ -77,7 +77,7 @@ void SplashScreenState_execute(SplashScreenState this, void* owner)
 // state's exit
 void SplashScreenState_exit(SplashScreenState this, void* owner)
 {
-	Screen_FXFadeOut(Screen_getInstance(), 16);
+	Screen_startEffect(Screen_getInstance(), kFadeOut, 16);
 
 	// destroy the state
 	__DELETE(this);
@@ -104,7 +104,7 @@ void SplashScreenState_resume(SplashScreenState this, void* owner)
 #endif
 
 	// make a fade in
-	Screen_FXFadeIn(Screen_getInstance(), 16 >> 1);
+	    Screen_startEffect(Screen_getInstance(), kFadeIn, 16);
 
 #ifdef __DEBUG_TOOLS
 	}

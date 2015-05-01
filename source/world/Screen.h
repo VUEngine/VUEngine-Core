@@ -40,8 +40,6 @@
 #define __ACTIVE 		(int)0x1
 #define __PASSIVE		(int)0x0
 
-// delay between screen movements during shaking effect (in ms)
-#define SHAKE_DELAY		100
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -55,7 +53,6 @@
 // declare the virtual methods which are redefined
 #define Screen_SET_VTABLE(ClassName)											\
     Object_SET_VTABLE(ClassName)												\
-    __VIRTUAL_SET(ClassName, Screen, handleMessage);							\
 
 #define Screen_ATTRIBUTES														\
 																				\
@@ -77,15 +74,6 @@
 	/* actor to center the screen around */										\
 	InGameEntity focusInGameEntity;												\
 																				\
-	/* temporary variable to hold the focus entity during shaking fx */			\
-	InGameEntity tempFocusInGameEntity;											\
-																				\
-	/* last offset set by shake function */										\
-	VBVec3D lastShakeOffset;													\
-																				\
-	/* time left in current shaking fx (in ms) */								\
-	u16 shakeTimeLeft;															\
-																				\
 	/* world's screen's last displacement */									\
 	VBVec3D lastDisplacement;													\
 																				\
@@ -105,7 +93,6 @@ Screen Screen_getInstance();
 void Screen_destructor(Screen this);
 void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager);
 void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving);
-bool Screen_handleMessage(Screen this, Telegram telegram);
 Optical Screen_getOptical(Screen this);
 void Screen_setOptical(Screen this, Optical optical);
 void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity);
@@ -120,10 +107,8 @@ VBVec3D Screen_getLastDisplacement(Screen this);
 Size Screen_getStageSize(Screen this);
 void Screen_setStageSize(Screen this, Size size);
 void Screen_forceDisplacement(Screen this, int flag);
-void Screen_FXFadeIn(Screen this, int wait);
-void Screen_FXFadeOut(Screen this, int wait);
-void Screen_FXShakeStart(Screen this, u16 duration);
-void Screen_FXShakeStop(Screen this);
+void Screen_startEffect(Screen this, int effect, int duration);
+void Screen_stopEffect(Screen this, int effect);
 
 
 #endif

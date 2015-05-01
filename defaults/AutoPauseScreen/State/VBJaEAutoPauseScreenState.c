@@ -89,14 +89,14 @@ static void VBJaEAutoPauseScreenState_enter(VBJaEAutoPauseScreenState this, void
     u8 strTextXPos = (__SCREEN_WIDTH >> 4) - (strAutomaticPauseTextSize.x >> 1);
     Printing_text(Printing_getInstance(), strAutomaticPauseText, strTextXPos, 11 + strAutomaticPauseSize.y, __AUTO_PAUSE_SCREEN_TEXT_FONT);
 
-	Screen_FXFadeIn(Screen_getInstance(), 16 >> 1);
+    Screen_startEffect(Screen_getInstance(), kFadeIn, 16 >> 1);
 }
 
 // state's exit
 static void VBJaEAutoPauseScreenState_exit(VBJaEAutoPauseScreenState this, void* owner)
 {
 	// make a fade out
-	Screen_FXFadeOut(Screen_getInstance(), 16 >> 1);
+	Screen_startEffect(Screen_getInstance(), kFadeOut, 16 >> 1);
 }
 
 // state's on message

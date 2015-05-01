@@ -26,7 +26,6 @@
 #include <Screen.h>
 #include <Optics.h>
 #include <Game.h>
-#include <MessageDispatcher.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,9 +42,7 @@ __CLASS_DEFINITION(Screen, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void Screen_constructor(Screen this);
-bool Screen_handleMessage(Screen this, Telegram telegram);
 static void Screen_capPosition(Screen this);
-void Screen_onScreenShake(Screen this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -333,126 +330,16 @@ void Screen_forceDisplacement(Screen this, int flag)
 	this->lastDisplacement.z = flag ? 1 : 0;
 }
 
-// state's on message
-bool Screen_handleMessage(Screen this, Telegram telegram)
+void Screen_startEffect(Screen this, int effect, int duration)
 {
-	switch (Telegram_getMessage(telegram))
-	{
-		case kScreenShake:
-            Screen_onScreenShake(this);
-            break;
-	}
+	ASSERT(this, "Screen::forceDisplacement: null this");
 
-	return false;
+	__VIRTUAL_CALL(void, ScreenMovementManager, startEffect, this->screenMovementManager, effect, duration);
 }
 
-// fade in the screen
-void Screen_FXFadeIn(Screen this, int wait)
+void Screen_stopEffect(Screen this, int effect)
 {
-	ASSERT(this, "Screen::FXFadeIn: null this");
+	ASSERT(this, "Screen::forceDisplacement: null this");
 
-	int i = 0;
-	// create the delay
-	for (; i <= 32; i += 2)
-	{
-		if (wait)
-		{
-			// create time delay
-			Clock_delay(Game_getClock(Game_getInstance()), wait);
-		}
-
-		// increase brightness
-		SET_BRIGHT(i, i << 1, i);
-	}
-}
-
-// fade out the screen
-void Screen_FXFadeOut(Screen this, int wait)
-{
-	ASSERT(this, "Screen::FXFadeOut: null this");
-
-	int i = 32;
-
-	// create the delay
-	for (; i >= 0; i-=2)
-	{
-		if (wait)
-		{
-			// create time delay
-			Clock_delay(Game_getClock(Game_getInstance()), wait);
-		}
-		// decrease brightness
-		SET_BRIGHT(i, i << 1, i);
-	}
-}
-
-// start shaking the screen
-void Screen_FXShakeStart(Screen this, u16 duration)
-{
-	ASSERT(this, "Screen::FXShakeStart: null this");
-
-    // set desired fx duration
-    this->shakeTimeLeft = duration;
-
-    // discard pending screen shake messages from previously started shake fx
-    MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance(), kScreenShake);
-
-    // instantly send shake message to myself to start fx
-    MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kScreenShake, NULL);
-}
-
-// stop shaking the screen
-void Screen_FXShakeStop(Screen this)
-{
-	ASSERT(this, "Screen::FXShakeStop: null this");
-
-    this->shakeTimeLeft = 0;
-}
-
-// shake the screen
-void Screen_onScreenShake(Screen this)
-{
-	ASSERT(this, "Screen::onScreenShake: null this");
-
-    // stop if no shaking time left
-    if (this->shakeTimeLeft == 0)
-    {
-        // if needed, undo last offset
-        if (this->lastShakeOffset.x != 0 || this->lastShakeOffset.y != 0)
-        {
-            Screen_setFocusInGameEntity(this, this->tempFocusInGameEntity);
-            this->lastShakeOffset.x = 0;
-            GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(Game_getStateMachine(Game_getInstance()))));
-        }
-
-        return;
-    }
-
-    // substract time until next shake
-    this->shakeTimeLeft = (this->shakeTimeLeft <= SHAKE_DELAY) ? 0 : this->shakeTimeLeft - SHAKE_DELAY;
-
-    if (this->lastShakeOffset.x == 0 && this->lastShakeOffset.y == 0)
-    {
-        // new offset
-        // TODO: use random number(s) or pre-defined shaking pattern
-        this->lastShakeOffset.x = ITOFIX19_13(2);
-
-        this->tempFocusInGameEntity = Screen_getFocusInGameEntity(this);
-		Screen_unsetFocusInGameEntity(this);
-
-        // move screen a bit
-        Screen_move(this, this->lastShakeOffset, false);
-    }
-    else
-    {
-        // undo last offset
-        Screen_setFocusInGameEntity(this, this->tempFocusInGameEntity);
-        this->lastShakeOffset.x = 0;
-    }
-
-    // apply screen offset
-    GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(Game_getStateMachine(Game_getInstance()))));
-
-    // send message for next screen movement
-	MessageDispatcher_dispatchMessage(SHAKE_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kScreenShake, NULL);
+	__VIRTUAL_CALL(void, ScreenMovementManager, stopEffect, this->screenMovementManager, effect);
 }

@@ -25,6 +25,8 @@
 
 #include <ScreenMovementManager.h>
 #include <Screen.h>
+#include <Game.h>
+#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -42,7 +44,8 @@ __CLASS_FRIEND_DEFINITION(Screen);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void ScreenMovementManager_constructor(ScreenMovementManager this);
+void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration);
+void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,7 +62,7 @@ static void ScreenMovementManager_constructor(ScreenMovementManager this);
 __SINGLETON(ScreenMovementManager);
 
 // class's constructor
-static void ScreenMovementManager_constructor(ScreenMovementManager this)
+void ScreenMovementManager_constructor(ScreenMovementManager this)
 {
 	ASSERT(this, "ScreenMovementManager::constructor: null this");
 
@@ -142,3 +145,65 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 	}
 }
 
+void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, int duration)
+{
+	ASSERT(this, "ScreenMovementManager::startEffect: null this");
+	
+	switch(effect)
+	{
+		case kFadeIn:
+			
+			ScreenMovementManager_FXFadeIn(this, duration);
+			break;
+
+		case kFadeOut:
+			
+			ScreenMovementManager_FXFadeOut(this, duration);
+			break;
+	}
+}
+
+void ScreenMovementManager_stopEffect(ScreenMovementManager this, int effect)
+{
+	ASSERT(this, "ScreenMovementManager::stopEffect: null this");
+}
+
+// fade in the screen
+void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
+{
+	ASSERT(this, "ScreenMovementManager::FXFadeIn: null this");
+
+	int i = 0;
+	// create the delay
+	for (; i <= 32; i += 2)
+	{
+		if (duration)
+		{
+			// create time delay
+			Clock_delay(Game_getClock(Game_getInstance()), duration);
+		}
+
+		// increase brightness
+		SET_BRIGHT(i, i << 1, i);
+	}
+}
+
+// fade out the screen
+void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
+{
+	ASSERT(this, "ScreenMovementManager::FXFadeOut: null this");
+
+	int i = 32;
+
+	// create the delay
+	for (; i >= 0; i-=2)
+	{
+		if (duration)
+		{
+			// create time delay
+			Clock_delay(Game_getClock(Game_getInstance()), duration);
+		}
+		// decrease brightness
+		SET_BRIGHT(i, i << 1, i);
+	}
+}
