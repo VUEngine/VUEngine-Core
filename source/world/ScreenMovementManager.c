@@ -130,9 +130,6 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 				screen->lastDisplacement.x = screen->position.x - screen->lastDisplacement.x;
 				screen->lastDisplacement.y = screen->position.y - screen->lastDisplacement.y;
 				screen->lastDisplacement.z = screen->position.z - screen->lastDisplacement.z;
-				
-				screen->lastDisplacement.z = 0;
-				screen->position.z = 0;
 			}
 			else
 			{
