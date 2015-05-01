@@ -131,12 +131,6 @@ typedef struct StageDefinition
 	// pointer to the background music
 	const u16 (*bgm)[];
 
-	// stages's identifier
-	void* identifier;
-
-	// stages's name
-	void* name;
-
 } StageDefinition;
 
 typedef const StageDefinition StageROMDef;

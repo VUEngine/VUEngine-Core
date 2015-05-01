@@ -117,10 +117,4 @@ StageROMDef EMPTY_ST =
 
     //background music
     NULL,
-
-    //identifier
-    "",
-
-    //name
-    "",
 };
