@@ -336,8 +336,6 @@ void BgmapSprite_render(BgmapSprite this)
 				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
 			}
 			
-			while (*_xpstts & XPBSYR);
-
 			// make sure to not render again
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__UPCAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;

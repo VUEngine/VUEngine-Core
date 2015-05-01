@@ -137,8 +137,7 @@ static void ObjectTexture_writeAnimatedSingle(ObjectTexture this)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = objectIndex * 2;
-			u16 charNumber = framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8);
-			charNumber += charLocation;
+			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
 		}
 	}
@@ -162,8 +161,7 @@ static void ObjectTexture_writeAnimatedShared(ObjectTexture this)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = (i * cols + j) << 1;
-			u16 charNumber = framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8);
-			charNumber += charLocation;
+			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
 		}
 	}
@@ -187,8 +185,7 @@ static void ObjectTexture_writeAnimatedMulti(ObjectTexture this)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = (i * cols + j) << 1;
-			u16 charNumber = framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8);
-			charNumber += charLocation;
+			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
 		}
 	}
@@ -212,8 +209,7 @@ static void ObjectTexture_writeNotAnimated(ObjectTexture this)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = (i * cols + j) << 1;
-			u16 charNumber = framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8);
-			charNumber += charLocation;
+			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
 			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
 		}
 	}

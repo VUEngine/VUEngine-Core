@@ -524,6 +524,15 @@ static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
 		Body_bounce(this->body, axisOfCollision, otherSpatialObjectsElasticity);
+		
+		if (!(axisOfCollision & Body_isMoving(this->body)))
+	    {
+			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kBodyStoped, &axisOfCollision);
+		}
+		else
+	    {
+			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this), kBodyBounced, &axisOfCollision);
+		}
 	}
 }
 

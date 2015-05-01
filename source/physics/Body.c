@@ -704,12 +704,15 @@ void Body_stopMovement(Body this, u8 axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
+	u8 axisOfStopping = 0;
+	
 	if (__XAXIS & axis)
 	{
 		// not moving anymore
 		this->velocity.x = 0;
 		this->acceleration.x = 0;
 		this->appliedForce.x = 0;
+		axisOfStopping |= __XAXIS;
 	}
 
 	if (__YAXIS & axis)
@@ -718,6 +721,7 @@ void Body_stopMovement(Body this, u8 axis)
 		this->velocity.y = 0;
 		this->acceleration.y = 0;
 		this->appliedForce.y = 0;
+		axisOfStopping |= __YAXIS;
 	}
 
 	if (__ZAXIS & axis)
@@ -726,12 +730,13 @@ void Body_stopMovement(Body this, u8 axis)
 		this->velocity.z = 0;
 		this->acceleration.z = 0;
 		this->appliedForce.z = 0;
+		axisOfStopping |= __ZAXIS;
 	}
 
 	if (!Body_isMoving(this))
 	{
 		Body_sleep(this);
-		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyStoped, NULL);
+		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->owner), kBodyStoped, &axisOfStopping);
 	}
 }
 

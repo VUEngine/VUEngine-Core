@@ -213,8 +213,6 @@ void ObjectSprite_render(ObjectSprite this)
 		u16 secondWordValue = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
 		
-		while (*_xpstts & XPBSYR);
-
 		for (; i < rows; i++)
 		{
 			int j = 0;
@@ -280,6 +278,8 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 
 		// render in the new position to avoid flickering
 		this->renderFlag = true;
+		while (*_xpstts & XPBSYR);
+
 		ObjectSprite_render(this);
 
 		// turn off previous OBJs' to avoid ghosting
