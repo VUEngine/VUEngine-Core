@@ -150,11 +150,6 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 		globalPosition.y += position.y;
 		globalPosition.z += position.z;
 
-		if (this->collisionSolver)
-		{
-			CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __XAXIS | __YAXIS | __ZAXIS);
-		}
-
 		Body_setPosition(this->body, globalPosition, __UPCAST(SpatialObject, this));
 	}
 }
@@ -222,7 +217,7 @@ void Actor_update(Actor this)
 }
 
 // update colliding entities
-void Actor_updateCollisionStatus(Actor this, u8 movementAxis)
+void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 
@@ -405,7 +400,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 					case kBodyStartedMoving:
 
 						CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
-						Actor_updateCollisionStatus(this, *(u8*)Telegram_getExtraInfo(telegram));
+						Actor_resetCollisionStatus(this, *(u8*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
@@ -643,6 +638,6 @@ void Actor_addForce(Actor this, const Force* force)
 
 	Body_addForce(this->body, &effectiveForceToApply);
 	
-	Actor_updateCollisionStatus(this, Body_isMoving(this->body));
+	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
 	Actor_updateSourroundingFriction(this);
 }

@@ -76,9 +76,6 @@ static void VBJaEPrecautionScreenState_enter(VBJaEPrecautionScreenState this, vo
 
     // show this screen for at least (2) seconds, as defined by Nintendo in the official development manual
 	Clock_delay(Game_getClock(Game_getInstance()), __PRECAUTION_SCREEN_INITIAL_DELAY);
-
-	// flush any pressed key
-	KeypadManager_clear(KeypadManager_getInstance());
 }
 
 
