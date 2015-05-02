@@ -22,6 +22,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
 #include <AnimationCoordinator.h>
 
 
@@ -73,4 +74,31 @@ const CharSet AnimationCoordinator_getCharSet(AnimationCoordinator this)
 	ASSERT(this, "AnimationCoordinator::getCharSet: null this");
 
 	return this->charSet;
+}
+
+bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
+{
+	ASSERT(this, "AnimationCoordinator::playAnimation: null this");
+
+	return false;
+	if(VirtualList_begin(this->animationControllers))
+	{
+		AnimationController firstAnimationController = __UPCAST(AnimationController, VirtualList_front(this->animationControllers));
+
+		if(animationController == firstAnimationController)
+		{
+			return true;
+		}
+
+		// only if not playing already
+		if(strncmp(functionName, AnimationController_getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+		{
+			// first animate the frame
+			AnimationController_play(firstAnimationController, animationDescription, functionName);
+		}
+		
+		return false;
+	}
+	
+	return true;
 }

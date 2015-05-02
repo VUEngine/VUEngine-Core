@@ -72,10 +72,6 @@ void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinato
 
 	if(VirtualList_begin(this->animationControllers))
 	{
-		AnimationController firstAnimationController = __UPCAST(AnimationController, VirtualList_front(this->animationControllers));
-	
-		ASSERT(firstAnimationController, "ObjectAnimationCoordinator::addAnimationController: null firstAnimationController");
-
 		AnimationController_stop(animationController);
 	}
 	

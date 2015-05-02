@@ -260,7 +260,7 @@ bool AnimationController_update(AnimationController this, Clock clock)
 }
 
 // play animation
-void AnimationController_playAnimationFunction(AnimationController this, AnimationFunction* animationFunction)
+void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction)
 {
 	ASSERT(this, "AnimationController::playAnimation: null this");
 	ASSERT(animationFunction, "AnimationController::playAnimation: null animationFunction");
@@ -299,11 +299,19 @@ AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationCont
 }
 
 // play animation
-void AnimationController_play(AnimationController this, AnimationDescription* animationDescription, char* functionName)
+void AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName)
 {
 	ASSERT(this, "AnimationController::play: null this");
 	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
 	ASSERT(functionName, "AnimationController::play: null functionName");
+	
+	if(this->animationCoordinator)
+	{
+		if(!AnimationCoordinator_playAnimation(this->animationCoordinator, this, animationDescription, functionName))
+		{
+			return;
+		}
+	}
 
 	int i = 0;
 
@@ -352,7 +360,7 @@ void AnimationController_stop(AnimationController this)
 }
 
 // is play animation
-bool AnimationController_isPlayingFunction(AnimationController this, AnimationDescription* animationDescription, char* functionName)
+bool AnimationController_isPlayingFunction(AnimationController this, const AnimationDescription* animationDescription, char* functionName)
 {
 	ASSERT(this, "AnimationController::isPlayingFunction: null this");
 

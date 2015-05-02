@@ -28,6 +28,7 @@
 
 #include <Object.h>
 #include <CharSet.h>
+#include <Sprite.h>
 #include <AnimationController.h>
 
 
@@ -66,6 +67,7 @@ void AnimationCoordinator_destructor(AnimationCoordinator this);
 void AnimationCoordinator_addAnimationController(AnimationCoordinator this, AnimationController animationController);
 void AnimationCoordinator_removeAnimationController(AnimationCoordinator this, AnimationController animationController);
 const CharSet AnimationCoordinator_getCharSet(AnimationCoordinator this);
+bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
 
 
 #endif
