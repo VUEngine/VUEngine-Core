@@ -147,7 +147,7 @@ void Particle_transform(Particle this)
 		__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
 		
 		// update sprite's 2D position
-		__VIRTUAL_CALL(void, Sprite, synchronizePosition, this->objectSprite, position);
+		__VIRTUAL_CALL(void, Sprite, positione, this->objectSprite, position);
     }
 }
 
@@ -166,7 +166,7 @@ void Particle_setPosition(Particle this, VBVec3D position)
 	Body_setPosition(this->body, position, __UPCAST(SpatialObject, this));
 
 	// sync sprite
-	__VIRTUAL_CALL(void, Sprite, synchronizePosition, this->objectSprite, position);
+	__VIRTUAL_CALL(void, Sprite, positione, this->objectSprite, position);
 
 	// calculate sprite's parallax
 	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);

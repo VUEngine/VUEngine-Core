@@ -24,6 +24,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationController.h>
+#include <AnimationCoordinator.h>
+#include <AnimationCoordinatorFactory.h>
 #include <string.h>
 
 
@@ -47,11 +49,11 @@ extern int strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimationController, Object owner)
-__CLASS_NEW_END(AnimationController, owner);
+__CLASS_NEW_DEFINITION(AnimationController, Object owner, Sprite sprite, CharSet charSet)
+__CLASS_NEW_END(AnimationController, owner, sprite, charSet);
 
 // class's constructor
-void AnimationController_constructor(AnimationController this, Object owner)
+void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, CharSet charSet)
 {
 	__CONSTRUCT_BASE();
 
@@ -71,6 +73,9 @@ void AnimationController_constructor(AnimationController this, Object owner)
 
 	// not playing anything yet
 	this->playing = false;
+	
+	// animation coordinator
+	this->animationCoordinator = AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory_getInstance(), this, sprite, charSet);
 }
 
 //destructor
@@ -78,6 +83,11 @@ void AnimationController_destructor(AnimationController this)
 {
 	ASSERT(this, "AnimationController::destructor: null this");
 
+	if(this->animationCoordinator)
+	{
+		__VIRTUAL_CALL(void, AnimationCoordinator, removeAnimationController, this->animationCoordinator, this);
+	}
+	
 	// destroy the super object
 	__DESTROY_BASE;
 }
@@ -281,6 +291,13 @@ void AnimationController_playAnimationFunction(AnimationController this, Animati
 	this->playing = true;
 }
 
+AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this)
+{
+	ASSERT(this, "AnimationController::getPlayingAnimationFunction: null this");
+
+	return this->playing? this->animationFunction: NULL;
+}
+
 // play animation
 void AnimationController_play(AnimationController this, AnimationDescription* animationDescription, char* functionName)
 {
@@ -322,6 +339,16 @@ void AnimationController_play(AnimationController this, AnimationDescription* an
 			this->playing = true;
 		}
 	}
+}
+
+// stop animation
+void AnimationController_stop(AnimationController this)
+{
+	ASSERT(this, "AnimationController::stop: null this");
+
+	this->animationFunction = NULL;
+	this->playing = false;
+	this->actualFrame = 0;
 }
 
 // is play animation

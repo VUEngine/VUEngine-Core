@@ -156,7 +156,7 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 		{
 			CharSet charSet = __UPCAST(CharSet, VirtualNode_getData(node));
 			
-			if(CharSet_getCharSetDefinition(charSet) == charSetDefinition)
+			if(CharSet_getCharSetDefinition(charSet) == charSetDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
 			{
 				return charSet;
 			}
@@ -183,6 +183,7 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 			break;
 
 		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 		case __ANIMATED_MULTI:
 		case __NOT_ANIMATED:
 

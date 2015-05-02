@@ -606,10 +606,10 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 				
 				// update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, synchronizePosition, sprite, this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, positione, sprite, this->transform.globalPosition);
 
 				// update sprite's 2D rotation
-				__VIRTUAL_CALL(void, Sprite, synchronizeRotation, sprite, this->transform.globalRotation);
+				__VIRTUAL_CALL(void, Sprite, rotate, sprite, this->transform.globalRotation);
 			}
 		}
 		else if(!updateSpriteTransformations && updateSpritePosition)
@@ -620,10 +620,10 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
 				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, synchronizePosition, sprite, this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, positione, sprite, this->transform.globalPosition);
 
 				// update sprite's 2D rotation
-				__VIRTUAL_CALL(void, Sprite, synchronizeRotation, sprite, this->transform.globalRotation);
+				__VIRTUAL_CALL(void, Sprite, rotate, sprite, this->transform.globalRotation);
 			}
 		}
 		else if(updateSpriteTransformations && !updateSpritePosition)

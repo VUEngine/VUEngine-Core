@@ -256,9 +256,9 @@ void BgmapSprite_setPosition(BgmapSprite this, VBVec2D position)
 	this->drawSpec.position.z = position.z;
 }
 
-void BgmapSprite_synchronizePosition(BgmapSprite this, VBVec3D position3D)
+void BgmapSprite_positione(BgmapSprite this, VBVec3D position3D)
 {
-	ASSERT(this, "BgmapSprite::synchronizePosition: null this");
+	ASSERT(this, "BgmapSprite::positione: null this");
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -274,9 +274,9 @@ void BgmapSprite_synchronizePosition(BgmapSprite this, VBVec3D position3D)
 	this->renderFlag |= __UPDATE_G;
 }
 
-void BgmapSprite_synchronizeRotation(BgmapSprite this, Rotation rotation)
+void BgmapSprite_rotate(BgmapSprite this, Rotation rotation)
 {
-	ASSERT(this, "BgmapSprite::synchronizeRotation: null this");
+	ASSERT(this, "BgmapSprite::rotate: null this");
 
 	this->drawSpec.rotation.x = rotation.x % __TOTAL_SIN_ENTRIES; 
 	this->drawSpec.rotation.y = rotation.y % __TOTAL_SIN_ENTRIES; 

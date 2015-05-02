@@ -28,6 +28,8 @@
 
 #include <Object.h>
 #include <Clock.h>
+#include <CharSet.h>
+#include <Sprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -37,15 +39,6 @@
 // event
 #define __EVENT_ANIMATION_COMPLETE				"animationComplete"
 #define __EVENT_ANIMATION_FRAME_CHANGED			"animationFrameChanged"
-
-// max length of an animation function's name
-#define __MAX_ANIMATION_FUNCTION_NAME_LENGTH	20
-
-// max number of frames per animation function
-#define __MAX_FRAMES_PER_ANIMATION_FUNCTION		16
-
-// max number of animation functions per description
-#define __MAX_ANIMATION_FUNCTIONS				32
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,6 +58,9 @@
 																				\
 	/* who owns the animated sprite */											\
 	Object owner;																\
+																				\
+	/* who owns the animated sprite */											\
+	AnimationCoordinator animationCoordinator;									\
 																				\
 	/* actual animation's frame to show */										\
 	s8 actualFrame;																\
@@ -92,49 +88,14 @@ __CLASS(AnimationController);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// a function which defines the frames to play
-typedef struct AnimationFunction
-{
-	// number of frames of this animation function
-	int numberOfFrames;
-
-	// frames to play in animation
-	int frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
-
-	// number of cicles a frame of animation is displayed
-	int delay;
-
-	// whether to play it in loop or not
-	int loop;
-
-	// method to call function completion
-	void* onAnimationComplete;
-
-	// function's name
-	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];
-
-} AnimationFunction;
-
-typedef const AnimationFunction AnimationFunctionROMDef;
-
-// an animation definition
-typedef struct AnimationDescription
-{
-	// animation functions
-	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
-
-} AnimationDescription;
-
-typedef const AnimationDescription AnimationDescriptionROMDef;
-
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(AnimationController, Object owner);
+__CLASS_NEW_DECLARE(AnimationController, Object owner, Sprite sprite, CharSet charSet);
 
-void AnimationController_constructor(AnimationController this, Object owner);
+void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, CharSet charSet);
 void AnimationController_destructor(AnimationController this);
 void AnimationController_writeAnimation(AnimationController this);
 s8 AnimationController_getActualFrameIndex(AnimationController this);
@@ -153,7 +114,9 @@ u8 AnimationController_getRows(AnimationController this);
 u8 AnimationController_getCols(AnimationController this);
 int AnimationController_getMapType(AnimationController this);
 void AnimationController_playAnimationFunction(AnimationController this, AnimationFunction* animationFunction);
+AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
 void AnimationController_play(AnimationController this, AnimationDescription* animationDescription, char* functionName);
+void AnimationController_stop(AnimationController this);
 bool AnimationController_isPlayingFunction(AnimationController this, AnimationDescription* animationDescription, char* functionName);
 bool AnimationController_isPlaying(AnimationController this);
 void AnimationController_write(AnimationController this);

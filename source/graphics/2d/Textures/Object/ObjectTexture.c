@@ -96,6 +96,7 @@ void ObjectTexture_write(ObjectTexture this)
 			break;
 
 		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 			
 			ObjectTexture_writeAnimatedShared(this);
 			break;

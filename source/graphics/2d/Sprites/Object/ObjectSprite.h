@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Sprite.h>
+#include <AnimationController.h>
 #include <MiscStructs.h>
 #include <Texture.h>
 
@@ -49,7 +50,7 @@
 	__VIRTUAL_SET(ClassName, ObjectSprite, render);								\
 	__VIRTUAL_SET(ClassName, ObjectSprite, getPosition);						\
 	__VIRTUAL_SET(ClassName, ObjectSprite, setPosition);						\
-	__VIRTUAL_SET(ClassName, ObjectSprite, synchronizePosition);				\
+	__VIRTUAL_SET(ClassName, ObjectSprite, positione);							\
 	__VIRTUAL_SET(ClassName, ObjectSprite, setDirection);						\
 	__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);					\
 	__VIRTUAL_SET(ClassName, ObjectSprite, show);								\
@@ -114,7 +115,7 @@ void ObjectSprite_destructor(ObjectSprite this);
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
 VBVec2D ObjectSprite_getPosition(ObjectSprite this);
 void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position);
-void ObjectSprite_synchronizePosition(ObjectSprite this, VBVec3D position3D);
+void ObjectSprite_positione(ObjectSprite this, VBVec3D position3D);
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
 void ObjectSprite_render(ObjectSprite this);
 u8 ObjectSprite_getTotalObjects(ObjectSprite this);

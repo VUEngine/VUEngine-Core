@@ -23,11 +23,13 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <ObjectAnimatedSprite.h>
 #include <ObjectSpriteContainer.h>
+#include <AnimationController.h>
 #include <ObjectTexture.h>
 #include <Game.h>
-#include <string.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,7 +64,7 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Sp
 	// construct base object
 	__CONSTRUCT_BASE(spriteDefinition);
 
-	this->animationController = __NEW(AnimationController, owner);
+	this->animationController = __NEW(AnimationController, owner, __UPCAST(Sprite, this), Texture_getCharSet(this->texture));
 }
 
 //destructor
@@ -102,6 +104,7 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 			{
 				CharSet charSet = Texture_getCharSet(this->texture);
 

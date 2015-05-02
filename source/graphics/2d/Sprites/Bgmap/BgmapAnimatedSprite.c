@@ -23,9 +23,11 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
+
 #include <BgmapAnimatedSprite.h>
 #include <Game.h>
-#include <string.h>
+#include <AnimationController.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +62,7 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Spri
 	// construct base object
 	__CONSTRUCT_BASE(spriteDefinition);
 
-	this->animationController = __NEW(AnimationController, owner);
+	this->animationController = __NEW(AnimationController, owner, __UPCAST(Sprite, this), Texture_getCharSet(this->texture));
 	
 	if(this->texture)
 	{
@@ -95,7 +97,8 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
 		case __ANIMATED_SINGLE:
-
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 			{
 				CharSet charSet = Texture_getCharSet(this->texture);
 
@@ -106,7 +109,6 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 				//write charset
 				CharSet_write(charSet);
 			}
-
 			break;
 
 		case __ANIMATED_MULTI:

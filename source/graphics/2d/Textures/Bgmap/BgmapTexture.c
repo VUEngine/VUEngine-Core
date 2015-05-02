@@ -40,9 +40,9 @@ __CLASS_DEFINITION(BgmapTexture, Texture);
 
 static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
 static void BgmapTexture_writeAnimatedSingle(BgmapTexture this);
-static void BgmapTexture_writeNotAnimated(BgmapTexture this);
-static void BgmapTexture_writeNotAnimated(BgmapTexture this);
+static void BgmapTexture_writeAnimatedShared(BgmapTexture this);
 static void BgmapTexture_writeAnimatedMulti(BgmapTexture this);
+static void BgmapTexture_writeNotAnimated(BgmapTexture this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -90,6 +90,12 @@ void BgmapTexture_write(BgmapTexture this)
 			BgmapTexture_writeAnimatedSingle(this);
 			break;
 
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
+
+			BgmapTexture_writeAnimatedShared(this);
+			break;
+
 		case __ANIMATED_MULTI:
 
 			// write the definition to graphic memory
@@ -100,11 +106,6 @@ void BgmapTexture_write(BgmapTexture this)
 
 			// write the definition to graphic memory
 			BgmapTexture_writeNotAnimated(this);
-			break;
-
-		case __ANIMATED_SHARED:
-
-			ASSERT(false, "BgmapTexture::write: __ANIMATED_SHARED");
 			break;
 
 		default:
@@ -143,10 +144,10 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 	}
 }
 
-// write an inanimated map
-static void BgmapTexture_writeNotAnimated(BgmapTexture this)
+// write an animated map
+static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::writeNoAnimated: null this");
+	ASSERT(this, "BgmapTexture::writeAnimated: null this");
 
 	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
@@ -161,15 +162,15 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	{
 		return;
 	}
-	
+
 	//put the map into memory calculating the number of char for each reference
 	for (; i--;)
 	{
-		//specifying the char displacement inside the char mem
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
+
 	}
 }
 
@@ -211,6 +212,37 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 		}
 	}
 }
+
+// write an inanimated map
+static void BgmapTexture_writeNotAnimated(BgmapTexture this)
+{
+	ASSERT(this, "BgmapTexture::writeNoAnimated: null this");
+
+	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
+	int palette = this->palette << 14;
+
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int i = this->textureDefinition->rows;
+
+	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
+	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
+
+	if (0 > xOffset || 0 > yOffset)
+	{
+		return;
+	}
+	
+	//put the map into memory calculating the number of char for each reference
+	for (; i--;)
+	{
+		//specifying the char displacement inside the char mem
+		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
+				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
+				this->textureDefinition->cols,
+				(palette) | (charLocation));
+	}
+}
+
 
 // get texture's x offset within bgmap mem
 u8 BgmapTexture_getXOffset(BgmapTexture this)

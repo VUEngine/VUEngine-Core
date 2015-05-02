@@ -25,6 +25,7 @@
 
 #include <Sprite.h>
 #include <SpriteManager.h>
+#include <AnimationController.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -225,11 +226,10 @@ u8 Sprite_getParallaxDisplacement(Sprite this)
 	return this->parallaxDisplacement;
 }
 
-void Sprite_synchronizeRotation(Sprite this, Rotation rotation)
+void Sprite_rotate(Sprite this, Rotation rotation)
 {
-	ASSERT(this, "Sprite::synchronizeRotation: null this");
+	ASSERT(this, "Sprite::rotate: null this");
 }
-
 
 
 //---------------------------------------------------------------------------------------------------------

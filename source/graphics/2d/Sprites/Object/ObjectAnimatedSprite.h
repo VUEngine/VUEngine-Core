@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSprite.h>
+#include <AnimationController.h>
 #include <Clock.h>
 
 

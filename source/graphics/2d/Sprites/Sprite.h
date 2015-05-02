@@ -28,8 +28,8 @@
 
 #include <Object.h>
 #include <MiscStructs.h>
-#include <AnimationController.h>
 #include <Texture.h>
+#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,13 +53,13 @@
 	__VIRTUAL_DEC(render);														\
 	__VIRTUAL_DEC(getPosition);													\
 	__VIRTUAL_DEC(setPosition);													\
-	__VIRTUAL_DEC(synchronizePosition);											\
-	__VIRTUAL_DEC(synchronizeRotation);											\
+	__VIRTUAL_DEC(positione);													\
+	__VIRTUAL_DEC(resize);														\
+	__VIRTUAL_DEC(rotate);														\
 	__VIRTUAL_DEC(getScale);													\
 	__VIRTUAL_DEC(setDirection);												\
 	__VIRTUAL_DEC(applyAffineTransformations);									\
 	__VIRTUAL_DEC(applyHbiasTransformations);									\
-	__VIRTUAL_DEC(resize);														\
 	__VIRTUAL_DEC(calculateParallax);											\
 	__VIRTUAL_DEC(writeAnimation);												\
 	__VIRTUAL_DEC(show);														\
@@ -77,7 +77,7 @@
 	__VIRTUAL_SET(ClassName, Sprite, show);										\
 	__VIRTUAL_SET(ClassName, Sprite, hide);										\
 	__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);							\
-	__VIRTUAL_SET(ClassName, Sprite, synchronizeRotation);						\
+	__VIRTUAL_SET(ClassName, Sprite, rotate);									\
 
 #define Sprite_ATTRIBUTES														\
 																				\
@@ -131,6 +131,43 @@ typedef struct SpriteDefinition
 
 typedef const SpriteDefinition SpriteROMDef;
 
+
+// a function which defines the frames to play
+typedef struct AnimationFunction
+{
+	// number of frames of this animation function
+	int numberOfFrames;
+
+	// frames to play in animation
+	int frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
+
+	// number of cicles a frame of animation is displayed
+	int delay;
+
+	// whether to play it in loop or not
+	int loop;
+
+	// method to call function completion
+	void* onAnimationComplete;
+
+	// function's name
+	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];
+
+} AnimationFunction;
+
+typedef const AnimationFunction AnimationFunctionROMDef;
+
+// an animation definition
+typedef struct AnimationDescription
+{
+	// animation functions
+	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
+
+} AnimationDescription;
+
+typedef const AnimationDescription AnimationDescriptionROMDef;
+
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
@@ -149,7 +186,6 @@ u16 Sprite_getHead(Sprite this);
 void Sprite_setRenderFlag(Sprite this, bool renderFlag);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
-const AnimationController const Sprite_getAnimationController(Sprite this);
 
 //---------------------------------------------------------------------------------------------------------
 // 										Animation
@@ -157,7 +193,7 @@ const AnimationController const Sprite_getAnimationController(Sprite this);
 
 void Sprite_update(Sprite this, Clock clock);
 void Sprite_pause(Sprite this, bool pause);
-void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName);
+void Sprite_play(Sprite thisa, AnimationDescription* animationDescription, char* functionName);
 bool Sprite_isPlaying(Sprite this);
 bool Sprite_isPlayingFunction(Sprite this, AnimationDescription* animationDescription, char* functionName);
 void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta);
@@ -167,7 +203,7 @@ s8 Sprite_getFrameDelay(Sprite this);
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
 void Sprite_writeAnimation(Sprite this);
 u8 Sprite_getParallaxDisplacement(Sprite this);
-void Sprite_synchronizeRotation(Sprite this, Rotation rotation);
+void Sprite_rotate(Sprite this, Rotation rotation);
 
 
 //---------------------------------------------------------------------------------------------------------

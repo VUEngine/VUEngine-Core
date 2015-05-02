@@ -34,6 +34,7 @@
 #include <string.h>
 #include <OptionsSelector.h>
 #include <Texture.h>
+#include <AnimationController.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -111,6 +112,7 @@ enum AnimationProperties
 //---------------------------------------------------------------------------------------------------------
 
 extern UserAnimatedInGameEntity _userAnimatedInGameEntities[];
+const AnimationController const Sprite_getAnimationController(Sprite this);
 
 static void AnimationEditor_constructor(AnimationEditor this);
 static void AnimationEditor_setupMode(AnimationEditor this);

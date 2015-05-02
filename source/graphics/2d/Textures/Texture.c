@@ -187,6 +187,7 @@ u8 Texture_getTotalCols(Texture this)
 
 		case __ANIMATED_MULTI:
 		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 			{
 				// return the total number of chars
 				int totalCols = this->textureDefinition->numberOfFrames * this->textureDefinition->cols;

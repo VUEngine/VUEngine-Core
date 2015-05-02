@@ -18,62 +18,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef BGMAP_ANIMATED_SPRITE_H_
-#define BGMAP_ANIMATED_SPRITE_H_
+#ifndef BGMAP_ANIMATION_COORDINATOR_H_
+#define BGMAP_ANIMATION_COORDINATOR_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BgmapSprite.h>
-#include <AnimationController.h>
-#include <Clock.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
+#include <AnimationCoordinator.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define BgmapAnimatedSprite_METHODS												\
-	BgmapSprite_METHODS															\
+#define BgmapAnimationCoordinator_METHODS											\
+	AnimationCoordinator_METHODS;													\
+	
+#define BgmapAnimationCoordinator_SET_VTABLE(ClassName)								\
+	AnimationCoordinator_SET_VTABLE(ClassName);										\
+	__VIRTUAL_SET(ClassName, BgmapAnimationCoordinator, addAnimationController);	\
+	__VIRTUAL_SET(ClassName, BgmapAnimationCoordinator, addAnimationController);	\
+	__VIRTUAL_SET(ClassName, BgmapAnimationCoordinator, removeAnimationController);	\
 
-// declare the virtual methods which are redefined
-#define BgmapAnimatedSprite_SET_VTABLE(ClassName)								\
-	BgmapSprite_SET_VTABLE(ClassName)											\
-	__VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);				\
+#define BgmapAnimationCoordinator_ATTRIBUTES										\
+																					\
+	/* super's attributes */														\
+	AnimationCoordinator_ATTRIBUTES;												\
 
-#define BgmapAnimatedSprite_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	BgmapSprite_ATTRIBUTES;														\
-																				\
-	/* bgmap's source coordinates */											\
-	TextureSource originalTextureSource;										\
-
-// declare a Sprite, which holds a texture and a drawing specification
-__CLASS(BgmapAnimatedSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
+__CLASS(BgmapAnimationCoordinator);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(BgmapAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
+__CLASS_NEW_DECLARE(BgmapAnimationCoordinator, const CharSet charSet);
 
-void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this);
-void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this);
+void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSet charSet);
+void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this);
+void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
+void BgmapAnimationCoordinator_removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
 
 
 #endif

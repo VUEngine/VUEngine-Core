@@ -137,8 +137,8 @@ int Error_triggerException(Error this, char* string)
 	}
 	
 	// error display message
-//	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
-	Printing_render(Printing_getInstance(), 31);
+	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
+//	Printing_render(Printing_getInstance(), 31);
 
 	// dimm game
 	VIP_REGS[GPLT0] = __DIMM_VALUE_1;

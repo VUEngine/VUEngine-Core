@@ -301,6 +301,8 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 				this->bgmapTextures[i] = NULL;
 				break;
 
+			case __ANIMATED_SHARED:
+			case __ANIMATED_SHARED_COORDINATED:
 			case __ANIMATED_MULTI:
 			case __NOT_ANIMATED:
 
@@ -320,7 +322,10 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	// try to find a texture with the same bgmap definition
 	for (; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if (this->bgmapTextures[i] && Texture_getBgmapDefinition(__UPCAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition)
+		if (this->bgmapTextures[i] && 
+			Texture_getBgmapDefinition(__UPCAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
+			CharSet_getAllocationType(Texture_getCharSet(__UPCAST(Texture, this->bgmapTextures[i]))) == bgmapTextureDefinition->charSetDefinition.allocationType
+		)
 		{
 			// return if found
 			return this->bgmapTextures[i];
@@ -376,6 +381,8 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
 			break;
 
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 		case __ANIMATED_MULTI:
 		case __NOT_ANIMATED:
 
@@ -401,9 +408,9 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (shared) texture no allocated");
 			break;
 			
-		case __ANIMATED_SHARED:
+		default:
 
-			NM_ASSERT(false, "BgmapTextureManager::getTexture: __ANIMATED_SHARED");
+			NM_ASSERT(false, "BgmapTextureManager::getTexture: not valid allocation type");
 			break;
 	}
 

@@ -42,6 +42,7 @@
 #include <CharSetManager.h>
 #include <SoundManager.h>
 #include <MBackgroundManager.h>
+#include <AnimationCoordinatorFactory.h>
 #include <StateMachine.h>
 #include <Screen.h>
 #include <ScreenMovementManager.h>
@@ -406,6 +407,7 @@ void Game_reset(Game this)
 	ParamTableManager_reset(this->paramTableManager);
 	SpriteManager_reset(this->spriteManager);
 	MBackgroundManager_reset(MBackgroundManager_getInstance());
+	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
 
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());

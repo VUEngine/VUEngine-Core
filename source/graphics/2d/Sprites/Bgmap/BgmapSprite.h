@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Sprite.h>
+#include <AnimationController.h>
 #include <MiscStructs.h>
 #include <Texture.h>
 
@@ -56,8 +57,8 @@
 	__VIRTUAL_SET(ClassName, BgmapSprite, render);								\
 	__VIRTUAL_SET(ClassName, BgmapSprite, getPosition);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, setPosition);							\
-	__VIRTUAL_SET(ClassName, BgmapSprite, synchronizePosition);					\
-	__VIRTUAL_SET(ClassName, BgmapSprite, synchronizeRotation);					\
+	__VIRTUAL_SET(ClassName, BgmapSprite, positione);							\
+	__VIRTUAL_SET(ClassName, BgmapSprite, rotate);								\
 	__VIRTUAL_SET(ClassName, BgmapSprite, getScale);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, setDirection);						\
 	__VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);			\
@@ -126,8 +127,8 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
 VBVec2D BgmapSprite_getPosition(BgmapSprite this);
 void BgmapSprite_setPosition(BgmapSprite this, VBVec2D position);
-void BgmapSprite_synchronizePosition(BgmapSprite this, VBVec3D position3D);
-void BgmapSprite_synchronizeRotation(BgmapSprite this, Rotation rotation);
+void BgmapSprite_positione(BgmapSprite this, VBVec3D position3D);
+void BgmapSprite_rotate(BgmapSprite this, Rotation rotation);
 void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z);
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);
 void BgmapSprite_invalidateParamTable(BgmapSprite this);

@@ -18,62 +18,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef BGMAP_ANIMATED_SPRITE_H_
-#define BGMAP_ANIMATED_SPRITE_H_
+#ifndef ANIMATION_COORDINATOR_FACTORY_H_
+#define ANIMATION_COORDINATOR_FACTORY_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <BgmapSprite.h>
+#include <Object.h>
 #include <AnimationController.h>
-#include <Clock.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
+#include <AnimationCoordinator.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define BgmapAnimatedSprite_METHODS												\
-	BgmapSprite_METHODS															\
+#define AnimationCoordinatorFactory_METHODS														\
+	Object_METHODS;																\
+	
+#define AnimationCoordinatorFactory_SET_VTABLE(ClassName)						\
+	Object_SET_VTABLE(ClassName);												\
 
-// declare the virtual methods which are redefined
-#define BgmapAnimatedSprite_SET_VTABLE(ClassName)								\
-	BgmapSprite_SET_VTABLE(ClassName)											\
-	__VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);				\
-
-#define BgmapAnimatedSprite_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	BgmapSprite_ATTRIBUTES;														\
-																				\
-	/* bgmap's source coordinates */											\
-	TextureSource originalTextureSource;										\
-
-// declare a Sprite, which holds a texture and a drawing specification
-__CLASS(BgmapAnimatedSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
+__CLASS(AnimationCoordinatorFactory);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(BgmapAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
+AnimationCoordinatorFactory AnimationCoordinatorFactory_getInstance();
 
-void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this);
-void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this);
+void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this);
+void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this);
+AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, CharSet charSet);
 
 
 #endif
