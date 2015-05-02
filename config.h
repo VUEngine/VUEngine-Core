@@ -15,7 +15,6 @@
 
 #define __PRINT_FRAMERATE
 
-
 //---------------------------------------------------------------------------------------------------------
 // 										OPTICS / PROJECTION
 //---------------------------------------------------------------------------------------------------------
@@ -98,6 +97,19 @@
 // passes because of the delay needed to read the keypad
 #undef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 
+
+//---------------------------------------------------------------------------------------------------------
+// 										ANIMATION
+//---------------------------------------------------------------------------------------------------------
+
+// max length of an animation function's name
+#define __MAX_ANIMATION_FUNCTION_NAME_LENGTH	20
+
+// max number of frames per animation function
+#define __MAX_FRAMES_PER_ANIMATION_FUNCTION		16
+
+// max number of animation functions per description
+#define __MAX_ANIMATION_FUNCTIONS				32
 
 //---------------------------------------------------------------------------------------------------------
 // 										MEMORY POOL
