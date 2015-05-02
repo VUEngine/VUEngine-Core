@@ -55,7 +55,7 @@ static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
 static void Actor_updateSourroundingFriction(Actor this);
-
+static void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -150,7 +150,14 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 		globalPosition.y += position.y;
 		globalPosition.z += position.z;
 
+		Actor_resetCollisionStatus(this, __XAXIS | __YAXIS | __ZAXIS);
+
 		Body_setPosition(this->body, globalPosition, __UPCAST(SpatialObject, this));
+		
+		if(this->shape)
+		{
+			__VIRTUAL_CALL(void, Shape, positione, this->shape);
+		}
 	}
 }
 
@@ -217,7 +224,7 @@ void Actor_update(Actor this)
 }
 
 // update colliding entities
-void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
+static void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 

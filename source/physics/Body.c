@@ -697,6 +697,11 @@ void Body_printPhysics(Body this, int x, int y)
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->acceleration.x), x, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->acceleration.y), x+14, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(this->acceleration.z), x+14*2, y++, NULL);
+	Printing_text(Printing_getInstance(), "Force", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "                             ", x, y, NULL);
+	Printing_float(Printing_getInstance(), FIX19_13TOF(this->appliedForce.x), x, y, NULL);
+	Printing_float(Printing_getInstance(), FIX19_13TOF(this->appliedForce.y), x+14, y, NULL);
+	Printing_float(Printing_getInstance(), FIX19_13TOF(this->appliedForce.z), x+14*2, y++, NULL);
 }
 
 // stop movement over an axis

@@ -138,24 +138,30 @@ u8 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Accelera
 
 	u8 axisOfCollision = 0;
 
+	VBVec3D displacement =
+    {
+    	acceleration->x ? 0 < acceleration->x? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
+		acceleration->y ? 0 < acceleration->y? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
+		acceleration->z ? 0 < acceleration->z? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0
+	};
+
+
 	int i = 0;
 	for (; i < kLastAxis; i++)
-    {
-		VirtualNode node = VirtualList_begin(this->lastCollidingSpatialObject[i]);
-		
-		for(; node; node = VirtualNode_getNext(node))
-        {
-			VBVec3D displacement =
-            {
-				kXAxis == i ? 0 < acceleration->x? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
-				kYAxis == i ? 0 < acceleration->y? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
-				kZAxis == i ? 0 < acceleration->z? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0
-			};
-
-			axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __UPCAST(SpatialObject, VirtualNode_getData(node)), displacement, this->ownerPreviousPosition);
+	{
+		if ((kXAxis == i && (displacement.x)) ||
+			(kYAxis == i && (displacement.y)) ||
+			(kZAxis == i && (displacement.z))
+		)
+		{
+			VirtualNode node = VirtualList_begin(this->lastCollidingSpatialObject[i]);
+			for(; node; node = VirtualNode_getNext(node))
+	        {
+				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __UPCAST(SpatialObject, VirtualNode_getData(node)), displacement, this->ownerPreviousPosition);
+	        }
 		}
 	}
-
+	
 	return axisOfCollision;
 }
 
@@ -339,6 +345,10 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 	}
 
 	__VIRTUAL_CALL(void, SpatialObject, setPosition, this->owner, myOwnerPosition);
+
+	// save owner's new position
+	this->ownerPreviousPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, SpatialObject, getPosition, this->owner);
+
 }
 
 // retrieve friction of colliding objects
