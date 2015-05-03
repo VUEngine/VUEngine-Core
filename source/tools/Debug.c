@@ -58,7 +58,6 @@
 #include <Body.h>
 #include <Circle.h>
 #include <Cuboid.h>
-#include <Mass.h>
 #include <Shape.h>
 #include <Polygon.h>
 
@@ -479,7 +478,6 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 			{&Body_getObjectSize, "Body"},
 			{&Circle_getObjectSize, "Circle"},
 			{&Cuboid_getObjectSize, "Cuboid"},
-			{&Mass_getObjectSize, "Mass"},
 			{&Shape_getObjectSize, "Shape"},
 			{&Polygon_getObjectSize, "Polygon"},
 			{&Container_getObjectSize, "Container"},

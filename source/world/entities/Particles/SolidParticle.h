@@ -29,6 +29,13 @@
 #include <Particle.h>
 #include <Shape.h>
 
+//---------------------------------------------------------------------------------------------------------
+// 										MISC
+//---------------------------------------------------------------------------------------------------------
+
+// needed because of interdependency between Shape's and SpatialObject's headers
+Shape SpatialObject_getShape(SpatialObject this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

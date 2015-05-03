@@ -75,7 +75,7 @@
 	s8 frameDelayDelta;															\
 																				\
 	/* a pointer to the animation function being played */						\
-	AnimationFunction* animationFunction;										\
+	const AnimationFunction* animationFunction;									\
 																				\
 	/* flag to know if playing an animation */									\
 	int playing: 1;																\
@@ -114,7 +114,7 @@ u8 AnimationController_getRows(AnimationController this);
 u8 AnimationController_getCols(AnimationController this);
 int AnimationController_getMapType(AnimationController this);
 void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction);
-AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
+const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
 void AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
 void AnimationController_stop(AnimationController this);
 bool AnimationController_isPlayingFunction(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);

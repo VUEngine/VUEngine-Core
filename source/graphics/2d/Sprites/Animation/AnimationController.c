@@ -291,7 +291,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	this->playing = true;
 }
 
-AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this)
+const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getPlayingAnimationFunction: null this");
 
@@ -387,4 +387,3 @@ void AnimationController_pause(AnimationController this, bool pause)
 		this->actualFrame = 0;
 	}
 }
-

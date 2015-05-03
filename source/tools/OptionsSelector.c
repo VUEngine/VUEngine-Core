@@ -56,7 +56,6 @@
 #include <Body.h>
 #include <Circle.h>
 #include <Cuboid.h>
-#include <Mass.h>
 #include <Shape.h>
 #include <Actor.h>
 #include <InanimatedInGameEntity.h>
