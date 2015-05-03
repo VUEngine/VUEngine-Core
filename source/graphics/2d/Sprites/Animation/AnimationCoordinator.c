@@ -80,7 +80,6 @@ bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationCont
 {
 	ASSERT(this, "AnimationCoordinator::playAnimation: null this");
 
-	return false;
 	if(VirtualList_begin(this->animationControllers))
 	{
 		AnimationController firstAnimationController = __UPCAST(AnimationController, VirtualList_front(this->animationControllers));
@@ -91,7 +90,7 @@ bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationCont
 		}
 
 		// only if not playing already
-		if(strncmp(functionName, AnimationController_getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+		if(!AnimationController_isPlaying(firstAnimationController) || strncmp(functionName, AnimationController_getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 		{
 			// first animate the frame
 			AnimationController_play(firstAnimationController, animationDescription, functionName);
