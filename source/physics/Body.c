@@ -163,6 +163,15 @@ Acceleration Body_getAcceleration(Body this)
 	return this->acceleration;
 }
 
+// retrieve applied force
+Force Body_getAppliedForce(Body this)
+{
+	ASSERT(this, "Body::getAppliedForce: null this");
+
+	return this->appliedForce;
+}
+
+
 // retrieve movement type
 MovementType Body_getMovementType(Body this)
 {

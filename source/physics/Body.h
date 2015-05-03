@@ -123,6 +123,7 @@ void Body_addForce(Body this, const Force* force);
 u8 Body_isMoving(Body this);
 Velocity Body_getVelocity(Body this);
 Acceleration Body_getAcceleration(Body this);
+Force Body_getAppliedForce(Body this);
 MovementType Body_getMovementType(Body this);
 void Body_clearAcceleration(Body this, u8 axis);
 void Body_moveAccelerated(Body this, u8 axis);
