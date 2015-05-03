@@ -180,14 +180,14 @@ u8 Texture_getTotalCols(Texture this)
 	switch (CharSet_getAllocationType(this->charSet))
 	{
 		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 
 			// just return the cols
 			return this->textureDefinition->cols;
 			break;
 
 		case __ANIMATED_MULTI:
-		case __ANIMATED_SHARED:
-		case __ANIMATED_SHARED_COORDINATED:
 			{
 				// return the total number of chars
 				int totalCols = this->textureDefinition->numberOfFrames * this->textureDefinition->cols;
@@ -214,13 +214,14 @@ u8 Texture_getTotalRows(Texture this)
 	switch (CharSet_getAllocationType(this->charSet))
 	{
 		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
 
 			// just return the cols
 			return this->textureDefinition->rows;
 			break;
 
 		case __ANIMATED_MULTI:
-		case __ANIMATED_SHARED:
 			{
 				// return the total number of chars
 				int totalCols = Texture_getTotalCols(this);
