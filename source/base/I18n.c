@@ -101,22 +101,6 @@ void I18n_setActiveLanguage(I18n this, u8 languageId)
     this->ActiveLanguage = languageId;
 }
 
-// set the language by language name
-void I18n_setActiveLanguageByName(I18n this, const char* lang)
-{
-	ASSERT(this, "I18n::setActiveLanguageByName: null this");
-
-    u8 i = 0;
-	for (; __LANGUAGES[i]; i++)
-    {
-        if (0 == strcmp(__LANGUAGES[i]->name, lang))
-        {
-            I18n_setActiveLanguage(I18n_getInstance(), i);
-	        break;
-        }
-    }
-}
-
 // get all registered languages
 LangDefinition * I18n_getLanguages(I18n this)
 {
