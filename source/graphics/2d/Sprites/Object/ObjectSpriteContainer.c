@@ -326,11 +326,15 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::hide: null this");
 
-	VirtualNode node = VirtualList_begin(this->objectSprites);
-
-	for(; node; node = VirtualNode_getNext(node))
+	// must check list, because the Sprite's destructor calls this method
+	if(this->objectSprites)
 	{
-		__VIRTUAL_CALL(void, Sprite, hide, __UPCAST(Sprite, VirtualNode_getData(node)));
+		VirtualNode node = VirtualList_begin(this->objectSprites);
+	
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			__VIRTUAL_CALL(void, Sprite, hide, __UPCAST(Sprite, VirtualNode_getData(node)));
+		}
 	}
 }
 
