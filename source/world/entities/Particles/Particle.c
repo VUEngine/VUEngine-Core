@@ -143,8 +143,11 @@ void Particle_transform(Particle this)
 
 		ASSERT(this->objectSprite, "Particle::transform: null objectSprite");
 
-		// calculate sprite's parallax
-		__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
+		if (__ZAXIS & Body_isMoving(this->body))
+		{
+			// calculate sprite's parallax
+			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
+		}
 		
 		// update sprite's 2D position
 		__VIRTUAL_CALL(void, Sprite, positione, this->objectSprite, position);

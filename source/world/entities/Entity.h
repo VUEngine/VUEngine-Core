@@ -146,7 +146,7 @@ void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
 void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition);
 void Entity_initialTransform(Entity this, Transformation* environmentTransform);
-void Entity_transform(Entity this, Transformation* environmentTransform);
+void Entity_transform(Entity this, const Transformation* environmentTransform);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
 VBVec3D Entity_getPosition(Entity this);
 int Entity_getMapParallax(Entity this);

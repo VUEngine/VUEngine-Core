@@ -671,7 +671,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 }
 
 // transform class
-void Entity_transform(Entity this, Transformation* environmentTransform)
+void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
 

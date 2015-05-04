@@ -40,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #undef __STREAM_CYCLE_DURATION
-#define __STREAM_CYCLE_DURATION	(16)
+#define __STREAM_CYCLE_DURATION	(8)
 
 #define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
@@ -57,7 +57,7 @@
 
 // since there are 32 layers, that's the theoretical limit of entities to display
 #undef __STREAMING_AMPLITUDE
-#define __STREAMING_AMPLITUDE		16
+#define __STREAMING_AMPLITUDE		32
 
 #define __MAXIMUM_PARALLAX		10
 #define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)

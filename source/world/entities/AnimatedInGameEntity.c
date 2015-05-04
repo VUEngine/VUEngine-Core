@@ -150,7 +150,7 @@ static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Objec
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void AnimatedInGameEntity_transform(AnimatedInGameEntity this, Transformation* environmentTransform)
+void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "AnimatedInGameEntity::transform: null this");
 

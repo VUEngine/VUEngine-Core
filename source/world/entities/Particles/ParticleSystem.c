@@ -75,6 +75,7 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	this->particles = __NEW(VirtualList);
 	this->expiredParticles = __NEW(VirtualList);
 	
+	this->particleCount = 0;
 	this->paused = !this->particleSystemDefinition->autoStart;
 	
 	// set size from definition if there are not no sprites to be added
@@ -161,9 +162,10 @@ void ParticleSystem_update(ParticleSystem this)
 		
 		if(this->lastUpdateTime > this->nextSpawnTime)
 		{
-			if(VirtualList_getSize(this->particles) < this->particleSystemDefinition->maximumNumberOfAliveParticles)
+			if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
 			{
 				ParticleSystem_spawnParticle(this);
+				this->particleCount++;
 				this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 			}
 		}
@@ -215,7 +217,7 @@ static void ParticleSystem_spawnParticle(ParticleSystem this)
 	VirtualList_pushBack(this->particles, particle);
 }
 
-void ParticleSystem_transform(ParticleSystem this, Transformation* environmentTransform)
+void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ParticleSystem::transform: null this");
 	
@@ -303,6 +305,7 @@ static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventF
 	ASSERT(__UPCAST(Particle, eventFirer), "ParticleSystem::onParticleExipired: null this");
 
 	VirtualList_pushBack(this->expiredParticles, eventFirer);
+	this->particleCount--;
 }
 
 int ParticleSystem_computeNextSpawnTime(ParticleSystem this)

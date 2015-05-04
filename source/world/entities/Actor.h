@@ -119,7 +119,7 @@ __CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id);
 void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id);
 void Actor_destructor(Actor this);
 void Actor_setLocalPosition(Actor this, VBVec3D position);
-void Actor_transform(Actor this, Transformation* environmentTransform);
+void Actor_transform(Actor this, const Transformation* environmentTransform);
 void Actor_update(Actor this);
 void Actor_moveOpositeDirecion(Actor this, int axis);
 int Actor_changedDirection(Actor this, int axis);

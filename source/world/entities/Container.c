@@ -331,19 +331,19 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 {
 	ASSERT(this, "Container::initialTransform: null this");
 	
-	// concatenate environment transform
-	Transformation environmentTransformCopy;
-	
-	environmentTransformCopy.globalPosition = environmentTransform->globalPosition;
-	environmentTransformCopy.globalRotation = environmentTransform->globalRotation;
-	environmentTransformCopy.globalScale = environmentTransform->globalScale;
-	
-	Container_concatenateTransform(&environmentTransformCopy, &this->transform);
+	// concatenate transform
+	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
 
-	// save new globals
-	this->transform.globalPosition = environmentTransformCopy.globalPosition;
-	this->transform.globalRotation = environmentTransformCopy.globalRotation;
-	this->transform.globalScale = environmentTransformCopy.globalScale;
+	// propagate rotation
+	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	
+	// propagate scale
+	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
 	// if I have children
 	if (this->children)
@@ -360,7 +360,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
 
-			__VIRTUAL_CALL(void, Container, initialTransform, child, &environmentTransformCopy);
+			__VIRTUAL_CALL(void, Container, initialTransform, child, &this->transform);
 		}
 	}
 
@@ -368,23 +368,23 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 }
 
 // initial transform but don't call the virtual method
-void Container_transformNonVirtual(Container this, Transformation* environmentTransform)
+void Container_transformNonVirtual(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
 
-	// concatenate environment transform
-	Transformation environmentTransformCopy;
-	
-	environmentTransformCopy.globalPosition = environmentTransform->globalPosition;
-	environmentTransformCopy.globalRotation = environmentTransform->globalRotation;
-	environmentTransformCopy.globalScale = environmentTransform->globalScale;
-	
-	Container_concatenateTransform(&environmentTransformCopy, &this->transform);
+	// concatenate transform
+	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
 
-	// save new globals
-	this->transform.globalPosition = environmentTransformCopy.globalPosition;
-	this->transform.globalRotation = environmentTransformCopy.globalRotation;
-	this->transform.globalScale = environmentTransformCopy.globalScale;
+	// propagate rotation
+	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	
+	// propagate scale
+	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
 	// if I have children
 	if (this->children)
@@ -403,7 +403,7 @@ void Container_transformNonVirtual(Container this, Transformation* environmentTr
 			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
 			child->invalidateGlobalPosition.z = child->invalidateGlobalPosition.z || this->invalidateGlobalPosition.z;
 
-			Container_transformNonVirtual(child, &environmentTransformCopy);
+			Container_transformNonVirtual(child, &this->transform);
 		}
 	}
 
@@ -414,23 +414,23 @@ void Container_transformNonVirtual(Container this, Transformation* environmentTr
 }
 
 // initial transform
-void Container_transform(Container this, Transformation* environmentTransform)
+void Container_transform(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
 
-	// concatenate environment transform
-	Transformation environmentTransformCopy;
-	
-	environmentTransformCopy.globalPosition = environmentTransform->globalPosition;
-	environmentTransformCopy.globalRotation = environmentTransform->globalRotation;
-	environmentTransformCopy.globalScale = environmentTransform->globalScale;
-	
-	Container_concatenateTransform(&environmentTransformCopy, &this->transform);
+	// concatenate transform
+	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
 
-	// save new globals
-	this->transform.globalPosition = environmentTransformCopy.globalPosition;
-	this->transform.globalRotation = environmentTransformCopy.globalRotation;
-	this->transform.globalScale = environmentTransformCopy.globalScale;
+	// propagate rotation
+	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	
+	// propagate scale
+	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
 	// if I have children
 	if (this->children)
@@ -449,7 +449,7 @@ void Container_transform(Container this, Transformation* environmentTransform)
 			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
 			child->invalidateGlobalPosition.z = child->invalidateGlobalPosition.z || this->invalidateGlobalPosition.z;
 
-			__VIRTUAL_CALL(void, Container, transform, child, &environmentTransformCopy);
+			__VIRTUAL_CALL(void, Container, transform, child, &this->transform);
 		}
 	}
 

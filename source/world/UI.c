@@ -104,7 +104,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 }
 
 // transform
-void UI_transform(UI this, Transformation* environmentTransform)
+void UI_transform(UI this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "UI::transform: null this");
 

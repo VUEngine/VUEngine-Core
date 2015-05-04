@@ -148,7 +148,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 }
 
 // transform class
-void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTransform)
+void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
@@ -168,18 +168,19 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 			Container_transformNonVirtual(__UPCAST(Container, this), environmentTransform);
 		}
 
-		// concatenate environment transform
-		Transformation environmentTransformCopy;
-		environmentTransformCopy.globalPosition = environmentTransform->globalPosition;
-		environmentTransformCopy.globalRotation = environmentTransform->globalRotation;
-		environmentTransformCopy.globalScale = environmentTransform->globalScale;
+		// concatenate transform
+		this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+		this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+		this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
 
-		Container_concatenateTransform(&environmentTransformCopy, &this->transform);
-	
-		// save new global position
-		this->transform.globalPosition = environmentTransformCopy.globalPosition;
-		this->transform.globalRotation = environmentTransformCopy.globalRotation;
-		this->transform.globalScale = environmentTransformCopy.globalScale;
+		// propagate rotation
+		this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+		this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
+		this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+		
+		// propagate scale
+		this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+		this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 	
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;

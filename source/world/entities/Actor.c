@@ -174,7 +174,7 @@ static void Actor_syncPositionWithBody(Actor this)
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void Actor_transform(Actor this, Transformation* environmentTransform)
+void Actor_transform(Actor this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::transform: null this");
 
