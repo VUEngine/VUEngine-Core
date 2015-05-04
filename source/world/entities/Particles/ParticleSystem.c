@@ -178,7 +178,7 @@ static void ParticleSystem_spawnParticle(ParticleSystem this)
 	fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(Utilities_randomSeed(), abs(this->particleSystemDefinition->particleDefinition->maximumMass - this->particleSystemDefinition->particleDefinition->minimumMass));
 
 	int spriteDefinitionIndex = Utilities_random(Utilities_randomSeed(), abs(this->numberOfSpriteDefinitions));
-	
+
 	// call the appropiate allocator to support inheritance!
 	Particle particle = ((Particle (*)(ParticleDefinition*, ...)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
 	
@@ -322,12 +322,12 @@ void ParticleSystem_start(ParticleSystem this)
 	this->lastUpdateTime = Clock_getTime(this->clock);
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 
-	this->paused = 0;
+	this->paused = false;
 }
 
 void ParticleSystem_pause(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::pause: null this");
 
-	this->paused = 1;
+	this->paused = true;
 }
