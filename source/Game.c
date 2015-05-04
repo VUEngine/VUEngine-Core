@@ -759,17 +759,15 @@ static void Game_update(Game this)
 			// record time
 			cleanUpTime = currentTime;
 		}
-		else
-		{
-#ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
-			// accumulate user's input until next logic cycle
-			KeypadManager_read(this->keypadManager);
-#endif
-		}
 		
 		// increase the frame rate
 		FrameRate_increaseRawFPS(this->frameRate);
 
+#ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
+		// accumulate user's input until next logic cycle
+		KeypadManager_read(this->keypadManager);
+#endif
+		
 #ifdef __DEBUG
 		if (previousLastProcessName != this->lastProcessName)
 		{
