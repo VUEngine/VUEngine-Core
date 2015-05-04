@@ -351,7 +351,10 @@ void Body_applyForce(Body this, const Force* force, bool clearAxis)
 		Body_moveAccelerated(this, __ZAXIS);
 	}
 
-	Body_awake(this, axisStartedMovement);
+	if(axisStartedMovement)
+	{
+		Body_awake(this, axisStartedMovement);
+	}
 }
 
 // apply gravity

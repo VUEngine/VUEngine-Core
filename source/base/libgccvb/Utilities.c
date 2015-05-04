@@ -121,7 +121,6 @@ long Utilities_randomSeed()
 	while (count < __RANDOM_SEED_CYCLES)
 	{
 		rand |= * _xpstts;
-		rand |= VIP_REGS[CTA]; // CTA = (*(BYTE*)(0x0005F830));
 		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
 
 		// prevent division by zero
