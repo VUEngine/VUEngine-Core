@@ -277,7 +277,7 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 
 	int xDisplacement = 11;
 	
-	Printing_text(Printing_getInstance(), "PARAM TABLE STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "PARAM TABLE'S STATUS", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Size:              ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->size, x + xDisplacement, y, NULL);
 	
@@ -288,23 +288,4 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 	Printing_hex(Printing_getInstance(), __PARAM_BASE, x + xDisplacement, y, NULL);
 	Printing_text(Printing_getInstance(), "ParamEnd:           ", x, ++y, NULL);
 	Printing_hex(Printing_getInstance(), __PARAM_TABLE_END, x + xDisplacement, y, NULL);
-
-	VirtualNode node = VirtualList_begin(this->bSprites);
-	++y;
-	Printing_text(Printing_getInstance(), "Param values:", x, y++, NULL);
-
-	int i = 0;
-	xDisplacement = 0;
-	
-	for (; node; node = VirtualNode_getNext(node), i++)
-	{
-		Printing_hex(Printing_getInstance(), (int)VirtualNode_getData(node), x + xDisplacement, y + i, NULL);
-
-		if(y + i + 1 >= __SCREEN_HEIGHT >> 3)
-		{
-			i++;
-			i = 0;
-			xDisplacement += 10;
-		}
-	}
 }

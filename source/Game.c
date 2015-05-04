@@ -771,8 +771,8 @@ static void Game_update(Game this)
 #ifdef __DEBUG
 		if (previousLastProcessName != this->lastProcessName)
 		{
-			Printing_text(Printing_getInstance(), ":                              ", 10, 0, NULL);
-			Printing_text(Printing_getInstance(), this->lastProcessName, 12, 0, NULL);
+			Printing_text(Printing_getInstance(), ":                              ", 10, __SCREEN_HEIGHT / 8 - 1, NULL);
+			Printing_text(Printing_getInstance(), this->lastProcessName, 12, __SCREEN_HEIGHT / 8 - 1, NULL);
 		}
 #endif
 	}

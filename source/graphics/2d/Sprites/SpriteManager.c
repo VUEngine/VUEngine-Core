@@ -24,11 +24,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 
+#include <string.h>
 #include <SpriteManager.h>
 #include <Game.h>
 #include <ObjectSpriteContainerManager.h>
 #include <VPUManager.h>
 #include <Screen.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __MAX_SPRITE_CLASS_NAME_SIZE	19
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -494,17 +502,35 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	}
 }
 
+Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
+{
+	ASSERT(this, "SpriteManager::getSpriteAtLayer: null this");
+	ASSERT((unsigned)layer < __TOTAL_LAYERS, "SpriteManager::getSpriteAtLayer: invalid layer");
+	
+	VirtualNode node = VirtualList_begin(this->sprites);
+	
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		if (Sprite_getWorldLayer(__UPCAST(Sprite, VirtualNode_getData(node))) == layer)
+		{
+			return __UPCAST(Sprite, VirtualNode_getData(node));
+		}
+	}
+	
+	return NULL;
+}
+
 // print status
 void SpriteManager_print(SpriteManager this, int x, int y)
 {
 	ASSERT(this, "SpriteManager::print: null this");
 
-	Printing_text(Printing_getInstance(), "SPRITES USAGE", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Last free layer: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->freeLayer, x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Free layers: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __TOTAL_LAYERS - 1 - VirtualList_getSize(this->sprites), x + 17, y, NULL);
-	Printing_text(Printing_getInstance(), "Sprites count: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Sprites' count: ", x, ++y, NULL);
 
 	int auxY = y + 2;
 	int auxX = x;
@@ -513,23 +539,21 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 
 	for (; node; node = VirtualNode_getNext(node))
 	{
+		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 
-		/*
-		Printing_text(Printing_getInstance(), "Sprite: ", auxX, auxY, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX + 8, auxY, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(sprite), auxX + 11, auxY, NULL);
-*/
-		Printing_text(Printing_getInstance(), "  : ", auxX, auxY, NULL);
+		strncpy(spriteClassName, __GET_CLASS_NAME(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
+		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
+		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 2] = '.';
+		
 		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX, auxY, NULL);
-//		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.x), auxX + 3, auxY, NULL);
-//		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.y), auxX + 8, auxY, NULL);
-//		Printing_int(Printing_getInstance(), FIX19_13TOI(Sprite_getDrawSpec(sprite).position.z), auxX + 13, auxY, NULL);
+		Printing_text(Printing_getInstance(), ": ", auxX + 2, auxY, NULL);
+		Printing_text(Printing_getInstance(), spriteClassName, auxX + 4, auxY, NULL);
 
-		if (28 <= ++auxY)
+		if (__SCREEN_HEIGHT / 8 - 2 <= ++auxY)
 		{
 			auxY = y + 2;
-			auxX += 25;
+			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 5;
 		}
 	}
 

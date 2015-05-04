@@ -309,3 +309,91 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		ObjectSprite_render(__UPCAST(ObjectSprite, VirtualNode_getData(node)));
 	}
 }
+
+void ObjectSpriteContainer_show(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::show: null this");
+
+	VirtualNode node = VirtualList_begin(this->objectSprites);
+
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		__VIRTUAL_CALL(void, Sprite, show, __UPCAST(Sprite, VirtualNode_getData(node)));
+	}
+}
+
+void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::hide: null this");
+
+	VirtualNode node = VirtualList_begin(this->objectSprites);
+
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		__VIRTUAL_CALL(void, Sprite, hide, __UPCAST(Sprite, VirtualNode_getData(node)));
+	}
+}
+
+u16 ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
+	
+	return this->availableObjects;
+}
+
+int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
+	
+	return VirtualList_getSize(this->objectSprites);
+}
+
+int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
+	
+	if(VirtualList_begin(this->objectSprites))
+	{
+		ObjectSprite lastObjectSprite = __UPCAST(ObjectSprite, VirtualList_back(this->objectSprites));
+		
+		ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
+		
+		return ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite);
+	}
+	
+	return 0;
+}
+
+int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
+	
+	return this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+}
+
+int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
+	
+	return (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
+}
+
+void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
+{
+	ASSERT(this, "ObjectSpriteContainer::print: null this");
+
+	Printing_text(Printing_getInstance(), "Segment: ", x, y, NULL);
+	Printing_int(Printing_getInstance(), this->spt, x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "Available objects: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getAvailableObjects(this), x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "Total used objects: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getTotalUsedObjects(this), x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "Next free object index: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getNextFreeObjectIndex(this), x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "Object index range: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getFirstObjectIndex(this), x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "-", x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)), y, NULL);
+	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getLastObjectIndex(this), x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)) + 1, y, NULL);
+	Printing_text(Printing_getInstance(), "Z Position: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(this->z), x + 24, y, NULL);
+}

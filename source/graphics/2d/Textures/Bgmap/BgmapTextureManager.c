@@ -485,7 +485,11 @@ void BgmapTextureManager_print(BgmapTextureManager this, int x, int y)
 	int textureCount = 0;
 	for (;this->bgmapTextures[textureCount] && textureCount < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; textureCount++);
 
-	Printing_text(Printing_getInstance(), "TEXTURES", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Texture count: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), textureCount, x + 15, y, NULL);
+	Printing_text(Printing_getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Segments for textures: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), BgmapTextureManager_getAvailableBgmapSegments(this), x + 23, y, NULL);
+	Printing_text(Printing_getInstance(), "Textures' count: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), textureCount, x + 23, y, NULL);
+	Printing_text(Printing_getInstance(), "Printing segment: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(this), x + 23, y, NULL);
 }

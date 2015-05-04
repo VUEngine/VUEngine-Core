@@ -149,9 +149,18 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 	return suitableObjectSpriteContainer;
 }
 
+ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment)
+{
+	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: null this");
+	ASSERT((unsigned)segment < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: invalid segment");
+
+	return (unsigned)segment < __TOTAL_OBJECT_SEGMENTS? this->objectSpriteContainers[segment]: NULL;
+}
+
+
 void ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSpriteContainerManager this, fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {
-	ASSERT(this, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: no ObjectSpriteContainers available");
+	ASSERT(this, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: null this");
 	
 	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 
@@ -175,4 +184,21 @@ void ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSprit
 		ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], position);
 		previousZ = z[i];
 	}
+}
+
+// print status
+void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y)
+{
+	ASSERT(this, "ObjectSpriteContainerManager::print: null this");
+
+	Printing_text(Printing_getInstance(), "OBJECTS' USAGE", x, y++, NULL);
+	int totalUsedObjects = 0;
+	int i = 0;
+	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
+	{
+		totalUsedObjects += ObjectSpriteContainer_getTotalUsedObjects(this->objectSpriteContainers[i]);
+	}
+	
+	Printing_text(Printing_getInstance(), "Total used objects: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), totalUsedObjects, x + 20, y, NULL);
 }

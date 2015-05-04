@@ -49,10 +49,12 @@
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);					\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);				\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);				\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, positione);		\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, positione);					\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);				\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);			\
-	
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);						\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);						\
+
 #define ObjectSpriteContainer_ATTRIBUTES										\
 																				\
 	/* super's attributes */													\
@@ -95,6 +97,14 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, VBVec2D posit
 void ObjectSpriteContainer_positione(ObjectSpriteContainer this, VBVec3D position3D);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z);
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
+void ObjectSpriteContainer_show(ObjectSpriteContainer this);
+void ObjectSpriteContainer_hide(ObjectSpriteContainer this);
+u16 ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);
+void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y);
 
 
 #endif
