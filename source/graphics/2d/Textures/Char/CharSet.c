@@ -164,7 +164,7 @@ void CharSet_rewrite(CharSet this)
 	ASSERT(this, "CharSet::rewrite: null this");
 
 	extern unsigned int volatile* _xpstts;
-	while (*_xpstts & XPBSYR);
+	//while (*_xpstts & XPBSYR);
 
 	// write again
 	CharSet_write(this);

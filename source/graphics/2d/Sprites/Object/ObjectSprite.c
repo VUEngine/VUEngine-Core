@@ -219,7 +219,7 @@ void ObjectSprite_render(ObjectSprite this)
 			for (; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
-				int finalX = x + (8 * j)  * xDirection;
+				int finalX = x + (j << 3)  * xDirection;
 				
 				// hide the object if ouside screen's bounds
 				if((unsigned)finalX > __SCREEN_WIDTH)
@@ -228,7 +228,7 @@ void ObjectSprite_render(ObjectSprite this)
 					continue;
 				}
 
-				int finalY = y + (8 * i)  * yDirection;
+				int finalY = y + (i << 3)  * yDirection;
 				if((unsigned)finalY > __SCREEN_HEIGHT)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
@@ -278,6 +278,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 
 		// render in the new position to avoid flickering
 		this->renderFlag = true;
+
 		while (*_xpstts & XPBSYR);
 
 		ObjectSprite_render(this);
