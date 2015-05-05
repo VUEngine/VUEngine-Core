@@ -327,9 +327,18 @@ void Body_applyForce(Body this, const Force* force, bool clearAxis)
 	this->appliedForce.y = force->y;
 	this->appliedForce.z = force->z;
 	
-	this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, this->mass);
-	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, this->mass);
-	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, this->mass);
+	if(this->mass)
+	{
+		this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, this->mass);
+		this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, this->mass);
+		this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, this->mass);
+	}
+	else
+	{
+		this->acceleration.x += this->appliedForce.x;
+		this->acceleration.y += this->appliedForce.y;
+		this->acceleration.z += this->appliedForce.z;
+	}
 
 	int axisStartedMovement = 0;
 
@@ -588,7 +597,7 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 		*acceleration += FIX19_13_MULT(gravity, elapsedTime);
 	}
 
-	fix19_13 frictionAcceleration = FIX19_13_DIV(frictionForce, this->mass);
+	fix19_13 frictionAcceleration = this->mass? FIX19_13_DIV(frictionForce, this->mass): frictionForce;
 
 	if(appliedForce)
 	{

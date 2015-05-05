@@ -161,7 +161,7 @@ long Utilities_randomSeed()
  */
 int Utilities_random(long seed, int randnums)
 {
-	return randnums? abs((int)(seed % randnums)): 0;
+	return seed & randnums? abs((int)(seed % randnums)): 0;
 }
 
 /*

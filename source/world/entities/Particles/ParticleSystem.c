@@ -185,7 +185,7 @@ static void ParticleSystem_spawnParticle(ParticleSystem this)
 
 	// call the appropiate allocator to support inheritance!
 	Particle particle = ((Particle (*)(ParticleDefinition*, ...)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
-	
+
 	fix19_13 x = this->particleSystemDefinition->minimumRelativeSpanPosition.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x));
 	fix19_13 y = this->particleSystemDefinition->minimumRelativeSpanPosition.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
 	fix19_13 z = this->particleSystemDefinition->minimumRelativeSpanPosition.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
