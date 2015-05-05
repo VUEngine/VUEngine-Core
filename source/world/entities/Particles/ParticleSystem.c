@@ -231,8 +231,8 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 	{
 		long seed = Utilities_randomSeed();
 	
-		int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, abs(this->particleSystemDefinition->particleDefinition->maximumLifeSpan - this->particleSystemDefinition->particleDefinition->minimumLifeSpan));
-		fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, abs(this->particleSystemDefinition->particleDefinition->maximumMass - this->particleSystemDefinition->particleDefinition->minimumMass));
+		int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
+		fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 		
 		// call the appropiate allocator to support inheritance!
 		Particle particle = __UPCAST(Particle, VirtualList_front(this->expiredParticles));
@@ -294,8 +294,8 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	
 	long seed = Utilities_randomSeed();
 
-	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, abs(this->particleSystemDefinition->particleDefinition->maximumLifeSpan - this->particleSystemDefinition->particleDefinition->minimumLifeSpan));
-	fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, abs(this->particleSystemDefinition->particleDefinition->maximumMass - this->particleSystemDefinition->particleDefinition->minimumMass));
+	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
+	fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 
 	int spriteDefinitionIndex = Utilities_random(seed, abs(this->numberOfSpriteDefinitions));
 
@@ -427,11 +427,8 @@ static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
 	ASSERT(this, "ParticleSystem::computeNextSpawnTime: null this");
 
 	return this->lastUpdateTime +
-	    this->particleSystemDefinition->minimumSpawnDelay +
-	    Utilities_random(
-	        Utilities_randomSeed(),
-	        abs(this->particleSystemDefinition->maximumSpawnDelay - this->particleSystemDefinition->minimumSpawnDelay)
-        );
+			this->particleSystemDefinition->minimumSpawnDelay +
+			Utilities_random(Utilities_randomSeed(), this->particleSystemDefinition->spawnDelayDelta);
 }
 
 void ParticleSystem_start(ParticleSystem this)

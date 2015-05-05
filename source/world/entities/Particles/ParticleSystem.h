@@ -95,8 +95,8 @@ typedef struct ParticleSystemDefinition
 	// minimun generation delay in miliseconds
 	u16 minimumSpawnDelay;
 
-	// maximum generation delay in miliseconds
-	u16 maximumSpawnDelay;
+	// generation delay delta in miliseconds
+	u16 spawnDelayDelta;
 
 	// maximum total particles
 	u8 maximumNumberOfAliveParticles;

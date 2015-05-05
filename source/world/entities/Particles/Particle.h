@@ -98,14 +98,14 @@ typedef struct ParticleDefinition
 	// particle's minimum life span in miliseconds
 	u16 minimumLifeSpan;
 
-	// particle's maximum life span in miliseconds
-	u16 maximumLifeSpan;
+	// particle's life span delta in miliseconds
+	u16 lifeSpanDelta;
 
 	// particle's minimum life mass
 	fix19_13 minimumMass;
 
-	// particle's maximum life mass
-	fix19_13 maximumMass;
+	// particle's mass delta
+	fix19_13 massDelta;
 
 	// axis subject to gravity
 	u8 axisSubjectToGravity;
