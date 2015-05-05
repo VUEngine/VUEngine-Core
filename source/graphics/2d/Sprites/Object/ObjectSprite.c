@@ -303,6 +303,8 @@ void ObjectSprite_show(ObjectSprite this)
 
 	if(this->renderFlag)
 	{
+		while (*_xpstts & XPBSYR);
+
 		ObjectSprite_render(this);
 	}
 	
