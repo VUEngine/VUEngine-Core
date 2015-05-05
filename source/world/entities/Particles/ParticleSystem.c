@@ -380,10 +380,11 @@ void ParticleSystem_resume(ParticleSystem this)
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
+		Particle_hide(__UPCAST(Particle, VirtualNode_getData(node)));
 	}
 	
-	this->lastUpdateTime = this->paused ? 0 : Clock_getTime(this->clock);
-	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
+	this->lastUpdateTime = Clock_getTime(this->clock);
+	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 }
 
 void ParticleSystem_suspend(ParticleSystem this)
@@ -407,7 +408,6 @@ void ParticleSystem_suspend(ParticleSystem this)
 	{
 		__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
 	}
-
 }
 
 static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventFirer)
