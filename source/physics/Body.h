@@ -114,6 +114,8 @@ fix19_13 Body_getElasticity(Body this);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 Force Body_getFriction(Body this);
 void Body_setFriction(Body this, Force friction);
+fix19_13 Body_getMass(Body this);
+void Body_setMass(Body this, fix19_13 mass);
 bool Body_isAwake(Body body);
 void Body_sleep(Body body);
 void Body_clearForce(Body this);

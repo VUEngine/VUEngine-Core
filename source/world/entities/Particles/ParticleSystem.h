@@ -67,14 +67,14 @@
 	/* next spawn time */														\
 	u32 nextSpawnTime;															\
 																				\
+	/* particle count */														\
+	s16 particleCount;															\
+																				\
 	/* status flag */															\
 	bool paused;																\
 																				\
 	/* status flag */															\
 	u8 numberOfSpriteDefinitions;												\
-																				\
-	/* particle count */														\
-	u16 particleCount;															\
 
 __CLASS(ParticleSystem);
 
@@ -88,6 +88,9 @@ typedef struct ParticleSystemDefinition
 {
 	// It has an Entity at the beggining
 	EntityDefinition entityDefinition;
+
+	// whether to delete or reuse expired particles
+	u8 recycleParticles;
 
 	// minimun generation delay in miliseconds
 	u16 minimumSpawnDelay;

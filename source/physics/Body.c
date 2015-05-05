@@ -860,6 +860,20 @@ void Body_setFriction(Body this, Force friction)
 	this->friction = friction;
 }
 
+fix19_13 Body_getMass(Body this)
+{
+	ASSERT(this, "Body::getMass: null this");
+
+	return this->mass;
+}
+
+void Body_setMass(Body this, fix19_13 mass)
+{
+	ASSERT(this, "Body::setMass: null this");
+
+	this->mass = mass;
+}
+
 // retrieve state
 bool Body_isAwake(Body this)
 {

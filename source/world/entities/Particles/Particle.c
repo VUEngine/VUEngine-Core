@@ -113,27 +113,30 @@ void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle 
 {
 	ASSERT(this, "Particle::update: null this");
 
-	this->lifeSpan -= timeElapsed;
-	Sprite_update(__UPCAST(Sprite, this->objectSprite), _gameClock);
-	
-	if(behavior)
+	if(0 <= this->lifeSpan)
 	{
-		behavior(this);
-	}
-	
-	if(0 > this->lifeSpan)
-	{
-		Object_fireEvent(__UPCAST(Object, this), __EVENT_PARTICLE_EXPIRED);
+		this->lifeSpan -= timeElapsed;
+		Sprite_update(__UPCAST(Sprite, this->objectSprite), _gameClock);
+		
+		if(behavior)
+		{
+			behavior(this);
+		}
+		
+		if(0 > this->lifeSpan)
+		{
+			Object_fireEvent(__UPCAST(Object, this), __EVENT_PARTICLE_EXPIRED);
+		}
 	}
 }
 
 // transform 
-void Particle_transform(Particle this)
+void Particle_transform(Particle this, bool updateSpritePosition)
 {
 	ASSERT(this, "Particle::transform: null this");
 	ASSERT(this->body, "Particle::transform: null body");
 
-	if (Body_isAwake(this->body))
+	if (updateSpritePosition || Body_isAwake(this->body))
     {
 		VBVec3D position = Body_getPosition(this->body);
 
@@ -150,12 +153,27 @@ void Particle_transform(Particle this)
     }
 }
 
-void Particle_addForce(Particle this, const Force* force)
+void Particle_addForce(Particle this, Force force)
 {
 	ASSERT(this, "Particle::position: null this");
 	
-	Body_addForce(this->body, force);
+	Body_addForce(this->body, &force);
 }
+
+void Particle_setLifeSpan(Particle this, int lifeSpan)
+{
+	ASSERT(this, "Particle::setLifeSpan: null this");
+	
+	this->lifeSpan = lifeSpan;
+}
+
+void Particle_setMass(Particle this, fix19_13 mass)
+{
+	ASSERT(this, "Particle::setMass: null this");
+	
+	Body_setMass(this->body, mass);
+}
+
 
 void Particle_setPosition(Particle this, VBVec3D position)
 {

@@ -301,6 +301,11 @@ void ObjectSprite_show(ObjectSprite this)
 	
 	Sprite_show(__UPCAST(Sprite, this));
 
+	if(this->renderFlag)
+	{
+		ObjectSprite_render(this);
+	}
+	
 	int i = 0;
 	for (; i < this->totalObjects; i++)
 	{
