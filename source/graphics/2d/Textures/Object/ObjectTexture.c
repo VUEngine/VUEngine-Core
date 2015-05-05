@@ -93,8 +93,6 @@ void ObjectTexture_write(ObjectTexture this)
 
 	int i = 0;
 
-	//while (*_xpstts & XPBSYR);
-
 	for (; i < rows; i++)
 	{
 		int j = 0;

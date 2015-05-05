@@ -109,6 +109,8 @@ void ParticleSystem_destructor(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::destructor: null this");
 
+	ParticleSystem_processExpiredParticles(this);
+	
 	if(this->particles)
 	{
 		VirtualNode node = VirtualList_begin(this->particles);
