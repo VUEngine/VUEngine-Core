@@ -44,6 +44,9 @@
 #include <DirectDraw.h>
 #include <Printing.h>
 #include <MiscStructs.h>
+#include <MBgmapSprite.h>
+#include <BgmapAnimationCoordinator.h>
+#include <ObjectAnimationCoordinator.h>
 
 #include <Clock.h>
 #include <State.h>
@@ -68,6 +71,11 @@
 #include <InanimatedInGameEntity.h>
 #include <Actor.h>
 #include <Image.h>
+#include <ManagedEntity.h>
+#include <MBackground.h>
+#include <Particle.h>
+#include <ParticleSystem.h>
+
 #include <ScrollBackground.h>
 #include <GameState.h>
 #include <Stage.h>
@@ -158,6 +166,8 @@ static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, i
 static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
 
 static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message);
@@ -446,6 +456,8 @@ static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
 
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFirstPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSecondPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowThirdPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFourthPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowUserDefinedClassesSizes);
 
 	this->currentSubPage = VirtualList_begin(this->subPages);
@@ -460,17 +472,13 @@ static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, in
 
 	ClassSizeData classesSizeData[] =
 	{
-			{&Clock_getObjectSize, "Clock"},
-			{&State_getObjectSize, "State"},
-			{&StateMachine_getObjectSize, "StateMachine"},
-			{&Telegram_getObjectSize, "Telegram"},
-			{&VirtualList_getObjectSize, "VirtualList"},
-			{&VirtualNode_getObjectSize, "VirtualNode"},
-			//{&AnimatedSprite_getObjectSize, "AnimatedSprite"},
-			{&CharSet_getObjectSize, "CharSet"},
-			{&Sprite_getObjectSize, "Sprite"},
-			{&Texture_getObjectSize, "Texture"},
-
+		{&Clock_getObjectSize, "Clock"},
+		{&Object_getObjectSize, "Object"},
+		{&State_getObjectSize, "State"},
+		{&StateMachine_getObjectSize, "StateMachine"},
+		{&Telegram_getObjectSize, "Telegram"},
+		{&VirtualList_getObjectSize, "VirtualList"},
+		{&VirtualNode_getObjectSize, "VirtualNode"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
@@ -482,21 +490,61 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 
 	ClassSizeData classesSizeData[] =
 	{
-			{&Body_getObjectSize, "Body"},
-			{&Circle_getObjectSize, "Circle"},
-			{&Cuboid_getObjectSize, "Cuboid"},
-			{&Shape_getObjectSize, "Shape"},
-			{&Polygon_getObjectSize, "Polygon"},
-			{&Container_getObjectSize, "Container"},
-			{&Entity_getObjectSize, "Entity"},
-			{&InGameEntity_getObjectSize, "InGameEntity"},
-			{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
-			{&InanimatedInGameEntity_getObjectSize, "Inanim. InGameEntity"},
-			{&Actor_getObjectSize, "Actor"},
-			{&Image_getObjectSize, "Image"},
-			{&ScrollBackground_getObjectSize, "ScrollBackg."},
-			{&GameState_getObjectSize, "GameState"},
-			{&GameState_getObjectSize, "Stage"},
+		{&CharSet_getObjectSize, "CharSet"},
+		{&Texture_getObjectSize, "Texture"},
+		{&Sprite_getObjectSize, "Sprite"},
+		{&BgmapTexture_getObjectSize, "BgmapTexture"},
+		{&BgmapSprite_getObjectSize, "BgmapSprite"},
+		{&MBgmapSprite_getObjectSize, "MBgmapSprite"},
+		{&BgmapAnimatedSprite_getObjectSize, "BgmapAnim. Sprite"},
+		{&BgmapAnimationCoordinator_getObjectSize, "BgmapAnim. Coord."},
+		{&ObjectTexture_getObjectSize, "ObjectTexture"},
+		{&ObjectSprite_getObjectSize, "ObjectSprite"},
+		{&ObjectSpriteContainer_getObjectSize, "ObjectSpriteCont."},
+		{&ObjectAnimatedSprite_getObjectSize, "ObjectAnim. Sprite"},
+		{&ObjectAnimationCoordinator_getObjectSize, "ObjectAnim.Coord."},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
+}
+
+static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y)
+{
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&SpatialObject_getObjectSize, "SpatialObject"},
+		{&Body_getObjectSize, "Body"},
+		{&Circle_getObjectSize, "Circle"},
+		{&Cuboid_getObjectSize, "Cuboid"},
+		{&Shape_getObjectSize, "Shape"},
+		{&Polygon_getObjectSize, "Polygon"},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
+}
+
+static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y)
+{
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&Container_getObjectSize, "Container"},
+		{&Entity_getObjectSize, "Entity"},
+		{&Image_getObjectSize, "Image"},
+		{&ManagedEntity_getObjectSize, "ManagedEntity"},
+		{&MBackground_getObjectSize, "MBackground"},
+		{&InGameEntity_getObjectSize, "InGameEntity"},
+		{&ScrollBackground_getObjectSize, "ScrollBackg."},
+		{&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
+		{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
+		{&Actor_getObjectSize, "Actor"},
+		{&Particle_getObjectSize, "Particle"},
+		{&ParticleSystem_getObjectSize, "ParticleSystem"},
+		{&GameState_getObjectSize, "GameState"},
+		{&GameState_getObjectSize, "Stage"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");

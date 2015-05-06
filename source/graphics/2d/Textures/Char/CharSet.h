@@ -74,6 +74,12 @@
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
 																				\
+	/* char set definition */													\
+	CharSetDefinition* charSetDefinition;										\
+																				\
+	/* array definition of the charSet */										\
+	u16 charDefinitionDisplacement;												\
+																				\
 	/* memory displacement */													\
 	u16 offset;																	\
 																				\
@@ -81,13 +87,7 @@
 	u8 usageCount;																\
 																				\
 	/* memory segment */														\
-	u8 segment: 2;																\
-																				\
-	/* char set definition */													\
-	CharSetDefinition* charSetDefinition;										\
-																				\
-	/* array definition of the charSet */										\
-	u16 charDefinitionDisplacement;												\
+	u8 segment;																	\
 
 __CLASS(CharSet);
 

@@ -247,7 +247,7 @@ void ObjectSprite_render(ObjectSprite this)
 	}
 }
 
-u8 ObjectSprite_getTotalObjects(ObjectSprite this)
+s16 ObjectSprite_getTotalObjects(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getTotalObjects: null this");
 	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
@@ -255,14 +255,14 @@ u8 ObjectSprite_getTotalObjects(ObjectSprite this)
 	return this->totalObjects;
 }
 
-int ObjectSprite_getObjectIndex(ObjectSprite this)
+s16 ObjectSprite_getObjectIndex(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getObjectIndex: null this");
 
 	return this->objectIndex;
 }
 
-void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
+void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 {
 	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
 	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");

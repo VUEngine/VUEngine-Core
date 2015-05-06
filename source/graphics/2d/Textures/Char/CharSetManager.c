@@ -317,7 +317,7 @@ int CharSetManager_getTotalUsedChars(CharSetManager this, int segment)
 	if(VirtualList_begin(this->charSets[segment]))
 	{
 		CharSet lastCharSet = VirtualList_back(this->charSets[segment]);
-		return CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + 1;
+		return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + 1;
 	}
 	
 	return 0;

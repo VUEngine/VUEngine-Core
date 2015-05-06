@@ -124,14 +124,14 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	__DESTROY_BASE;
 }
 
-s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
+s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::addObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::addObjectSprite: null objectSprite");
 	
 	if(objectSprite)
 	{
-		int lastObjectIndex = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+		s16 lastObjectIndex = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
 
 		if(VirtualList_getSize(this->objectSprites))
 		{
@@ -155,7 +155,7 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 	return -1;
 }
 
-void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
+void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s16 numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
@@ -201,7 +201,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	}
 }
 
-bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, int numberOfObjects)
+bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s16 numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 

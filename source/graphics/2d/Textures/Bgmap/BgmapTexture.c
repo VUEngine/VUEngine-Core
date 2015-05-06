@@ -122,7 +122,7 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
 
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + (int)CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
@@ -152,7 +152,7 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
 
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + (int)CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
@@ -184,7 +184,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 
 	// determine the number of frames the map had
 	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + (int)CharSet_getOffset(this->charSet);
 	int frames = CharSet_getNumberOfChars(this->charSet) / area;
 
 	int i = this->textureDefinition->rows;
@@ -221,7 +221,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;
 
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = (CharSet_getSegment(this->charSet) << 9) + (int)CharSet_getOffset(this->charSet);
 	int i = this->textureDefinition->rows;
 
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
