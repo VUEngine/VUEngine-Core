@@ -117,13 +117,10 @@
 
 #define __MEMORY_POOLS		9
 
-#define __BLOCK_DEFINITION(BlockSize, Elements)									\
-	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 							\
-
 #define __MEMORY_POOL_ARRAYS													\
 	__BLOCK_DEFINITION(256, 1)													\
 	__BLOCK_DEFINITION(192, 1)													\
-	__BLOCK_DEFINITION(160, 56)													\
+	__BLOCK_DEFINITION(160, 48)													\
 	__BLOCK_DEFINITION(132, 24)													\
 	__BLOCK_DEFINITION(100, 24)													\
 	__BLOCK_DEFINITION(84, 80)													\
@@ -147,6 +144,7 @@
 	__SET_MEMORY_POOL_ARRAY(36)													\
 	__SET_MEMORY_POOL_ARRAY(28)													\
 	__SET_MEMORY_POOL_ARRAY(24)													\
+
 
 #define __MIN_BLOCK 		24
 
