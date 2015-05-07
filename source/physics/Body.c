@@ -800,22 +800,22 @@ bool Body_isActive(Body this)
 }
 
 // retrieve position
-VBVec3D Body_getPosition(Body this)
+const VBVec3D* Body_getPosition(Body this)
 {
 	ASSERT(this, "Body::getPosition: null this");
 
-	return this->position;
+	return &this->position;
 }
 
 // retrieve position
-void Body_setPosition(Body this, VBVec3D position, SpatialObject caller)
+void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller)
 {
 	ASSERT(this, "Body::setPosition: null this");
 
 	if (this->owner == caller)
 	{
 		// set position
-		this->position = position;
+		this->position = *position;
 	}
 }
 

@@ -136,7 +136,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 void Particle_destructor(Particle this);
 void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle particle));
 void Particle_transform(Particle this, bool updateSpritePosition);
-void Particle_addForce(Particle this, Force force);
+void Particle_addForce(Particle this, const Force* force);
 void Particle_setLifeSpan(Particle this, int lifeSpan);
 void Particle_setMass(Particle this, fix19_13 mass);
 void Particle_show(Particle this);
@@ -146,8 +146,8 @@ u8 Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration);
 u16 Particle_getHeight(Particle this);
 u16 Particle_getDepth(Particle this);
 Gap Particle_getGap(Particle this);
-void Particle_setPosition(Particle this, VBVec3D position);
-VBVec3D Particle_getPosition(Particle this);
+void Particle_setPosition(Particle this, const VBVec3D* position);
+const VBVec3D* Particle_getPosition(Particle this);
 void Particle_resume(Particle this);
 void Particle_suspend(Particle this);
 

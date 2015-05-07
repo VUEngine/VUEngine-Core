@@ -148,7 +148,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 void Entity_transform(Entity this, const Transformation* environmentTransform);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
-VBVec3D Entity_getPosition(Entity this);
+const VBVec3D* Entity_getPosition(Entity this);
 int Entity_getMapParallax(Entity this);
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
 int Entity_getInGameType(Entity this);

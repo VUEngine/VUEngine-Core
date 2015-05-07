@@ -154,18 +154,18 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	for (; node;)
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
-		VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+		const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 
 		VirtualNode otherNode = VirtualNode_getPrevious(node);
 
 		for(; otherNode; otherNode = VirtualNode_getPrevious(otherNode))
 		{
 			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(otherNode));
-			VBVec2D otherPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, otherSprite);
+			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, otherSprite);
 	
 			// check if z positions are swaped
-			if (otherPosition.z > position.z ||
-					(otherPosition.z == position.z && Sprite_getParallaxDisplacement(otherSprite) > Sprite_getParallaxDisplacement(sprite))
+			if (otherPosition->z > position->z ||
+					(otherPosition->z == position->z && Sprite_getParallaxDisplacement(otherSprite) > Sprite_getParallaxDisplacement(sprite))
 			)
 			{
 				// get each entity's layer
@@ -205,18 +205,18 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 	for (; this->node; this->node = VirtualNode_getNext(this->node))
 	{
 		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(this->node));
-		VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+		const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 
 		this->otherNode = this->otherNode ? VirtualNode_getNext(this->otherNode) : VirtualNode_getNext(this->node);
 
 		for (; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
 		{
 			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(this->otherNode));
-			VBVec2D otherPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, otherSprite);
+			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, otherSprite);
 
 			// check if z positions are swaped
-			if (otherPosition.z < position.z ||
-					(otherPosition.z == position.z && Sprite_getParallaxDisplacement(otherSprite) < Sprite_getParallaxDisplacement(sprite))
+			if (otherPosition->z < position->z ||
+					(otherPosition->z == position->z && Sprite_getParallaxDisplacement(otherSprite) < Sprite_getParallaxDisplacement(sprite))
 			)
 			{
 				// get each entity's layer

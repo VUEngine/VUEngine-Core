@@ -136,7 +136,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 			}
 			else
 			{
-				if(abs(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z) < abs(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z))
+				if(abs(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i])->z - z) < abs(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer)->z - z))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}
@@ -181,7 +181,7 @@ void ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSprit
 				0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
 		};
 
-		ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], position);
+		ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
 		previousZ = z[i];
 	}
 }

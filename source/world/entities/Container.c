@@ -460,11 +460,11 @@ void Container_transform(Container this, const Transformation* environmentTransf
 }
 
 // retrieve global position
-VBVec3D Container_getGlobalPosition(Container this)
+const VBVec3D* Container_getGlobalPosition(Container this)
 {
 	ASSERT(this, "Container::getGlobalPosition: null this");
 
-	return this->transform.globalPosition;
+	return &this->transform.globalPosition;
 }
 
 // invalidate global position
@@ -490,58 +490,61 @@ static void Container_propagateInvalidateGlobalPosition(Container this)
 }
 
 // retrieve local position
-VBVec3D Container_getLocalPosition(Container this)
+const VBVec3D* Container_getLocalPosition(Container this)
 {
 	ASSERT(this, "Container::getLocalPosition: null this");
 
-	return this->transform.localPosition;
+	return &this->transform.localPosition;
 }
 
 //set class's local position
-void Container_setLocalPosition(Container this, VBVec3D position)
+void Container_setLocalPosition(Container this, const VBVec3D* position)
 {
 	ASSERT(this, "Container::setLocalPosition: null this");
 
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalPosition.x = this->transform.localPosition.x != position.x;
-	this->invalidateGlobalPosition.y = this->transform.localPosition.y != position.y;
-	this->invalidateGlobalPosition.z = this->transform.localPosition.z != position.z;
+	this->invalidateGlobalPosition.x = this->transform.localPosition.x != position->x;
+	this->invalidateGlobalPosition.y = this->transform.localPosition.y != position->y;
+	this->invalidateGlobalPosition.z = this->transform.localPosition.z != position->z;
 
-	this->transform.localPosition = position;
+	this->transform.localPosition = *position;
 
-	Container_propagateInvalidateGlobalPosition(this);
+	if(this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
+	{
+		Container_propagateInvalidateGlobalPosition(this);
+	}
 }
 
-Rotation Container_getLocalRotation(Container this)
+const Rotation* Container_getLocalRotation(Container this)
 {
 	ASSERT(this, "Container::getLocalRotation: null this");
 
-	return this->transform.localRotation;
+	return &this->transform.localRotation;
 }
 
 //set class's local position
-void Container_setLocalRotation(Container this, Rotation rotation)
+void Container_setLocalRotation(Container this, const Rotation* rotation)
 {
 	ASSERT(this, "Container::setLocalRotation: null this");
 
-	this->transform.localRotation = rotation;
+	this->transform.localRotation = *rotation;
 	
 	Container_invalidateGlobalPosition(this);
 }
 
-Scale Container_getLocalScale(Container this)
+const Scale* Container_getLocalScale(Container this)
 {
 	ASSERT(this, "Container::getLocalScale: null this");
 
-	return this->transform.localScale;
+	return &this->transform.localScale;
 }
 
 //set class's local position
-void Container_setLocalScale(Container this, Scale scale)
+void Container_setLocalScale(Container this, const Scale* scale)
 {
 	ASSERT(this, "Container::invalidateGlobalPosition: null this");
 
-	this->transform.localScale = scale;
+	this->transform.localScale = *scale;
 	
 	Container_invalidateGlobalPosition(this);
 }

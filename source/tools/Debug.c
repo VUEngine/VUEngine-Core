@@ -56,9 +56,9 @@
 #include <CharSet.h>
 #include <Sprite.h>
 #include <Texture.h>
-#include <Body.h>
 
 #include <Body.h>
+#include <CollisionSolver.h>
 #include <Circle.h>
 #include <Cuboid.h>
 #include <Shape.h>
@@ -516,6 +516,7 @@ static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, in
 	{
 		{&SpatialObject_getObjectSize, "SpatialObject"},
 		{&Body_getObjectSize, "Body"},
+		{&CollisionSolver_getObjectSize, "CollisionSolver"},
 		{&Circle_getObjectSize, "Circle"},
 		{&Cuboid_getObjectSize, "Cuboid"},
 		{&Shape_getObjectSize, "Shape"},
@@ -804,9 +805,9 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(sprite), x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(VBVec3D, Sprite, getPosition, sprite).x), x + 10, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(VBVec3D, Sprite, getPosition, sprite).y), x + 14, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(VBVec3D, Sprite, getPosition, sprite).z), x + 18, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->x), x + 10, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->y), x + 14, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->z), x + 18, y, NULL);
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 	}
 	else

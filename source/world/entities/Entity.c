@@ -354,7 +354,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 i
 			}
 			
 			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, positionedEntity->position);
+			__VIRTUAL_CALL(void, Container, setLocalPosition, entity, &positionedEntity->position);
 	
 			// add children if defined
 			if (positionedEntity->childrenDefinitions)
@@ -406,7 +406,7 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* pos
 			}
 
 			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, positionedEntity->position);
+			__VIRTUAL_CALL(void, Container, setLocalPosition, entity, &positionedEntity->position);
 			
 			// add children if defined
 			if (positionedEntity->childrenDefinitions)
@@ -606,10 +606,10 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 				
 				// update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, positione, sprite, this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, positione, sprite, &this->transform.globalPosition);
 
 				// update sprite's 2D rotation
-				__VIRTUAL_CALL(void, Sprite, rotate, sprite, this->transform.globalRotation);
+				__VIRTUAL_CALL(void, Sprite, rotate, sprite, &this->transform.globalRotation);
 			}
 		}
 		else if(!updateSpriteTransformations && updateSpritePosition)
@@ -620,10 +620,10 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
 		
 				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, positione, sprite, this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, positione, sprite, &this->transform.globalPosition);
 
 				// update sprite's 2D rotation
-				__VIRTUAL_CALL(void, Sprite, rotate, sprite, this->transform.globalRotation);
+				__VIRTUAL_CALL(void, Sprite, rotate, sprite, &this->transform.globalRotation);
 			}
 		}
 		else if(updateSpriteTransformations && !updateSpritePosition)
@@ -703,11 +703,11 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
 }
 
 // retrieve position
-VBVec3D Entity_getPosition(Entity this)
+const VBVec3D* Entity_getPosition(Entity this)
 {
 	ASSERT(this, "Entity::getPosition: null this");
 
-	return this->transform.globalPosition;
+	return &this->transform.globalPosition;
 }
 
 // retrieve sprite
@@ -807,12 +807,12 @@ bool Entity_isVisible(Entity this, int pad)
 
 		ASSERT(sprite, "Entity:isVisible: null sprite");
 		
-		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+		const VBVec2D* spritePosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 //		lowLimit -= drawSpec.position.parallax;
 //		highLimit += drawSpec.position.parallax;
 		
-		x = FIX19_13TOI(spritePosition.x);
-		y = FIX19_13TOI(spritePosition.y);
+		x = FIX19_13TOI(spritePosition->x);
+		y = FIX19_13TOI(spritePosition->y);
 		z = FIX19_13TOI(this->transform.globalPosition.z - _screenPosition->z);
 	}
 	else 

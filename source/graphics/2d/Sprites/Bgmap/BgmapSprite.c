@@ -240,25 +240,25 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	BgmapSprite_invalidateParamTable(this);
 }
 
-VBVec2D BgmapSprite_getPosition(BgmapSprite this)
+const VBVec2D* BgmapSprite_getPosition(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
 
-	return this->drawSpec.position;
+	return &this->drawSpec.position;
 }
 
-void BgmapSprite_setPosition(BgmapSprite this, VBVec2D position)
+void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "BgmapSprite::setPosition: null this");
 
-	this->drawSpec.position.x = position.x;
-	this->drawSpec.position.y = position.y;
-	this->drawSpec.position.z = position.z;
+	this->drawSpec.position = *position;
 }
 
-void BgmapSprite_positione(BgmapSprite this, VBVec3D position3D)
+void BgmapSprite_positione(BgmapSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "BgmapSprite::positione: null this");
+
+	VBVec3D position3D = *position;
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -274,13 +274,13 @@ void BgmapSprite_positione(BgmapSprite this, VBVec3D position3D)
 	this->renderFlag |= __UPDATE_G;
 }
 
-void BgmapSprite_rotate(BgmapSprite this, Rotation rotation)
+void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 {
 	ASSERT(this, "BgmapSprite::rotate: null this");
 
-	this->drawSpec.rotation.x = rotation.x % __TOTAL_SIN_ENTRIES; 
-	this->drawSpec.rotation.y = rotation.y % __TOTAL_SIN_ENTRIES; 
-	this->drawSpec.rotation.z = rotation.z % __TOTAL_SIN_ENTRIES; 
+	this->drawSpec.rotation.x = rotation->x % __TOTAL_SIN_ENTRIES; 
+	this->drawSpec.rotation.y = rotation->y % __TOTAL_SIN_ENTRIES; 
+	this->drawSpec.rotation.z = rotation->z % __TOTAL_SIN_ENTRIES; 
 }
 
 // calculate the parallax

@@ -115,7 +115,7 @@
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-#define __MEMORY_POOLS		10
+#define __MEMORY_POOLS		9
 
 #define __BLOCK_DEFINITION(BlockSize, Elements)									\
 	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 							\
@@ -123,14 +123,13 @@
 #define __MEMORY_POOL_ARRAYS													\
 	__BLOCK_DEFINITION(256, 1)													\
 	__BLOCK_DEFINITION(192, 1)													\
-	__BLOCK_DEFINITION(160, 32)													\
+	__BLOCK_DEFINITION(160, 56)													\
 	__BLOCK_DEFINITION(132, 24)													\
-	__BLOCK_DEFINITION(100, 36)													\
-	__BLOCK_DEFINITION(84, 64)													\
-	__BLOCK_DEFINITION(68, 64)													\
+	__BLOCK_DEFINITION(100, 24)													\
+	__BLOCK_DEFINITION(84, 80)													\
 	__BLOCK_DEFINITION(36, 64)													\
-	__BLOCK_DEFINITION(28, 800)													\
-	__BLOCK_DEFINITION(24, 160)													\
+	__BLOCK_DEFINITION(28, 784)													\
+	__BLOCK_DEFINITION(24, 192)													\
 
 
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)										\
@@ -145,7 +144,6 @@
 	__SET_MEMORY_POOL_ARRAY(132)												\
 	__SET_MEMORY_POOL_ARRAY(100)												\
 	__SET_MEMORY_POOL_ARRAY(84)													\
-	__SET_MEMORY_POOL_ARRAY(68)													\
 	__SET_MEMORY_POOL_ARRAY(36)													\
 	__SET_MEMORY_POOL_ARRAY(28)													\
 	__SET_MEMORY_POOL_ARRAY(24)													\

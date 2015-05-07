@@ -213,23 +213,25 @@ void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, in
 	ASSERT(this, "ObjectSpriteContainer::setDirection: null this");
 }
 
-VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
+const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getPosition: null this");
 
-	VBVec2D position =
+	static VBVec2D position =
 	{
-		0, 0, this->z, 0
+		0, 0, 0, 0
 	};
+	
+	position.x = this->z;
 
-	return position;
+	return &position;
 }
 
-void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, VBVec2D position)
+void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position)
 {
 	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
 
-	this->z = position.z;
+	this->z = position->z;
 	this->renderFlag |= __UPDATE_G;
 }
 

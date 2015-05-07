@@ -144,28 +144,28 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 	}
 }
 
-VBVec2D ObjectSprite_getPosition(ObjectSprite this)
+const VBVec2D* ObjectSprite_getPosition(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getPosition: null this");
 
-	return this->position;
+	return &this->position;
 }
 
-void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position)
+void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "ObjectSprite::setPosition: null this");
 
-	this->position.x = position.x;
-	this->position.y = position.y;
-	this->position.z = position.z;
+	this->position = *position;
 
 	this->renderFlag |= __UPDATE_G;
 }
 
-void ObjectSprite_positione(ObjectSprite this, VBVec3D position3D)
+void ObjectSprite_positione(ObjectSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "ObjectSprite::positione: null this");
 
+	VBVec3D position3D = *position;
+	
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
@@ -276,21 +276,35 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 		ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
 		ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
 
-		// render in the new position to avoid flickering
-		this->renderFlag = true;
-
-		while (*_xpstts & XPBSYR);
-
-		ObjectSprite_render(this);
-
-		// turn off previous OBJs' to avoid ghosting
 		if(0 <= previousObjectIndex)
-		{				
-			int i = previousObjectIndex + this->totalObjects - 1;
-			for (; i >= this->objectIndex + this->totalObjects; i--)
+		{	
+			// if was visible
+			if(OAM[((previousObjectIndex) << 2) + 1] & 0xC000)
 			{
-				OAM[(i << 2) + 1] &= __HIDE_MASK;
+				// render in the new position to avoid flickering
+				this->renderFlag = true;
+	
+				while (*_xpstts & XPBSYR);
+	
+				ObjectSprite_render(this);
+				
+				// turn off previous OBJs' to avoid ghosting
+				int i = previousObjectIndex + this->totalObjects - 1;
+				for (; i >= this->objectIndex + this->totalObjects; i--)
+				{
+					OAM[(i << 2) + 1] &= __HIDE_MASK;
+				}
 			}
+			else
+			{
+				// otherwise hide
+				ObjectSprite_hide(this);
+			}
+		}
+		else
+		{
+			// render on next cycle
+			this->renderFlag = true;
 		}
 	}
 }

@@ -92,8 +92,8 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s16 numberOfObjects);
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s16 numberOfObjects);
 void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction);
-VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
-void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, VBVec2D position);
+const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
+void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
 void ObjectSpriteContainer_positione(ObjectSpriteContainer this, VBVec3D position3D);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z);
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);

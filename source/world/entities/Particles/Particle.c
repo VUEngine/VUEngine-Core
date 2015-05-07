@@ -138,14 +138,14 @@ void Particle_transform(Particle this, bool updateSpritePosition)
 
 	if (updateSpritePosition || Body_isAwake(this->body))
     {
-		VBVec3D position = Body_getPosition(this->body);
+		const VBVec3D* position = Body_getPosition(this->body);
 
 		ASSERT(this->objectSprite, "Particle::transform: null objectSprite");
 
 		if (__ZAXIS & Body_isMoving(this->body))
 		{
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
+			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
 		}
 		
 		// update sprite's 2D position
@@ -153,11 +153,11 @@ void Particle_transform(Particle this, bool updateSpritePosition)
     }
 }
 
-void Particle_addForce(Particle this, Force force)
+void Particle_addForce(Particle this, const Force* force)
 {
 	ASSERT(this, "Particle::position: null this");
 	
-	Body_addForce(this->body, &force);
+	Body_addForce(this->body, force);
 }
 
 void Particle_setLifeSpan(Particle this, int lifeSpan)
@@ -175,7 +175,7 @@ void Particle_setMass(Particle this, fix19_13 mass)
 }
 
 
-void Particle_setPosition(Particle this, VBVec3D position)
+void Particle_setPosition(Particle this, const VBVec3D* position)
 {
 	ASSERT(this, "Particle::position: null this");
 	ASSERT(this->body, "Particle::position: null body");
@@ -186,11 +186,11 @@ void Particle_setPosition(Particle this, VBVec3D position)
 	__VIRTUAL_CALL(void, Sprite, positione, this->objectSprite, position);
 
 	// calculate sprite's parallax
-	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
+	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
 }
 
 // retrieve position
-VBVec3D Particle_getPosition(Particle this)
+const VBVec3D* Particle_getPosition(Particle this)
 {
 	ASSERT(this, "Particle::getPosition: null this");
 	ASSERT(this->body, "Particle::getPosition: null body");

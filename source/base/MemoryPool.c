@@ -36,6 +36,36 @@
 #define __MEMORY_ALIGNMENT	4
 
 // TODO: remove me
+#define __MEMORY_POOLS		9
+
+#define __MEMORY_POOL_ARRAYS													\
+	__BLOCK_DEFINITION(256, 1)													\
+	__BLOCK_DEFINITION(192, 1)													\
+	__BLOCK_DEFINITION(160, 48)													\
+	__BLOCK_DEFINITION(132, 24)													\
+	__BLOCK_DEFINITION(100, 24)													\
+	__BLOCK_DEFINITION(84, 80)													\
+	__BLOCK_DEFINITION(36, 64)													\
+	__BLOCK_DEFINITION(28, 784)													\
+	__BLOCK_DEFINITION(24, 192)													\
+
+
+#define __SET_MEMORY_POOL_ARRAY(BlockSize)										\
+	this->poolLocation[pool] = this->pool ## BlockSize ## B;					\
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);	\
+	this->poolSizes[pool++][eBlockSize] = BlockSize;							\
+
+#define __SET_MEMORY_POOL_ARRAYS												\
+	__SET_MEMORY_POOL_ARRAY(256)												\
+	__SET_MEMORY_POOL_ARRAY(192)												\
+	__SET_MEMORY_POOL_ARRAY(160)												\
+	__SET_MEMORY_POOL_ARRAY(132)												\
+	__SET_MEMORY_POOL_ARRAY(100)												\
+	__SET_MEMORY_POOL_ARRAY(84)													\
+	__SET_MEMORY_POOL_ARRAY(36)													\
+	__SET_MEMORY_POOL_ARRAY(28)													\
+	__SET_MEMORY_POOL_ARRAY(24)													\
+	
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -231,17 +261,13 @@ int MemoryPool_getPoolSize(MemoryPool this)
 	ASSERT(this, "MemoryPool::reset: null this");
 
 	int size = 0;
+	int pool = 0;
 
-	size += sizeof(this->pool256B);
-	size += sizeof(this->pool192B);
-	size += sizeof(this->pool160B);
-	size += sizeof(this->pool132B);
-	size += sizeof(this->pool100B);
-	size += sizeof(this->pool84B);
-	size += sizeof(this->pool68B);
-	size += sizeof(this->pool36B);
-	size += sizeof(this->pool28B);
-	size += sizeof(this->pool24B);
+	// clear all allocable objects usage
+	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	{
+		size += this->poolSizes[pool][ePoolSize];
+	}
 
 	return size;
 }

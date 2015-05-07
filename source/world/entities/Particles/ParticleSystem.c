@@ -53,8 +53,8 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this);
 static void ParticleSystem_processExpiredParticles(ParticleSystem this);
 static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventFirer);
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this);
-static VBVec3D ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed);
-static Force ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed);
+static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed);
+static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -252,40 +252,36 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 	return ParticleSystem_spawnParticle(this);
 }
 
-static VBVec3D ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed)
+static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed)
 {
 	ASSERT(this, "ParticleSystem::getParticleSpawnPosition: null this");
 
-	fix19_13 x = this->particleSystemDefinition->minimumRelativeSpanPosition.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x));
-	fix19_13 y = this->particleSystemDefinition->minimumRelativeSpanPosition.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
-	fix19_13 z = this->particleSystemDefinition->minimumRelativeSpanPosition.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
-
-	VBVec3D position = 
+	static VBVec3D position = 
 	{
-		x + this->transform.globalPosition.x + (0 < x? this->particleSystemDefinition->minimumSpanDistance.x: -this->particleSystemDefinition->minimumSpanDistance.x),
-		y + this->transform.globalPosition.y + (0 < x? this->particleSystemDefinition->minimumSpanDistance.y: -this->particleSystemDefinition->minimumSpanDistance.y),
-		z + this->transform.globalPosition.z + (0 < x? this->particleSystemDefinition->minimumSpanDistance.z: -this->particleSystemDefinition->minimumSpanDistance.z)
+		0, 0, 0
 	};
 
-	return position;
+	position.x = this->transform.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpanPosition.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x));
+	position.y = this->transform.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpanPosition.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
+	position.z = this->transform.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpanPosition.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
+
+	return &position;
 }
 
-static Force ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed)
+static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed)
 {
 	ASSERT(this, "ParticleSystem::getParticleSpawnForce: null this");
 
-	fix19_13 x = ITOFIX19_13(this->particleSystemDefinition->minimumForce.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x)));
-	fix19_13 y = ITOFIX19_13(this->particleSystemDefinition->minimumForce.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y)));
-	fix19_13 z = ITOFIX19_13(this->particleSystemDefinition->minimumForce.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z)));
-
-	Force force =
+	static Force force =
     {
-    	x,
-        y,
-        z
+    	0, 0, 0
     };
 
-	return force;
+	force.x = ITOFIX19_13(this->particleSystemDefinition->minimumForce.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x)));
+	force.y = ITOFIX19_13(this->particleSystemDefinition->minimumForce.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y)));
+	force.z = ITOFIX19_13(this->particleSystemDefinition->minimumForce.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z)));
+
+	return &force;
 }
 
 static Particle ParticleSystem_spawnParticle(ParticleSystem this)

@@ -113,9 +113,9 @@ __CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinitio
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition);
 void ObjectSprite_destructor(ObjectSprite this);
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
-VBVec2D ObjectSprite_getPosition(ObjectSprite this);
-void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position);
-void ObjectSprite_positione(ObjectSprite this, VBVec3D position3D);
+const VBVec2D* ObjectSprite_getPosition(ObjectSprite this);
+void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);
+void ObjectSprite_positione(ObjectSprite this, const VBVec3D* position3D);
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
 void ObjectSprite_render(ObjectSprite this);
 s16 ObjectSprite_getTotalObjects(ObjectSprite this);

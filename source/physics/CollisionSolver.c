@@ -247,7 +247,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 	// retrieve the colliding spatialObject's position and gap
 	Gap myOwnerGap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
 	VBVec3D myOwnerPosition = *this->ownerPositionToWrite;
-	VBVec3D otherPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, SpatialObject, getPosition, collidingSpatialObject);
+	const VBVec3D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObject);
 	Gap otherGap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject);
 
 	// pointers to the dimensions to affect
@@ -275,7 +275,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 
 			myPositionAxisToCheck = &this->ownerPositionToCheck->x;
 			myPositionAxis = &myOwnerPosition.x;
-			otherPositionAxis = &otherPosition.x;
+			otherPositionAxis = &otherPosition->x;
 
 			myHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getWidth, this->owner) >> 1;
 			otherHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getWidth, collidingSpatialObject) >> 1;
@@ -290,7 +290,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 
 			myPositionAxisToCheck = &this->ownerPositionToCheck->y;
 			myPositionAxis = &myOwnerPosition.y;
-			otherPositionAxis = &otherPosition.y;
+			otherPositionAxis = &otherPosition->y;
 
 			myHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getHeight, this->owner) >> 1;
 			otherHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getHeight, collidingSpatialObject) >> 1;
@@ -305,10 +305,10 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 
 			myPositionAxisToCheck = &this->ownerPositionToCheck->z;
 			myPositionAxis = &myOwnerPosition.z;
-			otherPositionAxis = &otherPosition.z;
+			otherPositionAxis = &otherPosition->z;
 
 			// TODO: must make depth work as the width and high
-			if (this->ownerPositionToCheck->z < otherPosition.z)
+			if (this->ownerPositionToCheck->z < otherPosition->z)
 			{
 				myHalfSize = __VIRTUAL_CALL(u16, SpatialObject, getDepth, this->owner);
 				otherHalfSize = 0;
@@ -344,10 +344,10 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 							+ pad);
 	}
 
-	__VIRTUAL_CALL(void, SpatialObject, setPosition, this->owner, myOwnerPosition);
+	__VIRTUAL_CALL(void, SpatialObject, setPosition, this->owner, &myOwnerPosition);
 
 	// save owner's new position
-	this->ownerPreviousPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, SpatialObject, getPosition, this->owner);
+	this->ownerPreviousPosition = *__VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
 
 }
 
