@@ -35,6 +35,8 @@
 // it is neccesary for the object to be aligned to 2 multiples
 #define __MEMORY_ALIGNMENT	4
 
+// TODO: remove me
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION

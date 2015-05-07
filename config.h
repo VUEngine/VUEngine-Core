@@ -1,6 +1,12 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#include <Oop.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										DEBUGGING TOOLS
@@ -127,12 +133,6 @@
 	__BLOCK_DEFINITION(36, 64)													\
 	__BLOCK_DEFINITION(28, 784)													\
 	__BLOCK_DEFINITION(24, 192)													\
-
-
-#define __SET_MEMORY_POOL_ARRAY(BlockSize)										\
-	this->poolLocation[pool] = this->pool ## BlockSize ## B;					\
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);	\
-	this->poolSizes[pool++][eBlockSize] = BlockSize;							\
 
 #define __SET_MEMORY_POOL_ARRAYS												\
 	__SET_MEMORY_POOL_ARRAY(256)												\
