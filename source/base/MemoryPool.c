@@ -35,8 +35,6 @@
 // it is neccesary for the object to be aligned to 2 multiples
 #define __MEMORY_ALIGNMENT	4
 
-// TODO: remove me
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -141,7 +139,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 	if (i >= numberOfOjects)
 	{
 		Printing_clear(Printing_getInstance());
-		MemoryPool_printMemUsage(this, 1, 10);
+		MemoryPool_printMemUsage(this, 1, 8);
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
@@ -159,6 +157,11 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 {
 	ASSERT(this, "MemoryPool::free: null this");
 
+	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
+	{
+		return;
+	}
+	
 #ifdef __DEBUG
 
 	int i;

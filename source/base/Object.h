@@ -52,9 +52,6 @@
 	/* pointer to the class's virtual table */									\
 	void* vTable;																\
 																				\
-	/* flag to know if it's a dynamic created object */ 						\
-	u32 dynamic;																\
-																				\
 	/* events */																\
 	VirtualList events;															\
 

@@ -121,32 +121,39 @@
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-#define __MEMORY_POOLS		9
+#define __MEMORY_POOLS		12
 
+// TODO: remove me
 #define __MEMORY_POOL_ARRAYS													\
 	__BLOCK_DEFINITION(256, 1)													\
 	__BLOCK_DEFINITION(192, 1)													\
-	__BLOCK_DEFINITION(160, 48)													\
-	__BLOCK_DEFINITION(132, 24)													\
-	__BLOCK_DEFINITION(100, 24)													\
-	__BLOCK_DEFINITION(84, 80)													\
-	__BLOCK_DEFINITION(36, 64)													\
-	__BLOCK_DEFINITION(28, 784)													\
-	__BLOCK_DEFINITION(24, 192)													\
+	__BLOCK_DEFINITION(152, 16)													\
+	__BLOCK_DEFINITION(128, 16)													\
+	__BLOCK_DEFINITION(96, 16)													\
+	__BLOCK_DEFINITION(80, 12)													\
+	__BLOCK_DEFINITION(72, 40)													\
+	__BLOCK_DEFINITION(64, 16)													\
+	__BLOCK_DEFINITION(32, 44)													\
+	__BLOCK_DEFINITION(28, 160)													\
+	__BLOCK_DEFINITION(24, 442)													\
+	__BLOCK_DEFINITION(20, 144)													\
 
 #define __SET_MEMORY_POOL_ARRAYS												\
 	__SET_MEMORY_POOL_ARRAY(256)												\
 	__SET_MEMORY_POOL_ARRAY(192)												\
-	__SET_MEMORY_POOL_ARRAY(160)												\
-	__SET_MEMORY_POOL_ARRAY(132)												\
-	__SET_MEMORY_POOL_ARRAY(100)												\
-	__SET_MEMORY_POOL_ARRAY(84)													\
-	__SET_MEMORY_POOL_ARRAY(36)													\
+	__SET_MEMORY_POOL_ARRAY(152)												\
+	__SET_MEMORY_POOL_ARRAY(128)												\
+	__SET_MEMORY_POOL_ARRAY(96)													\
+	__SET_MEMORY_POOL_ARRAY(80)													\
+	__SET_MEMORY_POOL_ARRAY(72)													\
+	__SET_MEMORY_POOL_ARRAY(64)													\
+	__SET_MEMORY_POOL_ARRAY(32)													\
 	__SET_MEMORY_POOL_ARRAY(28)													\
 	__SET_MEMORY_POOL_ARRAY(24)													\
+	__SET_MEMORY_POOL_ARRAY(20)													\
 
+#define __MIN_BLOCK 		20
 
-#define __MIN_BLOCK 		24
 
 
 //---------------------------------------------------------------------------------------------------------

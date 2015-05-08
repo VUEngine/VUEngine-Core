@@ -120,9 +120,6 @@
 		/* just for safety set it again */												\
 		this->vTable = &ClassName ## _vTable;											\
 																						\
-		/* set dynamic flag */															\
-		this->dynamic = true;															\
-																						\
 		/* return the created object */													\
 		return this;																	\
 	}
@@ -167,16 +164,10 @@
 #define __DESTROY_BASE																	\
 																						\
 	/* since the base destructor is the second element in the virtual table */			\
-	_baseDestructor((void*)this);																\
+	_baseDestructor((void*)this);														\
 																						\
-	/* if dynamically created */														\
-	if (this->dynamic)																	\
-	{																					\
-		this->dynamic = false;															\
-																						\
-		/* free the memory */															\
-		MemoryPool_free(MemoryPool_getInstance(), (void*)this);							\
-	}
+	/* free the memory */																\
+	MemoryPool_free(MemoryPool_getInstance(), (void*)this);								\
 
 
 // retrieve virtual method's address

@@ -52,7 +52,6 @@ typedef struct Event
 // class's constructor
 void Object_constructor(Object this)
 {
-	this->dynamic = false;
 	this->events = NULL;
 }
 
