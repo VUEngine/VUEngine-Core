@@ -121,28 +121,25 @@
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-#define __MEMORY_POOLS		12
+#define __MEMORY_POOLS		11
 
-// TODO: remove me
 #define __MEMORY_POOL_ARRAYS													\
-	__BLOCK_DEFINITION(256, 1)													\
 	__BLOCK_DEFINITION(192, 1)													\
-	__BLOCK_DEFINITION(152, 16)													\
-	__BLOCK_DEFINITION(128, 16)													\
-	__BLOCK_DEFINITION(96, 16)													\
-	__BLOCK_DEFINITION(80, 12)													\
-	__BLOCK_DEFINITION(72, 40)													\
-	__BLOCK_DEFINITION(64, 16)													\
-	__BLOCK_DEFINITION(32, 44)													\
-	__BLOCK_DEFINITION(28, 160)													\
-	__BLOCK_DEFINITION(24, 442)													\
-	__BLOCK_DEFINITION(20, 144)													\
+	__BLOCK_DEFINITION(164, 4)													\
+	__BLOCK_DEFINITION(136, 48)													\
+	__BLOCK_DEFINITION(96, 48)													\
+	__BLOCK_DEFINITION(80, 32)													\
+	__BLOCK_DEFINITION(72, 64)													\
+	__BLOCK_DEFINITION(64, 32)													\
+	__BLOCK_DEFINITION(32, 64)													\
+	__BLOCK_DEFINITION(28, 256)													\
+	__BLOCK_DEFINITION(24, 640)													\
+	__BLOCK_DEFINITION(20, 256)													\
 
 #define __SET_MEMORY_POOL_ARRAYS												\
-	__SET_MEMORY_POOL_ARRAY(256)												\
 	__SET_MEMORY_POOL_ARRAY(192)												\
-	__SET_MEMORY_POOL_ARRAY(152)												\
-	__SET_MEMORY_POOL_ARRAY(128)												\
+	__SET_MEMORY_POOL_ARRAY(164)												\
+	__SET_MEMORY_POOL_ARRAY(136)												\
 	__SET_MEMORY_POOL_ARRAY(96)													\
 	__SET_MEMORY_POOL_ARRAY(80)													\
 	__SET_MEMORY_POOL_ARRAY(72)													\
@@ -153,7 +150,6 @@
 	__SET_MEMORY_POOL_ARRAY(20)													\
 
 #define __MIN_BLOCK 		20
-
 
 
 //---------------------------------------------------------------------------------------------------------

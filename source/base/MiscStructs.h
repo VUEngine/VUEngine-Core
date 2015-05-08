@@ -58,6 +58,15 @@ typedef struct VBVec3D
 
 } VBVec3D;
 
+typedef struct VBVec3DFlag
+{
+	u8 x: 2;
+	u8 y: 2;
+	u8 z: 2;
+
+} VBVec3DFlag;
+
+
 typedef struct IntegralPosition
 {
 	// fps increases a lot in hardware with ints

@@ -74,6 +74,9 @@
 	/* super's attributes */													\
 	SpatialObject_ATTRIBUTES;													\
 																				\
+	/* 3d transformation */														\
+	Transformation transform;													\
+																				\
 	/* children list */															\
 	VirtualList children;														\
 																				\
@@ -92,11 +95,8 @@
 	/* flag for parent to know to delete it */									\
 	u8 deleteMe;																\
 																				\
-	/* 3d transformation */														\
-	Transformation transform;													\
-																				\
 	/* flag to recalculate global position */									\
-	VBVec3D invalidateGlobalPosition;											\
+	VBVec3DFlag invalidateGlobalPosition;										\
 																				\
 
 __CLASS(Container);
