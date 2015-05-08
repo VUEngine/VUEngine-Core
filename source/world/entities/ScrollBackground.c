@@ -140,7 +140,7 @@ void ScrollBackground_initialTransform(ScrollBackground this, Transformation* en
 }
 
 // transform class
-void ScrollBackground_transform(ScrollBackground this, Transformation* environmentTransform)
+void ScrollBackground_transform(ScrollBackground this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ScrollBackground::transform: null this");
 

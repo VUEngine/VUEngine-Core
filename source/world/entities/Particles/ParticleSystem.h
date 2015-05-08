@@ -67,6 +67,9 @@
 	/* next spawn time */														\
 	u32 nextSpawnTime;															\
 																				\
+	/* particle count */														\
+	s16 particleCount;															\
+																				\
 	/* status flag */															\
 	bool paused;																\
 																				\
@@ -86,11 +89,14 @@ typedef struct ParticleSystemDefinition
 	// It has an Entity at the beggining
 	EntityDefinition entityDefinition;
 
+	// whether to delete or reuse expired particles
+	u8 recycleParticles;
+
 	// minimun generation delay in miliseconds
 	u16 minimumSpawnDelay;
 
-	// maximum generation delay in miliseconds
-	u16 maximumSpawnDelay;
+	// generation delay delta in miliseconds
+	u16 spawnDelayDelta;
 
 	// maximum total particles
 	u8 maximumNumberOfAliveParticles;
@@ -133,7 +139,7 @@ __CLASS_NEW_DECLARE(ParticleSystem, const ParticleSystemDefinition* particleSyst
 void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinition* particleSystemDefinition, s16 id);
 void ParticleSystem_destructor(ParticleSystem this);
 void ParticleSystem_update(ParticleSystem this);
-void ParticleSystem_transform(ParticleSystem this, Transformation* environmentTransform);
+void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform);
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);
 void ParticleSystem_show(ParticleSystem this);
 void ParticleSystem_hide(ParticleSystem this);

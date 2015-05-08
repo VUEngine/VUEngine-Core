@@ -327,9 +327,18 @@ void Body_applyForce(Body this, const Force* force, bool clearAxis)
 	this->appliedForce.y = force->y;
 	this->appliedForce.z = force->z;
 	
-	this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, this->mass);
-	this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, this->mass);
-	this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, this->mass);
+	if(this->mass)
+	{
+		this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, this->mass);
+		this->acceleration.y += FIX19_13_DIV(this->appliedForce.y, this->mass);
+		this->acceleration.z += FIX19_13_DIV(this->appliedForce.z, this->mass);
+	}
+	else
+	{
+		this->acceleration.x += this->appliedForce.x;
+		this->acceleration.y += this->appliedForce.y;
+		this->acceleration.z += this->appliedForce.z;
+	}
 
 	int axisStartedMovement = 0;
 
@@ -351,7 +360,10 @@ void Body_applyForce(Body this, const Force* force, bool clearAxis)
 		Body_moveAccelerated(this, __ZAXIS);
 	}
 
-	Body_awake(this, axisStartedMovement);
+	if(axisStartedMovement)
+	{
+		Body_awake(this, axisStartedMovement);
+	}
 }
 
 // apply gravity
@@ -585,7 +597,7 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 		*acceleration += FIX19_13_MULT(gravity, elapsedTime);
 	}
 
-	fix19_13 frictionAcceleration = FIX19_13_DIV(frictionForce, this->mass);
+	fix19_13 frictionAcceleration = this->mass? FIX19_13_DIV(frictionForce, this->mass): frictionForce;
 
 	if(appliedForce)
 	{
@@ -788,22 +800,22 @@ bool Body_isActive(Body this)
 }
 
 // retrieve position
-VBVec3D Body_getPosition(Body this)
+const VBVec3D* Body_getPosition(Body this)
 {
 	ASSERT(this, "Body::getPosition: null this");
 
-	return this->position;
+	return &this->position;
 }
 
 // retrieve position
-void Body_setPosition(Body this, VBVec3D position, SpatialObject caller)
+void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller)
 {
 	ASSERT(this, "Body::setPosition: null this");
 
 	if (this->owner == caller)
 	{
 		// set position
-		this->position = position;
+		this->position = *position;
 	}
 }
 
@@ -846,6 +858,20 @@ void Body_setFriction(Body this, Force friction)
 	ASSERT(this, "Body::setFriction: null this");
 
 	this->friction = friction;
+}
+
+fix19_13 Body_getMass(Body this)
+{
+	ASSERT(this, "Body::getMass: null this");
+
+	return this->mass;
+}
+
+void Body_setMass(Body this, fix19_13 mass)
+{
+	ASSERT(this, "Body::setMass: null this");
+
+	this->mass = mass;
 }
 
 // retrieve state

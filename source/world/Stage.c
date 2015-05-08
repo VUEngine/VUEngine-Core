@@ -40,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #undef __STREAM_CYCLE_DURATION
-#define __STREAM_CYCLE_DURATION	(12)
+#define __STREAM_CYCLE_DURATION	(16)
 
 #define __TOTAL_CYCLES	4
 #define __STREAM_UNLOAD_CYCLE	(0)
@@ -343,7 +343,7 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 		if(entity)
 		{
 			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, *position);
+			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
 
 			// initialize now
 			__VIRTUAL_CALL(void, Entity, initialize, entity);
@@ -594,7 +594,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
-	VBVec3D focusEntityPosition = Container_getGlobalPosition(__UPCAST(Container, this->focusEntity));
+	VBVec3D focusEntityPosition = *Container_getGlobalPosition(__UPCAST(Container, this->focusEntity));
 	focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
 	focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
 	focusEntityPosition.z = FIX19_13TOI(focusEntityPosition.z);

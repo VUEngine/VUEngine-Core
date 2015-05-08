@@ -32,7 +32,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __CHECK_GRAVITY_CYCLE	(__TARGET_FPS >> 3)
+#define __CHECK_GRAVITY_CYCLE	(__TARGET_FPS >> 2)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 		return;
 	}
 
-	if (!checkForGravity--)
+	if (!--checkForGravity)
 	{
 		checkForGravity = __CHECK_GRAVITY_CYCLE;
 		PhysicalWorld_checkForGravity(this);

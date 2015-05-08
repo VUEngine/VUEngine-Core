@@ -203,7 +203,7 @@ s8 Sprite_getFrameDelay(Sprite this);
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
 void Sprite_writeAnimation(Sprite this);
 u8 Sprite_getParallaxDisplacement(Sprite this);
-void Sprite_rotate(Sprite this, Rotation rotation);
+void Sprite_rotate(Sprite this, const Rotation* rotation);
 
 
 //---------------------------------------------------------------------------------------------------------

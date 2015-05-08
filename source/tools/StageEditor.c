@@ -681,7 +681,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 	if (this->currentEntityNode && this->shape)
 	{
 		Container container = __UPCAST(Container, VirtualNode_getData(this->currentEntityNode));
-		VBVec3D localPosition = Container_getLocalPosition(container);
+		VBVec3D localPosition = *Container_getLocalPosition(container);
 
 		localPosition.x += translation.x;
 		localPosition.y += translation.y;
@@ -760,16 +760,16 @@ static void StageEditor_printEntityPosition(StageEditor this)
 	if (this->currentEntityNode)
 	{
 		Container container = __UPCAST(Container, VirtualNode_getData(this->currentEntityNode));
-		VBVec3D globalPosition = Container_getGlobalPosition(container);
+		const VBVec3D* globalPosition = Container_getGlobalPosition(container);
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Container_getId(container), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(container), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition.x), x + 10, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition.y), x + 15, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition.z), x + 20, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->x), x + 10, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->y), x + 15, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->z), x + 20, y, NULL);
 	}
 }
 

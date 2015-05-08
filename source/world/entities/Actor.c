@@ -112,7 +112,7 @@ void Actor_destructor(Actor this)
 }
 
 //set class's local position
-void Actor_setLocalPosition(Actor this, VBVec3D position)
+void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 {
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
@@ -120,7 +120,7 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 
 	if (this->body)
     {
-		VBVec3D globalPosition = Container_getGlobalPosition(__UPCAST(Container, this));
+		VBVec3D globalPosition = *Container_getGlobalPosition(__UPCAST(Container, this));
 
 		Transformation environmentTransform =
         {
@@ -146,13 +146,13 @@ void Actor_setLocalPosition(Actor this, VBVec3D position)
 			globalPosition.z = environmentTransform.globalPosition.z;
 		}
 
-		globalPosition.x += position.x;
-		globalPosition.y += position.y;
-		globalPosition.z += position.z;
+		globalPosition.x += position->x;
+		globalPosition.y += position->y;
+		globalPosition.z += position->z;
 
 		Actor_resetCollisionStatus(this, __XAXIS | __YAXIS | __ZAXIS);
 
-		Body_setPosition(this->body, globalPosition, __UPCAST(SpatialObject, this));
+		Body_setPosition(this->body, &globalPosition, __UPCAST(SpatialObject, this));
 		
 		if(this->shape)
 		{
@@ -174,7 +174,7 @@ static void Actor_syncPositionWithBody(Actor this)
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void Actor_transform(Actor this, Transformation* environmentTransform)
+void Actor_transform(Actor this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::transform: null this");
 
@@ -462,7 +462,7 @@ u8 Actor_isMoving(Actor this)
 }
 
 // set position
-void Actor_setPosition(Actor this, VBVec3D position)
+void Actor_setPosition(Actor this, const VBVec3D* position)
 {
 	ASSERT(this, "Actor::setPosition: null this");
 
@@ -470,7 +470,7 @@ void Actor_setPosition(Actor this, VBVec3D position)
 }
 
 // retrieve global position
-VBVec3D Actor_getPosition(Actor this)
+const VBVec3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 

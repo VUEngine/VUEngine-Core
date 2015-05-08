@@ -44,6 +44,9 @@ __CLASS_DEFINITION(CharSet, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+// globals
+extern unsigned int volatile* _xpstts;
+
 //class's constructor
 static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset);
 
@@ -155,7 +158,7 @@ void CharSet_write(CharSet this)
 	ASSERT(this, "CharSet::write: null this");
 
 	//write to char memory
-	Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4), (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement), (int)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4);
+	Mem_copy((u8*)CharSegs((u32)this->segment) + (((u32)this->offset) << 4), (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement), (u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4);
 }
 
 // rewrite char on memory
@@ -163,7 +166,6 @@ void CharSet_rewrite(CharSet this)
 {
 	ASSERT(this, "CharSet::rewrite: null this");
 
-	extern unsigned int volatile* _xpstts;
 	while (*_xpstts & XPBSYR);
 
 	// write again
@@ -188,7 +190,7 @@ void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar)
 
 	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
 	{
-		Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
+		Mem_copy((u8*)CharSegs((u32)this->segment) + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
 	}
 }
 
@@ -211,11 +213,11 @@ void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE
 			0x00, 0x00,
 		};
 
-		Mem_copy(auxChar, (u8*)CharSegs(this->segment) + (this->offset << 4) + (charToReplace << 4), (int)(1 << 4));
+		Mem_copy(auxChar, (u8*)CharSegs((u32)this->segment) + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
 
 		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
-		Mem_copy((u8*)CharSegs(this->segment) + (this->offset << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
+		Mem_copy((u8*)CharSegs((u32)this->segment) + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
 	}
 }

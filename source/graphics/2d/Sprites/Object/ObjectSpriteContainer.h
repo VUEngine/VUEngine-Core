@@ -49,10 +49,12 @@
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);					\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);				\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);				\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, positione);		\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, positione);					\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);				\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);			\
-	
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);						\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);						\
+
 #define ObjectSpriteContainer_ATTRIBUTES										\
 																				\
 	/* super's attributes */													\
@@ -86,15 +88,23 @@ __CLASS(ObjectSpriteContainer);
 
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt);
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
-s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
-void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
-bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, int numberOfObjects);
+s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
+void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s16 numberOfObjects);
+bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s16 numberOfObjects);
 void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction);
-VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
-void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, VBVec2D position);
+const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
+void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
 void ObjectSpriteContainer_positione(ObjectSpriteContainer this, VBVec3D position3D);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z);
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
+void ObjectSpriteContainer_show(ObjectSpriteContainer this);
+void ObjectSpriteContainer_hide(ObjectSpriteContainer this);
+u16 ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);
+void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y);
 
 
 #endif

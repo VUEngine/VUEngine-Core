@@ -36,11 +36,7 @@
 #define __MEMORY_ALIGNMENT	4
 
 // TODO: remove me
-#undef __POOL_256B_SIZE
-#define __POOL_256B_SIZE 	(__BLOCK_256B * 2)
 
-#undef __POOL_16B_SIZE
-#define __POOL_16B_SIZE 	(__BLOCK_16B * 256)
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -54,18 +50,7 @@
 	/* dynamic memory area */													\
 	/* must always put together the pools! */									\
 	/* first byte is used as a usage flag */									\
-																				\
-	/*BYTE pool512B[__POOL_512B_SIZE];*/										\
-	BYTE pool256B[__POOL_256B_SIZE]; 											\
-	BYTE pool192B[__POOL_192B_SIZE]; 											\
-	BYTE pool128B[__POOL_128B_SIZE];											\
-	BYTE pool96B[__POOL_100B_SIZE];												\
-	BYTE pool80B[__POOL_80B_SIZE];												\
-	BYTE pool48B[__POOL_48B_SIZE];												\
-	BYTE pool32B[__POOL_32B_SIZE];												\
-	BYTE pool24B[__POOL_28B_SIZE];												\
-	BYTE pool16B[__POOL_16B_SIZE];												\
-	/* here ends the pool area */												\
+	__MEMORY_POOL_ARRAYS														\
 																				\
 	/* pointer to the beggining of each memory pool */							\
 	BYTE* poolLocation[__MEMORY_POOLS];											\
@@ -156,7 +141,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 	if (i >= numberOfOjects)
 	{
 		Printing_clear(Printing_getInstance());
-		MemoryPool_printMemUsage(this, 1, 4);
+		MemoryPool_printMemUsage(this, 1, 10);
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
@@ -228,54 +213,8 @@ static void MemoryPool_reset(MemoryPool this)
 	int i;
 
 	// initialize pool's sizes and pointers
-	/*
-	this->poolLocation[pool] = this->pool512B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool512B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_512B;
-	*/
-
-	this->poolLocation[pool] = this->pool256B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool256B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_256B;
-
-	this->poolLocation[pool] = this->pool192B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool192B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_192B;
-
-	this->poolLocation[pool] = this->pool128B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool128B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_128B;
-
-	this->poolLocation[pool] = this->pool96B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool96B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_100B;
-
-	this->poolLocation[pool] = this->pool80B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool80B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_80B;
-
-	this->poolLocation[pool] = this->pool48B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool48B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_48B;
-
-	this->poolLocation[pool] = this->pool32B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool32B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_32B;
-
-	this->poolLocation[pool] = this->pool24B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool24B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_28B;
-
-	this->poolLocation[pool] = this->pool16B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool16B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_16B;
-
-	/*
-	this->poolLocation[pool] = this->pool8B;
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool8B);
-	this->poolSizes[pool++][eBlockSize] = __BLOCK_8B;
-	*/
-
+	__SET_MEMORY_POOL_ARRAYS
+	
 	// clear all allocable objects usage
 	for (pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -293,16 +232,13 @@ int MemoryPool_getPoolSize(MemoryPool this)
 	ASSERT(this, "MemoryPool::reset: null this");
 
 	int size = 0;
+	int pool = 0;
 
-	size += sizeof(this->pool256B);
-	size += sizeof(this->pool192B);
-	size += sizeof(this->pool128B);
-	size += sizeof(this->pool96B);
-	size += sizeof(this->pool80B);
-	size += sizeof(this->pool48B);
-	size += sizeof(this->pool32B);
-	size += sizeof(this->pool24B);
-	size += sizeof(this->pool16B);
+	// clear all allocable objects usage
+	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	{
+		size += this->poolSizes[pool][ePoolSize];
+	}
 
 	return size;
 }

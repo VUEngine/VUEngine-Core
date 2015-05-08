@@ -44,7 +44,7 @@
 		Container_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, UI, addEntities);								\
 		__VIRTUAL_SET(ClassName, UI, transform);								\
-		__VIRTUAL_SET(ClassName, UI, initialTransform);								\
+		__VIRTUAL_SET(ClassName, UI, initialTransform);							\
 
 // declare a UI, which holds the objects in a game world
 __CLASS(UI);
@@ -74,7 +74,7 @@ __CLASS_NEW_DECLARE(UI, UIDefinition* uiDefinition);
 
 void UI_destructor(UI this);
 void UI_addEntities(UI this, PositionedEntity* entities);
-void UI_transform(UI this, Transformation* environmentTransform);
+void UI_transform(UI this, const Transformation* environmentTransform);
 void UI_initialTransform(UI this, Transformation* environmentTransform);
 
 

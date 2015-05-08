@@ -98,16 +98,12 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this, "Particle::addSprite: null this");
 	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator defined");
 
-	if (this->spriteDefinition->allocator)
+	// call the appropiate allocator to support inheritance!
+	this->objectSprite = __UPCAST(ObjectSprite, ((Sprite (*)(SpriteDefinition*, ...)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, this));
+
+	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __UPCAST(ObjectAnimatedSprite, this->objectSprite))
 	{
-		// call the appropiate allocator to support inheritance!
-		this->objectSprite = __UPCAST(ObjectSprite, ((Sprite (*)(SpriteDefinition*, ...)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, this));
-
-		if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __UPCAST(ObjectAnimatedSprite, this->objectSprite))
-		{
-			Sprite_play(__UPCAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
-		}
-
+		Sprite_play(__UPCAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
 	}
 
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
@@ -117,34 +113,40 @@ void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle 
 {
 	ASSERT(this, "Particle::update: null this");
 
-	this->lifeSpan -= timeElapsed;
-	Sprite_update(__UPCAST(Sprite, this->objectSprite), _gameClock);
-	
-	if(behavior)
+	if(0 <= this->lifeSpan)
 	{
-		behavior(this);
-	}
-	
-	if(0 > this->lifeSpan)
-	{
-		Object_fireEvent(__UPCAST(Object, this), __EVENT_PARTICLE_EXPIRED);
+		this->lifeSpan -= timeElapsed;
+		Sprite_update(__UPCAST(Sprite, this->objectSprite), _gameClock);
+		
+		if(behavior)
+		{
+			behavior(this);
+		}
+		
+		if(0 > this->lifeSpan)
+		{
+			Object_fireEvent(__UPCAST(Object, this), __EVENT_PARTICLE_EXPIRED);
+		}
 	}
 }
 
 // transform 
-void Particle_transform(Particle this)
+void Particle_transform(Particle this, bool updateSpritePosition)
 {
 	ASSERT(this, "Particle::transform: null this");
 	ASSERT(this->body, "Particle::transform: null body");
 
-	if (Body_isAwake(this->body))
+	if (updateSpritePosition || Body_isAwake(this->body))
     {
-		VBVec3D position = Body_getPosition(this->body);
+		const VBVec3D* position = Body_getPosition(this->body);
 
 		ASSERT(this->objectSprite, "Particle::transform: null objectSprite");
 
-		// calculate sprite's parallax
-		__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
+		if (__ZAXIS & Body_isMoving(this->body))
+		{
+			// calculate sprite's parallax
+			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
+		}
 		
 		// update sprite's 2D position
 		__VIRTUAL_CALL(void, Sprite, positione, this->objectSprite, position);
@@ -158,7 +160,22 @@ void Particle_addForce(Particle this, const Force* force)
 	Body_addForce(this->body, force);
 }
 
-void Particle_setPosition(Particle this, VBVec3D position)
+void Particle_setLifeSpan(Particle this, int lifeSpan)
+{
+	ASSERT(this, "Particle::setLifeSpan: null this");
+	
+	this->lifeSpan = lifeSpan;
+}
+
+void Particle_setMass(Particle this, fix19_13 mass)
+{
+	ASSERT(this, "Particle::setMass: null this");
+	
+	Body_setMass(this->body, mass);
+}
+
+
+void Particle_setPosition(Particle this, const VBVec3D* position)
 {
 	ASSERT(this, "Particle::position: null this");
 	ASSERT(this->body, "Particle::position: null body");
@@ -169,11 +186,11 @@ void Particle_setPosition(Particle this, VBVec3D position)
 	__VIRTUAL_CALL(void, Sprite, positione, this->objectSprite, position);
 
 	// calculate sprite's parallax
-	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position.z);
+	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
 }
 
 // retrieve position
-VBVec3D Particle_getPosition(Particle this)
+const VBVec3D* Particle_getPosition(Particle this)
 {
 	ASSERT(this, "Particle::getPosition: null this");
 	ASSERT(this->body, "Particle::getPosition: null body");

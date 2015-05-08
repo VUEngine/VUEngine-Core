@@ -98,43 +98,48 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 {
 	ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: null this");
 
-	if(__ANIMATED_SHARED != CharSet_getAllocationType(charSet))
+	switch(CharSet_getAllocationType(charSet))
 	{
-		return NULL;
-	}
-	
-	// try to find an already created coordinator
-	VirtualNode node = VirtualList_begin(this->animationCoordinators);
-	for(;node; node = VirtualNode_getNext(node))
-	{
-		AnimationCoordinator animationCoordinator = __UPCAST(AnimationCoordinator, VirtualNode_getData(node));
-		
-		if(AnimationCoordinator_getCharSet(animationCoordinator) == charSet)
-		{
-			__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
-			return animationCoordinator;
-		}
-	}
-	
-	AnimationCoordinator animationCoordinator = NULL;
-	
-	if(__UPCAST(BgmapAnimatedSprite, sprite))
-	{
-		animationCoordinator = __UPCAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSet));
-	}
-	else if(__UPCAST(ObjectAnimatedSprite, sprite))
-	{
-		animationCoordinator = __UPCAST(AnimationCoordinator, __NEW(ObjectAnimationCoordinator, charSet));
-	}
-	else
-	{
-		NM_ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: invalid sprite type");
-	}
+		case __ANIMATED_SHARED_COORDINATED:
+			{
+				// try to find an already created coordinator
+				VirtualNode node = VirtualList_begin(this->animationCoordinators);
+				for(;node; node = VirtualNode_getNext(node))
+				{
+					AnimationCoordinator animationCoordinator = __UPCAST(AnimationCoordinator, VirtualNode_getData(node));
+					
+					if(AnimationCoordinator_getCharSet(animationCoordinator) == charSet)
+					{
+						__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
+						return animationCoordinator;
+					}
+				}
+				
+				AnimationCoordinator animationCoordinator = NULL;
+				
+				if(__UPCAST(BgmapAnimatedSprite, sprite))
+				{
+					animationCoordinator = __UPCAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSet));
+				}
+				else if(__UPCAST(ObjectAnimatedSprite, sprite))
+				{
+					animationCoordinator = __UPCAST(AnimationCoordinator, __NEW(ObjectAnimationCoordinator, charSet));
+				}
+				else
+				{
+					NM_ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: invalid sprite type");
+				}
 
-	// create a new coordinator
-	__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
+				// create a new coordinator
+				__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
 
-	VirtualList_pushBack(this->animationCoordinators, animationCoordinator);
+				VirtualList_pushBack(this->animationCoordinators, animationCoordinator);
+				
+				return animationCoordinator;
+			}
+			break;
+	}
 	
-	return animationCoordinator;
+	return NULL;
+	
 }

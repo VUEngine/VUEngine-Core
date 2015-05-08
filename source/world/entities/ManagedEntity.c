@@ -105,14 +105,14 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 			{
 				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
 				VirtualList_pushBack(this->managedSprites, sprite);
-				VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+				VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 				
 				// eliminate fractions to avoid rounding problems later
 				position.x &= 0xFFFFE000;
 				position.y &= 0xFFFFE000;
 				
 				// don't round z coordinate since it is used for layer sorting
-				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, position);
+				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &position);
 			}
 		}
 		
@@ -148,7 +148,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 }
 
 // transform class
-void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTransform)
+void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
@@ -168,18 +168,19 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 			Container_transformNonVirtual(__UPCAST(Container, this), environmentTransform);
 		}
 
-		// concatenate environment transform
-		Transformation environmentTransformCopy;
-		environmentTransformCopy.globalPosition = environmentTransform->globalPosition;
-		environmentTransformCopy.globalRotation = environmentTransform->globalRotation;
-		environmentTransformCopy.globalScale = environmentTransform->globalScale;
+		// concatenate transform
+		this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+		this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+		this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
 
-		Container_concatenateTransform(&environmentTransformCopy, &this->transform);
-	
-		// save new global position
-		this->transform.globalPosition = environmentTransformCopy.globalPosition;
-		this->transform.globalRotation = environmentTransformCopy.globalRotation;
-		this->transform.globalScale = environmentTransformCopy.globalScale;
+		// propagate rotation
+		this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+		this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
+		this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+		
+		// propagate scale
+		this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+		this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 	
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;
@@ -198,14 +199,14 @@ void ManagedEntity_transform(ManagedEntity this, Transformation* environmentTran
 		{
 			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
 			
-			VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+			VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 			
 			position.x += position2D.x - this->previous2DPosition.x;
 			position.y += position2D.y - this->previous2DPosition.y;
 //			position.z += position2D.z - this->previous2DPosition.z;
 	
 			// don't round z coordinate since it is used for layer sorting
-			__VIRTUAL_CALL(void, Sprite, setPosition, sprite, position);
+			__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &position);
 			
 			Sprite_setRenderFlag(sprite, __UPDATE_G);
 		}

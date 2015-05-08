@@ -44,6 +44,9 @@
 #include <DirectDraw.h>
 #include <Printing.h>
 #include <MiscStructs.h>
+#include <MBgmapSprite.h>
+#include <BgmapAnimationCoordinator.h>
+#include <ObjectAnimationCoordinator.h>
 
 #include <Clock.h>
 #include <State.h>
@@ -53,9 +56,9 @@
 #include <CharSet.h>
 #include <Sprite.h>
 #include <Texture.h>
-#include <Body.h>
 
 #include <Body.h>
+#include <CollisionSolver.h>
 #include <Circle.h>
 #include <Cuboid.h>
 #include <Shape.h>
@@ -68,6 +71,11 @@
 #include <InanimatedInGameEntity.h>
 #include <Actor.h>
 #include <Image.h>
+#include <ManagedEntity.h>
+#include <MBackground.h>
+#include <Particle.h>
+#include <ParticleSystem.h>
+
 #include <ScrollBackground.h>
 #include <GameState.h>
 #include <Stage.h>
@@ -102,10 +110,13 @@
 	u8 currentLayer;															\
 																				\
 	/* current bgmap */															\
-	int currentBgmap;															\
+	int bgmapSegment;															\
+																				\
+	/* current obj segment */													\
+	int objectSegment;															\
 																				\
 	/* current char segment */													\
-	int charSeg;																\
+	int charSegment;															\
 																				\
 	/* window to look into bgmap memory */										\
 	VBVec2D bgmapDisplacement;													\
@@ -140,6 +151,7 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y);
 static void Debug_showMemoryStatus(Debug this, int increment, int x, int y);
 static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y);
 static void Debug_showTextureStatus(Debug this, int increment, int x, int y);
+static void Debug_showObjectStatus(Debug this, int increment, int x, int y);
 static void Debug_showSpritesStatus(Debug this, int increment, int x, int y);
 static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y);
 static void Debug_showHardwareStatus(Debug this, int increment, int x, int y);
@@ -147,12 +159,15 @@ static void Debug_showHardwareStatus(Debug this, int increment, int x, int y);
 // sub pages
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_textutesShowStatus(Debug this, int increment, int x, int y);
+static void Debug_objectsShowStatus(Debug this, int increment, int x, int y);
 static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y);
 static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
 
 static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message);
@@ -181,8 +196,9 @@ static void Debug_constructor(Debug this)
 	this->gameState = NULL;
 
 	this->currentLayer = __TOTAL_LAYERS - 1;
-	this->currentBgmap = 0;
-	this->charSeg = 0;
+	this->bgmapSegment = 0;
+	this->objectSegment = 0;
+	this->charSegment = 0;
 
 	this->update = NULL;
 
@@ -208,6 +224,7 @@ static void Debug_setupPages(Debug this)
 	VirtualList_pushBack(this->pages, &Debug_showMemoryStatus);
 	VirtualList_pushBack(this->pages, &Debug_showSpritesStatus);
 	VirtualList_pushBack(this->pages, &Debug_showTextureStatus);
+	VirtualList_pushBack(this->pages, &Debug_showObjectStatus);
 	VirtualList_pushBack(this->pages, &Debug_showCharMemoryStatus);
 	VirtualList_pushBack(this->pages, &Debug_showPhysicsStatus);
 	VirtualList_pushBack(this->pages, &Debug_showHardwareStatus);
@@ -439,6 +456,8 @@ static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
 
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFirstPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSecondPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowThirdPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFourthPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowUserDefinedClassesSizes);
 
 	this->currentSubPage = VirtualList_begin(this->subPages);
@@ -453,17 +472,13 @@ static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, in
 
 	ClassSizeData classesSizeData[] =
 	{
-			{&Clock_getObjectSize, "Clock"},
-			{&State_getObjectSize, "State"},
-			{&StateMachine_getObjectSize, "StateMachine"},
-			{&Telegram_getObjectSize, "Telegram"},
-			{&VirtualList_getObjectSize, "VirtualList"},
-			{&VirtualNode_getObjectSize, "VirtualNode"},
-			//{&AnimatedSprite_getObjectSize, "AnimatedSprite"},
-			{&CharSet_getObjectSize, "CharSet"},
-			{&Sprite_getObjectSize, "Sprite"},
-			{&Texture_getObjectSize, "Texture"},
-
+		{&Clock_getObjectSize, "Clock"},
+		{&Object_getObjectSize, "Object"},
+		{&State_getObjectSize, "State"},
+		{&StateMachine_getObjectSize, "StateMachine"},
+		{&Telegram_getObjectSize, "Telegram"},
+		{&VirtualList_getObjectSize, "VirtualList"},
+		{&VirtualNode_getObjectSize, "VirtualNode"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
@@ -475,21 +490,62 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 
 	ClassSizeData classesSizeData[] =
 	{
-			{&Body_getObjectSize, "Body"},
-			{&Circle_getObjectSize, "Circle"},
-			{&Cuboid_getObjectSize, "Cuboid"},
-			{&Shape_getObjectSize, "Shape"},
-			{&Polygon_getObjectSize, "Polygon"},
-			{&Container_getObjectSize, "Container"},
-			{&Entity_getObjectSize, "Entity"},
-			{&InGameEntity_getObjectSize, "InGameEntity"},
-			{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
-			{&InanimatedInGameEntity_getObjectSize, "Inanim. InGameEntity"},
-			{&Actor_getObjectSize, "Actor"},
-			{&Image_getObjectSize, "Image"},
-			{&ScrollBackground_getObjectSize, "ScrollBackg."},
-			{&GameState_getObjectSize, "GameState"},
-			{&GameState_getObjectSize, "Stage"},
+		{&CharSet_getObjectSize, "CharSet"},
+		{&Texture_getObjectSize, "Texture"},
+		{&Sprite_getObjectSize, "Sprite"},
+		{&BgmapTexture_getObjectSize, "BgmapTexture"},
+		{&BgmapSprite_getObjectSize, "BgmapSprite"},
+		{&MBgmapSprite_getObjectSize, "MBgmapSprite"},
+		{&BgmapAnimatedSprite_getObjectSize, "BgmapAnim. Sprite"},
+		{&BgmapAnimationCoordinator_getObjectSize, "BgmapAnim. Coord."},
+		{&ObjectTexture_getObjectSize, "ObjectTexture"},
+		{&ObjectSprite_getObjectSize, "ObjectSprite"},
+		{&ObjectSpriteContainer_getObjectSize, "ObjectSpriteCont."},
+		{&ObjectAnimatedSprite_getObjectSize, "ObjectAnim. Sprite"},
+		{&ObjectAnimationCoordinator_getObjectSize, "ObjectAnim.Coord."},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
+}
+
+static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y)
+{
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&SpatialObject_getObjectSize, "SpatialObject"},
+		{&Body_getObjectSize, "Body"},
+		{&CollisionSolver_getObjectSize, "CollisionSolver"},
+		{&Circle_getObjectSize, "Circle"},
+		{&Cuboid_getObjectSize, "Cuboid"},
+		{&Shape_getObjectSize, "Shape"},
+		{&Polygon_getObjectSize, "Polygon"},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
+}
+
+static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y)
+{
+	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&Container_getObjectSize, "Container"},
+		{&Entity_getObjectSize, "Entity"},
+		{&Image_getObjectSize, "Image"},
+		{&ManagedEntity_getObjectSize, "ManagedEntity"},
+		{&MBackground_getObjectSize, "MBackground"},
+		{&InGameEntity_getObjectSize, "InGameEntity"},
+		{&ScrollBackground_getObjectSize, "ScrollBackg."},
+		{&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
+		{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
+		{&Actor_getObjectSize, "Actor"},
+		{&Particle_getObjectSize, "Particle"},
+		{&ParticleSystem_getObjectSize, "ParticleSystem"},
+		{&GameState_getObjectSize, "GameState"},
+		{&GameState_getObjectSize, "Stage"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
@@ -510,38 +566,44 @@ static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y)
 	VirtualList_pushBack(this->subPages, &Debug_charMemoryShowStatus);
 	this->currentSubPage = VirtualList_begin(this->subPages);
 
-	this->charSeg = -1;
+	this->charSegment = -1;
 
 	Debug_showSubPage(this, 0);
 }
 
 static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y)
 {
-	this->charSeg += increment;
+	this->charSegment += increment;
 
-	if (-1 > this->charSeg)
+	if (-1 > this->charSegment)
 	{
-		this->charSeg = __CHAR_SEGMENTS - 1;
+		this->charSegment = __CHAR_SEGMENTS - 1;
 	}
 
-	if (-1 == this->charSeg)
+	if (-1 == this->charSegment)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		CharSetManager_print(CharSetManager_getInstance(), x, y);
 		Debug_dimmGame(this);
 	}
-	else if (__CHAR_SEGMENTS > this->charSeg)
+	else if (__CHAR_SEGMENTS > this->charSegment)
 	{
-		Printing_text(Printing_getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
-		Printing_text(Printing_getInstance(), "Char segment: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), this->charSeg + 1, x + 14, y, NULL);
+		Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
+		Printing_text(Printing_getInstance(), "Segment: ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->charSegment, x + 16, y, NULL);
+		Printing_text(Printing_getInstance(), "Total CharSets: ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), CharSetManager_getTotalCharSets(CharSetManager_getInstance(), this->charSegment), x + 16, y, NULL);
+		Printing_text(Printing_getInstance(), "Used chars: ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), CharSetManager_getTotalUsedChars(CharSetManager_getInstance(), this->charSegment), x + 16, y, NULL);
+		Printing_text(Printing_getInstance(), "Free chars: ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), CharSetManager_getTotalFreeChars(CharSetManager_getInstance(), this->charSegment), x + 16, y, NULL);
 
 		Debug_charMemoryShowMemory(this, increment, x, y);
 		Debug_lightUpGame(this);
 	}
 	else
 	{
-		this->charSeg = -1;
+		this->charSegment = -1;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		CharSetManager_print(CharSetManager_getInstance(), x, y);
 		Debug_dimmGame(this);
@@ -571,7 +633,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
 		Mem_add((u8*)BGMap(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
 				(const u8*)CHAR_MEMORY_MP,
 				__SCREEN_WIDTH >> 3,
-				(this->charSeg << 9) + i * (__SCREEN_WIDTH >> 3));
+				(this->charSegment << 9) + i * (__SCREEN_WIDTH >> 3));
 	}
 }
 
@@ -583,7 +645,7 @@ static void Debug_showTextureStatus(Debug this, int increment, int x, int y)
 	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
 	this->currentSubPage = VirtualList_begin(this->subPages);
 
-	this->currentBgmap = -1;
+	this->bgmapSegment = -1;
 	this->bgmapDisplacement.x = 0;
 	this->bgmapDisplacement.y = 0;
 
@@ -593,7 +655,7 @@ static void Debug_showTextureStatus(Debug this, int increment, int x, int y)
 static void Debug_showDebugBgmap(Debug this)
 {
 	if (VirtualNode_getData(this->currentPage) != &Debug_showTextureStatus ||
-		0 > this->currentBgmap
+		0 > this->bgmapSegment
 	)
 	{
 		return;
@@ -601,7 +663,7 @@ static void Debug_showDebugBgmap(Debug this)
 
 	// write the head
 	
-	WA[__TOTAL_LAYERS - 1].head = WRLD_ON | this->currentBgmap;
+	WA[__TOTAL_LAYERS - 1].head = WRLD_ON | this->bgmapSegment;
 	WA[__TOTAL_LAYERS - 1].mx = this->bgmapDisplacement.x;
 	WA[__TOTAL_LAYERS - 1].mp = 0;
 	WA[__TOTAL_LAYERS - 1].my = this->bgmapDisplacement.y;
@@ -614,26 +676,27 @@ static void Debug_showDebugBgmap(Debug this)
 
 static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 {
-	this->currentBgmap += increment;
+	this->bgmapSegment += increment;
 
-	if (-1 > this->currentBgmap)
+	if (-1 > this->bgmapSegment)
 	{
-		this->currentBgmap = BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) - 1;
+		this->bgmapSegment = BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) - 1;
 	}
 
-	if (-1 == this->currentBgmap)
+	if (-1 == this->bgmapSegment)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
 
-		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
+		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 8);
 		Debug_dimmGame(this);
 	}
-	else if (BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) > this->currentBgmap)
+	else if (BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) > this->bgmapSegment)
 	{
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
-		Printing_text(Printing_getInstance(), "Bgmap: ", x, y, NULL);
-		Printing_int(Printing_getInstance(), this->currentBgmap, x + 7, y, NULL);
+		Printing_text(Printing_getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
+		Printing_text(Printing_getInstance(), "Segment: ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->bgmapSegment, x + 9, y, NULL);
 
 		SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
@@ -645,10 +708,62 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 	}
 	else
 	{
-		this->currentBgmap = -1;
+		this->bgmapSegment = -1;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
-		ParamTableManager_print(ParamTableManager_getInstance(), x + 24, y);
+		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 8);
+		Debug_dimmGame(this);
+	}
+}
+
+static void Debug_showObjectStatus(Debug this, int increment, int x, int y)
+{
+	Debug_removeSubPages(this);
+
+	VirtualList_pushBack(this->subPages, &Debug_objectsShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_objectsShowStatus);
+	this->currentSubPage = VirtualList_begin(this->subPages);
+
+	this->objectSegment = -1;
+
+	Debug_showSubPage(this, 0);
+}
+
+static void Debug_objectsShowStatus(Debug this, int increment, int x, int y)
+{
+	this->objectSegment += increment;
+
+	if (-1 > this->objectSegment)
+	{
+		this->objectSegment = __TOTAL_OBJECT_SEGMENTS - 1;
+	}
+
+	if (-1 == this->objectSegment)
+	{
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		ObjectSpriteContainerManager_print(ObjectSpriteContainerManager_getInstance(), x, y);
+		Debug_dimmGame(this);
+	}
+	else if (__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
+	{
+		Printing_text(Printing_getInstance(), "OBJECTS' USAGE", x, y++, NULL);
+
+		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager_getInstance(), this->objectSegment);
+		SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer(__UPCAST(Sprite, objectSpriteContainer)));
+
+		ObjectSpriteContainer_print(objectSpriteContainer, x, ++y);
+
+		this->bgmapDisplacement.x = 0;
+		this->bgmapDisplacement.y = 0;
+
+		Debug_showDebugBgmap(this);
+		Debug_lightUpGame(this);
+	}
+	else
+	{
+		this->objectSegment = -1;
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		ObjectSpriteContainerManager_print(ObjectSpriteContainerManager_getInstance(), x, y);
 		Debug_dimmGame(this);
 	}
 }
@@ -682,10 +797,18 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 	}
 	else if (SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer)
 	{
-		Printing_text(Printing_getInstance(), "Layer: ", x, y, NULL);
-		Printing_int(Printing_getInstance(), this->currentLayer, x + 7, y, NULL);
+		Sprite sprite = SpriteManager_getSpriteAtLayer(SpriteManager_getInstance(), this->currentLayer);
+
+		Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
+		Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->currentLayer, x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(sprite), x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), "Position:", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->x), x + 10, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->y), x + 14, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->z), x + 18, y, NULL);
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
-		Debug_lightUpGame(this);
 	}
 	else
 	{

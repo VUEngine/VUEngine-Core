@@ -1,6 +1,12 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#include <Oop.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										DEBUGGING TOOLS
@@ -95,7 +101,7 @@
 // otherwise, it is read on each pass of the Game's main update loop, ensuring
 // that no user's input is lost, but introducing a considerable lost of loop's 
 // passes because of the delay needed to read the keypad
-#undef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
+#define __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -117,30 +123,30 @@
 
 #define __MEMORY_POOLS		9
 
-//each block size
-#define __BLOCK_512B 		512
-#define __BLOCK_256B 		256
-#define __BLOCK_192B 		192
-#define __BLOCK_128B 		128
-#define __BLOCK_100B 		100		// Used by images
-#define __BLOCK_80B 		80		// Used mainly by Sprites
-#define __BLOCK_48B 		48		// Used mainly by Telegrams
-#define __BLOCK_32B 		32		// Used mainly by CharSets
-#define __BLOCK_28B 		28		// Virtual nodes are 24 bytes long so a 32b block is too much
-#define __BLOCK_16B 		16
+#define __MEMORY_POOL_ARRAYS													\
+	__BLOCK_DEFINITION(256, 1)													\
+	__BLOCK_DEFINITION(192, 1)													\
+	__BLOCK_DEFINITION(160, 48)													\
+	__BLOCK_DEFINITION(132, 24)													\
+	__BLOCK_DEFINITION(100, 24)													\
+	__BLOCK_DEFINITION(84, 80)													\
+	__BLOCK_DEFINITION(36, 64)													\
+	__BLOCK_DEFINITION(28, 784)													\
+	__BLOCK_DEFINITION(24, 192)													\
 
-#define __POOL_512B_SIZE 	(__BLOCK_512B * 0)
-#define __POOL_256B_SIZE 	(__BLOCK_256B * 1)
-#define __POOL_192B_SIZE 	(__BLOCK_192B * 12)
-#define __POOL_128B_SIZE 	(__BLOCK_128B * 24)
-#define __POOL_100B_SIZE 	(__BLOCK_100B * 64)
-#define __POOL_80B_SIZE 	(__BLOCK_80B * 48)
-#define __POOL_48B_SIZE 	(__BLOCK_48B * 32)
-#define __POOL_32B_SIZE 	(__BLOCK_32B * 96)
-#define __POOL_28B_SIZE 	(__BLOCK_28B * 768)
-#define __POOL_16B_SIZE 	(__BLOCK_16B * 48)
+#define __SET_MEMORY_POOL_ARRAYS												\
+	__SET_MEMORY_POOL_ARRAY(256)												\
+	__SET_MEMORY_POOL_ARRAY(192)												\
+	__SET_MEMORY_POOL_ARRAY(160)												\
+	__SET_MEMORY_POOL_ARRAY(132)												\
+	__SET_MEMORY_POOL_ARRAY(100)												\
+	__SET_MEMORY_POOL_ARRAY(84)													\
+	__SET_MEMORY_POOL_ARRAY(36)													\
+	__SET_MEMORY_POOL_ARRAY(28)													\
+	__SET_MEMORY_POOL_ARRAY(24)													\
 
-#define __MIN_BLOCK 		__BLOCK_16B
+
+#define __MIN_BLOCK 		24
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -329,6 +335,14 @@
 
 // when this is defined, custom fonts are loaded instead of the default one
 #define __CUSTOM_FONTS
+
+
+//---------------------------------------------------------------------------------------------------------
+// 											FONTS
+//---------------------------------------------------------------------------------------------------------
+
+// how many times the randomSeed function cycles generate a random seed
+#define __RANDOM_SEED_CYCLES		2
 
 
 //---------------------------------------------------------------------------------------------------------

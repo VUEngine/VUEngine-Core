@@ -129,16 +129,16 @@ void Cuboid_setup(Cuboid this)
 	if (!this->moves)
 	{
 		// position the shape to avoid in real time calculation
-		VBVec3D ownerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, SpatialObject, getPosition, this->owner);
+		const VBVec3D* ownerPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
 		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
 
 		// calculate gap on each side of the rightCuboid
-		this->rightCuboid.x0 += ownerPosition.x + ITOFIX19_13(ownerGap.left);
-		this->rightCuboid.x1 += ownerPosition.x - ITOFIX19_13(ownerGap.right);
-		this->rightCuboid.y0 += ownerPosition.y + ITOFIX19_13(ownerGap.up);
-		this->rightCuboid.y1 += ownerPosition.y - ITOFIX19_13(ownerGap.down);
-		this->rightCuboid.z0 += ownerPosition.z;
-		this->rightCuboid.z1 += ownerPosition.z;
+		this->rightCuboid.x0 += ownerPosition->x + ITOFIX19_13(ownerGap.left);
+		this->rightCuboid.x1 += ownerPosition->x - ITOFIX19_13(ownerGap.right);
+		this->rightCuboid.y0 += ownerPosition->y + ITOFIX19_13(ownerGap.up);
+		this->rightCuboid.y1 += ownerPosition->y - ITOFIX19_13(ownerGap.down);
+		this->rightCuboid.z0 += ownerPosition->z;
+		this->rightCuboid.z1 += ownerPosition->z;
 	}
 
 	this->positionedRightcuboid = this->rightCuboid;
@@ -155,15 +155,15 @@ void Cuboid_positione(Cuboid this)
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
 
 	// get owner's position
-	VBVec3D myOwnerPosition = __VIRTUAL_CALL_UNSAFE(VBVec3D, SpatialObject, getPosition, this->owner);
+	const VBVec3D* myOwnerPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
 
 	// calculate positioned rightCuboid	
-	this->positionedRightcuboid.x0 = this->rightCuboid.x0 + myOwnerPosition.x + ITOFIX19_13(gap.left);
-	this->positionedRightcuboid.y0 = this->rightCuboid.y0 + myOwnerPosition.y + ITOFIX19_13(gap.up);
-	this->positionedRightcuboid.z0 = this->rightCuboid.z0 + myOwnerPosition.z;
-	this->positionedRightcuboid.x1 = this->rightCuboid.x1 + myOwnerPosition.x - ITOFIX19_13(gap.right);
-	this->positionedRightcuboid.y1 = this->rightCuboid.y1 + myOwnerPosition.y - ITOFIX19_13(gap.down);
-	this->positionedRightcuboid.z1 = this->rightCuboid.z1 + myOwnerPosition.z;
+	this->positionedRightcuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + ITOFIX19_13(gap.left);
+	this->positionedRightcuboid.y0 = this->rightCuboid.y0 + myOwnerPosition->y + ITOFIX19_13(gap.up);
+	this->positionedRightcuboid.z0 = this->rightCuboid.z0 + myOwnerPosition->z;
+	this->positionedRightcuboid.x1 = this->rightCuboid.x1 + myOwnerPosition->x - ITOFIX19_13(gap.right);
+	this->positionedRightcuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y - ITOFIX19_13(gap.down);
+	this->positionedRightcuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z;
 
 	// not checked yet
 	this->checked = false;

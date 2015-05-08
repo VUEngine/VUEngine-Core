@@ -663,11 +663,11 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	ASSERT(this->animatedSprite, "AnimationEditor::createSprite: null animatedSprite");
 	ASSERT(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite)), "AnimationEditor::createSprite: null texture");
 
-	VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __UPCAST(Sprite, this->animatedSprite));
+	VBVec2D spritePosition = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __UPCAST(Sprite, this->animatedSprite));
 	spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite))) << 2));
 	spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__UPCAST(Sprite, this->animatedSprite))) << 2));
 		
-	__VIRTUAL_CALL(void, Sprite, setPosition, __UPCAST(Sprite, this->animatedSprite), spritePosition);
+	__VIRTUAL_CALL(void, Sprite, setPosition, __UPCAST(Sprite, this->animatedSprite), &spritePosition);
 	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __UPCAST(Sprite, this->animatedSprite));
 	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __UPCAST(Sprite, this->animatedSprite)));
 	__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, this->animatedSprite));

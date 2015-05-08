@@ -144,28 +144,28 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 	}
 }
 
-VBVec2D ObjectSprite_getPosition(ObjectSprite this)
+const VBVec2D* ObjectSprite_getPosition(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getPosition: null this");
 
-	return this->position;
+	return &this->position;
 }
 
-void ObjectSprite_setPosition(ObjectSprite this, VBVec2D position)
+void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "ObjectSprite::setPosition: null this");
 
-	this->position.x = position.x;
-	this->position.y = position.y;
-	this->position.z = position.z;
+	this->position = *position;
 
 	this->renderFlag |= __UPDATE_G;
 }
 
-void ObjectSprite_positione(ObjectSprite this, VBVec3D position3D)
+void ObjectSprite_positione(ObjectSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "ObjectSprite::positione: null this");
 
+	VBVec3D position3D = *position;
+	
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
@@ -219,7 +219,7 @@ void ObjectSprite_render(ObjectSprite this)
 			for (; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
-				int finalX = x + (8 * j)  * xDirection;
+				int finalX = x + (j << 3)  * xDirection;
 				
 				// hide the object if ouside screen's bounds
 				if((unsigned)finalX > __SCREEN_WIDTH)
@@ -228,7 +228,7 @@ void ObjectSprite_render(ObjectSprite this)
 					continue;
 				}
 
-				int finalY = y + (8 * i)  * yDirection;
+				int finalY = y + (i << 3)  * yDirection;
 				if((unsigned)finalY > __SCREEN_HEIGHT)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
@@ -247,7 +247,7 @@ void ObjectSprite_render(ObjectSprite this)
 	}
 }
 
-u8 ObjectSprite_getTotalObjects(ObjectSprite this)
+s16 ObjectSprite_getTotalObjects(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getTotalObjects: null this");
 	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
@@ -255,14 +255,14 @@ u8 ObjectSprite_getTotalObjects(ObjectSprite this)
 	return this->totalObjects;
 }
 
-int ObjectSprite_getObjectIndex(ObjectSprite this)
+s16 ObjectSprite_getObjectIndex(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getObjectIndex: null this");
 
 	return this->objectIndex;
 }
 
-void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
+void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 {
 	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
 	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");
@@ -276,20 +276,35 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, int objectIndex)
 		ObjectTexture_setObjectIndex(__UPCAST(ObjectTexture, this->texture), this->objectIndex);
 		ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
 
-		// render in the new position to avoid flickering
-		this->renderFlag = true;
-		while (*_xpstts & XPBSYR);
-
-		ObjectSprite_render(this);
-
-		// turn off previous OBJs' to avoid ghosting
 		if(0 <= previousObjectIndex)
-		{				
-			int i = previousObjectIndex + this->totalObjects - 1;
-			for (; i >= this->objectIndex + this->totalObjects; i--)
+		{	
+			// if was visible
+			if(OAM[((previousObjectIndex) << 2) + 1] & 0xC000)
 			{
-				OAM[(i << 2) + 1] &= __HIDE_MASK;
+				// render in the new position to avoid flickering
+				this->renderFlag = true;
+	
+				while (*_xpstts & XPBSYR);
+	
+				ObjectSprite_render(this);
+				
+				// turn off previous OBJs' to avoid ghosting
+				int i = previousObjectIndex + this->totalObjects - 1;
+				for (; i >= this->objectIndex + this->totalObjects; i--)
+				{
+					OAM[(i << 2) + 1] &= __HIDE_MASK;
+				}
 			}
+			else
+			{
+				// otherwise hide
+				ObjectSprite_hide(this);
+			}
+		}
+		else
+		{
+			// render on next cycle
+			this->renderFlag = true;
 		}
 	}
 }
@@ -300,6 +315,13 @@ void ObjectSprite_show(ObjectSprite this)
 	
 	Sprite_show(__UPCAST(Sprite, this));
 
+	if(this->renderFlag)
+	{
+		while (*_xpstts & XPBSYR);
+
+		ObjectSprite_render(this);
+	}
+	
 	int i = 0;
 	for (; i < this->totalObjects; i++)
 	{

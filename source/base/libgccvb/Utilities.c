@@ -118,11 +118,9 @@ long Utilities_randomSeed()
 	rand = Clock_getTime(clock);
 
 	// repeat through many times to make more random and to allow the CTA value to change multiple times
-	while (count < 5)
+	while (count < __RANDOM_SEED_CYCLES)
 	{
 		rand |= * _xpstts;
-		//rand = * _xpstts;
-		// rand = VIP_REGS[CTA]; // CTA = (*(BYTE*)(0x0005F830));
 		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
 
 		// prevent division by zero
@@ -163,7 +161,7 @@ long Utilities_randomSeed()
  */
 int Utilities_random(long seed, int randnums)
 {
-	return randnums? (seed % randnums): 0;
+	return seed & randnums? abs((int)(seed % randnums)): 0;
 }
 
 /*

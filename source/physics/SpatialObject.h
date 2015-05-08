@@ -98,8 +98,8 @@ u16 SpatialObject_getWidth(SpatialObject this);
 u16 SpatialObject_getHeight(SpatialObject this);
 u16 SpatialObject_getDepth(SpatialObject this);
 Gap SpatialObject_getGap(SpatialObject this);
-VBVec3D SpatialObject_getPosition(SpatialObject this);
-void SpatialObject_setPosition(SpatialObject this, VBVec3D position);
+const VBVec3D* SpatialObject_getPosition(SpatialObject this);
+void SpatialObject_setPosition(SpatialObject this, const VBVec3D* position);
 fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
 

@@ -309,34 +309,59 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 	this->needsDefrag = false;
 }
 
+int CharSetManager_getTotalUsedChars(CharSetManager this, int segment)
+{
+	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
+	ASSERT((unsigned)segment < __CHAR_SEGMENTS, "CharSetManager::getTotalUsedChars: invalid segment");
+
+	if(VirtualList_begin(this->charSets[segment]))
+	{
+		CharSet lastCharSet = VirtualList_back(this->charSets[segment]);
+		return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + 1;
+	}
+	
+	return 0;
+}
+
+int CharSetManager_getTotalFreeChars(CharSetManager this, int segment)
+{
+	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
+	ASSERT((unsigned)segment < __CHAR_SEGMENTS, "CharSetManager::getTotalUsedChars: invalid segment");
+
+	return __CHAR_SEGMENT_TOTAL_CHARS - CharSetManager_getTotalUsedChars(this, segment);
+}
+
+int CharSetManager_getTotalCharSets(CharSetManager this, int segment)
+{
+	ASSERT(this, "CharSetManager::getTotalCharSets: null this");
+	ASSERT((unsigned)segment < __CHAR_SEGMENTS, "CharSetManager::getTotalUsedChars: invalid segment");
+
+	return VirtualList_getSize(this->charSets[segment]);
+}
+
 // print class's attributes's states
 void CharSetManager_print(CharSetManager this, int x, int y)
 {
 	ASSERT(this, "CharSetManager::print: null this");
 
-	Printing_text(Printing_getInstance(), "CHARACTER MEMORY", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "CharSets: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
 
+	int totalCharSets = 0;
+	int totalUsedChars = 0;
+	int totalFreeChars = 0;
 	int segment = 0;
 
 	for(; segment < __CHAR_SEGMENTS; segment++)
 	{
-		Printing_int(Printing_getInstance(), VirtualList_getSize(this->charSets[segment]), x + 12, y++, NULL);
+		totalCharSets += VirtualList_getSize(this->charSets[segment]);
+		totalUsedChars += CharSetManager_getTotalUsedChars(this, segment);
+		totalFreeChars += CharSetManager_getTotalFreeChars(this, segment);
 	}
 	
-	y++;
-		
-/*	int i = 0;
-	for (segment = 0; segment < 4; segment++)
-	{
-		Printing_text(Printing_getInstance(), "CharSeg", x, y, NULL);
-		Printing_int(Printing_getInstance(), segment, x + 8, y, NULL);
-		for (i = 0; i < __CHAR_SETS_PER_SEGMENT && (y + i + 1) < 28; i++)
-		{
-			Printing_hex(Printing_getInstance(), this->segment[segment][i], x, y + i + 1, NULL);
-		}
-
-		x += 12;
-	}
-	*/
+	Printing_text(Printing_getInstance(), "Total CharSets: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), totalCharSets, x + 18, y, NULL);
+	Printing_text(Printing_getInstance(), "Total used chars: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), totalUsedChars, x + 18, y, NULL);
+	Printing_text(Printing_getInstance(), "Total free chars: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), totalFreeChars, x + 18, y, NULL);
 }
