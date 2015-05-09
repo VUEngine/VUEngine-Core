@@ -51,6 +51,19 @@
 	__BLOCK_DEFINITION(24, 480)													\
 	__BLOCK_DEFINITION(20, 160)													\
 
+#define __MEMORY_POOL_ARRAYS													\
+	__BLOCK_DEFINITION(192, 1)													\
+	__BLOCK_DEFINITION(164, 2)													\
+	__BLOCK_DEFINITION(136, 48)													\
+	__BLOCK_DEFINITION(96, 24)													\
+	__BLOCK_DEFINITION(80, 20)													\
+	__BLOCK_DEFINITION(72, 64)													\
+	__BLOCK_DEFINITION(64, 16)													\
+	__BLOCK_DEFINITION(32, 64)													\
+	__BLOCK_DEFINITION(24, 256)													\
+	__BLOCK_DEFINITION(20, 512)													\
+	__BLOCK_DEFINITION(16, 256)													\
+
 #define __SET_MEMORY_POOL_ARRAYS												\
 	__SET_MEMORY_POOL_ARRAY(192)												\
 	__SET_MEMORY_POOL_ARRAY(164)												\
@@ -60,9 +73,9 @@
 	__SET_MEMORY_POOL_ARRAY(72)													\
 	__SET_MEMORY_POOL_ARRAY(64)													\
 	__SET_MEMORY_POOL_ARRAY(32)													\
-	__SET_MEMORY_POOL_ARRAY(28)													\
 	__SET_MEMORY_POOL_ARRAY(24)													\
 	__SET_MEMORY_POOL_ARRAY(20)													\
+	__SET_MEMORY_POOL_ARRAY(16)													\
 
 #define __MIN_BLOCK 		20
 
@@ -173,7 +186,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
-	// assign address to allocated object
+	// mark address as allocated
 	this->poolLocation[pool][displacement] = 0xFF;
 
 	// return designed address
@@ -234,6 +247,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 
 #endif
 
+	// set address as free
 	object[-__MEMORY_ALIGNMENT] = 0x00;
 }
 
@@ -362,7 +376,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 		
 		Printing_text(Printing_getInstance(), "           ", x, originalY + 1 + pool, NULL);
 
-		if(85 < usedBlocksPercentage)
+		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
 			Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize],  x, y, NULL);
 			Printing_int(Printing_getInstance(), usedBlocksPercentage, x + 7 - Utilities_intLength(usedBlocksPercentage), y, NULL);

@@ -153,6 +153,8 @@
 
 #define __MIN_BLOCK 		20
 
+// percentage (0-100) above the MemoryPool' status shows the pool usage
+#define __MEMORY_POOL_WARNING_THRESHOLD	85
 
 //---------------------------------------------------------------------------------------------------------
 // 										CHAR MANAGEMENT
