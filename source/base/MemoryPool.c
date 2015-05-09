@@ -359,9 +359,11 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
+		
+		Printing_text(Printing_getInstance(), "             ", x, y, NULL);
+
 		if(85 < usedBlocksPercentage)
 		{
-			Printing_text(Printing_getInstance(), "             ", x, y, NULL);
 			Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize],  x, y, NULL);
 			Printing_int(Printing_getInstance(), usedBlocksPercentage, x + 7 - Utilities_intLength(usedBlocksPercentage), y, NULL);
 			Printing_text(Printing_getInstance(), "% ", x + 7, y++, NULL);
