@@ -63,11 +63,12 @@ __CLASS_DEFINITION(MessageDispatcher, Object);
 
 typedef struct DelayedMessage
 {
+	// pointer to the telegram to dispatch
+	Telegram telegram;
+
 	// time of arrival
 	u32 timeOfArrival;
 
-	// pointer to the telegram to dispatch
-	Telegram telegram;
 
 } DelayedMessage;
 
@@ -127,11 +128,12 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 	{
 		MessageDispatcher_dispatchDelayedMessage(MessageDispatcher_getInstance(), delay, sender, receiver, message, extraInfo);
 	}
+	
 	return false;
 }
 
 // dispatch delayed messages
-void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
+static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
 		Object receiver, int message, void* extraInfo)
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
@@ -142,7 +144,7 @@ void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay,
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 
 	delayMessage->telegram = telegram;
-	delayMessage->timeOfArrival = Clock_getTime(Game_getClock(Game_getInstance()));
+	delayMessage->timeOfArrival = Clock_getTime(Game_getClock(Game_getInstance())) + delay;
 
 	VirtualList_pushFront(this->delayedMessages, delayMessage);
 }
@@ -166,7 +168,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 			ASSERT(__GET_CAST(Telegram, telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
-			if (Clock_getTime(Game_getClock(Game_getInstance())) > delayedMessage->timeOfArrival + Telegram_getDelay(telegram))
+			if (Clock_getTime(Game_getClock(Game_getInstance())) > delayedMessage->timeOfArrival)
 			{
 				VirtualList_pushFront(telegramsToDispatch, delayedMessage);
 			}

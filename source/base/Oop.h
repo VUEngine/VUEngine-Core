@@ -124,6 +124,7 @@
 		return this;																	\
 	}
 
+#define	__DINAMIC_STRUCT_PAD	4
 
 // like new in C++
 #define __NEW(ClassName, ...)															\
@@ -143,15 +144,15 @@
 #define __NEW_BASIC(ClassName)															\
 																						\
 	/* allocate data */																	\
-	(ClassName*)MemoryPool_allocate(MemoryPool_getInstance(),							\
-		sizeof(ClassName));
+	(ClassName*)(MemoryPool_allocate(MemoryPool_getInstance(),							\
+		sizeof(ClassName) + __DINAMIC_STRUCT_PAD) + __DINAMIC_STRUCT_PAD);										\
 
 
 // like delete in C++ (calls virtual destructor)
 #define __DELETE_BASIC(object)															\
 																						\
 	/* free the memory */																\
-	MemoryPool_free(MemoryPool_getInstance(), (void*)object)
+	MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DINAMIC_STRUCT_PAD)		\
 
 
 // construct the base object

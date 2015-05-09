@@ -32,11 +32,13 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// it is neccesary for the object to be aligned to 2 multiples
-#define __MEMORY_ALIGNMENT	4
+// it is neccesary for the object to be aligned to 2's multiples
+#define __MEMORY_ALIGNMENT			0
+#define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
+#define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
 // TODO: remove me
-#define __MEMORY_POOLS		11
+#define __MEMORY_POOLS		10
 
 #define __MEMORY_POOL_ARRAYS													\
 	__BLOCK_DEFINITION(192, 1)													\
@@ -45,25 +47,11 @@
 	__BLOCK_DEFINITION(96, 24)													\
 	__BLOCK_DEFINITION(80, 20)													\
 	__BLOCK_DEFINITION(72, 64)													\
-	__BLOCK_DEFINITION(64, 16)													\
-	__BLOCK_DEFINITION(32, 64)													\
-	__BLOCK_DEFINITION(28, 178)													\
-	__BLOCK_DEFINITION(24, 480)													\
-	__BLOCK_DEFINITION(20, 160)													\
-
-#define __MEMORY_POOL_ARRAYS													\
-	__BLOCK_DEFINITION(192, 1)													\
-	__BLOCK_DEFINITION(164, 2)													\
-	__BLOCK_DEFINITION(136, 48)													\
-	__BLOCK_DEFINITION(96, 24)													\
-	__BLOCK_DEFINITION(80, 20)													\
-	__BLOCK_DEFINITION(72, 64)													\
-	__BLOCK_DEFINITION(64, 16)													\
-	__BLOCK_DEFINITION(32, 64)													\
-	__BLOCK_DEFINITION(24, 256)													\
+	__BLOCK_DEFINITION(64, 24)													\
+	__BLOCK_DEFINITION(32, 256)													\
 	__BLOCK_DEFINITION(20, 512)													\
-	__BLOCK_DEFINITION(16, 256)													\
-
+	__BLOCK_DEFINITION(16, 760)													\
+	
 #define __SET_MEMORY_POOL_ARRAYS												\
 	__SET_MEMORY_POOL_ARRAY(192)												\
 	__SET_MEMORY_POOL_ARRAY(164)												\
@@ -73,11 +61,9 @@
 	__SET_MEMORY_POOL_ARRAY(72)													\
 	__SET_MEMORY_POOL_ARRAY(64)													\
 	__SET_MEMORY_POOL_ARRAY(32)													\
-	__SET_MEMORY_POOL_ARRAY(24)													\
 	__SET_MEMORY_POOL_ARRAY(20)													\
 	__SET_MEMORY_POOL_ARRAY(16)													\
 
-#define __MIN_BLOCK 		20
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -146,14 +132,14 @@ void MemoryPool_destructor(MemoryPool this)
 }
 
 // allocate memory for data
-void* MemoryPool_allocate(MemoryPool this, int numBytes)
+BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 {
 	ASSERT(this, "MemoryPool::allocate: null this");
 
 	int i = 0;
-	int blockSize = __MIN_BLOCK;
+	int blockSize = this->poolSizes[__MEMORY_POOLS - 1][eBlockSize];
 	int numberOfOjects = 0;
-	int pool = 0;
+	int pool = __MEMORY_POOLS;
 	int displacement = 0;
 	int displacementStep = 0;
 
@@ -161,22 +147,19 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 	numBytes += __MEMORY_ALIGNMENT;
 
 	// seach for the shortest pool which can hold the data
-	for (pool = __MEMORY_POOLS; pool-- && numBytes > this->poolSizes[pool][eBlockSize];);
+	for (; pool-- && numBytes > blockSize; blockSize = this->poolSizes[pool - 1][eBlockSize]);
 
 	ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
 
-	// pool found
-	blockSize = this->poolSizes[pool][eBlockSize];
-
 	// get the number of allocable objects in the pool
-	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+	numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 
 	// how much must displace on each iteration
-	displacementStep = this->poolSizes[pool][eBlockSize];
+	displacementStep = blockSize;
 
 	// look for a free block
 	for (i = 0, displacement = 0;
-	    i < numberOfOjects && this->poolLocation[pool][displacement];
+	    i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
 	    i++, displacement += displacementStep);
 
 	if (i >= numberOfOjects)
@@ -187,7 +170,7 @@ void* MemoryPool_allocate(MemoryPool this, int numBytes)
 	}
 
 	// mark address as allocated
-	this->poolLocation[pool][displacement] = 0xFF;
+	*((u32*)&this->poolLocation[pool][displacement]) = __MEMORY_USED_BLOCK_FLAG;
 
 	// return designed address
 	return &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT];
@@ -236,7 +219,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 		if (object == &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT])
 		{
 			// free the block
-			this->poolLocation[pool][displacement] = 0x00;
+			*((u32*)&this->poolLocation[pool][displacement]) = __MEMORY_FREE_BLOCK_FLAG;
 
 			return;
 		}
@@ -248,7 +231,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 #endif
 
 	// set address as free
-	object[-__MEMORY_ALIGNMENT] = 0x00;
+	*((u32*)&object[-__MEMORY_ALIGNMENT]) = __MEMORY_FREE_BLOCK_FLAG;
 }
 
 // clear all dynamic memory
@@ -265,10 +248,9 @@ static void MemoryPool_reset(MemoryPool this)
 	// clear all allocable objects usage
 	for (pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		//memset(this->poolSizes[pool], 0 , sizeof(this->poolSizes[pool]));
 		for (i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
 		{
-			this->poolLocation[pool][i] = 0x00;
+			*((u32*)&this->poolLocation[pool][i]) = __MEMORY_FREE_BLOCK_FLAG;
 		}
 	}
 }

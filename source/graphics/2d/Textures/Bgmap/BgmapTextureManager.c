@@ -322,13 +322,22 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	// try to find a texture with the same bgmap definition
 	for (; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
-		if (this->bgmapTextures[i] && 
-			Texture_getBgmapDefinition(__UPCAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
-			CharSet_getAllocationType(Texture_getCharSet(__UPCAST(Texture, this->bgmapTextures[i]))) == bgmapTextureDefinition->charSetDefinition.allocationType
-		)
+		if (this->bgmapTextures[i])
 		{
-			// return if found
-			return this->bgmapTextures[i];
+			CharSet charSet = Texture_getCharSet(__UPCAST(Texture, this->bgmapTextures[i]));
+
+			if(Texture_getBgmapDefinition(__UPCAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
+				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition.allocationType)
+			)
+			{
+				if(!charSet)
+				{
+					BgmapTexture_write(this->bgmapTextures[i]);
+				}
+				
+				// return if found
+				return this->bgmapTextures[i];
+			}
 		}
 	}
 
