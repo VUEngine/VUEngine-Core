@@ -40,16 +40,16 @@
 
 #define __MEMORY_POOL_ARRAYS													\
 	__BLOCK_DEFINITION(192, 1)													\
-	__BLOCK_DEFINITION(164, 4)													\
+	__BLOCK_DEFINITION(164, 2)													\
 	__BLOCK_DEFINITION(136, 48)													\
-	__BLOCK_DEFINITION(96, 48)													\
-	__BLOCK_DEFINITION(80, 32)													\
+	__BLOCK_DEFINITION(96, 24)													\
+	__BLOCK_DEFINITION(80, 20)													\
 	__BLOCK_DEFINITION(72, 64)													\
-	__BLOCK_DEFINITION(64, 32)													\
+	__BLOCK_DEFINITION(64, 16)													\
 	__BLOCK_DEFINITION(32, 64)													\
-	__BLOCK_DEFINITION(28, 256)													\
-	__BLOCK_DEFINITION(24, 640)													\
-	__BLOCK_DEFINITION(20, 256)													\
+	__BLOCK_DEFINITION(28, 178)													\
+	__BLOCK_DEFINITION(24, 480)													\
+	__BLOCK_DEFINITION(20, 160)													\
 
 #define __SET_MEMORY_POOL_ARRAYS												\
 	__SET_MEMORY_POOL_ARRAY(192)												\
@@ -360,7 +360,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
 		
-		Printing_text(Printing_getInstance(), "             ", x, y, NULL);
+		Printing_text(Printing_getInstance(), "           ", x, originalY + 1 + pool, NULL);
 
 		if(85 < usedBlocksPercentage)
 		{
