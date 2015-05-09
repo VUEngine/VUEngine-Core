@@ -123,35 +123,32 @@
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-#define __MEMORY_POOLS		11
+#define __MEMORY_POOLS		10
 
 #define __MEMORY_POOL_ARRAYS													\
-	__BLOCK_DEFINITION(192, 1)													\
-	__BLOCK_DEFINITION(164, 4)													\
-	__BLOCK_DEFINITION(136, 48)													\
-	__BLOCK_DEFINITION(96, 48)													\
-	__BLOCK_DEFINITION(80, 32)													\
-	__BLOCK_DEFINITION(72, 64)													\
-	__BLOCK_DEFINITION(64, 32)													\
-	__BLOCK_DEFINITION(32, 64)													\
-	__BLOCK_DEFINITION(28, 256)													\
-	__BLOCK_DEFINITION(24, 640)													\
-	__BLOCK_DEFINITION(20, 256)													\
-
+	__BLOCK_DEFINITION(180, 1)													\
+	__BLOCK_DEFINITION(160, 2)													\
+	__BLOCK_DEFINITION(132, 48)													\
+	__BLOCK_DEFINITION(112, 16)													\
+	__BLOCK_DEFINITION(96, 40)													\
+	__BLOCK_DEFINITION(76, 28)													\
+	__BLOCK_DEFINITION(68, 80)													\
+	__BLOCK_DEFINITION(28, 384)													\
+	__BLOCK_DEFINITION(20, 768)													\
+	__BLOCK_DEFINITION(16, 256)													\
+	
 #define __SET_MEMORY_POOL_ARRAYS												\
-	__SET_MEMORY_POOL_ARRAY(192)												\
-	__SET_MEMORY_POOL_ARRAY(164)												\
-	__SET_MEMORY_POOL_ARRAY(136)												\
+	__SET_MEMORY_POOL_ARRAY(180)												\
+	__SET_MEMORY_POOL_ARRAY(160)												\
+	__SET_MEMORY_POOL_ARRAY(132)												\
+	__SET_MEMORY_POOL_ARRAY(112)												\
 	__SET_MEMORY_POOL_ARRAY(96)													\
-	__SET_MEMORY_POOL_ARRAY(80)													\
-	__SET_MEMORY_POOL_ARRAY(72)													\
-	__SET_MEMORY_POOL_ARRAY(64)													\
-	__SET_MEMORY_POOL_ARRAY(32)													\
+	__SET_MEMORY_POOL_ARRAY(76)													\
+	__SET_MEMORY_POOL_ARRAY(68)													\
 	__SET_MEMORY_POOL_ARRAY(28)													\
-	__SET_MEMORY_POOL_ARRAY(24)													\
 	__SET_MEMORY_POOL_ARRAY(20)													\
+	__SET_MEMORY_POOL_ARRAY(16)													\
 
-#define __MIN_BLOCK 		20
 
 // percentage (0-100) above the MemoryPool' status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD	85
