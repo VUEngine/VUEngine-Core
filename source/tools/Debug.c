@@ -468,7 +468,7 @@ static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
 
 static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y)
 {
-	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -486,7 +486,7 @@ static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, in
 
 static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y)
 {
-	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -510,7 +510,7 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 
 static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y)
 {
-	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -528,7 +528,7 @@ static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, in
 
 static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y)
 {
-	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -553,7 +553,7 @@ static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, i
 
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y)
 {
-	MemoryPool_printMemUsage(MemoryPool_getInstance(), x, y);
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
 	Debug_printClassSizes(_userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }

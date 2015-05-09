@@ -253,7 +253,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 	// pointers to the dimensions to affect
 	const fix19_13* myPositionAxisToCheck = NULL;
 	fix19_13* myPositionAxis = NULL;
-	fix19_13* otherPositionAxis = NULL;
+	const fix19_13* otherPositionAxis = NULL;
 
 	// used to the width, height or depth
 	u16 myHalfSize = 0;

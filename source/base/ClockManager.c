@@ -148,16 +148,22 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
     {
     		FrameRate frameRate = FrameRate_getInstance();
     		
-#ifdef __PRINT_FRAMERATE
-    		bool printFrameRate = !Game_isInSpecialMode(Game_getInstance());
-    		int y = 0;
 #ifdef __DEBUG
     		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, __SCREEN_HEIGHT / 8 - 1, NULL);
-    		y = 1;
+    		
 #endif 	    		
-	    	if (printFrameRate)
+
+#ifdef __PRINT_FRAMERATE
+	    	if (!Game_isInSpecialMode(Game_getInstance()))
 	    	{
-	    		FrameRate_print(frameRate, 0, y);
+	    		FrameRate_print(frameRate, 0, 0);
+	    	}
+#endif
+	    	
+#ifdef __PRINT_MEMORY_POOL_STATUS
+	    	if (!Game_isInSpecialMode(Game_getInstance()))
+	    	{
+	    		MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 0);
 	    	}
 #endif
 	    	//reset frame rate counters
