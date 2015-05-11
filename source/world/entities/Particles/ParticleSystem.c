@@ -83,9 +83,9 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	this->paused = !this->particleSystemDefinition->autoStart;
 	
 	// set size from definition if there are not no sprites to be added
-	this->size.x += abs(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x);
-	this->size.y += abs(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y);
-	this->size.z += abs(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z);
+	this->size.x += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x));
+	this->size.y += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
+	this->size.z += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
 	
 	// retrieve clock
 	this->clock = Game_getInGameClock(Game_getInstance());

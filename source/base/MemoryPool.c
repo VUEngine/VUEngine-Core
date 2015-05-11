@@ -37,33 +37,6 @@
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
-// TODO: remove me
-#define __MEMORY_POOLS		10
-
-#define __MEMORY_POOL_ARRAYS													\
-	__BLOCK_DEFINITION(180, 1)													\
-	__BLOCK_DEFINITION(160, 2)													\
-	__BLOCK_DEFINITION(132, 48)													\
-	__BLOCK_DEFINITION(112, 16)													\
-	__BLOCK_DEFINITION(96, 40)													\
-	__BLOCK_DEFINITION(76, 28)													\
-	__BLOCK_DEFINITION(68, 80)													\
-	__BLOCK_DEFINITION(28, 384)													\
-	__BLOCK_DEFINITION(20, 768)													\
-	__BLOCK_DEFINITION(16, 256)													\
-	
-#define __SET_MEMORY_POOL_ARRAYS												\
-	__SET_MEMORY_POOL_ARRAY(180)												\
-	__SET_MEMORY_POOL_ARRAY(160)												\
-	__SET_MEMORY_POOL_ARRAY(132)												\
-	__SET_MEMORY_POOL_ARRAY(112)												\
-	__SET_MEMORY_POOL_ARRAY(96)													\
-	__SET_MEMORY_POOL_ARRAY(76)													\
-	__SET_MEMORY_POOL_ARRAY(68)													\
-	__SET_MEMORY_POOL_ARRAY(28)													\
-	__SET_MEMORY_POOL_ARRAY(20)													\
-	__SET_MEMORY_POOL_ARRAY(16)													\
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
