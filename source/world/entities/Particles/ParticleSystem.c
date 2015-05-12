@@ -108,8 +108,10 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 void ParticleSystem_destructor(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::destructor: null this");
-
+	
 	ParticleSystem_processExpiredParticles(this);
+	
+	ParticleSystem_hide(this);
 	
 	if(this->particles)
 	{
@@ -132,11 +134,11 @@ void ParticleSystem_destructor(ParticleSystem this)
 		{
 			__DELETE(VirtualNode_getData(node));
 		}
-		
+
 		__DELETE(this->expiredParticles);
 		this->expiredParticles = NULL;
 	}
-
+	
 	// destroy the super Container
 	__DESTROY_BASE;
 }
@@ -171,9 +173,10 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 	{
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			VirtualList_removeElement(this->particles, VirtualNode_getData(node));
+			Particle particle = __UPCAST(Particle, VirtualNode_getData(node));
+			VirtualList_removeElement(this->particles, particle);
 			
-			__DELETE(VirtualNode_getData(node));
+			__DELETE(particle);
 		}
 
 		VirtualList_clear(this->expiredParticles);

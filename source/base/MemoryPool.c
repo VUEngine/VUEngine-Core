@@ -37,6 +37,9 @@
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
+// TODO: remove me
+#define __MEMORY_POOLS		10
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION

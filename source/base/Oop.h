@@ -137,7 +137,8 @@
 #define __DELETE(object)																\
 																						\
 	/* since the destructor is the first element in the virtual table */				\
-	((void (*)(void*))((void***)object)[0][0])(object);
+	ASSERT(object && *(u32*)object, "Deleting null object");							\
+	((void (*)(void*))((void***)object)[0][0])(object);									\
 
 
 // like new in C++
@@ -145,13 +146,14 @@
 																						\
 	/* allocate data */																	\
 	(ClassName*)(MemoryPool_allocate(MemoryPool_getInstance(),							\
-		sizeof(ClassName) + __DINAMIC_STRUCT_PAD) + __DINAMIC_STRUCT_PAD);										\
+		sizeof(ClassName) + __DINAMIC_STRUCT_PAD) + __DINAMIC_STRUCT_PAD);				\
 
 
 // like delete in C++ (calls virtual destructor)
 #define __DELETE_BASIC(object)															\
 																						\
 	/* free the memory */																\
+	ASSERT(object && *(u32*)object, "Deleting null basic object");						\
 	MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DINAMIC_STRUCT_PAD)		\
 
 
