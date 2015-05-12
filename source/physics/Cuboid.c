@@ -86,7 +86,7 @@ u8 Cuboid_overlaps(Cuboid this, Shape shape)
 
 	if (__GET_CAST(Cuboid, shape))
 	{
-		return Cuboid_overlapsCuboid(this, __UPCAST(Cuboid, shape));
+		return Cuboid_overlapsCuboid(this, __GET_CAST(Cuboid, shape));
 	}
 
 	return false;
@@ -195,7 +195,7 @@ u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, 
 
 	if (__GET_CAST(Cuboid, shape))
 	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), displacement, previousPosition);
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __GET_CAST(Cuboid, shape), displacement, previousPosition);
 	}
 
 	return 0;
@@ -381,7 +381,7 @@ u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBV
 
 	if (__GET_CAST(Cuboid, shape))
     {
-		return Cuboid_testIfCollisionWithCuboid(this, __UPCAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement, previousPosition);
+		return Cuboid_testIfCollisionWithCuboid(this, __GET_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement, previousPosition);
 	}
 
 	return false;

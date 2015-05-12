@@ -327,7 +327,7 @@ static void StageEditor_releaseShape(StageEditor this)
 {
 	if (this->currentEntityNode)
 	{
-		Entity entity = __UPCAST(Entity, VirtualNode_getData(this->currentEntityNode));
+		Entity entity = __GET_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
 		if (this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, entity))
 	    {
@@ -345,7 +345,7 @@ static void StageEditor_getShape(StageEditor this)
 		return;
 	}
 
-	Entity entity = __UPCAST(Entity, VirtualNode_getData(this->currentEntityNode));
+	Entity entity = __GET_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
 	this->shape = __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, entity);
 
@@ -360,7 +360,7 @@ static void StageEditor_getShape(StageEditor this)
 
 			case kCuboid:
 
-				this->shape = __UPCAST(Shape, __NEW(Cuboid, __UPCAST(SpatialObject, entity)));
+				this->shape = __GET_CAST(Shape, __NEW(Cuboid, __GET_CAST(SpatialObject, entity)));
 				break;
 		}
 	}
@@ -373,7 +373,7 @@ static void StageEditor_positioneShape(StageEditor this)
 		return;
 	}
 
-	Entity entity = __UPCAST(Entity, VirtualNode_getData(this->currentEntityNode));
+	Entity entity = __GET_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
 	__VIRTUAL_CALL(void, Shape, setup, this->shape);
 
@@ -403,7 +403,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 {
 	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
+	VirtualList stageEntities = Container_getChildren(__GET_CAST(Container, GameState_getStage(this->gameState)));
 
 	if (!this->currentEntityNode)
 	{
@@ -431,7 +431,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 {
 	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
+	VirtualList stageEntities = Container_getChildren(__GET_CAST(Container, GameState_getStage(this->gameState)));
 	
 	if (!this->currentEntityNode)
 	{
@@ -680,7 +680,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 {
 	if (this->currentEntityNode && this->shape)
 	{
-		Container container = __UPCAST(Container, VirtualNode_getData(this->currentEntityNode));
+		Container container = __GET_CAST(Container, VirtualNode_getData(this->currentEntityNode));
 		VBVec3D localPosition = *Container_getLocalPosition(container);
 
 		localPosition.x += translation.x;
@@ -738,7 +738,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		Stage_addEntity(GameState_getStage(this->gameState), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, &position, NULL, false);
 		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
-		VirtualList stageEntities = Container_getChildren(__UPCAST(Container, GameState_getStage(this->gameState)));
+		VirtualList stageEntities = Container_getChildren(__GET_CAST(Container, GameState_getStage(this->gameState)));
 		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
 
 		// select the added entity
@@ -759,7 +759,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 
 	if (this->currentEntityNode)
 	{
-		Container container = __UPCAST(Container, VirtualNode_getData(this->currentEntityNode));
+		Container container = __GET_CAST(Container, VirtualNode_getData(this->currentEntityNode));
 		const VBVec3D* globalPosition = Container_getGlobalPosition(container);
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);

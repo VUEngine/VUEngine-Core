@@ -64,7 +64,7 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Sp
 	// construct base object
 	__CONSTRUCT_BASE(spriteDefinition);
 
-	this->animationController = __NEW(AnimationController, owner, __UPCAST(Sprite, this), Texture_getCharSet(this->texture));
+	this->animationController = __NEW(AnimationController, owner, __GET_CAST(Sprite, this), Texture_getCharSet(this->texture));
 }
 
 //destructor
@@ -120,9 +120,9 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 
 		case __ANIMATED_MULTI:
 
-			ObjectTexture_resetBgmapDisplacement(__UPCAST(ObjectTexture, this->texture));
-			ObjectTexture_addBgmapDisplacement(__UPCAST(ObjectTexture, this->texture), animationFrame);
-			ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+			ObjectTexture_resetBgmapDisplacement(__GET_CAST(ObjectTexture, this->texture));
+			ObjectTexture_addBgmapDisplacement(__GET_CAST(ObjectTexture, this->texture), animationFrame);
+			ObjectTexture_write(__GET_CAST(ObjectTexture, this->texture));
 			break;
 	}
 }

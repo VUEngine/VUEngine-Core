@@ -88,7 +88,7 @@ void MBackground_initialize(MBackground this)
 	// first register with the manager so it handles the texture loading process
 	MBackgroundManager_registerMBackground(MBackgroundManager_getInstance(), this, this->mBackgroundDefinition->spritesDefinitions[0]->textureDefinition);
 
-	Entity_initialize(__UPCAST(Entity, this));
+	Entity_initialize(__GET_CAST(Entity, this));
 
 	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
 }
@@ -98,7 +98,7 @@ Texture MBackground_getTexture(MBackground this)
 {
 	ASSERT(this, "MBackground::getTexture: null this");
 
-	return !this->sprites? NULL: Sprite_getTexture(__UPCAST(Sprite, VirtualList_front(this->sprites)));
+	return !this->sprites? NULL: Sprite_getTexture(__GET_CAST(Sprite, VirtualList_front(this->sprites)));
 }
 
 int MBackground_isVisible(MBackground this, int pad)
@@ -106,5 +106,5 @@ int MBackground_isVisible(MBackground this, int pad)
 	ASSERT(this, "MBackground::isVisible: null this");
 
 	// TODO: add support for MBgmapSprites
-	return Entity_isVisible(__UPCAST(Entity, this), pad);
+	return Entity_isVisible(__GET_CAST(Entity, this), pad);
 }

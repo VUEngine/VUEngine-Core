@@ -71,7 +71,7 @@ void Sprite_constructor(Sprite this)
 void Sprite_destructor(Sprite this)
 {
 	ASSERT(this, "Sprite::destructor: null this");
-	ASSERT(__UPCAST(Sprite, this), "Sprite::destructor: null cast");
+	ASSERT(__GET_CAST(Sprite, this), "Sprite::destructor: null cast");
 
 	__VIRTUAL_CALL(void, Sprite, hide, this);
 

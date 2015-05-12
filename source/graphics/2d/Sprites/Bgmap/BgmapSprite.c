@@ -75,21 +75,21 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 	__CONSTRUCT_BASE();
 
 	// register with sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
+	SpriteManager_addSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
 	// create the texture
 	if(bSpriteDefinition->textureDefinition)
 	{
-		this->texture = __UPCAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+		this->texture = __GET_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
 	}
 	
 	if(this->texture)
 	{
-		Object_addEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
+		Object_addEventListener(__GET_CAST(Object, this->texture), __GET_CAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = BgmapTexture_getXOffset(__UPCAST(BgmapTexture, this->texture)) << 3;
-		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.mx = BgmapTexture_getXOffset(__GET_CAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__GET_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 	}
 	else
@@ -151,7 +151,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 void BgmapSprite_destructor(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::destructor: null this");
-	ASSERT(__UPCAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
+	ASSERT(__GET_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
 	//if affine or bgmap
 	if (WRLD_AFFINE & this->head)
@@ -163,13 +163,13 @@ void BgmapSprite_destructor(BgmapSprite this)
 	// free the texture
 	if(this->texture)
 	{
-		Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
-		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, this->texture));
+		Object_removeEventListener(__GET_CAST(Object, this->texture), __GET_CAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
+		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __GET_CAST(BgmapTexture, this->texture));
 		this->texture = NULL;
 	}
 	
 	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
+	SpriteManager_removeSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
 	// destroy the super object
 	__DESTROY_BASE;
@@ -225,7 +225,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	
 	if(this->texture)
 	{
-		if (WRLD_AFFINE == Sprite_getMode(__UPCAST(Sprite, this)))
+		if (WRLD_AFFINE == Sprite_getMode(__GET_CAST(Sprite, this)))
 		{
 			this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 			this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
@@ -337,7 +337,7 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 			
 			// make sure to not render again
-			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__UPCAST(BgmapTexture, this->texture));
+			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__GET_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
 		}

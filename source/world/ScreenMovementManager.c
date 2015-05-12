@@ -89,7 +89,7 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 	// if focusInGameEntity is defined
 	if (screen && screen->focusInGameEntity)
 	{
-		Container focusInGameEntityParent = Container_getParent(__UPCAST(Container, screen->focusInGameEntity));
+		Container focusInGameEntityParent = Container_getParent(__GET_CAST(Container, screen->focusInGameEntity));
 		
 		if(focusInGameEntityParent)
 		{
@@ -106,7 +106,7 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 				screen->lastDisplacement = screen->position;
 	
 				// get focusInGameEntity's position
-				screen->position = *Entity_getPosition(__UPCAST(Entity, screen->focusInGameEntity));
+				screen->position = *Entity_getPosition(__GET_CAST(Entity, screen->focusInGameEntity));
 				
 				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
 				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);

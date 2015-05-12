@@ -79,7 +79,7 @@ void BgmapTexture_write(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
-	Texture_write(__UPCAST(Texture, this));
+	Texture_write(__GET_CAST(Texture, this));
 	
 	//determine the allocation type
 	switch (CharSet_getAllocationType(this->charSet))

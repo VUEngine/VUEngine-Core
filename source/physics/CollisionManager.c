@@ -138,7 +138,7 @@ Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner,
 	}
 
 	// return created shape
-	return __UPCAST(Shape, VirtualList_front(this->shapes));
+	return __GET_CAST(Shape, VirtualList_front(this->shapes));
 }
 
 // remove a shape
@@ -165,7 +165,7 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 
 	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL_UNSAFE(const void* const, SpatialObject, getShape, owner));
 
-	return node? __UPCAST(Shape, VirtualNode_getData(node)): NULL;
+	return node? __GET_CAST(Shape, VirtualNode_getData(node)): NULL;
 }
 
 // process removed shapes
@@ -180,7 +180,7 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 	{
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Shape shape = __UPCAST(Shape, VirtualNode_getData(node));
+			Shape shape = __GET_CAST(Shape, VirtualNode_getData(node));
 
 			// remove from the list
 			VirtualList_removeElement(this->shapes, (BYTE*) shape);
@@ -209,7 +209,7 @@ int CollisionManager_update(CollisionManager this)
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		// current to check shape's rectangle
-		__VIRTUAL_CALL(void, Shape, positione, __UPCAST(Shape, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Shape, positione, __GET_CAST(Shape, VirtualNode_getData(node)));
 	}
 
 	// check the shapes
@@ -217,7 +217,7 @@ int CollisionManager_update(CollisionManager this)
 	for (; node; node = VirtualNode_getNext(node))
 	{
 		// load the current shape
-		Shape shape = __UPCAST(Shape, VirtualNode_getData(node));
+		Shape shape = __GET_CAST(Shape, VirtualNode_getData(node));
 
 		if (!Shape_checkForCollisions(shape))
 		{
@@ -238,7 +238,7 @@ int CollisionManager_update(CollisionManager this)
 		for (; nodeForActiveShapes; nodeForActiveShapes = VirtualNode_getNext(nodeForActiveShapes))
 		{	
 			// load the current shape to check against
-			Shape shapeToCheck = __UPCAST(Shape, VirtualNode_getData(nodeForActiveShapes));
+			Shape shapeToCheck = __GET_CAST(Shape, VirtualNode_getData(nodeForActiveShapes));
 
 			// don't compare with current movable shape,
 			// when the shape already has been checked
@@ -267,7 +267,7 @@ int CollisionManager_update(CollisionManager this)
 			thereWhereCollisions = true;
 
 			// inform the owner about the collision
-			MessageDispatcher_dispatchMessage(0, __UPCAST(Object, shape), __UPCAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
+			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, shape), __GET_CAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
 
 			__DELETE(collidingObjects);
 		}

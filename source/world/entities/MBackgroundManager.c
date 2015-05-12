@@ -102,7 +102,7 @@ void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			if(!Texture_getDefinition(__UPCAST(Texture, VirtualNode_getData(node))))
+			if(!Texture_getDefinition(__GET_CAST(Texture, VirtualNode_getData(node))))
 			{
 				break;
 			}
@@ -117,7 +117,7 @@ void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground
 		else 
 		{
 			// free texture found, so replace it
-			Texture texture = __UPCAST(Texture, VirtualNode_getData(node));
+			Texture texture = __GET_CAST(Texture, VirtualNode_getData(node));
 			Texture_setDefinition(texture, textureDefinition);
 			Texture_releaseCharSet(texture);
 			Texture_rewrite(texture);

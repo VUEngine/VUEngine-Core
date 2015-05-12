@@ -88,7 +88,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	int i = 0;
 	
 	// static to avoid call to memcpy
-	Transformation environmentTransform = Container_getEnvironmentTransform(__UPCAST(Container, this));
+	Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
 
 	for (;entities && entities[i].entityDefinition; i++)
 	{
@@ -99,7 +99,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 		// apply transformations
 		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 
-		Container_addChild(__UPCAST(Container, this), __UPCAST(Container, entity));
+		Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, entity));
 	}
 }
 
@@ -130,7 +130,7 @@ void UI_transform(UI this, const Transformation* environmentTransform)
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 
-	Container_transform(__UPCAST(Container, this), environmentTransform);
+	Container_transform(__GET_CAST(Container, this), environmentTransform);
 	
 	if(screen)
 	{
@@ -166,7 +166,7 @@ void UI_initialTransform(UI this, Transformation* environmentTransform)
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 
-	Container_initialTransform(__UPCAST(Container, this), environmentTransform);
+	Container_initialTransform(__GET_CAST(Container, this), environmentTransform);
 	
 	if(screen)
 	{

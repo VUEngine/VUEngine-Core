@@ -106,7 +106,7 @@ void AnimatedInGameEntity_initialize(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::initialize: null this");
 	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::initialize: null animatedInGameEntityDefinition");
 
-	Entity_initialize(__UPCAST(Entity, this));
+	Entity_initialize(__GET_CAST(Entity, this));
 
 	AnimatedInGameEntity_addListeners(this);
 
@@ -123,9 +123,9 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 		// setup listeners
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
 	
-			function(__UPCAST(Object, sprite), __UPCAST(Object, this), (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
+			function(__GET_CAST(Object, sprite), __GET_CAST(Object, this), (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
 		}
 	}
 }
@@ -158,14 +158,14 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 	if (this->direction.x != this->previousDirection.x)
 	{
 		// change sprite's direction
-		Entity_setSpritesDirection(__UPCAST(Entity, this), __XAXIS, this->direction.x);
+		Entity_setSpritesDirection(__GET_CAST(Entity, this), __XAXIS, this->direction.x);
 
 		// save current direction
 		this->previousDirection = this->direction;
 	}
 
 	// call base
-	Entity_transform(__UPCAST(Entity, this), environmentTransform);
+	Entity_transform(__GET_CAST(Entity, this), environmentTransform);
 }
 
 // execute character's logic
@@ -174,7 +174,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::update: null this");
 
 	// call base
-	Container_update(__UPCAST(Container, this));
+	Container_update(__GET_CAST(Container, this));
 
 	// if direction changed
 	if (this->direction.x != this->previousDirection.x)
@@ -182,7 +182,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 		ASSERT(this->sprites, "AnimatedInGameEntity::update: null sprites");
 
 		// calculate gap again
-		InGameEntity_setGap(__UPCAST(InGameEntity, this));
+		InGameEntity_setGap(__GET_CAST(InGameEntity, this));
 	}
 
 	if (this->sprites)
@@ -201,7 +201,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 	for (; node ; node = VirtualNode_getNext(node))
 	{
 		// first animate the frame
-		Sprite_update(__UPCAST(Sprite, VirtualNode_getData(node)), this->clock);
+		Sprite_update(__GET_CAST(Sprite, VirtualNode_getData(node)), this->clock);
 	}
 }
 
@@ -218,7 +218,7 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite_pause(__UPCAST(Sprite, VirtualNode_getData(node)), pause);
+			Sprite_pause(__GET_CAST(Sprite, VirtualNode_getData(node)), pause);
 		}
 	}
 }
@@ -237,7 +237,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 		// play animation on each sprite
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Sprite_play(__UPCAST(Sprite, VirtualNode_getData(node)), this->animationDescription, animationName);
+			Sprite_play(__GET_CAST(Sprite, VirtualNode_getData(node)), this->animationDescription, animationName);
 		}
 	}
 }
@@ -248,7 +248,7 @@ bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::isPlayingAnimation: null sprites");
 
-	return Sprite_isPlaying(__UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
+	return Sprite_isPlaying(__GET_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
 }
 
 // is animation selected
@@ -258,9 +258,9 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 
 	if(this->sprites)
 	{
-		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
+		Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
-		return Sprite_isPlayingFunction(__UPCAST(Sprite, sprite), this->animationDescription, functionName);
+		return Sprite_isPlayingFunction(__GET_CAST(Sprite, sprite), this->animationDescription, functionName);
 	}
 
 	return false;
@@ -295,9 +295,9 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::resume: null this");
 
-	Entity_resume(__UPCAST(Entity, this));
+	Entity_resume(__GET_CAST(Entity, this));
 
-	Entity_setSpritesDirection(__UPCAST(Entity, this), __XAXIS, this->direction.x);
+	Entity_setSpritesDirection(__GET_CAST(Entity, this), __XAXIS, this->direction.x);
 
 	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
 	

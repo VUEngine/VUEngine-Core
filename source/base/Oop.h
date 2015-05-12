@@ -188,7 +188,7 @@
 			((ReturnType (*)(ClassName, ...))											\
 			(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))		\
 				(																		\
-						__UPCAST(ClassName, object), ##__VA_ARGS__						\
+						__GET_CAST(ClassName, object), ##__VA_ARGS__						\
 				):																		\
 			/* call base implementation */												\
 			(ReturnType)Error_triggerException(Error_getInstance(),						\
@@ -202,7 +202,7 @@
 		((ReturnType (*)(ClassName, ...))												\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))			\
 			(																			\
-				__UPCAST(ClassName, object), ##__VA_ARGS__								\
+				__GET_CAST(ClassName, object), ##__VA_ARGS__								\
 			)																			\
 
 #endif
@@ -215,29 +215,13 @@
 					object, ##__VA_ARGS__												\
 			)																			\
 
-// cast macro
-#define __GET_CAST(ClassName, object)													\
-		(																				\
-			/* check if object's destructor matches class' destructor */				\
-			object && ((void*)ClassName ## _destructor == 								\
-							((void (*)(void*))((void***)object)[0][0]))?				\
-																						\
-			/* cast is safe */															\
-			(ClassName)object															\
-																						\
-			/* otherwise */																\
-			:																			\
-			/* cast is null */															\
-			NULL																		\
-		)
-
 #ifdef __DEBUG
-#define __UPCAST(ClassName, object)														\
+#define __GET_CAST(ClassName, object)														\
 																						\
 		/* try to up cast object */														\
-		(ClassName)Object_upcast((Object)object, ClassName ## _getBaseClass, NULL)
+		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
 #else	
-#define __UPCAST(ClassName, object) (ClassName)object
+#define __GET_CAST(ClassName, object) (ClassName)object
 #endif
 
 

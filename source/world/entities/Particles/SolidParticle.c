@@ -58,7 +58,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	this->solidParticleDefinition = solidParticleDefinition;
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __UPCAST(SpatialObject, this), solidParticleDefinition->shapeType);
+	this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __GET_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
 }
 
 // class's destructor
@@ -79,7 +79,7 @@ void SolidParticle_update(SolidParticle this, u16 timeElapsed, void (* behavior)
 {
 	ASSERT(this, "SolidParticle::update: null this");
 
-	Particle_update(__UPCAST(Particle, this), timeElapsed, behavior);
+	Particle_update(__GET_CAST(Particle, this), timeElapsed, behavior);
 }
 
 // retrieve shape
@@ -124,7 +124,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
     {
 		case kCollision:
 
-			SolidParticle_resolveCollision(this, __UPCAST(VirtualList, Telegram_getExtraInfo(telegram)));
+			SolidParticle_resolveCollision(this, __GET_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
 			return true;
 			break;
 			

@@ -63,7 +63,7 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	// if the char definition is NULL, it must be a text	
 	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
 	ASSERT(this->charSet, "Texture::destructor: null charSet");
-	Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+	Object_addEventListener(__GET_CAST(Object, this->charSet), __GET_CAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 	
 	// set the palette
 	this->palette = textureDefinition->palette;
@@ -98,7 +98,7 @@ void Texture_releaseCharSet(Texture this)
 
 	if (this->charSet)
 	{
-		Object_removeEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+		Object_removeEventListener(__GET_CAST(Object, this->charSet), __GET_CAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
 		this->charSet = NULL;
 	}
@@ -116,7 +116,7 @@ void Texture_write(Texture this)
 
 		if(this->charSet)
 		{
-			Object_addEventListener(__UPCAST(Object, this->charSet), __UPCAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+			Object_addEventListener(__GET_CAST(Object, this->charSet), __GET_CAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 		}
 	}
 }
@@ -309,7 +309,7 @@ static void Texture_onCharSetRewritten(Texture this, Object eventFirer)
 	__VIRTUAL_CALL(void, Texture, write, this);
 
 	// propagate event
-	Object_fireEvent(__UPCAST(Object, this), __EVENT_TEXTURE_REWRITTEN);
+	Object_fireEvent(__GET_CAST(Object, this), __EVENT_TEXTURE_REWRITTEN);
 }
 
 // write directly to texture

@@ -124,7 +124,7 @@ void Container_destructor(Container this)
 		// destroy each child
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
 			child->parent = NULL;
@@ -209,7 +209,7 @@ void Container_processRemovedChildren(Container this)
 		// remove each child
 		for (; node ; node = VirtualNode_getNext(node))
 	    {
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			VirtualList_removeElement(this->children, child);
 			
@@ -356,7 +356,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 		// update each child
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
 
@@ -397,7 +397,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 		// update each child
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
 			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
@@ -443,7 +443,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 		// update each child
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
 			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
@@ -477,7 +477,7 @@ static void Container_propagateInvalidateGlobalPosition(Container this)
 		// update each child
 		for (; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition.x |= this->invalidateGlobalPosition.x;
 			child->invalidateGlobalPosition.y |= this->invalidateGlobalPosition.y;
@@ -564,7 +564,7 @@ void Container_invalidateGlobalPosition(Container this)
 		for (; node; node = VirtualNode_getNext(node))
 		{
 			// make sure children recalculates its global position
-			Container_invalidateGlobalPosition(__UPCAST(Container, VirtualNode_getData(node)));
+			Container_invalidateGlobalPosition(__GET_CAST(Container, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -603,7 +603,7 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 			for (; node ; node = VirtualNode_getNext(node))
 	        {
 				// pass event to each child
-				if (Container_passEvent(__UPCAST(Container, VirtualNode_getData(node)), event, args))
+				if (Container_passEvent(__GET_CAST(Container, VirtualNode_getData(node)), event, args))
 	            {
 					return true;
 				}
@@ -714,7 +714,7 @@ Container Container_findChildByName(Container this, VirtualList children, char* 
     // look through all children
     for (; node ; node = VirtualNode_getNext(node))
     {
-        child = __UPCAST(Container, VirtualNode_getData(node));
+        child = __GET_CAST(Container, VirtualNode_getData(node));
 
         if (child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
         {
@@ -769,7 +769,7 @@ Container Container_getChildById(Container this, s16 id)
 		// look through all children
 		for (; node ; node = VirtualNode_getNext(node))
         {
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			if(child->id == id)
 			{
@@ -792,7 +792,7 @@ void Container_suspend(Container this)
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 			
 			__VIRTUAL_CALL(void, Container, suspend, child);
 		}
@@ -810,7 +810,7 @@ void Container_resume(Container this)
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 			
 			__VIRTUAL_CALL(void, Container, resume, child);
 		}

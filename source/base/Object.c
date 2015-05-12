@@ -58,7 +58,7 @@ void Object_constructor(Object this)
 // class's destructor
 void Object_destructor(Object this)
 {
-	Object_fireEvent(__UPCAST(Object, this), __EVENT_OBJECT_DESTROYED);
+	Object_fireEvent(__GET_CAST(Object, this), __EVENT_OBJECT_DESTROYED);
 
 	if (this->events)
 	{
@@ -161,7 +161,7 @@ void Object_fireEvent(Object this,  char* eventName)
 }
 
 // cast object to base class
-Object Object_upcast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void))
+Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void))
 {
 	ASSERT(this, "Object::upcast: null this");
 	
@@ -190,5 +190,5 @@ Object Object_upcast(Object this, void* (*targetClassGetClassMethod)(void), void
 		return this;
 	}
 	
-	return Object_upcast((Object)this, targetClassGetClassMethod, (void* (*)(void))baseClassGetClassMethod());
+	return Object_getCast((Object)this, targetClassGetClassMethod, (void* (*)(void))baseClassGetClassMethod());
 }	

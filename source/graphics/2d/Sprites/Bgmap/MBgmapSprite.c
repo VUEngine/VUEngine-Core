@@ -112,7 +112,7 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			// free the texture
-			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, VirtualNode_getData(node)));
+			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __GET_CAST(BgmapTexture, VirtualNode_getData(node)));
 		}
 		
 		__DELETE(this->textures);
@@ -138,7 +138,7 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 			MBgmapSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
 		}
 		
-		this->texture = __UPCAST(Texture, VirtualList_front(this->textures));
+		this->texture = __GET_CAST(Texture, VirtualList_front(this->textures));
 	}
 }
 
@@ -191,7 +191,7 @@ void MBgmapSprite_positione(MBgmapSprite this, VBVec3D position3D)
 		this->drawSpec.position.z = position3D.z;
 
 		// calculate sprite's parallax
-		__VIRTUAL_CALL(void, Sprite, calculateParallax, __UPCAST(Sprite, this), this->drawSpec.position.z);
+		__VIRTUAL_CALL(void, Sprite, calculateParallax, __GET_CAST(Sprite, this), this->drawSpec.position.z);
 	}
 
 	const Point* const axisCapped = MBgmapSprite_capPosition(this);
@@ -210,7 +210,7 @@ void MBgmapSprite_positione(MBgmapSprite this, VBVec3D position3D)
 	
 	this->renderFlag |= __UPDATE_M;
 
-	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture)) << 3: 0;
+	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BgmapTexture_getYOffset(__GET_CAST(BgmapTexture, this->texture)) << 3: 0;
 }
 
 // calculate the size multiplier
@@ -289,7 +289,7 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 
 	MBgmapSprite_calculateSizeMultiplier(this);
 	
-	Texture texture = __UPCAST(Texture, VirtualList_front(this->textures));
+	Texture texture = __GET_CAST(Texture, VirtualList_front(this->textures));
 	
 	if(!this->mSpriteDefinition->xLoop)
 	{

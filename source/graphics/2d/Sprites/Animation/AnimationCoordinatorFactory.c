@@ -106,7 +106,7 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				VirtualNode node = VirtualList_begin(this->animationCoordinators);
 				for(;node; node = VirtualNode_getNext(node))
 				{
-					AnimationCoordinator animationCoordinator = __UPCAST(AnimationCoordinator, VirtualNode_getData(node));
+					AnimationCoordinator animationCoordinator = __GET_CAST(AnimationCoordinator, VirtualNode_getData(node));
 					
 					if(AnimationCoordinator_getCharSet(animationCoordinator) == charSet)
 					{
@@ -117,13 +117,13 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				
 				AnimationCoordinator animationCoordinator = NULL;
 				
-				if(__UPCAST(BgmapAnimatedSprite, sprite))
+				if(__GET_CAST(BgmapAnimatedSprite, sprite))
 				{
-					animationCoordinator = __UPCAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSet));
+					animationCoordinator = __GET_CAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSet));
 				}
-				else if(__UPCAST(ObjectAnimatedSprite, sprite))
+				else if(__GET_CAST(ObjectAnimatedSprite, sprite))
 				{
-					animationCoordinator = __UPCAST(AnimationCoordinator, __NEW(ObjectAnimationCoordinator, charSet));
+					animationCoordinator = __GET_CAST(AnimationCoordinator, __NEW(ObjectAnimationCoordinator, charSet));
 				}
 				else
 				{
