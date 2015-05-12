@@ -393,6 +393,12 @@ void Game_reset(Game this)
 {
 	ASSERT(this, "Game::reset: null this");
 
+#ifdef	__MEMORY_POOL_CLEAN_UP
+	MemoryPool_cleanUp(MemoryPool_getInstance());
+#endif
+	
+	// discard all delayed messages, since the objects receiving them 
+	// most likely will be deleted
 	MessageDispatcher_discardAllDelayedMessages(MessageDispatcher_getInstance());
 	
 	// setup the display

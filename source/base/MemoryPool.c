@@ -38,7 +38,6 @@
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
 // TODO: remove me
-#define __MEMORY_POOLS		10
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -96,6 +95,7 @@ static void MemoryPool_constructor(MemoryPool this)
 	__CONSTRUCT_BASE();
 
 	MemoryPool_reset(this);
+	MemoryPool_cleanUp(this);
 }
 
 // class's destructor
@@ -230,6 +230,32 @@ static void MemoryPool_reset(MemoryPool this)
 		}
 	}
 }
+
+// clear all dynamic memory
+void MemoryPool_cleanUp(MemoryPool this)
+{
+	ASSERT(this, "MemoryPool::reset: null this");
+
+	int pool = 0;
+	int i;
+
+	// clear all allocable objects usage
+	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	{
+		for (i = 0; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
+		{
+			if(!*((u32*)&this->poolLocation[pool][i]))
+			{
+				int j = i;
+				for (; j < this->poolSizes[pool][eBlockSize]; j++)
+				{
+					this->poolLocation[pool][j] = 0;
+				}
+			}
+		}
+	}
+}
+
 
 // retrieve pool size
 int MemoryPool_getPoolSize(MemoryPool this)
