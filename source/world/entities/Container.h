@@ -54,6 +54,7 @@
 		__VIRTUAL_DEC(setLocalPosition);										\
 		__VIRTUAL_DEC(doMessage);												\
 		__VIRTUAL_DEC(addChild);												\
+		__VIRTUAL_DEC(removeChild);												\
 		__VIRTUAL_DEC(suspend);													\
 		__VIRTUAL_DEC(resume);													\
 
@@ -66,6 +67,7 @@
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);					\
 		__VIRTUAL_SET(ClassName, Container, doMessage);							\
 		__VIRTUAL_SET(ClassName, Container, addChild);							\
+		__VIRTUAL_SET(ClassName, Container, removeChild);						\
 		__VIRTUAL_SET(ClassName, Container, suspend);							\
 		__VIRTUAL_SET(ClassName, Container, resume);							\
 

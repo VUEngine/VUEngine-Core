@@ -71,6 +71,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+__CLASS_FRIEND_DEFINITION(Container);
+
 // define the Stage
 __CLASS_DEFINITION(Stage, Container);
 
@@ -110,6 +112,7 @@ static void Stage_setObjectSpritesContainers(Stage this);
 static void Stage_loadTextures(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
+static void Stage_unloadChild(Stage this, Container child);
 BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
 
 
@@ -243,7 +246,7 @@ static void Stage_setObjectSpritesContainers(Stage this)
 }
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore)
+void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition)
 {
 	ASSERT(this, "Stage::load: null this");
 
@@ -259,12 +262,14 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	// set world's limits
 	Screen_setStageSize(Screen_getInstance(), stageDefinition->size);
 
-	// set screen's position
-	Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
+	if(overrideScreenPosition)
+	{
+		Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
+	}
 
 	// set OBJs' z position
 	Stage_setObjectSpritesContainers(this);
-	
+
 	// preload textures
 	Stage_loadTextures(this);
 
@@ -405,22 +410,25 @@ Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity,
 }
 
 // add entity to the stage
-void Stage_removeEntity(Stage this, Entity entity, bool permanent)
+void Stage_removeChild(Stage this, Container child)
 {
 	ASSERT(this, "Stage::removeEntity: null this");
-	ASSERT(entity, "Stage::removeEntity: null entity");
+	ASSERT(child, "Stage::removeEntity: null child");
 
-	if (!entity)
+	if (!child)
 	{
 		return;
 	}
 
 	// hide until effectively deleted
-	Entity_hide(entity);
+	if(__GET_CAST(Entity, child))
+	{
+		Entity_hide(__GET_CAST(Entity, child));
+	}
 
-	Container_deleteMyself(__GET_CAST(Container, entity));
+	Container_removeChild(__GET_CAST(Container, this), child);
 
-	s16 id = Container_getId(__GET_CAST(Container, entity));
+	s16 id = Container_getId(__GET_CAST(Container, child));
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
@@ -435,13 +443,47 @@ void Stage_removeEntity(Stage this, Entity entity, bool permanent)
 		}
 	}
 
-	if (permanent)
+	if(node)
 	{
-		ASSERT(entity, "Stage::removeEntity: null node");
-
 		VirtualList_removeElement(this->stageEntities, VirtualNode_getData(node));
 		VirtualList_removeElement(this->loadedStageEntities, VirtualNode_getData(node));
 		__DELETE_BASIC(VirtualNode_getData(node));
+	}
+}
+
+// unload entity from the stage
+static void Stage_unloadChild(Stage this, Container child)
+{
+	ASSERT(this, "Stage::unloadChild: null this");
+	ASSERT(child, "Stage::unloadChild: null child");
+
+	if (!child)
+	{
+		return;
+	}
+
+	// hide until effectively deleted
+	if(__GET_CAST(Entity, child))
+	{
+		Entity_hide(__GET_CAST(Entity, child));
+	}
+
+	child->deleteMe = true;
+	Container_removeChild(__GET_CAST(Container, this), child);
+
+	s16 id = Container_getId(__GET_CAST(Container, child));
+
+	VirtualNode node = VirtualList_begin(this->stageEntities);
+
+	for (; node; node = VirtualNode_getNext(node))
+	{
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+
+		if (stageEntityDescription->id == id)
+		{
+			stageEntityDescription->id = -1;
+			break;
+		}
 	}
 }
 
@@ -811,8 +853,8 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 				}
 			}
 
-			// delete it
-			Container_deleteMyself(__GET_CAST(Container, entity));
+			// unload it
+			Stage_unloadChild(this, __GET_CAST(Container, entity));
 		}
 	}
 

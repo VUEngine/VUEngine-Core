@@ -86,7 +86,10 @@ void Particle_destructor(Particle this)
 	// remove a body
 	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __GET_CAST(SpatialObject, this));
 	
-	__DELETE(this->objectSprite);
+	if(this->objectSprite)
+	{
+		__DELETE(this->objectSprite);
+	}
 	
 	// destroy the super Container
 	__DESTROY_BASE;

@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Game.h>
+#include <SRAMManager.h>
 #include <HardwareManager.h>
 #include <ClockManager.h>
 #include <CollisionManager.h>
@@ -208,6 +209,7 @@ static void Game_constructor(Game this)
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
 	this->screen = Screen_getInstance();
+	//SRAMManager_getInstance();
 	
 	// set the default screen movement manager
 	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
@@ -293,6 +295,28 @@ void Game_changeState(Game this, GameState state)
 	this->nextState = state;
 	this->nextStateOperation = kSwapState;
 }
+
+// add a state to the game's state machine's stack
+void Game_addState(Game this, GameState state)
+{
+	ASSERT(this, "Game::changeState: null this");
+
+	// state changing must be done when no other process
+	// may be affecting the game's general state
+	this->nextState = state;
+	this->nextStateOperation = kPushState;
+}
+
+// add a state to the game's state machine's stack
+void Game_removeState(Game this, GameState state)
+{
+	ASSERT(this, "Game::changeState: null this");
+
+	// state changing must be done when no other process
+	// may be affecting the game's general state
+	this->nextStateOperation = kPopState;
+}
+
 
 // set game's state
 static void Game_setNextState(Game this, GameState state)

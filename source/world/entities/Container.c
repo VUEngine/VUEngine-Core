@@ -156,7 +156,7 @@ void Container_deleteMyself(Container this)
 	if(this->parent)
 	{
 		this->deleteMe = true;
-		Container_removeChild(this->parent, this);
+		__VIRTUAL_CALL(void, Container, removeChild, this->parent, this);
 	}
 	else
 	{
@@ -703,8 +703,10 @@ char* Container_getName(Container this)
 }
 
 // find child by name in given list
-Container Container_findChildByName(Container this, VirtualList children, char* childName, bool recursive)
+static Container Container_findChildByName(Container this, VirtualList children, char* childName, bool recursive)
 {
+	ASSERT(this, "Container::findChildByName: null this");
+
     Container child, grandChild;
     VirtualNode node = VirtualList_begin(children);
 

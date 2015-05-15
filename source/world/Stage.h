@@ -53,6 +53,7 @@
 		__VIRTUAL_SET(ClassName, Stage, update);								\
 		__VIRTUAL_SET(ClassName, Stage, suspend);								\
 		__VIRTUAL_SET(ClassName, Stage, resume);								\
+		__VIRTUAL_SET(ClassName, Stage, removeChild);							\
 
 #define Stage_ATTRIBUTES														\
 																				\
@@ -143,11 +144,11 @@ typedef const StageDefinition StageROMDef;
 __CLASS_NEW_DECLARE(Stage);
 
 void Stage_destructor(Stage this);
-void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore);
+void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 Size Stage_getSize(Stage this);
 Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, bool permanent);
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, bool permanent);
-void Stage_removeEntity(Stage this, Entity entity, bool permanent);
+void Stage_removeChild(Stage this, Container child);
 void Stage_update(Stage this);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);

@@ -97,6 +97,8 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, CharSet charSet)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: null this");
+	ASSERT(sprite, "AnimationCoordinatorFactory::getCoordinator: null sprite");
+	ASSERT(charSet, "AnimationCoordinatorFactory::getCoordinator: null charSet");
 
 	switch(CharSet_getAllocationType(charSet))
 	{
