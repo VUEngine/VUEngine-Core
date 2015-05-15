@@ -119,7 +119,7 @@ source/					VBJaEngine source code.
 source/base/libgccvb/	heavily modified libgccvb
 lib/					miscellaneous files needed for linking, etc.
 lib/src/				miscellaneous files needed for linking, etc.	sources, and other utilities sources.
-utilities/				miscellaneous utitilities for padding, sound, etc.
+utilities/				miscellaneous utilities for padding, sound, etc.
 
 
 For more documentation go to:
