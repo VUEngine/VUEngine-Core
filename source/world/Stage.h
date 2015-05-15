@@ -146,6 +146,7 @@ __CLASS_NEW_DECLARE(Stage);
 void Stage_destructor(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 Size Stage_getSize(Stage this);
+bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition);
 Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, bool permanent);
 Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, bool permanent);
 void Stage_removeChild(Stage this, Container child);

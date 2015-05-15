@@ -374,6 +374,27 @@ Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *
 	return NULL;
 }
 
+bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition)
+{
+	ASSERT(this, "Stage::registerEntityId: null this");
+
+	VirtualNode node = VirtualList_begin(this->stageEntities);
+
+	for (; node; node = VirtualNode_getNext(node))
+	{
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+
+		if (entityDefinition == stageEntityDescription->positionedEntity->entityDefinition)
+		{
+			stageEntityDescription->id = id;
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+
 // add entity to the stage
 Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, bool permanent)
 {
