@@ -808,7 +808,7 @@ static void Stage_loadInRangeEntities(Stage this)
 		if (-1 == stageEntityDescription->id)
 		{
 			// if entity in load range
-			if (Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid))
+			if (stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 

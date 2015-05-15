@@ -120,6 +120,9 @@ typedef const struct PositionedEntity
 
 	// extra info
 	void* extraInfo;
+	
+	// force load
+	bool loadRegardlessOfPosition;
 
 } PositionedEntity;
 
