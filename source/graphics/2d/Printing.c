@@ -98,7 +98,7 @@ void Printing_loadFonts(Printing this)
     u8 i = 0;
 
     // load registered fonts to (end of) char memory
-    for (; __FONTS[i]; i++)
+    for(; __FONTS[i]; i++)
     {
         numCharsToAdd = (__FONTS[i]->characterCount * __FONTS[i]->fontSize.x * __FONTS[i]->fontSize.y) << 4;
         lastFontDefEndPos -= numCharsToAdd;
@@ -109,7 +109,7 @@ void Printing_loadFonts(Printing this)
 // render general print output layer
 void Printing_render(Printing this, int textLayer)
 {
-	if (0 > textLayer || textLayer >= __TOTAL_LAYERS)
+	if(0 > textLayer || textLayer >= __TOTAL_LAYERS)
 	{
 		ASSERT(false, "Printing::render: invalid layer");
 		return;
@@ -141,12 +141,12 @@ static FontData Printing_getFontByName(Printing this, const char* font)
 
 	// iterate over registered fonts to find memory offset of font to use
 	u8 j = 0;
-    for (; __FONTS[j]; j++)
+    for(; __FONTS[j]; j++)
     {
         fontData.fontDefinition = __FONTS[j];
         fontData.memoryOffset -= (fontData.fontDefinition->characterCount * fontData.fontDefinition->fontSize.x * fontData.fontDefinition->fontSize.y);
 
-        if ((font == NULL) || (0 == strcmp(fontData.fontDefinition->name, font)))
+        if((font == NULL) || (0 == strcmp(fontData.fontDefinition->name, font)))
         {
             break;
         }
@@ -169,7 +169,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 	{
 		pos = (y << 6) + x;
 
-		switch (string[i])
+		switch(string[i])
 		{
 			case 13: // Line Feed
 
@@ -188,9 +188,9 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 
 			default:
 
-                for (charOffsetX = 0; charOffsetX < fontData.fontDefinition->fontSize.x; charOffsetX++)
+                for(charOffsetX = 0; charOffsetX < fontData.fontDefinition->fontSize.x; charOffsetX++)
                 {
-                    for (charOffsetY = 0; charOffsetY < fontData.fontDefinition->fontSize.y; charOffsetY++)
+                    for(charOffsetY = 0; charOffsetY < fontData.fontDefinition->fontSize.y; charOffsetY++)
                     {
                         BGMM[(0x1000 * bgmap) + pos + charOffsetX + (charOffsetY << 6)] =
                             (
@@ -211,7 +211,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
                 }
 
                 x += fontData.fontDefinition->fontSize.x;
-				if (x >= 64)
+				if(x >= 64)
 				{
 				    y += fontData.fontDefinition->fontSize.y;
 					x = col;
@@ -227,7 +227,7 @@ void Printing_int(Printing this, int value, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 	
-	if (value < 0)
+	if(value < 0)
 	{
 		value *= -1;
 
@@ -244,7 +244,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
-	if (0 && value<0)
+	if(0 && value<0)
 	{
 		value *= -1;
 
@@ -270,7 +270,7 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 
 	int decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 
-	if (value < 0)
+	if(value < 0)
 	{
 		sign = -1;
 		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
@@ -287,9 +287,9 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 	Printing_out(this, printingBgmap, x + length, y, ".", __PRINTING_PALETTE, font);
 
 	// print the decimal part
-	for (i = 0; size; i++)
+	for(i = 0; size; i++)
 	{
-		if (decimal < size)
+		if(decimal < size)
 		{
 			Printing_out(this, printingBgmap, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALETTE, font);
 		}
@@ -321,7 +321,7 @@ Size Printing_getTextSize(Printing this, const char* string, const char* font)
 
 	while (string[i])
 	{
-		switch (string[i])
+		switch(string[i])
 		{
 			case 13: // Line Feed
 
@@ -341,7 +341,7 @@ Size Printing_getTextSize(Printing this, const char* string, const char* font)
 			default:
 
                 currentLineLength += fontData.fontDefinition->fontSize.x;
-				if (currentLineLength >= 64)
+				if(currentLineLength >= 64)
 				{
                     size.y += fontData.fontDefinition->fontSize.y;
                     currentLineLength = 0;
@@ -350,7 +350,7 @@ Size Printing_getTextSize(Printing this, const char* string, const char* font)
 				break;
 		}
 
-        if (currentLineLength > size.x) {
+        if(currentLineLength > size.x) {
             size.x = currentLineLength;
         }
 

@@ -121,7 +121,7 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 		VirtualNode node = VirtualList_begin(this->sprites);
 	
 		// setup listeners
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 	    {
 			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
 	
@@ -155,7 +155,7 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 	ASSERT(this, "AnimatedInGameEntity::transform: null this");
 
 	// set sprite direction
-	if (this->direction.x != this->previousDirection.x)
+	if(this->direction.x != this->previousDirection.x)
 	{
 		// change sprite's direction
 		Entity_setSpritesDirection(__GET_CAST(Entity, this), __XAXIS, this->direction.x);
@@ -177,7 +177,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 	Container_update(__GET_CAST(Container, this));
 
 	// if direction changed
-	if (this->direction.x != this->previousDirection.x)
+	if(this->direction.x != this->previousDirection.x)
 	{
 		ASSERT(this->sprites, "AnimatedInGameEntity::update: null sprites");
 
@@ -185,7 +185,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 		InGameEntity_setGap(__GET_CAST(InGameEntity, this));
 	}
 
-	if (this->sprites)
+	if(this->sprites)
 	{
 		this->animationFrameChanged = false;
 		AnimatedInGameEntity_animate(this);
@@ -198,7 +198,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 	VirtualNode node = VirtualList_begin(this->sprites);
 
 	// move each child to a temporary list
-	for (; node ; node = VirtualNode_getNext(node))
+	for(; node ; node = VirtualNode_getNext(node))
 	{
 		// first animate the frame
 		Sprite_update(__GET_CAST(Sprite, VirtualNode_getData(node)), this->clock);
@@ -211,12 +211,12 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 	ASSERT(this, "AnimatedInGameEntity::pauseAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::pauseAnimation: null sprites");
 
-	if (this->sprites)
+	if(this->sprites)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// play animation on each sprite
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 	    {
 			Sprite_pause(__GET_CAST(Sprite, VirtualNode_getData(node)), pause);
 		}
@@ -228,14 +228,14 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 {
 	ASSERT(this, "AnimatedInGameEntity::playAnimation: null this");
 
-	if (this->sprites && animationName)
+	if(this->sprites && animationName)
 	{
 		this->currentAnimationName = animationName;
 		
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// play animation on each sprite
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 	    {
 			Sprite_play(__GET_CAST(Sprite, VirtualNode_getData(node)), this->animationDescription, animationName);
 		}

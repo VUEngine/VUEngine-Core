@@ -139,13 +139,13 @@ void Particle_transform(Particle this, bool updateSpritePosition)
 	ASSERT(this, "Particle::transform: null this");
 	ASSERT(this->body, "Particle::transform: null body");
 
-	if (updateSpritePosition || Body_isAwake(this->body))
+	if(updateSpritePosition || Body_isAwake(this->body))
     {
 		const VBVec3D* position = Body_getPosition(this->body);
 
 		ASSERT(this->objectSprite, "Particle::transform: null objectSprite");
 
-		if (__ZAXIS & Body_isMoving(this->body))
+		if(__ZAXIS & Body_isMoving(this->body))
 		{
 			// calculate sprite's parallax
 			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);

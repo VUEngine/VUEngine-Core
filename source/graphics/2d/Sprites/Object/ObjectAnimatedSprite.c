@@ -100,7 +100,7 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 	}
 	
 	// write according to the allocation type
-	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
+	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:

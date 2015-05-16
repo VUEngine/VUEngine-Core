@@ -123,7 +123,7 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	numBytes += __MEMORY_ALIGNMENT;
 
 	// seach for the shortest pool which can hold the data
-	for (; numBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
+	for(; numBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
 
 	ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
 
@@ -134,11 +134,11 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	displacementStep = blockSize;
 
 	// look for a free block
-	for (i = 0, displacement = 0;
+	for(i = 0, displacement = 0;
 	    i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
 	    i++, displacement += displacementStep);
 
-	if (i >= numberOfOjects)
+	if(i >= numberOfOjects)
 	{
 		Printing_clear(Printing_getInstance());
 		MemoryPool_printDetailedUsage(this, 1, 8);
@@ -171,13 +171,13 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	int displacement = 0;
 	int numberOfOjects = 0;
 
-	if (!object)
+	if(!object)
 	{
 		return;
 	}
 
 	// look for the pool containing the object
-	for (pool = 0; object >= &this->poolLocation[pool][0 + __MEMORY_ALIGNMENT] && pool < __MEMORY_POOLS; pool++);
+	for(pool = 0; object >= &this->poolLocation[pool][0 + __MEMORY_ALIGNMENT] && pool < __MEMORY_POOLS; pool++);
 
 	// look for the registry in which the object is
 	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
@@ -189,10 +189,10 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
 	// search for the pool in which it is allocated
-	for (i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
+	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
 		// if the object has been found
-		if (object == &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT])
+		if(object == &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT])
 		{
 			// free the block
 			*((u32*)&this->poolLocation[pool][displacement]) = __MEMORY_FREE_BLOCK_FLAG;
@@ -222,9 +222,9 @@ static void MemoryPool_reset(MemoryPool this)
 	__SET_MEMORY_POOL_ARRAYS
 	
 	// clear all allocable objects usage
-	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		for (i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
+		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
 		{
 			*((u32*)&this->poolLocation[pool][i]) = __MEMORY_FREE_BLOCK_FLAG;
 		}
@@ -240,14 +240,14 @@ void MemoryPool_cleanUp(MemoryPool this)
 	int i;
 
 	// clear all allocable objects usage
-	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		for (i = 0; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
+		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
 		{
 			if(!*((u32*)&this->poolLocation[pool][i]))
 			{
 				int j = i;
-				for (; j < this->poolSizes[pool][eBlockSize]; j++)
+				for(; j < this->poolSizes[pool][eBlockSize]; j++)
 				{
 					this->poolLocation[pool][j] = 0;
 				}
@@ -266,7 +266,7 @@ int MemoryPool_getPoolSize(MemoryPool this)
 	int pool = 0;
 
 	// clear all allocable objects usage
-	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		size += this->poolSizes[pool][ePoolSize];
 	}
@@ -291,12 +291,12 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 	Printing_text(Printing_getInstance(), "Free", x + 5, y, NULL);
 	Printing_text(Printing_getInstance(), "Used", x + 10, y++, NULL);
 
-	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
-		for (displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
+		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 		{
-			if (this->poolLocation[pool][displacement])
+			if(this->poolLocation[pool][displacement])
 			{
 				totalUsedBlocks++;
 			}
@@ -343,12 +343,12 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	
 	Printing_text(Printing_getInstance(), "MEM", x, y++, NULL);
 
-	for (pool = 0; pool < __MEMORY_POOLS; pool++)
+	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
-		for (displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
+		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 		{
-			if (this->poolLocation[pool][displacement])
+			if(this->poolLocation[pool][displacement])
 			{
 				totalUsedBlocks++;
 			}

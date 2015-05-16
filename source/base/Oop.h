@@ -36,7 +36,7 @@
 		static bool __callFlag = false;													\
 																						\
 		/* check if not called */														\
-		if (!__callFlag)																\
+		if(!__callFlag)																\
 		{																				\
 			/* call method */															\
 			MethodName(__VA_ARGS__);													\
@@ -51,7 +51,7 @@
 	{																					\
 		/* check that each entry in the table is not NULL */							\
 		int i = 0;																		\
-		for (; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++)					\
+		for(; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++)					\
 		{																				\
 			/* check each entry */														\
 			NM_ASSERT(((void**)&ClassName ## _vTable)[i],								\
@@ -105,7 +105,7 @@
 		ClassName this = ClassName ## _allocator();										\
 																						\
 		/* check if properly created */													\
-		if (!this) return NULL;															\
+		if(!this) return NULL;															\
 
 
 // end class's allocator
@@ -406,12 +406,12 @@
 		/* set the vtable */															\
 		__SET_CLASS(ClassName);															\
 																						\
-		if (__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			NM_ASSERT(false, ClassName get instance during construction);				\
 		}																				\
 		/* first check if not constructed yet */										\
-		if (__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;						\
 																						\
@@ -458,13 +458,13 @@
 		/* set the vtable */															\
 		__SET_CLASS(ClassName);															\
 																						\
-		if (__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			NM_ASSERT(false, ClassName get instance during construction);				\
 		}																				\
 																						\
 		/* first check if not constructed yet */										\
-		if (__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;						\
 																						\

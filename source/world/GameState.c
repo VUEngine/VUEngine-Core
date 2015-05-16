@@ -64,7 +64,7 @@ void GameState_destructor(GameState this)
 	ASSERT(this, "GameState::destructor: null this");
 
 	// destroy the stage
-	if (this->stage)
+	if(this->stage)
 	{
 		// destroy the stage
 		__DELETE(this->stage);
@@ -100,7 +100,7 @@ void GameState_exit(GameState this, void* owner)
 	ASSERT(this, "GameState::exit: null this");
 
 	// make sure to free the memory
-	if (this->stage)
+	if(this->stage)
 	{
 		// destroy the stage
 		__DELETE(this->stage);
@@ -115,15 +115,15 @@ void GameState_suspend(GameState this, void* owner)
 	ASSERT(this, "GameState::suspend: null this");
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
 	
@@ -153,15 +153,15 @@ void GameState_resume(GameState this, void* owner)
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
 
@@ -255,7 +255,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// disable hardware interrupts
 	Game_disableHardwareInterrupts(Game_getInstance());
 
-	if (this->stage)
+	if(this->stage)
 	{
 		// destroy the stage
 		__DELETE(this->stage);

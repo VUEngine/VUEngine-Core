@@ -121,7 +121,7 @@ void VirtualNode_swapData(VirtualNode this, VirtualNode node)
 	ASSERT(this, "VirtualNode::swapData: null this");
 
 	// check that both nodes are valid and are not the same
-	if (!(this && node && (this != node)))
+	if(!(this && node && (this != node)))
 	{
 		return;
 	}

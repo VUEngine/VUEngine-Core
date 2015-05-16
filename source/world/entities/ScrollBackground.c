@@ -120,7 +120,7 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this)
 	VirtualNode node = VirtualList_begin(this->sprites);
 	int i = 0;
 
-	for (; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
+	for(; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
 	{
 		this->scrollBgmapSprites[i] = VirtualNode_getData(node);
 
@@ -147,13 +147,13 @@ void ScrollBackground_transform(ScrollBackground this, const Transformation* env
 	// don't calling base class's transform method
 	// will improve performance
 #ifdef __STAGE_EDITOR
-	if (Game_isInSpecialMode(Game_getInstance()))
+	if(Game_isInSpecialMode(Game_getInstance()))
 	{
 		Entity_transform(__GET_CAST(Entity, this), environmentTransform);
 	}
 #endif
 
-	if (_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
+	if(_screenDisplacement->x || _screenDisplacement->y || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
 	{
 		ScrollBackground_updateScrolling(this);
 	}
@@ -192,14 +192,14 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	screens = FIX19_13TOI(screenPosition.x) / __SCREEN_WIDTH;
 
 	// check if the number of screens is divisible by 2
-	//if (!(screens & 2)1 == 0 && screens != 0){
+	//if(!(screens & 2)1 == 0 && screens != 0){
 	displacement = FIX19_13TOI(screenPosition.x);
 
-	if (screens)
+	if(screens)
 	{
 		displacement -= ( screens - 1) * __SCREEN_WIDTH;
 
-		if (!(screens & 1))
+		if(!(screens & 1))
 	{
 			// if so,
 			factor = 2;
@@ -208,7 +208,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 
 	axis = __SCREEN_WIDTH * factor - displacement;
 
-	if ((unsigned)axis <= __SCREEN_WIDTH)
+	if((unsigned)axis <= __SCREEN_WIDTH)
 	{
 		drawSpec0.position.x = ITOFIX19_13(axis - __SCREEN_WIDTH);
 
@@ -216,7 +216,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	}
 	else
 	{
-		if (axis < 0)
+		if(axis < 0)
     	{
 			drawSpec1.position.x = ITOFIX19_13(axis);
 
@@ -269,7 +269,7 @@ void ScrollBackground_suspend(ScrollBackground this)
 
 	int i = 0;
 
-	for (; i <= kRightSprite ; i++)
+	for(; i <= kRightSprite ; i++)
 	{
 		this->scrollBgmapSprites[i] = NULL;
 	}

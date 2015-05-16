@@ -195,7 +195,7 @@ static void SoundManager_constructor(SoundManager this)
 		int i = 0;
 
 		// reset all records
-		for (i = 0; i < __TOTAL_SOUNDS; i++)
+		for(i = 0; i < __TOTAL_SOUNDS; i++)
 		{
 			this->noteWait[i] = 0;
 			this->actualNote[i] = 0;
@@ -203,7 +203,7 @@ static void SoundManager_constructor(SoundManager this)
 
 		this->bgm = NULL;
 
-		for ( i = 0; i < __FXS; i++)
+		for( i = 0; i < __FXS; i++)
 		{
 			this->fxSound[i] = NULL;
 
@@ -232,7 +232,7 @@ void SoundManager_setWaveForm(SoundManager this)
 	ASSERT(this, "SoundManager::setWaveForm: null this");
 
 	int i;
-	for (i = 0; i < 32; i++)
+	for(i = 0; i < 32; i++)
 	{
 		WAVEDATA1[i*4] = organWave[i];
 		WAVEDATA2[i*4] = sinWave[i];
@@ -271,10 +271,10 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 	int i;
 
 	//only if bgm loaded
-	if (this->bgm != NULL)
+	if(this->bgm != NULL)
 	{
 		//check if note's length has been played
-		if (this->noteWait[0] > this->bgm[0][1])
+		if(this->noteWait[0] > this->bgm[0][1])
 		{
 			//move to the next note
 			this->actualNote[0]++;
@@ -283,7 +283,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 			this->noteWait[0] = 0;
 
 			//if note is greater than song's length
-			if (this->actualNote[0] >= this->bgm[0][0])
+			if(this->actualNote[0] >= this->bgm[0][0])
 			{
 				//rewind song
 				this->actualNote[0] = 0;
@@ -291,9 +291,9 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 		}
 
 		//if note has changed
-		if (!this->noteWait[0])
+		if(!this->noteWait[0])
 		{
-			for (channel = 0, i = 0; channel < 2; channel++)
+			for(channel = 0, i = 0; channel < 2; channel++)
 			{
 				//stop sound on the current channel
 				/* There is a bug which makes the sound of
@@ -304,15 +304,15 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 				SND_REGS[channel].SxINT = 0x00;
 
 				//grab note
-				for (;i<2 && !this->bgm[this->actualNote[0]+3][i];i++);
+				for(;i<2 && !this->bgm[this->actualNote[0]+3][i];i++);
 
-				if (i<2)
+				if(i<2)
 				{
 					note = this->bgm[this->actualNote[0] + 3][i];
 				}
 
 				//if note is not off
-				if (note != 0)
+				if(note != 0)
 				{
 					//set note's output level
 					SND_REGS[channel].SxLRV = this->bgm[0][2];
@@ -335,7 +335,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 				}
 
 				//not sure about this
-				if (channel == 4)
+				if(channel == 4)
 				{
 					SND_REGS[channel].S5SWP = this->bgm[0][5];
 				}
@@ -358,13 +358,13 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 	/* The maximum sound level for each side is 0xF
 	 * In the center position the output level is the one
 	 * defined in the sound's definition */
-//	if (-10000 != this->fxPosition[fxS].parallax )
+//	if(-10000 != this->fxPosition[fxS].parallax )
 	{
 		//zMinus = this->fxPosition[fxS].parallax ;//* this->zFactor;
 
 		maxOutputLevel -= zMinus;
 
-		if (maxOutputLevel > 0)
+		if(maxOutputLevel > 0)
 		{
 			int leftDistance = abs(FIX19_13TOI(this->fxPosition[fxS].x) - __LEFT_EAR_CENTER);
 			int rightDistance = abs(FIX19_13TOI(this->fxPosition[fxS].x) - __RIGHT_EAR_CENTER);
@@ -379,12 +379,12 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 			leftOutput = maxOutputLevel - leftMinus;
 			rightOutput = maxOutputLevel - rightMinus;
 
-			if (0 < leftOutput)
+			if(0 < leftOutput)
 			{
 				output |= (((int)leftOutput) << 4);
 			}
 
-			if (0 < rightOutput)
+			if(0 < rightOutput)
 			{
 				output|=(((int)rightOutput));
 			}
@@ -406,13 +406,13 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 	int note = 0;
 	int fxS = 0;
 
-	for (; fxS < __FXS; fxS++)
+	for(; fxS < __FXS; fxS++)
 	{
 		//only if fx defined
-		if (this->fxSound[fxS])
+		if(this->fxSound[fxS])
 		{
 			//check if note's length has been played
-			if (this->noteWait[fxS + 1] > this->fxSound[fxS][1])
+			if(this->noteWait[fxS + 1] > this->fxSound[fxS][1])
 			{
 				//move to the next note
 				this->actualNote[fxS + 1]++;
@@ -421,7 +421,7 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 				this->noteWait[fxS + 1] = 0;
 
 				//if note if greater than song's length
-				if (this->actualNote[fxS+1] > this->fxSound[fxS][0])
+				if(this->actualNote[fxS+1] > this->fxSound[fxS][0])
 				{
 					//stop sound
 					this->fxSound[fxS] = NULL;
@@ -436,7 +436,7 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 			}
 			
 			//if note has changed
-			if (!this->noteWait[fxS + 1])
+			if(!this->noteWait[fxS + 1])
 			{
 				//stop sound on the current channel
 				/* There is a bug which makes the sound of
@@ -449,7 +449,7 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 				note=this->fxSound[fxS][this->actualNote[fxS+1]+6];
 
 				//if note is not off
-				if (note != 0)
+				if(note != 0)
 				{
 					//if sound is positioned
 					SND_REGS[fxS + 2].SxLRV = SoundManager_calculateSoundPosition(this, fxS);
@@ -493,10 +493,10 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D  pos
 	int i = 0;
 
 	// try to find a free channel
-	for (;i < __FXS && this->fxSound[i]; i++);
+	for(;i < __FXS && this->fxSound[i]; i++);
 
 	// if a channel was available
-	if (i < __FXS)
+	if(i < __FXS)
 	{
 		// record the fx definition's address
 		this->fxSound[i] = fxSound;
@@ -521,10 +521,10 @@ int SoundManager_playingSound(SoundManager this, const u16* fxSound)
 	int i = 0;
 
 	// find sound
-	for (;i<__FXS && this->fxSound[i] != fxSound; i++);
+	for(;i<__FXS && this->fxSound[i] != fxSound; i++);
 
 	// if sound found
-	if (i<__FXS)
+	if(i<__FXS)
 	{
 		return true;
 	}
@@ -568,7 +568,7 @@ void SoundManager_stopAllSound(SoundManager this)
 	int channel = 0;
 
 	//disables sound on all channels
-	for (channel = 0; channel < 6; channel++)
+	for(channel = 0; channel < 6; channel++)
 	{
 		SND_REGS[channel].SxINT = 0x00;
 	}

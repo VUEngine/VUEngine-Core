@@ -116,7 +116,7 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 {
 	ASSERT(this, "ObjectSprite::setDirection: null this");
 
-	switch (axis)
+	switch(axis)
 	{
 		case __XAXIS:
 
@@ -199,7 +199,7 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(0 <= this->objectIndex, "ObjectSprite::render: 0 > this->objectIndex");
 
 	//if render flag is set
-	if (this->renderFlag && 0 <= this->objectIndex)
+	if(this->renderFlag && 0 <= this->objectIndex)
 	{
 		int cols = Texture_getCols(__GET_CAST(Texture, this->texture));
 		int rows = Texture_getRows(__GET_CAST(Texture, this->texture));
@@ -213,10 +213,10 @@ void ObjectSprite_render(ObjectSprite this)
 		u16 secondWordValue = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
 		
-		for (; i < rows; i++)
+		for(; i < rows; i++)
 		{
 			int j = 0;
-			for (; j < cols; j++)
+			for(; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
 				int finalX = x + (j << 3)  * xDirection;
@@ -290,7 +290,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 				
 				// turn off previous OBJs' to avoid ghosting
 				int i = previousObjectIndex + this->totalObjects - 1;
-				for (; i >= this->objectIndex + this->totalObjects; i--)
+				for(; i >= this->objectIndex + this->totalObjects; i--)
 				{
 					OAM[(i << 2) + 1] &= __HIDE_MASK;
 				}
@@ -323,7 +323,7 @@ void ObjectSprite_show(ObjectSprite this)
 	}
 	
 	int i = 0;
-	for (; i < this->totalObjects; i++)
+	for(; i < this->totalObjects; i++)
 	{
 		OAM[((this->objectIndex + i) << 2) + 1] |= __SHOW_MASK;
 	}
@@ -341,7 +341,7 @@ void ObjectSprite_hide(ObjectSprite this)
 
 	// must check for the texture since it can be already be deleted
 	int i = 0;
-	for (; i < this->totalObjects; i++)
+	for(; i < this->totalObjects; i++)
 	{
 		OAM[((this->objectIndex + i) << 2) + 1] &= __HIDE_MASK;
 	}

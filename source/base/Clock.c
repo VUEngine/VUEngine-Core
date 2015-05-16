@@ -90,7 +90,7 @@ void Clock_delay(Clock this, int milliSeconds)
 	ASSERT(this, "Clock::delay: null this");
 	u32 time = this->milliSeconds;
 
-	if (this->paused)
+	if(this->paused)
 	{
 		return;
 	}
@@ -114,7 +114,7 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	int secondsPosition = col + 3;
 
 	//print minutes
-	if (minutes < 10)
+	if(minutes < 10)
 	{
 		Printing_text(Printing_getInstance(), "0", minutesPosition, row, font);
 		minutesPosition++;
@@ -126,7 +126,7 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	Printing_text(Printing_getInstance(), ":", secondsPosition - 1, row, font);
 
 	//print seconds
-	if (seconds < 10)
+	if(seconds < 10)
 	{
 		Printing_text(Printing_getInstance(), "0", secondsPosition, row, font);
 		secondsPosition++;
@@ -141,14 +141,14 @@ void Clock_update(Clock this, u32 ticks)
 	ASSERT(this, "Clock::update: null this");
 
 	// increase count
-	if (!this->paused)
+	if(!this->paused)
 	{
 		// calculate milliseconds
 		this->milliSeconds += ticks;
 
 		u8 currentSecond = Clock_getSeconds(this);
 
-		if (currentSecond != this->previousSecond)
+		if(currentSecond != this->previousSecond)
 		{
 			this->previousSecond = currentSecond;
 
@@ -156,7 +156,7 @@ void Clock_update(Clock this, u32 ticks)
 
 			u8 currentMinute = Clock_getMinutes(this);
 
-			if (currentMinute != this->previousMinute)
+			if(currentMinute != this->previousMinute)
 			{
 				this->previousMinute = currentMinute;
 

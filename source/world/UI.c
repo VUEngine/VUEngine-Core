@@ -90,7 +90,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	// static to avoid call to memcpy
 	Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
 
-	for (;entities && entities[i].entityDefinition; i++)
+	for(;entities && entities[i].entityDefinition; i++)
 	{
 		Entity entity = Entity_loadFromDefinition(&entities[i], ID++);
 

@@ -95,7 +95,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 	ASSERT(this, "ManagedEntity::registerSprites: null this");
 	ASSERT(child, "ManagedEntity::registerSprites: null child");
 
-	if (child)
+	if(child)
 	{
 		if(child->sprites)
 		{
@@ -159,7 +159,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 	if(updateSpritePosition)
 	{
-		if (this->invalidateGlobalPosition.x ||
+		if(this->invalidateGlobalPosition.x ||
 			this->invalidateGlobalPosition.y ||
 			this->invalidateGlobalPosition.z ||
 			this->children)

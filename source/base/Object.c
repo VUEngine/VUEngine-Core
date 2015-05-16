@@ -60,11 +60,11 @@ void Object_destructor(Object this)
 {
 	Object_fireEvent(__GET_CAST(Object, this), __EVENT_OBJECT_DESTROYED);
 
-	if (this->events)
+	if(this->events)
 	{
 		VirtualNode node = VirtualList_begin(this->events);
 
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
@@ -92,12 +92,12 @@ void Object_addEventListener(Object this, Object listener, void (*method)(Object
 {
 	ASSERT(this, "Object::addEventListener: null this");
 
-	if (!listener || !method || !eventName)
+	if(!listener || !method || !eventName)
 	{
 		return;
 	}
 
-	if (NULL == this->events)
+	if(NULL == this->events)
 	{
 		this->events = __NEW(VirtualList);
 	}
@@ -120,15 +120,15 @@ void Object_removeEventListener(Object this, Object listener, void (*method)(Obj
 {
 	ASSERT(this, "Object::addEventListener: null this");
 
-	if (this->events)
+	if(this->events)
 	{
 		VirtualNode node = VirtualList_begin(this->events);
 
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
 			Event* event = (Event*)VirtualNode_getData(node);
 
-			if (listener == event->listener && method == event->method && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+			if(listener == event->listener && method == event->method && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
 			{
 				VirtualList_removeElement(this->events, event);
 
@@ -144,15 +144,15 @@ void Object_fireEvent(Object this,  char* eventName)
 {
 	ASSERT(this, "Object::fireEvent: null this");
 
-	if (this->events)
+	if(this->events)
 	{
 		VirtualNode node = VirtualList_begin(this->events);
 
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
 			Event* event = (Event*)VirtualNode_getData(node);
 
-			if (!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+			if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
 			{
 				event->method(event->listener, this);
 			}

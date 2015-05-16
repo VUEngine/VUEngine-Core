@@ -91,7 +91,7 @@ void InGameEntity_setGap(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::setGap: null this");
 
-	if (this->sprites)
+	if(this->sprites)
 	{
 		// retrieve the sprite's scale
 		Scale scale = __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, __GET_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
@@ -103,7 +103,7 @@ void InGameEntity_setGap(InGameEntity this)
 		this->gap = this->inGameEntityDefinition->gap;
 	
 		// if facing to the left... swap left / right gap
-		if (__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode)
+		if(__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode)
 		{
 			this->gap.left 	= this->inGameEntityDefinition->gap.right;
 			this->gap.right = this->inGameEntityDefinition->gap.left;
@@ -113,7 +113,7 @@ void InGameEntity_setGap(InGameEntity this)
 		ASSERT(scale.y, "InGameEntity::setGap: 0 scale y");
 
 		// scale gap if needed
-		if (WRLD_AFFINE != bgmapMode)
+		if(WRLD_AFFINE != bgmapMode)
 		{
 			// must scale the gap
 			this->gap.left 	= 	FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), abs(scale.x)));
@@ -169,7 +169,7 @@ void InGameEntity_setShapeState(InGameEntity this, bool state)
 {
 	ASSERT(this, "InGameEntity::setShapeState: null this");
 
-	if (this->shape)
+	if(this->shape)
 	{
 		Shape_setActive(this->shape, state);
 	}

@@ -87,7 +87,7 @@ void ClockManager_destructor(ClockManager this)
 	VirtualNode node = VirtualList_begin(this->clocks);
 
 	// destroy all registered clocks
-	for (; node ; node = VirtualNode_getNext(node))
+	for(; node ; node = VirtualNode_getNext(node))
 	{
 		Clock_destructor(__GET_CAST(Clock, VirtualNode_getData(node)));
 	}
@@ -105,7 +105,7 @@ void ClockManager_register(ClockManager this, Clock clock)
 {
 	ASSERT(this, "ClockManager::register: null this");
 
-	if (!this->clocks)
+	if(!this->clocks)
 	{
 		this->clocks = __NEW(VirtualList);
 	}
@@ -129,12 +129,12 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 
 	u32 previousSecond = this->ticks / __MILLISECONDS_IN_SECOND;
 
-	if (this->clocks)
+	if(this->clocks)
 	{
 		VirtualNode node = VirtualList_begin(this->clocks);
 
 		// update all registered clocks
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 		{
 			Clock_update(__GET_CAST(Clock, VirtualNode_getData(node)), ticksElapsed);
 		}
@@ -144,7 +144,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	this->ticks += ticksElapsed;
 	
     //if second has changed, set frame rate 
-    if (previousSecond != (this->ticks / __MILLISECONDS_IN_SECOND))
+    if(previousSecond != (this->ticks / __MILLISECONDS_IN_SECOND))
     {
     		FrameRate frameRate = FrameRate_getInstance();
     		
@@ -154,14 +154,14 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #endif 	    		
 
 #ifdef __PRINT_FRAMERATE
-	    	if (!Game_isInSpecialMode(Game_getInstance()))
+	    	if(!Game_isInSpecialMode(Game_getInstance()))
 	    	{
 	    		FrameRate_print(frameRate, 0, 0);
 	    	}
 #endif
 	    	
 #ifdef __PRINT_MEMORY_POOL_STATUS
-	    	if (!Game_isInSpecialMode(Game_getInstance()))
+	    	if(!Game_isInSpecialMode(Game_getInstance()))
 	    	{
 	    		MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 0);
 	    	}
@@ -186,7 +186,7 @@ void ClockManager_reset(ClockManager this)
 	VirtualNode node = VirtualList_begin(this->clocks);
 
 	// update all registered clocks
-	for (; node ; node = VirtualNode_getNext(node))
+	for(; node ; node = VirtualNode_getNext(node))
 	{
 		Clock_reset(__GET_CAST(Clock, VirtualNode_getData(node)));
 	}

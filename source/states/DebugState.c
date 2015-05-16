@@ -114,41 +114,41 @@ static void DebugState_exit(DebugState this, void* owner)
 static bool DebugState_handleMessage(DebugState this, void* owner, Telegram telegram)
 {
 	// process message
-	switch (Telegram_getMessage(telegram))
+	switch(Telegram_getMessage(telegram))
 	{
 		case kKeyPressed:
 			{
 				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
 
-				if (pressedKey & K_LL)
+				if(pressedKey & K_LL)
 				{
 					Debug_showPreviousPage(Debug_getInstance());
 				}
-				else if (pressedKey & K_LR)
+				else if(pressedKey & K_LR)
 				{
 					Debug_showNextPage(Debug_getInstance());
 				}
-				else if (pressedKey & K_LU)
+				else if(pressedKey & K_LU)
 				{
 					Debug_showPreviousSubPage(Debug_getInstance());
 				}
-				else if (pressedKey & K_LD)
+				else if(pressedKey & K_LD)
 				{
 					Debug_showNextSubPage(Debug_getInstance());
 				}
-				else if (pressedKey & K_RL)
+				else if(pressedKey & K_RL)
 				{
 					Debug_diplaceLeft(Debug_getInstance());
 				}
-				else if (pressedKey & K_RR)
+				else if(pressedKey & K_RR)
 				{
 					Debug_diplaceRight(Debug_getInstance());
 				}
-				else if (pressedKey & K_RU)
+				else if(pressedKey & K_RU)
 				{
 					Debug_diplaceUp(Debug_getInstance());
 				}
-				else if (pressedKey & K_RD)
+				else if(pressedKey & K_RD)
 				{
 					Debug_diplaceDown(Debug_getInstance());
 				}

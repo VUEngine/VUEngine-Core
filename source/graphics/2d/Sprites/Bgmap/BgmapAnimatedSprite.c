@@ -94,7 +94,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 	ASSERT(Texture_getCharSet(this->texture), "BgmapAnimatedSprite::writeAnimation: null charset");
 
 	// write according to the allocation type
-	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
+	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:

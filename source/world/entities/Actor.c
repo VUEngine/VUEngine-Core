@@ -118,7 +118,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 
 	Container_setLocalPosition(__GET_CAST(Container, this), position);
 
-	if (this->body)
+	if(this->body)
     {
 		VBVec3D globalPosition = *Container_getGlobalPosition(__GET_CAST(Container, this));
 
@@ -138,7 +138,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 				{ITOFIX7_9(1), ITOFIX7_9(1)}
 		};
 
-		if (this->parent)
+		if(this->parent)
         {
 			environmentTransform = Container_getEnvironmentTransform(this->parent);
 			globalPosition.x = environmentTransform.globalPosition.x;
@@ -178,7 +178,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::transform: null this");
 
-	if (this->body && Body_isAwake(this->body))
+	if(this->body && Body_isAwake(this->body))
     {
 		Actor_syncPositionWithBody(this);
 		
@@ -217,7 +217,7 @@ void Actor_update(Actor this)
 	// call base
 	AnimatedInGameEntity_update(__GET_CAST(AnimatedInGameEntity, this));
 
-	if (this->stateMachine)
+	if(this->stateMachine)
 	{
 		StateMachine_update(this->stateMachine);
 	}
@@ -228,7 +228,7 @@ static void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 
-	if (this->collisionSolver)
+	if(this->collisionSolver)
 	{
 		CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, movementAxis);
 	}
@@ -258,7 +258,7 @@ void Actor_moveOpositeDirecion(Actor this, int axis)
 {
 	ASSERT(this, "Actor::moveOpositeDirecion: null this");
 
-	switch (axis)
+	switch(axis)
 	{
 		case __XAXIS:
 
@@ -282,7 +282,7 @@ int Actor_changedDirection(Actor this, int axis)
 {
 	ASSERT(this, "Actor::changedDirection: null this");
 
-	switch (axis)
+	switch(axis)
 	{
 		case __XAXIS:
 
@@ -311,9 +311,9 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	// save current direction
 	this->previousDirection = this->direction;
 
-	if ((__XAXIS & axis))
+	if((__XAXIS & axis))
 	{
-		if (__RIGHT == this->direction.x)
+		if(__RIGHT == this->direction.x)
 	    {
 			this->direction.x = __LEFT;
 		}
@@ -323,9 +323,9 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 		}
 	}
 
-	if ((__YAXIS & axis))
+	if((__YAXIS & axis))
 	{
-		if (__NEAR == this->direction.y)
+		if(__NEAR == this->direction.y)
 	    {
 			this->direction.y = __FAR;
 		}
@@ -335,9 +335,9 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 		}
 	}
 
-	if ((__ZAXIS & axis))
+	if((__ZAXIS & axis))
 	{
-		if (__RIGHT == this->direction.z)
+		if(__RIGHT == this->direction.z)
 	    {
 			this->direction.x = __LEFT;
 		}
@@ -378,19 +378,19 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 {
 	ASSERT(this, "Actor::handleMessage: null this");
 
-	if (!StateMachine_handleMessage(this->stateMachine, telegram))
+	if(!StateMachine_handleMessage(this->stateMachine, telegram))
 	{
 		// retrieve message
 		int message = Telegram_getMessage(telegram);
 
-		if (this->body)
+		if(this->body)
 	    {
 			Object sender = Telegram_getSender(telegram);
 			Actor otherActor = __GET_CAST(Actor, sender);
 
-			if (true || (sender == __GET_CAST(Object, this)) || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
+			if(true || (sender == __GET_CAST(Object, this)) || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
 	        {
-				switch (message)
+				switch(message)
 	            {
 					case kCollision:
 
@@ -413,7 +413,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 					case kBodyStoped:
 
-						if (!Body_isMoving(this->body))
+						if(!Body_isMoving(this->body))
 	                    {
 							CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
 						}
@@ -426,7 +426,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 						break;
 				}
 			}
-			else if (otherActor)
+			else if(otherActor)
 	        {
 				__VIRTUAL_CALL(void, Actor, takeHitFrom, otherActor);
 
@@ -474,7 +474,7 @@ const VBVec3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
-	if (this->body)
+	if(this->body)
 	{
 		return Body_getPosition(this->body);
 	}
@@ -495,7 +495,7 @@ bool Actor_updateSpriteTransformations(Actor this)
 {
 	ASSERT(this, "Actor::updateSpriteTransformations: null this");
 
-	if (this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
+	if(this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
 	{
 		return true;
 	}
@@ -508,7 +508,7 @@ void Actor_stopMovement(Actor this)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
-	if (this->body)
+	if(this->body)
 	{
 		Body_stopMovement(this->body, __XAXIS);
 		Body_stopMovement(this->body, __YAXIS);
@@ -521,13 +521,13 @@ static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 {
 	ASSERT(this, "Actor::bounce: null this");
 
-	if (axisOfCollision)
+	if(axisOfCollision)
 	{
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
 		Body_bounce(this->body, axisOfCollision, otherSpatialObjectsElasticity);
 		
-		if (!(axisOfCollision & Body_isMoving(this->body)))
+		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {
 			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyStoped, &axisOfCollision);
 		}
@@ -600,7 +600,7 @@ void Actor_takeHitFrom(Actor this, Actor other)
 
 	const Body otherBody = Actor_getBody(other);
 
-	if (otherBody)
+	if(otherBody)
 	{
 		Body_takeHitFrom(this->body, otherBody);
 	}
@@ -638,9 +638,9 @@ void Actor_addForce(Actor this, const Force* force)
 
 	Force effectiveForceToApply =
 	{
-		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis(this, &acceleration)))? force->x: 0,
-		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis(this, &acceleration)))? force->y: 0,
-		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis(this, &acceleration)))? force->z: 0
+		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->x : 0,
+		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->y : 0,
+		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->z : 0
 	};
 
 	Body_addForce(this->body, &effectiveForceToApply);
