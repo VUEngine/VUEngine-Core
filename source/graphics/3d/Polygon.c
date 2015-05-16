@@ -104,7 +104,7 @@ void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 	}
 
 	// add vertice to the end of the list
-	VirtualList_pushBack(this->vertices, (BYTE*)vertice);
+	VirtualList_pushBack(this->vertices, vertice);
 }
 
 

@@ -113,9 +113,9 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	ASSERT(this, "MemoryPool::allocate: null this");
 
 	int i = 0;
-	int blockSize = this->poolSizes[__MEMORY_POOLS - 1][eBlockSize];
 	int numberOfOjects = 0;
-	int pool = __MEMORY_POOLS;
+	int pool = __MEMORY_POOLS - 1;
+	int blockSize = this->poolSizes[pool][eBlockSize];
 	int displacement = 0;
 	int displacementStep = 0;
 
@@ -123,7 +123,7 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	numBytes += __MEMORY_ALIGNMENT;
 
 	// seach for the shortest pool which can hold the data
-	for (; pool-- && numBytes > blockSize; blockSize = this->poolSizes[pool - 1][eBlockSize]);
+	for (; numBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
 
 	ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
 

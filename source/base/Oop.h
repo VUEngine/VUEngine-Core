@@ -153,7 +153,8 @@
 #define __DELETE_BASIC(object)															\
 																						\
 	/* free the memory */																\
-	ASSERT(object && *(u32*)object, "Deleting null basic object");						\
+	ASSERT(object && *(u32*)((u32)object - __DINAMIC_STRUCT_PAD), 						\
+			"Oop: deleting null basic object");											\
 	MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DINAMIC_STRUCT_PAD)		\
 
 
