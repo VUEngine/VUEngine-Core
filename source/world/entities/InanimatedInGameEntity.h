@@ -81,9 +81,9 @@ typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id);
+__CLASS_NEW_DECLARE(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, const char* const name);
 
-void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id);
+void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, const char* const name);
 void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);
 fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this);
 fix19_13 InanimatedInGameEntity_getFriction(InanimatedInGameEntity this);

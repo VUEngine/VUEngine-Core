@@ -97,9 +97,9 @@ __CLASS(AnimatedInGameEntity);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id);
+__CLASS_NEW_DECLARE(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, const char* const name);
 
-void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id);
+void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, const char* const name);
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
 void AnimatedInGameEntity_initialize(AnimatedInGameEntity this);
 void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform);

@@ -133,10 +133,10 @@ typedef const PositionedEntity PositionedEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id);
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name);
 void Entity_destructor(Entity this);
 SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
-Entity Entity_load(const EntityDefinition* entityDefinition, int ID, void* extraInfo);
+Entity Entity_load(const EntityDefinition* entityDefinition, int id, const char* const name, void* extraInfo);
 Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 id);
 Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* positionedEntity, s16 id);
 void Entity_initialize(Entity this);

@@ -63,7 +63,7 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition)
 	ASSERT(this, "UI::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(-1);
+	__CONSTRUCT_BASE(-1, NULL);
 
 	// add entities in the definition
 	__VIRTUAL_CALL(void, UI, addEntities, this, uiDefinition->entities);

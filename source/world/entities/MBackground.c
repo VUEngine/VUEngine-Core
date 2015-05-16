@@ -50,11 +50,11 @@ __CLASS_DEFINITION(MBackground, Entity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id)
-__CLASS_NEW_END(MBackground, mBackgroundDefinition, id);
+__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(MBackground, mBackgroundDefinition, id, name);
 
 // class's constructor
-void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id)
+void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "MBackground::constructor: null this");
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
@@ -62,7 +62,7 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	ASSERT(mBackgroundDefinition->spritesDefinitions[0]->textureDefinition, "MBackground::constructor: null texture definition");
 	
 	// construct base object
-	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id);
+	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id, name);
 
 	this->mBackgroundDefinition = mBackgroundDefinition;
 	

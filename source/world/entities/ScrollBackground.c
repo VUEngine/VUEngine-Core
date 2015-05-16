@@ -62,17 +62,17 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ScrollBackground, ScrollBackgroundDefinition* backgroundDefinition, s16 id)
-__CLASS_NEW_END(ScrollBackground, backgroundDefinition, id);
+__CLASS_NEW_DEFINITION(ScrollBackground, ScrollBackgroundDefinition* backgroundDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(ScrollBackground, backgroundDefinition, id, name);
 
 // class's constructor
-void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 id)
+void ScrollBackground_constructor(ScrollBackground this, ScrollBackgroundDefinition* scrollBackgroundDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "ScrollBackground::constructor: null this");
 	ASSERT(scrollBackgroundDefinition, "ScrollBackground::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(scrollBackgroundDefinition, id);
+	__CONSTRUCT_BASE(scrollBackgroundDefinition, id, name);
 
 	this->size.x = __SCREEN_WIDTH;
 	this->size.y = __SCREEN_HEIGHT;

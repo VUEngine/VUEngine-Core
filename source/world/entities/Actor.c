@@ -62,16 +62,16 @@ static void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Actor, const ActorDefinition* actorDefinition, s16 id)
-__CLASS_NEW_END(Actor, actorDefinition, id);
+__CLASS_NEW_DEFINITION(Actor, const ActorDefinition* actorDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(Actor, actorDefinition, id, name);
 
 // class's constructor
-void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id)
+void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE((AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id);
+	__CONSTRUCT_BASE((AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;

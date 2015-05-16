@@ -60,17 +60,17 @@ static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Objec
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id)
-__CLASS_NEW_END(AnimatedInGameEntity, animatedInGameEntityDefinition, id);
+__CLASS_NEW_DEFINITION(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(AnimatedInGameEntity, animatedInGameEntityDefinition, id, name);
 
 // AnimatedInGameEntity.c
 // class's constructor
-void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id)
+void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "AnimatedInGameEntity::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(&animatedInGameEntityDefinition->inGameEntityDefinition, id);
+	__CONSTRUCT_BASE(&animatedInGameEntityDefinition->inGameEntityDefinition, id, name);
 
 	// save ROM definition
 	this->animatedInGameEntityDefinition = animatedInGameEntityDefinition;

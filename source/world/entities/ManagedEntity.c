@@ -55,16 +55,16 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id)
-__CLASS_NEW_END(ManagedEntity, managedEntityDefinition, id);
+__CLASS_NEW_DEFINITION(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(ManagedEntity, managedEntityDefinition, id, name);
 
 // class's constructor
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id)
+void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "ManagedEntity::constructor: null this");
 
 	// construct base Entity
-	__CONSTRUCT_BASE((EntityDefinition*)managedEntityDefinition, id);
+	__CONSTRUCT_BASE((EntityDefinition*)managedEntityDefinition, id, name);
 
 	/* the sprite must be initializated in the derivated class */
 	this->managedSprites = __NEW(VirtualList);

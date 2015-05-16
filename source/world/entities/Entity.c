@@ -54,12 +54,12 @@ static void Entity_releaseSprites(Entity this);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id)
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "Entity::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(id);
+	__CONSTRUCT_BASE(id, name);
 
 	// save definition
 	this->entityDefinition = entityDefinition;
@@ -311,7 +311,7 @@ SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 }
 
 // create an entity in gameengine's memory
-Entity Entity_load(const EntityDefinition* entityDefinition, int id, void* extraInfo)
+Entity Entity_load(const EntityDefinition* entityDefinition, int id, const char* const name, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -319,7 +319,7 @@ Entity Entity_load(const EntityDefinition* entityDefinition, int id, void* extra
 	if (entityDefinition->allocator)
 	{
 		// call the appropiate allocator to support inheritance!
-		Entity entity = ((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id);
+		Entity entity = ((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, name);
 
 		// setup entity if allocated and constructed
 		if (entity)
@@ -344,15 +344,10 @@ Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 i
 	
 	if (positionedEntity)
 	{
-		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
+		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
 
 		if(entity)
 		{
-			if(positionedEntity->name)
-			{
-				Container_setName(__GET_CAST(Container, entity), positionedEntity->name);
-			}
-			
 			// set spatial position
 			__VIRTUAL_CALL(void, Container, setLocalPosition, entity, &positionedEntity->position);
 	
@@ -396,7 +391,7 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* pos
 	
 	if (positionedEntity)
 	{
-		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->extraInfo);
+		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
 		
 		if(entity)
 		{

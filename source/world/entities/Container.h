@@ -115,9 +115,9 @@ Shape SpatialObject_getShape(SpatialObject this);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Container, s16 id);
+__CLASS_NEW_DECLARE(Container, s16 id, const char* const name);
 
-void Container_constructor(Container this, s16 id);
+void Container_constructor(Container this, s16 id, const char* const name);
 void Container_destructor(Container this);
 void Container_deleteMyself(Container this);
 void Container_addChild(Container this, Container child);
@@ -145,7 +145,7 @@ s16 Container_getId(Container this);
 Container Container_getParent(Container this);
 int Container_getChildCount(Container this);
 VirtualList Container_getChildren(Container this);
-void Container_setName(Container this, char* name);
+void Container_setName(Container this, const char* const  name);
 char* Container_getName(Container this);
 Container Container_getChildByName(Container this, char* childName, bool recursive);
 Container Container_getChildById(Container this, s16 id);

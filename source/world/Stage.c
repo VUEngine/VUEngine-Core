@@ -130,7 +130,7 @@ static void Stage_constructor(Stage this)
 	ASSERT(this, "Stage::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(-1);
+	__CONSTRUCT_BASE(-1, NULL);
 
 	this->stageEntities = NULL;
 	this->loadedStageEntities = NULL;
@@ -337,13 +337,13 @@ static void Stage_setupUI(Stage this)
 }
 
 // 
-Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, VBVec3D *position, void *extraInfo, bool permanent)
+Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, const char* const name, VBVec3D *position, void *extraInfo, bool permanent)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
 	if (entityDefinition)
 	{
-		Entity entity = Entity_load(entityDefinition, this->nextEntityId++, extraInfo);
+		Entity entity = Entity_load(entityDefinition, this->nextEntityId++, name, extraInfo);
 
 		if(entity)
 		{

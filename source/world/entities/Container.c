@@ -48,11 +48,11 @@ void Container_processRemovedChildren(Container this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Container, s16 id)
-__CLASS_NEW_END(Container, id);
+__CLASS_NEW_DEFINITION(Container, s16 id, const char* const name)
+__CLASS_NEW_END(Container, id, name);
 
 // class's constructor
-void Container_constructor(Container this, s16 id)
+void Container_constructor(Container this, s16 id, const char* const name)
 {
 	ASSERT(this, "Container::constructor: null this");
 
@@ -98,6 +98,7 @@ void Container_constructor(Container this, s16 id)
 	this->deleteMe = false;
 	
 	this->name = NULL;
+	Container_setName(this, name);
 }
 
 // class's destructor
@@ -668,7 +669,7 @@ VirtualList Container_getChildren(Container this)
 }
 
 // set name
-void Container_setName(Container this, char* name)
+void Container_setName(Container this, const char* const name)
 {
 	ASSERT(this, "Container::setName: null this");
 	

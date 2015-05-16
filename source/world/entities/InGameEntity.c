@@ -43,16 +43,16 @@ __CLASS_DEFINITION(InGameEntity, Entity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id)
-__CLASS_NEW_END(InGameEntity, inGameEntityDefinition, id);
+__CLASS_NEW_DEFINITION(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(InGameEntity, inGameEntityDefinition, id, name);
 
 // class's constructor
-void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id)
+void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "InGameEntity::constructor: null this");
 	ASSERT(inGameEntityDefinition, "InGameEntity::constructor: null definition");
 
-	__CONSTRUCT_BASE(&inGameEntityDefinition->entityDefinition, id);
+	__CONSTRUCT_BASE(&inGameEntityDefinition->entityDefinition, id, name);
 
 	this->inGameEntityDefinition = inGameEntityDefinition;
 
