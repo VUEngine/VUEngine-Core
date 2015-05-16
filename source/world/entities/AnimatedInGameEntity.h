@@ -93,6 +93,7 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 
 __CLASS(AnimatedInGameEntity);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
@@ -113,5 +114,6 @@ AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGam
 void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
 void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock);
 void AnimatedInGameEntity_resume(AnimatedInGameEntity this);
+
 
 #endif
