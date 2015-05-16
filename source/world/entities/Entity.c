@@ -311,7 +311,7 @@ SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 }
 
 // create an entity in gameengine's memory
-Entity Entity_load(const EntityDefinition* entityDefinition, int id, const char* const name, void* extraInfo)
+Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -338,7 +338,7 @@ Entity Entity_load(const EntityDefinition* entityDefinition, int id, const char*
 }
 
 // load an entity from a PositionedEntity definition
-Entity Entity_loadFromDefinition(const PositionedEntity* positionedEntity, s16 id)
+Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 	
@@ -385,7 +385,7 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
 }
 
 // load an entity from a PositionedEntity definition
-Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* positionedEntity, s16 id)
+Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* const positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 	

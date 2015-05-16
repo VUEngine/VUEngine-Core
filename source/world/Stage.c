@@ -337,7 +337,7 @@ static void Stage_setupUI(Stage this)
 }
 
 // 
-Entity Stage_addEntity(Stage this, EntityDefinition* entityDefinition, const char* const name, VBVec3D *position, void *extraInfo, bool permanent)
+Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
@@ -396,7 +396,7 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 
 
 // add entity to the stage
-Entity Stage_addPositionedEntity(Stage this, PositionedEntity* positionedEntity, bool permanent)
+Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
