@@ -90,7 +90,7 @@ char* I18n_getText(I18n this, int string)
 {
 	ASSERT(this, "I18n::getText: null this");
 
-	return 0 < string? __LANGUAGES[this->ActiveLanguage]->language[string]: NULL;
+	return 0 <= string ? __LANGUAGES[this->ActiveLanguage]->language[string] : NULL;
 }
 
 // set the language
