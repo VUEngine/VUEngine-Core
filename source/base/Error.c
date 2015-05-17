@@ -150,7 +150,7 @@ int Error_triggerException(Error this, char* string)
 	VIP_REGS[JPLT2] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT3] = __DIMM_VALUE_1;
 
-	//trap the game here
+	// trap the game here
 	while (true);
 
 	return false;
