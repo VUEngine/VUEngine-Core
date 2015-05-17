@@ -62,15 +62,15 @@ extern unsigned int volatile* _xpstts;
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* mSpriteDefinition)
-__CLASS_NEW_END(ObjectSprite, mSpriteDefinition);
+__CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
+__CLASS_NEW_END(ObjectSprite, oSpriteDefinition, owner);
 
 // class's constructor
-void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition)
+void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
 {
 	ASSERT(this, "ObjectSprite::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE((SpriteDefinition*)oSpriteDefinition, owner);
 
 	this->head = oSpriteDefinition->display;
 	this->objectIndex = -1;
@@ -198,6 +198,8 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 	ASSERT(0 <= this->objectIndex, "ObjectSprite::render: 0 > this->objectIndex");
 
+	NM_ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
+
 	//if render flag is set
 	if (this->renderFlag && 0 <= this->objectIndex)
 	{
@@ -219,25 +221,25 @@ void ObjectSprite_render(ObjectSprite this)
 			for (; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
-				int finalX = x + (j << 3)  * xDirection;
+				int outputX = x + (j << 3)  * xDirection;
 				
 				// hide the object if ouside screen's bounds
-				if((unsigned)finalX > __SCREEN_WIDTH)
+				if((unsigned)outputX > __SCREEN_WIDTH)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
 					continue;
 				}
 
-				int finalY = y + (i << 3)  * yDirection;
-				if((unsigned)finalY > __SCREEN_HEIGHT)
+				int outputY = y + (i << 3)  * yDirection;
+				if((unsigned)outputY > __SCREEN_HEIGHT)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
 					continue;
 				}
 
-				OAM[objectIndex << 2] = finalX;
+				OAM[objectIndex << 2] = outputX;
 				OAM[(objectIndex << 2) + 1] = secondWordValue;
-				OAM[(objectIndex << 2) + 2] = finalY;
+				OAM[(objectIndex << 2) + 2] = outputY;
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
@@ -303,6 +305,10 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 		}
 		else
 		{
+			while (*_xpstts & XPBSYR);
+
+			ObjectSprite_render(this);
+
 			// render on next cycle
 			this->renderFlag = true;
 		}
@@ -322,10 +328,13 @@ void ObjectSprite_show(ObjectSprite this)
 		ObjectSprite_render(this);
 	}
 	
-	int i = 0;
-	for (; i < this->totalObjects; i++)
+	if (0 <= this->objectIndex)
 	{
-		OAM[((this->objectIndex + i) << 2) + 1] |= __SHOW_MASK;
+		int i = 0;
+		for (; i < this->totalObjects; i++)
+		{
+			OAM[((this->objectIndex + i) << 2) + 1] |= __SHOW_MASK;
+		}
 	}
 }
 
@@ -339,11 +348,13 @@ void ObjectSprite_hide(ObjectSprite this)
 		return;
 	}
 
-	// must check for the texture since it can be already be deleted
-	int i = 0;
-	for (; i < this->totalObjects; i++)
+	if (0 <= this->objectIndex)
 	{
-		OAM[((this->objectIndex + i) << 2) + 1] &= __HIDE_MASK;
+		int i = 0;
+		for (; i < this->totalObjects; i++)
+		{
+			OAM[((this->objectIndex + i) << 2) + 1] &= __HIDE_MASK;
+		}
 	}
 }
 
@@ -353,7 +364,6 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 
 	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __GET_CAST(Sprite, this->objectSpriteContainer)): 0;
 }
-
 
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this)
 {

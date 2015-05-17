@@ -172,7 +172,7 @@ typedef const AnimationDescription AnimationDescriptionROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void Sprite_constructor(Sprite this);
+void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, Object owner);
 void Sprite_destructor(Sprite this);
 Scale Sprite_getScale(Sprite this);
 void Sprite_resize(Sprite this, Scale scale, fix19_13 z);

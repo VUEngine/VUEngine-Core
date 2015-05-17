@@ -45,7 +45,7 @@ __CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 extern int strcmp(const char *, const char *);
 
 // class's constructor
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,14 +53,14 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Spri
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
-__CLASS_NEW_END(BgmapAnimatedSprite, spriteDefinition, owner);
+__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
+__CLASS_NEW_END(BgmapAnimatedSprite, bSpriteDefinition, owner);
 
 // class's constructor
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
 {
 	// construct base object
-	__CONSTRUCT_BASE(spriteDefinition);
+	__CONSTRUCT_BASE(bSpriteDefinition, owner);
 
 	this->animationController = __NEW(AnimationController, owner, __GET_CAST(Sprite, this), Texture_getCharSet(this->texture));
 	

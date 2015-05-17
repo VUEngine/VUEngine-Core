@@ -94,7 +94,6 @@ static void AnimationEditorState_destructor(AnimationEditorState this)
 static void AnimationEditorState_enter(AnimationEditorState this, void* owner)
 {
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
-
 	AnimationEditor_start(AnimationEditor_getInstance(), __GET_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 

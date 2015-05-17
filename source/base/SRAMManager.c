@@ -30,7 +30,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define SAVE_RAM_ADDRESS	(u16*)0x06000000
+#define SAVE_RAM_ADDRESS	0x06000000
 
 const struct UserData* _userData = (void*)SAVE_RAM_ADDRESS;
 
@@ -67,6 +67,8 @@ __SINGLETON(SRAMManager);
 // class's constructor
 static void SRAMManager_constructor(SRAMManager this)
 {
+	ASSERT(this, "SRAMManager::constructor: null this");
+
 	__CONSTRUCT_BASE();
 }
 
@@ -82,22 +84,31 @@ void SRAMManager_destructor(SRAMManager this)
 
 void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAddress, int dataSize)
 {
+	ASSERT(this, "SRAMManager::save: null this");
+
 	int i = 0;
 	
 	u16* destination = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
+	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
+	ASSERT(SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
 
 	for(; i < dataSize; i++)
 	{
 		destination[i] = source[i];
+		
 	}
 }
 
 void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, int dataSize)
 {
+	ASSERT(this, "SRAMManager::read: null this");
+
 	int i = 0;
 
 	u16* source = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
-		
+	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
+	ASSERT(SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
+
 	for(; i < dataSize; i++)
 	{
 		destination[i] = source[i] & 0xFF;

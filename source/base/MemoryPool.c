@@ -237,12 +237,12 @@ void MemoryPool_cleanUp(MemoryPool this)
 	ASSERT(this, "MemoryPool::reset: null this");
 
 	int pool = 0;
-	int i;
 
 	// clear all allocable objects usage
 	for (pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		for (i = 0; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
+		int i = 0;
+		for (; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
 		{
 			if(!*((u32*)&this->poolLocation[pool][i]))
 			{

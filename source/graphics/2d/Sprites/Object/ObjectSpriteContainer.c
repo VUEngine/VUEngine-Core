@@ -35,7 +35,6 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER	256
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -92,6 +91,9 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 
 	for(; i < (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
 	{
+		OAM[(i << 2) + 0] = 0;
+		OAM[(i << 2) + 1] = 0;
+		OAM[(i << 2) + 2] = 0;
 		OAM[(i << 2) + 3] = 0;
 	}
 

@@ -66,13 +66,13 @@ static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition)
-__CLASS_NEW_END(BgmapSprite, bSpriteDefinition);
+__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
+__CLASS_NEW_END(BgmapSprite, bSpriteDefinition, owner);
 
 // class's constructor
-void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition)
+void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE((SpriteDefinition*)bSpriteDefinition, owner);
 
 	// register with sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));

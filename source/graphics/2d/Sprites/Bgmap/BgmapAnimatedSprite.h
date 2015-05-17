@@ -70,7 +70,7 @@ __CLASS(BgmapAnimatedSprite);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(BgmapAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
+__CLASS_NEW_DECLARE(BgmapAnimatedSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner);
 
 void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this);
 void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this);

@@ -105,6 +105,16 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 		
 		this->objectSpriteContainers[i] = NULL;
 	}
+	
+	// clean OBJ memory
+	for(i = 0; i < 4 * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
+	{
+		OAM[(i << 2) + 0] = 0;
+		OAM[(i << 2) + 1] = 0;
+		OAM[(i << 2) + 2] = 0;
+		OAM[(i << 2) + 3] = 0;
+	}
+
 }
 
 // retrieve a mega sprite

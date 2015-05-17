@@ -515,15 +515,18 @@ static void Stage_loadTextures(Stage this)
 
 	int i = 0;
 
-	for (; this->stageDefinition->textures[i]; i++)
+	if(this->stageDefinition->textures)
 	{
-		if(__ANIMATED_SHARED != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
+		for (; this->stageDefinition->textures[i]; i++)
 		{
-			BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
-		}
-		else
-		{
-			ASSERT(this, "Stage::loadTextures: loading an Object texture");
+			if(__ANIMATED_SHARED != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
+			{
+				BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
+			}
+			else
+			{
+				ASSERT(this, "Stage::loadTextures: loading an Object texture");
+			}
 		}
 	}
 	

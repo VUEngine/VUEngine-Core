@@ -272,6 +272,9 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	//load world entities
 	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
 
+	// move the screen to its position
+	Screen_positione(Screen_getInstance(), false);
+
 	// transform everything
 	GameState_transform(this);
 

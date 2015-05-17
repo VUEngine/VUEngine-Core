@@ -52,7 +52,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Sprite_constructor(Sprite this)
+void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, Object owner)
 {
 	__CONSTRUCT_BASE();
 

@@ -555,8 +555,6 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 
 	Sprite sprite = NULL;
 
-	ASSERT(spriteDefinition->allocator, "Entity::load: no sprite allocator defined");
-
 	if (spriteDefinition->allocator)
 	{
 		// call the appropiate allocator to support inheritance!
@@ -680,6 +678,9 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	{
 		// call base class's transform method
 		Container_transform(__GET_CAST(Container, this), environmentTransform);
+		
+		updateSpritePosition = true;
+		updateSpriteTransformations = true;
 	}
 
 	if(updateSpritePosition || updateSpriteTransformations)

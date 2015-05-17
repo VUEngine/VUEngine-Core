@@ -64,13 +64,13 @@ static const Point* const MBgmapSprite_capPosition(MBgmapSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition)
-__CLASS_NEW_END(MBgmapSprite, mSpriteDefinition);
+__CLASS_NEW_DEFINITION(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner)
+__CLASS_NEW_END(MBgmapSprite, mSpriteDefinition, owner);
 
 // class's constructor
-void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition)
+void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE(&mSpriteDefinition->bSpriteDefinition);
+	__CONSTRUCT_BASE(&mSpriteDefinition->bSpriteDefinition, owner);
 	
 	this->mSpriteDefinition = mSpriteDefinition;
 
