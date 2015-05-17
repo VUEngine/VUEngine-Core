@@ -260,7 +260,7 @@ static void Debug_lightUpGame(Debug this)
 // update
 void Debug_update(Debug this)
 {
-	if (this->update)
+	if(this->update)
 	{
 		((void (*)(Debug))this->update)(this);
 	}
@@ -292,7 +292,7 @@ void Debug_showPreviousPage(Debug this)
 {
 	this->currentPage = VirtualNode_getPrevious(this->currentPage);
 
-	if (NULL == this->currentPage)
+	if(NULL == this->currentPage)
 	{
 		this->currentPage = VirtualList_end(this->pages);
 	}
@@ -305,7 +305,7 @@ void Debug_showNextPage(Debug this)
 {
 	this->currentPage = VirtualNode_getNext(this->currentPage);
 
-	if (NULL == this->currentPage)
+	if(NULL == this->currentPage)
 	{
 		this->currentPage = VirtualList_begin(this->pages);
 	}
@@ -316,14 +316,14 @@ void Debug_showNextPage(Debug this)
 // show previous sub page
 void Debug_showPreviousSubPage(Debug this)
 {
-	if (!this->currentSubPage)
+	if(!this->currentSubPage)
 	{
 		return;
 	}
 
 	this->currentSubPage = VirtualNode_getPrevious(this->currentSubPage);
 
-	if (NULL == this->currentSubPage)
+	if(NULL == this->currentSubPage)
 	{
 		this->currentSubPage = VirtualList_end(this->subPages);
 	}
@@ -334,14 +334,14 @@ void Debug_showPreviousSubPage(Debug this)
 // show next sub page
 void Debug_showNextSubPage(Debug this)
 {
-	if (!this->currentSubPage)
+	if(!this->currentSubPage)
 	{
 		return;
 	}
 
 	this->currentSubPage = VirtualNode_getNext(this->currentSubPage);
 
-	if (NULL == this->currentSubPage)
+	if(NULL == this->currentSubPage)
 	{
 		this->currentSubPage = VirtualList_begin(this->subPages);
 	}
@@ -362,7 +362,7 @@ static void Debug_printHeader(Debug this)
 // show page
 static void Debug_showPage(Debug this, int increment)
 {
-	if (this->currentPage && VirtualNode_getData(this->currentPage))
+	if(this->currentPage && VirtualNode_getData(this->currentPage))
 	{
 		this->update = NULL;
 
@@ -381,7 +381,7 @@ static void Debug_showPage(Debug this, int increment)
 // show sub page
 static void Debug_showSubPage(Debug this, int increment)
 {
-	if (this->currentSubPage && VirtualNode_getData(this->currentSubPage))
+	if(this->currentSubPage && VirtualNode_getData(this->currentSubPage))
 	{
 		this->update = NULL;
 
@@ -575,18 +575,18 @@ static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y)
 {
 	this->charSegment += increment;
 
-	if (-1 > this->charSegment)
+	if(-1 > this->charSegment)
 	{
 		this->charSegment = __CHAR_SEGMENTS - 1;
 	}
 
-	if (-1 == this->charSegment)
+	if(-1 == this->charSegment)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		CharSetManager_print(CharSetManager_getInstance(), x, y);
 		Debug_dimmGame(this);
 	}
-	else if (__CHAR_SEGMENTS > this->charSegment)
+	else if(__CHAR_SEGMENTS > this->charSegment)
 	{
 		Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
 		Printing_text(Printing_getInstance(), "Segment: ", x, ++y, NULL);
@@ -621,14 +621,14 @@ static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
 
 	int i = 0;
 	int j = 0;
-	for (; i <  __CHAR_SEGMENT_TOTAL_CHARS; i+= 2, j++)
+	for(; i <  __CHAR_SEGMENT_TOTAL_CHARS; i+= 2, j++)
 	{
 		CHAR_MEMORY_MP[i] = (BYTE)(j & 0xFF);
 		CHAR_MEMORY_MP[i + 1] = (BYTE)((j & 0xFF00) >> 8);
 	}
 
 	//put the map into memory calculating the number of char for each reference
-	for (i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 48; i++)
+	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 48; i++)
 	{
 		Mem_add((u8*)BGMap(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
 				(const u8*)CHAR_MEMORY_MP,
@@ -654,7 +654,7 @@ static void Debug_showTextureStatus(Debug this, int increment, int x, int y)
 
 static void Debug_showDebugBgmap(Debug this)
 {
-	if (VirtualNode_getData(this->currentPage) != &Debug_showTextureStatus ||
+	if(VirtualNode_getData(this->currentPage) != &Debug_showTextureStatus ||
 		0 > this->bgmapSegment
 	)
 	{
@@ -678,12 +678,12 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 {
 	this->bgmapSegment += increment;
 
-	if (-1 > this->bgmapSegment)
+	if(-1 > this->bgmapSegment)
 	{
 		this->bgmapSegment = BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) - 1;
 	}
 
-	if (-1 == this->bgmapSegment)
+	if(-1 == this->bgmapSegment)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
@@ -691,7 +691,7 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 8);
 		Debug_dimmGame(this);
 	}
-	else if (BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) > this->bgmapSegment)
+	else if(BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) > this->bgmapSegment)
 	{
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing_text(Printing_getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
@@ -733,18 +733,18 @@ static void Debug_objectsShowStatus(Debug this, int increment, int x, int y)
 {
 	this->objectSegment += increment;
 
-	if (-1 > this->objectSegment)
+	if(-1 > this->objectSegment)
 	{
 		this->objectSegment = __TOTAL_OBJECT_SEGMENTS - 1;
 	}
 
-	if (-1 == this->objectSegment)
+	if(-1 == this->objectSegment)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		ObjectSpriteContainerManager_print(ObjectSpriteContainerManager_getInstance(), x, y);
 		Debug_dimmGame(this);
 	}
-	else if (__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
+	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
 	{
 		Printing_text(Printing_getInstance(), "OBJECTS' USAGE", x, y++, NULL);
 
@@ -785,17 +785,17 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 {
 	this->currentLayer -= increment;
 
-	if (this->currentLayer > __TOTAL_LAYERS)
+	if(this->currentLayer > __TOTAL_LAYERS)
 	{
 		this->currentLayer = SpriteManager_getFreeLayer(SpriteManager_getInstance()) + 1;
 	}
 
-	if (__TOTAL_LAYERS == this->currentLayer)
+	if(__TOTAL_LAYERS == this->currentLayer)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		SpriteManager_print(SpriteManager_getInstance(), x, y);
 	}
-	else if (SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer)
+	else if(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer)
 	{
 		Sprite sprite = SpriteManager_getSpriteAtLayer(SpriteManager_getInstance(), this->currentLayer);
 
@@ -860,7 +860,7 @@ static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int 
 
 	Printing_text(Printing_getInstance(), "CLASSES MEMORY USAGE (B) ", x, y++, NULL);
 
-	if (message)
+	if(message)
 	{
 		Printing_text(Printing_getInstance(), message, x, ++y, NULL);
 		y++;
@@ -870,7 +870,7 @@ static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int 
 	y++;
 
 	int i = 0;
-	for (; classesSizeData[i].classSizeFunction && (0 == size || i < size); i++)
+	for(; classesSizeData[i].classSizeFunction && (0 == size || i < size); i++)
 	{
 		Printing_text(Printing_getInstance(), classesSizeData[i].name, x, ++y, NULL);
 		Printing_int(Printing_getInstance(), ((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);

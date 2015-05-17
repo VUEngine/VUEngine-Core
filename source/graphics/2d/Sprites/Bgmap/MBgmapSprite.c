@@ -126,14 +126,14 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::loadTextures: null this");
 
-	if (this->mSpriteDefinition)
+	if(this->mSpriteDefinition)
 	{
 		MBgmapSprite_releaseTextures(this);
 		this->textures = __NEW(VirtualList);
 		
 		int i = 0;
 		
-		for (; this->mSpriteDefinition->textureDefinitions[i]; i++)
+		for(; this->mSpriteDefinition->textureDefinitions[i]; i++)
 	    {
 			MBgmapSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
 		}
@@ -149,7 +149,7 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 
 	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: no sprite allocator defined");
 
-	if (textureDefinition)
+	if(textureDefinition)
 	{
 		BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
 		
@@ -186,7 +186,7 @@ void MBgmapSprite_positione(MBgmapSprite this, VBVec3D position3D)
 	this->drawSpec.textureSource.mx = FIX19_13TOI(-position2D.x);
 	this->drawSpec.textureSource.my = FIX19_13TOI(-position2D.y);
 		
-	if (previousZPosition != this->drawSpec.position.z)
+	if(previousZPosition != this->drawSpec.position.z)
 	{
 		this->drawSpec.position.z = position3D.z;
 

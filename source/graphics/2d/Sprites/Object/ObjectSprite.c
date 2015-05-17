@@ -116,7 +116,7 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 {
 	ASSERT(this, "ObjectSprite::setDirection: null this");
 
-	switch (axis)
+	switch(axis)
 	{
 		case __XAXIS:
 
@@ -197,11 +197,10 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 	ASSERT(0 <= this->objectIndex, "ObjectSprite::render: 0 > this->objectIndex");
-
-	NM_ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
+	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
 	//if render flag is set
-	if (this->renderFlag && 0 <= this->objectIndex)
+	if(this->renderFlag && 0 <= this->objectIndex)
 	{
 		int cols = Texture_getCols(__GET_CAST(Texture, this->texture));
 		int rows = Texture_getRows(__GET_CAST(Texture, this->texture));
@@ -215,10 +214,10 @@ void ObjectSprite_render(ObjectSprite this)
 		u16 secondWordValue = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
 		
-		for (; i < rows; i++)
+		for(; i < rows; i++)
 		{
 			int j = 0;
-			for (; j < cols; j++)
+			for(; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
 				int outputX = x + (j << 3)  * xDirection;
@@ -237,7 +236,7 @@ void ObjectSprite_render(ObjectSprite this)
 					continue;
 				}
 
-				OAM[objectIndex << 2] = outputX;
+				OAM[(objectIndex << 2)] = outputX;
 				OAM[(objectIndex << 2) + 1] = secondWordValue;
 				OAM[(objectIndex << 2) + 2] = outputY;
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
@@ -292,7 +291,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 				
 				// turn off previous OBJs' to avoid ghosting
 				int i = previousObjectIndex + this->totalObjects - 1;
-				for (; i >= this->objectIndex + this->totalObjects; i--)
+				for(; i >= this->objectIndex + this->totalObjects; i--)
 				{
 					OAM[(i << 2) + 1] &= __HIDE_MASK;
 				}
@@ -305,10 +304,6 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 		}
 		else
 		{
-			while (*_xpstts & XPBSYR);
-
-			ObjectSprite_render(this);
-
 			// render on next cycle
 			this->renderFlag = true;
 		}

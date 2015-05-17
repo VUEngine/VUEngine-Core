@@ -114,7 +114,7 @@ static void StageEditorState_exit(StageEditorState this, void* owner)
 static bool StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram)
 {
 	// process message
-	switch (Telegram_getMessage(telegram))
+	switch(Telegram_getMessage(telegram))
 	{
 		case kKeyPressed:
 			{

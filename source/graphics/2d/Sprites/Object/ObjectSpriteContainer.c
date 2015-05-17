@@ -297,7 +297,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 	
 	//if render flag is set
-	if (this->renderFlag)
+	if(this->renderFlag)
 	{
 		// make sure to not render again
 		WA[this->worldLayer].head = this->head | WRLD_OVR;

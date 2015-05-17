@@ -114,7 +114,7 @@ static void AnimationEditorState_exit(AnimationEditorState this, void* owner)
 static bool AnimationEditorState_handleMessage(AnimationEditorState this, void* owner, Telegram telegram)
 {
 	// process message
-	switch (Telegram_getMessage(telegram))
+	switch(Telegram_getMessage(telegram))
 	{
 		case kKeyPressed:
 			{

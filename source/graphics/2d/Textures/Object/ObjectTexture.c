@@ -93,10 +93,10 @@ void ObjectTexture_write(ObjectTexture this)
 
 	int i = 0;
 
-	for (; i < rows; i++)
+	for(; i < rows; i++)
 	{
 		int j = 0;
-		for (; j < cols; j++)
+		for(; j < cols; j++)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = (i * cols + j) << 1;

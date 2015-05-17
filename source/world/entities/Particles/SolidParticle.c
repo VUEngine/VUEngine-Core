@@ -120,7 +120,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 {
 	ASSERT(this, "SolidParticle::handleMessage: null this");
 /*
-	switch (Telegram_getMessage(telegram))
+	switch(Telegram_getMessage(telegram))
     {
 		case kCollision:
 
@@ -137,7 +137,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 		case kBodyStoped:
 
-			if (!Body_isMoving(this->body))
+			if(!Body_isMoving(this->body))
             {
 				CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
 			}

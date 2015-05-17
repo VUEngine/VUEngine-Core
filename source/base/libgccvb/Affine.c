@@ -102,7 +102,7 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = 0;
 
-	for (; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i++, counter++) 
+	for(; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i++, counter++)
 	{
 		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
 		affine[i].paralax = fixedAffineMatrix.paralax;
@@ -183,7 +183,7 @@ fix19_13 Affine_applyAllLowPrecision(u16 param, fix19_13 paramTableRow, const Sc
 	// add one row for cleaning up
 	fix19_13 totalRows = FIX19_13_MULT(ITOFIX19_13(height << 1), FIX7_9TOFIX19_13(scale->y)) + ITOFIX19_13(1);
 	
-	if (0 > totalRows)
+	if(0 > totalRows)
 	{
 		totalRows *= -1;
 	}
@@ -197,9 +197,9 @@ fix19_13 Affine_applyAllLowPrecision(u16 param, fix19_13 paramTableRow, const Sc
 	totalRows = height << 2;
 	i = 0;
 	affineEntry = 0;
-//	for (; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i += 0b10000000000000, affineEntry ++, counter++) 
-//	for (; i < totalRows; i += 0b10000000000000, affineEntry ++, counter++) 
-		for (; i < totalRows; i++, affineEntry ++, counter++) 
+//	for(; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i += 0b10000000000000, affineEntry ++, counter++)
+//	for(; i < totalRows; i += 0b10000000000000, affineEntry ++, counter++)
+		for(; i < totalRows; i++, affineEntry ++, counter++)
 	{
 			affine[affineEntry].pb_y = FTOFIX13_3(i * affineMatrix.pb + affineMatrix.dx);
 			affine[affineEntry].paralax = affineMatrix.paralax;

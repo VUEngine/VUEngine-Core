@@ -55,7 +55,7 @@ void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedI
 	__CONSTRUCT_BASE(&inanimatedInGameEntityDefinition->inGameEntityDefinition, id, name);
 
 	// check if register for collision detection
-	if (inanimatedInGameEntityDefinition->registerShape)
+	if(inanimatedInGameEntityDefinition->registerShape)
 	{
 		// register a shape for collision detection
 		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __GET_CAST(SpatialObject, this), kCuboid);
