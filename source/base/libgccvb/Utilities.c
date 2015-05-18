@@ -55,7 +55,7 @@ WORD Utilities_rotateBits(WORD invalue, int places, int direction)
 	WORD outvalue;
 
     // Rotating left or right?
-    if (__ROT_LEFT == direction)
+    if(__ROT_LEFT == direction)
 	{
         // First a normal shift
         outvalue = invalue << (places & ((sizeof(int) << 3) - 1));
@@ -79,13 +79,13 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 	int flag = false;
 //	static char sign='-';
 
-	if ((int)num < 0)
+	if((int)num < 0)
 	{
 		flag = true;
 //		num*=(-1);
 	}
 	
-	for (; i < __CHAR_HOLDER_SIZE - 1; i++)
+	for(; i < __CHAR_HOLDER_SIZE - 1; i++)
 	{
 		rev[__CHAR_HOLDER_SIZE - 2 - i] = numbers[num % base];
 		num /= base;
@@ -96,7 +96,7 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 	{
 		i++;
 	}
-	if (i >= (__CHAR_HOLDER_SIZE - 1 - digits))
+	if(i >= (__CHAR_HOLDER_SIZE - 1 - digits))
 	{
 		i = __CHAR_HOLDER_SIZE - 1 - digits;
 	}
@@ -124,12 +124,12 @@ long Utilities_randomSeed()
 		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
 
 		// prevent division by zero
-		if (random == 0)
+		if(random == 0)
 		{
 		    random = 1;
         }
 
-		if (rand == 0)
+		if(rand == 0)
 		{
 			rand = 1;
         }
@@ -137,7 +137,7 @@ long Utilities_randomSeed()
 		// just randomly doing stuff to the number
 		random += ((rand * count) + (count % random) + (prevnum / rand));
 
-		if (rand == prevnum)
+		if(rand == prevnum)
 		{
 			// if the CTA value doesnt change then count up
 			count++;
@@ -183,5 +183,5 @@ int Utilities_getDigitCount(int value)
 	}
 	while (value);
 
-	return (size)? size: 1;
+	return (size) ? size : 1;
 }

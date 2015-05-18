@@ -36,7 +36,7 @@
 		static bool __callFlag = false;													\
 																						\
 		/* check if not called */														\
-		if (!__callFlag)																\
+		if(!__callFlag)																\
 		{																				\
 			/* call method */															\
 			MethodName(__VA_ARGS__);													\
@@ -51,7 +51,7 @@
 	{																					\
 		/* check that each entry in the table is not NULL */							\
 		int i = 0;																		\
-		for (; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++)					\
+		for(; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++)					\
 		{																				\
 			/* check each entry */														\
 			NM_ASSERT(((void**)&ClassName ## _vTable)[i],								\
@@ -105,7 +105,7 @@
 		ClassName this = ClassName ## _allocator();										\
 																						\
 		/* check if properly created */													\
-		if (!this) return NULL;															\
+		if(!this) return NULL;															\
 
 
 // end class's allocator
@@ -120,13 +120,11 @@
 		/* just for safety set it again */												\
 		this->vTable = &ClassName ## _vTable;											\
 																						\
-		/* set dynamic flag */															\
-		this->dynamic = true;															\
-																						\
 		/* return the created object */													\
 		return this;																	\
 	}
 
+#define	__DINAMIC_STRUCT_PAD	4
 
 // like new in C++
 #define __NEW(ClassName, ...)															\
@@ -139,22 +137,25 @@
 #define __DELETE(object)																\
 																						\
 	/* since the destructor is the first element in the virtual table */				\
-	((void (*)(void*))((void***)object)[0][0])(object);
+	ASSERT(object && *(u32*)object, "Deleting null object");							\
+	((void (*)(void*))((void***)object)[0][0])(object);									\
 
 
 // like new in C++
 #define __NEW_BASIC(ClassName)															\
 																						\
 	/* allocate data */																	\
-	(ClassName*)MemoryPool_allocate(MemoryPool_getInstance(),							\
-		sizeof(ClassName));
+	(ClassName*)(MemoryPool_allocate(MemoryPool_getInstance(),							\
+		sizeof(ClassName) + __DINAMIC_STRUCT_PAD) + __DINAMIC_STRUCT_PAD);				\
 
 
 // like delete in C++ (calls virtual destructor)
 #define __DELETE_BASIC(object)															\
 																						\
 	/* free the memory */																\
-	MemoryPool_free(MemoryPool_getInstance(), (void*)object)
+	ASSERT(object && *(u32*)((u32)object - __DINAMIC_STRUCT_PAD), 						\
+			"Oop: deleting null basic object");											\
+	MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DINAMIC_STRUCT_PAD)		\
 
 
 // construct the base object
@@ -167,16 +168,10 @@
 #define __DESTROY_BASE																	\
 																						\
 	/* since the base destructor is the second element in the virtual table */			\
-	_baseDestructor((void*)this);																\
+	_baseDestructor((void*)this);														\
 																						\
-	/* if dynamically created */														\
-	if (this->dynamic)																	\
-	{																					\
-		this->dynamic = false;															\
-																						\
-		/* free the memory */															\
-		MemoryPool_free(MemoryPool_getInstance(), (void*)this);							\
-	}
+	/* free the memory */																\
+	MemoryPool_free(MemoryPool_getInstance(), (void*)this);								\
 
 
 // retrieve virtual method's address
@@ -194,7 +189,7 @@
 			((ReturnType (*)(ClassName, ...))											\
 			(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))		\
 				(																		\
-						__UPCAST(ClassName, object), ##__VA_ARGS__						\
+						__GET_CAST(ClassName, object), ##__VA_ARGS__						\
 				):																		\
 			/* call base implementation */												\
 			(ReturnType)Error_triggerException(Error_getInstance(),						\
@@ -208,7 +203,7 @@
 		((ReturnType (*)(ClassName, ...))												\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))			\
 			(																			\
-				__UPCAST(ClassName, object), ##__VA_ARGS__								\
+				__GET_CAST(ClassName, object), ##__VA_ARGS__								\
 			)																			\
 
 #endif
@@ -221,29 +216,13 @@
 					object, ##__VA_ARGS__												\
 			)																			\
 
-// cast macro
-#define __GET_CAST(ClassName, object)													\
-		(																				\
-			/* check if object's destructor matches class' destructor */				\
-			object && ((void*)ClassName ## _destructor == 								\
-							((void (*)(void*))((void***)object)[0][0]))?				\
-																						\
-			/* cast is safe */															\
-			(ClassName)object															\
-																						\
-			/* otherwise */																\
-			:																			\
-			/* cast is null */															\
-			NULL																		\
-		)
-
 #ifdef __DEBUG
-#define __UPCAST(ClassName, object)														\
+#define __GET_CAST(ClassName, object)														\
 																						\
 		/* try to up cast object */														\
-		(ClassName)Object_upcast((Object)object, ClassName ## _getBaseClass, NULL)
+		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
 #else	
-#define __UPCAST(ClassName, object) (ClassName)object
+#define __GET_CAST(ClassName, object) (ClassName)object
 #endif
 
 
@@ -427,12 +406,12 @@
 		/* set the vtable */															\
 		__SET_CLASS(ClassName);															\
 																						\
-		if (__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			NM_ASSERT(false, ClassName get instance during construction);				\
 		}																				\
 		/* first check if not constructed yet */										\
-		if (__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;						\
 																						\
@@ -479,13 +458,13 @@
 		/* set the vtable */															\
 		__SET_CLASS(ClassName);															\
 																						\
-		if (__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			NM_ASSERT(false, ClassName get instance during construction);				\
 		}																				\
 																						\
 		/* first check if not constructed yet */										\
-		if (__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)						\
 		{																				\
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;						\
 																						\

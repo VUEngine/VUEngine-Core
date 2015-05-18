@@ -79,10 +79,10 @@ void BgmapTexture_write(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
-	Texture_write(__UPCAST(Texture, this));
+	Texture_write(__GET_CAST(Texture, this));
 	
 	//determine the allocation type
-	switch (CharSet_getAllocationType(this->charSet))
+	switch(CharSet_getAllocationType(this->charSet))
 	{
 		case __ANIMATED_SINGLE:
 
@@ -128,13 +128,13 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if (0 > xOffset || 0 > yOffset)
+	if(0 > xOffset || 0 > yOffset)
 	{
 		return;
 	}
 
 	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
+	for(; i--;)
 	{
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
@@ -158,13 +158,13 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if (0 > xOffset || 0 > yOffset)
+	if(0 > xOffset || 0 > yOffset)
 	{
 		return;
 	}
 
 	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
+	for(; i--;)
 	{
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
@@ -192,18 +192,18 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if (0 > xOffset || 0 > yOffset)
+	if(0 > xOffset || 0 > yOffset)
 	{
 		return;
 	}
 
 	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
+	for(; i--;)
 	{
 		int j = 1;
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
-		for (; j <= frames; j++)
+		for(; j <= frames; j++)
 		{
 			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (i << 6)) << 1),
 					(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
@@ -227,13 +227,13 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if (0 > xOffset || 0 > yOffset)
+	if(0 > xOffset || 0 > yOffset)
 	{
 		return;
 	}
 	
 	//put the map into memory calculating the number of char for each reference
-	for (; i--;)
+	for(; i--;)
 	{
 		//specifying the char displacement inside the char mem
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),

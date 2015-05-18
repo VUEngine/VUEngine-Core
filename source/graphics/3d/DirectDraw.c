@@ -123,7 +123,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 	int parallax = fromPoint.parallax;
 
-	if (dy < 0)
+	if(dy < 0)
 	{
 	    dy = -dy;
 	    stepY = -1;
@@ -133,7 +133,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	    stepY = 1;
 	}
 
-	if (dx < 0)
+	if(dx < 0)
 	{
 	    dx = -dx;
 	    stepX = -1;
@@ -146,14 +146,14 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	dy <<= 1;
 	dx <<= 1;
 
-	if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+	if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 	{
 		DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
 		DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
 	}
 
 	int counter = 0;
-	if (dx > dy)
+	if(dx > dy)
 	{
 		int fraction = dy - (dx >> 1);
 
@@ -161,11 +161,11 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 		while (fromPoint.x != toPoint.x)
 		{
-			if (++counter > 100)
+			if(++counter > 100)
 			{
 				break;
 			}
-			if (fraction >= 0)
+			if(fraction >= 0)
 			{
 				fromPoint.y += stepY;
 				fraction -= dx;
@@ -176,7 +176,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			parallax += parallaxStep;
 
-			if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+			if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 			{
 				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
 				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
@@ -192,12 +192,12 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 		while (fromPoint.y != toPoint.y)
 		{
-			if (++counter > 100)
+			if(++counter > 100)
 			{
 				break;
 			}
 
-			if (fraction >= 0)
+			if(fraction >= 0)
 			{
 				fromPoint.x += stepX;
 				fraction -= dy;
@@ -208,7 +208,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			parallax += parallaxStep;
 
-			if (((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+			if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 			{
 				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
 				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);

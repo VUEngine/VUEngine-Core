@@ -102,7 +102,7 @@ void SpriteManager_destructor(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::destructor: null this");
 
-	if (this->sprites)
+	if(this->sprites)
 	{
 		__DELETE(this->sprites);
 		this->sprites = NULL;
@@ -120,7 +120,7 @@ void SpriteManager_reset(SpriteManager this)
 	// must reset the ObjectSpriteContainerManager before the SpriteManager!
 	ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager_getInstance());
 
-	if (this->sprites)
+	if(this->sprites)
 	{
 		__DELETE(this->sprites);
 		this->sprites = NULL;
@@ -151,20 +151,20 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 
 	VirtualNode node = VirtualList_end(this->sprites);
 
-	for (; node;)
+	for(; node;)
 	{
-		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+		Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
 		const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 
 		VirtualNode otherNode = VirtualNode_getPrevious(node);
 
 		for(; otherNode; otherNode = VirtualNode_getPrevious(otherNode))
 		{
-			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(otherNode));
+			Sprite otherSprite = __GET_CAST(Sprite, VirtualNode_getData(otherNode));
 			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, otherSprite);
 	
 			// check if z positions are swaped
-			if (otherPosition->z > position->z ||
+			if(otherPosition->z > position->z ||
 					(otherPosition->z == position->z && Sprite_getParallaxDisplacement(otherSprite) > Sprite_getParallaxDisplacement(sprite))
 			)
 			{
@@ -202,20 +202,20 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 	this->node = this->node ? this->otherNode ? this->node : VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
 
-	for (; this->node; this->node = VirtualNode_getNext(this->node))
+	for(; this->node; this->node = VirtualNode_getNext(this->node))
 	{
-		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(this->node));
+		Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(this->node));
 		const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 
 		this->otherNode = this->otherNode ? VirtualNode_getNext(this->otherNode) : VirtualNode_getNext(this->node);
 
-		for (; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
+		for(; this->otherNode; this->otherNode = VirtualNode_getNext(this->otherNode))
 		{
-			Sprite otherSprite = __UPCAST(Sprite, VirtualNode_getData(this->otherNode));
+			Sprite otherSprite = __GET_CAST(Sprite, VirtualNode_getData(this->otherNode));
 			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, otherSprite);
 
 			// check if z positions are swaped
-			if (otherPosition->z < position->z ||
+			if(otherPosition->z < position->z ||
 					(otherPosition->z == position->z && Sprite_getParallaxDisplacement(otherSprite) < Sprite_getParallaxDisplacement(sprite))
 			)
 			{
@@ -231,8 +231,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(otherSprite, worldLayer1);
 
 				// render inmediately
-				__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, sprite));
-				__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, otherSprite));
+				__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, sprite));
+				__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, otherSprite));
 
 				// swap array entries
 				VirtualNode_swapData(this->node, this->otherNode);
@@ -241,7 +241,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			}
 		}
 
-		if (!this->otherNode)
+		if(!this->otherNode)
 		{
 			return;
 		}
@@ -251,7 +251,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::addSprite: null this");
-	ASSERT(__UPCAST(Sprite, sprite), "SpriteManager::addSprite: adding no sprite");
+	ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::addSprite: adding no sprite");
 
 #ifdef __DEBUG
 	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
@@ -267,7 +267,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		
 		if(VirtualList_begin(this->sprites))
 		{
-			layer = Sprite_getWorldLayer(__UPCAST(Sprite, VirtualList_front(this->sprites))) - 1;
+			layer = Sprite_getWorldLayer(__GET_CAST(Sprite, VirtualList_front(this->sprites))) - 1;
 			
 			if(this->tempFreedLayer && layer == this->tempFreedLayer)
 			{
@@ -298,12 +298,12 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::removeSprite: null this");
-	ASSERT(__UPCAST(Sprite, sprite), "SpriteManager::removeSprite: removing no sprite");
+	ASSERT(__GET_CAST(Sprite, sprite), "SpriteManager::removeSprite: removing no sprite");
 
 	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::removeSprite: sprite not found");
 
 	// check if exists
-	if (VirtualList_removeElement(this->sprites, sprite))
+	if(VirtualList_removeElement(this->sprites, sprite))
 	{
 		// hide it
 		__VIRTUAL_CALL(void, Sprite, hide, sprite);
@@ -355,20 +355,20 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 		}		
 	}
 	
-	if (this->freedLayer)
+	if(this->freedLayer)
 	{
 		ASSERT(this->freedLayer < __TOTAL_LAYERS, "SpriteManager::processRemovedSprites: error freedLayer");
 
 		VirtualNode node = VirtualList_end(this->sprites);
 
-		for (; node; node = VirtualNode_getPrevious(node))
+		for(; node; node = VirtualNode_getPrevious(node))
 		{
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
 			u8 spriteLayer = Sprite_getWorldLayer(sprite);
 			
 			// search for the next sprite with the closest 
 			// layer to the freed layer
-			if (spriteLayer < this->freedLayer)
+			if(spriteLayer < this->freedLayer)
 			{
 				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processRemovedSprites:1 this->freeLayer >= this->freedLayer");
 
@@ -394,7 +394,7 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 			}
 		}
 		
-		if (!node)
+		if(!node)
 		{
 			this->freedLayer = 0;
 			previouslyRecoveredAllLayers = true;
@@ -407,9 +407,9 @@ void SpriteManager_setLastLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
-	if (VirtualList_begin(this->sprites))
+	if(VirtualList_begin(this->sprites))
 	{
-		this->freeLayer = Sprite_getWorldLayer(__UPCAST(Sprite, VirtualList_front(this->sprites))) - 1;
+		this->freeLayer = Sprite_getWorldLayer(__GET_CAST(Sprite, VirtualList_front(this->sprites))) - 1;
 		ASSERT(!this->tempFreedLayer || this->freeLayer <= this->tempFreedLayer, "SpriteManager::setLastLayer: this->freeLayer >= this->tempFreedLayer");
 	}
 	else 
@@ -425,7 +425,7 @@ void SpriteManager_setLastLayer(SpriteManager this)
 	
 	Printing_render(Printing_getInstance(), this->freeLayer);
 	
-	if (0 < this->freeLayer)
+	if(0 < this->freeLayer)
 	{
 		WA[this->freeLayer - 1].head = WRLD_OFF;
 	}
@@ -444,19 +444,19 @@ void SpriteManager_render(SpriteManager this)
 
 	while (*_xpstts & XPBSYR);
 
-	for (; node; node = VirtualNode_getNext(node))
+	for(; node; node = VirtualNode_getNext(node))
 	{
-		__VIRTUAL_CALL(void, Sprite, render, __UPCAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(Game_getInstance()))
+	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(Game_getInstance()))
+	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(Game_getInstance()))
+	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 	// sort layers
 	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
@@ -477,15 +477,15 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 	VirtualNode node = VirtualList_end(this->sprites);
 
-	for (; node; node = VirtualNode_getPrevious(node))
+	for(; node; node = VirtualNode_getPrevious(node))
 	{
-		if (Sprite_getWorldLayer(__UPCAST(Sprite, VirtualNode_getData(node))) != layer)
+		if(Sprite_getWorldLayer(__GET_CAST(Sprite, VirtualNode_getData(node))) != layer)
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, __UPCAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __GET_CAST(Sprite, VirtualNode_getData(node)));
 		}
 		else
 		{
-			__VIRTUAL_CALL(void, Sprite, show, __UPCAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, show, __GET_CAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -496,9 +496,9 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	ASSERT(this, "SpriteManager::recoverLayers: null this");
 
 	VirtualNode node = VirtualList_end(this->sprites);
-	for (; node; node = VirtualNode_getPrevious(node))
+	for(; node; node = VirtualNode_getPrevious(node))
 	{
-		__VIRTUAL_CALL(void, Sprite, show, __UPCAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, show, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
 }
 
@@ -511,9 +511,9 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		if (Sprite_getWorldLayer(__UPCAST(Sprite, VirtualNode_getData(node))) == layer)
+		if(Sprite_getWorldLayer(__GET_CAST(Sprite, VirtualNode_getData(node))) == layer)
 		{
-			return __UPCAST(Sprite, VirtualNode_getData(node));
+			return __GET_CAST(Sprite, VirtualNode_getData(node));
 		}
 	}
 	
@@ -537,10 +537,10 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 
 	VirtualNode node = VirtualList_begin(this->sprites);
 
-	for (; node; node = VirtualNode_getNext(node))
+	for(; node; node = VirtualNode_getNext(node))
 	{
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
-		Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(node));
+		Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
 
 		strncpy(spriteClassName, __GET_CLASS_NAME(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
@@ -550,7 +550,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 		Printing_text(Printing_getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing_text(Printing_getInstance(), spriteClassName, auxX + 4, auxY, NULL);
 
-		if (__SCREEN_HEIGHT / 8 - 2 <= ++auxY)
+		if(__SCREEN_HEIGHT / 8 - 2 <= ++auxY)
 		{
 			auxY = y + 2;
 			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 5;

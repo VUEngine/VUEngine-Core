@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Game.h>
+#include <SRAMManager.h>
 #include <HardwareManager.h>
 #include <ClockManager.h>
 #include <CollisionManager.h>
@@ -208,6 +209,7 @@ static void Game_constructor(Game this)
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
 	this->screen = Screen_getInstance();
+	//SRAMManager_getInstance();
 	
 	// set the default screen movement manager
 	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
@@ -263,7 +265,7 @@ void Game_start(Game this, GameState state)
 
 	HardwareManager_displayOn(this->hardwareManager);
 
-	if (!StateMachine_getCurrentState(this->stateMachine))
+	if(!StateMachine_getCurrentState(this->stateMachine))
 	{
 		// start the game's general clock
 		Clock_start(this->clock);
@@ -293,6 +295,28 @@ void Game_changeState(Game this, GameState state)
 	this->nextState = state;
 	this->nextStateOperation = kSwapState;
 }
+
+// add a state to the game's state machine's stack
+void Game_addState(Game this, GameState state)
+{
+	ASSERT(this, "Game::changeState: null this");
+
+	// state changing must be done when no other process
+	// may be affecting the game's general state
+	this->nextState = state;
+	this->nextStateOperation = kPushState;
+}
+
+// add a state to the game's state machine's stack
+void Game_removeState(Game this, GameState state)
+{
+	ASSERT(this, "Game::changeState: null this");
+
+	// state changing must be done when no other process
+	// may be affecting the game's general state
+	this->nextStateOperation = kPopState;
+}
+
 
 // set game's state
 static void Game_setNextState(Game this, GameState state)
@@ -357,12 +381,12 @@ static void Game_setNextState(Game this, GameState state)
 	HardwareManager_enableRendering(this->hardwareManager);
 
 	// if automatic pause function is in place
-	if (this->automaticPauseState)
+	if(this->automaticPauseState)
 	{
 		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock_getTime(this->clock) - this->lastAutoPauseCheckTime);
 		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
 		
-		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, __UPCAST(Object, this), __UPCAST(Object, this), kAutoPause, NULL);
+		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, __GET_CAST(Object, this), __GET_CAST(Object, this), kAutoPause, NULL);
 		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 	}
 
@@ -393,6 +417,12 @@ void Game_reset(Game this)
 {
 	ASSERT(this, "Game::reset: null this");
 
+#ifdef	__MEMORY_POOL_CLEAN_UP
+	MemoryPool_cleanUp(MemoryPool_getInstance());
+#endif
+	
+	// discard all delayed messages, since the objects receiving them 
+	// most likely will be deleted
 	MessageDispatcher_discardAllDelayedMessages(MessageDispatcher_getInstance());
 	
 	// setup the display
@@ -433,24 +463,24 @@ static void Game_handleInput(Game this)
 	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 
 	// check code to access special feature
-	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RU))
+	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RU))
 	{
-		if (Game_isInDebugMode(this))
+		if(Game_isInDebugMode(this))
 		{
-			this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+			this->nextState = __GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
 		else
 		{
-			if (Game_isInSpecialMode(this))
+			if(Game_isInSpecialMode(this))
 			{
-				this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+				this->nextState = __GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __UPCAST(GameState, DebugState_getInstance());
+			this->nextState = __GET_CAST(GameState, DebugState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -463,24 +493,24 @@ static void Game_handleInput(Game this)
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RD))
+	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RD))
 	{
-		if (Game_isInStageEditor(this))
+		if(Game_isInStageEditor(this))
 		{
-			this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+			this->nextState = __GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
 		else
 		{
-			if (Game_isInSpecialMode(this))
+			if(Game_isInSpecialMode(this))
 			{
-				this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+				this->nextState = __GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __UPCAST(GameState, StageEditorState_getInstance());
+			this->nextState = __GET_CAST(GameState, StageEditorState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -493,24 +523,24 @@ static void Game_handleInput(Game this)
 #ifdef __ANIMATION_EDITOR
 
 	// check code to access special feature
-	if ((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RR))
+	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RR))
 	{
-		if (Game_isInAnimationEditor(this))
+		if(Game_isInAnimationEditor(this))
 		{
-			this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+			this->nextState = __GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 			StateMachine_popState(this->stateMachine);
 			this->nextState = NULL;
 		}
 		else
 		{
-			if (Game_isInSpecialMode(this))
+			if(Game_isInSpecialMode(this))
 			{
-				this->nextState = __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+				this->nextState = __GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 				StateMachine_popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __UPCAST(GameState, AnimationEditorState_getInstance());
+			this->nextState = __GET_CAST(GameState, AnimationEditorState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -522,7 +552,7 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
+	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
 		return;
@@ -530,7 +560,7 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
+	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
 		return;
@@ -538,7 +568,7 @@ static void Game_handleInput(Game this)
 #endif
 
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
+	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
 		return;
@@ -546,22 +576,22 @@ static void Game_handleInput(Game this)
 #endif
 
 	// check for a new key pressed
-	if (pressedKey)
+	if(pressedKey)
 	{
 		// inform the game about the pressed key
-		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyPressed, &pressedKey);
+		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->stateMachine), kKeyPressed, &pressedKey);
 	}
 
-	if (releasedKey)
+	if(releasedKey)
 	{
 		// inform the game about the released key
-		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyReleased, &releasedKey);
+		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->stateMachine), kKeyReleased, &releasedKey);
 	}
 
-	if (holdKey)
+	if(holdKey)
 	{
 		// inform the game about the hold key
-		MessageDispatcher_dispatchMessage(0, __UPCAST(Object, this), __UPCAST(Object, this->stateMachine), kKeyHold, &holdKey);
+		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
 
 	KeypadManager_clear(this->keypadManager);
@@ -591,13 +621,13 @@ static void Game_updateLogic(Game this)
 	this->lastProcessName = "dispatch delayed messages";
 #endif
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 	// dispatch queued messages
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
@@ -623,13 +653,13 @@ static void Game_updatePhysics(Game this)
 #endif
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 	// process collisions
 	CollisionManager_update(this->collisionManager);
@@ -655,16 +685,16 @@ static void Game_updateRendering(Game this)
 	this->lastProcessName = "apply transformations";
 #endif
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 	// apply world transformations
-	GameState_transform(__UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	GameState_transform(__GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 
 #ifdef __DEBUG
 	this->lastProcessName = "render";
@@ -687,15 +717,15 @@ static void Game_cleanUp(Game this)
 	this->lastProcessName = "update param table";
 #endif
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(this))
+	if(!Game_isInSpecialMode(this))
 #endif
-	if (!ParamTableManager_processRemovedSprites(this->paramTableManager))
+	if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
 	{
 #ifdef __DEBUG
 		this->lastProcessName = "defragmenting";
@@ -728,10 +758,10 @@ static void Game_update(Game this)
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
-		if (currentTime - mainLogicTime >= __FPS_BASED_SECONDS)
+		if(currentTime - mainLogicTime >= __FPS_BASED_SECONDS)
 		{
 			// check if new state available
-			if (this->nextState)
+			if(this->nextState)
 			{
 #ifdef __DEBUG
 				this->lastProcessName = "setting next state";
@@ -752,7 +782,7 @@ static void Game_update(Game this)
 		}
 		// do some clean up at the half of the second, to don't interfere
 		// with the game' normal flow
-		else if (currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
+		else if(currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
 		{
 			Game_cleanUp(this);
 
@@ -766,14 +796,6 @@ static void Game_update(Game this)
 #ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 		// accumulate user's input until next logic cycle
 		KeypadManager_read(this->keypadManager);
-#endif
-		
-#ifdef __DEBUG
-		if (previousLastProcessName != this->lastProcessName)
-		{
-			Printing_text(Printing_getInstance(), ":                              ", 10, __SCREEN_HEIGHT / 8 - 1, NULL);
-			Printing_text(Printing_getInstance(), this->lastProcessName, 12, __SCREEN_HEIGHT / 8 - 1, NULL);
-		}
 #endif
 	}
 }
@@ -880,13 +902,13 @@ bool Game_isEnteringSpecialMode(Game this)
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= __UPCAST(GameState, DebugState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __GET_CAST(GameState, DebugState_getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= __UPCAST(GameState, StageEditorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __GET_CAST(GameState, StageEditorState_getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= __UPCAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __GET_CAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -899,13 +921,13 @@ bool Game_isExitingSpecialMode(Game this)
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= __UPCAST(GameState, DebugState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __GET_CAST(GameState, DebugState_getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= __UPCAST(GameState, StageEditorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __GET_CAST(GameState, StageEditorState_getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= __UPCAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __GET_CAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -923,7 +945,7 @@ Stage Game_getStage(Game this)
 {
 	ASSERT(this, "Game::getStage: null this");
 
-	return GameState_getStage(__UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState_getStage(__GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 // retrieve current state
@@ -931,7 +953,7 @@ GameState Game_getCurrentState(Game this)
 {
 	ASSERT(this, "Game::getCurrentState: null this");
 
-	return __UPCAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+	return __GET_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 }
 
 #ifdef __LOW_BATTERY_INDICATOR
@@ -940,16 +962,16 @@ static void Game_checkLowBattery(Game this, u16 keypad)
 {
 	ASSERT(this, "Game::checkLowBatteryIndicator: null this");
 
-    if (keypad & K_PWR)
+    if(keypad & K_PWR)
     {
-        if (!this->isShowingLowBatteryIndicator) {
-            MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kLowBatteryIndicator, (bool*)true);
+        if(!this->isShowingLowBatteryIndicator) {
+            MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, __GET_CAST(Object, this), __GET_CAST(Object, this), kLowBatteryIndicator, (bool*)true);
             this->isShowingLowBatteryIndicator = true;
         }
     }
     else
     {
-         if (this->isShowingLowBatteryIndicator) {
+         if(this->isShowingLowBatteryIndicator) {
             MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance(), kLowBatteryIndicator);
             Printing_text(Printing_getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
             this->isShowingLowBatteryIndicator = false;
@@ -963,7 +985,7 @@ static void Game_printLowBatteryIndicator(Game this, bool showIndicator)
 	ASSERT(this, "Game::printLowBatteryIndicator: null this");
 
     Printing_text(Printing_getInstance(), (showIndicator) ? "\x01\x02" : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
-    MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
+    MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __GET_CAST(Object, this), __GET_CAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
 }
 #endif
 
@@ -973,7 +995,7 @@ void Game_pause(Game this, GameState pauseState)
 	ASSERT(this, "Game::pause: null this");
 	ASSERT(pauseState, "Game::pause: null pauseState");
 
-	if (pauseState)
+	if(pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPushState;
@@ -987,14 +1009,14 @@ void Game_unpause(Game this, GameState pauseState)
 	ASSERT(pauseState, "Game::unpause: null pauseState");
 	ASSERT(pauseState == Game_getCurrentState(this), "Game::unpause: null pauseState sent is not the current one");
 
-	if (pauseState && Game_getCurrentState(this) == pauseState)
+	if(pauseState && Game_getCurrentState(this) == pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
 		
-		if (Game_getCurrentState(this) == this->automaticPauseState)
+		if(Game_getCurrentState(this) == this->automaticPauseState)
 		{
-			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kAutoPause, NULL);
+			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, __GET_CAST(Object, this), __GET_CAST(Object, this), kAutoPause, NULL);
 			this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 		}
 	}
@@ -1012,17 +1034,17 @@ static void Game_autoPause(Game this)
 {
 	ASSERT(this, "Game::autoPause: null this");
 
-	if (this->automaticPauseState)
+	if(this->automaticPauseState)
 	{
 		// only pause if no more than one state is active
-		if (1 == StateMachine_getStackSize(this->stateMachine))
+		if(1 == StateMachine_getStackSize(this->stateMachine))
 		{
 			Game_pause(this, this->automaticPauseState);
 		}
 		else 
 		{
 			// otherwise just wait a minute to check again
-			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __UPCAST(Object, this), __UPCAST(Object, this), kAutoPause, NULL);
+			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __GET_CAST(Object, this), __GET_CAST(Object, this), kAutoPause, NULL);
 		}
 	}
 }

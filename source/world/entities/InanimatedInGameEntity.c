@@ -42,23 +42,23 @@ __CLASS_DEFINITION(InanimatedInGameEntity, InGameEntity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id)
-__CLASS_NEW_END(InanimatedInGameEntity, inanimatedInGameEntityDefinition, id);
+__CLASS_NEW_DEFINITION(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(InanimatedInGameEntity, inanimatedInGameEntityDefinition, id, name);
 
 // class's constructor
-void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id)
+void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "InanimatedInGameEntity::constructor: null this");
 	ASSERT(inanimatedInGameEntityDefinition, "InanimatedInGameEntity::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(&inanimatedInGameEntityDefinition->inGameEntityDefinition, id);
+	__CONSTRUCT_BASE(&inanimatedInGameEntityDefinition->inGameEntityDefinition, id, name);
 
 	// check if register for collision detection
-	if (inanimatedInGameEntityDefinition->registerShape)
+	if(inanimatedInGameEntityDefinition->registerShape)
 	{
 		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __UPCAST(SpatialObject, this), kCuboid);
+		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __GET_CAST(SpatialObject, this), kCuboid);
 
 		ASSERT(this->shape, "InanimatedInGameEntity::constructor: shape not created");
 	}

@@ -35,7 +35,7 @@ void Mem_copy (u8* dest, const u8* src, u16 num)
 {
 	u16 i;
 	CACHE_ENABLE;
-	for (i = 0; i < num; i++)
+	for(i = 0; i < num; i++)
 	{
 		*dest++ = *src++;
 	}
@@ -46,7 +46,7 @@ void Mem_copy (u8* dest, const u8* src, u16 num)
 void Mem_set (u8* dest, u16 src, u16 num)
 {
 	u16 i;
-	for (i = 0; i < num; i++,dest++) 
+	for(i = 0; i < num; i++,dest++)
 	{
 		*dest += src;	
 		dest++;
@@ -60,7 +60,7 @@ void Mem_clearFast(u32* dest,  u16 num )
 	num >>= 1;
 
 	//memset(dest, 0, num);
-	for (i = 0; i < num; i += 16)
+	for(i = 0; i < num; i += 16)
 	{
 		//*dest++ = 0x00000000;
 		dest[i]    = 0x00000000;
@@ -85,7 +85,7 @@ void Mem_clearFast(u32* dest,  u16 num )
 void Mem_clear (u16* dest,  u16 num )
 {
 	u16 i;
-	for (i = 0; i < num; i++) *dest++ = 0x0000;
+	for(i = 0; i < num; i++) *dest++ = 0x0000;
 }
 
 void Mem_substract (u8* dest, const u8* src, u16 num, u16 offset,u8 modifier)
@@ -97,7 +97,7 @@ void Mem_add (u8* dest, const u8* src, u16 num, u16 offset)
 	CACHE_ENABLE;
 	u16 i;
 	int carry;
-	for (i = 0; i < num; i++)
+	for(i = 0; i < num; i++)
 	{
 		*dest++ = carry = *src++ + offset;
 		*dest++ =(*src++ + (offset >> 8)) | (carry >> 8);

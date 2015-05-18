@@ -50,11 +50,11 @@ __CLASS_DEFINITION(MBackground, Entity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id)
-__CLASS_NEW_END(MBackground, mBackgroundDefinition, id);
+__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(MBackground, mBackgroundDefinition, id, name);
 
 // class's constructor
-void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id)
+void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "MBackground::constructor: null this");
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
@@ -62,7 +62,7 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	ASSERT(mBackgroundDefinition->spritesDefinitions[0]->textureDefinition, "MBackground::constructor: null texture definition");
 	
 	// construct base object
-	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id);
+	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id, name);
 
 	this->mBackgroundDefinition = mBackgroundDefinition;
 	
@@ -88,7 +88,7 @@ void MBackground_initialize(MBackground this)
 	// first register with the manager so it handles the texture loading process
 	MBackgroundManager_registerMBackground(MBackgroundManager_getInstance(), this, this->mBackgroundDefinition->spritesDefinitions[0]->textureDefinition);
 
-	Entity_initialize(__UPCAST(Entity, this));
+	Entity_initialize(__GET_CAST(Entity, this));
 
 	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
 }
@@ -98,7 +98,7 @@ Texture MBackground_getTexture(MBackground this)
 {
 	ASSERT(this, "MBackground::getTexture: null this");
 
-	return !this->sprites? NULL: Sprite_getTexture(__UPCAST(Sprite, VirtualList_front(this->sprites)));
+	return !this->sprites? NULL: Sprite_getTexture(__GET_CAST(Sprite, VirtualList_front(this->sprites)));
 }
 
 int MBackground_isVisible(MBackground this, int pad)
@@ -106,5 +106,5 @@ int MBackground_isVisible(MBackground this, int pad)
 	ASSERT(this, "MBackground::isVisible: null this");
 
 	// TODO: add support for MBgmapSprites
-	return Entity_isVisible(__UPCAST(Entity, this), pad);
+	return Entity_isVisible(__GET_CAST(Entity, this), pad);
 }

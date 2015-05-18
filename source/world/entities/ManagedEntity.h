@@ -68,9 +68,9 @@ typedef const ManagedEntityDefinition ManagedEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id);
+__CLASS_NEW_DECLARE(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name);
 
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 ID);
+void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name);
 void ManagedEntity_destructor(ManagedEntity this);
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform);
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform);

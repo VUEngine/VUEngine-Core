@@ -58,9 +58,9 @@ int Math_powerFast(int base, int power)
 
 	power = 0 > power ? -power : power;
 
-	for (i = 1; i < power; i++)
+	for(i = 1; i < power; i++)
 	{
-		for (j = 0; j < limit; j++)
+		for(j = 0; j < limit; j++)
 		{
 			result += sum;
 		}

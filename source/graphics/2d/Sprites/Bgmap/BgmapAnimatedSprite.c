@@ -45,7 +45,7 @@ __CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 extern int strcmp(const char *, const char *);
 
 // class's constructor
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,22 +53,22 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Spri
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
-__CLASS_NEW_END(BgmapAnimatedSprite, spriteDefinition, owner);
+__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
+__CLASS_NEW_END(BgmapAnimatedSprite, bSpriteDefinition, owner);
 
 // class's constructor
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
 {
 	// construct base object
-	__CONSTRUCT_BASE(spriteDefinition);
+	__CONSTRUCT_BASE(bSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __UPCAST(Sprite, this), Texture_getCharSet(this->texture));
+	this->animationController = __NEW(AnimationController, owner, __GET_CAST(Sprite, this), Texture_getCharSet(this->texture));
 	
 	if(this->texture)
 	{
 		// since the offset will be moved during animation, must save it
-		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
-		this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture))) << 3;
+		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__GET_CAST(BgmapTexture, this->texture))) << 3;
+		this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__GET_CAST(BgmapTexture, this->texture))) << 3;
 	}
 }
 
@@ -94,7 +94,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 	ASSERT(Texture_getCharSet(this->texture), "BgmapAnimatedSprite::writeAnimation: null charset");
 
 	// write according to the allocation type
-	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
+	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
@@ -119,7 +119,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}
 			
-			BgmapSprite_invalidateParamTable(__UPCAST(BgmapSprite, this));
+			BgmapSprite_invalidateParamTable(__GET_CAST(BgmapSprite, this));
 			this->renderFlag |= __UPDATE_M;
 			break;
 	}

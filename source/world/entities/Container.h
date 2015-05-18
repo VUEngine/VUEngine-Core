@@ -54,6 +54,7 @@
 		__VIRTUAL_DEC(setLocalPosition);										\
 		__VIRTUAL_DEC(doMessage);												\
 		__VIRTUAL_DEC(addChild);												\
+		__VIRTUAL_DEC(removeChild);												\
 		__VIRTUAL_DEC(suspend);													\
 		__VIRTUAL_DEC(resume);													\
 
@@ -66,6 +67,7 @@
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);					\
 		__VIRTUAL_SET(ClassName, Container, doMessage);							\
 		__VIRTUAL_SET(ClassName, Container, addChild);							\
+		__VIRTUAL_SET(ClassName, Container, removeChild);						\
 		__VIRTUAL_SET(ClassName, Container, suspend);							\
 		__VIRTUAL_SET(ClassName, Container, resume);							\
 
@@ -73,6 +75,9 @@
 																				\
 	/* super's attributes */													\
 	SpatialObject_ATTRIBUTES;													\
+																				\
+	/* 3d transformation */														\
+	Transformation transform;													\
 																				\
 	/* children list */															\
 	VirtualList children;														\
@@ -92,11 +97,8 @@
 	/* flag for parent to know to delete it */									\
 	u8 deleteMe;																\
 																				\
-	/* 3d transformation */														\
-	Transformation transform;													\
-																				\
 	/* flag to recalculate global position */									\
-	VBVec3D invalidateGlobalPosition;											\
+	VBVec3DFlag invalidateGlobalPosition;										\
 																				\
 
 __CLASS(Container);
@@ -113,9 +115,9 @@ Shape SpatialObject_getShape(SpatialObject this);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Container, s16 id);
+__CLASS_NEW_DECLARE(Container, s16 id, const char* const name);
 
-void Container_constructor(Container this, s16 id);
+void Container_constructor(Container this, s16 id, const char* const name);
 void Container_destructor(Container this);
 void Container_deleteMyself(Container this);
 void Container_addChild(Container this, Container child);
@@ -143,7 +145,7 @@ s16 Container_getId(Container this);
 Container Container_getParent(Container this);
 int Container_getChildCount(Container this);
 VirtualList Container_getChildren(Container this);
-void Container_setName(Container this, char* name);
+void Container_setName(Container this, const char* const  name);
 char* Container_getName(Container this);
 Container Container_getChildByName(Container this, char* childName, bool recursive);
 Container Container_getChildById(Container this, s16 id);

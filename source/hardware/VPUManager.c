@@ -195,7 +195,7 @@ void VPUManager_clearScreen(VPUManager this)
 
 	int i;
 	//clear every bgmap segment
-    for (i = 0; i < 14; i++)
+    for(i = 0; i < 14; i++)
 	{
 		Mem_clear((u16*)BGMap(i), 8192);
     }
@@ -221,7 +221,7 @@ void VPUManager_setupColumnTable(VPUManager this)
 	ASSERT(this, "VPUManager::setupColumnTable: null this");
 
 	int i;
-	for (i = 0; i < 128; i++)
+	for(i = 0; i < 128; i++)
 	{
 		CLMN_TBL[i] = columnTable[i];
 		CLMN_TBL[i + 0x0080] = columnTable[127 - i];

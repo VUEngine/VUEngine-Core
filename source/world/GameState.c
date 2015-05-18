@@ -64,7 +64,7 @@ void GameState_destructor(GameState this)
 	ASSERT(this, "GameState::destructor: null this");
 
 	// destroy the stage
-	if (this->stage)
+	if(this->stage)
 	{
 		// destroy the stage
 		__DELETE(this->stage);
@@ -100,7 +100,7 @@ void GameState_exit(GameState this, void* owner)
 	ASSERT(this, "GameState::exit: null this");
 
 	// make sure to free the memory
-	if (this->stage)
+	if(this->stage)
 	{
 		// destroy the stage
 		__DELETE(this->stage);
@@ -115,15 +115,15 @@ void GameState_suspend(GameState this, void* owner)
 	ASSERT(this, "GameState::suspend: null this");
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
 	
@@ -153,15 +153,15 @@ void GameState_resume(GameState this, void* owner)
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
 
@@ -204,7 +204,7 @@ bool GameState_handleMessage(GameState this, void* owner, Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
-	return Container_propagateEvent(__UPCAST(Container, this->stage), Container_onMessage, Telegram_getMessage(telegram));
+	return Container_propagateEvent(__GET_CAST(Container, this->stage), Container_onMessage, Telegram_getMessage(telegram));
 }
 
 // update level entities' positions
@@ -237,7 +237,7 @@ void GameState_transform(GameState this)
 // propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message)
 {
-	return Container_propagateEvent(__UPCAST(Container, this->stage), Container_onMessage, message);
+	return Container_propagateEvent(__GET_CAST(Container, this->stage), Container_onMessage, message);
 }
 
 // process user input
@@ -247,7 +247,7 @@ void GameState_onMessage(GameState this, int message)
 
 }
 // load a stage
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore)
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition)
 {
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
@@ -255,7 +255,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// disable hardware interrupts
 	Game_disableHardwareInterrupts(Game_getInstance());
 
-	if (this->stage)
+	if(this->stage)
 	{
 		// destroy the stage
 		__DELETE(this->stage);
@@ -270,7 +270,10 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
 	//load world entities
-	Stage_load(this->stage, stageDefinition, entityNamesToIgnore);
+	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
+
+	// move the screen to its position
+	Screen_positione(Screen_getInstance(), false);
 
 	// transform everything
 	GameState_transform(this);

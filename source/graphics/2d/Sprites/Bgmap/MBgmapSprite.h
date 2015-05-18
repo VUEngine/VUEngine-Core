@@ -44,7 +44,7 @@
 // declare the virtual methods which are redefined
 #define MBgmapSprite_SET_VTABLE(ClassName)										\
 	BgmapSprite_SET_VTABLE(ClassName)											\
-	__VIRTUAL_SET(ClassName, MBgmapSprite, positione);				\
+	__VIRTUAL_SET(ClassName, MBgmapSprite, positione);							\
 
 #define MBgmapSprite_ATTRIBUTES													\
 																				\
@@ -97,9 +97,9 @@ typedef const MBgmapSpriteDefinition MBgmapSpriteROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition);
+__CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition, Object );
 
-void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition);
+void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner);
 void MBgmapSprite_destructor(MBgmapSprite this);
 void MBgmapSprite_positione(MBgmapSprite this, VBVec3D position3D);
 

@@ -48,11 +48,11 @@ void Container_processRemovedChildren(Container this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Container, s16 id)
-__CLASS_NEW_END(Container, id);
+__CLASS_NEW_DEFINITION(Container, s16 id, const char* const name)
+__CLASS_NEW_END(Container, id, name);
 
 // class's constructor
-void Container_constructor(Container this, s16 id)
+void Container_constructor(Container this, s16 id, const char* const name)
 {
 	ASSERT(this, "Container::constructor: null this");
 
@@ -98,6 +98,7 @@ void Container_constructor(Container this, s16 id)
 	this->deleteMe = false;
 	
 	this->name = NULL;
+	Container_setName(this, name);
 }
 
 // class's destructor
@@ -109,7 +110,7 @@ void Container_destructor(Container this)
 	Container_processRemovedChildren(this);
 
 	// if I have children
-	if (this->children)
+	if(this->children)
 	{
 		// create a temporary children list
 		VirtualList childrenToDelete = __NEW(VirtualList);
@@ -122,9 +123,9 @@ void Container_destructor(Container this)
 		VirtualNode node = VirtualList_begin(childrenToDelete);
 
 		// destroy each child
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 	    {
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
 			child->parent = NULL;
@@ -135,7 +136,7 @@ void Container_destructor(Container this)
 	}
 
 	// first remove from parent
-	if (this->parent)
+	if(this->parent)
 	{
 		Container_removeChild(this->parent, this);
 	}
@@ -156,7 +157,7 @@ void Container_deleteMyself(Container this)
 	if(this->parent)
 	{
 		this->deleteMe = true;
-		Container_removeChild(this->parent, this);
+		__VIRTUAL_CALL(void, Container, removeChild, this->parent, this);
 	}
 	else
 	{
@@ -170,17 +171,17 @@ void Container_addChild(Container this, Container child)
 	ASSERT(this, "Container::addChild: null this");
 
 	// check if child is valid
-	if (child)
+	if(child)
 	{
 		// if don't have any child yet
-		if (!this->children)
+		if(!this->children)
 	    {
 			// create children list
 			this->children = __NEW(VirtualList);
 		}
 
 		// first remove from previous parent
-		if (child->parent)
+		if(child->parent)
 	    {
 			Container_removeChild(child->parent, child);
 		}
@@ -202,14 +203,14 @@ void Container_processRemovedChildren(Container this)
 {
 	ASSERT(this, "Container::processRemovedChildren: null this");
 
-	if (this->children && this->removedChildren)
+	if(this->children && this->removedChildren)
 	{
 		VirtualNode node = VirtualList_begin(this->removedChildren);
 
 		// remove each child
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 	    {
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			VirtualList_removeElement(this->children, child);
 			
@@ -231,10 +232,10 @@ void Container_removeChild(Container this, Container child)
 	ASSERT(this, "Container::removeChild: null this");
 
 	// check if child is valid and if I'm its parent
-	if (child && this == child->parent && this->children)
+	if(child && this == child->parent && this->children)
 	{
 		// if don't have any children to remove yet
-		if (!this->removedChildren)
+		if(!this->removedChildren)
 	    {
 			// create children list
 			this->removedChildren = __NEW(VirtualList);
@@ -254,7 +255,7 @@ void Container_update(Container this)
 	ASSERT(this, "Container::update: null this");
 
 	// if I have children
-	if (this->children)
+	if(this->children)
 	{
 		// first remove children
 		Container_processRemovedChildren(this);
@@ -262,7 +263,7 @@ void Container_update(Container this)
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// update each child
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 	    {
 			__VIRTUAL_CALL(void, Container, update, VirtualNode_getData(node));
 		}
@@ -274,7 +275,7 @@ Transformation Container_getEnvironmentTransform(Container this)
 {
 	ASSERT(this, "Container::getEnvironmentTransform: null this");
 
-	if (this->parent)
+	if(this->parent)
 	{
 		Transformation transformation = Container_getEnvironmentTransform(this->parent);
 
@@ -346,7 +347,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
 	// if I have children
-	if (this->children)
+	if(this->children)
 	{
 		// first remove children
 		Container_processRemovedChildren(this);
@@ -354,9 +355,9 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// update each child
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
 
@@ -387,7 +388,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
 	// if I have children
-	if (this->children)
+	if(this->children)
 	{
 		// first remove children
 		//Container_processRemovedChildren(this);
@@ -395,9 +396,9 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// update each child
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
 			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
@@ -433,7 +434,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
 	// if I have children
-	if (this->children)
+	if(this->children)
 	{
 		// first remove children
 		//Container_processRemovedChildren(this);
@@ -441,9 +442,9 @@ void Container_transform(Container this, const Transformation* environmentTransf
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// update each child
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
 			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
@@ -470,14 +471,14 @@ const VBVec3D* Container_getGlobalPosition(Container this)
 // invalidate global position
 static void Container_propagateInvalidateGlobalPosition(Container this)
 {
-	if (this->children)
+	if(this->children)
 	{
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// update each child
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			child->invalidateGlobalPosition.x |= this->invalidateGlobalPosition.x;
 			child->invalidateGlobalPosition.y |= this->invalidateGlobalPosition.y;
@@ -556,15 +557,15 @@ void Container_invalidateGlobalPosition(Container this)
 
 	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
 
-	if (this->children)
+	if(this->children)
 	{
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// update each child
-		for (; node; node = VirtualNode_getNext(node))
+		for(; node; node = VirtualNode_getNext(node))
 		{
 			// make sure children recalculates its global position
-			Container_invalidateGlobalPosition(__UPCAST(Container, VirtualNode_getData(node)));
+			Container_invalidateGlobalPosition(__GET_CAST(Container, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -589,10 +590,10 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 	ASSERT(this, "Container::passEvent: null this");
 
 	// if event is valid
-	if (event)
+	if(event)
 	{
 		// propagate if I have children
-		if (this->children)
+		if(this->children)
     	{
 			// first remove children
 			Container_processRemovedChildren(this);
@@ -600,10 +601,10 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 			VirtualNode node = VirtualList_begin(this->children);
 
 			// update each child
-			for (; node ; node = VirtualNode_getNext(node))
+			for(; node ; node = VirtualNode_getNext(node))
 	        {
 				// pass event to each child
-				if (Container_passEvent(__UPCAST(Container, VirtualNode_getData(node)), event, args))
+				if(Container_passEvent(__GET_CAST(Container, VirtualNode_getData(node)), event, args))
 	            {
 					return true;
 				}
@@ -668,7 +669,7 @@ VirtualList Container_getChildren(Container this)
 }
 
 // set name
-void Container_setName(Container this, char* name)
+void Container_setName(Container this, const char* const name)
 {
 	ASSERT(this, "Container::setName: null this");
 	
@@ -703,8 +704,10 @@ char* Container_getName(Container this)
 }
 
 // find child by name in given list
-Container Container_findChildByName(Container this, VirtualList children, char* childName, bool recursive)
+static Container Container_findChildByName(Container this, VirtualList children, char* childName, bool recursive)
 {
+	ASSERT(this, "Container::findChildByName: null this");
+
     Container child, grandChild;
     VirtualNode node = VirtualList_begin(children);
 
@@ -712,18 +715,18 @@ Container Container_findChildByName(Container this, VirtualList children, char* 
     Container_processRemovedChildren(this);
 
     // look through all children
-    for (; node ; node = VirtualNode_getNext(node))
+    for(; node ; node = VirtualNode_getNext(node))
     {
-        child = __UPCAST(Container, VirtualNode_getData(node));
+        child = __GET_CAST(Container, VirtualNode_getData(node));
 
-        if (child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
+        if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
         {
             return child;
         }
-        else if (recursive && child->children)
+        else if(recursive && child->children)
         {
             grandChild = Container_findChildByName(this, child->children, childName, recursive);
-            if (grandChild) {
+            if(grandChild) {
                 return grandChild;
             }
         }
@@ -739,13 +742,13 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 
     Container foundChild = NULL;
 
-	if (childName && this->children)
+	if(childName && this->children)
 	{
         // search through direct children
 		foundChild = Container_findChildByName(this, this->children, childName, false);
 
         // if no direct child could be found, do a recursive search, if applicable
-        if (!foundChild && recursive)
+        if(!foundChild && recursive)
         {
             foundChild = Container_findChildByName(this, this->children, childName, true);
         }
@@ -759,7 +762,7 @@ Container Container_getChildById(Container this, s16 id)
 {
 	ASSERT(this, "Container::getChildById: null this");
 
-	if (this->children)
+	if(this->children)
 	{
 		// first remove children
 		Container_processRemovedChildren(this);
@@ -767,9 +770,9 @@ Container Container_getChildById(Container this, s16 id)
 		VirtualNode node = VirtualList_begin(this->children);
 
 		// look through all children
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
         {
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 
 			if(child->id == id)
 			{
@@ -792,7 +795,7 @@ void Container_suspend(Container this)
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 			
 			__VIRTUAL_CALL(void, Container, suspend, child);
 		}
@@ -810,7 +813,7 @@ void Container_resume(Container this)
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Container child = __UPCAST(Container, VirtualNode_getData(node));
+			Container child = __GET_CAST(Container, VirtualNode_getData(node));
 			
 			__VIRTUAL_CALL(void, Container, resume, child);
 		}

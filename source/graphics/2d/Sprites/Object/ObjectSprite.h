@@ -108,9 +108,9 @@ typedef const ObjectSpriteDefinition ObjectSpriteROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinition);
+__CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 
-void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition);
+void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 void ObjectSprite_destructor(ObjectSprite this);
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
 const VBVec2D* ObjectSprite_getPosition(ObjectSprite this);

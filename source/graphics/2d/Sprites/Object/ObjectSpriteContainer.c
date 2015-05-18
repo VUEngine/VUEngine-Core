@@ -35,7 +35,6 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER	256
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,13 +84,16 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	this->z = 0;
 	
 	// register to sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
+	SpriteManager_addSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
 	// clear OBJ memory
 	int i = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
 
 	for(; i < (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
 	{
+		OAM[(i << 2) + 0] = 0;
+		OAM[(i << 2) + 1] = 0;
+		OAM[(i << 2) + 2] = 0;
 		OAM[(i << 2) + 3] = 0;
 	}
 
@@ -104,7 +106,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 
 	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
+	SpriteManager_removeSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
 	if(this->objectSprites)
 	{
@@ -112,7 +114,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			ObjectSprite_invalidateObjectSpriteContainer(__UPCAST(ObjectSprite, VirtualNode_getData(node)));
+			ObjectSprite_invalidateObjectSpriteContainer(__GET_CAST(ObjectSprite, VirtualNode_getData(node)));
 			__DELETE(VirtualNode_getData(node));
 		}
 
@@ -135,7 +137,7 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 
 		if(VirtualList_getSize(this->objectSprites))
 		{
-			ObjectSprite lastObjectSprite = __UPCAST(ObjectSprite, VirtualList_back(this->objectSprites));
+			ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 			
 			ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 			
@@ -164,7 +166,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	if(this->objectSpriteToDefragment)
 	{
 		int objectSpritePosition = VirtualList_getNodePosition(this->objectSprites, objectSprite);
-		int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
+		int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __GET_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
 		
 		if(objectSpritePosition <= objectSpriteToDefragmentPosition)
 		{
@@ -251,9 +253,9 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteToDefragment");
 
 	// get the next sprite to move
-	ObjectSprite objectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
+	ObjectSprite objectSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
 	
-	ASSERT(Sprite_getTexture(__UPCAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
+	ASSERT(Sprite_getTexture(__GET_CAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
 	
 	// move sprite back
 	ObjectSprite_setObjectIndex(objectSprite, this->freedObjectIndex);
@@ -272,7 +274,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		
 		if(node)
 		{
-			ObjectSprite lastObjectSprite = __UPCAST(ObjectSprite, VirtualNode_getData(node));
+			ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(node));
 			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - (ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite));
 		}
 		else
@@ -295,7 +297,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 	
 	//if render flag is set
-	if (this->renderFlag)
+	if(this->renderFlag)
 	{
 		// make sure to not render again
 		WA[this->worldLayer].head = this->head | WRLD_OVR;
@@ -308,7 +310,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		ObjectSprite_render(__UPCAST(ObjectSprite, VirtualNode_getData(node)));
+		ObjectSprite_render(__GET_CAST(ObjectSprite, VirtualNode_getData(node)));
 	}
 }
 
@@ -320,7 +322,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		__VIRTUAL_CALL(void, Sprite, show, __UPCAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, show, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
 }
 
@@ -335,7 +337,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 	
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, __UPCAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __GET_CAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -360,7 +362,7 @@ int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
 	
 	if(VirtualList_begin(this->objectSprites))
 	{
-		ObjectSprite lastObjectSprite = __UPCAST(ObjectSprite, VirtualList_back(this->objectSprites));
+		ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 		
 		ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 		

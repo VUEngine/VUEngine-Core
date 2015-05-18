@@ -70,7 +70,7 @@ __CLASS(ObjectAnimatedSprite);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ObjectAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner);
+__CLASS_NEW_DECLARE(ObjectAnimatedSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 
 void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this);
 void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this);

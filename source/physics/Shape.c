@@ -86,7 +86,7 @@ void Shape_setActive(Shape this, bool active)
 {
 	ASSERT(this, "Shape::setActive: null this");
 
-	if (active)
+	if(active)
 	{
 		CollisionManager_shapeBecameActive(CollisionManager_getInstance(), this);
 	}

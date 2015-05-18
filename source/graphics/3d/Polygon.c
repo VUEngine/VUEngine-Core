@@ -69,12 +69,12 @@ static void Polygon_constructor(Polygon this)
 void Polygon_destructor(Polygon this)
 {
 	// delete the vertices list
-	if (this->vertices)
+	if(this->vertices)
 	{
 		VirtualNode node = VirtualList_begin(this->vertices);
 
 		// delete each vertex
-		for (; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = VirtualNode_getNext(node))
 		{
 			__DELETE_BASIC(VirtualNode_getData(node));
 		}
@@ -98,13 +98,13 @@ void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 
 	// if not vertices list yet created
 	// delete the vertices list
-	if (!this->vertices)
+	if(!this->vertices)
 	{
 		this->vertices = __NEW(VirtualList);
 	}
 
 	// add vertice to the end of the list
-	VirtualList_pushBack(this->vertices, (BYTE*)vertice);
+	VirtualList_pushBack(this->vertices, vertice);
 }
 
 
@@ -114,7 +114,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 	int palette = 0x03;
 
 	// if I have some vertex, draw them
-	if (this->vertices && 2 < VirtualList_getSize(this->vertices))
+	if(this->vertices && 2 < VirtualList_getSize(this->vertices))
 	{
 		// the node's which hold the vertices
 		VirtualNode fromNode = VirtualList_begin(this->vertices);
@@ -129,7 +129,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 		VBVec2D toVertice2D = {0, 0, 0};
 
 		// draw the lines
-		for (; toNode ; fromNode = VirtualNode_getNext(fromNode), toNode = VirtualNode_getNext(toNode))
+		for(; toNode ; fromNode = VirtualNode_getNext(fromNode), toNode = VirtualNode_getNext(toNode))
 		{
 			// normalize vertice to screen coordinates
 			fromVertice3D = *((VBVec3D*)VirtualNode_getData(fromNode));
@@ -142,7 +142,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			__OPTICS_PROJECT_TO_2D(toVertice3D, toVertice2D);
 
 			// calculate parallax
-			if (calculateParallax)
+			if(calculateParallax)
 			{
 				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
 				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);
@@ -153,7 +153,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, palette);
 		}
 
-		if (fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
+		if(fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
 		{
 			fromVertice3D = *((VBVec3D*)VirtualNode_getData(fromNode));
 			toVertice3D = *((VBVec3D*)VirtualNode_getData(toNode));
@@ -165,7 +165,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			__OPTICS_PROJECT_TO_2D(toVertice3D, toVertice2D);
 
 			// calculate parallax
-			if (calculateParallax)
+			if(calculateParallax)
 			{
 				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
 				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);

@@ -52,7 +52,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Sprite_constructor(Sprite this)
+void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, Object owner)
 {
 	__CONSTRUCT_BASE();
 
@@ -71,7 +71,7 @@ void Sprite_constructor(Sprite this)
 void Sprite_destructor(Sprite this)
 {
 	ASSERT(this, "Sprite::destructor: null this");
-	ASSERT(__UPCAST(Sprite, this), "Sprite::destructor: null cast");
+	ASSERT(__GET_CAST(Sprite, this), "Sprite::destructor: null cast");
 
 	__VIRTUAL_CALL(void, Sprite, hide, this);
 
@@ -116,7 +116,7 @@ void Sprite_setRenderFlag(Sprite this, bool renderFlag)
 
 	// do not override the whole world entry, or will be updated in the
 	// next render
-	if (__UPDATE_HEAD != this->renderFlag || !renderFlag)
+	if(__UPDATE_HEAD != this->renderFlag || !renderFlag)
 	{
 		this->renderFlag = !renderFlag ? 0 : this->renderFlag | renderFlag;
 	}
@@ -160,7 +160,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 {
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
-	if (this->worldLayer != worldLayer)
+	if(this->worldLayer != worldLayer)
 	{
 		this->worldLayer = worldLayer;
 	
@@ -239,7 +239,7 @@ void Sprite_update(Sprite this, Clock clock)
 {
 	ASSERT(this, "Sprite::update: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		if(AnimationController_animate(this->animationController))
@@ -253,7 +253,7 @@ void Sprite_pause(Sprite this, bool pause)
 {
 	ASSERT(this, "Sprite::pause: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		AnimationController_pause(this->animationController, pause);
@@ -266,7 +266,7 @@ void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* 
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		AnimationController_play(this->animationController, animationDescription, functionName);
@@ -279,7 +279,7 @@ bool Sprite_isPlaying(Sprite this)
 {
 	ASSERT(this, "Sprite::isPlaying: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		return AnimationController_isPlaying(this->animationController);
@@ -292,7 +292,7 @@ bool Sprite_isPlayingFunction(Sprite this, AnimationDescription* animationDescri
 {
 	ASSERT(this, "Sprite::isPlayingFunction: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		return AnimationController_isPlayingFunction(this->animationController, animationDescription, functionName);
@@ -305,7 +305,7 @@ void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta)
 {
 	ASSERT(this, "Sprite::setFrameDelayDelta: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		AnimationController_setFrameDelayDelta(this->animationController, frameDelayDelta);
@@ -316,7 +316,7 @@ s8 Sprite_getActualFrame(Sprite this)
 {
 	ASSERT(this, "Sprite::getActualFrame: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		return AnimationController_getActualFrame(this->animationController);
@@ -329,7 +329,7 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame)
 {
 	ASSERT(this, "Sprite::setActualFrame: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		AnimationController_setActualFrame(this->animationController, actualFrame);
@@ -340,7 +340,7 @@ s8 Sprite_getFrameDelay(Sprite this)
 {
 	ASSERT(this, "Sprite::getFrameDelay: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		return AnimationController_getFrameDelay(this->animationController);
@@ -353,7 +353,7 @@ void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
 {
 	ASSERT(this, "Sprite::setFrameDelay: null this");
 
-	if (this->animationController)
+	if(this->animationController)
 	{
 		// first animate the frame
 		AnimationController_setFrameDelay(this->animationController, frameDelay);

@@ -128,8 +128,16 @@ void KeypadManager_clear(KeypadManager this)
 	ASSERT(this, "KeypadManager::clear: null this");
 
 	this->previousKey = this->currentKey;
+	this->currentKey = 0;
+}
+
+// clear previous saved keys
+void KeypadManager_flush(KeypadManager this)
+{
+	ASSERT(this, "KeypadManager::flush: null this");
 
 	this->currentKey = 0;
+	this->previousKey = 0;
 }
 
 // get pressed key

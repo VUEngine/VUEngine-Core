@@ -56,6 +56,5 @@ void* Telegram_getSender(Telegram this);
 void* Telegram_getReceiver(Telegram this);
 int Telegram_getMessage(Telegram this);
 void* Telegram_getExtraInfo(Telegram this);
-u32 Telegram_getDelay(Telegram this);
 
 #endif

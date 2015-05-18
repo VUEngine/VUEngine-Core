@@ -87,9 +87,9 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 	Screen screen = Screen_getInstance();
 	
 	// if focusInGameEntity is defined
-	if (screen && screen->focusInGameEntity)
+	if(screen && screen->focusInGameEntity)
 	{
-		Container focusInGameEntityParent = Container_getParent(__UPCAST(Container, screen->focusInGameEntity));
+		Container focusInGameEntityParent = Container_getParent(__GET_CAST(Container, screen->focusInGameEntity));
 		
 		if(focusInGameEntityParent)
 		{
@@ -100,32 +100,32 @@ void ScreenMovementManager_positione(ScreenMovementManager this, u8 checkIfFocus
 			__VIRTUAL_CALL(void, Container, transform, screen->focusInGameEntity, &environmentTransform);
 	
 			// get focusInGameEntity is moving
-			if (__VIRTUAL_CALL(bool, InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
+			if(__VIRTUAL_CALL(bool, InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 			{
 				// save last position
 				screen->lastDisplacement = screen->position;
 	
 				// get focusInGameEntity's position
-				screen->position = *Entity_getPosition(__UPCAST(Entity, screen->focusInGameEntity));
+				screen->position = *Entity_getPosition(__GET_CAST(Entity, screen->focusInGameEntity));
 				
 				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
 				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 				screen->position.z += screen->focusEntityPositionDisplacement.z - ITOFIX19_13(__SCREEN_DEPTH >> 1);
 	
-				if (0 > screen->position.x)
+				if(0 > screen->position.x)
 				{
 					screen->position.x = 0;
 				}
-				else if (ITOFIX19_13(screen->stageSize.x) < screen->position.x + ITOFIX19_13(__SCREEN_WIDTH))
+				else if(ITOFIX19_13(screen->stageSize.x) < screen->position.x + ITOFIX19_13(__SCREEN_WIDTH))
 				{
 					screen->position.x = ITOFIX19_13(screen->stageSize.x - __SCREEN_WIDTH);
 				}
 	
-				if (0 > screen->position.y)
+				if(0 > screen->position.y)
 				{
 					screen->position.y = 0;
 				}
-				else if (ITOFIX19_13(screen->stageSize.y) < screen->position.y + ITOFIX19_13(__SCREEN_HEIGHT))
+				else if(ITOFIX19_13(screen->stageSize.y) < screen->position.y + ITOFIX19_13(__SCREEN_HEIGHT))
 				{
 					screen->position.y = ITOFIX19_13(screen->stageSize.y - __SCREEN_HEIGHT);
 				}
@@ -175,9 +175,9 @@ void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
 
 	int i = 0;
 	// create the delay
-	for (; i <= 32; i += 2)
+	for(; i <= 32; i += 2)
 	{
-		if (duration)
+		if(duration)
 		{
 			// create time delay
 			Clock_delay(Game_getClock(Game_getInstance()), duration);
@@ -196,9 +196,9 @@ void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
 	int i = 32;
 
 	// create the delay
-	for (; i >= 0; i-=2)
+	for(; i >= 0; i-=2)
 	{
-		if (duration)
+		if(duration)
 		{
 			// create time delay
 			Clock_delay(Game_getClock(Game_getInstance()), duration);

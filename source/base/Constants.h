@@ -34,21 +34,20 @@
 //---------------------------------------------------------------------------------------------------------
 
 // override null definition (because we don't want to include standard C libraries)
-#define NULL 	(void *)0x00000000
+#define NULL 		(void *)0x00000000
 
 // axis definitions
-#define __XAXIS 		0x01
-#define __YAXIS 		0x02
-#define __ZAXIS 		0x04
+#define __XAXIS 	0x01
+#define __YAXIS 	0x02
+#define __ZAXIS 	0x04
 
 // direction
-#define __LEFT		 ((int)-1)
-#define __RIGHT		 ((int)1)
-#define __UP		 ((int)-1)
-#define __DOWN		 ((int)1)
-#define __NEAR		 ((int)-1)
-#define __FAR		 ((int)1)
-
+#define __LEFT		((int)-1)
+#define __RIGHT		((int)1)
+#define __UP		((int)-1)
+#define __DOWN		((int)1)
+#define __NEAR		((int)-1)
+#define __FAR		((int)1)
 
 // messages
 enum MessagesTypes
@@ -57,18 +56,12 @@ enum MessagesTypes
 	kHighFPS = 0,
 	kAutoPause,
 	kLowBatteryIndicator,
-
-	// graphic system messages
-	kScreenShake,
+	kEntityRemoved,
 
 	// physics messages
 	kNoCollision,
 	kCollision,
 	kCollisionWithYou,
-	kKeyPressed,
-	kKeyReleased,
-	kKeyHold,
-	kEntityRemoved,
 	kBodyStoped,
 	kBodyBounced,
 	kBodyStartedMoving,
@@ -76,12 +69,17 @@ enum MessagesTypes
 	kBodyChangedDirection,
 	kBodySleep,
 
+	// keypad massages
+	kKeyPressed,
+	kKeyReleased,
+	kKeyHold,
+
 	// don't place messages below this:
 	kLastEngineMessage
 };
 
 #define NM_ASSERT( STATEMENT, ... )													\
-	if (!(STATEMENT))																\
+	if(!(STATEMENT))																\
 	{ 																				\
 		/* thrown exception */														\
 		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__));	\
@@ -94,7 +92,7 @@ enum MessagesTypes
 
 #else
 #define ASSERT( STATEMENT, MESSAGE )												\
-	if (!(STATEMENT)) 																\
+	if(!(STATEMENT)) 																\
 	{																				\
 		int sp;																		\
 		asm(" mov sp,%0  ": "=r" (sp));												\

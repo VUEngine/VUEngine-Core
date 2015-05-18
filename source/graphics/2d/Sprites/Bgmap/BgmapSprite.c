@@ -66,30 +66,30 @@ static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition)
-__CLASS_NEW_END(BgmapSprite, bSpriteDefinition);
+__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
+__CLASS_NEW_END(BgmapSprite, bSpriteDefinition, owner);
 
 // class's constructor
-void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition)
+void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE((SpriteDefinition*)bSpriteDefinition, owner);
 
 	// register with sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
+	SpriteManager_addSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
 	// create the texture
 	if(bSpriteDefinition->textureDefinition)
 	{
-		this->texture = __UPCAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+		this->texture = __GET_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
 	}
 	
 	if(this->texture)
 	{
-		Object_addEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
+		Object_addEventListener(__GET_CAST(Object, this->texture), __GET_CAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = BgmapTexture_getXOffset(__UPCAST(BgmapTexture, this->texture)) << 3;
-		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__UPCAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.mx = BgmapTexture_getXOffset(__GET_CAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__GET_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 	}
 	else
@@ -119,7 +119,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 
 	//this->head = bSpriteDefinition->display | WRLD_BGMAP;
 	//set world layer's head acording to map's render mode
-	switch (bSpriteDefinition->bgmapMode)
+	switch(bSpriteDefinition->bgmapMode)
 	{
 		case WRLD_BGMAP:
 
@@ -151,10 +151,10 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 void BgmapSprite_destructor(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::destructor: null this");
-	ASSERT(__UPCAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
+	ASSERT(__GET_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
 	//if affine or bgmap
-	if (WRLD_AFFINE & this->head)
+	if(WRLD_AFFINE & this->head)
 	{
 		//free param table space
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
@@ -163,13 +163,13 @@ void BgmapSprite_destructor(BgmapSprite this)
 	// free the texture
 	if(this->texture)
 	{
-		Object_removeEventListener(__UPCAST(Object, this->texture), __UPCAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
-		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __UPCAST(BgmapTexture, this->texture));
+		Object_removeEventListener(__GET_CAST(Object, this->texture), __GET_CAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
+		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __GET_CAST(BgmapTexture, this->texture));
 		this->texture = NULL;
 	}
 	
 	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), __UPCAST(Sprite, this));
+	SpriteManager_removeSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
 	// destroy the super object
 	__DESTROY_BASE;
@@ -188,7 +188,7 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 {
 	ASSERT(this, "BgmapSprite::setDirection: null this");
 
-	switch (axis)
+	switch(axis)
 	{
 		case __XAXIS:
 
@@ -225,7 +225,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	
 	if(this->texture)
 	{
-		if (WRLD_AFFINE == Sprite_getMode(__UPCAST(Sprite, this)))
+		if(WRLD_AFFINE == Sprite_getMode(__GET_CAST(Sprite, this)))
 		{
 			this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 			this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
@@ -307,14 +307,14 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
 	//if render flag is set
-	if (this->renderFlag)
+	if(this->renderFlag)
 	{
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
 //		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BgmapSprite::render: freeLayer >= this->worldLayer");
 
-		if (__UPDATE_HEAD == this->renderFlag)
+		if(__UPDATE_HEAD == this->renderFlag)
 		{
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
@@ -324,7 +324,7 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 
 			//set the world size according to the zoom
-			if (WRLD_AFFINE & this->head)
+			if(WRLD_AFFINE & this->head)
 			{
 				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
@@ -337,13 +337,13 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 			
 			// make sure to not render again
-			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__UPCAST(BgmapTexture, this->texture));
+			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__GET_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
 		}
 		
 		//set the world screen position
-		if (this->renderFlag & __UPDATE_M)
+		if(this->renderFlag & __UPDATE_M)
 		{
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
@@ -351,17 +351,17 @@ void BgmapSprite_render(BgmapSprite this)
 		}
 		
 		//set the world screen position
-		if (this->renderFlag & __UPDATE_G)
+		if(this->renderFlag & __UPDATE_G)
 		{
 			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
 			worldPointer->gp = this->drawSpec.position.parallax + this->parallaxDisplacement;
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 		}
 
-		if (this->renderFlag & __UPDATE_SIZE)
+		if(this->renderFlag & __UPDATE_SIZE)
 		{
 			//set the world size according to the zoom
-			if (WRLD_AFFINE & this->head)
+			if(WRLD_AFFINE & this->head)
 			{
 				if(0 < this->paramTableRow)
 				{
@@ -461,7 +461,7 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
-	if (this->param)
+	if(this->param)
 	{
 		int halfWidth = (int)Texture_getCols(this->texture) << 2;
 		int halfHeight = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
@@ -488,7 +488,7 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
 
-	if (this->param)
+	if(this->param)
 	{
 		this->paramTableRow = 0;
 		
@@ -501,7 +501,7 @@ void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
 
-	if (this->param)
+	if(this->param)
 	{
 		this->paramTableRow = 0;
 		

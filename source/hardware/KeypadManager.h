@@ -93,6 +93,7 @@ void KeypadManager_disable(KeypadManager this);
 int KeypadManager_isEnabled(KeypadManager this);
 void KeypadManager_read(KeypadManager this);
 void KeypadManager_clear(KeypadManager this);
+void KeypadManager_flush(KeypadManager this);
 u16 KeypadManager_getPressedKey(KeypadManager this);
 u16 KeypadManager_getReleasedKey(KeypadManager this);
 u16 KeypadManager_getHoldKey(KeypadManager this);

@@ -60,7 +60,7 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 // calculate the size of a given magnitud, being it a 8 pixel multiple
 inline u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
 {
-	if (WRLD_AFFINE != mapMode)
+	if(WRLD_AFFINE != mapMode)
 	{
 		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13((int)magnitude), FIX7_9TOFIX19_13(scale)));
 	}
@@ -87,7 +87,7 @@ inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int para
 	height >>= 1;
 
 	// check x visibility
-	if (FIX19_13TOI(position2D.x) + width < lowLimit || FIX19_13TOI(position2D.x) - width > highLimit)
+	if(FIX19_13TOI(position2D.x) + width < lowLimit || FIX19_13TOI(position2D.x) - width > highLimit)
 	{
 		return false;
 	}
@@ -96,7 +96,7 @@ inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int para
 	highLimit = __SCREEN_HEIGHT + pad;
 
 	// check y visibility
-	if (FIX19_13TOI(position2D.y) + height < lowLimit || FIX19_13TOI(position2D.y) - height > highLimit)
+	if(FIX19_13TOI(position2D.y) + height < lowLimit || FIX19_13TOI(position2D.y) - height > highLimit)
 	{
 		return false;
 	}

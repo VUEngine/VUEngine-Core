@@ -47,7 +47,7 @@ __CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
 extern int strcmp(const char *, const char *);
 
 // class's constructor
-static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner);
+static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,16 +55,16 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Sp
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectAnimatedSprite, const SpriteDefinition* spriteDefinition, Object owner)
-__CLASS_NEW_END(ObjectAnimatedSprite, spriteDefinition, owner);
+__CLASS_NEW_DEFINITION(ObjectAnimatedSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
+__CLASS_NEW_END(ObjectAnimatedSprite, oSpriteDefinition, owner);
 
 // class's constructor
-static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const SpriteDefinition* spriteDefinition, Object owner)
+static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
 {
 	// construct base object
-	__CONSTRUCT_BASE(spriteDefinition);
+	__CONSTRUCT_BASE((SpriteDefinition*)oSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __UPCAST(Sprite, this), Texture_getCharSet(this->texture));
+	this->animationController = __NEW(AnimationController, owner, __GET_CAST(Sprite, this), Texture_getCharSet(this->texture));
 }
 
 //destructor
@@ -100,7 +100,7 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 	}
 	
 	// write according to the allocation type
-	switch (CharSet_getAllocationType(Texture_getCharSet(this->texture)))
+	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
@@ -120,9 +120,9 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 
 		case __ANIMATED_MULTI:
 
-			ObjectTexture_resetBgmapDisplacement(__UPCAST(ObjectTexture, this->texture));
-			ObjectTexture_addBgmapDisplacement(__UPCAST(ObjectTexture, this->texture), animationFrame);
-			ObjectTexture_write(__UPCAST(ObjectTexture, this->texture));
+			ObjectTexture_resetBgmapDisplacement(__GET_CAST(ObjectTexture, this->texture));
+			ObjectTexture_addBgmapDisplacement(__GET_CAST(ObjectTexture, this->texture), animationFrame);
+			ObjectTexture_write(__GET_CAST(ObjectTexture, this->texture));
 			break;
 	}
 }

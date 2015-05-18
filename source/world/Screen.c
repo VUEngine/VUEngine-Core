@@ -139,13 +139,13 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	ASSERT(this->screenMovementManager, "Screen::update: null screenMovementManager");
 
 #ifdef __DEBUG_TOOLS
-	if (!Game_isInSpecialMode(Game_getInstance()))
+	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 #ifdef __STAGE_EDITOR
-	if (!Game_isInSpecialMode(Game_getInstance()))
+	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 #ifdef __ANIMATION_EDITOR
-	if (!Game_isInSpecialMode(Game_getInstance()))
+	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
 	__VIRTUAL_CALL(void, ScreenMovementManager, positione, this->screenMovementManager, checkIfFocusEntityIsMoving);
@@ -187,7 +187,7 @@ void Screen_onFocusEntityDeleted(Screen this, InGameEntity actor)
 {
 	ASSERT(this, "Screen::focusEntityDeleted: null this");
 
-	if (this->focusInGameEntity == actor)
+	if(this->focusInGameEntity == actor)
 	{
 		Screen_unsetFocusInGameEntity(this);
 	}
@@ -205,7 +205,7 @@ void Screen_move(Screen this, VBVec3D translation, int cap)
 	this->position.y += translation.y;
 	this->position.z += translation.z;
 
-	if (cap)
+	if(cap)
 	{
 		Screen_capPosition(this);
 	}
@@ -216,32 +216,32 @@ static void Screen_capPosition(Screen this)
 {
 	ASSERT(this, "Screen::capPosition: null this");
 
-	if (this->position.x < 0)
+	if(this->position.x < 0)
 	{
 		this->position.x = 0;
 	}
 
-	if (this->position.x + ITOFIX19_13(__SCREEN_WIDTH) > ITOFIX19_13(this->stageSize.x))
+	if(this->position.x + ITOFIX19_13(__SCREEN_WIDTH) > ITOFIX19_13(this->stageSize.x))
 	{
 		this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
 	}
 
-	if (this->position.y < 0)
+	if(this->position.y < 0)
 	{
 		this->position.y = 0;
 	}
 
-	if (this->position.y + ITOFIX19_13(__SCREEN_HEIGHT) > ITOFIX19_13(this->stageSize.y))
+	if(this->position.y + ITOFIX19_13(__SCREEN_HEIGHT) > ITOFIX19_13(this->stageSize.y))
 	{
 		this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
 	}
 
-	if (this->position.z < 0)
+	if(this->position.z < 0)
 	{
 		this->position.z = 0;
 	}
 
-	if (this->position.z > ITOFIX19_13(this->stageSize.z))
+	if(this->position.z > ITOFIX19_13(this->stageSize.z))
 	{
 		this->position.z = ITOFIX19_13(this->stageSize.z);
 	}

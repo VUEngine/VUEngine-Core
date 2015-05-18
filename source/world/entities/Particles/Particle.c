@@ -71,7 +71,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->particleDefinition = particleDefinition;
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
-	this->body = PhysicalWorld_registerBody(PhysicalWorld_getInstance(), __UPCAST(SpatialObject, this), mass);
+	this->body = PhysicalWorld_registerBody(PhysicalWorld_getInstance(), __GET_CAST(SpatialObject, this), mass);
 	Body_setAxisSubjectToGravity(this->body, particleDefinition->axisSubjectToGravity);
 	
 	this->objectSprite = NULL;
@@ -84,9 +84,12 @@ void Particle_destructor(Particle this)
 	ASSERT(this, "Particle::destructor: null this");
 
 	// remove a body
-	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __UPCAST(SpatialObject, this));
+	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __GET_CAST(SpatialObject, this));
 	
-	__DELETE(this->objectSprite);
+	if(this->objectSprite)
+	{
+		__DELETE(this->objectSprite);
+	}
 	
 	// destroy the super Container
 	__DESTROY_BASE;
@@ -99,11 +102,11 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator defined");
 
 	// call the appropiate allocator to support inheritance!
-	this->objectSprite = __UPCAST(ObjectSprite, ((Sprite (*)(SpriteDefinition*, ...)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, this));
+	this->objectSprite = __GET_CAST(ObjectSprite, ((Sprite (*)(SpriteDefinition*, ...)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, this));
 
-	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __UPCAST(ObjectAnimatedSprite, this->objectSprite))
+	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __GET_CAST(ObjectAnimatedSprite, this->objectSprite))
 	{
-		Sprite_play(__UPCAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+		Sprite_play(__GET_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
 	}
 
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
@@ -116,7 +119,7 @@ void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle 
 	if(0 <= this->lifeSpan)
 	{
 		this->lifeSpan -= timeElapsed;
-		Sprite_update(__UPCAST(Sprite, this->objectSprite), _gameClock);
+		Sprite_update(__GET_CAST(Sprite, this->objectSprite), _gameClock);
 		
 		if(behavior)
 		{
@@ -125,7 +128,7 @@ void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle 
 		
 		if(0 > this->lifeSpan)
 		{
-			Object_fireEvent(__UPCAST(Object, this), __EVENT_PARTICLE_EXPIRED);
+			Object_fireEvent(__GET_CAST(Object, this), __EVENT_PARTICLE_EXPIRED);
 		}
 	}
 }
@@ -136,13 +139,13 @@ void Particle_transform(Particle this, bool updateSpritePosition)
 	ASSERT(this, "Particle::transform: null this");
 	ASSERT(this->body, "Particle::transform: null body");
 
-	if (updateSpritePosition || Body_isAwake(this->body))
+	if(updateSpritePosition || Body_isAwake(this->body))
     {
 		const VBVec3D* position = Body_getPosition(this->body);
 
 		ASSERT(this->objectSprite, "Particle::transform: null objectSprite");
 
-		if (__ZAXIS & Body_isMoving(this->body))
+		if(__ZAXIS & Body_isMoving(this->body))
 		{
 			// calculate sprite's parallax
 			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
@@ -180,7 +183,7 @@ void Particle_setPosition(Particle this, const VBVec3D* position)
 	ASSERT(this, "Particle::position: null this");
 	ASSERT(this->body, "Particle::position: null body");
 	
-	Body_setPosition(this->body, position, __UPCAST(SpatialObject, this));
+	Body_setPosition(this->body, position, __GET_CAST(SpatialObject, this));
 
 	// sync sprite
 	__VIRTUAL_CALL(void, Sprite, positione, this->objectSprite, position);

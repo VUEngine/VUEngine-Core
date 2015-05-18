@@ -83,7 +83,7 @@ void ObjectTexture_write(ObjectTexture this)
 		return;
 	}
 	
-	Texture_write(__UPCAST(Texture, this));
+	Texture_write(__GET_CAST(Texture, this));
 	
 	int palette = this->palette << 14;
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
@@ -93,10 +93,10 @@ void ObjectTexture_write(ObjectTexture this)
 
 	int i = 0;
 
-	for (; i < rows; i++)
+	for(; i < rows; i++)
 	{
 		int j = 0;
-		for (; j < cols; j++)
+		for(; j < cols; j++)
 		{
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = (i * cols + j) << 1;

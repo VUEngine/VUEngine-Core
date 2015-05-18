@@ -154,7 +154,7 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			CharSet charSet = __UPCAST(CharSet, VirtualNode_getData(node));
+			CharSet charSet = __GET_CAST(CharSet, VirtualNode_getData(node));
 			
 			if(CharSet_getCharSetDefinition(charSet) == charSetDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
 			{
@@ -173,7 +173,7 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 
 	CharSet charSet = NULL;
 
-	switch (charSetDefinition->allocationType)
+	switch(charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 
@@ -190,7 +190,7 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 			// first try to find an already created charset
 			charSet = CharSetManager_findCharSet(this, charSetDefinition);
 
-			if (charSet)
+			if(charSet)
 			{
 				CharSet_increaseUsageCount(charSet);
 			}
@@ -242,7 +242,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 
 	int segment = 0;
 
-	for (; segment < __CHAR_SEGMENTS ; segment++)
+	for(; segment < __CHAR_SEGMENTS ; segment++)
 	{
 		ASSERT(this->charSets[segment], "CharSetManager::getNextFreeOffset: null this");
 
@@ -250,11 +250,11 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 
 		if(VirtualList_begin(this->charSets[segment]))
 		{
-			CharSet lastCharSet = __UPCAST(CharSet, VirtualList_back(this->charSets[segment]));
+			CharSet lastCharSet = __GET_CAST(CharSet, VirtualList_back(this->charSets[segment]));
 			offset += CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 		}
 		
-		if ((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_SEGMENT_TOTAL_CHARS)
+		if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_SEGMENT_TOTAL_CHARS)
 		{
 			CharSet charSet = __NEW(CharSet, charSetDefinition, segment, offset);
 
@@ -277,21 +277,21 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
-	if (!this->needsDefrag)
+	if(!this->needsDefrag)
 	{
 		return;
 	}
 
 	int segment = 0;
-	for (; segment < __CHAR_SEGMENTS ; segment++)
+	for(; segment < __CHAR_SEGMENTS ; segment++)
 	{
-		if (this->freedOffset[segment])
+		if(this->freedOffset[segment])
 		{
 			VirtualNode node = VirtualList_begin(this->charSets[segment]);
 			
 			for(; node; node = VirtualNode_getNext(node))
 			{
-				CharSet charSet = __UPCAST(CharSet, VirtualNode_getData(node));
+				CharSet charSet = __GET_CAST(CharSet, VirtualNode_getData(node));
 
 				if(this->freedOffset[segment] < CharSet_getOffset(charSet))
 				{

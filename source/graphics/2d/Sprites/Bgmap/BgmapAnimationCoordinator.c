@@ -71,7 +71,7 @@ void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator 
 
 	if(VirtualList_front(this->animationControllers))
 	{
-		AnimationController firstAnimationController = __UPCAST(AnimationController, VirtualList_front(this->animationControllers));
+		AnimationController firstAnimationController = __GET_CAST(AnimationController, VirtualList_front(this->animationControllers));
 	
 		ASSERT(firstAnimationController, "BgmapAnimationCoordinator::addAnimationController: null firstAnimationController");
 	

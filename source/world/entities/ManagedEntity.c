@@ -55,16 +55,16 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id)
-__CLASS_NEW_END(ManagedEntity, managedEntityDefinition, id);
+__CLASS_NEW_DEFINITION(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(ManagedEntity, managedEntityDefinition, id, name);
 
 // class's constructor
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id)
+void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "ManagedEntity::constructor: null this");
 
 	// construct base Entity
-	__CONSTRUCT_BASE((EntityDefinition*)managedEntityDefinition, id);
+	__CONSTRUCT_BASE((EntityDefinition*)managedEntityDefinition, id, name);
 
 	/* the sprite must be initializated in the derivated class */
 	this->managedSprites = __NEW(VirtualList);
@@ -95,7 +95,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 	ASSERT(this, "ManagedEntity::registerSprites: null this");
 	ASSERT(child, "ManagedEntity::registerSprites: null child");
 
-	if (child)
+	if(child)
 	{
 		if(child->sprites)
 		{
@@ -103,7 +103,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 
 			for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 			{
-				Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
+				Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(spriteNode));
 				VirtualList_pushBack(this->managedSprites, sprite);
 				VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 				
@@ -122,7 +122,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 			
 			for(; childNode; childNode = VirtualNode_getNext(childNode))
 			{
-				ManagedEntity_registerSprites(this, __UPCAST(Entity, VirtualNode_getData(childNode)));
+				ManagedEntity_registerSprites(this, __GET_CAST(Entity, VirtualNode_getData(childNode)));
 			}
 		}
 	}
@@ -133,7 +133,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 {
 	ASSERT(this, "ManagedEntity::initialTransform: null this");
 	
-	Entity_initialTransform(__UPCAST(Entity, this), environmentTransform);
+	Entity_initialTransform(__GET_CAST(Entity, this), environmentTransform);
 	
 	VBVec3D position3D = this->transform.globalPosition;
 	
@@ -144,7 +144,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	__OPTICS_PROJECT_TO_2D(position3D, this->previous2DPosition);
 	
 	VirtualList_clear(this->managedSprites);
-	ManagedEntity_registerSprites(this, __UPCAST(Entity, this));
+	ManagedEntity_registerSprites(this, __GET_CAST(Entity, this));
 }
 
 // transform class
@@ -152,20 +152,20 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
-	int updateSpritePosition = Entity_updateSpritePosition(__UPCAST(Entity, this));
+	int updateSpritePosition = Entity_updateSpritePosition(__GET_CAST(Entity, this));
 	
 	// TODO: take into account scaling
-	//int updateSpriteScale = Entity_updateSpriteScale(__UPCAST(Entity, this));
+	//int updateSpriteScale = Entity_updateSpriteScale(__GET_CAST(Entity, this));
 
 	if(updateSpritePosition)
 	{
-		if (this->invalidateGlobalPosition.x ||
+		if(this->invalidateGlobalPosition.x ||
 			this->invalidateGlobalPosition.y ||
 			this->invalidateGlobalPosition.z ||
 			this->children)
 		{
 			// call base class's transform method
-			Container_transformNonVirtual(__UPCAST(Container, this), environmentTransform);
+			Container_transformNonVirtual(__GET_CAST(Container, this), environmentTransform);
 		}
 
 		// concatenate transform
@@ -197,7 +197,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		
 		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
-			Sprite sprite = __UPCAST(Sprite, VirtualNode_getData(spriteNode));
+			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(spriteNode));
 			
 			VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 			
@@ -216,6 +216,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	else
 	{
 		// allow children's global positions to be updated properly
-		Entity_transform(__UPCAST(Entity, this), environmentTransform);
+		Entity_transform(__GET_CAST(Entity, this), environmentTransform);
 	}
 }

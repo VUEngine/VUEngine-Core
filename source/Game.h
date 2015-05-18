@@ -56,6 +56,8 @@ Game Game_getInstance();
 void Game_destructor(Game this);
 void Game_start(Game this, GameState state);
 void Game_changeState(Game this, GameState state);
+void Game_addState(Game this, GameState state);
+void Game_removeState(Game this, GameState state);
 void Game_disableHardwareInterrupts(Game this);
 void Game_enableHardwareInterrupts(Game this);
 void Game_reset(Game this);

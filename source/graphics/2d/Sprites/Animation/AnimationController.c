@@ -171,32 +171,32 @@ bool AnimationController_animate(AnimationController this)
 	ASSERT(this, "AnimationController::animate: null this");
 
 	// first check for a valid animation function
-	if (!this->animationFunction)
+	if(!this->animationFunction)
 	{
 		return false;
 	}
 
 	// if the actual frame was set to -1
 	// it means that a not loop animation has been completed
-	if (-1 == this->actualFrame)
+	if(-1 == this->actualFrame)
 	{
 		return false;
 	}
 
 	// show the next frame
-	if (this->actualFrame >= this->animationFunction->numberOfFrames)
+	if(this->actualFrame >= this->animationFunction->numberOfFrames)
 	{
 		// the last frame has been reached
-		if (this->animationFunction->onAnimationComplete)
+		if(this->animationFunction->onAnimationComplete)
 		{
-			Object_fireEvent(__UPCAST(Object, this), __EVENT_ANIMATION_COMPLETE);
+			Object_fireEvent(__GET_CAST(Object, this), __EVENT_ANIMATION_COMPLETE);
 		}
 
 		// rewind to first frame
 		this->actualFrame = 0;
 
 		// if the animation is not a loop
-		if (!this->animationFunction->loop)
+		if(!this->animationFunction->loop)
 		{
 			// not playing anymore
 			this->playing = false;
@@ -211,7 +211,7 @@ bool AnimationController_animate(AnimationController this)
 	bool animateFrameChanged = false;
 	
 	// if the frame has changed
-	if (this->actualFrame != this->previousFrame)
+	if(this->actualFrame != this->previousFrame)
 	{
 		// write the new frame of animation
 		animateFrameChanged = true;
@@ -220,13 +220,13 @@ bool AnimationController_animate(AnimationController this)
 		// has changed
 		this->previousFrame = this->actualFrame;
 		
-		Object_fireEvent(__UPCAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
+		Object_fireEvent(__GET_CAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
 	}
 
 	this->frameDelay += this->frameDelayDelta;
 
 	// reduce frame delay count
-	if (0 >= this->frameDelay)
+	if(0 >= this->frameDelay)
 	{
 		// incrase the frame to show
 		this->previousFrame = this->actualFrame++;
@@ -235,7 +235,7 @@ bool AnimationController_animate(AnimationController this)
 		this->frameDelay = this->animationFunction->delay;
 
 		// if the delay is negative
-		if (0 > this->frameDelay)
+		if(0 > this->frameDelay)
 		{
 			// pick up a random delay
 			this->frameDelay = Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
@@ -250,7 +250,7 @@ bool AnimationController_update(AnimationController this, Clock clock)
 {
 	ASSERT(this, "AnimationController::update: null this");
 
-	if (this->playing && !Clock_isPaused(clock))
+	if(this->playing && !Clock_isPaused(clock))
 	{
 		// first animate the frame
 		return AnimationController_animate(this);
@@ -268,14 +268,14 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object_removeEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+		Object_removeEventListener(__GET_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 	}
 	
 	// setup animation frame
 	this->animationFunction = animationFunction;
 
 	// register event callback
-	Object_addEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+	Object_addEventListener(__GET_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 
 	// force frame writing in the next update
 	this->previousFrame = 0;
@@ -316,22 +316,22 @@ void AnimationController_play(AnimationController this, const AnimationDescripti
 	int i = 0;
 
 	// search for the animation function
-	for (; animationDescription->animationFunctions[i]; i++ )
+	for(; animationDescription->animationFunctions[i]; i++ )
 	{
 		// compare function's names
-		if (!strcmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name))
+		if(!strcmp((const char *)functionName, (const char *)animationDescription->animationFunctions[i]->name))
 		{
 			// remove previous listeners
 			if(this->animationFunction && this->animationFunction->onAnimationComplete)
 			{
-				Object_removeEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+				Object_removeEventListener(__GET_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 			}
 
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
 
 			// register event callback
-			Object_addEventListener(__UPCAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+			Object_addEventListener(__GET_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 
 			// force frame writing in the next update
 			this->previousFrame = 0;
@@ -382,7 +382,7 @@ void AnimationController_pause(AnimationController this, bool pause)
 	ASSERT(this, "AnimationController::pause: null this");
 	this->playing = !pause;
 
-	if (-1 == this->actualFrame)
+	if(-1 == this->actualFrame)
 	{
 		this->actualFrame = 0;
 	}

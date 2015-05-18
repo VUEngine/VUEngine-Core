@@ -86,7 +86,7 @@ void TimerManager_setInterrupt(TimerManager this, int value)
 {
 	ASSERT(this, "TimerManager::setInterrupt: null this");
 
-	if (value)
+	if(value)
 	{
 		this->tcrValue |= TIMER_INT;
 	}
@@ -103,7 +103,7 @@ void TimerManager_enable(TimerManager this, int value)
 {
 	ASSERT(this, "TimerManager::enable: null this");
 
-	if (value)
+	if(value)
 	{
 		this->tcrValue |= TIMER_ENB;
 	}
@@ -137,7 +137,7 @@ void TimerManager_setFrequency(TimerManager this, int frequency)
 {
 	ASSERT(this, "TimerManager::setFrequency: null this");
 
-	if (frequency)
+	if(frequency)
 	{
 		this->tcrValue |= TIMER_20US;
 	}

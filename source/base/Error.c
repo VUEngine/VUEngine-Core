@@ -100,7 +100,7 @@ int Error_triggerException(Error this, char* string)
 	Printing_loadFonts(Printing_getInstance());
 
 	//print error message to screen
-	if (0 < y)
+	if(0 < y)
 	{
 		Printing_text(Printing_getInstance(), "                                             ", x, y - 1, NULL);
 	}
@@ -131,7 +131,7 @@ int Error_triggerException(Error this, char* string)
 		Printing_text(Printing_getInstance(), messageLine, x + 1, y++ + 2, NULL);
 	}
 	
-	if (y < __SCREEN_HEIGHT / 8 - 1)
+	if(y < __SCREEN_HEIGHT / 8 - 1)
 	{
 		Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 	}
@@ -150,7 +150,7 @@ int Error_triggerException(Error this, char* string)
 	VIP_REGS[JPLT2] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT3] = __DIMM_VALUE_1;
 
-	//trap the game here
+	// trap the game here
 	while (true);
 
 	return false;

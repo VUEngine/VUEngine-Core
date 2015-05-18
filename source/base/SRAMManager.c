@@ -23,104 +23,95 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-
-#include <I18n.h>
-#include <Game.h>
+#include <SRAMManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
+// 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-extern LangROMDef* __LANGUAGES[];
+#define SAVE_RAM_ADDRESS	0x06000000
 
+const struct UserData* _userData = (void*)SAVE_RAM_ADDRESS;
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define I18n_ATTRIBUTES															\
+#define SRAMManager_ATTRIBUTES													\
 																				\
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
-																				\
-	/* currently active language */												\
-	u8 ActiveLanguage;															\
 
-// define the I18n
-__CLASS_DEFINITION(I18n, Object);
+// define the manager
+__CLASS_DEFINITION(SRAMManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
-static void I18n_constructor(I18n this);
+// extern
+void SoundManager_playSounds(SoundManager this);
+
+//class's constructor
+static void SRAMManager_constructor(SRAMManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__SINGLETON(I18n);
+__SINGLETON(SRAMManager);
 
 // class's constructor
-static void I18n_constructor(I18n this)
+static void SRAMManager_constructor(SRAMManager this)
 {
-	ASSERT(this, "I18n::constructor: null this");
+	ASSERT(this, "SRAMManager::constructor: null this");
 
 	__CONSTRUCT_BASE();
-
-	this->ActiveLanguage = 0;
 }
 
+
 // class's destructor
-void I18n_destructor(I18n this)
+void SRAMManager_destructor(SRAMManager this)
 {
-	ASSERT(this, "I18n::destructor: null this");
+	ASSERT(this, "SRAMManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
 
-// get localized string
-char* I18n_getText(I18n this, int string)
+void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAddress, int dataSize)
 {
-	ASSERT(this, "I18n::getText: null this");
+	ASSERT(this, "SRAMManager::save: null this");
 
-	return 0 <= string ? __LANGUAGES[this->ActiveLanguage]->language[string] : NULL;
+	int i = 0;
+	
+	u16* destination = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
+	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
+	ASSERT(SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
+
+	for(; i < dataSize; i++)
+	{
+		destination[i] = source[i];
+		
+	}
 }
 
-// set the language
-void I18n_setActiveLanguage(I18n this, u8 languageId)
+void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, int dataSize)
 {
-	ASSERT(this, "I18n::setActiveLanguage: null this");
+	ASSERT(this, "SRAMManager::read: null this");
 
-    this->ActiveLanguage = languageId;
+	int i = 0;
+
+	u16* source = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
+	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
+	ASSERT(SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
+
+	for(; i < dataSize; i++)
+	{
+		destination[i] = source[i] & 0xFF;
+	}
 }
 
-// get all registered languages
-LangDefinition * I18n_getLanguages(I18n this)
-{
-	ASSERT(this, "I18n::getLanguages: null this");
-
-    return (LangDefinition *)__LANGUAGES;
-}
-
-// get the id of the currently active language
-u8 I18n_getActiveLanguage(I18n this)
-{
-	ASSERT(this, "I18n::getActiveLanguage: null this");
-
-    return this->ActiveLanguage;
-}
-
-// get the name of the currently active language
-char* I18n_getActiveLanguageName(I18n this)
-{
-	ASSERT(this, "I18n::getActiveLanguageName: null this");
-
-    return (char*)__LANGUAGES[this->ActiveLanguage]->name;
-}

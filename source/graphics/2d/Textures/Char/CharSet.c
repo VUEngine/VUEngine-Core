@@ -172,7 +172,7 @@ void CharSet_rewrite(CharSet this)
 	CharSet_write(this);
 
 	// propagate event
-	Object_fireEvent(__UPCAST(Object, this), __EVENT_CHARSET_REWRITTEN);
+	Object_fireEvent(__GET_CAST(Object, this), __EVENT_CHARSET_REWRITTEN);
 }
 
 // set charDefinitionDisplacement

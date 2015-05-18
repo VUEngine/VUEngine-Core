@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-#ifndef MEMORY_POOL_H_
-#define MEMORY_POOL_H_
+#ifndef SRAM_MANAGER_H_
+#define SRAM_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,27 +34,28 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MemoryPool_METHODS														\
+#define SRAMManager_METHODS														\
 		Object_METHODS															\
 
 // declare the virtual methods which are redefined
-#define MemoryPool_SET_VTABLE(ClassName)										\
+#define SRAMManager_SET_VTABLE(ClassName)										\
 		Object_SET_VTABLE(ClassName)											\
 
-__CLASS(MemoryPool);
+__CLASS(SRAMManager);
 
+// forward declare game's custom user's data struct
+struct UserData;
+
+extern const struct UserData* _userData;
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-MemoryPool MemoryPool_getInstance();
-void MemoryPool_destructor(MemoryPool this);
-void MemoryPool_cleanUp(MemoryPool this);
-BYTE* MemoryPool_allocate(MemoryPool this, int numBytes);
-void MemoryPool_free(MemoryPool this, BYTE* object);
-void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y);
-void MemoryPool_printResumedUsage(MemoryPool this, int x, int y);
+SRAMManager SRAMManager_getInstance();
+void SRAMManager_destructor(SRAMManager this);
+void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAddress, int dataSize);
+void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, int dataSize);
 
 
 #endif
