@@ -75,7 +75,6 @@ static void SRAMManager_constructor(SRAMManager this)
 	SRAMManager_initialize(this);
 }
 
-
 // class's destructor
 void SRAMManager_destructor(SRAMManager this)
 {
@@ -95,7 +94,7 @@ void static SRAMManager_initialize(SRAMManager this)
 	for(; i--;)
 	{
 		u32 dummyChar[__SRAM_DUMMY_READ_LENGHT];
-		SRAMManager_read(SRAMManager_getInstance(), (BYTE*)&dummyChar, NULL, sizeof(dummyChar));
+		SRAMManager_read(this, (BYTE*)&dummyChar, NULL, sizeof(dummyChar));
 	}
 }
 
