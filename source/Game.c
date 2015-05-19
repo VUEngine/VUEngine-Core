@@ -209,7 +209,6 @@ static void Game_constructor(Game this)
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
 	this->screen = Screen_getInstance();
-	//SRAMManager_getInstance();
 	
 	// set the default screen movement manager
 	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
@@ -262,6 +261,9 @@ void Game_start(Game this, GameState state)
 {
 	ASSERT(this, "Game::start: null this");
 	ASSERT(state, "Game::start: initial state is NULL");
+
+	// intialize SRAM
+	SRAMManager_getInstance();
 
 	HardwareManager_displayOn(this->hardwareManager);
 

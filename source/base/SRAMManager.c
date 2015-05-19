@@ -24,15 +24,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SRAMManager.h>
-
+#include <Game.h>
+#include <Clock.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define SAVE_RAM_ADDRESS	0x06000000
+#define __SAVE_RAM_ADDRESS				0x06000000
+#define	__SRAM_ACCESS_DELAY				200
+#define	__SRAM_DUMMY_READ_CYCLES		8
+#define	__SRAM_DUMMY_READ_LENGHT		100
 
-const struct UserData* _userData = (void*)SAVE_RAM_ADDRESS;
+const struct UserData* _userData = (void*)__SAVE_RAM_ADDRESS;
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -51,11 +55,8 @@ __CLASS_DEFINITION(SRAMManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// extern
-void SoundManager_playSounds(SoundManager this);
-
-//class's constructor
 static void SRAMManager_constructor(SRAMManager this);
+void static SRAMManager_initialize(SRAMManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -70,6 +71,8 @@ static void SRAMManager_constructor(SRAMManager this)
 	ASSERT(this, "SRAMManager::constructor: null this");
 
 	__CONSTRUCT_BASE();
+	
+	SRAMManager_initialize(this);
 }
 
 
@@ -82,6 +85,20 @@ void SRAMManager_destructor(SRAMManager this)
 	__SINGLETON_DESTROY;
 }
 
+void static SRAMManager_initialize(SRAMManager this)
+{
+	ASSERT(this, "SRAMManager::initialize: null this");
+	
+	Clock_delay(Game_getClock(Game_getInstance()), __SRAM_ACCESS_DELAY);
+	
+	int i = __SRAM_DUMMY_READ_CYCLES;
+	for(; i--;)
+	{
+		u32 dummyChar[__SRAM_DUMMY_READ_LENGHT];
+		SRAMManager_read(SRAMManager_getInstance(), (BYTE*)&dummyChar, NULL, sizeof(dummyChar));
+	}
+}
+
 void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAddress, int dataSize)
 {
 	ASSERT(this, "SRAMManager::save: null this");
@@ -90,7 +107,7 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAdd
 	
 	u16* destination = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
 	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
-	ASSERT(SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
+	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
 
 	for(; i < dataSize; i++)
 	{
@@ -107,7 +124,7 @@ void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, i
 
 	u16* source = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
 	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
-	ASSERT(SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
+	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
 
 	for(; i < dataSize; i++)
 	{
