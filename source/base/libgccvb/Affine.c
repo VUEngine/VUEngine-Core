@@ -82,8 +82,8 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 	affineMatrix.pb = -SINF(rotation->z) / scaleX;
 	affineMatrix.pc = SINF(rotation->z) / scaleY;
 	affineMatrix.pd = COSF(rotation->z) / scaleY;
-	affineMatrix.dx = (textureSource->mx + width) - (affineMatrix.pa * width + affineMatrix.pb * height);
-	affineMatrix.dy = (textureSource->my + height) - (affineMatrix.pc * width + affineMatrix.pd * height);
+	affineMatrix.dx = (textureSource->mx + width / fabs(scaleX)) - (affineMatrix.pa * width + affineMatrix.pb * height);
+	affineMatrix.dy = (textureSource->my + height / fabs(scaleY)) - (affineMatrix.pc * width + affineMatrix.pd * height);
 	affineMatrix.paralax = 0;
 
 	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);
