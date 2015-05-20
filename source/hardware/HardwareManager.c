@@ -33,6 +33,9 @@
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __ALERT_STACK_OVERFLOW
+u32 _lastDataVariable __attribute__ ((section (".after_bss"))) = 0;
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,6 +66,7 @@ __CLASS_DEFINITION(HardwareManager, Object);
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
+
 
 extern u32 key_vector;
 extern u32 tim_vector;
@@ -154,7 +158,6 @@ void HardwareManager_vpuInterruptHandler(void)
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 	
 	// put your code here
-	
 	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
@@ -337,9 +340,25 @@ void HardwareManager_disableKeypad(HardwareManager this)
 	KeypadManager_disable(this->keypadManager);
 }
 
+void HardwareManager_checkStackStatus(HardwareManager this)
+{
+	ASSERT(this, "HardwareManager::checkStackStatus: null this");
+
+	int sp;
+	asm(" mov sp,%0  ": "=r" (sp));
+	
+	if((0x05000000 & sp) && sp < (int)&_lastDataVariable)
+	{
+		HardwareManager_printStackStatus(HardwareManager_getInstance(), 1, 15, false);
+		NM_ASSERT(false, "HardwareManager::checkStackStatus: stack overflown!");
+	}
+}
+
 // print hardware's states
 void HardwareManager_print(HardwareManager this, int x, int y)
 {
+	ASSERT(this, "HardwareManager::print: null this");
+
 	Printing_text(Printing_getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
 	int auxY = y;
@@ -428,4 +447,28 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 	Printing_hex(Printing_getInstance(), VIP_REGS[VER], x + xDisplacement, auxY, NULL);
 
 //	Printing_hex(Printing_getInstance(), HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5, NULL);
+}
+
+void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed)
+{
+	ASSERT(this, "HardwareManager::print: null this");
+	
+	int sp;
+	asm(" mov sp,%0  ": "=r" (sp));
+	
+	if(resumed)
+	{
+		Printing_text(Printing_getInstance(), "STACK'S ROOM:        " , x, y, NULL);
+		Printing_int(Printing_getInstance(), sp - (int)&_lastDataVariable, x + 14, y, NULL);
+	}	
+	else
+	{
+		Printing_text(Printing_getInstance(), "STACK'S STATUS" , x, y, NULL);
+		Printing_text(Printing_getInstance(), "Pointer:" , x, ++y, NULL);
+		Printing_hex(Printing_getInstance(), sp, x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), "Bss' end:" , x, ++y, NULL);
+		Printing_hex(Printing_getInstance(), (int)&_lastDataVariable, x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), "Room:           " , x, ++y, NULL);
+		Printing_int(Printing_getInstance(), sp - (int)&_lastDataVariable, x + 10, y, NULL);
+	}
 }

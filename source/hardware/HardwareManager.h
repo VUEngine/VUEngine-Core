@@ -99,6 +99,8 @@ void HardwareManager_setupColumnTable(HardwareManager this);
 void HardwareManager_enableKeypad(HardwareManager this);
 void HardwareManager_disableKeypad(HardwareManager this);
 u16 HardwareManager_readKeypad(HardwareManager this);
+void HardwareManager_checkStackStatus(HardwareManager this);
 void HardwareManager_print(HardwareManager this, int x, int y);
+void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
 
 #endif

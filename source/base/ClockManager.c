@@ -29,6 +29,7 @@
 #include <SoundManager.h>
 #include <HardwareManager.h>
 #include <MessageDispatcher.h>
+#include <HardwareManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -127,6 +128,10 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
+#ifdef __ALERT_STACK_OVERFLOW
+	HardwareManager_checkStackStatus(HardwareManager_getInstance());
+#endif
+	
 	u32 previousSecond = this->ticks / __MILLISECONDS_IN_SECOND;
 
 	if(this->clocks)
@@ -165,6 +170,10 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	    	{
 	    		MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 0);
 	    	}
+#endif
+	   
+#ifdef __ALERT_STACK_OVERFLOW
+	    	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 18, __SCREEN_HEIGHT / 8 - 1, true);
 #endif
 	    	//reset frame rate counters
 			FrameRate_reset(frameRate);

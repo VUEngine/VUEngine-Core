@@ -52,6 +52,11 @@ SECTIONS
   {
     *(.bss*)
   } >ram = 0xFF
+
+  .after_bss :
+  {
+    *(.after_bss*)
+  } >ram = 0xFF
   /* These must appear regardless of  .  */
 
 
