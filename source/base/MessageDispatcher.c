@@ -181,7 +181,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			Telegram telegram = delayedMessage->telegram;
 
 			// check if sender and receiver are still alive
-			if(Telegram_getSender(telegram) && Telegram_getReceiver(telegram))
+			if(*(u32*)Telegram_getSender(telegram) && *(u32*)Telegram_getReceiver(telegram))
 			{
 				__VIRTUAL_CALL(bool, Object, handleMessage, Telegram_getReceiver(telegram), telegram);
 			}
