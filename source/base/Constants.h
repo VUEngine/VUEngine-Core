@@ -78,38 +78,40 @@ enum MessagesTypes
 	kLastEngineMessage
 };
 
-#define NM_ASSERT( STATEMENT, ... )													\
-	if(!(STATEMENT))																\
-	{ 																				\
-		/* thrown exception */														\
-		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__));	\
+#define NM_ASSERT(STATEMENT, ...)														\
+	 																					\
+	if(!(STATEMENT))																	\
+	{ 																					\
+		/* thrown exception */															\
+		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);	\
 	}
 
 #undef ASSERT
 
 #ifndef __DEBUG
-	#define ASSERT( STATEMENT, ... )
+	#define ASSERT(Statement, ...)
 
 #else
-#define ASSERT( STATEMENT, MESSAGE )												\
-	if(!(STATEMENT)) 																\
-	{																				\
-		int sp;																		\
-		asm(" mov sp,%0  ": "=r" (sp));												\
-		int lp;																		\
-		asm(" mov lp,%0  ": "=r" (lp));												\
-		int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2 ? 			\
-				__EXCEPTION_COLUMN : 0;												\
-		int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? 					\
-				__EXCEPTION_LINE : 0;												\
-		y += 2; 																	\
-		Printing_text(Printing_getInstance(), " SP:" , x, y, NULL);					\
-		Printing_hex(Printing_getInstance(), sp, x + 7, y, NULL);					\
-		Printing_text(Printing_getInstance(), " LP:" , x, ++y, NULL);				\
-		Printing_hex(Printing_getInstance(), lp, x + 7, y, NULL);					\
-																					\
-		/* thrown exception */														\
-		Error_triggerException(Error_getInstance(), MESSAGE);						\
+#define ASSERT(Statement, Message)														\
+	 																					\
+	if(!(Statement)) 																	\
+	{																					\
+		int sp;																			\
+		asm(" mov sp,%0  ": "=r" (sp));													\
+		int lp;																			\
+		asm(" mov lp,%0  ": "=r" (lp));													\
+		int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2 ? 				\
+				__EXCEPTION_COLUMN : 0;													\
+		int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? 						\
+				__EXCEPTION_LINE : 0;													\
+		y += 2; 																		\
+		Printing_text(Printing_getInstance(), " SP:" , x, y, NULL);						\
+		Printing_hex(Printing_getInstance(), sp, x + 7, y, NULL);						\
+		Printing_text(Printing_getInstance(), " LP:" , x, ++y, NULL);					\
+		Printing_hex(Printing_getInstance(), lp, x + 7, y, NULL);						\
+																						\
+		/* thrown exception */															\
+		Error_triggerException(Error_getInstance(), Message, NULL);						\
 	}
 #endif
 

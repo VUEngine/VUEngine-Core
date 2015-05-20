@@ -86,6 +86,7 @@ void AnimationController_destructor(AnimationController this)
 	if(this->animationCoordinator)
 	{
 		__VIRTUAL_CALL(void, AnimationCoordinator, removeAnimationController, this->animationCoordinator, this);
+		this->animationCoordinator = NULL;
 	}
 	
 	// destroy the super object

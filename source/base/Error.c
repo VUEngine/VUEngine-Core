@@ -80,7 +80,7 @@ void Error_destructor(Error this)
 }
 
 // setup the error message and lock program here
-int Error_triggerException(Error this, char* string)
+int Error_triggerException(Error this, char* message, char* detail)
 {
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
@@ -110,32 +110,39 @@ int Error_triggerException(Error this, char* string)
 	Printing_text(Printing_getInstance(), " Last process:                                  ", x, y, NULL);
 	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y++, NULL);
 	
-	Printing_text(Printing_getInstance(), "                                                " , x, ++y + 1, NULL);
-	y += 2;
-	Printing_text(Printing_getInstance(), "                                                " , x, y++ + 1, NULL);
-	Printing_text(Printing_getInstance(), " Message:                                       " , x, y++, NULL);
-
-	int stringMaxLenght = __SCREEN_WIDTH / 8 - 2;
-	int rowsAvailable  = __SCREEN_HEIGHT / 8 - y;
-	int stringLength = strnlen(string, stringMaxLenght * rowsAvailable);
-	int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght? 1: 0);
-	int line = 0;
-	
-	for(; line < lines; line++, string += stringMaxLenght)
+	if(message)
 	{
-		char messageLine[stringLength];
-		strncpy(messageLine, string, stringLength);
+		Printing_text(Printing_getInstance(), "                                                " , x, ++y + 1, NULL);
+		y += 2;
+		Printing_text(Printing_getInstance(), "                                                " , x, y++ + 1, NULL);
+		Printing_text(Printing_getInstance(), " Message:                                       " , x, y++, NULL);
+	
+		int stringMaxLenght = __SCREEN_WIDTH / 8 - 2;
+		int rowsAvailable  = __SCREEN_HEIGHT / 8 - y;
+		int stringLength = strnlen(message, stringMaxLenght * rowsAvailable);
+		int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght? 1: 0);
+		int line = 0;
 		
-		// TODO: fix me, termination character not working
-		messageLine[stringLength - 1] = (char)0;
-		Printing_text(Printing_getInstance(), messageLine, x + 1, y++ + 2, NULL);
+		for(; line < lines; line++, message += stringMaxLenght)
+		{
+			char messageLine[stringLength];
+			strncpy(messageLine, message, stringLength);
+			
+			// TODO: fix me, termination character not working
+			messageLine[stringLength - 1] = (char)0;
+			Printing_text(Printing_getInstance(), messageLine, x + 1, y++ + 2, NULL);
+		}
+		
+		if(detail)
+		{
+			Printing_text(Printing_getInstance(), detail, x + 1, y++ + 2, NULL);
+		}	
+		
+		if(y < __SCREEN_HEIGHT / 8 - 1)
+		{
+			Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
+		}
 	}
-	
-	if(y < __SCREEN_HEIGHT / 8 - 1)
-	{
-		Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
-	}
-	
 	// error display message
 	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 //	Printing_render(Printing_getInstance(), 31);

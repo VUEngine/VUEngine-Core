@@ -50,9 +50,8 @@ __CLASS(Error);
 //---------------------------------------------------------------------------------------------------------
 
 Error Error_getInstance();
-
 void Error_destructor(Error this);
-int Error_triggerException(Error this, char* string);
+int Error_triggerException(Error this, char* message, char* detail);
 
 
 #endif

@@ -189,13 +189,16 @@
 			((ReturnType (*)(ClassName, ...))											\
 			(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))		\
 				(																		\
-						__GET_CAST(ClassName, object), ##__VA_ARGS__						\
+						__GET_CAST(ClassName, object), ##__VA_ARGS__					\
 				):																		\
 			/* call base implementation */												\
 			(ReturnType)Error_triggerException(Error_getInstance(),						\
-				 __MAKE_STRING(ClassName ## _ ##  MethodName))							\
+				"Virtual Call: " __MAKE_STRING(ClassName ## _ ##  MethodName) 			\
+				" on object of type: ", 												\
+				object? 																\
+					__VIRTUAL_CALL_UNSAFE(char*, Object, getClassName, (Object)object)	\
+				: "NULL")																\
 		)
-
 
 #else
 #define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, object, ...)					\
