@@ -173,7 +173,10 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #endif
 	   
 #ifdef __ALERT_STACK_OVERFLOW
-	    	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
+	    	if(!Game_isInSpecialMode(Game_getInstance()))
+	    	{
+	    		HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
+	    	}
 #endif
 	    	//reset frame rate counters
 			FrameRate_reset(frameRate);
