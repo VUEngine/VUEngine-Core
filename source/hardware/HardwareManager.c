@@ -456,19 +456,31 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 	
+	int room = sp - (int)&_lastDataVariable;
+
 	if(resumed)
 	{
-		Printing_text(Printing_getInstance(), "STACK'S ROOM:        " , x, y, NULL);
-		Printing_int(Printing_getInstance(), sp - (int)&_lastDataVariable, x + 14, y, NULL);
+		if(__SCREEN_WIDTH / 8 < x + Utilities_intLength(room) + 13)
+		{
+			x = __SCREEN_WIDTH / 8 - Utilities_intLength(room) - 13;
+		}
+		
+		Printing_text(Printing_getInstance(), "STACK'S ROOM        " , x, y, NULL);
+		Printing_int(Printing_getInstance(), room, x + 13, y, NULL);
 	}	
 	else
 	{
+		if(__SCREEN_WIDTH / 8 - 1 < Utilities_intLength(room) + 10)
+		{
+			x = __SCREEN_WIDTH / 8 - 1 - Utilities_intLength(room) - 10;
+		}
+
 		Printing_text(Printing_getInstance(), "STACK'S STATUS" , x, y, NULL);
 		Printing_text(Printing_getInstance(), "Pointer:" , x, ++y, NULL);
 		Printing_hex(Printing_getInstance(), sp, x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Bss' end:" , x, ++y, NULL);
 		Printing_hex(Printing_getInstance(), (int)&_lastDataVariable, x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Room:           " , x, ++y, NULL);
-		Printing_int(Printing_getInstance(), sp - (int)&_lastDataVariable, x + 10, y, NULL);
+		Printing_int(Printing_getInstance(), room, x + 10, y, NULL);
 	}
 }

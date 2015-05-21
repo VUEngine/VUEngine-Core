@@ -168,12 +168,12 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #ifdef __PRINT_MEMORY_POOL_STATUS
 	    	if(!Game_isInSpecialMode(Game_getInstance()))
 	    	{
-	    		MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 0);
+	    		MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
 	    	}
 #endif
 	   
 #ifdef __ALERT_STACK_OVERFLOW
-	    	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 18, __SCREEN_HEIGHT / 8 - 1, true);
+	    	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
 #endif
 	    	//reset frame rate counters
 			FrameRate_reset(frameRate);
@@ -181,6 +181,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 			// no need to track this, so prevent a very unlikely overflow
 	    	this->ticks = 0;
     }	
+	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
 
     // update sounds
     SoundManager_playSounds(SoundManager_getInstance());
