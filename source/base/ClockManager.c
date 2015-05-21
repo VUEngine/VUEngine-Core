@@ -181,7 +181,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 			// no need to track this, so prevent a very unlikely overflow
 	    	this->ticks = 0;
     }	
-	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
 
     // update sounds
     SoundManager_playSounds(SoundManager_getInstance());
