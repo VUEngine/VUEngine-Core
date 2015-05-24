@@ -93,7 +93,7 @@ __CLASS(Actor);
 
 typedef struct ActorDefinition
 {
-	// It has an InGameEntity at the beggining
+	// it has an InGameEntity at the beginning
 	AnimatedInGameEntityDefinition animatedInGameEntityDefinition;
 
 	// friction for physics

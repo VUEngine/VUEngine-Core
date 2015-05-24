@@ -53,7 +53,7 @@
 	/* first byte is used as a usage flag */									\
 	__MEMORY_POOL_ARRAYS														\
 																				\
-	/* pointer to the beggining of each memory pool */							\
+	/* pointer to the beginning of each memory pool */							\
 	BYTE* poolLocation[__MEMORY_POOLS];											\
 																				\
 	/* pool's size and pool's block size */										\

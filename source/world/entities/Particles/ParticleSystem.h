@@ -86,7 +86,7 @@ __CLASS(ParticleSystem);
 // defines a ParticleSystem in ROM memory
 typedef struct ParticleSystemDefinition
 {
-	// It has an Entity at the beggining
+	// it has an Entity at the beginning
 	EntityDefinition entityDefinition;
 
 	// whether to delete or reuse expired particles

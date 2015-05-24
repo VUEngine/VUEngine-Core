@@ -76,20 +76,19 @@ __CLASS(InGameEntity);
 // defines a InGameEntity in ROM memory
 typedef struct InGameEntityDefinition
 {
-	// It has an Entity at the beggining
+	// it has an Entity at the beginning
 	EntityDefinition entityDefinition;
 
-	// gap for collision detection (to correct graphical collision with bgEntity's size)
-	// in pixels
+	// gap for collision detection (to correct graphical collision with bgEntity's size) (in pixels)
 	Gap gap;
 
-	/* gameworld's character's type	*/
+	// gameworld's character's type
 	u16 inGameType;
 
-	// object's size over the z axis
+	// object's size over the x axis
 	u16 width;
 
-	// object's size over the z axis
+	// object's size over the y axis
 	u16 height;
 
 	// object's size over the z axis

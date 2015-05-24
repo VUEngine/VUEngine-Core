@@ -60,7 +60,7 @@ __CLASS(InanimatedInGameEntity);
 // defines a InanimatedInGameEntity in ROM memory
 typedef struct InanimatedInGameEntityDefinition
 {
-	// It has an InGameEntity at the beggining
+	// it has an InGameEntity at the beginning
 	InGameEntityDefinition inGameEntityDefinition;
 
 	// friction for physics

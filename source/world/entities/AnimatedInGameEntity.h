@@ -38,7 +38,7 @@
 // defines an AnimatedInGameEntity
 typedef struct AnimatedInGameEntityDefinition
 {
-	// It has an InGameEntity at the beggining
+	// it has an InGameEntity at the beginning
 	InGameEntityDefinition inGameEntityDefinition;
 
 	// the animation
