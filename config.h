@@ -304,8 +304,6 @@
 #define __JPLT2_VALUE  			0xD0	// 11 01 00 00
 #define __JPLT3_VALUE  			0xE0	// 11 10 00 00
 
-#define	__BKCOL					0x00
-
 #define __BRTA					0x00
 #define __BRTB					0x00
 #define __BRTC					0x00

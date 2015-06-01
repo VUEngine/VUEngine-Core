@@ -34,6 +34,8 @@
 #include <SpriteManager.h>
 #include <Texture.h>
 #include <ParamTableManager.h>
+#include <VPUManager.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
@@ -64,7 +66,6 @@
 #define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + __ENTITY_LOAD_PAD)
 #define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- __ENTITY_LOAD_PAD)
 #define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + __ENTITY_LOAD_PAD)
-
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -203,7 +204,7 @@ void Stage_destructor(Stage this)
 	__DESTROY_BASE;
 }
 
-// place holder for objects designed around OBJECTS in the VB hardware
+// placeholder for objects designed around OBJECTS in the VB hardware
 void Stage_setupObjActor(Stage this, int *actor,int x,int y, int z)
 {
 	// TODO
@@ -255,6 +256,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// set optical values
 	Screen_setOptical(Screen_getInstance(), this->stageDefinition->optical);
+
+	// set background color
+	VPUManager_setBackgroundColor(this, this->stageDefinition->backgroundColor);
 
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());

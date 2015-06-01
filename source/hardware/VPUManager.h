@@ -132,6 +132,12 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 #define	__PARAM_BASE	(__PARAM_TABLE_END - 0x00002000 * (__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager_getInstance())) - __PRINTABLE_BGMAP_AREA)
 #define	__PARAM_DISPLACEMENT(param)	(__PARAM_BASE + (param & 0xFFF0))
 
+#define	__COLOR_BLACK			0x00
+#define	__COLOR_DARK_RED		0x01
+#define	__COLOR_MEDIUM_RED		0x02
+#define	__COLOR_BRIGHT_RED		0x03
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -166,6 +172,7 @@ void VPUManager_displayHide(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this);
+void VPUManager_setBackgroundColor(VPUManager this, u8 color);
 
 
 #endif

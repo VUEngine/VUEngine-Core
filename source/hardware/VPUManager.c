@@ -153,17 +153,20 @@ void VPUManager_setupPalettes(VPUManager this)
 	VIP_REGS[BRTA]  = __BRTA;
 	VIP_REGS[BRTB]  = __BRTB;
 	VIP_REGS[BRTC]  = __BRTC;
+
 	VIP_REGS[GPLT0] = __GPLT0_VALUE;
 	VIP_REGS[GPLT1] = __GPLT1_VALUE;
 	VIP_REGS[GPLT2] = __GPLT2_VALUE;
 	VIP_REGS[GPLT3] = __GPLT3_VALUE;
+
 	VIP_REGS[JPLT0] = __JPLT0_VALUE;
 	VIP_REGS[JPLT1] = __JPLT1_VALUE;
 	VIP_REGS[JPLT2] = __JPLT2_VALUE;
 	VIP_REGS[JPLT3] = __JPLT3_VALUE;
-	VIP_REGS[BKCOL] = __BKCOL;	/* Clear the screen to black before rendering */
 
+	VPUManager_setBackgroundColor(this, __COLOR_BLACK);
 }
+
 // set brightness all the way up
 void VPUManager_upBrightness(VPUManager this)
 {
@@ -183,8 +186,7 @@ void VPUManager_displayHide(VPUManager this)
 	VIP_REGS[BRTB] = 0;
 	VIP_REGS[BRTC] = 0;
 
-	// turn back the background
-	VIP_REGS[BKCOL] = 0x00;
+	VPUManager_setBackgroundColor(this, __COLOR_BLACK);
 }
 
 
@@ -228,4 +230,17 @@ void VPUManager_setupColumnTable(VPUManager this)
 		CLMN_TBL[i + 0x0100] = columnTable[i];
 		CLMN_TBL[i + 0x0180] = columnTable[127 - i];
 	}
+}
+
+// set background color
+void VPUManager_setBackgroundColor(VPUManager this, u8 color)
+{
+	ASSERT(this, "VPUManager::setBackgroundColor: null this");
+
+    if (color > __COLOR_BRIGHT_RED)
+    {
+        color = __COLOR_BRIGHT_RED;
+    }
+
+	VIP_REGS[BKCOL] = color;
 }
