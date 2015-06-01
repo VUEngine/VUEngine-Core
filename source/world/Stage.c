@@ -258,7 +258,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	Screen_setOptical(Screen_getInstance(), this->stageDefinition->optical);
 
 	// set background color
-	VPUManager_setBackgroundColor(this, this->stageDefinition->backgroundColor);
+	VPUManager_setBackgroundColor(VPUManager_getInstance(), this->stageDefinition->backgroundColor);
 
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());
