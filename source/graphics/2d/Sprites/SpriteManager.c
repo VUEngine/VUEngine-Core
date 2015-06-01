@@ -163,9 +163,9 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 			Sprite otherSprite = __GET_CAST(Sprite, VirtualNode_getData(otherNode));
 			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, otherSprite);
 	
-			// check if z positions are swaped
+			// check if z positions are swapped
 			if(otherPosition->z > position->z ||
-					(otherPosition->z == position->z && Sprite_getParallaxDisplacement(otherSprite) > Sprite_getParallaxDisplacement(sprite))
+                (otherPosition->z == position->z && Sprite_getDisplacement(otherSprite).z > Sprite_getDisplacement(sprite).z)
 			)
 			{
 				// get each entity's layer
@@ -214,9 +214,9 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			Sprite otherSprite = __GET_CAST(Sprite, VirtualNode_getData(this->otherNode));
 			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, otherSprite);
 
-			// check if z positions are swaped
+			// check if z positions are swapped
 			if(otherPosition->z < position->z ||
-					(otherPosition->z == position->z && Sprite_getParallaxDisplacement(otherSprite) < Sprite_getParallaxDisplacement(sprite))
+                (otherPosition->z == position->z && Sprite_getDisplacement(otherSprite).z < Sprite_getDisplacement(sprite).z)
 			)
 			{
 				// get each entity's layer

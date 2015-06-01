@@ -164,6 +164,15 @@ typedef struct Direction
 
 } Direction;
 
+// displacement vector
+typedef struct Displacement
+{
+	s8 x;
+	s8 y;
+	s8 z;
+
+} Displacement;
+
 typedef struct DirectionChange
 {
 	s8 x: 2;

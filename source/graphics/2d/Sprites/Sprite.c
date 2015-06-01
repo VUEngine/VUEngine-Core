@@ -64,7 +64,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, O
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->parallaxDisplacement = 0;
+	this->displacement = (Displacement){0, 0, 0};
 }
 
 // class's destructor
@@ -219,11 +219,11 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
 }
 
 // get render flag
-u8 Sprite_getParallaxDisplacement(Sprite this)
+Displacement Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getRenderFlag: null this");
 
-	return this->parallaxDisplacement;
+	return this->displacement;
 }
 
 void Sprite_rotate(Sprite this, const Rotation* rotation)

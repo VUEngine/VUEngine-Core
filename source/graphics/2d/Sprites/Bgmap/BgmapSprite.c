@@ -112,35 +112,36 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 	this->drawSpec.rotation.y = 0;
 	this->drawSpec.rotation.z = 0;
 
-	this->parallaxDisplacement = bSpriteDefinition->parallaxDisplacement;
+	this->displacement = bSpriteDefinition->displacement;
 
 	this->param = 0;
 	this->paramTableRow = -1;
 
 	//this->head = bSpriteDefinition->display | WRLD_BGMAP;
-	//set world layer's head acording to map's render mode
+
+	// set world layer's head acording to map's render mode
 	switch(bSpriteDefinition->bgmapMode)
 	{
 		case WRLD_BGMAP:
 
-			//set map head
+			// set map head
 			this->head = bSpriteDefinition->display | WRLD_BGMAP;
 
 			break;
 
 		case WRLD_AFFINE:
 
-			//set map head
+			// set map head
 			this->head = bSpriteDefinition->display | WRLD_AFFINE;
 
-			//allocate param table space
+			// allocate param table space
 			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
 
 			break;
 
 		case WRLD_HBIAS:
 
-			//set map head
+			// set map head
 			this->head = bSpriteDefinition->display | WRLD_HBIAS | WRLD_OVR;
 
 			break;
@@ -153,10 +154,10 @@ void BgmapSprite_destructor(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::destructor: null this");
 	ASSERT(__GET_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
-	//if affine or bgmap
+	// if affine or bgmap
 	if(WRLD_AFFINE & this->head)
 	{
-		//free param table space
+		// free param table space
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
 	}
 
@@ -306,7 +307,7 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
-	//if render flag is set
+	// if render flag is set
 	if(this->renderFlag)
 	{
 		static WORLD* worldPointer = NULL;
@@ -320,10 +321,10 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
 			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
-			worldPointer->gp = this->drawSpec.position.parallax + this->parallaxDisplacement;
+			worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z;
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 
-			//set the world size according to the zoom
+			// set the world size according to the zoom
 			if(WRLD_AFFINE & this->head)
 			{
 				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
@@ -342,7 +343,7 @@ void BgmapSprite_render(BgmapSprite this)
 			return;
 		}
 		
-		//set the world screen position
+		// set the world screen position
 		if(this->renderFlag & __UPDATE_M)
 		{
 			worldPointer->mx = this->drawSpec.textureSource.mx;
@@ -350,17 +351,17 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->my = this->drawSpec.textureSource.my;
 		}
 		
-		//set the world screen position
+		// set the world screen position
 		if(this->renderFlag & __UPDATE_G)
 		{
 			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
-			worldPointer->gp = this->drawSpec.position.parallax + this->parallaxDisplacement;
+			worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z;
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 		}
 
 		if(this->renderFlag & __UPDATE_SIZE)
 		{
-			//set the world size according to the zoom
+			// set the world size according to the zoom
 			if(WRLD_AFFINE & this->head)
 			{
 				if(0 < this->paramTableRow)
@@ -446,9 +447,7 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
 // 										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
-/*
- * Affine FX
- */
+// Affine FX
 
 void BgmapSprite_noAFX(BgmapSprite this, int direction)
 {
