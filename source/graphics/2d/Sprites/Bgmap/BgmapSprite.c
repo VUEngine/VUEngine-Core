@@ -320,9 +320,9 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x) + this->displacement.x;
 			worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z;
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y) + this->displacement.y;
 
 			// set the world size according to the zoom
 			if(WRLD_AFFINE & this->head)
@@ -354,9 +354,9 @@ void BgmapSprite_render(BgmapSprite this)
 		// set the world screen position
 		if(this->renderFlag & __UPDATE_G)
 		{
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x) + this->displacement.x;
 			worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z;
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y) + this->displacement.y;
 		}
 
 		if(this->renderFlag & __UPDATE_SIZE)

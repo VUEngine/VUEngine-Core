@@ -207,11 +207,12 @@ void ObjectSprite_render(ObjectSprite this)
 
 		int xDirection = this->head & 0x2000? -1: 1;
 		int yDirection = this->head & 0x1000? -1: 1;
-		int x = FIX19_13TOI(this->position.x) - FIX19_13TOI(this->halfWidth) * xDirection;
-		int y = FIX19_13TOI(this->position.y) - FIX19_13TOI(this->halfHeight) * yDirection;
+
+		int x = FIX19_13TOI(this->position.x) - FIX19_13TOI(this->halfWidth) * xDirection + this->displacement.x;
+		int y = FIX19_13TOI(this->position.y) - FIX19_13TOI(this->halfHeight) * yDirection + this->displacement.y;
 		
 		int i = 0;
-		u16 secondWordValue = (this->head & __SHOW_MASK) | (this->position.parallax & __HIDE_MASK);
+		u16 secondWordValue = (this->head & __SHOW_MASK) | ((this->position.parallax + this->displacement.z) & __HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
 		
 		for(; i < rows; i++)
