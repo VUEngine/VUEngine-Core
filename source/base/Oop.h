@@ -494,13 +494,13 @@
 
 
 // MemoryPool's defines
-#define __BLOCK_DEFINITION(BlockSize, Elements)									\
-	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 							\
+#define __BLOCK_DEFINITION(BlockSize, Elements)											\
+	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 									\
 
-#define __SET_MEMORY_POOL_ARRAY(BlockSize)										\
-	this->poolLocation[pool] = this->pool ## BlockSize ## B;					\
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);	\
-	this->poolSizes[pool++][eBlockSize] = BlockSize;							\
+#define __SET_MEMORY_POOL_ARRAY(BlockSize)												\
+	this->poolLocation[pool] = this->pool ## BlockSize ## B;							\
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);			\
+	this->poolSizes[pool++][eBlockSize] = BlockSize;									\
 
 
 #endif
