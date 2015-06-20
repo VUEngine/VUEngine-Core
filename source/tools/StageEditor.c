@@ -81,6 +81,9 @@
 																				\
 	/* translation step size */													\
 	int translationStepSize;													\
+																				\
+	/* current user's object's sprite */										\
+	Sprite userObjectSprite;													\
 
 // define the StageEditor
 __CLASS_DEFINITION(StageEditor, Object);
@@ -127,7 +130,8 @@ static void StageEditor_printProjectionValues(StageEditor this);
 static void StageEditor_printUserObjects(StageEditor this);
 static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey);
 static void StageEditor_printTranslationStepSize(StageEditor this);
-
+static void StageEditor_removePreviousSprite(StageEditor this);
+static void StageEditor_showSelectedUserObject(StageEditor this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -145,6 +149,8 @@ static void StageEditor_constructor(StageEditor this)
 	this->currentEntityNode = NULL;
 
 	this->gameState = NULL;
+	
+	this->userObjectSprite = NULL;
 
 	this->mode = kFirstMode + 1;
 
@@ -197,6 +203,8 @@ void StageEditor_start(StageEditor this, GameState gameState)
 
 	this->gameState = gameState;
 	this->mode = kFirstMode + 1;
+	this->userObjectSprite = NULL;
+
 	StageEditor_releaseShape(this);
 	StageEditor_setupMode(this);
 }
@@ -208,6 +216,7 @@ void StageEditor_stop(StageEditor this)
 
 	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
 	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	StageEditor_removePreviousSprite(this);
 	StageEditor_releaseShape(this);
 	this->currentEntityNode = NULL;
 }
@@ -317,8 +326,10 @@ static void StageEditor_setupMode(StageEditor this)
 
 		case kAddObjects:
 
+			StageEditor_removePreviousSprite(this);
 			StageEditor_releaseShape(this);
 			StageEditor_printUserObjects(this);
+			StageEditor_showSelectedUserObject(this);
 			break;
 	}
 }
@@ -710,15 +721,44 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 	}
 }
 
+static void StageEditor_removePreviousSprite(StageEditor this)
+{
+	if(this->userObjectSprite)
+	{
+		__DELETE(this->userObjectSprite);
+		this->userObjectSprite = NULL;
+	}
+}
+
+static void StageEditor_showSelectedUserObject(StageEditor this)
+{
+	StageEditor_removePreviousSprite(this);
+	
+	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spritesDefinitions[0];
+	this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
+	ASSERT(this->userObjectSprite, "AnimationEditor::createSprite: null animatedSprite");
+	ASSERT(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite)), "AnimationEditor::createSprite: null texture");
+
+	VBVec2D spritePosition = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, this->userObjectSprite));
+	spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite))) << 2));
+	spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite))) << 2));
+		
+	__VIRTUAL_CALL(void, Sprite, setPosition, __GET_CAST(Sprite, this->userObjectSprite), &spritePosition);
+	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __GET_CAST(Sprite, this->userObjectSprite));
+	__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, this->userObjectSprite));
+}
+
 static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 {
 	if(pressedKey & K_LU)
 	{
 		OptionsSelector_selectPrevious(this->userObjectsSelector);
+		StageEditor_showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_LD)
 	{
 		OptionsSelector_selectNext(this->userObjectsSelector);
+		StageEditor_showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_A)
 	{
@@ -744,6 +784,8 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		// select the added entity
 		this->mode = kTranslateEntities;
 		StageEditor_setupMode(this);
+		
+		StageEditor_removePreviousSprite(this);
 	}
 }
 
