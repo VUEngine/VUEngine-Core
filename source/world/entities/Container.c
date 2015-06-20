@@ -35,8 +35,6 @@ __CLASS_DEFINITION(Container, SpatialObject);
 //---------------------------------------------------------------------------------------------------------
 
 static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args);
-void Container_invalidateGlobalPosition(Container this);
-void Container_processRemovedChildren(Container this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -194,6 +192,29 @@ void Container_addChild(Container this, Container child)
 	}
 }
 
+// remove child Container
+void Container_removeChild(Container this, Container child)
+{
+	ASSERT(this, "Container::removeChild: null this");
+
+	// check if child is valid and if I'm its parent
+	if(child && this == child->parent && this->children)
+	{
+		// if don't have any children to remove yet
+		if(!this->removedChildren)
+	    {
+			// create children list
+			this->removedChildren = __NEW(VirtualList);
+		}
+
+		// register for removing
+		VirtualList_pushBack(this->removedChildren, (void*)child);
+
+		// set no parent
+		child->parent = NULL;
+	}
+}
+
 // process removed children
 void Container_processRemovedChildren(Container this)
 {
@@ -219,29 +240,6 @@ void Container_processRemovedChildren(Container this)
 		__DELETE(this->removedChildren);
 
 		this->removedChildren = NULL;
-	}
-}
-
-// remove child Container
-void Container_removeChild(Container this, Container child)
-{
-	ASSERT(this, "Container::removeChild: null this");
-
-	// check if child is valid and if I'm its parent
-	if(child && this == child->parent && this->children)
-	{
-		// if don't have any children to remove yet
-		if(!this->removedChildren)
-	    {
-			// create children list
-			this->removedChildren = __NEW(VirtualList);
-		}
-
-		// register for removing
-		VirtualList_pushBack(this->removedChildren, (void*)child);
-
-		// set no parent
-		child->parent = NULL;
 	}
 }
 

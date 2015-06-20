@@ -96,7 +96,6 @@ typedef struct StageEntityToInitialize
 // global
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
-void Container_processRemovedChildren(Container this);
 Shape SpatialObject_getShape(SpatialObject this);
 
 static void Stage_constructor(Stage this);

@@ -176,8 +176,10 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 
 	if(this->body && Body_isAwake(this->body))
     {
-		Actor_syncPositionWithBody(this);
+		const VBVec3D* position = Body_getPosition(this->body);
 		
+		Actor_syncPositionWithBody(this);
+
 		// an Actor with a physical body is agnostic to parenting
 		Transformation environmentAgnosticTransform =
 	    {
@@ -195,9 +197,11 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 				{environmentTransform->globalScale.x, environmentTransform->globalScale.y},
 		};
 
+		Container_invalidateGlobalPosition(__GET_CAST(Container, this));
+
 		// call base
 		AnimatedInGameEntity_transform(__GET_CAST(AnimatedInGameEntity, this), &environmentAgnosticTransform);
-	}
+    }
 	else
 	{
 		// call base

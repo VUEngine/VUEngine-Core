@@ -731,17 +731,21 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 	StageEditor_removePreviousSprite(this);
 	
 	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spritesDefinitions[0];
-	this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
-	ASSERT(this->userObjectSprite, "AnimationEditor::createSprite: null animatedSprite");
-	ASSERT(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite)), "AnimationEditor::createSprite: null texture");
-
-	VBVec2D spritePosition = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, this->userObjectSprite));
-	spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite))) << 2));
-	spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite))) << 2));
-		
-	__VIRTUAL_CALL(void, Sprite, setPosition, __GET_CAST(Sprite, this->userObjectSprite), &spritePosition);
-	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __GET_CAST(Sprite, this->userObjectSprite));
-	__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, this->userObjectSprite));
+	
+	if(spriteDefinition)
+	{
+		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
+		ASSERT(this->userObjectSprite, "AnimationEditor::createSprite: null animatedSprite");
+		ASSERT(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite)), "AnimationEditor::createSprite: null texture");
+	
+		VBVec2D spritePosition = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, this->userObjectSprite));
+		spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__GET_CAST(Sprite, this->userObjectSprite))) << 2));
+			
+		__VIRTUAL_CALL(void, Sprite, setPosition, __GET_CAST(Sprite, this->userObjectSprite), &spritePosition);
+		__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __GET_CAST(Sprite, this->userObjectSprite));
+		__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, this->userObjectSprite));
+	}
 }
 
 static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
