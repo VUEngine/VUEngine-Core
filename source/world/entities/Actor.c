@@ -174,10 +174,8 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::transform: null this");
 
-	if(this->body && Body_isAwake(this->body))
+	if(this->body && Body_isMoving(this->body))
     {
-		const VBVec3D* position = Body_getPosition(this->body);
-		
 		Actor_syncPositionWithBody(this);
 
 		// an Actor with a physical body is agnostic to parenting
@@ -197,6 +195,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 				{environmentTransform->globalScale.x, environmentTransform->globalScale.y},
 		};
 
+		// since body is moving
 		Container_invalidateGlobalPosition(__GET_CAST(Container, this));
 
 		// call base

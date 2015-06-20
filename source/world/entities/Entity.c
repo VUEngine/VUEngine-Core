@@ -666,8 +666,8 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
 
-	bool updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
-	bool updateSpriteTransformations = __VIRTUAL_CALL(bool, Entity, updateSpriteTransformations, this);
+	bool updateSpritePosition = false;
+	bool updateSpriteTransformations = false;
 
 	if(this->invalidateGlobalPosition.x ||
 		this->invalidateGlobalPosition.y ||
@@ -679,6 +679,11 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		
 		updateSpritePosition = true;
 		updateSpriteTransformations = true;
+	}
+	else
+	{
+		updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
+		updateSpriteTransformations = __VIRTUAL_CALL(bool, Entity, updateSpriteTransformations, this);
 	}
 
 	if(updateSpritePosition || updateSpriteTransformations)

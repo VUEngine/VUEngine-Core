@@ -289,6 +289,7 @@ static void StageEditor_setupMode(StageEditor this)
 {
 	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
     StageEditor_printHeader(this);
+	StageEditor_removePreviousSprite(this);
 
 	switch(this->mode)
 	{
@@ -322,7 +323,6 @@ static void StageEditor_setupMode(StageEditor this)
 
 		case kAddObjects:
 
-			StageEditor_removePreviousSprite(this);
 			StageEditor_releaseShape(this);
 			StageEditor_printUserObjects(this);
 			StageEditor_showSelectedUserObject(this);
