@@ -27,6 +27,7 @@
 #include <Texture.h>
 #include <UI.h>
 #include <ObjectSpriteContainerManager.h>
+#include <VPUManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -106,6 +107,12 @@ typedef struct StageDefinition
 	
 	// physical world's friction
 	fix19_13 friction;
+	
+	// palettes' config
+	PaletteConfig paletteConfig;
+
+	// OBJs segments's sizes(SPT0 to SPT3)
+	fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
 	// OBJs segments z coordinates (SPT0 to SPT3)
 	fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
@@ -128,9 +135,6 @@ typedef struct StageDefinition
 	// pointer to the background music
 	const u16 (*bgm)[];
 
-	// background color index
-	u8 backgroundColor;
-
 } StageDefinition;
 
 typedef const StageDefinition StageROMDef;
@@ -143,6 +147,7 @@ typedef const StageDefinition StageROMDef;
 __CLASS_NEW_DECLARE(Stage);
 
 void Stage_destructor(Stage this);
+void Stage_setupPalettes(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 Size Stage_getSize(Stage this);
 bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition);

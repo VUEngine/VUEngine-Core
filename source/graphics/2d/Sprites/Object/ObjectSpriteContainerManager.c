@@ -47,7 +47,7 @@ __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ObjectSpriteContainer, u8 spt);
+__CLASS_NEW_DECLARE(ObjectSpriteContainer, u8 spt, u16 totalObjects, u16 firstObjectIndex);
 
 static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this);
 
@@ -103,7 +103,7 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 	}
 	
 	// clean OBJ memory
-	for(i = 0; i < 4 * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
+	for(i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
 		OAM[(i << 2) + 0] = 0;
 		OAM[(i << 2) + 1] = 0;
@@ -124,7 +124,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 	{
 		if(!this->objectSpriteContainers[i])
 		{
-			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i);
+			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i, __AVAILABLE_CHAR_OBJECTS / 4, __AVAILABLE_CHAR_OBJECTS - (__TOTAL_OBJECT_SEGMENTS - (i + 1)) * __TOTAL_OBJECT_SEGMENTS / 4);
 		}
 	}
 
@@ -164,10 +164,11 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
 }
 
 
-void ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSpriteContainerManager this, fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
+void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, fix19_13 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {
-	ASSERT(this, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 	
+	fix19_13 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 
 	// must add them from SPT3 to SPT0
@@ -175,11 +176,13 @@ void ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSprit
 	int i = __TOTAL_OBJECT_SEGMENTS;
 	for(; i--; )
 	{
-		NM_ASSERT(z[i] <= previousZ, "ObjectSpriteContainerManager::setObjectSpriteContainerZPosition: wrong z");
+		NM_ASSERT(z[i] <= previousZ, "ObjectSpriteContainerManager::setupObjectSpriteContainers: wrong z");
 
 		if(!this->objectSpriteContainers[i])
 		{
-			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i);
+			availableObjects -= size[i];
+			NM_ASSERT(0 <= availableObjects, "ObjectSpriteContainerManager::setupObjectSpriteContainers: OBJs depleted");
+			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i, size[i], availableObjects);
 		}
 
 		VBVec2D position =

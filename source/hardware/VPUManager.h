@@ -134,6 +134,29 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 #define	__COLOR_BRIGHT_RED		0x03
 
 
+
+typedef struct PaletteConfig
+{
+	u8 backgroundColor;
+	
+	struct Bgmap 
+	{
+		u8 gplt0;
+		u8 gplt1;
+		u8 gplt2;
+		u8 gplt3;
+	} bgmap;
+	
+	struct Object 
+	{
+		u8 jplt0;
+		u8 jplt1;
+		u8 jplt2;
+		u8 jplt3;
+	} object;
+	
+} PaletteConfig;
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -162,9 +185,9 @@ void VPUManager_disableInterrupt(VPUManager this);
 void VPUManager_enableInterrupt(VPUManager this);
 void VPUManager_displayOn(VPUManager this);
 void VPUManager_displayOff(VPUManager this);
-void VPUManager_setupPalettes(VPUManager this);
+void VPUManager_setupPalettes(VPUManager this, PaletteConfig* paletteConfig);
 void VPUManager_upBrightness(VPUManager this);
-void VPUManager_displayHide(VPUManager this);
+void VPUManager_lowerBrightness(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this);

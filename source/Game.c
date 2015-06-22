@@ -262,6 +262,7 @@ void Game_start(Game this, GameState state)
 	SRAMManager_getInstance();
 
 	HardwareManager_displayOn(this->hardwareManager);
+    HardwareManager_lowerBrightness(this->hardwareManager);
 
 	if(!StateMachine_getCurrentState(this->stateMachine))
 	{
@@ -427,6 +428,7 @@ void Game_reset(Game this)
     HardwareManager_clearScreen(this->hardwareManager);
 	HardwareManager_setupColumnTable(this->hardwareManager);
     HardwareManager_displayOn(this->hardwareManager);
+    HardwareManager_lowerBrightness(this->hardwareManager);
 
 	// reset managers
     Screen_setFocusInGameEntity(this->screen, NULL);

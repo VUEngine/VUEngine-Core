@@ -274,7 +274,6 @@ void HardwareManager_displayOn(HardwareManager this)
 	ASSERT(this, "HardwareManager::displayOn: null this");
 
 	VPUManager_displayOn(this->vpuManager);
-	VPUManager_setupPalettes(this->vpuManager);
 }
 
 // display off
@@ -311,6 +310,15 @@ void HardwareManager_upBrightness(HardwareManager this)
 
 	VPUManager_upBrightness(this->vpuManager);
 }
+
+// lower display brightness
+void HardwareManager_lowerBrightness(HardwareManager this)
+{
+	ASSERT(this, "HardwareManager::lowerBrightness: null this");
+
+	VPUManager_lowerBrightness(this->vpuManager);
+}
+
 
 // setup default column table
 void HardwareManager_setupColumnTable(HardwareManager this)

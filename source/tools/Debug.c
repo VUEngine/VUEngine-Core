@@ -233,7 +233,7 @@ static void Debug_dimmGame(Debug this)
 	VIP_REGS[GPLT0] = 0b01010100;
 	VIP_REGS[GPLT1] = 0b01010000;
 	VIP_REGS[GPLT2] = 0b01010100;
-	VIP_REGS[GPLT3] = __GPLT3_VALUE;
+	VIP_REGS[GPLT3] = 0xE0;
 	VIP_REGS[JPLT0] = 0b01010100;
 	VIP_REGS[JPLT1] = 0b01010100;
 	VIP_REGS[JPLT2] = 0b01010100;
@@ -242,15 +242,7 @@ static void Debug_dimmGame(Debug this)
 
 static void Debug_lightUpGame(Debug this)
 {
-	//VPUManager_setupPalettes(VPUManager_getInstance());
-	VIP_REGS[GPLT0] = __GPLT0_VALUE;
-	VIP_REGS[GPLT1] = __GPLT1_VALUE;
-	VIP_REGS[GPLT2] = __GPLT2_VALUE;
-	VIP_REGS[GPLT3] = __GPLT3_VALUE;
-	VIP_REGS[JPLT0] = __JPLT0_VALUE;
-	VIP_REGS[JPLT1] = __JPLT1_VALUE;
-	VIP_REGS[JPLT2] = __JPLT2_VALUE;
-	VIP_REGS[JPLT3] = __JPLT3_VALUE;
+	Stage_setupPalettes(GameState_getStage(this->gameState));
 }
 
 // update

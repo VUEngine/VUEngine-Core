@@ -91,6 +91,7 @@ void HardwareManager_displayOff(HardwareManager this);
 void HardwareManager_disableRendering(HardwareManager this);
 void HardwareManager_enableRendering(HardwareManager this);
 void HardwareManager_upBrightness(HardwareManager this);
+void HardwareManager_lowerBrightness(HardwareManager this);
 void HardwareManager_setupColumnTable(HardwareManager this);
 void HardwareManager_enableKeypad(HardwareManager this);
 void HardwareManager_disableKeypad(HardwareManager this);

@@ -60,11 +60,11 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectSpriteContainer, u8 spt)
-__CLASS_NEW_END(ObjectSpriteContainer, spt);
+__CLASS_NEW_DEFINITION(ObjectSpriteContainer, u8 spt, u16 totalObjects, u16 firstObjectIndex)
+__CLASS_NEW_END(ObjectSpriteContainer, spt, totalObjects, firstObjectIndex);
 
 // class's constructor
-void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
+void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt, u16 totalObjects, u16 firstObjectIndex)
 {
 	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
@@ -72,8 +72,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	__CONSTRUCT_BASE();
 
 	this->head = WRLD_OBJ | WRLD_ON;
-	this->spt = spt;
-	this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+	this->spt = spt;	
+	this->totalObjects = totalObjects;
+	this->availableObjects = this->totalObjects;
+	this->firstObjectIndex = firstObjectIndex;
 	this->objectSprites = __NEW(VirtualList);
 	this->objectSpriteToDefragment = NULL;
 	this->freedObjectIndex = 0;
@@ -83,9 +85,9 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 	SpriteManager_addSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
 	// clear OBJ memory
-	int i = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+	int i = firstObjectIndex;
 
-	for(; i < (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER; i++)
+	for(; i < this->firstObjectIndex + this->totalObjects; i++)
 	{
 		OAM[(i << 2) + 0] = 0;
 		OAM[(i << 2) + 1] = 0;
@@ -93,7 +95,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt)
 		OAM[(i << 2) + 3] = 0;
 	}
 
-	VIP_REGS[SPT0 + this->spt] = (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
+	VIP_REGS[SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 }
 
 // class's destructor
@@ -129,7 +131,7 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 	
 	if(objectSprite)
 	{
-		s16 lastObjectIndex = this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+		s16 lastObjectIndex = this->firstObjectIndex;
 
 		if(VirtualList_getSize(this->objectSprites))
 		{
@@ -271,11 +273,11 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		if(node)
 		{
 			ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(node));
-			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - (ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite));
+			this->availableObjects = this->totalObjects - (ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite));
 		}
 		else
 		{
-			this->availableObjects = __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+			this->availableObjects = this->totalObjects;
 		}
 		
 		return;
@@ -372,14 +374,14 @@ int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 	
-	return this->spt * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER;
+	return this->firstObjectIndex;
 }
 
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 	
-	return (this->spt + 1) * __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER - 1;
+	return this->firstObjectIndex + this->totalObjects;
 }
 
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)

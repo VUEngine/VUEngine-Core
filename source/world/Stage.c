@@ -198,13 +198,6 @@ void Stage_destructor(Stage this)
 	__DESTROY_BASE;
 }
 
-// placeholder for objects designed around OBJECTS in the VB hardware
-void Stage_setupObjActor(Stage this, int *actor,int x,int y, int z)
-{
-	// TODO
-	ASSERT(this, "Stage::setupObjActor: null this");
-}
-
 // determine if a point is visible
 inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallRightcuboid* smallRightcuboid)
 {
@@ -237,8 +230,16 @@ static void Stage_setObjectSpritesContainers(Stage this)
 {
 	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
 
-	ObjectSpriteContainerManager_setObjectSpriteContainersZPosition(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->objectSpritesContainersZPosition);
+	ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->objectSpritesContainersSize, this->stageDefinition->objectSpritesContainersZPosition);
 }
+
+void Stage_setupPalettes(Stage this)
+{
+	ASSERT(this, "Stage::setupPalettes: null this");
+
+	VPUManager_setupPalettes(VPUManager_getInstance(), &this->stageDefinition->paletteConfig);
+}
+
 
 // load stage's entites
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition)
@@ -251,9 +252,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	// set optical values
 	Screen_setOptical(Screen_getInstance(), this->stageDefinition->optical);
 
-	// set background color
-	VPUManager_setBackgroundColor(VPUManager_getInstance(), this->stageDefinition->backgroundColor);
-
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());
 
@@ -265,6 +263,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 		Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
 	}
 
+	// set palettes
+	Stage_setupPalettes(this);
+	
 	// set OBJs' z position
 	Stage_setObjectSpritesContainers(this);
 
@@ -1019,6 +1020,9 @@ void Stage_resume(Stage this)
 	// set physics
 	PhysicalWorld_setFriction(PhysicalWorld_getInstance(), this->stageDefinition->friction);
 	PhysicalWorld_setGravity(PhysicalWorld_getInstance(), this->stageDefinition->gravity);
+
+	// set palettes
+	Stage_setupPalettes(this);
 
 	// set OBJs' z position
 	Stage_setObjectSpritesContainers(this);

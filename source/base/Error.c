@@ -147,7 +147,7 @@ int Error_triggerException(Error this, char* message, char* detail)
 	VIP_REGS[GPLT0] = __DIMM_VALUE_1;
 	VIP_REGS[GPLT1] = __DIMM_VALUE_2;
 	VIP_REGS[GPLT2] = __DIMM_VALUE_1;
-	VIP_REGS[GPLT3] = __GPLT3_VALUE;
+	VIP_REGS[GPLT3] = 0xE0;
 	VIP_REGS[JPLT0] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT1] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT2] = __DIMM_VALUE_1;

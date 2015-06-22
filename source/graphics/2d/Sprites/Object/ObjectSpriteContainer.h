@@ -31,7 +31,7 @@
 // 											 MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __AVAILABLE_OBJECTS_PER_OBJECT_SPRITE_CONTAINER	256
+#define __AVAILABLE_CHAR_OBJECTS	1024
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,6 +71,12 @@
 	/* used for defragmentation */												\
 	int freedObjectIndex;														\
 																				\
+	/* first object index */													\
+	u16 firstObjectIndex;														\
+																				\
+	/* total objects */															\
+	u16 totalObjects;															\
+																				\
 	/* OBJs available */														\
 	u16 availableObjects;														\
 																				\
@@ -85,7 +91,7 @@ __CLASS(ObjectSpriteContainer);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt);
+void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt, u16 totalObjects, u16 firstObjectIndex);
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
 s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s16 numberOfObjects);

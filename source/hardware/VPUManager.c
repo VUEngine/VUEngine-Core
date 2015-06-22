@@ -141,26 +141,22 @@ void VPUManager_displayOff(VPUManager this)
 	VPUManager_disableInterrupt(this);
 }
 
-// setup palettes
-void VPUManager_setupPalettes(VPUManager this)
+// setup backgorund color
+void VPUManager_setupPalettes(VPUManager this, PaletteConfig* paletteConfig)
 {
 	ASSERT(this, "VPUManager::setupPalettes: null this");
 
-	VIP_REGS[BRTA]  = __BRTA;
-	VIP_REGS[BRTB]  = __BRTB;
-	VIP_REGS[BRTC]  = __BRTC;
+	VIP_REGS[GPLT0] = paletteConfig->bgmap.gplt0;
+	VIP_REGS[GPLT1] = paletteConfig->bgmap.gplt1;
+	VIP_REGS[GPLT2] = paletteConfig->bgmap.gplt2;
+	VIP_REGS[GPLT3] = paletteConfig->bgmap.gplt3;
 
-	VIP_REGS[GPLT0] = __GPLT0_VALUE;
-	VIP_REGS[GPLT1] = __GPLT1_VALUE;
-	VIP_REGS[GPLT2] = __GPLT2_VALUE;
-	VIP_REGS[GPLT3] = __GPLT3_VALUE;
-
-	VIP_REGS[JPLT0] = __JPLT0_VALUE;
-	VIP_REGS[JPLT1] = __JPLT1_VALUE;
-	VIP_REGS[JPLT2] = __JPLT2_VALUE;
-	VIP_REGS[JPLT3] = __JPLT3_VALUE;
-
-	VPUManager_setBackgroundColor(this, __COLOR_BLACK);
+	VIP_REGS[JPLT0] = paletteConfig->object.jplt0;
+	VIP_REGS[JPLT1] = paletteConfig->object.jplt1;
+	VIP_REGS[JPLT2] = paletteConfig->object.jplt2;
+	VIP_REGS[JPLT3] = paletteConfig->object.jplt3;
+	
+	VIP_REGS[BKCOL] = paletteConfig->backgroundColor <= __COLOR_BRIGHT_RED? paletteConfig->backgroundColor: __COLOR_BRIGHT_RED;
 }
 
 // set brightness all the way up
@@ -174,7 +170,7 @@ void VPUManager_upBrightness(VPUManager this)
 }
 
 // set brightness all way down
-void VPUManager_displayHide(VPUManager this)
+void VPUManager_lowerBrightness(VPUManager this)
 {
 	ASSERT(this, "VPUManager::displayHide: null this");
 
