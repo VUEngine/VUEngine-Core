@@ -188,6 +188,7 @@ void VPUManager_displayOff(VPUManager this);
 void VPUManager_setupPalettes(VPUManager this, PaletteConfig* paletteConfig);
 void VPUManager_upBrightness(VPUManager this);
 void VPUManager_lowerBrightness(VPUManager this);
+void VPUManager_displayHide(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this);
