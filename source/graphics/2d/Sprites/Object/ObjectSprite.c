@@ -219,15 +219,17 @@ void ObjectSprite_render(ObjectSprite this)
 				s32 objectIndex = this->objectIndex + i * cols + j;
 				int outputX = x + (j << 3)  * xDirection;
 				
+				// add 8 to the calculation to avoid char's cut off
+				// when screolling
 				// hide the object if ouside screen's bounds
-				if((unsigned)outputX > __SCREEN_WIDTH)
+				if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
 					continue;
 				}
 
 				int outputY = y + (i << 3)  * yDirection;
-				if((unsigned)outputY > __SCREEN_HEIGHT)
+				if((unsigned)outputY > __SCREEN_HEIGHT + 8)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
 					continue;

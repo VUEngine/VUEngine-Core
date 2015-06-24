@@ -131,17 +131,33 @@
 // only use for debugging, proper object's initialization must make this macro unnecessary
 #undef __MEMORY_POOL_CLEAN_UP
 
-#define __MEMORY_POOLS	3
+#define __MEMORY_POOLS		11
 
 #define __MEMORY_POOL_ARRAYS													\
-		__BLOCK_DEFINITION(256, 64)												\
-		__BLOCK_DEFINITION(128, 64)												\
-		__BLOCK_DEFINITION(64, 64)												\
+	__BLOCK_DEFINITION(180, 1)													\
+	__BLOCK_DEFINITION(164, 2)													\
+	__BLOCK_DEFINITION(160, 2)													\
+	__BLOCK_DEFINITION(132, 44)													\
+	__BLOCK_DEFINITION(112, 16)													\
+	__BLOCK_DEFINITION(96, 40)													\
+	__BLOCK_DEFINITION(76, 24)													\
+	__BLOCK_DEFINITION(68, 80)													\
+	__BLOCK_DEFINITION(28, 280)													\
+	__BLOCK_DEFINITION(20, 512)													\
+	__BLOCK_DEFINITION(16, 256)													\
 
 #define __SET_MEMORY_POOL_ARRAYS												\
-		__SET_MEMORY_POOL_ARRAY(256)											\
-		__SET_MEMORY_POOL_ARRAY(128)											\
-		__SET_MEMORY_POOL_ARRAY(64)												\
+	__SET_MEMORY_POOL_ARRAY(180)												\
+	__SET_MEMORY_POOL_ARRAY(164)												\
+	__SET_MEMORY_POOL_ARRAY(160)												\
+	__SET_MEMORY_POOL_ARRAY(132)												\
+	__SET_MEMORY_POOL_ARRAY(112)												\
+	__SET_MEMORY_POOL_ARRAY(96)													\
+	__SET_MEMORY_POOL_ARRAY(76)													\
+	__SET_MEMORY_POOL_ARRAY(68)													\
+	__SET_MEMORY_POOL_ARRAY(28)													\
+	__SET_MEMORY_POOL_ARRAY(20)													\
+	__SET_MEMORY_POOL_ARRAY(16)													\
 
 // percentage (0-100) above which the MemoryPool's status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD	85
@@ -276,20 +292,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __PRINTING_PALETTE		3
-
-#define __GPLT0_VALUE  			0xE4	// 11 10 01 00
-#define __GPLT1_VALUE  			0xE0	// 11 10 00 00
-#define __GPLT2_VALUE  			0xD0	// 11 01 00 00
-#define __GPLT3_VALUE  			0xE0	// 11 10 00 00
-
-#define __JPLT0_VALUE  			0xE4	// 11 10 01 00
-#define __JPLT1_VALUE  			0xE0	// 11 10 00 00
-#define __JPLT2_VALUE  			0xD0	// 11 01 00 00
-#define __JPLT3_VALUE  			0xE0	// 11 10 00 00
-
-#define __BRTA					0x00
-#define __BRTB					0x00
-#define __BRTC					0x00
 
 
 //---------------------------------------------------------------------------------------------------------
