@@ -217,7 +217,7 @@ void ObjectSprite_render(ObjectSprite this)
 			for(; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
-				int outputX = x + (j << 3)  * xDirection;
+				int outputX = x + (j << 3)  * xDirection + this->displacement.x;
 				
 				// add 8 to the calculation to avoid char's cut off
 				// when screolling
@@ -228,7 +228,7 @@ void ObjectSprite_render(ObjectSprite this)
 					continue;
 				}
 
-				int outputY = y + (i << 3)  * yDirection;
+				int outputY = y + (i << 3)  * yDirection + this->displacement.x;
 				if((unsigned)outputY > __SCREEN_HEIGHT + 8)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
