@@ -78,6 +78,9 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	this->position.y = 0;
 	this->position.z = 0;
 	this->position.parallax = 0;
+	
+	this->displacement = oSpriteDefinition->displacement;
+
 
 	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
@@ -217,7 +220,7 @@ void ObjectSprite_render(ObjectSprite this)
 			for(; j < cols; j++)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
-				int outputX = x + (j << 3)  * xDirection + this->displacement.x;
+				int outputX = x + (j << 3)  * xDirection;
 				
 				// add 8 to the calculation to avoid char's cut off
 				// when screolling
@@ -228,7 +231,7 @@ void ObjectSprite_render(ObjectSprite this)
 					continue;
 				}
 
-				int outputY = y + (i << 3)  * yDirection + this->displacement.x;
+				int outputY = y + (i << 3)  * yDirection;
 				if((unsigned)outputY > __SCREEN_HEIGHT + 8)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
