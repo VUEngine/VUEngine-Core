@@ -81,7 +81,6 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	
 	this->displacement = oSpriteDefinition->displacement;
 
-
 	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
 	this->texture = __GET_CAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
@@ -222,8 +221,7 @@ void ObjectSprite_render(ObjectSprite this)
 				s32 objectIndex = this->objectIndex + i * cols + j;
 				int outputX = x + (j << 3)  * xDirection;
 				
-				// add 8 to the calculation to avoid char's cut off
-				// when screolling
+				// add 8 to the calculation to avoid char's cut off when scrolling
 				// hide the object if ouside screen's bounds
 				if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
 				{
@@ -232,6 +230,7 @@ void ObjectSprite_render(ObjectSprite this)
 				}
 
 				int outputY = y + (i << 3)  * yDirection;
+
 				if((unsigned)outputY > __SCREEN_HEIGHT + 8)
 				{
 					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
