@@ -222,7 +222,7 @@ const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 		0, 0, 0, 0
 	};
 	
-	position.x = this->z;
+	position.z = this->z;
 
 	return &position;
 }
