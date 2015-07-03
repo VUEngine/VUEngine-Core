@@ -329,7 +329,8 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 			else
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3);
+				// -1 because 0 means 1 pixel for width
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
 				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
 			}
 			
@@ -377,7 +378,8 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 			else
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3);
+				// -1 because 0 means 1 pixel for width
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
 				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
 			}
 		}
