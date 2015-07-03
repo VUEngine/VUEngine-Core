@@ -49,8 +49,8 @@
 #undef __ENTITY_LOAD_PAD 			
 #undef __ENTITY_UNLOAD_PAD 		
 
-#define __ENTITY_LOAD_PAD 			(32)
-#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
+#define __ENTITY_LOAD_PAD 			(16)
+#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 16)
 
 // since there are 32 layers, that's the theoretical limit of entities to display
 #undef __STREAMING_AMPLITUDE

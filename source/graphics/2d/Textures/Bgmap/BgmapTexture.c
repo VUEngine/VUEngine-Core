@@ -233,7 +233,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	{
 		//specifying the char displacement inside the char mem
 		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (i << 6)) << 1),
-				(const u8*)(this->textureDefinition->bgmapDefinition + ( i * (this->textureDefinition->cols) << 1)),
+				(const u8*)(this->textureDefinition->bgmapDefinition + (i * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}

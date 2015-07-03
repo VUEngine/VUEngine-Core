@@ -780,19 +780,6 @@ bool Entity_isVisible(Entity this, int pad)
 {
 	ASSERT(this, "Entity::isVisible: null this");
 
-	if(this->children)
-	{
-		VirtualNode childNode = VirtualList_begin(this->children);
-		
-		for(; childNode; childNode = VirtualNode_getNext(childNode))
-		{
-			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad))
-			{
-				return true;
-			}
-		}
-	}
-	
 	int lowLimit = 0 - pad;
 	int highLimit = __SCREEN_WIDTH + pad;
 	int x = 0;
@@ -807,8 +794,8 @@ bool Entity_isVisible(Entity this, int pad)
 		ASSERT(sprite, "Entity:isVisible: null sprite");
 		
 		const VBVec2D* spritePosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
-//		lowLimit -= drawSpec.position.parallax;
-//		highLimit += drawSpec.position.parallax;
+		lowLimit -= spritePosition->parallax;
+		highLimit += spritePosition->parallax;
 		
 		x = FIX19_13TOI(spritePosition->x);
 		y = FIX19_13TOI(spritePosition->y);
@@ -827,30 +814,37 @@ bool Entity_isVisible(Entity this, int pad)
 	}
 
 	// check x visibility
-	if(x + this->size.x < lowLimit || x > highLimit)
+	if(x + this->size.x >= lowLimit && x <= highLimit)
 	{
-		return false;
+		lowLimit = -pad;
+		highLimit = __SCREEN_HEIGHT + pad;
+
+		// check y visibility
+		if(y + this->size.y >= lowLimit && y <= highLimit)
+		{
+			
+			lowLimit = -pad;
+			highLimit = _optical->maximumViewDistance + pad;
+
+			// check y visibility
+			return z + this->size.z >= lowLimit && z <= highLimit;
+		}
 	}
 
-	lowLimit = -pad;
-	highLimit = __SCREEN_HEIGHT + pad;
-
-	// check y visibility
-	if(y + this->size.y < lowLimit || y > highLimit)
+	if(this->children)
 	{
-		return false;
+		VirtualNode childNode = VirtualList_begin(this->children);
+		
+		for(; childNode; childNode = VirtualNode_getNext(childNode))
+		{
+			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad))
+			{
+				return true;
+			}
+		}
 	}
-
-	lowLimit = -pad;
-	highLimit = _optical->maximumViewDistance + pad;
-
-	// check y visibility
-	if(z + this->size.z < lowLimit || z > highLimit)
-	{
-		return false;
-	}
-
-	return true;
+	
+	return false;
 }
 
 // check if must update sprite's position

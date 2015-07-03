@@ -52,8 +52,8 @@ extern Optical* _optical;
 // external 
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this);
 
-// local
 static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this);
+static void ObjectSpriteContainer_sort(ObjectSpriteContainer this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -284,6 +284,69 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	}
 }
 
+#define __HIDE_MASK						0x3FFF
+
+static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::sort: null this");
+
+	VirtualNode node = VirtualList_end(this->objectSprites);
+
+	for(; node;)
+	{
+		ObjectSprite sprite = __GET_CAST(ObjectSprite, VirtualNode_getData(node));
+		const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, sprite));
+
+		VirtualNode otherNode = VirtualNode_getPrevious(node);
+
+		for(; otherNode; otherNode = VirtualNode_getPrevious(otherNode))
+		{
+			ObjectSprite otherSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(otherNode));
+			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, otherSprite));
+	
+			// check if z positions are swapped
+			if(otherPosition->z < position->z ||
+                (otherPosition->z == position->z && Sprite_getDisplacement(__GET_CAST(Sprite, otherSprite)).z < Sprite_getDisplacement(__GET_CAST(Sprite, sprite)).z)
+			)
+			{
+				if(this->availableObjects >= ObjectSprite_getTotalObjects(sprite))
+				{
+					// swap
+					s16 otherObjectIndex = ObjectSprite_getObjectIndex(otherSprite);
+	
+					/*
+					ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
+					s16 nextFreeObjectIndex = ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite);
+					
+					ObjectSprite_setObjectIndex(sprite, nextFreeObjectIndex);
+					ObjectSprite_render(sprite);
+*/
+					ObjectSprite_setObjectIndex(sprite, otherObjectIndex);
+					ObjectSprite_render(sprite);
+
+					ObjectSprite_setObjectIndex(otherSprite, otherObjectIndex + ObjectSprite_getTotalObjects(sprite));
+					ObjectSprite_render(otherSprite);
+
+					int i = 0;
+					for (; i < ObjectSprite_getTotalObjects(sprite); i++)
+					{
+//						OAM[((nextFreeObjectIndex + i) << 2) + 1] &= __HIDE_MASK;
+					}
+					
+					// swap array entries
+					VirtualNode_swapData(node, otherNode);
+		
+					// make sure sort is complete
+					//node = VirtualList_end(this->objectSprites);
+					return;
+				}
+			}
+		}
+		
+		node = VirtualNode_getPrevious(node);
+	}
+}
+
 // render a world layer with the map's information
 void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 {
@@ -292,6 +355,10 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->objectSpriteToDefragment)
 	{
 		ObjectSpriteContainer_defragment(this);
+	}
+	else
+	{
+		//ObjectSpriteContainer_sort(this);
 	}
 	
 	//if render flag is set
@@ -349,9 +416,20 @@ u16 ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
 
 int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 {
-	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
+	ASSERT(this, "ObjectSpriteContainer::getTotalUsedObjects: null this");
 	
-	return VirtualList_getSize(this->objectSprites);
+	int totalUsedObjects = 0;
+	if(this->objectSprites)
+	{
+		VirtualNode node = VirtualList_begin(this->objectSprites);
+	
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			totalUsedObjects += ObjectSprite_getTotalObjects(__GET_CAST(ObjectSprite, VirtualNode_getData(node)));
+		}
+	}
+
+	return totalUsedObjects;
 }
 
 int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)

@@ -80,6 +80,7 @@ void Texture_destructor(Texture this)
 void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
 {
 	this->textureDefinition = textureDefinition;
+	this->palette = textureDefinition->palette;
 }
 
 TextureDefinition* Texture_getDefinition(Texture this)

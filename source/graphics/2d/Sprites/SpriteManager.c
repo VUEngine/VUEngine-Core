@@ -326,7 +326,7 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::processRemovedSprites: null this");
 
-	// must wait a cycle to settup the printing layer so
+	// must wait a cycle to setup the printing layer so
 	// we allow for the last sprite to be redraw in the previous layer
 	// before reclaiming it back
 	static bool previouslyRecoveredAllLayers = false;
@@ -435,16 +435,6 @@ void SpriteManager_render(SpriteManager this)
 	// recover layers
 	SpriteManager_processFreedLayers(this);
 
-	// render from WORLD 31 to the lowest active one
-	VirtualNode node = VirtualList_begin(this->sprites);
-
-	while (*_xpstts & XPBSYR);
-
-	for(; node; node = VirtualNode_getNext(node))
-	{
-		__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(node)));
-	}
-
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
@@ -456,6 +446,16 @@ void SpriteManager_render(SpriteManager this)
 #endif
 	// sort layers
 	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+
+	// render from WORLD 31 to the lowest active one
+	VirtualNode node = VirtualList_begin(this->sprites);
+
+	while (*_xpstts & XPBSYR);
+
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(node)));
+	}
 }
 
 // retrieve free layer

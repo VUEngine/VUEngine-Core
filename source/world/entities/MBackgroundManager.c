@@ -30,9 +30,6 @@
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
 																				\
-	/* registerd background */													\
-	VirtualList mBackgrounds;													\
-																				\
 	/* textures */																\
 	VirtualList textures;														\
 
@@ -59,7 +56,6 @@ static void MBackgroundManager_constructor(MBackgroundManager this)
 {
 	__CONSTRUCT_BASE();
 
-	this->mBackgrounds = __NEW(VirtualList);
 	this->textures = __NEW(VirtualList);
 }
 
@@ -67,13 +63,6 @@ static void MBackgroundManager_constructor(MBackgroundManager this)
 void MBackgroundManager_destructor(MBackgroundManager this)
 {
 	ASSERT(this, "MBackgroundManager::destructor: null this");
-
-	if(this->mBackgrounds) 
-	{
-		__DELETE(this->mBackgrounds);
-		
-		this->mBackgrounds = NULL;
-	}
 
 	if(this->textures) 
 	{
@@ -87,57 +76,48 @@ void MBackgroundManager_destructor(MBackgroundManager this)
 }
 
 // register coin
-void MBackgroundManager_registerMBackground(MBackgroundManager this, MBackground mBackground, TextureDefinition* textureDefinition)
+void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefinition* textureDefinition)
 {
-	ASSERT(this, "MBackgroundManager::registerMBackground: null this");
-	ASSERT(textureDefinition, "MBackgroundManager::registerMBackground: null texture definition");
+	ASSERT(this, "MBackgroundManager::registerTexture: null this");
+	ASSERT(textureDefinition, "MBackgroundManager::registerTexture: null texture definition");
 	
-	if(!VirtualList_find(this->mBackgrounds, mBackground))
+	VirtualNode node = VirtualList_begin(this->textures);
+	
+	for(; node; node = VirtualNode_getNext(node))
 	{
-		VirtualNode node = VirtualList_begin(this->textures);
-		
-		for(; node; node = VirtualNode_getNext(node))
+		if(!Texture_getDefinition(__GET_CAST(Texture, VirtualNode_getData(node))))
 		{
-			if(!Texture_getDefinition(__GET_CAST(Texture, VirtualNode_getData(node))))
-			{
-				break;
-			}
+			break;
 		}
-		
-		if(!node)
-		{
-			// texture not found, must load it
-			BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
-			VirtualList_pushBack(this->textures, bgmapTexture);
-		}
-		else 
-		{
-			// free texture found, so replace it
-			Texture texture = __GET_CAST(Texture, VirtualNode_getData(node));
-			Texture_setDefinition(texture, textureDefinition);
-			Texture_releaseCharSet(texture);
-			Texture_rewrite(texture);
-		}
-
-		VirtualList_pushBack(this->mBackgrounds, mBackground);
+	}
+	
+	if(!node)
+	{
+		// texture not found, must load it
+		BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
+		VirtualList_pushBack(this->textures, bgmapTexture);
+	}
+	else 
+	{
+		// free texture found, so replace it
+		Texture texture = __GET_CAST(Texture, VirtualNode_getData(node));
+		Texture_setDefinition(texture, textureDefinition);
+		Texture_rewrite(texture);
 	}
 }
 
 // remove background
-void MBackgroundManager_removeMBackground(MBackgroundManager this, MBackground mBackground)
+void MBackgroundManager_removeTexture(MBackgroundManager this, Texture texture)
 {
-	ASSERT(this, "MBackgroundManager::removeMBackground: null this");
-	ASSERT(VirtualList_find(this->mBackgrounds, mBackground), "MBackgroundManager::removeMBackground: mBackground not found");
+	ASSERT(this, "MBackgroundManager::removeTexture: null this");
 	
-	Texture texture = MBackground_getTexture(mBackground);
-	ASSERT(VirtualList_find(this->textures, texture), "MBackgroundManager::removeMBackground: texture not found");
+	ASSERT(VirtualList_find(this->textures, texture), "MBackgroundManager::removeTexture: texture not found");
 	
-	if(texture)
+	if(texture && VirtualList_find(this->textures, texture))
 	{
 		Texture_setDefinition(texture, NULL);
+		Texture_releaseCharSet(texture);
 	}
-	
-	VirtualList_removeElement(this->mBackgrounds, mBackground);
 }
 
 // remove texture

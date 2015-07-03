@@ -43,9 +43,6 @@
 																				\
 	/* next offset to reclaim */												\
 	u16 freedOffset[__CHAR_SEGMENTS];											\
-																				\
-	/* defragmentation flag */													\
-	bool needsDefrag;															\
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager, Object);
@@ -78,8 +75,6 @@ static void CharSetManager_constructor(CharSetManager this)
 		this->charSets[segment] = NULL;
 	}
 	
-	this->needsDefrag = false;
-
 	CharSetManager_reset(this);
 }
 
@@ -133,8 +128,6 @@ void CharSetManager_reset(CharSetManager this)
 		this->charSets[segment] = __NEW(VirtualList);
 		this->freedOffset[segment] = 0;
 	}
-	
-	this->needsDefrag = false;
 }
 
 // find a charset
@@ -224,12 +217,10 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 		VirtualList_removeElement(this->charSets[segment], charSet);
 	
 		__DELETE(charSet);
-
-		this->needsDefrag = true;
 	}
 }
 
-// allocate a char defintion within char graphic memory
+// allocate a char definition within char graphic memory
 static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSetManager::allocateCharSet: null this");
@@ -273,11 +264,6 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
-	if(!this->needsDefrag)
-	{
-		return;
-	}
-
 	int segment = 0;
 	for(; segment < __CHAR_SEGMENTS ; segment++)
 	{
@@ -301,8 +287,6 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 			this->freedOffset[segment] = 0;
 		}
 	}
-
-	this->needsDefrag = false;
 }
 
 int CharSetManager_getTotalUsedChars(CharSetManager this, int segment)
@@ -313,7 +297,7 @@ int CharSetManager_getTotalUsedChars(CharSetManager this, int segment)
 	if(VirtualList_begin(this->charSets[segment]))
 	{
 		CharSet lastCharSet = VirtualList_back(this->charSets[segment]);
-		return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + 1;
+		return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 	}
 	
 	return 0;

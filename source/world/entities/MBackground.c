@@ -61,10 +61,6 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id, name);
 
 	this->mBackgroundDefinition = mBackgroundDefinition;
-	
-	this->size.x = __SCREEN_WIDTH;
-	this->size.y = __SCREEN_HEIGHT;
-	this->size.z = 1;
 }
 
 // class's destructor
@@ -72,7 +68,12 @@ void MBackground_destructor(MBackground this)
 {
 	ASSERT(this, "MBackground::destructor: null this");
 
-	MBackgroundManager_removeMBackground(MBackgroundManager_getInstance(), this);
+	VirtualNode node = VirtualList_begin(this->sprites);
+	
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__GET_CAST(Sprite, VirtualNode_getData(node))));
+	}
 
 	// destroy the super object
 	__DESTROY_BASE;
@@ -81,20 +82,20 @@ void MBackground_destructor(MBackground this)
 // initialize method
 void MBackground_initialize(MBackground this)
 {
+	ASSERT(this->mBackgroundDefinition->spritesDefinitions[0], "MBackground::initialize: null sprite list");
+
 	// first register with the manager so it handles the texture loading process
-	MBackgroundManager_registerMBackground(MBackgroundManager_getInstance(), this, this->mBackgroundDefinition->spritesDefinitions[0]->textureDefinition);
-
+	if(this->mBackgroundDefinition->spritesDefinitions[0])
+	{
+		int i = 0;
+		
+		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
+		{	
+			MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+		}
+	}
+	
 	Entity_initialize(__GET_CAST(Entity, this));
-
-	ASSERT(this->sprites, "MBackground::constructor: null sprite list");
-}
-
-// retrieve texture
-Texture MBackground_getTexture(MBackground this)
-{
-	ASSERT(this, "MBackground::getTexture: null this");
-
-	return !this->sprites? NULL: Sprite_getTexture(__GET_CAST(Sprite, VirtualList_front(this->sprites)));
 }
 
 int MBackground_isVisible(MBackground this, int pad)
