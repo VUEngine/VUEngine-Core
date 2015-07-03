@@ -976,6 +976,7 @@ void Stage_streamAll(Stage this)
 	Container_processRemovedChildren(__GET_CAST(Container, this));
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
+	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 }
 
 // retrieve ui

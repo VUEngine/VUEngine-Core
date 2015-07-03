@@ -30,11 +30,18 @@
 	/* super's attributes */													\
 	Object_ATTRIBUTES;															\
 																				\
-	/* textures */																\
-	VirtualList textures;														\
+	/* textureRegistries */																\
+	VirtualList textureRegistries;														\
 
 __CLASS_DEFINITION(MBackgroundManager, Object);
 
+
+typedef struct TextureRegistry
+{
+	Texture texture;
+	u8 cols;
+	u8 rows;
+} TextureRegistry;
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -56,20 +63,25 @@ static void MBackgroundManager_constructor(MBackgroundManager this)
 {
 	__CONSTRUCT_BASE();
 
-	this->textures = __NEW(VirtualList);
+	this->textureRegistries = __NEW(VirtualList);
 }
 
 // class destructor
 void MBackgroundManager_destructor(MBackgroundManager this)
 {
 	ASSERT(this, "MBackgroundManager::destructor: null this");
+	ASSERT(this->textureRegistries, "MBackgroundManager::destructor: null textureRegistries");
 
-	if(this->textures) 
+	VirtualNode node = VirtualList_begin(this->textureRegistries);
+	
+	for(; node; node = VirtualNode_getNext(node))
 	{
-		__DELETE(this->textures);
-		
-		this->textures = NULL;
+		__DELETE_BASIC(VirtualNode_getNext(node));
 	}
+	
+	__DELETE(this->textureRegistries);
+	
+	this->textureRegistries = NULL;
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -81,28 +93,42 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 	ASSERT(this, "MBackgroundManager::registerTexture: null this");
 	ASSERT(textureDefinition, "MBackgroundManager::registerTexture: null texture definition");
 	
-	VirtualNode node = VirtualList_begin(this->textures);
-	
+	VirtualNode node = VirtualList_begin(this->textureRegistries);
+
+	TextureRegistry* textureRegistry = NULL;
+
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		if(!Texture_getDefinition(__GET_CAST(Texture, VirtualNode_getData(node))))
+		textureRegistry = (TextureRegistry*)VirtualNode_getData(node);
+
+		if(!Texture_getCharSet(textureRegistry->texture))
 		{
-			break;
+			if(textureDefinition->cols <= textureRegistry->cols &&
+				textureDefinition->rows <= textureRegistry->rows
+			)
+			{
+				break;
+			}
 		}
+		
+		textureRegistry = NULL;
 	}
 	
-	if(!node)
+	if(textureRegistry)
 	{
-		// texture not found, must load it
-		BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
-		VirtualList_pushBack(this->textures, bgmapTexture);
+		// free texture found, so replace it
+		Texture_setDefinition(textureRegistry->texture, textureDefinition);
+		Texture_setPallet(textureRegistry->texture, textureDefinition->palette);
+		Texture_rewrite(textureRegistry->texture);
 	}
 	else 
 	{
-		// free texture found, so replace it
-		Texture texture = __GET_CAST(Texture, VirtualNode_getData(node));
-		Texture_setDefinition(texture, textureDefinition);
-		Texture_rewrite(texture);
+		// texture not found, must load it
+		textureRegistry = __NEW_BASIC(TextureRegistry);
+		textureRegistry->texture = __GET_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
+		textureRegistry->cols = textureDefinition->cols;
+		textureRegistry->rows = textureDefinition->rows;
+		VirtualList_pushBack(this->textureRegistries, textureRegistry);
 	}
 }
 
@@ -110,12 +136,25 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 void MBackgroundManager_removeTexture(MBackgroundManager this, Texture texture)
 {
 	ASSERT(this, "MBackgroundManager::removeTexture: null this");
+
+#ifdef __DEBUG
+	VirtualNode node = VirtualList_begin(this->textureRegistries);
 	
-	ASSERT(VirtualList_find(this->textures, texture), "MBackgroundManager::removeTexture: texture not found");
-	
-	if(texture && VirtualList_find(this->textures, texture))
+	for(; node; node = VirtualNode_getNext(node))
 	{
-		Texture_setDefinition(texture, NULL);
+		TextureRegistry* textureRegistry = (TextureRegistry*)VirtualNode_getData(node);
+
+		if(texture == textureRegistry->texture)
+		{
+			break;
+		}
+	}
+	
+	ASSERT(node, "MBackgroundManager::removeTexture: texture not found");
+#endif
+	
+	if(texture)
+	{
 		Texture_releaseCharSet(texture);
 	}
 }
@@ -125,5 +164,16 @@ void MBackgroundManager_reset(MBackgroundManager this)
 {
 	ASSERT(this, "MBackgroundManager::reset: null this");
 
-	VirtualList_clear(this->textures);
+	VirtualNode node = VirtualList_begin(this->textureRegistries);
+	
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		TextureRegistry* textureRegistry = (TextureRegistry*)VirtualNode_getData(node);
+
+		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __GET_CAST(BgmapTexture, textureRegistry->texture));
+
+		__DELETE_BASIC(textureRegistry);
+	}
+
+	VirtualList_clear(this->textureRegistries);
 }
