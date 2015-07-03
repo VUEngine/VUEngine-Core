@@ -69,7 +69,7 @@ __CLASS_DEFINITION(SpriteManager, Object);
 extern unsigned int volatile* _xpstts;
 
 static void SpriteManager_constructor(SpriteManager this);
-static void SpriteManager_processFreedLayers(SpriteManager this);
+static void SpriteManager_processFreedLayersProgressively(SpriteManager this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -321,10 +321,20 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	}
 }
 
-// process removed sprites
-static void SpriteManager_processFreedLayers(SpriteManager this)
+void SpriteManager_processFreedLayers(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::processRemovedSprites: null this");
+
+	while(this->freedLayer)
+	{
+		SpriteManager_processFreedLayersProgressively(this);
+	}
+}
+
+// process removed sprites
+static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::processFreedLayersProgressively: null this");
 
 	// must wait a cycle to setup the printing layer so
 	// we allow for the last sprite to be redraw in the previous layer
@@ -353,7 +363,7 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 	
 	if(this->freedLayer)
 	{
-		ASSERT(this->freedLayer < __TOTAL_LAYERS, "SpriteManager::processRemovedSprites: error freedLayer");
+		ASSERT(this->freedLayer < __TOTAL_LAYERS, "SpriteManager::processFreedLayersProgressively: error freedLayer");
 
 		VirtualNode node = VirtualList_end(this->sprites);
 
@@ -366,7 +376,7 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 			// layer to the freed layer
 			if(spriteLayer < this->freedLayer)
 			{
-				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processRemovedSprites:1 this->freeLayer >= this->freedLayer");
+				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processFreedLayersProgressively:1 this->freeLayer >= this->freedLayer");
 
 				// render last position before using new layer
 				__VIRTUAL_CALL(void, Sprite, render, sprite);
@@ -382,7 +392,7 @@ static void SpriteManager_processFreedLayers(SpriteManager this)
 				// so the next time it is checked against it
 			    this->freedLayer--;
 			    
-				ASSERT(this->freedLayer > this->freeLayer, "Sprite::processRemovedSprites:2 this->freedLayer <= this->freeLayer");
+				ASSERT(this->freedLayer > this->freeLayer, "Sprite::processFreedLayersProgressively:2 this->freedLayer <= this->freeLayer");
 
 			    // don't enter here again if the end has been reached
 			    node = VirtualNode_getPrevious(node);
@@ -433,7 +443,7 @@ void SpriteManager_render(SpriteManager this)
 	ASSERT(this, "SpriteManager::render: null this");
 
 	// recover layers
-	SpriteManager_processFreedLayers(this);
+	SpriteManager_processFreedLayersProgressively(this);
 
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(Game_getInstance()))

@@ -97,6 +97,7 @@ typedef struct StageEntityToInitialize
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 Shape SpatialObject_getShape(SpatialObject this);
+void SpriteManager_processFreedLayers(SpriteManager this);
 
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
@@ -976,6 +977,7 @@ void Stage_streamAll(Stage this)
 	Container_processRemovedChildren(__GET_CAST(Container, this));
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
+	SpriteManager_processFreedLayers(SpriteManager_getInstance());
 	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 }
 
