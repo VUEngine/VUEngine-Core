@@ -210,9 +210,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			// check if z positions are swapped
 			if(FIX19_13TOI(nextPosition->z) + Sprite_getDisplacement(nextSprite).z < FIX19_13TOI(position->z) + Sprite_getDisplacement(sprite).z)
 			{
-				Printing_int(Printing_getInstance(), FIX19_13TOI(position->z), 1, 10, NULL);
-				Printing_int(Printing_getInstance(), FIX19_13TOI(nextPosition->z), 10, 10, NULL);
-
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
 				u8 worldLayer2 = Sprite_getWorldLayer(nextSprite);
