@@ -31,9 +31,8 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
-#define __SHOW_MASK						0xC000
-#define __HIDE_MASK						0x3FFF
+#define __ACCOUNT_FOR_BGMAP_PLACEMENT				1
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -210,7 +209,7 @@ void ObjectSprite_render(ObjectSprite this)
 		int y = FIX19_13TOI(this->position.y) - FIX19_13TOI(this->halfHeight) * yDirection + this->displacement.y;
 		
 		int i = 0;
-		u16 secondWordValue = (this->head & __SHOW_MASK) | ((this->position.parallax + this->displacement.z) & __HIDE_MASK);
+		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.z) & __OBJECT_CHAR_HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
 		
 		for(; i < rows; i++)
@@ -225,7 +224,7 @@ void ObjectSprite_render(ObjectSprite this)
 				// hide the object if ouside screen's bounds
 				if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
 				{
-					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
+					OAM[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					continue;
 				}
 
@@ -233,7 +232,7 @@ void ObjectSprite_render(ObjectSprite this)
 
 				if((unsigned)outputY > __SCREEN_HEIGHT + 8)
 				{
-					OAM[(objectIndex << 2) + 1] &= __HIDE_MASK;
+					OAM[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					continue;
 				}
 
@@ -280,24 +279,42 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 
 		if(0 <= previousObjectIndex)
 		{	
-			// if was visible
-			if(OAM[((previousObjectIndex) << 2) + 1] & 0xC000)
+			int i = previousObjectIndex;
+			for(; i < previousObjectIndex + this->totalObjects; i++)
 			{
-				// render in the new position to avoid flickering
-				this->renderFlag = true;
-	
-				while (*_xpstts & XPBSYR);
-	
-				ObjectSprite_render(this);
-				
-				// turn off previous OBJs' to avoid ghosting
-				int i = previousObjectIndex + this->totalObjects - 1;
-				for(; i >= this->objectIndex + this->totalObjects; i--)
+				if(OAM[((i) << 2) + 1] & 0xC000)
 				{
-					OAM[(i << 2) + 1] &= __HIDE_MASK;
+					// render in the new position to avoid flickering
+					this->renderFlag = true;
+		
+					while (*_xpstts & XPBSYR);
+		
+					ObjectSprite_render(this);
+					
+					// turn off previous OBJs' to avoid ghosting
+					if(this->objectIndex < previousObjectIndex)
+					{
+						int counter = 0;
+						int j = previousObjectIndex + this->totalObjects - 1;
+						for(; j >= this->objectIndex + this->totalObjects && counter < this->totalObjects; j--, counter++)
+						{
+							OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						}
+					}
+					else
+					{
+						int j = previousObjectIndex;
+						for(; j < previousObjectIndex + this->totalObjects; j++)
+						{
+							OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						}
+					}
+					
+					break;
 				}
 			}
-			else
+
+			if(i >= previousObjectIndex + this->totalObjects)
 			{
 				// otherwise hide
 				ObjectSprite_hide(this);
@@ -329,7 +346,7 @@ void ObjectSprite_show(ObjectSprite this)
 		int i = 0;
 		for (; i < this->totalObjects; i++)
 		{
-			OAM[((this->objectIndex + i) << 2) + 1] |= __SHOW_MASK;
+			OAM[((this->objectIndex + i) << 2) + 1] |= __OBJECT_CHAR_SHOW_MASK;
 		}
 	}
 }
@@ -349,7 +366,7 @@ void ObjectSprite_hide(ObjectSprite this)
 		int i = 0;
 		for (; i < this->totalObjects; i++)
 		{
-			OAM[((this->objectIndex + i) << 2) + 1] &= __HIDE_MASK;
+			OAM[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 		}
 	}
 }

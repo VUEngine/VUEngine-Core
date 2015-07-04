@@ -115,7 +115,7 @@ static void StageEditor_positioneShape(StageEditor this);
 static void StageEditor_highLightEntity(StageEditor this);
 static void StageEditor_selectPreviousEntity(StageEditor this);
 static void StageEditor_selectNextEntity(StageEditor this);
-static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey);
+static void StageEditor_translateEntity(StageEditor this, u16 pressedKey);
 static void StageEditor_moveScreen(StageEditor this, u16 pressedKey);
 static void StageEditor_changeProjection(StageEditor this, u16 pressedKey);
 static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D translation);
@@ -260,7 +260,7 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 
                 case kTranslateEntities:
 
-                    StageEditor_traslateEntity(this, pressedKey);
+                    StageEditor_translateEntity(this, pressedKey);
                     break;
 
                 case kAddObjects:
@@ -587,7 +587,7 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
 }
 
 // translate entity
-static void StageEditor_traslateEntity(StageEditor this, u16 pressedKey)
+static void StageEditor_translateEntity(StageEditor this, u16 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{

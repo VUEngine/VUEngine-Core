@@ -81,6 +81,9 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt, u16 t
 	this->freedObjectIndex = 0;
 	this->z = 0;
 	
+	this->node = NULL;
+	this->previousNode = NULL;
+	
 	// register to sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
 
@@ -148,6 +151,9 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 		this->availableObjects -= numberOfObjects;
 		
 		this->renderFlag = __UPDATE_HEAD;
+
+		this->node = NULL;
+		this->previousNode = NULL;
 
 		return lastObjectIndex;
 	}
@@ -284,66 +290,52 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	}
 }
 
-#define __HIDE_MASK						0x3FFF
-
 static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::sort: null this");
 
-	VirtualNode node = VirtualList_end(this->objectSprites);
+	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node): VirtualList_end(this->objectSprites);
 
-	for(; node;)
+	for(; this->node; this->node = VirtualNode_getPrevious(this->node))
 	{
-		ObjectSprite sprite = __GET_CAST(ObjectSprite, VirtualNode_getData(node));
-		const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, sprite));
+		this->previousNode = VirtualNode_getPrevious(this->node);
 
-		VirtualNode otherNode = VirtualNode_getPrevious(node);
-
-		for(; otherNode; otherNode = VirtualNode_getPrevious(otherNode))
+		if(this->previousNode)
 		{
-			ObjectSprite otherSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(otherNode));
-			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, otherSprite));
+			ObjectSprite sprite = __GET_CAST(ObjectSprite, VirtualNode_getData(this->node));
+			ObjectSprite previousSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
+			const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, sprite));
+			const VBVec2D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, previousSprite));
 	
 			// check if z positions are swapped
-			if(otherPosition->z < position->z ||
-                (otherPosition->z == position->z && Sprite_getDisplacement(__GET_CAST(Sprite, otherSprite)).z < Sprite_getDisplacement(__GET_CAST(Sprite, sprite)).z)
-			)
+			if(previousPosition->z + Sprite_getDisplacement(__GET_CAST(Sprite, previousSprite)).z > position->z + Sprite_getDisplacement(__GET_CAST(Sprite, sprite)).z)
 			{
 				if(this->availableObjects >= ObjectSprite_getTotalObjects(sprite))
 				{
 					// swap
-					s16 otherObjectIndex = ObjectSprite_getObjectIndex(otherSprite);
+					s16 previousObjectIndex = ObjectSprite_getObjectIndex(previousSprite);
 	
-					/*
 					ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 					s16 nextFreeObjectIndex = ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite);
 					
-					ObjectSprite_setObjectIndex(sprite, nextFreeObjectIndex);
-					ObjectSprite_render(sprite);
-*/
-					ObjectSprite_setObjectIndex(sprite, otherObjectIndex);
-					ObjectSprite_render(sprite);
-
-					ObjectSprite_setObjectIndex(otherSprite, otherObjectIndex + ObjectSprite_getTotalObjects(sprite));
-					ObjectSprite_render(otherSprite);
+					ObjectSprite_setObjectIndex(previousSprite, nextFreeObjectIndex);
+					ObjectSprite_setObjectIndex(sprite, previousObjectIndex);
+					ObjectSprite_setObjectIndex(previousSprite, previousObjectIndex + ObjectSprite_getTotalObjects(sprite));
 
 					int i = 0;
 					for (; i < ObjectSprite_getTotalObjects(sprite); i++)
 					{
-//						OAM[((nextFreeObjectIndex + i) << 2) + 1] &= __HIDE_MASK;
+						OAM[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					}
 					
 					// swap array entries
-					VirtualNode_swapData(node, otherNode);
+					VirtualNode_swapData(this->node, this->previousNode);
 		
-					// make sure sort is complete
-					//node = VirtualList_end(this->objectSprites);
+					this->node = this->previousNode;
 					return;
 				}
 			}
 		}
-		
-		node = VirtualNode_getPrevious(node);
 	}
 }
 
@@ -355,10 +347,6 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->objectSpriteToDefragment)
 	{
 		ObjectSpriteContainer_defragment(this);
-	}
-	else
-	{
-		//ObjectSpriteContainer_sort(this);
 	}
 	
 	//if render flag is set
@@ -376,6 +364,11 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		ObjectSprite_render(__GET_CAST(ObjectSprite, VirtualNode_getData(node)));
+	}
+	
+	if(!this->objectSpriteToDefragment)
+	{
+		ObjectSpriteContainer_sort(this);
 	}
 }
 

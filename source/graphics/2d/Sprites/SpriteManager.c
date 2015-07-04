@@ -198,22 +198,24 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 	for(; this->node; this->node = VirtualNode_getNext(this->node))
 	{
-		Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(this->node));
-		const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
-
 		this->nextNode = VirtualNode_getNext(this->node);
 
 		if(this->nextNode)
 		{
-			Sprite otherSprite = __GET_CAST(Sprite, VirtualNode_getData(this->nextNode));
-			const VBVec2D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, otherSprite);
+			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(this->node));
+			Sprite nextSprite = __GET_CAST(Sprite, VirtualNode_getData(this->nextNode));
+			const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
+			const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
 	
 			// check if z positions are swapped
-			if(FIX19_13TOI(otherPosition->z) + Sprite_getDisplacement(otherSprite).z < FIX19_13TOI(position->z) + Sprite_getDisplacement(sprite).z)
+			if(FIX19_13TOI(nextPosition->z) + Sprite_getDisplacement(nextSprite).z < FIX19_13TOI(position->z) + Sprite_getDisplacement(sprite).z)
 			{
+				Printing_int(Printing_getInstance(), FIX19_13TOI(position->z), 1, 10, NULL);
+				Printing_int(Printing_getInstance(), FIX19_13TOI(nextPosition->z), 10, 10, NULL);
+
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
-				u8 worldLayer2 = Sprite_getWorldLayer(otherSprite);
+				u8 worldLayer2 = Sprite_getWorldLayer(nextSprite);
 	
 				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
 				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
@@ -222,15 +224,16 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				while (*_xpstts & XPBSYR);
 
 				Sprite_setWorldLayer(sprite, worldLayer2);
-				Sprite_setWorldLayer(otherSprite, worldLayer1);
+				Sprite_setWorldLayer(nextSprite, worldLayer1);
 	
 				// render inmediately
 				__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, sprite));
-				__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, otherSprite));
+				__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, nextSprite));
 	
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);
 
+				this->node = this->nextNode;
 				return;
 			}
 		}

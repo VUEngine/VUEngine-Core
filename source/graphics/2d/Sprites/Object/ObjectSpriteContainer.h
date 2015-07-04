@@ -62,6 +62,10 @@
 	/* object sprites */														\
 	VirtualList objectSprites;													\
 																				\
+	/* for z sorting */															\
+	VirtualNode node;															\
+	VirtualNode previousNode;													\
+																				\
 	/* next object sprite to defragment */										\
 	VirtualNode objectSpriteToDefragment;										\
 																				\
