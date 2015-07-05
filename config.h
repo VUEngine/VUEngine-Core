@@ -54,8 +54,7 @@
 
 // maximum view distance (Depth)
 // always use a power of 2 as the maximum view distance, and update the number of bits to make projection faster
-#define __MAXIMUM_VIEW_DISTANCE					256
-#define __MAXIMUM_VIEW_DISTANCE_POW				8
+#define __MAXIMUM_VIEW_DISTANCE_POWER			8
 
 // distance between eyes
 #define __BASE_FACTOR							768

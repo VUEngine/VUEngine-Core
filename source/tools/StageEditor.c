@@ -48,7 +48,7 @@
 #define __HVPC_STEP							ITOFIX19_13(8)
 #define __VERTICAL_VIEW_POINT_CENTER_STEP	ITOFIX19_13(8)
 #define __DISTANCE_EYE_SCREEN_STEP			ITOFIX19_13(8)
-#define __MAXIMUM_VIEW_DISTACE_STEP			ITOFIX19_13(8)
+#define __MAXIMUM_VIEW_DISTACE_STEP			1
 #define __BASE_DISTACE_STEP					ITOFIX19_13(8)
 
 //---------------------------------------------------------------------------------------------------------
@@ -562,11 +562,11 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
 	}
 	else if(pressedKey & K_RU)
 	{
-		_optical->maximumViewDistance += __MAXIMUM_VIEW_DISTACE_STEP;
+		_optical->maximumViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
 	}
 	else if(pressedKey & K_RD)
 	{
-		_optical->maximumViewDistance -= __MAXIMUM_VIEW_DISTACE_STEP;
+		_optical->maximumViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
 	}
 	else if(pressedKey & K_LT)
 	{
@@ -863,7 +863,7 @@ static void StageEditor_printProjectionValues(StageEditor this)
 	Printing_text(Printing_getInstance(), "Distance Eye Screen:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->distanceEyeScreen), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Maximum View Screen:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->maximumViewDistance), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), (2 << _optical->maximumViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->baseDistance), x + 22, y, NULL);
 }

@@ -88,7 +88,7 @@ static void Screen_constructor(Screen this)
 	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
 
 	// maximum distance from the _SC to the infinite
-	this->optical.maximumViewDistance = ITOFIX19_13(__MAXIMUM_VIEW_DISTANCE);
+	this->optical.maximumViewDistancePower = __MAXIMUM_VIEW_DISTANCE_POWER;
 
 	// distance from left to right eye (depth sensation)
 	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);

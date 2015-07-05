@@ -207,7 +207,7 @@ static void SoundManager_constructor(SoundManager this)
 		}
 
 		//determine the step for each sound level according to the maximum view distance
-		this->zFactor = __MAXIMUM_VIEW_DISTANCE / __MAXIMUM_OUTPUT_LEVEL;
+		this->zFactor = (2 << _optical->maximumViewDistancePower) / __MAXIMUM_OUTPUT_LEVEL;
 
 		//divide here to multiply in runtime
 		this->zFactor = 1 / this->zFactor;
@@ -369,8 +369,8 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 
 			//calculate the amount of sound that reachs each ear
 			//xDistance / (384/15)
-			leftMinus = leftDistance / (__MAXIMUM_VIEW_DISTANCE / maxOutputLevel);
-			rightMinus = rightDistance / (__MAXIMUM_VIEW_DISTANCE / maxOutputLevel);
+			leftMinus = leftDistance / ((2 << _optical->maximumViewDistancePower) / maxOutputLevel);
+			rightMinus = rightDistance / ((2 << _optical->maximumViewDistancePower) / maxOutputLevel);
 
 			leftOutput = maxOutputLevel - leftMinus;
 			rightOutput = maxOutputLevel - rightMinus;

@@ -210,7 +210,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 	z -= _screenPosition->z;
 	
-	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - FIX19_13_DIV(z , _optical->maximumViewDistance));
+	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z >> _optical->maximumViewDistancePower));
 
 	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE): ratio;
 	
