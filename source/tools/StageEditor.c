@@ -863,7 +863,7 @@ static void StageEditor_printProjectionValues(StageEditor this)
 	Printing_text(Printing_getInstance(), "Distance Eye Screen:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->distanceEyeScreen), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Maximum View Screen:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), (2 << _optical->maximumViewDistancePower), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), (1 << _optical->maximumViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->baseDistance), x + 22, y, NULL);
 }

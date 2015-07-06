@@ -824,7 +824,7 @@ bool Entity_isVisible(Entity this, int pad)
 		{
 			
 			lowLimit = -pad;
-			highLimit = (2 << _optical->maximumViewDistancePower) + pad;
+			highLimit = (1 << _optical->maximumViewDistancePower) + pad;
 
 			// check y visibility
 			return z + this->size.z >= lowLimit && z <= highLimit;
