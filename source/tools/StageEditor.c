@@ -567,6 +567,11 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
 	else if(pressedKey & K_RD)
 	{
 		_optical->maximumViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
+		
+		if(0 >= _optical->maximumViewDistancePower)
+		{
+			_optical->maximumViewDistancePower = 1;
+		}
 	}
 	else if(pressedKey & K_LT)
 	{

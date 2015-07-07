@@ -196,6 +196,7 @@ static void Game_constructor(Game this)
 	this->bgmapTextureManager = BgmapTextureManager_getInstance();
 	this->paramTableManager =  ParamTableManager_getInstance();
 	this->charSetManager = CharSetManager_getInstance();
+	this->screen = Screen_getInstance();
 	this->soundManager = SoundManager_getInstance();
 	this->spriteManager = SpriteManager_getInstance();
 	this->collisionManager = CollisionManager_getInstance();
@@ -204,7 +205,6 @@ static void Game_constructor(Game this)
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
-	this->screen = Screen_getInstance();
 	
 	// set the default screen movement manager
 	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());

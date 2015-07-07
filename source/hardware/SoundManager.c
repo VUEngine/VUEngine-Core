@@ -151,9 +151,6 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 																				\
 	/* space position of each fx */												\
 	VBVec2D fxPosition[__FXS];													\
-																				\
-	/* factor of scale for 3d sound */											\
-	float zFactor;																\
 
 
 __CLASS_DEFINITION(SoundManager, Object);
@@ -205,12 +202,6 @@ static void SoundManager_constructor(SoundManager this)
 
 			this->fxPosition[i].parallax = -10000;
 		}
-
-		//determine the step for each sound level according to the maximum view distance
-		this->zFactor = (1 << _optical->maximumViewDistancePower) / __MAXIMUM_OUTPUT_LEVEL;
-
-		//divide here to multiply in runtime
-		this->zFactor = 1 / this->zFactor;
 	}
 }
 
