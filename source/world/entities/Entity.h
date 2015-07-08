@@ -86,7 +86,7 @@ __CLASS(Entity);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines a Entity in ROM memory
+// defines an entity in ROM memory
 typedef struct EntityDefinition
 {
 	// the class type
@@ -99,7 +99,7 @@ typedef struct EntityDefinition
 
 typedef const EntityDefinition EntityROMDef;
 
-// a actor asociated with a position
+// an actor associated with a position
 typedef const struct PositionedEntity
 {
 	// pointer to the entity definition in ROM
