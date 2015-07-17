@@ -195,6 +195,25 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	}
 }
 
+void ObjectSpriteContainerManager_positione(ObjectSpriteContainerManager this, fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
+{
+	ASSERT(this, "ObjectSpriteContainerManager::positione: null this");
+	
+	int i = __TOTAL_OBJECT_SEGMENTS;
+	for(; i--; )
+	{
+		if(this->objectSpriteContainers[i])
+		{
+			VBVec2D position =
+			{
+					0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
+			};
+
+			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
+		}
+	}
+}
+
 // print status
 void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y)
 {
