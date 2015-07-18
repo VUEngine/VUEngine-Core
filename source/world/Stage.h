@@ -48,7 +48,6 @@
 #define Stage_SET_VTABLE(ClassName)												\
 		Container_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, Stage, update);								\
-		__VIRTUAL_SET(ClassName, Stage, transform);								\
 		__VIRTUAL_SET(ClassName, Stage, suspend);								\
 		__VIRTUAL_SET(ClassName, Stage, resume);								\
 		__VIRTUAL_SET(ClassName, Stage, removeChild);							\
@@ -156,7 +155,6 @@ Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const posit
 Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent);
 void Stage_removeChild(Stage this, Container child);
 void Stage_update(Stage this);
-void Stage_transform(Stage this, const Transformation* environmentTransform);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
 UI Stage_getUI(Stage this);

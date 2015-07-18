@@ -95,7 +95,6 @@ typedef struct StageEntityToInitialize
 
 // global
 extern const VBVec3D* _screenPosition;
-const extern VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 Shape SpatialObject_getShape(SpatialObject this);
 void SpriteManager_processFreedLayers(SpriteManager this);
@@ -286,10 +285,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// setup ui
 	Stage_setupUI(this);
-	
-	// force update OBJ's z position
-	Screen_positione(Screen_getInstance(), false);
-	ObjectSpriteContainerManager_positione(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->objectSpritesContainersZPosition);
 	
 	// set physics
 	PhysicalWorld_setFriction(PhysicalWorld_getInstance(), stageDefinition->friction);
@@ -913,19 +908,6 @@ void Stage_update(Stage this)
 	{
 		Container_update(__GET_CAST(Container, this->ui));
 	}
-}
-
-// transform state
-void Stage_transform(Stage this, const Transformation* environmentTransform)
-{
-	ASSERT(this, "Stage::transform: null this");
-
-	if(_screenDisplacement->z)
-	{
-		ObjectSpriteContainerManager_positione(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->objectSpritesContainersZPosition);
-	}
-	
-	Container_transform(__GET_CAST(Container, this), environmentTransform);
 }
 
 // stream entities according to screen's position

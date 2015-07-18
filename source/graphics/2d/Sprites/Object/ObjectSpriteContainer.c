@@ -228,7 +228,7 @@ const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 		0, 0, 0, 0
 	};
 	
-	position.z = this->z;
+	position.z = this->z - _screenPosition->z;
 
 	return &position;
 }
@@ -237,7 +237,7 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 {
 	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
 
-	this->z = position->z - _screenPosition->z;
+	this->z = position->z;
 	this->renderFlag |= __UPDATE_G;
 }
 
