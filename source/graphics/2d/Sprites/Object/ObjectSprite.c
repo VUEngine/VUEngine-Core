@@ -170,6 +170,7 @@ void ObjectSprite_positione(ObjectSprite this, const VBVec3D* position)
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);
+	this->position.z = position->z;
 
 	if(0 > this->objectIndex)
 	{

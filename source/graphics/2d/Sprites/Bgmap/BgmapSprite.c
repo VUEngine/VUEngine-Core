@@ -267,6 +267,7 @@ void BgmapSprite_positione(BgmapSprite this, const VBVec3D* position)
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->drawSpec.position);
+	this->drawSpec.position.z = position->z;
 
 	this->renderFlag |= __UPDATE_G;
 }
@@ -285,7 +286,7 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z)
 {
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
-	this->drawSpec.position.z = z - _screenPosition->z;
+	this->drawSpec.position.z = z;
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 

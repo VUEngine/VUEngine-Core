@@ -159,9 +159,11 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 }
 
 // set sprite's position
-void MBgmapSprite_positione(MBgmapSprite this, VBVec3D position3D)
+void MBgmapSprite_positione(MBgmapSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
+
+	VBVec3D position3D = *position;
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -178,7 +180,8 @@ void MBgmapSprite_positione(MBgmapSprite this, VBVec3D position3D)
 	
 	this->drawSpec.position.x = 0;
 	this->drawSpec.position.y = 0;
-	
+	this->drawSpec.position.z = position->z;
+
 	this->drawSpec.textureSource.mx = FIX19_13TOI(-position2D.x);
 	this->drawSpec.textureSource.my = FIX19_13TOI(-position2D.y);
 		

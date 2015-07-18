@@ -97,7 +97,7 @@ __CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinitio
 
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner);
 void MBgmapSprite_destructor(MBgmapSprite this);
-void MBgmapSprite_positione(MBgmapSprite this, VBVec3D position3D);
+void MBgmapSprite_positione(MBgmapSprite this, const VBVec3D* position);
 
 
 #endif

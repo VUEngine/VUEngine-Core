@@ -103,7 +103,7 @@ bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s16 numberOfOb
 void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction);
 const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
-void ObjectSpriteContainer_positione(ObjectSpriteContainer this, VBVec3D position3D);
+void ObjectSpriteContainer_positione(ObjectSpriteContainer this, const VBVec3D* position);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z);
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);

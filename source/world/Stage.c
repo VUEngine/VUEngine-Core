@@ -910,6 +910,39 @@ void Stage_update(Stage this)
 	}
 }
 
+// transform state
+void Stage_transform(Stage this, const Transformation* environmentTransform)
+{
+	ASSERT(this, "Stage::transform: null this");
+
+	Container_transform(__GET_CAST(Container, this), environmentTransform);
+	
+	if(this->ui)
+	{
+		// static to avoid call to _memcpy
+		static Transformation uiEnvironmentTransform =
+		{
+				// local position
+				{0, 0, 0},
+				// global position
+				{0, 0, 0},
+				// local rotation
+				{0, 0, 0},
+				// global rotation
+				{0, 0, 0},
+				// local scale
+				{ITOFIX7_9(1), ITOFIX7_9(1)},
+				// global scale
+				{ITOFIX7_9(1), ITOFIX7_9(1)}
+		};
+		
+		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
+
+
+		__VIRTUAL_CALL(void, Container, transform, this->ui, &uiEnvironmentTransform);
+	}
+}
+
 // stream entities according to screen's position
 void Stage_stream(Stage this)
 {

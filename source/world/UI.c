@@ -111,7 +111,7 @@ void UI_transform(UI this, const Transformation* environmentTransform)
 	{
 		0, 0, 0
 	};
-	
+
 	if(screen)
 	{
 		// must hack the screen position for my children's sprites
