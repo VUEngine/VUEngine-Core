@@ -240,7 +240,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 
 		Particle_setLifeSpan(particle, lifeSpan);
 		Particle_setMass(particle, mass);
-		Particle_setPosition(particle, ParticleSystem_getParticleSpawnPosition(this, seed));
+		__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 
 		Particle_show(particle);
@@ -298,9 +298,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 
 	// call the appropiate allocator to support inheritance!
 	Particle particle = ((Particle (*)(ParticleDefinition*, ...)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
-
-	Particle_setPosition(particle, ParticleSystem_getParticleSpawnPosition(this, seed));
-
+	__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 
 	Object_addEventListener(__GET_CAST(Object, particle), __GET_CAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);

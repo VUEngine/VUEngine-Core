@@ -46,6 +46,7 @@
 		__VIRTUAL_DEC(resume);													\
 		__VIRTUAL_DEC(suspend);													\
 
+
 // define the virtual methods
 #define Particle_SET_VTABLE(ClassName)											\
 		SpatialObject_SET_VTABLE(ClassName)										\
@@ -53,9 +54,10 @@
 		__VIRTUAL_SET(ClassName, Particle, transform);							\
 		__VIRTUAL_SET(ClassName, Particle, moves);								\
 		__VIRTUAL_SET(ClassName, Particle, canMoveOverAxis);					\
-		__VIRTUAL_SET(ClassName, Particle, getPosition);						\
 		__VIRTUAL_SET(ClassName, Particle, resume);								\
 		__VIRTUAL_SET(ClassName, Particle, suspend);							\
+		__VIRTUAL_SET(ClassName, Particle, setPosition);						\
+		__VIRTUAL_SET(ClassName, Particle, getPosition);						\
 
 
 #define Particle_ATTRIBUTES														\

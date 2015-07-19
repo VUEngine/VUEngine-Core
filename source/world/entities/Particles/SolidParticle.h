@@ -24,6 +24,8 @@
 
 #include <Particle.h>
 #include <Shape.h>
+#include <CollisionSolver.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										MISC
@@ -51,6 +53,8 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);						\
 		__VIRTUAL_SET(ClassName, SolidParticle, getShape);						\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);					\
+		__VIRTUAL_SET(ClassName, Particle, setPosition);						\
+
 
 #define SolidParticle_ATTRIBUTES												\
 																				\
@@ -65,7 +69,12 @@ Shape SpatialObject_getShape(SpatialObject this);
 																				\
 	/* previous position for collision handling */								\
 	VBVec3D previousGlobalPosition;												\
-
+																				\
+	/* collision solver */														\
+	CollisionSolver collisionSolver;											\
+																				\
+	/* position */																\
+	VBVec3D position;															\
 
 __CLASS(SolidParticle);
 
@@ -92,8 +101,14 @@ typedef struct SolidParticleDefinition
 	// object's size over the z axis
 	u16 depth;
 	
-	// body's mass
-	fix19_13 mass;
+	// friction for physics
+	fix19_13 friction;
+
+	// elasticity for physics
+	fix19_13 elasticity;
+
+	// flag to ignore collisions against other particles
+	bool ignoreParticles;
 
 } SolidParticleDefinition;
 
@@ -114,6 +129,7 @@ u16 SolidParticle_getWidth(SolidParticle this);
 u16 SolidParticle_getHeight(SolidParticle this);
 u16 SolidParticle_getDepth(SolidParticle this);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
+void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position);
 
 
 #endif

@@ -204,6 +204,7 @@ void Particle_show(Particle this)
 	ASSERT(this->objectSprite, "Particle::show: null objectSprite");
 
 	ObjectSprite_show(this->objectSprite);
+	Body_setActive(this->body, true);
 }
 
 // make it invisible
@@ -213,6 +214,7 @@ void Particle_hide(Particle this)
 	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
 	
 	ObjectSprite_hide(this->objectSprite);
+	Body_setActive(this->body, false);
 }
 
 // does it move?
