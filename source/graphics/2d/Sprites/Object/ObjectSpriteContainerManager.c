@@ -142,7 +142,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 			}
 			else
 			{
-				if(abs(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i])->z - z) < abs(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer)->z - z))
+				if(ITOFIX19_13(1) == z || abs(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i])->z - z) < abs(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer)->z - z))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}

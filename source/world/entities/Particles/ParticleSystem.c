@@ -92,11 +92,6 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	// calculate the numbe of sprite definitions
 	for(this->numberOfSpriteDefinitions = 0; 0 <= (int)this->numberOfSpriteDefinitions && this->particleSystemDefinition->objectSpriteDefinitions[this->numberOfSpriteDefinitions]; this->numberOfSpriteDefinitions++);
 	
-	if(this->particleSystemDefinition->recycleParticles)
-	{
-		ParticleSystem_spawnAllParticles(this);
-	}
-	
 	ASSERT(0 < this->numberOfSpriteDefinitions, "ParticleSystem::constructor: 0 sprite definitions");
 }
 
@@ -176,6 +171,18 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 		}
 
 		VirtualList_clear(this->expiredParticles);
+	}
+}
+
+void ParticleSystem_ready(ParticleSystem this)
+{
+	ASSERT(this, "ParticleSystem::ready: null this");
+	
+	Entity_ready(__GET_CAST(Entity, this));
+	
+	if(this->particleSystemDefinition->recycleParticles)
+	{
+		ParticleSystem_spawnAllParticles(this);
 	}
 }
 

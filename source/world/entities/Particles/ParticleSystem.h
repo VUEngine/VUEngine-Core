@@ -35,6 +35,7 @@
 
 #define ParticleSystem_SET_VTABLE(ClassName)									\
 		Entity_SET_VTABLE(ClassName)											\
+		__VIRTUAL_SET(ClassName, ParticleSystem, ready);						\
 		__VIRTUAL_SET(ClassName, ParticleSystem, update);						\
 		__VIRTUAL_SET(ClassName, ParticleSystem, transform);					\
 		__VIRTUAL_SET(ClassName, ParticleSystem, resume);						\
@@ -134,6 +135,7 @@ __CLASS_NEW_DECLARE(ParticleSystem, const ParticleSystemDefinition* particleSyst
 
 void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinition* particleSystemDefinition, s16 id);
 void ParticleSystem_destructor(ParticleSystem this);
+void ParticleSystem_ready(ParticleSystem this);
 void ParticleSystem_update(ParticleSystem this);
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform);
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);
