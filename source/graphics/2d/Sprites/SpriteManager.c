@@ -71,6 +71,7 @@ extern unsigned int volatile* _xpstts;
 static void SpriteManager_constructor(SpriteManager this);
 static void SpriteManager_processFreedLayersProgressively(SpriteManager this);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -214,18 +215,16 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
 				u8 worldLayer2 = Sprite_getWorldLayer(nextSprite);
 	
+				// swap layers
 				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
 				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
 	
-				// swap layers
-				while (*_xpstts & XPBSYR);
-
 				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 	
 				// render inmediately
-				__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, sprite));
-				__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, nextSprite));
+				//__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, sprite));
+				//__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, nextSprite));
 	
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);
@@ -312,6 +311,25 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	{
 		ASSERT(false, "SpriteManager::removeSprite: sprite not registered");
 	}
+}
+
+// process sprites
+void SpriteManager_processLayers(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::processLayers: null this");
+
+	SpriteManager_processFreedLayersProgressively(SpriteManager_getInstance());
+
+#ifdef __DEBUG_TOOLS
+	if(!Game_isInSpecialMode(Game_getInstance()))
+#endif
+#ifdef __STAGE_EDITOR
+	if(!Game_isInSpecialMode(Game_getInstance()))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if(!Game_isInSpecialMode(Game_getInstance()))
+#endif
+	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 }
 
 void SpriteManager_processFreedLayers(SpriteManager this)
@@ -435,20 +453,7 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	// recover layers
-	SpriteManager_processFreedLayersProgressively(this);
-
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(Game_getInstance()))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(Game_getInstance()))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(Game_getInstance()))
-#endif
-	// sort layers
-	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+	VPUManager_disableInterrupt(VPUManager_getInstance());
 
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_begin(this->sprites);
@@ -459,6 +464,8 @@ void SpriteManager_render(SpriteManager this)
 	{
 		__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
+	
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 // retrieve free layer

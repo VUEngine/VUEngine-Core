@@ -153,7 +153,8 @@ void HardwareManager_vpuInterruptHandler(void)
 {
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 	
-	// put your code here
+	SpriteManager_processLayers(SpriteManager_getInstance());
+
 	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
@@ -300,7 +301,7 @@ void HardwareManager_enableRendering(HardwareManager this)
 
 	// turn on display
 	VPUManager_displayOn(this->vpuManager);
-	//VPUManager_enableInterrupt(VPUManager_getInstance());
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 // make sure the brigtness is ok
