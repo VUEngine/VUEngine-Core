@@ -105,17 +105,19 @@ int Error_triggerException(Error this, char* message, char* detail)
 	Printing_text(Printing_getInstance(), "                                                " , x, y++, NULL);
 	Printing_text(Printing_getInstance(), " Last process:                                  ", x, y, NULL);
 	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y++, NULL);
-	
+	Printing_text(Printing_getInstance(), " LP:                                  " , x, y, NULL);	
+	Printing_hex(Printing_getInstance(), _lp, x + 7, y, NULL);	
+	Printing_text(Printing_getInstance(), " SP: 		                         " , x, ++y, NULL);
+	Printing_hex(Printing_getInstance(), _sp, x + 7, y, NULL);
+
 	if(message)
 	{
 		Printing_text(Printing_getInstance(), "                                                " , x, ++y + 1, NULL);
-		y += 2;
-		Printing_text(Printing_getInstance(), "                                                " , x, y++ + 1, NULL);
-		Printing_text(Printing_getInstance(), " Message:                                       " , x, y++, NULL);
+		Printing_text(Printing_getInstance(), " Message:                                       " , x, ++y, NULL);
 	
 		int stringMaxLenght = __SCREEN_WIDTH / 8 - 2;
 		int rowsAvailable  = __SCREEN_HEIGHT / 8 - y;
-		int stringLength = strnlen(message, stringMaxLenght * rowsAvailable);
+		int stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
 		int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght? 1: 0);
 		int line = 0;
 		
@@ -126,12 +128,13 @@ int Error_triggerException(Error this, char* message, char* detail)
 			
 			// TODO: fix me, termination character not working
 			messageLine[stringLength - 1] = (char)0;
-			Printing_text(Printing_getInstance(), messageLine, x + 1, y++ + 2, NULL);
+			Printing_text(Printing_getInstance(), "                                                " , x, ++y, NULL);
+			Printing_text(Printing_getInstance(), messageLine, x + 1, y, NULL);
 		}
 		
 		if(detail)
 		{
-			Printing_text(Printing_getInstance(), detail, x + 1, y++ + 2, NULL);
+			Printing_text(Printing_getInstance(), detail, x + 1, ++y, NULL);
 		}	
 		
 		if(y < __SCREEN_HEIGHT / 8 - 1)

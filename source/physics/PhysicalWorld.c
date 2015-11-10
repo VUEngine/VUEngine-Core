@@ -185,7 +185,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 		ASSERT(body, "PhysicalWorld::getBody: null body");
 
 		// check if current shape's owner is the same as the entity calling this method
-		if(owner == Body_getOwner(body) && Body_isActive(body))
+		if(owner == Body_getOwner(body))
 		{
 			return body;
 		}

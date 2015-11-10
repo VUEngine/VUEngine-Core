@@ -187,7 +187,7 @@
 				(																		\
 						__GET_CAST(ClassName, object), ##__VA_ARGS__					\
 				):																		\
-			/* call base implementation */												\
+			/* trigger exception */														\
 			(ReturnType)Error_triggerException(Error_getInstance(),						\
 				"Virtual Call: " __MAKE_STRING(ClassName ## _ ##  MethodName) 			\
 				" on object of type: ", 												\

@@ -24,6 +24,7 @@
 
 #include <stdarg.h>
 #include <Types.h>
+#include <Globals.h>
 #include <Oop.h>
 #include <Constants.h>
 

@@ -455,6 +455,8 @@ void SpriteManager_render(SpriteManager this)
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
+	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_begin(this->sprites);
 

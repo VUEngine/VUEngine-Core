@@ -77,10 +77,15 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 // class's destructor
 void Particle_destructor(Particle this)
 {
-	ASSERT(this, "Particle::destructor: null this");
+	ASSERT(__GET_CAST(Particle, this), "Particle::destructor: null this");
 
 	// remove a body
-	PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __GET_CAST(SpatialObject, this));
+	if(this->body)
+	{
+		// remove a body
+		PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __GET_CAST(SpatialObject, this));
+		this->body = NULL;
+	}
 	
 	if(this->objectSprite)
 	{
