@@ -347,20 +347,6 @@ void HardwareManager_disableKeypad(HardwareManager this)
 	KeypadManager_disable(this->keypadManager);
 }
 
-void HardwareManager_checkStackStatus(HardwareManager this)
-{
-	ASSERT(this, "HardwareManager::checkStackStatus: null this");
-
-	int sp;
-	asm(" mov sp,%0  ": "=r" (sp));
-	
-	if((0x05000000 & sp) && sp < (int)&_lastDataVariable)
-	{
-		HardwareManager_printStackStatus(HardwareManager_getInstance(), 1, 15, false);
-		NM_ASSERT(false, "HardwareManager::checkStackStatus: stack overflown!");
-	}
-}
-
 // print hardware's states
 void HardwareManager_print(HardwareManager this, int x, int y)
 {
@@ -456,6 +442,21 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 //	Printing_hex(Printing_getInstance(), HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5, NULL);
 }
 
+#ifdef __ALERT_STACK_OVERFLOW
+void HardwareManager_checkStackStatus(HardwareManager this)
+{
+	ASSERT(this, "HardwareManager::checkStackStatus: null this");
+
+	int sp;
+	asm(" mov sp,%0  ": "=r" (sp));
+	
+	if((0x05000000 & sp) && sp < (int)&_lastDataVariable)
+	{
+		HardwareManager_printStackStatus(HardwareManager_getInstance(), 1, 15, false);
+		NM_ASSERT(false, "HardwareManager::checkStackStatus: stack overflown!");
+	}
+}
+
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed)
 {
 	ASSERT(this, "HardwareManager::print: null this");
@@ -491,3 +492,4 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 		Printing_int(Printing_getInstance(), room, x + 10, y, NULL);
 	}
 }
+#endif
