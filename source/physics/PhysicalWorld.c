@@ -158,11 +158,10 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 
 	if(body)
 	{
-		// deactivate the shape,
-		// will be removed in the next update
+		// deactivate the shape, will be removed in the next update
 		Body_setActive(body, false);
 
-		// place in  the removed bodies list
+		// place in the removed bodies list
 		VirtualList_pushFront(this->removedBodies, (BYTE*)body);
 	}
 }

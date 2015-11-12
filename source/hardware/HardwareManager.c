@@ -473,7 +473,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 			x = __SCREEN_WIDTH / 8 - Utilities_intLength(room) - 13;
 		}
 		
-		Printing_text(Printing_getInstance(), "STACK'S ROOM        " , x, y, NULL);
+		Printing_text(Printing_getInstance(), "   STACK'S ROOM        " , x - 3, y, NULL);
 		Printing_int(Printing_getInstance(), room, x + 13, y, NULL);
 	}	
 	else
@@ -483,7 +483,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 			x = __SCREEN_WIDTH / 8 - 1 - Utilities_intLength(room) - 10;
 		}
 
-		Printing_text(Printing_getInstance(), "STACK'S STATUS" , x, y, NULL);
+		Printing_text(Printing_getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
 		Printing_text(Printing_getInstance(), "Pointer:" , x, ++y, NULL);
 		Printing_hex(Printing_getInstance(), sp, x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Bss' end:" , x, ++y, NULL);
