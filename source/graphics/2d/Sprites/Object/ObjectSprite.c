@@ -357,6 +357,8 @@ void ObjectSprite_hide(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::hide: null this");
 
+	this->renderFlag = false;
+	
 	if(0 > this->objectIndex)
 	{
 		return;

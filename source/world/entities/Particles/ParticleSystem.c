@@ -142,8 +142,8 @@ static void ParticleSystem_spawnAllParticles(ParticleSystem this)
 	for(; i < this->particleSystemDefinition->maximumNumberOfAliveParticles; i++)
 	{
 		Particle particle = ParticleSystem_spawnParticle(this);
-		Particle_hide(particle);
 		VirtualList_pushBack(this->expiredParticles, particle);
+		Particle_hide(particle);
 	}
 }
 
@@ -249,7 +249,6 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		Particle_setMass(particle, mass);
 		__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
-
 		Particle_show(particle);
 	
 		VirtualList_popFront(this->expiredParticles);
