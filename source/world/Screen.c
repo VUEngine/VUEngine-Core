@@ -70,6 +70,8 @@ static void Screen_constructor(Screen this)
 	this->position.y = 0;
 	this->position.z = 0;
 	
+	this->positionBackup = this->position;
+	
 	this->screenMovementManager = NULL;
 
 	this->focusEntityPositionDisplacement.x = 0;
@@ -263,6 +265,30 @@ void Screen_setPosition(Screen this, VBVec3D position)
 	this->lastDisplacement.z = 0;
 
 	Screen_capPosition(this);
+}
+
+// set screen's position for UI transformation
+void Screen_prepareForUITransform(Screen this)
+{
+	ASSERT(this, "Screen::prepareForUITransform: null this");
+
+	this->positionBackup = this->position;
+
+	this->lastDisplacement.x = 0;
+	this->lastDisplacement.y = 0;
+	this->lastDisplacement.z = 0;
+}
+
+// set screen's position after UI transformation
+void Screen_doneUITransform(Screen this)
+{
+	ASSERT(this, "Screen::doneUITransform: null this");
+
+	this->position = this->positionBackup;
+
+	this->lastDisplacement.x = 0;
+	this->lastDisplacement.y = 0;
+	this->lastDisplacement.z = 0;
 }
 
 // retrieve optical config structure

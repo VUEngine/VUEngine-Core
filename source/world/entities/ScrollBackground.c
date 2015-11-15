@@ -182,7 +182,6 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	// project to 2d coordinates
 	__OPTICS_PROJECT_TO_2D(position3D, screenPosition);
 
-
 	// get the number of "screens" from the beginnig of the world
 	// to the actual screen's position
 	screens = FIX19_13TOI(screenPosition.x) / __SCREEN_WIDTH;

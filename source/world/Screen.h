@@ -60,6 +60,7 @@
 																				\
 	/* screen position */														\
 	VBVec3D position;															\
+	VBVec3D positionBackup;														\
 																				\
 	/* screen position displacement manager */									\
 	ScreenMovementManager screenMovementManager;								\
@@ -98,6 +99,8 @@ void Screen_onFocusEntityDeleted(Screen this, InGameEntity actor);
 void Screen_move(Screen this, VBVec3D translation, int cap);
 VBVec3D Screen_getPosition(Screen this);
 void Screen_setPosition(Screen this, VBVec3D position);
+void Screen_prepareForUITransform(Screen this);
+void Screen_doneUITransform(Screen this);
 void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement);
 VBVec3D Screen_getLastDisplacement(Screen this);
 Size Screen_getStageSize(Screen this);
