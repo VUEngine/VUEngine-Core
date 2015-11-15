@@ -24,7 +24,7 @@
 #define __PRINT_MEMORY_POOL_STATUS
 
 // fires an exception if the stack is overflown
-//#define __ALERT_STACK_OVERFLOW
+#define __ALERT_STACK_OVERFLOW
 
 
 //---------------------------------------------------------------------------------------------------------
