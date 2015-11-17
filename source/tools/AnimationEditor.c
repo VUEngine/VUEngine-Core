@@ -654,7 +654,17 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 	position.z -= 10;
 
-	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[0];
+	int i = 0;
+	SpriteDefinition* spriteDefinition = NULL;
+	
+	do
+	{
+		spriteDefinition = (SpriteDefinition*)_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[i];
+	}
+	while(_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[++i]);
+	
+	NM_ASSERT(spriteDefinition, "AnimationEditor::createSprite: null spriteDefinition");
+
 	this->animatedSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
 	ASSERT(this->animatedSprite, "AnimationEditor::createSprite: null animatedSprite");
 	ASSERT(Sprite_getTexture(__GET_CAST(Sprite, this->animatedSprite)), "AnimationEditor::createSprite: null texture");
