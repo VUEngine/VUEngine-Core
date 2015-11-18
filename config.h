@@ -34,13 +34,8 @@
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
 #define __ANIMATION_EDITOR
-#endif
-
-#define __PRINT_FRAMERATE
-#define __PRINT_MEMORY_POOL_STATUS
-
-// fires an exception if the stack is overflown
 #define __ALERT_STACK_OVERFLOW
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------
