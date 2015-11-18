@@ -325,6 +325,8 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 			}
 		}
 
+		int counter = 0;
+		
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			if(y <= __SCREEN_WIDTH >> 3)
@@ -344,6 +346,10 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 
 					case kFloat:
 						Printing_float(Printing_getInstance(), *((float*)VirtualNode_getData(node)), x + 1, y, NULL);
+						break;
+						
+					case kCount:
+						Printing_int(Printing_getInstance(), counter++, x + 1, y, NULL);
 						break;
 				}
 			}
