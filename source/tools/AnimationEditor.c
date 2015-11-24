@@ -70,6 +70,9 @@
 	/* animated in game entity selector */										\
 	OptionsSelector animatedInGameEntitySelector;								\
 																				\
+	/* animated sprite selector */												\
+	OptionsSelector spriteSelector;												\
+																				\
 	/* animations selector */													\
 	OptionsSelector animationsSelector;											\
 																				\
@@ -89,6 +92,7 @@ enum Modes
 {
 	kFirstMode = 0,
 	kSelectActor,
+	kSelectSprite,
 	kSelectAnimation,
 	kEditAnimation,
 	kLastMode
@@ -112,15 +116,18 @@ const AnimationController const Sprite_getAnimationController(Sprite this);
 
 static void AnimationEditor_constructor(AnimationEditor this);
 static void AnimationEditor_setupMode(AnimationEditor this);
-static void AnimationEditor_printUserAnimatedInGameEntitys(AnimationEditor this);
+static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this);
+static void AnimationEditor_printSprites(AnimationEditor this);
 static void AnimationEditor_printActorAnimations(AnimationEditor this);
 static void AnimationEditor_printAnimationConfig(AnimationEditor this);
 static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey);
+static void AnimationEditor_selectSprite(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_removePreviousSprite(AnimationEditor this);
 static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey);
 static void AnimationEditor_loadAnimationFunction(AnimationEditor this);
 static void AnimationEditor_createSprite(AnimationEditor this);
+static void AnimationEditor_createSpriteSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
@@ -143,6 +150,7 @@ static void AnimationEditor_constructor(AnimationEditor this)
 	this->animatedSprite = NULL;
 	this->gameState = NULL;
 	this->animatedInGameEntitySelector = NULL;
+	this->spriteSelector = NULL;
 	this->animationsSelector = NULL;
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
@@ -158,6 +166,11 @@ void AnimationEditor_destructor(AnimationEditor this)
 	if(this->animatedInGameEntitySelector)
 	{
 		__DELETE(this->animatedInGameEntitySelector);
+	}
+
+	if(this->animatedInGameEntitySelector)
+	{
+		__DELETE(this->spriteSelector);
 	}
 
 	if(this->animationsSelector)
@@ -275,12 +288,19 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 	{
 		case kSelectActor:
 
-			AnimationEditor_printUserAnimatedInGameEntitys(this);
+			AnimationEditor_printUserAnimatedInGameEntities(this);
+			break;
+
+		case kSelectSprite:
+
+			AnimationEditor_createSpriteSelector(this);
+			AnimationEditor_printSprites(this);
+			AnimationEditor_createSprite(this);
+			Sprite_pause(this->animatedSprite, true);
 			break;
 
 		case kSelectAnimation:
 
-			AnimationEditor_createSprite(this);
 			AnimationEditor_createAnimationsSelector(this);
 			Sprite_pause(this->animatedSprite, true);
 			AnimationEditor_printActorAnimations(this);
@@ -339,6 +359,11 @@ bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 						AnimationEditor_selectActor(this, pressedKey);
 						break;
 
+					case kSelectSprite:
+
+						AnimationEditor_selectSprite(this, pressedKey);
+						break;
+						
 					case kSelectAnimation:
 
 						AnimationEditor_selectAnimation(this, pressedKey);
@@ -362,11 +387,34 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
 
 	if(pressedKey & K_LU)
 	{
-		OptionsSelector_selectPrevious(this->animatedInGameEntitySelector);
+		OptionsSelector_selectPrevious(this->spriteSelector);
 	}
 	else if(pressedKey & K_LD)
 	{
-		OptionsSelector_selectNext(this->animatedInGameEntitySelector);
+		OptionsSelector_selectNext(this->spriteSelector);
+	}
+	else if(pressedKey & K_A)
+	{
+		// select the added entity
+		this->mode = kSelectSprite;
+		AnimationEditor_setupMode(this);
+	}
+}
+
+static void AnimationEditor_selectSprite(AnimationEditor this, u16 pressedKey)
+{
+	int userAnimatedInGameEntitiesCount = 0;
+	for(; _userAnimatedInGameEntities[userAnimatedInGameEntitiesCount].animatedInGameEntityDefinition; userAnimatedInGameEntitiesCount++);
+
+	if(pressedKey & K_LU)
+	{
+		OptionsSelector_selectPrevious(this->spriteSelector);
+		AnimationEditor_createSprite(this);
+	}
+	else if(pressedKey & K_LD)
+	{
+		OptionsSelector_selectNext(this->spriteSelector);
+		AnimationEditor_createSprite(this);
 	}
 	else if(pressedKey & K_A)
 	{
@@ -375,6 +423,7 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
 		AnimationEditor_setupMode(this);
 	}
 }
+
 
 static void AnimationEditor_removePreviousSprite(AnimationEditor this)
 {
@@ -569,11 +618,18 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 }
 
 
-static void AnimationEditor_printUserAnimatedInGameEntitys(AnimationEditor this)
+static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this)
 {
 	Printing_text(Printing_getInstance(), "ACTORS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
 	OptionsSelector_showOptions(this->animatedInGameEntitySelector, 1, 4);
+}
+
+static void AnimationEditor_printSprites(AnimationEditor this)
+{
+	Printing_text(Printing_getInstance(), "SPRITES", 1, 2, NULL);
+	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
+	OptionsSelector_showOptions(this->spriteSelector, 1, 4);
 }
 
 static void AnimationEditor_printActorAnimations(AnimationEditor this)
@@ -654,14 +710,7 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 	position.z -= 10;
 
-	int i = 0;
-	SpriteDefinition* spriteDefinition = NULL;
-	
-	do
-	{
-		spriteDefinition = (SpriteDefinition*)_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[i];
-	}
-	while(_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[++i]);
+	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[OptionsSelector_getSelectedOption(this->spriteSelector)];
 	
 	NM_ASSERT(spriteDefinition, "AnimationEditor::createSprite: null spriteDefinition");
 
@@ -677,6 +726,28 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __GET_CAST(Sprite, this->animatedSprite));
 	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __GET_CAST(Sprite, this->animatedSprite)));
 	__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, this->animatedSprite));
+}
+
+static void AnimationEditor_createSpriteSelector(AnimationEditor this)
+{
+	if(this->spriteSelector)
+	{
+		__DELETE(this->spriteSelector);
+	}
+
+	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION / 2, __FRAME_OPTION_MARK, kCount);
+
+	VirtualList spriteIndexes = __NEW(VirtualList);
+
+	int i = 0;
+	while(_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[i])
+	{
+		VirtualList_pushBack(spriteIndexes, _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[i]);
+		i++;
+	}
+
+	OptionsSelector_setOptions(this->spriteSelector, spriteIndexes);
+	__DELETE(spriteIndexes);
 }
 
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this)

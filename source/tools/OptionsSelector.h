@@ -53,7 +53,8 @@ enum OptionTypes
 {
 	kString,
 	kInt,
-	kFloat
+	kFloat,
+	kCount
 };
 
 
