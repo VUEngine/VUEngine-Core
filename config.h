@@ -197,11 +197,11 @@
 // 										TEXTURE MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
-// bgmaps to use (leave 2 bgmaps to allocate param table)
+// total number of bgmap segments
 #define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 	14
 
-// bgmaps to use (leave 2 bgmaps to allocate param table)
-#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 	(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 1)
+// bgmaps to use (leave 2 bgmaps to allocate param table, 1 for printing)
+#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 	(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 3)
 
 // number of bgmap definitions in each bgmap segment
 #define __NUM_BGMAPS_PER_SEGMENT 			16
