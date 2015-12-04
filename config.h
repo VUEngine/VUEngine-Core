@@ -303,6 +303,18 @@
 
 #define __PRINTING_PALETTE		3
 
+// default palette values, actual values are set in stage definitions
+
+#define __BGMAP_PALETTE_0		0b11100100
+#define __BGMAP_PALETTE_1		0b11100000
+#define __BGMAP_PALETTE_2		0b11010000
+#define __BGMAP_PALETTE_3		0b11100000
+
+#define __OBJECT_PALETTE_0		0b11100100
+#define __OBJECT_PALETTE_1		0b11100000
+#define __OBJECT_PALETTE_2		0b11010000
+#define __OBJECT_PALETTE_3		0b11100000
+
 
 //---------------------------------------------------------------------------------------------------------
 // 									LOW BATTERY INDICATOR
