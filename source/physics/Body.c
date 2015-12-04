@@ -1011,17 +1011,17 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	{
 		case __XAXIS:
 			
-			deltaFactor = gravity->x? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->x): ITOFIX19_13(1);
+			deltaFactor = gravity->x ? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->x) : ITOFIX19_13(1);
 			break;
 		
 		case __YAXIS:
 			
-			deltaFactor = gravity->x? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->y): ITOFIX19_13(1);
+			deltaFactor = gravity->y ? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->y) : ITOFIX19_13(1);
 			break;
 			
 		case __ZAXIS:
 			
-			deltaFactor = gravity->x? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->z): ITOFIX19_13(1);
+			deltaFactor = gravity->z ? FIX19_13_DIV(ITOFIX19_13(__GRAVITY), gravity->z) : ITOFIX19_13(1);
 			break;
 	}
 	
