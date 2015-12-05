@@ -99,7 +99,7 @@ Features:
 		* Bouncing
 		* Automatic collision detection and notification
 	� Particles:
-		* Phisically based
+		* Physically based
 	� Stages:
 		* 3D stages
 		* Level streaming

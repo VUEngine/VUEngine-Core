@@ -267,7 +267,7 @@ void Texture_setPallet(Texture this, u8 palette)
 	this->palette = palette;
 }
 
-u8 Texture_getPallet(Texture this)
+u8 Texture_getPalette(Texture this)
 {
 	ASSERT(this, "Texture::getPallet: null this");
 

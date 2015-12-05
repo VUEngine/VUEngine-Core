@@ -119,7 +119,7 @@ u8 Texture_getNumberOfFrames(Texture this);
 CharSet Texture_getCharSet(Texture this);
 BYTE* Texture_getBgmapDefinition(Texture this);
 void Texture_setPallet(Texture this, u8 palette);
-u8 Texture_getPallet(Texture this);
+u8 Texture_getPalette(Texture this);
 u8 Texture_getRows(Texture this);
 u8 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
