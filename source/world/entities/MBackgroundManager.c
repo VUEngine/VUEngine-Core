@@ -119,7 +119,7 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 	{
 		// free texture found, so replace it
 		Texture_setDefinition(textureRegistry->texture, textureDefinition);
-		Texture_setPallet(textureRegistry->texture, textureDefinition->palette);
+		Texture_setPalette(textureRegistry->texture, textureDefinition->palette);
 		Texture_rewrite(textureRegistry->texture);
 	}
 	else 
