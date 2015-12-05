@@ -699,8 +699,9 @@ static void Game_updateRendering(Game this)
 	this->lastProcessName = "render";
 #endif
 	// render sprites
-	SpriteManager_render(this->spriteManager);
-
+//	SpriteManager_render(this->spriteManager);
+	HardwareManager_enableVPUWriting(this->hardwareManager);
+	
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
 #ifdef __DEBUG
@@ -757,6 +758,7 @@ static void Game_update(Game this)
 #else
 		currentTime = Clock_getTime(this->clock);
 #endif		
+
 		if(currentTime - mainLogicTime >= __FPS_BASED_SECONDS)
 		{
 			// check if new state available

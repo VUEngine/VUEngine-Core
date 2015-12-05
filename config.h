@@ -31,16 +31,17 @@
 #ifdef __DEBUG
 #define __PRINT_FRAMERATE
 #define __PRINT_MEMORY_POOL_STATUS
+#define __ALERT_STACK_OVERFLOW
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
 #define __ANIMATION_EDITOR
 #endif
 
+#ifdef __DEBUG_TOOLS
 #define __PRINT_FRAMERATE
 #define __PRINT_MEMORY_POOL_STATUS
-
-// fires an exception if the stack is overflown
 #define __ALERT_STACK_OVERFLOW
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -34,7 +34,7 @@ ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h				\
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding  
 CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -include $(CONFIG_FILE) $(ESSENTIALS) 
-MACROS = __DEBUG __DEBUG_TOOLS __STAGE_EDITOR __ANIMATION_EDITOR
+MACROS = __DEBUG
 endif
 
 ifeq ($(TYPE), release)

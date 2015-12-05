@@ -219,12 +219,9 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
 				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
 	
+				// don't render inmediately, it causes glitches
 				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
-	
-				// render inmediately
-				//__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, sprite));
-				//__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, nextSprite));
 	
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);
@@ -453,21 +450,19 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	VPUManager_disableInterrupt(VPUManager_getInstance());
-
-	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+	///VPUManager_disableInterrupt(VPUManager_getInstance());
 
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_begin(this->sprites);
 
-	while (*_xpstts & XPBSYR);
+	//while (*_xpstts & XPBSYR);
 
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
 	
-	VPUManager_enableInterrupt(VPUManager_getInstance());
+	//VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 // retrieve free layer
