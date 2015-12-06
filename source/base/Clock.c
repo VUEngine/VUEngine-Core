@@ -57,6 +57,7 @@ static void Clock_constructor(Clock this)
 
 	// initialize time
 	this->milliSeconds = 0;
+	this->previousMilliSeconds = 0;
 
 	// initialize state
 	this->paused = true;
@@ -140,6 +141,7 @@ void Clock_update(Clock this, u32 ticks)
 	if(!this->paused)
 	{
 		// calculate milliseconds
+		this->previousMilliSeconds = this->milliSeconds;
 		this->milliSeconds += ticks;
 
 		u8 currentSecond = Clock_getSeconds(this);
@@ -168,6 +170,7 @@ void Clock_reset(Clock this)
 	ASSERT(this, "Clock::reset: null this");
 
 	this->milliSeconds = 0;
+	this->previousMilliSeconds = 0;
 
 	this->previousSecond = 0;
 	this->previousMinute = 0;
@@ -203,6 +206,14 @@ u32 Clock_getTime(Clock this)
 	ASSERT(this, "Clock::getTime: null this");
 
 	return this->milliSeconds;
+}
+
+// retrieve clock's elapsed time in last cycle
+u32 Clock_getElapsedTime(Clock this)
+{
+	ASSERT(this, "Clock::getTimeElapse: null this");
+
+	return this->milliSeconds - this->previousMilliSeconds;
 }
 
 // retrieve current elapsed milliseconds in the current second

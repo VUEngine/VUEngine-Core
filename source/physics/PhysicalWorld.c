@@ -58,9 +58,6 @@
 	/* time elapsed between updates*/											\
 	fix19_13 elapsedTime;														\
 																				\
-	/* time for movement over each axis	*/										\
-	unsigned long time;															\
-																				\
 	/* in game clock */															\
 	Clock clock;																\
 
@@ -98,9 +95,6 @@ static void PhysicalWorld_constructor(PhysicalWorld this)
 	this->gravity.x = 0;
 	this->gravity.y = 0;
 	this->gravity.z = 0;
-
-	// record this update's time
-	this->time = 0;
 }
 
 // class's destructor
@@ -262,8 +256,6 @@ void PhysicalWorld_start(PhysicalWorld this)
 	{
 		this->clock = Game_getInGameClock(Game_getInstance());
 	}
-
-	this->time = Clock_getTime(this->clock);
 }
 
 // calculate collisions
@@ -284,7 +276,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 #endif
 
 	// get the elapsed time
-	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getTime(this->clock) - this->time), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
 	if(0 == this->elapsedTime)
 	{
@@ -304,9 +296,6 @@ void PhysicalWorld_update(PhysicalWorld this)
 	{
 		Body_update(__GET_CAST(Body, VirtualNode_getData(node)), &this->gravity, this->elapsedTime);
 	}
-
-	// record this update's time
-	this->time = Clock_getTime(this->clock);
 }
 
 // unregister all bodies
@@ -327,8 +316,6 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualList_clear(this->bodies);
 	VirtualList_clear(this->activeBodies);
 	VirtualList_clear(this->removedBodies);
-
-	this->time = 0;
 }
 
 // check if an entity has been registered

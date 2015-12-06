@@ -74,6 +74,7 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	this->particleSystemDefinition = particleSystemDefinition;
 	
 	this->particles = __NEW(VirtualList);
+	this->recyclableParticles = NULL;
 	this->expiredParticles = __NEW(VirtualList);
 	
 	this->particleCount = 0;
@@ -87,7 +88,6 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	// retrieve clock
 	this->clock = Game_getInGameClock(Game_getInstance());
 	
-	this->lastUpdateTime = this->paused ? 0 : Clock_getTime(this->clock);
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
 	// calculate the numbe of sprite definitions
@@ -100,10 +100,10 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 void ParticleSystem_destructor(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::destructor: null this");
-	
-	ParticleSystem_processExpiredParticles(this);
-	
+
 	ParticleSystem_hide(this);
+
+	ParticleSystem_processExpiredParticles(this);
 	
 	if(this->particles)
 	{
@@ -118,19 +118,27 @@ void ParticleSystem_destructor(ParticleSystem this)
 		this->particles = NULL;
 	}
 
-	if(this->expiredParticles)
+	if(this->recyclableParticles)
 	{
-		VirtualNode node = VirtualList_begin(this->expiredParticles);
+		VirtualNode node = VirtualList_begin(this->recyclableParticles);
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
 			__DELETE(VirtualNode_getData(node));
 		}
+		
+		__DELETE(this->recyclableParticles);
+		this->recyclableParticles = NULL;
+	}
+	
+	if(this->expiredParticles)
+	{
+		ASSERT(!VirtualList_getSize(this->expiredParticles), "ParticleSystem::destructor: expiredParticles not clean");
 
 		__DELETE(this->expiredParticles);
 		this->expiredParticles = NULL;
 	}
-	
+
 	// destroy the super Container
 	__DESTROY_BASE;
 }
@@ -139,11 +147,13 @@ static void ParticleSystem_spawnAllParticles(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::spawnAllParticles: null this");
 	
+	this->recyclableParticles = __NEW(VirtualList);
+
 	int i = 0;
 	for(; i < this->particleSystemDefinition->maximumNumberOfAliveParticles; i++)
 	{
 		Particle particle = ParticleSystem_spawnParticle(this);
-		VirtualList_pushBack(this->expiredParticles, particle);
+		VirtualList_pushBack(this->recyclableParticles, particle);
 		Particle_hide(particle);
 	}
 }
@@ -158,8 +168,13 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 	{
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			VirtualList_removeElement(this->particles, VirtualNode_getData(node));
+			Particle particle = __GET_CAST(Particle, VirtualNode_getData(node));
+			VirtualList_pushBack(this->recyclableParticles, particle);
+			VirtualList_removeElement(this->particles, particle);
+			this->particleCount--;
 		}
+
+		VirtualList_clear(this->expiredParticles);
 	}
 	else
 	{
@@ -169,6 +184,7 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 			VirtualList_removeElement(this->particles, particle);
 			
 			__DELETE(particle);
+			this->particleCount--;
 		}
 
 		VirtualList_clear(this->expiredParticles);
@@ -195,7 +211,7 @@ void ParticleSystem_update(ParticleSystem this)
 	
 	ParticleSystem_processExpiredParticles(this);
 
-    u32 timeElapsed = Clock_getTime(this->clock) - this->lastUpdateTime;
+    u32 timeElapsed = Clock_getElapsedTime(this->clock);
 
     // update each particle
     VirtualNode node = VirtualList_begin(this->particles);
@@ -208,9 +224,9 @@ void ParticleSystem_update(ParticleSystem this)
 	if(!this->paused)
 	{
 		// check if it is time to spawn new particles
-		this->lastUpdateTime = Clock_getTime(this->clock);
-		
-		if(this->lastUpdateTime > this->nextSpawnTime)
+		this->nextSpawnTime -= abs(timeElapsed);
+
+		if(0 > this->nextSpawnTime)
 		{
 			if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
 			{
@@ -236,7 +252,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::recycleParticle: null this");
 
-	if(VirtualList_begin(this->expiredParticles))
+	if(VirtualList_begin(this->recyclableParticles))
 	{
 		long seed = Utilities_randomSeed();
 	
@@ -244,7 +260,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 		
 		// call the appropiate allocator to support inheritance!
-		Particle particle = __GET_CAST(Particle, VirtualList_front(this->expiredParticles));
+		Particle particle = __GET_CAST(Particle, VirtualList_front(this->recyclableParticles));
 
 		Particle_setLifeSpan(particle, lifeSpan);
 		Particle_setMass(particle, mass);
@@ -252,7 +268,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 		Particle_show(particle);
 	
-		VirtualList_popFront(this->expiredParticles);
+		VirtualList_popFront(this->recyclableParticles);
 		
 		return particle;
 	}
@@ -387,7 +403,6 @@ void ParticleSystem_resume(ParticleSystem this)
 		Particle_hide(__GET_CAST(Particle, VirtualNode_getData(node)));
 	}
 	
-	this->lastUpdateTime = Clock_getTime(this->clock);
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 }
 
@@ -421,15 +436,13 @@ static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventF
 
 	VirtualList_pushBack(this->expiredParticles, eventFirer);
 	Particle_hide(__GET_CAST(Particle, eventFirer));
-	this->particleCount--;
 }
 
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::computeNextSpawnTime: null this");
 
-	return this->lastUpdateTime +
-			this->particleSystemDefinition->minimumSpawnDelay +
+	return this->particleSystemDefinition->minimumSpawnDelay +
 			Utilities_random(Utilities_randomSeed(), this->particleSystemDefinition->spawnDelayDelta);
 }
 
@@ -437,7 +450,6 @@ void ParticleSystem_start(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::start: null this");
 
-	this->lastUpdateTime = Clock_getTime(this->clock);
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 
 	this->paused = false;

@@ -46,6 +46,9 @@
 	/* time elapsed */															\
 	u32 milliSeconds;															\
 																				\
+	/* time elapsed */															\
+	u32 previousMilliSeconds;													\
+																				\
 	/* register */																\
 	u8 previousSecond;															\
 																				\
@@ -86,6 +89,7 @@ u32 Clock_getMilliSeconds(Clock this);
 u16 Clock_getSeconds(Clock this);
 u8 Clock_getMinutes(Clock this);
 u32 Clock_getTime(Clock this);
+u32 Clock_getElapsedTime(Clock this);
 int Clock_getTimeInCurrentSecond(Clock this);
 void Clock_setTimeInSeconds(Clock this, float totalSeconds);
 void Clock_setTime(Clock this, int hours, int minutes, int seconds);

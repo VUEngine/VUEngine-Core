@@ -49,9 +49,6 @@ u32 _lastDataVariable __attribute__ ((section (".after_bss"))) = 0;
 	/* VPU manager */															\
 	VPUManager vpuManager;														\
 																				\
-	/* flag for VPU writing */													\
-	bool allowVPUWriting;														\
-																				\
 	/* VPU manager */															\
 	KeypadManager keypadManager;												\
 																				\
@@ -159,13 +156,6 @@ void HardwareManager_vpuInterruptHandler(void)
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 	
 	SpriteManager_processLayers(SpriteManager_getInstance());
-	
-	if(_hardwareManager->allowVPUWriting)
-	{
-		SpriteManager_render(SpriteManager_getInstance());
-		
-		_hardwareManager->allowVPUWriting = false;
-	}
 	
 	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
@@ -314,21 +304,6 @@ void HardwareManager_enableRendering(HardwareManager this)
 	// turn on display
 	VPUManager_displayOn(this->vpuManager);
 	VPUManager_enableInterrupt(VPUManager_getInstance());
-}
-
-void HardwareManager_enableVPUWriting(HardwareManager this)
-{
-	ASSERT(this, "HardwareManager::enableVPUWriting: null this");
-
-	this->allowVPUWriting = true;
-}
-
-
-void HardwareManager_disableVPUWriting(HardwareManager this)
-{
-	ASSERT(this, "HardwareManager::enableVPUWriting: null this");
-
-	this->allowVPUWriting = false;
 }
 
 // make sure the brigtness is ok

@@ -144,18 +144,17 @@ int Error_triggerException(Error this, char* message, char* detail)
 	}
 	// error display message
 	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
-//	Printing_render(Printing_getInstance(), 31);
 
 	// dimm game
-	VIP_REGS[GPLT0] = __DIMM_VALUE_1;
+	VIP_REGS[GPLT0] = 0b11100100;
 	VIP_REGS[GPLT1] = __DIMM_VALUE_2;
 	VIP_REGS[GPLT2] = __DIMM_VALUE_1;
-	VIP_REGS[GPLT3] = 0xE0;
+	VIP_REGS[GPLT3] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT0] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT1] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT2] = __DIMM_VALUE_1;
 	VIP_REGS[JPLT3] = __DIMM_VALUE_1;
-
+	
 	// trap the game here
 	while (true);
 

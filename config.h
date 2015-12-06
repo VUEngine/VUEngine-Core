@@ -212,9 +212,6 @@
 // number of bgmap definitions in each bgmap segment
 #define __NUM_BGMAPS_PER_SEGMENT 			16
 
-// number of bgmap segments for dynamically allocated textures when preloading
-#define __NUMBER_OF_BGMAPS_SEGMENTS_ROOM 	1
-
 // printing area
 #define __PRINTING_BGMAP_X_OFFSET			0
 #define __PRINTING_BGMAP_Y_OFFSET			0

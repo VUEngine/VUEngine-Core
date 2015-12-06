@@ -53,16 +53,16 @@
 	VirtualList particles;														\
 																				\
 	/* particle list */															\
+	VirtualList recyclableParticles;											\
+																				\
+	/* particle list */															\
 	VirtualList expiredParticles;												\
 																				\
 	/* clock  */																\
 	Clock clock;																\
 																				\
-	/* last udpate time */														\
-	u32 lastUpdateTime;															\
-																				\
 	/* next spawn time */														\
-	u32 nextSpawnTime;															\
+	s32 nextSpawnTime;															\
 																				\
 	/* particle count */														\
 	s16 particleCount;															\

@@ -699,8 +699,7 @@ static void Game_updateRendering(Game this)
 	this->lastProcessName = "render";
 #endif
 	// render sprites
-//	SpriteManager_render(this->spriteManager);
-	HardwareManager_enableVPUWriting(this->hardwareManager);
+	SpriteManager_render(this->spriteManager);
 	
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);

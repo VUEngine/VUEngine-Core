@@ -91,6 +91,7 @@ void Particle_destructor(Particle this)
 	if(this->objectSprite)
 	{
 		__DELETE(this->objectSprite);
+		this->objectSprite = NULL;
 	}
 	
 	// destroy the super Container

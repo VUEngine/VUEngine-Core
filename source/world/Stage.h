@@ -111,6 +111,10 @@ typedef struct StageDefinition
 	
 	// palettes' config
 	PaletteConfig paletteConfig;
+	
+    // BGMAP segments configuration
+    // free segments
+	u8 spareBgmapSegments;
 
 	// OBJs segments's sizes(SPT0 to SPT3)
 	fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];

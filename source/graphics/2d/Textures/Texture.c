@@ -260,7 +260,7 @@ BYTE* Texture_getBgmapDefinition(Texture this)
 }
 
 // set the palette
-void Texture_setPallet(Texture this, u8 palette)
+void Texture_setPalette(Texture this, u8 palette)
 {
 	ASSERT(this, "Texture::setPallet: null this");
 

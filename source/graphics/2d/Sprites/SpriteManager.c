@@ -450,19 +450,22 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	///VPUManager_disableInterrupt(VPUManager_getInstance());
+	VPUManager_disableInterrupt(VPUManager_getInstance());
+
+	SpriteManager_processLayers(SpriteManager_getInstance());
+	//SpriteManager_sortLayersProgressively(this);
 
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_begin(this->sprites);
-
-	//while (*_xpstts & XPBSYR);
 
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
 	
-	//VPUManager_enableInterrupt(VPUManager_getInstance());
+	SpriteManager_setLastLayer(this);
+
+	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 // retrieve free layer
