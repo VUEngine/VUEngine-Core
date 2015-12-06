@@ -113,7 +113,7 @@ typedef struct StageDefinition
 	PaletteConfig paletteConfig;
 	
     // BGMAP segments configuration
-    // free segments
+    // number of segments reserved for dynamically allocated textures when preloading
 	u8 spareBgmapSegments;
 
 	// OBJs segments's sizes(SPT0 to SPT3)
