@@ -256,20 +256,20 @@ BYTE* Texture_getBgmapDefinition(Texture this)
 {
 	ASSERT(this, "Texture::getBgmapDef: null this");
 
-	return this->textureDefinition? this->textureDefinition->bgmapDefinition: NULL;
+	return this->textureDefinition ? this->textureDefinition->bgmapDefinition : NULL;
 }
 
 // set the palette
 void Texture_setPalette(Texture this, u8 palette)
 {
-	ASSERT(this, "Texture::setPallet: null this");
+	ASSERT(this, "Texture::setPalette: null this");
 
 	this->palette = palette;
 }
 
 u8 Texture_getPalette(Texture this)
 {
-	ASSERT(this, "Texture::getPallet: null this");
+	ASSERT(this, "Texture::getPalette: null this");
 
 	return this->palette;
 }
@@ -321,7 +321,6 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 	}
 }
 
-
 // write directly to texture
 void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
 {
@@ -334,4 +333,3 @@ void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BY
 		CharSet_putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
-

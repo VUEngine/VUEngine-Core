@@ -214,7 +214,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
 	__VIRTUAL_CALL(void, Sprite, show, this);
 }
 
-// get render flag
+// get displacement
 Displacement Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getRenderFlag: null this");
@@ -231,6 +231,7 @@ void Sprite_rotate(Sprite this, const Rotation* rotation)
 //---------------------------------------------------------------------------------------------------------
 // 										Animation
 //---------------------------------------------------------------------------------------------------------
+
 void Sprite_update(Sprite this, Clock clock)
 {
 	ASSERT(this, "Sprite::update: null this");
