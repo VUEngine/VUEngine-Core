@@ -66,6 +66,8 @@ void BgmapTextureManager_setAvailableBgmapSegments(BgmapTextureManager this, u8 
 void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this);
 void BgmapTextureManager_resetAvailableBgmapSegments(BgmapTextureManager this);
 u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this);
+u8 BgmapTextureManager_getSpareBgmapSegments(BgmapTextureManager this);
+void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 spareBgmapSegments);
 
 void BgmapTextureManager_print(BgmapTextureManager this, int x, int y);
 

@@ -20,6 +20,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
+#include <InGameEntity.h>
+#include <InanimatedInGameEntity.h>
 #include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -243,9 +245,21 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	}
 	else if(!positionedEntity->childrenDefinitions)
 	{
-		halfWidth = 1;
-		halfHeight = 1;
-		halfDepth = 1;
+		// TODO: there should be a class which handles these special cases
+		if((int)__TYPE(InGameEntity) == (int)positionedEntity->entityDefinition->allocator || 
+			(int)__TYPE(InanimatedInGameEntity) == (int)positionedEntity->entityDefinition->allocator 
+		)
+		{
+			halfWidth = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->width >> 1;
+			halfHeight = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->height >> 1;
+			halfDepth = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->depth >> 1;
+		}
+		else
+		{
+			halfWidth = 1;
+			halfHeight = 1;
+			halfDepth = 1;
+		}
 	}
 
 	int x = FIX19_13TOI(globalPosition3D.x);
@@ -638,7 +652,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 // draw class
 void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 {
-	ASSERT(this, "InGameEntity::transform: null this");
+	ASSERT(this, "Entity::transform: null this");
 
 	this->invalidateGlobalPosition.x = true;
 	this->invalidateGlobalPosition.y = true;
