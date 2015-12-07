@@ -103,6 +103,20 @@ typedef struct StageDefinition
 	// world's size over each axis in pixels
 	Size size;
 	
+	// streaming
+	struct Streaming 
+	{
+		u8 delayPerCycle;
+		u8 loadPadding;
+		u8 unloadPadding;
+		u8 streamingAmplitude;
+	} streaming;
+
+
+// since there are 32 layers, that's the theoretical limit of entities to display
+#undef __STREAMING_AMPLITUDE
+#define __STREAMING_AMPLITUDE		16
+	
 	// physical world's gravity
 	Acceleration gravity;
 	

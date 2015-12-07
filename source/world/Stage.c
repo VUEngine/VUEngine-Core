@@ -37,31 +37,14 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#undef __STREAM_CYCLE_DURATION
-#define __STREAM_CYCLE_DURATION	(8)
 
-#define __TOTAL_CYCLES	4
-#define __STREAM_UNLOAD_CYCLE	(0)
-#define __STREAM_SELECT_ENTITIES_IN_LOAD_RANGE	__STREAM_CYCLE_DURATION / __TOTAL_CYCLES
-#define __STREAM_LOAD_CYCLE	(__STREAM_CYCLE_DURATION / __TOTAL_CYCLES) * 2
-#define __STREAM_INITIALIZE_CYCLE	(__STREAM_CYCLE_DURATION / __TOTAL_CYCLES) * 3
-
-
-#undef __ENTITY_LOAD_PAD 			
-#undef __ENTITY_UNLOAD_PAD 		
-
-#define __ENTITY_LOAD_PAD 			(32)
-#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 16)
-
-// since there are 32 layers, that's the theoretical limit of entities to display
-#undef __STREAMING_AMPLITUDE
-#define __STREAMING_AMPLITUDE		16
+#define __STREAMING_CYCLES		4
 
 #define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		ITOFIX19_13(0 - __MAXIMUM_PARALLAX - __ENTITY_LOAD_PAD)
-#define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + __ENTITY_LOAD_PAD)
-#define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- __ENTITY_LOAD_PAD)
-#define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + __ENTITY_LOAD_PAD)
+#define __LOAD_LOW_X_LIMIT		ITOFIX19_13(- __MAXIMUM_PARALLAX - this->stageDefinition->streaming.loadPadding)
+#define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- this->stageDefinition->streaming.loadPadding)
+#define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + this->stageDefinition->streaming.loadPadding)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -692,14 +675,14 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	VirtualNode node = savedNode ? savedNode : VirtualList_begin(this->stageEntities);
 	int counter = 0;
 
-	for(; node && counter < __STREAMING_AMPLITUDE / 4; node = direction ? VirtualNode_getPrevious(node) : VirtualNode_getNext(node), counter++);
+	for(; node && counter < this->stageDefinition->streaming.streamingAmplitude / 4; node = direction ? VirtualNode_getPrevious(node) : VirtualNode_getNext(node), counter++);
 
 	node = node ? node : direction ? VirtualList_begin(this->stageEntities) : VirtualList_end(this->stageEntities);
 	savedNode = NULL;
 
 	int entityLoaded = false;
 
-	for(counter = 0; node && (!savedNode || counter < __STREAMING_AMPLITUDE); node = direction ? VirtualNode_getNext(node) : VirtualNode_getPrevious(node), counter++)
+	for(counter = 0; node && (!savedNode || counter < this->stageDefinition->streaming.streamingAmplitude); node = direction ? VirtualNode_getNext(node) : VirtualNode_getPrevious(node), counter++)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
 
@@ -872,7 +855,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		Entity entity = __GET_CAST(Entity, VirtualNode_getData(node));
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!__VIRTUAL_CALL(bool, Entity, isVisible, entity, __ENTITY_UNLOAD_PAD))
+		if(!__VIRTUAL_CALL(bool, Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding)))
 		{
 			s16 id = Container_getId(__GET_CAST(Container, entity));
 
@@ -951,55 +934,52 @@ void Stage_stream(Stage this)
 	ASSERT(this, "Stage::stream: null this");
 
 	// if the screen is moving
-	static int streamCycle = 0;
-
-	switch(streamCycle)
+	static int streamingCycleCounter = 0;
+	int streamingCycleBase = this->stageDefinition->streaming.delayPerCycle / __STREAMING_CYCLES;
+	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle;
+	
+	if(!streamingCycleCounter)
 	{
-		case __STREAM_UNLOAD_CYCLE:
-			
-			// unload not visible objects
-			Stage_unloadOutOfRangeEntities(this);
-			break;
-			
-		case __STREAM_SELECT_ENTITIES_IN_LOAD_RANGE:
-			
-			if(this->focusEntity)
-			{
-				// load visible objects
-				Stage_selectEntitiesInLoadRange(this);
-			}
-			else
-			{
-				InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
-				this->focusEntity = focusInGameEntity? __GET_CAST(Entity, focusInGameEntity): NULL;
-			}
+		// unload not visible objects
+		Stage_unloadOutOfRangeEntities(this);
+	}
+	else if(streamingCycleCounter == streamingCycleBase)
+	{			
+		if(this->focusEntity)
+		{
+			// load visible objects
+			Stage_selectEntitiesInLoadRange(this);
+		}
+		else
+		{
+			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
+			this->focusEntity = focusInGameEntity? __GET_CAST(Entity, focusInGameEntity): NULL;
+		}
+	}			
+	else if(streamingCycleCounter == streamingCycleBase * 2)
+	{
+		if(VirtualList_begin(this->entitiesToLoad))
+		{
+			Stage_loadEntities(this);
+		}
+		/*else
+		{
+			streamingCycleCounter = streamingCycleBase * 3;
+		}*/
+	}
+	else if(streamingCycleCounter == streamingCycleBase * 3)
+	{		
+		if(VirtualList_begin(this->entitiesToInitialize))
+		{
+			Stage_initializeEntities(this);
+		}
 
-			break;
-			
-		case __STREAM_LOAD_CYCLE:
-
-			if(VirtualList_begin(this->entitiesToLoad))
-			{
-				Stage_loadEntities(this);
-				break;
-			}
-			
-			streamCycle = __STREAM_INITIALIZE_CYCLE;
-
-		case __STREAM_INITIALIZE_CYCLE:
-			
-			if(VirtualList_begin(this->entitiesToInitialize))
-			{
-				Stage_initializeEntities(this);
-				break;
-			}
-
-			streamCycle = __STREAM_CYCLE_DURATION;
+		//streamingCycleCounter = streamingDelayPerCycle;
 	}
 	
-	if(++streamCycle >= __STREAM_CYCLE_DURATION)
+	if(++streamingCycleCounter >= streamingDelayPerCycle)
 	{
-		streamCycle  = __STREAM_UNLOAD_CYCLE;
+		streamingCycleCounter  = 0;
 	}
 }
 
