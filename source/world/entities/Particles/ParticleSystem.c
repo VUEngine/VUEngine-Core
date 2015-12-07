@@ -395,6 +395,16 @@ void ParticleSystem_resume(ParticleSystem this)
 		__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
 	}
 
+	if(this->recyclableParticles)
+	{
+		node = VirtualList_begin(this->recyclableParticles);
+		
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
+		}
+	}
+	
 	node = VirtualList_begin(this->expiredParticles);
 		
 	for(; node; node = VirtualNode_getNext(node))
@@ -420,7 +430,17 @@ void ParticleSystem_suspend(ParticleSystem this)
 	{
 		__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
 	}
-	
+
+	if(this->recyclableParticles)
+	{
+		node = VirtualList_begin(this->recyclableParticles);
+		
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
+		}
+	}
+
 	node = VirtualList_begin(this->expiredParticles);
 	
 	for(; node; node = VirtualNode_getNext(node))
