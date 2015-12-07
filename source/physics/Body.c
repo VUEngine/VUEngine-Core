@@ -38,7 +38,7 @@ __CLASS_DEFINITION(Body, Object);
 
 // this should be improved and calculated dynamically based on framerate
 
-#define STOPED_MOVING		0
+#define STOPPED_MOVING		0
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
@@ -418,7 +418,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 	{
 		if(elapsedTime)
 		{
-			int axisStopedMovement = 0;
+			int axisStoppedMovement = 0;
 			int axisOfMovement = 0;
  			int axisOfChangeOfMovement = 0;
 
@@ -453,7 +453,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 	 	 		}
 	 	 		else
 				{
-	 	 			axisStopedMovement |= __XAXIS;
+	 	 			axisStoppedMovement |= __XAXIS;
 	 	 		}
 	 	 	}
 
@@ -470,7 +470,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 	 	 		}
 	 	 		else
 				{
-	 	 			axisStopedMovement |= __YAXIS;
+	 	 			axisStoppedMovement |= __YAXIS;
 	 	 		}
 	 	 	}
 
@@ -487,14 +487,14 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 	 	 		}
 	 	 		else
 				{
-	 	 			axisStopedMovement |= __ZAXIS;
+	 	 			axisStoppedMovement |= __ZAXIS;
 	 	 		}
 	 	 	}
 
 		 	// if stopped on any axis
-		 	if(axisStopedMovement)
+		 	if(axisStoppedMovement)
 			{
-	 			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyStoped, &axisStopedMovement);
+	 			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyStopped, &axisStoppedMovement);
 		 	}
 
 		 	if(axisOfChangeOfMovement)
@@ -661,7 +661,7 @@ static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity
 
  		if(!appliedForce && !*velocity)
 		{
- 			moving = STOPED_MOVING;
+ 			moving = STOPPED_MOVING;
  		}
  		else
 		{
@@ -758,7 +758,7 @@ void Body_stopMovement(Body this, u8 axis)
 	if(!Body_isMoving(this))
 	{
 		Body_sleep(this);
-		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyStoped, &axisOfStopping);
+		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyStopped, &axisOfStopping);
 	}
 }
 
@@ -944,7 +944,7 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
 
-	int axisOnWhichStoped = 0;
+	int axisOnWhichStopped = 0;
 	int axisOnWhichBounced = 0;
 
 	if((__XAXIS & axis))
@@ -955,7 +955,7 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 		}
 		else
 		{
-			axisOnWhichStoped |= __XAXIS;
+			axisOnWhichStopped |= __XAXIS;
 		}
 	}
 
@@ -967,7 +967,7 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 		}
 		else
 		{
-			axisOnWhichStoped |= __YAXIS;
+			axisOnWhichStopped |= __YAXIS;
 		}
 	}
 
@@ -979,13 +979,13 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 		}
 		else
 		{
-			axisOnWhichStoped |= __ZAXIS;
+			axisOnWhichStopped |= __ZAXIS;
 		}
 	}
 
-	if(axisOnWhichStoped)
+	if(axisOnWhichStopped)
 	{
-		Body_stopMovement(this, axisOnWhichStoped);
+		Body_stopMovement(this, axisOnWhichStopped);
 	}
 
 	if(axisOnWhichBounced)

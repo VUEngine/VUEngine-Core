@@ -410,11 +410,11 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 						return true;
 						break;
 
-					case kBodyStoped:
+					case kBodyStopped:
 
 						if(!Body_isMoving(this->body))
 	                    {
-							CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
+							CollisionManager_shapeStoppedMoving(CollisionManager_getInstance(), this->shape);
 						}
 						break;
 
@@ -528,7 +528,7 @@ static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 		
 		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {
-			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyStoped, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
 		else
 	    {

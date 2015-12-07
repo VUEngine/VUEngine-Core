@@ -58,7 +58,7 @@ enum MessagesTypes
 	kNoCollision,
 	kCollision,
 	kCollisionWithYou,
-	kBodyStoped,
+	kBodyStopped,
 	kBodyBounced,
 	kBodyStartedMoving,
 	kBodyStartedMovingByGravity,

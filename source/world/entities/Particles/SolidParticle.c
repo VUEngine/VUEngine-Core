@@ -172,7 +172,7 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 		
 		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {
-			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyStoped, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
 		else
 	    {
@@ -248,11 +248,11 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 			return true;
 			break;
 
-		case kBodyStoped:
+		case kBodyStopped:
 
 			if(!Body_isMoving(this->body))
             {
-				CollisionManager_shapeStopedMoving(CollisionManager_getInstance(), this->shape);
+				CollisionManager_shapeStoppedMoving(CollisionManager_getInstance(), this->shape);
 			}
 			break;
 

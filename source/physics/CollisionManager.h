@@ -56,7 +56,7 @@ void CollisionManager_processRemovedShapes(CollisionManager this);
 int CollisionManager_update(CollisionManager this);
 void CollisionManager_reset(CollisionManager this);
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
-void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape);
+void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);
 void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape);
 void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
 void CollisionManager_drawShapes(CollisionManager this);

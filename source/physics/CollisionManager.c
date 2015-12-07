@@ -197,7 +197,7 @@ int CollisionManager_update(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
-	int thereWhereCollisions = false;
+	int thereWereCollisions = false;
 
 	VirtualNode node = VirtualList_begin(this->movingShapes);
 
@@ -236,8 +236,7 @@ int CollisionManager_update(CollisionManager this)
 			// load the current shape to check against
 			Shape shapeToCheck = __GET_CAST(Shape, VirtualNode_getData(nodeForActiveShapes));
 
-			// don't compare with current movable shape,
-			// when the shape already has been checked
+			// don't compare with current movable shape, when the shape already has been checked
 			// and when it is not active
 			if(shape != shapeToCheck && !Shape_isChecked(shapeToCheck))
 			{
@@ -260,7 +259,7 @@ int CollisionManager_update(CollisionManager this)
 
 		if(collidingObjects)
 		{
-			thereWhereCollisions = true;
+			thereWereCollisions = true;
 
 			// inform the owner about the collision
 			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, shape), __GET_CAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
@@ -274,7 +273,7 @@ int CollisionManager_update(CollisionManager this)
 	// process removed shapes
 	CollisionManager_processRemovedShapes(this);
 
-	return thereWhereCollisions;
+	return thereWereCollisions;
 }
 
 // unregister all shapes
@@ -316,7 +315,7 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 }
 
 // inform of a change in the shape
-void CollisionManager_shapeStopedMoving(CollisionManager this, Shape shape)
+void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape)
 {
 	ASSERT(this, "CollisionManager::shapeChangedState: null this");
 	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
