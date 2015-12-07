@@ -169,6 +169,10 @@ void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
 {
 	ASSERT(this, "ScreenMovementManager::FXFadeIn: null this");
 
+#ifdef __DEBUG
+	return;
+#endif
+
 	int i = 0;
 	// create the delay
 	for(; i <= 32; i += 2)
@@ -189,6 +193,9 @@ void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
 {
 	ASSERT(this, "ScreenMovementManager::FXFadeOut: null this");
 
+#ifdef __DEBUG
+	return;
+#endif
 	int i = 32;
 
 	// create the delay

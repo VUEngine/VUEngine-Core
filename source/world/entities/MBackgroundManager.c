@@ -171,7 +171,15 @@ void MBackgroundManager_reset(MBackgroundManager this)
 	{
 		TextureRegistry* textureRegistry = (TextureRegistry*)VirtualNode_getData(node);
 
-		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __GET_CAST(BgmapTexture, textureRegistry->texture));
+		// textures could be deleted externally
+		if(*(u32*)textureRegistry->texture)
+		{
+			ASSERT(textureRegistry, "MBackgroundManager::reset: null textureRegistry");
+			ASSERT(textureRegistry->texture, "MBackgroundManager::reset: null texture");
+			ASSERT(__GET_CAST(BgmapTexture, textureRegistry->texture), "MBackgroundManager::reset: no BgmapTexture");
+	
+			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __GET_CAST(BgmapTexture, textureRegistry->texture));
+		}
 
 		__DELETE_BASIC(textureRegistry);
 	}

@@ -159,13 +159,17 @@ void Object_fireEvent(Object this,  char* eventName)
 // cast object to base class
 Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void))
 {
-	ASSERT(this, "Object::upcast: null this");
+	ASSERT(this, "Object::getCast: null this");
 	
 	if(!this)
 	{
 		return NULL;
 	}
 	
+	ASSERT(*(u32*)this, "Object::getCast: deleted this");
+	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, this), "Object::getCast: null getClassName");
+	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this), "Object::getCast: null getBaseClass");
+
 	if(!baseClassGetClassMethod)
 	{
 		if(targetClassGetClassMethod == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
