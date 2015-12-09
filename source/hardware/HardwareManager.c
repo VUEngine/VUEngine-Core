@@ -454,9 +454,6 @@ void HardwareManager_checkStackStatus(HardwareManager this)
 		HardwareManager_printStackStatus(HardwareManager_getInstance(), 1, 15, false);
 		NM_ASSERT(false, "HardwareManager::checkStackStatus: stack overflown!");
 	}
-
-	Printing_hex(Printing_getInstance(), (int)&_lastDataVariable, 10, 10, NULL);
-
 }
 
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed)
