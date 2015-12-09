@@ -55,7 +55,8 @@ SECTIONS
 
   .after_bss :
   {
-    *(.after_bss*)
+	*(.after_bss*)
+ 	__lastDataVariable = .;
   } >ram = 0xFF
   /* These must appear regardless of  .  */
 

@@ -212,6 +212,45 @@ void MBgmapSprite_positione(MBgmapSprite this, const VBVec3D* position)
 	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BgmapTexture_getYOffset(__GET_CAST(BgmapTexture, this->texture)) << 3: 0;
 }
 
+void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
+{
+	ASSERT(this, "MBgmapSprite::setPosition: null this");
+	
+	this->drawSpec.position.x = 0;
+	this->drawSpec.position.y = 0;
+
+	fix19_13 previousZPosition = this->drawSpec.position.z;
+	this->drawSpec.position.z = position->z;
+
+	this->drawSpec.textureSource.mx = FIX19_13TOI(-position->x);
+	this->drawSpec.textureSource.my = FIX19_13TOI(-position->y);
+		
+	if(previousZPosition != this->drawSpec.position.z)
+	{
+		// calculate sprite's parallax
+		__VIRTUAL_CALL(void, Sprite, calculateParallax, __GET_CAST(Sprite, this), this->drawSpec.position.z);
+	}
+
+	const Point* const axisCapped = MBgmapSprite_capPosition(this);
+	
+	if(axisCapped->x)
+	{
+		this->drawSpec.position.x = ITOFIX19_13(-axisCapped->x);
+		this->renderFlag |= __UPDATE_G;
+	}
+	
+	if(axisCapped->y)
+	{
+		this->drawSpec.position.y = ITOFIX19_13(-axisCapped->y);
+		this->renderFlag |= __UPDATE_G;
+	}
+	
+	this->renderFlag |= __UPDATE_M;
+
+	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BgmapTexture_getYOffset(__GET_CAST(BgmapTexture, this->texture)) << 3: 0;
+
+}
+
 // calculate the size multiplier
 static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 {
@@ -346,4 +385,5 @@ static const Point* const MBgmapSprite_capPosition(MBgmapSprite this)
 
 	return &axisCapped;
 }
+
 

@@ -316,6 +316,7 @@ void BgmapSprite_render(BgmapSprite this)
 
 		if(__UPDATE_HEAD == this->renderFlag)
 		{
+			while (*_xpstts & XPBSYR);
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
