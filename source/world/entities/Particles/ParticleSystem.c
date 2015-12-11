@@ -266,7 +266,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		Particle_setMass(particle, mass);
 		__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
-		Particle_show(particle);
+//		Particle_show(particle);
 	
 		VirtualList_popFront(this->recyclableParticles);
 		

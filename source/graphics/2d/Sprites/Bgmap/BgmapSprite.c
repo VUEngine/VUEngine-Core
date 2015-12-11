@@ -335,7 +335,7 @@ void BgmapSprite_render(BgmapSprite this)
 			{
 				// -1 because 0 means 1 pixel for width
 				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
 			}
 			
 			// make sure to not render again
