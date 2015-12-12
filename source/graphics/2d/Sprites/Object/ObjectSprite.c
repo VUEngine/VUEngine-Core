@@ -339,8 +339,7 @@ void ObjectSprite_show(ObjectSprite this)
 	{
 		while (*_xpstts & XPBSYR);
 
-
-(this);
+		ObjectSprite_render(this);
 	}
 	
 	if (0 <= this->objectIndex)
