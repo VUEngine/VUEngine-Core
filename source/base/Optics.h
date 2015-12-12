@@ -36,7 +36,6 @@
 	Vector.y -= (_screenPosition->y + 0x00001000)& 0xFFFFE000;						\
 	Vector.z -= (_screenPosition->z + 0x00001000)& 0xFFFFE000;
 
-#define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)																										\
 #define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)									\
 		Vector2D.x = Vector3D.x 													\
 			+ (FIX19_13_MULT(_optical->horizontalViewPointCenter - 					\
