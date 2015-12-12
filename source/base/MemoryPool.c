@@ -35,19 +35,8 @@
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
 // TODO: remove me
-#undef __MEMORY_POOL_ARRAYS
-#define __MEMORY_POOL_ARRAYS													\
-	__BLOCK_DEFINITION(180, 1)													\
-	__BLOCK_DEFINITION(164, 2)													\
-	__BLOCK_DEFINITION(160, 2)													\
-	__BLOCK_DEFINITION(132, 42)													\
-	__BLOCK_DEFINITION(112, 46)													\
-	__BLOCK_DEFINITION(96, 54)													\
-	__BLOCK_DEFINITION(76, 24)													\
-	__BLOCK_DEFINITION(68, 76)													\
-	__BLOCK_DEFINITION(28, 272)													\
-	__BLOCK_DEFINITION(20, 496)													\
-	__BLOCK_DEFINITION(16, 480)													\
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
