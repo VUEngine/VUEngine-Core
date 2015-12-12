@@ -106,8 +106,8 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 				VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 				
 				// eliminate fractions to avoid rounding problems later
-				position.x &= 0xFFFFE000;
-				position.y &= 0xFFFFE000;
+				//position.x &= 0xFFFFE000;
+				//position.y &= 0xFFFFE000;
 				
 				// don't round z coordinate since it is used for layer sorting
 				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &position);
@@ -193,9 +193,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	
 		VirtualNode spriteNode = VirtualList_begin(this->managedSprites);
 		
-		position2D.x &= 0xFFFFE000;
-		position2D.y &= 0xFFFFE000;
-
 		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
 			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(spriteNode));

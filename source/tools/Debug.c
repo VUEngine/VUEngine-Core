@@ -230,14 +230,16 @@ static void Debug_setupPages(Debug this)
 
 static void Debug_dimmGame(Debug this)
 {
-	VIP_REGS[GPLT0] = 0b01010100;
+	VIP_REGS[GPLT0] = 0b01010000;
 	VIP_REGS[GPLT1] = 0b01010000;
 	VIP_REGS[GPLT2] = 0b01010100;
-	VIP_REGS[GPLT3] = 0b11100000;
+	VIP_REGS[GPLT3] = 0b01010100;
 	VIP_REGS[JPLT0] = 0b01010100;
 	VIP_REGS[JPLT1] = 0b01010100;
 	VIP_REGS[JPLT2] = 0b01010100;
 	VIP_REGS[JPLT3] = 0b01010100;
+
+	VIP_REGS[0x30 | __PRINTING_PALETTE] = 0b11100100;
 }
 
 static void Debug_lightUpGame(Debug this)

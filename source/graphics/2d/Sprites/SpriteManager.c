@@ -444,12 +444,10 @@ void SpriteManager_setLastLayer(SpriteManager this)
 		WA[this->freeLayer - 1].head = WRLD_OFF;
 	}
 }
-u32 counterC = 0;
 
 // render sprites
 void SpriteManager_render(SpriteManager this)
 {
-	counterC = 0;
 	ASSERT(this, "SpriteManager::render: null this");
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
