@@ -24,6 +24,7 @@
 #include <Optics.h>
 #include <Shape.h>
 #include <CollisionManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -192,6 +193,9 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	
 		VirtualNode spriteNode = VirtualList_begin(this->managedSprites);
 		
+		position2D.x &= 0xFFFFE000;
+		position2D.y &= 0xFFFFE000;
+
 		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
 			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(spriteNode));

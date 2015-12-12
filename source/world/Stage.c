@@ -31,6 +31,7 @@
 #include <Texture.h>
 #include <ParamTableManager.h>
 #include <VPUManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

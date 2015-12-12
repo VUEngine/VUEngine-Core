@@ -13,4 +13,3 @@ cproject
 *.lnk
 *.asm
 sections.txt
-debugConfig.h

@@ -652,6 +652,16 @@ static void Game_updatePhysics(Game this)
 #ifdef __DEBUG
 	this->lastProcessName = "update physics";
 #endif
+	
+#ifdef __DEBUG_TOOLS
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __STAGE_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
 	// simulate physics
 	PhysicalWorld_update(this->physicalWorld);
 #ifdef __DEBUG

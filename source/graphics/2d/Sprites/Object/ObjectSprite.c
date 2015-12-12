@@ -25,6 +25,7 @@
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Screen.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

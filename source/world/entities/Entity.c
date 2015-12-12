@@ -652,7 +652,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 // draw class
 void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 {
-	ASSERT(this, "Entity::transform: null this");
+	ASSERT(this, "Entity::initialTransform: null this");
 
 	this->invalidateGlobalPosition.x = true;
 	this->invalidateGlobalPosition.y = true;
@@ -693,7 +693,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		Container_transform(__GET_CAST(Container, this), environmentTransform);
 		
 		updateSpritePosition = true;
-		updateSpriteTransformations = true;
+		updateSpriteTransformations = this->invalidateGlobalPosition.z;
 	}
 	else
 	{

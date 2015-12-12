@@ -25,6 +25,7 @@
 #include <Shape.h>
 #include <Prototypes.h>
 #include <Game.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

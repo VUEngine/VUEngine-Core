@@ -22,6 +22,7 @@
 #include <MBgmapSprite.h>
 #include <Optics.h>
 #include <Screen.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -182,8 +183,11 @@ void MBgmapSprite_positione(MBgmapSprite this, const VBVec3D* position)
 	this->drawSpec.position.y = 0;
 	this->drawSpec.position.z = position->z;
 
-	this->drawSpec.textureSource.mx = FIX19_13TOI(-position2D.x);
-	this->drawSpec.textureSource.my = FIX19_13TOI(-position2D.y);
+	this->drawSpec.textureSource.mx = (int)(0.5f + FIX19_13TOF(-position2D.x));
+	this->drawSpec.textureSource.my = (int)(0.5f + FIX19_13TOF(-position2D.y));
+
+//	this->drawSpec.textureSource.mx = FIX19_13TOI(-position2D.x);
+//	this->drawSpec.textureSource.my = FIX19_13TOI(-position2D.y);
 		
 	if(previousZPosition != this->drawSpec.position.z)
 	{
