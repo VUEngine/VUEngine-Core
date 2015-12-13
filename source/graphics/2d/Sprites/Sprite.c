@@ -41,6 +41,8 @@ __CLASS_DEFINITION(Sprite, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+extern unsigned int volatile* _xpstts;
+
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
 //---------------------------------------------------------------------------------------------------------
@@ -158,8 +160,10 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 
 	if(this->worldLayer != worldLayer)
 	{
+		while (*_xpstts & XPBSYR);
 		this->worldLayer = worldLayer;
-	
+		WORLD_HEAD(worldLayer, 0x0000);
+
 		// make sure everything is setup in the next render cycle
 		this->renderFlag = __UPDATE_HEAD;
 	}

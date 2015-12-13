@@ -460,6 +460,14 @@ u8 Actor_isMoving(Actor this)
 	return this->body ? Body_isMoving(this->body) : 0;
 }
 
+u8 Actor_getMovementState(Actor this)
+{
+	ASSERT(this, "Actor::getMovementState: null this");
+
+	return Body_isMoving(this->body);
+}
+
+
 // set position
 void Actor_setPosition(Actor this, const VBVec3D* position)
 {

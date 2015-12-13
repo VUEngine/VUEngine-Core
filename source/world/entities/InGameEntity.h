@@ -39,12 +39,14 @@ struct Shape_str;
 #define InGameEntity_METHODS													\
 		Entity_METHODS															\
 		__VIRTUAL_DEC(isMoving);												\
+		__VIRTUAL_DEC(getMovementState);										\
 		__VIRTUAL_DEC(getInGameType);											\
 		
 #define InGameEntity_SET_VTABLE(ClassName)										\
 		Entity_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);						\
+		__VIRTUAL_SET(ClassName, InGameEntity, getMovementState);				\
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);							\
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);					\
 		
@@ -109,6 +111,7 @@ void InGameEntity_setGap(InGameEntity this);
 u16 InGameEntity_getInGameType(InGameEntity this);
 bool InGameEntity_moves(InGameEntity this);
 u8 InGameEntity_isMoving(InGameEntity this);
+u8 InGameEntity_getMovementState(InGameEntity this);
 void InGameEntity_setDirection(InGameEntity this, Direction direction);
 Direction InGameEntity_getDirection(InGameEntity this);
 void InGameEntity_setShapeState(InGameEntity this, bool state);

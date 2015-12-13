@@ -56,6 +56,7 @@
 		__VIRTUAL_SET(ClassName, Actor, handleMessage);							\
 		__VIRTUAL_SET(ClassName, Actor, moves);									\
 		__VIRTUAL_SET(ClassName, Actor, isMoving);								\
+		__VIRTUAL_SET(ClassName, Actor, getMovementState);						\
 		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);					\
 		__VIRTUAL_SET(ClassName, Actor, updateSpriteTransformations);			\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);						\
@@ -127,6 +128,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_moves(Actor this);
 u8 Actor_isMoving(Actor this);
+u8 Actor_getMovementState(Actor this);
 const VBVec3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const VBVec3D* position);
 bool Actor_updateSpritePosition(Actor this);

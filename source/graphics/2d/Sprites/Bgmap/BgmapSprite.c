@@ -308,23 +308,6 @@ void BgmapSprite_render(BgmapSprite this)
 	// if render flag is set
 	if(this->renderFlag)
 	{
-		/*
-		extern u32 counterC;
-		static int prev = 0;
-		fix19_13 slowerer = 0;
-
-		if(++counterC == 5 || counterC == 6)
-		{
-			if(counterC == 5) prev = this->drawSpec.position.x;
-			Printing_int(Printing_getInstance(), FIX19_13TOI(this->drawSpec.position.x), 20, 5 + counterC, NULL);
-			Printing_float(Printing_getInstance(), FIX19_13TOF(this->drawSpec.position.x), 30, 5 + counterC, NULL);
-			if(counterC == 6){
-				slowerer = FTOFIX19_13(0.5f);
-			Printing_int(Printing_getInstance(), FIX19_13TOI(prev - this->drawSpec.position.x), 40, 5 + counterC+1, NULL);
-			Printing_float(Printing_getInstance(), FIX19_13TOF(prev - this->drawSpec.position.x), 40, 5 + counterC+2, NULL);
-			}
-		}
-*/
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
@@ -334,7 +317,6 @@ void BgmapSprite_render(BgmapSprite this)
 
 		if(__UPDATE_HEAD == this->renderFlag)
 		{
-			while (*_xpstts & XPBSYR);
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
@@ -357,6 +339,7 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 			
 			// make sure to not render again
+			while (*_xpstts & XPBSYR);
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__GET_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;

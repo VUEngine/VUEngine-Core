@@ -145,6 +145,13 @@ u8 InGameEntity_isMoving(InGameEntity this)
 	return false;
 }
 
+u8 InGameEntity_getMovementState(InGameEntity this)
+{
+	ASSERT(this, "InGameEntity::getMovementState: null this");
+
+	return 0;
+}
+
 // set direction
 void InGameEntity_setDirection(InGameEntity this, Direction direction)
 {

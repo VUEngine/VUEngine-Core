@@ -147,7 +147,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	ASSERT(this, "SpriteManager::sortLayers: null this");
 
 	bool swap = false;
-	
+
 	do
 	{
 		swap = false;
@@ -391,7 +391,7 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 
 				// move the sprite to the freed layer
 				Sprite_setWorldLayer(sprite, this->freedLayer);
-				
+
 				// register previous sprite's layer
 				// to avoid flicker and gosthing
 				this->tempFreedLayer = spriteLayer;
@@ -453,7 +453,6 @@ void SpriteManager_render(SpriteManager this)
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
 	SpriteManager_processLayers(SpriteManager_getInstance());
-	//SpriteManager_sortLayersProgressively(this);
 
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_end(this->sprites);
