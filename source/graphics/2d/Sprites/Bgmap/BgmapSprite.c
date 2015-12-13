@@ -252,9 +252,9 @@ void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
 	this->drawSpec.position = *position;
 }
 
-void BgmapSprite_positione(BgmapSprite this, const VBVec3D* position)
+void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 {
-	ASSERT(this, "BgmapSprite::positione: null this");
+	ASSERT(this, "BgmapSprite::position: null this");
 
 	VBVec3D position3D = *position;
 

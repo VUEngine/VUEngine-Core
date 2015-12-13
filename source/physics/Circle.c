@@ -54,7 +54,7 @@ static void Circle_constructor(Circle this, SpatialObject owner)
 	__CONSTRUCT_BASE(owner);
 
 	// TODO
-	this->radious = 1;
+	this->radius = 1;
 }
 
 // class's destructor

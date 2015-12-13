@@ -38,7 +38,7 @@
 		__VIRTUAL_SET(ClassName, Cuboid, draw);									\
 		__VIRTUAL_SET(ClassName, Cuboid, overlaps);								\
 		__VIRTUAL_SET(ClassName, Cuboid, setup);								\
-		__VIRTUAL_SET(ClassName, Cuboid, positione);							\
+		__VIRTUAL_SET(ClassName, Cuboid, position);							\
 		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);					\
 		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);						\
 		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);					\
@@ -73,7 +73,7 @@ __CLASS_NEW_DECLARE(Cuboid, SpatialObject owner);
 void Cuboid_destructor(Cuboid this);
 u8 Cuboid_overlaps(Cuboid this, Shape shape);
 void Cuboid_setup(Cuboid this);
-void Cuboid_positione(Cuboid this);
+void Cuboid_position(Cuboid this);
 Rightcuboid Cuboid_getRightcuboid(Cuboid this);
 Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
 u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);

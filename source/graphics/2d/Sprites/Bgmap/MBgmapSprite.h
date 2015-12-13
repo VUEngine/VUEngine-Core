@@ -40,7 +40,7 @@
 // declare the virtual methods which are redefined
 #define MBgmapSprite_SET_VTABLE(ClassName)										\
 	BgmapSprite_SET_VTABLE(ClassName)											\
-	__VIRTUAL_SET(ClassName, MBgmapSprite, positione);							\
+	__VIRTUAL_SET(ClassName, MBgmapSprite, position);							\
 	__VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);						\
 
 #define MBgmapSprite_ATTRIBUTES													\
@@ -98,7 +98,7 @@ __CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinitio
 
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner);
 void MBgmapSprite_destructor(MBgmapSprite this);
-void MBgmapSprite_positione(MBgmapSprite this, const VBVec3D* position);
+void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position);
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position);
 
 

@@ -695,7 +695,7 @@ static void Game_updateRendering(Game this)
 #endif
 
 	// position the screen
-	Screen_positione(this->screen, true);
+	Screen_position(this->screen, true);
 
 #ifdef __DEBUG
 	this->lastProcessName = "apply transformations";

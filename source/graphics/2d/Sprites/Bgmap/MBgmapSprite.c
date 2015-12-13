@@ -160,7 +160,7 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 }
 
 // set sprite's position
-void MBgmapSprite_positione(MBgmapSprite this, const VBVec3D* position)
+void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
 

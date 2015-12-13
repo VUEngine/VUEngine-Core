@@ -131,7 +131,7 @@ void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMo
 }
 
 // center world's screen in function of focus actor's position
-void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
+void Screen_position(Screen this, u8 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "Screen::update: null this");
 	ASSERT(this->screenMovementManager, "Screen::update: null screenMovementManager");
@@ -146,7 +146,7 @@ void Screen_positione(Screen this, u8 checkIfFocusEntityIsMoving)
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
-	__VIRTUAL_CALL(void, ScreenMovementManager, positione, this->screenMovementManager, checkIfFocusEntityIsMoving);
+	__VIRTUAL_CALL(void, ScreenMovementManager, position, this->screenMovementManager, checkIfFocusEntityIsMoving);
 }
 
 // set the focus entity
