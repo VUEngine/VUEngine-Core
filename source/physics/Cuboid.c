@@ -145,9 +145,9 @@ void Cuboid_setup(Cuboid this)
 }
 
 // prepare the shape to be checked
-void Cuboid_positione(Cuboid this)
+void Cuboid_position(Cuboid this)
 {
-	ASSERT(this, "Cuboid::positione: null this");
+	ASSERT(this, "Cuboid::position: null this");
 
 	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
 

@@ -48,7 +48,7 @@
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);					\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);				\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);				\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, positione);					\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);					\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);				\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);			\
 	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);						\
@@ -103,7 +103,7 @@ bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s16 numberOfOb
 void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction);
 const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
-void ObjectSpriteContainer_positione(ObjectSpriteContainer this, const VBVec3D* position);
+void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z);
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);

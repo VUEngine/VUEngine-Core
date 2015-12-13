@@ -111,7 +111,7 @@ static void StageEditor_constructor(StageEditor this);
 static void StageEditor_setupMode(StageEditor this);
 static void StageEditor_releaseShape(StageEditor this);
 static void StageEditor_getShape(StageEditor this);
-static void StageEditor_positioneShape(StageEditor this);
+static void StageEditor_positionShape(StageEditor this);
 static void StageEditor_highLightEntity(StageEditor this);
 static void StageEditor_selectPreviousEntity(StageEditor this);
 static void StageEditor_selectNextEntity(StageEditor this);
@@ -373,7 +373,7 @@ static void StageEditor_getShape(StageEditor this)
 	}
 }
 
-static void StageEditor_positioneShape(StageEditor this)
+static void StageEditor_positionShape(StageEditor this)
 {
 	if(!this->currentEntityNode || !this->shape)
 	{
@@ -388,7 +388,7 @@ static void StageEditor_positioneShape(StageEditor this)
 
 	if(__VIRTUAL_CALL(bool, Entity, moves, entity))
 	{
-		__VIRTUAL_CALL(void, Shape, positione, this->shape);
+		__VIRTUAL_CALL(void, Shape, position, this->shape);
 	}
 }
 
@@ -397,7 +397,7 @@ static void StageEditor_highLightEntity(StageEditor this)
 	if(this->currentEntityNode)
 	{
 		StageEditor_printEntityPosition(this);
-		StageEditor_positioneShape(this);
+		StageEditor_positionShape(this);
 	}
 	else
 	{
@@ -709,7 +709,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		
 		GameState_transform(this->gameState);
 
-		StageEditor_positioneShape(this);
+		StageEditor_positionShape(this);
 
 		StageEditor_printEntityPosition(this);
 
@@ -718,7 +718,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		StageEditor_printTranslationStepSize(this);
 
 		// should work
-		//__VIRTUAL_CALL(void, Shape, positione, this->shape);
+		//__VIRTUAL_CALL(void, Shape, position, this->shape);
 	}
 }
 

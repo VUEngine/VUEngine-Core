@@ -97,7 +97,7 @@ void SolidParticle_update(SolidParticle this, u16 timeElapsed, void (* behavior)
 	
 		if(this->shape)
 		{
-			__VIRTUAL_CALL(void, Shape, positione, this->shape);
+			__VIRTUAL_CALL(void, Shape, position, this->shape);
 		}
 		
 		if(this->collisionSolver)

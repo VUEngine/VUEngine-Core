@@ -197,9 +197,9 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 
 void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, u8 spt, fix19_13 z)
 {
-	ASSERT(this, "ObjectSpriteContainerManager::positione: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::position: null this");
 	
-	ASSERT(spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::positione: invalid spt");
+	ASSERT(spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::position: invalid spt");
 
 	if(spt < __TOTAL_OBJECT_SEGMENTS)
 	{

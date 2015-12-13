@@ -41,8 +41,8 @@
 	/* super's attributes */													\
 	Shape_ATTRIBUTES;															\
 																				\
-	/* radious */																\
-	u8 radious;																	\
+	/* radius */																\
+	u8 radius;																	\
 
 // A Circle which represent a generic object inside a Stage
 __CLASS(Circle);

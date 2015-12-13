@@ -265,14 +265,13 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// retrieve focus entity for streaming
 	InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
-	this->focusEntity = focusInGameEntity? __GET_CAST(Entity, focusInGameEntity): NULL;
+	this->focusEntity = focusInGameEntity ? __GET_CAST(Entity, focusInGameEntity) : NULL;
 
 	// setup ui
 	Stage_setupUI(this);
 	
 	// set physics
 	PhysicalWorld_setFriction(PhysicalWorld_getInstance(), stageDefinition->friction);
-	
 	PhysicalWorld_setGravity(PhysicalWorld_getInstance(), stageDefinition->gravity);
 
 	// load background music
@@ -288,7 +287,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	if(this->ui)
 	{
 		__VIRTUAL_CALL(void, Container, resume, __GET_CAST(Container, this->ui));
-		
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 	}
 
@@ -355,12 +353,12 @@ Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinitio
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
-	
+/*
 			if(permanent)
 			{
 				// TODO
 			}
-			
+*/
 			__VIRTUAL_CALL(void, Entity, ready, entity);
 
 			return entity;
@@ -419,7 +417,7 @@ Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const posit
 		{
 			// TODO
 		}
-*/		
+*/
 		return entity;
 	}
 
@@ -954,7 +952,7 @@ void Stage_stream(Stage this)
 		else
 		{
 			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
-			this->focusEntity = focusInGameEntity? __GET_CAST(Entity, focusInGameEntity): NULL;
+			this->focusEntity = focusInGameEntity ? __GET_CAST(Entity, focusInGameEntity) : NULL;
 		}
 	}			
 	else if(streamingCycleCounter == streamingCycleBase * 2)

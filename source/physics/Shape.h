@@ -34,7 +34,7 @@
 		Object_METHODS															\
 		__VIRTUAL_DEC(overlaps);												\
 		__VIRTUAL_DEC(setup);													\
-		__VIRTUAL_DEC(positione);												\
+		__VIRTUAL_DEC(position);												\
 		__VIRTUAL_DEC(getAxisOfCollision);										\
 		__VIRTUAL_DEC(testIfCollision);											\
 		__VIRTUAL_DEC(deleteDirectDrawData);									\

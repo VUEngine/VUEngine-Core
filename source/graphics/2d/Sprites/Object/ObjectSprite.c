@@ -158,16 +158,16 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 	this->renderFlag |= __UPDATE_G;
 }
 
-void ObjectSprite_positione(ObjectSprite this, const VBVec3D* position)
+void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 {
-	ASSERT(this, "ObjectSprite::positione: null this");
+	ASSERT(this, "ObjectSprite::position: null this");
 
 	VBVec3D position3D = *position;
 	
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
-	ASSERT(this->texture, "ObjectSprite::positione: null texture");
+	ASSERT(this->texture, "ObjectSprite::position: null texture");
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);

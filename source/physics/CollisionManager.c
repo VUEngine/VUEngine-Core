@@ -205,7 +205,7 @@ int CollisionManager_update(CollisionManager this)
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		// current to check shape's rectangle
-		__VIRTUAL_CALL(void, Shape, positione, __GET_CAST(Shape, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Shape, position, __GET_CAST(Shape, VirtualNode_getData(node)));
 	}
 
 	// check the shapes

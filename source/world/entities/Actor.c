@@ -152,7 +152,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		
 		if(this->shape)
 		{
-			__VIRTUAL_CALL(void, Shape, positione, this->shape);
+			__VIRTUAL_CALL(void, Shape, position, this->shape);
 		}
 	}
 }

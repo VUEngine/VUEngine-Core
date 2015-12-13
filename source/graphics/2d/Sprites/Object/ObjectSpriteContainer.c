@@ -241,9 +241,9 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 	this->renderFlag |= __UPDATE_G;
 }
 
-void ObjectSpriteContainer_positione(ObjectSpriteContainer this, const VBVec3D* position)
+void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position)
 {
-	ASSERT(this, "ObjectSpriteContainer::positione: null this");
+	ASSERT(this, "ObjectSpriteContainer::position: null this");
 }
 
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z)

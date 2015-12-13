@@ -53,7 +53,7 @@
 	__VIRTUAL_SET(ClassName, BgmapSprite, render);								\
 	__VIRTUAL_SET(ClassName, BgmapSprite, getPosition);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, setPosition);							\
-	__VIRTUAL_SET(ClassName, BgmapSprite, positione);							\
+	__VIRTUAL_SET(ClassName, BgmapSprite, position);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, rotate);								\
 	__VIRTUAL_SET(ClassName, BgmapSprite, getScale);							\
 	__VIRTUAL_SET(ClassName, BgmapSprite, setDirection);						\
@@ -123,7 +123,7 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
 const VBVec2D* BgmapSprite_getPosition(BgmapSprite this);
 void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position);
-void BgmapSprite_positione(BgmapSprite this, const VBVec3D* position);
+void BgmapSprite_position(BgmapSprite this, const VBVec3D* position);
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation);
 void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z);
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);

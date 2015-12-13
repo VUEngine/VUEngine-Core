@@ -612,7 +612,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 				
 				// update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, positione, sprite, &this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
 
 				// update sprite's 2D rotation
 				__VIRTUAL_CALL(void, Sprite, rotate, sprite, &this->transform.globalRotation);
@@ -626,7 +626,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 				Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
 		
 				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, positione, sprite, &this->transform.globalPosition);
+				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
 
 				// update sprite's 2D rotation
 				__VIRTUAL_CALL(void, Sprite, rotate, sprite, &this->transform.globalRotation);
@@ -671,7 +671,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 
 		if(__VIRTUAL_CALL(int, Entity, moves, this))
 	    {
-			__VIRTUAL_CALL(void, Shape, positione, this->shape);
+			__VIRTUAL_CALL(void, Shape, position, this->shape);
 		}
 	}
 }
