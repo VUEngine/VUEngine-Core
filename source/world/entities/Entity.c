@@ -689,11 +689,11 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		this->invalidateGlobalPosition.z ||
 		this->children)
 	{
-		// call base class's transform method
-		Container_transform(__GET_CAST(Container, this), environmentTransform);
-		
 		updateSpritePosition = true;
 		updateSpriteTransformations = this->invalidateGlobalPosition.z;
+
+		// call base class's transform method
+		Container_transform(__GET_CAST(Container, this), environmentTransform);
 	}
 	else
 	{
