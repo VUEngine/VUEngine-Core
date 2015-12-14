@@ -220,9 +220,9 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
 	
 				// don't render inmediately, it causes glitches
-				Sprite_setWorldLayer(sprite, worldLayer2);
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
-	
+				Sprite_setWorldLayer(sprite, worldLayer2);
+
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);
 
@@ -298,6 +298,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		// don't do anything, the recovery algorithm will take
 		// care of this new freed layer
 		u8 spriteLayer = Sprite_getWorldLayer(sprite);
+
 		this->freedLayer = this->freedLayer < spriteLayer? spriteLayer: this->freedLayer;
 		
 		// sorting needs to restart
@@ -316,7 +317,7 @@ void SpriteManager_processLayers(SpriteManager this)
 	ASSERT(this, "SpriteManager::processLayers: null this");
 
 	SpriteManager_processFreedLayersProgressively(SpriteManager_getInstance());
-
+/*
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
@@ -327,6 +328,7 @@ void SpriteManager_processLayers(SpriteManager this)
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+	*/
 }
 
 void SpriteManager_processFreedLayers(SpriteManager this)
@@ -392,9 +394,6 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 				// move the sprite to the freed layer
 				Sprite_setWorldLayer(sprite, this->freedLayer);
 
-				// render last position before using new layer
-				__VIRTUAL_CALL(void, Sprite, render, sprite);
-
 				// register previous sprite's layer
 				// to avoid flicker and gosthing
 				this->tempFreedLayer = spriteLayer;
@@ -455,7 +454,9 @@ void SpriteManager_render(SpriteManager this)
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
-	SpriteManager_processLayers(SpriteManager_getInstance());
+//	SpriteManager_processFreedLayersProgressively(SpriteManager_getInstance());
+//	SpriteManager_processLayers(SpriteManager_getInstance());
+	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_end(this->sprites);

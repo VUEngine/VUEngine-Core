@@ -317,6 +317,9 @@ void BgmapSprite_render(BgmapSprite this)
 
 		if(__UPDATE_HEAD == this->renderFlag)
 		{
+			while (*_xpstts & XPBSYR);
+
+			worldPointer->head = 0;
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
@@ -339,7 +342,7 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 			
 			// make sure to not render again
-			while (*_xpstts & XPBSYR);
+			//while (*_xpstts & XPBSYR);
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__GET_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
