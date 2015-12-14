@@ -515,6 +515,7 @@ static void Stage_loadTextures(Stage this)
 		{
 			if(__ANIMATED_SHARED != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
 			{
+				CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->stageDefinition->textures[i]->charSetDefinition);
 				BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
 			}
 			else

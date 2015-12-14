@@ -392,6 +392,9 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 				// move the sprite to the freed layer
 				Sprite_setWorldLayer(sprite, this->freedLayer);
 
+				// render last position before using new layer
+				__VIRTUAL_CALL(void, Sprite, render, sprite);
+
 				// register previous sprite's layer
 				// to avoid flicker and gosthing
 				this->tempFreedLayer = spriteLayer;
