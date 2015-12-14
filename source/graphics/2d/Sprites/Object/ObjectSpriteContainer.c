@@ -48,6 +48,7 @@ __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 // globals
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
+extern unsigned int volatile* _xpstts;
 
 // external 
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this);
@@ -352,6 +353,8 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	//if render flag is set
 	if(this->renderFlag)
 	{
+		while (*_xpstts & XPBSYR);
+
 		// make sure to not render again
 		WA[this->worldLayer].head = this->head | WRLD_OVR;
 		
