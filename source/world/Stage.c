@@ -513,7 +513,7 @@ static void Stage_preloadAssets(Stage this)
 	{
 		for (; this->stageDefinition->charSets[i]; i++)
 		{
-			if(__ANIMATED_SHARED != this->stageDefinition->charSets[i]->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->charSets[i]->allocationType)
 			{
 				CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->stageDefinition->charSets[i]);
 			}
@@ -528,7 +528,7 @@ static void Stage_preloadAssets(Stage this)
 	{
 		for (i = 0; this->stageDefinition->textures[i]; i++)
 		{
-			if(__ANIMATED_SHARED != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
 			{
 				BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
 			}
