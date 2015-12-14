@@ -142,7 +142,10 @@ typedef struct StageDefinition
 	// engine's optical values structure
 	Optical optical;
 
-	// each of the stage's entities
+	// char sets for preloading
+	CharSetDefinition** charSets;
+
+	// textures for preloading
 	TextureDefinition** textures;
 
 	// UI's definition

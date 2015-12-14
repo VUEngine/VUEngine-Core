@@ -89,7 +89,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore);
 static void Stage_selectEntitiesInLoadRange(Stage this);
 static void Stage_setObjectSpritesContainers(Stage this);
-static void Stage_loadTextures(Stage this);
+static void Stage_preloadAssets(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
@@ -255,7 +255,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	Stage_setObjectSpritesContainers(this);
 
 	// preload textures
-	Stage_loadTextures(this);
+	Stage_preloadAssets(this);
 
 	// register all the entities in the stage's definition
 	Stage_registerEntities(this, entityNamesToIgnore);
@@ -503,24 +503,38 @@ static void Stage_unloadChild(Stage this, Container child)
 }
 
 // preload textures
-static void Stage_loadTextures(Stage this)
+static void Stage_preloadAssets(Stage this)
 {
-	ASSERT(this, "Stage::loadTextures: null this");
+	ASSERT(this, "Stage::preloadAssets: null this");
 
 	int i = 0;
 
+	if(this->stageDefinition->charSets)
+	{
+		for (; this->stageDefinition->charSets[i]; i++)
+		{
+			if(__ANIMATED_SHARED != this->stageDefinition->charSets[i]->allocationType)
+			{
+				CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->stageDefinition->charSets[i]);
+			}
+			else
+			{
+				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
+			}
+		}
+	}
+
 	if(this->stageDefinition->textures)
 	{
-		for (; this->stageDefinition->textures[i]; i++)
+		for (i = 0; this->stageDefinition->textures[i]; i++)
 		{
 			if(__ANIMATED_SHARED != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
 			{
-				CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->stageDefinition->textures[i]->charSetDefinition);
 				BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
 			}
 			else
 			{
-				ASSERT(this, "Stage::loadTextures: loading an Object texture");
+				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
 			}
 		}
 	}
@@ -1046,7 +1060,7 @@ void Stage_resume(Stage this)
 	Stage_setObjectSpritesContainers(this);
 
 	// reload textures
-	Stage_loadTextures(this);
+	Stage_preloadAssets(this);
 
 	if(this->focusEntity)
 	{
