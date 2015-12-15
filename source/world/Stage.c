@@ -286,10 +286,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, resume, __GET_CAST(Container, this->ui));
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 	}
-
 }
 
 // retrieve size

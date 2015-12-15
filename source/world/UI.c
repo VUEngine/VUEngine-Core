@@ -93,7 +93,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 		__VIRTUAL_CALL(void, Entity, initialize, entity);
 
 		// apply transformations
-		__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
+		//__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 
 		Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, entity));
 	}
