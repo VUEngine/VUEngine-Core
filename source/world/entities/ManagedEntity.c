@@ -106,8 +106,8 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 				VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 				
 				// eliminate fractions to avoid rounding problems later
-				//position.x &= 0xFFFFE000;
-				//position.y &= 0xFFFFE000;
+				position.x &= 0xFFFFE000;
+				position.y &= 0xFFFFE000;
 				
 				// don't round z coordinate since it is used for layer sorting
 				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &position);
@@ -191,16 +191,23 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 	
+		position2D.x &= 0xFFFFE000;
+		position2D.y &= 0xFFFFE000;
+
 		VirtualNode spriteNode = VirtualList_begin(this->managedSprites);
+		int ii = 0;
 		
+		fix19_13 xDisplacement = position2D.x - this->previous2DPosition.x;
+		fix19_13 yDisplacement = position2D.y - this->previous2DPosition.y;
+
 		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
 			Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(spriteNode));
 			
 			VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 			
-			position.x += position2D.x - this->previous2DPosition.x;
-			position.y += position2D.y - this->previous2DPosition.y;
+			position.x += xDisplacement;
+			position.y += yDisplacement;
 //			position.z += position2D.z - this->previous2DPosition.z;
 	
 			// don't round z coordinate since it is used for layer sorting
@@ -209,11 +216,17 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 			Sprite_setRenderFlag(sprite, __UPDATE_G);
 		}
 		
+		for(spriteNode = VirtualList_begin(this->managedSprites); spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
+		{
+			__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(spriteNode)));
+
+		}
+		
 		this->previous2DPosition = position2D;
 	}
 	else
 	{
 		// allow children's global positions to be updated properly
-		Entity_transform(__GET_CAST(Entity, this), environmentTransform);
+	//	Entity_transform(__GET_CAST(Entity, this), environmentTransform);
 	}
 }

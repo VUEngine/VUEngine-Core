@@ -131,7 +131,7 @@ void ScrollBackground_initialTransform(ScrollBackground this, Transformation* en
 	ASSERT(this, "ScrollBackground::transform: null this");
 
 	// call base class's transform method
-	Entity_transform(__GET_CAST(Entity, this), environmentTransform);
+	Entity_initialTransform(__GET_CAST(Entity, this), environmentTransform);
 
 	ScrollBackground_updateScrolling(this);
 }
@@ -166,7 +166,8 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	DrawSpec drawSpec0 = BgmapSprite_getDrawSpec(this->scrollBgmapSprites[kRightSprite]);
 	drawSpec0.position.z = this->transform.globalPosition.z;
 
-	DrawSpec drawSpec1 = drawSpec0;
+	DrawSpec drawSpec1 = BgmapSprite_getDrawSpec(this->scrollBgmapSprites[kLeftSprite]);
+	drawSpec1.position.z = this->transform.globalPosition.z;
 
 	VBVec3D position3D = {_screenPosition->x, -_screenPosition->y + this->transform.globalPosition.y, this->transform.globalPosition.z};
 
@@ -225,7 +226,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 			drawSpec1.position.x = drawSpec0.position.x - ITOFIX19_13(__SCREEN_WIDTH - 1);
 		}
 	}
-
+	
 	// now move the drawspec in order to render the texture in the center
 	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(__GET_CAST(Sprite, this->scrollBgmapSprites[kLeftSprite]))) << 2);
 	drawSpec0.position.parallax = drawSpec1.position.parallax = BgmapSprite_getDrawSpec(this->scrollBgmapSprites[kLeftSprite]).position.parallax;

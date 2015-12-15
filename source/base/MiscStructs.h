@@ -163,9 +163,9 @@ typedef struct Direction
 // displacement vector
 typedef struct Displacement
 {
-	s8 x;
-	s8 y;
-	s8 z;
+	fix19_13 x;
+	fix19_13 y;
+	fix19_13 z;
 
 } Displacement;
 

@@ -145,7 +145,7 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 		{
 			CharSet charSet = __GET_CAST(CharSet, VirtualNode_getData(node));
 			
-			if(CharSet_getCharSetDefinition(charSet) == charSetDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
+			if(CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
 			{
 				return charSet;
 			}

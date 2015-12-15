@@ -322,9 +322,9 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x) + this->displacement.x;
-			worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z;
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y) + this->displacement.y;
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
 			// set the world size according to the zoom
 			if(WRLD_AFFINE & this->head)
@@ -358,9 +358,9 @@ void BgmapSprite_render(BgmapSprite this)
 		// set the world screen position
 		if(this->renderFlag & __UPDATE_G)
 		{
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x) + this->displacement.x;
-			worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z;
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y) + this->displacement.y;
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 		}
 
 		if(this->renderFlag & __UPDATE_SIZE)
@@ -430,16 +430,7 @@ void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
 {
 	ASSERT(this, "BgmapSprite::setDrawSpec: null this");
 
-	this->drawSpec.position.x = drawSpec->position.x;
-	this->drawSpec.position.y = drawSpec->position.y;
-	this->drawSpec.position.z = drawSpec->position.z;
-
-	this->drawSpec.textureSource.mx = drawSpec->textureSource.mx;
-	this->drawSpec.textureSource.my = drawSpec->textureSource.my;
-	this->drawSpec.textureSource.mp = drawSpec->textureSource.mp;
-
-	this->drawSpec.scale.x = drawSpec->scale.x;
-	this->drawSpec.scale.y = drawSpec->scale.y;
+	this->drawSpec = *drawSpec;
 }
 
 // retrieve param table current row

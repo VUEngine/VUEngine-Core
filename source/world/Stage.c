@@ -515,11 +515,11 @@ static void Stage_preloadAssets(Stage this)
 		{
 			if(__ANIMATED_SINGLE != this->stageDefinition->charSets[i]->allocationType)
 			{
-				CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->stageDefinition->charSets[i]);
+				CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->charSets[i]);
 			}
 			else
 			{
-				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
+				ASSERT(this, "Stage::preloadAssets: preloading an animated single char set");
 			}
 		}
 	}

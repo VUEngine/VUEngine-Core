@@ -209,8 +209,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
 	
 			// check if z positions are swapped
-			if(nextPosition->z < position->z)
-//			if(nextPosition->z + ITOFIX19_13(Sprite_getDisplacement(nextSprite).z) < position->z + ITOFIX19_13(Sprite_getDisplacement(sprite).z))
+			if(nextPosition->z + Sprite_getDisplacement(nextSprite).z < position->z + Sprite_getDisplacement(sprite).z)
 			{
 				// get each entity's layer
 				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
