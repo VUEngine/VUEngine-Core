@@ -385,6 +385,8 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 	{
 		__VIRTUAL_CALL(void, Sprite, show, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
+	
+	this->renderFlag = true;
 }
 
 void ObjectSpriteContainer_hide(ObjectSpriteContainer this)

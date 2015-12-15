@@ -517,6 +517,8 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	{
 		__VIRTUAL_CALL(void, Sprite, show, __GET_CAST(Sprite, VirtualNode_getData(node)));
 	}
+	
+	SpriteManager_setLastLayer(this);
 }
 
 Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)

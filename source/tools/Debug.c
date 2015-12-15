@@ -280,6 +280,9 @@ void Debug_hide(Debug this)
 // show previous page
 void Debug_showPreviousPage(Debug this)
 {
+	SpriteManager_recoverLayers(SpriteManager_getInstance());
+	Debug_dimmGame(this);
+
 	this->currentPage = VirtualNode_getPrevious(this->currentPage);
 
 	if(NULL == this->currentPage)
@@ -293,6 +296,9 @@ void Debug_showPreviousPage(Debug this)
 // show next page
 void Debug_showNextPage(Debug this)
 {
+	SpriteManager_recoverLayers(SpriteManager_getInstance());
+	Debug_dimmGame(this);
+
 	this->currentPage = VirtualNode_getNext(this->currentPage);
 
 	if(NULL == this->currentPage)
@@ -799,7 +805,8 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->y), x + 20, y, NULL);
 		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->z + Sprite_getDisplacement(sprite).z), x + 30, y, NULL);
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
-	}
+		Debug_lightUpGame(this);
+}
 	else
 	{
 		this->currentLayer = __TOTAL_LAYERS;
