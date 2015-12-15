@@ -24,6 +24,7 @@
 #include <Optics.h>
 #include <Shape.h>
 #include <CollisionManager.h>
+#include <VPUManager.h>
 #include <debugConfig.h>
 
 
@@ -216,12 +217,16 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 			Sprite_setRenderFlag(sprite, __UPDATE_G);
 		}
 		
+		VPUManager_disableInterrupt(VPUManager_getInstance());
+
 		for(spriteNode = VirtualList_begin(this->managedSprites); spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
 		{
 			__VIRTUAL_CALL(void, Sprite, render, __GET_CAST(Sprite, VirtualNode_getData(spriteNode)));
 
 		}
 		
+		VPUManager_enableInterrupt(VPUManager_getInstance());
+
 		this->previous2DPosition = position2D;
 	}
 	else

@@ -154,6 +154,8 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
     		
 #endif 	    		
 
+    		FrameRate_print(frameRate, 0, 0);
+
 #ifdef __PRINT_FRAMERATE
 	    	if(!Game_isInSpecialMode(Game_getInstance()))
 	    	{
