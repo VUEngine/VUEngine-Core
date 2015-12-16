@@ -98,6 +98,39 @@ void MBackground_initialize(MBackground this)
 	Entity_initialize(__SAFE_CAST(Entity, this));
 }
 
+
+void MBackground_suspend(MBackground this)
+{
+	ASSERT(this, "MBackground::suspend: null this");
+
+	VirtualNode node = VirtualList_begin(this->sprites);
+	
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, VirtualNode_getData(node))));
+	}
+
+	Entity_suspend(__SAFE_CAST(Entity, this));
+}
+
+void MBackground_resume(MBackground this)
+{
+	ASSERT(this, "MBackground::resume: null this");
+
+	// first register with the manager so it handles the texture loading process
+	if(this->mBackgroundDefinition->spritesDefinitions[0])
+	{
+		int i = 0;
+		
+		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
+		{	
+			MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+		}
+	}
+
+	Entity_resume(__SAFE_CAST(Entity, this));
+}
+
 int MBackground_isVisible(MBackground this, int pad)
 {
 	ASSERT(this, "MBackground::isVisible: null this");
