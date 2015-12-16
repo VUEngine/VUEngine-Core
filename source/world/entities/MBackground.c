@@ -72,7 +72,7 @@ void MBackground_destructor(MBackground this)
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__GET_CAST(Sprite, VirtualNode_getData(node))));
+		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, VirtualNode_getData(node))));
 	}
 
 	// destroy the super object
@@ -95,7 +95,7 @@ void MBackground_initialize(MBackground this)
 		}
 	}
 	
-	Entity_initialize(__GET_CAST(Entity, this));
+	Entity_initialize(__SAFE_CAST(Entity, this));
 }
 
 int MBackground_isVisible(MBackground this, int pad)
@@ -103,5 +103,5 @@ int MBackground_isVisible(MBackground this, int pad)
 	ASSERT(this, "MBackground::isVisible: null this");
 
 	// TODO: add support for MBgmapSprites
-	return Entity_isVisible(__GET_CAST(Entity, this), pad);
+	return Entity_isVisible(__SAFE_CAST(Entity, this), pad);
 }

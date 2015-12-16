@@ -90,7 +90,7 @@ static void StageEditorState_destructor(StageEditorState this)
 static void StageEditorState_enter(StageEditorState this, void* owner)
 {
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
-	StageEditor_start(StageEditor_getInstance(), __GET_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	StageEditor_start(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute
@@ -114,7 +114,7 @@ static bool StageEditorState_handleMessage(StageEditorState this, void* owner, T
 	{
 		case kKeyPressed:
 			{
-				MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, StageEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
+				MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, StageEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
 			}
 			break;
 	}

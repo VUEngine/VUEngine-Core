@@ -72,6 +72,7 @@ enum ShapeTypes
 	kNoShape = 0,
 	kCircle,
 	kCuboid,
+	kInverseCuboid,	
 };
 
 

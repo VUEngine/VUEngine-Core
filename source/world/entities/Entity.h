@@ -45,6 +45,7 @@
 		Container_SET_VTABLE(ClassName)											\
 		__VIRTUAL_SET(ClassName, Entity, initialTransform);						\
 		__VIRTUAL_SET(ClassName, Entity, transform);							\
+		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);						\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);						\
 		__VIRTUAL_SET(ClassName, Entity, isVisible);							\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);							\
@@ -146,6 +147,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
 void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition);
 void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 void Entity_transform(Entity this, const Transformation* environmentTransform);
+void Entity_setLocalPosition(Entity this, const VBVec3D* position);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
 const VBVec3D* Entity_getPosition(Entity this);
 int Entity_getMapParallax(Entity this);

@@ -86,7 +86,7 @@ void ClockManager_destructor(ClockManager this)
 	// destroy all registered clocks
 	for(; node ; node = VirtualNode_getNext(node))
 	{
-		Clock_destructor(__GET_CAST(Clock, VirtualNode_getData(node)));
+		Clock_destructor(__SAFE_CAST(Clock, VirtualNode_getData(node)));
 	}
 
 	// clear my list
@@ -137,7 +137,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 		// update all registered clocks
 		for(; node ; node = VirtualNode_getNext(node))
 		{
-			Clock_update(__GET_CAST(Clock, VirtualNode_getData(node)), ticksElapsed);
+			Clock_update(__SAFE_CAST(Clock, VirtualNode_getData(node)), ticksElapsed);
 		}
 	}
 
@@ -198,7 +198,7 @@ void ClockManager_reset(ClockManager this)
 	// update all registered clocks
 	for(; node ; node = VirtualNode_getNext(node))
 	{
-		Clock_reset(__GET_CAST(Clock, VirtualNode_getData(node)));
+		Clock_reset(__SAFE_CAST(Clock, VirtualNode_getData(node)));
 	}
 
 	this->ticks = 0;

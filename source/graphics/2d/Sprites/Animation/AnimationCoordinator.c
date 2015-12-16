@@ -79,7 +79,7 @@ bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationCont
 
 	if(VirtualList_begin(this->animationControllers))
 	{
-		AnimationController firstAnimationController = __GET_CAST(AnimationController, VirtualList_front(this->animationControllers));
+		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
 
 		if(animationController == firstAnimationController)
 		{

@@ -84,7 +84,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	int i = 0;
 	
 	// static to avoid call to memcpy
-	Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
 	for(;entities && entities[i].entityDefinition; i++)
 	{
@@ -95,7 +95,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 		// apply transformations
 		//__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 
-		Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, entity));
+		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 	}
 }
 
@@ -109,7 +109,7 @@ void UI_transform(UI this, const Transformation* environmentTransform)
 
 	Screen_prepareForUITransform(screen);
 
-	Container_transform(__GET_CAST(Container, this), environmentTransform);
+	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 
 	Screen_doneUITransform(screen);
 }
@@ -141,7 +141,7 @@ void UI_initialTransform(UI this, Transformation* environmentTransform)
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 
-	Container_initialTransform(__GET_CAST(Container, this), environmentTransform);
+	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
 	
 	if(screen)
 	{

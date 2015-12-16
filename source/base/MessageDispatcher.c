@@ -161,7 +161,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 
-			ASSERT(__GET_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
+			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
 			if(Clock_getTime(Game_getClock(Game_getInstance())) > delayedMessage->timeOfArrival)
 			{

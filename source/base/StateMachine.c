@@ -182,7 +182,7 @@ void StateMachine_popState(StateMachine this)
 	}
 
 	// update current state
-	this->currentState = __GET_CAST(State, VirtualList_front(this->stateStack));
+	this->currentState = __SAFE_CAST(State, VirtualList_front(this->stateStack));
 
 	ASSERT(this->currentState, "StateMachine::popState: null currentState");
 
@@ -278,7 +278,7 @@ State StateMachine_getPreviousState(StateMachine this)
 	{
 		node = VirtualNode_getNext(node);
 
-		return __GET_CAST(State, VirtualNode_getData(node));
+		return __SAFE_CAST(State, VirtualNode_getData(node));
 	}
 
 	return NULL;

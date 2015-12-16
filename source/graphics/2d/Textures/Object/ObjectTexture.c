@@ -79,7 +79,7 @@ void ObjectTexture_write(ObjectTexture this)
 		return;
 	}
 	
-	Texture_write(__GET_CAST(Texture, this));
+	Texture_write(__SAFE_CAST(Texture, this));
 	
 	int palette = this->palette << 14;
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);

@@ -90,7 +90,7 @@ static void AnimationEditorState_destructor(AnimationEditorState this)
 static void AnimationEditorState_enter(AnimationEditorState this, void* owner)
 {
 	Clock_pause(Game_getInGameClock(Game_getInstance()), true);
-	AnimationEditor_start(AnimationEditor_getInstance(), __GET_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	AnimationEditor_start(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute
@@ -114,7 +114,7 @@ static bool AnimationEditorState_handleMessage(AnimationEditorState this, void* 
 	{
 		case kKeyPressed:
 			{
-				MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, AnimationEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
+				MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, AnimationEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
 			}
 			break;
 	}

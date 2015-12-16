@@ -143,7 +143,7 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			CharSet charSet = __GET_CAST(CharSet, VirtualNode_getData(node));
+			CharSet charSet = __SAFE_CAST(CharSet, VirtualNode_getData(node));
 			
 			if(CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
 			{
@@ -237,7 +237,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 
 		if(VirtualList_begin(this->charSets[segment]))
 		{
-			CharSet lastCharSet = __GET_CAST(CharSet, VirtualList_back(this->charSets[segment]));
+			CharSet lastCharSet = __SAFE_CAST(CharSet, VirtualList_back(this->charSets[segment]));
 			offset += CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 		}
 		
@@ -273,7 +273,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 			
 			for(; node; node = VirtualNode_getNext(node))
 			{
-				CharSet charSet = __GET_CAST(CharSet, VirtualNode_getData(node));
+				CharSet charSet = __SAFE_CAST(CharSet, VirtualNode_getData(node));
 
 				if(this->freedOffset[segment] < CharSet_getOffset(charSet))
 				{

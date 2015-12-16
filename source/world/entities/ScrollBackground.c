@@ -90,7 +90,7 @@ void ScrollBackground_initialize(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::initialize: null this");
 
-	Entity_initialize(__GET_CAST(Entity, this));
+	Entity_initialize(__SAFE_CAST(Entity, this));
 
 	ASSERT(this->sprites, "ScrollBackground::constructor: null sprite list");
 
@@ -100,11 +100,11 @@ void ScrollBackground_initialize(ScrollBackground this)
 	
 	if(bSprite)
 	{
-		BgmapTexture bTtexture = __GET_CAST(BgmapTexture, Sprite_getTexture(__GET_CAST(Sprite, bSprite)));
+		BgmapTexture bTtexture = __SAFE_CAST(BgmapTexture, Sprite_getTexture(__SAFE_CAST(Sprite, bSprite)));
 
 		if(bTtexture)
 		{
-			this->size.y = (u16)Texture_getRows(__GET_CAST(Texture, bTtexture)) << 3;
+			this->size.y = (u16)Texture_getRows(__SAFE_CAST(Texture, bTtexture)) << 3;
 		}
 	}
 }
@@ -121,7 +121,7 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this)
 	{
 		this->scrollBgmapSprites[i] = VirtualNode_getData(node);
 
-		ASSERT(__GET_CAST(BgmapSprite, this->scrollBgmapSprites[i]), "ScrollBackground::constructor: no sprite added to list")
+		ASSERT(__SAFE_CAST(BgmapSprite, this->scrollBgmapSprites[i]), "ScrollBackground::constructor: no sprite added to list")
 	}
 }
 
@@ -131,7 +131,7 @@ void ScrollBackground_initialTransform(ScrollBackground this, Transformation* en
 	ASSERT(this, "ScrollBackground::transform: null this");
 
 	// call base class's transform method
-	Entity_initialTransform(__GET_CAST(Entity, this), environmentTransform);
+	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
 
 	ScrollBackground_updateScrolling(this);
 }
@@ -146,7 +146,7 @@ void ScrollBackground_transform(ScrollBackground this, const Transformation* env
 #ifdef __STAGE_EDITOR
 	if(Game_isInSpecialMode(Game_getInstance()))
 	{
-		Entity_transform(__GET_CAST(Entity, this), environmentTransform);
+		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 	}
 #endif
 
@@ -228,7 +228,7 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	}
 	
 	// now move the drawspec in order to render the texture in the center
-	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(__GET_CAST(Sprite, this->scrollBgmapSprites[kLeftSprite]))) << 2);
+	drawSpec0.position.y = drawSpec1.position.y = screenPosition.y - ITOFIX19_13(Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->scrollBgmapSprites[kLeftSprite]))) << 2);
 	drawSpec0.position.parallax = drawSpec1.position.parallax = BgmapSprite_getDrawSpec(this->scrollBgmapSprites[kLeftSprite]).position.parallax;
 
 	// set map's position
@@ -236,10 +236,10 @@ static void ScrollBackground_updateScrolling(ScrollBackground this)
 	ASSERT(this->scrollBgmapSprites[kRightSprite], "ScrollBackground::updateScrolling: null kRightSprite sprite");
 
 	BgmapSprite_setDrawSpec(this->scrollBgmapSprites[kRightSprite], &drawSpec0);
-	Sprite_setRenderFlag(__GET_CAST(Sprite, this->scrollBgmapSprites[kRightSprite]), __UPDATE_G);
+	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this->scrollBgmapSprites[kRightSprite]), __UPDATE_G);
 
 	BgmapSprite_setDrawSpec(this->scrollBgmapSprites[kLeftSprite], &drawSpec1);
-	Sprite_setRenderFlag(__GET_CAST(Sprite, this->scrollBgmapSprites[kLeftSprite]), __UPDATE_G);
+	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this->scrollBgmapSprites[kLeftSprite]), __UPDATE_G);
 }
 
 // whether it is visible
@@ -262,7 +262,7 @@ void ScrollBackground_suspend(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::suspend: null this");
 
-	Entity_suspend(__GET_CAST(Entity, this));
+	Entity_suspend(__SAFE_CAST(Entity, this));
 
 	int i = 0;
 
@@ -276,9 +276,9 @@ void ScrollBackground_resume(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::resume: null this");
 
-	Entity_resume(__GET_CAST(Entity, this));
+	Entity_resume(__SAFE_CAST(Entity, this));
 
 	ScrollBackground_retrieveSprites(this);
 	
-	Entity_translateSprites(__GET_CAST(Entity, this), true, true);
+	Entity_translateSprites(__SAFE_CAST(Entity, this), true, true);
 }

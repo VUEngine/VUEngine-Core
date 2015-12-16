@@ -168,7 +168,7 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 	{
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Particle particle = __GET_CAST(Particle, VirtualNode_getData(node));
+			Particle particle = __SAFE_CAST(Particle, VirtualNode_getData(node));
 			VirtualList_pushBack(this->recyclableParticles, particle);
 			VirtualList_removeElement(this->particles, particle);
 			this->particleCount--;
@@ -180,7 +180,7 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 	{
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Particle particle = __GET_CAST(Particle, VirtualNode_getData(node));
+			Particle particle = __SAFE_CAST(Particle, VirtualNode_getData(node));
 			VirtualList_removeElement(this->particles, particle);
 			
 			__DELETE(particle);
@@ -195,7 +195,7 @@ void ParticleSystem_ready(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::ready: null this");
 	
-	Entity_ready(__GET_CAST(Entity, this));
+	Entity_ready(__SAFE_CAST(Entity, this));
 	
 	if(this->particleSystemDefinition->recycleParticles)
 	{
@@ -207,7 +207,7 @@ void ParticleSystem_update(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::update: null this");
 	
-	Container_update(__GET_CAST(Container, this));
+	Container_update(__SAFE_CAST(Container, this));
 	
 	ParticleSystem_processExpiredParticles(this);
 
@@ -260,7 +260,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 		
 		// call the appropiate allocator to support inheritance!
-		Particle particle = __GET_CAST(Particle, VirtualList_front(this->recyclableParticles));
+		Particle particle = __SAFE_CAST(Particle, VirtualList_front(this->recyclableParticles));
 
 		Particle_setLifeSpan(particle, lifeSpan);
 		Particle_setMass(particle, mass);
@@ -324,7 +324,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 
-	Object_addEventListener(__GET_CAST(Object, particle), __GET_CAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
+	Object_addEventListener(__SAFE_CAST(Object, particle), __SAFE_CAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
 	
 	return particle;
 }
@@ -333,7 +333,7 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 {
 	ASSERT(this, "ParticleSystem::transform: null this");
 	
-	Entity_transform(__GET_CAST(Entity, this), environmentTransform);
+	Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 
 	ParticleSystem_processExpiredParticles(this);
 
@@ -358,13 +358,13 @@ void ParticleSystem_show(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::show: null this");
 
-	Entity_show(__GET_CAST(Entity, this));
+	Entity_show(__SAFE_CAST(Entity, this));
 	
 	VirtualNode node = VirtualList_begin(this->particles);
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		Particle_show(__GET_CAST(Particle, VirtualNode_getData(node)));
+		Particle_show(__SAFE_CAST(Particle, VirtualNode_getData(node)));
 	}
 }
 
@@ -372,13 +372,13 @@ void ParticleSystem_hide(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::hide: null this");
 	
-	Entity_hide(__GET_CAST(Entity, this));
+	Entity_hide(__SAFE_CAST(Entity, this));
 	
 	VirtualNode node = VirtualList_begin(this->particles);
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		Particle_hide(__GET_CAST(Particle, VirtualNode_getData(node)));
+		Particle_hide(__SAFE_CAST(Particle, VirtualNode_getData(node)));
 	}
 }
 
@@ -386,7 +386,7 @@ void ParticleSystem_resume(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::resume: null this");
 
-	Entity_resume(__GET_CAST(Entity, this));
+	Entity_resume(__SAFE_CAST(Entity, this));
 
 	VirtualNode node = VirtualList_begin(this->particles);
 	
@@ -410,7 +410,7 @@ void ParticleSystem_resume(ParticleSystem this)
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
-		Particle_hide(__GET_CAST(Particle, VirtualNode_getData(node)));
+		Particle_hide(__SAFE_CAST(Particle, VirtualNode_getData(node)));
 	}
 	
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
@@ -420,7 +420,7 @@ void ParticleSystem_suspend(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::suspend: null this");
 
-	Entity_suspend(__GET_CAST(Entity, this));
+	Entity_suspend(__SAFE_CAST(Entity, this));
 
 	ParticleSystem_processExpiredParticles(this);
 	
@@ -452,10 +452,10 @@ void ParticleSystem_suspend(ParticleSystem this)
 static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventFirer)
 {
 	ASSERT(this, "ParticleSystem::onParticleExipired: null this");
-	ASSERT(__GET_CAST(Particle, eventFirer), "ParticleSystem::onParticleExipired: null this");
+	ASSERT(__SAFE_CAST(Particle, eventFirer), "ParticleSystem::onParticleExipired: null this");
 
 	VirtualList_pushBack(this->expiredParticles, eventFirer);
-	Particle_hide(__GET_CAST(Particle, eventFirer));
+	Particle_hide(__SAFE_CAST(Particle, eventFirer));
 }
 
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)

@@ -102,7 +102,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u8 movemen
 			VirtualNode node = VirtualList_begin(this->lastCollidingSpatialObject[i]);
 			for(; node; node = VirtualNode_getNext(node))
 	        {
-				Object_removeEventListener(__GET_CAST(Object, VirtualNode_getData(node)), __GET_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
+				Object_removeEventListener(__SAFE_CAST(Object, VirtualNode_getData(node)), __SAFE_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
 	        }
 	
 			VirtualList_clear(this->lastCollidingSpatialObject[i]);
@@ -153,7 +153,7 @@ u8 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Accelera
 			VirtualNode node = VirtualList_begin(this->lastCollidingSpatialObject[i]);
 			for(; node; node = VirtualNode_getNext(node))
 	        {
-				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __GET_CAST(SpatialObject, VirtualNode_getData(node)), displacement, this->ownerPreviousPosition);
+				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)), displacement, this->ownerPreviousPosition);
 	        }
 		}
 	}
@@ -207,7 +207,7 @@ static void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, 
 		VirtualList_pushBack(this->lastCollidingSpatialObject[kZAxis], collidingSpatialObject);
 	}	
 	
-	Object_addEventListener(__GET_CAST(Object, collidingSpatialObject), __GET_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
+	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
 }
 
 // resolve collision against other entities
@@ -363,14 +363,14 @@ Force CollisionSolver_getSourroundingFriction(CollisionSolver this)
 		VirtualNode node = VirtualList_begin(this->lastCollidingSpatialObject[kYAxis]);
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			friction.x += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __GET_CAST(SpatialObject, VirtualNode_getData(node)));
+			friction.x += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)));
 		}
 
 		// get friction in z axis
 		node = VirtualList_begin(this->lastCollidingSpatialObject[kZAxis]);
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			friction.x += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __GET_CAST(SpatialObject, VirtualNode_getData(node)));
+			friction.x += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)));
 		}
 	}
 
@@ -380,14 +380,14 @@ Force CollisionSolver_getSourroundingFriction(CollisionSolver this)
 		VirtualNode node = VirtualList_begin(this->lastCollidingSpatialObject[kXAxis]);
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			friction.y += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __GET_CAST(SpatialObject, VirtualNode_getData(node)));
+			friction.y += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)));
 		}
 
 		// get friction in z axis
 		node = VirtualList_begin(this->lastCollidingSpatialObject[kZAxis]);
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			friction.y += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __GET_CAST(SpatialObject, VirtualNode_getData(node)));
+			friction.y += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)));
 		}
 	}
 
@@ -397,14 +397,14 @@ Force CollisionSolver_getSourroundingFriction(CollisionSolver this)
 		VirtualNode node = VirtualList_begin(this->lastCollidingSpatialObject[kXAxis]);
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			friction.z += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __GET_CAST(SpatialObject, VirtualNode_getData(node)));
+			friction.z += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)));
 		}
 
 		// get friction in y axis
 		node = VirtualList_begin(this->lastCollidingSpatialObject[kYAxis]);
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			friction.z += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __GET_CAST(SpatialObject, VirtualNode_getData(node)));
+			friction.z += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)));
 		}
 	}
 
@@ -440,7 +440,7 @@ fix19_13 CollisionSolver_getCollisingSpatialObjectsTotalElasticity(CollisionSolv
 
 	for(; 0 <= collidingSpatialObjectListIndex && node; node = VirtualNode_getNext(node))
 	{
-		totalElasticiy += __VIRTUAL_CALL(fix19_13, SpatialObject, getElasticity, __GET_CAST(SpatialObject, VirtualNode_getData(node)));
+		totalElasticiy += __VIRTUAL_CALL(fix19_13, SpatialObject, getElasticity, __SAFE_CAST(SpatialObject, VirtualNode_getData(node)));
 	}
 	
 	return totalElasticiy;

@@ -80,12 +80,12 @@ void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordin
 	ASSERT(this, "ObjectAnimationCoordinator::removeAnimationController: null this");
 	ASSERT(VirtualList_begin(this->animationControllers), "ObjectAnimationCoordinator::removeAnimationController: null this");
 
-	bool mustChangeLeader = animationController == __GET_CAST(AnimationController, VirtualList_front(this->animationControllers));
+	bool mustChangeLeader = animationController == __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
 	VirtualList_removeElement(this->animationControllers, animationController);
 	
 	if(mustChangeLeader && VirtualList_begin(this->animationControllers))
 	{
-		AnimationController firstAnimationController = __GET_CAST(AnimationController, VirtualList_front(this->animationControllers));
+		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
 		
 		if(firstAnimationController)
 		{

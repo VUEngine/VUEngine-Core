@@ -221,7 +221,7 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames)
 		this->currentPage = VirtualList_begin(this->pages);
 		ASSERT(VirtualList_getSize(this->pages), "OptionsSelector::setOptions: empty pages");
 
-		this->currentOption = this->currentPage ? VirtualList_begin(__GET_CAST(VirtualList, VirtualNode_getData(this->currentPage))) : NULL;
+		this->currentOption = this->currentPage ? VirtualList_begin(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage))) : NULL;
 	}
 
 	this->currentPageIndex = 0;
@@ -252,7 +252,7 @@ void OptionsSelector_selectNext(OptionsSelector this)
 				this->currentOptionIndex = 0;
 			}
 
-			this->currentOption = VirtualList_begin(__GET_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
+			this->currentOption = VirtualList_begin(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
 			ASSERT(this->currentOption, "selectNext: null current option");
 
 			OptionsSelector_showOptions(this, this->x, this->y);
@@ -286,7 +286,7 @@ void OptionsSelector_selectPrevious(OptionsSelector this)
 				this->currentOptionIndex = this->totalOptions - 1;
 			}
 
-			this->currentOption = VirtualList_end(__GET_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
+			this->currentOption = VirtualList_end(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
 			ASSERT(this->currentOption, "selectPrevious: current option data");
 
 			OptionsSelector_showOptions(this, this->x, this->y);
@@ -307,13 +307,13 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 {
 	ASSERT(this, "OptionsSelector::showOptions: null this");
 
-	if(this->currentPage && 0 < VirtualList_getSize(__GET_CAST(VirtualList, VirtualNode_getData(this->currentPage))))
+	if(this->currentPage && 0 < VirtualList_getSize(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage))))
 	{
 		this->x = 0 <= x && x <= __SCREEN_WIDTH >> 3 ? x : 0;
 		this->y = 0 <= y && y <= __SCREEN_HEIGHT >> 3 ? y : 0;
 
 		ASSERT(this->currentPage, "showOptions: currentPage");
-		VirtualNode node = VirtualList_begin(__GET_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
+		VirtualNode node = VirtualList_begin(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
 
 		int i = 0;
 		for(; i + y < (__SCREEN_HEIGHT >> 3); i++)
@@ -374,7 +374,7 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
 		ASSERT(this->currentPage, "printSelectorMark: current page");
 		ASSERT(VirtualNode_getData(this->currentPage), "printSelectorMark: null current data");
 
-		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList_getSize(__GET_CAST(VirtualList, VirtualList_front(this->pages)));
+		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList_getSize(__SAFE_CAST(VirtualList, VirtualList_front(this->pages)));
 		int optionColumn = (int)(indexOption / this->rows);
 		int optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = (__SCREEN_WIDTH >> 3) / this->cols * optionColumn;

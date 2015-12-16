@@ -58,13 +58,13 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
 	// construct base object
 	__CONSTRUCT_BASE(bSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __GET_CAST(Sprite, this), Texture_getCharSet(this->texture));
+	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), Texture_getCharSet(this->texture));
 	
 	if(this->texture)
 	{
 		// since the offset will be moved during animation, must save it
-		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__GET_CAST(BgmapTexture, this->texture))) << 3;
-		this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__GET_CAST(BgmapTexture, this->texture))) << 3;
+		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;
+		this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;
 	}
 }
 
@@ -115,7 +115,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}
 			
-			BgmapSprite_invalidateParamTable(__GET_CAST(BgmapSprite, this));
+			BgmapSprite_invalidateParamTable(__SAFE_CAST(BgmapSprite, this));
 			this->renderFlag |= __UPDATE_M;
 			break;
 	}

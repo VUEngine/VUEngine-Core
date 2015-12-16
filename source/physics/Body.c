@@ -494,12 +494,12 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 		 	// if stopped on any axis
 		 	if(axisStoppedMovement)
 			{
-	 			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyStopped, &axisStoppedMovement);
+	 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axisStoppedMovement);
 		 	}
 
 		 	if(axisOfChangeOfMovement)
 			{
-		 		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyChangedDirection, &axisOfChangeOfMovement);
+		 		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyChangedDirection, &axisOfChangeOfMovement);
 		 	}
 
 		 	// clear any force so the next update does not get influenced
@@ -758,7 +758,7 @@ void Body_stopMovement(Body this, u8 axis)
 	if(!Body_isMoving(this))
 	{
 		Body_sleep(this);
-		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyStopped, &axisOfStopping);
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axisOfStopping);
 	}
 }
 
@@ -909,7 +909,7 @@ static void Body_awake(Body this, int axisStartedMovement)
 
 	if(dispatchMessage)
 	{
-		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyStartedMoving, &axisStartedMovement);
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStartedMoving, &axisStartedMovement);
 	}
 }
 
@@ -922,7 +922,7 @@ void Body_sleep(Body this)
 
 	PhysicalWorld_bodySleep(PhysicalWorld_getInstance(), this);
 
-	MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodySleep, NULL);
+	MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodySleep, NULL);
 }
 
 // is it moving?
@@ -990,7 +990,7 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 
 	if(axisOnWhichBounced)
 	{
- 		MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this->owner), kBodyBounced, &axisOnWhichBounced);
+ 		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyBounced, &axisOnWhichBounced);
 	}
 }
 

@@ -127,7 +127,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 
 	if(this->sprites)
 	{
-		Sprite sprite = __GET_CAST(Sprite, VirtualList_front(this->sprites));
+		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_front(this->sprites));
 		Texture texture = Sprite_getTexture(sprite);
 
 		if(texture)
@@ -184,7 +184,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Entity_getSizeFromChildren(__GET_CAST(Entity, VirtualNode_getData(node)), rightcuboid);
+			Entity_getSizeFromChildren(__SAFE_CAST(Entity, VirtualNode_getData(node)), rightcuboid);
 		}
 	}
 }
@@ -387,10 +387,10 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
 		//go through n sprites in entity's definition
 		for(; childrenDefinitions[i].entityDefinition; i++)
 	    {
-			Entity entity = Entity_loadFromDefinitionWithoutInitilization(&childrenDefinitions[i], this->id + Container_getChildCount(__GET_CAST(Container, this)));
+			Entity entity = Entity_loadFromDefinitionWithoutInitilization(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
 
 			// create the entity and add it to the world
-			Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, entity));
+			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 		}
 	}	
 }
@@ -408,7 +408,7 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* con
 		{
 			if(positionedEntity->name)
 			{
-				Container_setName(__GET_CAST(Container, entity), positionedEntity->name);
+				Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
 			}
 
 			// set spatial position
@@ -443,7 +443,7 @@ void Entity_initialize(Entity this)
 
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			__VIRTUAL_CALL(void, Entity, initialize, __GET_CAST(Entity, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Entity, initialize, __SAFE_CAST(Entity, VirtualNode_getData(node)));
 		}
 	}
 	
@@ -471,7 +471,7 @@ void Entity_ready(Entity this)
 
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			__VIRTUAL_CALL(void, Entity, ready, __GET_CAST(Entity, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Entity, ready, __SAFE_CAST(Entity, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -488,10 +488,10 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 		//go through n sprites in entity's definition
 		for(; childrenDefinitions[i].entityDefinition; i++)
 	    {
-			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], this->id + Container_getChildCount(__GET_CAST(Container, this)));
+			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
 
 			// create the entity and add it to the world
-			Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, entity));
+			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 		}
 	}	
 }
@@ -511,7 +511,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 	};
 
     // create the hint entity and add it to the hero as a child entity
-	Entity childEntity = Entity_loadFromDefinition(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__GET_CAST(Container, this)));
+	Entity childEntity = Entity_loadFromDefinition(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
 
 	if(childEntity)
 	{
@@ -521,14 +521,14 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		// if already initialized
 		if(0 <= this->size.x && 0 <= this->size.y && 0 <= this->size.z)
 		{
-			Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	
 			 // apply transformations
 			__VIRTUAL_CALL(void, Container, initialTransform, childEntity, &environmentTransform);
 		}
 		
 		// create the entity and add it to the world
-		Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, childEntity));
+		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
 		
 		__VIRTUAL_CALL(void, Entity, ready, childEntity);
 	}
@@ -603,7 +603,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 			// move each child to a temporary list
 			for(; node ; node = VirtualNode_getNext(node))
 			{
-				Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
+				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
 		
 				// calculate the scale
 				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
@@ -623,7 +623,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 			// move each child to a temporary list
 			for(; node ; node = VirtualNode_getNext(node))
 			{
-				Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
+				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
 		
 				//update sprite's 2D position
 				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
@@ -637,7 +637,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 			// move each child to a temporary list
 			for(; node ; node = VirtualNode_getNext(node))
 			{
-				Sprite sprite = __GET_CAST(Sprite, VirtualNode_getData(node));
+				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
 		
 				// calculate the scale
 				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
@@ -659,7 +659,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	this->invalidateGlobalPosition.z = true;
 
 	// call base class's transform method
-	Container_initialTransform(__GET_CAST(Container, this), environmentTransform);
+	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
 
 	// force sprite translation
 	Entity_translateSprites(this, true, true);
@@ -676,6 +676,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	}
 }
 
+#include <TriggerEntity.h>
 // transform class
 void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
@@ -693,7 +694,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		updateSpriteTransformations = this->invalidateGlobalPosition.z;
 
 		// call base class's transform method
-		Container_transform(__GET_CAST(Container, this), environmentTransform);
+		Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 	}
 	else
 	{
@@ -706,7 +707,21 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		// update graphical representation
 		Entity_translateSprites(this, updateSpriteTransformations, updateSpritePosition);
 	}
+	
+/*	if(this->shape && __GET_CAST(TriggerEntity, this))
+	{
+		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+	}
+	*/
 }
+
+void Entity_setLocalPosition(Entity this, const VBVec3D* position)
+{
+	ASSERT(this, "Entity::setLocalPosition: null this");
+
+	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
+}
+
 
 // retrieve EntityDefinition
 EntityDefinition* Entity_getEntityDefinition(Entity this)
@@ -804,7 +819,7 @@ bool Entity_isVisible(Entity this, int pad)
 	if(this->sprites)
 	{
 		static Sprite sprite = NULL;
-		sprite = __GET_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
+		sprite = __SAFE_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
 
 		ASSERT(sprite, "Entity:isVisible: null sprite");
 		
@@ -888,7 +903,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 
 		for(; node ; node = VirtualNode_getNext(node))
 	    {
-			__VIRTUAL_CALL(void, Sprite, setDirection, __GET_CAST(Sprite, VirtualNode_getData(node)), axis, direction);
+			__VIRTUAL_CALL(void, Sprite, setDirection, __SAFE_CAST(Sprite, VirtualNode_getData(node)), axis, direction);
 		}
 	}
 }
@@ -913,7 +928,7 @@ void Entity_show(Entity this)
 		// move each child to a temporary list
 		for(; node ; node = VirtualNode_getNext(node))
 	    {
-			__VIRTUAL_CALL(void, Sprite, show, __GET_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -930,7 +945,7 @@ void Entity_hide(Entity this)
 		// move each child to a temporary list
 		for(; node ; node = VirtualNode_getNext(node))
 	    {
-			__VIRTUAL_CALL(void, Sprite, hide, __GET_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -940,7 +955,7 @@ void Entity_suspend(Entity this)
 {
 	ASSERT(this, "Entity::suspend: null this");
 
-	Container_suspend(__GET_CAST(Container, this));
+	Container_suspend(__SAFE_CAST(Container, this));
 	Entity_releaseSprites(this);
 }
 
@@ -949,7 +964,7 @@ void Entity_resume(Entity this)
 {
 	ASSERT(this, "Entity::resume: null this");
 
-	Container_resume(__GET_CAST(Container, this));
+	Container_resume(__SAFE_CAST(Container, this));
 
 	// initialize sprites
 	if(this->entityDefinition)

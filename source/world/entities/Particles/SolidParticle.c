@@ -59,10 +59,10 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	Body_setFriction(this->body, totalFriction);
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __GET_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
+	this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
 	__VIRTUAL_CALL(void, Shape, setup, this->shape);
 
-	this->collisionSolver = __NEW(CollisionSolver, __GET_CAST(SpatialObject, this), &this->position, &this->position);
+	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
 }
 
 // class's destructor
@@ -89,7 +89,7 @@ void SolidParticle_update(SolidParticle this, u16 timeElapsed, void (* behavior)
 {
 	ASSERT(this, "SolidParticle::update: null this");
 
-	Particle_update(__GET_CAST(Particle, this), timeElapsed, behavior);
+	Particle_update(__SAFE_CAST(Particle, this), timeElapsed, behavior);
 
 	if(0 <= this->lifeSpan)
 	{
@@ -172,11 +172,11 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 		
 		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {
-			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyStopped, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
 		else
 	    {
-			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyBounced, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
 		}
 	}
 }
@@ -202,7 +202,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 	
 			for(node = VirtualList_begin(collidingSpatialObjects); node; node = VirtualNode_getNext(node))
 		    {
-				SpatialObject spatialObject = __GET_CAST(SpatialObject, VirtualNode_getData(node));
+				SpatialObject spatialObject = __SAFE_CAST(SpatialObject, VirtualNode_getData(node));
 				
 				if(__GET_CAST(Particle, spatialObject))
 				{
@@ -237,7 +237,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
     {
 		case kCollision:
 
-			SolidParticle_resolveCollision(this, __GET_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
+			SolidParticle_resolveCollision(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
 			return true;
 			break;
 			
@@ -252,7 +252,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 			if(!Body_isMoving(this->body))
             {
-				CollisionManager_shapeStoppedMoving(CollisionManager_getInstance(), this->shape);
+				//CollisionManager_shapeStoppedMoving(CollisionManager_getInstance(), this->shape);
 			}
 			break;
 
@@ -269,7 +269,7 @@ void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 {
 	ASSERT(this, "SolidParticle::position: null this");
 	
-	Particle_setPosition(__GET_CAST(Particle, this), position);
+	Particle_setPosition(__SAFE_CAST(Particle, this), position);
 	CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __XAXIS | __YAXIS | __ZAXIS);
 
 	this->position = *position;

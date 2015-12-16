@@ -439,11 +439,11 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 
 	Printing_text(Printing_getInstance(), "STAGE STATUS", 20, y + 3, NULL);
 	Printing_text(Printing_getInstance(), "Entities: ", 20, ++y + 3, NULL);
-	Printing_int(Printing_getInstance(), Container_getChildCount(__GET_CAST(Container, GameState_getStage(this->gameState))), 34, y + 3, NULL);
+	Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, GameState_getStage(this->gameState))), 34, y + 3, NULL);
 	Printing_text(Printing_getInstance(), "UI Entities: ", 20, ++y + 3, NULL);
 
 	UI ui = Stage_getUI(GameState_getStage(this->gameState));
-	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__GET_CAST(Container, ui)) : 0, 34, y + 3, NULL);
+	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 34, y + 3, NULL);
 }
 
 static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
@@ -745,7 +745,7 @@ static void Debug_objectsShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "OBJECTS' USAGE", x, y++, NULL);
 
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager_getInstance(), this->objectSegment);
-		SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer(__GET_CAST(Sprite, objectSpriteContainer)));
+		SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer(__SAFE_CAST(Sprite, objectSpriteContainer)));
 
 		ObjectSpriteContainer_print(objectSpriteContainer, x, ++y);
 

@@ -70,6 +70,7 @@ __CLASS(Cuboid);
 
 __CLASS_NEW_DECLARE(Cuboid, SpatialObject owner);
 
+void Cuboid_constructor(Cuboid this, SpatialObject owner);
 void Cuboid_destructor(Cuboid this);
 u8 Cuboid_overlaps(Cuboid this, Shape shape);
 void Cuboid_setup(Cuboid this);

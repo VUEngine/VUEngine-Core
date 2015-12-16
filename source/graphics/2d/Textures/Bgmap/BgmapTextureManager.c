@@ -148,8 +148,8 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 	int j = 0;
 	int aux = 0;
 
-	u8 cols = Texture_getTotalCols(__GET_CAST(Texture, bgmapTexture));
-	u8 rows = Texture_getTotalRows(__GET_CAST(Texture, bgmapTexture));
+	u8 cols = Texture_getTotalCols(__SAFE_CAST(Texture, bgmapTexture));
+	u8 rows = Texture_getTotalRows(__SAFE_CAST(Texture, bgmapTexture));
 	
 	cols += cols < 64? 1: 0;
 	rows += rows < 64? 1: 0;
@@ -157,7 +157,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 	u16 area = rows * cols;
 
 	//if texture already defined, don't allocate
-	if(Texture_getNumberOfChars(__GET_CAST(Texture, bgmapTexture)))
+	if(Texture_getNumberOfChars(__SAFE_CAST(Texture, bgmapTexture)))
 	{
 		for(i = 0; i < this->availableBgmapSegments; i++)
 		{
@@ -186,7 +186,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 						{
 							if(cols <= 64 - this->xOffset[i][j])
 							{
-								u16 id = Texture_getId(__GET_CAST(Texture, bgmapTexture));
+								u16 id = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
 
 								//registry bgmap definition
 								this->offset[id][kXOffset] = this->xOffset[i][j];
@@ -261,7 +261,7 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 	int xDisplacement = 0;
 	int yDisplacement = 0;
 
-	u8 length = Texture_getCols(__GET_CAST(Texture, bgmapTexture));
+	u8 length = Texture_getCols(__SAFE_CAST(Texture, bgmapTexture));
 
 	// if there is space in the first row
 	// calculate y displacement
@@ -292,9 +292,9 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 	// if no one is using the texture anymore
 	if(bgmapTexture && BgmapTexture_decreaseUsageCount(bgmapTexture))
 	{
-		int i = Texture_getId(__GET_CAST(Texture, bgmapTexture));
+		int i = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
 		
-		switch(CharSet_getAllocationType(Texture_getCharSet(__GET_CAST(Texture, bgmapTexture))))
+		switch(CharSet_getAllocationType(Texture_getCharSet(__SAFE_CAST(Texture, bgmapTexture))))
 		{
 			case __ANIMATED_SINGLE:
 
@@ -307,7 +307,7 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 			case __ANIMATED_MULTI:
 			case __NOT_ANIMATED:
 
-				Texture_releaseCharSet(__GET_CAST(Texture, bgmapTexture));
+				Texture_releaseCharSet(__SAFE_CAST(Texture, bgmapTexture));
 				break;
 		}
 	}
@@ -325,9 +325,9 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	{
 		if(this->bgmapTextures[i])
 		{
-			CharSet charSet = Texture_getCharSet(__GET_CAST(Texture, this->bgmapTextures[i]));
+			CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]));
 
-			if(Texture_getBgmapDefinition(__GET_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
+			if(Texture_getBgmapDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
 				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition.allocationType)
 			)
 			{
@@ -404,7 +404,7 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 			{
 				BgmapTexture_increaseUsageCount(bgmapTexture);
 				
-				if(!Texture_getCharSet(__GET_CAST(Texture, bgmapTexture)))
+				if(!Texture_getCharSet(__SAFE_CAST(Texture, bgmapTexture)))
 				{
 					__VIRTUAL_CALL(void, Texture, write, bgmapTexture);
 				}

@@ -265,7 +265,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// retrieve focus entity for streaming
 	InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
-	this->focusEntity = focusInGameEntity ? __GET_CAST(Entity, focusInGameEntity) : NULL;
+	this->focusEntity = focusInGameEntity ? __SAFE_CAST(Entity, focusInGameEntity) : NULL;
 
 	// setup ui
 	Stage_setupUI(this);
@@ -281,7 +281,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
 	
 	// apply transformations
-	Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(void, Container, initialTransform, this, &environmentTransform);
 
 	if(this->ui)
@@ -322,7 +322,7 @@ static void Stage_setupUI(Stage this)
 		if(this->ui)
 		{
 			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 			__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 		}
 	}
@@ -346,10 +346,10 @@ Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinitio
 			__VIRTUAL_CALL(void, Entity, initialize, entity);
 
 			// create the entity and add it to the world
-			Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, entity));
+			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
 /*
 			if(permanent)
@@ -402,10 +402,10 @@ Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const posit
 			__VIRTUAL_CALL(void, Entity, initialize, entity);
 
 			// create the entity and add it to the world
-			Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, entity));
+			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
 			
 			__VIRTUAL_CALL(void, Entity, ready, entity);
@@ -436,12 +436,12 @@ void Stage_removeChild(Stage this, Container child)
 	// hide until effectively deleted
 	if(__GET_CAST(Entity, child))
 	{
-		Entity_hide(__GET_CAST(Entity, child));
+		Entity_hide(__SAFE_CAST(Entity, child));
 	}
 
-	Container_removeChild(__GET_CAST(Container, this), child);
+	Container_removeChild(__SAFE_CAST(Container, this), child);
 
-	s16 id = Container_getId(__GET_CAST(Container, child));
+	s16 id = Container_getId(__SAFE_CAST(Container, child));
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
@@ -478,13 +478,13 @@ static void Stage_unloadChild(Stage this, Container child)
 	// hide until effectively deleted
 	if(__GET_CAST(Entity, child))
 	{
-		Entity_hide(__GET_CAST(Entity, child));
+		Entity_hide(__SAFE_CAST(Entity, child));
 	}
 
 	child->deleteMe = true;
-	Container_removeChild(__GET_CAST(Container, this), child);
+	Container_removeChild(__SAFE_CAST(Container, this), child);
 
-	s16 id = Container_getId(__GET_CAST(Container, child));
+	s16 id = Container_getId(__SAFE_CAST(Container, child));
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
@@ -669,7 +669,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
-	VBVec3D focusEntityPosition = *Container_getGlobalPosition(__GET_CAST(Container, this->focusEntity));
+	VBVec3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
 	focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
 	focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
 	focusEntityPosition.z = FIX19_13TOI(focusEntityPosition.z);
@@ -760,7 +760,7 @@ static void Stage_loadEntities(Stage this)
 			stageEntityToInitialize->positionedEntity = stageEntityDescription->positionedEntity;
 			stageEntityToInitialize->entity = entity;
 			VirtualList_pushBack(this->entitiesToInitialize, stageEntityToInitialize);
-			stageEntityDescription->id = Container_getId(__GET_CAST(Container, entity));
+			stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
 			VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 			
 			VirtualList_removeElement(this->entitiesToLoad, stageEntityDescription);
@@ -781,7 +781,7 @@ static void Stage_initializeEntities(Stage this)
 {
 	ASSERT(this, "Stage::initializeEntities: null this");
 
-	Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
 	VirtualNode node = VirtualList_begin(this->entitiesToInitialize);
 	
@@ -792,7 +792,7 @@ static void Stage_initializeEntities(Stage this)
 		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity);
 		
 		// create the entity and add it to the world
-		Container_addChild(__GET_CAST(Container, this), __GET_CAST(Container, stageEntityToInitialize->entity));
+		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, stageEntityToInitialize->entity));
 		
 		// apply transformations
 		__VIRTUAL_CALL(void, Container, initialTransform, stageEntityToInitialize->entity, &environmentTransform);
@@ -828,7 +828,7 @@ static void Stage_loadInRangeEntities(Stage this)
 
 				if(entity) 
 				{
-					stageEntityDescription->id = Container_getId(__GET_CAST(Container, entity));
+					stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
 	
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 				}
@@ -864,12 +864,12 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		// get next entity
-		Entity entity = __GET_CAST(Entity, VirtualNode_getData(node));
+		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(node));
 
 		// if the entity isn't visible inside the view field, unload it
 		if(!__VIRTUAL_CALL(bool, Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding)))
 		{
-			s16 id = Container_getId(__GET_CAST(Container, entity));
+			s16 id = Container_getId(__SAFE_CAST(Container, entity));
 
 			VirtualNode auxNode = VirtualList_begin(this->loadedStageEntities);
 
@@ -887,7 +887,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 			}
 
 			// unload it
-			Stage_unloadChild(this, __GET_CAST(Container, entity));
+			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 		}
 	}
 
@@ -899,11 +899,11 @@ void Stage_update(Stage this)
 {
 	ASSERT(this, "Stage::update: null this");
 
-	Container_update(__GET_CAST(Container, this));
+	Container_update(__SAFE_CAST(Container, this));
 
 	if(this->ui)
 	{
-		Container_update(__GET_CAST(Container, this->ui));
+		Container_update(__SAFE_CAST(Container, this->ui));
 	}
 }
 
@@ -912,7 +912,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Stage::transform: null this");
 
-	Container_transform(__GET_CAST(Container, this), environmentTransform);
+	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 	
 	if(this->ui)
 	{
@@ -965,7 +965,7 @@ void Stage_stream(Stage this)
 		else
 		{
 			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
-			this->focusEntity = focusInGameEntity ? __GET_CAST(Entity, focusInGameEntity) : NULL;
+			this->focusEntity = focusInGameEntity ? __SAFE_CAST(Entity, focusInGameEntity) : NULL;
 		}
 	}			
 	else if(streamingCycleCounter == streamingCycleBase * 2)
@@ -1001,7 +1001,7 @@ void Stage_streamAll(Stage this)
 	ASSERT(this, "Stage::streamAll: null this");
 
 	// must make sure there are not pending entities for removal
-	Container_processRemovedChildren(__GET_CAST(Container, this));
+	Container_processRemovedChildren(__SAFE_CAST(Container, this));
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
 	SpriteManager_processFreedLayers(SpriteManager_getInstance());
@@ -1021,17 +1021,17 @@ void Stage_suspend(Stage this)
 {
 	ASSERT(this, "Stage::suspend: null this");
 
-	Container_suspend(__GET_CAST(Container, this));
+	Container_suspend(__SAFE_CAST(Container, this));
 	
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, suspend, __GET_CAST(Container, this->ui));
+		__VIRTUAL_CALL(void, Container, suspend, __SAFE_CAST(Container, this->ui));
 	}
 	
 	// relinquish screen focus priority
 	if(this->focusEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
 	{
-		if(this->focusEntity == __GET_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
+		if(this->focusEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
 		{
 			// relinquish focus entity
 		    Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
@@ -1063,21 +1063,21 @@ void Stage_resume(Stage this)
 	if(this->focusEntity)
 	{
 		// recover focus entity
-	    Screen_setFocusInGameEntity(Screen_getInstance(), __GET_CAST(InGameEntity, this->focusEntity));
+	    Screen_setFocusInGameEntity(Screen_getInstance(), __SAFE_CAST(InGameEntity, this->focusEntity));
 	}
 
 	// load background music
 	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->bgm);
 
-	Container_resume(__GET_CAST(Container, this));
+	Container_resume(__SAFE_CAST(Container, this));
 
 	// apply transformations
-	Transformation environmentTransform = Container_getEnvironmentTransform(__GET_CAST(Container, this));
+	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(void, Container, initialTransform, this, &environmentTransform);
 
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, resume, __GET_CAST(Container, this->ui));
+		__VIRTUAL_CALL(void, Container, resume, __SAFE_CAST(Container, this->ui));
 		
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 	}

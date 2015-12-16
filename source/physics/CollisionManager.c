@@ -22,6 +22,7 @@
 #include <CollisionManager.h>
 #include <Circle.h>
 #include <Cuboid.h>
+#include <InverseCuboid.h>
 #include <MessageDispatcher.h>
 
 
@@ -131,10 +132,15 @@ Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner,
 
 			VirtualList_pushFront(this->shapes, (void*)__NEW(Cuboid, owner));
 			break;
+
+		case kInverseCuboid:
+
+			VirtualList_pushFront(this->shapes, (void*)__NEW(InverseCuboid, owner));
+			break;
 	}
 
 	// return created shape
-	return __GET_CAST(Shape, VirtualList_front(this->shapes));
+	return __SAFE_CAST(Shape, VirtualList_front(this->shapes));
 }
 
 // remove a shape
@@ -161,7 +167,7 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 
 	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL_UNSAFE(const void* const, SpatialObject, getShape, owner));
 
-	return node? __GET_CAST(Shape, VirtualNode_getData(node)): NULL;
+	return node? __SAFE_CAST(Shape, VirtualNode_getData(node)): NULL;
 }
 
 // process removed shapes
@@ -176,7 +182,7 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 	{
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Shape shape = __GET_CAST(Shape, VirtualNode_getData(node));
+			Shape shape = __SAFE_CAST(Shape, VirtualNode_getData(node));
 
 			// remove from the list
 			VirtualList_removeElement(this->shapes, (BYTE*) shape);
@@ -205,7 +211,7 @@ int CollisionManager_update(CollisionManager this)
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		// current to check shape's rectangle
-		__VIRTUAL_CALL(void, Shape, position, __GET_CAST(Shape, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Shape, position, __SAFE_CAST(Shape, VirtualNode_getData(node)));
 	}
 
 	// check the shapes
@@ -213,7 +219,7 @@ int CollisionManager_update(CollisionManager this)
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		// load the current shape
-		Shape shape = __GET_CAST(Shape, VirtualNode_getData(node));
+		Shape shape = __SAFE_CAST(Shape, VirtualNode_getData(node));
 
 		if(!Shape_checkForCollisions(shape))
 		{
@@ -234,7 +240,7 @@ int CollisionManager_update(CollisionManager this)
 		for(; nodeForActiveShapes; nodeForActiveShapes = VirtualNode_getNext(nodeForActiveShapes))
 		{	
 			// load the current shape to check against
-			Shape shapeToCheck = __GET_CAST(Shape, VirtualNode_getData(nodeForActiveShapes));
+			Shape shapeToCheck = __SAFE_CAST(Shape, VirtualNode_getData(nodeForActiveShapes));
 
 			// don't compare with current movable shape, when the shape already has been checked
 			// and when it is not active
@@ -245,7 +251,6 @@ int CollisionManager_update(CollisionManager this)
 
 				if(collisionResult)
 				{
-
 					if(!collidingObjects)
 					{
 						collidingObjects = __NEW(VirtualList);
@@ -262,7 +267,7 @@ int CollisionManager_update(CollisionManager this)
 			thereWereCollisions = true;
 
 			// inform the owner about the collision
-			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, shape), __GET_CAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
+			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
 
 			__DELETE(collidingObjects);
 		}
@@ -301,9 +306,8 @@ void CollisionManager_reset(CollisionManager this)
 // inform of a change in the shape
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeChangedState: null this");
-
-	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
+	ASSERT(this, "CollisionManager::shapeStartedMoving: null this");
+	ASSERT(shape, "CollisionManager::shapeStartedMoving: null shape");
 
 	CollisionManager_shapeBecameActive(this, shape);
 
@@ -317,8 +321,8 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 // inform of a change in the shape
 void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeChangedState: null this");
-	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
+	ASSERT(this, "CollisionManager::shapeStoppedMoving: null this");
+	ASSERT(shape, "CollisionManager::shapeStoppedMoving: null shape");
 
 	VirtualList_removeElement(this->movingShapes, shape);
 	

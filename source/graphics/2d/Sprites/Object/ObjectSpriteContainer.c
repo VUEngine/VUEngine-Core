@@ -86,7 +86,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt, u16 t
 	this->previousNode = NULL;
 	
 	// register to sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
+	SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 
 	// clear OBJ memory
 	int i = firstObjectIndex;
@@ -108,7 +108,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 
 	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), __GET_CAST(Sprite, this));
+	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 
 	if(this->objectSprites)
 	{
@@ -116,7 +116,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			ObjectSprite_invalidateObjectSpriteContainer(__GET_CAST(ObjectSprite, VirtualNode_getData(node)));
+			ObjectSprite_invalidateObjectSpriteContainer(__SAFE_CAST(ObjectSprite, VirtualNode_getData(node)));
 			__DELETE(VirtualNode_getData(node));
 		}
 
@@ -139,7 +139,7 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 
 		if(VirtualList_getSize(this->objectSprites))
 		{
-			ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
+			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 			
 			ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 			
@@ -171,7 +171,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	if(this->objectSpriteToDefragment)
 	{
 		int objectSpritePosition = VirtualList_getNodePosition(this->objectSprites, objectSprite);
-		int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __GET_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
+		int objectSpriteToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment)));
 		
 		if(objectSpritePosition <= objectSpriteToDefragmentPosition)
 		{
@@ -258,9 +258,9 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteToDefragment");
 
 	// get the next sprite to move
-	ObjectSprite objectSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
+	ObjectSprite objectSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
 	
-	ASSERT(Sprite_getTexture(__GET_CAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
+	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
 	
 	// move sprite back
 	ObjectSprite_setObjectIndex(objectSprite, this->freedObjectIndex);
@@ -279,7 +279,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		
 		if(node)
 		{
-			ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(node));
+			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(node));
 			this->availableObjects = this->totalObjects - (ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite));
 		}
 		else
@@ -303,20 +303,20 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 
 		if(this->previousNode)
 		{
-			ObjectSprite sprite = __GET_CAST(ObjectSprite, VirtualNode_getData(this->node));
-			ObjectSprite previousSprite = __GET_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
-			const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, sprite));
-			const VBVec2D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __GET_CAST(Sprite, previousSprite));
+			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
+			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
+			const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
+			const VBVec2D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
 	
 			// check if z positions are swapped
-			if(previousPosition->z + Sprite_getDisplacement(__GET_CAST(Sprite, previousSprite)).z > position->z + Sprite_getDisplacement(__GET_CAST(Sprite, sprite)).z)
+			if(previousPosition->z + Sprite_getDisplacement(__SAFE_CAST(Sprite, previousSprite)).z > position->z + Sprite_getDisplacement(__SAFE_CAST(Sprite, sprite)).z)
 			{
 				if(this->availableObjects >= ObjectSprite_getTotalObjects(sprite))
 				{
 					// swap
 					s16 previousObjectIndex = ObjectSprite_getObjectIndex(previousSprite);
 	
-					ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
+					ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 					s16 nextFreeObjectIndex = ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite);
 					
 					ObjectSprite_setObjectIndex(previousSprite, nextFreeObjectIndex);
@@ -366,7 +366,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		ObjectSprite_render(__GET_CAST(ObjectSprite, VirtualNode_getData(node)));
+		ObjectSprite_render(__SAFE_CAST(ObjectSprite, VirtualNode_getData(node)));
 	}
 	
 	if(!this->objectSpriteToDefragment)
@@ -383,7 +383,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		__VIRTUAL_CALL(void, Sprite, show, __GET_CAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
 	}
 	
 	this->renderFlag = true;
@@ -400,7 +400,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 	
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, __GET_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
 		}
 	}
 }
@@ -423,7 +423,7 @@ int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 	
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			totalUsedObjects += ObjectSprite_getTotalObjects(__GET_CAST(ObjectSprite, VirtualNode_getData(node)));
+			totalUsedObjects += ObjectSprite_getTotalObjects(__SAFE_CAST(ObjectSprite, VirtualNode_getData(node)));
 		}
 	}
 
@@ -436,7 +436,7 @@ int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
 	
 	if(VirtualList_begin(this->objectSprites))
 	{
-		ObjectSprite lastObjectSprite = __GET_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
+		ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 		
 		ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 		

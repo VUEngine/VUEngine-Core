@@ -185,7 +185,7 @@
 			((ReturnType (*)(ClassName, ...))											\
 			(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))		\
 				(																		\
-						__GET_CAST(ClassName, object), ##__VA_ARGS__					\
+						__SAFE_CAST(ClassName, object), ##__VA_ARGS__					\
 				):																		\
 			/* trigger exception */														\
 			(ReturnType)Error_triggerException(Error_getInstance(),						\
@@ -202,7 +202,7 @@
 		((ReturnType (*)(ClassName, ...))												\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))			\
 			(																			\
-				__GET_CAST(ClassName, object), ##__VA_ARGS__								\
+				__SAFE_CAST(ClassName, object), ##__VA_ARGS__								\
 			)																			\
 
 #endif
@@ -216,13 +216,18 @@
 			)																			\
 
 #ifdef __DEBUG
-#define __GET_CAST(ClassName, object)														\
+#define __SAFE_CAST(ClassName, object)														\
 																						\
 		/* try to up cast object */														\
 		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
 #else	
-#define __GET_CAST(ClassName, object) (ClassName)object
+#define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
+
+#define __GET_CAST(ClassName, object)														\
+																						\
+		/* try to up cast object */														\
+		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
 
 
 // declare a virtual method

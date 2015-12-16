@@ -143,7 +143,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, BgmapSprite b
 	//calculate necessary space to allocate
 	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
 	// add one row as padding to make sure not ovewriting take place
-	return (((int)Texture_getRows(Sprite_getTexture(__GET_CAST(Sprite, bSprite))) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
+	return (((int)Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bSprite))) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite
@@ -216,7 +216,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			BgmapSprite sprite = __GET_CAST(BgmapSprite, VirtualNode_getData(node));
+			BgmapSprite sprite = __SAFE_CAST(BgmapSprite, VirtualNode_getData(node));
 	
 			u32 spriteParam = BgmapSprite_getParam(sprite);
 			

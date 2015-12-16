@@ -54,7 +54,7 @@ void Object_constructor(Object this)
 // class's destructor
 void Object_destructor(Object this)
 {
-	Object_fireEvent(__GET_CAST(Object, this), __EVENT_OBJECT_DESTROYED);
+	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_OBJECT_DESTROYED);
 
 	if(this->events)
 	{

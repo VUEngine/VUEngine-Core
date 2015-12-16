@@ -85,12 +85,12 @@ void Actor_destructor(Actor this)
 	ASSERT(this, "Actor::destructor: null this");
 
 	// inform the screen I'm being removed
-	Screen_onFocusEntityDeleted(Screen_getInstance(), __GET_CAST(InGameEntity, this));
+	Screen_onFocusEntityDeleted(Screen_getInstance(), __SAFE_CAST(InGameEntity, this));
 
 	if(this->body)
 	{
 		// remove a body
-		PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __GET_CAST(SpatialObject, this));
+		PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __SAFE_CAST(SpatialObject, this));
 		this->body = NULL;
 	}
 	
@@ -112,11 +112,11 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 {
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
-	Container_setLocalPosition(__GET_CAST(Container, this), position);
+	Entity_setLocalPosition(__SAFE_CAST(Container, this), position);
 
 	if(this->body)
     {
-		VBVec3D globalPosition = *Container_getGlobalPosition(__GET_CAST(Container, this));
+		VBVec3D globalPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this));
 
 		Transformation environmentTransform =
         {
@@ -148,7 +148,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 
 		Actor_resetCollisionStatus(this, __XAXIS | __YAXIS | __ZAXIS);
 
-		Body_setPosition(this->body, &globalPosition, __GET_CAST(SpatialObject, this));
+		Body_setPosition(this->body, &globalPosition, __SAFE_CAST(SpatialObject, this));
 		
 		if(this->shape)
 		{
@@ -165,7 +165,7 @@ static void Actor_syncPositionWithBody(Actor this)
 		CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->transform.globalPosition);
 	}
 
-	Container_setLocalPosition(__GET_CAST(Container, this), Body_getPosition(this->body));
+	Entity_setLocalPosition(__SAFE_CAST(Container, this), Body_getPosition(this->body));
 }
 
 // updates the animation attributes
@@ -196,15 +196,15 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 		};
 
 		// since body is moving
-		Container_invalidateGlobalPosition(__GET_CAST(Container, this));
+		Container_invalidateGlobalPosition(__SAFE_CAST(Container, this));
 
 		// call base
-		AnimatedInGameEntity_transform(__GET_CAST(AnimatedInGameEntity, this), &environmentAgnosticTransform);
+		AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), &environmentAgnosticTransform);
     }
 	else
 	{
 		// call base
-		AnimatedInGameEntity_transform(__GET_CAST(AnimatedInGameEntity, this), environmentTransform);
+		AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
 	}
 }
 
@@ -214,7 +214,7 @@ void Actor_update(Actor this)
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	AnimatedInGameEntity_update(__GET_CAST(AnimatedInGameEntity, this));
+	AnimatedInGameEntity_update(__SAFE_CAST(AnimatedInGameEntity, this));
 
 	if(this->stateMachine)
 	{
@@ -385,26 +385,27 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 		if(this->body)
 	    {
 			Object sender = Telegram_getSender(telegram);
-			Actor otherActor = __GET_CAST(Actor, sender);
+			Actor otherActor = __SAFE_CAST(Actor, sender);
 
-			if(true || (sender == __GET_CAST(Object, this)) || __GET_CAST(Cuboid, sender) || __GET_CAST(Body, sender))
+			if(true || (sender == __SAFE_CAST(Object, this)) || __SAFE_CAST(Cuboid, sender) || __SAFE_CAST(Body, sender))
 	        {
 				switch(message)
 	            {
 					case kCollision:
 
-						Actor_resolveCollision(this, __GET_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
+						Actor_resolveCollision(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
 						return true;
 						break;
 						
 					case kCollisionWithYou:
 
-						Actor_resolveCollisionAgainstMe(this, __GET_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
+						Actor_resolveCollisionAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
 					case kBodyStartedMoving:
 
+						ASSERT(this->shape, "Actor::handleMessage: null shape");
 						CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
 						Actor_resetCollisionStatus(this, *(u8*)Telegram_getExtraInfo(telegram));
 						return true;
@@ -414,6 +415,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 						if(!Body_isMoving(this->body))
 	                    {
+							ASSERT(this->shape, "Actor::handleMessage: null shape");
 							CollisionManager_shapeStoppedMoving(CollisionManager_getInstance(), this->shape);
 						}
 						break;
@@ -486,7 +488,7 @@ const VBVec3D* Actor_getPosition(Actor this)
 		return Body_getPosition(this->body);
 	}
 
-	return Entity_getPosition(__GET_CAST(Entity, this));
+	return Entity_getPosition(__SAFE_CAST(Entity, this));
 }
 
 // check if must update sprite's position
@@ -507,7 +509,7 @@ bool Actor_updateSpriteTransformations(Actor this)
 		return true;
 	}
 	
-	return Entity_updateSpriteTransformations(__GET_CAST(Entity, this));
+	return Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this));
 }
 
 // stop movement completelty
@@ -536,11 +538,11 @@ static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 		
 		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {
-			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyStopped, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
 		else
 	    {
-			MessageDispatcher_dispatchMessage(0, __GET_CAST(Object, this), __GET_CAST(Object, this), kBodyBounced, &axisOfCollision);
+			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
 		}
 	}
 }

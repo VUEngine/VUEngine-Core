@@ -83,7 +83,7 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 
 	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
-	this->texture = __GET_CAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
+	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
 	this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 	this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
@@ -201,8 +201,8 @@ void ObjectSprite_render(ObjectSprite this)
 	//if render flag is set
 	if(this->renderFlag && 0 <= this->objectIndex)
 	{
-		int cols = Texture_getCols(__GET_CAST(Texture, this->texture));
-		int rows = Texture_getRows(__GET_CAST(Texture, this->texture));
+		int cols = Texture_getCols(__SAFE_CAST(Texture, this->texture));
+		int rows = Texture_getRows(__SAFE_CAST(Texture, this->texture));
 
 		int xDirection = this->head & 0x2000? -1: 1;
 		int yDirection = this->head & 0x1000? -1: 1;
@@ -276,8 +276,8 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 	if(0 <= this->objectIndex)
 	{
 		// rewrite texture
-		ObjectTexture_setObjectIndex(__GET_CAST(ObjectTexture, this->texture), this->objectIndex);
-		ObjectTexture_write(__GET_CAST(ObjectTexture, this->texture));
+		ObjectTexture_setObjectIndex(__SAFE_CAST(ObjectTexture, this->texture), this->objectIndex);
+		ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
 
 		if(0 <= previousObjectIndex)
 		{	
@@ -334,7 +334,7 @@ void ObjectSprite_show(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::show: null this");
 	
-	Sprite_show(__GET_CAST(Sprite, this));
+	Sprite_show(__SAFE_CAST(Sprite, this));
 
 	if(this->renderFlag)
 	{
@@ -379,7 +379,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
 
-	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __GET_CAST(Sprite, this->objectSpriteContainer)): 0;
+	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)): 0;
 }
 
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this)

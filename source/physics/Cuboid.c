@@ -20,6 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Cuboid.h>
+#include <InverseCuboid.h>
 #include <Optics.h>
 #include <Polygon.h>
 #include <Math.h>
@@ -32,16 +33,17 @@
 // define the Cuboid
 __CLASS_DEFINITION(Cuboid, Shape);
 
+__CLASS_FRIEND_DEFINITION(InverseCuboid);
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Cuboid_constructor(Cuboid this, SpatialObject owner);
 static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
 static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition);
 static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement, VBVec3D previousPosition);
 static void Cuboid_configurePolygon(Cuboid this, int renew);
+static bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other);
 
 Shape SpatialObject_getShape(SpatialObject this);
 
@@ -56,7 +58,7 @@ __CLASS_NEW_END(Cuboid, owner);
 
 
 // class's constructor
-static void Cuboid_constructor(Cuboid this, SpatialObject owner)
+void Cuboid_constructor(Cuboid this, SpatialObject owner)
 {
 	ASSERT(this, "Cuboid::constructor: null this");
 
@@ -81,9 +83,13 @@ u8 Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
-	if(__GET_CAST(Cuboid, shape))
+	if(__GET_CAST(InverseCuboid, shape))
 	{
-		return Cuboid_overlapsCuboid(this, __GET_CAST(Cuboid, shape));
+		return Cuboid_overlapsInverseCuboid(this, __SAFE_CAST(InverseCuboid, shape));
+	}
+	else if(__GET_CAST(Cuboid, shape))
+	{
+		return Cuboid_overlapsCuboid(this, __SAFE_CAST(Cuboid, shape));
 	}
 
 	return false;
@@ -102,11 +108,30 @@ bool Cuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second)
 }
 
 // check if overlaps with other rect
+bool Cuboid_overlapsWithInverseRightcuboids(Rightcuboid* first, Rightcuboid* second)
+{
+	ASSERT(first, "Cuboid::overlapsWithRightcuboids: null first");
+	ASSERT(second, "Cuboid::overlapsWithRightcuboids: null second");
+
+	// test for collision
+	return (first->x0 < second->x0 || first->x1 > second->x1 ||
+			 first->y0 < second->y0 || first->y1 > second->y1 ||
+			 first->z0 < second->z0 || first->z1 > second->z1);
+}
+
+// check if overlaps with other rect
 bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other)
 {
 	ASSERT(this, "Cuboid::overlapsCuboid: null this");
 
 	return Cuboid_overlapsWithRightcuboids(&this->positionedRightcuboid, &other->positionedRightcuboid);
+}
+
+bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other)
+{
+	ASSERT(this, "Cuboid::overlapsInverseCuboid: null this");
+
+	return Cuboid_overlapsWithInverseRightcuboids(&this->positionedRightcuboid, &other->positionedRightcuboid);
 }
 
 void Cuboid_setup(Cuboid this)
@@ -192,7 +217,7 @@ u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, 
 
 	if(__GET_CAST(Cuboid, shape))
 	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, __GET_CAST(Cuboid, shape), displacement, previousPosition);
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition);
 	}
 
 	return 0;
@@ -378,7 +403,7 @@ u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBV
 
 	if(__GET_CAST(Cuboid, shape))
     {
-		return Cuboid_testIfCollisionWithCuboid(this, __GET_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement, previousPosition);
+		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement, previousPosition);
 	}
 
 	return false;

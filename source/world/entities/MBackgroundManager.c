@@ -126,7 +126,7 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 	{
 		// texture not found, must load it
 		textureRegistry = __NEW_BASIC(TextureRegistry);
-		textureRegistry->texture = __GET_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
+		textureRegistry->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
 		textureRegistry->cols = textureDefinition->cols;
 		textureRegistry->rows = textureDefinition->rows;
 		VirtualList_pushBack(this->textureRegistries, textureRegistry);
@@ -176,9 +176,9 @@ void MBackgroundManager_reset(MBackgroundManager this)
 		{
 			ASSERT(textureRegistry, "MBackgroundManager::reset: null textureRegistry");
 			ASSERT(textureRegistry->texture, "MBackgroundManager::reset: null texture");
-			ASSERT(__GET_CAST(BgmapTexture, textureRegistry->texture), "MBackgroundManager::reset: no BgmapTexture");
+			ASSERT(__SAFE_CAST(BgmapTexture, textureRegistry->texture), "MBackgroundManager::reset: no BgmapTexture");
 	
-			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __GET_CAST(BgmapTexture, textureRegistry->texture));
+			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, textureRegistry->texture));
 		}
 
 		__DELETE_BASIC(textureRegistry);
