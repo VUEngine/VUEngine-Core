@@ -197,7 +197,9 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	}
 	
 	VirtualList_removeElement(this->objectSprites, objectSprite);
-	
+
+	this->node = this->previousNode = NULL;
+
 	// if was the last node
 	if(!this->objectSpriteToDefragment || !VirtualList_begin(this->objectSprites))
 	{
