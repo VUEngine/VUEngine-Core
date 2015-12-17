@@ -35,6 +35,7 @@
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -137,6 +138,9 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	{
 		Printing_clear(Printing_getInstance());
 		MemoryPool_printDetailedUsage(this, 1, 8);
+		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 12, NULL);
+		Printing_int(Printing_getInstance(), numBytes, 44, 12, NULL);
+
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 

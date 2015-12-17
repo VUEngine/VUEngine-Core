@@ -213,7 +213,7 @@ u32 Clock_getElapsedTime(Clock this)
 {
 	ASSERT(this, "Clock::getTimeElapse: null this");
 
-	return this->milliSeconds - this->previousMilliSeconds;
+	return this->paused? 0: this->milliSeconds - this->previousMilliSeconds;
 }
 
 // retrieve current elapsed milliseconds in the current second

@@ -440,13 +440,6 @@ void ParticleSystem_suspend(ParticleSystem this)
 			__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
 		}
 	}
-
-	node = VirtualList_begin(this->expiredParticles);
-	
-	for(; node; node = VirtualNode_getNext(node))
-	{
-		__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
-	}
 }
 
 static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventFirer)

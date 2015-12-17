@@ -785,6 +785,8 @@ void Container_suspend(Container this)
 
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = VirtualList_begin(this->children);
 		
 		for(; node; node = VirtualNode_getNext(node))
