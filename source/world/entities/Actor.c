@@ -112,7 +112,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 {
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
-	Entity_setLocalPosition(__SAFE_CAST(Container, this), position);
+	Entity_setLocalPosition(__SAFE_CAST(Entity, this), position);
 
 	if(this->body)
     {
@@ -165,7 +165,7 @@ static void Actor_syncPositionWithBody(Actor this)
 		CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->transform.globalPosition);
 	}
 
-	Entity_setLocalPosition(__SAFE_CAST(Container, this), Body_getPosition(this->body));
+	Entity_setLocalPosition(__SAFE_CAST(Entity, this), Body_getPosition(this->body));
 }
 
 // updates the animation attributes

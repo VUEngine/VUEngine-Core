@@ -83,17 +83,11 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	static int ID = 0;
 	int i = 0;
 	
-	// static to avoid call to memcpy
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-
 	for(;entities && entities[i].entityDefinition; i++)
 	{
 		Entity entity = Entity_loadFromDefinition(&entities[i], ID++);
 
 		__VIRTUAL_CALL(void, Entity, initialize, entity);
-
-		// apply transformations
-		//__VIRTUAL_CALL(void, Container, initialTransform, entity, environmentTransform);
 
 		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 	}

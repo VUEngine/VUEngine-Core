@@ -387,11 +387,11 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
 
 	if(pressedKey & K_LU)
 	{
-		OptionsSelector_selectPrevious(this->spriteSelector);
+		OptionsSelector_selectPrevious(this->animatedInGameEntitySelector);
 	}
 	else if(pressedKey & K_LD)
 	{
-		OptionsSelector_selectNext(this->spriteSelector);
+		OptionsSelector_selectNext(this->animatedInGameEntitySelector);
 	}
 	else if(pressedKey & K_A)
 	{

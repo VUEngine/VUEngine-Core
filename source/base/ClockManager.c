@@ -19,6 +19,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <debugConfig.h>
 #include <ClockManager.h>
 #include <FrameRate.h>
 #include <Game.h>
