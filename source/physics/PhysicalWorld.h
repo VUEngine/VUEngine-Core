@@ -53,7 +53,7 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_1
 void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 void PhysicalWorld_start(PhysicalWorld this);
-void PhysicalWorld_update(PhysicalWorld this);
+void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime);
 void PhysicalWorld_reset(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);

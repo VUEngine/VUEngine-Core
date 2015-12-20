@@ -383,9 +383,6 @@ static void Game_setNextState(Game this, GameState state)
 	// make sure printing layer is set
 	SpriteManager_setLastLayer(this->spriteManager);
 
-	// start physical simulation again
-	PhysicalWorld_start(this->physicalWorld);
-
 	// disable rendering
 	HardwareManager_enableRendering(this->hardwareManager);
 
@@ -663,6 +660,8 @@ static void Game_updatePhysics(Game this)
 	this->lastProcessName = "update physics";
 #endif
 	
+	fix19_13 elapsedTime = ITOFIX19_13(Clock_getElapsedTime(this->physicsClock));
+
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(this))
 #endif
@@ -673,7 +672,7 @@ static void Game_updatePhysics(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// simulate physics
-	PhysicalWorld_update(this->physicalWorld);
+	PhysicalWorld_update(this->physicalWorld, elapsedTime);
 #ifdef __DEBUG
 	this->lastProcessName = "process collisions";
 #endif
@@ -688,7 +687,7 @@ static void Game_updatePhysics(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// process collisions
-	CollisionManager_update(this->collisionManager);
+	CollisionManager_update(this->collisionManager, elapsedTime);
 
 	// increase the frame rate
 	FrameRate_increasePhysicsFPS(this->frameRate);
@@ -932,7 +931,6 @@ void Game_startPhysics(Game this)
 {
 	ASSERT(this, "Game::startPhysics: null this");
 
-	PhysicalWorld_start(this->physicalWorld);
 	Clock_reset(this->physicsClock);
 	Clock_start(this->physicsClock);
 }

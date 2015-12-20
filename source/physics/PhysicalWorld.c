@@ -54,12 +54,6 @@
 																				\
 	/* friction */																\
 	fix19_13 friction;															\
-																				\
-	/* time elapsed between updates*/											\
-	fix19_13 elapsedTime;														\
-																				\
-	/* in game clock */															\
-	Clock clock;																\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -90,7 +84,6 @@ static void PhysicalWorld_constructor(PhysicalWorld this)
 	this->bodies = __NEW(VirtualList);
 	this->activeBodies = __NEW(VirtualList);
 	this->removedBodies = __NEW(VirtualList);
-	this->clock = NULL;
 
 	this->gravity.x = 0;
 	this->gravity.y = 0;
@@ -248,18 +241,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 }
 
 // calculate collisions
-void PhysicalWorld_start(PhysicalWorld this)
-{
-	ASSERT(this, "PhysicalWorld::start: null this");
-
-	if(!this->clock)
-	{
-		this->clock = Game_getPhysicsClock(Game_getInstance());
-	}
-}
-
-// calculate collisions
-void PhysicalWorld_update(PhysicalWorld this)
+void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
@@ -268,17 +250,10 @@ void PhysicalWorld_update(PhysicalWorld this)
 
 	static int checkForGravity = __CHECK_GRAVITY_CYCLE;
 
-#ifdef __DEBUG
-	if(!this->clock)
-	{
-		return;
-	}
-#endif
-
 	// get the elapsed time
-	this->elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	elapsedTime = FIX19_13_DIV(elapsedTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
-	if(0 == this->elapsedTime)
+	if(0 == elapsedTime)
 	{
 		return;
 	}
@@ -294,7 +269,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 	// check the bodies
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		Body_update(__SAFE_CAST(Body, VirtualNode_getData(node)), &this->gravity, this->elapsedTime);
+		Body_update(__SAFE_CAST(Body, VirtualNode_getData(node)), &this->gravity, elapsedTime);
 	}
 }
 
@@ -400,7 +375,7 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 
-	return this->elapsedTime;
+	return FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(Game_getPhysicsClock(Game_getInstance()))), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 }
 
 // print status
