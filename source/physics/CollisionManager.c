@@ -199,11 +199,14 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 }
 
 // calculate collisions
-int CollisionManager_update(CollisionManager this)
+void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
-	int thereWereCollisions = false;
+	if(!elapsedTime)
+	{
+		return;
+	}
 
 	VirtualNode node = VirtualList_begin(this->movingShapes);
 
@@ -264,8 +267,6 @@ int CollisionManager_update(CollisionManager this)
 
 		if(collidingObjects)
 		{
-			thereWereCollisions = true;
-
 			// inform the owner about the collision
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
 
@@ -277,8 +278,6 @@ int CollisionManager_update(CollisionManager this)
 
 	// process removed shapes
 	CollisionManager_processRemovedShapes(this);
-
-	return thereWereCollisions;
 }
 
 // unregister all shapes
