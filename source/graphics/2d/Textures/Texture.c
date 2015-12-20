@@ -57,7 +57,7 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	// save the bgmap definition's address
 	this->textureDefinition = textureDefinition;
 	// if the char definition is NULL, it must be a text	
-	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
 	ASSERT(this->charSet, "Texture::destructor: null charSet");
 	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 	
@@ -108,7 +108,7 @@ void Texture_write(Texture this)
 	if(!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
-		this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), (CharSetDefinition*)&this->textureDefinition->charSetDefinition);
+		this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
 
 		if(this->charSet)
 		{
