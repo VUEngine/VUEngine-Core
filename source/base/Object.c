@@ -105,7 +105,8 @@ void Object_addEventListener(Object this, Object listener, void (*method)(Object
 	Event* event = __NEW_BASIC(Event);
 	event->listener = listener;
 	event->method = method;
-	// don't relay on the user, make it safe
+
+	// don't rely on the user, make it safe
 	strncpy(event->name, eventName, __MAX_EVENT_NAME_LENGTH);
 
 	VirtualList_pushBack(this->events, event);

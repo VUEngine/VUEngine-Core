@@ -196,7 +196,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		position2D.y &= 0xFFFFE000;
 
 		VirtualNode spriteNode = VirtualList_begin(this->managedSprites);
-		int ii = 0;
 		
 		fix19_13 xDisplacement = position2D.x - this->previous2DPosition.x;
 		fix19_13 yDisplacement = position2D.y - this->previous2DPosition.y;
