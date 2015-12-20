@@ -77,7 +77,7 @@ __CLASS(Texture);
 typedef struct TextureDefinition
 {
 	// pointer to the char definition
-	CharSetDefinition charSetDefinition;
+	CharSetDefinition* charSetDefinition;
 
 	// pointer to the bgtexture definition in ROM
 	BYTE* bgmapDefinition;

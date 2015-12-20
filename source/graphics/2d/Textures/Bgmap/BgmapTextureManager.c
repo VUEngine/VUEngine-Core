@@ -328,7 +328,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 			CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]));
 
 			if(Texture_getBgmapDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
-				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition.allocationType)
+				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition->allocationType)
 			)
 			{
 				if(!charSet)
@@ -381,7 +381,7 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 	BgmapTexture bgmapTexture = NULL;
 
 	//determine the allocation type
-	switch(bgmapTextureDefinition->charSetDefinition.allocationType)
+	switch(bgmapTextureDefinition->charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 

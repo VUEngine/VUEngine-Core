@@ -526,7 +526,7 @@ static void Stage_preloadAssets(Stage this)
 	{
 		for (i = 0; this->stageDefinition->textures[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->textures[i]->charSetDefinition.allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->textures[i]->charSetDefinition->allocationType)
 			{
 				BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
 			}
