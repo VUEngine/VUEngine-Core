@@ -254,7 +254,7 @@ void PhysicalWorld_start(PhysicalWorld this)
 
 	if(!this->clock)
 	{
-		this->clock = Game_getInGameClock(Game_getInstance());
+		this->clock = Game_getPhysicsClock(Game_getInstance());
 	}
 }
 

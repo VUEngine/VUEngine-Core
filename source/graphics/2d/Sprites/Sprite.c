@@ -234,7 +234,7 @@ void Sprite_rotate(Sprite this, const Rotation* rotation)
 // 										Animation
 //---------------------------------------------------------------------------------------------------------
 
-void Sprite_update(Sprite this, Clock clock)
+void Sprite_update(Sprite this)
 {
 	ASSERT(this, "Sprite::update: null this");
 

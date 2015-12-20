@@ -89,6 +89,12 @@ enum StateOperations
 	/* timer to use in game */													\
 	Clock inGameClock;															\
 																				\
+	/* timer to use for animations */											\
+	Clock animationsClock;														\
+																				\
+	/* timer to use for physics */												\
+	Clock physicsClock;															\
+																				\
 	/* managers */																\
 	HardwareManager hardwareManager;											\
 	FrameRate frameRate;														\
@@ -179,8 +185,10 @@ static void Game_constructor(Game this)
 	// construct the general clock
 	this->clock = __NEW(Clock);
 
-	// construct the in game clock
+	// construct the clocks
 	this->inGameClock = __NEW(Clock);
+	this->animationsClock = __NEW(Clock);
+	this->physicsClock = __NEW(Clock);
 
 	// construct the game's state machine
 	this->stateMachine = __NEW(StateMachine, this);
@@ -225,6 +233,8 @@ void Game_destructor(Game this)
 	// destroy the clocks
 	Clock_destructor(this->clock);
 	Clock_destructor(this->inGameClock);
+	Clock_destructor(this->animationsClock);
+	Clock_destructor(this->physicsClock);
 
 	__DELETE(this->stateMachine);
 
@@ -842,19 +852,110 @@ bool Game_handleMessage(Game this, Telegram telegram)
 }
 
 // retrieve clock
-Clock Game_getClock(Game this)
+const Clock Game_getClock(Game this)
 {
 	ASSERT(this, "Game::getClock: null this");
 
 	return this->clock;
 }
 
-// retrieve in game clock
-Clock Game_getInGameClock(Game this)
+// retrieve clock
+const Clock Game_getInGameClock(Game this)
 {
 	ASSERT(this, "Game::getInGameClock: null this");
 
 	return this->inGameClock;
+}
+
+// retrieve in game clock
+const Clock Game_getAnimationsClock(Game this)
+{
+	ASSERT(this, "Game::getAnimationsClock: null this");
+
+	return this->animationsClock;
+}
+
+const Clock Game_getPhysicsClock(Game this)
+{
+	ASSERT(this, "Game::getPhysicsClock: null this");
+
+	return this->physicsClock;
+}
+
+void Game_startClocks(Game this)
+{
+	ASSERT(this, "Game::pauseClocks: null this");
+	
+	Clock_reset(this->inGameClock);
+	Clock_reset(this->animationsClock);
+	Clock_reset(this->physicsClock);
+	Clock_start(this->inGameClock);
+	Clock_start(this->animationsClock);
+	Clock_start(this->physicsClock);
+}
+
+void Game_pauseClocks(Game this)
+{
+	ASSERT(this, "Game::pauseClocks: null this");
+
+	Clock_pause(this->inGameClock, true);
+	Clock_pause(this->animationsClock, true);
+	Clock_pause(this->physicsClock, true);
+}
+
+void Game_resumeClocks(Game this)
+{
+	ASSERT(this, "Game::resumeClocks: null this");
+
+	Clock_pause(this->inGameClock, false);
+	Clock_pause(this->animationsClock, false);
+	Clock_pause(this->physicsClock, false);
+}
+
+void Game_startInGameClock(Game this)
+{
+	ASSERT(this, "Game::startInGameClock: null this");
+
+	Clock_reset(this->inGameClock);
+	Clock_start(this->inGameClock);
+}
+
+void Game_startAnimations(Game this)
+{
+	ASSERT(this, "Game::startAnimations: null this");
+
+	Clock_reset(this->animationsClock);
+	Clock_start(this->animationsClock);
+}
+
+void Game_startPhysics(Game this)
+{
+	ASSERT(this, "Game::startPhysics: null this");
+
+	PhysicalWorld_start(this->physicalWorld);
+	Clock_reset(this->physicsClock);
+	Clock_start(this->physicsClock);
+}
+
+void Game_pauseInGameClock(Game this, bool pause)
+{
+	ASSERT(this, "Game::pauseInGameClock: null this");
+
+	Clock_pause(this->inGameClock, pause);
+}
+
+void Game_pauseAnimations(Game this, bool pause)
+{
+	ASSERT(this, "Game::pauseAnimations: null this");
+
+	Clock_pause(this->animationsClock, pause);
+}
+
+void Game_pausePhysics(Game this, bool pause)
+{
+	ASSERT(this, "Game::pausePhysics: null this");
+	
+	Clock_pause(this->physicsClock, pause);
 }
 
 // retrieve last process' name

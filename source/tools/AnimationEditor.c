@@ -199,7 +199,7 @@ void AnimationEditor_update(AnimationEditor this)
 
 	if(this->gameState && this->animatedSprite)
 	{
-		Sprite_update(this->animatedSprite, Game_getClock(Game_getInstance()));
+		Sprite_update(this->animatedSprite);
 	}
 }
 

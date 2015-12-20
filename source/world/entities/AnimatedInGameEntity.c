@@ -191,13 +191,16 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 // update animations
 static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 {
-	VirtualNode node = VirtualList_begin(this->sprites);
-
-	// move each child to a temporary list
-	for(; node ; node = VirtualNode_getNext(node))
+	if(!Clock_isPaused(this->clock))
 	{
-		// first animate the frame
-		Sprite_update(__SAFE_CAST(Sprite, VirtualNode_getData(node)), this->clock);
+		VirtualNode node = VirtualList_begin(this->sprites);
+	
+		// move each child to a temporary list
+		for(; node ; node = VirtualNode_getNext(node))
+		{
+			// first animate the frame
+			Sprite_update(__SAFE_CAST(Sprite, VirtualNode_getData(node)));
+		}
 	}
 }
 

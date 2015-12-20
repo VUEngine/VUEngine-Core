@@ -187,7 +187,7 @@ void Sprite_hide(Sprite this);
 // 										Animation
 //---------------------------------------------------------------------------------------------------------
 
-void Sprite_update(Sprite this, Clock clock);
+void Sprite_update(Sprite this);
 void Sprite_pause(Sprite this, bool pause);
 void Sprite_play(Sprite thisa, AnimationDescription* animationDescription, char* functionName);
 bool Sprite_isPlaying(Sprite this);

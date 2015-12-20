@@ -122,7 +122,11 @@ void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle 
 	if(0 <= this->lifeSpan)
 	{
 		this->lifeSpan -= timeElapsed;
-		Sprite_update(__SAFE_CAST(Sprite, this->objectSprite), _gameClock);
+		
+		if(!Clock_isPaused(_gameClock))
+		{
+			Sprite_update(__SAFE_CAST(Sprite, this->objectSprite));
+		}
 		
 		if(behavior)
 		{

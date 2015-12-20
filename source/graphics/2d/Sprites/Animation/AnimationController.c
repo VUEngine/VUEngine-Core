@@ -243,6 +243,7 @@ bool AnimationController_animate(AnimationController this)
 }
 
 // render frame
+/*
 bool AnimationController_update(AnimationController this, Clock clock)
 {
 	ASSERT(this, "AnimationController::update: null this");
@@ -255,6 +256,7 @@ bool AnimationController_update(AnimationController this, Clock clock)
 	
 	return false;
 }
+*/
 
 // play animation
 void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction)
