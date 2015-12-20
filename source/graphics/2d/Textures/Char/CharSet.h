@@ -124,6 +124,7 @@ bool CharSet_decreaseUsageCount(CharSet this);
 int CharSet_getAllocationType(CharSet this);
 u16 CharSet_getOffset(CharSet this);
 void CharSet_setOffset(CharSet this, u16 offset);
+void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition);
 CharSetDefinition* CharSet_getCharSetDefinition(CharSet this);
 u16 CharSet_getNumberOfChars(CharSet this);
 u8 CharSet_getSegment(CharSet this);

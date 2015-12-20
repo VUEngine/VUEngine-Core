@@ -131,6 +131,13 @@ CharSetDefinition* CharSet_getCharSetDefinition(CharSet this)
 	return this->charSetDefinition;
 }
 
+// set charset's char definition
+void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition)
+{
+	ASSERT(this, "CharSet::setCharDefinition: null this");
+
+	this->charSetDefinition = charSetDefinition;
+}
 
 // retrieve chargrop's number of chars
 u16 CharSet_getNumberOfChars(CharSet this)
