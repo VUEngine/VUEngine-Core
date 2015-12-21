@@ -157,6 +157,7 @@ void OptionsSelector_destructor(OptionsSelector this)
 	OptionsSelector_flushPages(this);
 
 	// allow a new construct
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

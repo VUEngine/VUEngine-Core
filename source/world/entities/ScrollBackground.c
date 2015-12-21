@@ -82,6 +82,7 @@ void ScrollBackground_destructor(ScrollBackground this)
 	ASSERT(this, "ScrollBackground::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

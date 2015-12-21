@@ -79,6 +79,7 @@ void CharSet_destructor(CharSet this)
 	this->usageCount = 0xFF;
 
 	// free processor memory
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

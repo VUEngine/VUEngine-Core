@@ -78,6 +78,7 @@ void Clock_destructor(Clock this)
 	ClockManager_unregister(ClockManager_getInstance(), this);
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

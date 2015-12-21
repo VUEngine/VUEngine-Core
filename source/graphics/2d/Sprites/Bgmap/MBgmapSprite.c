@@ -94,6 +94,7 @@ void MBgmapSprite_destructor(MBgmapSprite this)
 	this->texture = NULL;
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

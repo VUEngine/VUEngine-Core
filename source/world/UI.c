@@ -71,6 +71,7 @@ void UI_destructor(UI this)
 	ASSERT(this, "UI::destructor: null this");
 
 	// destroy base
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

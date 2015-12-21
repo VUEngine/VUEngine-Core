@@ -61,6 +61,7 @@ void SpatialObject_destructor(SpatialObject this)
 	ASSERT(this, "SpatialObject::destructor: null this");
 
 	// destroy the super SpatialObject
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

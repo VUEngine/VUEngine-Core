@@ -92,6 +92,7 @@ void Entity_destructor(Entity this)
 	Entity_releaseSprites(this);
 
 	// destroy the super Container
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

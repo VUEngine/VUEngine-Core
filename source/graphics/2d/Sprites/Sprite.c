@@ -74,6 +74,7 @@ void Sprite_destructor(Sprite this)
 	__VIRTUAL_CALL(void, Sprite, hide, this);
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

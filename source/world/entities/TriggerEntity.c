@@ -67,6 +67,7 @@ void TriggerEntity_destructor(TriggerEntity this)
 	ASSERT(this, "TriggerEntity::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

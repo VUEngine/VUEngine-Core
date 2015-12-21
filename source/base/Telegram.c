@@ -85,6 +85,7 @@ void Telegram_destructor(Telegram this)
 	this->receiver = NULL;
 
 	// free the memory
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

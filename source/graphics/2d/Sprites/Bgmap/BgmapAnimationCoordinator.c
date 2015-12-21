@@ -57,6 +57,7 @@ void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
 	ASSERT(this, "BgmapAnimationCoordinator::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

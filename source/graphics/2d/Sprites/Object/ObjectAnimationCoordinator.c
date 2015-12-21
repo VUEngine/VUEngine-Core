@@ -58,6 +58,7 @@ void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
 	ASSERT(this, "ObjectAnimationCoordinator::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

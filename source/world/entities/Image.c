@@ -54,5 +54,6 @@ void Image_destructor(Image this)
 	ASSERT(this, "Image::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }

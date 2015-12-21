@@ -64,6 +64,7 @@ void InverseCuboid_destructor(InverseCuboid this)
 	ASSERT(this, "InverseCuboid::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

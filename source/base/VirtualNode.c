@@ -60,6 +60,7 @@ static void VirtualNode_destructor(VirtualNode this)
 	ASSERT(this, "VirtualNode::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 
