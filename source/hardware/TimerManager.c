@@ -21,6 +21,7 @@
 
 #include <TimerManager.h>
 #include <HardwareManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

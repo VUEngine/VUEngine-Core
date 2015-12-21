@@ -23,6 +23,7 @@
 #include <Game.h>
 #include <ClockManager.h>
 #include <SpriteManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

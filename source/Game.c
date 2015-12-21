@@ -46,6 +46,8 @@
 #include <VPUManager.h>
 #include <Printing.h>
 #include <I18n.h>
+#include <debugConfig.h>
+
 #ifdef __DEBUG_TOOLS
 #include <DebugState.h>
 #endif

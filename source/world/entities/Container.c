@@ -132,6 +132,8 @@ void Container_destructor(Container this)
 	// first remove from parent
 	if(this->parent)
 	{
+		// don't allow my parnt to try to delete me again
+		this->deleteMe = false;
 		Container_removeChild(this->parent, this);
 	}
 	
@@ -233,6 +235,7 @@ void Container_processRemovedChildren(Container this)
 			
 			if(child->deleteMe)
 			{
+				child->parent = NULL;
 				__DELETE(child);
 			}
 		}

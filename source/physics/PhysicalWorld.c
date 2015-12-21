@@ -22,6 +22,7 @@
 #include <PhysicalWorld.h>
 #include <Game.h>
 #include <Clock.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
