@@ -54,6 +54,10 @@ void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 																				\
 	/* delayed messages */														\
 	VirtualList delayedMessages;												\
+																				\
+	/* delayed messages */														\
+	VirtualList delayedMessagesToDiscard;										\
+
 
 __CLASS_DEFINITION(MessageDispatcher, Object);
 
@@ -82,6 +86,7 @@ static void MessageDispatcher_constructor(MessageDispatcher this)
 	__CONSTRUCT_BASE();
 
 	this->delayedMessages = __NEW(VirtualList);
+	this->delayedMessagesToDiscard = __NEW(VirtualList);
 }
 
 // class's destructor
@@ -90,6 +95,7 @@ void MessageDispatcher_destructor(MessageDispatcher this)
 	ASSERT(this, "MessageDispatcher::destructor: null this");
 
 	__DELETE(this->delayedMessages);
+	__DELETE(this->delayedMessagesToDiscard);
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -146,11 +152,41 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 }
 
 // dispatch delayed messages
+void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
+{
+	ASSERT(this, "MessageDispatcher::processDiscardedMessages: null this");
+	ASSERT(this->delayedMessagesToDiscard, "MessageDispatcher::processDiscardedMessages: null delayedMessagesToDiscard");
+
+	if(VirtualList_begin(this->delayedMessagesToDiscard))
+	{
+		VirtualNode node = VirtualList_begin(this->delayedMessagesToDiscard);
+		
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
+			Telegram telegram = delayedMessage->telegram;
+
+			VirtualList_removeElement(this->delayedMessages, delayedMessage);
+
+			ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
+			ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
+
+			__DELETE(telegram);
+			__DELETE_BASIC(delayedMessage);
+		}
+
+		VirtualList_clear(this->delayedMessagesToDiscard);
+	}
+}
+
+// dispatch delayed messages
 void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
-	ASSERT(this->delayedMessages, "MessageDispatcher::reset: null delayedMessages");
+	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
+	MessageDispatcher_processDiscardedMessages(this);
+	
 	if(VirtualList_begin(this->delayedMessages))
 	{
 		VirtualList telegramsToDispatch = __NEW(VirtualList);
@@ -176,8 +212,18 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 			Telegram telegram = delayedMessage->telegram;
 
+			VirtualNode auxNode = VirtualList_begin(this->delayedMessagesToDiscard);
+			
+			for(; auxNode; auxNode = VirtualNode_getNext(auxNode))
+			{
+				if(delayedMessage == VirtualNode_getData(auxNode))
+				{
+					break;
+				}
+			}
+
 			// check if sender and receiver are still alive
-			if(*(u32*)Telegram_getSender(telegram) && *(u32*)Telegram_getReceiver(telegram))
+			if(!auxNode && *(u32*)Telegram_getSender(telegram) && *(u32*)Telegram_getReceiver(telegram))
 			{
 				__VIRTUAL_CALL(bool, Object, handleMessage, Telegram_getReceiver(telegram), telegram);
 			}
@@ -191,6 +237,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			Telegram telegram = delayedMessage->telegram;
 
 			VirtualList_removeElement(this->delayedMessages, delayedMessage);
+			VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
 
 			__DELETE(telegram);
 			__DELETE_BASIC(delayedMessage);
@@ -217,6 +264,7 @@ void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this)
 	}
 
 	VirtualList_clear(this->delayedMessages);
+	VirtualList_clear(this->delayedMessagesToDiscard);
 }
 
 // discard delayed messages of an specific type
@@ -226,8 +274,6 @@ void MessageDispatcher_discardDelayedMessages(MessageDispatcher this, int messag
 
 	VirtualNode node = VirtualList_begin(this->delayedMessages);
 
-	VirtualList delayedMessagesToDiscard = __NEW(VirtualList);
-	
 	for(; node; node = VirtualNode_getNext(node))
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
@@ -235,22 +281,7 @@ void MessageDispatcher_discardDelayedMessages(MessageDispatcher this, int messag
 
 		if(Telegram_getMessage(telegram) == message)
 		{
-			VirtualList_pushBack(delayedMessagesToDiscard, delayedMessage);
+			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}
 	}
-
-	node = VirtualList_begin(delayedMessagesToDiscard);
-	
-	for(; node; node = VirtualNode_getNext(node))
-	{
-		DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
-		Telegram telegram = delayedMessage->telegram;
-
-		VirtualList_removeElement(this->delayedMessages, delayedMessage);
-
-		__DELETE(telegram);
-		__DELETE_BASIC(delayedMessage);
-	}
-
-	__DELETE(delayedMessagesToDiscard);
 }

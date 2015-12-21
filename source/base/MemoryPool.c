@@ -121,7 +121,14 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	// seach for the shortest pool which can hold the data
 	for(; numBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
 
-	ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
+	if(0 > pool)
+	{
+		Printing_clear(Printing_getInstance());
+		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 12, NULL);
+		Printing_int(Printing_getInstance(), numBytes, 44, 12, NULL);
+
+		NM_ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
+	}
 
 	// get the number of allocable objects in the pool
 	numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
