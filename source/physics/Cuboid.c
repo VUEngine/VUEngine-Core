@@ -75,6 +75,7 @@ void Cuboid_destructor(Cuboid this)
 	Cuboid_deleteDirectDrawData(this);
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

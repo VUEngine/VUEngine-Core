@@ -72,6 +72,7 @@ void InGameEntity_destructor(InGameEntity this)
 	ASSERT(this, "InGameEntity::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

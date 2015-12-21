@@ -83,6 +83,7 @@ void CollisionSolver_destructor(CollisionSolver this)
 	__DELETE(this->lastCollidingSpatialObject[kZAxis]);
 	
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

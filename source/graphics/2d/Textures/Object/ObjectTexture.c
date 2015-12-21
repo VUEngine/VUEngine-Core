@@ -66,6 +66,7 @@ void ObjectTexture_destructor(ObjectTexture this)
 	this->objectIndex = -1;
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

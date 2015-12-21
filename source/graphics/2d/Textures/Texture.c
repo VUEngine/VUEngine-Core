@@ -73,6 +73,7 @@ void Texture_destructor(Texture this)
 	Texture_releaseCharSet(this);
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

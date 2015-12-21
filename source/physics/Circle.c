@@ -63,5 +63,6 @@ void Circle_destructor(Circle this)
 	ASSERT(this, "Circle::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }

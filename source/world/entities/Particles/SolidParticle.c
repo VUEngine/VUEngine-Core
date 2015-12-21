@@ -82,6 +82,7 @@ void SolidParticle_destructor(SolidParticle this)
 	}
 	
 	// destroy the super Container
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

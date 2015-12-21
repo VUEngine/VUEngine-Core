@@ -86,6 +86,7 @@ void ManagedEntity_destructor(ManagedEntity this)
 	}
 
 	// destroy the super Entity
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

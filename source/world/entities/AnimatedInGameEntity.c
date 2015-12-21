@@ -93,6 +93,7 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 	AnimatedInGameEntity_removeListeners(this);
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

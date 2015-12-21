@@ -67,6 +67,7 @@ void Shape_destructor(Shape this)
 	ASSERT(this, "Shape::destructor: null this");
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

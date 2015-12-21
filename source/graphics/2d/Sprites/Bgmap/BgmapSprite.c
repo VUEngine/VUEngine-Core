@@ -170,6 +170,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

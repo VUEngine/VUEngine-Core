@@ -67,6 +67,7 @@ void BgmapTexture_destructor(BgmapTexture this)
 	this->usageCount = 0xFF;
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

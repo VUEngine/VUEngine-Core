@@ -144,6 +144,7 @@ void Container_destructor(Container this)
 	}
 
 	// destroy the super Container
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

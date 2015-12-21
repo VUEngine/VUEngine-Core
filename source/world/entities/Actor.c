@@ -104,6 +104,7 @@ void Actor_destructor(Actor this)
 	__DELETE(this->stateMachine);
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

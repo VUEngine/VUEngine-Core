@@ -63,6 +63,7 @@ void AnimationCoordinator_destructor(AnimationCoordinator this)
 	}
 
 	// destroy the super object
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 

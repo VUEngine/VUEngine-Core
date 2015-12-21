@@ -140,6 +140,7 @@ void ParticleSystem_destructor(ParticleSystem this)
 	}
 
 	// destroy the super Container
+	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 
