@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HARWDARE_MANAGER_H_
-#define HARWDARE_MANAGER_H_
+#ifndef HARDWARE_MANAGER_H_
+#define HARDWARE_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,16 +58,15 @@ static u8* const HW_REGS =			(u8*)0x02000000;
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
+// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
+
 // declare the virtual methods
-#define HardwareManager_METHODS													\
-		Object_METHODS															\
+#define HardwareManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define HardwareManager_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)											\
+#define HardwareManager_SET_VTABLE(ClassName)															\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(HardwareManager);
 
@@ -101,5 +100,6 @@ void HardwareManager_print(HardwareManager this, int x, int y);
 void HardwareManager_checkStackStatus(HardwareManager this);
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
 #endif
+
 
 #endif

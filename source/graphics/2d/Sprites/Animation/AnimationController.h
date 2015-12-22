@@ -42,47 +42,41 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimationController_METHODS												\
+#define AnimationController_METHODS																		\
 
 // declare the virtual methods which are redefined
-#define AnimationController_SET_VTABLE(CsName)									\
+#define AnimationController_SET_VTABLE(CsName)															\
 
-#define AnimationController_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* who owns the animated sprite */											\
-	Object owner;																\
-																				\
-	/* who owns the animated sprite */											\
-	AnimationCoordinator animationCoordinator;									\
-																				\
-	/* actual animation's frame to show */										\
-	s8 actualFrame;																\
-																				\
-	/* previous animation's frame shown */										\
-	s8 previousFrame;															\
-																				\
-	/* actual frame cicle in a given direction (i.e. when walking) */			\
-	s8 frameDelay;																\
-																				\
-	/* frame delay increment update cycle */									\
-	s8 frameDelayDelta;															\
-																				\
-	/* a pointer to the animation function being played */						\
-	const AnimationFunction* animationFunction;									\
-																				\
-	/* flag to know if playing an animation */									\
-	int playing: 1;																\
+#define AnimationController_ATTRIBUTES																	\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* who owns the animated sprite */																	\
+	Object owner;																						\
+																										\
+	/* who owns the animated sprite */																	\
+	AnimationCoordinator animationCoordinator;															\
+																										\
+	/* actual animation's frame to show */																\
+	s8 actualFrame;																						\
+																										\
+	/* previous animation's frame shown */																\
+	s8 previousFrame;																					\
+																										\
+	/* actual frame cicle in a given direction (i.e. when walking) */									\
+	s8 frameDelay;																						\
+																										\
+	/* frame delay increment update cycle */															\
+	s8 frameDelayDelta;																					\
+																										\
+	/* a pointer to the animation function being played */												\
+	const AnimationFunction* animationFunction;															\
+																										\
+	/* flag to know if playing an animation */															\
+	int playing: 1;																						\
 
-// declare a Sprite, which holds a texture and a drawing specification
 __CLASS(AnimationController);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -30,12 +30,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MemoryPool_METHODS														\
-		Object_METHODS															\
+#define MemoryPool_METHODS																				\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define MemoryPool_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define MemoryPool_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(MemoryPool);
 
@@ -45,6 +45,7 @@ __CLASS(MemoryPool);
 //---------------------------------------------------------------------------------------------------------
 
 MemoryPool MemoryPool_getInstance();
+
 void MemoryPool_destructor(MemoryPool this);
 void MemoryPool_cleanUp(MemoryPool this);
 BYTE* MemoryPool_allocate(MemoryPool this, int numBytes);

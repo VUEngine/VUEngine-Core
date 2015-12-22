@@ -47,17 +47,16 @@ void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 //---------------------------------------------------------------------------------------------------------
 
 // text box based on bgmaps
-#define MessageDispatcher_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* delayed messages */														\
-	VirtualList delayedMessages;												\
-																				\
-	/* delayed messages */														\
-	VirtualList delayedMessagesToDiscard;										\
-
+#define MessageDispatcher_ATTRIBUTES																	\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* delayed messages */																				\
+	VirtualList delayedMessages;																		\
+																										\
+	/* delayed messages */																				\
+	VirtualList delayedMessagesToDiscard;																\
 
 __CLASS_DEFINITION(MessageDispatcher, Object);
 
@@ -68,7 +67,6 @@ typedef struct DelayedMessage
 
 	// time of arrival
 	u32 timeOfArrival;
-
 
 } DelayedMessage;
 

@@ -34,16 +34,16 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define ClockManager_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* register clocks */														\
-	VirtualList clocks;															\
-																				\
-	/* */																		\
-	u32 ticks;
+#define ClockManager_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* register clocks */																				\
+	VirtualList clocks;																					\
+																										\
+	/* */																								\
+	u32 ticks;																							\
 
 // define the manager
 __CLASS_DEFINITION(ClockManager, Object);
@@ -77,7 +77,6 @@ static void ClockManager_constructor(ClockManager this)
 	this->ticks = 0;
 }
 
-
 // class's destructor
 void ClockManager_destructor(ClockManager this)
 {
@@ -97,7 +96,6 @@ void ClockManager_destructor(ClockManager this)
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
-
 
 // register a clock
 void ClockManager_register(ClockManager this, Clock clock)

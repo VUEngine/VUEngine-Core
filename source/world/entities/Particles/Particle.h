@@ -39,46 +39,46 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Particle_METHODS														\
-		SpatialObject_METHODS													\
-		__VIRTUAL_DEC(update);													\
-		__VIRTUAL_DEC(transform);												\
-		__VIRTUAL_DEC(resume);													\
-		__VIRTUAL_DEC(suspend);													\
+#define Particle_METHODS																				\
+		SpatialObject_METHODS																			\
+		__VIRTUAL_DEC(update);																			\
+		__VIRTUAL_DEC(transform);																		\
+		__VIRTUAL_DEC(resume);																			\
+		__VIRTUAL_DEC(suspend);																			\
 
 
 // define the virtual methods
-#define Particle_SET_VTABLE(ClassName)											\
-		SpatialObject_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, Particle, update);								\
-		__VIRTUAL_SET(ClassName, Particle, transform);							\
-		__VIRTUAL_SET(ClassName, Particle, moves);								\
-		__VIRTUAL_SET(ClassName, Particle, canMoveOverAxis);					\
-		__VIRTUAL_SET(ClassName, Particle, resume);								\
-		__VIRTUAL_SET(ClassName, Particle, suspend);							\
-		__VIRTUAL_SET(ClassName, Particle, setPosition);						\
-		__VIRTUAL_SET(ClassName, Particle, getPosition);						\
+#define Particle_SET_VTABLE(ClassName)																	\
+		SpatialObject_SET_VTABLE(ClassName)																\
+		__VIRTUAL_SET(ClassName, Particle, update);														\
+		__VIRTUAL_SET(ClassName, Particle, transform);													\
+		__VIRTUAL_SET(ClassName, Particle, moves);														\
+		__VIRTUAL_SET(ClassName, Particle, canMoveOverAxis);											\
+		__VIRTUAL_SET(ClassName, Particle, resume);														\
+		__VIRTUAL_SET(ClassName, Particle, suspend);													\
+		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
+		__VIRTUAL_SET(ClassName, Particle, getPosition);												\
 
 
-#define Particle_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	SpatialObject_ATTRIBUTES;													\
-																				\
-	/* definition */															\
-	const ParticleDefinition* particleDefinition;								\
-																				\
-	/* definition */															\
-	const SpriteDefinition* spriteDefinition;									\
-																				\
-	/* OBJ based sprite */														\
-	ObjectSprite objectSprite;													\
-																				\
-	/* physical body */															\
-	Body body;																	\
-																				\
-	/* miliseconds */															\
-	int lifeSpan;																\
+#define Particle_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	SpatialObject_ATTRIBUTES;																			\
+																										\
+	/* definition */																					\
+	const ParticleDefinition* particleDefinition;														\
+																										\
+	/* definition */																					\
+	const SpriteDefinition* spriteDefinition;															\
+																										\
+	/* OBJ based sprite */																				\
+	ObjectSprite objectSprite;																			\
+																										\
+	/* physical body */																					\
+	Body body;																							\
+																										\
+	/* life span in milliseconds */																		\
+	int lifeSpan;																						\
 
 __CLASS(Particle);
 
@@ -93,13 +93,13 @@ typedef struct ParticleDefinition
 	// the class type
 	void* allocator;
 
-	// particle's minimum life span in miliseconds
+	// particle's minimum life span in milliseconds
 	u16 minimumLifeSpan;
 
-	// particle's life span delta in miliseconds
+	// particle's life span delta in milliseconds
 	u16 lifeSpanDelta;
 
-	// particle's minimum life mass
+	// particle's minimum mass
 	fix19_13 minimumMass;
 
 	// particle's mass delta
@@ -111,9 +111,7 @@ typedef struct ParticleDefinition
 	// function pointer to control particle's behavior
 	void (* behavior)(Particle particle);
 
-	// animation's name to play if
-	// sprite is animated
-	// the animation
+	// animation's name to play if sprite is animated
 	AnimationDescription* animationDescription;
 
 	// animation to play automatically
@@ -148,5 +146,6 @@ void Particle_setPosition(Particle this, const VBVec3D* position);
 const VBVec3D* Particle_getPosition(Particle this);
 void Particle_resume(Particle this);
 void Particle_suspend(Particle this);
+
 
 #endif

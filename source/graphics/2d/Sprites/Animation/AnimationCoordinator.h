@@ -32,24 +32,24 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationCoordinator_METHODS														\
-	Object_METHODS;																\
-	__VIRTUAL_DEC(addAnimationController);										\
-	__VIRTUAL_DEC(removeAnimationController);									\
+#define AnimationCoordinator_METHODS																	\
+	Object_METHODS;																						\
+	__VIRTUAL_DEC(addAnimationController);																\
+	__VIRTUAL_DEC(removeAnimationController);															\
 
-#define AnimationCoordinator_SET_VTABLE(ClassName)								\
-	Object_SET_VTABLE(ClassName);												\
+#define AnimationCoordinator_SET_VTABLE(ClassName)														\
+	Object_SET_VTABLE(ClassName);																		\
 
-#define AnimationCoordinator_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* controllers to sync */													\
-	VirtualList animationControllers;											\
-																				\
-	/* char set shared among entities */										\
-	CharSet charSet;															\
+#define AnimationCoordinator_ATTRIBUTES																	\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* controllers to sync */																			\
+	VirtualList animationControllers;																	\
+																										\
+	/* char set shared among entities */																\
+	CharSet charSet;																					\
 
 __CLASS(AnimationCoordinator);
 

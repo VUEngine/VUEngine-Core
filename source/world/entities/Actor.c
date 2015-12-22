@@ -53,6 +53,7 @@ static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingS
 static void Actor_updateSourroundingFriction(Actor this);
 static void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -470,7 +471,6 @@ u8 Actor_getMovementState(Actor this)
 	return Body_isMoving(this->body);
 }
 
-
 // set position
 void Actor_setPosition(Actor this, const VBVec3D* position)
 {
@@ -497,7 +497,15 @@ bool Actor_updateSpritePosition(Actor this)
 {
 	ASSERT(this, "Actor::updateSpritePosition: null this");
 
-	return (this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z || Actor_isMoving(this) || _screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z);
+	return (
+	    this->invalidateGlobalPosition.x ||
+	    this->invalidateGlobalPosition.y ||
+	    this->invalidateGlobalPosition.z ||
+	    Actor_isMoving(this) ||
+	    _screenDisplacement->x ||
+	    _screenDisplacement->y ||
+	    _screenDisplacement->z
+	);
 }
 
 // check if must update sprite's scale

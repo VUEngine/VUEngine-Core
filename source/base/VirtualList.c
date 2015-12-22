@@ -30,21 +30,21 @@
 // define a limit to prevent, and detect looped lists
 #define LIST_MAX_SIZE 1000
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define VirtualList_ATTRIBUTES													\
-																				\
-	/* it is derivated from */													\
-	Object_ATTRIBUTES															\
-																				\
-	/* a pointer to the head of the list */ 									\
-	VirtualNode head;															\
-																				\
-	/* a pointer to the tail of the list */										\
-	VirtualNode tail;															\
-
+#define VirtualList_ATTRIBUTES																			\
+																										\
+	/* it is derivated from */																			\
+	Object_ATTRIBUTES																					\
+																										\
+	/* a pointer to the head of the list */ 															\
+	VirtualNode head;																					\
+																										\
+	/* a pointer to the tail of the list */																\
+	VirtualNode tail;																					\
 
 __CLASS_DEFINITION(VirtualList, Object);
 

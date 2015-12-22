@@ -26,52 +26,53 @@
 #include <Clock.h>
 #include <Particle.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParticleSystem_METHODS													\
-		Entity_METHODS															\
+#define ParticleSystem_METHODS																			\
+		Entity_METHODS																					\
 
-#define ParticleSystem_SET_VTABLE(ClassName)									\
-		Entity_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, ParticleSystem, ready);						\
-		__VIRTUAL_SET(ClassName, ParticleSystem, update);						\
-		__VIRTUAL_SET(ClassName, ParticleSystem, transform);					\
-		__VIRTUAL_SET(ClassName, ParticleSystem, resume);						\
-		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);						\
+#define ParticleSystem_SET_VTABLE(ClassName)															\
+		Entity_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, ParticleSystem, ready);												\
+		__VIRTUAL_SET(ClassName, ParticleSystem, update);												\
+		__VIRTUAL_SET(ClassName, ParticleSystem, transform);											\
+		__VIRTUAL_SET(ClassName, ParticleSystem, resume);												\
+		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);												\
 
-#define ParticleSystem_ATTRIBUTES												\
-																				\
-	/* it is derivated from */													\
-	Entity_ATTRIBUTES															\
-																				\
-	/* system's definition */													\
-	const ParticleSystemDefinition* particleSystemDefinition;					\
-																				\
-	/* particle list */															\
-	VirtualList particles;														\
-																				\
-	/* particle list */															\
-	VirtualList recyclableParticles;											\
-																				\
-	/* particle list */															\
-	VirtualList expiredParticles;												\
-																				\
-	/* clock  */																\
-	Clock clock;																\
-																				\
-	/* next spawn time */														\
-	s32 nextSpawnTime;															\
-																				\
-	/* particle count */														\
-	s16 particleCount;															\
-																				\
-	/* status flag */															\
-	bool paused;																\
-																				\
-	/* status flag */															\
-	u8 numberOfSpriteDefinitions;												\
+#define ParticleSystem_ATTRIBUTES																		\
+																										\
+	/* it is derivated from */																			\
+	Entity_ATTRIBUTES																					\
+																										\
+	/* system's definition */																			\
+	const ParticleSystemDefinition* particleSystemDefinition;											\
+																										\
+	/* particle list */																					\
+	VirtualList particles;																				\
+																										\
+	/* particle list */																					\
+	VirtualList recyclableParticles;																	\
+																										\
+	/* particle list */																					\
+	VirtualList expiredParticles;																		\
+																										\
+	/* clock  */																						\
+	Clock clock;																						\
+																										\
+	/* next spawn time */																				\
+	s32 nextSpawnTime;																					\
+																										\
+	/* particle count */																				\
+	s16 particleCount;																					\
+																										\
+	/* pause flag */																					\
+	bool paused;																						\
+																										\
+	/* number of sprite definitions */																	\
+	u8 numberOfSpriteDefinitions;																		\
 
 __CLASS(ParticleSystem);
 
@@ -89,10 +90,10 @@ typedef struct ParticleSystemDefinition
 	// whether to delete or reuse expired particles
 	u8 recycleParticles;
 
-	// minimun generation delay in miliseconds
+	// minimun generation delay in milliseconds
 	u16 minimumSpawnDelay;
 
-	// generation delay delta in miliseconds
+	// generation delay delta in milliseconds
 	u16 spawnDelayDelta;
 
 	// maximum total particles

@@ -133,8 +133,6 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 #define	__COLOR_MEDIUM_RED		0x02
 #define	__COLOR_BRIGHT_RED		0x03
 
-
-
 typedef struct PaletteConfig
 {
 	u8 backgroundColor;
@@ -157,6 +155,7 @@ typedef struct PaletteConfig
 	
 } PaletteConfig;
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -164,12 +163,12 @@ typedef struct PaletteConfig
 // Defines as a pointer to a struct that is not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define VPUManager_METHODS														\
-		Object_METHODS															\
+#define VPUManager_METHODS																				\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define VPUManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define VPUManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(VPUManager);
 

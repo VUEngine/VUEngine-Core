@@ -22,6 +22,7 @@
 #include <SoundManager.h>
 #include <Optics.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -129,29 +130,31 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 #define SSTOP					   *(u8*)0x01000580
 
 #define __MAXIMUM_OUTPUT_LEVEL		0xF
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define SoundManager_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* actual note of each sound being played*/									\
-	int actualNote[__TOTAL_SOUNDS];												\
-																				\
-	/* note delay for each sound being played */								\
-	BYTE noteWait[__TOTAL_SOUNDS];												\
-																				\
-	/* background music */														\
-	const u16 (*bgm)[__BGM_CHANNELS];											\
-																				\
-	/* fx sound */																\
-	const u16* fxSound[__FXS];													\
-																				\
-	/* space position of each fx */												\
-	VBVec2D fxPosition[__FXS];													\
+#define SoundManager_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* actual note of each sound being played*/															\
+	int actualNote[__TOTAL_SOUNDS];																		\
+																										\
+	/* note delay for each sound being played */														\
+	BYTE noteWait[__TOTAL_SOUNDS];																		\
+																										\
+	/* background music */																				\
+	const u16 (*bgm)[__BGM_CHANNELS];																	\
+																										\
+	/* fx sound */																						\
+	const u16* fxSound[__FXS];																			\
+																										\
+	/* space position of each fx */																		\
+	VBVec2D fxPosition[__FXS];																			\
 
 
 __CLASS_DEFINITION(SoundManager, Object);

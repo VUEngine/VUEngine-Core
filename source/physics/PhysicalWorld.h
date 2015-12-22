@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PHYSICS_WORLD_H_
-#define PHYSICS_WORLD_H_
+#ifndef PHYSICAL_WORLD_H_
+#define PHYSICAL_WORLD_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,12 +32,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define PhysicalWorld_METHODS													\
-		Object_METHODS															\
+#define PhysicalWorld_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define PhysicalWorld_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define PhysicalWorld_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(PhysicalWorld);
 

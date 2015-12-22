@@ -26,6 +26,7 @@
 #include <CharSet.h>
 #include <Telegram.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -37,20 +38,20 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define BgmapTexture_METHODS													\
-	Texture_METHODS																\
+#define BgmapTexture_METHODS																			\
+	Texture_METHODS																						\
 
-#define BgmapTexture_SET_VTABLE(ClassName)										\
-	Texture_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, BgmapTexture, write);								\
+#define BgmapTexture_SET_VTABLE(ClassName)																\
+	Texture_SET_VTABLE(ClassName)																		\
+	__VIRTUAL_SET(ClassName, BgmapTexture, write);														\
 
-#define BgmapTexture_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Texture_ATTRIBUTES;															\
-																				\
-	/* how many textures are using me */										\
-	u8 usageCount;																\
+#define BgmapTexture_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Texture_ATTRIBUTES;																					\
+																										\
+	/* how many textures are using me */																\
+	u8 usageCount;																						\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(BgmapTexture);
@@ -80,5 +81,6 @@ u8 BgmapTexture_getYOffset(BgmapTexture this);
 u8 BgmapTexture_getBgmapSegment(BgmapTexture this);
 void BgmapTexture_increaseUsageCount(BgmapTexture this);
 bool BgmapTexture_decreaseUsageCount(BgmapTexture this);
+
 
 #endif

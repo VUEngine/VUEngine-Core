@@ -31,15 +31,14 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Image_METHODS															\
-		Entity_METHODS															\
+#define Image_METHODS																					\
+		Entity_METHODS																					\
 
-#define Image_SET_VTABLE(ClassName)												\
-		Entity_SET_VTABLE(ClassName)											\
+#define Image_SET_VTABLE(ClassName)																		\
+		Entity_SET_VTABLE(ClassName)																	\
 
-// A Image which represent a generic object inside a Stage
-#define Image_ATTRIBUTES														\
-		Entity_ATTRIBUTES														\
+#define Image_ATTRIBUTES																				\
+		Entity_ATTRIBUTES																				\
 
 __CLASS(Image);
 

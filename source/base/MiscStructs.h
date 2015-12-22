@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MISCSTRUCTS_H_
-#define MISCSTRUCTS_H_
+#ifndef MISC_STRUCTS_H_
+#define MISC_STRUCTS_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,7 +32,6 @@ typedef struct Size
 	s16 z;
 
 } Size;
-
 
 // spacial position
 typedef struct VBVec3DReal
@@ -62,7 +61,6 @@ typedef struct VBVec3DFlag
 
 } VBVec3DFlag;
 
-
 typedef struct IntegralPosition
 {
 	// fps increases a lot in hardware with ints
@@ -82,7 +80,6 @@ typedef struct Velocity
 	fix19_13 V;
 
 } Velocity;
-
 
 // spacial velocity variation vector
 typedef struct Acceleration

@@ -35,7 +35,6 @@ typedef struct FontSize
 {
 	u8 x;
 	u8 y;
-
 } FontSize;
 
 // max length of a font's name
@@ -47,12 +46,12 @@ typedef struct FontSize
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Printing_METHODS														\
-		Object_METHODS															\
+#define Printing_METHODS																				\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define Printing_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
+#define Printing_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
 
 // declare Printing class
 __CLASS(Printing);

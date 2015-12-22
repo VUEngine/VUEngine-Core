@@ -29,7 +29,6 @@
 //#undef __MILLISECONDS_IN_SECOND
 //#define __MILLISECONDS_IN_SECOND	100
 
-
 /*
 // these improve performance in the real machine
 #undef __OPTICS_NORMALIZE

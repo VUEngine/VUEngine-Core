@@ -30,24 +30,23 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackground_METHODS														\
-		Entity_METHODS															\
+#define MBackground_METHODS																				\
+		Entity_METHODS																					\
 
-#define MBackground_SET_VTABLE(ClassName)										\
-		Entity_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, MBackground, initialize);						\
-		__VIRTUAL_SET(ClassName, MBackground, suspend);							\
-		__VIRTUAL_SET(ClassName, MBackground, resume);							\
-		__VIRTUAL_SET(ClassName, MBackground, isVisible);						\
+#define MBackground_SET_VTABLE(ClassName)																\
+		Entity_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, MBackground, initialize);												\
+		__VIRTUAL_SET(ClassName, MBackground, suspend);													\
+		__VIRTUAL_SET(ClassName, MBackground, resume);													\
+		__VIRTUAL_SET(ClassName, MBackground, isVisible);												\
 
-// A MBackground which represent a generic object inside a Stage
-#define MBackground_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Entity_ATTRIBUTES;															\
-																				\
-	/* ROM definition */														\
-	MBackgroundDefinition* mBackgroundDefinition;								\
+#define MBackground_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Entity_ATTRIBUTES;																					\
+																										\
+	/* ROM definition */																				\
+	MBackgroundDefinition* mBackgroundDefinition;														\
 
 __CLASS(MBackground);
 

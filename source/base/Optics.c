@@ -64,7 +64,6 @@ inline u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
 	return magnitude;
 }
 
-
 //determine if a point is visible
 inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad)
 {

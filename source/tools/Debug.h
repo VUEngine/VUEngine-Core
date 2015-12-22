@@ -19,6 +19,7 @@
 
 #ifdef __DEBUG_TOOLS
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -32,13 +33,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Debug_METHODS															\
-		Object_METHODS															\
-
+#define Debug_METHODS																					\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define Debug_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)											\
+#define Debug_SET_VTABLE(ClassName)																		\
+		Object_SET_VTABLE(ClassName)																	\
 
 // declare a Debug
 __CLASS(Debug);
@@ -71,7 +71,7 @@ void Debug_diplaceRight(Debug this);
 void Debug_diplaceUp(Debug this);
 void Debug_diplaceDown(Debug this);
 
-#endif
 
+#endif
 
 #endif

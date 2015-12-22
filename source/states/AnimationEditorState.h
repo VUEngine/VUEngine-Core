@@ -18,6 +18,8 @@
 #define ANIMATION_EDITOR_STATE_H_
 
 #ifdef __ANIMATION_EDITOR
+
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -51,7 +53,7 @@ __CLASS(AnimationEditorState);
 // setup the init focus screen
 AnimationEditorState AnimationEditorState_getInstance(void);
 
-#endif
 
+#endif
 
 #endif

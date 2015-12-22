@@ -45,9 +45,9 @@
 #define	SWEEP	0x04	// Sweep/modulation channel
 #define	NOISE	0x05	// Pseudorandom noise channel
 */
-/* DogP's code
- */
-//musical notes to VB register values (may not be quite correct, based on frequencies from Game Boy)
+
+// DogP's code
+// musical notes to VB register values (may not be quite correct, based on frequencies from Game Boy)
 #define NONE 0x00
 #define C_10 0x00
 #define CS10 0x00
@@ -186,12 +186,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SoundManager_METHODS													\
-		Object_METHODS															\
+#define SoundManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define SoundManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define SoundManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(SoundManager);
 

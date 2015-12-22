@@ -106,7 +106,6 @@ void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 	VirtualList_pushBack(this->vertices, vertice);
 }
 
-
 // draw polygon to screen
 void Polygon_draw(Polygon this, int calculateParallax)
 {

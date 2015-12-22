@@ -26,20 +26,23 @@
 #include <HardwareManager.h>
 #include <TimerManager.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __DIMM_VALUE_1	0b01010100
 #define __DIMM_VALUE_2	0b01010000
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Error_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
+#define Error_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
 
 // define the Error
 __CLASS_DEFINITION(Error, Object);
@@ -61,7 +64,6 @@ bool Game_isConstructed();
 
 // a singleton
 __SINGLETON(Error);
-
 
 // class's constructor
 static void Error_constructor(Error this)

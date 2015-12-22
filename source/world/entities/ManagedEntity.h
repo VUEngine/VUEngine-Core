@@ -31,24 +31,24 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ManagedEntity_METHODS													\
-		Entity_METHODS															\
+#define ManagedEntity_METHODS																			\
+		Entity_METHODS																					\
 
-#define ManagedEntity_SET_VTABLE(ClassName)										\
-		Entity_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, ManagedEntity, initialTransform);				\
-		__VIRTUAL_SET(ClassName, ManagedEntity, transform);						\
+#define ManagedEntity_SET_VTABLE(ClassName)																\
+		Entity_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, ManagedEntity, initialTransform);										\
+		__VIRTUAL_SET(ClassName, ManagedEntity, transform);												\
 
-#define ManagedEntity_ATTRIBUTES												\
-																				\
-	/* it is derivated from*/													\
-	Entity_ATTRIBUTES															\
-																				\
-	/* sprites' list */															\
-	VirtualList managedSprites;													\
-																				\
-	/* previous 2d projected position */										\
-	VBVec2D previous2DPosition;													\
+#define ManagedEntity_ATTRIBUTES																		\
+																										\
+	/* it is derivated from*/																			\
+	Entity_ATTRIBUTES																					\
+																										\
+	/* sprites' list */																					\
+	VirtualList managedSprites;																			\
+																										\
+	/* previous 2d projected position */																\
+	VBVec2D previous2DPosition;																			\
 
 __CLASS(ManagedEntity);
 
@@ -59,6 +59,7 @@ __CLASS(ManagedEntity);
 
 typedef EntityDefinition ManagedEntityDefinition;
 typedef const ManagedEntityDefinition ManagedEntityROMDef;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE

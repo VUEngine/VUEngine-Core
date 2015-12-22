@@ -24,6 +24,7 @@
 
 #include <Object.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -59,20 +60,20 @@
 #define	K_RL	0x4000		// Right Pad, Left
 #define	K_RD	0x8000		// Right Pad, Down
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
+// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
+
 // declare the virtual methods
-#define KeypadManager_METHODS													\
-		Object_METHODS															\
+#define KeypadManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define KeypadManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define KeypadManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(KeypadManager);
 

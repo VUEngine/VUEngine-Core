@@ -29,62 +29,52 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Actor_METHODS															\
-		AnimatedInGameEntity_METHODS											\
-		__VIRTUAL_DEC(die);														\
-		__VIRTUAL_DEC(takeHitFrom);												\
-		__VIRTUAL_DEC(getAxisFreeForMovement);									\
+#define Actor_METHODS																					\
+		AnimatedInGameEntity_METHODS																	\
+		__VIRTUAL_DEC(die);																				\
+		__VIRTUAL_DEC(takeHitFrom);																		\
+		__VIRTUAL_DEC(getAxisFreeForMovement);															\
 
-#define Actor_SET_VTABLE(ClassName)												\
-		AnimatedInGameEntity_SET_VTABLE(ClassName)								\
-		__VIRTUAL_SET(ClassName, Actor, update);								\
-		__VIRTUAL_SET(ClassName, Actor, transform);								\
-		__VIRTUAL_SET(ClassName, Actor, handleMessage);							\
-		__VIRTUAL_SET(ClassName, Actor, moves);									\
-		__VIRTUAL_SET(ClassName, Actor, isMoving);								\
-		__VIRTUAL_SET(ClassName, Actor, getMovementState);						\
-		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);					\
-		__VIRTUAL_SET(ClassName, Actor, updateSpriteTransformations);			\
-		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);						\
-		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);							\
-		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);				\
-		__VIRTUAL_SET(ClassName, Actor, getElasticity);							\
-		__VIRTUAL_SET(ClassName, Actor, getFriction);							\
-		__VIRTUAL_SET(ClassName, Actor, getPosition);							\
-		__VIRTUAL_SET(ClassName, Actor, setPosition);							\
-		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);						\
+#define Actor_SET_VTABLE(ClassName)																		\
+		AnimatedInGameEntity_SET_VTABLE(ClassName)														\
+		__VIRTUAL_SET(ClassName, Actor, update);														\
+		__VIRTUAL_SET(ClassName, Actor, transform);														\
+		__VIRTUAL_SET(ClassName, Actor, handleMessage);													\
+		__VIRTUAL_SET(ClassName, Actor, moves);															\
+		__VIRTUAL_SET(ClassName, Actor, isMoving);														\
+		__VIRTUAL_SET(ClassName, Actor, getMovementState);												\
+		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);											\
+		__VIRTUAL_SET(ClassName, Actor, updateSpriteTransformations);									\
+		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);												\
+		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);													\
+		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);										\
+		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
+		__VIRTUAL_SET(ClassName, Actor, getFriction);													\
+		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
+		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
+		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);												\
 
 
-#define Actor_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	AnimatedInGameEntity_ATTRIBUTES;											\
-																				\
-	/* definition */															\
-	const ActorDefinition* actorDefinition;										\
-																				\
-	/* a state machine to handle entity's logic	*/								\
-	StateMachine stateMachine;													\
-																				\
-	/* a state machine to handle entity's logic	*/								\
-	Body body;																	\
-																				\
-	/* collision solver */														\
-	CollisionSolver collisionSolver;											\
+#define Actor_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	AnimatedInGameEntity_ATTRIBUTES;																	\
+																										\
+	/* definition */																					\
+	const ActorDefinition* actorDefinition;																\
+																										\
+	/* a state machine to handle entity's logic	*/														\
+	StateMachine stateMachine;																			\
+																										\
+	/* a physical body	*/																				\
+	Body body;																							\
+																										\
+	/* collision solver */																				\
+	CollisionSolver collisionSolver;																	\
 
 __CLASS(Actor);
 
@@ -140,5 +130,6 @@ void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force);
+
 
 #endif

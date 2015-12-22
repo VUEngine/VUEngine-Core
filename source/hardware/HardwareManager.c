@@ -34,26 +34,27 @@
 extern u32 _lastDataVariable;
 #endif
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define HardwareManager_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* Timer manager */															\
-	TimerManager timerManager;													\
-																				\
-	/* VPU manager */															\
-	VPUManager vpuManager;														\
-																				\
-	/* VPU manager */															\
-	KeypadManager keypadManager;												\
-																				\
-	/* HW registry */															\
-	u8*  hwRegisters;															\
+#define HardwareManager_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* Timer manager */																					\
+	TimerManager timerManager;																			\
+																										\
+	/* VPU manager */																					\
+	VPUManager vpuManager;																				\
+																										\
+	/* VPU manager */																					\
+	KeypadManager keypadManager;																		\
+																										\
+	/* HW registry */																					\
+	u8*  hwRegisters;																					\
 
 // define the HardwareManager
 __CLASS_DEFINITION(HardwareManager, Object);
@@ -62,7 +63,6 @@ __CLASS_DEFINITION(HardwareManager, Object);
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
-
 
 extern u32 key_vector;
 extern u32 tim_vector;

@@ -74,15 +74,15 @@ enum MessagesTypes
 	kLastEngineMessage
 };
 
-#define NM_ASSERT(STATEMENT, ...)																\
-	 																							\
-	if(!(STATEMENT))																			\
-	{ 																							\
-		asm(" mov sp,%0  ": "=r" (_sp));												\
-		asm(" mov lp,%0  ": "=r" (_lp));												\
-																						\
-		/* thrown exception */															\
-		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);	\
+#define NM_ASSERT(STATEMENT, ...)																		\
+	 																									\
+	if(!(STATEMENT))																					\
+	{ 																									\
+		asm(" mov sp,%0  ": "=r" (_sp));																\
+		asm(" mov lp,%0  ": "=r" (_lp));																\
+																										\
+		/* thrown exception */																			\
+		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);					\
 	}
 
 #undef ASSERT
@@ -91,15 +91,15 @@ enum MessagesTypes
 	#define ASSERT(Statement, ...)
 
 #else
-#define ASSERT(Statement, Message)														\
-	 																					\
-	if(!(Statement)) 																	\
-	{																					\
-		asm(" mov sp,%0  ": "=r" (_sp));												\
-		asm(" mov lp,%0  ": "=r" (_lp));												\
-																						\
-		/* thrown exception */															\
-		Error_triggerException(Error_getInstance(), Message, NULL);						\
+#define ASSERT(Statement, Message)																		\
+	 																									\
+	if(!(Statement)) 																					\
+	{																									\
+		asm(" mov sp,%0  ": "=r" (_sp));																\
+		asm(" mov lp,%0  ": "=r" (_lp));																\
+																										\
+		/* thrown exception */																			\
+		Error_triggerException(Error_getInstance(), Message, NULL);										\
 	}
 #endif
 

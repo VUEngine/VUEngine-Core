@@ -16,6 +16,7 @@
 
 #ifdef __STAGE_EDITOR
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -39,11 +40,11 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __USER_OBJECT_SHOW_ROW 	6
-#define __MAX_TRANSLATION_STEP	8 * 4
-#define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
-#define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
-#define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
+#define __USER_OBJECT_SHOW_ROW 				6
+#define __MAX_TRANSLATION_STEP				8 * 4
+#define __SCREEN_X_TRANSLATION_STEP			__SCREEN_WIDTH / 4
+#define __SCREEN_Y_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
+#define __SCREEN_Z_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
 
 #define __HVPC_STEP							ITOFIX19_13(8)
 #define __VERTICAL_VIEW_POINT_CENTER_STEP	ITOFIX19_13(8)
@@ -51,35 +52,36 @@
 #define __MAXIMUM_VIEW_DISTACE_STEP			1
 #define __BASE_DISTACE_STEP					ITOFIX19_13(8)
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define StageEditor_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* current in game entity */												\
-	GameState gameState;														\
-																				\
-	/* current in game entity */												\
-	VirtualNode currentEntityNode;												\
-																				\
-	/* current entity's shape */												\
-	Shape shape;																\
-																				\
-	/* mode */																	\
-	int mode;																	\
-																				\
-	/* actors selector */														\
-	OptionsSelector userObjectsSelector;										\
-																				\
-	/* translation step size */													\
-	int translationStepSize;													\
-																				\
-	/* current user's object's sprite */										\
-	Sprite userObjectSprite;													\
+#define StageEditor_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* current in game entity */																		\
+	GameState gameState;																				\
+																										\
+	/* current in game entity */																		\
+	VirtualNode currentEntityNode;																		\
+																										\
+	/* current entity's shape */																		\
+	Shape shape;																						\
+																										\
+	/* mode */																							\
+	int mode;																							\
+																										\
+	/* actors selector */																				\
+	OptionsSelector userObjectsSelector;																\
+																										\
+	/* translation step size */																			\
+	int translationStepSize;																			\
+																										\
+	/* current user's object's sprite */																\
+	Sprite userObjectSprite;																			\
 
 // define the StageEditor
 __CLASS_DEFINITION(StageEditor, Object);
@@ -128,6 +130,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey);
 static void StageEditor_printTranslationStepSize(StageEditor this);
 static void StageEditor_removePreviousSprite(StageEditor this);
 static void StageEditor_showSelectedUserObject(StageEditor this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS

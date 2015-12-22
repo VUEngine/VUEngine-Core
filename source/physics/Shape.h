@@ -30,41 +30,40 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Shape_METHODS															\
-		Object_METHODS															\
-		__VIRTUAL_DEC(overlaps);												\
-		__VIRTUAL_DEC(setup);													\
-		__VIRTUAL_DEC(position);												\
-		__VIRTUAL_DEC(getAxisOfCollision);										\
-		__VIRTUAL_DEC(testIfCollision);											\
-		__VIRTUAL_DEC(deleteDirectDrawData);									\
-		__VIRTUAL_DEC(draw);													\
+#define Shape_METHODS																				\
+		Object_METHODS																				\
+		__VIRTUAL_DEC(overlaps);																	\
+		__VIRTUAL_DEC(setup);																		\
+		__VIRTUAL_DEC(position);																	\
+		__VIRTUAL_DEC(getAxisOfCollision);															\
+		__VIRTUAL_DEC(testIfCollision);																\
+		__VIRTUAL_DEC(deleteDirectDrawData);														\
+		__VIRTUAL_DEC(draw);																		\
 		__VIRTUAL_DEC(print);
 
-#define Shape_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)											\
+#define Shape_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																\
 
-#define Shape_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* the entity to which the shape belongs */									\
-	SpatialObject owner;														\
-																				\
-	/* flag to know if the shapes below to an entity which moves */				\
-	bool moves: true;															\
-																				\
-	/* whether it has been checked for collision in current update */			\
-	bool checked: true;															\
-																				\
-	/* flag to know if setup is needed */										\
-	bool ready: true;															\
-																				\
-	/* flag to check agains other shapes */										\
-	bool checkForCollisions: true;
+#define Shape_ATTRIBUTES																			\
+																									\
+	/* super's attributes */																		\
+	Object_ATTRIBUTES;																				\
+																									\
+	/* the entity to which the shape belongs */														\
+	SpatialObject owner;																			\
+																									\
+	/* flag to know if the shapes below to an entity which moves */									\
+	bool moves: true;																				\
+																									\
+	/* whether it has been checked for collision in current update */								\
+	bool checked: true;																				\
+																									\
+	/* flag to know if setup is needed */															\
+	bool ready: true;																				\
+																									\
+	/* flag to check agains other shapes */															\
+	bool checkForCollisions: true;																	\
 
-// A Shape which represent a generic object inside a Stage
 __CLASS(Shape);
 
 enum ShapeTypes

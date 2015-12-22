@@ -31,12 +31,12 @@
 
 // error handling class
 // declare the virtual methods
-#define Error_METHODS															\
-		Object_METHODS															\
+#define Error_METHODS																					\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define Error_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)											\
+#define Error_SET_VTABLE(ClassName)																		\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(Error);
 
@@ -46,6 +46,7 @@ __CLASS(Error);
 //---------------------------------------------------------------------------------------------------------
 
 Error Error_getInstance();
+
 void Error_destructor(Error this);
 int Error_triggerException(Error this, char* message, char* detail);
 

@@ -23,6 +23,7 @@
 #include <Game.h>
 #include <Clock.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -34,14 +35,15 @@
 
 const struct UserData* _userData = (void*)__SAVE_RAM_ADDRESS;
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define SRAMManager_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
+#define SRAMManager_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
 
 // define the manager
 __CLASS_DEFINITION(SRAMManager, Object);
@@ -126,4 +128,3 @@ void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, i
 		destination[i] = source[i] & 0xFF;
 	}
 }
-

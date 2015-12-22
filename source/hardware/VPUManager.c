@@ -55,10 +55,10 @@ volatile u16* VIP_REGS = (u16*)0x0005F800;
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define VPUManager_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
+#define VPUManager_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
 
 // define the VPUManager
 __CLASS_DEFINITION(VPUManager, Object);

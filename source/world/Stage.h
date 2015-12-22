@@ -31,63 +31,56 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Stage_METHODS															\
-		Container_METHODS														\
-
+#define Stage_METHODS																					\
+		Container_METHODS																				\
 
 // declare the virtual methods which are redefined
-#define Stage_SET_VTABLE(ClassName)												\
-		Container_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, Stage, update);								\
-		__VIRTUAL_SET(ClassName, Stage, transform);								\
-		__VIRTUAL_SET(ClassName, Stage, suspend);								\
-		__VIRTUAL_SET(ClassName, Stage, resume);								\
-		__VIRTUAL_SET(ClassName, Stage, removeChild);							\
+#define Stage_SET_VTABLE(ClassName)																		\
+		Container_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Stage, update);														\
+		__VIRTUAL_SET(ClassName, Stage, transform);														\
+		__VIRTUAL_SET(ClassName, Stage, suspend);														\
+		__VIRTUAL_SET(ClassName, Stage, resume);														\
+		__VIRTUAL_SET(ClassName, Stage, removeChild);													\
 
-#define Stage_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Container_ATTRIBUTES;														\
-																				\
-	/* world's definition pointer */											\
-	StageDefinition* stageDefinition;											\
-																				\
-	/* the stage entities */ 													\
-	VirtualList stageEntities;													\
-																				\
-	/* the stage entities to test for streaming */ 								\
-	VirtualList stageEntitiesToTest;											\
-																				\
-	/* the stage entities to test for streaming */ 								\
-	VirtualList loadedStageEntities;											\
-																				\
-	/* the removed entities */ 													\
-	VirtualList removedEntities;												\
-																				\
-	/* streaming's preloaded entities */ 										\
-	VirtualList entitiesToLoad;													\
-																				\
-	/* streaming's uninitialized entities */ 									\
-	VirtualList entitiesToInitialize;											\
-																				\
-	/* the UI */ 																\
-	UI ui;																		\
-																				\
-	/* focus entity: needed for streaming */									\
-	Entity focusEntity;															\
-																				\
-	/* next entity's id */														\
-	s16 nextEntityId;															\
-
+#define Stage_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Container_ATTRIBUTES;																				\
+																										\
+	/* world's definition pointer */																	\
+	StageDefinition* stageDefinition;																	\
+																										\
+	/* the stage entities */ 																			\
+	VirtualList stageEntities;																			\
+																										\
+	/* the stage entities to test for streaming */ 														\
+	VirtualList stageEntitiesToTest;																	\
+																										\
+	/* the stage entities to test for streaming */ 														\
+	VirtualList loadedStageEntities;																	\
+																										\
+	/* the removed entities */ 																			\
+	VirtualList removedEntities;																		\
+																										\
+	/* streaming's preloaded entities */ 																\
+	VirtualList entitiesToLoad;																			\
+																										\
+	/* streaming's uninitialized entities */ 															\
+	VirtualList entitiesToInitialize;																	\
+																										\
+	/* the UI */ 																						\
+	UI ui;																								\
+																										\
+	/* focus entity: needed for streaming */															\
+	Entity focusEntity;																					\
+																										\
+	/* next entity's id */																				\
+	s16 nextEntityId;																					\
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
@@ -111,7 +104,6 @@ typedef struct StageDefinition
 		u8 unloadPadding;
 		u8 streamingAmplitude;
 	} streaming;
-
 
 // since there are 32 layers, that's the theoretical limit of entities to display
 #undef __STREAMING_AMPLITUDE

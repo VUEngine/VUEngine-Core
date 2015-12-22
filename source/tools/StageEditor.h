@@ -17,7 +17,6 @@
 #ifndef STAGE_EDITOR_H_
 #define STAGE_EDITOR_H_
 
-
 #ifdef __STAGE_EDITOR
 
 
@@ -35,13 +34,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define StageEditor_METHODS														\
-		Object_METHODS															\
+#define StageEditor_METHODS																				\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define StageEditor_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, StageEditor, handleMessage);					\
+#define StageEditor_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, StageEditor, handleMessage);											\
 
 // declare a StageEditor
 __CLASS(StageEditor);
@@ -67,7 +66,7 @@ void StageEditor_start(StageEditor this, GameState gameState);
 void StageEditor_stop(StageEditor this);
 bool StageEditor_handleMessage(StageEditor this, Telegram telegram);
 
-#endif
 
+#endif
 
 #endif

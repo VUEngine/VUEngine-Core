@@ -68,12 +68,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectManager_METHODS													\
-		Object_METHODS															\
+#define ObjectManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define ObjectManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define ObjectManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(ObjectManager);
 
@@ -87,14 +87,3 @@ void ObjectManager_destructor(ObjectManager this);
 
 
 #endif
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											INCLUDES
-//---------------------------------------------------------------------------------------------------------
-#include <Types.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											DEFINES
-//---------------------------------------------------------------------------------------------------------

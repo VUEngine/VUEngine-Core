@@ -29,22 +29,18 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define InverseCuboid_METHODS													\
-		Cuboid_METHODS															\
+#define InverseCuboid_METHODS																			\
+		Cuboid_METHODS																					\
 
+#define InverseCuboid_SET_VTABLE(ClassName)																\
+		Cuboid_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, InverseCuboid, overlaps);												\
 
-#define InverseCuboid_SET_VTABLE(ClassName)										\
-		Cuboid_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, InverseCuboid, overlaps);						\
+#define InverseCuboid_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Cuboid_ATTRIBUTES;																					\
 
-
-#define InverseCuboid_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Cuboid_ATTRIBUTES;															\
-
-
-// A InverseCuboid which represent a generic object inside a Stage
 __CLASS(InverseCuboid);
 
 

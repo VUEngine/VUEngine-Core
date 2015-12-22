@@ -33,13 +33,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Game_METHODS															\
-		Object_METHODS															\
+#define Game_METHODS																					\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define Game_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, Game, handleMessage);							\
+#define Game_SET_VTABLE(ClassName)																		\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Game, handleMessage);													\
 
 __CLASS(Game);
 

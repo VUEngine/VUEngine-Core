@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifdef __DEBUG_TOOLS
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
@@ -82,43 +82,43 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Debug_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* current in game state */													\
-	GameState gameState;														\
-																				\
-	/* pages */																	\
-	VirtualList pages;															\
-																				\
-	/* sub pages */																\
-	VirtualList subPages;														\
-																				\
-	/* current page */															\
-	VirtualNode currentPage;													\
-																				\
-	/* current subb page */														\
-	VirtualNode currentSubPage;													\
-																				\
-	/* current layer */															\
-	u8 currentLayer;															\
-																				\
-	/* current bgmap */															\
-	int bgmapSegment;															\
-																				\
-	/* current obj segment */													\
-	int objectSegment;															\
-																				\
-	/* current char segment */													\
-	int charSegment;															\
-																				\
-	/* window to look into bgmap memory */										\
-	VBVec2D bgmapDisplacement;													\
-																				\
-	/* update function pointer */												\
-	void (*update)(void *);														\
+#define Debug_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* current in game state */																			\
+	GameState gameState;																				\
+																										\
+	/* pages */																							\
+	VirtualList pages;																					\
+																										\
+	/* sub pages */																						\
+	VirtualList subPages;																				\
+																										\
+	/* current page */																					\
+	VirtualNode currentPage;																			\
+																										\
+	/* current subb page */																				\
+	VirtualNode currentSubPage;																			\
+																										\
+	/* current layer */																					\
+	u8 currentLayer;																					\
+																										\
+	/* current bgmap */																					\
+	int bgmapSegment;																					\
+																										\
+	/* current obj segment */																			\
+	int objectSegment;																					\
+																										\
+	/* current char segment */																			\
+	int charSegment;																					\
+																										\
+	/* window to look into bgmap memory */																\
+	VBVec2D bgmapDisplacement;																			\
+																										\
+	/* update function pointer */																		\
+	void (*update)(void *);																				\
 
 // define the Debug
 __CLASS_DEFINITION(Debug, Object);
@@ -660,7 +660,6 @@ static void Debug_showDebugBgmap(Debug this)
 	}
 
 	// write the head
-	
 	WA[__TOTAL_LAYERS - 1].head = WRLD_ON | this->bgmapSegment;
 	WA[__TOTAL_LAYERS - 1].mx = this->bgmapDisplacement.x;
 	WA[__TOTAL_LAYERS - 1].mp = 0;
@@ -808,7 +807,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->z + Sprite_getDisplacement(sprite).z), x + 30, y, NULL);
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 		Debug_lightUpGame(this);
-}
+    }
 	else
 	{
 		this->currentLayer = __TOTAL_LAYERS;
@@ -875,5 +874,6 @@ static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int 
 		Printing_int(Printing_getInstance(), ((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);
 	}
 }
+
 
 #endif

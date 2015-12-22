@@ -132,7 +132,7 @@ void Container_destructor(Container this)
 	// first remove from parent
 	if(this->parent)
 	{
-		// don't allow my parnt to try to delete me again
+		// don't allow my parent to try to delete me again
 		this->deleteMe = false;
 		Container_removeChild(this->parent, this);
 	}
@@ -619,7 +619,7 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 // process user input
 int Container_onMessage(Container this, va_list args)
 {
-	ASSERT(this, "Container::onKeyHold: null this");
+	ASSERT(this, "Container::onMessage: null this");
 
 	int message = va_arg(args, int);
 	return __VIRTUAL_CALL(int, Container, doMessage, this, message);
@@ -636,7 +636,7 @@ int Container_doMessage(Container this, int message)
 //retrieve class's in game index
 s16 Container_getId(Container this)
 {
-	ASSERT(this, "Container::doMessage: null this");
+	ASSERT(this, "Container::getId: null this");
 
 	return this->id;
 }
@@ -685,7 +685,7 @@ void Container_setName(Container this, const char* const name)
 	{
 		char name[__MAX_CONTAINER_NAME_LENGTH];
 		
-	}NameWrapper;
+	} NameWrapper;
 	
 	NameWrapper* nameWrapper = (NameWrapper*)__NEW_BASIC(NameWrapper);
 	this->name = nameWrapper->name;
@@ -724,7 +724,8 @@ static Container Container_findChildByName(Container this, VirtualList children,
         else if(recursive && child->children)
         {
             grandChild = Container_findChildByName(this, child->children, childName, recursive);
-            if(grandChild) {
+            if(grandChild)
+            {
                 return grandChild;
             }
         }

@@ -29,23 +29,20 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Polygon_METHODS															\
-		Object_METHODS															\
+#define Polygon_METHODS																					\
+		Object_METHODS																					\
 
+#define Polygon_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
 
-#define Polygon_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
+#define Polygon_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* vertices */																						\
+	VirtualList vertices;																				\
 
-
-#define Polygon_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* vertices */																\
-	VirtualList vertices;														\
-
-// A Polygon which represent a generic object inside a Stage
 __CLASS(Polygon);
 
 
@@ -54,6 +51,7 @@ __CLASS(Polygon);
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(Polygon);
+
 void Polygon_destructor(Polygon this);
 void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z);
 void Polygon_draw(Polygon this, int calculateParallax);

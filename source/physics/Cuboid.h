@@ -30,37 +30,35 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Cuboid_METHODS															\
-		Shape_METHODS															\
+#define Cuboid_METHODS																					\
+		Shape_METHODS																					\
 
-#define Cuboid_SET_VTABLE(ClassName)											\
-		Shape_SET_VTABLE(ClassName)												\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);									\
-		__VIRTUAL_SET(ClassName, Cuboid, overlaps);								\
-		__VIRTUAL_SET(ClassName, Cuboid, setup);								\
-		__VIRTUAL_SET(ClassName, Cuboid, position);							\
-		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);					\
-		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);						\
-		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);					\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);									\
-		__VIRTUAL_SET(ClassName, Cuboid, print);								\
+#define Cuboid_SET_VTABLE(ClassName)																	\
+		Shape_SET_VTABLE(ClassName)																		\
+		__VIRTUAL_SET(ClassName, Cuboid, draw);															\
+		__VIRTUAL_SET(ClassName, Cuboid, overlaps);														\
+		__VIRTUAL_SET(ClassName, Cuboid, setup);														\
+		__VIRTUAL_SET(ClassName, Cuboid, position);														\
+		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);											\
+		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);												\
+		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);											\
+		__VIRTUAL_SET(ClassName, Cuboid, draw);															\
+		__VIRTUAL_SET(ClassName, Cuboid, print);														\
 
+#define Cuboid_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Shape_ATTRIBUTES;																					\
+																										\
+	/* the rectangle */																					\
+	Rightcuboid rightCuboid;																			\
+																										\
+	/* the rightCuboid to check */																		\
+	Rightcuboid positionedRightcuboid;																	\
+																										\
+	/* for debugging purposes */																		\
+	Polygon polygon;																					\
 
-#define Cuboid_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Shape_ATTRIBUTES;															\
-																				\
-	/* the rectangle */															\
-	Rightcuboid rightCuboid;													\
-																				\
-	/* the rightCuboid to check */												\
-	Rightcuboid positionedRightcuboid;											\
-																				\
-	/* for debugging purposes */												\
-	Polygon polygon;															\
-
-// A Cuboid which represent a generic object inside a Stage
 __CLASS(Cuboid);
 
 

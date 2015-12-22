@@ -31,18 +31,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define UI_METHODS																\
-		Container_METHODS														\
-		__VIRTUAL_DEC(addEntities);												\
+#define UI_METHODS																						\
+		Container_METHODS																				\
+		__VIRTUAL_DEC(addEntities);																		\
 
 // declare the virtual methods which are redefined
-#define UI_SET_VTABLE(ClassName)												\
-		Container_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, UI, addEntities);								\
-		__VIRTUAL_SET(ClassName, UI, transform);								\
-		__VIRTUAL_SET(ClassName, UI, initialTransform);							\
+#define UI_SET_VTABLE(ClassName)																		\
+		Container_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, UI, addEntities);														\
+		__VIRTUAL_SET(ClassName, UI, transform);														\
+		__VIRTUAL_SET(ClassName, UI, initialTransform);													\
 
-// declare a UI, which holds the objects in a game world
+// declare a UI
 __CLASS(UI);
 
 

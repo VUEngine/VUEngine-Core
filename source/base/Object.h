@@ -44,20 +44,20 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the class from which all classes derivate
-#define Object_ATTRIBUTES														\
-																				\
-	/* pointer to the class's virtual table */									\
-	void* vTable;																\
-																				\
-	/* events */																\
-	VirtualList events;															\
+#define Object_ATTRIBUTES																				\
+																										\
+	/* pointer to the class's virtual table */															\
+	void* vTable;																						\
+																										\
+	/* events */																						\
+	VirtualList events;																					\
 
 // declare the virtual methods
-#define Object_METHODS															\
-	__VIRTUAL_DEC(handleMessage);												\
+#define Object_METHODS																					\
+	__VIRTUAL_DEC(handleMessage);																		\
 
 // define the virtual methods
-#define Object_SET_VTABLE(ClassName)											\
+#define Object_SET_VTABLE(ClassName)																	\
 	__VIRTUAL_SET(ClassName, Object, handleMessage);
 
 // the root class for everything else!!

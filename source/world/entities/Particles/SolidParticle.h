@@ -40,41 +40,40 @@ Shape SpatialObject_getShape(SpatialObject this);
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SolidParticle_METHODS													\
-		Particle_METHODS														\
+#define SolidParticle_METHODS																			\
+		Particle_METHODS																				\
 
 // define the virtual methods
-#define SolidParticle_SET_VTABLE(ClassName)										\
-		Particle_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, SolidParticle, update);						\
-		__VIRTUAL_SET(ClassName, SolidParticle, getShape);						\
-		__VIRTUAL_SET(ClassName, SolidParticle, getWidth);						\
-		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);						\
-		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);						\
-		__VIRTUAL_SET(ClassName, SolidParticle, getShape);						\
-		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);					\
-		__VIRTUAL_SET(ClassName, Particle, setPosition);						\
+#define SolidParticle_SET_VTABLE(ClassName)																\
+		Particle_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, SolidParticle, update);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, getShape);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, getWidth);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, getShape);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
+		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
 
-
-#define SolidParticle_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Particle_ATTRIBUTES;														\
-																				\
-	/* physical body */															\
-	Shape shape;																\
-																				\
-	/* shape for collision detection */											\
-	const SolidParticleDefinition* solidParticleDefinition;						\
-																				\
-	/* previous position for collision handling */								\
-	VBVec3D previousGlobalPosition;												\
-																				\
-	/* collision solver */														\
-	CollisionSolver collisionSolver;											\
-																				\
-	/* position */																\
-	VBVec3D position;															\
+#define SolidParticle_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Particle_ATTRIBUTES;																				\
+																										\
+	/* physical body */																					\
+	Shape shape;																						\
+																										\
+	/* shape for collision detection */																	\
+	const SolidParticleDefinition* solidParticleDefinition;												\
+																										\
+	/* previous position for collision handling */														\
+	VBVec3D previousGlobalPosition;																		\
+																										\
+	/* collision solver */																				\
+	CollisionSolver collisionSolver;																	\
+																										\
+	/* position */																						\
+	VBVec3D position;																					\
 
 __CLASS(SolidParticle);
 

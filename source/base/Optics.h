@@ -31,23 +31,21 @@
 //---------------------------------------------------------------------------------------------------------
 
 // these improve performance in the real machine
-#define __OPTICS_NORMALIZE(Vector)													\
-	Vector.x -= (_screenPosition->x + 0x00001000)& 0xFFFFE000;						\
-	Vector.y -= (_screenPosition->y + 0x00001000)& 0xFFFFE000;						\
-	Vector.z -= (_screenPosition->z + 0x00001000)& 0xFFFFE000;
+#define __OPTICS_NORMALIZE(Vector)																		\
+	Vector.x -= (_screenPosition->x + 0x00001000)& 0xFFFFE000;											\
+	Vector.y -= (_screenPosition->y + 0x00001000)& 0xFFFFE000;											\
+	Vector.z -= (_screenPosition->z + 0x00001000)& 0xFFFFE000;											\
 
-#define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)									\
-		Vector2D.x = Vector3D.x 													\
-			+ (FIX19_13_MULT(_optical->horizontalViewPointCenter - 					\
-					Vector3D.x, Vector3D.z) >> _optical->maximumViewDistancePower);	\
-		Vector2D.y = Vector3D.y 													\
-			- (FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter,		\
-				Vector3D.z) >> _optical->maximumViewDistancePower);					\
-		Vector2D.z = Vector3D.z;													\
-		Vector2D.x += 0x00001000;													\
-		Vector2D.y += 0x00001000;													\
-		Vector2D.x &= 0xFFFFE000;													\
-		Vector2D.y &= 0xFFFFE000;					
+#define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)														\
+		Vector2D.x = Vector3D.x + (FIX19_13_MULT(_optical->horizontalViewPointCenter - 					\
+            Vector3D.x, Vector3D.z) >> _optical->maximumViewDistancePower);								\
+		Vector2D.y = Vector3D.y - (FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter,		\
+            Vector3D.z) >> _optical->maximumViewDistancePower);											\
+		Vector2D.z = Vector3D.z;																		\
+		Vector2D.x += 0x00001000;																		\
+		Vector2D.y += 0x00001000;																		\
+		Vector2D.x &= 0xFFFFE000;																		\
+		Vector2D.y &= 0xFFFFE000;																		\
 
 
 //---------------------------------------------------------------------------------------------------------

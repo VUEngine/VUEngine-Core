@@ -26,34 +26,34 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define FrameRate_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* raw frames per second */													\
-	u32 rawFPS;																	\
-																				\
-	/* raw frames per second */													\
-	u32 lastRawFPS;																\
-																				\
-	/* rendering frames per second */											\
-	u16 renderFPS;																\
-																				\
-	/* logic frames per second */												\
-	u16 logicFPS;																\
-																				\
-	/* physics frames per second */												\
-	u16 physicsFPS;																\
-																				\
-	/* rendering frames per second */											\
-	u16 lastRenderFPS;															\
-																				\
-	/* logic frames per second */												\
-	u16 lastLogicFPS;															\
-																				\
-	/* physics frames per second */												\
-	u16 lastPhysicsFPS;															\
+#define FrameRate_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* raw frames per second */																			\
+	u32 rawFPS;																							\
+																										\
+	/* raw frames per second */																			\
+	u32 lastRawFPS;																						\
+																										\
+	/* rendering frames per second */																	\
+	u16 renderFPS;																						\
+																										\
+	/* logic frames per second */																		\
+	u16 logicFPS;																						\
+																										\
+	/* physics frames per second */																		\
+	u16 physicsFPS;																						\
+																										\
+	/* rendering frames per second */																	\
+	u16 lastRenderFPS;																					\
+																										\
+	/* logic frames per second */																		\
+	u16 lastLogicFPS;																					\
+																										\
+	/* physics frames per second */																		\
+	u16 lastPhysicsFPS;																					\
 
 // define the FrameRate
 __CLASS_DEFINITION(FrameRate, Object);

@@ -16,6 +16,7 @@
 
 #ifdef __STAGE_EDITOR
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -58,10 +59,10 @@ enum Screens
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define StageEditorState_ATTRIBUTES													\
-																					\
-	/* inherits */																	\
-	GameState_ATTRIBUTES															\
+#define StageEditorState_ATTRIBUTES																		\
+																										\
+	/* inherits */																						\
+	GameState_ATTRIBUTES																				\
 
 __CLASS_DEFINITION(StageEditorState, GameState);
 

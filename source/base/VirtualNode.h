@@ -34,28 +34,28 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define VirtualNode_METHODS														\
-		Object_METHODS															\
+#define VirtualNode_METHODS																				\
+		Object_METHODS																					\
 
+#define VirtualNode_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
-#define VirtualNode_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
-
-#define VirtualNode_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* pointer to next node */													\
-	VirtualNode next;															\
-																				\
-	/* pointer to previos node */												\
-	VirtualNode previous;														\
-																				\
-	/* pointer to the data */													\
-	void* data;																	\
+#define VirtualNode_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* pointer to next node */																			\
+	VirtualNode next;																					\
+																										\
+	/* pointer to previos node */																		\
+	VirtualNode previous;																				\
+																										\
+	/* pointer to the data */																			\
+	void* data;																							\
 
 __CLASS(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
@@ -68,6 +68,5 @@ VirtualNode VirtualNode_getNext(VirtualNode this);
 VirtualNode VirtualNode_getPrevious(VirtualNode this);
 void VirtualNode_swapData(VirtualNode this, VirtualNode node);
 
+
 #endif
-
-
