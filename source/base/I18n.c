@@ -51,7 +51,6 @@ __CLASS_DEFINITION(I18n, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void I18n_constructor(I18n this);
 
 

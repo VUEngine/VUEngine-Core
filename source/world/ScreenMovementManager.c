@@ -29,7 +29,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-
 // define the ScreenMovementManager
 __CLASS_DEFINITION(ScreenMovementManager, Object);
 
@@ -42,12 +41,6 @@ __CLASS_FRIEND_DEFINITION(Screen);
 
 void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration);
 void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												GLOBALS
-//---------------------------------------------------------------------------------------------------------
-
 
 
 //---------------------------------------------------------------------------------------------------------

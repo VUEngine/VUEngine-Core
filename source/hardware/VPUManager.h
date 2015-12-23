@@ -29,7 +29,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-/***** Display RAM *****/
+// Display RAM
 /*@null@*/
 static u32* const	L_FRAME0 =	(u32*)0x00000000;				// Left Frame Buffer 0
 #define		CharSeg0		 0x00006000					// Characters 0-511
@@ -56,13 +56,13 @@ static u16* const	CLMN_TBL =	(u16*)0x0003DC00;				// Base address of Column Tabl
 static u16* const	OAM =		(u16*)OAMBase;					// Pointer to OAM
 #define		Object(o)		 (OAMBase + (o * 0x0008))	// Address of Obj o (0 <= o <= 1023)
 
-/* Macro to set the brightness registers */
+// Macro to set the brightness registers
 #define	SET_BRIGHT(a,b,c)       VIP_REGS[BRTA]=(u16)(a); VIP_REGS[BRTB]=(u16)(b); VIP_REGS[BRTC]=(u16)(c)
 
-/* Macro to set the GPLT (BGMap palette) */
+// Macro to set the GPLT (BGMap palette)
 #define	SET_GPLT(n,pal)         VIP_REGS[GPLT0+n]=pal
 
-/* Macro to set the JPLT (OBJ palette) */
+// Macro to set the JPLT (OBJ palette)
 #define	SET_JPLT(n,pal)         VIP_REGS[JPLT0+n]=pal
 
 #define __ROT_LEFT 0x00

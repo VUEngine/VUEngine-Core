@@ -28,17 +28,10 @@
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void MessageDispatcher_constructor(MessageDispatcher this);
-
-// class's destructor
 static void MessageDispatcher_destructor(MessageDispatcher this);
-
-// dispatch delayed messages
 static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
-		Object receiver, int message, void* extraInfo);
-
-// discart delayed messages
+	Object receiver, int message, void* extraInfo);
 void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 
 

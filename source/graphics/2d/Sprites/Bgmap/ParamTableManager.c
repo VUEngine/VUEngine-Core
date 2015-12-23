@@ -69,6 +69,7 @@ __CLASS_DEFINITION(ParamTableManager, Object);
 void ParamTableManager_constructor(ParamTableManager this);
 static int ParamTableManager_calculateSize(ParamTableManager this, BgmapSprite bSprite);
 
+
 // ---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 // ---------------------------------------------------------------------------------------------------------

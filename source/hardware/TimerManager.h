@@ -29,10 +29,10 @@
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-//use with 20us timer (range = 0 to 1300)
+// use with 20us timer (range = 0 to 1300)
 #define TIME_US(n)		(((n)/20)-1)
 
-//use with 100us timer (range = 0 to 6500, and 0 to 6.5)
+// use with 100us timer (range = 0 to 6500, and 0 to 6.5)
 #define TIME_MS(n)		(((n)*10)-1)
 #define TIME_SEC(n)		(((n)*10000)-1)
 

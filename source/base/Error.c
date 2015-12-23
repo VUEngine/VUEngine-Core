@@ -52,7 +52,6 @@ __CLASS_DEFINITION(Error, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Error_constructor(Error this);
 
 bool Game_isConstructed();
@@ -106,11 +105,12 @@ int Error_triggerException(Error this, char* message, char* detail)
 	Printing_text(Printing_getInstance(), "                   EXCEPTION                    " , x, y++, NULL);
 	Printing_text(Printing_getInstance(), "                                                " , x, y++, NULL);
 	Printing_text(Printing_getInstance(), " Last process:                                  ", x, y, NULL);
-	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y++, NULL);
-	Printing_text(Printing_getInstance(), " LP:                                  " , x, y, NULL);	
-	Printing_hex(Printing_getInstance(), _lp, x + 7, y, NULL);	
+	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y, NULL);
+	Printing_text(Printing_getInstance(), "                                                " , x, ++y, NULL);
+	Printing_text(Printing_getInstance(), " LP:                                  " , x, ++y, NULL);
+	Printing_hex(Printing_getInstance(), _lp, x + 5, y, NULL);
 	Printing_text(Printing_getInstance(), " SP: 		                         " , x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), _sp, x + 7, y, NULL);
+	Printing_hex(Printing_getInstance(), _sp, x + 5, y, NULL);
 
 	if(message)
 	{
@@ -131,7 +131,7 @@ int Error_triggerException(Error this, char* message, char* detail)
 			// TODO: fix me, termination character not working
 			messageLine[stringLength - 1] = (char)0;
 			Printing_text(Printing_getInstance(), "                                                " , x, ++y, NULL);
-			Printing_text(Printing_getInstance(), messageLine, x + 1, y, NULL);
+			Printing_text(Printing_getInstance(), messageLine, x + 1, ++y, NULL);
 		}
 		
 		if(detail)

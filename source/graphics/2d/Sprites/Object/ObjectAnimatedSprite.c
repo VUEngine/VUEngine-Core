@@ -42,7 +42,6 @@ __CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
 
 extern int strcmp(const char *, const char *);
 
-// class's constructor
 static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 
 

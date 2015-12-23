@@ -36,7 +36,6 @@ __CLASS_DEFINITION(Clock, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Clock_constructor(Clock this);
 
 

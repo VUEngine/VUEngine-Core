@@ -30,7 +30,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-//movement type
+// movement type
 #define	__UNIFORM_MOVEMENT		0x00
 #define	__ACCELERATED_MOVEMENT	0x01
 
@@ -86,7 +86,6 @@
 	/* axis that is subject to gravity */																\
 	u8 axisSubjectToGravity;																			\
 
-// A Body which represent a generic object inside a Stage
 __CLASS(Body);
 
 

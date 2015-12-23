@@ -37,7 +37,7 @@
 
 #define VirtualList_ATTRIBUTES																			\
 																										\
-	/* it is derivated from */																			\
+	/* it is derived from */																			\
 	Object_ATTRIBUTES																					\
 																										\
 	/* a pointer to the head of the list */ 															\
@@ -55,7 +55,6 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void VirtualList_constructor(VirtualList this);
 
 

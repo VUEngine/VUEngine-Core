@@ -48,6 +48,7 @@ extern const Optical* _optical;
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
 static void Entity_releaseSprites(Entity this);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +64,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	// save definition
 	this->entityDefinition = entityDefinition;
 
-	/* the sprite must be initializated in the derivated class */
+	// the sprite must be initialized in the derived class
 	this->sprites = NULL;
 
 	this->shape = NULL;
@@ -118,7 +119,7 @@ static void Entity_releaseSprites(Entity this)
 	}
 }
 
-static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboid)
+static void Entity_getSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid)
 {
 	ASSERT(this, "Entity::getSizeFromChildren: null this");
 
@@ -149,34 +150,34 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 	int y = FIX19_13TOI(this->transform.globalPosition.y);
 	int z = FIX19_13TOI(this->transform.globalPosition.z);
 	
-	if(0 == rightcuboid->x1 || halfWidth + x > rightcuboid->x1)
+	if(0 == rightCuboid->x1 || halfWidth + x > rightCuboid->x1)
 	{
-		rightcuboid->x1 = halfWidth + x;
+		rightCuboid->x1 = halfWidth + x;
 	}
 	
-	if(0 == rightcuboid->x0 || x - halfWidth < rightcuboid->x0)
+	if(0 == rightCuboid->x0 || x - halfWidth < rightCuboid->x0)
 	{
-		rightcuboid->x0 = x - halfWidth;
+		rightCuboid->x0 = x - halfWidth;
 	}
 	
-	if(0 == rightcuboid->y1 || halfHeight + y > rightcuboid->y1)
+	if(0 == rightCuboid->y1 || halfHeight + y > rightCuboid->y1)
 	{
-		rightcuboid->y1 = halfHeight + y;
+		rightCuboid->y1 = halfHeight + y;
 	}
 	
-	if(0 == rightcuboid->y0 || y - halfHeight < rightcuboid->y0)
+	if(0 == rightCuboid->y0 || y - halfHeight < rightCuboid->y0)
 	{
-		rightcuboid->y0 = y - halfHeight;
+		rightCuboid->y0 = y - halfHeight;
 	}
 
-	if(0 == rightcuboid->z1 || halfDepth + z > rightcuboid->z1)
+	if(0 == rightCuboid->z1 || halfDepth + z > rightCuboid->z1)
 	{
-		rightcuboid->z1 = halfDepth + z;
+		rightCuboid->z1 = halfDepth + z;
 	}
 	
-	if(0 == rightcuboid->z0 || z - halfDepth < rightcuboid->z0)
+	if(0 == rightCuboid->z0 || z - halfDepth < rightCuboid->z0)
 	{
-		rightcuboid->z0 = z - halfHeight;
+		rightCuboid->z0 = z - halfHeight;
 	}
 
 	if(this->children)
@@ -185,7 +186,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 		
 		for(; node; node = VirtualNode_getNext(node))
 		{
-			Entity_getSizeFromChildren(__SAFE_CAST(Entity, VirtualNode_getData(node)), rightcuboid);
+			Entity_getSizeFromChildren(__SAFE_CAST(Entity, VirtualNode_getData(node)), rightCuboid);
 		}
 	}
 }
@@ -193,23 +194,23 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightcuboid* rightcuboi
 // calculate my size based on me and my children
 void Entity_calculateSize(Entity this)
 {
-	SmallRightcuboid rightcuboid = {0, 0, 0, 0, 0, 0};
+	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromChildren(this, &rightcuboid);
+	Entity_getSizeFromChildren(this, &rightCuboid);
 
-	rightcuboid.x0 = FIX19_13TOI(this->transform.globalPosition.x) - rightcuboid.x0;
-	rightcuboid.x1 = rightcuboid.x1 - FIX19_13TOI(this->transform.globalPosition.x);
-	rightcuboid.y0 = FIX19_13TOI(this->transform.globalPosition.y) - rightcuboid.y0;
-	rightcuboid.y1 = rightcuboid.y1 - FIX19_13TOI(this->transform.globalPosition.y);
-	rightcuboid.z0 = FIX19_13TOI(this->transform.globalPosition.z) - rightcuboid.z0;
-	rightcuboid.z1 = rightcuboid.z1 - FIX19_13TOI(this->transform.globalPosition.z);
+	rightCuboid.x0 = FIX19_13TOI(this->transform.globalPosition.x) - rightCuboid.x0;
+	rightCuboid.x1 = rightCuboid.x1 - FIX19_13TOI(this->transform.globalPosition.x);
+	rightCuboid.y0 = FIX19_13TOI(this->transform.globalPosition.y) - rightCuboid.y0;
+	rightCuboid.y1 = rightCuboid.y1 - FIX19_13TOI(this->transform.globalPosition.y);
+	rightCuboid.z0 = FIX19_13TOI(this->transform.globalPosition.z) - rightCuboid.z0;
+	rightCuboid.z1 = rightCuboid.z1 - FIX19_13TOI(this->transform.globalPosition.z);
 
-	this->size.x = rightcuboid.x0 + rightcuboid.x1;
-	this->size.y = rightcuboid.y0 + rightcuboid.y1;
-	this->size.z = rightcuboid.z0 + rightcuboid.z1;
+	this->size.x = rightCuboid.x0 + rightCuboid.x1;
+	this->size.y = rightCuboid.y0 + rightCuboid.y1;
+	this->size.z = rightCuboid.z0 + rightCuboid.z1;
 }
 
-static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightcuboid* rightcuboid)
+static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightCuboid* rightCuboid)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
 	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
@@ -267,34 +268,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	int y = FIX19_13TOI(globalPosition3D.y);
 	int z = FIX19_13TOI(globalPosition3D.z);
 	
-	if(0 == rightcuboid->x1 || halfWidth + x > rightcuboid->x1)
+	if(0 == rightCuboid->x1 || halfWidth + x > rightCuboid->x1)
 	{
-		rightcuboid->x1 = halfWidth + x;
+		rightCuboid->x1 = halfWidth + x;
 	}
 	
-	if(0 == rightcuboid->x0 || x - halfWidth < rightcuboid->x0)
+	if(0 == rightCuboid->x0 || x - halfWidth < rightCuboid->x0)
 	{
-		rightcuboid->x0 = x - halfWidth;
+		rightCuboid->x0 = x - halfWidth;
 	}
 	
-	if(0 == rightcuboid->y1 || halfHeight + y > rightcuboid->y1)
+	if(0 == rightCuboid->y1 || halfHeight + y > rightCuboid->y1)
 	{
-		rightcuboid->y1 = halfHeight + y;
+		rightCuboid->y1 = halfHeight + y;
 	}
 	
-	if(0 == rightcuboid->y0 || y - halfHeight < rightcuboid->y0)
+	if(0 == rightCuboid->y0 || y - halfHeight < rightCuboid->y0)
 	{
-		rightcuboid->y0 = y - halfHeight;
+		rightCuboid->y0 = y - halfHeight;
 	}
 
-	if(0 == rightcuboid->z1 || halfDepth + z > rightcuboid->z1)
+	if(0 == rightCuboid->z1 || halfDepth + z > rightCuboid->z1)
 	{
-		rightcuboid->z1 = halfDepth + z;
+		rightCuboid->z1 = halfDepth + z;
 	}
 	
-	if(0 == rightcuboid->z0 || z - halfDepth < rightcuboid->z0)
+	if(0 == rightCuboid->z0 || z - halfDepth < rightCuboid->z0)
 	{
-		rightcuboid->z0 = z - halfHeight;
+		rightCuboid->z0 = z - halfHeight;
 	}
 
 	if(positionedEntity->childrenDefinitions)
@@ -302,24 +303,24 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		int i = 0;
 		for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
 		{
-			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &globalPosition3D, rightcuboid);
+			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &globalPosition3D, rightCuboid);
 		}
 	}
 }
 
 // calculate total size from definition
-SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition)
+SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition)
 {
-	SmallRightcuboid rightcuboid = {0, 0, 0, 0, 0, 0};
+	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightcuboid);
+	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightCuboid);
 
-	rightcuboid.x0 = (s16)FIX19_13TOI(positionedEntity->position.x) - rightcuboid.x0;
-	rightcuboid.x1 = rightcuboid.x1 - (s16)FIX19_13TOI(positionedEntity->position.x);
-	rightcuboid.y0 = (s16)FIX19_13TOI(positionedEntity->position.y) - rightcuboid.y0;
-	rightcuboid.y1 = rightcuboid.y1 - (s16)FIX19_13TOI(positionedEntity->position.y);
+	rightCuboid.x0 = (s16)FIX19_13TOI(positionedEntity->position.x) - rightCuboid.x0;
+	rightCuboid.x1 = rightCuboid.x1 - (s16)FIX19_13TOI(positionedEntity->position.x);
+	rightCuboid.y0 = (s16)FIX19_13TOI(positionedEntity->position.y) - rightCuboid.y0;
+	rightCuboid.y1 = rightCuboid.y1 - (s16)FIX19_13TOI(positionedEntity->position.y);
 
-	return rightcuboid;
+	return rightCuboid;
 }
 
 // create an entity in gameengine's memory

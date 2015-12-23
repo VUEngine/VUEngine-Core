@@ -40,7 +40,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the BgmapSprite
 __CLASS_DEFINITION(BgmapSprite, Sprite);
 
 
@@ -57,6 +56,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
 static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
 static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS

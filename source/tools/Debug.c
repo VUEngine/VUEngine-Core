@@ -130,15 +130,14 @@ __CLASS_DEFINITION(Debug, Object);
 
 extern ClassSizeData _userClassesSizeData[];
 
-// class's constructor
 static void Debug_constructor(Debug this);
-
-// setup pages
+static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message);
+static void Debug_showCollisionShapes(Debug this);
+static void Debug_showDebugBgmap(Debug this);
 static void Debug_setupPages(Debug this);
 static void Debug_showPage(Debug this, int increment);
 static void Debug_showSubPage(Debug this, int increment);
 static void Debug_removeSubPages(Debug this);
-
 static void Debug_dimmGame(Debug this);
 static void Debug_lightUpGame(Debug this);
 
@@ -165,10 +164,6 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
-
-static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message);
-static void Debug_showCollisionShapes(Debug this);
-static void Debug_showDebugBgmap(Debug this);
 
 
 //---------------------------------------------------------------------------------------------------------

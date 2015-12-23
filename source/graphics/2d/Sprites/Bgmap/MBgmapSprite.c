@@ -36,7 +36,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the MBgmapSprite
 __CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
 
 

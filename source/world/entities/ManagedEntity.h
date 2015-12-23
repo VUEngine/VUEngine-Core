@@ -41,7 +41,7 @@
 
 #define ManagedEntity_ATTRIBUTES																		\
 																										\
-	/* it is derivated from*/																			\
+	/* it is derived from*/																			\
 	Entity_ATTRIBUTES																					\
 																										\
 	/* sprites' list */																					\

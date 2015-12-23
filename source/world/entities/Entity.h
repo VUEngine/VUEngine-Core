@@ -66,7 +66,7 @@
 
 #define Entity_ATTRIBUTES																				\
 																										\
-	/* it is derivated from */																			\
+	/* it is derived from */																			\
 	Container_ATTRIBUTES																				\
 																										\
 	/* sprites' list */																					\
@@ -133,7 +133,7 @@ typedef const PositionedEntity PositionedEntityROMDef;
 
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name);
 void Entity_destructor(Entity this);
-SmallRightcuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
+SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
 Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo);
 Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity, s16 id);
 Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* const positionedEntity, s16 id);

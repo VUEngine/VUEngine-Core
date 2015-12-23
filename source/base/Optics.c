@@ -64,7 +64,7 @@ inline u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
 	return magnitude;
 }
 
-//determine if a point is visible
+// determine if a point is visible
 inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad)
 {
 	int lowLimit = 0 - parallax - pad;
@@ -72,10 +72,10 @@ inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int para
 
 	VBVec2D position2D;
 
-	//normalize position
+	// normalize position
 	__OPTICS_NORMALIZE(position3D);
 
-	//project the position to 2d space
+	// project the position to 2d space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 	width >>= 1;

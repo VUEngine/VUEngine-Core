@@ -40,7 +40,6 @@ __CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 
 extern int strcmp(const char *, const char *);
 
-// class's constructor
 static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner);
 
 

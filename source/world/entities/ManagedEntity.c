@@ -65,7 +65,7 @@ void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* mana
 	// construct base Entity
 	__CONSTRUCT_BASE((EntityDefinition*)managedEntityDefinition, id, name);
 
-	/* the sprite must be initializated in the derivated class */
+	/* the sprite must be initializated in the derived class */
 	this->managedSprites = __NEW(VirtualList);
 
 	this->previous2DPosition.x = 0;

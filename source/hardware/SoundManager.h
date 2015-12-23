@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SOUNDMANAGER_H_
-#define SOUNDMANAGER_H_
+#ifndef SOUND_MANAGER_H_
+#define SOUND_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------

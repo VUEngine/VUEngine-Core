@@ -68,7 +68,6 @@ __CLASS_DEFINITION(VPUManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void VPUManager_constructor(VPUManager this);
 
 

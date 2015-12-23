@@ -53,4 +53,5 @@ void* Telegram_getReceiver(Telegram this);
 int Telegram_getMessage(Telegram this);
 void* Telegram_getExtraInfo(Telegram this);
 
+
 #endif

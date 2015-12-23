@@ -77,7 +77,6 @@ static ClockManager _clockManager;
 int _lp = 0;
 int _sp = 0;
 
-// class's constructor
 static void HardwareManager_constructor(HardwareManager this);
 
 

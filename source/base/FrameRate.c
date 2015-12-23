@@ -63,7 +63,6 @@ __CLASS_DEFINITION(FrameRate, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void FrameRate_constructor(FrameRate this);
 
 

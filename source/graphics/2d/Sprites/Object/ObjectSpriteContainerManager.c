@@ -50,7 +50,6 @@ static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManage
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 // a singleton
 __SINGLETON(ObjectSpriteContainerManager);
 

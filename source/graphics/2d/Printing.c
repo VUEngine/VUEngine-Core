@@ -31,12 +31,6 @@
 
 extern FontROMDef* __FONTS[];
 
-typedef struct FontData
-{
-	const struct FontDefinition * fontDefinition;
-    u16 memoryOffset;
-} FontData;
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS

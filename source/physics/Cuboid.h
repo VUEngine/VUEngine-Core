@@ -51,10 +51,10 @@
 	Shape_ATTRIBUTES;																					\
 																										\
 	/* the rectangle */																					\
-	Rightcuboid rightCuboid;																			\
+	RightCuboid rightCuboid;																			\
 																										\
 	/* the rightCuboid to check */																		\
-	Rightcuboid positionedRightcuboid;																	\
+	RightCuboid positionedRightCuboid;																	\
 																										\
 	/* for debugging purposes */																		\
 	Polygon polygon;																					\
@@ -73,8 +73,8 @@ void Cuboid_destructor(Cuboid this);
 u8 Cuboid_overlaps(Cuboid this, Shape shape);
 void Cuboid_setup(Cuboid this);
 void Cuboid_position(Cuboid this);
-Rightcuboid Cuboid_getRightcuboid(Cuboid this);
-Rightcuboid Cuboid_getPositionedRightcuboid(Cuboid this);
+RightCuboid Cuboid_getRightCuboid(Cuboid this);
+RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this);
 u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);
 u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);
 void Cuboid_draw(Cuboid this);

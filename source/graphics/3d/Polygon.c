@@ -30,7 +30,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Polygon
 __CLASS_DEFINITION(Polygon, Object);
 
 
@@ -42,7 +41,6 @@ __CLASS_DEFINITION(Polygon, Object);
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 
-// class's constructor
 static void Polygon_constructor(Polygon this);
 
 

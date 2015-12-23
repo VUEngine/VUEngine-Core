@@ -29,18 +29,18 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the InverseCuboid
 __CLASS_DEFINITION(InverseCuboid, Cuboid);
-
 __CLASS_FRIEND_DEFINITION(Cuboid);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner);
-bool InverseCuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second);
+bool InverseCuboid_overlapsWithRightCuboids(RightCuboid* first, RightCuboid* second);
 bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -48,7 +48,6 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other);
 
 __CLASS_NEW_DEFINITION(InverseCuboid, SpatialObject owner)
 __CLASS_NEW_END(InverseCuboid, owner);
-
 
 // class's constructor
 static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
@@ -86,17 +85,17 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other)
 {
 	ASSERT(this, "Cuboid::overlapsCuboid: null this");
 
-	return InverseCuboid_overlapsWithRightcuboids(&this->positionedRightcuboid, &other->positionedRightcuboid);
+	return InverseCuboid_overlapsWithRightCuboids(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
 // check if overlaps with other rect
-bool InverseCuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second)
+bool InverseCuboid_overlapsWithRightCuboids(RightCuboid* first, RightCuboid* second)
 {
-	ASSERT(first, "Cuboid::overlapsWithRightcuboids: null first");
-	ASSERT(second, "Cuboid::overlapsWithRightcuboids: null second");
+	ASSERT(first, "Cuboid::overlapsWithRightCuboids: null first");
+	ASSERT(second, "Cuboid::overlapsWithRightCuboids: null second");
 
 	// test for collision
 	return (first->x0 < second->x0 || first->x1 > second->x1 ||
-			 first->y0 < second->y0 || first->y1 > second->y1 ||
-			 first->z0 < second->z0 || first->z1 > second->z1);
+		first->y0 < second->y0 || first->y1 > second->y1 ||
+		first->z0 < second->z0 || first->z1 > second->z1);
 }

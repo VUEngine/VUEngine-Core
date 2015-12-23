@@ -19,7 +19,7 @@
 
 #define __MAKE_STRING(a) #a
 
-// concatenate two strigs
+// concatenate two strings
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
 #define __CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
@@ -32,7 +32,7 @@
 		static bool __callFlag = false;													\
 																						\
 		/* check if not called */														\
-		if(!__callFlag)																\
+		if(!__callFlag)																	\
 		{																				\
 			/* call method */															\
 			MethodName(__VA_ARGS__);													\
@@ -120,13 +120,13 @@
 		return this;																	\
 	}
 
-#define	__DINAMIC_STRUCT_PAD	4
+#define	__DYNAMIC_STRUCT_PAD	4
 
 // like new in C++
 #define __NEW(ClassName, ...)															\
 																						\
 	/* call class's new implementation */												\
-	ClassName ## _new(__VA_ARGS__)
+	ClassName ## _new(__VA_ARGS__)														\
 
 
 // like delete in C++ (calls virtual destructor)
@@ -136,29 +136,26 @@
 	ASSERT(object && *(u32*)object, "Deleting null object");							\
 	((void (*)(void*))((void***)object)[0][0])(object);									\
 
-
 // like new in C++
 #define __NEW_BASIC(ClassName)															\
 																						\
 	/* allocate data */																	\
 	(ClassName*)(MemoryPool_allocate(MemoryPool_getInstance(),							\
-		sizeof(ClassName) + __DINAMIC_STRUCT_PAD) + __DINAMIC_STRUCT_PAD);				\
-
+		sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);				\
 
 // like delete in C++ (calls virtual destructor)
 #define __DELETE_BASIC(object)															\
 																						\
 	/* free the memory */																\
-	ASSERT(object && *(u32*)((u32)object - __DINAMIC_STRUCT_PAD), 						\
+	ASSERT(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD), 						\
 			"Oop: deleting null basic object");											\
-	MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DINAMIC_STRUCT_PAD)		\
-
+	MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DYNAMIC_STRUCT_PAD)		\
 
 // construct the base object
 #define __CONSTRUCT_BASE(...)															\
 																						\
 	/* call base's constructor */														\
-	_baseConstructor((void*)this, ##__VA_ARGS__);												\
+	_baseConstructor((void*)this, ##__VA_ARGS__);										\
 
 // must always call base class's destructor
 #define __DESTROY_BASE																	\
@@ -169,12 +166,11 @@
 	/* free the memory */																\
 	MemoryPool_free(MemoryPool_getInstance(), (void*)this);								\
 
-
 // retrieve virtual method's address
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object, ...)						\
 																						\
 	/* call derived implementation */													\
-	(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)
+	(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)					\
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
 #ifdef __DEBUG
@@ -202,7 +198,7 @@
 		((ReturnType (*)(ClassName, ...))												\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))			\
 			(																			\
-				__SAFE_CAST(ClassName, object), ##__VA_ARGS__								\
+				__SAFE_CAST(ClassName, object), ##__VA_ARGS__							\
 			)																			\
 
 #endif
@@ -216,7 +212,7 @@
 			)																			\
 
 #ifdef __DEBUG
-#define __SAFE_CAST(ClassName, object)														\
+#define __SAFE_CAST(ClassName, object)													\
 																						\
 		/* try to up cast object */														\
 		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
@@ -224,32 +220,28 @@
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
 
-#define __GET_CAST(ClassName, object)														\
+#define __GET_CAST(ClassName, object)													\
 																						\
 		/* try to up cast object */														\
-		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
-
+		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)		\
 
 // declare a virtual method
 #define __VIRTUAL_DEC(MethodName)														\
 																						\
 	/* define a virtual method pointer */												\
-	void* MethodName
-
+	void* MethodName																	\
 
 // override a virtual method
 #define __VIRTUAL_SET(ClassVTable, ClassName, MethodName)								\
 																						\
 	/* set the virtual method's address in its correspoiding vtable offset */			\
-	ClassVTable ## _vTable.MethodName = ClassName ## _ ## MethodName
-
+	ClassVTable ## _vTable.MethodName = ClassName ## _ ## MethodName					\
 
 // override a virtual method
 #define __VIRTUAL_BASE_SET(ClassVTable, ClassName, MethodName, BaseClassMethodName)		\
 																						\
 	/* set the virtual method's address in its correspoiding vtable offset */			\
-	ClassVTable ## _vTable.MethodName = ClassName ## _ ## BaseClassMethodName
-
+	ClassVTable ## _vTable.MethodName = ClassName ## _ ## BaseClassMethodName			\
 
 // call configure class's vtable method
 #define __SET_CLASS(ClassName)															\
@@ -286,7 +278,6 @@
 		_baseDestructor = (void (*)(void*))&BaseClassName ## _destructor;				\
 	}
 
-
 // class's vtable declaration and instantiation
 #define __VTABLE(ClassName)																\
 																						\
@@ -306,8 +297,7 @@
 		ClassName ## _METHODS;															\
 																						\
 	/* create the vtable instance */													\
-	}ClassName ## _vTable;																\
-
+	} ClassName ## _vTable;																\
 
 // declare a class
 #define __CLASS(ClassName)																\
@@ -339,7 +329,6 @@
 																						\
 		/* end definition */															\
 	} ClassName ## _str;																\
-
 
 // define a class
 #define __CLASS_DEFINITION(ClassName, BaseClassName)									\
@@ -381,7 +370,6 @@
 																						\
 	/* define allocator */																\
 	__ALLOCATOR_DEFINITION(ClassName, BaseClassName)
-
 
 // retrieves object's class' name
 #define __GET_CLASS_NAME(object)														\
@@ -483,8 +471,7 @@
 		return _instance ## ClassName;													\
 	}
 
-// gcc has a bug, it doesn't move back the sp register after returning
-// from a variadic call
+// gcc has a bug, it doesn't move back the sp register after returning from a variadic call
 #define __CALL_VARIADIC(VariadicFunctionCall)											\
 																						\
 	/* variadic function call */														\
@@ -492,7 +479,6 @@
 																						\
 	/* sp fix displacement */															\
 	asm("addi	20, sp, sp")
-
 
 // MemoryPool's defines
 #define __BLOCK_DEFINITION(BlockSize, Elements)											\

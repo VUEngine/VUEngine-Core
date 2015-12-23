@@ -54,10 +54,7 @@ __CLASS_DEFINITION(DirectDraw, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void DirectDraw_constructor(DirectDraw this);
-
-// draw a pixel on the screen (DirectDraw)
 static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int palette);
 
 

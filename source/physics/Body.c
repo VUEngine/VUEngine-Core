@@ -42,7 +42,8 @@ __CLASS_DEFINITION(Body, Object);
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
-#define THRESHOLD FTOFIX19_13(0.1f)
+#define THRESHOLD 			FTOFIX19_13(0.1f)
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -517,10 +518,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 	// get friction fBody from the game world
 	fix19_13 worldFriction = PhysicalWorld_getFriction(PhysicalWorld_getInstance()) * 2;
 
-	static Force frictionForce = 
-	{
-		0, 0, 0
-	};
+	static Force frictionForce = {0, 0, 0};
 	
 	frictionForce.x = 0;
 	frictionForce.y = 0;
@@ -763,7 +761,7 @@ void Body_stopMovement(Body this, u8 axis)
 	}
 }
 
-// set axis subjet to gravity
+// get axis subject to gravity
 u8 Body_getAxisSubjectToGravity(Body this)
 {
 	ASSERT(this, "Body::getAxisSubjectToGravity: null this");
@@ -771,7 +769,7 @@ u8 Body_getAxisSubjectToGravity(Body this)
 	return this->axisSubjectToGravity;
 }
 
-// set axis subjet to gravity
+// set axis subject to gravity
 void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity)
 {
 	ASSERT(this, "Body::setAxisSubjectToGravity: null this");
@@ -784,7 +782,6 @@ void Body_setActive(Body this, bool active)
 {
 	ASSERT(this, "Body::setActive: null this");
 
-	// it is active
 	this->active = active;
 }
 
@@ -811,7 +808,6 @@ void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller)
 
 	if(this->owner == caller)
 	{
-		// set position
 		this->position = *position;
 	}
 }

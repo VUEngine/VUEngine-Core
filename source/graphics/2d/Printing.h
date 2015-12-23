@@ -77,9 +77,16 @@ typedef struct FontDefinition
 
 typedef const FontDefinition FontROMDef;
 
+typedef struct FontData
+{
+	const struct FontDefinition * fontDefinition;
+    u16 memoryOffset;
+
+} FontData;
+
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+// 												PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 Printing Printing_getInstance();

@@ -46,7 +46,6 @@ __CLASS_DEFINITION(KeypadManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void KeypadManager_constructor(KeypadManager this);
 
 

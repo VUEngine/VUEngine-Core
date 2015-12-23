@@ -44,7 +44,6 @@ __CLASS_DEFINITION(TimerManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void TimerManager_constructor(TimerManager this);
 
 

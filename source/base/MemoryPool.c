@@ -68,10 +68,7 @@ enum MemoryPoolSizes
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class constructor
 static void MemoryPool_constructor(MemoryPool this);
-
-// clear all dynamic memory
 static void MemoryPool_reset(MemoryPool this);
 
 

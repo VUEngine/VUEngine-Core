@@ -293,7 +293,7 @@ typedef struct Transformation
 
 } Transformation;
 
-typedef struct Rightcuboid
+typedef struct RightCuboid
 {
 	/* left upper corner */
 	fix19_13 x0;
@@ -305,9 +305,9 @@ typedef struct Rightcuboid
 	fix19_13 y1;
 	fix19_13 z1;
 
-} Rightcuboid;
+} RightCuboid;
 
-typedef struct SmallRightcuboid
+typedef struct SmallRightCuboid
 {
 	/* left upper corner */
 	s16 x0;
@@ -319,7 +319,7 @@ typedef struct SmallRightcuboid
 	s16 y1;
 	s16 z1;
 
-} SmallRightcuboid;
+} SmallRightCuboid;
 
 //spacial state vector
 typedef struct GeneralAxisFlag

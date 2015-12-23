@@ -65,7 +65,6 @@ __CLASS_DEFINITION(SpriteManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
 extern unsigned int volatile* _xpstts;
 
 static void SpriteManager_constructor(SpriteManager this);

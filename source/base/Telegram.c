@@ -50,7 +50,6 @@ __CLASS_DEFINITION(Telegram, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Telegram_constructor(Telegram this, u32 dispatchTime, void* sender, void* receiver, int message, void* extraInfo);
 
 
