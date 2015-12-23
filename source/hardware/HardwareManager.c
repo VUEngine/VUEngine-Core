@@ -305,7 +305,7 @@ void HardwareManager_enableRendering(HardwareManager this)
 	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
-// make sure the brigtness is ok
+// make sure the brightness is ok
 void HardwareManager_upBrightness(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::upBrightness: null this");

@@ -452,7 +452,7 @@ void Game_reset(Game this)
 #ifdef __DEBUG
     HardwareManager_displayOn(HardwareManager_getInstance());
 
-	// make sure the brigtness is ok
+	// make sure the brightness is ok
     HardwareManager_upBrightness(HardwareManager_getInstance());
 #endif
 
