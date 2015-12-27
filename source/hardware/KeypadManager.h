@@ -84,6 +84,8 @@ __CLASS(KeypadManager);
 KeypadManager KeypadManager_getInstance();
 
 void KeypadManager_destructor(KeypadManager this);
+void KeypadManager_enableInterrupt(KeypadManager this);
+void KeypadManager_disableInterrupt(KeypadManager this);
 void KeypadManager_enable(KeypadManager this);
 void KeypadManager_disable(KeypadManager this);
 int KeypadManager_isEnabled(KeypadManager this);

@@ -165,14 +165,21 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)VirtualNode_getData(node);
 			Telegram telegram = delayedMessage->telegram;
-
+			
 			VirtualList_removeElement(this->delayedMessages, delayedMessage);
 
 			ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
 			ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
 
-			__DELETE(telegram);
-			__DELETE_BASIC(delayedMessage);
+			if(*(u32*)telegram)
+			{
+				__DELETE(telegram);
+			}
+
+			if(*(u32*)delayedMessage)
+			{
+				__DELETE_BASIC(delayedMessage);
+			}
 		}
 
 		VirtualList_clear(this->delayedMessagesToDiscard);

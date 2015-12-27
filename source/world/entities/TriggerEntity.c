@@ -61,7 +61,6 @@ void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* trig
 	ASSERT(this->shape, "TriggerEntity::constructor: shape not created");
 }
 
-// class's destructor
 void TriggerEntity_destructor(TriggerEntity this)
 {
 	ASSERT(this, "TriggerEntity::destructor: null this");

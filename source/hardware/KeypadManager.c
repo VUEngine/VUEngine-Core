@@ -36,6 +36,9 @@
 																				\
 	/*  */																		\
 	u16 previousKey;															\
+																				\
+	/*  */																		\
+	u8 enabled;																	\
 
 // define the KeypadManager
 __CLASS_DEFINITION(KeypadManager, Object);
@@ -65,6 +68,7 @@ static void KeypadManager_constructor(KeypadManager this)
 
 	this->currentKey = 0;
 	this->previousKey = 0;
+	this->enabled = false;
 
 	readingStatus = (unsigned int *)&HW_REGS[SCR];
 }
@@ -79,13 +83,29 @@ void KeypadManager_destructor(KeypadManager this)
 }
 
 // enable keypad reads
-void KeypadManager_enable(KeypadManager this)
+void KeypadManager_enableInterrupt(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::enable: null this");
 
 	HW_REGS[SCR] = 0;
 	HW_REGS[SCR] &= ~(S_HWDIS | S_INTDIS);
-	HW_REGS[SCR] |= S_HW;
+//	HW_REGS[SCR] |= S_HW;
+}
+
+// disable keypad reads
+void KeypadManager_disableInterrupt(KeypadManager this)
+{
+	ASSERT(this, "KeypadManager::disable: null this");
+
+	HW_REGS[SCR] = (S_INTDIS | S_HW);
+}
+
+// enable keypad reads
+void KeypadManager_enable(KeypadManager this)
+{
+	ASSERT(this, "KeypadManager::enable: null this");
+
+	this->enabled = true;
 }
 
 // disable keypad reads
@@ -93,7 +113,7 @@ void KeypadManager_disable(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::disable: null this");
 
-	HW_REGS[SCR] = (S_INTDIS | S_HW);
+	this->enabled = false;
 }
 
 // get status
@@ -101,7 +121,7 @@ int KeypadManager_isEnabled(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::disable: null this");
 
-	return (S_INTDIS | S_HW) != HW_REGS[SCR];
+	return this->enabled;
 }
 
 // read keypad
@@ -109,7 +129,8 @@ void KeypadManager_read(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
-	KeypadManager_disable(this);
+	// disable interrupt
+	HW_REGS[SCR] = (S_INTDIS | S_HW);
 
 	//wait for screen to idle
 	while (*readingStatus & S_STAT);

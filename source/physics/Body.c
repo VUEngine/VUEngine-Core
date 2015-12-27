@@ -20,6 +20,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Body.h>
+#include <Game.h>
+#include <Clock.h>
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
 
@@ -64,7 +66,7 @@ enum CollidingObjectIndexes
 	eLastCollidingObject,
 };
 
-
+Clock _physhicsClock = NULL;
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -116,6 +118,11 @@ static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 	this->active = true;
 
 	this->elasticity = 0;
+	
+	if(!_physhicsClock)
+	{
+		_physhicsClock = Game_getPhysicsClock(Game_getInstance());
+	}
 }
 
 // class's destructor
@@ -616,7 +623,9 @@ VBVec3D Body_getLastDisplacement(Body this)
 
 	VBVec3D displacement = {0, 0, 0};
 
-	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
+	// TODO: fix this horrible hack, 
+	// fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
+	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getMilliSeconds(_physhicsClock) - Clock_getPreviousMilliSeconds(_physhicsClock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
 	displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
 	displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);

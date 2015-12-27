@@ -39,11 +39,13 @@ __CLASS_FRIEND_DEFINITION(InverseCuboid);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
-static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition);
+static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (Rightcuboid*, Rightcuboid*));
 static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement, VBVec3D previousPosition);
 static void Cuboid_configurePolygon(Cuboid this, int renew);
+static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
 static bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other);
+static bool Cuboid_overlapsWithRightcuboid(Rightcuboid* first, Rightcuboid* second);
+static bool Cuboid_overlapsWithInverseRightcuboid(Rightcuboid* first, Rightcuboid* second);
 
 Shape SpatialObject_getShape(SpatialObject this);
 
@@ -97,7 +99,7 @@ u8 Cuboid_overlaps(Cuboid this, Shape shape)
 }
 
 // check if overlaps with other rect
-bool Cuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second)
+static bool Cuboid_overlapsWithRightcuboid(Rightcuboid* first, Rightcuboid* second)
 {
 	ASSERT(first, "Cuboid::overlapsWithRightcuboids: null first");
 	ASSERT(second, "Cuboid::overlapsWithRightcuboids: null second");
@@ -109,7 +111,7 @@ bool Cuboid_overlapsWithRightcuboids(Rightcuboid* first, Rightcuboid* second)
 }
 
 // check if overlaps with other rect
-bool Cuboid_overlapsWithInverseRightcuboids(Rightcuboid* first, Rightcuboid* second)
+static bool Cuboid_overlapsWithInverseRightcuboid(Rightcuboid* first, Rightcuboid* second)
 {
 	ASSERT(first, "Cuboid::overlapsWithRightcuboids: null first");
 	ASSERT(second, "Cuboid::overlapsWithRightcuboids: null second");
@@ -125,14 +127,14 @@ bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other)
 {
 	ASSERT(this, "Cuboid::overlapsCuboid: null this");
 
-	return Cuboid_overlapsWithRightcuboids(&this->positionedRightcuboid, &other->positionedRightcuboid);
+	return Cuboid_overlapsWithRightcuboid(&this->positionedRightcuboid, &other->positionedRightcuboid);
 }
 
 bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other)
 {
 	ASSERT(this, "Cuboid::overlapsInverseCuboid: null this");
 
-	return Cuboid_overlapsWithInverseRightcuboids(&this->positionedRightcuboid, &other->positionedRightcuboid);
+	return Cuboid_overlapsWithInverseRightcuboid(&this->positionedRightcuboid, &other->positionedRightcuboid);
 }
 
 void Cuboid_setup(Cuboid this)
@@ -216,16 +218,20 @@ u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, 
 
 	Shape shape = __VIRTUAL_CALL(Shape, SpatialObject, getShape, collidingSpatialObject);
 
-	if(__GET_CAST(Cuboid, shape))
+	if(__GET_CAST(InverseCuboid, shape))
 	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition);
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, Cuboid_overlapsWithInverseRightcuboid);
+	}
+	else if(__GET_CAST(Cuboid, shape))
+	{
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithRightcuboid);
 	}
 
 	return 0;
 }
 
 // determine axis of collision
-static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition)
+static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (Rightcuboid*, Rightcuboid*))
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
@@ -277,7 +283,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 			positionedRightCuboid.x0 += displacement.x;
 			positionedRightCuboid.x1 += displacement.x;
 
-			if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+			if(overlapsFunction(&positionedRightCuboid, &otherRightcuboid))
             {
 				axisOfCollision |= __XAXIS;
 				numberOfAxis++;
@@ -293,7 +299,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 			positionedRightCuboid.y1 += displacement.y;
 
 			// test for collision
-			if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+			if(overlapsFunction(&positionedRightCuboid, &otherRightcuboid))
             {
 				axisOfCollision |= __YAXIS;
 				numberOfAxis++;
@@ -309,7 +315,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 			positionedRightCuboid.z1 += displacement.z;
 
 			// test for collision
-			if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+			if(overlapsFunction(&positionedRightCuboid, &otherRightcuboid))
             {
 				axisOfCollision |= __ZAXIS;
 				numberOfAxis++;
@@ -443,7 +449,7 @@ static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, 
 		positionedRightCuboid.x1 += displacement.x;
 
 		// test for collision
-		if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+		if(Cuboid_overlapsWithRightcuboid(&positionedRightCuboid, &otherRightcuboid))
         {
 			axisOfPossibleCollision |= __XAXIS;
 		}
@@ -455,7 +461,7 @@ static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, 
 		positionedRightCuboid.y1 += displacement.y;
 
 		// test for collision
-		if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+		if(Cuboid_overlapsWithRightcuboid(&positionedRightCuboid, &otherRightcuboid))
         {
 			axisOfPossibleCollision |= __YAXIS;
 		}
@@ -467,7 +473,7 @@ static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, 
 		positionedRightCuboid.z1 += displacement.z;
 
 		// test for collision
-		if(Cuboid_overlapsWithRightcuboids(&positionedRightCuboid, &otherRightcuboid))
+		if(Cuboid_overlapsWithRightcuboid(&positionedRightCuboid, &otherRightcuboid))
 		{
 	    	axisOfPossibleCollision |= __ZAXIS;
 		}

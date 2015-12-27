@@ -141,7 +141,7 @@ void HardwareManager_keypadInterruptHandler(void)
 // cro's interrupt handler
 void HardwareManager_croInterruptHandler(void)   // Expansion Port Interrupt Handler
 {
-	Printing_text(Printing_getInstance(), "EXP interrupt", 48 - 13, 0, NULL);
+	Printing_text(Printing_getInstance(), "EXP cron", 48 - 13, 0, NULL);
 }
 
 // com's interrupt handler
@@ -336,7 +336,7 @@ void HardwareManager_enableKeypad(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::enableKeypad: null this");
 
-	KeypadManager_enable(this->keypadManager);
+	KeypadManager_enableInterrupt(this->keypadManager);
 }
 
 // disable key pad
@@ -344,7 +344,7 @@ void HardwareManager_disableKeypad(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::disableKeypad: null this");
 
-	KeypadManager_disable(this->keypadManager);
+	KeypadManager_disableInterrupt(this->keypadManager);
 }
 
 // print hardware's states

@@ -85,6 +85,8 @@ GameState Game_getCurrentState(Game this);
 void Game_pause(Game this, GameState pauseState);
 void Game_unpause(Game this, GameState pauseState);
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
+void Game_disableKeypad(Game this);
+void Game_enableKeypad(Game this);
 
 #ifdef __DEBUG_TOOLS
 bool Game_isInDebugMode(Game this);

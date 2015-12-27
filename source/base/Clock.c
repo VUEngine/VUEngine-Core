@@ -185,6 +185,13 @@ u32 Clock_getMilliSeconds(Clock this)
 	return this->milliSeconds;
 }
 
+u32 Clock_getPreviousMilliSeconds(Clock this)
+{
+	ASSERT(this, "Clock::getPreviousMilliSeconds: null this");
+
+	return this->previousMilliSeconds;
+}
+
 //retrieve clock's seconds
 u16 Clock_getSeconds(Clock this)
 {

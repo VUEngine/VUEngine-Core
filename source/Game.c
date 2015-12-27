@@ -328,7 +328,6 @@ void Game_removeState(Game this, GameState state)
 	this->nextStateOperation = kPopState;
 }
 
-
 // set game's state
 static void Game_setNextState(Game this, GameState state)
 {
@@ -467,6 +466,11 @@ static void Game_handleInput(Game this)
 {
 	ASSERT(this, "Game::handleInput: null this");
 
+	if(!KeypadManager_isEnabled(this->keypadManager))
+	{
+		return;
+	}
+	
 #ifdef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 	KeypadManager_read(this->keypadManager);
 #endif
@@ -1165,4 +1169,18 @@ static void Game_autoPause(Game this)
 			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
 		}
 	}
+}
+
+void Game_disableKeypad(Game this)
+{
+	ASSERT(this, "Game::disableKeyPad: null this");
+
+	KeypadManager_disable(this->keypadManager);
+}
+
+void Game_enableKeypad(Game this)
+{
+	ASSERT(this, "Game::enableKeypad: null this");
+
+	KeypadManager_enable(this->keypadManager);
 }

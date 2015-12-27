@@ -86,6 +86,7 @@ void Clock_update(Clock this, u32 ticks);
 void Clock_interrupt();
 void Clock_reset(Clock this);
 u32 Clock_getMilliSeconds(Clock this);
+u32 Clock_getPreviousMilliSeconds(Clock this);
 u16 Clock_getSeconds(Clock this);
 u8 Clock_getMinutes(Clock this);
 u32 Clock_getTime(Clock this);

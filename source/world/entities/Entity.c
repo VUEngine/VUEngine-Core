@@ -677,7 +677,6 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	}
 }
 
-#include <TriggerEntity.h>
 // transform class
 void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
@@ -708,12 +707,6 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		// update graphical representation
 		Entity_translateSprites(this, updateSpriteTransformations, updateSpritePosition);
 	}
-	
-/*	if(this->shape && __GET_CAST(TriggerEntity, this))
-	{
-		__VIRTUAL_CALL(void, Shape, draw, this->shape);
-	}
-	*/
 }
 
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)

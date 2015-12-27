@@ -312,7 +312,6 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 
 	if(!VirtualList_find(this->movingShapes, shape))
 	{
-//		Printing_text(Printing_getInstance(), "CollisionManager::shapeStartedMoving", 10, 10, NULL);
 		VirtualList_pushBack(this->movingShapes, shape);
 	}
 }
