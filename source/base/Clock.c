@@ -244,7 +244,7 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 void Clock_start(Clock this)
 {
 	ASSERT(this, "Clock::start: null this");
-	//Clock_reset(this);
+	Clock_reset(this);
 
 	this->paused = false;
 }
@@ -255,7 +255,6 @@ void Clock_stop(Clock this)
 	ASSERT(this, "Clock::stop: null this");
 
 	Clock_reset(this);
-
 	this->paused = true;
 }
 

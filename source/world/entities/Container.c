@@ -282,8 +282,7 @@ Transformation Container_getEnvironmentTransform(Container this)
 		return transformation;
 	}
 
-	// static to avoid call to _memcpy
-	static Transformation environmentTransform =
+	Transformation environmentTransform =
 	{
 			// local position
 			{0, 0, 0},

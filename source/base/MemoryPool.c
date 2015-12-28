@@ -35,7 +35,17 @@
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
 
-
+#define __MEMORY_POOL_ARRAYS													\
+	__BLOCK_DEFINITION(188, 1)													\
+	__BLOCK_DEFINITION(164, 2)													\
+	__BLOCK_DEFINITION(132, 32)													\
+	__BLOCK_DEFINITION(112, 32)													\
+	__BLOCK_DEFINITION(96, 54)													\
+	__BLOCK_DEFINITION(76, 28)													\
+	__BLOCK_DEFINITION(68, 72)													\
+	__BLOCK_DEFINITION(28, 256)													\
+	__BLOCK_DEFINITION(20, 664)													\
+	__BLOCK_DEFINITION(16, 400)													\
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------

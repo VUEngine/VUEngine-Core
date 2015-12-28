@@ -812,7 +812,7 @@ static void Game_update(Game this)
 			// record time
 			mainLogicTime = currentTime;
 		}
-		// do some clean up at the half of the second, to don't interfere
+		// do some clean up at the half of the second, to not interfere
 		// with the game' normal flow
 		else if(currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
 		{
@@ -891,9 +891,6 @@ void Game_startClocks(Game this)
 {
 	ASSERT(this, "Game::pauseClocks: null this");
 	
-	Clock_reset(this->inGameClock);
-	Clock_reset(this->animationsClock);
-	Clock_reset(this->physicsClock);
 	Clock_start(this->inGameClock);
 	Clock_start(this->animationsClock);
 	Clock_start(this->physicsClock);
@@ -921,7 +918,6 @@ void Game_startInGameClock(Game this)
 {
 	ASSERT(this, "Game::startInGameClock: null this");
 
-	Clock_reset(this->inGameClock);
 	Clock_start(this->inGameClock);
 }
 
@@ -929,7 +925,6 @@ void Game_startAnimations(Game this)
 {
 	ASSERT(this, "Game::startAnimations: null this");
 
-	Clock_reset(this->animationsClock);
 	Clock_start(this->animationsClock);
 }
 
@@ -937,7 +932,6 @@ void Game_startPhysics(Game this)
 {
 	ASSERT(this, "Game::startPhysics: null this");
 
-	Clock_reset(this->physicsClock);
 	Clock_start(this->physicsClock);
 }
 

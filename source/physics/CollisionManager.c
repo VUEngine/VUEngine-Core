@@ -207,7 +207,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 	{
 		return;
 	}
-
+	
 	VirtualNode node = VirtualList_begin(this->movingShapes);
 
 	// check the shapes

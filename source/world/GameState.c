@@ -266,6 +266,9 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
+	// make sure no entity is set as focus for the screen
+	Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
+
 	//load world entities
 	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
 
