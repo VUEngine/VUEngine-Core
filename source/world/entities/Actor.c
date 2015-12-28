@@ -492,7 +492,7 @@ const VBVec3D* Actor_getPosition(Actor this)
 	return Entity_getPosition(__SAFE_CAST(Entity, this));
 }
 
-// check if must update sprite's position
+// check if necessary to update sprite's position
 bool Actor_updateSpritePosition(Actor this)
 {
 	ASSERT(this, "Actor::updateSpritePosition: null this");
@@ -508,7 +508,7 @@ bool Actor_updateSpritePosition(Actor this)
 	);
 }
 
-// check if must update sprite's scale
+// check if necessary to update sprite's scale
 bool Actor_updateSpriteTransformations(Actor this)
 {
 	ASSERT(this, "Actor::updateSpriteTransformations: null this");

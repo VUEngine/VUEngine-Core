@@ -251,7 +251,7 @@ bool ScrollBackground_isVisible(ScrollBackground this, int pad)
 	return true;
 }
 
-// check if must update sprite's position
+// check if necessary to update sprite's position
 bool ScrollBackground_updateSpritePosition(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::updateSpritePosition: null this");

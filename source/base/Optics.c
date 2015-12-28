@@ -40,17 +40,17 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 {
 	fix19_13 leftEyePoint, rightEyePoint;
 
-	fix19_13 leftEjeGx, rightEjeGx;
+	fix19_13 leftEyeGx, rightEyeGx;
 
 	// set map position and parallax
 	leftEyePoint = _optical->horizontalViewPointCenter - (_optical->baseDistance >> 1);
 
 	rightEyePoint = _optical->horizontalViewPointCenter + (_optical->baseDistance >> 1);
 
-	leftEjeGx = x - FIX19_13_DIV(FIX19_13_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
-	rightEjeGx = x + FIX19_13_DIV(FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
+	leftEyeGx = x - FIX19_13_DIV(FIX19_13_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
+	rightEyeGx = x + FIX19_13_DIV(FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
 
-	return FIX19_13TOI(rightEjeGx - leftEjeGx) / __PARALLAX_CORRECTION_FACTOR;
+	return FIX19_13TOI(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
 }
 
 // calculate the size of a given magnitud, being it a 8 pixel multiple

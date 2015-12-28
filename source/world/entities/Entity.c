@@ -858,7 +858,7 @@ bool Entity_isVisible(Entity this, int pad)
 			lowLimit = -pad;
 			highLimit = (1 << _optical->maximumViewDistancePower) + pad;
 
-			// check y visibility
+			// check z visibility
 			return z + this->size.z >= lowLimit && z <= highLimit;
 		}
 	}
@@ -879,14 +879,14 @@ bool Entity_isVisible(Entity this, int pad)
 	return false;
 }
 
-// check if must update sprite's position
+// check if necessary to update sprite's position
 bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 	return ((_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
 }
 
-// check if must update sprite's scale
+// check if necessary to update sprite's scale
 bool Entity_updateSpriteTransformations(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteTransformations: null this");
