@@ -220,7 +220,11 @@ static void Game_constructor(Game this)
 	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
 	
 	// to make debugging easier
+#ifndef __DEBUG
+	this->lastProcessName = "not available";
+#else
 	this->lastProcessName = "starting up";
+#endif
     this->nextStateOperation = kSwapState;
 
 	// setup engine paramenters

@@ -110,8 +110,7 @@ long Utilities_randomSeed()
 	int	rand, prevnum = 0,	count = 1;
 	extern unsigned int volatile* _xpstts;
 
-	Clock clock = Game_getClock(Game_getInstance());
-	rand = Clock_getTime(clock);
+	rand = Clock_getTime(Game_getClock(Game_getInstance()));
 
 	// repeat through many times to make more random and to allow the CTA value to change multiple times
 	while (count < __RANDOM_SEED_CYCLES)
@@ -146,6 +145,7 @@ long Utilities_randomSeed()
 
 		// keep track of the last number
 		prevnum = rand;
+		rand = Clock_getTime(Game_getClock(Game_getInstance()));
 	}
 
 	// returns the random seed
