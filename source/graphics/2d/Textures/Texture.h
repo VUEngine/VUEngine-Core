@@ -26,6 +26,7 @@
 #include <CharSet.h>
 #include <Telegram.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -37,36 +38,36 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Texture_METHODS															\
-	Object_METHODS																\
-	__VIRTUAL_DEC(write);														\
+#define Texture_METHODS																					\
+	Object_METHODS																						\
+	__VIRTUAL_DEC(write);																				\
 
-#define Texture_SET_VTABLE(ClassName)											\
-	Object_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, Texture, write);									\
+#define Texture_SET_VTABLE(ClassName)																	\
+	Object_SET_VTABLE(ClassName)																		\
+	__VIRTUAL_SET(ClassName, Texture, write);															\
 
-#define Texture_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* char group to use int this texture */									\
-	CharSet charSet;															\
-																				\
-	/* pointer to ROM definition */												\
-	TextureDefinition* textureDefinition;										\
-																				\
-	/* texture's id */															\
-	u16 id;																		\
-																				\
-	/* color palette */															\
-	u8 palette: 2;																\
+#define Texture_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* char group to use int this texture */															\
+	CharSet charSet;																					\
+																										\
+	/* pointer to ROM definition */																		\
+	TextureDefinition* textureDefinition;																\
+																										\
+	/* texture's id */																					\
+	u16 id;																								\
+																										\
+	/* color palette */																					\
+	u8 palette: 2;																						\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(Texture);
 
-//use a Texture when you want to show a static background or a character that must be scaled according
-//its depth on the screen so there exists consistency between the depth and the size of the character
+// use a Texture when you want to show a static background or a character that must be scaled according to
+// its depth on the screen so there exists consistency between the depth and the size of the character
 
 
 //---------------------------------------------------------------------------------------------------------

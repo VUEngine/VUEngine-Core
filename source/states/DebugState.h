@@ -19,6 +19,7 @@
 
 #ifdef __DEBUG_TOOLS
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -31,16 +32,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define DebugState_METHODS															\
+#define DebugState_METHODS																				\
 	GameState_METHODS;
 
 // declare the virtual methods which are redefined
-#define DebugState_SET_VTABLE(ClassName)											\
-	GameState_SET_VTABLE(ClassName)													\
-	__VIRTUAL_SET(ClassName, DebugState, enter);									\
-	__VIRTUAL_SET(ClassName, DebugState, execute);									\
-	__VIRTUAL_SET(ClassName, DebugState, exit);										\
-	__VIRTUAL_SET(ClassName, DebugState, handleMessage);							\
+#define DebugState_SET_VTABLE(ClassName)																\
+	GameState_SET_VTABLE(ClassName)																		\
+	__VIRTUAL_SET(ClassName, DebugState, enter);														\
+	__VIRTUAL_SET(ClassName, DebugState, execute);														\
+	__VIRTUAL_SET(ClassName, DebugState, exit);															\
+	__VIRTUAL_SET(ClassName, DebugState, handleMessage);												\
 
 __CLASS(DebugState);
 
@@ -52,7 +53,7 @@ __CLASS(DebugState);
 // setup the init focus screen
 DebugState DebugState_getInstance(void);
 
-#endif
 
+#endif
 
 #endif

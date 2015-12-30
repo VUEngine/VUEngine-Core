@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INGAMEENTITY_H_
-#define INGAMEENTITY_H_
+#ifndef IN_GAME_ENTITY_H_
+#define IN_GAME_ENTITY_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -26,43 +26,38 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 struct Shape_str;
 
-#define InGameEntity_METHODS													\
-		Entity_METHODS															\
-		__VIRTUAL_DEC(isMoving);												\
-		__VIRTUAL_DEC(getMovementState);										\
-		__VIRTUAL_DEC(getInGameType);											\
+#define InGameEntity_METHODS																			\
+		Entity_METHODS																					\
+		__VIRTUAL_DEC(isMoving);																		\
+		__VIRTUAL_DEC(getMovementState);																\
+		__VIRTUAL_DEC(getInGameType);																	\
 		
-#define InGameEntity_SET_VTABLE(ClassName)										\
-		Entity_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, InGameEntity, moves);							\
-		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);						\
-		__VIRTUAL_SET(ClassName, InGameEntity, getMovementState);				\
-		__VIRTUAL_SET(ClassName, InGameEntity, getGap);							\
-		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);					\
+#define InGameEntity_SET_VTABLE(ClassName)																\
+		Entity_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, InGameEntity, moves);													\
+		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);												\
+		__VIRTUAL_SET(ClassName, InGameEntity, getMovementState);										\
+		__VIRTUAL_SET(ClassName, InGameEntity, getGap);													\
+		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);											\
 		
-#define InGameEntity_ATTRIBUTES													\
-																				\
-	/* it is derivated from */													\
-	Entity_ATTRIBUTES															\
-																				\
-	/* pointer to the ROM definition */											\
-	InGameEntityDefinition* inGameEntityDefinition;								\
-																				\
-	/* direction */																\
-	Direction direction;														\
-																				\
-	/* Gap to calculate collisions */											\
-	Gap gap;																	\
+#define InGameEntity_ATTRIBUTES																			\
+																										\
+	/* it is derived from */																			\
+	Entity_ATTRIBUTES																					\
+																										\
+	/* pointer to the ROM definition */																	\
+	InGameEntityDefinition* inGameEntityDefinition;														\
+																										\
+	/* direction */																						\
+	Direction direction;																				\
+																										\
+	/* Gap to calculate collisions */																	\
+	Gap gap;																							\
 
 __CLASS(InGameEntity);
 

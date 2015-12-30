@@ -39,55 +39,54 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectSpriteContainer_METHODS											\
-	Sprite_METHODS																\
+#define ObjectSpriteContainer_METHODS																	\
+	Sprite_METHODS																						\
 
 // declare the virtual methods which are redefined
-#define ObjectSpriteContainer_SET_VTABLE(ClassName)								\
-	Sprite_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);					\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);				\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);				\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);					\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);				\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);			\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);						\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);						\
+#define ObjectSpriteContainer_SET_VTABLE(ClassName)														\
+	Sprite_SET_VTABLE(ClassName)																		\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);											\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);										\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);										\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);											\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);										\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);									\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);												\
+	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);												\
 
-#define ObjectSpriteContainer_ATTRIBUTES										\
-																				\
-	/* super's attributes */													\
-	Sprite_ATTRIBUTES;															\
-																				\
-	/* object sprites */														\
-	VirtualList objectSprites;													\
-																				\
-	/* for z sorting */															\
-	VirtualNode node;															\
-	VirtualNode previousNode;													\
-																				\
-	/* next object sprite to defragment */										\
-	VirtualNode objectSpriteToDefragment;										\
-																				\
-	/* for WORLD sorting */														\
-	fix19_13 z;																	\
-																				\
-	/* used for defragmentation */												\
-	int freedObjectIndex;														\
-																				\
-	/* first object index */													\
-	u16 firstObjectIndex;														\
-																				\
-	/* total objects */															\
-	u16 totalObjects;															\
-																				\
-	/* OBJs available */														\
-	u16 availableObjects;														\
-																				\
-	/* spt index */																\
-	u8 spt;																		\
+#define ObjectSpriteContainer_ATTRIBUTES																\
+																										\
+	/* super's attributes */																			\
+	Sprite_ATTRIBUTES;																					\
+																										\
+	/* object sprites */																				\
+	VirtualList objectSprites;																			\
+																										\
+	/* for z sorting */																					\
+	VirtualNode node;																					\
+	VirtualNode previousNode;																			\
+																										\
+	/* next object sprite to defragment */																\
+	VirtualNode objectSpriteToDefragment;																\
+																										\
+	/* for WORLD sorting */																				\
+	fix19_13 z;																							\
+																										\
+	/* used for defragmentation */																		\
+	int freedObjectIndex;																				\
+																										\
+	/* first object index */																			\
+	u16 firstObjectIndex;																				\
+																										\
+	/* total objects */																					\
+	u16 totalObjects;																					\
+																										\
+	/* OBJs available */																				\
+	u16 availableObjects;																				\
+																										\
+	/* spt index */																						\
+	u8 spt;																								\
 
-// declare a ObjectSpriteContainer, which holds a texture and a drawing specification
 __CLASS(ObjectSpriteContainer);
 
 

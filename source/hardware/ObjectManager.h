@@ -29,7 +29,7 @@
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-/***** Object Manipulation Macros *****/
+// Object Manipulation Macros
 
 #define	OBJ_XSET(n,x)		OAM[ (n) << 2]      = (x)
 #define	OBJ_YSET(n,y)		OAM[((n) << 2) + 2] = (y)
@@ -40,13 +40,13 @@
 #define OBJ_PALSET(n,pal)	OAM[((n) << 2) + 3] = (((pal) << 14) & 0xC000) | (OAM[((n) << 2) + 3] & 0x3FFF)
 #define OBJ_VIS(n,v)		OAM[((n) << 2) + 1] = (((v) << 14) & 0xC000) | (OAM[((n) << 2) + 1] & 0x3FFF)
 
-/* Object attributes */
-#define	JX			0				// Display pointer X
-#define	JP			2				// Paralax
-#define	JY			4				// Display pointer Y
-#define	JCA			6				// Character No.
+// Object attributes
+#define	JX			0 // Display pointer X
+#define	JP			2 // Parallax
+#define	JY			4 // Display pointer Y
+#define	JCA			6 // Character No.
 
-/***** "vbSetObject" header flags *****/	// (OR these together to build an Object Header)
+// "vbSetObject" header flags (OR these together to build an object header)
 #define	JLON		0x8000
 #define	JRON		0x4000
 
@@ -68,12 +68,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectManager_METHODS													\
-		Object_METHODS															\
+#define ObjectManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define ObjectManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define ObjectManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(ObjectManager);
 
@@ -87,14 +87,3 @@ void ObjectManager_destructor(ObjectManager this);
 
 
 #endif
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											INCLUDES
-//---------------------------------------------------------------------------------------------------------
-#include <Types.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											DEFINES
-//---------------------------------------------------------------------------------------------------------

@@ -23,23 +23,17 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define ObjectSpriteContainerManager_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* object groups */															\
-	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
+#define ObjectSpriteContainerManager_ATTRIBUTES															\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* object groups */																					\
+	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];								\
 
-// define the ObjectSpriteContainer
 __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 
 
@@ -55,7 +49,6 @@ static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManage
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
 
 // a singleton
 __SINGLETON(ObjectSpriteContainerManager);
@@ -162,7 +155,6 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
 
 	return (unsigned)segment < __TOTAL_OBJECT_SEGMENTS? this->objectSpriteContainers[segment]: NULL;
 }
-
 
 void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, fix19_13 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {

@@ -16,6 +16,7 @@
 
 #ifdef __ANIMATION_EDITOR
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -46,44 +47,45 @@
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationEditor_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* current in game gameState */												\
-	GameState gameState;														\
-																				\
-	/* current animated sprite */												\
-	Sprite animatedSprite;														\
-																				\
-	/* current animation description */											\
-	AnimationDescription* animationDescription;									\
-																				\
-	/* current animation function */											\
-	AnimationFunction animationFunction;										\
-																				\
-	/* animated in game entity selector */										\
-	OptionsSelector animatedInGameEntitySelector;								\
-																				\
-	/* animated sprite selector */												\
-	OptionsSelector spriteSelector;												\
-																				\
-	/* animations selector */													\
-	OptionsSelector animationsSelector;											\
-																				\
-	/* animation edition selector */											\
-	OptionsSelector animationEditionSelector;									\
-																				\
-	/* frame edition selector */												\
-	OptionsSelector frameEditionSelector;										\
-																				\
-	/* mode */																	\
-	int mode;																	\
+#define AnimationEditor_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* current in game gameState */																		\
+	GameState gameState;																				\
+																										\
+	/* current animated sprite */																		\
+	Sprite animatedSprite;																				\
+																										\
+	/* current animation description */																	\
+	AnimationDescription* animationDescription;															\
+																										\
+	/* current animation function */																	\
+	AnimationFunction animationFunction;																\
+																										\
+	/* animated in game entity selector */																\
+	OptionsSelector animatedInGameEntitySelector;														\
+																										\
+	/* animated sprite selector */																		\
+	OptionsSelector spriteSelector;																		\
+																										\
+	/* animations selector */																			\
+	OptionsSelector animationsSelector;																	\
+																										\
+	/* animation edition selector */																	\
+	OptionsSelector animationEditionSelector;															\
+																										\
+	/* frame edition selector */																		\
+	OptionsSelector frameEditionSelector;																\
+																										\
+	/* mode */																							\
+	int mode;																							\
 
 // define the AnimationEditor
 __CLASS_DEFINITION(AnimationEditor, Object);
@@ -274,7 +276,6 @@ void AnimationEditor_stop(AnimationEditor this)
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 }
 
-
 // print title
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
@@ -423,7 +424,6 @@ static void AnimationEditor_selectSprite(AnimationEditor this, u16 pressedKey)
 		AnimationEditor_setupMode(this);
 	}
 }
-
 
 static void AnimationEditor_removePreviousSprite(AnimationEditor this)
 {
@@ -616,7 +616,6 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 
 	AnimationEditor_printAnimationConfig(this);
 }
-
 
 static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this)
 {

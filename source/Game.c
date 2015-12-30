@@ -77,60 +77,59 @@ enum StateOperations
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Game_ATTRIBUTES															\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* game's state machine */													\
-	StateMachine stateMachine;													\
-																				\
-	/* engine's global timer */													\
-	Clock clock;																\
-																				\
-	/* timer to use in game */													\
-	Clock inGameClock;															\
-																				\
-	/* timer to use for animations */											\
-	Clock animationsClock;														\
-																				\
-	/* timer to use for physics */												\
-	Clock physicsClock;															\
-																				\
-	/* managers */																\
-	HardwareManager hardwareManager;											\
-	FrameRate frameRate;														\
-	BgmapTextureManager bgmapTextureManager;											\
-	CharSetManager charSetManager;												\
-	SoundManager soundManager;													\
-	ParamTableManager paramTableManager;										\
-	SpriteManager spriteManager;												\
-	CollisionManager collisionManager;											\
-	PhysicalWorld physicalWorld;												\
-	KeypadManager keypadManager;												\
-	VPUManager vpuManager;														\
-	DirectDraw directDraw;														\
-	I18n i18n;																	\
-	Screen screen;																\
-																				\
-	/* game's next state */														\
-	GameState nextState;														\
-																				\
-	/* game's next state operation */											\
-	int nextStateOperation; 													\
-																				\
-	/* last process' name */													\
-	char* lastProcessName;														\
-																				\
-	/* auto pause state */											 			\
-	GameState automaticPauseState;												\
-																				\
-	/* auto pause last checked time */											\
-	u32 lastAutoPauseCheckTime;													\
-																				\
-	/* low battery indicator showing flag */									\
-	bool isShowingLowBatteryIndicator;											\
-	
+#define Game_ATTRIBUTES																					\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* game's state machine */																			\
+	StateMachine stateMachine;																			\
+																										\
+	/* engine's global timer */																			\
+	Clock clock;																						\
+																										\
+	/* timer to use in game */																			\
+	Clock inGameClock;																					\
+																										\
+	/* timer to use for animations */																	\
+	Clock animationsClock;																				\
+																										\
+	/* timer to use for physics */																		\
+	Clock physicsClock;																					\
+																										\
+	/* managers */																						\
+	HardwareManager hardwareManager;																	\
+	FrameRate frameRate;																				\
+	BgmapTextureManager bgmapTextureManager;															\
+	CharSetManager charSetManager;																		\
+	SoundManager soundManager;																			\
+	ParamTableManager paramTableManager;																\
+	SpriteManager spriteManager;																		\
+	CollisionManager collisionManager;																	\
+	PhysicalWorld physicalWorld;																		\
+	KeypadManager keypadManager;																		\
+	VPUManager vpuManager;																				\
+	DirectDraw directDraw;																				\
+	I18n i18n;																							\
+	Screen screen;																						\
+																										\
+	/* game's next state */																				\
+	GameState nextState;																				\
+																										\
+	/* game's next state operation */																	\
+	int nextStateOperation; 																			\
+																										\
+	/* last process' name */																			\
+	char* lastProcessName;																				\
+																										\
+	/* auto pause state */											 									\
+	GameState automaticPauseState;																		\
+																										\
+	/* auto pause last checked time */																	\
+	u32 lastAutoPauseCheckTime;																			\
+																										\
+	/* low battery indicator showing flag */															\
+	bool isShowingLowBatteryIndicator;																	\
 
 __CLASS_DEFINITION(Game, Object);
 
@@ -150,11 +149,11 @@ static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
 static void Game_updateRendering(Game this);
 static void Game_cleanUp(Game this);
+static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
 static void Game_checkLowBattery(Game this, u16 keyPressed);
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
-static void Game_autoPause(Game this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -227,7 +226,7 @@ static void Game_constructor(Game this)
 #endif
     this->nextStateOperation = kSwapState;
 
-	// setup engine paramenters
+	// setup engine parameters
 	Game_initialize(this);
 }
 
@@ -247,7 +246,7 @@ void Game_destructor(Game this)
 	__SINGLETON_DESTROY;
 }
 
-// setup engine paramenters
+// setup engine parameters
 void Game_initialize(Game this)
 {
 	ASSERT(this, "Game::initialize: null this");
@@ -296,7 +295,7 @@ void Game_start(Game this, GameState state)
 	}
 	else
 	{
-		ASSERT(false, "Game: already started");
+		ASSERT(false, "Game::start: already started");
 	}
 }
 
@@ -405,7 +404,7 @@ static void Game_setNextState(Game this, GameState state)
 	this->nextState = NULL;
 }
 
-// disable interrutps
+// disable interrupts
 void Game_disableHardwareInterrupts(Game this)
 {
 	ASSERT(this, "Game::disableHardwareInterrupts: null this");
@@ -457,7 +456,7 @@ void Game_reset(Game this)
 #ifdef __DEBUG
     HardwareManager_displayOn(HardwareManager_getInstance());
 
-	// make sure the brigtness is ok
+	// make sure the brightness is ok
     HardwareManager_upBrightness(HardwareManager_getInstance());
 #endif
 
@@ -571,7 +570,6 @@ static void Game_handleInput(Game this)
 		KeypadManager_clear(this->keypadManager);
 		return;
 	}
-
 #endif
 
 #ifdef __DEBUG_TOOLS
@@ -744,7 +742,7 @@ static void Game_updateRendering(Game this)
 #endif
 }
 
-// do defragmentation, memory recovy, etc
+// do defragmentation, memory recovery, etc
 static void Game_cleanUp(Game this)
 {
 	
@@ -779,7 +777,6 @@ static void Game_update(Game this)
 	u32 currentTime = 0;
 	u32 mainLogicTime = 0;
 	u32 cleanUpTime = 0;
-	
 
 #ifdef __DEBUG
 	char* previousLastProcessName = NULL;
@@ -1052,6 +1049,7 @@ bool Game_isExitingSpecialMode(Game this)
 
 	return isEnteringSpecialMode;
 }
+
 // retrieve state machine, use with caution!!!
 StateMachine Game_getStateMachine(Game this)
 {

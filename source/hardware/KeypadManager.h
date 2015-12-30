@@ -24,11 +24,12 @@
 
 #include <Object.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-/* Hardware reg SCR definitions */
+// Hardware reg SCR definitions
 #define	S_INTDIS	0x80 	// Disable Interrups
 #define	S_SW		0x20 	// Software Reading
 #define	S_SWCK		0x10 	// Software Clock, Interrupt?
@@ -36,12 +37,7 @@
 #define	S_STAT		0x02 	// Hardware Reading Status
 #define	S_HWDIS		0x01	// Disable Hardware Reading
 
-/* Keypad Definitions */
-#define	K_ANY	0xFFFC		// All keys, without pwr & sgn
-#define	K_BTNS	0x303C		// All buttons; no d-pads, pwr or sgn
-#define	K_PADS	0xCFC0		// All d-pads
-#define	K_LPAD	0x0F00		// Left d-pad only
-#define	K_RPAD	0xC0C0		// Right d-pad only
+// Keypad Definitions
 #define	K_PWR	0x0001		// Low Battery
 #define	K_SGN	0x0002		// Signature; 1 = Standard Pad
 #define	K_A		0x0004		// A Button
@@ -58,21 +54,26 @@
 #define	K_SEL	0x2000		// Select Button
 #define	K_RL	0x4000		// Right Pad, Left
 #define	K_RD	0x8000		// Right Pad, Down
+#define	K_ANY	0xFFFC		// All keys, without pwr & sgn
+#define	K_BTNS	0x303C		// All buttons; no d-pads, pwr or sgn
+#define	K_PADS	0xCFC0		// All d-pads
+#define	K_LPAD	0x0F00		// Left d-pad only
+#define	K_RPAD	0xC0C0		// Right d-pad only
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
+// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
+
 // declare the virtual methods
-#define KeypadManager_METHODS													\
-		Object_METHODS															\
+#define KeypadManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define KeypadManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define KeypadManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(KeypadManager);
 

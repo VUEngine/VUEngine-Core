@@ -28,38 +28,27 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define BgmapAnimatedSprite_METHODS												\
-	BgmapSprite_METHODS															\
+#define BgmapAnimatedSprite_METHODS																		\
+	BgmapSprite_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define BgmapAnimatedSprite_SET_VTABLE(ClassName)								\
-	BgmapSprite_SET_VTABLE(ClassName)											\
-	__VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);				\
+#define BgmapAnimatedSprite_SET_VTABLE(ClassName)														\
+	BgmapSprite_SET_VTABLE(ClassName)																	\
+	__VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);										\
 
-#define BgmapAnimatedSprite_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	BgmapSprite_ATTRIBUTES;														\
-																				\
-	/* bgmap's source coordinates */											\
-	TextureSource originalTextureSource;										\
+#define BgmapAnimatedSprite_ATTRIBUTES																	\
+																										\
+	/* super's attributes */																			\
+	BgmapSprite_ATTRIBUTES;																				\
+																										\
+	/* bgmap's source coordinates */																	\
+	TextureSource originalTextureSource;																\
 
-// declare a Sprite, which holds a texture and a drawing specification
 __CLASS(BgmapAnimatedSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------------------------------------------

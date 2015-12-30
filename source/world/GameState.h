@@ -32,34 +32,34 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define GameState_METHODS														\
-		State_METHODS															\
-		__VIRTUAL_DEC(transform);												\
+#define GameState_METHODS																				\
+		State_METHODS																					\
+		__VIRTUAL_DEC(transform);																		\
 
 // declare the virtual methods which are redefined
-#define GameState_SET_VTABLE(ClassName)											\
-		State_SET_VTABLE(ClassName)												\
-		__VIRTUAL_SET(ClassName, GameState, enter);								\
-		__VIRTUAL_SET(ClassName, GameState, execute);							\
-		__VIRTUAL_SET(ClassName, GameState, exit);								\
-		__VIRTUAL_SET(ClassName, GameState, suspend);							\
-		__VIRTUAL_SET(ClassName, GameState, resume);							\
-		__VIRTUAL_SET(ClassName, GameState, handleMessage);						\
-		__VIRTUAL_SET(ClassName, GameState, transform);							\
+#define GameState_SET_VTABLE(ClassName)																	\
+		State_SET_VTABLE(ClassName)																		\
+		__VIRTUAL_SET(ClassName, GameState, enter);														\
+		__VIRTUAL_SET(ClassName, GameState, execute);													\
+		__VIRTUAL_SET(ClassName, GameState, exit);														\
+		__VIRTUAL_SET(ClassName, GameState, suspend);													\
+		__VIRTUAL_SET(ClassName, GameState, resume);													\
+		__VIRTUAL_SET(ClassName, GameState, handleMessage);												\
+		__VIRTUAL_SET(ClassName, GameState, transform);													\
 
-#define GameState_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	State_ATTRIBUTES;															\
-																				\
-	/* a pointer to the game's stage */											\
-	Stage stage;																\
-																				\
-	/* flag to allow streaming */												\
-	int canStream;																\
-																				\
-	/* must save to allow pause */												\
-	VBVec3D screenPosition;														\
+#define GameState_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	State_ATTRIBUTES;																					\
+																										\
+	/* a pointer to the game's stage */																	\
+	Stage stage;																						\
+																										\
+	/* flag to allow streaming */																		\
+	int canStream;																						\
+																										\
+	/* must save to allow pause */																		\
+	VBVec3D screenPosition;																				\
 
 __CLASS(GameState);
 
@@ -69,6 +69,7 @@ __CLASS(GameState);
 //---------------------------------------------------------------------------------------------------------
 
 GameState GameState_getInstance(void);
+
 void GameState_constructor(GameState this);
 void GameState_destructor(GameState this);
 void GameState_enter(GameState this, void* owner);

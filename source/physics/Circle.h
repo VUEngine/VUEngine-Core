@@ -30,21 +30,20 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Circle_METHODS															\
-		Shape_METHODS															\
+#define Circle_METHODS																					\
+		Shape_METHODS																					\
 
-#define Circle_SET_VTABLE(ClassName)											\
-		Shape_SET_VTABLE(ClassName)												\
+#define Circle_SET_VTABLE(ClassName)																	\
+		Shape_SET_VTABLE(ClassName)																		\
 
-#define Circle_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Shape_ATTRIBUTES;															\
-																				\
-	/* radius */																\
-	u8 radius;																	\
+#define Circle_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Shape_ATTRIBUTES;																					\
+																										\
+	/* radius */																						\
+	u8 radius;																							\
 
-// A Circle which represent a generic object inside a Stage
 __CLASS(Circle);
 
 

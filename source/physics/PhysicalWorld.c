@@ -36,25 +36,25 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define PhysicalWorld_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* registered of bodies  */													\
-	VirtualList	bodies;															\
-																				\
-	/* a list of bodies which must detect collisions */							\
-	VirtualList	activeBodies;													\
-																				\
-	/* a list of bodies which must be removed */								\
-	VirtualList	removedBodies;													\
-																				\
-	/* gravity */																\
-	Acceleration gravity;														\
-																				\
-	/* friction */																\
-	fix19_13 friction;															\
+#define PhysicalWorld_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* registered of bodies  */																			\
+	VirtualList	bodies;																					\
+																										\
+	/* a list of bodies which must detect collisions */													\
+	VirtualList	activeBodies;																			\
+																										\
+	/* a list of bodies which must be removed */														\
+	VirtualList	removedBodies;																			\
+																										\
+	/* gravity */																						\
+	Acceleration gravity;																				\
+																										\
+	/* friction */																						\
+	fix19_13 friction;																					\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -64,7 +64,6 @@ __CLASS_DEFINITION(PhysicalWorld, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void PhysicalWorld_constructor(PhysicalWorld this);
 
 
@@ -223,7 +222,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		// load the current shape
 		Body body = __SAFE_CAST(Body, VirtualNode_getData(node));
 
-		// check if must apply gravity
+		// check if necessary to apply gravity
 		bool gravitySensibleAxis = Body_getAxisSubjectToGravity(body) & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, Body_getOwner(body), &this->gravity);
 
 		if(gravitySensibleAxis)

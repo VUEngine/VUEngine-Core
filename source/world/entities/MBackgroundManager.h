@@ -25,15 +25,16 @@
 #include <MBackground.h>
 #include <Texture.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackgroundManager_METHODS												\
-	Object_METHODS;																\
+#define MBackgroundManager_METHODS																		\
+	Object_METHODS;																						\
 	
-#define MBackgroundManager_SET_VTABLE(ClassName)								\
-	Object_SET_VTABLE(ClassName);												\
+#define MBackgroundManager_SET_VTABLE(ClassName)														\
+	Object_SET_VTABLE(ClassName);																		\
 
 __CLASS(MBackgroundManager);
 
@@ -48,5 +49,6 @@ void MBackgroundManager_destructor(MBackgroundManager this);
 void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefinition* textureDefinition);
 void MBackgroundManager_removeTexture(MBackgroundManager this, Texture texture);
 void MBackgroundManager_reset(MBackgroundManager this);
+
 
 #endif

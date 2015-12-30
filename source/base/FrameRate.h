@@ -30,12 +30,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define FrameRate_METHODS														\
-		Object_METHODS															\
+#define FrameRate_METHODS																				\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define FrameRate_SET_VTABLE(ClassName)											\
-		Object_SET_VTABLE(ClassName)											\
+#define FrameRate_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(FrameRate);
 
@@ -45,6 +45,7 @@ __CLASS(FrameRate);
 //---------------------------------------------------------------------------------------------------------
 
 FrameRate FrameRate_getInstance();
+
 void FrameRate_destructor(FrameRate this);
 void FrameRate_reset(FrameRate this);
 u32 FrameRate_getRawFPS(FrameRate this);

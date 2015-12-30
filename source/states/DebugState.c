@@ -16,6 +16,7 @@
 
 #ifdef __DEBUG_TOOLS
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -57,10 +58,10 @@ enum Screens
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define DebugState_ATTRIBUTES														\
-																					\
-	/* inherits */																	\
-	GameState_ATTRIBUTES															\
+#define DebugState_ATTRIBUTES																			\
+																										\
+	/* inherits */																						\
+	GameState_ATTRIBUTES																				\
 
 __CLASS_DEFINITION(DebugState, GameState);
 

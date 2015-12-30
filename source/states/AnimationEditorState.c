@@ -16,6 +16,7 @@
 
 #ifdef __ANIMATION_EDITOR
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -58,10 +59,10 @@ enum Screens
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationEditorState_ATTRIBUTES												\
-																					\
-	/* inherits */																	\
-	GameState_ATTRIBUTES															\
+#define AnimationEditorState_ATTRIBUTES																	\
+																										\
+	/* inherits */																						\
+	GameState_ATTRIBUTES																				\
 
 __CLASS_DEFINITION(AnimationEditorState, GameState);
 

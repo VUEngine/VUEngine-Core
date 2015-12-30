@@ -42,60 +42,60 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Container_METHODS														\
-		SpatialObject_METHODS													\
-		__VIRTUAL_DEC(update);													\
-		__VIRTUAL_DEC(transform);												\
-		__VIRTUAL_DEC(initialTransform);										\
-		__VIRTUAL_DEC(setLocalPosition);										\
-		__VIRTUAL_DEC(doMessage);												\
-		__VIRTUAL_DEC(addChild);												\
-		__VIRTUAL_DEC(removeChild);												\
-		__VIRTUAL_DEC(suspend);													\
-		__VIRTUAL_DEC(resume);													\
+#define Container_METHODS																				\
+		SpatialObject_METHODS																			\
+		__VIRTUAL_DEC(update);																			\
+		__VIRTUAL_DEC(transform);																		\
+		__VIRTUAL_DEC(initialTransform);																\
+		__VIRTUAL_DEC(setLocalPosition);																\
+		__VIRTUAL_DEC(doMessage);																		\
+		__VIRTUAL_DEC(addChild);																		\
+		__VIRTUAL_DEC(removeChild);																		\
+		__VIRTUAL_DEC(suspend);																			\
+		__VIRTUAL_DEC(resume);																			\
 
 // define the virtual methods
-#define Container_SET_VTABLE(ClassName)											\
-		SpatialObject_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, Container, update);							\
-		__VIRTUAL_SET(ClassName, Container, transform);							\
-		__VIRTUAL_SET(ClassName, Container, initialTransform);					\
-		__VIRTUAL_SET(ClassName, Container, setLocalPosition);					\
-		__VIRTUAL_SET(ClassName, Container, doMessage);							\
-		__VIRTUAL_SET(ClassName, Container, addChild);							\
-		__VIRTUAL_SET(ClassName, Container, removeChild);						\
-		__VIRTUAL_SET(ClassName, Container, suspend);							\
-		__VIRTUAL_SET(ClassName, Container, resume);							\
+#define Container_SET_VTABLE(ClassName)																	\
+		SpatialObject_SET_VTABLE(ClassName)																\
+		__VIRTUAL_SET(ClassName, Container, update);													\
+		__VIRTUAL_SET(ClassName, Container, transform);													\
+		__VIRTUAL_SET(ClassName, Container, initialTransform);											\
+		__VIRTUAL_SET(ClassName, Container, setLocalPosition);											\
+		__VIRTUAL_SET(ClassName, Container, doMessage);													\
+		__VIRTUAL_SET(ClassName, Container, addChild);													\
+		__VIRTUAL_SET(ClassName, Container, removeChild);												\
+		__VIRTUAL_SET(ClassName, Container, suspend);													\
+		__VIRTUAL_SET(ClassName, Container, resume);													\
 
-#define Container_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	SpatialObject_ATTRIBUTES;													\
-																				\
-	/* 3d transformation */														\
-	Transformation transform;													\
-																				\
-	/* children list */															\
-	VirtualList children;														\
-																				\
-	/* removed children list */													\
-	VirtualList removedChildren;												\
-																				\
-	/* parent */																\
-	Container parent;															\
-																				\
-	/* name */																	\
-	char* name;																	\
-																				\
-	/* entity's id */															\
-	s16 id;																		\
-																				\
-	/* flag for parent to know to delete it */									\
-	u8 deleteMe;																\
-																				\
-	/* flag to recalculate global position */									\
-	VBVec3DFlag invalidateGlobalPosition;										\
-																				\
+#define Container_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	SpatialObject_ATTRIBUTES;																			\
+																										\
+	/* 3d transformation */																				\
+	Transformation transform;																			\
+																										\
+	/* children list */																					\
+	VirtualList children;																				\
+																										\
+	/* removed children list */																			\
+	VirtualList removedChildren;																		\
+																										\
+	/* parent */																						\
+	Container parent;																					\
+																										\
+	/* name */																							\
+	char* name;																							\
+																										\
+	/* entity's id */																					\
+	s16 id;																								\
+																										\
+	/* flag for parent to know to delete it */															\
+	u8 deleteMe;																						\
+																										\
+	/* flag to recalculate global position */															\
+	VBVec3DFlag invalidateGlobalPosition;																\
+																										\
 
 __CLASS(Container);
 
@@ -106,6 +106,7 @@ __CLASS(Container);
 
 // needed because of interdependency between Shape's and SpatialObject's headers
 Shape SpatialObject_getShape(SpatialObject this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE

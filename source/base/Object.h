@@ -43,22 +43,22 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the class from which all classes derivate
-#define Object_ATTRIBUTES														\
-																				\
-	/* pointer to the class's virtual table */									\
-	void* vTable;																\
-																				\
-	/* events */																\
-	VirtualList events;															\
+// declare the class from which all classes derive
+#define Object_ATTRIBUTES																				\
+																										\
+	/* pointer to the class's virtual table */															\
+	void* vTable;																						\
+																										\
+	/* events */																						\
+	VirtualList events;																					\
 
 // declare the virtual methods
-#define Object_METHODS															\
-	__VIRTUAL_DEC(handleMessage);												\
+#define Object_METHODS																					\
+	__VIRTUAL_DEC(handleMessage);																		\
 
 // define the virtual methods
-#define Object_SET_VTABLE(ClassName)											\
-	__VIRTUAL_SET(ClassName, Object, handleMessage);
+#define Object_SET_VTABLE(ClassName)																	\
+	__VIRTUAL_SET(ClassName, Object, handleMessage);													\
 
 // the root class for everything else!!
 __CLASS(Object);
@@ -75,5 +75,6 @@ void Object_addEventListener(Object this, Object listener, void (*method)(Object
 void Object_removeEventListener(Object this, Object listener, void (*method)(Object, Object), char* eventName);
 void Object_fireEvent(Object this, char* eventName);
 Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void));
+
 
 #endif

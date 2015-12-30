@@ -36,7 +36,6 @@
 
 __CLASS_DEFINITION(MBackgroundManager, Object);
 
-
 typedef struct TextureRegistry
 {
 	Texture texture;
@@ -44,11 +43,11 @@ typedef struct TextureRegistry
 	u8 rows;
 } TextureRegistry;
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class constructor 
 static void MBackgroundManager_constructor(MBackgroundManager this);
 
 

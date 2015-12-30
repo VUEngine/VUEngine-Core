@@ -26,6 +26,7 @@
 #include <CharSet.h>
 #include <Telegram.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -37,23 +38,23 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ObjectTexture_METHODS													\
-	Texture_METHODS																\
+#define ObjectTexture_METHODS																			\
+	Texture_METHODS																						\
 
-#define ObjectTexture_SET_VTABLE(ClassName)										\
-	Texture_SET_VTABLE(ClassName)												\
-	__VIRTUAL_SET(ClassName, ObjectTexture, write);								\
+#define ObjectTexture_SET_VTABLE(ClassName)																\
+	Texture_SET_VTABLE(ClassName)																		\
+	__VIRTUAL_SET(ClassName, ObjectTexture, write);														\
 
-#define ObjectTexture_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Texture_ATTRIBUTES;															\
-																				\
-	/* object index */															\
-	int objectIndex;															\
-																				\
-	/* bgmap displacement */													\
-	int bgmapDisplacement;														\
+#define ObjectTexture_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Texture_ATTRIBUTES;																					\
+																										\
+	/* object index */																					\
+	int objectIndex;																					\
+																										\
+	/* bgmap displacement */																			\
+	int bgmapDisplacement;																				\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(ObjectTexture);

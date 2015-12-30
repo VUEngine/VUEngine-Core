@@ -29,19 +29,19 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ObjectAnimationCoordinator_METHODS											\
-	AnimationCoordinator_METHODS;													\
+#define ObjectAnimationCoordinator_METHODS																\
+	AnimationCoordinator_METHODS;																		\
 	
-#define ObjectAnimationCoordinator_SET_VTABLE(ClassName)								\
-	AnimationCoordinator_SET_VTABLE(ClassName);										\
-	__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, addAnimationController);	\
-	__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, addAnimationController);	\
-	__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, removeAnimationController);	\
+#define ObjectAnimationCoordinator_SET_VTABLE(ClassName)												\
+	AnimationCoordinator_SET_VTABLE(ClassName);															\
+	__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, addAnimationController);						\
+	__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, addAnimationController);						\
+	__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, removeAnimationController);\
 
-#define ObjectAnimationCoordinator_ATTRIBUTES										\
-																					\
-	/* super's attributes */														\
-	AnimationCoordinator_ATTRIBUTES;												\
+#define ObjectAnimationCoordinator_ATTRIBUTES															\
+																										\
+	/* super's attributes */																			\
+	AnimationCoordinator_ATTRIBUTES;																	\
 
 __CLASS(ObjectAnimationCoordinator);
 

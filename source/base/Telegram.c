@@ -26,22 +26,22 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Telegram_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* the message itself. These are all enumerated in a file */				\
-	int message;																\
-																				\
-	/* any additional information that may accompany the message */				\
-	void* extraInfo;															\
-																				\
-	/* who sent this telegram */												\
-	void* sender;																\
-																				\
-	/* who is to receive this telegram */										\
-	void* receiver;																\
+#define Telegram_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* the message itself. These are all enumerated in a file */										\
+	int message;																						\
+																										\
+	/* any additional information that may accompany the message */										\
+	void* extraInfo;																					\
+																										\
+	/* who sent this telegram */																		\
+	void* sender;																						\
+																										\
+	/* who is to receive this telegram */																\
+	void* receiver;																						\
 
 __CLASS_DEFINITION(Telegram, Object);
 
@@ -50,7 +50,6 @@ __CLASS_DEFINITION(Telegram, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Telegram_constructor(Telegram this, u32 dispatchTime, void* sender, void* receiver, int message, void* extraInfo);
 
 

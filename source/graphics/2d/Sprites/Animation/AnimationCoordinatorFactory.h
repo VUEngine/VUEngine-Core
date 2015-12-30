@@ -31,11 +31,11 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationCoordinatorFactory_METHODS														\
-	Object_METHODS;																\
+#define AnimationCoordinatorFactory_METHODS																\
+	Object_METHODS;																						\
 	
-#define AnimationCoordinatorFactory_SET_VTABLE(ClassName)						\
-	Object_SET_VTABLE(ClassName);												\
+#define AnimationCoordinatorFactory_SET_VTABLE(ClassName)												\
+	Object_SET_VTABLE(ClassName);																		\
 
 __CLASS(AnimationCoordinatorFactory);
 

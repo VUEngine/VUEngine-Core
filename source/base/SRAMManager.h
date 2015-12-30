@@ -30,12 +30,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SRAMManager_METHODS														\
-		Object_METHODS															\
+#define SRAMManager_METHODS																				\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define SRAMManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define SRAMManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(SRAMManager);
 
@@ -44,11 +44,13 @@ struct UserData;
 
 extern const struct UserData* _userData;
 
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 SRAMManager SRAMManager_getInstance();
+
 void SRAMManager_destructor(SRAMManager this);
 void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAddress, int dataSize);
 void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, int dataSize);

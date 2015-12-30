@@ -30,51 +30,46 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SpatialObject_METHODS													\
-		Object_METHODS															\
-		__VIRTUAL_DEC(getShape);												\
-		__VIRTUAL_DEC(getShapeType);											\
-		__VIRTUAL_DEC(moves);													\
-		__VIRTUAL_DEC(canMoveOverAxis);											\
-		__VIRTUAL_DEC(getWidth);												\
-		__VIRTUAL_DEC(getHeight);												\
-		__VIRTUAL_DEC(getDepth);												\
-		__VIRTUAL_DEC(getGap);													\
-		__VIRTUAL_DEC(getPosition);												\
-		__VIRTUAL_DEC(setPosition);												\
-		__VIRTUAL_DEC(getElasticity);											\
-		__VIRTUAL_DEC(getFriction);												\
+#define SpatialObject_METHODS																			\
+		Object_METHODS																					\
+		__VIRTUAL_DEC(getShape);																		\
+		__VIRTUAL_DEC(getShapeType);																	\
+		__VIRTUAL_DEC(moves);																			\
+		__VIRTUAL_DEC(canMoveOverAxis);																	\
+		__VIRTUAL_DEC(getWidth);																		\
+		__VIRTUAL_DEC(getHeight);																		\
+		__VIRTUAL_DEC(getDepth);																		\
+		__VIRTUAL_DEC(getGap);																			\
+		__VIRTUAL_DEC(getPosition);																		\
+		__VIRTUAL_DEC(setPosition);																		\
+		__VIRTUAL_DEC(getElasticity);																	\
+		__VIRTUAL_DEC(getFriction);																		\
 
 // define the virtual methods
-#define SpatialObject_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, SpatialObject, getShape);						\
-		__VIRTUAL_SET(ClassName, SpatialObject, getShapeType);					\
-		__VIRTUAL_SET(ClassName, SpatialObject, moves);							\
-		__VIRTUAL_SET(ClassName, SpatialObject, canMoveOverAxis);				\
-		__VIRTUAL_SET(ClassName, SpatialObject, getWidth);						\
-		__VIRTUAL_SET(ClassName, SpatialObject, getHeight);						\
-		__VIRTUAL_SET(ClassName, SpatialObject, getDepth);						\
-		__VIRTUAL_SET(ClassName, SpatialObject, getGap);						\
-		__VIRTUAL_SET(ClassName, SpatialObject, getPosition);					\
-		__VIRTUAL_SET(ClassName, SpatialObject, setPosition);					\
-		__VIRTUAL_SET(ClassName, SpatialObject, getElasticity);					\
-		__VIRTUAL_SET(ClassName, SpatialObject, getFriction);					\
+#define SpatialObject_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, SpatialObject, getShape);												\
+		__VIRTUAL_SET(ClassName, SpatialObject, getShapeType);											\
+		__VIRTUAL_SET(ClassName, SpatialObject, moves);													\
+		__VIRTUAL_SET(ClassName, SpatialObject, canMoveOverAxis);										\
+		__VIRTUAL_SET(ClassName, SpatialObject, getWidth);												\
+		__VIRTUAL_SET(ClassName, SpatialObject, getHeight);												\
+		__VIRTUAL_SET(ClassName, SpatialObject, getDepth);												\
+		__VIRTUAL_SET(ClassName, SpatialObject, getGap);												\
+		__VIRTUAL_SET(ClassName, SpatialObject, getPosition);											\
+		__VIRTUAL_SET(ClassName, SpatialObject, setPosition);											\
+		__VIRTUAL_SET(ClassName, SpatialObject, getElasticity);											\
+		__VIRTUAL_SET(ClassName, SpatialObject, getFriction);											\
 
 
-#define SpatialObject_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
+#define SpatialObject_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
 
 __CLASS(SpatialObject);
 
@@ -98,5 +93,6 @@ const VBVec3D* SpatialObject_getPosition(SpatialObject this);
 void SpatialObject_setPosition(SpatialObject this, const VBVec3D* position);
 fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
+
 
 #endif

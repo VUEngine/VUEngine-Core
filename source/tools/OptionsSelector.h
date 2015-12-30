@@ -31,12 +31,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define OptionsSelector_METHODS													\
-		Object_METHODS															\
+#define OptionsSelector_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define OptionsSelector_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)											\
+#define OptionsSelector_SET_VTABLE(ClassName)															\
+		Object_SET_VTABLE(ClassName)																	\
 
 // declare a OptionsSelector
 __CLASS(OptionsSelector);
@@ -47,7 +47,7 @@ typedef struct Option
 	int (*classSizeFunction)(void);
 	char* name;
 
-}ClassSizeData;
+} ClassSizeData;
 
 enum OptionTypes
 {

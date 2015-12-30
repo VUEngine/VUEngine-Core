@@ -166,7 +166,7 @@ void Particle_transform(Particle this, bool updateSpritePosition)
 
 void Particle_addForce(Particle this, const Force* force)
 {
-	ASSERT(this, "Particle::position: null this");
+	ASSERT(this, "Particle::addForce: null this");
 	
 	Body_addForce(this->body, force);
 }
@@ -188,8 +188,8 @@ void Particle_setMass(Particle this, fix19_13 mass)
 
 void Particle_setPosition(Particle this, const VBVec3D* position)
 {
-	ASSERT(this, "Particle::position: null this");
-	ASSERT(this->body, "Particle::position: null body");
+	ASSERT(this, "Particle::setPosition: null this");
+	ASSERT(this->body, "Particle::setPosition: null body");
 	
 	Body_setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
 
@@ -238,7 +238,6 @@ bool Particle_moves(Particle this)
 	return true;
 }
 
-
 // defaults to true
 u8 Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration)
 {
@@ -253,7 +252,7 @@ void Particle_resume(Particle this)
 
 	Particle_addSprite(this);
 	
-	NM_ASSERT(this->objectSprite, "Particle::resume: null this");
+	NM_ASSERT(this->objectSprite, "Particle::resume: null objectSprite");
 }
 
 void Particle_suspend(Particle this)

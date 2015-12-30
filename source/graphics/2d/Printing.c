@@ -20,7 +20,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <string.h>
-
 #include <Printing.h>
 #include <HardwareManager.h>
 #include <Utilities.h>
@@ -31,12 +30,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern FontROMDef* __FONTS[];
-
-typedef struct FontData
-{
-	const struct FontDefinition * fontDefinition;
-    u16 memoryOffset;
-} FontData;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,10 +44,10 @@ typedef struct FontData
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Printing_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
+#define Printing_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
 
 // define the Printing
 __CLASS_DEFINITION(Printing, Object);

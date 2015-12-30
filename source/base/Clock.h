@@ -34,40 +34,40 @@
 #define __EVENT_MINUTE_CHANGED	"minuteChanged"
 #define __EVENT_HOUR_CHANGED	"hourChanged"
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Clock_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* time elapsed */															\
-	u32 milliSeconds;															\
-																				\
-	/* time elapsed */															\
-	u32 previousMilliSeconds;													\
-																				\
-	/* register */																\
-	u8 previousSecond;															\
-																				\
-	/* register */																\
-	u8 previousMinute;															\
-																				\
-	/* flag to pause the clock */												\
-	bool paused;																\
-																				\
+#define Clock_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* time elapsed */																					\
+	u32 milliSeconds;																					\
+																										\
+	/* time elapsed */																					\
+	u32 previousMilliSeconds;																			\
+																										\
+	/* register */																						\
+	u8 previousSecond;																					\
+																										\
+	/* register */																						\
+	u8 previousMinute;																					\
+																										\
+	/* flag to pause the clock */																		\
+	bool paused;																						\
 
 // declare the virtual methods
-#define Clock_METHODS															\
-		Object_METHODS															\
-		__VIRTUAL_DEC(update);
+#define Clock_METHODS																					\
+		Object_METHODS																					\
+		__VIRTUAL_DEC(update);																			\
 
 // declare the virtual methods which are redefined
-#define Clock_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, Clock, update);
+#define Clock_SET_VTABLE(ClassName)																		\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Clock, update);														\
 
 // declare a Clock
 __CLASS(Clock);

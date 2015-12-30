@@ -30,18 +30,15 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
-// declare the virtual methods
-#define BgmapTextureManager_METHODS												\
-		Object_METHODS															\
+// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
+// declare the virtual methods
+#define BgmapTextureManager_METHODS																		\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define BgmapTextureManager_SET_VTABLE(ClassName)								\
-		Object_SET_VTABLE(ClassName)											\
-
+#define BgmapTextureManager_SET_VTABLE(ClassName)														\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(BgmapTextureManager);
 
@@ -68,7 +65,6 @@ void BgmapTextureManager_resetAvailableBgmapSegments(BgmapTextureManager this);
 u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this);
 u8 BgmapTextureManager_getSpareBgmapSegments(BgmapTextureManager this);
 void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 spareBgmapSegments);
-
 void BgmapTextureManager_print(BgmapTextureManager this, int x, int y);
 
 

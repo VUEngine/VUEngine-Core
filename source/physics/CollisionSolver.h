@@ -28,10 +28,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -43,38 +39,39 @@ enum Axis
 	kLastAxis
 };
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define CollisionSolver_METHODS													\
-	Object_METHODS																\
+#define CollisionSolver_METHODS																			\
+	Object_METHODS																						\
 
-#define CollisionSolver_SET_VTABLE(ClassName)												\
-	Object_SET_VTABLE(ClassName)												\
+#define CollisionSolver_SET_VTABLE(ClassName)															\
+	Object_SET_VTABLE(ClassName)																		\
 
-
-#define CollisionSolver_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* owner */																	\
-	SpatialObject owner;														\
-																				\
-	/* last collinding object */												\
-	VirtualList lastCollidingSpatialObject[kLastAxis];							\
-																				\
-	/* owner's positions for collision handling */								\
-	const VBVec3D* ownerPositionToCheck;										\
-	const VBVec3D* ownerPositionToWrite;										\
-	VBVec3D ownerPreviousPosition;												\
-																				\
-	/* flags to apply friction on each axis */									\
-	GeneralAxisFlag sensibleToFriction;											\
+#define CollisionSolver_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* owner */																							\
+	SpatialObject owner;																				\
+																										\
+	/* last collinding object */																		\
+	VirtualList lastCollidingSpatialObject[kLastAxis];													\
+																										\
+	/* owner's positions for collision handling */														\
+	const VBVec3D* ownerPositionToCheck;																\
+	const VBVec3D* ownerPositionToWrite;																\
+	VBVec3D ownerPreviousPosition;																		\
+																										\
+	/* flags to apply friction on each axis */															\
+	GeneralAxisFlag sensibleToFriction;																	\
 
 __CLASS(CollisionSolver);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE

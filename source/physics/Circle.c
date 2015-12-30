@@ -34,7 +34,6 @@ __CLASS_DEFINITION(Circle, Shape);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Circle_constructor(Circle this, SpatialObject owner);
 
 

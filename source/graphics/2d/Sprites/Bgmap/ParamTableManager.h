@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PARAMTABLE_H_
-#define PARAMTABLE_H_
+#ifndef PARAM_TABLE_MANAGER_H_
+#define PARAM_TABLE_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -25,25 +25,26 @@
 #include <Object.h>
 #include <BgmapSprite.h>
 
+
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+// 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __PARAM_TABLE_PADDING	1
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ParamTableManager_METHODS												\
-		Object_METHODS															\
+#define ParamTableManager_METHODS																		\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define ParamTableManager_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)											\
+#define ParamTableManager_SET_VTABLE(ClassName)															\
+		Object_SET_VTABLE(ClassName)																	\
 
-// declare a Sprite, which holds a texture and a drawing specification
 __CLASS(ParamTableManager);
 
 

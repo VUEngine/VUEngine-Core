@@ -20,7 +20,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <string.h>
-
 #include <I18n.h>
 #include <Game.h>
 
@@ -36,13 +35,13 @@ extern LangROMDef* __LANGUAGES[];
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define I18n_ATTRIBUTES															\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* currently active language */												\
-	u8 ActiveLanguage;															\
+#define I18n_ATTRIBUTES																					\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* currently active language */																		\
+	u8 ActiveLanguage;																					\
 
 // define the I18n
 __CLASS_DEFINITION(I18n, Object);
@@ -52,7 +51,6 @@ __CLASS_DEFINITION(I18n, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void I18n_constructor(I18n this);
 
 

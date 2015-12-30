@@ -28,22 +28,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 // a state machine
-#define StateMachine_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* that which owns this instance */											\
-	void* owner;																\
-																				\
-	/* pointer to the current state */											\
-	State currentState;															\
-																				\
-	/* pointer to the previous state */											\
-	State previousState;														\
-																				\
-	/* stack of states */														\
-	VirtualList stateStack;														\
+#define StateMachine_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* that which owns this instance */																	\
+	void* owner;																						\
+																										\
+	/* pointer to the current state */																	\
+	State currentState;																					\
+																										\
+	/* pointer to the previous state */																	\
+	State previousState;																				\
+																										\
+	/* stack of states */																				\
+	VirtualList stateStack;																				\
 
 __CLASS_DEFINITION(StateMachine, Object);
 
@@ -64,11 +64,8 @@ void StateMachine_constructor(StateMachine this, void* owner)
 
 	// set pointers
 	this->owner = owner;
-
 	this->currentState = NULL;
-
 	this->previousState = NULL;
-
 	this->stateStack = __NEW(VirtualList);
 }
 
@@ -165,7 +162,7 @@ void StateMachine_pushState(StateMachine this, State newState)
 	__VIRTUAL_CALL(void, State, enter, this->currentState, this->owner);
 }
 
-// pop a state fromt the stack
+// pop a state from the stack
 void StateMachine_popState(StateMachine this)
 {
 	ASSERT(this, "StateMachine::popState: null this");
@@ -243,8 +240,7 @@ bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 	return false;
 }
 
-// returns true if the current state's type is equal to the type of the
-// class passed as a parameter.
+// returns true if the current state's type is equal to the type of the class passed as a parameter.
 bool StateMachine_isInState(StateMachine this, const State state)
 {
 	ASSERT(this, "StateMachine::isInState: null this");

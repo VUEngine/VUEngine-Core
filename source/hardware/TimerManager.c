@@ -25,21 +25,16 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define TimerManager_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/*  */																		\
-	u8 tcrValue;																\
+#define TimerManager_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/*  */																								\
+	u8 tcrValue;																						\
 
 // define the TimerManager
 __CLASS_DEFINITION(TimerManager, Object);
@@ -49,7 +44,6 @@ __CLASS_DEFINITION(TimerManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void TimerManager_constructor(TimerManager this);
 
 

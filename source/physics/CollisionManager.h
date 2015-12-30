@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COLLISIONMANAGER_H_
-#define COLLISIONMANAGER_H_
+#ifndef COLLISION_MANAGER_H_
+#define COLLISION_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -32,12 +32,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define CollisionManager_METHODS												\
-		Object_METHODS															\
+#define CollisionManager_METHODS																		\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define CollisionManager_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)											\
+#define CollisionManager_SET_VTABLE(ClassName)															\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(CollisionManager);
 

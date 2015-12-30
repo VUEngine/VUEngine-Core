@@ -29,22 +29,21 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define InanimatedInGameEntity_METHODS											\
-		InGameEntity_METHODS													\
+#define InanimatedInGameEntity_METHODS																	\
+		InGameEntity_METHODS																			\
 
-#define InanimatedInGameEntity_SET_VTABLE(ClassName)							\
-		InGameEntity_SET_VTABLE(ClassName)										\
-		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getElasticity);		\
-		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getFriction);			\
+#define InanimatedInGameEntity_SET_VTABLE(ClassName)													\
+		InGameEntity_SET_VTABLE(ClassName)																\
+		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getElasticity);								\
+		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getFriction);									\
 
-// A InanimatedInGameEntity which represent a generic object inside a Stage
-#define InanimatedInGameEntity_ATTRIBUTES										\
-																				\
-	/* super's attributes */													\
-	InGameEntity_ATTRIBUTES														\
-																				\
-	/* ROM definition */														\
-	InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition;			\
+#define InanimatedInGameEntity_ATTRIBUTES																\
+																										\
+	/* super's attributes */																			\
+	InGameEntity_ATTRIBUTES																				\
+																										\
+	/* ROM definition */																				\
+	InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition;									\
 
 __CLASS(InanimatedInGameEntity);
 

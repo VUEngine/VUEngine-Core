@@ -178,7 +178,6 @@ int Utilities_getDigitCount(int value)
 	return (size) ? size : 1;
 }
 
-
 /* 
    A C-program for MT19937, with initialization improved 2002/1/26.
    Coded by Takuji Nishimura and Makoto Matsumoto.
@@ -222,8 +221,7 @@ int Utilities_getDigitCount(int value)
    email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
 */
 
-
-/* Period parameters */  
+/* Period parameters */
 #define N 624
 #define M 397
 #define MATRIX_A 0x9908b0dfUL   /* constant vector a */

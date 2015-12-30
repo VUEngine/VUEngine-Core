@@ -60,7 +60,7 @@ __CLASS_DEFINITION(Stage, Container);
 typedef struct StageEntityDescription
 {
 	PositionedEntity* positionedEntity;
-	SmallRightcuboid smallRightcuboid;
+	SmallRightCuboid smallRightCuboid;
 	s16 id;
 	long distance;
 
@@ -82,6 +82,7 @@ typedef struct StageEntityToInitialize
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 Shape SpatialObject_getShape(SpatialObject this);
+BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
 
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
@@ -93,7 +94,6 @@ static void Stage_preloadAssets(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
-BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallRightcuboid* smallRightcuboid)
+inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
 {
 	ASSERT(this, "Stage::inLoadRange: null this");
 
@@ -198,13 +198,13 @@ inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallR
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 	// check x visibility
-	if(position2D.x + ITOFIX19_13(smallRightcuboid->x1) < __LOAD_LOW_X_LIMIT || position2D.x - ITOFIX19_13(smallRightcuboid->x0) > __LOAD_HIGHT_X_LIMIT)
+	if(position2D.x + ITOFIX19_13(smallRightCuboid->x1) < __LOAD_LOW_X_LIMIT || position2D.x - ITOFIX19_13(smallRightCuboid->x0) > __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(position2D.y + ITOFIX19_13(smallRightcuboid->y1) < __LOAD_LOW_Y_LIMIT || position2D.y - ITOFIX19_13(smallRightcuboid->y0) > __LOAD_HIGHT_Y_LIMIT)
+	if(position2D.y + ITOFIX19_13(smallRightCuboid->y1) < __LOAD_LOW_Y_LIMIT || position2D.y - ITOFIX19_13(smallRightCuboid->y0) > __LOAD_HIGHT_Y_LIMIT)
 	{
 		return false;
 	}
@@ -562,7 +562,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	VBVec3D environmentPosition3D = {0, 0, 0};
-	stageEntityDescription->smallRightcuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
+	stageEntityDescription->smallRightCuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
 	return stageEntityDescription;
 }
@@ -730,7 +730,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 		if(0 > stageEntityDescription->id)
 		{
 			// if entity in load range
-			if(Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid))
+			if(Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
 				stageEntityDescription->id = 0x7FFF;
 				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
@@ -821,7 +821,7 @@ static void Stage_loadInRangeEntities(Stage this)
 		if(-1 == stageEntityDescription->id)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightcuboid))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 

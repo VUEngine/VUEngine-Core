@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHARSETMEM_H_
-#define CHARSETMEM_H_
+#ifndef CHARSET_MANAGER_H_
+#define CHARSET_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -30,16 +30,15 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
+// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
+
 // declare the virtual methods
-#define CharSetManager_METHODS													\
-		Object_METHODS															\
+#define CharSetManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define CharSetManager_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)											\
+#define CharSetManager_SET_VTABLE(ClassName)															\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(CharSetManager);
 

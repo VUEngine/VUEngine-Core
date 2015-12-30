@@ -42,8 +42,8 @@ __CLASS_DEFINITION(UI, Container);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-//class's constructor
 static void UI_constructor(UI this, UIDefinition* uiDefinition);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS

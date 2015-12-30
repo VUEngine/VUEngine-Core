@@ -19,6 +19,7 @@
 
 #ifdef __ANIMATION_EDITOR
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -33,14 +34,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimationEditor_METHODS													\
-		Object_METHODS															\
+#define AnimationEditor_METHODS																			\
+		Object_METHODS																					\
 
 
 // declare the virtual methods which are redefined
-#define AnimationEditor_SET_VTABLE(ClassName)									\
-		Object_SET_VTABLE(ClassName)											\
-		__VIRTUAL_SET(ClassName, AnimationEditor, handleMessage);				\
+#define AnimationEditor_SET_VTABLE(ClassName)															\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, AnimationEditor, handleMessage);										\
 
 // declare a AnimationEditor
 __CLASS(AnimationEditor);
@@ -66,7 +67,7 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState);
 void AnimationEditor_stop(AnimationEditor this);
 bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram);
 
-#endif
 
+#endif
 
 #endif

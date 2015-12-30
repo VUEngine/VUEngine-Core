@@ -26,20 +26,23 @@
 #include <HardwareManager.h>
 #include <TimerManager.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __DIMM_VALUE_1	0b01010100
 #define __DIMM_VALUE_2	0b01010000
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Error_ATTRIBUTES														\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
+#define Error_ATTRIBUTES																				\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
 
 // define the Error
 __CLASS_DEFINITION(Error, Object);
@@ -49,7 +52,6 @@ __CLASS_DEFINITION(Error, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Error_constructor(Error this);
 
 bool Game_isConstructed();
@@ -61,7 +63,6 @@ bool Game_isConstructed();
 
 // a singleton
 __SINGLETON(Error);
-
 
 // class's constructor
 static void Error_constructor(Error this)
@@ -90,7 +91,7 @@ int Error_triggerException(Error this, char* message, char* detail)
 	// turn on the display
     HardwareManager_displayOn(HardwareManager_getInstance());
 
-	// make sure the brigtness is ok
+	// make sure the brightness is ok
     HardwareManager_upBrightness(HardwareManager_getInstance());
 
 	Printing_loadFonts(Printing_getInstance());
@@ -106,9 +107,9 @@ int Error_triggerException(Error this, char* message, char* detail)
 	Printing_text(Printing_getInstance(), " Last process:                                  ", x, y, NULL);
 	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y++, NULL);
 	Printing_text(Printing_getInstance(), " LP:                                  " , x, y, NULL);	
-	Printing_hex(Printing_getInstance(), _lp, x + 7, y, NULL);	
+	Printing_hex(Printing_getInstance(), _lp, x + 5, y, NULL);
 	Printing_text(Printing_getInstance(), " SP: 		                         " , x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), _sp, x + 7, y, NULL);
+	Printing_hex(Printing_getInstance(), _sp, x + 5, y, NULL);
 
 	if(message)
 	{

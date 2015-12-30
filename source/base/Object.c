@@ -20,7 +20,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <string.h>
-
 #include <Object.h>
 #include <VirtualList.h>
 
@@ -29,7 +28,7 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// it is the base class for everything.. so it does derivates from nothing but itself
+// it is the base class for everything.. so it does derives from nothing but itself
 __CLASS_DEFINITION(Object, Object);
 
 typedef struct Event
@@ -68,9 +67,7 @@ void Object_destructor(Object this)
 		__DELETE(this->events);
 	}
 
-	/* an Object can not be instantiated, so there is no
-	 * memory to free
-	 */
+	// an Object can not be instantiated, so there is no memory to free
 
 	ASSERT(this, "Object::destructor: null this");
 }
@@ -115,7 +112,7 @@ void Object_addEventListener(Object this, Object listener, void (*method)(Object
 // remove an event listener
 void Object_removeEventListener(Object this, Object listener, void (*method)(Object, Object),  char* eventName)
 {
-	ASSERT(this, "Object::addEventListener: null this");
+	ASSERT(this, "Object::removeEventListener: null this");
 
 	if(this->events)
 	{
@@ -192,4 +189,4 @@ Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), voi
 	}
 	
 	return Object_getCast((Object)this, targetClassGetClassMethod, (void* (*)(void))baseClassGetClassMethod());
-}	
+}

@@ -36,7 +36,6 @@ __CLASS_DEFINITION(Clock, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void Clock_constructor(Clock this);
 
 
@@ -232,7 +231,7 @@ int Clock_getTimeInCurrentSecond(Clock this)
 	return 1000 * (this->milliSeconds * 0.001f - F_FLOOR(this->milliSeconds * 0.001f));
 }
 
-// set clock's total elapsed time from seconds paramenters
+// set clock's total elapsed time from seconds parameters
 void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 {
 	ASSERT(this, "Clock::setTimeInSeconds: null this");

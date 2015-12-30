@@ -55,11 +55,9 @@ __CLASS_DEFINITION(CollisionManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
-static void CollisionManager_constructor(CollisionManager this);
-
-// retrieve shape
 Shape SpatialObject_getShape(SpatialObject this);
+
+static void CollisionManager_constructor(CollisionManager this);
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -29,10 +29,10 @@
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-//use with 20us timer (range = 0 to 1300)
+// use with 20us timer (range = 0 to 1300)
 #define TIME_US(n)		(((n)/20)-1)
 
-//use with 100us timer (range = 0 to 6500, and 0 to 6.5)
+// use with 100us timer (range = 0 to 6500, and 0 to 6.5)
 #define TIME_MS(n)		(((n)*10)-1)
 #define TIME_SEC(n)		(((n)*10000)-1)
 
@@ -43,20 +43,20 @@
 #define TIMER_20US		0x10
 #define TIMER_100US		0x00
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/* Defines as a pointer to a structure that
- * is not defined here and so is not accessible to the outside world
- */
+// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
+
 // declare the virtual methods
-#define TimerManager_METHODS													\
-		Object_METHODS															\
+#define TimerManager_METHODS																			\
+		Object_METHODS																					\
 
 // declare the virtual methods which are redefined
-#define TimerManager_SET_VTABLE(ClassName)										\
-		Object_SET_VTABLE(ClassName)											\
+#define TimerManager_SET_VTABLE(ClassName)																\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(TimerManager);
 

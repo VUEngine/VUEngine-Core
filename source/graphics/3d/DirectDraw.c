@@ -28,29 +28,25 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-//left buffer base addresses
-#define __LEFT_BUFFER_1 (u32)0x00000000
+// left buffer base addresses
+#define __LEFT_BUFFER_1 	(u32)0x00000000
 
-//right buffer base address
-#define __RIGHT_BUFFER_1 (u32)0x00010000
+// right buffer base address
+#define __RIGHT_BUFFER_1 	(u32)0x00010000
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// DirectDraw.c
-
-#define DirectDraw_ATTRIBUTES					\
-												\
-	/* super's attributes */					\
-	Object_ATTRIBUTES;							\
-												\
-	/* actuar frames per second */				\
+#define DirectDraw_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* actual frames per second */																		\
 	int fps;
 
-
-// define the DirectDraw
 __CLASS_DEFINITION(DirectDraw, Object);
 
 
@@ -58,10 +54,7 @@ __CLASS_DEFINITION(DirectDraw, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void DirectDraw_constructor(DirectDraw this);
-
-// draw a pixel on the screen (DirectDraw)
 static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int palette);
 
 
@@ -70,7 +63,6 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(DirectDraw);
-
 
 // class's constructor
 static void DirectDraw_constructor(DirectDraw this)
@@ -94,9 +86,8 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 	//int* pointer = (int*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
 
-	// calculate pixel position each column has 16 words,
-	// so 16 * 4 bytes = 64, 8 bytes are 4 pixels
-	// pointer += x * 64 + y / 4;
+	// calculate pixel position each column has 16 words, so 16 * 4 bytes = 64, 8 bytes are 4 pixels
+	//pointer += x * 64 + y / 4;
 	pointer += ((x << 6) + (y >> 2));
 
 	// calculate the pixel to be draw
@@ -161,6 +152,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 			{
 				break;
 			}
+
 			if(fraction >= 0)
 			{
 				fromPoint.y += stepY;
@@ -178,7 +170,6 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
 			}
 		}
-
 	}
 	else
 	{

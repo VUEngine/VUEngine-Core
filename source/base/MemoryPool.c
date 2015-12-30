@@ -29,33 +29,31 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// it is neccesary for the object to be aligned to 2's multiples
+// it is necessary for the object to be aligned to 2's multiples
 #define __MEMORY_ALIGNMENT			0
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
-
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define MemoryPool_ATTRIBUTES													\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* dynamic memory area */													\
-	/* must always put together the pools! */									\
-	/* first byte is used as a usage flag */									\
-	__MEMORY_POOL_ARRAYS														\
-																				\
-	/* pointer to the beginning of each memory pool */							\
-	BYTE* poolLocation[__MEMORY_POOLS];											\
-																				\
-	/* pool's size and pool's block size */										\
-	int poolSizes[__MEMORY_POOLS][2];											\
-
+#define MemoryPool_ATTRIBUTES																			\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* dynamic memory area */																			\
+	/* must always put together the pools! */															\
+	/* first byte is used as a usage flag */															\
+	__MEMORY_POOL_ARRAYS																				\
+																										\
+	/* pointer to the beginning of each memory pool */													\
+	BYTE* poolLocation[__MEMORY_POOLS];																	\
+																										\
+	/* pool's size and pool's block size */																\
+	int poolSizes[__MEMORY_POOLS][2];																	\
 
 __CLASS_DEFINITION(MemoryPool, Object);
 
@@ -70,17 +68,13 @@ enum MemoryPoolSizes
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class constructor
 static void MemoryPool_constructor(MemoryPool this);
-
-// clear all dynamic memory
 static void MemoryPool_reset(MemoryPool this);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
 
 // a singleton
 __SINGLETON(MemoryPool);
@@ -157,7 +151,6 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	// return designed address
 	return &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT];
 };
-
 
 // free memory when an object is no longer used
 // remove an object from heap
@@ -261,7 +254,6 @@ void MemoryPool_cleanUp(MemoryPool this)
 		}
 	}
 }
-
 
 // retrieve pool size
 int MemoryPool_getPoolSize(MemoryPool this)

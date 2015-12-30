@@ -28,17 +28,10 @@
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
 static void MessageDispatcher_constructor(MessageDispatcher this);
-
-// class's destructor
 static void MessageDispatcher_destructor(MessageDispatcher this);
-
-// dispatch delayed messages
 static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
-		Object receiver, int message, void* extraInfo);
-
-// discart delayed messages
+	Object receiver, int message, void* extraInfo);
 void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 
 
@@ -47,17 +40,16 @@ void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 //---------------------------------------------------------------------------------------------------------
 
 // text box based on bgmaps
-#define MessageDispatcher_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* delayed messages */														\
-	VirtualList delayedMessages;												\
-																				\
-	/* delayed messages */														\
-	VirtualList delayedMessagesToDiscard;										\
-
+#define MessageDispatcher_ATTRIBUTES																	\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* delayed messages */																				\
+	VirtualList delayedMessages;																		\
+																										\
+	/* delayed messages */																				\
+	VirtualList delayedMessagesToDiscard;																\
 
 __CLASS_DEFINITION(MessageDispatcher, Object);
 
@@ -68,7 +60,6 @@ typedef struct DelayedMessage
 
 	// time of arrival
 	u32 timeOfArrival;
-
 
 } DelayedMessage;
 

@@ -30,7 +30,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Polygon
 __CLASS_DEFINITION(Polygon, Object);
 
 
@@ -42,7 +41,6 @@ __CLASS_DEFINITION(Polygon, Object);
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 
-// class's constructor
 static void Polygon_constructor(Polygon this);
 
 
@@ -105,7 +103,6 @@ void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 	// add vertice to the end of the list
 	VirtualList_pushBack(this->vertices, vertice);
 }
-
 
 // draw polygon to screen
 void Polygon_draw(Polygon this, int calculateParallax)
