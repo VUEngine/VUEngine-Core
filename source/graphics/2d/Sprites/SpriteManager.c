@@ -222,15 +222,34 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 				Sprite_setWorldLayer(sprite, worldLayer2);
 
+				bool isSpriteHidden = Sprite_isHidden(sprite);
+				bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
+
 				while (*_xpstts & XPBSYR);
 
 				WORLD_HEAD(worldLayer1, 0x0000);
 				WORLD_HEAD(worldLayer2, 0x0000);
 
+				if(isSpriteHidden)
+				{
+					Sprite_setRenderFlag(sprite, 0);
+				}
+				else
+				{
+					// render last position before using new layer
+					__VIRTUAL_CALL(void, Sprite, render, sprite);
+				}
+				
 				// render last position before using new layer
-				__VIRTUAL_CALL(void, Sprite, render, sprite);
-				// render last position before using new layer
-				__VIRTUAL_CALL(void, Sprite, render, nextSprite);
+				if(isNextSpriteHidden)
+				{
+					Sprite_setRenderFlag(nextSprite, 0);
+				}
+				else
+				{
+					// render last position before using new layer
+					__VIRTUAL_CALL(void, Sprite, render, nextSprite);
+				}
 
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);

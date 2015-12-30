@@ -132,6 +132,16 @@ void Sprite_hide(Sprite this)
 	WORLD_HEAD(this->worldLayer, 0x0000);
 }
 
+bool Sprite_isHidden(Sprite this)
+{
+	ASSERT(this, "Sprite::isHidden: null this");
+
+	static WORLD* worldPointer = NULL;
+	worldPointer = &WA[this->worldLayer];
+
+	return !worldPointer->head;
+}
+
 // retrieve animation controller
 const AnimationController const Sprite_getAnimationController(Sprite this)
 {
