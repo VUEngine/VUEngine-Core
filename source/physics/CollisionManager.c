@@ -50,6 +50,7 @@
 // define the CollisionManager
 __CLASS_DEFINITION(CollisionManager, Object);
 
+__CLASS_FRIEND_DEFINITION(Shape);
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -222,7 +223,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 		// load the current shape
 		Shape shape = __SAFE_CAST(Shape, VirtualNode_getData(node));
 
-		if(!Shape_checkForCollisions(shape))
+		if(!shape->checkForCollisions)
 		{
 			continue;
 		}
@@ -245,7 +246,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 
 			// don't compare with current movable shape, when the shape already has been checked
 			// and when it is not active
-			if(shape != shapeToCheck && !Shape_isChecked(shapeToCheck))
+			if(shape != shapeToCheck && !shapeToCheck->checked)
 			{
 				// check if shapes overlap
 				collisionResult = __VIRTUAL_CALL(bool, Shape, overlaps, shape, shapeToCheck);
@@ -258,7 +259,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 					}
 
 					// add object to list
-					VirtualList_pushFront(collidingObjects, Shape_getOwner(shapeToCheck));
+					VirtualList_pushFront(collidingObjects, shapeToCheck->owner);
 				}
 			}
 		}
@@ -266,7 +267,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 		if(collidingObjects)
 		{
 			// inform the owner about the collision
-			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, Shape_getOwner(shape)), kCollision, (void*)collidingObjects);
+			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
 
 			__DELETE(collidingObjects);
 		}

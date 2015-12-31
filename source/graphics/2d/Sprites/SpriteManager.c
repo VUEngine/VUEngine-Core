@@ -60,6 +60,8 @@
 
 __CLASS_DEFINITION(SpriteManager, Object);
 
+__CLASS_FRIEND_DEFINITION(Sprite);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -165,11 +167,11 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
 
 				// check if z positions are swapped
-				if(FIX19_13TOI(nextPosition->z) + Sprite_getDisplacement(nextSprite).z < FIX19_13TOI(position->z) + Sprite_getDisplacement(sprite).z)
+				if(FIX19_13TOI(nextPosition->z) + nextSprite->displacement.z < FIX19_13TOI(position->z) + sprite->displacement.z)
 				{
 					// get each entity's layer
-					u8 worldLayer1 = Sprite_getWorldLayer(sprite);
-					u8 worldLayer2 = Sprite_getWorldLayer(nextSprite);
+					u8 worldLayer1 = sprite->worldLayer;
+					u8 worldLayer2 = nextSprite->worldLayer;
 		
 					ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
 					ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
@@ -208,18 +210,18 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
 	
 			// check if z positions are swapped
-			if(nextPosition->z + Sprite_getDisplacement(nextSprite).z < position->z + Sprite_getDisplacement(sprite).z)
+			if(nextPosition->z + nextSprite->displacement.z < position->z + sprite->displacement.z)
 			{
 				// get each entity's layer
-				u8 worldLayer1 = Sprite_getWorldLayer(sprite);
-				u8 worldLayer2 = Sprite_getWorldLayer(nextSprite);
+				u8 worldLayer1 = sprite->worldLayer;
+				u8 worldLayer2 = nextSprite->worldLayer;
 	
+				bool isSpriteHidden = Sprite_isHidden(sprite);
+				bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
+
 				// swap layers
 				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
 				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
-
-				bool isSpriteHidden = Sprite_isHidden(sprite);
-				bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
 
 				// don't render inmediately, it causes glitches
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
@@ -281,7 +283,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		
 		if(VirtualList_begin(this->sprites))
 		{
-			layer = Sprite_getWorldLayer(__SAFE_CAST(Sprite, VirtualList_front(this->sprites))) - 1;
+			layer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
 			
 			if(this->tempFreedLayer && layer == this->tempFreedLayer)
 			{
@@ -326,7 +328,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		// if there is already a higher layer being freed
 		// don't do anything, the recovery algorithm will take
 		// care of this new freed layer
-		u8 spriteLayer = Sprite_getWorldLayer(sprite);
+		u8 spriteLayer = sprite->worldLayer;
 
 		this->freedLayer = this->freedLayer < spriteLayer? spriteLayer: this->freedLayer;
 		
@@ -409,7 +411,7 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 		for(; node; node = VirtualNode_getPrevious(node))
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
-			u8 spriteLayer = Sprite_getWorldLayer(sprite);
+			u8 spriteLayer = sprite->worldLayer;
 			
 			// search for the next sprite with the closest 
 			// layer to the freed layer
@@ -454,7 +456,7 @@ void SpriteManager_setLastLayer(SpriteManager this)
 
 	if(VirtualList_begin(this->sprites))
 	{
-		this->freeLayer = Sprite_getWorldLayer(__SAFE_CAST(Sprite, VirtualList_front(this->sprites))) - 1;
+		this->freeLayer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
 		ASSERT(!this->tempFreedLayer || this->freeLayer <= this->tempFreedLayer, "SpriteManager::setLastLayer: this->freeLayer >= this->tempFreedLayer");
 	}
 	else 
@@ -515,7 +517,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 	for(; node; node = VirtualNode_getPrevious(node))
 	{
-		if(Sprite_getWorldLayer(__SAFE_CAST(Sprite, VirtualNode_getData(node))) != layer)
+		if((__SAFE_CAST(Sprite, VirtualNode_getData(node)))->worldLayer != layer)
 		{
 			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
 		}
@@ -549,7 +551,7 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 	
 	for(; node; node = VirtualNode_getNext(node))
 	{
-		if(Sprite_getWorldLayer(__SAFE_CAST(Sprite, VirtualNode_getData(node))) == layer)
+		if((__SAFE_CAST(Sprite, VirtualNode_getData(node)))->worldLayer == layer)
 		{
 			return __SAFE_CAST(Sprite, VirtualNode_getData(node));
 		}

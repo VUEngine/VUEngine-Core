@@ -59,6 +59,8 @@
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
 
+__CLASS_FRIEND_DEFINITION(Body);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -171,7 +173,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 		ASSERT(body, "PhysicalWorld::getBody: null body");
 
 		// check if current shape's owner is the same as the entity calling this method
-		if(owner == Body_getOwner(body))
+		if(owner == body->owner)
 		{
 			return body;
 		}
@@ -223,7 +225,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		Body body = __SAFE_CAST(Body, VirtualNode_getData(node));
 
 		// check if necessary to apply gravity
-		bool gravitySensibleAxis = Body_getAxisSubjectToGravity(body) & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, Body_getOwner(body), &this->gravity);
+		bool gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
 
 		if(gravitySensibleAxis)
 		{
@@ -307,7 +309,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 		Body body = __SAFE_CAST(Body, VirtualNode_getData(node));
 
 		// check if current body's owner is the same as the entity calling this method
-		if(__GET_CAST(SpatialObject, owner) == Body_getOwner(body))
+		if(__GET_CAST(SpatialObject, owner) == body->owner)
 		{
 			// check if body is active.... maybe a body must be removed
 			// and a new entity has been loaded in the same memory location
