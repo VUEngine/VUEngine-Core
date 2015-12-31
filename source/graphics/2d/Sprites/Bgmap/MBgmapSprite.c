@@ -39,6 +39,7 @@
 __CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 
 	if(this->textures)
 	{
-		VirtualNode node = VirtualList_begin(this->textures);
+		VirtualNode node = this->textures->head;
 		
 		for(; node; node = node->next)
 		{

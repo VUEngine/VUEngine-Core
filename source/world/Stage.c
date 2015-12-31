@@ -58,6 +58,8 @@ __CLASS_DEFINITION(Stage, Container);
 
 __CLASS_FRIEND_DEFINITION(Container);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
+
 
 typedef struct StageEntityDescription
 {
@@ -141,7 +143,7 @@ void Stage_destructor(Stage this)
 	
 	if(this->stageEntities)
 	{
-		VirtualNode node = VirtualList_begin(this->stageEntities);
+		VirtualNode node = this->stageEntities->head;
 
 		for(; node; node = node->next)
 		{
@@ -167,7 +169,7 @@ void Stage_destructor(Stage this)
 	
 	if(this->entitiesToInitialize)
 	{
-		VirtualNode node = VirtualList_begin(this->entitiesToInitialize);
+		VirtualNode node = this->entitiesToInitialize->head;
 		
 		for(; node; node = node->next)
 		{
@@ -373,7 +375,7 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 {
 	ASSERT(this, "Stage::registerEntityId: null this");
 
-	VirtualNode node = VirtualList_begin(this->stageEntities);
+	VirtualNode node = this->stageEntities->head;
 
 	for(; node; node = node->next)
 	{
@@ -446,7 +448,7 @@ void Stage_removeChild(Stage this, Container child)
 
 	s16 id = Container_getId(__SAFE_CAST(Container, child));
 
-	VirtualNode node = VirtualList_begin(this->stageEntities);
+	VirtualNode node = this->stageEntities->head;
 
 	for(; node; node = node->next)
 	{
@@ -489,7 +491,7 @@ static void Stage_unloadChild(Stage this, Container child)
 
 	s16 id = Container_getId(__SAFE_CAST(Container, child));
 
-	VirtualNode node = VirtualList_begin(this->stageEntities);
+	VirtualNode node = this->stageEntities->head;
 
 	for(; node; node = node->next)
 	{
@@ -597,7 +599,7 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 	{
 		if(this->stageDefinition->entities[i].name && entityNamesToIgnore)
 		{
-			VirtualNode node = VirtualList_begin(entityNamesToIgnore);
+			VirtualNode node = entityNamesToIgnore->head;
 			
 			for(; node; node = node->next)
 			{
@@ -645,7 +647,7 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 		(FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) +
 		FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) * FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
 
-		VirtualNode auxNode = VirtualList_begin(this->stageEntities);
+		VirtualNode auxNode = this->stageEntities->head;
 
 		for(; auxNode; auxNode = auxNode->next)
 		{
@@ -687,12 +689,12 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 
 	static VirtualNode savedNode = NULL;
 
-	VirtualNode node = savedNode ? savedNode : VirtualList_begin(this->stageEntities);
+	VirtualNode node = savedNode ? savedNode : this->stageEntities->head;
 	int counter = 0;
 
 	for(; node && counter < this->stageDefinition->streaming.streamingAmplitude / 4; node = direction ? VirtualNode_getPrevious(node) : node->next, counter++);
 
-	node = node ? node : direction ? VirtualList_begin(this->stageEntities) : VirtualList_end(this->stageEntities);
+	node = node ? node : direction ? this->stageEntities->head : this->stageEntities->tail;
 	savedNode = NULL;
 
 	int entityLoaded = false;
@@ -749,7 +751,7 @@ static void Stage_loadEntities(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: entity not loaded");
 
-	VirtualNode node = VirtualList_begin(this->entitiesToLoad);
+	VirtualNode node = this->entitiesToLoad->head;
 	
 	for(; node; node = node->next)
 	{
@@ -786,7 +788,7 @@ static void Stage_initializeEntities(Stage this)
 
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
-	VirtualNode node = VirtualList_begin(this->entitiesToInitialize);
+	VirtualNode node = this->entitiesToInitialize->head;
 	
 	for(; node; node = node->next)
 	{
@@ -814,7 +816,7 @@ static void Stage_loadInRangeEntities(Stage this)
 	ASSERT(this, "Stage::loadInRangeEntities: null this");
 
 	// need a temporal list to remove and delete entities
-	VirtualNode node = VirtualList_begin(this->stageEntities);
+	VirtualNode node = this->stageEntities->head;
 
 	for(; node; node = node->next)
 	{
@@ -861,7 +863,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 	CACHE_ENABLE;
 
 	// need a temporal list to remove and delete entities
-	VirtualNode node = VirtualList_begin(this->children);
+	VirtualNode node = this->children->head;
 
 	// check which actors must be unloaded
 	for(; node; node = node->next)
@@ -874,7 +876,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		{
 			s16 id = Container_getId(__SAFE_CAST(Container, entity));
 
-			VirtualNode auxNode = VirtualList_begin(this->loadedStageEntities);
+			VirtualNode auxNode = this->loadedStageEntities->head;
 
 			for(; auxNode; auxNode = auxNode->next)
 			{
@@ -973,7 +975,7 @@ void Stage_stream(Stage this)
 	}			
 	else if(streamingCycleCounter == streamingCycleBase * 2)
 	{
-		if(VirtualList_begin(this->entitiesToLoad))
+		if(this->entitiesToLoad->head)
 		{
 			Stage_loadEntities(this);
 		}
@@ -984,7 +986,7 @@ void Stage_stream(Stage this)
 	}
 	else if(streamingCycleCounter == streamingCycleBase * 3)
 	{		
-		if(VirtualList_begin(this->entitiesToInitialize))
+		if(this->entitiesToInitialize->head)
 		{
 			Stage_initializeEntities(this);
 		}

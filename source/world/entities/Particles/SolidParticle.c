@@ -32,6 +32,7 @@
 __CLASS_DEFINITION(SolidParticle, Particle);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -198,7 +199,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 			VirtualList collidingObjectsToRemove = __NEW(VirtualList);
 			VirtualNode node = NULL;
 	
-			for(node = VirtualList_begin(collidingSpatialObjects); node; node = node->next)
+			for(node = collidingSpatialObjects->head; node; node = node->next)
 		    {
 				SpatialObject spatialObject = __SAFE_CAST(SpatialObject, node->data);
 				
@@ -208,7 +209,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 				}
 			}
 	
-			for(node = VirtualList_begin(collidingObjectsToRemove); node; node = node->next)
+			for(node = collidingObjectsToRemove->head; node; node = node->next)
 		    {
 				// whenever you process some objects of a collisions list remove them and leave the Actor handle
 				// the ones you don't care about, i.e.: in most cases, the ones which are solid

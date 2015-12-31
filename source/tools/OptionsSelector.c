@@ -112,6 +112,7 @@
 __CLASS_DEFINITION(OptionsSelector, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -169,7 +170,7 @@ static void OptionsSelector_flushPages(OptionsSelector this)
 
 	if(this->pages)
 	{
-		VirtualNode node = VirtualList_begin(this->pages);
+		VirtualNode node = this->pages->head;
 
 		for(; node; node = node->next)
 		{
@@ -199,7 +200,7 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames)
 	int numberOfPages = (int)(this->totalOptions / optionsPerPage);
 	numberOfPages += 0 < this->totalOptions % optionsPerPage ? 1 : 0;
 
-	VirtualNode node = VirtualList_begin(optionsNames);
+	VirtualNode node = optionsNames->head;
 
 	ASSERT(VirtualList_getSize(optionsNames), "OptionsSelector::setOptions: empty optionsNames");
 	ASSERT(VirtualList_getSize(optionsNames), "OptionsSelector::setOptions: empty options");
@@ -221,10 +222,10 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames)
 			VirtualList_pushBack(this->pages, options);
 		}
 
-		this->currentPage = VirtualList_begin(this->pages);
+		this->currentPage = this->pages->head;
 		ASSERT(VirtualList_getSize(this->pages), "OptionsSelector::setOptions: empty pages");
 
-		this->currentOption = this->currentPage ? VirtualList_begin(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage))) : NULL;
+		this->currentOption = this->currentPage ? (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head : NULL;
 	}
 
 	this->currentPageIndex = 0;
@@ -250,12 +251,12 @@ void OptionsSelector_selectNext(OptionsSelector this)
 
 			if(!this->currentPage)
 			{
-				this->currentPage = VirtualList_begin(this->pages);
+				this->currentPage = this->pages->head;
 				this->currentPageIndex = 0;
 				this->currentOptionIndex = 0;
 			}
 
-			this->currentOption = VirtualList_begin(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
+			this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head;
 			ASSERT(this->currentOption, "selectNext: null current option");
 
 			OptionsSelector_showOptions(this, this->x, this->y);
@@ -284,12 +285,12 @@ void OptionsSelector_selectPrevious(OptionsSelector this)
 
 			if(!this->currentPage)
 			{
-				this->currentPage = VirtualList_end(this->pages);
+				this->currentPage = this->pages->tail;
 				this->currentPageIndex = VirtualList_getSize(this->pages) - 1;
 				this->currentOptionIndex = this->totalOptions - 1;
 			}
 
-			this->currentOption = VirtualList_end(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
+			this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->tail;
 			ASSERT(this->currentOption, "selectPrevious: current option data");
 
 			OptionsSelector_showOptions(this, this->x, this->y);
@@ -316,7 +317,7 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 		this->y = 0 <= y && y <= __SCREEN_HEIGHT >> 3 ? y : 0;
 
 		ASSERT(this->currentPage, "showOptions: currentPage");
-		VirtualNode node = VirtualList_begin(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)));
+		VirtualNode node = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head;
 
 		int i = 0;
 		for(; i + y < (__SCREEN_HEIGHT >> 3); i++)

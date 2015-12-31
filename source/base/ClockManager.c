@@ -49,6 +49,7 @@
 __CLASS_DEFINITION(ClockManager, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +86,7 @@ void ClockManager_destructor(ClockManager this)
 {
 	ASSERT(this, "ClockManager::destructor: null this");
 
-	VirtualNode node = VirtualList_begin(this->clocks);
+	VirtualNode node = this->clocks->head;
 
 	// destroy all registered clocks
 	for(; node ; node = node->next)
@@ -135,7 +136,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 
 	if(this->clocks)
 	{
-		VirtualNode node = VirtualList_begin(this->clocks);
+		VirtualNode node = this->clocks->head;
 
 		// update all registered clocks
 		for(; node ; node = node->next)
@@ -193,7 +194,7 @@ void ClockManager_reset(ClockManager this)
 	ASSERT(this, "ClockManager::reset: null this");
 	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
 
-	VirtualNode node = VirtualList_begin(this->clocks);
+	VirtualNode node = this->clocks->head;
 
 	// update all registered clocks
 	for(; node ; node = node->next)

@@ -30,6 +30,8 @@
 __CLASS_DEFINITION(Container, SpatialObject);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -115,7 +117,7 @@ void Container_destructor(Container this)
 		__DELETE(this->children);
 		this->children = NULL;
 
-		VirtualNode node = VirtualList_begin(childrenToDelete);
+		VirtualNode node = childrenToDelete->head;
 
 		// destroy each child
 		for(; node ; node = node->next)
@@ -226,7 +228,7 @@ void Container_processRemovedChildren(Container this)
 
 	if(this->children && this->removedChildren)
 	{
-		VirtualNode node = VirtualList_begin(this->removedChildren);
+		VirtualNode node = this->removedChildren->head;
 
 		// remove each child
 		for(; node ; node = node->next)
@@ -259,7 +261,7 @@ void Container_update(Container this)
 		// first remove children
 		Container_processRemovedChildren(this);
 
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		// update each child
 		for(; node ; node = node->next)
@@ -350,7 +352,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 		// first remove children
 		Container_processRemovedChildren(this);
 
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		// update each child
 		for(; node; node = node->next)
@@ -391,7 +393,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 		// first remove children
 		//Container_processRemovedChildren(this);
 
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		// update each child
 		for(; node; node = node->next)
@@ -437,7 +439,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 		// first remove children
 		//Container_processRemovedChildren(this);
 
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		// update each child
 		for(; node; node = node->next)
@@ -471,7 +473,7 @@ static void Container_propagateInvalidateGlobalPosition(Container this)
 {
 	if(this->children)
 	{
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		// update each child
 		for(; node; node = node->next)
@@ -557,7 +559,7 @@ void Container_invalidateGlobalPosition(Container this)
 
 	if(this->children)
 	{
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		// update each child
 		for(; node; node = node->next)
@@ -596,7 +598,7 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 			// first remove children
 			Container_processRemovedChildren(this);
 
-			VirtualNode node = VirtualList_begin(this->children);
+			VirtualNode node = this->children->head;
 
 			// update each child
 			for(; node ; node = node->next)
@@ -707,7 +709,7 @@ static Container Container_findChildByName(Container this, VirtualList children,
 	ASSERT(this, "Container::findChildByName: null this");
 
     Container child, grandChild;
-    VirtualNode node = VirtualList_begin(children);
+    VirtualNode node = children->head;
 
     // first remove children
     Container_processRemovedChildren(this);
@@ -766,7 +768,7 @@ Container Container_getChildById(Container this, s16 id)
 		// first remove children
 		Container_processRemovedChildren(this);
 
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		// look through all children
 		for(; node ; node = node->next)
@@ -792,7 +794,7 @@ void Container_suspend(Container this)
 	{
 		Container_processRemovedChildren(this);
 
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 		
 		for(; node; node = node->next)
 		{
@@ -810,7 +812,7 @@ void Container_resume(Container this)
 
 	if(this->children)
 	{
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 		
 		for(; node; node = node->next)
 		{

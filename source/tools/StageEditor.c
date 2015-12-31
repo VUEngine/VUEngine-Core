@@ -87,6 +87,7 @@
 __CLASS_DEFINITION(StageEditor, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 enum Modes
@@ -420,7 +421,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 
 	if(!this->currentEntityNode)
 	{
-		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
+		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
 	}
 	else
 	{
@@ -428,7 +429,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 
 		if(!this->currentEntityNode)
     	{
-			this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
+			this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
 		}
 	}
 
@@ -448,7 +449,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 	
 	if(!this->currentEntityNode)
 	{
-		this->currentEntityNode = stageEntities ? VirtualList_begin(stageEntities) : NULL;
+		this->currentEntityNode = stageEntities ? stageEntities->head : NULL;
 	}
 	else
 	{
@@ -457,7 +458,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 
 		if(!this->currentEntityNode)
 	    {
-			this->currentEntityNode = stageEntities ? VirtualList_begin(stageEntities) : NULL;
+			this->currentEntityNode = stageEntities ? stageEntities->head : NULL;
 		}
 	}
 
@@ -790,7 +791,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
 		VirtualList stageEntities = Container_getChildren(__SAFE_CAST(Container, GameState_getStage(this->gameState)));
-		this->currentEntityNode = stageEntities ? VirtualList_end(stageEntities) : NULL;
+		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
 
 		// select the added entity
 		this->mode = kTranslateEntities;

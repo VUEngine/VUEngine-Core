@@ -36,6 +36,17 @@
 #define VirtualList_SET_VTABLE(ClassName)																\
 	Object_SET_VTABLE(ClassName);																		\
 
+#define VirtualList_ATTRIBUTES																			\
+																										\
+	/* it is derived from */																			\
+	Object_ATTRIBUTES																					\
+																										\
+	/* a pointer to the head of the list */ 															\
+	VirtualNode head;																					\
+																										\
+	/* a pointer to the tail of the list */																\
+	VirtualNode tail;																					\
+
 __CLASS(VirtualList);
 
 

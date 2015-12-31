@@ -28,6 +28,9 @@
 
 __CLASS_DEFINITION(ObjectAnimationCoordinator, AnimationCoordinator);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -61,7 +64,7 @@ void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinato
 	ASSERT(animationController, "ObjectAnimationCoordinator::addAnimationController: null animationController");
 	ASSERT(!VirtualList_find(this->animationControllers, animationController), "ObjectAnimationCoordinator::addAnimationController: animationController already registered");
 
-	if(VirtualList_begin(this->animationControllers))
+	if(this->animationControllers->head)
 	{
 		AnimationController_stop(animationController);
 	}
@@ -72,12 +75,12 @@ void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinato
 void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::removeAnimationController: null this");
-	ASSERT(VirtualList_begin(this->animationControllers), "ObjectAnimationCoordinator::removeAnimationController: null this");
+	ASSERT(this->animationControllers->head, "ObjectAnimationCoordinator::removeAnimationController: null this");
 
 	bool mustChangeLeader = animationController == __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
 	VirtualList_removeElement(this->animationControllers, animationController);
 	
-	if(mustChangeLeader && VirtualList_begin(this->animationControllers))
+	if(mustChangeLeader && this->animationControllers->head)
 	{
 		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
 		

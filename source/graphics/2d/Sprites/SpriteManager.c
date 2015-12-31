@@ -62,6 +62,7 @@ __CLASS_DEFINITION(SpriteManager, Object);
 
 __CLASS_FRIEND_DEFINITION(Sprite);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -154,7 +155,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	{
 		swap = false;
 		
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 		
 		if(node)
 		{
@@ -197,7 +198,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
 
-	this->node = this->node ? this->nextNode ? this->node : this->node->next: VirtualList_begin(this->sprites);
+	this->node = this->node ? this->nextNode ? this->node : this->node->next: this->sprites->head;
 
 	for(; this->node; this->node = this->node->next)
 	{
@@ -282,7 +283,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		// if there are layers being freed up by the recovery algorithm
 		u8 layer = __TOTAL_LAYERS - 1;
 		
-		if(VirtualList_begin(this->sprites))
+		if(this->sprites->head)
 		{
 			layer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
 			
@@ -407,7 +408,7 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 	{
 		ASSERT(this->freedLayer < __TOTAL_LAYERS, "SpriteManager::processFreedLayersProgressively: error freedLayer");
 
-		VirtualNode node = VirtualList_end(this->sprites);
+		VirtualNode node = this->sprites->tail;
 
 		for(; node; node = node->previous)
 		{
@@ -455,7 +456,7 @@ void SpriteManager_setLastLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
-	if(VirtualList_begin(this->sprites))
+	if(this->sprites->head)
 	{
 		this->freeLayer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
 		ASSERT(!this->tempFreedLayer || this->freeLayer <= this->tempFreedLayer, "SpriteManager::setLastLayer: this->freeLayer >= this->tempFreedLayer");
@@ -491,7 +492,7 @@ void SpriteManager_render(SpriteManager this)
 	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 
 	// render from WORLD 31 to the lowest active one
-	VirtualNode node = VirtualList_end(this->sprites);
+	VirtualNode node = this->sprites->tail;
 
 	for(; node; node = node->previous)
 	{
@@ -514,7 +515,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 {
 	ASSERT(this, "SpriteManager::showLayer: null this");
 
-	VirtualNode node = VirtualList_end(this->sprites);
+	VirtualNode node = this->sprites->tail;
 
 	for(; node; node = node->previous)
 	{
@@ -534,7 +535,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::recoverLayers: null this");
 
-	VirtualNode node = VirtualList_end(this->sprites);
+	VirtualNode node = this->sprites->tail;
 	for(; node; node = node->previous)
 	{
 		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
@@ -548,7 +549,7 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 	ASSERT(this, "SpriteManager::getSpriteAtLayer: null this");
 	ASSERT((unsigned)layer < __TOTAL_LAYERS, "SpriteManager::getSpriteAtLayer: invalid layer");
 	
-	VirtualNode node = VirtualList_begin(this->sprites);
+	VirtualNode node = this->sprites->head;
 	
 	for(; node; node = node->next)
 	{
@@ -576,7 +577,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 	int auxY = y + 2;
 	int auxX = x;
 
-	VirtualNode node = VirtualList_begin(this->sprites);
+	VirtualNode node = this->sprites->head;
 
 	for(; node; node = node->next)
 	{

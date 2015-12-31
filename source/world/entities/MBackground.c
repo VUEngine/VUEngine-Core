@@ -36,6 +36,7 @@
 __CLASS_DEFINITION(MBackground, Entity);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,7 +66,7 @@ void MBackground_destructor(MBackground this)
 {
 	ASSERT(this, "MBackground::destructor: null this");
 
-	VirtualNode node = VirtualList_begin(this->sprites);
+	VirtualNode node = this->sprites->head;
 	
 	for(; node; node = node->next)
 	{
@@ -101,7 +102,7 @@ void MBackground_suspend(MBackground this)
 {
 	ASSERT(this, "MBackground::suspend: null this");
 
-	VirtualNode node = VirtualList_begin(this->sprites);
+	VirtualNode node = this->sprites->head;
 	
 	for(; node; node = node->next)
 	{

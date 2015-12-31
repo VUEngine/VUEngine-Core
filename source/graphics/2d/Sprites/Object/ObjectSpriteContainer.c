@@ -35,6 +35,7 @@
 __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -109,7 +110,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 
 	if(this->objectSprites)
 	{
-		VirtualNode node = VirtualList_begin(this->objectSprites);
+		VirtualNode node = this->objectSprites->head;
 
 		for(; node; node = node->next)
 		{
@@ -199,7 +200,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	this->node = this->previousNode = NULL;
 
 	// if was the last node
-	if(!this->objectSpriteToDefragment || !VirtualList_begin(this->objectSprites))
+	if(!this->objectSpriteToDefragment || !this->objectSprites->head)
 	{
 		// just update the measures
 		this->objectSpriteToDefragment = NULL;
@@ -275,7 +276,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	{
 		this->freedObjectIndex = 0;
 
-		VirtualNode node = VirtualList_end(this->objectSprites);
+		VirtualNode node = this->objectSprites->tail;
 		
 		if(node)
 		{
@@ -295,7 +296,7 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::sort: null this");
 
-	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node): VirtualList_end(this->objectSprites);
+	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node): this->objectSprites->tail;
 
 	for(; this->node; this->node = VirtualNode_getPrevious(this->node))
 	{
@@ -362,7 +363,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		this->renderFlag = false;
 	}
 	
-	VirtualNode node = VirtualList_begin(this->objectSprites);
+	VirtualNode node = this->objectSprites->head;
 
 	for(; node; node = node->next)
 	{
@@ -379,7 +380,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::show: null this");
 
-	VirtualNode node = VirtualList_begin(this->objectSprites);
+	VirtualNode node = this->objectSprites->head;
 
 	for(; node; node = node->next)
 	{
@@ -396,7 +397,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 	// must check list, because the Sprite's destructor calls this method
 	if(this->objectSprites)
 	{
-		VirtualNode node = VirtualList_begin(this->objectSprites);
+		VirtualNode node = this->objectSprites->head;
 	
 		for(; node; node = node->next)
 		{
@@ -419,7 +420,7 @@ int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 	int totalUsedObjects = 0;
 	if(this->objectSprites)
 	{
-		VirtualNode node = VirtualList_begin(this->objectSprites);
+		VirtualNode node = this->objectSprites->head;
 	
 		for(; node; node = node->next)
 		{
@@ -434,7 +435,7 @@ int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 	
-	if(VirtualList_begin(this->objectSprites))
+	if(this->objectSprites->head)
 	{
 		ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 		

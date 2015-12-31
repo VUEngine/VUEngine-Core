@@ -54,6 +54,7 @@ void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 __CLASS_DEFINITION(MessageDispatcher, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 typedef struct DelayedMessage
@@ -151,9 +152,9 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 	ASSERT(this, "MessageDispatcher::processDiscardedMessages: null this");
 	ASSERT(this->delayedMessagesToDiscard, "MessageDispatcher::processDiscardedMessages: null delayedMessagesToDiscard");
 
-	if(VirtualList_begin(this->delayedMessagesToDiscard))
+	if(this->delayedMessagesToDiscard->head)
 	{
-		VirtualNode node = VirtualList_begin(this->delayedMessagesToDiscard);
+		VirtualNode node = this->delayedMessagesToDiscard->head;
 		
 		for(; node; node = node->next)
 		{
@@ -188,11 +189,11 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 	MessageDispatcher_processDiscardedMessages(this);
 	
-	if(VirtualList_begin(this->delayedMessages))
+	if(this->delayedMessages->head)
 	{
 		VirtualList telegramsToDispatch = __NEW(VirtualList);
 
-		VirtualNode node = VirtualList_begin(this->delayedMessages);
+		VirtualNode node = this->delayedMessages->head;
 
 		for(; node; node = node->next)
 		{
@@ -206,14 +207,14 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			}
 		}
 
-		node = VirtualList_begin(telegramsToDispatch);
+		node = telegramsToDispatch->head;
 
 		for(; node; node = node->next)
 		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 			Telegram telegram = delayedMessage->telegram;
 
-			VirtualNode auxNode = VirtualList_begin(this->delayedMessagesToDiscard);
+			VirtualNode auxNode = this->delayedMessagesToDiscard->head;
 			
 			for(; auxNode; auxNode = auxNode->next)
 			{
@@ -230,7 +231,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			}
 		}
 
-		node = VirtualList_begin(telegramsToDispatch);
+		node = telegramsToDispatch->head;
 
 		for(; node; node = node->next)
 		{
@@ -253,7 +254,7 @@ void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
 
-	VirtualNode node = VirtualList_begin(this->delayedMessages);
+	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
 	{
@@ -273,7 +274,7 @@ void MessageDispatcher_discardDelayedMessages(MessageDispatcher this, int messag
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
 
-	VirtualNode node = VirtualList_begin(this->delayedMessages);
+	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
 	{

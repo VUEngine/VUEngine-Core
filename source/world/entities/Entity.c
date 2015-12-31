@@ -36,6 +36,7 @@
 __CLASS_DEFINITION(Entity, Container);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ static void Entity_releaseSprites(Entity this)
 
 	if(this->sprites)
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 
 		// move each child to a temporary list
 		for(; node ; node = node->next)
@@ -141,7 +142,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightCuboid* rightCuboi
 			halfDepth = this->size.z >> 1;
 		}
 	}
-	else if(!this->children || !VirtualList_begin(this->children))
+	else if(!this->children || !this->children->head)
 	{
 		halfWidth = this->size.x >> 1;
 		halfHeight = this->size.y >> 1;
@@ -184,7 +185,7 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightCuboid* rightCuboi
 
 	if(this->children)
 	{
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 		
 		for(; node; node = node->next)
 		{
@@ -443,7 +444,7 @@ void Entity_initialize(Entity this)
 
 	if(this->children)
 	{
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
 		{
@@ -471,7 +472,7 @@ void Entity_ready(Entity this)
 	if(this->children)
 	{
 		// call ready method on children
-		VirtualNode node = VirtualList_begin(this->children);
+		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
 		{
@@ -600,7 +601,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 
 	if(this->sprites)
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 
 		if(updateSpriteTransformations && updateSpritePosition)
 		{
@@ -816,7 +817,7 @@ bool Entity_isVisible(Entity this, int pad)
 	if(this->sprites)
 	{
 		static Sprite sprite = NULL;
-		sprite = __SAFE_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
+		sprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head));
 
 		ASSERT(sprite, "Entity:isVisible: null sprite");
 		
@@ -860,7 +861,7 @@ bool Entity_isVisible(Entity this, int pad)
 
 	if(this->children)
 	{
-		VirtualNode childNode = VirtualList_begin(this->children);
+		VirtualNode childNode = this->children->head;
 		
 		for(; childNode; childNode = childNode->next)
 		{
@@ -896,7 +897,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 
 	if(this->sprites)
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 
 		for(; node ; node = node->next)
 	    {
@@ -920,7 +921,7 @@ void Entity_show(Entity this)
 
 	if(this->sprites)
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 
 		// move each child to a temporary list
 		for(; node ; node = node->next)
@@ -937,7 +938,7 @@ void Entity_hide(Entity this)
 
 	if(this->sprites)
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 
 		// move each child to a temporary list
 		for(; node ; node = node->next)

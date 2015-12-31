@@ -29,6 +29,9 @@
 
 __CLASS_DEFINITION(AnimationCoordinator, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -72,7 +75,7 @@ bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationCont
 {
 	ASSERT(this, "AnimationCoordinator::playAnimation: null this");
 
-	if(VirtualList_begin(this->animationControllers))
+	if(this->animationControllers->head)
 	{
 		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
 

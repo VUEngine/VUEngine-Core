@@ -48,6 +48,7 @@
 __CLASS_DEFINITION(StateMachine, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -78,7 +79,7 @@ void StateMachine_destructor(StateMachine this)
 	ASSERT(this->stateStack, "StateMachine::destructor: null stateStack");
 
 	// delete the stack
-	VirtualNode node = VirtualList_begin(this->stateStack);
+	VirtualNode node = this->stateStack->head;
 
 	for(; node; node = node->next)
 	{
@@ -271,7 +272,7 @@ State StateMachine_getPreviousState(StateMachine this)
 {
 	ASSERT(this, "StateMachine::getPreviousState: null this");
 
-	VirtualNode node = VirtualList_begin(this->stateStack);
+	VirtualNode node = this->stateStack->head;
 
 	if(node)
 	{

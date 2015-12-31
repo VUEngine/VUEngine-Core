@@ -32,6 +32,7 @@
 __CLASS_DEFINITION(Object, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 typedef struct Event
@@ -60,7 +61,7 @@ void Object_destructor(Object this)
 
 	if(this->events)
 	{
-		VirtualNode node = VirtualList_begin(this->events);
+		VirtualNode node = this->events->head;
 
 		for(; node; node = node->next)
 		{
@@ -119,7 +120,7 @@ void Object_removeEventListener(Object this, Object listener, void (*method)(Obj
 
 	if(this->events)
 	{
-		VirtualNode node = VirtualList_begin(this->events);
+		VirtualNode node = this->events->head;
 
 		for(; node; node = node->next)
 		{
@@ -143,7 +144,7 @@ void Object_fireEvent(Object this,  char* eventName)
 
 	if(this->events)
 	{
-		VirtualNode node = VirtualList_begin(this->events);
+		VirtualNode node = this->events->head;
 
 		for(; node; node = node->next)
 		{

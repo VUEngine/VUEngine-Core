@@ -40,6 +40,7 @@
 __CLASS_DEFINITION(AnimatedInGameEntity, InGameEntity);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -117,7 +118,7 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 {
 	if(this->sprites)
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 	
 		// setup listeners
 		for(; node ; node = node->next)
@@ -196,7 +197,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 {
 	if(!Clock_isPaused(this->clock))
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 	
 		// move each child to a temporary list
 		for(; node ; node = node->next)
@@ -215,7 +216,7 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 
 	if(this->sprites)
 	{
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 
 		// play animation on each sprite
 		for(; node ; node = node->next)
@@ -234,7 +235,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 	{
 		this->currentAnimationName = animationName;
 		
-		VirtualNode node = VirtualList_begin(this->sprites);
+		VirtualNode node = this->sprites->head;
 
 		// play animation on each sprite
 		for(; node ; node = node->next)
@@ -250,7 +251,7 @@ bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 	ASSERT(this, "AnimatedInGameEntity::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::isPlayingAnimation: null sprites");
 
-	return Sprite_isPlaying(__SAFE_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
+	return Sprite_isPlaying(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
 }
 
 // is animation selected
@@ -260,7 +261,7 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 
 	if(this->sprites)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites)));
+		Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head));
 
 		return Sprite_isPlayingFunction(__SAFE_CAST(Sprite, sprite), this->animationDescription, functionName);
 	}

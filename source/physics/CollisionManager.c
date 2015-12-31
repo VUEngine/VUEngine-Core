@@ -52,6 +52,8 @@ __CLASS_DEFINITION(CollisionManager, Object);
 
 __CLASS_FRIEND_DEFINITION(Shape);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -89,7 +91,7 @@ void CollisionManager_destructor(CollisionManager this)
 	ASSERT(this->shapes, "CollisionManager::destructor: null shapes");
 
 	// delete the shapes
-	VirtualNode node = VirtualList_begin(this->shapes);
+	VirtualNode node = this->shapes->head;
 
 	// delete all shapes registered
 	for(;node; node = node->next)
@@ -176,7 +178,7 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 	ASSERT(this, "CollisionManager::processRemovedShapes: null this");
 	ASSERT(this->shapes, "CollisionManager::processRemovedShapes: null shapes");
 
-	VirtualNode node = VirtualList_begin(this->removedShapes);
+	VirtualNode node = this->removedShapes->head;
 
 	if(node)
 	{
@@ -208,7 +210,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 		return;
 	}
 	
-	VirtualNode node = VirtualList_begin(this->movingShapes);
+	VirtualNode node = this->movingShapes->head;
 
 	// check the shapes
 	for(; node; node = node->next)
@@ -218,7 +220,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 	}
 
 	// check the shapes
-	node = VirtualList_begin(this->movingShapes);
+	node = this->movingShapes->head;
 	for(; node; node = node->next)
 	{
 		// load the current shape
@@ -237,7 +239,7 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 		// dont' check again the current shape when processing other movable shapes
 		Shape_checked(shape, true);
 
-		VirtualNode nodeForActiveShapes = VirtualList_begin(this->activeShapes);
+		VirtualNode nodeForActiveShapes = this->activeShapes->head;
 
 		// check the shapes
 		for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
@@ -286,7 +288,7 @@ void CollisionManager_reset(CollisionManager this)
 	ASSERT(this, "CollisionManager::reset: null this");
 	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
 
-	VirtualNode node = VirtualList_begin(this->shapes);
+	VirtualNode node = this->shapes->head;
 
 	for(; node; node = node->next)
 	{
@@ -357,7 +359,7 @@ void CollisionManager_drawShapes(CollisionManager this)
 	ASSERT(this, "CollisionManager::drawShapes: null this");
 
 	// comparing against the other shapes
-	VirtualNode node = VirtualList_begin(this->shapes);
+	VirtualNode node = this->shapes->head;
 
 	// check the shapes
 	for(; node; node = node->next)
@@ -373,7 +375,7 @@ void CollisionManager_flushShapesDirectDrawData(CollisionManager this)
 //	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
 
 	// comparing against the other shapes
-	VirtualNode node = VirtualList_begin(this->shapes);
+	VirtualNode node = this->shapes->head;
 
 	// check the shapes
 	for(; node; node = node->next)

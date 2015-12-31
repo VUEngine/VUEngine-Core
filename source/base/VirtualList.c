@@ -35,16 +35,6 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define VirtualList_ATTRIBUTES																			\
-																										\
-	/* it is derived from */																			\
-	Object_ATTRIBUTES																					\
-																										\
-	/* a pointer to the head of the list */ 															\
-	VirtualNode head;																					\
-																										\
-	/* a pointer to the tail of the list */																\
-	VirtualNode tail;																					\
 
 __CLASS_DEFINITION(VirtualList, Object);
 
@@ -509,7 +499,7 @@ VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const v
 	{
 		VirtualList_pushFront(this, data);
 
-		newNode = VirtualList_begin(this);
+		newNode = this->head;
 	}
 	else
 	{

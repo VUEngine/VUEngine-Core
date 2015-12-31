@@ -124,6 +124,7 @@
 __CLASS_DEFINITION(Debug, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -222,7 +223,7 @@ static void Debug_setupPages(Debug this)
 	VirtualList_pushBack(this->pages, &Debug_showPhysicsStatus);
 	VirtualList_pushBack(this->pages, &Debug_showHardwareStatus);
 
-	this->currentPage = VirtualList_begin(this->pages);
+	this->currentPage = this->pages->head;
 }
 
 static void Debug_dimmGame(Debug this)
@@ -284,7 +285,7 @@ void Debug_showPreviousPage(Debug this)
 
 	if(NULL == this->currentPage)
 	{
-		this->currentPage = VirtualList_end(this->pages);
+		this->currentPage = this->pages->tail;
 	}
 
 	Debug_showPage(this, -1);
@@ -300,7 +301,7 @@ void Debug_showNextPage(Debug this)
 
 	if(NULL == this->currentPage)
 	{
-		this->currentPage = VirtualList_begin(this->pages);
+		this->currentPage = this->pages->head;
 	}
 
 	Debug_showPage(this, 1);
@@ -318,7 +319,7 @@ void Debug_showPreviousSubPage(Debug this)
 
 	if(NULL == this->currentSubPage)
 	{
-		this->currentSubPage = VirtualList_end(this->subPages);
+		this->currentSubPage = this->subPages->tail;
 	}
 
 	Debug_showSubPage(this, -1);
@@ -336,7 +337,7 @@ void Debug_showNextSubPage(Debug this)
 
 	if(NULL == this->currentSubPage)
 	{
-		this->currentSubPage = VirtualList_begin(this->subPages);
+		this->currentSubPage = this->subPages->head;
 	}
 
 	Debug_showSubPage(this, 1);
@@ -348,14 +349,14 @@ static void Debug_printHeader(Debug this)
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
     Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
     Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->pages, VirtualNode_getData(this->currentPage)) + 1, 17, 0, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->pages, this->currentPage->data) + 1, 17, 0, NULL);
     Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
 }
 
 // show page
 static void Debug_showPage(Debug this, int increment)
 {
-	if(this->currentPage && VirtualNode_getData(this->currentPage))
+	if(this->currentPage && this->currentPage->data)
 	{
 		this->update = NULL;
 
@@ -367,7 +368,7 @@ static void Debug_showPage(Debug this, int increment)
 
 		Debug_dimmGame(this);
 
-		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentPage))(this, increment, 1, 2);
+		((void (*)(Debug, int, int, int))this->currentPage->data)(this, increment, 1, 2);
 	}
 }
 
@@ -455,7 +456,7 @@ static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFourthPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowUserDefinedClassesSizes);
 
-	this->currentSubPage = VirtualList_begin(this->subPages);
+	this->currentSubPage = this->subPages->head;
 
 	Debug_showSubPage(this, 0);
 }
@@ -559,7 +560,7 @@ static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y)
 
 	VirtualList_pushBack(this->subPages, &Debug_charMemoryShowStatus);
 	VirtualList_pushBack(this->subPages, &Debug_charMemoryShowStatus);
-	this->currentSubPage = VirtualList_begin(this->subPages);
+	this->currentSubPage = this->subPages->head;
 
 	this->charSegment = -1;
 
@@ -638,7 +639,7 @@ static void Debug_showTextureStatus(Debug this, int increment, int x, int y)
 
 	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
 	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
-	this->currentSubPage = VirtualList_begin(this->subPages);
+	this->currentSubPage = this->subPages->head;
 
 	this->bgmapSegment = -1;
 	this->bgmapDisplacement.x = 0;
@@ -649,7 +650,7 @@ static void Debug_showTextureStatus(Debug this, int increment, int x, int y)
 
 static void Debug_showDebugBgmap(Debug this)
 {
-	if(VirtualNode_getData(this->currentPage) != &Debug_showTextureStatus ||
+	if(this->currentPage->data != &Debug_showTextureStatus ||
 		0 > this->bgmapSegment
 	)
 	{
@@ -716,7 +717,7 @@ static void Debug_showObjectStatus(Debug this, int increment, int x, int y)
 
 	VirtualList_pushBack(this->subPages, &Debug_objectsShowStatus);
 	VirtualList_pushBack(this->subPages, &Debug_objectsShowStatus);
-	this->currentSubPage = VirtualList_begin(this->subPages);
+	this->currentSubPage = this->subPages->head;
 
 	this->objectSegment = -1;
 
@@ -768,7 +769,7 @@ static void Debug_showSpritesStatus(Debug this, int increment, int x, int y)
 
 	VirtualList_pushBack(this->subPages, &Debug_spritesShowStatus);
 	VirtualList_pushBack(this->subPages, &Debug_spritesShowStatus);
-	this->currentSubPage = VirtualList_begin(this->subPages);
+	this->currentSubPage = this->subPages->head;
 
 	this->currentLayer = __TOTAL_LAYERS;
 
@@ -820,7 +821,7 @@ static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y)
 
 	VirtualList_pushBack(this->subPages, &Debug_physicStatusShowStatistics);
 	VirtualList_pushBack(this->subPages, &Debug_physicStatusShowShapes);
-	this->currentSubPage = VirtualList_begin(this->subPages);
+	this->currentSubPage = this->subPages->head;
 
 	Debug_showSubPage(this, 0);
 }

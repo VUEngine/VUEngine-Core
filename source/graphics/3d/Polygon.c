@@ -33,6 +33,7 @@
 __CLASS_DEFINITION(Polygon, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ void Polygon_destructor(Polygon this)
 	// delete the vertices list
 	if(this->vertices)
 	{
-		VirtualNode node = VirtualList_begin(this->vertices);
+		VirtualNode node = this->vertices->head;
 
 		// delete each vertex
 		for(; node ; node = node->next)
@@ -115,7 +116,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 	if(this->vertices && 2 < VirtualList_getSize(this->vertices))
 	{
 		// the node's which hold the vertices
-		VirtualNode fromNode = VirtualList_begin(this->vertices);
+		VirtualNode fromNode = this->vertices->head;
 		VirtualNode toNode = fromNode->next;
 
 		// 3d vertices

@@ -49,6 +49,7 @@
 __CLASS_DEFINITION(CharSetManager, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,7 +92,7 @@ void CharSetManager_destructor(CharSetManager this)
 	{
 		if(this->charSets[i])
 		{
-			VirtualNode node = VirtualList_begin(this->charSets[i]);
+			VirtualNode node = this->charSets[i]->head;
 			
 			for(; node; node = node->next)
 			{
@@ -118,7 +119,7 @@ void CharSetManager_reset(CharSetManager this)
 	{
 		if(this->charSets[segment])
 		{
-			VirtualNode node = VirtualList_begin(this->charSets[segment]);
+			VirtualNode node = this->charSets[segment]->head;
 			
 			for(; node; node = node->next)
 			{
@@ -142,7 +143,7 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 	int i = 0;
 	for(; i < __CHAR_SEGMENTS; i++)
 	{
-		VirtualNode node = VirtualList_begin(this->charSets[i]);
+		VirtualNode node = this->charSets[i]->head;
 		
 		for(; node; node = node->next)
 		{
@@ -238,7 +239,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 
 		u16 offset = 1;
 
-		if(VirtualList_begin(this->charSets[segment]))
+		if(this->charSets[segment]->head)
 		{
 			CharSet lastCharSet = __SAFE_CAST(CharSet, VirtualList_back(this->charSets[segment]));
 			offset += CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
@@ -272,7 +273,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 	{
 		if(this->freedOffset[segment])
 		{
-			VirtualNode node = VirtualList_begin(this->charSets[segment]);
+			VirtualNode node = this->charSets[segment]->head;
 			
 			for(; node; node = node->next)
 			{
@@ -297,7 +298,7 @@ int CharSetManager_getTotalUsedChars(CharSetManager this, int segment)
 	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
 	ASSERT((unsigned)segment < __CHAR_SEGMENTS, "CharSetManager::getTotalUsedChars: invalid segment");
 
-	if(VirtualList_begin(this->charSets[segment]))
+	if(this->charSets[segment]->head)
 	{
 		CharSet lastCharSet = VirtualList_back(this->charSets[segment]);
 		return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;

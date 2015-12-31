@@ -36,6 +36,7 @@
 __CLASS_DEFINITION(ScrollBackground, Entity);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 enum ScrollSprites
@@ -118,7 +119,7 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this)
 {
 	ASSERT(this, "ScrollBackground::retrieveSprites: null this");
 
-	VirtualNode node = VirtualList_begin(this->sprites);
+	VirtualNode node = this->sprites->head;
 	int i = 0;
 
 	for(; node && i <= kRightSprite ; node = node->next, i++)

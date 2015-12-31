@@ -34,6 +34,9 @@
 // define the InGameEntity
 __CLASS_DEFINITION(InGameEntity, Entity);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -92,10 +95,10 @@ void InGameEntity_setGap(InGameEntity this)
 	if(this->sprites)
 	{
 		// retrieve the sprite's scale
-		Scale scale = __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, __SAFE_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
+		Scale scale = __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
 	
 		// retrieve transforming mode
-		int bgmapMode = Sprite_getMode(__SAFE_CAST(Sprite, VirtualNode_getData(VirtualList_begin(this->sprites))));
+		int bgmapMode = Sprite_getMode(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
 	
 		// load original gap
 		this->gap = this->inGameEntityDefinition->gap;

@@ -37,6 +37,7 @@ __CLASS_DEFINITION(ManagedEntity, Entity);
 
 __CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -101,7 +102,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 	{
 		if(child->sprites)
 		{
-			VirtualNode spriteNode = VirtualList_begin(child->sprites);
+			VirtualNode spriteNode = child->sprites->head;
 
 			for(; spriteNode; spriteNode = spriteNode->next)
 			{
@@ -120,7 +121,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 		
 		if(child->children)
 		{
-			VirtualNode childNode = VirtualList_begin(child->children);
+			VirtualNode childNode = child->children->head;
 			
 			for(; childNode; childNode = childNode->next)
 			{
@@ -198,7 +199,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		position2D.x &= 0xFFFFE000;
 		position2D.y &= 0xFFFFE000;
 
-		VirtualNode spriteNode = VirtualList_begin(this->managedSprites);
+		VirtualNode spriteNode = this->managedSprites->head;
 		
 		fix19_13 xDisplacement = position2D.x - this->previous2DPosition.x;
 		fix19_13 yDisplacement = position2D.y - this->previous2DPosition.y;
@@ -221,7 +222,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		
 		VPUManager_disableInterrupt(VPUManager_getInstance());
 
-		for(spriteNode = VirtualList_begin(this->managedSprites); spriteNode; spriteNode = spriteNode->next)
+		for(spriteNode = this->managedSprites->head; spriteNode; spriteNode = spriteNode->next)
 		{
 			__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, spriteNode->data));
 

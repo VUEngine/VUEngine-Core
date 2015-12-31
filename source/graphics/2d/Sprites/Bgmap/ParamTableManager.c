@@ -62,6 +62,7 @@ typedef struct ParamTableFreeData
 __CLASS_DEFINITION(ParamTableManager, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 // ---------------------------------------------------------------------------------------------------------
@@ -115,7 +116,7 @@ void ParamTableManager_reset(ParamTableManager this)
 
 	VirtualList_clear(this->bSprites);
 	
-	VirtualNode node = VirtualList_begin(this->removedBgmapSpritesSizes);
+	VirtualNode node = this->removedBgmapSpritesSizes->head;
 	
 	for(; node; node = node->next)
 	{
@@ -215,7 +216,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 	
 	if(this->paramTableFreeData.param)
 	{
-		VirtualNode node = VirtualList_begin(this->bSprites);
+		VirtualNode node = this->bSprites->head;
 		
 		for(; node; node = node->next)
 		{

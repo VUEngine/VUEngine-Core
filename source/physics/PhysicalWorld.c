@@ -61,6 +61,7 @@ __CLASS_DEFINITION(PhysicalWorld, Object);
 
 __CLASS_FRIEND_DEFINITION(Body);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -100,7 +101,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
 
 	// delete the bodies
-	VirtualNode node = VirtualList_begin(this->bodies);
+	VirtualNode node = this->bodies->head;
 
 	// delete all bodies registered
 	for(;node; node = node->next)
@@ -165,7 +166,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 	// process removed bodies
 	PhysicalWorld_processRemovedBodies(this);
 
-	VirtualNode node = VirtualList_begin(this->bodies);
+	VirtualNode node = this->bodies->head;
 
 	for(; node; node = node->next)
 	{
@@ -189,7 +190,7 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 	ASSERT(this, "PhysicalWorld::processRemovedBodies: null this");
 	ASSERT(this->removedBodies, "PhysicalWorld::processRemovedBodies: null bodies");
 
-	VirtualNode node = VirtualList_begin(this->removedBodies);
+	VirtualNode node = this->removedBodies->head;
 
 	if(node)
 	{
@@ -220,7 +221,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 	// prepare bodies which move
 	// this will place the shape in the owner's position
-	for(node = VirtualList_begin(this->bodies); node; node = node->next)
+	for(node = this->bodies->head; node; node = node->next)
 	{
 		// load the current shape
 		Body body = __SAFE_CAST(Body, node->data);
@@ -267,7 +268,7 @@ void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 		PhysicalWorld_checkForGravity(this);
 	}
 
-	VirtualNode node = VirtualList_begin(this->activeBodies);
+	VirtualNode node = this->activeBodies->head;
 
 	// check the bodies
 	for(; node; node = node->next)
@@ -282,7 +283,7 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	ASSERT(this, "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
 
-	VirtualNode node = VirtualList_begin(this->bodies);
+	VirtualNode node = this->bodies->head;
 
 	for(; node; node = node->next)
 	{
@@ -302,7 +303,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 	ASSERT(this, "PhysicalWorld::isSpatialObjectRegistered: null this");
 	ASSERT(this->bodies, "PhysicalWorld::isSpatialObjectRegistered: null bodies");
 
-	VirtualNode node = VirtualList_begin(this->bodies);
+	VirtualNode node = this->bodies->head;
 
 	for(; node; node = node->next)
 	{
