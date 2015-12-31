@@ -57,15 +57,6 @@
 // screen depth in pixels
 #define __SCREEN_DEPTH							0
 
-// z position of the screen
-#define __ZZERO									0
-
-// game world limit to unload entities
-#define __Z_GAME_LIMIT							__ZZERO - 30
-
-// lowest possible z coordinate
-#define __ZLOWLIMIT 							-200
-
 // distance from player's eyes to the virtual screen
 #define __DISTANCE_EYE_SCREEN					384
 
@@ -82,9 +73,6 @@
 // player's eyes' vertical position
 #define __VERTICAL_VIEW_POINT_CENTER			112
 
-// zoom factor to distortoine zooming
-#define __ZOOM_FACTOR							0.2f
-
 // parallax values are divide by this factor to control their strength
 #define __PARALLAX_CORRECTION_FACTOR			20
 
@@ -94,29 +82,29 @@
 //---------------------------------------------------------------------------------------------------------
 
 // determine whether frame rate is capped or not
-#define __CAP_FPS					1
+#define __CAP_FPS								1
 
 // clock resolution
-#define __TIMER_RESOLUTION			10
+#define __TIMER_RESOLUTION						10
 
 // target frames per second
 // must be a muliple of 50 to being able to use a timer resolution greater than 1
 // if finer control is needed, change timer resolution to 1
-#define __TARGET_FPS 				50
+#define __TARGET_FPS 							50
 
 // target frames per second
-#define __OPTIMUM_FPS 				__TARGET_FPS
+#define __OPTIMUM_FPS 							__TARGET_FPS
 
 // target frames per second
-#define __MINIMUM_GOOD_FPS 			(__TARGET_FPS - 0)
+#define __MINIMUM_GOOD_FPS 						(__TARGET_FPS - 0)
 
-#define __MILLISECONDS_IN_SECOND	1000
+#define __MILLISECONDS_IN_SECOND				1000
 
 // set animation delays as if they are 60 FPS, and multiply by this factor
-#define __FPS_ANIM_FACTOR 			(__TARGET_FPS / (float)__OPTIMUM_FPS)
+#define __FPS_ANIM_FACTOR 						(__TARGET_FPS / (float)__OPTIMUM_FPS)
 
 // seconds that must elapse to call rest state (in seconds)
-#define __REST_DELAY 				900 // 15 minutes
+#define __REST_DELAY 							900 // 15 minutes
 
 // if defined, user input is only read in the Game's update logic cycle;
 // otherwise, it is read on each pass of the Game's main update loop, ensuring
@@ -147,36 +135,36 @@
 // only use for debugging, proper object's initialization must make this macro unnecessary
 #undef __MEMORY_POOL_CLEAN_UP
 
-#define __MEMORY_POOLS		11
+#define __MEMORY_POOLS							11
 
-#define __MEMORY_POOL_ARRAYS													\
-	__BLOCK_DEFINITION(180, 1)													\
-	__BLOCK_DEFINITION(164, 2)													\
-	__BLOCK_DEFINITION(160, 2)													\
-	__BLOCK_DEFINITION(132, 44)													\
-	__BLOCK_DEFINITION(112, 16)													\
-	__BLOCK_DEFINITION(96, 40)													\
-	__BLOCK_DEFINITION(76, 24)													\
-	__BLOCK_DEFINITION(68, 80)													\
-	__BLOCK_DEFINITION(28, 280)													\
-	__BLOCK_DEFINITION(20, 512)													\
-	__BLOCK_DEFINITION(16, 256)													\
+#define __MEMORY_POOL_ARRAYS																			\
+	__BLOCK_DEFINITION(180, 1)																			\
+	__BLOCK_DEFINITION(164, 2)																			\
+	__BLOCK_DEFINITION(160, 2)																			\
+	__BLOCK_DEFINITION(132, 44)																			\
+	__BLOCK_DEFINITION(112, 16)																			\
+	__BLOCK_DEFINITION(96, 40)																			\
+	__BLOCK_DEFINITION(76, 24)																			\
+	__BLOCK_DEFINITION(68, 80)																			\
+	__BLOCK_DEFINITION(28, 280)																			\
+	__BLOCK_DEFINITION(20, 512)																			\
+	__BLOCK_DEFINITION(16, 256)																			\
 
-#define __SET_MEMORY_POOL_ARRAYS												\
-	__SET_MEMORY_POOL_ARRAY(180)												\
-	__SET_MEMORY_POOL_ARRAY(164)												\
-	__SET_MEMORY_POOL_ARRAY(160)												\
-	__SET_MEMORY_POOL_ARRAY(132)												\
-	__SET_MEMORY_POOL_ARRAY(112)												\
-	__SET_MEMORY_POOL_ARRAY(96)													\
-	__SET_MEMORY_POOL_ARRAY(76)													\
-	__SET_MEMORY_POOL_ARRAY(68)													\
-	__SET_MEMORY_POOL_ARRAY(28)													\
-	__SET_MEMORY_POOL_ARRAY(20)													\
-	__SET_MEMORY_POOL_ARRAY(16)													\
+#define __SET_MEMORY_POOL_ARRAYS																		\
+	__SET_MEMORY_POOL_ARRAY(180)																		\
+	__SET_MEMORY_POOL_ARRAY(164)																		\
+	__SET_MEMORY_POOL_ARRAY(160)																		\
+	__SET_MEMORY_POOL_ARRAY(132)																		\
+	__SET_MEMORY_POOL_ARRAY(112)																		\
+	__SET_MEMORY_POOL_ARRAY(96)																			\
+	__SET_MEMORY_POOL_ARRAY(76)																			\
+	__SET_MEMORY_POOL_ARRAY(68)																			\
+	__SET_MEMORY_POOL_ARRAY(28)																			\
+	__SET_MEMORY_POOL_ARRAY(20)																			\
+	__SET_MEMORY_POOL_ARRAY(16)																			\
 
 // percentage (0-100) above which the MemoryPool's status shows the pool usage
-#define __MEMORY_POOL_WARNING_THRESHOLD	85
+#define __MEMORY_POOL_WARNING_THRESHOLD			85
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -185,10 +173,10 @@
 
 // number of char segments
 // the fourth segment is used for text allocation, changing this value to 4 may cause text corruption
-#define __CHAR_SEGMENTS					3
+#define __CHAR_SEGMENTS							3
 
 // number of chars per char segment
-#define __CHAR_SEGMENT_TOTAL_CHARS 		512
+#define __CHAR_SEGMENT_TOTAL_CHARS 				512
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -196,7 +184,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // total number of layers (basically the number of Worlds)
-#define __TOTAL_LAYERS			32
+#define __TOTAL_LAYERS							32
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -204,27 +192,27 @@
 //---------------------------------------------------------------------------------------------------------
 
 // total number of bgmap segments
-#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 	14
+#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 		14
 
 // bgmaps to use (leave 2 bgmaps to allocate param table, 1 for printing)
-#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 	(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 3)
+#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 		(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 3)
 
 // number of bgmap definitions in each bgmap segment
-#define __NUM_BGMAPS_PER_SEGMENT 			16
+#define __NUM_BGMAPS_PER_SEGMENT 				16
 
 // printing area
-#define __PRINTING_BGMAP_X_OFFSET			0
-#define __PRINTING_BGMAP_Y_OFFSET			0
-#define __PRINTING_BGMAP_Z_OFFSET			__ZZERO
-#define __PRINTABLE_BGMAP_AREA 				(64 * 28)
+#define __PRINTING_BGMAP_X_OFFSET				0
+#define __PRINTING_BGMAP_Y_OFFSET				0
+#define __PRINTING_BGMAP_Z_OFFSET				0
+#define __PRINTABLE_BGMAP_AREA 					(64 * 28)
 
-#define __PALETTE_MASK						0x0600
-#define __WORLD_LAYER_MASK					0x01F0
-#define __SEGMENT_MASK						0x000F
+#define __PALETTE_MASK							0x0600
+#define __WORLD_LAYER_MASK						0x01F0
+#define __SEGMENT_MASK							0x000F
 
-#define __PALETTE_MASK_DISP					0x09 /* 6 */
-#define __WORLD_LAYER_MASK_DISP				0x04 /* 1 */
-#define __SEGMENT_MASK_DISP					0x00 /* 0 */
+#define __PALETTE_MASK_DISP						0x09 /* 6 */
+#define __WORLD_LAYER_MASK_DISP					0x04 /* 1 */
+#define __SEGMENT_MASK_DISP						0x00 /* 0 */
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -232,13 +220,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 // param table for affine and hbias render
-#define __PARAM_TABLE_END 					0x0003D800
+#define __PARAM_TABLE_END 						0x0003D800
 
 // maximum possible scale: affects param table allocation space
-#define __MAXIMUM_SCALE						2
+#define __MAXIMUM_SCALE							2
 
 // maximum number of rows to write on each call to affine calculation functions
-#define __MAXIMUM_AFFINE_ROWS_PER_CALL		16
+#define __MAXIMUM_AFFINE_ROWS_PER_CALL			16
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -251,28 +239,27 @@
 // 2) select the next entity to load
 // 3) create the selected entity
 // 4) initialize the loaded entity
-#define __STREAM_CYCLE_DURATION		24
+#define __STREAM_CYCLE_DURATION					24
 
 // pad to determine if an entity must be loaded/unloaded 
 // load pad must always be lower than unload pad!
 // too close values will put the streaming under heavy usage!
-#define __ENTITY_LOAD_PAD 			192
-#define __ENTITY_UNLOAD_PAD 		(__ENTITY_LOAD_PAD + 32)
+#define __ENTITY_LOAD_PAD 						192
+#define __ENTITY_UNLOAD_PAD 					(__ENTITY_LOAD_PAD + 32)
 
 // the number of entities in the stage's definition to check for streaming in on each preload cycle
 // since there are 32 layers, that's the theoretical limit of entities to display
-#define __STREAMING_AMPLITUDE		16
+#define __STREAMING_AMPLITUDE					16
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PHYSICS
 //---------------------------------------------------------------------------------------------------------
 
-// physical friction
-#define __GRAVITY					9800 * 4
+#define __GRAVITY								9800 * 4
 
-#define __MAX_SHAPES_PER_LEVEL		32
-#define __MAX_BODIES_PER_LEVEL		32
+#define __MAX_SHAPES_PER_LEVEL					32
+#define __MAX_BODIES_PER_LEVEL					32
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -280,39 +267,39 @@
 //---------------------------------------------------------------------------------------------------------
 
 // channels per bgms
-#define __BGM_CHANNELS			2
+#define __BGM_CHANNELS							2
 
 // channels per fx
-#define __FX_CHANNELS			1
+#define __FX_CHANNELS							1
 
 // simultaneous bgms
-#define __BGMS					1
+#define __BGMS									1
 
 // simultaneous fx
-#define __FXS					2
+#define __FXS									2
 
-#define __TOTAL_SOUNDS			(__BGMS + __FXS)
-#define __LEFT_EAR_CENTER		96
-#define __RIGHT_EAR_CENTER		288
+#define __TOTAL_SOUNDS							(__BGMS + __FXS)
+#define __LEFT_EAR_CENTER						96
+#define __RIGHT_EAR_CENTER						288
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										COLOR PALETTES
 //---------------------------------------------------------------------------------------------------------
 
-#define __PRINTING_PALETTE		3
+#define __PRINTING_PALETTE						3
 
 // default palette values, actual values are set in stage definitions
 
-#define __BGMAP_PALETTE_0		0b11100100
-#define __BGMAP_PALETTE_1		0b11100000
-#define __BGMAP_PALETTE_2		0b11010000
-#define __BGMAP_PALETTE_3		0b11100000
+#define __BGMAP_PALETTE_0						0b11100100
+#define __BGMAP_PALETTE_1						0b11100000
+#define __BGMAP_PALETTE_2						0b11010000
+#define __BGMAP_PALETTE_3						0b11100000
 
-#define __OBJECT_PALETTE_0		0b11100100
-#define __OBJECT_PALETTE_1		0b11100000
-#define __OBJECT_PALETTE_2		0b11010000
-#define __OBJECT_PALETTE_3		0b11100000
+#define __OBJECT_PALETTE_0						0b11100100
+#define __OBJECT_PALETTE_1						0b11100000
+#define __OBJECT_PALETTE_2						0b11010000
+#define __OBJECT_PALETTE_3						0b11100000
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -339,11 +326,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 // amount of time after which to show auto pause (in milliseconds)
-#define __AUTO_PAUSE_DELAY			(30 * 60 * 1000)
+#define __AUTO_PAUSE_DELAY						(30 * 60 * 1000)
 
 // the automatic pause state is not pushed until there is only one state in the game's stack.
 // the following defines the time between checks whether the condition is met (in milliseconds)
-#define __AUTO_PAUSE_RECHECK_DELAY	(60 * 1000)
+#define __AUTO_PAUSE_RECHECK_DELAY				(60 * 1000)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -359,15 +346,15 @@
 //---------------------------------------------------------------------------------------------------------
 
 // how many times the randomSeed function cycles generate a random seed
-#define __RANDOM_SEED_CYCLES		2
+#define __RANDOM_SEED_CYCLES					2
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											EXCEPTIONS
 //---------------------------------------------------------------------------------------------------------
 
-#define __EXCEPTION_COLUMN	0
-#define __EXCEPTION_LINE	0
+#define __EXCEPTION_COLUMN						0
+#define __EXCEPTION_LINE						0
 
 
 #endif
