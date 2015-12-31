@@ -140,7 +140,7 @@ bool Sprite_isHidden(Sprite this)
 	static WORLD* worldPointer = NULL;
 	worldPointer = &WA[this->worldLayer];
 
-	return 0x0000 == worldPointer->head;
+	return 0x0000 == worldPointer->head && this->renderFlag != __UPDATE_HEAD;
 }
 
 // retrieve animation controller
