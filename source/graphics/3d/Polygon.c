@@ -32,6 +32,8 @@
 
 __CLASS_DEFINITION(Polygon, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -70,9 +72,9 @@ void Polygon_destructor(Polygon this)
 		VirtualNode node = VirtualList_begin(this->vertices);
 
 		// delete each vertex
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 		{
-			__DELETE_BASIC(VirtualNode_getData(node));
+			__DELETE_BASIC(node->data);
 		}
 
 		// delete the list
@@ -114,7 +116,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 	{
 		// the node's which hold the vertices
 		VirtualNode fromNode = VirtualList_begin(this->vertices);
-		VirtualNode toNode = VirtualNode_getNext(fromNode);
+		VirtualNode toNode = fromNode->next;
 
 		// 3d vertices
 		VBVec3D fromVertice3D = {0, 0, 0};
@@ -125,11 +127,11 @@ void Polygon_draw(Polygon this, int calculateParallax)
 		VBVec2D toVertice2D = {0, 0, 0};
 
 		// draw the lines
-		for(; toNode ; fromNode = VirtualNode_getNext(fromNode), toNode = VirtualNode_getNext(toNode))
+		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
 		{
 			// normalize vertice to screen coordinates
-			fromVertice3D = *((VBVec3D*)VirtualNode_getData(fromNode));
-			toVertice3D = *((VBVec3D*)VirtualNode_getData(toNode));
+			fromVertice3D = *((VBVec3D*)fromNode->data);
+			toVertice3D = *((VBVec3D*)toNode->data);
 			__OPTICS_NORMALIZE(fromVertice3D);
 			__OPTICS_NORMALIZE(toVertice3D);
 
@@ -151,8 +153,8 @@ void Polygon_draw(Polygon this, int calculateParallax)
 
 		if(fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
 		{
-			fromVertice3D = *((VBVec3D*)VirtualNode_getData(fromNode));
-			toVertice3D = *((VBVec3D*)VirtualNode_getData(toNode));
+			fromVertice3D = *((VBVec3D*)fromNode->data);
+			toVertice3D = *((VBVec3D*)toNode->data);
 			__OPTICS_NORMALIZE(fromVertice3D);
 			__OPTICS_NORMALIZE(toVertice3D);
 

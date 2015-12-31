@@ -40,6 +40,8 @@
 
 __CLASS_DEFINITION(AnimationCoordinatorFactory, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -83,9 +85,9 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 
 	VirtualNode node = VirtualList_begin(this->animationCoordinators);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__DELETE(VirtualNode_getData(node));
+		__DELETE(node->data);
 	}
 
 	VirtualList_clear(this->animationCoordinators);
@@ -103,9 +105,9 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 			{
 				// try to find an already created coordinator
 				VirtualNode node = VirtualList_begin(this->animationCoordinators);
-				for(;node; node = VirtualNode_getNext(node))
+				for(;node; node = node->next)
 				{
-					AnimationCoordinator animationCoordinator = __SAFE_CAST(AnimationCoordinator, VirtualNode_getData(node));
+					AnimationCoordinator animationCoordinator = __SAFE_CAST(AnimationCoordinator, node->data);
 					
 					if(AnimationCoordinator_getCharSet(animationCoordinator) == charSet)
 					{

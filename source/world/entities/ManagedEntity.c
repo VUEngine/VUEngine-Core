@@ -34,7 +34,9 @@
 
 // define the ManagedEntity
 __CLASS_DEFINITION(ManagedEntity, Entity);
+
 __CLASS_FRIEND_DEFINITION(Entity);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -101,9 +103,9 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 		{
 			VirtualNode spriteNode = VirtualList_begin(child->sprites);
 
-			for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
+			for(; spriteNode; spriteNode = spriteNode->next)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(spriteNode));
+				Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 				VirtualList_pushBack(this->managedSprites, sprite);
 				VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 				
@@ -120,9 +122,9 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 		{
 			VirtualNode childNode = VirtualList_begin(child->children);
 			
-			for(; childNode; childNode = VirtualNode_getNext(childNode))
+			for(; childNode; childNode = childNode->next)
 			{
-				ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, VirtualNode_getData(childNode)));
+				ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
 			}
 		}
 	}
@@ -201,9 +203,9 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		fix19_13 xDisplacement = position2D.x - this->previous2DPosition.x;
 		fix19_13 yDisplacement = position2D.y - this->previous2DPosition.y;
 
-		for(; spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
+		for(; spriteNode; spriteNode = spriteNode->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(spriteNode));
+			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			
 			VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 			
@@ -219,9 +221,9 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		
 		VPUManager_disableInterrupt(VPUManager_getInstance());
 
-		for(spriteNode = VirtualList_begin(this->managedSprites); spriteNode; spriteNode = VirtualNode_getNext(spriteNode))
+		for(spriteNode = VirtualList_begin(this->managedSprites); spriteNode; spriteNode = spriteNode->next)
 		{
-			__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, VirtualNode_getData(spriteNode)));
+			__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, spriteNode->data));
 
 		}
 		

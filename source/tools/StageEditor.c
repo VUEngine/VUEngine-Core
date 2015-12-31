@@ -86,6 +86,9 @@
 // define the StageEditor
 __CLASS_DEFINITION(StageEditor, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
+
 enum Modes
 {
     kFirstMode = 0,
@@ -450,7 +453,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 	else
 	{
 		Printing_text(Printing_getInstance(), "StageEditor", 1, 10, NULL);
-		this->currentEntityNode = VirtualNode_getNext(this->currentEntityNode);
+		this->currentEntityNode = this->currentEntityNode->next;
 
 		if(!this->currentEntityNode)
 	    {
@@ -695,7 +698,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 {
 	if(this->currentEntityNode && this->shape)
 	{
-		Container container = __SAFE_CAST(Container, VirtualNode_getData(this->currentEntityNode));
+		Container container = __SAFE_CAST(Container, this->currentEntityNode->data);
 		VBVec3D localPosition = *Container_getLocalPosition(container);
 
 		localPosition.x += translation.x;

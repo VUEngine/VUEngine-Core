@@ -31,6 +31,9 @@
 // it is the base class for everything.. so it does derives from nothing but itself
 __CLASS_DEFINITION(Object, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
+
 typedef struct Event
 {
 	Object listener;
@@ -59,9 +62,9 @@ void Object_destructor(Object this)
 	{
 		VirtualNode node = VirtualList_begin(this->events);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__DELETE_BASIC(VirtualNode_getData(node));
+			__DELETE_BASIC(node->data);
 		}
 
 		__DELETE(this->events);
@@ -118,9 +121,9 @@ void Object_removeEventListener(Object this, Object listener, void (*method)(Obj
 	{
 		VirtualNode node = VirtualList_begin(this->events);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			Event* event = (Event*)VirtualNode_getData(node);
+			Event* event = (Event*)node->data;
 
 			if(listener == event->listener && method == event->method && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
 			{
@@ -142,9 +145,9 @@ void Object_fireEvent(Object this,  char* eventName)
 	{
 		VirtualNode node = VirtualList_begin(this->events);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			Event* event = (Event*)VirtualNode_getData(node);
+			Event* event = (Event*)node->data;
 
 			if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
 			{

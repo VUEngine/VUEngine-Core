@@ -35,6 +35,8 @@
 // define the MBackground
 __CLASS_DEFINITION(MBackground, Entity);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -65,9 +67,9 @@ void MBackground_destructor(MBackground this)
 
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, VirtualNode_getData(node))));
+		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, node->data)));
 	}
 
 	// destroy the super object
@@ -101,9 +103,9 @@ void MBackground_suspend(MBackground this)
 
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, VirtualNode_getData(node))));
+		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, node->data)));
 	}
 
 	Entity_suspend(__SAFE_CAST(Entity, this));

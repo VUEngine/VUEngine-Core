@@ -36,6 +36,9 @@
 
 __CLASS_DEFINITION(MBackgroundManager, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
+
 typedef struct TextureRegistry
 {
 	Texture texture;
@@ -74,9 +77,9 @@ void MBackgroundManager_destructor(MBackgroundManager this)
 
 	VirtualNode node = VirtualList_begin(this->textureRegistries);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__DELETE_BASIC(VirtualNode_getNext(node));
+		__DELETE_BASIC(node->next);
 	}
 	
 	__DELETE(this->textureRegistries);
@@ -97,9 +100,9 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 
 	TextureRegistry* textureRegistry = NULL;
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		textureRegistry = (TextureRegistry*)VirtualNode_getData(node);
+		textureRegistry = (TextureRegistry*)node->data;
 
 		if(!Texture_getCharSet(textureRegistry->texture))
 		{
@@ -140,9 +143,9 @@ void MBackgroundManager_removeTexture(MBackgroundManager this, Texture texture)
 #ifdef __DEBUG
 	VirtualNode node = VirtualList_begin(this->textureRegistries);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		TextureRegistry* textureRegistry = (TextureRegistry*)VirtualNode_getData(node);
+		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
 		if(texture == textureRegistry->texture)
 		{
@@ -166,9 +169,9 @@ void MBackgroundManager_reset(MBackgroundManager this)
 
 	VirtualNode node = VirtualList_begin(this->textureRegistries);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		TextureRegistry* textureRegistry = (TextureRegistry*)VirtualNode_getData(node);
+		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
 		// textures could be deleted externally
 		if(*(u32*)textureRegistry->texture)

@@ -123,6 +123,8 @@
 // define the Debug
 __CLASS_DEFINITION(Debug, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -294,7 +296,7 @@ void Debug_showNextPage(Debug this)
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_dimmGame(this);
 
-	this->currentPage = VirtualNode_getNext(this->currentPage);
+	this->currentPage = this->currentPage->next;
 
 	if(NULL == this->currentPage)
 	{
@@ -330,7 +332,7 @@ void Debug_showNextSubPage(Debug this)
 		return;
 	}
 
-	this->currentSubPage = VirtualNode_getNext(this->currentSubPage);
+	this->currentSubPage = this->currentSubPage->next;
 
 	if(NULL == this->currentSubPage)
 	{

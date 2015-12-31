@@ -34,6 +34,8 @@
 // define the ObjectSpriteContainer
 __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -109,10 +111,10 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	{
 		VirtualNode node = VirtualList_begin(this->objectSprites);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			ObjectSprite_invalidateObjectSpriteContainer(__SAFE_CAST(ObjectSprite, VirtualNode_getData(node)));
-			__DELETE(VirtualNode_getData(node));
+			ObjectSprite_invalidateObjectSpriteContainer(__SAFE_CAST(ObjectSprite, node->data));
+			__DELETE(node->data);
 		}
 
 		__DELETE(this->objectSprites);
@@ -177,7 +179,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 			ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
 
 			// move forward before deframenting
-			this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
+			this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;
 		}
 	}
 	else
@@ -189,7 +191,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
 
 		// move forward before deframenting
-		this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);
+		this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;
 	}
 	
 	VirtualList_removeElement(this->objectSprites, objectSprite);
@@ -267,7 +269,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	this->freedObjectIndex += ObjectSprite_getTotalObjects(objectSprite);
 
 	// move to the next sprite to move
-	this->objectSpriteToDefragment = VirtualNode_getNext(this->objectSpriteToDefragment);	
+	this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;	
 	
 	if(!this->objectSpriteToDefragment)
 	{
@@ -277,7 +279,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		
 		if(node)
 		{
-			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(node));
+			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, node->data);
 			this->availableObjects = this->totalObjects - (ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite));
 		}
 		else
@@ -362,9 +364,9 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	
 	VirtualNode node = VirtualList_begin(this->objectSprites);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		ObjectSprite_render(__SAFE_CAST(ObjectSprite, VirtualNode_getData(node)));
+		ObjectSprite_render(__SAFE_CAST(ObjectSprite, node->data));
 	}
 	
 	if(!this->objectSpriteToDefragment)
@@ -379,9 +381,9 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 
 	VirtualNode node = VirtualList_begin(this->objectSprites);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
 	}
 	
 	this->renderFlag = true;
@@ -396,9 +398,9 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 	{
 		VirtualNode node = VirtualList_begin(this->objectSprites);
 	
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 }
@@ -419,9 +421,9 @@ int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 	{
 		VirtualNode node = VirtualList_begin(this->objectSprites);
 	
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			totalUsedObjects += ObjectSprite_getTotalObjects(__SAFE_CAST(ObjectSprite, VirtualNode_getData(node)));
+			totalUsedObjects += ObjectSprite_getTotalObjects(__SAFE_CAST(ObjectSprite, node->data));
 		}
 	}
 

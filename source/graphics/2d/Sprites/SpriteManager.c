@@ -61,6 +61,7 @@
 __CLASS_DEFINITION(SpriteManager, Object);
 
 __CLASS_FRIEND_DEFINITION(Sprite);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -157,12 +158,12 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 		
 		if(node)
 		{
-			VirtualNode nextNode = VirtualNode_getNext(node);
+			VirtualNode nextNode = node->next;
 			
-			for(; nextNode; node = VirtualNode_getNext(node), nextNode = VirtualNode_getNext(nextNode))
+			for(; nextNode; node = node->next, nextNode = nextNode->next)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
-				Sprite nextSprite = __SAFE_CAST(Sprite, VirtualNode_getData(nextNode));
+				Sprite sprite = __SAFE_CAST(Sprite, node->data);
+				Sprite nextSprite = __SAFE_CAST(Sprite, nextNode->data);
 				const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 				const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
 
@@ -196,16 +197,16 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
 
-	this->node = this->node ? this->nextNode ? this->node : VirtualNode_getNext(this->node): VirtualList_begin(this->sprites);
+	this->node = this->node ? this->nextNode ? this->node : this->node->next: VirtualList_begin(this->sprites);
 
-	for(; this->node; this->node = VirtualNode_getNext(this->node))
+	for(; this->node; this->node = this->node->next)
 	{
-		this->nextNode = VirtualNode_getNext(this->node);
+		this->nextNode = this->node->next;
 
 		if(this->nextNode)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->node));
-			Sprite nextSprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->nextNode));
+			Sprite sprite = __SAFE_CAST(Sprite, this->node->data);
+			Sprite nextSprite = __SAFE_CAST(Sprite, this->nextNode->data);
 			const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
 			const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
 	
@@ -408,9 +409,9 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 
 		VirtualNode node = VirtualList_end(this->sprites);
 
-		for(; node; node = VirtualNode_getPrevious(node))
+		for(; node; node = node->previous)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 			u8 spriteLayer = sprite->worldLayer;
 			
 			// search for the next sprite with the closest 
@@ -436,7 +437,7 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 				ASSERT(this->freedLayer > this->freeLayer, "Sprite::processFreedLayersProgressively:2 this->freedLayer <= this->freeLayer");
 
 			    // don't enter here again if the end has been reached
-			    node = VirtualNode_getPrevious(node);
+			    node = node->previous;
 				break;
 			}
 		}
@@ -492,9 +493,9 @@ void SpriteManager_render(SpriteManager this)
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = VirtualList_end(this->sprites);
 
-	for(; node; node = VirtualNode_getPrevious(node))
+	for(; node; node = node->previous)
 	{
-		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
 	}
 
 	VPUManager_enableInterrupt(VPUManager_getInstance());
@@ -515,15 +516,15 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 	VirtualNode node = VirtualList_end(this->sprites);
 
-	for(; node; node = VirtualNode_getPrevious(node))
+	for(; node; node = node->previous)
 	{
-		if((__SAFE_CAST(Sprite, VirtualNode_getData(node)))->worldLayer != layer)
+		if((__SAFE_CAST(Sprite, node->data))->worldLayer != layer)
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, node->data));
 		}
 		else
 		{
-			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 }
@@ -534,9 +535,9 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	ASSERT(this, "SpriteManager::recoverLayers: null this");
 
 	VirtualNode node = VirtualList_end(this->sprites);
-	for(; node; node = VirtualNode_getPrevious(node))
+	for(; node; node = node->previous)
 	{
-		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
 	}
 	
 	SpriteManager_setLastLayer(this);
@@ -549,11 +550,11 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 	
 	VirtualNode node = VirtualList_begin(this->sprites);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		if((__SAFE_CAST(Sprite, VirtualNode_getData(node)))->worldLayer == layer)
+		if((__SAFE_CAST(Sprite, node->data))->worldLayer == layer)
 		{
-			return __SAFE_CAST(Sprite, VirtualNode_getData(node));
+			return __SAFE_CAST(Sprite, node->data);
 		}
 	}
 	
@@ -577,10 +578,10 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 
 	VirtualNode node = VirtualList_begin(this->sprites);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
-		Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		strncpy(spriteClassName, __GET_CLASS_NAME(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;

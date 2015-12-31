@@ -35,6 +35,9 @@
 // define the ScrollBackground
 __CLASS_DEFINITION(ScrollBackground, Entity);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
+
 enum ScrollSprites
 {
 	kLeftSprite = 0,
@@ -118,9 +121,9 @@ static void ScrollBackground_retrieveSprites(ScrollBackground this)
 	VirtualNode node = VirtualList_begin(this->sprites);
 	int i = 0;
 
-	for(; node && i <= kRightSprite ; node = VirtualNode_getNext(node), i++)
+	for(; node && i <= kRightSprite ; node = node->next, i++)
 	{
-		this->scrollBgmapSprites[i] = VirtualNode_getData(node);
+		this->scrollBgmapSprites[i] = node->data;
 
 		ASSERT(__SAFE_CAST(BgmapSprite, this->scrollBgmapSprites[i]), "ScrollBackground::constructor: no sprite added to list")
 	}

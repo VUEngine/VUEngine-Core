@@ -48,6 +48,8 @@
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -91,9 +93,9 @@ void CharSetManager_destructor(CharSetManager this)
 		{
 			VirtualNode node = VirtualList_begin(this->charSets[i]);
 			
-			for(; node; node = VirtualNode_getNext(node))
+			for(; node; node = node->next)
 			{
-				__DELETE(VirtualNode_getData(node));
+				__DELETE(node->data);
 			}
 			
 			__DELETE(this->charSets[i]);
@@ -118,9 +120,9 @@ void CharSetManager_reset(CharSetManager this)
 		{
 			VirtualNode node = VirtualList_begin(this->charSets[segment]);
 			
-			for(; node; node = VirtualNode_getNext(node))
+			for(; node; node = node->next)
 			{
-				__DELETE(VirtualNode_getData(node));
+				__DELETE(node->data);
 			}
 			
 			__DELETE(this->charSets[segment]);
@@ -142,9 +144,9 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 	{
 		VirtualNode node = VirtualList_begin(this->charSets[i]);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			CharSet charSet = __SAFE_CAST(CharSet, VirtualNode_getData(node));
+			CharSet charSet = __SAFE_CAST(CharSet, node->data);
 			
 			if(CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
 			{
@@ -272,9 +274,9 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 		{
 			VirtualNode node = VirtualList_begin(this->charSets[segment]);
 			
-			for(; node; node = VirtualNode_getNext(node))
+			for(; node; node = node->next)
 			{
-				CharSet charSet = __SAFE_CAST(CharSet, VirtualNode_getData(node));
+				CharSet charSet = __SAFE_CAST(CharSet, node->data);
 
 				if(this->freedOffset[segment] < CharSet_getOffset(charSet))
 				{

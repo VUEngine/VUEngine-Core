@@ -35,6 +35,8 @@
 // define the Entity
 __CLASS_DEFINITION(Entity, Container);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -107,9 +109,9 @@ static void Entity_releaseSprites(Entity this)
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// move each child to a temporary list
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 	    {
-			__DELETE(VirtualNode_getData(node));
+			__DELETE(node->data);
 		}
 
 		// delete the sprites
@@ -184,9 +186,9 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightCuboid* rightCuboi
 	{
 		VirtualNode node = VirtualList_begin(this->children);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			Entity_getSizeFromChildren(__SAFE_CAST(Entity, VirtualNode_getData(node)), rightCuboid);
+			Entity_getSizeFromChildren(__SAFE_CAST(Entity, node->data), rightCuboid);
 		}
 	}
 }
@@ -443,9 +445,9 @@ void Entity_initialize(Entity this)
 	{
 		VirtualNode node = VirtualList_begin(this->children);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Entity, initialize, __SAFE_CAST(Entity, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Entity, initialize, __SAFE_CAST(Entity, node->data));
 		}
 	}
 	
@@ -471,9 +473,9 @@ void Entity_ready(Entity this)
 		// call ready method on children
 		VirtualNode node = VirtualList_begin(this->children);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Entity, ready, __SAFE_CAST(Entity, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Entity, ready, __SAFE_CAST(Entity, node->data));
 		}
 	}
 }
@@ -603,9 +605,9 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 		if(updateSpriteTransformations && updateSpritePosition)
 		{
 			// move each child to a temporary list
-			for(; node ; node = VirtualNode_getNext(node))
+			for(; node ; node = node->next)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
+				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 		
 				// calculate the scale
 				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
@@ -623,9 +625,9 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 		else if(!updateSpriteTransformations && updateSpritePosition)
 		{
 			// move each child to a temporary list
-			for(; node ; node = VirtualNode_getNext(node))
+			for(; node ; node = node->next)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
+				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 		
 				//update sprite's 2D position
 				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
@@ -637,9 +639,9 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 		else if(updateSpriteTransformations && !updateSpritePosition)
 		{
 			// move each child to a temporary list
-			for(; node ; node = VirtualNode_getNext(node))
+			for(; node ; node = node->next)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
+				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 		
 				// calculate the scale
 				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
@@ -860,7 +862,7 @@ bool Entity_isVisible(Entity this, int pad)
 	{
 		VirtualNode childNode = VirtualList_begin(this->children);
 		
-		for(; childNode; childNode = VirtualNode_getNext(childNode))
+		for(; childNode; childNode = childNode->next)
 		{
 			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad))
 			{
@@ -896,9 +898,9 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 	{
 		VirtualNode node = VirtualList_begin(this->sprites);
 
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(void, Sprite, setDirection, __SAFE_CAST(Sprite, VirtualNode_getData(node)), axis, direction);
+			__VIRTUAL_CALL(void, Sprite, setDirection, __SAFE_CAST(Sprite, node->data), axis, direction);
 		}
 	}
 }
@@ -921,9 +923,9 @@ void Entity_show(Entity this)
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// move each child to a temporary list
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 }
@@ -938,9 +940,9 @@ void Entity_hide(Entity this)
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// move each child to a temporary list
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, VirtualNode_getData(node)));
+			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 }

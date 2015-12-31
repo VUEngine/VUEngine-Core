@@ -111,6 +111,8 @@
 // define the OptionsSelector
 __CLASS_DEFINITION(OptionsSelector, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -169,10 +171,10 @@ static void OptionsSelector_flushPages(OptionsSelector this)
 	{
 		VirtualNode node = VirtualList_begin(this->pages);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			ASSERT(VirtualNode_getData(node), "flushPages: null node data");
-			__DELETE(VirtualNode_getData(node));
+			ASSERT(node->data, "flushPages: null node data");
+			__DELETE(node->data);
 		}
 
 		__DELETE(this->pages);
@@ -211,9 +213,9 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames)
 			VirtualList options = __NEW(VirtualList);
 
 			int counter = 0;
-			for(; node && counter < optionsPerPage; counter++, node = VirtualNode_getNext(node))
+			for(; node && counter < optionsPerPage; counter++, node = node->next)
 			{
-				VirtualList_pushBack(options, (const char*)VirtualNode_getData(node));
+				VirtualList_pushBack(options, (const char*)node->data);
 			}
 
 			VirtualList_pushBack(this->pages, options);
@@ -238,12 +240,12 @@ void OptionsSelector_selectNext(OptionsSelector this)
 	{
 		OptionsSelector_printSelectorMark(this, " ");
 
-		this->currentOption = VirtualNode_getNext(this->currentOption);
+		this->currentOption = this->currentOption->next;
 		this->currentOptionIndex++;
 
 		if(!this->currentOption)
 		{
-			this->currentPage = VirtualNode_getNext(this->currentPage);
+			this->currentPage = this->currentPage->next;
 			this->currentPageIndex++;
 
 			if(!this->currentPage)
@@ -328,25 +330,25 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 
 		int counter = 0;
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
 			if(y <= __SCREEN_WIDTH >> 3)
 			{
 				ASSERT(node, "showOptions: push null node");
-				ASSERT(VirtualNode_getData(node), "showOptions: push null node data");
+				ASSERT(node->data, "showOptions: push null node data");
 
 				switch(this->type)
 				{
 					case kString:
-						Printing_text(Printing_getInstance(), (char*)VirtualNode_getData(node), x + 1, y, NULL);
+						Printing_text(Printing_getInstance(), (char*)node->data, x + 1, y, NULL);
 						break;
 
 					case kInt:
-						Printing_int(Printing_getInstance(), *((int*)VirtualNode_getData(node)), x + 1, y, NULL);
+						Printing_int(Printing_getInstance(), *((int*)node->data), x + 1, y, NULL);
 						break;
 
 					case kFloat:
-						Printing_float(Printing_getInstance(), *((float*)VirtualNode_getData(node)), x + 1, y, NULL);
+						Printing_float(Printing_getInstance(), *((float*)node->data), x + 1, y, NULL);
 						break;
 						
 					case kCount:

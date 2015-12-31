@@ -48,6 +48,8 @@
 // define the manager
 __CLASS_DEFINITION(ClockManager, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -65,6 +67,7 @@ static void ClockManager_constructor(ClockManager this);
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(ClockManager);
+
 
 // class's constructor
 static void ClockManager_constructor(ClockManager this)
@@ -85,9 +88,9 @@ void ClockManager_destructor(ClockManager this)
 	VirtualNode node = VirtualList_begin(this->clocks);
 
 	// destroy all registered clocks
-	for(; node ; node = VirtualNode_getNext(node))
+	for(; node ; node = node->next)
 	{
-		Clock_destructor(__SAFE_CAST(Clock, VirtualNode_getData(node)));
+		Clock_destructor(__SAFE_CAST(Clock, node->data));
 	}
 
 	// clear my list
@@ -135,9 +138,9 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 		VirtualNode node = VirtualList_begin(this->clocks);
 
 		// update all registered clocks
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 		{
-			Clock_update(__SAFE_CAST(Clock, VirtualNode_getData(node)), ticksElapsed);
+			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed);
 		}
 	}
 
@@ -193,9 +196,9 @@ void ClockManager_reset(ClockManager this)
 	VirtualNode node = VirtualList_begin(this->clocks);
 
 	// update all registered clocks
-	for(; node ; node = VirtualNode_getNext(node))
+	for(; node ; node = node->next)
 	{
-		Clock_reset(__SAFE_CAST(Clock, VirtualNode_getData(node)));
+		Clock_reset(__SAFE_CAST(Clock, node->data));
 	}
 
 	this->ticks = 0;

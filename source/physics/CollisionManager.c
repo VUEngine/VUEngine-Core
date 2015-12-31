@@ -51,6 +51,7 @@
 __CLASS_DEFINITION(CollisionManager, Object);
 
 __CLASS_FRIEND_DEFINITION(Shape);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -91,9 +92,9 @@ void CollisionManager_destructor(CollisionManager this)
 	VirtualNode node = VirtualList_begin(this->shapes);
 
 	// delete all shapes registered
-	for(;node; node = VirtualNode_getNext(node))
+	for(;node; node = node->next)
 	{
-		__DELETE(VirtualNode_getData(node));
+		__DELETE(node->data);
 	}
 
 	// delete lists
@@ -166,7 +167,7 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 
 	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL_UNSAFE(const void* const, SpatialObject, getShape, owner));
 
-	return node? __SAFE_CAST(Shape, VirtualNode_getData(node)): NULL;
+	return node? __SAFE_CAST(Shape, node->data): NULL;
 }
 
 // process removed shapes
@@ -179,9 +180,9 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 
 	if(node)
 	{
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			Shape shape = __SAFE_CAST(Shape, VirtualNode_getData(node));
+			Shape shape = __SAFE_CAST(Shape, node->data);
 
 			// remove from the list
 			VirtualList_removeElement(this->shapes, (BYTE*) shape);
@@ -210,18 +211,18 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 	VirtualNode node = VirtualList_begin(this->movingShapes);
 
 	// check the shapes
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		// current to check shape's rectangle
-		__VIRTUAL_CALL(void, Shape, position, __SAFE_CAST(Shape, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Shape, position, __SAFE_CAST(Shape, node->data));
 	}
 
 	// check the shapes
 	node = VirtualList_begin(this->movingShapes);
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		// load the current shape
-		Shape shape = __SAFE_CAST(Shape, VirtualNode_getData(node));
+		Shape shape = __SAFE_CAST(Shape, node->data);
 
 		if(!shape->checkForCollisions)
 		{
@@ -239,10 +240,10 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 		VirtualNode nodeForActiveShapes = VirtualList_begin(this->activeShapes);
 
 		// check the shapes
-		for(; nodeForActiveShapes; nodeForActiveShapes = VirtualNode_getNext(nodeForActiveShapes))
+		for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
 		{	
 			// load the current shape to check against
-			Shape shapeToCheck = __SAFE_CAST(Shape, VirtualNode_getData(nodeForActiveShapes));
+			Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
 
 			// don't compare with current movable shape, when the shape already has been checked
 			// and when it is not active
@@ -287,10 +288,10 @@ void CollisionManager_reset(CollisionManager this)
 
 	VirtualNode node = VirtualList_begin(this->shapes);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		// delete it
-		__DELETE(VirtualNode_getData(node));
+		__DELETE(node->data);
 	}
 
 	// empty the lists
@@ -359,9 +360,9 @@ void CollisionManager_drawShapes(CollisionManager this)
 	VirtualNode node = VirtualList_begin(this->shapes);
 
 	// check the shapes
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Shape, draw, VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Shape, draw, node->data);
 	}
 }
 
@@ -375,9 +376,9 @@ void CollisionManager_flushShapesDirectDrawData(CollisionManager this)
 	VirtualNode node = VirtualList_begin(this->shapes);
 
 	// check the shapes
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, node->data);
 	}
 }
 

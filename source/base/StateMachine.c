@@ -47,6 +47,8 @@
 
 __CLASS_DEFINITION(StateMachine, Object);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -78,9 +80,9 @@ void StateMachine_destructor(StateMachine this)
 	// delete the stack
 	VirtualNode node = VirtualList_begin(this->stateStack);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__DELETE(VirtualNode_getData(node));
+		__DELETE(node->data);
 	}
 
 	// empty the list
@@ -273,9 +275,9 @@ State StateMachine_getPreviousState(StateMachine this)
 
 	if(node)
 	{
-		node = VirtualNode_getNext(node);
+		node = node->next;
 
-		return __SAFE_CAST(State, VirtualNode_getData(node));
+		return __SAFE_CAST(State, node->data);
 	}
 
 	return NULL;

@@ -39,6 +39,8 @@
 
 __CLASS_DEFINITION(AnimatedInGameEntity, InGameEntity);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -118,9 +120,9 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 		VirtualNode node = VirtualList_begin(this->sprites);
 	
 		// setup listeners
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 	    {
-			Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(node));
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 	
 			function(__SAFE_CAST(Object, sprite), __SAFE_CAST(Object, this), (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
 		}
@@ -197,10 +199,10 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 		VirtualNode node = VirtualList_begin(this->sprites);
 	
 		// move each child to a temporary list
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 		{
 			// first animate the frame
-			Sprite_update(__SAFE_CAST(Sprite, VirtualNode_getData(node)));
+			Sprite_update(__SAFE_CAST(Sprite, node->data));
 		}
 	}
 }
@@ -216,9 +218,9 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// play animation on each sprite
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 	    {
-			Sprite_pause(__SAFE_CAST(Sprite, VirtualNode_getData(node)), pause);
+			Sprite_pause(__SAFE_CAST(Sprite, node->data), pause);
 		}
 	}
 }
@@ -235,9 +237,9 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 		VirtualNode node = VirtualList_begin(this->sprites);
 
 		// play animation on each sprite
-		for(; node ; node = VirtualNode_getNext(node))
+		for(; node ; node = node->next)
 	    {
-			Sprite_play(__SAFE_CAST(Sprite, VirtualNode_getData(node)), this->animationDescription, animationName);
+			Sprite_play(__SAFE_CAST(Sprite, node->data), this->animationDescription, animationName);
 		}
 	}
 }

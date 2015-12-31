@@ -34,6 +34,7 @@
 // define the ParticleSystem
 __CLASS_DEFINITION(ParticleSystem, Entity);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -109,9 +110,9 @@ void ParticleSystem_destructor(ParticleSystem this)
 	{
 		VirtualNode node = VirtualList_begin(this->particles);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__DELETE(VirtualNode_getData(node));
+			__DELETE(node->data);
 		}
 		
 		__DELETE(this->particles);
@@ -122,9 +123,9 @@ void ParticleSystem_destructor(ParticleSystem this)
 	{
 		VirtualNode node = VirtualList_begin(this->recyclableParticles);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__DELETE(VirtualNode_getData(node));
+			__DELETE(node->data);
 		}
 		
 		__DELETE(this->recyclableParticles);
@@ -167,9 +168,9 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 
 	if(this->particleSystemDefinition->recycleParticles)
 	{
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			Particle particle = __SAFE_CAST(Particle, VirtualNode_getData(node));
+			Particle particle = __SAFE_CAST(Particle, node->data);
 			VirtualList_pushBack(this->recyclableParticles, particle);
 			VirtualList_removeElement(this->particles, particle);
 			this->particleCount--;
@@ -179,9 +180,9 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 	}
 	else
 	{
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			Particle particle = __SAFE_CAST(Particle, VirtualNode_getData(node));
+			Particle particle = __SAFE_CAST(Particle, node->data);
 			VirtualList_removeElement(this->particles, particle);
 			
 			__DELETE(particle);
@@ -217,9 +218,9 @@ void ParticleSystem_update(ParticleSystem this)
     // update each particle
     VirtualNode node = VirtualList_begin(this->particles);
 
-    for(; node; node = VirtualNode_getNext(node))
+    for(; node; node = node->next)
     {
-        __VIRTUAL_CALL(void, Particle, update, VirtualNode_getData(node), timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
+        __VIRTUAL_CALL(void, Particle, update, node->data, timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
     }
 
 	if(!this->paused)
@@ -342,9 +343,9 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 
 	VirtualNode node = VirtualList_begin(this->particles);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, transform, VirtualNode_getData(node), updateSpritePosition);
+		__VIRTUAL_CALL(void, Particle, transform, node->data, updateSpritePosition);
 	}
 }
 
@@ -363,9 +364,9 @@ void ParticleSystem_show(ParticleSystem this)
 	
 	VirtualNode node = VirtualList_begin(this->particles);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		Particle_show(__SAFE_CAST(Particle, VirtualNode_getData(node)));
+		Particle_show(__SAFE_CAST(Particle, node->data));
 	}
 }
 
@@ -377,9 +378,9 @@ void ParticleSystem_hide(ParticleSystem this)
 	
 	VirtualNode node = VirtualList_begin(this->particles);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		Particle_hide(__SAFE_CAST(Particle, VirtualNode_getData(node)));
+		Particle_hide(__SAFE_CAST(Particle, node->data));
 	}
 }
 
@@ -391,27 +392,27 @@ void ParticleSystem_resume(ParticleSystem this)
 
 	VirtualNode node = VirtualList_begin(this->particles);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Particle, resume, node->data);
 	}
 
 	if(this->recyclableParticles)
 	{
 		node = VirtualList_begin(this->recyclableParticles);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
+			__VIRTUAL_CALL(void, Particle, resume, node->data);
 		}
 	}
 	
 	node = VirtualList_begin(this->expiredParticles);
 		
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, resume, VirtualNode_getData(node));
-		Particle_hide(__SAFE_CAST(Particle, VirtualNode_getData(node)));
+		__VIRTUAL_CALL(void, Particle, resume, node->data);
+		Particle_hide(__SAFE_CAST(Particle, node->data));
 	}
 	
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
@@ -427,18 +428,18 @@ void ParticleSystem_suspend(ParticleSystem this)
 	
 	VirtualNode node = VirtualList_begin(this->particles);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
+		__VIRTUAL_CALL(void, Particle, suspend, node->data);
 	}
 
 	if(this->recyclableParticles)
 	{
 		node = VirtualList_begin(this->recyclableParticles);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Particle, suspend, VirtualNode_getData(node));
+			__VIRTUAL_CALL(void, Particle, suspend, node->data);
 		}
 	}
 }

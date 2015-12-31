@@ -375,7 +375,7 @@ VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
 
 	VirtualNode node = this->head;
 
-	for(; node && VirtualNode_getData(node) != (void*)dataPointer; node = VirtualNode_getNext(node));
+	for(; node && node->data != (void*)dataPointer; node = node->next);
 
 	return node;
 }

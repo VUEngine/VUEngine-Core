@@ -60,6 +60,7 @@
 __CLASS_DEFINITION(PhysicalWorld, Object);
 
 __CLASS_FRIEND_DEFINITION(Body);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -102,9 +103,9 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	VirtualNode node = VirtualList_begin(this->bodies);
 
 	// delete all bodies registered
-	for(;node; node = VirtualNode_getNext(node))
+	for(;node; node = node->next)
 	{
-		__DELETE(VirtualNode_getData(node));
+		__DELETE(node->data);
 	}
 
 	// delete lists
@@ -166,10 +167,10 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 
 	VirtualNode node = VirtualList_begin(this->bodies);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		// current body
-		Body body = __SAFE_CAST(Body, VirtualNode_getData(node));
+		Body body = __SAFE_CAST(Body, node->data);
 		ASSERT(body, "PhysicalWorld::getBody: null body");
 
 		// check if current shape's owner is the same as the entity calling this method
@@ -192,9 +193,9 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 
 	if(node)
 	{
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			Body body = __SAFE_CAST(Body, VirtualNode_getData(node));
+			Body body = __SAFE_CAST(Body, node->data);
 
 			// remove from the lists
 			VirtualList_removeElement(this->bodies, (BYTE*) body);
@@ -219,10 +220,10 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 	// prepare bodies which move
 	// this will place the shape in the owner's position
-	for(node = VirtualList_begin(this->bodies); node; node = VirtualNode_getNext(node))
+	for(node = VirtualList_begin(this->bodies); node; node = node->next)
 	{
 		// load the current shape
-		Body body = __SAFE_CAST(Body, VirtualNode_getData(node));
+		Body body = __SAFE_CAST(Body, node->data);
 
 		// check if necessary to apply gravity
 		bool gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
@@ -269,9 +270,9 @@ void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 	VirtualNode node = VirtualList_begin(this->activeBodies);
 
 	// check the bodies
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		Body_update(__SAFE_CAST(Body, VirtualNode_getData(node)), &this->gravity, elapsedTime);
+		Body_update(__SAFE_CAST(Body, node->data), &this->gravity, elapsedTime);
 	}
 }
 
@@ -283,10 +284,10 @@ void PhysicalWorld_reset(PhysicalWorld this)
 
 	VirtualNode node = VirtualList_begin(this->bodies);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		// delete it
-		__DELETE(VirtualNode_getData(node));
+		__DELETE(node->data);
 	}
 
 	// empty the lists
@@ -303,10 +304,10 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 
 	VirtualNode node = VirtualList_begin(this->bodies);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		// current body
-		Body body = __SAFE_CAST(Body, VirtualNode_getData(node));
+		Body body = __SAFE_CAST(Body, node->data);
 
 		// check if current body's owner is the same as the entity calling this method
 		if(__GET_CAST(SpatialObject, owner) == body->owner)

@@ -38,6 +38,8 @@
 
 __CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
 
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -106,10 +108,10 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 	{
 		VirtualNode node = VirtualList_begin(this->textures);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
 			// free the texture
-			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, VirtualNode_getData(node)));
+			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, node->data));
 		}
 		
 		__DELETE(this->textures);

@@ -52,10 +52,12 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_FRIEND_DEFINITION(Container);
 
 // define the Stage
 __CLASS_DEFINITION(Stage, Container);
+
+__CLASS_FRIEND_DEFINITION(Container);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 typedef struct StageEntityDescription
 {
@@ -141,9 +143,9 @@ void Stage_destructor(Stage this)
 	{
 		VirtualNode node = VirtualList_begin(this->stageEntities);
 
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			__DELETE_BASIC(VirtualNode_getData(node));
+			__DELETE_BASIC(node->data);
 		}
 		
 		__DELETE(this->stageEntities);
@@ -167,9 +169,9 @@ void Stage_destructor(Stage this)
 	{
 		VirtualNode node = VirtualList_begin(this->entitiesToInitialize);
 		
-		for(; node; node = VirtualNode_getNext(node))
+		for(; node; node = node->next)
 		{
-			StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)VirtualNode_getData(node);
+			StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)node->data;
 
 			__DELETE(stageEntityToInitialize->entity);
 			__DELETE_BASIC(stageEntityToInitialize);
@@ -373,9 +375,9 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
 		if(entityDefinition == stageEntityDescription->positionedEntity->entityDefinition)
 		{
@@ -446,9 +448,9 @@ void Stage_removeChild(Stage this, Container child)
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
 		if(stageEntityDescription->id == id)
 		{
@@ -459,9 +461,9 @@ void Stage_removeChild(Stage this, Container child)
 
 	if(node)
 	{
-		VirtualList_removeElement(this->stageEntities, VirtualNode_getData(node));
-		VirtualList_removeElement(this->loadedStageEntities, VirtualNode_getData(node));
-		__DELETE_BASIC(VirtualNode_getData(node));
+		VirtualList_removeElement(this->stageEntities, node->data);
+		VirtualList_removeElement(this->loadedStageEntities, node->data);
+		__DELETE_BASIC(node->data);
 	}
 }
 
@@ -489,9 +491,9 @@ static void Stage_unloadChild(Stage this, Container child)
 
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
 		if(stageEntityDescription->id == id)
 		{
@@ -597,9 +599,9 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 		{
 			VirtualNode node = VirtualList_begin(entityNamesToIgnore);
 			
-			for(; node; node = VirtualNode_getNext(node))
+			for(; node; node = node->next)
 			{
-				const char* name = (char*)VirtualNode_getData(node);
+				const char* name = (char*)node->data;
 				if(!strncmp(name, this->stageDefinition->entities[i].name, __MAX_CONTAINER_NAME_LENGTH))
 				{
 					break;
@@ -645,9 +647,9 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 
 		VirtualNode auxNode = VirtualList_begin(this->stageEntities);
 
-		for(; auxNode; auxNode = VirtualNode_getNext(auxNode))
+		for(; auxNode; auxNode = auxNode->next)
 		{
-			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
+			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
 
 			if(stageEntityDescription->distance + weightIncrement * i > auxStageEntityDescription->distance)
 			{
@@ -688,16 +690,16 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	VirtualNode node = savedNode ? savedNode : VirtualList_begin(this->stageEntities);
 	int counter = 0;
 
-	for(; node && counter < this->stageDefinition->streaming.streamingAmplitude / 4; node = direction ? VirtualNode_getPrevious(node) : VirtualNode_getNext(node), counter++);
+	for(; node && counter < this->stageDefinition->streaming.streamingAmplitude / 4; node = direction ? VirtualNode_getPrevious(node) : node->next, counter++);
 
 	node = node ? node : direction ? VirtualList_begin(this->stageEntities) : VirtualList_end(this->stageEntities);
 	savedNode = NULL;
 
 	int entityLoaded = false;
 
-	for(counter = 0; node && (!savedNode || counter < this->stageDefinition->streaming.streamingAmplitude); node = direction ? VirtualNode_getNext(node) : VirtualNode_getPrevious(node), counter++)
+	for(counter = 0; node && (!savedNode || counter < this->stageDefinition->streaming.streamingAmplitude); node = direction ? node->next : VirtualNode_getPrevious(node), counter++)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
 		if(!savedNode)
 		{
@@ -749,9 +751,9 @@ static void Stage_loadEntities(Stage this)
 
 	VirtualNode node = VirtualList_begin(this->entitiesToLoad);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
 		Entity entity = Entity_loadFromDefinitionWithoutInitilization(stageEntityDescription->positionedEntity, this->nextEntityId++);
 
@@ -786,9 +788,9 @@ static void Stage_initializeEntities(Stage this)
 
 	VirtualNode node = VirtualList_begin(this->entitiesToInitialize);
 	
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)VirtualNode_getData(node);
+		StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)node->data;
 
 		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity);
 		
@@ -814,9 +816,9 @@ static void Stage_loadInRangeEntities(Stage this)
 	// need a temporal list to remove and delete entities
 	VirtualNode node = VirtualList_begin(this->stageEntities);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(node);
+		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
 		if(-1 == stageEntityDescription->id)
 		{
@@ -862,10 +864,10 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 	VirtualNode node = VirtualList_begin(this->children);
 
 	// check which actors must be unloaded
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = node->next)
 	{
 		// get next entity
-		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(node));
+		Entity entity = __SAFE_CAST(Entity, node->data);
 
 		// if the entity isn't visible inside the view field, unload it
 		if(!__VIRTUAL_CALL(bool, Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding)))
@@ -874,9 +876,9 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 
 			VirtualNode auxNode = VirtualList_begin(this->loadedStageEntities);
 
-			for(; auxNode; auxNode = VirtualNode_getNext(auxNode))
+			for(; auxNode; auxNode = auxNode->next)
 			{
-				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)VirtualNode_getData(auxNode);
+				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)auxNode->data;
 
 				if(stageEntityDescription->id == id)
 				{
