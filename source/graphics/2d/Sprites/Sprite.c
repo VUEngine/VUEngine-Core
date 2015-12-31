@@ -130,6 +130,7 @@ void Sprite_hide(Sprite this)
 	ASSERT(this, "Sprite::hide: null this");
 
 	WORLD_HEAD(this->worldLayer, 0x0000);
+	this->renderFlag = false;
 }
 
 bool Sprite_isHidden(Sprite this)
@@ -139,7 +140,7 @@ bool Sprite_isHidden(Sprite this)
 	static WORLD* worldPointer = NULL;
 	worldPointer = &WA[this->worldLayer];
 
-	return !worldPointer->head;
+	return 0x0000 == worldPointer->head;
 }
 
 // retrieve animation controller

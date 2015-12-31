@@ -179,6 +179,7 @@ u16 Sprite_getHead(Sprite this);
 void Sprite_setRenderFlag(Sprite this, bool renderFlag);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
+bool Sprite_isHidden(Sprite this);
 
 
 //---------------------------------------------------------------------------------------------------------

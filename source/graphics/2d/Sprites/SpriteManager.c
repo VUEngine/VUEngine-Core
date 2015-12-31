@@ -217,13 +217,14 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				// swap layers
 				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
 				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
-	
+
+				bool isSpriteHidden = Sprite_isHidden(sprite);
+				bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
+
 				// don't render inmediately, it causes glitches
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 				Sprite_setWorldLayer(sprite, worldLayer2);
 
-				bool isSpriteHidden = Sprite_isHidden(sprite);
-				bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
 
 				while (*_xpstts & XPBSYR);
 
@@ -232,7 +233,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 				if(isSpriteHidden)
 				{
-					Sprite_setRenderFlag(sprite, 0);
+					Sprite_hide(sprite);
 				}
 				else
 				{
@@ -243,7 +244,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				// render last position before using new layer
 				if(isNextSpriteHidden)
 				{
-					Sprite_setRenderFlag(nextSprite, 0);
+					Sprite_hide(nextSprite);
 				}
 				else
 				{
