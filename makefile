@@ -1,5 +1,5 @@
-#Makefile taken from Wikipedia.org
-#
+# Makefile taken from Wikipedia.org
+
 # Specify the main target
 TARGET = libvbjae
 
