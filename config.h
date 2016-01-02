@@ -131,7 +131,7 @@
 // 										MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-// reset to 0 each byte of each free block on reseting game
+// reset to 0 each byte of each free block on resetting game
 // only use for debugging, proper object's initialization must make this macro unnecessary
 #undef __MEMORY_POOL_CLEAN_UP
 
