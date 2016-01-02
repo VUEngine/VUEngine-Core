@@ -22,7 +22,8 @@
 // 										CONFIG MACROS OVERRIDE
 //---------------------------------------------------------------------------------------------------------
 
-#undef __PRINT_FRAMERATE
+#define __DEBUG_NO_FADE
+//#undef __PRINT_FRAMERATE
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION			1

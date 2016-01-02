@@ -93,6 +93,7 @@ void Container_constructor(Container this, s16 id, const char* const name)
 	this->children = NULL;
 	this->removedChildren = NULL;
 	this->deleteMe = false;
+	this->hidden = false;
 	
 	this->name = NULL;
 	Container_setName(this, name);
@@ -826,3 +827,50 @@ void Container_resume(Container this)
 	Container_invalidateGlobalPosition(this);
 }
 
+
+void Container_show(Container this)
+{
+	ASSERT(this, "Container::show: null this");
+
+	this->hidden = false;
+	
+	if(this->children)
+	{
+		VirtualNode node = this->children->head;
+		
+		for(; node; node = node->next)
+		{
+			Container child = __SAFE_CAST(Container, node->data);
+			
+			__VIRTUAL_CALL(void, Container, show, child);
+		}
+	}
+	
+	Container_invalidateGlobalPosition(this);
+}
+
+void Container_hide(Container this)
+{
+	ASSERT(this, "Container::hide: null this");
+
+	this->hidden = true;
+	
+	if(this->children)
+	{
+		VirtualNode node = this->children->head;
+		
+		for(; node; node = node->next)
+		{
+			Container child = __SAFE_CAST(Container, node->data);
+			
+			__VIRTUAL_CALL(void, Container, hide, child);
+		}
+	}
+}
+
+bool Container_isHidden(Container this)
+{
+	ASSERT(this, "Container::isHidden: null this");
+
+	return this->hidden;
+}

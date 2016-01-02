@@ -53,6 +53,8 @@
 		__VIRTUAL_DEC(removeChild);																		\
 		__VIRTUAL_DEC(suspend);																			\
 		__VIRTUAL_DEC(resume);																			\
+		__VIRTUAL_DEC(show);																			\
+		__VIRTUAL_DEC(hide);																			\
 
 // define the virtual methods
 #define Container_SET_VTABLE(ClassName)																	\
@@ -66,6 +68,8 @@
 		__VIRTUAL_SET(ClassName, Container, removeChild);												\
 		__VIRTUAL_SET(ClassName, Container, suspend);													\
 		__VIRTUAL_SET(ClassName, Container, resume);													\
+		__VIRTUAL_SET(ClassName, Container, show);													\
+		__VIRTUAL_SET(ClassName, Container, hide);													\
 
 #define Container_ATTRIBUTES																			\
 																										\
@@ -90,11 +94,14 @@
 	/* entity's id */																					\
 	s16 id;																								\
 																										\
-	/* flag for parent to know to delete it */															\
-	u8 deleteMe;																						\
-																										\
 	/* flag to recalculate global position */															\
 	VBVec3DFlag invalidateGlobalPosition;																\
+																										\
+	/* flag for parent to know to delete it */															\
+	u8 deleteMe: 1;																						\
+																										\
+	/* flag to hide the entity */																		\
+	u8 hidden: 1;																						\
 																										\
 
 __CLASS(Container);
@@ -150,6 +157,9 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 Container Container_getChildById(Container this, s16 id);
 void Container_suspend(Container this);
 void Container_resume(Container this);
+void Container_show(Container this);
+void Container_hide(Container this);
+bool Container_isHidden(Container this);
 
 
 #endif

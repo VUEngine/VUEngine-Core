@@ -23,6 +23,7 @@
 #include <Screen.h>
 #include <Game.h>
 #include <Clock.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -162,7 +163,7 @@ void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
 {
 	ASSERT(this, "ScreenMovementManager::FXFadeIn: null this");
 
-#ifdef __DEBUG
+#ifdef __DEBUG_NO_FADE
 	return;
 #endif
 
@@ -187,7 +188,7 @@ void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
 {
 	ASSERT(this, "ScreenMovementManager::FXFadeOut: null this");
 
-#ifdef __DEBUG
+#ifdef __DEBUG_NO_FADE
 	return;
 #endif
 

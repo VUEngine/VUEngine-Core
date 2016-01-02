@@ -290,7 +290,6 @@ void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, C
 			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}
 	}
-
 }
 
 // discard delayed messages of an specific type

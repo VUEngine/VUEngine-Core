@@ -178,10 +178,23 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 					ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
 					ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
 		
+					bool isSpriteHidden = Sprite_isHidden(sprite);
+					bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
+
 					// swap layers
 					Sprite_setWorldLayer(sprite, worldLayer2);
 					Sprite_setWorldLayer(nextSprite, worldLayer1);
 		
+					if(isSpriteHidden)
+					{
+						Sprite_hide(sprite);
+					}
+
+					if(isNextSpriteHidden)
+					{
+						Sprite_hide(nextSprite);
+					}
+
 					// swap array entries
 					VirtualNode_swapData(node, nextNode);
 					

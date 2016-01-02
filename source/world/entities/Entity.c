@@ -669,6 +669,11 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	// force sprite translation
 	Entity_translateSprites(this, true, true);
 
+	if(this->hidden)
+	{
+		Entity_hide(this);
+	}
+
 	if(this->shape)
 	{
 		// setup shape
@@ -919,6 +924,8 @@ void Entity_show(Entity this)
 {
 	ASSERT(this, "Entity::show: null this");
 
+	Container_show(__SAFE_CAST(Container, this));
+	
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
@@ -936,6 +943,8 @@ void Entity_hide(Entity this)
 {
 	ASSERT(this, "Entity::hide: null this");
 
+	Container_hide(__SAFE_CAST(Container, this));
+	
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
@@ -969,6 +978,11 @@ void Entity_resume(Entity this)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 		Entity_translateSprites(this, true, true);
+	}
+	
+	if(this->hidden)
+	{
+		Entity_hide(this);
 	}
 }
 
