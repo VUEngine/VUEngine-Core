@@ -22,7 +22,38 @@
 // 										CONFIG MACROS OVERRIDE
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __DEBUG
+#define __DEBUG_NO_FADE
+#endif
+#undef __PRINT_FRAMERATE
 
+//#undef __TIMER_RESOLUTION
+//#define __TIMER_RESOLUTION			1
+//#undef __MILLISECONDS_IN_SECOND
+//#define __MILLISECONDS_IN_SECOND	100
+
+/*
+// these improve performance in the real machine
+#undef __OPTICS_NORMALIZE
+#define __OPTICS_NORMALIZE(Vector)													\
+	Vector.x -= (_screenPosition->x + 0x00001000)& 0xFFFFE000;						\
+	Vector.y -= (_screenPosition->y + 0x00001000)& 0xFFFFE000;						\
+	Vector.z -= (_screenPosition->z + 0x00001000)& 0xFFFFE000;
+
+#undef __OPTICS_PROJECT_TO_2D
+#define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)									\
+		Vector2D.x = Vector3D.x 													\
+			+ (FIX19_13_MULT(_optical->horizontalViewPointCenter - 					\
+					Vector3D.x, Vector3D.z) >> _optical->maximumViewDistancePower);	\
+		Vector2D.y = Vector3D.y 													\
+			- (FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter,		\
+				Vector3D.z) >> _optical->maximumViewDistancePower);					\
+		Vector2D.z = Vector3D.z;													\
+		Vector2D.x += 0x00001000;													\
+		Vector2D.y += 0x00001000;													\
+		Vector2D.x &= 0xFFFFE000;													\
+		Vector2D.y &= 0xFFFFE000;					
+*/
 
 
 #endif
