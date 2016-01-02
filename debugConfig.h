@@ -22,7 +22,9 @@
 // 										CONFIG MACROS OVERRIDE
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __DEBUG
 #define __DEBUG_NO_FADE
+#endif
 //#undef __PRINT_FRAMERATE
 
 //#undef __TIMER_RESOLUTION
