@@ -33,7 +33,6 @@ static void MessageDispatcher_constructor(MessageDispatcher this);
 static void MessageDispatcher_destructor(MessageDispatcher this);
 static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
 	Object receiver, int message, void* extraInfo);
-void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -246,32 +245,19 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			VirtualList_removeElement(this->delayedMessages, delayedMessage);
 			VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
 
-			__DELETE(telegram);
-			__DELETE_BASIC(delayedMessage);
+			if(*(u32*)telegram)
+			{
+				__DELETE(telegram);
+			}
+			
+			if(*(u32*)delayedMessage)
+			{
+				__DELETE_BASIC(delayedMessage);
+			}
 		}
 
 		__DELETE(telegramsToDispatch);
 	}
-}
-
-// discard delayed messages
-void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this)
-{
-	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
-
-	VirtualNode node = this->delayedMessages->head;
-
-	for(; node; node = node->next)
-	{
-		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
-		Telegram telegram = delayedMessage->telegram;
-
-		__DELETE(telegram);
-		__DELETE_BASIC(delayedMessage);
-	}
-
-	VirtualList_clear(this->delayedMessages);
-	VirtualList_clear(this->delayedMessagesToDiscard);
 }
 
 // discard delayed messages
