@@ -968,6 +968,7 @@ void Entity_resume(Entity this)
 	if(this->entityDefinition)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
+		Entity_translateSprites(this, true, true);
 	}
 }
 

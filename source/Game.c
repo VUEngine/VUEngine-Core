@@ -88,9 +88,6 @@ enum StateOperations
 	/* engine's global timer */																			\
 	Clock clock;																						\
 																										\
-	/* timer to use in game */																			\
-	Clock inGameClock;																					\
-																										\
 	/* timer to use for animations */																	\
 	Clock animationsClock;																				\
 																										\
@@ -187,7 +184,6 @@ static void Game_constructor(Game this)
 	this->clock = __NEW(Clock);
 
 	// construct the clocks
-	this->inGameClock = __NEW(Clock);
 	this->animationsClock = __NEW(Clock);
 	this->physicsClock = __NEW(Clock);
 
@@ -237,7 +233,6 @@ void Game_destructor(Game this)
 
 	// destroy the clocks
 	Clock_destructor(this->clock);
-	Clock_destructor(this->inGameClock);
 	Clock_destructor(this->animationsClock);
 	Clock_destructor(this->physicsClock);
 
@@ -337,9 +332,6 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
     ASSERT(state, "Game::setState: setting NULL state");
 
-    // discard delayed messages
-    MessageDispatcher_discardAllDelayedMessages(MessageDispatcher_getInstance());
-
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
@@ -354,6 +346,12 @@ static void Game_setNextState(Game this, GameState state)
 			this->lastProcessName = "kSwapState";
 #endif		
 	
+			if(Game_getCurrentState(this))
+			{
+				// discard delayed messages from the current state
+				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
+			}
+			
 			// setup new state
 		    StateMachine_swapState(this->stateMachine, (State)state);
 			break;
@@ -372,6 +370,13 @@ static void Game_setNextState(Game this, GameState state)
 #ifdef __DEBUG
 			this->lastProcessName = "kPopState";
 #endif		
+
+			if(Game_getCurrentState(this))
+			{
+				// discard delayed messages from the current state
+			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
+			}
+
 			// setup new state
 		    StateMachine_popState(this->stateMachine);
 			break;
@@ -430,10 +435,6 @@ void Game_reset(Game this)
 #ifdef	__MEMORY_POOL_CLEAN_UP
 	MemoryPool_cleanUp(MemoryPool_getInstance());
 #endif
-	
-	// discard all delayed messages, since the objects receiving them 
-	// most likely will be deleted
-	MessageDispatcher_discardAllDelayedMessages(MessageDispatcher_getInstance());
 	
 	// setup the display
     HardwareManager_clearScreen(this->hardwareManager);
@@ -880,7 +881,7 @@ const Clock Game_getInGameClock(Game this)
 {
 	ASSERT(this, "Game::getInGameClock: null this");
 
-	return this->inGameClock;
+	return GameState_getInGameClock(Game_getCurrentState(this));
 }
 
 // retrieve in game clock
@@ -902,7 +903,7 @@ void Game_startClocks(Game this)
 {
 	ASSERT(this, "Game::pauseClocks: null this");
 	
-	Clock_start(this->inGameClock);
+	Clock_start(Game_getInGameClock(this));
 	Clock_start(this->animationsClock);
 	Clock_start(this->physicsClock);
 }
@@ -911,7 +912,7 @@ void Game_pauseClocks(Game this)
 {
 	ASSERT(this, "Game::pauseClocks: null this");
 
-	Clock_pause(this->inGameClock, true);
+	Clock_pause(Game_getInGameClock(this), true);
 	Clock_pause(this->animationsClock, true);
 	Clock_pause(this->physicsClock, true);
 }
@@ -920,7 +921,7 @@ void Game_resumeClocks(Game this)
 {
 	ASSERT(this, "Game::resumeClocks: null this");
 
-	Clock_pause(this->inGameClock, false);
+	Clock_pause(Game_getInGameClock(this), false);
 	Clock_pause(this->animationsClock, false);
 	Clock_pause(this->physicsClock, false);
 }
@@ -929,7 +930,7 @@ void Game_startInGameClock(Game this)
 {
 	ASSERT(this, "Game::startInGameClock: null this");
 
-	Clock_start(this->inGameClock);
+	Clock_start(Game_getInGameClock(this));
 }
 
 void Game_startAnimations(Game this)
@@ -950,7 +951,7 @@ void Game_pauseInGameClock(Game this, bool pause)
 {
 	ASSERT(this, "Game::pauseInGameClock: null this");
 
-	Clock_pause(this->inGameClock, pause);
+	Clock_pause(GameState_getInGameClock(Game_getCurrentState(this)), pause);
 }
 
 void Game_pauseAnimations(Game this, bool pause)
@@ -1081,7 +1082,7 @@ GameState Game_getCurrentState(Game this)
 {
 	ASSERT(this, "Game::getCurrentState: null this");
 
-	return __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+	return StateMachine_getCurrentState(this->stateMachine)? __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)): NULL;
 }
 
 #ifdef __LOW_BATTERY_INDICATOR
@@ -1100,7 +1101,7 @@ static void Game_checkLowBattery(Game this, u16 keypad)
     else
     {
          if(this->isShowingLowBatteryIndicator) {
-            MessageDispatcher_discardDelayedMessages(MessageDispatcher_getInstance(), kLowBatteryIndicator);
+            MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kLowBatteryIndicator);
             Printing_text(Printing_getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
             this->isShowingLowBatteryIndicator = false;
          }

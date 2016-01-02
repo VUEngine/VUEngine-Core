@@ -21,6 +21,7 @@
 
 #include <MessageDispatcher.h>
 #include <Game.h>
+#include <Clock.h>
 #include <VirtualList.h>
 
 
@@ -64,6 +65,9 @@ typedef struct DelayedMessage
 
 	// time of arrival
 	u32 timeOfArrival;
+	
+	// reference to clock
+	Clock clock;
 
 } DelayedMessage;
 
@@ -141,7 +145,8 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 
 	delayMessage->telegram = telegram;
-	delayMessage->timeOfArrival = Clock_getTime(Game_getClock(Game_getInstance())) + delay;
+	delayMessage->clock = Game_getInGameClock(Game_getInstance());
+	delayMessage->timeOfArrival = Clock_getTime(delayMessage->clock) + delay;
 
 	VirtualList_pushFront(this->delayedMessages, delayMessage);
 }
@@ -201,7 +206,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
-			if(Clock_getTime(Game_getClock(Game_getInstance())) > delayedMessage->timeOfArrival)
+			if(Clock_getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 			{
 				VirtualList_pushFront(telegramsToDispatch, delayedMessage);
 			}
@@ -269,8 +274,27 @@ void MessageDispatcher_discardAllDelayedMessages(MessageDispatcher this)
 	VirtualList_clear(this->delayedMessagesToDiscard);
 }
 
+// discard delayed messages
+void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock)
+{
+	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
+
+	VirtualNode node = this->delayedMessages->head;
+
+	for(; node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+
+		if(delayedMessage->clock == clock)
+		{
+			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+		}
+	}
+
+}
+
 // discard delayed messages of an specific type
-void MessageDispatcher_discardDelayedMessages(MessageDispatcher this, int message)
+void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
 
@@ -281,7 +305,7 @@ void MessageDispatcher_discardDelayedMessages(MessageDispatcher this, int messag
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(Telegram_getMessage(telegram) == message)
+		if(Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender)
 		{
 			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}

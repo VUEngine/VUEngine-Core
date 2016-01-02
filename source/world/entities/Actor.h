@@ -43,6 +43,7 @@
 		AnimatedInGameEntity_SET_VTABLE(ClassName)														\
 		__VIRTUAL_SET(ClassName, Actor, update);														\
 		__VIRTUAL_SET(ClassName, Actor, transform);														\
+		__VIRTUAL_SET(ClassName, Actor, resume);														\
 		__VIRTUAL_SET(ClassName, Actor, handleMessage);													\
 		__VIRTUAL_SET(ClassName, Actor, moves);															\
 		__VIRTUAL_SET(ClassName, Actor, isMoving);														\
@@ -107,6 +108,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 void Actor_destructor(Actor this);
 void Actor_setLocalPosition(Actor this, const VBVec3D* position);
 void Actor_transform(Actor this, const Transformation* environmentTransform);
+void Actor_resume(Actor this);
 void Actor_update(Actor this);
 void Actor_moveOpositeDirecion(Actor this, int axis);
 int Actor_changedDirection(Actor this, int axis);

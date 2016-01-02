@@ -38,9 +38,6 @@ __CLASS_DEFINITION(Particle, SpatialObject);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
-static Clock _gameClock = NULL;
-
 static void Particle_addSprite(Particle this);
 
 
@@ -57,11 +54,6 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 {
 	ASSERT(this, "Particle::constructor: null this");
 
-	if(!_gameClock)
-	{
-		_gameClock = Game_getInGameClock(Game_getInstance());
-	}
-	
 	// construct base Container
 	__CONSTRUCT_BASE();
 
@@ -124,10 +116,7 @@ void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle 
 	{
 		this->lifeSpan -= timeElapsed;
 		
-		if(!Clock_isPaused(_gameClock))
-		{
-			Sprite_update(__SAFE_CAST(Sprite, this->objectSprite));
-		}
+		Sprite_update(__SAFE_CAST(Sprite, this->objectSprite));
 		
 		if(behavior)
 		{

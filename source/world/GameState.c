@@ -45,6 +45,7 @@ void GameState_constructor(GameState this)
 
 	// construct the stage
 	this->stage = NULL;
+	this->inGameClock = __NEW(Clock);
 
 	// by default can stream
 	this->canStream = true;
@@ -58,6 +59,8 @@ void GameState_constructor(GameState this)
 void GameState_destructor(GameState this)
 {
 	ASSERT(this, "GameState::destructor: null this");
+
+	__DELETE(this->inGameClock);
 
 	// destroy the stage
 	if(this->stage)
@@ -77,6 +80,8 @@ void GameState_destructor(GameState this)
 void GameState_enter(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::enter: null this");
+	
+	Clock_start(this->inGameClock);
 }
 
 // state's execute
@@ -104,6 +109,8 @@ void GameState_exit(GameState this, void* owner)
 	}
 
 	this->stage = NULL;
+	
+	Clock_stop(this->inGameClock);
 }
 
 // state's suspend
@@ -111,6 +118,8 @@ void GameState_suspend(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::suspend: null this");
 
+	Clock_pause(this->inGameClock, true);
+	
 #ifdef __DEBUG_TOOLS
 	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
@@ -194,6 +203,9 @@ void GameState_resume(GameState this, void* owner)
 #ifdef __ANIMATION_EDITOR
 	}
 #endif
+	
+	// unpause clock
+	Clock_pause(this->inGameClock, false);
 }
 
 // state's on message
@@ -308,4 +320,11 @@ Stage GameState_getStage(GameState this)
 	ASSERT(this->stage, "GameState::getStage: null stage");
 
 	return this->stage;
+}
+
+Clock GameState_getInGameClock(GameState this)
+{
+	ASSERT(this, "GameState::getInGameClock: null this");
+
+	return this->inGameClock;
 }

@@ -60,6 +60,9 @@
 																										\
 	/* must save to allow pause */																		\
 	VBVec3D screenPosition;																				\
+																										\
+	/* timer to use in game */																			\
+	Clock inGameClock;																					\
 
 __CLASS(GameState);
 
@@ -84,6 +87,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 void GameState_setCanStream(GameState this, int canStream);
 bool GameState_canStream(GameState this);
 Stage GameState_getStage(GameState this);
+Clock GameState_getInGameClock(GameState this);
 
 
 #endif

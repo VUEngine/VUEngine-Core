@@ -210,6 +210,17 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	}
 }
 
+void Actor_resume(Actor this)
+{
+	ASSERT(this, "Actor::resume: null this");
+
+	AnimatedInGameEntity_resume(__SAFE_CAST(AnimatedInGameEntity, this));
+
+	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
+	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __YAXIS, this->direction.y);
+}
+
+
 // execute character's logic
 void Actor_update(Actor this)
 {

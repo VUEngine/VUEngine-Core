@@ -25,6 +25,7 @@
 #include <Object.h>
 #include <StateMachine.h>
 #include <Telegram.h>
+#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,7 +50,8 @@ __CLASS(MessageDispatcher);
 MessageDispatcher MessageDispatcher_getInstance();
 bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
 void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
-void MessageDispatcher_discardDelayedMessages(MessageDispatcher this, int message);
+void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message);
+void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock);
 
 
 #endif
