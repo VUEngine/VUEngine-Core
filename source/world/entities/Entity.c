@@ -654,7 +654,7 @@ void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool
 	}
 }
 
-// draw class
+// initial transformation
 void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
