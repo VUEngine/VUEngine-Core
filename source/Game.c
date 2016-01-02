@@ -653,9 +653,11 @@ static void Game_updateLogic(Game this)
 	// dispatch queued messages
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 
+#ifdef __PRINT_FRAMERATE
 	// increase the frame rate
 	FrameRate_increaseLogicFPS(this->frameRate);
-
+#endif
+	
 #ifdef __DEBUG
 	this->lastProcessName = "logic ended";
 #endif
@@ -697,8 +699,11 @@ static void Game_updatePhysics(Game this)
 	// process collisions
 	CollisionManager_update(this->collisionManager, elapsedTime);
 
+#ifdef __PRINT_FRAMERATE
 	// increase the frame rate
 	FrameRate_increasePhysicsFPS(this->frameRate);
+#endif
+	
 #ifdef __DEBUG
 	this->lastProcessName = "physics ended";
 #endif
@@ -735,8 +740,11 @@ static void Game_updateRendering(Game this)
 	// render sprites
 	SpriteManager_render(this->spriteManager);
 	
+#ifdef __PRINT_FRAMERATE
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
+#endif
+	
 #ifdef __DEBUG
 	this->lastProcessName = "render done";
 #endif
@@ -823,9 +831,11 @@ static void Game_update(Game this)
 			cleanUpTime = currentTime;
 		}
 		
+#ifdef __PRINT_FRAMERATE
 		// increase the frame rate
 		FrameRate_increaseRawFPS(this->frameRate);
-
+#endif
+		
 #ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
 		// accumulate user's input until next logic cycle
 		KeypadManager_read(this->keypadManager);
