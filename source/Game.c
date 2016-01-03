@@ -150,6 +150,8 @@ static void Game_checkLowBattery(Game this, u16 keyPressed);
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
 
+void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -348,7 +350,7 @@ static void Game_setNextState(Game this, GameState state)
 			{
 				// discard delayed messages from the current state
 				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
-				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
+				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 			
 			// setup new state
@@ -374,7 +376,7 @@ static void Game_setNextState(Game this, GameState state)
 			{
 				// discard delayed messages from the current state
 			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
-				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
+				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 
 			// setup new state

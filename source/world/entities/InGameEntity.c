@@ -169,6 +169,7 @@ Direction InGameEntity_getDirection(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::getDirection: null this");
 
+	// TODO: must be recursive to account for parenting 
 	return this->direction;
 }
 
