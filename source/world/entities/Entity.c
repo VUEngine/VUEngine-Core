@@ -19,6 +19,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
 #include <Entity.h>
 #include <InGameEntity.h>
 #include <InanimatedInGameEntity.h>
@@ -324,6 +325,43 @@ SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 	rightCuboid.y1 = rightCuboid.y1 - (s16)FIX19_13TOI(positionedEntity->position.y);
 
 	return rightCuboid;
+}
+
+// find child by name in given list
+VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName)
+{
+	ASSERT(childrenDefinitions, "Entity::calculatGlobalPositionFromDefinitionByName: null positionedEntity");
+
+	static VBVec3D position;
+	
+	int i = 0;
+	for(; childrenDefinitions[i].entityDefinition; i++)
+	{
+		if(!strncmp(childName, childrenDefinitions[i].name, __MAX_CONTAINER_NAME_LENGTH))
+		{
+			position.x = environmentPosition.x + childrenDefinitions[i].position.x;
+			position.y = environmentPosition.y + childrenDefinitions[i].position.y;
+			position.z = environmentPosition.z + childrenDefinitions[i].position.z;
+			return &position;
+		}
+
+		if(childrenDefinitions[i].childrenDefinitions)
+		{
+			VBVec3D concatenatedEnvironmentPosition = environmentPosition;
+			concatenatedEnvironmentPosition.x += childrenDefinitions[i].position.x;
+			concatenatedEnvironmentPosition.y += childrenDefinitions[i].position.y;
+			concatenatedEnvironmentPosition.z += childrenDefinitions[i].position.z;
+
+			VBVec3D* position = Entity_calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
+			
+			if(position)
+			{
+				return position;
+			}
+		}
+	}
+
+    return NULL;
 }
 
 // create an entity in gameengine's memory
