@@ -407,6 +407,9 @@
 		{																				\
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;						\
 																						\
+			/* set the vtable pointer */												\
+			_instance ## ClassName.vTable = &ClassName ## _vTable;						\
+																						\
 			/* call constructor */														\
 			ClassName ## _constructor(&_instance ## ClassName);							\
 																						\
