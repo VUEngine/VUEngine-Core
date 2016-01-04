@@ -384,6 +384,62 @@ void CollisionManager_flushShapesDirectDrawData(CollisionManager this)
 	}
 }
 
+// check if gravity must apply to this actor
+SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this, const Shape shape, VBVec3D direction)
+{
+	ASSERT(this, "CollisionManager::searchNextShapeOfCollision: null this");
+
+	VBVec3D displacement =
+    {
+    	direction.x ? 0 < direction.x? ITOFIX19_13(1): ITOFIX19_13(-1): 0,
+		direction.y ? 0 < direction.y? ITOFIX19_13(1): ITOFIX19_13(-1): 0,
+		direction.z ? 0 < direction.z? ITOFIX19_13(1): ITOFIX19_13(-1): 0
+	};
+	
+	if(0 == abs(direction.x) + abs(direction.y) + abs(direction.z))
+	{
+		return NULL;
+	}
+
+	SpatialObject collidingObject = NULL;
+	
+	do
+	{
+		VirtualNode nodeForActiveShapes = this->activeShapes->head;
+
+		// check the shapes
+		for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
+		{	
+			// load the current shape to check against
+			Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
+	
+			if(shape == shapeToCheck)
+			{
+				continue;
+			}
+			
+			NM_ASSERT(VirtualList_getSize(this->activeShapes), "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
+	
+			// check if shapes overlap
+			if(__VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, shapeToCheck->owner), displacement))
+			{
+				collidingObject = shapeToCheck->owner;
+				break;
+			}
+		}
+		
+		displacement.x += 0 < direction.x? ITOFIX19_13(1): ITOFIX19_13(-1);
+		displacement.y += 0 < direction.y? ITOFIX19_13(1): ITOFIX19_13(-1);
+		displacement.z += 0 < direction.z? ITOFIX19_13(1): ITOFIX19_13(-1);
+	}
+	while(!collidingObject && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.x) && ITOFIX19_13(__SCREEN_HEIGHT) > abs(displacement.y) && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.z));
+
+	Printing_int(Printing_getInstance(), FIX19_13TOI(displacement.y), 10, 15, NULL);
+	NM_ASSERT(collidingObject, "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
+	return collidingObject;
+}
+
+
 // print status
 void CollisionManager_print(CollisionManager this, int x, int y)
 {

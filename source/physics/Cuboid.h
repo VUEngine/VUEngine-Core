@@ -76,7 +76,7 @@ void Cuboid_position(Cuboid this);
 RightCuboid Cuboid_getRightCuboid(Cuboid this);
 RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this);
 u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);
-u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);
+u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement);
 void Cuboid_draw(Cuboid this);
 void Cuboid_deleteDirectDrawData(Cuboid this);
 void Cuboid_print(Cuboid this, int x, int y);

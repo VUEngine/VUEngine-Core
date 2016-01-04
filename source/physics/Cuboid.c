@@ -41,7 +41,7 @@ __CLASS_FRIEND_DEFINITION(InverseCuboid);
 Shape SpatialObject_getShape(SpatialObject this);
 
 static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*));
-static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement, VBVec3D previousPosition);
+static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement);
 static void Cuboid_configurePolygon(Cuboid this, int renew);
 static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
 static bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other);
@@ -402,7 +402,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 }
 
 // test if collision with the entity give the displacement
-u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition)
+u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
@@ -410,14 +410,14 @@ u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBV
 
 	if(__GET_CAST(Cuboid, shape))
     {
-		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement, previousPosition);
+		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement);
 	}
 
 	return false;
 }
 
 // test if collision with the entity give the displacement
-static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement, VBVec3D previousPosition)
+static u8 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 

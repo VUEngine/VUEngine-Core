@@ -157,7 +157,7 @@ u8 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Accelera
 			VirtualNode node = this->lastCollidingSpatialObject[i]->head;
 			for(; node; node = node->next)
 	        {
-				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, node->data), displacement, this->ownerPreviousPosition);
+				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, node->data), displacement);
 	        }
 		}
 	}

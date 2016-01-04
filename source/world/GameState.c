@@ -88,6 +88,7 @@ void GameState_enter(GameState this, void* owner)
 void GameState_execute(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::execute: null this");
+	ASSERT(this->stage, "GameState::execute: null stage");
 
 	// update the stage
 	__VIRTUAL_CALL(void, Container, update, this->stage);
