@@ -14,7 +14,6 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -35,15 +34,20 @@ extern LangROMDef* __LANGUAGES[];
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * I18n
+ *
+ * Handles internationalization of text output and thus allows multiple selectable languages.
+ */
+
 #define I18n_ATTRIBUTES																					\
 																										\
 	/* super's attributes */																			\
 	Object_ATTRIBUTES;																					\
 																										\
 	/* currently active language */																		\
-	u8 ActiveLanguage;																					\
+	u8 activeLanguage;																					\
 
-// define the I18n
 __CLASS_DEFINITION(I18n, Object);
 
 
@@ -60,17 +64,25 @@ static void I18n_constructor(I18n this);
 
 __SINGLETON(I18n);
 
-// class's constructor
+/**
+ *  Class constructor
+ *
+ *  @param  I18n    this    I18n instance
+ */
 static void I18n_constructor(I18n this)
 {
 	ASSERT(this, "I18n::constructor: null this");
 
 	__CONSTRUCT_BASE();
 
-	this->ActiveLanguage = 0;
+	this->activeLanguage = 0;
 }
 
-// class's destructor
+/**
+ *  Class destructor
+ *
+ *  @param  I18n    this    I18n instance
+ */
 void I18n_destructor(I18n this)
 {
 	ASSERT(this, "I18n::destructor: null this");
@@ -79,23 +91,41 @@ void I18n_destructor(I18n this)
 	__SINGLETON_DESTROY;
 }
 
-// get localized string
+/**
+ *  Get localized string
+ *
+ *  @param  I18n    this    I18n instance
+ *  @param  int     string  The identifier of the string to localize
+ *
+ *  @return localized string or NULL if no translation could be found
+ */
 char* I18n_getText(I18n this, int string)
 {
 	ASSERT(this, "I18n::getText: null this");
 
-	return 0 <= string ? __LANGUAGES[this->ActiveLanguage]->language[string] : NULL;
+	return 0 <= string ? __LANGUAGES[this->activeLanguage]->language[string] : NULL;
 }
 
-// set the language
+/**
+ *  Set the active language
+ *
+ *  @param  I18n    this        I18n instance
+ *  @param  u8      languageId  ID of the language to make active
+ */
 void I18n_setActiveLanguage(I18n this, u8 languageId)
 {
 	ASSERT(this, "I18n::setActiveLanguage: null this");
 
-    this->ActiveLanguage = languageId;
+    this->activeLanguage = languageId;
 }
 
-// get all registered languages
+/**
+ *  Get all registered languages
+ *
+ *  @param  I18n    this    I18n instance
+ *
+ *  @return Array of LangDefinition pointers
+ */
 LangDefinition * I18n_getLanguages(I18n this)
 {
 	ASSERT(this, "I18n::getLanguages: null this");
@@ -103,18 +133,30 @@ LangDefinition * I18n_getLanguages(I18n this)
     return (LangDefinition *)__LANGUAGES;
 }
 
-// get the id of the currently active language
+/**
+ *  Retrieves ID of the currently active language
+ *
+ *  @param  I18n    this    I18n instance
+ *
+ *  @return ID of currently active language
+ */
 u8 I18n_getActiveLanguage(I18n this)
 {
 	ASSERT(this, "I18n::getActiveLanguage: null this");
 
-    return this->ActiveLanguage;
+    return this->activeLanguage;
 }
 
-// get the name of the currently active language
+/**
+ *  Retrieves name of the currently active language
+ *
+ *  @param  I18n    this    I18n instance
+ *
+ *  @return Name of currently active language
+ */
 char* I18n_getActiveLanguageName(I18n this)
 {
 	ASSERT(this, "I18n::getActiveLanguageName: null this");
 
-    return (char*)__LANGUAGES[this->ActiveLanguage]->name;
+    return (char*)__LANGUAGES[this->activeLanguage]->name;
 }
