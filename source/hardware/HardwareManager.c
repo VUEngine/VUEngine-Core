@@ -321,7 +321,6 @@ void HardwareManager_lowerBrightness(HardwareManager this)
 	VPUManager_lowerBrightness(this->vpuManager);
 }
 
-
 // setup default column table
 void HardwareManager_setupColumnTable(HardwareManager this)
 {

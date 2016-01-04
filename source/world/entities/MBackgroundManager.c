@@ -26,13 +26,13 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackgroundManager_ATTRIBUTES													\
-																						\
-	/* super's attributes */															\
-	Object_ATTRIBUTES;																	\
-																						\
-	/* textureRegistries */																\
-	VirtualList textureRegistries;														\
+#define MBackgroundManager_ATTRIBUTES																	\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/* textureRegistries */																				\
+	VirtualList textureRegistries;																		\
 
 __CLASS_DEFINITION(MBackgroundManager, Object);
 
