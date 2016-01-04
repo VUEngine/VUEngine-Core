@@ -229,6 +229,21 @@ void Actor_update(Actor this)
 	// call base
 	AnimatedInGameEntity_update(__SAFE_CAST(AnimatedInGameEntity, this));
 
+	// sync direction with velocity
+	if(this->body && Body_isMoving(this->body))
+	{
+	    Velocity velocity = Body_getVelocity(this->body);
+	
+		if(0 < velocity.x)
+	    {
+			this->direction.x = __RIGHT;
+		}
+		else if(0 > velocity.x)
+	    {
+			this->direction.x = __LEFT;
+		}
+	}
+
 	if(this->stateMachine)
 	{
 		StateMachine_update(this->stateMachine);
