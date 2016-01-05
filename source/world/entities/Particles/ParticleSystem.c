@@ -263,7 +263,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
 		fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 		
-		// call the appropiate allocator to support inheritance!
+		// call the appropriate allocator to support inheritance
 		Particle particle = __SAFE_CAST(Particle, VirtualList_front(this->recyclableParticles));
 
 		Particle_setLifeSpan(particle, lifeSpan);
@@ -323,7 +323,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 
 	int spriteDefinitionIndex = Utilities_random(seed, abs(this->numberOfSpriteDefinitions));
 
-	// call the appropiate allocator to support inheritance!
+	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(ParticleDefinition*, ...)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
 	__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));

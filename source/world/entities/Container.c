@@ -37,7 +37,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args);
+static int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -571,27 +571,27 @@ void Container_invalidateGlobalPosition(Container this)
 	}
 }
 
-// propagate an event to the children wrapper
-int Container_propagateEvent(Container this, int (*event)(Container this, va_list args), ...)
+// propagate a message to the children wrapper
+int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...)
 {
-	ASSERT(this, "Container::propagateEvent: null this");
-	ASSERT(event, "Container::propagateEvent: null event");
+	ASSERT(this, "Container::propagateMessage: null this");
+	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
 
 	va_list args;
-    va_start(args, event);
-    int result = Container_passEvent(this, event, args);
+    va_start(args, propagatedMessageHandler);
+    int result = Container_passMessage(this, propagatedMessageHandler, args);
     va_end(args);
 
     return result;
 }
 
-// pass event to children recursively
-static int Container_passEvent(Container this, int (*event)(Container this, va_list args), va_list args)
+// pass message to children recursively
+static int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
-	ASSERT(this, "Container::passEvent: null this");
+	ASSERT(this, "Container::passMessage: null this");
 
-	// if event is valid
-	if(event)
+	// if message is valid
+	if(propagatedMessageHandler)
 	{
 		// propagate if I have children
 		if(this->children)
@@ -604,39 +604,39 @@ static int Container_passEvent(Container this, int (*event)(Container this, va_l
 			// update each child
 			for(; node ; node = node->next)
 	        {
-				// pass event to each child
-				if(Container_passEvent(__SAFE_CAST(Container, node->data), event, args))
+				// pass message to each child
+				if(Container_passMessage(__SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
 	            {
 					return true;
 				}
 			}
 		}
 
-		// if no child processed the event, I process it
-		return event(this, args);
+		// if no child processed the message, I process it
+		return propagatedMessageHandler(this, args);
 	}
 
 	return false;
 }
 
 // process user input
-int Container_onMessage(Container this, va_list args)
+int Container_onPropagatedMessage(Container this, va_list args)
 {
-	ASSERT(this, "Container::onMessage: null this");
+	ASSERT(this, "Container::onPropagatedMessage: null this");
 
 	int message = va_arg(args, int);
-	return __VIRTUAL_CALL(int, Container, doMessage, this, message);
+	return __VIRTUAL_CALL(int, Container, handlePropagatedMessage, this, message);
 }
 
 // process message
-int Container_doMessage(Container this, int message)
+bool Container_handlePropagatedMessage(Container this, int message)
 {
-	ASSERT(this, "Container::doMessage: null this");
+	ASSERT(this, "Container::handlePropagatedMessage: null this");
 
 	return false;
 }
 
-//retrieve class's in game index
+// retrieve class's in game index
 s16 Container_getId(Container this)
 {
 	ASSERT(this, "Container::getId: null this");

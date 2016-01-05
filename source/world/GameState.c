@@ -214,7 +214,7 @@ bool GameState_handleMessage(GameState this, void* owner, Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
-	return Container_propagateEvent(__SAFE_CAST(Container, this->stage), Container_onMessage, Telegram_getMessage(telegram));
+	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, Telegram_getMessage(telegram));
 }
 
 // update level entities' positions
@@ -247,13 +247,13 @@ void GameState_transform(GameState this)
 // propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message)
 {
-	return Container_propagateEvent(__SAFE_CAST(Container, this->stage), Container_onMessage, message);
+	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, message);
 }
 
 // process user input
-void GameState_onMessage(GameState this, int message)
+void GameState_onPropagatedMessage(GameState this, int message)
 {
-	ASSERT(this, "GameState::onMessage: null this");
+	ASSERT(this, "GameState::onPropagatedMessage: null this");
 
 }
 // load a stage

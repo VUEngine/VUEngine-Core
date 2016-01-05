@@ -372,7 +372,7 @@ Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const
 
 	if(entityDefinition->allocator)
 	{
-		// call the appropiate allocator to support inheritance!
+		// call the appropriate allocator to support inheritance
 		Entity entity = ((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, name);
 
 		// setup entity if allocated and constructed
@@ -613,7 +613,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 
 	if(spriteDefinition->allocator)
 	{
-		// call the appropiate allocator to support inheritance!
+		// call the appropriate allocator to support inheritance
 		sprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
 	}
 
