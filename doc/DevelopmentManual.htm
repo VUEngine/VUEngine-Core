@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>VBJaEngine</title>
+    <title>VBJaEngine Development Manual</title>
     <link href="assets/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="assets/bootstrap/bootstrap-theme.min.css" rel="stylesheet">
     <link href="assets/custom/style.css" rel="stylesheet">
@@ -319,11 +319,7 @@ u8 energy;</code></pre>
             <h3>Friend classes</h3>
 
             <p>
-                To define an abstract class, simply omit the <code>__VIRTUAL_SET</code> definition.
-            </p>
-
-            <p>
-                Trying to instantiate an abstract Entity will result in an exception in <code>__DEBUG</code> mode.
+                [[TODO]]
             </p>
             
             <!--------------------------------------------------------------------------------------------------------->
@@ -377,7 +373,11 @@ u8 energy;</code></pre>
                 window is moved to the proper frame in case of BGMap mode being used, or the param table is rewritten in
                 the case of affine mode.
                 This is useful for example for an enemy Character which has few chars and few animation frames and when
-                there are  lot of the same Character on screen.
+                there are lot of the same Character on screen.
+            </p>
+            <b>__ANIMATED_SHARED_COORDINATED:</b>
+            <p>
+                [[TODO]]
             </p>
             <b>__NO_ANIMATED:</b>
             <p>
@@ -625,12 +625,29 @@ u8 energy;</code></pre>
 
             <h3>Messaging</h3>
 
+            <p>
+                [[TODO]]
+            </p>
+
+            <div class="alert alert-warning">
+                Delayed messages must always be sent between objects that you know will be alive at the moment of
+                delivery. Therefore you need to make sure to cancel any delayed messages in the destructor of each class
+                that uses them. This is done with the <b>MessageDispatcher_discardDelayedMessages</b> method.
+            </div>
+
 
 
             <!--------------------------------------------------------------------------------------------------------->
 
             <h3>Event System</h3>
-                - There is an event propagation capability in the engine, indeed, I could combine this with the event system, and we would get the full bubbling event capabilities of languages like ActionScript... at least as far as I remember :P
+
+            <p>
+                [[TODO]]
+            </p>
+
+            <p>
+                - There is an event propagation capability in the engine
+            </p>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -1132,6 +1149,58 @@ const FontROMDef* __FONTS[] =
 
             <h3>Managing and using graphical assets in VBDE</h3>
 
+            <p>
+                VBDE allows for hassle free, on-the-fly image conversion using
+                grit. To use it, create a folder called "assets" in the root
+                folder of your project, with a contained "images" folder. This
+                folder will hold all your images in any of the supported
+                formats: png, bmp, gif, pcx or jpg/jpeg (I recommend png.)
+            </p>
+
+            <p>
+                Images should use an indexed 4-color palette in the following
+                order: Black, Dark Red, Medium Red, Light Red. An example palette
+                for Photoshop can be found in {VBDE}/system/grit/.
+            </p>
+
+            <p>
+                In order to be detected and converted by the image conversion
+                script, you also need a *.grit file of the same name as the
+                graphic, which contains the conversion settings. You can find
+                a number of example grit files in {VBDE}/system/grit/ which you
+                can just copy and paste (and rename) into your images folder.
+            </p>
+
+            <p>
+                You can also make several files convert at once instead of
+                having all images converted individually. Grit files which do not
+                directly relate to an image file through their name, are applied
+                to all images files in the current directory (not sub-directories.)
+                This is useful for generating maps with shared tilesets.
+            </p>
+
+            <p>
+                Example file structure:<br>
+                my-project/<br>
+                '- assets/<br>
+                '- images/<br>
+                |- backgrounds/<br>
+                |  |- Backgrounds.grit<br>
+                |  |- Background-1.png<br>
+                |  '- Background-2.png<br>
+                |- Font.grit<br>
+                '- Font.png<br>
+                |- Hero.grit<br>
+                '- Hero.png<br>
+            </p>
+
+            <p>
+                Finally, to start the image conversion, press the editor's
+                grit button while having any project file opened. This will
+                convert all images that do not yet have a corresponding c file
+                or are newer than their c file.
+            </p>
+
 
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
@@ -1149,8 +1218,9 @@ const FontROMDef* __FONTS[] =
             <h3>Splash screens</h3>
 
             <p>
-                Default versions of common screens are shipped with the VBJaEngine. Those can easily be directly used,
-                modified, replaced and/or reordered and eliminate the need to create those by hand.
+                Default versions of common screens are available in the VBJaEngine Barebone.
+                Those can easily be directly used, modified, replaced and/or reordered and eliminate the need to
+                create those by hand.
             </p>
 
             <ol>
@@ -1356,13 +1426,24 @@ const FontROMDef* __FONTS[] =
             <h2>FAQ</h2>
 
             <p>
-                All of a sudden, I am getting a lot of different exceptions which I can't seem to find an answer for
-                in the code. What's going on?
+                <b>
+                    All of a sudden, I am getting a lot of different exceptions which I can't seem to find
+                    a reason for in the code. What's going on?
+                </b>
             </p>
 
             <p>
                 When things begin to break unexpectedly and in random places, it is almost guaranteed that a stack
                 overflow is the cause. In that case, you need to shrink down the memory pools.
+            </p>
+
+            <p>
+                <b>What does "VBJaEngine" stand for anyway?</b>
+            </p>
+
+            <p>
+                "JaE" are the initials of the engine's lead developer, Jorge Andres Eremiev.
+                You'll figure the rest out yourself from here. ;-)
             </p>
 
 
