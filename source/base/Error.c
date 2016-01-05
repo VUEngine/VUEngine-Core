@@ -143,6 +143,11 @@ int Error_triggerException(Error this, char* message, char* detail)
 			Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 		}
 	}
+	
+#ifdef __ALERT_STACK_OVERFLOW
+	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
+#endif
+
 	// error display message
 	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 

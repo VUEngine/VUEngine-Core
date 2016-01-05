@@ -559,6 +559,7 @@ static void Stage_preloadAssets(Stage this)
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity)
 {
 	ASSERT(this, "Stage::registerEntities: null this");
+	ASSERT(positionedEntity, "Stage::registerEntities: null positionedEntity");
 
 	StageEntityDescription* stageEntityDescription = __NEW_BASIC(StageEntityDescription);
 
@@ -749,7 +750,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 // load selected entities
 static void Stage_loadEntities(Stage this)
 {
-	ASSERT(this, "Stage::loadEntities: entity not loaded");
+	ASSERT(this, "Stage::loadEntities: null this");
 
 	VirtualNode node = this->entitiesToLoad->head;
 	
@@ -757,6 +758,8 @@ static void Stage_loadEntities(Stage this)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
+		ASSERT(stageEntityDescription, "Stage::loadEntities: null stageEntityDescription");
+		ASSERT(stageEntityDescription->positionedEntity, "Stage::loadEntities: null positionedEntity");
 		Entity entity = Entity_loadFromDefinitionWithoutInitilization(stageEntityDescription->positionedEntity, this->nextEntityId++);
 
 		if(entity)

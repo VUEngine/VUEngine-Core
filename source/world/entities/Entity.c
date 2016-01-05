@@ -441,7 +441,7 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
 // load an entity from a PositionedEntity definition
 Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* const positionedEntity, s16 id)
 {
-	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
+	ASSERT(positionedEntity, "Entity::loadFromDefinitionWithoutInitilization: null positionedEntity");
 	
 	if(positionedEntity)
 	{
