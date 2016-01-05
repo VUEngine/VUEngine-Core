@@ -46,6 +46,7 @@
 		__VIRTUAL_SET(ClassName, Stage, suspend);														\
 		__VIRTUAL_SET(ClassName, Stage, resume);														\
 		__VIRTUAL_SET(ClassName, Stage, removeChild);													\
+		__VIRTUAL_SET(ClassName, Stage, handlePropagatedMessage);										\
 
 #define Stage_ATTRIBUTES																				\
 																										\
@@ -175,6 +176,7 @@ void Stage_streamAll(Stage this);
 UI Stage_getUI(Stage this);
 void Stage_suspend(Stage this);
 void Stage_resume(Stage this);
+bool Stage_handlePropagatedMessage(Stage this, int message);
 
 
 #endif

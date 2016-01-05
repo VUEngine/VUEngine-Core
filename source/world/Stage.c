@@ -319,7 +319,7 @@ static void Stage_setupUI(Stage this)
 
 	if(this->stageDefinition->uiDefinition.allocator)
 	{
-		// call the appropiate allocator to support inheritance!
+		// call the appropriate allocator to support inheritance
 		this->ui = ((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(&this->stageDefinition->uiDefinition);
 		ASSERT(this->ui, "Stage::setupUI: null ui");
 
@@ -1086,4 +1086,17 @@ void Stage_resume(Stage this)
 		
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 	}
+}
+
+bool Stage_handlePropagatedMessage(Stage this, int message)
+{
+	ASSERT(this, "Stage::handlePropagatedMessage: null this");
+
+    if(this->ui)
+    {
+        // propagate message to ui
+        return Container_propagateMessage(__SAFE_CAST(Container, this->ui), Container_onPropagatedMessage, message);
+    }
+
+    return false;
 }
