@@ -118,7 +118,7 @@
             <p>
                 Since the nature of games is better and more easily represented by the OOP paradigm than a
                 structured one, because the former allows for better code re-usage and flexibility, and since the
-                available compiler for the VB only supports C, for this engine a set of C MACROS have been created
+                available compiler for the VB only supports C,a set of C MACROS have been created for this engine
                 to simulate some of the most visible features provided by C++:
             </p>
             <ul>
@@ -1252,7 +1252,7 @@ const FontROMDef* __FONTS[] =
 
             <!--------------------------------------------------------------------------------------------------------->
 
-            <h4>ASSERT</h4>
+            <h4>ASSERTs</h4>
 
             <p>
                 The engine provides two kinds of ASSERT macros, which check a given statement and throw an exception
@@ -1288,8 +1288,7 @@ const FontROMDef* __FONTS[] =
             <ul>
                 <li>
                     <b>MemoryPool allocation</b><br>
-                    To let you know that the memory is full, otherwise very hard bugs occur which are extremely hard to
-                    track
+                    To let you know that the memory is full, otherwise extremely hard to track bugs occur
                 </li>
                 <li>
                     <b>SpriteManager, registering a new Sprite</b><br>
@@ -1297,9 +1296,31 @@ const FontROMDef* __FONTS[] =
                 </li>
                 <li>
                     <b>ParamTableManager, registering a new Sprite</b><br>
-                    To  let you know that param memory is depleted
+                    To let you know that param memory is depleted
                 </li>
             </ul>
+
+            <h5>Debugging Exceptions</h5>
+
+            <p>
+                When an exception is thrown in-game in debug mode, you're presented with some output that's meant to
+                help you find the exact location that is causing the crash.
+                These are last process, LP and SP as well as the exception message.
+            </p>
+
+            <p>
+                Looking for the message in both your game code as well as the engine would be the quickest thing to do
+                but should give you only a rough idea of the problem's root in most cases.
+
+            </p>
+
+            <p>
+                The LP value shows you the exact location in memory where the crash occured and will lead you to the
+                function that has caused it. Look for the line "@$(OBJDUMP) -S main.elf > machine.asm" in your project's
+                makefile, uncomment it and recompile. The compiler will produce a file called "machine.asm" in the
+                project's root folder. It contains a huge list of all functions, their ASM equivalent and
+                memory locations. Search it for your LP value and it will lead you to the faulty function.
+            </p>
 
 
 
