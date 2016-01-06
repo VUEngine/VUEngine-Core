@@ -34,6 +34,8 @@
 
 #define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
 #define __TOTAL_SIN_ENTRIES				(sizeof(SINLUT) / sizeof(u16))
+#define __GX_LIMIT						511
+//#define __GY_LIMIT						511
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -323,7 +325,8 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
@@ -359,7 +362,8 @@ void BgmapSprite_render(BgmapSprite this)
 		// set the world screen position
 		if(this->renderFlag & __UPDATE_G)
 		{
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 		}
