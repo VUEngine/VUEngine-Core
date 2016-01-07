@@ -367,12 +367,13 @@ void MBgmapSprite_render(MBgmapSprite this)
 			
 			if(!this->mSpriteDefinition->yLoop)
 			{
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.mx);
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.my);
 			}
 			else
 			{
 				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
 			}
+
 			// make sure to not render again
 			while (*_xpstts & XPBSYR);
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
@@ -399,7 +400,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 			
 			if(!this->mSpriteDefinition->yLoop)
 			{
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.mx);
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.my);
 			}
 			else
 			{

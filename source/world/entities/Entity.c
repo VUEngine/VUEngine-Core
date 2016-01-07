@@ -27,6 +27,8 @@
 #include <Optics.h>
 #include <Shape.h>
 #include <CollisionManager.h>
+#include <BgmapSprite.h>
+#include <MBgmapSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -230,11 +232,37 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	s16 halfHeight = 0;
 	s16 halfDepth = 10;
 
-	if(positionedEntity->entityDefinition->spritesDefinitions && positionedEntity->entityDefinition->spritesDefinitions[0] && positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition)
+	if(positionedEntity->entityDefinition->spritesDefinitions && positionedEntity->entityDefinition->spritesDefinitions[0])
 	{
-		halfWidth = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2;
-		halfHeight = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2;
-		halfDepth = 10;
+		if(__TYPE(BgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[0]->allocator && positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition)
+		{
+			halfWidth = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2;
+			halfHeight = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2;
+			halfDepth = 10;
+		}
+		else if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[0]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0])
+		{
+			int j = 0;
+			
+			for(; ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[j]; j++)
+			{	
+				if(halfWidth < ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->cols << 2)
+				{
+					halfWidth = ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->cols << 2;
+				}
+
+				if(halfHeight < ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->rows << 2)
+				{
+					halfHeight = ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->rows << 2;
+				}
+			}
+
+			halfDepth = 10;
+		}
+		else
+		{
+			ASSERT(positionedEntity, "Entity::getSizeFromDefinition: cannot get a texture to calculate size");
+		}
 /*
 		if(positionedEntity->entityDefinition->spritesDefinitions && 
 				positionedEntity->entityDefinition->spritesDefinitions[0] && 
