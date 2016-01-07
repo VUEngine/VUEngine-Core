@@ -48,6 +48,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 const extern VBVec3D* _screenPosition;
 const extern VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
+extern unsigned int volatile* _xpstts;
 
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 
@@ -155,10 +156,18 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
-	int updateSpritePosition = Entity_updateSpritePosition(__SAFE_CAST(Entity, this));
-	
 	// TODO: take into account scaling
-	//int updateSpriteScale = Entity_updateSpriteScale(__SAFE_CAST(Entity, this));
+	/*
+	int updateSpriteScale = Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this));
+	
+	if(updateSpriteScale)
+	{
+		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
+		//return;
+	}
+	*/
+	
+	int updateSpritePosition = Entity_updateSpritePosition(__SAFE_CAST(Entity, this));
 
 	if(updateSpritePosition)
 	{
@@ -222,19 +231,15 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		
 		VPUManager_disableInterrupt(VPUManager_getInstance());
 
+		while (*_xpstts & XPBSYR);
+
 		for(spriteNode = this->managedSprites->head; spriteNode; spriteNode = spriteNode->next)
 		{
 			__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, spriteNode->data));
-
 		}
 		
 		VPUManager_enableInterrupt(VPUManager_getInstance());
 
 		this->previous2DPosition = position2D;
-	}
-	else
-	{
-		// allow children's global positions to be updated properly
-	//	Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 	}
 }

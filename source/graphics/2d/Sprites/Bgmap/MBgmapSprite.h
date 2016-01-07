@@ -38,6 +38,7 @@
 	BgmapSprite_SET_VTABLE(ClassName)											\
 	__VIRTUAL_SET(ClassName, MBgmapSprite, position);							\
 	__VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);						\
+	__VIRTUAL_SET(ClassName, MBgmapSprite, render);														\
 
 #define MBgmapSprite_ATTRIBUTES													\
 																				\
@@ -95,6 +96,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 void MBgmapSprite_destructor(MBgmapSprite this);
 void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position);
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position);
+void MBgmapSprite_render(MBgmapSprite this);
 
 
 #endif

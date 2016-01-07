@@ -26,6 +26,8 @@
 #include <Prototypes.h>
 #include <Game.h>
 #include <MBackgroundManager.h>
+#include <BgmapSprite.h>
+#include <MBgmapSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -90,7 +92,19 @@ void MBackground_initialize(MBackground this)
 		
 		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
 		{	
-			MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+			if(BgmapSprite_new == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			{
+				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+			}
+			else if(MBgmapSprite_new == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			{
+				int j = 0;
+				
+				for(; ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
+				{	
+					MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]);
+				}
+			}
 		}
 	}
 	

@@ -20,6 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MBgmapSprite.h>
+#include <SpriteManager.h>
 #include <Optics.h>
 #include <Screen.h>
 #include <debugConfig.h>
@@ -30,6 +31,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
+#define __GX_LIMIT						511
+//#define __GY_LIMIT						511
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,6 +52,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // globals
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
+extern unsigned int volatile* _xpstts;
 
 static void MBgmapSprite_releaseTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTextures(MBgmapSprite this);
@@ -165,7 +169,7 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 // set sprite's position
 void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 {
-	ASSERT(this, "MBgmapSprite::setPosition: null this");
+	ASSERT(this, "MBgmapSprite::position: null this");
 
 	VBVec3D position3D = *position;
 
@@ -324,6 +328,98 @@ static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 			this->sizeMultiplier.x = 8;
 			this->sizeMultiplier.y = 1;
 			break;
+	}
+}
+
+// render a world layer with the map's information
+void MBgmapSprite_render(MBgmapSprite this)
+{
+	ASSERT(this, "BgmapSprite::render: null this");
+	ASSERT(this->texture, "BgmapSprite::render: null texture");
+
+	// if render flag is set
+	if(this->renderFlag)
+	{
+		static WORLD* worldPointer = NULL;
+		worldPointer = &WA[this->worldLayer];
+
+		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BgmapSprite::render: freeLayer >= this->worldLayer");
+
+		if(__UPDATE_HEAD == this->renderFlag)
+		{
+			worldPointer->mx = this->drawSpec.textureSource.mx;
+			worldPointer->mp = this->drawSpec.textureSource.mp;
+			worldPointer->my = this->drawSpec.textureSource.my;
+			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
+			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+
+			// set the world size according to the zoom
+			if(!this->mSpriteDefinition->xLoop)
+			{
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1 - worldPointer->mx;
+			}
+			else
+			{
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
+			}
+			
+			if(!this->mSpriteDefinition->yLoop)
+			{
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.mx);
+			}
+			else
+			{
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
+			}
+			// make sure to not render again
+			while (*_xpstts & XPBSYR);
+			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
+			return;
+		}
+		
+		// set the world screen position
+		if(this->renderFlag & __UPDATE_M)
+		{
+			worldPointer->mx = this->drawSpec.textureSource.mx;
+			worldPointer->mp = this->drawSpec.textureSource.mp;
+			worldPointer->my = this->drawSpec.textureSource.my;
+
+			// set the world size according to the zoom
+			if(!this->mSpriteDefinition->xLoop)
+			{
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1 - worldPointer->mx;
+			}
+			else
+			{
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
+			}
+			
+			if(!this->mSpriteDefinition->yLoop)
+			{
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.mx);
+			}
+			else
+			{
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
+			}
+			
+			worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
+		}
+		
+		// set the world screen position
+		if(this->renderFlag & __UPDATE_G)
+		{
+			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
+			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+		}
+
+		// make sure to not render again
+		this->renderFlag = false;
 	}
 }
 

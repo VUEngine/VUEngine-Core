@@ -243,10 +243,10 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(sprite, worldLayer2);
 
 
-				while (*_xpstts & XPBSYR);
+				//while (*_xpstts & XPBSYR);
 
-				WORLD_HEAD(worldLayer1, 0x0000);
-				WORLD_HEAD(worldLayer2, 0x0000);
+				//WORLD_HEAD(worldLayer1, 0x0000);
+				//WORLD_HEAD(worldLayer2, 0x0000);
 
 				if(isSpriteHidden)
 				{
@@ -505,6 +505,8 @@ void SpriteManager_render(SpriteManager this)
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
 
+	while (*_xpstts & XPBSYR);
+	
 	for(; node; node = node->previous)
 	{
 		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));

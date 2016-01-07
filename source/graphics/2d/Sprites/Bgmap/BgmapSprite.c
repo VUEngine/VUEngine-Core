@@ -314,17 +314,14 @@ void BgmapSprite_render(BgmapSprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-		//while (*_xpstts & XPBSYR);
-
-//		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BgmapSprite::render: freeLayer >= this->worldLayer");
+		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BgmapSprite::render: freeLayer >= this->worldLayer");
 
 		if(__UPDATE_HEAD == this->renderFlag)
 		{
-			while (*_xpstts & XPBSYR);
-
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
+		
 			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
 			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
@@ -345,7 +342,7 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 			
 			// make sure to not render again
-			//while (*_xpstts & XPBSYR);
+			while (*_xpstts & XPBSYR);
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
