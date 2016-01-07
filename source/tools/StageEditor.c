@@ -750,7 +750,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		ASSERT(this->userObjectSprite, "AnimationEditor::createSprite: null animatedSprite");
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationEditor::createSprite: null texture");
 	
-		VBVec2D spritePosition = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
 		spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 		spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 			

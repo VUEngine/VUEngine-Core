@@ -800,9 +800,9 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(sprite), x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->x), x + 10, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->y), x + 20, y, NULL);
-		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL_UNSAFE(const VBVec3D*, Sprite, getPosition, sprite)->z + Sprite_getDisplacement(sprite).z), x + 30, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D, Sprite, getPosition, sprite).x), x + 10, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D, Sprite, getPosition, sprite).y), x + 20, y, NULL);
+		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL_UNSAFE(const VBVec3D, Sprite, getPosition, sprite).z + Sprite_getDisplacement(sprite).z), x + 30, y, NULL);
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 		Debug_lightUpGame(this);
     }

@@ -165,11 +165,11 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 				Sprite nextSprite = __SAFE_CAST(Sprite, nextNode->data);
-				const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
-				const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
+				VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+				VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, nextSprite);
 
 				// check if z positions are swapped
-				if(FIX19_13TOI(nextPosition->z) + nextSprite->displacement.z < FIX19_13TOI(position->z) + sprite->displacement.z)
+				if(FIX19_13TOI(nextPosition.z) + nextSprite->displacement.z < FIX19_13TOI(position.z) + sprite->displacement.z)
 				{
 					// get each entity's layer
 					u8 worldLayer1 = sprite->worldLayer;
@@ -221,11 +221,11 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, this->node->data);
 			Sprite nextSprite = __SAFE_CAST(Sprite, this->nextNode->data);
-			const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
-			const VBVec2D* nextPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, nextSprite);
+			VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+			VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, nextSprite);
 	
 			// check if z positions are swapped
-			if(nextPosition->z + nextSprite->displacement.z < position->z + sprite->displacement.z)
+			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
 			{
 				// get each entity's layer
 				u8 worldLayer1 = sprite->worldLayer;

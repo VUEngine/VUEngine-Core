@@ -143,6 +143,10 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 		}
 		
 		this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
+		ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
+
+		this->textureXOffset = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+		this->textureYOffset = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 	}
 }
 
@@ -179,87 +183,143 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 	position3D.x -= this->halfWidth;
 	position3D.y -= this->halfHeight;
 	
-	fix19_13 previousZPosition = this->drawSpec.position.z;
-
-	VBVec3D position2D;
+	VBVec2D position2D;
 	
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 	
-	this->drawSpec.position.x = 0;
-	this->drawSpec.position.y = 0;
-	this->drawSpec.position.z = position->z;
-
-	this->drawSpec.textureSource.mx = (int)(0.5f + FIX19_13TOF(-position2D.x));
-	this->drawSpec.textureSource.my = (int)(0.5f + FIX19_13TOF(-position2D.y));
-
-//	this->drawSpec.textureSource.mx = FIX19_13TOI(-position2D.x);
-//	this->drawSpec.textureSource.my = FIX19_13TOI(-position2D.y);
-		
-	if(previousZPosition != this->drawSpec.position.z)
-	{
-		this->drawSpec.position.z = position3D.z;
-
-		// calculate sprite's parallax
-		__VIRTUAL_CALL(void, Sprite, calculateParallax, __SAFE_CAST(Sprite, this), this->drawSpec.position.z);
-	}
-
-	const Point* const axisCapped = MBgmapSprite_capPosition(this);
-	
-	if(axisCapped->x)
-	{
-		this->drawSpec.position.x = ITOFIX19_13(-axisCapped->x);
-		this->renderFlag |= __UPDATE_G;
-	}
-	
-	if(axisCapped->y)
-	{
-		this->drawSpec.position.y = ITOFIX19_13(-axisCapped->y);
-		this->renderFlag |= __UPDATE_G;
-	}
-	
-	this->renderFlag |= __UPDATE_M;
-
-	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3: 0;
+	MBgmapSprite_setPosition(this, &position2D);
 }
 
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
 	
-	this->drawSpec.position.x = 0;
-	this->drawSpec.position.y = 0;
+	if(this->mSpriteDefinition->xLoop)
+	{
+		this->drawSpec.position.x = 0;
+		this->drawSpec.textureSource.mx = (int)(0.5f + FIX19_13TOF(-position->x));
+	}
+	else
+	{
+		this->drawSpec.textureSource.mx = this->textureXOffset;
 
+		if(ITOFIX19_13(__SCREEN_WIDTH) < position->x + this->displacement.x)
+		{
+			this->drawSpec.position.x = ITOFIX19_13(__SCREEN_WIDTH);
+			this->drawSpec.textureSource.mx = 0;
+		}
+		else if(0 > position->x + this->displacement.x)
+		{
+			this->drawSpec.position.x = 0;
+			this->drawSpec.textureSource.mx += (int)(0.5f - FIX19_13TOF(position->x + this->displacement.x));
+		}
+		else
+		{
+			this->drawSpec.position.x = position->x + this->displacement.x;
+		}
+	}
+
+	if(this->mSpriteDefinition->yLoop)
+	{
+		this->drawSpec.position.y = 0;
+		this->drawSpec.textureSource.my = (int)(0.5f + FIX19_13TOF(-position->y));
+	}
+	else
+	{
+		this->drawSpec.textureSource.my = this->textureYOffset;
+
+		if(ITOFIX19_13(__SCREEN_HEIGHT) < position->y + this->displacement.y)
+		{
+			this->drawSpec.position.y = ITOFIX19_13(__SCREEN_HEIGHT);
+		}
+		else if(0 > position->y + this->displacement.y)
+		{
+			this->drawSpec.position.y = 0;
+			this->drawSpec.textureSource.my += (int)(0.5f - FIX19_13TOF(position->y + this->displacement.y));
+		}
+		else
+		{
+			this->drawSpec.position.y = position->y + this->displacement.y;
+		}
+	}
+	
 	fix19_13 previousZPosition = this->drawSpec.position.z;
 	this->drawSpec.position.z = position->z;
 
-	this->drawSpec.textureSource.mx = FIX19_13TOI(-position->x);
-	this->drawSpec.textureSource.my = FIX19_13TOI(-position->y);
-		
 	if(previousZPosition != this->drawSpec.position.z)
 	{
 		// calculate sprite's parallax
 		__VIRTUAL_CALL(void, Sprite, calculateParallax, __SAFE_CAST(Sprite, this), this->drawSpec.position.z);
 	}
 
-	const Point* const axisCapped = MBgmapSprite_capPosition(this);
-	
-	if(axisCapped->x)
-	{
-		this->drawSpec.position.x = ITOFIX19_13(-axisCapped->x);
-		this->renderFlag |= __UPDATE_G;
-	}
-	
-	if(axisCapped->y)
-	{
-		this->drawSpec.position.y = ITOFIX19_13(-axisCapped->y);
-		this->renderFlag |= __UPDATE_G;
-	}
-	
+	this->renderFlag |= __UPDATE_G;
 	this->renderFlag |= __UPDATE_M;
+}
 
-	this->drawSpec.textureSource.my += 1 == this->sizeMultiplier.y? BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3: 0;
+void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement)
+{
+	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
 
+	if(this->mSpriteDefinition->xLoop)
+	{
+		this->drawSpec.textureSource.mx -= displacement->x;
+	}
+	else
+	{
+		if(this->drawSpec.textureSource.mx > this->textureXOffset)
+		{
+			this->drawSpec.textureSource.mx -= FIX19_13TOI(displacement->x);
+		}
+		else if(ITOFIX19_13(__SCREEN_WIDTH) < this->drawSpec.position.x + displacement->x)
+		{
+			this->drawSpec.position.x = ITOFIX19_13(__SCREEN_WIDTH);
+			this->drawSpec.textureSource.mx = 0;
+		}
+		else if(0 > this->drawSpec.position.x + displacement->x)
+		{
+			this->drawSpec.position.x = 0;
+			this->drawSpec.textureSource.mx -= FIX19_13TOI(displacement->x);
+		}
+		else
+		{
+			this->drawSpec.position.x += displacement->x;
+			this->drawSpec.textureSource.mx = this->textureXOffset;
+		}
+	}
+
+	if(this->mSpriteDefinition->yLoop)
+	{
+		this->drawSpec.textureSource.my -= displacement->y;
+	}
+	else
+	{
+		if(this->drawSpec.textureSource.my > this->textureYOffset)
+		{
+			this->drawSpec.textureSource.my -= FIX19_13TOI(displacement->y);
+		}
+		else if(ITOFIX19_13(__SCREEN_HEIGHT) < this->drawSpec.position.y + displacement->y)
+		{
+			this->drawSpec.position.y = ITOFIX19_13(__SCREEN_HEIGHT);
+			this->drawSpec.textureSource.my = 0;
+		}
+		else if(0 > this->drawSpec.position.y + displacement->y)
+		{
+			this->drawSpec.position.y = 0;
+			this->drawSpec.textureSource.my -= FIX19_13TOI(displacement->y);
+		}
+		else
+		{
+			this->drawSpec.position.y += displacement->y;
+			this->drawSpec.textureSource.my = this->textureYOffset;
+		}
+	}
+
+	this->drawSpec.position.z += displacement->z;
+	this->drawSpec.position.parallax += displacement->parallax;
+
+	this->renderFlag |= __UPDATE_G;
+	this->renderFlag |= __UPDATE_M;
 }
 
 // calculate the size multiplier
@@ -350,28 +410,29 @@ void MBgmapSprite_render(MBgmapSprite this)
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
-			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);;
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 
-			// set the world size according to the zoom
+			// set the world size
 			if(!this->mSpriteDefinition->xLoop)
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1 - worldPointer->mx;
+				int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
+				worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
 			}
 			else
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
+				worldPointer->w = __SCREEN_WIDTH;
 			}
-			
+
 			if(!this->mSpriteDefinition->yLoop)
 			{
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.my);
+				int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
+				worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
 			}
 			else
 			{
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
+				worldPointer->h = __SCREEN_HEIGHT;
 			}
 
 			// make sure to not render again
@@ -382,47 +443,71 @@ void MBgmapSprite_render(MBgmapSprite this)
 		}
 		
 		// set the world screen position
+		if(this->renderFlag & __UPDATE_G)
+		{
+			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
+			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
+		}
+
+		// set the world screen position
 		if(this->renderFlag & __UPDATE_M)
 		{
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
 
-			// set the world size according to the zoom
+			// set the world size
 			if(!this->mSpriteDefinition->xLoop)
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1 - worldPointer->mx;
+				int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
+				worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
 			}
 			else
 			{
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
+				worldPointer->w = __SCREEN_WIDTH;
 			}
-			
+
 			if(!this->mSpriteDefinition->yLoop)
 			{
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->drawSpec.textureSource.my);
+				int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
+				worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
 			}
 			else
 			{
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
+				worldPointer->h = __SCREEN_HEIGHT;
 			}
-			
-			worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
-		}
-		
-		// set the world screen position
-		if(this->renderFlag & __UPDATE_G)
-		{
-			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
-			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 		}
 
 		// make sure to not render again
 		this->renderFlag = false;
 	}
 }
+
+VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
+{
+	ASSERT(this, "BgmapSprite::getPosition: null this");
+	
+	/*
+	VBVec2D position;
+	
+	if(this->cappedPosition)
+	{
+		position.x = this->drawSpec.position.x;
+		position.y = this->drawSpec.position.y;
+	}
+	else
+	{
+		position.x = this->drawSpec.textureSource.mx;
+		position.y = this->drawSpec.textureSource.my;
+	}
+
+	position.z = this->drawSpec.position.z;
+	position.parallax = this->drawSpec.position.parallax;
+*/
+	return this->drawSpec.position;
+}
+
 
 // calculate total sprite's size
 static void MBgmapSprite_calculateSize(MBgmapSprite this)
@@ -443,51 +528,4 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 		this->size.y = (texture? Texture_getRows(texture): 64) * 8 * this->sizeMultiplier.x;
 	}
 }
-
-// calculate the position
-static const Point* const MBgmapSprite_capPosition(MBgmapSprite this)
-{
-	ASSERT(this, "MBgmapSprite::capPosition: null this");
-
-	static Point axisCapped = 
-	{
-		0, 0
-	};
-	
-	axisCapped.x = 0;
-	axisCapped.y = 0;
-
-	if(!this->mSpriteDefinition->xLoop)
-	{
-		if(this->drawSpec.textureSource.mx > this->size.x - __SCREEN_WIDTH)
-		{
-			axisCapped.x = this->drawSpec.textureSource.mx - (this->size.x - __SCREEN_WIDTH);
-			this->drawSpec.textureSource.mx = this->size.x - __SCREEN_WIDTH;
-		}
-		else if(0 > this->drawSpec.textureSource.mx)
-		{
-			axisCapped.x = this->drawSpec.textureSource.mx;
-			this->drawSpec.textureSource.mx = 0;
-		}
-	}
-
-	if(!this->mSpriteDefinition->yLoop)
-	{
-		int height = Texture_getRows(this->texture) << 3;
-		
-		if(this->drawSpec.textureSource.my > this->size.y - height)
-		{
-			axisCapped.y = this->drawSpec.textureSource.my - (this->size.y - height);
-			this->drawSpec.textureSource.my = this->size.y - height;
-		}
-		else if(0 > this->drawSpec.textureSource.my)
-		{
-			axisCapped.y = this->drawSpec.textureSource.my;
-			this->drawSpec.textureSource.my = 0;
-		}
-	}
-
-	return &axisCapped;
-}
-
 

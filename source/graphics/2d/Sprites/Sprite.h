@@ -49,6 +49,7 @@
 	__VIRTUAL_DEC(render);																				\
 	__VIRTUAL_DEC(getPosition);																			\
 	__VIRTUAL_DEC(setPosition);																			\
+	__VIRTUAL_DEC(addDisplacement);																		\
 	__VIRTUAL_DEC(position);																			\
 	__VIRTUAL_DEC(resize);																				\
 	__VIRTUAL_DEC(rotate);																				\

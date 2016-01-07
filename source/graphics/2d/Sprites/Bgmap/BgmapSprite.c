@@ -241,11 +241,11 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	BgmapSprite_invalidateParamTable(this);
 }
 
-const VBVec2D* BgmapSprite_getPosition(BgmapSprite this)
+VBVec2D BgmapSprite_getPosition(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
 
-	return &this->drawSpec.position;
+	return this->drawSpec.position;
 }
 
 void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
@@ -397,6 +397,19 @@ void BgmapSprite_render(BgmapSprite this)
 		this->renderFlag = false;
 	}
 }
+
+void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
+{
+	ASSERT(this, "BgmapSprite::addDisplacement: null this");
+
+	this->drawSpec.position.x += displacement->x;
+	this->drawSpec.position.y += displacement->y;
+	this->drawSpec.position.z += displacement->z;
+	this->drawSpec.position.parallax += displacement->parallax;
+	
+	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this), __UPDATE_G);
+}
+
 
 // get map's param table address
 u32 BgmapSprite_getParam(BgmapSprite this)

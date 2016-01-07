@@ -61,6 +61,7 @@
 	__VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasTransformations);									\
 	__VIRTUAL_SET(ClassName, BgmapSprite, resize);														\
 	__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);											\
+	__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);												\
 
 #define BgmapSprite_ATTRIBUTES																			\
 																										\
@@ -120,7 +121,7 @@ void BgmapSprite_destructor(BgmapSprite this);
 Scale BgmapSprite_getScale(BgmapSprite this);
 void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
-const VBVec2D* BgmapSprite_getPosition(BgmapSprite this);
+VBVec2D BgmapSprite_getPosition(BgmapSprite this);
 void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position);
 void BgmapSprite_position(BgmapSprite this, const VBVec3D* position);
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation);
@@ -132,6 +133,7 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this);
 u32 BgmapSprite_getParam(BgmapSprite this);
 void BgmapSprite_setParam(BgmapSprite this, u32 param);
 void BgmapSprite_render(BgmapSprite this);
+void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement);
 
 
 //---------------------------------------------------------------------------------------------------------

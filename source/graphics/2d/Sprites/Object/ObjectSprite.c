@@ -143,11 +143,11 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 	}
 }
 
-const VBVec2D* ObjectSprite_getPosition(ObjectSprite this)
+VBVec2D ObjectSprite_getPosition(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getPosition: null this");
 
-	return &this->position;
+	return this->position;
 }
 
 void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
@@ -382,6 +382,19 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 
 	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)): 0;
 }
+
+void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement)
+{
+	ASSERT(this, "ObjectSprite::addDisplacement: null this");
+
+	this->position.x += displacement->x;
+	this->position.y += displacement->y;
+	this->position.z += displacement->z;
+	this->position.parallax += displacement->parallax;
+
+	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this), __UPDATE_G);
+}
+
 
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this)
 {

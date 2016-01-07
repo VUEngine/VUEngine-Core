@@ -55,7 +55,8 @@
 	__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);											\
 	__VIRTUAL_SET(ClassName, ObjectSprite, show);														\
 	__VIRTUAL_SET(ClassName, ObjectSprite, hide);														\
-	__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);													\
+	__VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);													\
+	__VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);												\
 
 #define ObjectSprite_ATTRIBUTES																			\
 																										\
@@ -112,7 +113,7 @@ __CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinitio
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 void ObjectSprite_destructor(ObjectSprite this);
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
-const VBVec2D* ObjectSprite_getPosition(ObjectSprite this);
+VBVec2D ObjectSprite_getPosition(ObjectSprite this);
 void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);
 void ObjectSprite_position(ObjectSprite this, const VBVec3D* position3D);
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
@@ -123,6 +124,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
 void ObjectSprite_show(ObjectSprite this);
 void ObjectSprite_hide(ObjectSprite this);
 u8 ObjectSprite_getWorldLayer(ObjectSprite this);
+void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement);
 
 
 #endif

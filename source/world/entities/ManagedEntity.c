@@ -25,6 +25,7 @@
 #include <Shape.h>
 #include <CollisionManager.h>
 #include <VPUManager.h>
+#include <MBgmapSprite.h>
 #include <debugConfig.h>
 
 
@@ -101,6 +102,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 
 	if(child)
 	{
+		/*
 		if(child->sprites)
 		{
 			VirtualNode spriteNode = child->sprites->head;
@@ -109,7 +111,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 				VirtualList_pushBack(this->managedSprites, sprite);
-				VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
+				VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 				
 				// eliminate fractions to avoid rounding problems later
 				position.x &= 0xFFFFE000;
@@ -119,6 +121,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &position);
 			}
 		}
+		*/
 		
 		if(child->children)
 		{
@@ -156,6 +159,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
+	return Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
+
 	// TODO: take into account scaling
 	/*
 	int updateSpriteScale = Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this));
@@ -179,7 +184,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 			// call base class's transform method
 			Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 		}
-
+		
 		// concatenate transform
 		this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
 		this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
@@ -210,23 +215,18 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 		VirtualNode spriteNode = this->managedSprites->head;
 		
-		fix19_13 xDisplacement = position2D.x - this->previous2DPosition.x;
-		fix19_13 yDisplacement = position2D.y - this->previous2DPosition.y;
+		VBVec2D displacement;
 
+		displacement.x = position2D.x - this->previous2DPosition.x;
+		displacement.y = position2D.y - this->previous2DPosition.y;
+		displacement.z = 0;
+		displacement.parallax = 0;
+				
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			
-			VBVec2D position = *__VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
-			
-			position.x += xDisplacement;
-			position.y += yDisplacement;
-//			position.z += position2D.z - this->previous2DPosition.z;
-	
-			// don't round z coordinate since it is used for layer sorting
-			__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &position);
-			
-			Sprite_setRenderFlag(sprite, __UPDATE_G);
+			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
 		}
 		
 		VPUManager_disableInterrupt(VPUManager_getInstance());
@@ -242,4 +242,9 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 		this->previous2DPosition = position2D;
 	}
+	
+	this->invalidateGlobalPosition.x = false;
+	this->invalidateGlobalPosition.y = false;
+	this->invalidateGlobalPosition.z = false;
+
 }

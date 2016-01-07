@@ -892,12 +892,12 @@ bool Entity_isVisible(Entity this, int pad)
 
 		ASSERT(sprite, "Entity:isVisible: null sprite");
 		
-		const VBVec2D* spritePosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, sprite);
-		lowLimit -= spritePosition->parallax;
-		highLimit += spritePosition->parallax;
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+		lowLimit -= spritePosition.parallax;
+		highLimit += spritePosition.parallax;
 		
-		x = FIX19_13TOI(spritePosition->x);
-		y = FIX19_13TOI(spritePosition->y);
+		x = FIX19_13TOI(spritePosition.x);
+		y = FIX19_13TOI(spritePosition.y);
 		z = FIX19_13TOI(this->transform.globalPosition.z - _screenPosition->z);
 	}
 	else 

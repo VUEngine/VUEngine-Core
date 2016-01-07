@@ -221,18 +221,18 @@ void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, in
 	ASSERT(this, "ObjectSpriteContainer::setDirection: null this");
 }
 
-const VBVec2D* ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
+VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getPosition: null this");
 
-	static VBVec2D position =
+	VBVec2D position =
 	{
 		0, 0, 0, 0
 	};
 	
 	position.z = this->z;
 
-	return &position;
+	return position;
 }
 
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position)
@@ -306,11 +306,11 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 		{
 			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
 			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
-			const VBVec2D* position = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
-			const VBVec2D* previousPosition = __VIRTUAL_CALL_UNSAFE(const VBVec2D*, Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
+			VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
+			VBVec2D previousPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
 	
 			// check if z positions are swapped
-			if(previousPosition->z + Sprite_getDisplacement(__SAFE_CAST(Sprite, previousSprite)).z > position->z + Sprite_getDisplacement(__SAFE_CAST(Sprite, sprite)).z)
+			if(previousPosition.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, previousSprite)).z > position.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, sprite)).z)
 			{
 				if(this->availableObjects >= ObjectSprite_getTotalObjects(sprite))
 				{
@@ -460,6 +460,24 @@ int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
 	
 	return this->firstObjectIndex + this->totalObjects;
 }
+
+void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBVec2D* displacement)
+{
+	ASSERT(this, "BgmapSprite::addDisplacement: null this");
+
+	if(this->objectSprites)
+	{
+		VirtualNode node = this->objectSprites->head;
+
+		for(; node; node = node->next)
+		{
+			__VIRTUAL_CALL(void, Sprite, addDisplacement, __SAFE_CAST(Sprite, node->data), displacement);
+		}
+	}
+	
+	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this), __UPDATE_G);
+}
+
 
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 {
