@@ -434,13 +434,16 @@ void MBgmapSprite_render(MBgmapSprite this)
 				worldPointer->h = __SCREEN_HEIGHT;
 			}
 
-			// make sure to not render again
-			while (*_xpstts & XPBSYR);
+			// wait for the VIP to be idle
+//			while (*_xpstts & XPBSYR);
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
 		}
 		
+		// wait for the VIP to be idle
+//		while (*_xpstts & XPBSYR);
+
 		// set the world screen position
 		if(this->renderFlag & __UPDATE_G)
 		{

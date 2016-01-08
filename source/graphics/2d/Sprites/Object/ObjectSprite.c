@@ -208,8 +208,8 @@ void ObjectSprite_render(ObjectSprite this)
 		int xDirection = this->head & 0x2000 ? -1 : 1;
 		int yDirection = this->head & 0x1000 ? -1 : 1;
 
-		int x = FIX19_13TOI(this->position.x) - FIX19_13TOI(this->halfWidth) * xDirection + FIX19_13TOI(this->displacement.x);
-		int y = FIX19_13TOI(this->position.y) - FIX19_13TOI(this->halfHeight) * yDirection + FIX19_13TOI(this->displacement.y);
+		int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x);
+		int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y);
 
 		int i = 0;
 		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);

@@ -38,6 +38,7 @@
 		__VIRTUAL_DEC(die);																				\
 		__VIRTUAL_DEC(takeHitFrom);																		\
 		__VIRTUAL_DEC(getAxisFreeForMovement);															\
+		__VIRTUAL_DEC(updateSourroundingFriction);															\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedInGameEntity_SET_VTABLE(ClassName)														\
@@ -58,6 +59,7 @@
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);												\
+		__VIRTUAL_SET(ClassName, Actor, updateSourroundingFriction);												\
 
 
 #define Actor_ATTRIBUTES																				\
@@ -132,6 +134,7 @@ void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force);
+void Actor_updateSourroundingFriction(Actor this);
 
 
 #endif

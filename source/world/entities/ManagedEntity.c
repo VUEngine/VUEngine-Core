@@ -229,6 +229,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
 		}
 		
+		/*
 		VPUManager_disableInterrupt(VPUManager_getInstance());
 
 		while (*_xpstts & XPBSYR);
@@ -239,7 +240,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		}
 		
 		VPUManager_enableInterrupt(VPUManager_getInstance());
-
+*/
 		this->previous2DPosition = position2D;
 	}
 	

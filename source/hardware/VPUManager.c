@@ -113,7 +113,7 @@ void VPUManager_enableInterrupt(VPUManager this)
 	ASSERT(this, "VPUManager::enableInterrupt: null this");
 
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-	VIP_REGS[INTENB]= XPEND;
+	VIP_REGS[INTENB]= FRAMESTART;
 }
 
 // turn display on

@@ -50,7 +50,6 @@ const extern VBVec3D* _screenDisplacement;
 static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
-static void Actor_updateSourroundingFriction(Actor this);
 static void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 
 
@@ -262,7 +261,7 @@ static void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
 }
 
 // retrieve friction of colliding objects
-static void Actor_updateSourroundingFriction(Actor this)
+void Actor_updateSourroundingFriction(Actor this)
 {
 	ASSERT(this, "Actor::updateSourroundingFriction: null this");
 	ASSERT(this->body, "Actor::updateSourroundingFriction: null body");
@@ -595,7 +594,7 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingSpatialObjec
 
 		Actor_checkIfMustBounce(this, axisOfAllignement);
 		
-		Actor_updateSourroundingFriction(this);
+		__VIRTUAL_CALL(void, Actor, updateSourroundingFriction, this);
 	}
 }
 
@@ -625,7 +624,7 @@ static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingS
 		
 		Actor_checkIfMustBounce(this, axisOfCollision);
 		
-		Actor_updateSourroundingFriction(this);
+		__VIRTUAL_CALL(void, Actor, updateSourroundingFriction, this);
 	}
 }
 
@@ -690,5 +689,5 @@ void Actor_addForce(Actor this, const Force* force)
 	Body_addForce(this->body, &effectiveForceToApply);
 	
 	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
-	Actor_updateSourroundingFriction(this);
+	__VIRTUAL_CALL(void, Actor, updateSourroundingFriction, this);
 }

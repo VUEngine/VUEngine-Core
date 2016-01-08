@@ -242,12 +242,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 				Sprite_setWorldLayer(sprite, worldLayer2);
 
-
-				//while (*_xpstts & XPBSYR);
-
-				//WORLD_HEAD(worldLayer1, 0x0000);
-				//WORLD_HEAD(worldLayer2, 0x0000);
-
 				if(isSpriteHidden)
 				{
 					Sprite_hide(sprite);
@@ -483,7 +477,7 @@ void SpriteManager_setLastLayer(SpriteManager this)
 //	NM_ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
-	while (*_xpstts & XPBSYR);
+//	while (*_xpstts & XPBSYR);
 	
 	Printing_render(Printing_getInstance(), this->freeLayer);
 	
@@ -505,12 +499,17 @@ void SpriteManager_render(SpriteManager this)
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
 
+	// disable VIP's drawing
 	while (*_xpstts & XPBSYR);
-	
+	VIP_REGS[XPCTRL] |= XPRST;
+
 	for(; node; node = node->previous)
 	{
 		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
 	}
+
+	// enable VIP's drawing
+	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 
 	VPUManager_enableInterrupt(VPUManager_getInstance());
 }

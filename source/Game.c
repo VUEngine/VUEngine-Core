@@ -742,7 +742,7 @@ static void Game_updateRendering(Game this)
 #endif
 	// render sprites
 	SpriteManager_render(this->spriteManager);
-	
+
 #ifdef __PRINT_FRAMERATE
 	// increase the frame rate
 	FrameRate_increaseRenderFPS(this->frameRate);
