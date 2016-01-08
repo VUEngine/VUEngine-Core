@@ -97,7 +97,7 @@ typedef struct BgmapSpriteDefinition
 	TextureDefinition* textureDefinition;
 
 	// displacement modifier to achieve better control over display
-	Displacement displacement;
+	VBVec3D displacement;
 
 	// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
