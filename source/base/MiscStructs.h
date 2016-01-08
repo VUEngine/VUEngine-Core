@@ -157,15 +157,6 @@ typedef struct Direction
 
 } Direction;
 
-// displacement vector
-typedef struct Displacement
-{
-	fix19_13 x;
-	fix19_13 y;
-	fix19_13 z;
-
-} Displacement;
-
 typedef struct DirectionChange
 {
 	s8 x: 2;
@@ -238,7 +229,7 @@ typedef struct VBVec2D
 	fix19_13 y;
 
 	// since parallax may be the same given different z positions
-	// it's needed to have this value to being able to ordern WORLD layers
+	// it's needed to have this value to being able to order WORLD layers
 	fix19_13 z;
 	int parallax;
 

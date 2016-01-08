@@ -57,7 +57,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, O
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->displacement = (Displacement){0, 0, 0};
+	this->displacement = (VBVec3D){0, 0, 0};
 }
 
 // class's destructor
@@ -239,7 +239,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
 }
 
 // get displacement
-Displacement Sprite_getDisplacement(Sprite this)
+VBVec3D Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getRenderFlag: null this");
 

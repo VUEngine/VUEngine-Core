@@ -360,7 +360,7 @@ void BgmapSprite_render(BgmapSprite this)
 		if(this->renderFlag & __UPDATE_G)
 		{
 			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
+			worldPointer->gx = gx > __GX_LIMIT ? __GX_LIMIT : gx < -__GX_LIMIT ? -__GX_LIMIT : gx;
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 		}

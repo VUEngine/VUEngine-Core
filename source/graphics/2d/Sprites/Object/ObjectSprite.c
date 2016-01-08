@@ -199,22 +199,22 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(0 <= this->objectIndex, "ObjectSprite::render: 0 > this->objectIndex");
 	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
-	//if render flag is set
+	// if render flag is set
 	if(this->renderFlag && 0 <= this->objectIndex)
 	{
 		int cols = Texture_getCols(__SAFE_CAST(Texture, this->texture));
 		int rows = Texture_getRows(__SAFE_CAST(Texture, this->texture));
 
-		int xDirection = this->head & 0x2000? -1: 1;
-		int yDirection = this->head & 0x1000? -1: 1;
+		int xDirection = this->head & 0x2000 ? -1 : 1;
+		int yDirection = this->head & 0x1000 ? -1 : 1;
 
-		int x = FIX19_13TOI(this->position.x) - FIX19_13TOI(this->halfWidth) * xDirection + this->displacement.x;
-		int y = FIX19_13TOI(this->position.y) - FIX19_13TOI(this->halfHeight) * yDirection + this->displacement.y;
-		
+		int x = FIX19_13TOI(this->position.x) - FIX19_13TOI(this->halfWidth) * xDirection + FIX19_13TOI(this->displacement.x);
+		int y = FIX19_13TOI(this->position.y) - FIX19_13TOI(this->halfHeight) * yDirection + FIX19_13TOI(this->displacement.y);
+
 		int i = 0;
-		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.z) & __OBJECT_CHAR_HIDE_MASK);
+		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
-		
+
 		for(; i < rows; i++)
 		{
 			int j = 0;
@@ -223,8 +223,8 @@ void ObjectSprite_render(ObjectSprite this)
 				s32 objectIndex = this->objectIndex + i * cols + j;
 				int outputX = x + (j << 3)  * xDirection;
 				
-				// add 8 to the calculation to avoid char's cut off when scrolling
-				// hide the object if ouside screen's bounds
+				// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
+				// screen's bounds
 				if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
 				{
 					OAM[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;

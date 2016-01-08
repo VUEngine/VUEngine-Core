@@ -105,7 +105,7 @@
 	bool renderFlag;																					\
 																										\
 	/* displacement modifier to achieve better control over display */									\
-	Displacement displacement;																			\
+	VBVec3D displacement;																			\
 
 __CLASS(Sprite);
 
@@ -200,7 +200,7 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame);
 s8 Sprite_getFrameDelay(Sprite this);
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
 void Sprite_writeAnimation(Sprite this);
-Displacement Sprite_getDisplacement(Sprite this);
+VBVec3D Sprite_getDisplacement(Sprite this);
 void Sprite_rotate(Sprite this, const Rotation* rotation);
 
 
