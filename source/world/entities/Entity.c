@@ -887,18 +887,41 @@ bool Entity_isVisible(Entity this, int pad)
 	
 	if(this->sprites)
 	{
-		static Sprite sprite = NULL;
-		sprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head));
+		VirtualNode spriteNode = this->sprites->head;
+		
+		for(; spriteNode; spriteNode = spriteNode->next)
+		{
+			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+			ASSERT(sprite, "Entity:isVisible: null sprite");
 
-		ASSERT(sprite, "Entity:isVisible: null sprite");
-		
-		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-		lowLimit -= spritePosition.parallax;
-		highLimit += spritePosition.parallax;
-		
-		x = FIX19_13TOI(spritePosition.x);
-		y = FIX19_13TOI(spritePosition.y);
-		z = FIX19_13TOI(this->transform.globalPosition.z - _screenPosition->z);
+			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+			lowLimit -= spritePosition.parallax;
+			highLimit += spritePosition.parallax;
+			
+			x = FIX19_13TOI(spritePosition.x);
+			y = FIX19_13TOI(spritePosition.y);
+			z = FIX19_13TOI(this->transform.globalPosition.z - _screenPosition->z);
+			// check x visibility
+			if(x + this->size.x > lowLimit && x < highLimit)
+			{
+				lowLimit = -pad;
+				highLimit = __SCREEN_HEIGHT + pad;
+	
+				// check y visibility
+				if(y + this->size.y > lowLimit && y < highLimit)
+				{
+					
+					lowLimit = -pad;
+					highLimit = (1 << _optical->maximumViewDistancePower) + pad;
+	
+					// check z visibility
+					if(z + this->size.z > lowLimit && z < highLimit)
+					{
+						return true;
+					}
+				}
+			}
+		}
 	}
 	else 
 	{
@@ -910,25 +933,26 @@ bool Entity_isVisible(Entity this, int pad)
 		x = FIX19_13TOI(position3D.x) - (this->size.x >> 1);
 		y = FIX19_13TOI(position3D.y) - (this->size.y >> 1);
 		z = FIX19_13TOI(position3D.z);
-	}
-
-	// check x visibility
-	if(x + this->size.x >= lowLimit && x <= highLimit)
-	{
-		lowLimit = -pad;
-		highLimit = __SCREEN_HEIGHT + pad;
-
-		// check y visibility
-		if(y + this->size.y >= lowLimit && y <= highLimit)
+		
+		// check x visibility
+		if(x + this->size.x >= lowLimit && x <= highLimit)
 		{
-			
 			lowLimit = -pad;
-			highLimit = (1 << _optical->maximumViewDistancePower) + pad;
+			highLimit = __SCREEN_HEIGHT + pad;
 
-			// check z visibility
-			return z + this->size.z >= lowLimit && z <= highLimit;
+			// check y visibility
+			if(y + this->size.y >= lowLimit && y <= highLimit)
+			{
+				
+				lowLimit = -pad;
+				highLimit = (1 << _optical->maximumViewDistancePower) + pad;
+
+				// check z visibility
+				return z + this->size.z >= lowLimit && z <= highLimit;
+			}
 		}
 	}
+
 
 	if(this->children)
 	{

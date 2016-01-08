@@ -813,17 +813,22 @@ static void StageEditor_printEntityPosition(StageEditor this)
 
 	if(this->currentEntityNode)
 	{
-		Container container = __SAFE_CAST(Container, VirtualNode_getData(this->currentEntityNode));
-		const VBVec3D* globalPosition = Container_getGlobalPosition(container);
+		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+		const VBVec3D* globalPosition = Container_getGlobalPosition(__SAFE_CAST(Container, entity));
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Container_getId(container), x + 6, y, NULL);
+		Printing_int(Printing_getInstance(), Container_getId(__SAFE_CAST(Container, entity)), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(container), x + 6, y, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(entity), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->x), x + 10, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->y), x + 15, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->z), x + 20, y, NULL);
+		Printing_text(Printing_getInstance(), "Size (w, h):                  ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 15, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 25, y, NULL);
+		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 0), x + 15, y, NULL);
 	}
 }
 

@@ -59,7 +59,6 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);
 static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this);
 static void MBgmapSprite_calculateSize(MBgmapSprite this);
-static const Point* const MBgmapSprite_capPosition(MBgmapSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -488,24 +487,44 @@ VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
 	
-	/*
-	VBVec2D position;
-	
-	if(this->cappedPosition)
+	VBVec2D position = {0, 0, 0};
+
+	if(this->mSpriteDefinition->xLoop)
 	{
 		position.x = this->drawSpec.position.x;
+	}
+	else
+	{
+		if(this->drawSpec.textureSource.mx > this->textureXOffset)
+		{
+			position.x = ITOFIX19_13(this->textureXOffset - (int)this->drawSpec.textureSource.mx);
+		}
+		else
+		{
+			position.x = this->drawSpec.position.x;
+		}
+	}
+
+	if(this->mSpriteDefinition->yLoop)
+	{
 		position.y = this->drawSpec.position.y;
 	}
 	else
 	{
-		position.x = this->drawSpec.textureSource.mx;
-		position.y = this->drawSpec.textureSource.my;
+		if(this->drawSpec.textureSource.my > this->textureYOffset)
+		{
+			position.y = ITOFIX19_13(this->textureYOffset - (int)this->drawSpec.textureSource.my);
+		}
+		else
+		{
+			position.y = this->drawSpec.position.y;
+		}
 	}
 
 	position.z = this->drawSpec.position.z;
 	position.parallax = this->drawSpec.position.parallax;
-*/
-	return this->drawSpec.position;
+
+	return position;
 }
 
 
