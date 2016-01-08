@@ -246,21 +246,11 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				{
 					Sprite_hide(sprite);
 				}
-				else
-				{
-					// render last position before using new layer
-					__VIRTUAL_CALL(void, Sprite, render, sprite);
-				}
 				
 				// render last position before using new layer
 				if(isNextSpriteHidden)
 				{
 					Sprite_hide(nextSprite);
-				}
-				else
-				{
-					// render last position before using new layer
-					__VIRTUAL_CALL(void, Sprite, render, nextSprite);
 				}
 
 				// swap nodes' data
@@ -357,18 +347,6 @@ void SpriteManager_processLayers(SpriteManager this)
 	ASSERT(this, "SpriteManager::processLayers: null this");
 
 	SpriteManager_processFreedLayersProgressively(SpriteManager_getInstance());
-	/*
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(Game_getInstance()))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(Game_getInstance()))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(Game_getInstance()))
-#endif
-*/
-	//SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 }
 
 void SpriteManager_processFreedLayers(SpriteManager this)
@@ -494,14 +472,14 @@ void SpriteManager_render(SpriteManager this)
 
 	VPUManager_disableInterrupt(VPUManager_getInstance());
 
-	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
-
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
 
 	// disable VIP's drawing
 	while (*_xpstts & XPBSYR);
 	VIP_REGS[XPCTRL] |= XPRST;
+
+	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 
 	for(; node; node = node->previous)
 	{

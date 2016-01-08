@@ -290,8 +290,6 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 					// render in the new position to avoid flickering
 					this->renderFlag = true;
 		
-					while (*_xpstts & XPBSYR);
-
 					ObjectSprite_render(this);
 					
 					// turn off previous OBJs' to avoid ghosting

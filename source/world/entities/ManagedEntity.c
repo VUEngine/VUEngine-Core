@@ -49,7 +49,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 const extern VBVec3D* _screenPosition;
 const extern VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
-extern unsigned int volatile* _xpstts;
 
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 
@@ -229,18 +228,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
 		}
 		
-		/*
-		VPUManager_disableInterrupt(VPUManager_getInstance());
-
-		while (*_xpstts & XPBSYR);
-
-		for(spriteNode = this->managedSprites->head; spriteNode; spriteNode = spriteNode->next)
-		{
-			__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, spriteNode->data));
-		}
-		
-		VPUManager_enableInterrupt(VPUManager_getInstance());
-*/
 		this->previous2DPosition = position2D;
 	}
 	
