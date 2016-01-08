@@ -172,6 +172,8 @@ Scale Sprite_getScale(Sprite this);
 void Sprite_resize(Sprite this, Scale scale, fix19_13 z);
 Texture Sprite_getTexture(Sprite this);
 u16 Sprite_getMode(Sprite this);
+u16 Sprite_getWorldWidth(Sprite this);
+u16 Sprite_getWorldHeight(Sprite this);
 void Sprite_rewrite(Sprite this);
 u32 Sprite_getRenderFlag(Sprite this);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);

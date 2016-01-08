@@ -55,7 +55,6 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	ASSERT(this, "MBackground::constructor: null this");
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
 	ASSERT(mBackgroundDefinition->spritesDefinitions[0], "MBackground::constructor: null sprite definition");
-	ASSERT(mBackgroundDefinition->spritesDefinitions[0]->textureDefinition, "MBackground::constructor: null texture definition");
 	
 	// construct base object
 	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id, name);

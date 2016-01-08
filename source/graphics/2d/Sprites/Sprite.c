@@ -187,12 +187,30 @@ u16 Sprite_getHead(Sprite this)
 	return this->head;
 }
 
-// get map's render mode
+// get sprite's render mode
 u16 Sprite_getMode(Sprite this)
 {
 	ASSERT(this, "Sprite::getMode: null this");
 
 	return this->head & 0x3000;
+}
+
+// get sprites's layer's width
+u16 Sprite_getWorldWidth(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldWidth: null this");
+
+	WORLD* worldPointer = &WA[this->worldLayer];
+	return worldPointer->w;
+}
+
+// get sprites's layer's width
+u16 Sprite_getWorldHeight(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldHeight: null this");
+
+	WORLD* worldPointer = &WA[this->worldLayer];
+	return worldPointer->h;
 }
 
 // reload the sprite in bgmap memory
