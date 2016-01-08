@@ -228,54 +228,114 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		environmentPosition->z + positionedEntity->position.z
 	};
 
+	s16 left = 0;
+	s16 right = 0;
+	s16 top = 0;
+	s16 bottom = 0;
+	s16 front = 0;
+	s16 back = 0;
 	s16 halfWidth = 0;
 	s16 halfHeight = 0;
 	s16 halfDepth = 10;
 
 	if(positionedEntity->entityDefinition->spritesDefinitions && positionedEntity->entityDefinition->spritesDefinitions[0])
 	{
-		if(__TYPE(BgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[0]->allocator && positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition)
+		int i = 0;
+		
+		for(; positionedEntity->entityDefinition->spritesDefinitions[i]; i++)
 		{
-			halfWidth = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->cols << 2;
-			halfHeight = positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition->rows << 2;
-			halfDepth = 10;
-		}
-		else if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[0]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0])
-		{
-			int j = 0;
-			
-			for(; ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[j]; j++)
-			{	
-				if(halfWidth < ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->cols << 2)
+			if(__TYPE(BgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition)
+			{
+				BgmapSpriteDefinition* bgmapSpriteDefinition = (BgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i];
+				halfWidth = bgmapSpriteDefinition->textureDefinition->cols << 2;
+				halfHeight = bgmapSpriteDefinition->textureDefinition->rows << 2;
+				halfDepth = 10;
+				
+				if(left > -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
 				{
-					halfWidth = ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->cols << 2;
+					left = -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
 				}
-
-				if(halfHeight < ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->rows << 2)
+	
+				if(right < halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
 				{
-					halfHeight = ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0]->rows << 2;
+					right = halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
+				}
+	
+				if(top > -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
+				{
+					top = -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
+				}
+	
+				if(bottom < halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
+				{
+					bottom = halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
+				}
+	
+				if(front > -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
+				{
+					front = -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
+				}
+	
+				if(back < halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
+				{
+					back = halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
+				}
+	
+			}
+			else if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[0]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0])
+			{
+				MBgmapSpriteDefinition* mBgmapSpriteDefinition = (MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i]; 
+
+				int j = 0;
+				
+				halfWidth = 0;
+				halfHeight = 0;
+				halfDepth = 0;
+				
+				for(; mBgmapSpriteDefinition->textureDefinitions[j]; j++)
+				{	
+					if(halfWidth < mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2)
+					{
+						halfWidth = mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2;
+					}
+
+					if(halfHeight < mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2)
+					{
+						halfHeight = mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2;
+					}
+				}
+				
+				if(left > -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x))
+				{
+					left = -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x);
+				}
+	
+				if(right < halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x))
+				{
+					right = halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x);
+				}
+	
+				if(top > -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y))
+				{
+					top = -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y);
+				}
+	
+				if(bottom < halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y))
+				{
+					bottom = halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y);
+				}
+	
+				if(front > -halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z))
+				{
+					front = -halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
+				}
+	
+				if(back < halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z))
+				{
+					back = halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
 				}
 			}
-
-			halfDepth = 10;
 		}
-		else
-		{
-			ASSERT(positionedEntity, "Entity::getSizeFromDefinition: cannot get a texture to calculate size");
-		}
-/*
-		if(positionedEntity->entityDefinition->spritesDefinitions && 
-				positionedEntity->entityDefinition->spritesDefinitions[0] && 
-				WRLD_AFFINE == positionedEntity->entityDefinition->spritesDefinitions[0]->bgmapMode)
-		{
-			fix7_9 scale = FIX19_13TOFIX7_9(ITOFIX19_13(1) -
-				       (positionedEntity->position.z >> _optical->maximumViewDistancePower));
-		
-			halfWidth = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfWidth), FIX7_9TOFIX19_13(scale)));
-			halfHeight = FIX19_13TOI(FIX19_13_DIV(ITOFIX19_13(halfHeight), FIX7_9TOFIX19_13(scale)));
-		}
-		
-		*/
 	}
 	else if(!positionedEntity->childrenDefinitions)
 	{
@@ -287,12 +347,22 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 			halfWidth = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->width >> 1;
 			halfHeight = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->height >> 1;
 			halfDepth = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->depth >> 1;
+			
+			left = -halfWidth;
+			right = halfWidth;
+			top = -halfHeight;
+			bottom = halfHeight;
+			front = -halfDepth;
+			front = halfDepth;
 		}
 		else
 		{
-			halfWidth = 1;
-			halfHeight = 1;
-			halfDepth = 1;
+			left = -1;
+			right = 1;
+			top = -1;
+			bottom = 1;
+			front = -1;
+			front = 1;
 		}
 	}
 
@@ -300,34 +370,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	int y = FIX19_13TOI(globalPosition3D.y);
 	int z = FIX19_13TOI(globalPosition3D.z);
 	
-	if(0 == rightCuboid->x1 || halfWidth + x > rightCuboid->x1)
+	if(0 == rightCuboid->x0 || left + x < rightCuboid->x0)
 	{
-		rightCuboid->x1 = halfWidth + x;
+		rightCuboid->x0 = left + x;
 	}
 	
-	if(0 == rightCuboid->x0 || x - halfWidth < rightCuboid->x0)
+	if(0 == rightCuboid->x1 || right + x > rightCuboid->x1)
 	{
-		rightCuboid->x0 = x - halfWidth;
-	}
-	
-	if(0 == rightCuboid->y1 || halfHeight + y > rightCuboid->y1)
-	{
-		rightCuboid->y1 = halfHeight + y;
-	}
-	
-	if(0 == rightCuboid->y0 || y - halfHeight < rightCuboid->y0)
-	{
-		rightCuboid->y0 = y - halfHeight;
+		rightCuboid->x1 = right + x;
 	}
 
-	if(0 == rightCuboid->z1 || halfDepth + z > rightCuboid->z1)
+	if(0 == rightCuboid->y0 || top + y < rightCuboid->y0)
 	{
-		rightCuboid->z1 = halfDepth + z;
+		rightCuboid->y0 = top + y;
 	}
 	
-	if(0 == rightCuboid->z0 || z - halfDepth < rightCuboid->z0)
+	if(0 == rightCuboid->y1 || bottom + y > rightCuboid->y1)
 	{
-		rightCuboid->z0 = z - halfHeight;
+		rightCuboid->y1 = bottom + y;
+	}
+
+	if(0 == rightCuboid->z0 || front + z < rightCuboid->z0)
+	{
+		rightCuboid->z0 = front + z;
+	}
+	
+	if(0 == rightCuboid->z1 || back + z > rightCuboid->z1)
+	{
+		rightCuboid->z1 = back + z;
 	}
 
 	if(positionedEntity->childrenDefinitions)
