@@ -490,6 +490,8 @@ void SpriteManager_render(SpriteManager this)
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 
 	VPUManager_enableInterrupt(VPUManager_getInstance());
+	
+	
 }
 
 // retrieve free layer

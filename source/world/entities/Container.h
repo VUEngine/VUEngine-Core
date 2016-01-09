@@ -141,7 +141,7 @@ const Rotation* Container_getLocalRotation(Container this);
 void Container_setLocalRotation(Container this, const Rotation* rotation);
 const Scale* Container_getLocalScale(Container this);
 void Container_setLocalScale(Container this, const Scale* scale);
-void Container_invalidateGlobalPosition(Container this);
+void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate);
 int Container_onPropagatedMessage(Container this, va_list args);
 int Container_doKeyPressed(Container this, int pressedKey);
 int Container_doKeyUp(Container this, int pressedKey);

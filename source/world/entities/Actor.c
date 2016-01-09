@@ -175,38 +175,43 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::transform: null this");
 
-	if(this->body && Body_isMoving(this->body))
-    {
-		Actor_syncPositionWithBody(this);
-
-		// an Actor with a physical body is agnostic to parenting
-		Transformation environmentAgnosticTransform =
-	    {
-				// local position
-				{0, 0, 0},
-				// global position
-				{0, 0, 0},
-				// local ,rotation
-				{0, 0, 0},
-				// global rotation
-				{0, 0, 0},
-				// local scale
-				{environmentTransform->localScale.x, environmentTransform->localScale.y},
-				// global scale
-				{environmentTransform->globalScale.x, environmentTransform->globalScale.y},
-		};
-
-		// since body is moving
-		Container_invalidateGlobalPosition(__SAFE_CAST(Container, this));
-
-		// call base
-		AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), &environmentAgnosticTransform);
-    }
-	else
+	if(this->body)
 	{
-		// call base
-		AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
-	}
+		u8 bodyMovement = Body_isMoving(this->body);
+		
+		if(bodyMovement)
+		{
+			Actor_syncPositionWithBody(this);
+	
+			// an Actor with a physical body is agnostic to parenting
+			Transformation environmentAgnosticTransform =
+		    {
+					// local position
+					{0, 0, 0},
+					// global position
+					{0, 0, 0},
+					// local ,rotation
+					{0, 0, 0},
+					// global rotation
+					{0, 0, 0},
+					// local scale
+					{environmentTransform->localScale.x, environmentTransform->localScale.y},
+					// global scale
+					{environmentTransform->globalScale.x, environmentTransform->globalScale.y},
+			};
+	
+			// since body is moving
+			Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), bodyMovement);
+
+			// call base
+			AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), &environmentAgnosticTransform);
+
+			return;
+		}
+    }
+
+	// call base
+	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
 }
 
 void Actor_resume(Actor this)

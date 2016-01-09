@@ -366,7 +366,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 		}
 	}
 
-	Container_invalidateGlobalPosition(this);
+	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
 // initial transform but don't call the virtual method
@@ -531,7 +531,7 @@ void Container_setLocalRotation(Container this, const Rotation* rotation)
 
 	this->transform.localRotation = *rotation;
 	
-	Container_invalidateGlobalPosition(this);
+	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
 const Scale* Container_getLocalScale(Container this)
@@ -548,15 +548,17 @@ void Container_setLocalScale(Container this, const Scale* scale)
 
 	this->transform.localScale = *scale;
 	
-	Container_invalidateGlobalPosition(this);
+	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
 // invalidate global position
-void Container_invalidateGlobalPosition(Container this)
+void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
 {
 	ASSERT(this, "Container::invalidateGlobalPosition: null this");
 
-	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.z = true;
+	this->invalidateGlobalPosition.x = __XAXIS & axisToInvalidate? true: false;
+	this->invalidateGlobalPosition.y = __YAXIS & axisToInvalidate? true: false;
+	this->invalidateGlobalPosition.z = __ZAXIS & axisToInvalidate? true: false;
 
 	if(this->children)
 	{
@@ -566,7 +568,7 @@ void Container_invalidateGlobalPosition(Container this)
 		for(; node; node = node->next)
 		{
 			// make sure children recalculates its global position
-			Container_invalidateGlobalPosition(__SAFE_CAST(Container, node->data));
+			Container_invalidateGlobalPosition(__SAFE_CAST(Container, node->data), axisToInvalidate);
 		}
 	}
 }
@@ -824,7 +826,7 @@ void Container_resume(Container this)
 	}
 	
 	// force translation recalculations
-	Container_invalidateGlobalPosition(this);
+	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
 
@@ -846,7 +848,7 @@ void Container_show(Container this)
 		}
 	}
 	
-	Container_invalidateGlobalPosition(this);
+	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
 void Container_hide(Container this)

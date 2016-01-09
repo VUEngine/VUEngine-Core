@@ -437,7 +437,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 			// wait for the VIP to be idle
 //			while (*_xpstts & XPBSYR);
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
-			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
+			this->renderFlag = false;
 			return;
 		}
 		

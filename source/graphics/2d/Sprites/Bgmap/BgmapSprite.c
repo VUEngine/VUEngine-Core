@@ -350,9 +350,6 @@ void BgmapSprite_render(BgmapSprite this)
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
 		}
-		
-		// wait for the VIP to be idle
-//		while (*_xpstts & XPBSYR);
 
 		// set the world screen position
 		if(this->renderFlag & __UPDATE_M)
@@ -360,6 +357,7 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
+
 		}
 		
 		// set the world screen position
