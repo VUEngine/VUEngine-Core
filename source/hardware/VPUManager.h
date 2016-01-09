@@ -180,8 +180,10 @@ __CLASS(VPUManager);
 VPUManager VPUManager_getInstance();
 
 void VPUManager_destructor(VPUManager this);
-void VPUManager_disableInterrupt(VPUManager this);
+void VPUManager_enableDrawing(VPUManager this);
+void VPUManager_idleDrawing(VPUManager this);
 void VPUManager_enableInterrupt(VPUManager this);
+void VPUManager_disableInterrupt(VPUManager this);
 void VPUManager_displayOn(VPUManager this);
 void VPUManager_displayOff(VPUManager this);
 void VPUManager_setupPalettes(VPUManager this, PaletteConfig* paletteConfig);

@@ -470,15 +470,10 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	VPUManager_disableInterrupt(VPUManager_getInstance());
-
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
 
-	// disable VIP's drawing
-	while (*_xpstts & XPBSYR);
-	VIP_REGS[XPCTRL] |= XPRST;
-
+	SpriteManager_processLayers(SpriteManager_getInstance());
 	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 
 	for(; node; node = node->previous)
@@ -486,12 +481,9 @@ void SpriteManager_render(SpriteManager this)
 		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
 	}
 
-	// enable VIP's drawing
-	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
-
-	VPUManager_enableInterrupt(VPUManager_getInstance());
-	
-	
+	// allow drawing now
+	// don't need to idle it because it is handled by the VPU's XPEND interrupt
+	VPUManager_enableDrawing(VPUManager_getInstance());
 }
 
 // retrieve free layer

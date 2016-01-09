@@ -107,13 +107,27 @@ void VPUManager_disableInterrupt(VPUManager this)
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 }
 
+void VPUManager_enableDrawing(VPUManager this)
+{
+	ASSERT(this, "VPUManager::enableDrawing: null this");
+
+	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
+}
+
+void VPUManager_idleDrawing(VPUManager this)
+{
+	ASSERT(this, "VPUManager::idleDrawing: null this");
+
+	VIP_REGS[XPCTRL] |= XPRST;
+}
+
 // enable interrupt
 void VPUManager_enableInterrupt(VPUManager this)
 {
 	ASSERT(this, "VPUManager::enableInterrupt: null this");
 
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-	VIP_REGS[INTENB]= FRAMESTART;
+	VIP_REGS[INTENB]= XPEND;
 }
 
 // turn display on
@@ -122,7 +136,7 @@ void VPUManager_displayOn(VPUManager this)
 	ASSERT(this, "VPUManager::displayOn: null this");
 
 	VIP_REGS[REST] = 0;
-	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
+	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS];
 	VIP_REGS[DPCTRL] = VIP_REGS[DPSTTS] | (SYNCE | RE | DISP);
 	VIP_REGS[FRMCYC] = 0;
 }
