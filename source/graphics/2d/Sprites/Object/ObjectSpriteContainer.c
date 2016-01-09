@@ -345,12 +345,7 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
-	
-	if(this->objectSpriteToDefragment)
-	{
-		ObjectSpriteContainer_defragment(this);
-	}
-	
+
 	//if render flag is set
 	if(this->renderFlag)
 	{
@@ -361,16 +356,20 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		this->renderFlag = false;
 	}
 	
+	// defragmentation takes priority over z sorting
+	if(this->objectSpriteToDefragment)
+	{
+		ObjectSpriteContainer_defragment(this);
+	}
+	else
+	{
+		ObjectSpriteContainer_sort(this);
+	}
+	
 	VirtualNode node = this->objectSprites->head;
-
 	for(; node; node = node->next)
 	{
 		ObjectSprite_render(__SAFE_CAST(ObjectSprite, node->data));
-	}
-	
-	if(!this->objectSpriteToDefragment)
-	{
-		ObjectSpriteContainer_sort(this);
 	}
 }
 
