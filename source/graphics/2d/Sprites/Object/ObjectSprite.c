@@ -289,8 +289,6 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 					// render in the new position to avoid flickering
 					this->renderFlag = true;
 		
-					//ObjectSprite_render(this);
-					
 					// turn off previous OBJs' to avoid ghosting
 					if(this->objectIndex < previousObjectIndex)
 					{
@@ -334,13 +332,6 @@ void ObjectSprite_show(ObjectSprite this)
 	
 	Sprite_show(__SAFE_CAST(Sprite, this));
 
-	/*
-	if(this->renderFlag)
-	{
-		ObjectSprite_render(this);
-	}
-	*/
-	
 	if (0 <= this->objectIndex)
 	{
 		int i = 0;
