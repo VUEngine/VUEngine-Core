@@ -108,14 +108,12 @@ long Utilities_randomSeed()
 {
 	long random = 1;
 	int	rand, prevnum = 0,	count = 1;
-	extern unsigned int volatile* _xpstts;
 
 	rand = Clock_getTime(Game_getClock(Game_getInstance()));
 
 	// repeat through many times to make more random and to allow the CTA value to change multiple times
 	while (count < __RANDOM_SEED_CYCLES)
 	{
-		rand |= * _xpstts;
 		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
 
 		// prevent division by zero

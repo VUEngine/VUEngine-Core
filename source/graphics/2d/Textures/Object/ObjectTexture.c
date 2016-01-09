@@ -35,8 +35,6 @@ __CLASS_DEFINITION(ObjectTexture, Texture);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern unsigned int volatile* _xpstts;
-
 static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id);
 
 

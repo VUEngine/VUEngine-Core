@@ -50,7 +50,6 @@ __CLASS_DEFINITION(ObjectSprite, Sprite);
 // globals
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
-extern unsigned int volatile* _xpstts;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -337,8 +336,6 @@ void ObjectSprite_show(ObjectSprite this)
 
 	if(this->renderFlag)
 	{
-		while (*_xpstts & XPBSYR);
-
 		ObjectSprite_render(this);
 	}
 	

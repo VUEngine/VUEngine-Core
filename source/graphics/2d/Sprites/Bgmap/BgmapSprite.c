@@ -52,7 +52,6 @@ __CLASS_DEFINITION(BgmapSprite, Sprite);
 // global
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
-extern unsigned int volatile* _xpstts;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
@@ -342,9 +341,6 @@ void BgmapSprite_render(BgmapSprite this)
 				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
 				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
 			}
-			
-			// wait for the VIP to be idle
-			//while (*_xpstts & XPBSYR);
 			
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;

@@ -69,7 +69,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern unsigned int volatile* _xpstts;
 
 static void SpriteManager_constructor(SpriteManager this);
 static void SpriteManager_processFreedLayersProgressively(SpriteManager this);
@@ -455,8 +454,6 @@ void SpriteManager_setLastLayer(SpriteManager this)
 //	NM_ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
-//	while (*_xpstts & XPBSYR);
-	
 	Printing_render(Printing_getInstance(), this->freeLayer);
 	
 	if(0 < this->freeLayer)

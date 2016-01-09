@@ -36,7 +36,6 @@ __CLASS_DEFINITION(CharSet, Object);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern unsigned int volatile* _xpstts;
 
 static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset);
 
@@ -163,8 +162,6 @@ void CharSet_write(CharSet this)
 void CharSet_rewrite(CharSet this)
 {
 	ASSERT(this, "CharSet::rewrite: null this");
-
-	while (*_xpstts & XPBSYR);
 
 	// write again
 	CharSet_write(this);
