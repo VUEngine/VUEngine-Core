@@ -152,12 +152,7 @@ void HardwareManager_communicationInterruptHandler(void)   // Link Port Interrup
 // vpu's interrupt handler
 void HardwareManager_vpuInterruptHandler(void)
 {
-//	VPUManager_disableInterrupt(VPUManager_getInstance());
-
 	VPUManager_idleDrawing(VPUManager_getInstance());
-//	SpriteManager_processLayers(SpriteManager_getInstance());
-
-//	VPUManager_enableInterrupt(VPUManager_getInstance());
 }
 
 // setup interrupt vectors

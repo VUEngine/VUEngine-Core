@@ -405,11 +405,15 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 			{
 				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processFreedLayersProgressively:1 this->freeLayer >= this->freedLayer");
 
-				// render last position before using new layer
-				__VIRTUAL_CALL(void, Sprite, render, sprite);
+				bool isSpriteHidden = Sprite_isHidden(sprite);
 
 				// move the sprite to the freed layer
 				Sprite_setWorldLayer(sprite, this->freedLayer);
+
+				if(isSpriteHidden)
+				{
+					Sprite_hide(sprite);
+				}
 
 				// register previous sprite's layer
 				// to avoid flicker and gosthing
@@ -470,8 +474,8 @@ void SpriteManager_render(SpriteManager this)
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
 
-	SpriteManager_processLayers(SpriteManager_getInstance());
-	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+	SpriteManager_processFreedLayersProgressively(this);
+	SpriteManager_sortLayersProgressively(this);
 
 	for(; node; node = node->previous)
 	{
