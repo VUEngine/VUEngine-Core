@@ -260,6 +260,9 @@ void Game_initialize(Game this)
 
 	// clear sprite memory
     HardwareManager_clearScreen(this->hardwareManager);
+    
+	// start the game's general clock
+	Clock_start(this->clock);
 }
 
 // set game's initial state
@@ -276,9 +279,6 @@ void Game_start(Game this, GameState state)
 
 	if(!StateMachine_getCurrentState(this->stateMachine))
 	{
-		// start the game's general clock
-		Clock_start(this->clock);
-		
 		// register start time for auto pause check
 		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 

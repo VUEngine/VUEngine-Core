@@ -109,7 +109,14 @@ long Utilities_randomSeed()
 	long random = 1;
 	int	rand, prevnum = 0,	count = 1;
 
-	rand = Clock_getTime(Game_getClock(Game_getInstance()));
+	static Clock clock;
+	
+	if(!clock)
+	{
+		Game_getClock(Game_getInstance());
+	}
+	
+	rand = Clock_getTime(clock);
 
 	// repeat through many times to make more random and to allow the CTA value to change multiple times
 	while (count < __RANDOM_SEED_CYCLES)
@@ -143,7 +150,7 @@ long Utilities_randomSeed()
 
 		// keep track of the last number
 		prevnum = rand;
-		rand = Clock_getTime(Game_getClock(Game_getInstance()));
+		rand = Clock_getTime(clock);
 	}
 
 	// returns the random seed
