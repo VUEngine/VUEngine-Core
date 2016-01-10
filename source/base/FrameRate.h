@@ -48,17 +48,11 @@ FrameRate FrameRate_getInstance();
 
 void FrameRate_destructor(FrameRate this);
 void FrameRate_reset(FrameRate this);
-u32 FrameRate_getRawFPS(FrameRate this);
-u16 FrameRate_getRenderFPS(FrameRate this);
-u16 FrameRate_getLogicFPS(FrameRate this);
-u16 FrameRate_getPhysicsFPS(FrameRate this);
-void FrameRate_increaseRenderFPS(FrameRate this);
-void FrameRate_increaseRawFPS(FrameRate this);
-void FrameRate_increaseLogicFPS(FrameRate this);
-void FrameRate_increasePhysicsFPS(FrameRate this);
+u16 FrameRate_getFPS(FrameRate this);
+void FrameRate_increaseFPS(FrameRate this);
 bool FrameRate_isFPSHigh(FrameRate this);
 void FrameRate_print(FrameRate this,int col,int row);
-void FrameRate_printLastRecord(FrameRate this, int col, int row);
+void FrameRate_printLastCount(FrameRate this, int col, int row);
 
 
 #endif

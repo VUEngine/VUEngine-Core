@@ -656,11 +656,6 @@ static void Game_updateLogic(Game this)
 	// dispatch queued messages
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 
-#ifdef __PRINT_FRAMERATE
-	// increase the frame rate
-	FrameRate_increaseLogicFPS(this->frameRate);
-#endif
-	
 #ifdef __DEBUG
 	this->lastProcessName = "logic ended";
 #endif
@@ -701,11 +696,6 @@ static void Game_updatePhysics(Game this)
 #endif
 	// process collisions
 	CollisionManager_update(this->collisionManager, elapsedTime);
-
-#ifdef __PRINT_FRAMERATE
-	// increase the frame rate
-	FrameRate_increasePhysicsFPS(this->frameRate);
-#endif
 	
 #ifdef __DEBUG
 	this->lastProcessName = "physics ended";
@@ -742,11 +732,6 @@ static void Game_updateRendering(Game this)
 #endif
 	// render sprites
 	SpriteManager_render(this->spriteManager);
-
-#ifdef __PRINT_FRAMERATE
-	// increase the frame rate
-	FrameRate_increaseRenderFPS(this->frameRate);
-#endif
 	
 #ifdef __DEBUG
 	this->lastProcessName = "render done";
@@ -785,63 +770,38 @@ static void Game_update(Game this)
 {
 	ASSERT(this, "Game::update: null this");
 
-	u32 currentTime = 0;
-	u32 mainLogicTime = 0;
-	u32 cleanUpTime = 0;
-
 #ifdef __DEBUG
 	char* previousLastProcessName = NULL;
 #endif
 
 	while (true)
 	{
-#ifdef __DEBUG
-		currentTime = __CAP_FPS ? Clock_getTime(this->clock) : mainLogicTime + 1000 + __TIMER_RESOLUTION;
-		previousLastProcessName = this->lastProcessName;
-#else
-		currentTime = Clock_getTime(this->clock);
-#endif		
+	    while(!(VIP_REGS[INTPND] & GAMESTART)); 
+	    VIP_REGS[INTCLR]= GAMESTART;
 
-		if(currentTime - mainLogicTime >= __FPS_BASED_SECONDS)
+	    if(this->nextState)
 		{
-			// check if new state available
-			if(this->nextState)
-			{
 #ifdef __DEBUG
-				this->lastProcessName = "setting next state";
+			this->lastProcessName = "setting next state";
 #endif		
-				Game_setNextState(this, this->nextState);
+			Game_setNextState(this, this->nextState);
 #ifdef __DEBUG
-				this->lastProcessName = "setting next state done";
+			this->lastProcessName = "setting next state done";
 #endif		
-			}
-
-			// update each subsystem
-			Game_updateLogic(this);
-			Game_updatePhysics(this);
-			Game_updateRendering(this);
-			
-			// record time
-			mainLogicTime = currentTime;
 		}
-		// do some clean up at the half of the second, to not interfere
-		// with the game' normal flow
-		else if(currentTime - cleanUpTime >= __FPS_BASED_SECONDS * 3 / 2 && FrameRate_isFPSHigh(this->frameRate))
+
+		// update each subsystem
+		Game_updateLogic(this);
+		Game_updatePhysics(this);
+		Game_updateRendering(this);
+		
+		if(!FrameRate_getFPS(this->frameRate) && FrameRate_isFPSHigh(this->frameRate))
 		{
 			Game_cleanUp(this);
-
-			// record time
-			cleanUpTime = currentTime;
 		}
 		
 #ifdef __PRINT_FRAMERATE
-		// increase the frame rate
-		FrameRate_increaseRawFPS(this->frameRate);
-#endif
-		
-#ifndef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
-		// accumulate user's input until next logic cycle
-		KeypadManager_read(this->keypadManager);
+		FrameRate_increaseFPS(this->frameRate);
 #endif
 	}
 }

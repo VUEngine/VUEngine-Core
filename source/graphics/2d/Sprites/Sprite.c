@@ -35,7 +35,6 @@ __CLASS_DEFINITION(Sprite, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
 

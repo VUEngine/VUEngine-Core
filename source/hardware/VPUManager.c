@@ -94,15 +94,6 @@ void VPUManager_destructor(VPUManager this)
 	__SINGLETON_DESTROY;
 }
 
-// disable interrupt
-void VPUManager_disableInterrupt(VPUManager this)
-{
-	ASSERT(this, "VPUManager::disableInterrupt: null this");
-
-	VIP_REGS[INTENB]= 0;
-	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-}
-
 void VPUManager_enableDrawing(VPUManager this)
 {
 	ASSERT(this, "VPUManager::enableDrawing: null this");
@@ -115,6 +106,7 @@ void VPUManager_idleDrawing(VPUManager this)
 	ASSERT(this, "VPUManager::idleDrawing: null this");
 
 	VIP_REGS[XPCTRL] |= XPRST;
+	VIP_REGS[INTCLR] &= ~XPEND;
 }
 
 // enable interrupt
@@ -124,6 +116,15 @@ void VPUManager_enableInterrupt(VPUManager this)
 
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 	VIP_REGS[INTENB]= XPEND;
+}
+
+// disable interrupt
+void VPUManager_disableInterrupt(VPUManager this)
+{
+	ASSERT(this, "VPUManager::disableInterrupt: null this");
+
+	VIP_REGS[INTENB]= 0;
+	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 }
 
 // turn display on
