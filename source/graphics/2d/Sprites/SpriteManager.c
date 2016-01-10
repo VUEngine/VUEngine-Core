@@ -405,6 +405,9 @@ static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
 			{
 				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processFreedLayersProgressively:1 this->freeLayer >= this->freedLayer");
 
+				// render on previous position to avoid flickering
+				__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
+
 				bool isSpriteHidden = Sprite_isHidden(sprite);
 
 				// move the sprite to the freed layer
