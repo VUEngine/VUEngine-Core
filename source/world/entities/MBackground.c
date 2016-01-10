@@ -136,7 +136,19 @@ void MBackground_resume(MBackground this)
 		
 		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
 		{	
-			MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+			if(__TYPE(BgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			{
+				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+			}
+			else if(__TYPE(MBgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			{
+				int j = 0;
+				
+				for(; ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
+				{	
+					MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]);
+				}
+			}
 		}
 	}
 
