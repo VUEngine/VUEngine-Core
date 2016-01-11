@@ -47,7 +47,6 @@ extern const VBVec3D* _screenPosition;
 const extern VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
-static void ParticleSystem_spawnAllParticles(ParticleSystem this);
 static Particle ParticleSystem_recycleParticle(ParticleSystem this);
 static Particle ParticleSystem_spawnParticle(ParticleSystem this);
 static void ParticleSystem_processExpiredParticles(ParticleSystem this);
@@ -77,7 +76,7 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	this->particleSystemDefinition = particleSystemDefinition;
 	
 	this->particles = __NEW(VirtualList);
-	this->recyclableParticles = NULL;
+	this->recyclableParticles = this->particleSystemDefinition->recycleParticles? __NEW(VirtualList) : NULL;
 	this->expiredParticles = __NEW(VirtualList);
 	
 	this->particleCount = 0;
@@ -147,20 +146,6 @@ void ParticleSystem_destructor(ParticleSystem this)
 	__DESTROY_BASE;
 }
 
-static void ParticleSystem_spawnAllParticles(ParticleSystem this)
-{
-	ASSERT(this, "ParticleSystem::spawnAllParticles: null this");
-	
-	this->recyclableParticles = __NEW(VirtualList);
-
-	int i = 0;
-	for(; i < this->particleSystemDefinition->maximumNumberOfAliveParticles; i++)
-	{
-		Particle particle = ParticleSystem_spawnParticle(this);
-		VirtualList_pushBack(this->recyclableParticles, particle);
-		Particle_hide(particle);
-	}
-}
 
 static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 {
@@ -192,18 +177,6 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 		}
 
 		VirtualList_clear(this->expiredParticles);
-	}
-}
-
-void ParticleSystem_ready(ParticleSystem this)
-{
-	ASSERT(this, "ParticleSystem::ready: null this");
-	
-	Entity_ready(__SAFE_CAST(Entity, this));
-	
-	if(this->particleSystemDefinition->recycleParticles)
-	{
-		ParticleSystem_spawnAllParticles(this);
 	}
 }
 
@@ -256,7 +229,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::recycleParticle: null this");
 
-	if(this->recyclableParticles->head)
+	if(this->recyclableParticles->head && (VirtualList_getSize(this->particles) + VirtualList_getSize(this->recyclableParticles) >= this->particleSystemDefinition->maximumNumberOfAliveParticles))
 	{
 		long seed = Utilities_randomSeed();
 	
