@@ -38,7 +38,7 @@
 // one char set is shared by all sprites
 #define __ANIMATED_SHARED					0x03
 
-// a coordinator sync all sprites 
+// a coordinator syncs all sprites
 #define __ANIMATED_SHARED_COORDINATED		0x04
 
 // definition of a charset of an animated character of which all frames are written to memory and shared
@@ -92,11 +92,12 @@ __CLASS(CharSet);
 
 typedef struct CharSetDefinition
 {
-	// number of chars, depending on allocationType:
-	// __ANIMATED_SINGLE: number of chars of a single animation frame
-	// __ANIMATED_MULTI: sum of chars of all animation frames
-    // __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows of this texture)
-	// __NOT_ANIMATED: number of chars of whole image
+    // number of chars, depending on allocation type:
+    // __ANIMATED_SINGLE: number of chars of a single animation frame (cols * rows)
+    // __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows)
+    // __ANIMATED_SHARED_COORDINATED: number of chars of a single animation frame (cols * rows)
+    // __ANIMATED_MULTI: sum of chars of all animation frames
+    // __NOT_ANIMATED: number of chars of whole image
 	u16 numberOfChars;
 
 	// the way its chars and bgtexture will be allocated in graphic memory
