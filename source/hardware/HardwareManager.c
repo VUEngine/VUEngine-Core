@@ -158,7 +158,7 @@ void HardwareManager_vpuInterruptHandler(void)
 	Printing_int(Printing_getInstance(), drawingOvertimeCounter, 30, 15, NULL);
 #endif
 
-	VPUManager_idleDrawing(VPUManager_getInstance());
+	VPUManager_disableDrawing(VPUManager_getInstance());
 }
 
 // setup interrupt vectors

@@ -102,7 +102,7 @@ void VPUManager_enableDrawing(VPUManager this)
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 }
 
-void VPUManager_idleDrawing(VPUManager this)
+void VPUManager_disableDrawing(VPUManager this)
 {
 	ASSERT(this, "VPUManager::idleDrawing: null this");
 
