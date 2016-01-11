@@ -86,7 +86,7 @@ void static SRAMManager_initialize(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::initialize: null this");
 	
-	Clock_delay(Game_getClock(Game_getInstance()), __SRAM_ACCESS_DELAY);
+	//Clock_delay(Game_getClock(Game_getInstance()), __SRAM_ACCESS_DELAY);
 	
 	int i = __SRAM_DUMMY_READ_CYCLES;
 	for(; i--;)
