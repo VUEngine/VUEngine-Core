@@ -960,6 +960,7 @@ void Stage_stream(Stage this)
 	
 	if(!streamingCycleCounter)
 	{
+		Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
 	}
@@ -967,11 +968,13 @@ void Stage_stream(Stage this)
 	{			
 		if(this->focusEntity)
 		{
+			//Printing_text(Printing_getInstance(), "selecting", 25, 10, NULL);
 			// load visible objects
 			Stage_selectEntitiesInLoadRange(this);
 		}
 		else
 		{
+			//Printing_text(Printing_getInstance(), "focus    ", 25, 10, NULL);
 			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
 			this->focusEntity = focusInGameEntity ? __SAFE_CAST(Entity, focusInGameEntity) : NULL;
 		}
@@ -980,6 +983,7 @@ void Stage_stream(Stage this)
 	{
 		if(this->entitiesToLoad->head)
 		{
+			Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 			Stage_loadEntities(this);
 		}
 		/*else
@@ -991,6 +995,8 @@ void Stage_stream(Stage this)
 	{		
 		if(this->entitiesToInitialize->head)
 		{
+			//Printing_text(Printing_getInstance(), "initialize", 25, 10, NULL);
+
 			Stage_initializeEntities(this);
 		}
 
@@ -1012,7 +1018,7 @@ void Stage_streamAll(Stage this)
 	Container_processRemovedChildren(__SAFE_CAST(Container, this));
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
-	SpriteManager_processFreedLayers(SpriteManager_getInstance());
+	//SpriteManager_processFreedLayers(SpriteManager_getInstance());
 	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 }
 
