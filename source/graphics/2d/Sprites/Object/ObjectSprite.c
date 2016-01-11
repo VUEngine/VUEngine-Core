@@ -198,6 +198,8 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(0 <= this->objectIndex, "ObjectSprite::render: 0 > this->objectIndex");
 	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
+	//NM_ASSERT(!this->hidden, "ObjectSprite::render: hidden!");
+
 	// if render flag is set
 	if(this->renderFlag && 0 <= this->objectIndex)
 	{
@@ -281,50 +283,34 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 
 		if(0 <= previousObjectIndex)
 		{	
-			int i = previousObjectIndex;
-			for(; i < previousObjectIndex + this->totalObjects; i++)
+			if(!this->hidden)
 			{
-				if(OAM[((i) << 2) + 1] & 0xC000)
+				__VIRTUAL_CALL(void, Sprite, show, this);
+	
+				// turn off previous OBJs' to avoid ghosting
+				if(this->objectIndex < previousObjectIndex)
 				{
-					// render in the new position to avoid flickering
-					this->renderFlag = true;
-		
-					// must render now to avoid showing on the previous position
-					ObjectSprite_render(this);
-					
-					// turn off previous OBJs' to avoid ghosting
-					if(this->objectIndex < previousObjectIndex)
+					int counter = 0;
+					int j = previousObjectIndex + this->totalObjects - 1;
+					for(; j >= this->objectIndex + this->totalObjects && counter < this->totalObjects; j--, counter++)
 					{
-						int counter = 0;
-						int j = previousObjectIndex + this->totalObjects - 1;
-						for(; j >= this->objectIndex + this->totalObjects && counter < this->totalObjects; j--, counter++)
-						{
-							OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-						}
+						OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					}
-					else
-					{
-						int j = previousObjectIndex;
-						for(; j < previousObjectIndex + this->totalObjects; j++)
-						{
-							OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-						}
-					}
-					
-					break;
 				}
-			}
-
-			if(i >= previousObjectIndex + this->totalObjects)
-			{
-				// otherwise hide
-				ObjectSprite_hide(this);
+				else
+				{
+					int j = previousObjectIndex;
+					for(; j < previousObjectIndex + this->totalObjects; j++)
+					{
+						OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+					}
+				}
 			}
 		}
 		else
 		{
 			// render on next cycle
-			this->renderFlag = true;
+			this->renderFlag = !this->hidden;
 		}
 	}
 }
@@ -334,11 +320,6 @@ void ObjectSprite_show(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::show: null this");
 	
 	Sprite_show(__SAFE_CAST(Sprite, this));
-
-	if(this->renderFlag)
-	{
-		ObjectSprite_render(this);
-	}
 
 	if (0 <= this->objectIndex)
 	{
@@ -356,6 +337,7 @@ void ObjectSprite_hide(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::hide: null this");
 
 	this->renderFlag = false;
+	this->hidden = true;
 	
 	if(0 > this->objectIndex)
 	{

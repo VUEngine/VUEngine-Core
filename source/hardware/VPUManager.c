@@ -99,14 +99,15 @@ void VPUManager_enableDrawing(VPUManager this)
 	ASSERT(this, "VPUManager::enableDrawing: null this");
 
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
+	VPUManager_enableInterrupt(this);
 }
 
 void VPUManager_idleDrawing(VPUManager this)
 {
 	ASSERT(this, "VPUManager::idleDrawing: null this");
 
+	VIP_REGS[INTCLR] |= XPEND;
 	VIP_REGS[XPCTRL] |= XPRST;
-	VIP_REGS[INTCLR] &= ~XPEND;
 }
 
 // enable interrupt
@@ -115,7 +116,7 @@ void VPUManager_enableInterrupt(VPUManager this)
 	ASSERT(this, "VPUManager::enableInterrupt: null this");
 
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-	VIP_REGS[INTENB]= XPEND;
+	VIP_REGS[INTENB]= XPEND | TIMEERR;
 }
 
 // disable interrupt

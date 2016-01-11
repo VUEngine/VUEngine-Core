@@ -53,10 +53,6 @@
 																				\
 	/* next world layer	*/														\
 	s8 freeLayer;																\
-																				\
-	/* list of sprites to render */												\
-	s8 freedLayer;																\
-	s8 tempFreedLayer;															\
 
 __CLASS_DEFINITION(SpriteManager, Object);
 
@@ -71,7 +67,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 static void SpriteManager_constructor(SpriteManager this);
-static void SpriteManager_processFreedLayersProgressively(SpriteManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -90,8 +85,6 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->nextNode = NULL;
 
 	this->sprites = NULL;
-	this->freedLayer = 0;
-	this->tempFreedLayer = 0;
 
 	SpriteManager_reset(this);
 }
@@ -128,8 +121,6 @@ void SpriteManager_reset(SpriteManager this)
 	this->sprites = __NEW(VirtualList);
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
-	this->freedLayer = 0;
-	this->tempFreedLayer = 0;
 
 	this->node = NULL;
 	this->nextNode = NULL;
@@ -174,26 +165,10 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 					u8 worldLayer1 = sprite->worldLayer;
 					u8 worldLayer2 = nextSprite->worldLayer;
 		
-					ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
-					ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
-		
-					bool isSpriteHidden = Sprite_isHidden(sprite);
-					bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
-
 					// swap layers
 					Sprite_setWorldLayer(sprite, worldLayer2);
 					Sprite_setWorldLayer(nextSprite, worldLayer1);
 		
-					if(isSpriteHidden)
-					{
-						Sprite_hide(sprite);
-					}
-
-					if(isNextSpriteHidden)
-					{
-						Sprite_hide(nextSprite);
-					}
-
 					// swap array entries
 					VirtualNode_swapData(node, nextNode);
 					
@@ -230,27 +205,9 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				u8 worldLayer1 = sprite->worldLayer;
 				u8 worldLayer2 = nextSprite->worldLayer;
 	
-				bool isSpriteHidden = Sprite_isHidden(sprite);
-				bool isNextSpriteHidden = Sprite_isHidden(nextSprite);
-
-				// swap layers
-				ASSERT(worldLayer1 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 1");
-				ASSERT(worldLayer2 != this->freedLayer, "SpriteManager::sortLayers: wrong layer 2");
-
 				// don't render inmediately, it causes glitches
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 				Sprite_setWorldLayer(sprite, worldLayer2);
-
-				if(isSpriteHidden)
-				{
-					Sprite_hide(sprite);
-				}
-				
-				// render last position before using new layer
-				if(isNextSpriteHidden)
-				{
-					Sprite_hide(nextSprite);
-				}
 
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);
@@ -282,11 +239,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		if(this->sprites->head)
 		{
 			layer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
-			
-			if(this->tempFreedLayer && layer == this->tempFreedLayer)
-			{
-				layer--;
-			}
 		}
 		
 		// add to the front: last element corresponde to the 31 WORLD
@@ -322,14 +274,37 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		// hide it
 		__VIRTUAL_CALL(void, Sprite, hide, sprite);
 
-		// calculate the freed layer
-		// if there is already a higher layer being freed
-		// don't do anything, the recovery algorithm will take
-		// care of this new freed layer
 		u8 spriteLayer = sprite->worldLayer;
 
-		this->freedLayer = this->freedLayer < spriteLayer? spriteLayer: this->freedLayer;
+		VirtualNode node = this->sprites->head;
+
+		for(; node; node = node->next)
+		{
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			
+			// search for the next sprite with the closest 
+			// layer to the freed layer
+			if(spriteLayer < sprite->worldLayer)
+			{
+				node = node->previous;
+				break;
+			}
+		}
+
+		for(; node; node = node->previous)
+		{
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			
+			ASSERT(spriteLayer == sprite->worldLayer + 1, "SpriteManager::removeSprite: wrong layers");
+
+			spriteLayer--;
+			
+			// move the sprite to the freed layer
+			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
+		}
 		
+		SpriteManager_setLastLayer(this);
+
 		// sorting needs to restart
 		this->node = NULL;
 		this->nextNode = NULL;
@@ -337,108 +312,6 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	else 
 	{
 		ASSERT(false, "SpriteManager::removeSprite: sprite not registered");
-	}
-}
-
-// process sprites
-void SpriteManager_processLayers(SpriteManager this)
-{
-	ASSERT(this, "SpriteManager::processLayers: null this");
-
-	SpriteManager_processFreedLayersProgressively(SpriteManager_getInstance());
-}
-
-void SpriteManager_processFreedLayers(SpriteManager this)
-{
-	ASSERT(this, "SpriteManager::processRemovedSprites: null this");
-
-	while(this->freedLayer)
-	{
-		SpriteManager_processFreedLayersProgressively(this);
-	}
-}
-
-// process removed sprites
-static void SpriteManager_processFreedLayersProgressively(SpriteManager this)
-{
-	ASSERT(this, "SpriteManager::processFreedLayersProgressively: null this");
-
-	// must wait a cycle to setup the printing layer so
-	// we allow for the last sprite to be redraw in the previous layer
-	// before reclaiming it back
-	static bool previouslyRecoveredAllLayers = false;
-	
-	if(this->tempFreedLayer)
-	{
-		u8 tempFreedLayer = this->tempFreedLayer;
-		this->tempFreedLayer = 0;
-
-		if(previouslyRecoveredAllLayers)
-		{
-			previouslyRecoveredAllLayers = false;
-			
-			SpriteManager_setLastLayer(this);
-		}
-
-		// if not the free layer yet
-		// turn off the layer
-		if(this->freeLayer < tempFreedLayer)
-		{
-			WORLD_HEAD(tempFreedLayer, 0x0000);
-		}		
-	}
-	
-	if(this->freedLayer)
-	{
-		ASSERT(this->freedLayer < __TOTAL_LAYERS, "SpriteManager::processFreedLayersProgressively: error freedLayer");
-
-		VirtualNode node = this->sprites->tail;
-
-		for(; node; node = node->previous)
-		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
-			u8 spriteLayer = sprite->worldLayer;
-			
-			// search for the next sprite with the closest 
-			// layer to the freed layer
-			if(spriteLayer < this->freedLayer)
-			{
-				ASSERT(this->freeLayer < this->freedLayer, "Sprite::processFreedLayersProgressively:1 this->freeLayer >= this->freedLayer");
-
-				// render on previous position to avoid flickering
-				__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
-
-				bool isSpriteHidden = Sprite_isHidden(sprite);
-
-				// move the sprite to the freed layer
-				Sprite_setWorldLayer(sprite, this->freedLayer);
-
-				if(isSpriteHidden)
-				{
-					Sprite_hide(sprite);
-				}
-
-				// register previous sprite's layer
-				// to avoid flicker and gosthing
-				this->tempFreedLayer = spriteLayer;
-								
-				// decrease freed layer
-				// so the next time it is checked against it
-			    this->freedLayer--;
-			    
-				ASSERT(this->freedLayer > this->freeLayer, "Sprite::processFreedLayersProgressively:2 this->freedLayer <= this->freeLayer");
-
-			    // don't enter here again if the end has been reached
-			    node = node->previous;
-				break;
-			}
-		}
-		
-		if(!node)
-		{
-			this->freedLayer = 0;
-			previouslyRecoveredAllLayers = true;
-		}
 	}
 }
 
@@ -450,7 +323,6 @@ void SpriteManager_setLastLayer(SpriteManager this)
 	if(this->sprites->head)
 	{
 		this->freeLayer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
-		ASSERT(!this->tempFreedLayer || this->freeLayer <= this->tempFreedLayer, "SpriteManager::setLastLayer: this->freeLayer >= this->tempFreedLayer");
 	}
 	else 
 	{
@@ -474,11 +346,18 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
+
+	// z sorting
+	SpriteManager_sortLayersProgressively(this);
+
+	
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
+	unsigned int volatile* _xpstts =	NULL;
+	_xpstts = (unsigned int *)&VIP_REGS[XPSTTS];
 
-	SpriteManager_processFreedLayersProgressively(this);
-	SpriteManager_sortLayersProgressively(this);
+	while (*_xpstts & XPBSYR);
+	VIP_REGS[XPCTRL] |= XPRST;
 
 	for(; node; node = node->previous)
 	{

@@ -34,6 +34,7 @@
 // define the ObjectSpriteContainer
 __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 
+__CLASS_FRIEND_DEFINITION(ObjectSprite);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -141,8 +142,8 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 			
 			ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 			
-			lastObjectIndex = ObjectSprite_getObjectIndex(lastObjectSprite);
-			lastObjectIndex += ObjectSprite_getTotalObjects(lastObjectSprite);
+			lastObjectIndex = lastObjectSprite->objectIndex;
+			lastObjectIndex += lastObjectSprite->totalObjects;
 		}
 		
 		VirtualList_pushBack(this->objectSprites, objectSprite);
@@ -166,6 +167,9 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 	
+	// hide it
+	__VIRTUAL_CALL(void, Sprite, hide, objectSprite);
+
 	if(this->objectSpriteToDefragment)
 	{
 		int objectSpritePosition = VirtualList_getNodePosition(this->objectSprites, objectSprite);
@@ -174,7 +178,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		if(objectSpritePosition <= objectSpriteToDefragmentPosition)
 		{
 			this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
-			this->freedObjectIndex = ObjectSprite_getObjectIndex(objectSprite);
+			this->freedObjectIndex = objectSprite->objectIndex;
 			
 			ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
 
@@ -186,7 +190,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	{
 		// find the node to remove to defragment object memory
 		this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
-		this->freedObjectIndex = ObjectSprite_getObjectIndex(objectSprite);
+		this->freedObjectIndex = objectSprite->objectIndex;
 
 		ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
 
@@ -264,9 +268,9 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	
 	// move sprite back
 	ObjectSprite_setObjectIndex(objectSprite, this->freedObjectIndex);
-	
+
 	// set new index to the end of the current sprite
-	this->freedObjectIndex += ObjectSprite_getTotalObjects(objectSprite);
+	this->freedObjectIndex += objectSprite->totalObjects;
 
 	// move to the next sprite to move
 	this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;	
@@ -280,7 +284,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		if(node)
 		{
 			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, node->data);
-			this->availableObjects = this->totalObjects - (ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite));
+			this->availableObjects = this->totalObjects - (lastObjectSprite->objectIndex + lastObjectSprite->totalObjects);
 		}
 		else
 		{
@@ -311,20 +315,20 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 			// check if z positions are swapped
 			if(previousPosition.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, previousSprite)).z > position.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, sprite)).z)
 			{
-				if(this->availableObjects >= ObjectSprite_getTotalObjects(sprite))
+				if(this->availableObjects >= sprite->totalObjects)
 				{
 					// swap
-					s16 previousObjectIndex = ObjectSprite_getObjectIndex(previousSprite);
+					s16 previousObjectIndex = previousSprite->objectIndex;
 	
 					ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
-					s16 nextFreeObjectIndex = ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite);
+					s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
 					
 					ObjectSprite_setObjectIndex(previousSprite, nextFreeObjectIndex);
 					ObjectSprite_setObjectIndex(sprite, previousObjectIndex);
-					ObjectSprite_setObjectIndex(previousSprite, previousObjectIndex + ObjectSprite_getTotalObjects(sprite));
-
+					ObjectSprite_setObjectIndex(previousSprite, previousObjectIndex + sprite->totalObjects);
+					
 					int i = 0;
-					for (; i < ObjectSprite_getTotalObjects(sprite); i++)
+					for (; i < sprite->totalObjects; i++)
 					{
 						OAM[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					}
@@ -354,7 +358,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		// make sure to not render again
 		this->renderFlag = false;
 	}
-	
+
 	// defragmentation takes priority over z sorting
 	if(this->objectSpriteToDefragment)
 	{
@@ -364,7 +368,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	{
 		ObjectSpriteContainer_sort(this);
 	}
-	
+
 	VirtualNode node = this->objectSprites->head;
 	for(; node; node = node->next)
 	{
@@ -420,7 +424,7 @@ int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 	
 		for(; node; node = node->next)
 		{
-			totalUsedObjects += ObjectSprite_getTotalObjects(__SAFE_CAST(ObjectSprite, node->data));
+			totalUsedObjects += (__SAFE_CAST(ObjectSprite, node->data))->totalObjects;
 		}
 	}
 
@@ -437,7 +441,7 @@ int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
 		
 		ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 		
-		return ObjectSprite_getObjectIndex(lastObjectSprite) + ObjectSprite_getTotalObjects(lastObjectSprite);
+		return lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
 	}
 	
 	return 0;

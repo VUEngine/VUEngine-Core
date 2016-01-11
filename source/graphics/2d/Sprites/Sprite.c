@@ -56,6 +56,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, O
 	this->animationController = NULL;
 	this->texture = NULL;
 	this->displacement = (VBVec3D){0, 0, 0};
+	this->hidden = false;
 }
 
 // class's destructor
@@ -63,8 +64,6 @@ void Sprite_destructor(Sprite this)
 {
 	ASSERT(this, "Sprite::destructor: null this");
 	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::destructor: null cast");
-
-	__VIRTUAL_CALL(void, Sprite, hide, this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -120,6 +119,7 @@ void Sprite_show(Sprite this)
 	ASSERT(this, "Sprite::show: null this");
 
 	this->renderFlag = __UPDATE_HEAD;
+	this->hidden = false;
 }
 
 // hide
@@ -129,13 +129,14 @@ void Sprite_hide(Sprite this)
 
 	WORLD_HEAD(this->worldLayer, 0x0000);
 	this->renderFlag = false;
+	this->hidden = true;
 }
 
 bool Sprite_isHidden(Sprite this)
 {
 	ASSERT(this, "Sprite::isHidden: null this");
 
-	return 0x0000 == WAM[(this->worldLayer << 4)] && this->renderFlag != __UPDATE_HEAD;
+	return this->hidden;
 }
 
 // retrieve animation controller
@@ -165,7 +166,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 		this->worldLayer = worldLayer;
 
 		// make sure everything is setup in the next render cycle
-		this->renderFlag = __UPDATE_HEAD;
+		this->renderFlag = this->hidden? 0 : __UPDATE_HEAD;
 	}
 }
 

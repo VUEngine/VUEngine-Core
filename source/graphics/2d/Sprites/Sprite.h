@@ -81,6 +81,9 @@
 	/* super's attributes */																			\
 	Object_ATTRIBUTES;																					\
 																										\
+	/* displacement modifier to achieve better control over display */									\
+	VBVec3D displacement;																				\
+																										\
 	/* super's attributes */																			\
 	AnimationController animationController;															\
 																										\
@@ -103,9 +106,7 @@
 	/* int hbiasAmplitude; */																			\
 																										\
 	bool renderFlag;																					\
-																										\
-	/* displacement modifier to achieve better control over display */									\
-	VBVec3D displacement;																			\
+	bool hidden;																						\
 
 __CLASS(Sprite);
 

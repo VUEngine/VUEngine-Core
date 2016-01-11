@@ -113,7 +113,7 @@ long Utilities_randomSeed()
 	
 	if(!clock)
 	{
-		Game_getClock(Game_getInstance());
+		clock = Game_getClock(Game_getInstance());
 	}
 	
 	rand = Clock_getTime(clock);
