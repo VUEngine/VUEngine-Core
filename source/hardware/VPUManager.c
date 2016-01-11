@@ -98,14 +98,15 @@ void VPUManager_enableDrawing(VPUManager this)
 {
 	ASSERT(this, "VPUManager::enableDrawing: null this");
 
+	while (VIP_REGS[XPSTTS] & XPBSYR);
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
-	VPUManager_enableInterrupt(this);
 }
 
 void VPUManager_idleDrawing(VPUManager this)
 {
 	ASSERT(this, "VPUManager::idleDrawing: null this");
 
+//	while (VIP_REGS[XPSTTS] & XPBSYR);
 	VIP_REGS[INTCLR] |= XPEND;
 	VIP_REGS[XPCTRL] |= XPRST;
 }
@@ -137,6 +138,8 @@ void VPUManager_displayOn(VPUManager this)
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS];
 	VIP_REGS[DPCTRL] = VIP_REGS[DPSTTS] | (SYNCE | RE | DISP);
 	VIP_REGS[FRMCYC] = 0;
+	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
+
 }
 
 // turn display off

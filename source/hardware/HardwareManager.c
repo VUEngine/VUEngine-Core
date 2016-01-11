@@ -152,12 +152,13 @@ void HardwareManager_communicationInterruptHandler(void)   // Link Port Interrup
 // vpu's interrupt handler
 void HardwareManager_vpuInterruptHandler(void)
 {
+#ifdef __DEBUG
 	static int drawingOvertimeCounter = 0;
 	drawingOvertimeCounter += VIP_REGS[XPSTTS] & OVERTIME? 1: 0;
 	Printing_int(Printing_getInstance(), drawingOvertimeCounter, 30, 15, NULL);
-//	NM_ASSERT(!(VIP_REGS[XPSTTS] & OVERTIME), "HardwareManager::vpuInterruptHandler: drawing overtime"); 
+#endif
+
 	VPUManager_idleDrawing(VPUManager_getInstance());
-//	VPUManager_disableInterrupt(VPUManager_getInstance());
 }
 
 // setup interrupt vectors

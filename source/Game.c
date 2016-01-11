@@ -776,9 +776,6 @@ static void Game_update(Game this)
 
 	while (true)
 	{
-	    while(!(VIP_REGS[INTPND] & GAMESTART)); 
-	    VIP_REGS[INTCLR]= GAMESTART;
-
 	    if(this->nextState)
 		{
 #ifdef __DEBUG
@@ -791,14 +788,15 @@ static void Game_update(Game this)
 		}
 
 		// update each subsystem
+		Game_updateRendering(this);
 		Game_updateLogic(this);
 		Game_updatePhysics(this);
-		Game_updateRendering(this);
-		
+		/*
 		if(!FrameRate_getFPS(this->frameRate) && FrameRate_isFPSHigh(this->frameRate))
 		{
 			Game_cleanUp(this);
 		}
+		*/
 		
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(this->frameRate);

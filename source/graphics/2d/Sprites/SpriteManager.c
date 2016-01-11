@@ -209,6 +209,17 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 				Sprite_setWorldLayer(sprite, worldLayer2);
 
+				// must hide again 
+				if(sprite->hidden)
+				{
+					__VIRTUAL_CALL(void, Sprite, hide, sprite);
+				}
+
+				if(nextSprite->hidden)
+				{
+					__VIRTUAL_CALL(void, Sprite, hide, nextSprite);
+				}
+
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);
 
@@ -301,8 +312,15 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 			
 			// move the sprite to the freed layer
 			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
+			
+			// must hide again 
+			if(sprite->hidden)
+			{
+				__VIRTUAL_CALL(void, Sprite, hide, sprite);
+			}
 		}
 		
+		WORLD_HEAD(spriteLayer, 0x0000);
 		SpriteManager_setLastLayer(this);
 
 		// sorting needs to restart
@@ -346,19 +364,17 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
+	// wait to sync with the game start to render
+	// this wait actually controls the frame rate
+    while(!(VIP_REGS[INTPND] & GAMESTART)); 
+    VIP_REGS[INTCLR]= GAMESTART;
 
 	// z sorting
 	SpriteManager_sortLayersProgressively(this);
-
 	
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
-	unsigned int volatile* _xpstts =	NULL;
-	_xpstts = (unsigned int *)&VIP_REGS[XPSTTS];
-
-	while (*_xpstts & XPBSYR);
-	VIP_REGS[XPCTRL] |= XPRST;
-
+	
 	for(; node; node = node->previous)
 	{
 		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
