@@ -795,9 +795,8 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
 
-	this->invalidateGlobalPosition.x = true;
-	this->invalidateGlobalPosition.y = true;
-	this->invalidateGlobalPosition.z = true;
+	// force invalid position in all children
+	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
 
 	// call base class's transform method
 	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);

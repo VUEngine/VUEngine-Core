@@ -371,11 +371,11 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	// defragmentation takes priority over z sorting
 	if(this->objectSpriteToDefragment)
 	{
-		//ObjectSpriteContainer_defragment(this);
+		ObjectSpriteContainer_defragment(this);
 	}
 	else
 	{
-		//ObjectSpriteContainer_sort(this);
+		ObjectSpriteContainer_sort(this);
 	}
 
 	VirtualNode node = this->objectSprites->head;

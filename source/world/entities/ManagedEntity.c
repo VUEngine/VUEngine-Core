@@ -101,7 +101,6 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 
 	if(child)
 	{
-		/*
 		if(child->sprites)
 		{
 			VirtualNode spriteNode = child->sprites->head;
@@ -110,17 +109,8 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 				VirtualList_pushBack(this->managedSprites, sprite);
-				VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-				
-				// eliminate fractions to avoid rounding problems later
-				position.x &= 0xFFFFE000;
-				position.y &= 0xFFFFE000;
-				
-				// don't round z coordinate since it is used for layer sorting
-				__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &position);
 			}
 		}
-		*/
 		
 		if(child->children)
 		{
@@ -143,14 +133,28 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	
 	VirtualList_clear(this->managedSprites);
 	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
+	
+	// save new global position
+	VBVec3D position3D = this->transform.globalPosition;
+	VBVec2D position2D;
+	position2D.parallax = 0;
+	
+	// normalize the position to screen coordinates
+	__OPTICS_NORMALIZE(position3D);
+
+	// project position to 2D space
+	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+	position2D.x &= 0xFFFFE000;
+	position2D.y &= 0xFFFFE000;
+	
+	this->previous2DPosition = position2D;
 }
 
 // transform class
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
-
-	return Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 
 	// TODO: take into account scaling
 	/*
