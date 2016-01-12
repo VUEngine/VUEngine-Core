@@ -251,8 +251,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 		__VIRTUAL_CALL(void, Sprite, calculateParallax, __SAFE_CAST(Sprite, this), this->drawSpec.position.z);
 	}
 
-	this->renderFlag |= __UPDATE_G;
-	this->renderFlag |= __UPDATE_M;
+	this->renderFlag |= __UPDATE_G | __UPDATE_M;
 }
 
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement)
@@ -427,7 +426,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 			}
 			else
 			{
-				worldPointer->w = __SCREEN_WIDTH;
+				worldPointer->gx -= (this->drawSpec.position.parallax);
+				worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
 			}
 
 			if(!this->mSpriteDefinition->yLoop)
@@ -446,16 +446,12 @@ void MBgmapSprite_render(MBgmapSprite this)
 		}
 		
 		// set the world screen position
-		if(this->renderFlag & __UPDATE_G)
+		if(this->renderFlag & (__UPDATE_G | __UPDATE_M))
 		{
 			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
-		}
 
-		// set the world screen position
-		if(this->renderFlag & __UPDATE_M)
-		{
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
@@ -468,7 +464,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 			}
 			else
 			{
-				worldPointer->w = __SCREEN_WIDTH;
+				worldPointer->gx -= (this->drawSpec.position.parallax);
+				worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
 			}
 
 			if(!this->mSpriteDefinition->yLoop)
