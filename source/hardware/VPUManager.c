@@ -142,7 +142,8 @@ void VPUManager_interruptHandler(void)
 	// disable interrupts
 	VIP_REGS[INTENB]= 0;
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-	
+
+	// if the VPU is idle
 	if(idle) 
 	{
 		// disable drawing
@@ -151,7 +152,7 @@ void VPUManager_interruptHandler(void)
 
 		while (VIP_REGS[XPSTTS] & XPBSYR);
 		
-		// write VRAM
+		// write to VRAM
 		SpriteManager_render(SpriteManager_getInstance());
 		
 		// enable drawing
@@ -170,11 +171,9 @@ void VPUManager_displayOn(VPUManager this)
 	ASSERT(this, "VPUManager::displayOn: null this");
 
 	VIP_REGS[REST] = 0;
-	//VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS];
+	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	VIP_REGS[DPCTRL] = VIP_REGS[DPSTTS] | (SYNCE | RE | DISP);
 	VIP_REGS[FRMCYC] = 0;
-	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
-
 }
 
 // turn display off
