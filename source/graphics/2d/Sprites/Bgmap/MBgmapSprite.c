@@ -203,20 +203,11 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	else
 	{
 		this->drawSpec.textureSource.mx = this->textureXOffset;
+		this->drawSpec.position.x = position->x;
 
-		if(ITOFIX19_13(__SCREEN_WIDTH) < position->x + this->displacement.x)
+		if(0 > position->x + this->displacement.x)
 		{
-			this->drawSpec.position.x = ITOFIX19_13(__SCREEN_WIDTH);
-			this->drawSpec.textureSource.mx = 0;
-		}
-		else if(0 > position->x + this->displacement.x)
-		{
-			this->drawSpec.position.x = 0;
 			this->drawSpec.textureSource.mx += (int)(0.5f - FIX19_13TOF(position->x + this->displacement.x));
-		}
-		else
-		{
-			this->drawSpec.position.x = position->x + this->displacement.x;
 		}
 	}
 
@@ -228,19 +219,11 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	else
 	{
 		this->drawSpec.textureSource.my = this->textureYOffset;
+		this->drawSpec.position.y = position->y;
 
-		if(ITOFIX19_13(__SCREEN_HEIGHT) < position->y + this->displacement.y)
+		if(0 > position->y + this->displacement.y)
 		{
-			this->drawSpec.position.y = ITOFIX19_13(__SCREEN_HEIGHT);
-		}
-		else if(0 > position->y + this->displacement.y)
-		{
-			this->drawSpec.position.y = 0;
 			this->drawSpec.textureSource.my += (int)(0.5f - FIX19_13TOF(position->y + this->displacement.y));
-		}
-		else
-		{
-			this->drawSpec.position.y = position->y + this->displacement.y;
 		}
 	}
 	
@@ -272,7 +255,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 		}
 		else if(ITOFIX19_13(__SCREEN_WIDTH) < this->drawSpec.position.x + displacement->x)
 		{
-			this->drawSpec.position.x = ITOFIX19_13(__SCREEN_WIDTH);
+			this->drawSpec.position.x = this->drawSpec.position.x + displacement->x;
 			this->drawSpec.textureSource.mx = 0;
 		}
 		else if(0 > this->drawSpec.position.x + displacement->x)
@@ -299,7 +282,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 		}
 		else if(ITOFIX19_13(__SCREEN_HEIGHT) < this->drawSpec.position.y + displacement->y)
 		{
-			this->drawSpec.position.y = ITOFIX19_13(__SCREEN_HEIGHT);
+			this->drawSpec.position.y = this->drawSpec.position.y + displacement->y;
 			this->drawSpec.textureSource.my = 0;
 		}
 		else if(0 > this->drawSpec.position.y + displacement->y)
@@ -413,12 +396,15 @@ void MBgmapSprite_render(MBgmapSprite this)
 
 		if(__UPDATE_HEAD == this->renderFlag)
 		{
+			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
+			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+			int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+			worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
+
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);;
-			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
 
 			// set the world size
 			if(!this->mSpriteDefinition->xLoop)
@@ -450,9 +436,11 @@ void MBgmapSprite_render(MBgmapSprite this)
 		// set the world screen position
 		if(this->renderFlag & (__UPDATE_G | __UPDATE_M))
 		{
-			worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x);
+			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y);
+			int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+			worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
 
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;

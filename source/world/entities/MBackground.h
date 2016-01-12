@@ -38,7 +38,6 @@
 		__VIRTUAL_SET(ClassName, MBackground, initialize);												\
 		__VIRTUAL_SET(ClassName, MBackground, suspend);													\
 		__VIRTUAL_SET(ClassName, MBackground, resume);													\
-		__VIRTUAL_SET(ClassName, MBackground, isVisible);												\
 
 #define MBackground_ATTRIBUTES																			\
 																										\
@@ -73,7 +72,6 @@ void MBackground_destructor(MBackground this);
 void MBackground_initialize(MBackground this);
 void MBackground_suspend(MBackground this);
 void MBackground_resume(MBackground this);
-int MBackground_isVisible(MBackground this, int pad);
 
 
 #endif

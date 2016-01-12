@@ -154,11 +154,3 @@ void MBackground_resume(MBackground this)
 
 	Entity_resume(__SAFE_CAST(Entity, this));
 }
-
-int MBackground_isVisible(MBackground this, int pad)
-{
-	ASSERT(this, "MBackground::isVisible: null this");
-
-	// TODO: add support for MBgmapSprites
-	return Entity_isVisible(__SAFE_CAST(Entity, this), pad);
-}
