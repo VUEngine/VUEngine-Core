@@ -324,15 +324,15 @@ void SpriteManager_setLastLayer(SpriteManager this)
 		this->freeLayer = __TOTAL_LAYERS - 1;
 	}
 	
-	ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
-//	NM_ASSERT(this->freeLayer < __TOTAL_LAYERS - VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
+	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
+	NM_ASSERT(__TOTAL_LAYERS > VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
 	Printing_render(Printing_getInstance(), this->freeLayer);
 	
-	if(0 < this->freeLayer - 1)
+	if(0 < this->freeLayer)
 	{
-		WA[this->freeLayer - 2].head = WRLD_END;
+		WA[this->freeLayer - 1].head = WRLD_END;
 	}
 }
 
@@ -349,7 +349,13 @@ void SpriteManager_render(SpriteManager this)
 	
 	for(; node; node = node->previous)
 	{
-		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		__VIRTUAL_CALL(void, Sprite, render, sprite);
+		
+		// must make sure that no sprite has the end world
+		// which can be the case when a new sprite is added
+		// and the previous end world is assigned to it
+		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
 
 	// configure printing layer
