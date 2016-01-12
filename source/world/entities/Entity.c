@@ -614,14 +614,6 @@ void Entity_ready(Entity this)
 		{
 			__VIRTUAL_CALL(void, Entity, ready, __SAFE_CAST(Entity, childNode->data));
 		}
-
-		VirtualNode spriteNode = this->sprites->head;
-
-		// since transformations are done, allow the sprites to render
-		for(; spriteNode ; spriteNode = spriteNode->next)
-		{
-			Sprite_setRenderFlag(__SAFE_CAST(Sprite, spriteNode->data), __UPDATE_HEAD);
-		}
 	}
 }
 

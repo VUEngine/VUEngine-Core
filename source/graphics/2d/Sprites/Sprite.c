@@ -57,6 +57,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, O
 	this->texture = NULL;
 	this->displacement = (VBVec3D){0, 0, 0};
 	this->hidden = false;
+	this->initialized = false;
 }
 
 // class's destructor

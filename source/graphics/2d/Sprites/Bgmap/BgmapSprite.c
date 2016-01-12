@@ -273,6 +273,7 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 	this->drawSpec.position.z = position->z;
 
 	this->renderFlag |= __UPDATE_G;
+	this->initialized = true;
 }
 
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
@@ -308,7 +309,7 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
 	// if render flag is set
-	if(this->renderFlag)
+	if(this->renderFlag && this->initialized)
 	{
 		if(this->hidden)
 		{

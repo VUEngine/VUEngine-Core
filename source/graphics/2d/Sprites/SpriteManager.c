@@ -245,9 +245,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		VirtualList_pushFront(this->sprites, sprite);
 
 		Sprite_setWorldLayer(sprite, layer);
-		
-		// don't allow inmediate rendering until its position is properly set
-		Sprite_setRenderFlag(sprite, false);
 
 		ASSERT(this->freeLayer < layer, "SpriteManager::addSprite: this->freeLayer >= layer");
 
