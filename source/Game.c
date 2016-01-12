@@ -795,18 +795,23 @@ static void Game_update(Game this)
 		// this wait actually controls the frame rate
 	    while(!(VIP_REGS[INTPND] & GAMESTART)); 
 	    VIP_REGS[INTCLR]= GAMESTART;
-		// position the screen
+
+		// update each subsystem
+		
+		// transformations from the previous frame
+		// must be aplied while the VPU is wrinting to 
+		// VRAM
 	    Game_updateTransformations(this);
 		Game_updateLogic(this);
 		Game_updatePhysics(this);
 		Game_checkForNewState(this);
 
-		/*
+		// check if performance was good enough 
+		// the previous second to do some defragmenting
 		if(!FrameRate_getFPS(this->frameRate) && FrameRate_isFPSHigh(this->frameRate))
 		{
 			Game_cleanUp(this);
 		}
-		*/
 		
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(this->frameRate);
