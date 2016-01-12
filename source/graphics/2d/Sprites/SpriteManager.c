@@ -209,17 +209,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 				Sprite_setWorldLayer(sprite, worldLayer2);
 
-				// must hide again 
-				if(sprite->hidden)
-				{
-					__VIRTUAL_CALL(void, Sprite, hide, sprite);
-				}
-
-				if(nextSprite->hidden)
-				{
-					__VIRTUAL_CALL(void, Sprite, hide, nextSprite);
-				}
-
 				// swap nodes' data
 				VirtualNode_swapData(this->node, this->nextNode);
 
@@ -256,10 +245,10 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		VirtualList_pushFront(this->sprites, sprite);
 
 		Sprite_setWorldLayer(sprite, layer);
+		
+		// don't allow inmediate rendering until its position is properly set
+		Sprite_setRenderFlag(sprite, false);
 
-		// configure printing layer
-		// and shutdown unused layers
-		SpriteManager_setLastLayer(this);
 		ASSERT(this->freeLayer < layer, "SpriteManager::addSprite: this->freeLayer >= layer");
 
 		this->node = NULL;
@@ -282,9 +271,6 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	// check if exists
 	if(VirtualList_removeElement(this->sprites, sprite))
 	{
-		// hide it
-		__VIRTUAL_CALL(void, Sprite, hide, sprite);
-
 		u8 spriteLayer = sprite->worldLayer;
 
 		VirtualNode node = this->sprites->head;
@@ -312,17 +298,8 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 			
 			// move the sprite to the freed layer
 			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
-			
-			// must hide again 
-			if(sprite->hidden)
-			{
-				__VIRTUAL_CALL(void, Sprite, hide, sprite);
-			}
 		}
 		
-		WORLD_HEAD(spriteLayer, 0x0000);
-		SpriteManager_setLastLayer(this);
-
 		// sorting needs to restart
 		this->node = NULL;
 		this->nextNode = NULL;
@@ -353,9 +330,9 @@ void SpriteManager_setLastLayer(SpriteManager this)
 
 	Printing_render(Printing_getInstance(), this->freeLayer);
 	
-	if(0 < this->freeLayer)
+	if(0 < this->freeLayer - 1)
 	{
-		WA[this->freeLayer - 1].head = WRLD_OFF;
+		WA[this->freeLayer - 2].head = WRLD_END;
 	}
 }
 
@@ -363,11 +340,6 @@ void SpriteManager_setLastLayer(SpriteManager this)
 void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
-
-	// wait to sync with the game start to render
-	// this wait actually controls the frame rate
-    while(!(VIP_REGS[INTPND] & GAMESTART)); 
-    VIP_REGS[INTCLR]= GAMESTART;
 
 	// z sorting
 	SpriteManager_sortLayersProgressively(this);
@@ -380,9 +352,9 @@ void SpriteManager_render(SpriteManager this)
 		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
 	}
 
-	// allow drawing now
-	// don't need to idle it because it is handled by the VPU's XPEND interrupt
-	VPUManager_enableDrawing(VPUManager_getInstance());
+	// configure printing layer
+	// and shutdown unused layers
+	SpriteManager_setLastLayer(this);
 }
 
 // retrieve free layer

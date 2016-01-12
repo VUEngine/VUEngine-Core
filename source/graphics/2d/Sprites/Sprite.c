@@ -127,7 +127,6 @@ void Sprite_hide(Sprite this)
 {
 	ASSERT(this, "Sprite::hide: null this");
 
-	WORLD_HEAD(this->worldLayer, 0x0000);
 	this->renderFlag = false;
 	this->hidden = true;
 }
@@ -166,7 +165,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 		this->worldLayer = worldLayer;
 
 		// make sure everything is setup in the next render cycle
-		this->renderFlag = this->hidden? 0 : __UPDATE_HEAD;
+		this->renderFlag = __UPDATE_HEAD;
 	}
 }
 

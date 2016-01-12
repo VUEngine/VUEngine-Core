@@ -21,6 +21,8 @@
 
 #include <VPUManager.h>
 #include <HardwareManager.h>
+#include <SpriteManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -100,15 +102,18 @@ void VPUManager_enableDrawing(VPUManager this)
 
 	while (VIP_REGS[XPSTTS] & XPBSYR);
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
+	VPUManager_enableInterrupt(this);
 }
 
 void VPUManager_disableDrawing(VPUManager this)
 {
-	ASSERT(this, "VPUManager::idleDrawing: null this");
+	NM_ASSERT(false, "VPUManager::idleDrawing: null this");
 
-//	while (VIP_REGS[XPSTTS] & XPBSYR);
-	VIP_REGS[INTCLR] |= XPEND;
+	VPUManager_disableInterrupt(this);
+
+	while (VIP_REGS[XPSTTS] & XPBSYR);
 	VIP_REGS[XPCTRL] |= XPRST;
+	VIP_REGS[XPCTRL] &= ~XPEN;
 }
 
 // enable interrupt
@@ -117,7 +122,8 @@ void VPUManager_enableInterrupt(VPUManager this)
 	ASSERT(this, "VPUManager::enableInterrupt: null this");
 
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-	VIP_REGS[INTENB]= XPEND | TIMEERR;
+//	VIP_REGS[INTENB]= XPEND | TIMEERR;
+	VIP_REGS[INTENB]= XPEND;
 }
 
 // disable interrupt
@@ -129,13 +135,43 @@ void VPUManager_disableInterrupt(VPUManager this)
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 }
 
+void VPUManager_interruptHandler(void)
+{
+	bool idle = VIP_REGS[INTPND] & XPEND;
+	
+	// disable interrupts
+	VIP_REGS[INTENB]= 0;
+	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
+	
+	if(idle) 
+	{
+		// disable drawing
+		VIP_REGS[XPCTRL] |= XPRST;
+		VIP_REGS[XPCTRL] &= ~XPEN;
+
+		while (VIP_REGS[XPSTTS] & XPBSYR);
+		
+		// write VRAM
+		SpriteManager_render(SpriteManager_getInstance());
+		
+		// enable drawing
+//		while (VIP_REGS[XPSTTS] & XPBSYR);
+		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
+	}
+
+	// eneable interrupt
+	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
+	VIP_REGS[INTENB]= XPEND;
+}
+
+
 // turn display on
 void VPUManager_displayOn(VPUManager this)
 {
 	ASSERT(this, "VPUManager::displayOn: null this");
 
 	VIP_REGS[REST] = 0;
-	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS];
+	//VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS];
 	VIP_REGS[DPCTRL] = VIP_REGS[DPSTTS] | (SYNCE | RE | DISP);
 	VIP_REGS[FRMCYC] = 0;
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
@@ -150,7 +186,7 @@ void VPUManager_displayOff(VPUManager this)
 	VIP_REGS[REST] = 0;
 	VIP_REGS[XPCTRL] = 0;
 	VIP_REGS[DPCTRL] = 0;
-	VIP_REGS[FRMCYC] = 0;
+	VIP_REGS[FRMCYC] = 1;
 
 	VPUManager_disableInterrupt(this);
 }

@@ -310,6 +310,13 @@ void BgmapSprite_render(BgmapSprite this)
 	// if render flag is set
 	if(this->renderFlag)
 	{
+		if(this->hidden)
+		{
+			WORLD_HEAD(this->worldLayer, 0x0000);
+			this->renderFlag = 0;
+			return;
+		}
+		
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 

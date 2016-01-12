@@ -21,6 +21,7 @@
 
 #include <TimerManager.h>
 #include <HardwareManager.h>
+#include <ClockManager.h>
 #include <debugConfig.h>
 
 
@@ -47,6 +48,9 @@ __CLASS_DEFINITION(TimerManager, Object);
 static void TimerManager_constructor(TimerManager this);
 
 
+static TimerManager _timerManager;
+static ClockManager _clockManager;
+
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -61,6 +65,9 @@ static void TimerManager_constructor(TimerManager this)
 	__CONSTRUCT_BASE();
 
 	this->tcrValue = 0;
+	
+	_timerManager = this;
+	_clockManager = ClockManager_getInstance();
 }
 
 // class's destructor
@@ -88,6 +95,20 @@ void TimerManager_setInterrupt(TimerManager this, int value)
 
 	HW_REGS[TCR] = this->tcrValue;
 }
+
+// timer's interrupt handler
+void TimerManager_interruptHandler(void)
+{
+	//disable interrupts
+	TimerManager_setInterrupt(_timerManager, false);
+
+	// update clocks
+	ClockManager_update(_clockManager, __TIMER_RESOLUTION);
+
+	// enable interrupts
+	TimerManager_setInterrupt(_timerManager, true);
+}
+
 
 // enable timer
 void TimerManager_enable(TimerManager this, int value)

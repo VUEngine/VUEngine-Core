@@ -141,14 +141,6 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	
 	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
 	
-	VBVec3D position3D = this->transform.globalPosition;
-	
-	// normalize the position to screen coordinates
-	__OPTICS_NORMALIZE(position3D);
-
-	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, this->previous2DPosition);
-	
 	VirtualList_clear(this->managedSprites);
 	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
 }

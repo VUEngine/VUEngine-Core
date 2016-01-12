@@ -203,6 +203,21 @@ void ObjectSprite_render(ObjectSprite this)
 	// if render flag is set
 	if(this->renderFlag && 0 <= this->objectIndex)
 	{
+		if(this->hidden)
+		{
+			if (0 <= this->objectIndex)
+			{
+				int i = 0;
+				for (; i < this->totalObjects; i++)
+				{
+					OAM[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				}
+			}
+
+			this->renderFlag = 0;
+			return;
+		}
+
 		int cols = Texture_getCols(__SAFE_CAST(Texture, this->texture));
 		int rows = Texture_getRows(__SAFE_CAST(Texture, this->texture));
 
@@ -338,20 +353,6 @@ void ObjectSprite_hide(ObjectSprite this)
 
 	this->renderFlag = false;
 	this->hidden = true;
-	
-	if(0 > this->objectIndex)
-	{
-		return;
-	}
-
-	if (0 <= this->objectIndex)
-	{
-		int i = 0;
-		for (; i < this->totalObjects; i++)
-		{
-			OAM[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-		}
-	}
 }
 
 u8 ObjectSprite_getWorldLayer(ObjectSprite this)

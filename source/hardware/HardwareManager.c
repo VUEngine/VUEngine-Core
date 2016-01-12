@@ -70,12 +70,13 @@ extern u32 cro_vector;
 extern u32 com_vector;
 extern u32 vpu_vector;
 
-static HardwareManager _hardwareManager = NULL;
-static TimerManager _timerManager;
-static ClockManager _clockManager;
 
 int _lp = 0;
 int _sp = 0;
+
+void TimerManager_interruptHandler(void);
+void KeypadManager_interruptHandler(void);
+void VPUManager_interruptHandler(void);
 
 static void HardwareManager_constructor(HardwareManager this);
 
@@ -100,10 +101,6 @@ static void HardwareManager_constructor(HardwareManager this)
 	this->timerManager = TimerManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
-
-	_hardwareManager = this;
-	_timerManager = TimerManager_getInstance();
-	_clockManager = ClockManager_getInstance();
 }
 
 // class's destructor
@@ -113,28 +110,6 @@ void HardwareManager_destructor(HardwareManager this)
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
-}
-
-// timer's interrupt handler
-void HardwareManager_timerInterruptHandler()
-{
-	ASSERT(_hardwareManager, "HardwareManager::timerInterruptHandler: null _hardwareManager");
-
-	//disable interrupts
-	TimerManager_setInterrupt(_timerManager, false);
-
-	// update clocks
-	ClockManager_update(_clockManager, __TIMER_RESOLUTION);
-
-	// enable interrupts
-	TimerManager_setInterrupt(_timerManager, true);
-}
-
-// keypad's interrupt handler
-void HardwareManager_keypadInterruptHandler(void)
-{
-	// broadcast keypad event
-	Printing_text(Printing_getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
 
 // cro's interrupt handler
@@ -149,26 +124,14 @@ void HardwareManager_communicationInterruptHandler(void)   // Link Port Interrup
 	Printing_text(Printing_getInstance(), "COM interrupt", 48 - 13, 0, NULL);
 }
 
-// vpu's interrupt handler
-void HardwareManager_vpuInterruptHandler(void)
-{
-#ifdef __DEBUG
-	static int drawingOvertimeCounter = 0;
-	drawingOvertimeCounter += VIP_REGS[XPSTTS] & OVERTIME? 1: 0;
-	Printing_int(Printing_getInstance(), drawingOvertimeCounter, 30, 15, NULL);
-#endif
-
-	VPUManager_disableDrawing(VPUManager_getInstance());
-}
-
 // setup interrupt vectors
 void HardwareManager_setInterruptVectors(HardwareManager this)
 {
-	key_vector = (u32)HardwareManager_keypadInterruptHandler;
-	tim_vector = (u32)HardwareManager_timerInterruptHandler;
+	key_vector = (u32)KeypadManager_interruptHandler;
+	tim_vector = (u32)TimerManager_interruptHandler;
 	cro_vector = (u32)HardwareManager_croInterruptHandler;
 	com_vector = (u32)HardwareManager_communicationInterruptHandler;
-	vpu_vector = (u32)HardwareManager_vpuInterruptHandler;
+	vpu_vector = (u32)VPUManager_interruptHandler;
 }
 
 // set interruption level

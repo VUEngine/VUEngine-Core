@@ -608,11 +608,19 @@ void Entity_ready(Entity this)
 	if(this->children)
 	{
 		// call ready method on children
-		VirtualNode node = this->children->head;
+		VirtualNode childNode = this->children->head;
 
-		for(; node; node = node->next)
+		for(; childNode; childNode = childNode->next)
 		{
-			__VIRTUAL_CALL(void, Entity, ready, __SAFE_CAST(Entity, node->data));
+			__VIRTUAL_CALL(void, Entity, ready, __SAFE_CAST(Entity, childNode->data));
+		}
+
+		VirtualNode spriteNode = this->sprites->head;
+
+		// since transformations are done, allow the sprites to render
+		for(; spriteNode ; spriteNode = spriteNode->next)
+		{
+			Sprite_setRenderFlag(__SAFE_CAST(Sprite, spriteNode->data), __UPDATE_HEAD);
 		}
 	}
 }

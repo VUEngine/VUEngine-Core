@@ -190,3 +190,10 @@ u16 KeypadManager_getPreviousKey(KeypadManager this)
 	return this->previousKey;
 	//return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
 }
+
+// keypad's interrupt handler
+void KeypadManager_interruptHandler(void)
+{
+	// broadcast keypad event
+	Printing_text(Printing_getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
+}

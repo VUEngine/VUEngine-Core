@@ -142,7 +142,8 @@ static void Game_handleInput(Game this);
 static void Game_update(Game this);
 static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
-static void Game_updateRendering(Game this);
+static void Game_updateTransformations(Game this);
+static void Game_checkForNewState(Game this);
 static void Game_cleanUp(Game this);
 static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
@@ -390,9 +391,6 @@ static void Game_setNextState(Game this, GameState state)
 
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
-
-	// make sure printing layer is set
-	SpriteManager_setLastLayer(this->spriteManager);
 
 	// disable rendering
 	HardwareManager_enableRendering(this->hardwareManager);
@@ -703,7 +701,7 @@ static void Game_updatePhysics(Game this)
 }
 
 // update game's rendering subsystem
-static void Game_updateRendering(Game this)
+static void Game_updateTransformations(Game this)
 {
 #ifdef __DEBUG
 	this->lastProcessName = "move screen";
@@ -731,7 +729,7 @@ static void Game_updateRendering(Game this)
 	this->lastProcessName = "render";
 #endif
 	// render sprites
-	SpriteManager_render(this->spriteManager);
+	//SpriteManager_render(this->spriteManager);
 	
 #ifdef __DEBUG
 	this->lastProcessName = "render done";
@@ -765,6 +763,22 @@ static void Game_cleanUp(Game this)
 	}
 }
 
+static void Game_checkForNewState(Game this)
+{
+	ASSERT(this, "Game::checkForNewState: null this");
+
+    if(this->nextState)
+	{
+#ifdef __DEBUG
+		this->lastProcessName = "setting next state";
+#endif		
+		Game_setNextState(this, this->nextState);
+#ifdef __DEBUG
+		this->lastProcessName = "setting next state done";
+#endif		
+	}
+}
+
 // update game's subsystems
 static void Game_update(Game this)
 {
@@ -776,21 +790,17 @@ static void Game_update(Game this)
 
 	while (true)
 	{
-	    if(this->nextState)
-		{
-#ifdef __DEBUG
-			this->lastProcessName = "setting next state";
-#endif		
-			Game_setNextState(this, this->nextState);
-#ifdef __DEBUG
-			this->lastProcessName = "setting next state done";
-#endif		
-		}
-
 		// update each subsystem
-		Game_updateRendering(this);
+		// wait to sync with the game start to render
+		// this wait actually controls the frame rate
+	    while(!(VIP_REGS[INTPND] & GAMESTART)); 
+	    VIP_REGS[INTCLR]= GAMESTART;
+		// position the screen
+	    Game_updateTransformations(this);
 		Game_updateLogic(this);
 		Game_updatePhysics(this);
+		Game_checkForNewState(this);
+
 		/*
 		if(!FrameRate_getFPS(this->frameRate) && FrameRate_isFPSHigh(this->frameRate))
 		{

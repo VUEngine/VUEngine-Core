@@ -168,6 +168,15 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 	
 	// hide it
+	if (0 <= objectSprite->objectIndex)
+	{
+		int i = 0;
+		for (; i < objectSprite->totalObjects; i++)
+		{
+			OAM[((objectSprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+		}
+	}
+	
 	__VIRTUAL_CALL(void, Sprite, hide, objectSprite);
 
 	if(this->objectSpriteToDefragment)
@@ -362,11 +371,11 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	// defragmentation takes priority over z sorting
 	if(this->objectSpriteToDefragment)
 	{
-		ObjectSpriteContainer_defragment(this);
+		//ObjectSpriteContainer_defragment(this);
 	}
 	else
 	{
-		ObjectSpriteContainer_sort(this);
+		//ObjectSpriteContainer_sort(this);
 	}
 
 	VirtualNode node = this->objectSprites->head;
