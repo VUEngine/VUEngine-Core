@@ -256,7 +256,7 @@ void ObjectSprite_render(ObjectSprite this)
 				}
 
 				OAM[(objectIndex << 2)] = outputX;
-				OAM[(objectIndex << 2) + 1] = secondWordValue;
+				OAM[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
 				OAM[(objectIndex << 2) + 2] = outputY;
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
@@ -335,15 +335,6 @@ void ObjectSprite_show(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::show: null this");
 	
 	Sprite_show(__SAFE_CAST(Sprite, this));
-
-	if (0 <= this->objectIndex)
-	{
-		int i = 0;
-		for (; i < this->totalObjects; i++)
-		{
-			OAM[((this->objectIndex + i) << 2) + 1] |= __OBJECT_CHAR_SHOW_MASK;
-		}
-	}
 }
 
 // hide
@@ -351,7 +342,7 @@ void ObjectSprite_hide(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::hide: null this");
 
-	this->renderFlag = false;
+	this->renderFlag = true;
 	this->hidden = true;
 }
 

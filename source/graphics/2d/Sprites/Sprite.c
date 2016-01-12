@@ -128,7 +128,7 @@ void Sprite_hide(Sprite this)
 {
 	ASSERT(this, "Sprite::hide: null this");
 
-	this->renderFlag = false;
+	this->renderFlag = true;
 	this->hidden = true;
 }
 
