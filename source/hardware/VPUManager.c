@@ -155,15 +155,14 @@ void VPUManager_interruptHandler(void)
 		SpriteManager_render(SpriteManager_getInstance());
 		
 		// enable drawing
-//		while (VIP_REGS[XPSTTS] & XPBSYR);
+		while (VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
 
-	// eneable interrupt
+	// enable interrupt
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 	VIP_REGS[INTENB]= XPEND;
 }
-
 
 // turn display on
 void VPUManager_displayOn(VPUManager this)
