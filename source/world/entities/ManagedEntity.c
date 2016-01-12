@@ -145,8 +145,8 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-	position2D.x &= 0xFFFFE000;
-	position2D.y &= 0xFFFFE000;
+//	position2D.x &= 0xFFFFE000;
+//	position2D.y &= 0xFFFFE000;
 	
 	this->previous2DPosition = position2D;
 }
@@ -155,6 +155,9 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
+
+	// TODO : fix me
+	return Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 
 	// TODO: take into account scaling
 	/*
@@ -205,8 +208,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 	
-		position2D.x &= 0xFFFFE000;
-		position2D.y &= 0xFFFFE000;
+		//position2D.x &= 0xFFFFE000;
+		//position2D.y &= 0xFFFFE000;
 
 		VirtualNode spriteNode = this->managedSprites->head;
 		
