@@ -1051,6 +1051,10 @@ void Stage_suspend(Stage this)
 		    Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
 		}
 	}
+	else
+	{
+		this->focusEntity = Screen_getFocusInGameEntity(Screen_getInstance());
+	}
 }
 
 // resume after pause
