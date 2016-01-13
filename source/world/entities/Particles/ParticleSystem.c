@@ -188,7 +188,7 @@ void ParticleSystem_update(ParticleSystem this)
 	
 	ParticleSystem_processExpiredParticles(this);
 
-    u32 timeElapsed = Clock_getElapsedTime(this->clock);
+    u32 timeElapsed = Clock_getElapsedTime(this->clock) << __FRAME_CYCLE;
 
     // update each particle
     VirtualNode node = this->particles->head;
