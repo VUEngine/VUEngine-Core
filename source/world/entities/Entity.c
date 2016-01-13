@@ -60,7 +60,7 @@ static void Entity_releaseSprites(Entity this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name)
+__CLASS_NEW_DEFINITION(Entity, EntityDefinition* entityDefinition, s16 id, const char* const name)
 __CLASS_NEW_END(Entity, entityDefinition, id, name);
 
 
