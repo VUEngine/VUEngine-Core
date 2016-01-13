@@ -264,19 +264,19 @@ void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
 }
 
 // retrieve friction of colliding objects
-void Actor_updateSourroundingFriction(Actor this)
+void Actor_updateSurroundingFriction(Actor this)
 {
-	ASSERT(this, "Actor::updateSourroundingFriction: null this");
-	ASSERT(this->body, "Actor::updateSourroundingFriction: null body");
+	ASSERT(this, "Actor::updateSurroundingFriction: null this");
+	ASSERT(this->body, "Actor::updateSurroundingFriction: null body");
 
 	Force totalFriction = {this->actorDefinition->friction, this->actorDefinition->friction, this->actorDefinition->friction};
 	
 	if(this->collisionSolver)
 	{
-		Force sourroundingFriction = CollisionSolver_getSourroundingFriction(this->collisionSolver);
-		totalFriction.x += sourroundingFriction.x;
-		totalFriction.y += sourroundingFriction.y;
-		totalFriction.z += sourroundingFriction.z;
+		Force surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
+		totalFriction.x += surroundingFriction.x;
+		totalFriction.y += surroundingFriction.y;
+		totalFriction.z += surroundingFriction.z;
 	}
 
 	Body_setFriction(this->body, totalFriction);
@@ -604,7 +604,7 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingSpatialObjec
 
 		Actor_checkIfMustBounce(this, axisOfAllignement);
 		
-		__VIRTUAL_CALL(void, Actor, updateSourroundingFriction, this);
+		__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
 	}
 }
 
@@ -634,7 +634,7 @@ static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingS
 		
 		Actor_checkIfMustBounce(this, axisOfCollision);
 		
-		__VIRTUAL_CALL(void, Actor, updateSourroundingFriction, this);
+		__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
 	}
 }
 
@@ -699,7 +699,7 @@ void Actor_addForce(Actor this, const Force* force)
 	Body_addForce(this->body, &effectiveForceToApply);
 	
 	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
-	__VIRTUAL_CALL(void, Actor, updateSourroundingFriction, this);
+	__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
 }
 
 // get velocity
