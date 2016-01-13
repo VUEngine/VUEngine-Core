@@ -224,7 +224,7 @@ bool AnimationController_animate(AnimationController this)
 	this->frameDelay += this->frameDelayDelta;
 
 	// reduce frame delay count
-	if(0 >= this->frameDelay)
+	if(0 > this->frameDelay)
 	{
 		// incrase the frame to show
 		this->previousFrame = this->actualFrame++;
@@ -232,11 +232,15 @@ bool AnimationController_animate(AnimationController this)
 		// reset frame delay
 		this->frameDelay = this->animationFunction->delay;
 
-		// if the delay is negative
-		if(0 > this->frameDelay)
+		// the minimum valid delay is 1
+		if(0 == this->frameDelay)
+		{
+			this->frameDelay = 1;
+		}
+		else if(0 > this->frameDelay)
 		{
 			// pick up a random delay
-			this->frameDelay = Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
+			this->frameDelay = 1 + Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
 	}
 	
