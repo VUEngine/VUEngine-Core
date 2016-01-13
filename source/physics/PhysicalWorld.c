@@ -228,14 +228,22 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 		// check if necessary to apply gravity
 		bool gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
+		
+		u8 movingState = Body_isMoving(body);
+		
+		gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 
 		if(gravitySensibleAxis)
 		{
+			// Must account for the FPS to avoid situations is which 
+			// a collision is not detected when a body starts to fall
+			// and doesn't have enough time to detect a shape below
+			// when moving from one shape over another
 			Acceleration gravity =
 			{
-				gravitySensibleAxis & __XAXIS ? this->gravity.x : 0,
-				gravitySensibleAxis & __YAXIS ? this->gravity.y : 0,
-				gravitySensibleAxis & __ZAXIS ? this->gravity.z : 0
+				gravitySensibleAxis & __XAXIS ? this->gravity.x >> __FRAME_CYCLE: 0,
+				gravitySensibleAxis & __YAXIS ? this->gravity.y >> __FRAME_CYCLE: 0,
+				gravitySensibleAxis & __ZAXIS ? this->gravity.z >> __FRAME_CYCLE: 0
 			};
 
 			// add gravity

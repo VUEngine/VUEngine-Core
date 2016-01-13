@@ -24,6 +24,12 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 											   	MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __ALIGN_PADDING		1
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -140,11 +146,10 @@ u8 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Accelera
 
 	VBVec3D displacement =
     {
-    	acceleration->x ? 0 < acceleration->x? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
-		acceleration->y ? 0 < acceleration->y? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0,
-		acceleration->z ? 0 < acceleration->z? FTOFIX19_13(1.5f): FTOFIX19_13(-1.5f): 0
+    	acceleration->x ? 0 < acceleration->x? ITOFIX19_13(__ALIGN_PADDING + 1): ITOFIX19_13(-__ALIGN_PADDING - 1): 0,
+		acceleration->y ? 0 < acceleration->y? ITOFIX19_13(__ALIGN_PADDING + 1): ITOFIX19_13(-__ALIGN_PADDING - 1): 0,
+		acceleration->z ? 0 < acceleration->z? ITOFIX19_13(__ALIGN_PADDING + 1): ITOFIX19_13(-__ALIGN_PADDING - 1): 0
 	};
-
 
 	int i = 0;
 	for(; i < kLastAxis; i++)
@@ -190,8 +195,7 @@ static void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, 
 		alignThreshold = 1;
 	}
 	*/
-	int alignThreshold = 1;
-
+	int alignThreshold = __ALIGN_PADDING;
 
 	if(__XAXIS & axisOfCollision)
     {
