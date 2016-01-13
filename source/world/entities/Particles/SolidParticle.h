@@ -109,6 +109,9 @@ typedef struct SolidParticleDefinition
 	// flag to ignore collisions against other particles
 	bool ignoreParticles;
 
+	// flag to allow bouncing on each axis
+	u8 axisAllowedForBouncing;
+
 } SolidParticleDefinition;
 
 typedef const SolidParticleDefinition SolidParticleROMDef;

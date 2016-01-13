@@ -947,7 +947,7 @@ u8 Body_isMoving(Body this)
 }
 
 // bounce back
-void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
+void Body_bounce(Body this, u8 axis, u8 axisAllowedForBouncing, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
 
@@ -956,7 +956,7 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 
 	if((__XAXIS & axis))
 	{
-		if(Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x, axis, otherBodyElasticity))
+		if((__XAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x, axis, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __XAXIS;
 		}
@@ -968,7 +968,7 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 
 	if((__YAXIS & axis))
 	{
-		if(Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, axis, otherBodyElasticity))
+		if((__YAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, axis, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __YAXIS;
 		}
@@ -980,7 +980,7 @@ void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity)
 
 	if((__ZAXIS & axis))
 	{
-		if(Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, axis, otherBodyElasticity))
+		if((__ZAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, axis, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __ZAXIS;
 		}

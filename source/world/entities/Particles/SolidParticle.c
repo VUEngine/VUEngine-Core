@@ -167,7 +167,7 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 	{
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
-		Body_bounce(this->body, axisOfCollision, otherSpatialObjectsElasticity);
+		Body_bounce(this->body, axisOfCollision, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
 		
 		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {

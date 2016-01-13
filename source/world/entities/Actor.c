@@ -560,9 +560,9 @@ void Actor_stopMovement(Actor this)
 	}
 }
 
-u8 Actor_getAxisAllowedForCollision(Actor this)
+u8 Actor_getAxisAllowedForBouncing(Actor this)
 {
-	ASSERT(this, "Actor::getAxisAllowedForCollision: null this");
+	ASSERT(this, "Actor::getAxisAllowedForBouncing: null this");
 
 	return __XAXIS | __YAXIS | __ZAXIS;
 }
@@ -576,9 +576,9 @@ static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 	{
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
-		u8 axisToTextForBouncing = axisOfCollision & __VIRTUAL_CALL(u8, Actor, getAxisAllowedForCollision, this);
+		u8 axisAllowedForBouncing = __VIRTUAL_CALL(u8, Actor, getAxisAllowedForBouncing, this);
 		
-		Body_bounce(this->body, axisOfCollision, otherSpatialObjectsElasticity);
+		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
 		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {

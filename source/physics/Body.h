@@ -128,7 +128,7 @@ void Body_moveAccelerated(Body this, u8 axis);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_printPhysics(Body this, int x, int y);
 void Body_stopMovement(Body this, u8 axis);
-void Body_bounce(Body this, u8 axis, fix19_13 otherBodyElasticity);
+void Body_bounce(Body this, u8 axis, u8 axisAllowedForBouncing, fix19_13 otherBodyElasticity);
 void Body_takeHitFrom(Body this, Body other);
 
 

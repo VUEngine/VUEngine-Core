@@ -629,8 +629,6 @@ static void Game_handleInput(Game this)
 		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
 
-	KeypadManager_clear(this->keypadManager);
-	
 #ifdef __LOW_BATTERY_INDICATOR
     Game_checkLowBattery(this, holdKey);
 #endif

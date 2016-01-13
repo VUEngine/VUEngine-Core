@@ -39,7 +39,7 @@
 		__VIRTUAL_DEC(takeHitFrom);																		\
 		__VIRTUAL_DEC(getAxisFreeForMovement);															\
 		__VIRTUAL_DEC(updateSourroundingFriction);														\
-		__VIRTUAL_DEC(getAxisAllowedForCollision);														\
+		__VIRTUAL_DEC(getAxisAllowedForBouncing);														\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedInGameEntity_SET_VTABLE(ClassName)														\
@@ -61,7 +61,7 @@
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);												\
 		__VIRTUAL_SET(ClassName, Actor, updateSourroundingFriction);									\
-		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForCollision);									\
+		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);									\
 
 
 #define Actor_ATTRIBUTES																				\
@@ -130,7 +130,7 @@ void Actor_setPosition(Actor this, const VBVec3D* position);
 bool Actor_updateSpritePosition(Actor this);
 bool Actor_updateSpriteTransformations(Actor this);
 void Actor_stopMovement(Actor this);
-u8 Actor_getAxisAllowedForCollision(Actor this);
+u8 Actor_getAxisAllowedForBouncing(Actor this);
 void Actor_alignTo(Actor this, InGameEntity entity, int axis, int pad);
 const Body Actor_getBody(Actor this);
 void Actor_takeHitFrom(Actor this, Actor other);
