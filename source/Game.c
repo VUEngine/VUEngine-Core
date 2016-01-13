@@ -63,8 +63,6 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __FPS_BASED_SECONDS		(int)(1000 / __TARGET_FPS) 
-
 enum StateOperations
 {
 	kSwapState = 0,

@@ -132,7 +132,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
 	
-	u32 previousSecond = this->ticks / (__MILLISECONDS_IN_SECOND);
+	u32 previousSecond = this->ticks / ((__MILLISECONDS_IN_SECOND) << __FRAME_CYCLE);
 
 	if(this->clocks)
 	{
@@ -149,7 +149,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	this->ticks += ticksElapsed;
 	
     //if second has changed, set frame rate 
-    if(previousSecond != (this->ticks / __MILLISECONDS_IN_SECOND))
+    if(previousSecond != (this->ticks / ((__MILLISECONDS_IN_SECOND) << __FRAME_CYCLE)))
     {
     		FrameRate frameRate = FrameRate_getInstance();
     		
