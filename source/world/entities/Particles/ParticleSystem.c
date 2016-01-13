@@ -149,7 +149,7 @@ void ParticleSystem_destructor(ParticleSystem this)
 
 static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::update: null this");
+	ASSERT(this, "ParticleSystem::processExpiredParticles: null this");
 
 	VirtualNode node = this->expiredParticles->head;
 
