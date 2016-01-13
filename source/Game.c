@@ -473,9 +473,9 @@ static void Game_handleInput(Game this)
 		return;
 	}
 	
-#ifdef __POLL_USER_INPUT_ONLY_ON_LOGIC_CYCLE
+	// poll the user's input
 	KeypadManager_read(this->keypadManager);
-#endif
+
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);

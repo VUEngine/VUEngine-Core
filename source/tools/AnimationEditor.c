@@ -495,7 +495,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 
 			case kDelay:
 
-				this->animationFunction.delay -= 1 * __FPS_ANIM_FACTOR;
+				this->animationFunction.delay -= 1;
 
 				if(0 > this->animationFunction.delay)
 				{
@@ -531,7 +531,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 
 			case kDelay:
 
-				this->animationFunction.delay += 1 * __FPS_ANIM_FACTOR;
+				this->animationFunction.delay += 1;
 
 				if(1000 < this->animationFunction.delay)
 				{
