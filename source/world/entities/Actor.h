@@ -38,7 +38,7 @@
 		__VIRTUAL_DEC(die);																				\
 		__VIRTUAL_DEC(takeHitFrom);																		\
 		__VIRTUAL_DEC(getAxisFreeForMovement);															\
-		__VIRTUAL_DEC(updateSourroundingFriction);														\
+		__VIRTUAL_DEC(updateSurroundingFriction);														\
 		__VIRTUAL_DEC(getAxisAllowedForBouncing);														\
 
 #define Actor_SET_VTABLE(ClassName)																		\
@@ -60,7 +60,7 @@
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);												\
-		__VIRTUAL_SET(ClassName, Actor, updateSourroundingFriction);									\
+		__VIRTUAL_SET(ClassName, Actor, updateSurroundingFriction);									\
 		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);										\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 
@@ -138,7 +138,7 @@ void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force);
-void Actor_updateSourroundingFriction(Actor this);
+void Actor_updateSurroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 Velocity Actor_getVelocity(Actor this);
 

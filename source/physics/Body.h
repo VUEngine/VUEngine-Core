@@ -59,7 +59,7 @@
 	/* direction */																						\
 	Force appliedForce;																					\
 																										\
-	/* friction sourrounding object */																	\
+	/* friction surrounding object */																	\
 	Force friction;																						\
 																										\
 	/* spatial position */																				\

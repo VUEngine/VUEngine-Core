@@ -140,19 +140,19 @@ u16 SolidParticle_getDepth(SolidParticle this)
 }
 
 // retrieve friction of colliding objects
-static void SolidParticle_updateSourroundingFriction(SolidParticle this)
+static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::updateSourroundingFriction: null this");
-	ASSERT(this->body, "SolidParticle::updateSourroundingFriction: null body");
+	ASSERT(this, "SolidParticle::updateSurroundingFriction: null this");
+	ASSERT(this->body, "SolidParticle::updateSurroundingFriction: null body");
 
 	Force totalFriction = {0, 0, 0};
 	
 	if(this->collisionSolver)
 	{
-		Force sourroundingFriction = CollisionSolver_getSourroundingFriction(this->collisionSolver);
-		totalFriction.x += sourroundingFriction.x;
-		totalFriction.y += sourroundingFriction.y;
-		totalFriction.z += sourroundingFriction.z;
+		Force surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
+		totalFriction.x += surroundingFriction.x;
+		totalFriction.y += surroundingFriction.y;
+		totalFriction.z += surroundingFriction.z;
 	}
 
 	Body_setFriction(this->body, totalFriction);
@@ -223,7 +223,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 
 		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
 		
-		SolidParticle_updateSourroundingFriction(this);
+		SolidParticle_updateSurroundingFriction(this);
 	}
 }
 

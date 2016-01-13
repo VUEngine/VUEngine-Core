@@ -356,9 +356,9 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 }
 
 // retrieve friction of colliding objects
-Force CollisionSolver_getSourroundingFriction(CollisionSolver this)
+Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 {
-	ASSERT(this, "CollisionSolver::updateSourroundingFriction: null this");
+	ASSERT(this, "CollisionSolver::updateSurroundingFriction: null this");
 
 	Force friction = 
 	{
