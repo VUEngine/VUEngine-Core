@@ -1053,7 +1053,7 @@ void Stage_suspend(Stage this)
 	}
 	else
 	{
-		this->focusEntity = Screen_getFocusInGameEntity(Screen_getInstance());
+		this->focusEntity = __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance()));
 	}
 }
 
