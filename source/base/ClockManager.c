@@ -132,7 +132,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
 	
-	u32 previousSecond = this->ticks / __MILLISECONDS_IN_SECOND;
+	u32 previousSecond = this->ticks / (__MILLISECONDS_IN_SECOND);
 
 	if(this->clocks)
 	{

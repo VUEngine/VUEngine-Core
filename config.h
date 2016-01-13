@@ -74,31 +74,31 @@
 #define __VERTICAL_VIEW_POINT_CENTER			112
 
 // parallax values are divide by this factor to control their strength
-#define __PARALLAX_CORRECTION_FACTOR			20
+#define __PARALLAX_CORRECTION_FACTOR			16
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
 
-// determine whether frame rate is capped or not
-#define __CAP_FPS								1
-
 // clock resolution
 #define __TIMER_RESOLUTION						10
 
 // target frames per second
-// must be a muliple of 50 to being able to use a timer resolution greater than 1
-// if finer control is needed, change timer resolution to 1
-#define __TARGET_FPS 							50
+// __FRAME_CYCLE = 0 means __TARGET_FPS = 50
+// __FRAME_CYCLE = 1 means __TARGET_FPS = 25
+#define	__FRAME_CYCLE							1
+
+#define __TARGET_FPS 							(50 >> __FRAME_CYCLE)
 
 // target frames per second
-#define __OPTIMUM_FPS 							__TARGET_FPS
+#define __OPTIMUM_FPS 							(__TARGET_FPS >> __FRAME_CYCLE)
 
 // target frames per second
 #define __MINIMUM_GOOD_FPS 						(__TARGET_FPS - 0)
 
-#define __MILLISECONDS_IN_SECOND				1000
+
+#define __MILLISECONDS_IN_SECOND				(1000 >> __FRAME_CYCLE)
 
 // set animation delays as if they are 60 FPS, and multiply by this factor
 #define __FPS_ANIM_FACTOR 						(__TARGET_FPS / (float)__OPTIMUM_FPS)
@@ -135,25 +135,23 @@
 // only use for debugging, proper object's initialization must make this macro unnecessary
 #undef __MEMORY_POOL_CLEAN_UP
 
-#define __MEMORY_POOLS							11
+#define __MEMORY_POOLS							10
 
 #define __MEMORY_POOL_ARRAYS																			\
-	__BLOCK_DEFINITION(180, 1)																			\
-	__BLOCK_DEFINITION(164, 2)																			\
-	__BLOCK_DEFINITION(160, 2)																			\
-	__BLOCK_DEFINITION(132, 44)																			\
-	__BLOCK_DEFINITION(112, 16)																			\
-	__BLOCK_DEFINITION(96, 40)																			\
-	__BLOCK_DEFINITION(76, 24)																			\
-	__BLOCK_DEFINITION(68, 80)																			\
-	__BLOCK_DEFINITION(28, 280)																			\
-	__BLOCK_DEFINITION(20, 512)																			\
-	__BLOCK_DEFINITION(16, 256)																			\
+	__BLOCK_DEFINITION(188, 1)																			\
+	__BLOCK_DEFINITION(164, 4)																			\
+	__BLOCK_DEFINITION(132, 32)																			\
+	__BLOCK_DEFINITION(112, 48)																			\
+	__BLOCK_DEFINITION(96, 58)																			\
+	__BLOCK_DEFINITION(76, 32)																			\
+	__BLOCK_DEFINITION(68, 75)																			\
+	__BLOCK_DEFINITION(28, 256)																			\
+	__BLOCK_DEFINITION(20, 634)																			\
+	__BLOCK_DEFINITION(16, 290)	
 
 #define __SET_MEMORY_POOL_ARRAYS																		\
-	__SET_MEMORY_POOL_ARRAY(180)																		\
+	__SET_MEMORY_POOL_ARRAY(188)																		\
 	__SET_MEMORY_POOL_ARRAY(164)																		\
-	__SET_MEMORY_POOL_ARRAY(160)																		\
 	__SET_MEMORY_POOL_ARRAY(132)																		\
 	__SET_MEMORY_POOL_ARRAY(112)																		\
 	__SET_MEMORY_POOL_ARRAY(96)																			\
@@ -163,7 +161,7 @@
 	__SET_MEMORY_POOL_ARRAY(20)																			\
 	__SET_MEMORY_POOL_ARRAY(16)																			\
 
-// percentage (0-100) above which the MemoryPool's status shows the pool usage
+// percentage (0-100) above which the memory pool's status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD			85
 
 
@@ -244,8 +242,8 @@
 // pad to determine if an entity must be loaded/unloaded 
 // load pad must always be lower than unload pad!
 // too close values will put the streaming under heavy usage!
-#define __ENTITY_LOAD_PAD 						192
-#define __ENTITY_UNLOAD_PAD 					(__ENTITY_LOAD_PAD + 32)
+#define __ENTITY_LOAD_PAD 						256
+#define __ENTITY_UNLOAD_PAD 					(__ENTITY_LOAD_PAD + 56)
 
 // the number of entities in the stage's definition to check for streaming in on each preload cycle
 // since there are 32 layers, that's the theoretical limit of entities to display
@@ -287,19 +285,19 @@
 // 										COLOR PALETTES
 //---------------------------------------------------------------------------------------------------------
 
-#define __PRINTING_PALETTE						3
+#define __PRINTING_PALETTE						0
 
 // default palette values, actual values are set in stage definitions
 
-#define __BGMAP_PALETTE_0						0b11100100
-#define __BGMAP_PALETTE_1						0b11100000
-#define __BGMAP_PALETTE_2						0b11010000
-#define __BGMAP_PALETTE_3						0b11100000
+#define __BGMAP_PALETTE_0						0b11100100 // normal progression
+#define __BGMAP_PALETTE_1						0b11100000 // show dark red as black
+#define __BGMAP_PALETTE_2						0b10010000 // background layer
+#define __BGMAP_PALETTE_3						0b01010000 // very dark, used when getting hit
 
 #define __OBJECT_PALETTE_0						0b11100100
 #define __OBJECT_PALETTE_1						0b11100000
 #define __OBJECT_PALETTE_2						0b11010000
-#define __OBJECT_PALETTE_3						0b11100000
+#define __OBJECT_PALETTE_3						0b01010000
 
 
 //---------------------------------------------------------------------------------------------------------
