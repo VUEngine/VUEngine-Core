@@ -149,7 +149,7 @@ void ParticleSystem_destructor(ParticleSystem this)
 
 static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::update: null this");
+	ASSERT(this, "ParticleSystem::processExpiredParticles: null this");
 
 	VirtualNode node = this->expiredParticles->head;
 
@@ -188,7 +188,7 @@ void ParticleSystem_update(ParticleSystem this)
 	
 	ParticleSystem_processExpiredParticles(this);
 
-    u32 timeElapsed = Clock_getElapsedTime(this->clock);
+    u32 timeElapsed = Clock_getElapsedTime(this->clock) << __FRAME_CYCLE;
 
     // update each particle
     VirtualNode node = this->particles->head;
