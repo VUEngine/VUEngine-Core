@@ -479,8 +479,23 @@ static void Game_handleInput(Game this)
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
+	
+#ifdef __DEBUG_TOOLS 
 	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
+#else
+	
+#ifdef __STAGE_EDITOR 
+	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
+#else
+	
+#ifdef __ANIMATION_EDITOR 
+	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
+#endif
 
+#endif
+			
+#endif
+	
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
