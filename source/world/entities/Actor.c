@@ -50,7 +50,7 @@ const extern VBVec3D* _screenDisplacement;
 static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
-static void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -146,8 +146,6 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		globalPosition.x += position->x;
 		globalPosition.y += position->y;
 		globalPosition.z += position->z;
-
-		Actor_resetCollisionStatus(this, __XAXIS | __YAXIS | __ZAXIS);
 
 		Body_setPosition(this->body, &globalPosition, __SAFE_CAST(SpatialObject, this));
 		
@@ -255,7 +253,7 @@ void Actor_update(Actor this)
 }
 
 // update colliding entities
-static void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
+void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 

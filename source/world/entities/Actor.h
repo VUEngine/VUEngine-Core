@@ -135,6 +135,6 @@ fix19_13 Actor_getElasticity(Actor this);
 fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force);
 void Actor_updateSourroundingFriction(Actor this);
-
+void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 
 #endif
