@@ -19,10 +19,11 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
-#include <string.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -221,7 +222,7 @@ bool AnimationController_animate(AnimationController this)
 		Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
 	}
 
-	this->frameDelay += this->frameDelayDelta;
+	this->frameDelay += (this->frameDelayDelta << __FRAME_CYCLE);
 
 	// reduce frame delay count
 	if(0 > this->frameDelay)
@@ -230,7 +231,7 @@ bool AnimationController_animate(AnimationController this)
 		this->previousFrame = this->actualFrame++;
 
 		// reset frame delay
-		this->frameDelay = this->animationFunction->delay;
+		this->frameDelay = this->animationFunction->delay << __FRAME_CYCLE;
 
 		// the minimum valid delay is 1
 		if(0 == this->frameDelay)
