@@ -131,7 +131,7 @@ typedef const PositionedEntity PositionedEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(Entity, EntityDefinition* entityDefinition, s16 id, const char* const name);
 
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name);
 void Entity_destructor(Entity this);
