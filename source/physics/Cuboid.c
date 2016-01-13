@@ -181,6 +181,7 @@ void Cuboid_position(Cuboid this)
 
 	// get owner's position
 	const VBVec3D* myOwnerPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
+	Velocity velocity = __VIRTUAL_CALL_UNSAFE(Velocity, SpatialObject, getVelocity, this->owner);
 
 	// calculate positioned rightCuboid	
 	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + ITOFIX19_13(gap.left);
@@ -189,6 +190,21 @@ void Cuboid_position(Cuboid this)
 	this->positionedRightCuboid.x1 = this->rightCuboid.x1 + myOwnerPosition->x - ITOFIX19_13(gap.right);
 	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y - ITOFIX19_13(gap.down);
 	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z;
+
+	VBVec3D lorentzFactor = 
+	{
+		FIX19_13_DIV(velocity.x, __SPEED_LIGHT),
+		FIX19_13_DIV(velocity.y, __SPEED_LIGHT),
+		FIX19_13_DIV(velocity.z, __SPEED_LIGHT)
+	};
+	
+	this->positionedRightCuboid.x0 += 0 > velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
+	this->positionedRightCuboid.y0 += 0 > velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
+	this->positionedRightCuboid.z0 += 0 > velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;
+
+	this->positionedRightCuboid.x1 += 0 < velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
+	this->positionedRightCuboid.y1 += 0 < velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
+	this->positionedRightCuboid.z1 += 0 < velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;
 
 	// not checked yet
 	this->checked = false;

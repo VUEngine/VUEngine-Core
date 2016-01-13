@@ -61,7 +61,8 @@
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);												\
 		__VIRTUAL_SET(ClassName, Actor, updateSourroundingFriction);									\
-		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);									\
+		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);										\
+		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 
 
 #define Actor_ATTRIBUTES																				\
@@ -139,5 +140,6 @@ fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force);
 void Actor_updateSourroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
+Velocity Actor_getVelocity(Actor this);
 
 #endif

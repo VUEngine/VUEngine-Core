@@ -161,3 +161,13 @@ fix19_13 SpatialObject_getFriction(SpatialObject this)
 
 	return 0;
 }
+
+// get velocity
+Velocity SpatialObject_getVelocity(SpatialObject this)
+{
+	ASSERT(this, "SpatialObject::getVelocity: null this");
+
+	static Velocity velocity = {0, 0, 0};
+	return velocity;
+}
+

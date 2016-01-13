@@ -48,6 +48,7 @@
 		__VIRTUAL_DEC(setPosition);																		\
 		__VIRTUAL_DEC(getElasticity);																	\
 		__VIRTUAL_DEC(getFriction);																		\
+		__VIRTUAL_DEC(getVelocity);																		\
 
 // define the virtual methods
 #define SpatialObject_SET_VTABLE(ClassName)																\
@@ -64,6 +65,7 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, setPosition);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getElasticity);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getFriction);											\
+		__VIRTUAL_SET(ClassName, SpatialObject, getVelocity);											\
 
 
 #define SpatialObject_ATTRIBUTES																		\
@@ -93,6 +95,7 @@ const VBVec3D* SpatialObject_getPosition(SpatialObject this);
 void SpatialObject_setPosition(SpatialObject this, const VBVec3D* position);
 fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
+Velocity SpatialObject_getVelocity(SpatialObject this);
 
 
 #endif

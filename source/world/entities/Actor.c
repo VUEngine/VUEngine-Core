@@ -701,3 +701,11 @@ void Actor_addForce(Actor this, const Force* force)
 	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
 	__VIRTUAL_CALL(void, Actor, updateSourroundingFriction, this);
 }
+
+// get velocity
+Velocity Actor_getVelocity(Actor this)
+{
+	ASSERT(this, "Actor::getVelocity: null this");
+
+	return this->body? Body_getVelocity(this->body) : SpatialObject_getVelocity(__SAFE_CAST(SpatialObject, this));
+}
