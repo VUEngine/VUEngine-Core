@@ -430,11 +430,11 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 	Debug_removeSubPages(this);
 	Printing_text(Printing_getInstance(), "GENERAL STATUS", 1, y++, NULL);
 	Printing_text(Printing_getInstance(), "General clock time: ", 1, ++y, NULL);
-	Clock_print(Game_getClock(Game_getInstance()), 21, y, NULL);
+	Clock_print(Game_getClock(Game_getInstance()), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "Animations clock's time: ", 1, ++y, NULL);
-	Clock_print(Game_getAnimationsClock(Game_getInstance()), 21, y, NULL);
+	Clock_print(Game_getAnimationsClock(Game_getInstance()), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "Physics clock's time: ", 1, ++y, NULL);
-	Clock_print(Game_getPhysicsClock(Game_getInstance()), 21, y, NULL);
+	Clock_print(Game_getPhysicsClock(Game_getInstance()), 26, y, NULL);
 	FrameRate_printLastCount(FrameRate_getInstance(), 1, y + 3);
 
 	Printing_text(Printing_getInstance(), "STAGE STATUS", 20, y + 3, NULL);
