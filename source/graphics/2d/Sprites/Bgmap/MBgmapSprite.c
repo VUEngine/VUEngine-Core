@@ -95,7 +95,6 @@ void MBgmapSprite_destructor(MBgmapSprite this)
 	ASSERT(this, "MBgmapSprite::destructor: null this");
 
 	MBgmapSprite_releaseTextures(this);
-	this->texture = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -119,7 +118,6 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 		
 		__DELETE(this->textures);
 		this->textures = NULL;
-		this->texture = NULL;
 	}
 }
 
@@ -391,8 +389,6 @@ void MBgmapSprite_render(MBgmapSprite this)
 
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
-
-		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BgmapSprite::render: freeLayer >= this->worldLayer");
 
 		if(__UPDATE_HEAD == this->renderFlag)
 		{
