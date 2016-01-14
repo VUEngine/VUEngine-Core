@@ -241,7 +241,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 			layer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
 		}
 		
-		// add to the front: last element corresponde to the 31 WORLD
+		// add to the front: last element corresponds to the 31 WORLD
 		VirtualList_pushFront(this->sprites, sprite);
 
 		Sprite_setWorldLayer(sprite, layer);
@@ -255,7 +255,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 	}
 #endif
 }
-
 
 // remove sprite
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
@@ -276,8 +275,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 			
-			// search for the next sprite with the closest 
-			// layer to the freed layer
+			// search for the next sprite with the closest layer to the freed layer
 			if(spriteLayer < sprite->worldLayer)
 			{
 				node = node->previous;
@@ -355,8 +353,7 @@ void SpriteManager_render(SpriteManager this)
 		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
 
-	// configure printing layer
-	// and shutdown unused layers
+	// configure printing layer and shutdown unused layers
 	SpriteManager_setLastLayer(this);
 }
 

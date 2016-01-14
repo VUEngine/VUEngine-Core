@@ -97,8 +97,6 @@
 // target frames per second
 #define __MINIMUM_GOOD_FPS 						(__TARGET_FPS - 0)
 
-// set animation delays as if they are 60 FPS, and multiply by this factor
-#define __ANIMATION_DELAY(n)					(n >> __FRAME_CYCLE)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -123,24 +121,26 @@
 // only use for debugging, proper object's initialization must make this macro unnecessary
 #undef __MEMORY_POOL_CLEAN_UP
 
-#define __MEMORY_POOLS							10
+#define __MEMORY_POOLS							11
 
 #define __MEMORY_POOL_ARRAYS																			\
-	__BLOCK_DEFINITION(188, 1)																			\
-	__BLOCK_DEFINITION(164, 4)																			\
-	__BLOCK_DEFINITION(132, 30)																			\
-	__BLOCK_DEFINITION(112, 52)																			\
-	__BLOCK_DEFINITION(96, 58)																			\
+	__BLOCK_DEFINITION(184, 1)																			\
+	__BLOCK_DEFINITION(164, 3)																			\
+	__BLOCK_DEFINITION(136, 4)																			\
+	__BLOCK_DEFINITION(128, 22)																			\
+	__BLOCK_DEFINITION(112, 50)																			\
+	__BLOCK_DEFINITION(96, 66)																			\
 	__BLOCK_DEFINITION(76, 32)																			\
 	__BLOCK_DEFINITION(68, 75)																			\
 	__BLOCK_DEFINITION(28, 254)																			\
 	__BLOCK_DEFINITION(20, 632)																			\
-	__BLOCK_DEFINITION(16, 290)																		\
+	__BLOCK_DEFINITION(16, 290)																			\
 
 #define __SET_MEMORY_POOL_ARRAYS																		\
-	__SET_MEMORY_POOL_ARRAY(188)																		\
+	__SET_MEMORY_POOL_ARRAY(184)																		\
 	__SET_MEMORY_POOL_ARRAY(164)																		\
-	__SET_MEMORY_POOL_ARRAY(132)																		\
+	__SET_MEMORY_POOL_ARRAY(136)																		\
+	__SET_MEMORY_POOL_ARRAY(128)																		\
 	__SET_MEMORY_POOL_ARRAY(112)																		\
 	__SET_MEMORY_POOL_ARRAY(96)																			\
 	__SET_MEMORY_POOL_ARRAY(76)																			\
