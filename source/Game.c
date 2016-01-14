@@ -93,6 +93,7 @@ enum StateOperations
 	Clock physicsClock;																					\
 																										\
 	/* managers */																						\
+	ClockManager clockManager;																			\
 	HardwareManager hardwareManager;																	\
 	FrameRate frameRate;																				\
 	BgmapTextureManager bgmapTextureManager;															\
@@ -177,7 +178,7 @@ static void Game_constructor(Game this)
 	MemoryPool_getInstance();
 
 	// force construction now
-	ClockManager_getInstance();
+	this->clockManager = ClockManager_getInstance();
 
 	// construct the general clock
 	this->clock = __NEW(Clock);
@@ -817,6 +818,7 @@ static void Game_update(Game this)
 	    Game_updateTransformations(this);
 		Game_updateLogic(this);
 		Game_updatePhysics(this);
+		ClockManager_saveCurrentTime(this->clockManager);
 		Game_checkForNewState(this);
 
 		// check if performance was good enough 
@@ -829,6 +831,7 @@ static void Game_update(Game this)
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(this->frameRate);
 #endif
+		
 	}
 }
 

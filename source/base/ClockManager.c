@@ -132,7 +132,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
 	
-	u32 previousSecond = this->ticks / ((__MILLISECONDS_IN_SECOND) << __FRAME_CYCLE);
+	u32 previousSecond = (int)this->ticks / __MILLISECONDS_IN_SECOND;
 
 	if(this->clocks)
 	{
@@ -149,7 +149,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	this->ticks += ticksElapsed;
 	
     //if second has changed, set frame rate 
-    if(previousSecond != (this->ticks / ((__MILLISECONDS_IN_SECOND) << __FRAME_CYCLE)))
+    if(previousSecond != (int)(this->ticks / __MILLISECONDS_IN_SECOND))
     {
     		FrameRate frameRate = FrameRate_getInstance();
     		
@@ -188,7 +188,22 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
     SoundManager_playSounds(SoundManager_getInstance());
 }
 
-// update clocks
+// save the current time
+void ClockManager_saveCurrentTime(ClockManager this)
+{
+	ASSERT(this, "ClockManager::fixElapsedTime: null this");
+	ASSERT(this->clocks, "ClockManager::fixElapsedTime: null clocks list");
+
+	VirtualNode node = this->clocks->head;
+
+	// update all registered clocks
+	for(; node ; node = node->next)
+	{
+		Clock_saveCurrentTime(__SAFE_CAST(Clock, node->data));
+	}
+}
+
+// reset clocks
 void ClockManager_reset(ClockManager this)
 {
 	ASSERT(this, "ClockManager::reset: null this");

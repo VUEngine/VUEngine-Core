@@ -132,6 +132,14 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	Printing_int(Printing_getInstance(), seconds, secondsPosition, row, font);
 }
 
+// save the current miliseconds
+void Clock_saveCurrentTime(Clock this)
+{
+	ASSERT(this, "Clock::saveCurrentTime: null this");
+
+	this->previousMilliSeconds = this->milliSeconds;
+}
+
 // called on each timer interrupt
 void Clock_update(Clock this, u32 ticks)
 {
@@ -141,7 +149,7 @@ void Clock_update(Clock this, u32 ticks)
 	if(!this->paused)
 	{
 		// calculate milliseconds
-		this->previousMilliSeconds = this->milliSeconds;
+		//this->previousMilliSeconds = this->milliSeconds;
 		this->milliSeconds += ticks;
 
 		u8 currentSecond = Clock_getSeconds(this);
@@ -220,7 +228,7 @@ u32 Clock_getElapsedTime(Clock this)
 {
 	ASSERT(this, "Clock::getTimeElapse: null this");
 
-	return this->paused? 0: this->milliSeconds - this->previousMilliSeconds;
+	return this->paused? 0: (this->milliSeconds - this->previousMilliSeconds) >> __FRAME_CYCLE;
 }
 
 // retrieve current elapsed milliseconds in the current second
