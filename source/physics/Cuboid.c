@@ -193,9 +193,9 @@ void Cuboid_position(Cuboid this)
 
 	VBVec3D lorentzFactor = 
 	{
-		FIX19_13_DIV(velocity.x, __SPEED_LIGHT),
-		FIX19_13_DIV(velocity.y, __SPEED_LIGHT),
-		FIX19_13_DIV(velocity.z, __SPEED_LIGHT)
+		FIX19_13_DIV(velocity.x, __LIGHT_SPEED),
+		FIX19_13_DIV(velocity.y, __LIGHT_SPEED),
+		FIX19_13_DIV(velocity.z, __LIGHT_SPEED)
 	};
 	
 	this->positionedRightCuboid.x0 -= 0 > velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;

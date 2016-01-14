@@ -127,14 +127,14 @@
 	__BLOCK_DEFINITION(184, 1)																			\
 	__BLOCK_DEFINITION(164, 3)																			\
 	__BLOCK_DEFINITION(136, 4)																			\
-	__BLOCK_DEFINITION(128, 22)																			\
+	__BLOCK_DEFINITION(128, 28)																			\
 	__BLOCK_DEFINITION(112, 50)																			\
 	__BLOCK_DEFINITION(96, 66)																			\
 	__BLOCK_DEFINITION(76, 32)																			\
 	__BLOCK_DEFINITION(68, 75)																			\
 	__BLOCK_DEFINITION(28, 254)																			\
 	__BLOCK_DEFINITION(20, 632)																			\
-	__BLOCK_DEFINITION(16, 290)																			\
+	__BLOCK_DEFINITION(16, 290)																		\
 
 #define __SET_MEMORY_POOL_ARRAYS																		\
 	__SET_MEMORY_POOL_ARRAY(184)																		\
@@ -249,7 +249,7 @@
 
 // used to make an approximation of Lorentz' contraction
 // to handle collisions on very fast moving shapes
-#define __SPEED_LIGHT		ITOFIX19_13(100000 << __FRAME_CYCLE)
+#define __LIGHT_SPEED		ITOFIX19_13(100000 << __FRAME_CYCLE)
 
 
 //---------------------------------------------------------------------------------------------------------
