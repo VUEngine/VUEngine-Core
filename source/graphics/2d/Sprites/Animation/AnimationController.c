@@ -63,7 +63,7 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 
 	// initialize frame head
 	this->frameDelay = 0;
-	this->frameDelayDelta = -1;
+	this->frameDelayDelta = 1 << __FRAME_CYCLE;
 
 	// intialize animation function
 	this->animationFunction = NULL;
@@ -161,7 +161,7 @@ void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDe
 {
 	ASSERT(this, "AnimationController::setAnimationControllerCicleDelta: null this");
 
-	this->frameDelayDelta = frameDelayDelta;
+	this->frameDelayDelta = frameDelayDelta << __FRAME_CYCLE;
 }
 
 // animate the frame
@@ -222,7 +222,7 @@ bool AnimationController_animate(AnimationController this)
 		Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
 	}
 
-	this->frameDelay += (this->frameDelayDelta << __FRAME_CYCLE);
+	this->frameDelay -= this->frameDelayDelta;
 
 	// reduce frame delay count
 	if(0 > this->frameDelay)
@@ -231,7 +231,7 @@ bool AnimationController_animate(AnimationController this)
 		this->previousFrame = this->actualFrame++;
 
 		// reset frame delay
-		this->frameDelay = this->animationFunction->delay << __FRAME_CYCLE;
+		this->frameDelay = this->animationFunction->delay;
 
 		// the minimum valid delay is 1
 		if(0 == this->frameDelay)
