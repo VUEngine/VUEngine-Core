@@ -826,12 +826,11 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->z), x + 20, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w, h):                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 15, y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 25, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
 		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 0), x + 15, y, NULL);
 	}
 }
-
 
 static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation)
 {
