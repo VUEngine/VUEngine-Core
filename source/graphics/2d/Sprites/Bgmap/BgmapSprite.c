@@ -72,9 +72,6 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 {
 	__CONSTRUCT_BASE((SpriteDefinition*)bSpriteDefinition, owner);
 
-	// register with sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-
 	// create the texture
 	if(bSpriteDefinition->textureDefinition)
 	{
@@ -146,6 +143,9 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 
 			break;
 	}
+	
+	// register with sprite manager
+	SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 }
 
 // class's destructor
