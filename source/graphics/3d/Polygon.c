@@ -87,14 +87,14 @@ void Polygon_destructor(Polygon this)
 	__DESTROY_BASE;
 }
 
-// add a vertice
-void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
+// add a vertex
+void Polygon_addVertex(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 {
-	// create the vertice
-	VBVec3D* vertice = __NEW_BASIC(VBVec3D);
-	vertice->x = x;
-	vertice->y = y;
-	vertice->z = z;
+	// create the vertex
+	VBVec3D* vertex = __NEW_BASIC(VBVec3D);
+	vertex->x = x;
+	vertex->y = y;
+	vertex->z = z;
 
 	// if not vertices list yet created
 	// delete the vertices list
@@ -103,8 +103,8 @@ void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 		this->vertices = __NEW(VirtualList);
 	}
 
-	// add vertice to the end of the list
-	VirtualList_pushBack(this->vertices, vertice);
+	// add vertex to the end of the list
+	VirtualList_pushBack(this->vertices, vertex);
 }
 
 // draw polygon to screen
@@ -120,58 +120,57 @@ void Polygon_draw(Polygon this, int calculateParallax)
 		VirtualNode toNode = fromNode->next;
 
 		// 3d vertices
-		VBVec3D fromVertice3D = {0, 0, 0};
-		VBVec3D toVertice3D = {0, 0, 0};
+		VBVec3D fromVertex3D = {0, 0, 0};
+		VBVec3D toVertex3D = {0, 0, 0};
 
 		// 2d vertices
-		VBVec2D fromVertice2D = {0, 0, 0};
-		VBVec2D toVertice2D = {0, 0, 0};
+		VBVec2D fromVertex2D = {0, 0, 0};
+		VBVec2D toVertex2D = {0, 0, 0};
 
 		// draw the lines
 		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
 		{
-			// normalize vertice to screen coordinates
-			fromVertice3D = *((VBVec3D*)fromNode->data);
-			toVertice3D = *((VBVec3D*)toNode->data);
-			__OPTICS_NORMALIZE(fromVertice3D);
-			__OPTICS_NORMALIZE(toVertice3D);
+			// normalize vertex to screen coordinates
+			fromVertex3D = *((VBVec3D*)fromNode->data);
+			toVertex3D = *((VBVec3D*)toNode->data);
+			__OPTICS_NORMALIZE(fromVertex3D);
+			__OPTICS_NORMALIZE(toVertex3D);
 
 			// project to 2d coordinates
-			__OPTICS_PROJECT_TO_2D(fromVertice3D, fromVertice2D);
-			__OPTICS_PROJECT_TO_2D(toVertice3D, toVertice2D);
+			__OPTICS_PROJECT_TO_2D(fromVertex3D, fromVertex2D);
+			__OPTICS_PROJECT_TO_2D(toVertex3D, toVertex2D);
 
 			// calculate parallax
 			if(calculateParallax)
 			{
-				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
-				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);
+				fromVertex2D.parallax = Optics_calculateParallax(fromVertex3D.x, fromVertex3D.z);
+				toVertex2D.parallax = Optics_calculateParallax(toVertex3D.x, toVertex3D.z);
 			}
 
-
 			// draw the line in both buffers
-			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, palette);
+			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
 		}
 
 		if(fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
 		{
-			fromVertice3D = *((VBVec3D*)fromNode->data);
-			toVertice3D = *((VBVec3D*)toNode->data);
-			__OPTICS_NORMALIZE(fromVertice3D);
-			__OPTICS_NORMALIZE(toVertice3D);
+			fromVertex3D = *((VBVec3D*)fromNode->data);
+			toVertex3D = *((VBVec3D*)toNode->data);
+			__OPTICS_NORMALIZE(fromVertex3D);
+			__OPTICS_NORMALIZE(toVertex3D);
 
 			// project to 2d coordinates
-			__OPTICS_PROJECT_TO_2D(fromVertice3D, fromVertice2D);
-			__OPTICS_PROJECT_TO_2D(toVertice3D, toVertice2D);
+			__OPTICS_PROJECT_TO_2D(fromVertex3D, fromVertex2D);
+			__OPTICS_PROJECT_TO_2D(toVertex3D, toVertex2D);
 
 			// calculate parallax
 			if(calculateParallax)
 			{
-				fromVertice2D.parallax = Optics_calculateParallax(fromVertice3D.x, fromVertice3D.z);
-				toVertice2D.parallax = Optics_calculateParallax(toVertice3D.x, toVertice3D.z);
+				fromVertex2D.parallax = Optics_calculateParallax(fromVertex3D.x, fromVertex3D.z);
+				toVertex2D.parallax = Optics_calculateParallax(toVertex3D.x, toVertex3D.z);
 			}
 
 			// draw the line in both buffers
-			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertice2D, toVertice2D, palette);
+			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
 		}
 	}
 	//VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] & ~XPEN;

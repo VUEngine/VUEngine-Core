@@ -516,17 +516,17 @@ static void Cuboid_configurePolygon(Cuboid this, int renew)
 	this->polygon = __NEW(Polygon);
 
 	// add vertices
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
 
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
-	Polygon_addVertice(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
+	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
 }
 
 // draw rect

@@ -53,7 +53,7 @@ __CLASS(Polygon);
 __CLASS_NEW_DECLARE(Polygon);
 
 void Polygon_destructor(Polygon this);
-void Polygon_addVertice(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z);
+void Polygon_addVertex(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z);
 void Polygon_draw(Polygon this, int calculateParallax);
 
 
