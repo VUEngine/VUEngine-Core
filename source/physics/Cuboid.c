@@ -193,14 +193,14 @@ void Cuboid_position(Cuboid this)
 
 	VBVec3D lorentzFactor = 
 	{
-		FIX19_13_DIV(velocity.x, __SPEED_LIGHT),
-		FIX19_13_DIV(velocity.y, __SPEED_LIGHT),
-		FIX19_13_DIV(velocity.z, __SPEED_LIGHT)
+		FIX19_13_DIV(velocity.x, __LIGHT_SPEED),
+		FIX19_13_DIV(velocity.y, __LIGHT_SPEED),
+		FIX19_13_DIV(velocity.z, __LIGHT_SPEED)
 	};
 	
-	this->positionedRightCuboid.x0 += 0 > velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
-	this->positionedRightCuboid.y0 += 0 > velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
-	this->positionedRightCuboid.z0 += 0 > velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;
+	this->positionedRightCuboid.x0 -= 0 > velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
+	this->positionedRightCuboid.y0 -= 0 > velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
+	this->positionedRightCuboid.z0 -= 0 > velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;
 
 	this->positionedRightCuboid.x1 += 0 < velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
 	this->positionedRightCuboid.y1 += 0 < velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;

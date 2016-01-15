@@ -79,6 +79,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 	if(bSpriteDefinition->textureDefinition)
 	{
 		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
+
 	}
 	
 	if(this->texture)
@@ -152,6 +154,10 @@ void BgmapSprite_destructor(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::destructor: null this");
 	ASSERT(__SAFE_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
+	// remove from sprite manager before I become invalid
+	// and the VPU triggers a new render cycle
+	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+
 	// if affine or bgmap
 	if(WRLD_AFFINE & this->head)
 	{
@@ -167,9 +173,6 @@ void BgmapSprite_destructor(BgmapSprite this)
 		this->texture = NULL;
 	}
 	
-	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -320,8 +323,6 @@ void BgmapSprite_render(BgmapSprite this)
 		
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
-
-		ASSERT(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->worldLayer, "BgmapSprite::render: freeLayer >= this->worldLayer");
 
 		if(__UPDATE_HEAD == this->renderFlag)
 		{

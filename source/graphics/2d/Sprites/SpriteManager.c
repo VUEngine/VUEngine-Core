@@ -246,8 +246,6 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 
 		Sprite_setWorldLayer(sprite, layer);
 
-		ASSERT(this->freeLayer < layer, "SpriteManager::addSprite: this->freeLayer >= layer");
-
 		this->node = NULL;
 		this->nextNode = NULL;
 

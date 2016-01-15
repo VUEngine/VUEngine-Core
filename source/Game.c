@@ -93,6 +93,7 @@ enum StateOperations
 	Clock physicsClock;																					\
 																										\
 	/* managers */																						\
+	ClockManager clockManager;																			\
 	HardwareManager hardwareManager;																	\
 	FrameRate frameRate;																				\
 	BgmapTextureManager bgmapTextureManager;															\
@@ -177,7 +178,7 @@ static void Game_constructor(Game this)
 	MemoryPool_getInstance();
 
 	// force construction now
-	ClockManager_getInstance();
+	this->clockManager = ClockManager_getInstance();
 
 	// construct the general clock
 	this->clock = __NEW(Clock);
@@ -811,16 +812,31 @@ static void Game_update(Game this)
 
 		// update each subsystem
 		
-		// transformations from the previous frame
-		// must be aplied while the VPU is wrinting to 
-		// VRAM
+		// apply transformations from the previous frame
+		// while the VPU is busy writing the frame buffers
 	    Game_updateTransformations(this);
+	    
+	    // the engine's game logic is free of racing 
+	    // conditions against the VPU
 		Game_updateLogic(this);
+		
+		// physics' update takes place after game's logic
+		// has been done
 		Game_updatePhysics(this);
+		
+		// this is the point were the main game's subsystems
+		// have done all their work
+		// at this point save the current time on each 
+		// clock so they can properly calculate the elapsed
+		// time afterwards
+		ClockManager_saveCurrentTime(this->clockManager);
+		
+		// this is the moment to check if the game's state
+		// needs to be changed
 		Game_checkForNewState(this);
 
-		// check if performance was good enough 
-		// the previous second to do some defragmenting
+		// if performance was good enough in the 
+		// the previous second do some defragmenting
 		if(!FrameRate_getFPS(this->frameRate) && FrameRate_isFPSHigh(this->frameRate))
 		{
 			Game_cleanUp(this);
@@ -829,6 +845,7 @@ static void Game_update(Game this)
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(this->frameRate);
 #endif
+		
 	}
 }
 

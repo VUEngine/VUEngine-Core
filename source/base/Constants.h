@@ -45,6 +45,8 @@
 #define __NEAR		((int)-1)
 #define __FAR		((int)1)
 
+#define __MILLISECONDS_IN_SECOND				1000
+
 // messages
 enum MessagesTypes
 {
