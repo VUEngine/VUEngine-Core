@@ -972,22 +972,18 @@ void Stage_stream(Stage this)
 	{
 		Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 		// unload not visible objects
-		Printing_text(Printing_getInstance(), "U0", 25, 15, NULL);
 		Stage_unloadOutOfRangeEntities(this);
-		Printing_text(Printing_getInstance(), "U1", 25, 15, NULL);
 
 	}
 	else if(streamingCycleCounter == streamingCycleBase)
 	{			
 		if(this->focusEntity)
 		{
-			//Printing_text(Printing_getInstance(), "selecting", 25, 10, NULL);
 			// load visible objects
 			Stage_selectEntitiesInLoadRange(this);
 		}
 		else
 		{
-			//Printing_text(Printing_getInstance(), "focus    ", 25, 10, NULL);
 			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
 			this->focusEntity = focusInGameEntity ? __SAFE_CAST(Entity, focusInGameEntity) : NULL;
 		}
@@ -997,9 +993,7 @@ void Stage_stream(Stage this)
 		if(this->entitiesToLoad->head)
 		{
 			Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
-			Printing_text(Printing_getInstance(), "L0", 25, 15, NULL);
 			Stage_loadEntities(this);
-			Printing_text(Printing_getInstance(), "L1", 25, 15, NULL);
 		}
 		/*else
 		{
@@ -1010,11 +1004,7 @@ void Stage_stream(Stage this)
 	{		
 		if(this->entitiesToInitialize->head)
 		{
-			//Printing_text(Printing_getInstance(), "initialize", 25, 10, NULL);
-
-			Printing_text(Printing_getInstance(), "I0", 25, 15, NULL);
 			Stage_initializeEntities(this);
-			Printing_text(Printing_getInstance(), "I0", 25, 15, NULL);
 		}
 
 		//streamingCycleCounter = streamingDelayPerCycle;
@@ -1024,10 +1014,6 @@ void Stage_stream(Stage this)
 	{
 		streamingCycleCounter  = 0;
 	}
-	
-	if(this->children)
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->children), 1, 5, NULL);
-
 }
 
 // stream entities according to screen's position
