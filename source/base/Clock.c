@@ -22,6 +22,7 @@
 #include <Clock.h>
 #include <ClockManager.h>
 #include <MessageDispatcher.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -141,7 +142,7 @@ void Clock_saveCurrentTime(Clock this)
 }
 
 // called on each timer interrupt
-void Clock_update(Clock this, u32 ticks)
+void Clock_update(Clock this, u32 ticks, bool saveCurrentTime)
 {
 	ASSERT(this, "Clock::update: null this");
 
@@ -149,7 +150,11 @@ void Clock_update(Clock this, u32 ticks)
 	if(!this->paused)
 	{
 		// calculate milliseconds
-		//this->previousMilliSeconds = this->milliSeconds;
+		if(saveCurrentTime)
+		{
+			this->previousMilliSeconds = this->milliSeconds;
+		}
+		
 		this->milliSeconds += ticks;
 
 		u8 currentSecond = Clock_getSeconds(this);
@@ -228,7 +233,11 @@ u32 Clock_getElapsedTime(Clock this)
 {
 	ASSERT(this, "Clock::getTimeElapse: null this");
 
-	return this->paused? 0: (this->milliSeconds - this->previousMilliSeconds) >> __FRAME_CYCLE;
+	int rightShift = 1 == __TIMER_RESOLUTION? 1: 0;
+
+	int leftShift = !rightShift && 1 == __FRAME_CYCLE? 1: 0;
+
+	return this->paused? 0: ((this->milliSeconds - this->previousMilliSeconds) << leftShift ) >> rightShift;
 }
 
 // retrieve current elapsed milliseconds in the current second

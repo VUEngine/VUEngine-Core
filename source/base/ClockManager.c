@@ -44,6 +44,9 @@
 																										\
 	/* */																								\
 	u32 ticks;																							\
+																										\
+	/* */																								\
+	bool saveCurrentTime;																				\
 
 // define the manager
 __CLASS_DEFINITION(ClockManager, Object);
@@ -79,6 +82,8 @@ static void ClockManager_constructor(ClockManager this)
 	this->clocks = NULL;
 
 	this->ticks = 0;
+	
+	this->saveCurrentTime = false;
 }
 
 // class's destructor
@@ -141,8 +146,10 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 		// update all registered clocks
 		for(; node ; node = node->next)
 		{
-			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed);
+			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed, 10 == __TIMER_RESOLUTION || this->saveCurrentTime);
 		}
+		
+		this->saveCurrentTime = false;
 	}
 
 	// update tick count
@@ -192,15 +199,8 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 void ClockManager_saveCurrentTime(ClockManager this)
 {
 	ASSERT(this, "ClockManager::fixElapsedTime: null this");
-	ASSERT(this->clocks, "ClockManager::fixElapsedTime: null clocks list");
 
-	VirtualNode node = this->clocks->head;
-
-	// update all registered clocks
-	for(; node ; node = node->next)
-	{
-		Clock_saveCurrentTime(__SAFE_CAST(Clock, node->data));
-	}
+	this->saveCurrentTime = true;
 }
 
 // reset clocks
