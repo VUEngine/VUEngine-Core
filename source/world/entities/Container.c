@@ -182,16 +182,19 @@ void Container_addChild(Container this, Container child)
 		}
 
 		// first remove from previous parent
-		if(child->parent)
-	    {
-			Container_removeChild(child->parent, child);
+		if(this != this->parent)
+		{
+			if(child->parent)
+		    {
+				Container_removeChild(child->parent, child);
+			}
+	
+			// add to the children list
+			VirtualList_pushBack(this->children, (void*)child);
+
+			// set new parent
+			child->parent = this;
 		}
-
-		// add to the children list
-		VirtualList_pushBack(this->children, (void*)child);
-
-		// set new parent
-		child->parent = this;
 	}
 	else
 	{
