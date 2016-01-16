@@ -820,19 +820,18 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_int(Printing_getInstance(), Container_getId(__SAFE_CAST(Container, entity)), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(entity), x + 6, y, NULL);
-		Printing_text(Printing_getInstance(), "Position:                  ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->x), x + 15, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->y), x + 20, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->z), x + 25, y, NULL);
-		Printing_text(Printing_getInstance(), "Size (w, h, d):                  ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 15, y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 25, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_getDepth(entity), x + 25, y, NULL);
 		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 0), x + 15, y, NULL);
 	}
 }
-
 
 static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation)
 {

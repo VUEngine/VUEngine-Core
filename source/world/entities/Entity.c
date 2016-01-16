@@ -313,44 +313,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		
 		for(; positionedEntity->entityDefinition->spritesDefinitions[i]; i++)
 		{
-			if(__TYPE(BgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && positionedEntity->entityDefinition->spritesDefinitions[i]->textureDefinition)
-			{
-				BgmapSpriteDefinition* bgmapSpriteDefinition = (BgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i];
-				halfWidth = bgmapSpriteDefinition->textureDefinition->cols << 2;
-				halfHeight = bgmapSpriteDefinition->textureDefinition->rows << 2;
-				halfDepth = 10;
-				
-				if(left > -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
-				{
-					left = -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
-				}
-	
-				if(right < halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
-				{
-					right = halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
-				}
-	
-				if(top > -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
-				{
-					top = -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
-				}
-	
-				if(bottom < halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
-				{
-					bottom = halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
-				}
-	
-				if(front > -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
-				{
-					front = -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
-				}
-	
-				if(back < (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
-				{
-					back = (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
-				}
-			}
-			else if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i])->textureDefinitions[0])
+			if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i])->textureDefinitions[0])
 			{
 				MBgmapSpriteDefinition* mBgmapSpriteDefinition = (MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i]; 
 
@@ -403,6 +366,43 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 					back = halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
 				}
 				
+			}
+			else if(positionedEntity->entityDefinition->spritesDefinitions[i]->textureDefinition)
+			{
+				SpriteDefinition* spriteDefinition = (SpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i];
+				halfWidth = spriteDefinition->textureDefinition->cols << 2;
+				halfHeight = spriteDefinition->textureDefinition->rows << 2;
+				halfDepth = 10;
+				
+				if(left > -halfWidth + FIX19_13TOI(spriteDefinition->displacement.x))
+				{
+					left = -halfWidth + FIX19_13TOI(spriteDefinition->displacement.x);
+				}
+	
+				if(right < halfWidth + FIX19_13TOI(spriteDefinition->displacement.x))
+				{
+					right = halfWidth + FIX19_13TOI(spriteDefinition->displacement.x);
+				}
+	
+				if(top > -halfHeight + FIX19_13TOI(spriteDefinition->displacement.y))
+				{
+					top = -halfHeight + FIX19_13TOI(spriteDefinition->displacement.y);
+				}
+	
+				if(bottom < halfHeight + FIX19_13TOI(spriteDefinition->displacement.y))
+				{
+					bottom = halfHeight + FIX19_13TOI(spriteDefinition->displacement.y);
+				}
+	
+				if(front > -halfDepth + FIX19_13TOI(spriteDefinition->displacement.z))
+				{
+					front = -halfDepth + FIX19_13TOI(spriteDefinition->displacement.z);
+				}
+	
+				if(back < (halfDepth << 1) + FIX19_13TOI(spriteDefinition->displacement.z))
+				{
+					back = (halfDepth << 1) + FIX19_13TOI(spriteDefinition->displacement.z);
+				}
 			}
 		}
 	}

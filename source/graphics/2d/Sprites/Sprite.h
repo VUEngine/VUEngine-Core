@@ -124,6 +124,9 @@ typedef struct SpriteDefinition
 	// texture to use with the sprite
 	TextureDefinition* textureDefinition;
 
+	// displacement modifier to achieve better control over display
+	VBVec3D displacement;
+	
 } SpriteDefinition;
 
 typedef const SpriteDefinition SpriteROMDef;

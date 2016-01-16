@@ -35,6 +35,11 @@
     <div class="row">
         <div class="col-md-9 documentation" role="main">
 
+            <br><div class="alert alert-warning">
+                This document is a work in progress and thus contains incomplete or partially outdated information.<br>
+                If you have any problems which this document is unable to help you resolve, please refer to the
+                <a href="http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0">VBJaEngine support forum</a>.
+            </div>
 
             <!--------------------------------------------------------------------------------------------------------->
             <!--------------------------------------------------------------------------------------------------------->
@@ -396,6 +401,25 @@ u8 energy;</code></pre>
             <!--------------------------------------------------------------------------------------------------------->
 
             <h4>Sprite</h4>
+
+                <h5>Displacement vector</h5>
+
+                <p>
+                    Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's coordinates relative to
+                    those of it's entity's parent <i>after</i> the projection from 3D to 2D space has taken place.
+                    It is to be used...
+                </p>
+
+                <ul>
+                    <li>
+                        when you need to do "internal sorting" for multi sprite entities,
+                        since the order of Sprites in the Definition are not reliable
+                    </li>
+                    <li>
+                        when you want a Sprite to be always offset by a fixed number of pixels with respect to it's
+                        parent's 2D position (can be used for parallax offsets too)
+                    </li>
+                </ul>
 
 
             <!--------------------------------------------------------------------------------------------------------->
@@ -1435,6 +1459,19 @@ const FontROMDef* __FONTS[] =
             <p>
                 When things begin to break unexpectedly and in random places, it is almost guaranteed that a stack
                 overflow is the cause. In that case, you need to shrink down the memory pools.
+            </p>
+
+            <p>
+                <b>
+                    I am getting the following error after compiling, what does it mean?
+                </b>
+                <pre>/opt/gccvb/lib/gcc/v810/4.4.2/../../../../v810/bin/ld: main.elf section '.bss' will not fit in region 'ram'
+/opt/gccvb/lib/gcc/v810/4.4.2/../../../../v810/bin/ld: region 'ram' overflowed by xx bytes</pre>
+            </p>
+
+            <p>
+                In the context of the engine, it means that the memory pool is too big. You're trying to
+                reserve more RAM than physically exists.
             </p>
 
             <p>
