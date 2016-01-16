@@ -118,6 +118,7 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 		
 		__DELETE(this->textures);
 		this->textures = NULL;
+		this->texture = NULL;
 	}
 }
 
@@ -374,11 +375,10 @@ static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 // render a world layer with the map's information
 void MBgmapSprite_render(MBgmapSprite this)
 {
-	ASSERT(this, "BgmapSprite::render: null this");
-	ASSERT(this->texture, "BgmapSprite::render: null texture");
+	ASSERT(this, "MBgmapSprite::render: null this");
 
 	// if render flag is set
-	if(this->renderFlag && this->initialized)
+	if(this->texture && this->renderFlag && this->initialized)
 	{
 		if(this->hidden)
 		{
