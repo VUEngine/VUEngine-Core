@@ -42,10 +42,12 @@
 #define __STREAMING_CYCLES		4
 
 #define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		ITOFIX19_13(- __MAXIMUM_PARALLAX - this->stageDefinition->streaming.loadPadding)
-#define __LOAD_HIGHT_X_LIMIT	ITOFIX19_13(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->stageDefinition->streaming.loadPadding)
-#define __LOAD_LOW_Y_LIMIT		ITOFIX19_13(- this->stageDefinition->streaming.loadPadding)
-#define __LOAD_HIGHT_Y_LIMIT	ITOFIX19_13(__SCREEN_HEIGHT + this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_X_LIMIT		(- __MAXIMUM_PARALLAX - this->stageDefinition->streaming.loadPadding)
+#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_Y_LIMIT		(- this->stageDefinition->streaming.loadPadding)
+#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_Z_LIMIT		(- this->stageDefinition->streaming.loadPadding)
+#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->stageDefinition->streaming.loadPadding)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -189,26 +191,33 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-inline static int Stage_inLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
+inline static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
 {
-	ASSERT(this, "Stage::inLoadRange: null this");
+	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
 	VBVec2D position2D;
 
-	//normalize position
 	__OPTICS_NORMALIZE(position3D);
 
-	//project the position to 2d space
+	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+	position2D.z = position3D.z;
+	position2D.parallax = Optics_calculateParallax(position3D.x, position3D.z);
 
 	// check x visibility
-	if(position2D.x + ITOFIX19_13(smallRightCuboid->x1) < __LOAD_LOW_X_LIMIT || position2D.x - ITOFIX19_13(smallRightCuboid->x0) > __LOAD_HIGHT_X_LIMIT)
+	if(FIX19_13TOI(position2D.x) + smallRightCuboid->x1 + position2D.parallax <  __LOAD_LOW_X_LIMIT || FIX19_13TOI(position2D.x) + smallRightCuboid->x0 - position2D.parallax >  __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(position2D.y + ITOFIX19_13(smallRightCuboid->y1) < __LOAD_LOW_Y_LIMIT || position2D.y - ITOFIX19_13(smallRightCuboid->y0) > __LOAD_HIGHT_Y_LIMIT)
+	if(FIX19_13TOI(position2D.y) + smallRightCuboid->y1 <  __LOAD_LOW_Y_LIMIT || FIX19_13TOI(position2D.y) + smallRightCuboid->y0 >  __LOAD_HIGHT_Y_LIMIT)
+	{
+		return false;
+	}
+
+	// check z visibility
+	if(FIX19_13TOI(position2D.z) + smallRightCuboid->z1 <  __LOAD_LOW_Z_LIMIT || FIX19_13TOI(position2D.z) + smallRightCuboid->z0 >  __LOAD_HIGHT_Z_LIMIT)
 	{
 		return false;
 	}
@@ -735,7 +744,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 		if(0 > stageEntityDescription->id)
 		{
 			// if entity in load range
-			if(Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
+			if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
 				stageEntityDescription->id = 0x7FFF;
 				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
@@ -827,8 +836,9 @@ static void Stage_loadInRangeEntities(Stage this)
 
 		if(-1 == stageEntityDescription->id)
 		{
+
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_inLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
 
@@ -875,7 +885,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		Entity entity = __SAFE_CAST(Entity, node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!__VIRTUAL_CALL(bool, Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding)))
+		if(!__VIRTUAL_CALL(bool, Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX)))
 		{
 			s16 id = Container_getId(__SAFE_CAST(Container, entity));
 
@@ -962,7 +972,10 @@ void Stage_stream(Stage this)
 	{
 		Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 		// unload not visible objects
+		Printing_text(Printing_getInstance(), "U0", 25, 15, NULL);
 		Stage_unloadOutOfRangeEntities(this);
+		Printing_text(Printing_getInstance(), "U1", 25, 15, NULL);
+
 	}
 	else if(streamingCycleCounter == streamingCycleBase)
 	{			
@@ -984,7 +997,9 @@ void Stage_stream(Stage this)
 		if(this->entitiesToLoad->head)
 		{
 			Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
+			Printing_text(Printing_getInstance(), "L0", 25, 15, NULL);
 			Stage_loadEntities(this);
+			Printing_text(Printing_getInstance(), "L1", 25, 15, NULL);
 		}
 		/*else
 		{
@@ -997,7 +1012,9 @@ void Stage_stream(Stage this)
 		{
 			//Printing_text(Printing_getInstance(), "initialize", 25, 10, NULL);
 
+			Printing_text(Printing_getInstance(), "I0", 25, 15, NULL);
 			Stage_initializeEntities(this);
+			Printing_text(Printing_getInstance(), "I0", 25, 15, NULL);
 		}
 
 		//streamingCycleCounter = streamingDelayPerCycle;
@@ -1007,6 +1024,10 @@ void Stage_stream(Stage this)
 	{
 		streamingCycleCounter  = 0;
 	}
+	
+	if(this->children)
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->children), 1, 5, NULL);
+
 }
 
 // stream entities according to screen's position

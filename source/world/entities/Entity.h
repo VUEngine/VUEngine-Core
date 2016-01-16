@@ -80,8 +80,11 @@
 																										\
 	/* entity's definition */																			\
 	EntityDefinition *entityDefinition;																	\
+																										\
+	/* entity's definition */																			\
+	VBVec3D* centerDisplacement;																		\
 
-__CLASS(Entity);
+	__CLASS(Entity);
 
 
 //---------------------------------------------------------------------------------------------------------

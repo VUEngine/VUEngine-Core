@@ -293,22 +293,26 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 	if(bgmapTexture && BgmapTexture_decreaseUsageCount(bgmapTexture))
 	{
 		int i = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
+		CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, bgmapTexture));
 		
-		switch(CharSet_getAllocationType(Texture_getCharSet(__SAFE_CAST(Texture, bgmapTexture))))
+		if(charSet)
 		{
-			case __ANIMATED_SINGLE:
-
-				__DELETE(bgmapTexture);
-				this->bgmapTextures[i] = NULL;
-				break;
-
-			case __ANIMATED_SHARED:
-			case __ANIMATED_SHARED_COORDINATED:
-			case __ANIMATED_MULTI:
-			case __NOT_ANIMATED:
-
-				Texture_releaseCharSet(__SAFE_CAST(Texture, bgmapTexture));
-				break;
+			switch(CharSet_getAllocationType(charSet))
+			{
+				case __ANIMATED_SINGLE:
+	
+					__DELETE(bgmapTexture);
+					this->bgmapTextures[i] = NULL;
+					break;
+	
+				case __ANIMATED_SHARED:
+				case __ANIMATED_SHARED_COORDINATED:
+				case __ANIMATED_MULTI:
+				case __NOT_ANIMATED:
+	
+					Texture_releaseCharSet(__SAFE_CAST(Texture, bgmapTexture));
+					break;
+			}
 		}
 	}
 }

@@ -55,7 +55,7 @@
 #define __SCREEN_HEIGHT							224
 
 // screen depth in pixels
-#define __SCREEN_DEPTH							0
+#define __SCREEN_DEPTH							384
 
 // distance from player's eyes to the virtual screen
 #define __DISTANCE_EYE_SCREEN					384

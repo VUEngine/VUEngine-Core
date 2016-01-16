@@ -29,6 +29,7 @@
 #include <CollisionManager.h>
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ extern const Optical* _optical;
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
 static void Entity_releaseSprites(Entity this);
 
-
+VBVec3D centerDisplacement;
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -77,8 +78,8 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 
 	// the sprite must be initialized in the derived class
 	this->sprites = NULL;
-
 	this->shape = NULL;
+	this->centerDisplacement = NULL;
 
 	// initialize to 0 for the engine to know that
 	// size must be set
@@ -99,6 +100,11 @@ void Entity_destructor(Entity this)
 		CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
 	
 		this->shape = NULL;
+	}
+	
+	if(this->centerDisplacement)
+	{
+		__DELETE_BASIC(this->centerDisplacement);
 	}
 
 	Entity_releaseSprites(this);
@@ -130,74 +136,123 @@ static void Entity_releaseSprites(Entity this)
 	}
 }
 
-static void Entity_getSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid)
+static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environmentPosition, SmallRightCuboid* rightCuboid)
 {
-	ASSERT(this, "Entity::getSizeFromChildren: null this");
+	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
-	u16 halfWidth = 0;
-	u16 halfHeight = 0;
-	u16 halfDepth = 10;
+	VBVec3D globalPosition3D = this->transform.globalPosition;
+	
+	s16 left = 0;
+	s16 right = 0;
+	s16 top = 0;
+	s16 bottom = 0;
+	s16 front = 0;
+	s16 back = 0;
+	s16 halfWidth = 0;
+	s16 halfHeight = 0;
+	s16 halfDepth = 10;
 
-	if(this->sprites)
+	if((!this->size.x || !this->size.y || !this->size.z) && this->sprites)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_front(this->sprites));
-		Texture texture = Sprite_getTexture(sprite);
+		VirtualNode spriteNode = this->sprites->head;
 
-		if(texture)
+		for(; spriteNode; spriteNode = spriteNode->next)
 		{
-			halfWidth = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
-			halfHeight = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
-			halfDepth = this->size.z >> 1;
+			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+
+			Texture texture = Sprite_getTexture(sprite);
+
+			if(texture)
+			{
+				halfWidth = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
+				halfHeight = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
+				halfDepth = this->size.z >> 1;
+			}				
+			
+			VBVec3D spriteDisplacement = Sprite_getDisplacement(sprite);
+			if(left > -halfWidth + FIX19_13TOI(spriteDisplacement.x))
+			{
+				left = -halfWidth + FIX19_13TOI(spriteDisplacement.x);
+			}
+
+			if(right < halfWidth + FIX19_13TOI(spriteDisplacement.x))
+			{
+				right = halfWidth + FIX19_13TOI(spriteDisplacement.x);
+			}
+
+			if(top > -halfHeight + FIX19_13TOI(spriteDisplacement.y))
+			{
+				top = -halfHeight + FIX19_13TOI(spriteDisplacement.y);
+			}
+
+			if(bottom < halfHeight + FIX19_13TOI(spriteDisplacement.y))
+			{
+				bottom = halfHeight + FIX19_13TOI(spriteDisplacement.y);
+			}
+
+			if(front > -halfDepth + FIX19_13TOI(spriteDisplacement.z))
+			{
+				front = -halfDepth + FIX19_13TOI(spriteDisplacement.z);
+			}
+
+			if(back < halfDepth + FIX19_13TOI(spriteDisplacement.z))
+			{
+				back = halfDepth + FIX19_13TOI(spriteDisplacement.z);
+			}
 		}
 	}
-	else if(!this->children || !this->children->head)
+	else
 	{
-		halfWidth = this->size.x >> 1;
-		halfHeight = this->size.y >> 1;
-		halfDepth = this->size.z >> 1;
-	}
-	
-	int x = FIX19_13TOI(this->transform.globalPosition.x);
-	int y = FIX19_13TOI(this->transform.globalPosition.y);
-	int z = FIX19_13TOI(this->transform.globalPosition.z);
-	
-	if(0 == rightCuboid->x1 || halfWidth + x > rightCuboid->x1)
-	{
-		rightCuboid->x1 = halfWidth + x;
-	}
-	
-	if(0 == rightCuboid->x0 || x - halfWidth < rightCuboid->x0)
-	{
-		rightCuboid->x0 = x - halfWidth;
-	}
-	
-	if(0 == rightCuboid->y1 || halfHeight + y > rightCuboid->y1)
-	{
-		rightCuboid->y1 = halfHeight + y;
-	}
-	
-	if(0 == rightCuboid->y0 || y - halfHeight < rightCuboid->y0)
-	{
-		rightCuboid->y0 = y - halfHeight;
+		
+		right = this->size.x >> 1;
+		left = -right;
+		bottom = this->size.y >> 1;
+		top = -bottom;
+		front = 0;
+		back = this->size.z;
 	}
 
-	if(0 == rightCuboid->z1 || halfDepth + z > rightCuboid->z1)
+	int x = FIX19_13TOI(globalPosition3D.x);
+	int y = FIX19_13TOI(globalPosition3D.y);
+	int z = FIX19_13TOI(globalPosition3D.z);
+	
+	if(0 == rightCuboid->x0 || x + left < rightCuboid->x0)
 	{
-		rightCuboid->z1 = halfDepth + z;
+		rightCuboid->x0 = x + left;
 	}
 	
-	if(0 == rightCuboid->z0 || z - halfDepth < rightCuboid->z0)
+	if(0 == rightCuboid->x1 || right + x > rightCuboid->x1)
 	{
-		rightCuboid->z0 = z - halfHeight;
+		rightCuboid->x1 = right + x;
+	}
+
+	if(0 == rightCuboid->y0 || y + top < rightCuboid->y0)
+	{
+		rightCuboid->y0 = y + top;
+	}
+	
+	if(0 == rightCuboid->y1 || bottom + y > rightCuboid->y1)
+	{
+		rightCuboid->y1 = bottom + y;
+	}
+
+	if(0 == rightCuboid->z0 || z + front < rightCuboid->z0)
+	{
+		rightCuboid->z0 = z + front;
+	}
+	
+	if(0 == rightCuboid->z1 || back + z > rightCuboid->z1)
+	{
+		rightCuboid->z1 = back + z;
 	}
 
 	if(this->children)
 	{
-		VirtualNode node = this->children->head;
-		
-		for(; node; node = node->next)
+		VirtualNode childNode = this->children->head;
+
+		for(; childNode; childNode = childNode->next)
 		{
-			Entity_getSizeFromChildren(__SAFE_CAST(Entity, node->data), rightCuboid);
+			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), &globalPosition3D, rightCuboid);
 		}
 	}
 }
@@ -205,20 +260,29 @@ static void Entity_getSizeFromChildren(Entity this, SmallRightCuboid* rightCuboi
 // calculate my size based on me and my children
 void Entity_calculateSize(Entity this)
 {
+	ASSERT(this, "Entity::calculateSize: null this");
+
 	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromChildren(this, &rightCuboid);
+	VBVec3D environmentPosition = {0, 0, 0};
+	Entity_calculateSizeFromChildren(this, &environmentPosition, &rightCuboid);
 
-	rightCuboid.x0 = FIX19_13TOI(this->transform.globalPosition.x) - rightCuboid.x0;
-	rightCuboid.x1 = rightCuboid.x1 - FIX19_13TOI(this->transform.globalPosition.x);
-	rightCuboid.y0 = FIX19_13TOI(this->transform.globalPosition.y) - rightCuboid.y0;
-	rightCuboid.y1 = rightCuboid.y1 - FIX19_13TOI(this->transform.globalPosition.y);
-	rightCuboid.z0 = FIX19_13TOI(this->transform.globalPosition.z) - rightCuboid.z0;
-	rightCuboid.z1 = rightCuboid.z1 - FIX19_13TOI(this->transform.globalPosition.z);
-
-	this->size.x = rightCuboid.x0 + rightCuboid.x1;
-	this->size.y = rightCuboid.y0 + rightCuboid.y1;
-	this->size.z = rightCuboid.z0 + rightCuboid.z1;
+	VBVec3D centerDisplacement =
+	{
+		(ITOFIX19_13(rightCuboid.x1 + rightCuboid.x0) >> 1) - this->transform.globalPosition.x,
+		(ITOFIX19_13(rightCuboid.y1 + rightCuboid.y0) >> 1) - this->transform.globalPosition.y,
+		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) >> 1) - this->transform.globalPosition.z
+	};
+	
+	if(centerDisplacement.x || centerDisplacement.y || centerDisplacement.z)
+	{
+		this->centerDisplacement = __NEW_BASIC(VBVec3D);
+		*this->centerDisplacement = centerDisplacement;
+	}
+	
+	this->size.x = rightCuboid.x1 - rightCuboid.x0;
+	this->size.y = rightCuboid.y1 - rightCuboid.y0;
+	this->size.z = rightCuboid.z1 - rightCuboid.z0;
 }
 
 static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightCuboid* rightCuboid)
@@ -232,7 +296,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		environmentPosition->y + positionedEntity->position.y,
 		environmentPosition->z + positionedEntity->position.z
 	};
-
+	
 	s16 left = 0;
 	s16 right = 0;
 	s16 top = 0;
@@ -241,7 +305,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	s16 back = 0;
 	s16 halfWidth = 0;
 	s16 halfHeight = 0;
-	s16 halfDepth = 10;
+	s16 halfDepth = 5;
 
 	if(positionedEntity->entityDefinition->spritesDefinitions && positionedEntity->entityDefinition->spritesDefinitions[0])
 	{
@@ -249,7 +313,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		
 		for(; positionedEntity->entityDefinition->spritesDefinitions[i]; i++)
 		{
-			if(__TYPE(BgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && positionedEntity->entityDefinition->spritesDefinitions[0]->textureDefinition)
+			if(__TYPE(BgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && positionedEntity->entityDefinition->spritesDefinitions[i]->textureDefinition)
 			{
 				BgmapSpriteDefinition* bgmapSpriteDefinition = (BgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i];
 				halfWidth = bgmapSpriteDefinition->textureDefinition->cols << 2;
@@ -281,13 +345,12 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 					front = -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
 				}
 	
-				if(back < halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
+				if(back < (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
 				{
-					back = halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
+					back = (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
 				}
-	
 			}
-			else if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[0]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[0])->textureDefinitions[0])
+			else if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i])->textureDefinitions[0])
 			{
 				MBgmapSpriteDefinition* mBgmapSpriteDefinition = (MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i]; 
 
@@ -330,15 +393,16 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 					bottom = halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y);
 				}
 	
-				if(front > -halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z))
+				if(front > FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z))
 				{
-					front = -halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
+					front = FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
 				}
 	
 				if(back < halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z))
 				{
 					back = halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
 				}
+				
 			}
 		}
 	}
@@ -358,7 +422,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 			top = -halfHeight;
 			bottom = halfHeight;
 			front = -halfDepth;
-			front = halfDepth;
+			back = halfDepth;
 		}
 		else
 		{
@@ -367,7 +431,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 			top = -1;
 			bottom = 1;
 			front = -1;
-			front = 1;
+			back = 1;
 		}
 	}
 
@@ -375,9 +439,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	int y = FIX19_13TOI(globalPosition3D.y);
 	int z = FIX19_13TOI(globalPosition3D.z);
 	
-	if(0 == rightCuboid->x0 || left + x < rightCuboid->x0)
+	if(0 == rightCuboid->x0 || x + left < rightCuboid->x0)
 	{
-		rightCuboid->x0 = left + x;
+		rightCuboid->x0 = x + left;
 	}
 	
 	if(0 == rightCuboid->x1 || right + x > rightCuboid->x1)
@@ -385,9 +449,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		rightCuboid->x1 = right + x;
 	}
 
-	if(0 == rightCuboid->y0 || top + y < rightCuboid->y0)
+	if(0 == rightCuboid->y0 || y + top < rightCuboid->y0)
 	{
-		rightCuboid->y0 = top + y;
+		rightCuboid->y0 = y + top;
 	}
 	
 	if(0 == rightCuboid->y1 || bottom + y > rightCuboid->y1)
@@ -395,9 +459,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		rightCuboid->y1 = bottom + y;
 	}
 
-	if(0 == rightCuboid->z0 || front + z < rightCuboid->z0)
+	if(0 == rightCuboid->z0 || z + front < rightCuboid->z0)
 	{
-		rightCuboid->z0 = front + z;
+		rightCuboid->z0 = z + front;
 	}
 	
 	if(0 == rightCuboid->z1 || back + z > rightCuboid->z1)
@@ -422,10 +486,12 @@ SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 
 	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightCuboid);
 
-	rightCuboid.x0 = (s16)FIX19_13TOI(positionedEntity->position.x) - rightCuboid.x0;
-	rightCuboid.x1 = rightCuboid.x1 - (s16)FIX19_13TOI(positionedEntity->position.x);
-	rightCuboid.y0 = (s16)FIX19_13TOI(positionedEntity->position.y) - rightCuboid.y0;
-	rightCuboid.y1 = rightCuboid.y1 - (s16)FIX19_13TOI(positionedEntity->position.y);
+	rightCuboid.x0 = rightCuboid.x0 - FIX19_13TOI(positionedEntity->position.x);
+	rightCuboid.x1 = rightCuboid.x1 - FIX19_13TOI(positionedEntity->position.x);
+	rightCuboid.y0 = rightCuboid.y0 - FIX19_13TOI(positionedEntity->position.y);
+	rightCuboid.y1 = rightCuboid.y1 - FIX19_13TOI(positionedEntity->position.y);
+	rightCuboid.z0 = rightCuboid.z0 - FIX19_13TOI(positionedEntity->position.z);
+	rightCuboid.z1 = rightCuboid.z1 - FIX19_13TOI(positionedEntity->position.z);
 
 	return rightCuboid;
 }
@@ -596,12 +662,6 @@ void Entity_initialize(Entity this)
 	if(this->shape)
 	{
 		Shape_setActive(this->shape, true);
-	}
-	
-	if(!this->size.x || !this->size.y || !this->size.z)
-	{
-		// must force size calculation now
-		Entity_calculateSize(this);
 	}
 }
 
@@ -806,6 +866,13 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	// call base class's transform method
 	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
 
+	// now can calculate the size
+	if(!this->size.x || !this->size.y || !this->size.z)
+	{
+		// must force size calculation now
+		Entity_calculateSize(this);
+	}
+	
 	// force sprite translation
 	Entity_translateSprites(this, true, true);
 
@@ -857,13 +924,11 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		Entity_translateSprites(this, updateSpriteTransformations, updateSpritePosition);
 	}
 	
-	/*
-	if(this->shape)
+/*	if(this->shape)
 	{
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
 	*/
-
 }
 
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)
@@ -961,8 +1026,6 @@ bool Entity_isVisible(Entity this, int pad)
 {
 	ASSERT(this, "Entity::isVisible: null this");
 
-	int lowLimit = 0 - pad;
-	int highLimit = __SCREEN_WIDTH + pad;
 	int x = 0;
 	int y = 0;
 	int z = 0;
@@ -977,27 +1040,19 @@ bool Entity_isVisible(Entity this, int pad)
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
 			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-			lowLimit -= spritePosition.parallax;
-			highLimit += spritePosition.parallax;
 			
 			x = FIX19_13TOI(spritePosition.x);
 			y = FIX19_13TOI(spritePosition.y);
-			z = FIX19_13TOI(this->transform.globalPosition.z - _screenPosition->z);
+			z = FIX19_13TOI(spritePosition.z);
+
 			// check x visibility
-			if(x + this->size.x > lowLimit && x < highLimit)
+			if(x + this->size.x >= -pad && x <= __SCREEN_WIDTH + pad)
 			{
-				lowLimit = -pad;
-				highLimit = __SCREEN_HEIGHT + pad;
-	
 				// check y visibility
-				if(y + this->size.y > lowLimit && y < highLimit)
+				if(y + this->size.y >= -pad && y <= __SCREEN_HEIGHT + pad)
 				{
-					
-					lowLimit = -pad;
-					highLimit = (1 << _optical->maximumViewDistancePower) + pad;
-	
 					// check z visibility
-					if(z + this->size.z > lowLimit && z < highLimit)
+					if(z + this->size.z >= -pad && z <= __SCREEN_DEPTH + pad)
 					{
 						return true;
 					}
@@ -1009,34 +1064,42 @@ bool Entity_isVisible(Entity this, int pad)
 	{
 		VBVec3D position3D = this->transform.globalPosition;
 
+		if(this->centerDisplacement)
+		{
+			position3D.x += this->centerDisplacement->x;
+			position3D.y += this->centerDisplacement->y;
+			position3D.z += this->centerDisplacement->z;
+		}
+		
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
 
-		x = FIX19_13TOI(position3D.x) - (this->size.x >> 1);
-		y = FIX19_13TOI(position3D.y) - (this->size.y >> 1);
-		z = FIX19_13TOI(position3D.z);
+		VBVec2D position2D;
+		__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+		s16 halfWidth = this->size.x >> 1;
+		s16 halfHeight = this->size.y >> 1;
+		s16 halfDepth = this->size.z >> 1;
+
+		x = FIX19_13TOI(position2D.x);
+		y = FIX19_13TOI(position2D.y);
+		z = FIX19_13TOI(position2D.z);
 		
-		// check x visibility
-		if(x + this->size.x >= lowLimit && x <= highLimit)
+		if(x + halfWidth > -pad && x - halfWidth < __SCREEN_WIDTH + pad)
 		{
-			lowLimit = -pad;
-			highLimit = __SCREEN_HEIGHT + pad;
-
 			// check y visibility
-			if(y + this->size.y >= lowLimit && y <= highLimit)
+			if(y + halfHeight > -pad && y - halfHeight < __SCREEN_HEIGHT + pad)
 			{
-				
-				lowLimit = -pad;
-				highLimit = (1 << _optical->maximumViewDistancePower) + pad;
-
 				// check z visibility
-				return z + this->size.z >= lowLimit && z <= highLimit;
+				if(z + halfDepth > -pad && z - halfDepth < __SCREEN_DEPTH + pad)
+				{
+					return true;
+				}
 			}
 		}
 	}
 
-
-	if(this->children)
+	if(false && this->children)
 	{
 		VirtualNode childNode = this->children->head;
 		
