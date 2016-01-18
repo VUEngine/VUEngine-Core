@@ -129,6 +129,8 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 		
+		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
+		
 		if(this->shape)
 		{
 			__VIRTUAL_CALL(void, Shape, position, this->shape);
