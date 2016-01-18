@@ -72,7 +72,6 @@
 #include <Particle.h>
 #include <ParticleSystem.h>
 
-#include <ScrollBackground.h>
 #include <GameState.h>
 #include <Stage.h>
 #include <UI.h>
@@ -534,7 +533,6 @@ static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, i
 		{&ManagedEntity_getObjectSize, "ManagedEntity"},
 		{&MBackground_getObjectSize, "MBackground"},
 		{&InGameEntity_getObjectSize, "InGameEntity"},
-		{&ScrollBackground_getObjectSize, "ScrollBackg."},
 		{&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
 		{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
 		{&Actor_getObjectSize, "Actor"},

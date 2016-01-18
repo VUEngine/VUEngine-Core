@@ -58,7 +58,6 @@
 #include <Container.h>
 #include <Entity.h>
 #include <InGameEntity.h>
-#include <ScrollBackground.h>
 #include <GameState.h>
 #include <Stage.h>
 
