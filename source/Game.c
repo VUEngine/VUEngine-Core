@@ -693,6 +693,23 @@ static void Game_updatePhysics(Game this)
 	// simulate physics
 	PhysicalWorld_update(this->physicalWorld, ITOFIX19_13(Clock_getElapsedTime(this->physicsClock)));
 	
+	// process the collisions after the transformations have taken place
+#ifdef __DEBUG
+	this->lastProcessName = "process collisions";
+#endif
+
+#ifdef __DEBUG_TOOLS
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __STAGE_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+	// process collisions
+	CollisionManager_update(this->collisionManager, ITOFIX19_13(Clock_getElapsedTime(this->physicsClock)));
+	
 #ifdef __DEBUG
 	this->lastProcessName = "physics ended";
 #endif
@@ -722,23 +739,6 @@ static void Game_updateTransformations(Game this)
 #endif
 	// apply world transformations
 	GameState_transform(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
-
-	// process the collisions after the transformations have taken place
-#ifdef __DEBUG
-	this->lastProcessName = "process collisions";
-#endif
-
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-	// process collisions
-	CollisionManager_update(this->collisionManager, ITOFIX19_13(Clock_getElapsedTime(this->physicsClock)));
 }
 
 // do defragmentation, memory recovery, etc
@@ -814,7 +814,7 @@ static void Game_update(Game this)
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
-		
+
 		// this is the point were the main game's subsystems
 		// have done all their work
 		// at this point save the current time on each 
