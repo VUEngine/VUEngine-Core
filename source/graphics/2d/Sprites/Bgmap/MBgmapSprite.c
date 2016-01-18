@@ -242,6 +242,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 {
 	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
 
+	/*
 	if(this->mSpriteDefinition->xLoop)
 	{
 		this->drawSpec.textureSource.mx -= displacement->x;
@@ -295,7 +296,40 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 			this->drawSpec.textureSource.my = this->textureYOffset;
 		}
 	}
+*/
+	
+	if(this->mSpriteDefinition->xLoop)
+	{
+		this->drawSpec.position.x = 0;
+		this->drawSpec.textureSource.mx -= displacement->x;
+	}
+	else
+	{
+		this->drawSpec.textureSource.mx = this->textureXOffset;
+		this->drawSpec.position.x += displacement->x;
 
+		if(0 > this->drawSpec.position.x + this->displacement.x)
+		{
+			this->drawSpec.textureSource.mx += (int)(0.5f - FIX19_13TOF(this->drawSpec.position.x + this->displacement.x));
+		}
+	}
+	
+	if(this->mSpriteDefinition->yLoop)
+	{
+		this->drawSpec.position.y = 0;
+		this->drawSpec.textureSource.my -= displacement->y;
+	}
+	else
+	{
+		this->drawSpec.textureSource.my = this->textureYOffset;
+		this->drawSpec.position.y += displacement->y;
+
+		if(0 > this->drawSpec.position.y + this->displacement.y)
+		{
+			this->drawSpec.textureSource.my += (int)(0.5f - FIX19_13TOF(this->drawSpec.position.y + this->displacement.y));
+		}
+	}
+	
 	this->drawSpec.position.z += displacement->z;
 	this->drawSpec.position.parallax += displacement->parallax;
 

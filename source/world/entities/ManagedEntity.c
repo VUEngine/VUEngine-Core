@@ -156,19 +156,11 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
-	// TODO : fix me
-	return Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
-
-	// TODO: take into account scaling
-	/*
-	int updateSpriteScale = Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this));
-	
-	if(updateSpriteScale)
+	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
-		//return;
+		return;
 	}
-	*/
 	
 	int updateSpritePosition = Entity_updateSpritePosition(__SAFE_CAST(Entity, this));
 
