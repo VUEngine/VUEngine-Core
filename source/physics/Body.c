@@ -623,10 +623,7 @@ VBVec3D Body_getLastDisplacement(Body this)
 
 	VBVec3D displacement = {0, 0, 0};
 
-	// TODO: fix this horrible hack, 
-//	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
-	fix19_13 elapsedTime = Clock_isPaused(_physhicsClock)? 0 : FIX19_13_DIV(ITOFIX19_13(Clock_getMilliSeconds(_physhicsClock) - Clock_getPreviousMilliSeconds(_physhicsClock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
-	elapsedTime >>= 1;
+	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
 
 	displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
 	displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);
