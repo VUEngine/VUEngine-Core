@@ -188,7 +188,7 @@ void Container_addChild(Container this, Container child)
 		    {
 				Container_removeChild(child->parent, child);
 
-				__VIRTUAL_CALL(void, Container, changeEnvironment, child, &this->transformation);
+				__VIRTUAL_CALL(void, Container, changeEnvironment, child, &this->transform);
 		    }
 	
 			// add to the children list
