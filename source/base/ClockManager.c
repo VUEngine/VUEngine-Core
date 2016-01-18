@@ -136,6 +136,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
 	
+	u32 previousHundredthSecond = (int)this->ticks / (10);
 	u32 previousSecond = (int)this->ticks / __MILLISECONDS_IN_SECOND;
 
 	if(this->clocks)
@@ -190,8 +191,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	    	this->ticks = 0;
     }	
 
-    // update sounds
-    SoundManager_playSounds(SoundManager_getInstance());
+    if(previousHundredthSecond != (int)this->ticks / (10))
+    {
+	    // update sounds
+	    SoundManager_playSounds(SoundManager_getInstance());
+    }
 }
 
 // save the current time
