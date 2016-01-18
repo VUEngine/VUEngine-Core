@@ -198,6 +198,7 @@ void Cuboid_position(Cuboid this)
 	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y - ITOFIX19_13(gap.down);
 	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z;
 
+	/*
 #define __LIGHT_SPEED		ITOFIX19_13(100000 << __FRAME_CYCLE)
 
 	VBVec3D lorentzFactor = 
@@ -207,7 +208,6 @@ void Cuboid_position(Cuboid this)
 		FIX19_13_DIV(velocity.z, __LIGHT_SPEED)
 	};
 	
-	/*
 	this->positionedRightCuboid.x0 -= 0 > velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
 	this->positionedRightCuboid.y0 -= 0 > velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
 	this->positionedRightCuboid.z0 -= 0 > velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;

@@ -737,7 +737,7 @@ fix19_13 Actor_getFriction(Actor this)
 {
 	ASSERT(this, "Actor::getElasticity: null this");
 
-	return this->body ? Body_getFriction(this->body).x : this->actorDefinition->friction;
+	return this->actorDefinition->friction;
 }
 
 void Actor_addForce(Actor this, const Force* force)
