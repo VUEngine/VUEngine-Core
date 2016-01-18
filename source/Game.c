@@ -211,9 +211,6 @@ static void Game_constructor(Game this)
 	this->directDraw = DirectDraw_getInstance();
 	this->i18n = I18n_getInstance();
 	
-	// set the default screen movement manager
-	Screen_setScreenMovementManager(this->screen, ScreenMovementManager_getInstance());
-	
 	// to make debugging easier
 #ifndef __DEBUG
 	this->lastProcessName = "not available";

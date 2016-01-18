@@ -22,6 +22,7 @@
 #include <Screen.h>
 #include <Optics.h>
 #include <Game.h>
+#include <ScreenMovementManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -70,7 +71,8 @@ static void Screen_constructor(Screen this)
 	
 	this->positionBackup = this->position;
 	
-	this->screenMovementManager = NULL;
+	// set the default screen movement manager
+	this->screenMovementManager = ScreenMovementManager_getInstance();
 
 	this->focusEntityPositionDisplacement.x = 0;
 	this->focusEntityPositionDisplacement.y = 0;
