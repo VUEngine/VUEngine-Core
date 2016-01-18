@@ -369,39 +369,39 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 			}
 			else if(positionedEntity->entityDefinition->spritesDefinitions[i]->textureDefinition)
 			{
-				SpriteDefinition* spriteDefinition = (SpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i];
-				halfWidth = spriteDefinition->textureDefinition->cols << 2;
-				halfHeight = spriteDefinition->textureDefinition->rows << 2;
+				SpriteDefinition* bgmapSpriteDefinition = (SpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i];
+				halfWidth = bgmapSpriteDefinition->textureDefinition->cols << 2;
+				halfHeight = bgmapSpriteDefinition->textureDefinition->rows << 2;
 				halfDepth = 10;
 				
-				if(left > -halfWidth + FIX19_13TOI(spriteDefinition->displacement.x))
+				if(left > -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
 				{
-					left = -halfWidth + FIX19_13TOI(spriteDefinition->displacement.x);
+					left = -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
 				}
 	
-				if(right < halfWidth + FIX19_13TOI(spriteDefinition->displacement.x))
+				if(right < halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
 				{
-					right = halfWidth + FIX19_13TOI(spriteDefinition->displacement.x);
+					right = halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
 				}
 	
-				if(top > -halfHeight + FIX19_13TOI(spriteDefinition->displacement.y))
+				if(top > -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
 				{
-					top = -halfHeight + FIX19_13TOI(spriteDefinition->displacement.y);
+					top = -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
 				}
 	
-				if(bottom < halfHeight + FIX19_13TOI(spriteDefinition->displacement.y))
+				if(bottom < halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
 				{
-					bottom = halfHeight + FIX19_13TOI(spriteDefinition->displacement.y);
+					bottom = halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
 				}
 	
-				if(front > -halfDepth + FIX19_13TOI(spriteDefinition->displacement.z))
+				if(front > -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
 				{
-					front = -halfDepth + FIX19_13TOI(spriteDefinition->displacement.z);
+					front = -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
 				}
 	
-				if(back < (halfDepth << 1) + FIX19_13TOI(spriteDefinition->displacement.z))
+				if(back < (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
 				{
-					back = (halfDepth << 1) + FIX19_13TOI(spriteDefinition->displacement.z);
+					back = (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
 				}
 			}
 		}
@@ -923,12 +923,12 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		// update graphical representation
 		Entity_translateSprites(this, updateSpriteTransformations, updateSpritePosition);
 	}
-	
-/*	if(this->shape)
+/*
+	if(this->shape)
 	{
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
-	*/
+*/
 }
 
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)
@@ -936,6 +936,11 @@ void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 	ASSERT(this, "Entity::setLocalPosition: null this");
 
 	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
+
+	if(this->shape)
+	{
+		__VIRTUAL_CALL(void, Shape, position, this->shape);
+	}
 }
 
 
@@ -1099,7 +1104,7 @@ bool Entity_isVisible(Entity this, int pad)
 		}
 	}
 
-	if(false && this->children)
+	if(this->children)
 	{
 		VirtualNode childNode = this->children->head;
 		

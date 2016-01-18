@@ -126,6 +126,7 @@ StateMachine Actor_getStateMachine(Actor this);
 bool Actor_moves(Actor this);
 u8 Actor_isMoving(Actor this);
 u8 Actor_getMovementState(Actor this);
+void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const VBVec3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const VBVec3D* position);
 bool Actor_updateSpritePosition(Actor this);

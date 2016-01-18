@@ -245,9 +245,12 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 				gravitySensibleAxis & __YAXIS ? this->gravity.y >> __FRAME_CYCLE: 0,
 				gravitySensibleAxis & __ZAXIS ? this->gravity.z >> __FRAME_CYCLE: 0
 			};
-
-			// add gravity
-			Body_applyGravity(body, &gravity);
+			
+			if(gravity.x || gravity.y || gravity.z)
+			{
+				// add gravity
+				Body_applyGravity(body, &gravity);
+			}
 		}
 	}
 }

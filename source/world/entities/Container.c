@@ -187,7 +187,9 @@ void Container_addChild(Container this, Container child)
 			if(child->parent)
 		    {
 				Container_removeChild(child->parent, child);
-			}
+
+				__VIRTUAL_CALL(void, Container, changeEnvironment, child, &this->transformation);
+		    }
 	
 			// add to the children list
 			VirtualList_pushBack(this->children, (void*)child);
@@ -329,6 +331,41 @@ void Container_concatenateTransform(Transformation* environmentTransform, Transf
 	// propagate scale
 	environmentTransform->globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, transform->localScale.x);
 	environmentTransform->globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, transform->localScale.y);
+}
+
+// change environment
+void Container_changeEnvironment(Container this, Transformation* environmentTransform)
+{
+	ASSERT(this, "Container::changeEnvironment: null this");
+
+	VBVec3D localPosition = 
+	{
+		this->transform.globalPosition.x - environmentTransform->globalPosition.x, 
+		this->transform.globalPosition.y - environmentTransform->globalPosition.y, 
+		this->transform.globalPosition.z - environmentTransform->globalPosition.z, 
+	};
+
+	Rotation localRotation = 
+	{
+		this->transform.globalRotation.x - environmentTransform->globalRotation.x,
+		this->transform.globalRotation.y - environmentTransform->globalRotation.y,
+		this->transform.globalRotation.z - environmentTransform->globalRotation.z,
+	};
+	
+	Scale localScale = 
+	{
+		FIX7_9_DIV(this->transform.globalScale.x, environmentTransform->globalScale.x),
+		FIX7_9_DIV(this->transform.globalScale.y, environmentTransform->globalScale.y),
+	};
+
+	Container_setLocalPosition(this, &localPosition);
+	Container_setLocalRotation(this, &localRotation);
+	Container_setLocalScale(this, &localScale);
+	
+	// force global position calculation on the next transform cycle
+	this->invalidateGlobalPosition.x = true;
+	this->invalidateGlobalPosition.y = true;
+	this->invalidateGlobalPosition.z = true;
 }
 
 // initial transform

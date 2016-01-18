@@ -50,6 +50,7 @@
 		__VIRTUAL_DEC(setLocalPosition);																\
 		__VIRTUAL_DEC(handlePropagatedMessage);															\
 		__VIRTUAL_DEC(addChild);																		\
+		__VIRTUAL_DEC(changeEnvironment);																\
 		__VIRTUAL_DEC(removeChild);																		\
 		__VIRTUAL_DEC(suspend);																			\
 		__VIRTUAL_DEC(resume);																			\
@@ -65,6 +66,7 @@
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);											\
 		__VIRTUAL_SET(ClassName, Container, handlePropagatedMessage);									\
 		__VIRTUAL_SET(ClassName, Container, addChild);													\
+		__VIRTUAL_SET(ClassName, Container, changeEnvironment);											\
 		__VIRTUAL_SET(ClassName, Container, removeChild);												\
 		__VIRTUAL_SET(ClassName, Container, suspend);													\
 		__VIRTUAL_SET(ClassName, Container, resume);													\
@@ -131,6 +133,7 @@ void Container_update(Container this);
 int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...);
 Transformation Container_getEnvironmentTransform(Container this);
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform);
+void Container_changeEnvironment(Container this, Transformation* environmentTransform);
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform);
 void Container_transform(Container this, const Transformation* environmentTransform);
 void Container_initialTransform(Container this, Transformation* environmentTransform);

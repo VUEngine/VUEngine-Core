@@ -434,7 +434,6 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 	}
 	while(!collidingObject && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.x) && ITOFIX19_13(__SCREEN_HEIGHT) > abs(displacement.y) && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.z));
 
-	Printing_int(Printing_getInstance(), FIX19_13TOI(displacement.y), 10, 15, NULL);
 	NM_ASSERT(collidingObject, "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
 	return collidingObject;
 }

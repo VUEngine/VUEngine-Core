@@ -641,19 +641,6 @@ static void Game_handleInput(Game this)
 static void Game_updateLogic(Game this)
 {
 #ifdef __DEBUG
-	this->lastProcessName = "handle input";
-#endif
-	// process user's input
-	Game_handleInput(this);
-#ifdef __DEBUG
-	this->lastProcessName = "update state machines";
-#endif
-	// it is the update cycle
-	ASSERT(this->stateMachine, "Game::update: no state machine");
-
-	// update the game's logic
-	StateMachine_update(this->stateMachine);
-#ifdef __DEBUG
 	this->lastProcessName = "dispatch delayed messages";
 #endif
 #ifdef __DEBUG_TOOLS
@@ -667,6 +654,20 @@ static void Game_updateLogic(Game this)
 #endif
 	// dispatch queued messages
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+	
+#ifdef __DEBUG
+	this->lastProcessName = "handle input";
+#endif
+	// process user's input
+	Game_handleInput(this);
+#ifdef __DEBUG
+	this->lastProcessName = "update state machines";
+#endif
+	// it is the update cycle
+	ASSERT(this->stateMachine, "Game::update: no state machine");
+
+	// update the game's logic
+	StateMachine_update(this->stateMachine);
 
 #ifdef __DEBUG
 	this->lastProcessName = "logic ended";

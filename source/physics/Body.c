@@ -424,7 +424,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 {
 	ASSERT(this, "Body::update: null this");
 
-	if(this->awake)
+	if(this->awake && this->active)
 	{
 		if(elapsedTime)
 		{
@@ -624,9 +624,10 @@ VBVec3D Body_getLastDisplacement(Body this)
 	VBVec3D displacement = {0, 0, 0};
 
 	// TODO: fix this horrible hack, 
-	// fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
+//	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
 	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getMilliSeconds(_physhicsClock) - Clock_getPreviousMilliSeconds(_physhicsClock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
+	elapsedTime >>= 1;
 	displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
 	displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);
 	displacement.z = FIX19_13_MULT(this->velocity.z, elapsedTime);

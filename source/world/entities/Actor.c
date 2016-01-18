@@ -31,6 +31,7 @@
 #include <Cuboid.h>
 #include <Prototypes.h>
 #include <Game.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,7 +48,7 @@ __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 // global
 const extern VBVec3D* _screenDisplacement;
 
-static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
+void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
 static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
 static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
 
@@ -113,6 +114,33 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 {
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
+	VBVec3D displacement = this->transform.localPosition;
+	Entity_setLocalPosition(__SAFE_CAST(Entity, this), position);
+
+	if(this->body)
+    {
+		displacement.x -= this->transform.localPosition.x;
+		displacement.y -= this->transform.localPosition.y;
+		displacement.z -= this->transform.localPosition.z;		
+
+		this->transform.globalPosition.x += displacement.x;
+		this->transform.globalPosition.y += displacement.y;
+		this->transform.globalPosition.z += displacement.z;
+
+		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
+		
+		if(this->shape)
+		{
+			__VIRTUAL_CALL(void, Shape, position, this->shape);
+		}
+	}
+}
+
+//set class's local position
+void Actor_setLocalPosition1(Actor this, const VBVec3D* position)
+{
+	ASSERT(this, "Actor::setLocalPosition: null this");
+
 	Entity_setLocalPosition(__SAFE_CAST(Entity, this), position);
 
 	if(this->body)
@@ -156,7 +184,8 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	}
 }
 
-static void Actor_syncPositionWithBody(Actor this)
+
+void Actor_syncPositionWithBody(Actor this)
 {
 	// save previous position
 	if(this->collisionSolver)
@@ -164,52 +193,71 @@ static void Actor_syncPositionWithBody(Actor this)
 		CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->transform.globalPosition);
 	}
 
-	Entity_setLocalPosition(__SAFE_CAST(Entity, this), Body_getPosition(this->body));
+	// retrieve the body's displacement
+	VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
+	
+	// modify the global position accorging to the body's displacement
+	VBVec3D globalPosition = this->transform.globalPosition;
+	globalPosition.x += bodyLastDisplacement.x;
+	globalPosition.y += bodyLastDisplacement.y;
+	globalPosition.z += bodyLastDisplacement.z;
+
+	// move the body to the new global position 
+	// to account for any parenting
+	Body_setPosition(this->body, &globalPosition, __SAFE_CAST(SpatialObject, this));
+
+	// sync local position with global position
+	VBVec3D localPosition = this->transform.localPosition;
+	localPosition.x += bodyLastDisplacement.x;
+	localPosition.y += bodyLastDisplacement.y;
+	localPosition.z += bodyLastDisplacement.z;
+
+	Entity_setLocalPosition(__SAFE_CAST(Entity, this), &localPosition);
 }
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
 void Actor_transform(Actor this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "Actor::transform: null this");
+	// concatenate the transform since any parenting must
+	// affect the body's location
+	
+	// concatenate transform
+	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
+
+	// propagate rotation
+	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	
+	// propagate scale
+	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
 	if(this->body)
 	{
 		u8 bodyMovement = Body_isMoving(this->body);
-		
+
+		Actor_syncPositionWithBody(this);
+
 		if(bodyMovement)
 		{
-			Actor_syncPositionWithBody(this);
-	
-			// an Actor with a physical body is agnostic to parenting
-			Transformation environmentAgnosticTransform =
-		    {
-					// local position
-					{0, 0, 0},
-					// global position
-					{0, 0, 0},
-					// local ,rotation
-					{0, 0, 0},
-					// global rotation
-					{0, 0, 0},
-					// local scale
-					{environmentTransform->localScale.x, environmentTransform->localScale.y},
-					// global scale
-					{environmentTransform->globalScale.x, environmentTransform->globalScale.y},
-			};
-	
 			// since body is moving
 			Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), bodyMovement);
-
-			// call base
-			AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), &environmentAgnosticTransform);
-
-			return;
 		}
     }
-
+	
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
+
+	/*
+	if(this->shape)
+	{
+		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+	}
+	*/
 }
 
 void Actor_resume(Actor this)
@@ -497,6 +545,23 @@ u8 Actor_getMovementState(Actor this)
 	return Body_isMoving(this->body);
 }
 
+void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
+{
+	ASSERT(this, "Actor::changeEnvironment: null this");
+
+	Container_changeEnvironment(__SAFE_CAST(Container, this), environmentTransform);
+
+	if(this->body)
+	{
+		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
+	}
+	
+	if(this->shape)
+	{
+		__VIRTUAL_CALL(void, Shape, position, this->shape);
+	}
+}
+
 // set position
 void Actor_setPosition(Actor this, const VBVec3D* position)
 {
@@ -568,7 +633,7 @@ u8 Actor_getAxisAllowedForBouncing(Actor this)
 }
 
 // start bouncing after collision with another inGameEntity
-static void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
+void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 {
 	ASSERT(this, "Actor::bounce: null this");
 

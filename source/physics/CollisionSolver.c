@@ -21,6 +21,7 @@
 
 #include <CollisionSolver.h>
 #include <Shape.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -143,12 +144,13 @@ u8 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Accelera
 	ASSERT(this, "CollisionSolver::canMoveOverAxis: null this");
 
 	u8 axisOfCollision = 0;
+	int collisionCheckDistance = 1;
 
 	VBVec3D displacement =
     {
-    	acceleration->x ? 0 < acceleration->x? ITOFIX19_13(__ALIGN_PADDING + 1): ITOFIX19_13(-__ALIGN_PADDING - 1): 0,
-		acceleration->y ? 0 < acceleration->y? ITOFIX19_13(__ALIGN_PADDING + 1): ITOFIX19_13(-__ALIGN_PADDING - 1): 0,
-		acceleration->z ? 0 < acceleration->z? ITOFIX19_13(__ALIGN_PADDING + 1): ITOFIX19_13(-__ALIGN_PADDING - 1): 0
+    	acceleration->x ? 0 < acceleration->x? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance): ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance): 0,
+		acceleration->y ? 0 < acceleration->y? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance): ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance): 0,
+		acceleration->z ? 0 < acceleration->z? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance): ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance): 0
 	};
 
 	int i = 0;
@@ -224,7 +226,7 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 	ASSERT(this, "CollisionSolver::resolveCollision: null this");
 	ASSERT(collidingSpatialObjects, "CollisionSolver::resolveCollision: collidingEntities");
 
-	CollisionSolver_resetCollisionStatusOnAxis(this, movementAxis);
+	//CollisionSolver_resetCollisionStatusOnAxis(this, movementAxis);
 
 	u8 axisOfCollision = 0;
 
