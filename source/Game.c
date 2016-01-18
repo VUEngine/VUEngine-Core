@@ -681,8 +681,6 @@ static void Game_updatePhysics(Game this)
 	this->lastProcessName = "update physics";
 #endif
 	
-	fix19_13 elapsedTime = ITOFIX19_13(Clock_getElapsedTime(this->physicsClock));
-
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(this))
 #endif
@@ -693,22 +691,7 @@ static void Game_updatePhysics(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// simulate physics
-	PhysicalWorld_update(this->physicalWorld, elapsedTime);
-#ifdef __DEBUG
-	this->lastProcessName = "process collisions";
-#endif
-
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-	// process collisions
-	CollisionManager_update(this->collisionManager, elapsedTime);
+	PhysicalWorld_update(this->physicalWorld, ITOFIX19_13(Clock_getElapsedTime(this->physicsClock)));
 	
 #ifdef __DEBUG
 	this->lastProcessName = "physics ended";
@@ -740,15 +723,22 @@ static void Game_updateTransformations(Game this)
 	// apply world transformations
 	GameState_transform(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 
+	// process the collisions after the transformations have taken place
 #ifdef __DEBUG
-	this->lastProcessName = "render";
+	this->lastProcessName = "process collisions";
 #endif
-	// render sprites
-	//SpriteManager_render(this->spriteManager);
-	
-#ifdef __DEBUG
-	this->lastProcessName = "render done";
+
+#ifdef __DEBUG_TOOLS
+	if(!Game_isInSpecialMode(this))
 #endif
+#ifdef __STAGE_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+#ifdef __ANIMATION_EDITOR
+	if(!Game_isInSpecialMode(this))
+#endif
+	// process collisions
+	CollisionManager_update(this->collisionManager, ITOFIX19_13(Clock_getElapsedTime(this->physicsClock)));
 }
 
 // do defragmentation, memory recovery, etc
