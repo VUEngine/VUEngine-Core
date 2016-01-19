@@ -653,6 +653,13 @@ static void Game_updateLogic(Game this)
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 	
 #ifdef __DEBUG
+	this->lastProcessName = "handle input";
+#endif
+	// process user's input
+	Game_handleInput(this);
+
+
+#ifdef __DEBUG
 	this->lastProcessName = "update state machines";
 #endif
 	// it is the update cycle
@@ -660,12 +667,6 @@ static void Game_updateLogic(Game this)
 
 	// update the game's logic
 	StateMachine_update(this->stateMachine);
-
-#ifdef __DEBUG
-	this->lastProcessName = "handle input";
-#endif
-	// process user's input
-	Game_handleInput(this);
 
 #ifdef __DEBUG
 	this->lastProcessName = "logic ended";

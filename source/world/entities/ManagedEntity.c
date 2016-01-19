@@ -144,8 +144,6 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-	position2D.x = (position2D.x + __0_5F_FIX19_13) & 0xFFFFE000;
-	position2D.y = (position2D.y + __0_5F_FIX19_13) & 0xFFFFE000;
 	position2D.parallax = 0;
 
 	this->previous2DPosition = position2D;
@@ -173,8 +171,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-		position2D.x = (position2D.x + __0_5F_FIX19_13) & 0xFFFFE000;
-		position2D.y = (position2D.y + __0_5F_FIX19_13) & 0xFFFFE000;
 		position2D.parallax = 0;
 		
 		this->previous2DPosition = position2D;
@@ -220,9 +216,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 	
-		position2D.x = (position2D.x + __0_5F_FIX19_13) & 0xFFFFE000;
-		position2D.y = (position2D.y + __0_5F_FIX19_13) & 0xFFFFE000;
-
 		VirtualNode spriteNode = this->managedSprites->head;
 		
 		VBVec2D displacement;

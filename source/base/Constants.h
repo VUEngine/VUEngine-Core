@@ -29,6 +29,9 @@
 // 												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
+// use for faster rounding on fix19_13 values
+#define __0_5F_FIX19_13		0x00001000
+
 // override null definition (because we don't want to include standard C libraries)
 #define NULL 		(void *)0x00000000
 
