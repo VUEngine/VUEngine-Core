@@ -23,7 +23,7 @@
 #include <SpriteManager.h>
 #include <Optics.h>
 #include <Screen.h>
-#include <debugUtilities.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	if(this->mSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
-		this->drawSpec.textureSource.mx = (int)(0.5f + FIX19_13TOF(-position->x));
+		this->drawSpec.textureSource.mx = FIX19_13TOI(__0_5F_FIX19_13 - position->x);
 	}
 	else
 	{
@@ -206,14 +206,14 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 
 		if(0 > position->x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx += (int)(0.5f - FIX19_13TOF(position->x + this->displacement.x));
+			this->drawSpec.textureSource.mx += FIX19_13TOI(__0_5F_FIX19_13 - (position->x + this->displacement.x));
 		}
 	}
 
 	if(this->mSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
-		this->drawSpec.textureSource.my = (int)(0.5f + FIX19_13TOF(-position->y));
+		this->drawSpec.textureSource.my = FIX19_13TOI(__0_5F_FIX19_13 - position->y);
 	}
 	else
 	{
@@ -222,7 +222,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 
 		if(0 > position->y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my += (int)(0.5f - FIX19_13TOF(position->y + this->displacement.y));
+			this->drawSpec.textureSource.my += FIX19_13TOI(__0_5F_FIX19_13 - (position->y + this->displacement.y));
 		}
 	}
 	
@@ -254,7 +254,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 
 		if(0 > this->drawSpec.position.x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx += (int)(0.5f - FIX19_13TOF(this->drawSpec.position.x + this->displacement.x));
+			this->drawSpec.textureSource.mx += FIX19_13TOI(__0_5F_FIX19_13 - (this->drawSpec.position.x + this->displacement.x));
 		}
 	}
 	
@@ -270,7 +270,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 
 		if(0 > this->drawSpec.position.y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my += (int)(0.5f - FIX19_13TOF(this->drawSpec.position.y + this->displacement.y));
+			this->drawSpec.textureSource.my += FIX19_13TOI(__0_5F_FIX19_13 - (this->drawSpec.position.y + this->displacement.y));
 		}
 	}
 	
