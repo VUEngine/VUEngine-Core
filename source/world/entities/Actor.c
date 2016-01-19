@@ -31,7 +31,7 @@
 #include <Cuboid.h>
 #include <Prototypes.h>
 #include <Game.h>
-#include <debugUtilities.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ void Actor_syncPositionWithBody(Actor this)
 
 	// retrieve the body's displacement
 	VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
-	
+
 	// modify the global position accorging to the body's displacement
 	VBVec3D globalPosition = this->transform.globalPosition;
 	globalPosition.x += bodyLastDisplacement.x;

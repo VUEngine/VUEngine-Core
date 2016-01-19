@@ -137,7 +137,6 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
 	VBVec2D position2D;
-	position2D.parallax = 0;
 	
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -145,9 +144,10 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-//	position2D.x &= 0xFFFFE000;
-//	position2D.y &= 0xFFFFE000;
-	
+	position2D.x = (position2D.x + __0_5F_FIX19_13) & 0xFFFFE000;
+	position2D.y = (position2D.y + __0_5F_FIX19_13) & 0xFFFFE000;
+	position2D.parallax = 0;
+
 	this->previous2DPosition = position2D;
 }
 
@@ -156,9 +156,29 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
-	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
+	// allow normal transformation while not visible to avoid projection errors
+	// at the initial transformation
+	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
+		
+		// save the 2d position
+		VBVec3D position3D = this->transform.globalPosition;
+		VBVec2D position2D;
+
+		
+		// normalize the position to screen coordinates
+		__OPTICS_NORMALIZE(position3D);
+
+		// project position to 2D space
+		__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+		position2D.x = (position2D.x + __0_5F_FIX19_13) & 0xFFFFE000;
+		position2D.y = (position2D.y + __0_5F_FIX19_13) & 0xFFFFE000;
+		position2D.parallax = 0;
+		
+		this->previous2DPosition = position2D;
+
 		return;
 	}
 	
@@ -200,8 +220,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 	
-		//position2D.x &= 0xFFFFE000;
-		//position2D.y &= 0xFFFFE000;
+		position2D.x = (position2D.x + __0_5F_FIX19_13) & 0xFFFFE000;
+		position2D.y = (position2D.y + __0_5F_FIX19_13) & 0xFFFFE000;
 
 		VirtualNode spriteNode = this->managedSprites->head;
 		

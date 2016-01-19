@@ -829,7 +829,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getDepth(entity), x + 25, y, NULL);
 		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 0), x + 15, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 0, true), x + 15, y, NULL);
 	}
 }
 

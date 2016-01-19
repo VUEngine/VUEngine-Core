@@ -1027,7 +1027,7 @@ Gap Entity_getGap(Entity this)
 }
 
 // whether it is visible
-bool Entity_isVisible(Entity this, int pad)
+bool Entity_isVisible(Entity this, int pad, bool recursive)
 {
 	ASSERT(this, "Entity::isVisible: null this");
 
@@ -1104,13 +1104,13 @@ bool Entity_isVisible(Entity this, int pad)
 		}
 	}
 
-	if(this->children)
+	if(recursive && this->children)
 	{
 		VirtualNode childNode = this->children->head;
 		
 		for(; childNode; childNode = childNode->next)
 		{
-			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad))
+			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad), true)
 			{
 				return true;
 			}

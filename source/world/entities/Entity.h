@@ -166,7 +166,7 @@ u16 Entity_getWidth(Entity this);
 u16 Entity_getHeight(Entity this);
 u16 Entity_getDepth(Entity this);
 Gap Entity_getGap(Entity this);
-bool Entity_isVisible(Entity this, int pad);
+bool Entity_isVisible(Entity this, int pad, bool recursive);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteTransformations(Entity this);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
