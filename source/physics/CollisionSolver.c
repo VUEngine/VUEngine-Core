@@ -60,6 +60,7 @@ __CLASS_NEW_DEFINITION(CollisionSolver, SpatialObject owner, const VBVec3D* owne
 __CLASS_NEW_END(CollisionSolver, owner, ownerPositionToCheck, ownerPositionToWrite);
 
 // class's constructor
+// must always pass the global position
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner, const VBVec3D* ownerPositionToCheck, const VBVec3D* ownerPositionToWrite)
 {
 	ASSERT(this, "CollisionSolver::constructor: null this");

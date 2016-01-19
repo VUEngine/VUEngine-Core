@@ -109,6 +109,7 @@ void Actor_destructor(Actor this)
 	__DESTROY_BASE;
 }
 
+
 //set class's local position
 void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 {
@@ -130,54 +131,6 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 		
 		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
-		
-		if(this->shape)
-		{
-			__VIRTUAL_CALL(void, Shape, position, this->shape);
-		}
-	}
-}
-
-//set class's local position
-void Actor_setLocalPosition1(Actor this, const VBVec3D* position)
-{
-	ASSERT(this, "Actor::setLocalPosition: null this");
-
-	Entity_setLocalPosition(__SAFE_CAST(Entity, this), position);
-
-	if(this->body)
-    {
-		VBVec3D globalPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this));
-
-		Transformation environmentTransform =
-        {
-				// local position
-				{0, 0, 0},
-				// global position
-				{0, 0, 0},
-				// local rotation
-				{0, 0, 0},
-				// global rotation
-				{0, 0, 0},
-				// local scale
-				{ITOFIX7_9(1), ITOFIX7_9(1)},
-				// global scale
-				{ITOFIX7_9(1), ITOFIX7_9(1)}
-		};
-
-		if(this->parent)
-        {
-			environmentTransform = Container_getEnvironmentTransform(this->parent);
-			globalPosition.x = environmentTransform.globalPosition.x;
-			globalPosition.y = environmentTransform.globalPosition.y;
-			globalPosition.z = environmentTransform.globalPosition.z;
-		}
-
-		globalPosition.x += position->x;
-		globalPosition.y += position->y;
-		globalPosition.z += position->z;
-
-		Body_setPosition(this->body, &globalPosition, __SAFE_CAST(SpatialObject, this));
 		
 		if(this->shape)
 		{
@@ -569,7 +522,28 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 {
 	ASSERT(this, "Actor::setPosition: null this");
 
-	Actor_setLocalPosition(this, position);
+	VBVec3D displacement = this->transform.globalPosition;
+	this->transform.globalPosition = *position;
+
+	displacement.x -= this->transform.globalPosition.x;
+	displacement.y -= this->transform.globalPosition.y;
+	displacement.z -= this->transform.globalPosition.z;		
+
+	this->transform.localPosition.x -= displacement.x;
+	this->transform.localPosition.y -= displacement.y;
+	this->transform.localPosition.z -= displacement.z;
+
+	if(this->body)
+    {
+		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
+		
+		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
+		
+		if(this->shape)
+		{
+			__VIRTUAL_CALL(void, Shape, position, this->shape);
+		}
+	}
 }
 
 // retrieve global position
