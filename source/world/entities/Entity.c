@@ -1110,7 +1110,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		
 		for(; childNode; childNode = childNode->next)
 		{
-			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad), true)
+			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad, true))
 			{
 				return true;
 			}
