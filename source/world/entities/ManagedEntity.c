@@ -156,7 +156,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
-	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
+//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
+	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 		
