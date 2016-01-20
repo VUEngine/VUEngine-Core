@@ -49,8 +49,8 @@ __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 const extern VBVec3D* _screenDisplacement;
 
 void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
-static void Actor_resolveCollision(Actor this, VirtualList collidingEntities);
-static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
+static void Actor_resolveCollisions(Actor this, VirtualList collidingEntities);
+static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
 
 
 
@@ -425,13 +425,13 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 	            {
 					case kCollision:
 
-						Actor_resolveCollision(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
+						Actor_resolveCollisions(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
 						return true;
 						break;
 						
 					case kCollisionWithYou:
 
-						Actor_resolveCollisionAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
+						Actor_resolveCollisionsAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
@@ -619,7 +619,7 @@ void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 }
 
 // resolve collision against other entities
-static void Actor_resolveCollision(Actor this, VirtualList collidingSpatialObjects)
+static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObjects)
 {
 	ASSERT(this, "Actor::resolveCollision: null this");
 	ASSERT(this->body, "Actor::resolveCollision: null body");
@@ -633,10 +633,12 @@ static void Actor_resolveCollision(Actor this, VirtualList collidingSpatialObjec
 		
 		__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
 	}
+	
+	__VIRTUAL_CALL(void, Actor, collisionsProcessingDone, this);
 }
 
 // resolve collision against me entities
-static void Actor_resolveCollisionAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement)
+static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement)
 {
 	ASSERT(this, "Actor::resolveCollisionAgainstMe: null this");
 	ASSERT(this->body, "Actor::resolveCollisionAgainstMe: null body");
@@ -736,3 +738,9 @@ Velocity Actor_getVelocity(Actor this)
 
 	return this->body? Body_getVelocity(this->body) : SpatialObject_getVelocity(__SAFE_CAST(SpatialObject, this));
 }
+
+void Actor_collisionsProcessingDone(Actor this)
+{
+	ASSERT(this, "Actor::collisionsProcessingDone: null this");
+}
+

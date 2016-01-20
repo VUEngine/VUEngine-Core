@@ -35,11 +35,11 @@
 // declare the virtual methods
 #define Actor_METHODS																					\
 		AnimatedInGameEntity_METHODS																	\
-		__VIRTUAL_DEC(die);																				\
 		__VIRTUAL_DEC(takeHitFrom);																		\
 		__VIRTUAL_DEC(getAxisFreeForMovement);															\
 		__VIRTUAL_DEC(updateSurroundingFriction);														\
 		__VIRTUAL_DEC(getAxisAllowedForBouncing);														\
+		__VIRTUAL_DEC(collisionsProcessingDone);														\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedInGameEntity_SET_VTABLE(ClassName)														\
@@ -60,9 +60,10 @@
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);												\
-		__VIRTUAL_SET(ClassName, Actor, updateSurroundingFriction);									\
+		__VIRTUAL_SET(ClassName, Actor, updateSurroundingFriction);										\
 		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);										\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
+		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 
 
 #define Actor_ATTRIBUTES																				\
@@ -142,5 +143,6 @@ void Actor_addForce(Actor this, const Force* force);
 void Actor_updateSurroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 Velocity Actor_getVelocity(Actor this);
+void Actor_collisionsProcessingDone(Actor this);
 
 #endif
