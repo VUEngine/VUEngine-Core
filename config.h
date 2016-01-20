@@ -129,10 +129,10 @@
 	__BLOCK_DEFINITION(140, 28)																			\
 	__BLOCK_DEFINITION(128, 8)																			\
 	__BLOCK_DEFINITION(112, 58)																			\
-	__BLOCK_DEFINITION(96, 64)																			\
-	__BLOCK_DEFINITION(76, 28)																			\
-	__BLOCK_DEFINITION(68, 68)																			\
-	__BLOCK_DEFINITION(28, 242)																			\
+	__BLOCK_DEFINITION(96, 58)																			\
+	__BLOCK_DEFINITION(76, 20)																			\
+	__BLOCK_DEFINITION(68, 70)																			\
+	__BLOCK_DEFINITION(28, 260)																			\
 	__BLOCK_DEFINITION(20, 612)																			\
 	__BLOCK_DEFINITION(16, 234)																		\
 
@@ -249,7 +249,7 @@
 
 // used to make an approximation of Lorentz' contraction
 // to handle collisions on very fast moving shapes
-#define __LIGHT_SPEED		ITOFIX19_13(100000 << __FRAME_CYCLE)
+#define __LIGHT_SPEED		ITOFIX19_13(50000)
 
 
 //---------------------------------------------------------------------------------------------------------
