@@ -1,0 +1,70 @@
+<templateSet group="C">
+  <template name="enum" value="enum $NAME$ &#10;{&#10;    $END$,&#10;};" description="enum definition" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="for" value="$DEF$&#10;for($INIT$; $COND$; $INCDEC$)&#10;{&#10;    $END$&#10;}&#10;" description="for loop" toReformat="false" toShortenFQNames="true">
+    <variable name="DEF" expression="methodName()" defaultValue="&quot;Variable Definition&quot;" alwaysStopAt="true" />
+    <variable name="INIT" expression="" defaultValue="&quot;initialization&quot;" alwaysStopAt="true" />
+    <variable name="COND" expression="" defaultValue="&quot;condition&quot;" alwaysStopAt="true" />
+    <variable name="INCDEC" expression="" defaultValue="&quot;increment/decrement&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="false" />
+      <option name="XSL_TEXT" value="false" />
+      <option name="XML" value="false" />
+      <option name="XML_TEXT" value="false" />
+      <option name="JSON" value="false" />
+      <option name="JAVA_CODE" value="false" />
+      <option name="JAVA_STATEMENT" value="false" />
+      <option name="JAVA_EXPRESSION" value="false" />
+      <option name="JAVA_DECLARATION" value="false" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_STRING" value="false" />
+      <option name="COMPLETION" value="false" />
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="if" value="if($COND$) &#10;{&#10;    $END$&#10;}" description="if condition" toReformat="false" toShortenFQNames="true">
+    <variable name="COND" expression="" defaultValue="&quot;Condition&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="def" value="#define $NAME$&#9;$VAL$&#10;$END$" description="#define macro" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="capitalizeAndUnderscore(String)" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
+    <variable name="VAL" expression="" defaultValue="&quot;Value&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="inc" value="#include &lt;$FILE$.h&gt;&#10;$END$" description="#include file" toReformat="false" toShortenFQNames="true">
+    <variable name="FILE" expression="" defaultValue="&quot;File&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="ter" value="$COND$ ? $TRUE$ : $FALSE$" description="ternary" toReformat="false" toShortenFQNames="true">
+    <variable name="COND" expression="" defaultValue="&quot;Condition&quot;" alwaysStopAt="true" />
+    <variable name="TRUE" expression="" defaultValue="&quot;If true&quot;" alwaysStopAt="true" />
+    <variable name="FALSE" expression="" defaultValue="&quot;If false&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="sw" value="switch($VAR$)&#10;{&#10;    case $CASE$:&#10;    &#10;        $END$&#10;        break;&#10;}" description="switch statement" toReformat="false" toShortenFQNames="true">
+    <variable name="VAR" expression="" defaultValue="&quot;Variable&quot;" alwaysStopAt="true" />
+    <variable name="CASE" expression="" defaultValue="&quot;Case&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="cas" value="case $CASE$:&#10;&#10;    $END$&#10;    break;" description="case statement" toReformat="false" toShortenFQNames="true">
+    <variable name="CASE" expression="" defaultValue="&quot;Case&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+</templateSet>
