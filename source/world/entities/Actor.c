@@ -209,11 +209,12 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
-
+/*
 	if(this->shape)
 	{
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
+*/
 }
 
 void Actor_resume(Actor this)
