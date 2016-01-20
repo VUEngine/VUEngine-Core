@@ -233,12 +233,32 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 
 	SpatialObject collidingSpatialObject = NULL;
 
-	for(; node && !axisOfCollision; node = node->next)
+	VirtualList processedCollidingSpatialObjects = __NEW(VirtualList);
+	
+//	for(; node && !axisOfCollision; node = node->next)
+	for(; node; node = node->next)
 	{
 		collidingSpatialObject = node->data;
 		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(Shape, SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, this->ownerPreviousPosition);
-		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObject, axisOfCollision, scale);
+		
+		if(axisOfCollision)
+		{
+			CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObject, axisOfCollision, scale);
+		}
+		else
+		{
+			VirtualList_pushBack(processedCollidingSpatialObjects, collidingSpatialObject);
+		}
 	}
+	
+	node = processedCollidingSpatialObjects->head;
+	
+	for(; node; node = node->next)
+	{
+		VirtualList_removeElement(collidingSpatialObjects, node->data);
+	}
+	
+	__DELETE(processedCollidingSpatialObjects);
 	
 	return axisOfCollision;
 }

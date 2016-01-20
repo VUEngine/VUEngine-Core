@@ -143,6 +143,6 @@ void Actor_addForce(Actor this, const Force* force);
 void Actor_updateSurroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this, u8 movementAxis);
 Velocity Actor_getVelocity(Actor this);
-void Actor_collisionsProcessingDone(Actor this);
+void Actor_collisionsProcessingDone(Actor this, VirtualList collidingSpatialObjects);
 
 #endif

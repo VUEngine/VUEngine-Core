@@ -70,6 +70,27 @@ enum StateOperations
 	kPopState
 };
 
+enum GameCurrentProcess
+{
+	kGameStartingUp = 0,
+	kGameTransforming,
+	kGameTransformingDone,
+	kGameCheckingCollisions,
+	kGameCheckingCollisionsDone,
+	kGameHandlingUserInput,
+	kGameHandlingUserInputDone,
+	kGameDispatchingDelayedMessages,
+	kGameDispatchingDelayedMessagesDone,
+	kGameUpdatingStageMachine,
+	kGameUpdatingStageMachineDone,
+	kGameUpdatingPhysics,
+	kGameUpdatingPhysicsDone,
+	kGameCleaningUp,
+	kGameCleaningUpDone,
+	kGameCheckingForNewState,
+	kGameCheckingForNewStateDone,
+};
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -124,6 +145,9 @@ enum StateOperations
 	/* auto pause last checked time */																	\
 	u32 lastAutoPauseCheckTime;																			\
 																										\
+	/* current process enum */																			\
+	u32 currentProcess;																					\
+																										\
 	/* low battery indicator showing flag */															\
 	bool isShowingLowBatteryIndicator;																	\
 
@@ -176,6 +200,9 @@ static void Game_constructor(Game this)
 
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();
+	
+	// current process
+	this->currentProcess = kGameStartingUp;
 
 	// force construction now
 	this->clockManager = ClockManager_getInstance();
@@ -637,6 +664,9 @@ static void Game_handleInput(Game this)
 // update game's logic subsystem
 static void Game_updateLogic(Game this)
 {
+	
+	this->currentProcess = kGameDispatchingDelayedMessages;
+
 #ifdef __DEBUG
 	this->lastProcessName = "dispatch delayed messages";
 #endif
@@ -652,6 +682,8 @@ static void Game_updateLogic(Game this)
 	// dispatch queued messages
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 	
+	this->currentProcess = kGameHandlingUserInput;
+
 #ifdef __DEBUG
 	this->lastProcessName = "handle input";
 #endif
@@ -664,6 +696,8 @@ static void Game_updateLogic(Game this)
 #endif
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
+
+	this->currentProcess = kGameUpdatingStageMachine;
 
 	// update the game's logic
 	StateMachine_update(this->stateMachine);
@@ -680,6 +714,8 @@ static void Game_updatePhysics(Game this)
 	this->lastProcessName = "update physics";
 #endif
 	
+	this->currentProcess = kGameUpdatingPhysics;
+
 	fix19_13 elapsedTime = ITOFIX19_13(Clock_getElapsedTime(this->physicsClock));
 
 #ifdef __DEBUG_TOOLS
@@ -709,8 +745,12 @@ static void Game_updateTransformations(Game this)
 	// position the screen
 	Screen_position(this->screen, true);
 
+	this->currentProcess = kGameTransforming;
+
+#ifdef	__FORCE_VPU_SYNC	
 	// disable rendering until collisions have been checked
 	VPUManager_disableInterrupt(this->vpuManager);
+#endif
 #ifdef __DEBUG
 	this->lastProcessName = "apply transformations";
 #endif
@@ -725,6 +765,8 @@ static void Game_updateTransformations(Game this)
 #endif
 	// apply world transformations
 	GameState_transform(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+
+	this->currentProcess = kGameCheckingCollisions;
 
 	// process the collisions after the transformations have taken place
 #ifdef __DEBUG
@@ -743,9 +785,13 @@ static void Game_updateTransformations(Game this)
 	// process collisions
 	CollisionManager_update(this->collisionManager, 0);
 
+	this->currentProcess = kGameCheckingCollisionsDone;
+
+#ifdef	__FORCE_VPU_SYNC	
 	// allow rendering
 	VPUManager_enableInterrupt(this->vpuManager);
-
+#endif
+	
 #ifdef __DEBUG
 	this->lastProcessName = "transformations ended";
 #endif
@@ -755,6 +801,7 @@ static void Game_updateTransformations(Game this)
 static void Game_cleanUp(Game this)
 {
 	
+	this->currentProcess = kGameCleaningUp;
 #ifdef __DEBUG
 	this->lastProcessName = "update param table";
 #endif
@@ -776,12 +823,15 @@ static void Game_cleanUp(Game this)
 		
 		// TODO: bgmap memory defragmentation
 	}
+	
+	this->currentProcess = kGameCleaningUpDone;
 }
 
 static void Game_checkForNewState(Game this)
 {
 	ASSERT(this, "Game::checkForNewState: null this");
 
+	this->currentProcess = kGameCheckingForNewState;
     if(this->nextState)
 	{
 #ifdef __DEBUG
@@ -792,6 +842,8 @@ static void Game_checkForNewState(Game this)
 		this->lastProcessName = "setting next state done";
 #endif		
 	}
+    
+	this->currentProcess = kGameCheckingForNewStateDone;
 }
 
 // update game's subsystems
@@ -1197,3 +1249,27 @@ void Game_enableKeypad(Game this)
 
 	KeypadManager_enable(this->keypadManager);
 }
+
+#ifndef	__FORCE_VPU_SYNC	
+bool Game_doneDRAMPrecalculations(Game this)
+{
+	ASSERT(this, "Game::doneDRAMPrecalculations: null this");
+	return this->currentProcess != kGameTransforming && this->currentProcess != kGameCheckingCollisions;
+}
+
+const char* Game_getDRAMPrecalculationsStep(Game this)
+{
+	switch(this->currentProcess)
+	{
+		case kGameTransforming:
+			
+			return "Step: transforming";
+			break;
+		case kGameCheckingCollisions:
+			
+			return "Step: check collisions";
+			break;
+	}
+	return NULL;
+}
+#endif

@@ -634,7 +634,7 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 		__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
 	}
 	
-	__VIRTUAL_CALL(void, Actor, collisionsProcessingDone, this);
+	__VIRTUAL_CALL(void, Actor, collisionsProcessingDone, this, collidingSpatialObjects);
 }
 
 // resolve collision against me entities
@@ -739,7 +739,7 @@ Velocity Actor_getVelocity(Actor this)
 	return this->body? Body_getVelocity(this->body) : SpatialObject_getVelocity(__SAFE_CAST(SpatialObject, this));
 }
 
-void Actor_collisionsProcessingDone(Actor this)
+void Actor_collisionsProcessingDone(Actor this, VirtualList collidingSpatialObjects)
 {
 	ASSERT(this, "Actor::collisionsProcessingDone: null this");
 }

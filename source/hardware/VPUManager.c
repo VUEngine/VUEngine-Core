@@ -22,6 +22,7 @@
 #include <VPUManager.h>
 #include <HardwareManager.h>
 #include <SpriteManager.h>
+#include <Game.h>
 #include <debugConfig.h>
 
 
@@ -70,8 +71,12 @@ __CLASS_DEFINITION(VPUManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VPUManager_constructor(VPUManager this);
+#ifndef	__FORCE_VPU_SYNC	
+bool Game_doneDRAMPrecalculations(Game this);
+const char* Game_getDRAMPrecalculationsStep(Game this);
+#endif
 
+static void VPUManager_constructor(VPUManager this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -159,6 +164,27 @@ void VPUManager_interruptHandler(void)
 		while (VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
+
+#ifndef	__FORCE_VPU_SYNC	
+#ifdef __PRINT_VPU_OUT_OF_BUDGET_WARNING
+	static int messageDelay = __TARGET_FPS;
+	if(!Game_doneDRAMPrecalculations(Game_getInstance()))
+	{
+		Printing_text(Printing_getInstance(), "                      ", 1, 1, NULL);
+		Printing_text(Printing_getInstance(), "                               ", 1, 2, NULL);
+		Printing_text(Printing_getInstance(), "VPU: out of budget", 1, 1, NULL);
+		Printing_text(Printing_getInstance(), Game_getDRAMPrecalculationsStep(Game_getInstance()), 1, 2, NULL);
+		messageDelay = __TARGET_FPS;
+	}
+	
+	if(0 == --messageDelay )
+	{
+		Printing_text(Printing_getInstance(), "                      ", 1, 1, NULL);
+		Printing_text(Printing_getInstance(), "                               ", 1, 2, NULL);
+		messageDelay = -1;
+	}
+#endif
+#endif
 
 	// enable interrupt
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
