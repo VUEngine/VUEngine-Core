@@ -965,8 +965,8 @@ void Stage_stream(Stage this)
 
 	// if the screen is moving
 	static int streamingCycleCounter = 0;
-	int streamingCycleBase = this->stageDefinition->streaming.delayPerCycle / __STREAMING_CYCLES;
-	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle;
+	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
+	int streamingCycleBase = streamingDelayPerCycle / __STREAMING_CYCLES;
 	
 	if(!streamingCycleCounter)
 	{

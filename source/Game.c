@@ -709,6 +709,8 @@ static void Game_updateTransformations(Game this)
 	// position the screen
 	Screen_position(this->screen, true);
 
+	// disable rendering until collisions have been checked
+	VPUManager_disableInterrupt(this->vpuManager);
 #ifdef __DEBUG
 	this->lastProcessName = "apply transformations";
 #endif
@@ -740,6 +742,9 @@ static void Game_updateTransformations(Game this)
 #endif
 	// process collisions
 	CollisionManager_update(this->collisionManager, 0);
+
+	// allow rendering
+	VPUManager_enableInterrupt(this->vpuManager);
 
 #ifdef __DEBUG
 	this->lastProcessName = "transformations ended";
