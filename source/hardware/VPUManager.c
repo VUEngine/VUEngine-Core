@@ -170,17 +170,17 @@ void VPUManager_interruptHandler(void)
 	static int messageDelay = __TARGET_FPS;
 	if(!Game_doneDRAMPrecalculations(Game_getInstance()))
 	{
-		Printing_text(Printing_getInstance(), "                      ", 1, 1, NULL);
-		Printing_text(Printing_getInstance(), "                               ", 1, 2, NULL);
-		Printing_text(Printing_getInstance(), "VPU: out of budget", 1, 1, NULL);
-		Printing_text(Printing_getInstance(), Game_getDRAMPrecalculationsStep(Game_getInstance()), 1, 2, NULL);
+		Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
+		Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
+		Printing_text(Printing_getInstance(), "VPU: out of budget", 0, 1, NULL);
+		Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, 2, NULL);
 		messageDelay = __TARGET_FPS;
 	}
 	
 	if(0 == --messageDelay )
 	{
-		Printing_text(Printing_getInstance(), "                      ", 1, 1, NULL);
-		Printing_text(Printing_getInstance(), "                               ", 1, 2, NULL);
+		Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
+		Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
 		messageDelay = -1;
 	}
 #endif
