@@ -139,7 +139,6 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	}
 }
 
-
 void Actor_syncPositionWithBody(Actor this)
 {
 	// save previous position
@@ -149,8 +148,12 @@ void Actor_syncPositionWithBody(Actor this)
 	}
 
 	// retrieve the body's displacement
-	VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
+	VBVec3D bodyLastDisplacement = {0, 0, 0};
 
+	if(!Clock_isPaused(Game_getPhysicsClock(Game_getInstance())))
+	{
+		bodyLastDisplacement = Body_getLastDisplacement(this->body);
+	}
 	// modify the global position accorging to the body's displacement
 	VBVec3D globalPosition = this->transform.globalPosition;
 	globalPosition.x += bodyLastDisplacement.x;
@@ -207,12 +210,10 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
 
-	/*
 	if(this->shape)
 	{
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
-	*/
 }
 
 void Actor_resume(Actor this)
@@ -550,11 +551,6 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 const VBVec3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
-
-	if(this->body)
-	{
-		return Body_getPosition(this->body);
-	}
 
 	return Entity_getPosition(__SAFE_CAST(Entity, this));
 }

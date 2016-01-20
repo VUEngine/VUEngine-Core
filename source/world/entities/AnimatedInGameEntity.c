@@ -22,7 +22,6 @@
 #include <AnimatedInGameEntity.h>
 #include <Clock.h>
 #include <MessageDispatcher.h>
-#include <CollisionManager.h>
 #include <Optics.h>
 #include <Screen.h>
 #include <Shape.h>

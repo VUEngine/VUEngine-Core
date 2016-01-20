@@ -20,7 +20,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <InGameEntity.h>
-#include <CollisionManager.h>
 #include <Prototypes.h>
 #ifdef __DEBUG
 #include <DirectDraw.h>

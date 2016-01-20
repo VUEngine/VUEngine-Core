@@ -20,7 +20,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MBackground.h>
-#include <CollisionManager.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <Prototypes.h>

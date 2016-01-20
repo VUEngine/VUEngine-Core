@@ -205,11 +205,6 @@ void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
-	if(!elapsedTime)
-	{
-		return;
-	}
-	
 	VirtualNode node = this->movingShapes->head;
 
 	// check the shapes

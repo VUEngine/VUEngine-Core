@@ -23,7 +23,6 @@
 #include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
-#include <CollisionManager.h>
 #include <VPUManager.h>
 #include <MBgmapSprite.h>
 #include <debugConfig.h>
