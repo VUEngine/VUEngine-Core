@@ -166,7 +166,7 @@ void VPUManager_interruptHandler(void)
 	}
 
 #ifndef	__FORCE_VPU_SYNC	
-#ifdef __PRINT_VPU_OUT_OF_BUDGET_WARNING
+#ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
 	static int messageDelay = __TARGET_FPS;
 	if(!Game_doneDRAMPrecalculations(Game_getInstance()))
 	{

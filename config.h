@@ -35,12 +35,14 @@
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
 #define __ANIMATION_EDITOR
+#define __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
 #endif
 
 #ifdef __DEBUG_TOOLS
 #define __PRINT_FRAMERATE
 #define __PRINT_MEMORY_POOL_STATUS
 #define __ALERT_STACK_OVERFLOW
+#define __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
 #endif
 
 
@@ -80,6 +82,10 @@
 //---------------------------------------------------------------------------------------------------------
 // 										FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
+
+// disable VPU's XPEND interrupt, and thus rendering
+// while transformation operations have not finished
+#undef __FORCE_VPU_SYNC
 
 // clock resolution
 #define __TIMER_RESOLUTION						10
