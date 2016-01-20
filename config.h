@@ -250,6 +250,9 @@
 
 #define __GRAVITY								9800 * 4
 
+// number of game cycles to wait before checking for gravity on each body
+#define __GRAVITY_CHECK_CYCLE_DELAY	(__TARGET_FPS / 10)
+
 #define __MAX_SHAPES_PER_LEVEL					32
 #define __MAX_BODIES_PER_LEVEL					32
 

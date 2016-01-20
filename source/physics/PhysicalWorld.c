@@ -29,8 +29,6 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __CHECK_GRAVITY_CYCLE	(__TARGET_FPS / 10)
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -263,7 +261,7 @@ void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 	// process removed bodies
 	PhysicalWorld_processRemovedBodies(this);
 
-	static int checkForGravity = __CHECK_GRAVITY_CYCLE;
+	static int checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 
 	// get the elapsed time
 	elapsedTime = FIX19_13_DIV(elapsedTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
@@ -275,7 +273,7 @@ void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 
 	if(!--checkForGravity)
 	{
-		checkForGravity = __CHECK_GRAVITY_CYCLE;
+		checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 		PhysicalWorld_checkForGravity(this);
 	}
 
