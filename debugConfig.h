@@ -17,7 +17,7 @@
 //#define __DEBUG_NO_FADE
 #define __PRINT_FRAMERATE
 #undef	__FRAME_CYCLE
-#define	__FRAME_CYCLE							1
+#define	__FRAME_CYCLE							0
 
 #undef __LIGHT_SPEED
 #define __LIGHT_SPEED		ITOFIX19_13(50000)

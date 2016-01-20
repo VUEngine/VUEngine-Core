@@ -245,7 +245,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	if(this->mSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
-		this->drawSpec.textureSource.mx -= FIX19_13TOI(displacement->x);
+		this->drawSpec.textureSource.mx -= FIX19_13TOI(displacement->x + __0_5F_FIX19_13);
 	}
 	else
 	{
@@ -261,7 +261,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	if(this->mSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
-		this->drawSpec.textureSource.my -= FIX19_13TOI(displacement->y);
+		this->drawSpec.textureSource.my -= FIX19_13TOI(displacement->y + __0_5F_FIX19_13);
 	}
 	else
 	{

@@ -164,7 +164,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
 
-		
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
 
