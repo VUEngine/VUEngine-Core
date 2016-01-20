@@ -208,12 +208,12 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
 
-	/*
-	if(this->shape)
+/*
+  	if(this->shape)
 	{
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
-	*/
+*/
 }
 
 void Actor_resume(Actor this)
@@ -615,6 +615,18 @@ void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 	    {
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
 		}
+	}
+}
+
+void Actor_alignTo(Actor this, SpatialObject spatialObject)
+{
+	ASSERT(this, "Actor::alignTo: null this");
+
+	u8 axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, spatialObject, Body_getLastDisplacement(this->body), CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
+
+	if(axisOfCollision)
+	{
+		CollisionSolver_alignToCollidingSpatialObject(this->collisionSolver, spatialObject, axisOfCollision, &this->transform.globalScale);
 	}
 }
 

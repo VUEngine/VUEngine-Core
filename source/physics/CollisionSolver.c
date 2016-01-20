@@ -48,7 +48,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 const extern VBVec3D* _screenDisplacement;
 
 static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this, Object eventFirer);
-static void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -183,9 +182,8 @@ static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this
 	VirtualList_removeElement(this->lastCollidingSpatialObject[kZAxis], eventFirer);
 }
 
-
 // align to colliding spatialObject
-static void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale)
+void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale)
 {
 	ASSERT(this, "CollisionSolver::alignToCollidingSpatialObject: null this");
 	ASSERT(scale->y, "CollisionSolver::alignToCollidingSpatialObject: 0 scale y");
@@ -235,7 +233,6 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 
 	VirtualList processedCollidingSpatialObjects = __NEW(VirtualList);
 	
-//	for(; node && !axisOfCollision; node = node->next)
 	for(; node; node = node->next)
 	{
 		collidingSpatialObject = node->data;
