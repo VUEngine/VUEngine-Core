@@ -716,8 +716,6 @@ static void Game_updatePhysics(Game this)
 	
 	this->currentProcess = kGameUpdatingPhysics;
 
-	fix19_13 elapsedTime = ITOFIX19_13(Clock_getElapsedTime(this->physicsClock));
-
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(this))
 #endif
@@ -728,7 +726,7 @@ static void Game_updatePhysics(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// simulate physics
-	PhysicalWorld_update(this->physicalWorld, elapsedTime);
+	PhysicalWorld_update(this->physicalWorld, ITOFIX19_13(Clock_getElapsedTime(this->physicsClock)));
 	
 #ifdef __DEBUG
 	this->lastProcessName = "physics ended";
@@ -783,7 +781,7 @@ static void Game_updateTransformations(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// process collisions
-	CollisionManager_update(this->collisionManager, 0);
+	CollisionManager_update(this->collisionManager, Clock_isPaused(this->physicsClock));
 
 	this->currentProcess = kGameCheckingCollisionsDone;
 

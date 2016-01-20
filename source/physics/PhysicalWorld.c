@@ -53,6 +53,9 @@
 																										\
 	/* friction */																						\
 	fix19_13 friction;																					\
+																										\
+	/* elapsed time on last cycle */																	\
+	fix19_13 elapsedTime;																				\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -90,6 +93,9 @@ static void PhysicalWorld_constructor(PhysicalWorld this)
 	this->gravity.x = 0;
 	this->gravity.y = 0;
 	this->gravity.z = 0;
+	
+	this->friction = 0;
+	this->elapsedTime = 0;
 }
 
 // class's destructor
@@ -263,14 +269,16 @@ void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 
 	static int checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 
-	// get the elapsed time
-	elapsedTime = FIX19_13_DIV(elapsedTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
-
 	if(0 == elapsedTime)
 	{
 		return;
 	}
 
+	// get the elapsed time
+	elapsedTime = FIX19_13_DIV(elapsedTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+
+	this->elapsedTime = elapsedTime;
+	
 	if(!--checkForGravity)
 	{
 		checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
@@ -388,7 +396,7 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 
-	return FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(Game_getPhysicsClock(Game_getInstance()))), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	return this->elapsedTime;
 }
 
 // print status

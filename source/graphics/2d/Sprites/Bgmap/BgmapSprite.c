@@ -32,10 +32,10 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
-#define __TOTAL_SIN_ENTRIES				(sizeof(SINLUT) / sizeof(u16))
-#define __GX_LIMIT						511
-//#define __GY_LIMIT						511
+#define __WORLD_SIZE_DISPLACEMENT			1
+#define __TOTAL_SIN_ENTRIES					(sizeof(SINLUT) / sizeof(u16))
+#define __GX_LIMIT							511
+#define __GY_LIMIT							223
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -341,14 +341,14 @@ void BgmapSprite_render(BgmapSprite this)
 			if(WRLD_AFFINE & this->head)
 			{
 				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __WORLD_SIZE_DISPLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __WORLD_SIZE_DISPLACEMENT;
 			}
 			else
 			{
 				// -1 because 0 means 1 pixel for width
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - 1;
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
 			}
 			
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
@@ -391,14 +391,14 @@ void BgmapSprite_render(BgmapSprite this)
 				}
 
 				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __ACCOUNT_FOR_BGMAP_PLACEMENT;
+				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __WORLD_SIZE_DISPLACEMENT;
+				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __WORLD_SIZE_DISPLACEMENT;
 			}
 			else
 			{
 				// -1 because 0 means 1 pixel for width
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - 1;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3);
+				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
+				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
 			}
 		}
 

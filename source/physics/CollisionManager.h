@@ -53,7 +53,7 @@ Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner,
 void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
 Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner);
 void CollisionManager_processRemovedShapes(CollisionManager this);
-void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime);
+void CollisionManager_update(CollisionManager this, bool physicsClockIsPaused);
 void CollisionManager_reset(CollisionManager this);
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
 void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);

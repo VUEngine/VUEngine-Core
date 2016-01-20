@@ -201,10 +201,15 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 }
 
 // calculate collisions
-void CollisionManager_update(CollisionManager this, fix19_13 elapsedTime)
+void CollisionManager_update(CollisionManager this, bool physicsClockIsPaused)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
+	if(physicsClockIsPaused)
+	{
+		return;
+	}
+	
 	VirtualNode node = this->movingShapes->head;
 
 	// check the shapes
