@@ -182,7 +182,7 @@ void Container_addChild(Container this, Container child)
 		}
 
 		// first remove from previous parent
-		if(this != this->parent)
+		if(this != child->parent)
 		{
 			if(child->parent)
 		    {

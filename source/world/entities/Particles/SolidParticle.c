@@ -94,11 +94,6 @@ void SolidParticle_update(SolidParticle this, u16 timeElapsed, void (* behavior)
 	{
 		this->position = *Body_getPosition(this->body);
 	
-		if(this->shape)
-		{
-			__VIRTUAL_CALL(void, Shape, position, this->shape);
-		}
-		
 		if(this->collisionSolver)
 		{
 			CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->position);

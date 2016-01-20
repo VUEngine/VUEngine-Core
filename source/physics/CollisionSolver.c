@@ -227,15 +227,12 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 	ASSERT(this, "CollisionSolver::resolveCollision: null this");
 	ASSERT(collidingSpatialObjects, "CollisionSolver::resolveCollision: collidingEntities");
 
-	//CollisionSolver_resetCollisionStatusOnAxis(this, movementAxis);
-
 	u8 axisOfCollision = 0;
 
 	VirtualNode node = collidingSpatialObjects->head;
 
 	SpatialObject collidingSpatialObject = NULL;
 
-	// TODO: solve when more than one spatialObject has been touched
 	for(; node && !axisOfCollision; node = node->next)
 	{
 		collidingSpatialObject = node->data;

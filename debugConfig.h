@@ -19,7 +19,8 @@
 #undef	__FRAME_CYCLE
 #define	__FRAME_CYCLE							0
 
-#define __LIGHT_SPEED		ITOFIX19_13(100000 >> __FRAME_CYCLE)
+#undef __LIGHT_SPEED
+#define __LIGHT_SPEED		ITOFIX19_13(50000)
 
 /*
 #define __MEMORY_POOL_ARRAYS																			\

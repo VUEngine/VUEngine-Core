@@ -938,11 +938,6 @@ void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 	ASSERT(this, "Entity::setLocalPosition: null this");
 
 	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
-
-	if(this->shape)
-	{
-//		__VIRTUAL_CALL(void, Shape, position, this->shape);
-	}
 }
 
 

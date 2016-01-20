@@ -131,21 +131,12 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 		
 		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
-		
-		if(this->shape)
-		{
-			__VIRTUAL_CALL(void, Shape, position, this->shape);
-		}
 	}
 }
 
 void Actor_syncPositionWithBody(Actor this)
 {
-	// save previous position
-	if(this->collisionSolver)
-	{
-		CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->transform.globalPosition);
-	}
+	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
 	// retrieve the body's displacement
 	VBVec3D bodyLastDisplacement = {0, 0, 0};
@@ -177,9 +168,16 @@ void Actor_syncPositionWithBody(Actor this)
 // graphically refresh of characters that are visible
 void Actor_transform(Actor this, const Transformation* environmentTransform)
 {
+	ASSERT(this, "Actor::transform: null this");
+
+	// save previous position
+	if(this->collisionSolver)
+	{
+		CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->transform.globalPosition);
+	}
+
 	// concatenate the transform since any parenting must
 	// affect the body's location
-	
 	// concatenate transform
 	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
 	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
@@ -209,12 +207,6 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
-/*
-	if(this->shape)
-	{
-		__VIRTUAL_CALL(void, Shape, draw, this->shape);
-	}
-*/
 }
 
 void Actor_resume(Actor this)
@@ -512,11 +504,6 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 	{
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
-	
-	if(this->shape)
-	{
-		__VIRTUAL_CALL(void, Shape, position, this->shape);
-	}
 }
 
 // set position
@@ -540,11 +527,6 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 		
 		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
-		
-		if(this->shape)
-		{
-			__VIRTUAL_CALL(void, Shape, position, this->shape);
-		}
 	}
 }
 
