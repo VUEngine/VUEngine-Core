@@ -618,7 +618,7 @@ void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 	}
 }
 
-void Actor_alignTo(Actor this, SpatialObject spatialObject)
+void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject)
 {
 	ASSERT(this, "Actor::alignTo: null this");
 
@@ -626,7 +626,7 @@ void Actor_alignTo(Actor this, SpatialObject spatialObject)
 
 	if(axisOfCollision)
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this->collisionSolver, spatialObject, axisOfCollision, &this->transform.globalScale);
+		CollisionSolver_alignToCollidingSpatialObject(this->collisionSolver, spatialObject, axisOfCollision, &this->transform.globalScale, registerObject);
 	}
 }
 
@@ -639,7 +639,7 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 
 	if(this->collisionSolver)
 	{
-		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &this->transform.globalScale);
+		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &this->transform.globalScale, true);
 
 		Actor_checkIfMustBounce(this, axisOfAllignement);
 		
@@ -670,7 +670,7 @@ static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject colliding
 		};
 		
 		// invent the colliding object's displacement to simulate that it was me
-		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), fakeLastDisplacement, &this->transform.globalScale);
+		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), fakeLastDisplacement, &this->transform.globalScale, true);
 		__DELETE(collidingSpatialObjects);
 		
 		Actor_checkIfMustBounce(this, axisOfCollision);

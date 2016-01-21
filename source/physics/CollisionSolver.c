@@ -183,7 +183,7 @@ static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this
 }
 
 // align to colliding spatialObject
-void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale)
+void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale, bool registerObject)
 {
 	ASSERT(this, "CollisionSolver::alignToCollidingSpatialObject: null this");
 	ASSERT(scale->y, "CollisionSolver::alignToCollidingSpatialObject: 0 scale y");
@@ -201,13 +201,11 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 	if(__XAXIS & axisOfCollision)
     {
 		CollisionSolver_alignTo(this, collidingSpatialObject, __XAXIS, alignThreshold);
-		VirtualList_pushBack(this->lastCollidingSpatialObject[kXAxis], collidingSpatialObject);
 	}
 
 	if(__YAXIS & axisOfCollision)
     {
 		CollisionSolver_alignTo(this, collidingSpatialObject, __YAXIS, alignThreshold);
-		VirtualList_pushBack(this->lastCollidingSpatialObject[kYAxis], collidingSpatialObject);
 	}
 
 	if(__ZAXIS & axisOfCollision)
@@ -220,7 +218,7 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 }
 
 // resolve collision against other entities
-u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, u8 movementAxis, VBVec3D displacement, const Scale* scale)
+u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, u8 movementAxis, VBVec3D displacement, const Scale* scale, bool registerObjects)
 {
 	ASSERT(this, "CollisionSolver::resolveCollision: null this");
 	ASSERT(collidingSpatialObjects, "CollisionSolver::resolveCollision: collidingEntities");
@@ -240,7 +238,7 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 		
 		if(axisOfCollision)
 		{
-			CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObject, axisOfCollision, scale);
+			CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObject, axisOfCollision, scale, registerObjects);
 		}
 		else
 		{
