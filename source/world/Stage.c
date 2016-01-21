@@ -970,7 +970,7 @@ void Stage_stream(Stage this)
 	
 	if(!streamingCycleCounter)
 	{
-		Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
+		//Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
 
@@ -992,7 +992,7 @@ void Stage_stream(Stage this)
 	{
 		if(this->entitiesToLoad->head)
 		{
-			Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
+			//Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 			Stage_loadEntities(this);
 		}
 		/*else

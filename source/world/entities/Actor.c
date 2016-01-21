@@ -208,12 +208,10 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
 
-/*
   	if(this->shape)
 	{
-		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+//		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
-*/
 }
 
 void Actor_resume(Actor this)
@@ -535,6 +533,8 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 		
 		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
 	}
+	
+	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
 }
 
 // retrieve global position

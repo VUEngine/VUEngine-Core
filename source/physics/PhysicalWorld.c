@@ -230,30 +230,33 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		// load the current shape
 		Body body = __SAFE_CAST(Body, node->data);
 
-		// check if necessary to apply gravity
-		bool gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
-		
-		u8 movingState = Body_isMoving(body);
-		
-		gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
-
-		if(gravitySensibleAxis)
+		if(body->active)
 		{
-			// Must account for the FPS to avoid situations is which 
-			// a collision is not detected when a body starts to fall
-			// and doesn't have enough time to detect a shape below
-			// when moving from one shape over another
-			Acceleration gravity =
-			{
-				gravitySensibleAxis & __XAXIS ? this->gravity.x: 0,
-				gravitySensibleAxis & __YAXIS ? this->gravity.y: 0,
-				gravitySensibleAxis & __ZAXIS ? this->gravity.z: 0
-			};
+			// check if necessary to apply gravity
+			bool gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
 			
-			if(gravity.x || gravity.y || gravity.z)
+			u8 movingState = Body_isMoving(body);
+			
+			gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
+	
+			if(gravitySensibleAxis)
 			{
-				// add gravity
-				Body_applyGravity(body, &gravity);
+				// Must account for the FPS to avoid situations is which 
+				// a collision is not detected when a body starts to fall
+				// and doesn't have enough time to detect a shape below
+				// when moving from one shape over another
+				Acceleration gravity =
+				{
+					gravitySensibleAxis & __XAXIS ? this->gravity.x: 0,
+					gravitySensibleAxis & __YAXIS ? this->gravity.y: 0,
+					gravitySensibleAxis & __ZAXIS ? this->gravity.z: 0
+				};
+				
+				if(gravity.x || gravity.y || gravity.z)
+				{
+					// add gravity
+					Body_applyGravity(body, &gravity);
+				}
 			}
 		}
 	}
