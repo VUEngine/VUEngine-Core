@@ -50,9 +50,6 @@
 	/* super's attributes */																			\
 	Object_ATTRIBUTES;																					\
 																										\
-	/* mass */																							\
-	fix19_13 mass;																						\
-																										\
 	/* owner */																							\
 	SpatialObject owner;																				\
 																										\
@@ -71,20 +68,26 @@
 	/* acelearion structure */																			\
 	Acceleration acceleration;																			\
 																										\
-	/* movement type on each axis */																	\
-	MovementType movementType;																			\
+	/* clock */																							\
+	Clock clock;																						\
 																										\
 	/* elasticity */																					\
 	fix19_13 elasticity;																				\
+																										\
+	/* mass */																							\
+	fix19_13 mass;																						\
+																										\
+	/* movement type on each axis */																	\
+	MovementType movementType;																			\
+																										\
+	/* axis that is subject to gravity */																\
+	u8 axisSubjectToGravity;																			\
 																										\
 	/* raise flag to make the body active */															\
 	bool active: true;																					\
 																										\
 	/* raise flag to update body's physics */															\
 	bool awake: true;																					\
-																										\
-	/* axis that is subject to gravity */																\
-	u8 axisSubjectToGravity;																			\
 
 __CLASS(Body);
 
@@ -98,7 +101,7 @@ __CLASS_NEW_DECLARE(Body, SpatialObject owner, fix19_13 mass);
 void Body_destructor(Body this);
 void Body_setOwner(Body this, SpatialObject owner);
 SpatialObject Body_getOwner(Body this);
-void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
+void Body_update(Body this, const Acceleration* gravity);
 VBVec3D Body_getLastDisplacement(Body this);
 u8 Body_getAxisSubjectToGravity(Body this);
 void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity);

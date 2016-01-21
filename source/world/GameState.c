@@ -46,6 +46,8 @@ void GameState_constructor(GameState this)
 	// construct the stage
 	this->stage = NULL;
 	this->inGameClock = __NEW(Clock);
+	this->animationsClock = __NEW(Clock);
+	this->physicsClock = __NEW(Clock);
 
 	// by default can stream
 	this->canStream = true;
@@ -61,7 +63,9 @@ void GameState_destructor(GameState this)
 	ASSERT(this, "GameState::destructor: null this");
 
 	__DELETE(this->inGameClock);
-
+	__DELETE(this->animationsClock);
+	__DELETE(this->physicsClock);
+	
 	// destroy the stage
 	if(this->stage)
 	{
@@ -323,9 +327,92 @@ Stage GameState_getStage(GameState this)
 	return this->stage;
 }
 
-Clock GameState_getInGameClock(GameState this)
+const Clock GameState_getInGameClock(GameState this)
 {
 	ASSERT(this, "GameState::getInGameClock: null this");
 
 	return this->inGameClock;
+}
+
+const Clock GameState_getAnimationsClock(GameState this)
+{
+	ASSERT(this, "GameState::getAnimationsClock: null this");
+
+	return this->animationsClock;
+}
+
+const Clock GameState_getPhysicsClock(GameState this)
+{
+	ASSERT(this, "GameState::getAnimationsClock: null this");
+
+	return this->physicsClock;
+}
+
+void GameState_startClocks(GameState this)
+{
+	ASSERT(this, "GameState::startClocks: null this");
+
+	Clock_start(this->inGameClock);
+	Clock_start(this->animationsClock);
+	Clock_start(this->physicsClock);
+}
+
+void GameState_pauseClocks(GameState this)
+{
+	ASSERT(this, "GameState::pauseClocks: null this");
+
+	Clock_pause(this->inGameClock, true);
+	Clock_pause(this->animationsClock, true);
+	Clock_pause(this->physicsClock, true);
+}
+
+void GameState_resumeClocks(GameState this)
+{
+	ASSERT(this, "GameState::resumeClocks: null this");
+
+	Clock_pause(this->inGameClock, false);
+	Clock_pause(this->animationsClock, false);
+	Clock_pause(this->physicsClock, false);
+}
+
+void GameState_startInGameClock(GameState this)
+{
+	ASSERT(this, "GameState::startInGameClock: null this");
+
+	Clock_start(this->inGameClock);
+}
+
+void GameState_startAnimations(GameState this)
+{
+	ASSERT(this, "GameState::startAnimations: null this");
+
+	Clock_start(this->animationsClock);
+}
+
+void GameState_startPhysics(GameState this)
+{
+	ASSERT(this, "GameState::startPhysics: null this");
+
+	Clock_start(this->physicsClock);
+}
+
+void GameState_pauseInGameClock(GameState this, bool pause)
+{
+	ASSERT(this, "GameState::pauseInGameClock: null this");
+
+	Clock_pause(this->inGameClock, pause);
+}
+
+void GameState_pauseAnimations(GameState this, bool pause)
+{
+	ASSERT(this, "GameState::pauseAnimations: null this");
+
+	Clock_pause(this->animationsClock, pause);
+}
+
+void GameState_pausePhysics(GameState this, bool pause)
+{
+	ASSERT(this, "GameState::pausePhysics: null this");
+	
+	Clock_pause(this->physicsClock, pause);
 }

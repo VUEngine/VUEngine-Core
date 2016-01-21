@@ -107,12 +107,6 @@ enum GameCurrentProcess
 	/* engine's global timer */																			\
 	Clock clock;																						\
 																										\
-	/* timer to use for animations */																	\
-	Clock animationsClock;																				\
-																										\
-	/* timer to use for physics */																		\
-	Clock physicsClock;																					\
-																										\
 	/* managers */																						\
 	ClockManager clockManager;																			\
 	HardwareManager hardwareManager;																	\
@@ -210,10 +204,6 @@ static void Game_constructor(Game this)
 	// construct the general clock
 	this->clock = __NEW(Clock);
 
-	// construct the clocks
-	this->animationsClock = __NEW(Clock);
-	this->physicsClock = __NEW(Clock);
-
 	// construct the game's state machine
 	this->stateMachine = __NEW(StateMachine, this);
 
@@ -257,8 +247,6 @@ void Game_destructor(Game this)
 
 	// destroy the clocks
 	Clock_destructor(this->clock);
-	Clock_destructor(this->animationsClock);
-	Clock_destructor(this->physicsClock);
 
 	__DELETE(this->stateMachine);
 
@@ -726,8 +714,8 @@ static void Game_updatePhysics(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// simulate physics
-	PhysicalWorld_update(this->physicalWorld, ITOFIX19_13(Clock_getElapsedTime(this->physicsClock)));
-	
+	PhysicalWorld_update(this->physicalWorld);
+
 #ifdef __DEBUG
 	this->lastProcessName = "physics ended";
 #endif
@@ -781,7 +769,7 @@ static void Game_updateTransformations(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// process collisions
-	CollisionManager_update(this->collisionManager, Clock_isPaused(this->physicsClock));
+	CollisionManager_update(this->collisionManager, Clock_isPaused(Game_getPhysicsClock(this)));
 
 	this->currentProcess = kGameCheckingCollisionsDone;
 
@@ -844,6 +832,7 @@ static void Game_checkForNewState(Game this)
 	this->currentProcess = kGameCheckingForNewStateDone;
 }
 
+#include <Body.h>
 // update game's subsystems
 static void Game_update(Game this)
 {
@@ -855,6 +844,7 @@ static void Game_update(Game this)
 
 	while (true)
 	{
+		
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -945,83 +935,14 @@ const Clock Game_getAnimationsClock(Game this)
 {
 	ASSERT(this, "Game::getAnimationsClock: null this");
 
-	return this->animationsClock;
+	return GameState_getAnimationsClock(Game_getCurrentState(this));
 }
 
 const Clock Game_getPhysicsClock(Game this)
 {
 	ASSERT(this, "Game::getPhysicsClock: null this");
 
-	return this->physicsClock;
-}
-
-void Game_startClocks(Game this)
-{
-	ASSERT(this, "Game::pauseClocks: null this");
-	
-	Clock_start(Game_getInGameClock(this));
-	Clock_start(this->animationsClock);
-	Clock_start(this->physicsClock);
-}
-
-void Game_pauseClocks(Game this)
-{
-	ASSERT(this, "Game::pauseClocks: null this");
-
-	Clock_pause(Game_getInGameClock(this), true);
-	Clock_pause(this->animationsClock, true);
-	Clock_pause(this->physicsClock, true);
-}
-
-void Game_resumeClocks(Game this)
-{
-	ASSERT(this, "Game::resumeClocks: null this");
-
-	Clock_pause(Game_getInGameClock(this), false);
-	Clock_pause(this->animationsClock, false);
-	Clock_pause(this->physicsClock, false);
-}
-
-void Game_startInGameClock(Game this)
-{
-	ASSERT(this, "Game::startInGameClock: null this");
-
-	Clock_start(Game_getInGameClock(this));
-}
-
-void Game_startAnimations(Game this)
-{
-	ASSERT(this, "Game::startAnimations: null this");
-
-	Clock_start(this->animationsClock);
-}
-
-void Game_startPhysics(Game this)
-{
-	ASSERT(this, "Game::startPhysics: null this");
-
-	Clock_start(this->physicsClock);
-}
-
-void Game_pauseInGameClock(Game this, bool pause)
-{
-	ASSERT(this, "Game::pauseInGameClock: null this");
-
-	Clock_pause(GameState_getInGameClock(Game_getCurrentState(this)), pause);
-}
-
-void Game_pauseAnimations(Game this, bool pause)
-{
-	ASSERT(this, "Game::pauseAnimations: null this");
-
-	Clock_pause(this->animationsClock, pause);
-}
-
-void Game_pausePhysics(Game this, bool pause)
-{
-	ASSERT(this, "Game::pausePhysics: null this");
-	
-	Clock_pause(this->physicsClock, pause);
+	return GameState_getPhysicsClock(Game_getCurrentState(this));
 }
 
 // retrieve last process' name

@@ -263,7 +263,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 }
 
 // calculate collisions
-void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
+void PhysicalWorld_update(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
@@ -272,16 +272,6 @@ void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 
 	static int checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 
-	if(0 == elapsedTime)
-	{
-		return;
-	}
-
-	// get the elapsed time
-	elapsedTime = FIX19_13_DIV(elapsedTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
-
-	this->elapsedTime = elapsedTime;
-	
 	if(!--checkForGravity)
 	{
 		checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
@@ -293,7 +283,7 @@ void PhysicalWorld_update(PhysicalWorld this, fix19_13 elapsedTime)
 	// check the bodies
 	for(; node; node = node->next)
 	{
-		Body_update(__SAFE_CAST(Body, node->data), &this->gravity, elapsedTime);
+		Body_update(__SAFE_CAST(Body, node->data), &this->gravity);
 	}
 }
 
@@ -399,7 +389,7 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 
-	return this->elapsedTime;
+	return FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(Game_getPhysicsClock(Game_getInstance()))), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 }
 
 // print status

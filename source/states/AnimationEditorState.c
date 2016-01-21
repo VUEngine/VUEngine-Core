@@ -90,7 +90,7 @@ static void AnimationEditorState_destructor(AnimationEditorState this)
 // state's enter
 static void AnimationEditorState_enter(AnimationEditorState this, void* owner)
 {
-	Game_pauseClocks(Game_getInstance());
+	GameState_pauseClocks(Game_getCurrentState(Game_getInstance()));
 	AnimationEditor_start(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
@@ -104,7 +104,7 @@ static void AnimationEditorState_execute(AnimationEditorState this, void* owner)
 static void AnimationEditorState_exit(AnimationEditorState this, void* owner)
 {
 	AnimationEditor_stop(AnimationEditor_getInstance());
-	Game_resumeClocks(Game_getInstance());
+	GameState_resumeClocks(Game_getCurrentState(Game_getInstance()));
 }
 
 // state's on message

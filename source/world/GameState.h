@@ -25,6 +25,7 @@
 #include <State.h>
 #include <Telegram.h>
 #include <Stage.h>
+#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,6 +64,12 @@
 																										\
 	/* timer to use in game */																			\
 	Clock inGameClock;																					\
+																										\
+	/* timer to use in game for animations */															\
+	Clock animationsClock;																				\
+																										\
+	/* timer to use for physics */																		\
+	Clock physicsClock;																					\
 
 __CLASS(GameState);
 
@@ -87,7 +94,17 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 void GameState_setCanStream(GameState this, int canStream);
 bool GameState_canStream(GameState this);
 Stage GameState_getStage(GameState this);
-Clock GameState_getInGameClock(GameState this);
-
+const Clock GameState_getInGameClock(GameState this);
+const Clock GameState_getAnimationsClock(GameState this);
+const Clock GameState_getPhysicsClock(GameState this);
+void GameState_startClocks(GameState this);
+void GameState_pauseClocks(GameState this);
+void GameState_resumeClocks(GameState this);
+void GameState_startInGameClock(GameState this);
+void GameState_startAnimations(GameState this);
+void GameState_startPhysics(GameState this);
+void GameState_pauseInGameClock(GameState this, bool pause);
+void GameState_pauseAnimations(GameState this, bool pause);
+void GameState_pausePhysics(GameState this, bool pause);
 
 #endif

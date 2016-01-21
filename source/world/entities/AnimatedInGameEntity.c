@@ -80,8 +80,7 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	this->direction.z = __FAR;
 
 	this->previousDirection = this->direction;
-
-	this->clock = Game_getInGameClock(Game_getInstance());
+	this->clock = Game_getAnimationsClock(Game_getInstance());
 
 	this->currentAnimationName = NULL;
 	this->animationFrameChanged = false;

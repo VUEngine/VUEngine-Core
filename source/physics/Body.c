@@ -85,7 +85,7 @@ static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 	__CONSTRUCT_BASE();
 
 	this->owner = owner;
-
+	this->clock = Game_getPhysicsClock(Game_getInstance());
 	this->mass = mass;
 
 	this->awake = false;
@@ -132,6 +132,8 @@ void Body_destructor(Body this)
 {
 	ASSERT(this, "Body::destructor: null this");
 
+	this->clock = NULL;
+	
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -377,7 +379,7 @@ void Body_applyGravity(Body this, const Acceleration* gravity)
 {
 	ASSERT(this, "Body::applyGravity: null this");
 
-	if(gravity)
+	if(gravity && !Clock_isPaused(this->clock))
 	{
 		int axisStartedMovement = 0;
 
@@ -420,12 +422,14 @@ void Body_addForce(Body this, const Force* force)
 }
 
 // update movement
-void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
+void Body_update(Body this, const Acceleration* gravity)
 {
 	ASSERT(this, "Body::update: null this");
 
-	if(this->awake && this->active)
+	if(this->awake && this->active && !Clock_isPaused(this->clock))
 	{
+		fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+
 		if(elapsedTime)
 		{
 			int axisStoppedMovement = 0;
@@ -623,7 +627,7 @@ VBVec3D Body_getLastDisplacement(Body this)
 
 	VBVec3D displacement = {0, 0, 0};
 
-	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(PhysicalWorld_getInstance());
+	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
 	displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
 	displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);
@@ -1006,8 +1010,7 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	ASSERT(this, "Body::bounceOnAxis: null this");
 
 	// get the elapsed time
-	PhysicalWorld physicalWorld = PhysicalWorld_getInstance();
-	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(physicalWorld);
+	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;
 	
 	if(ITOFIX19_13(1) < totalElasticity)

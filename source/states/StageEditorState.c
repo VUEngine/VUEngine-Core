@@ -90,7 +90,7 @@ static void StageEditorState_destructor(StageEditorState this)
 // state's enter
 static void StageEditorState_enter(StageEditorState this, void* owner)
 {
-	Game_pauseClocks(Game_getInstance());
+	GameState_pauseClocks(Game_getCurrentState(Game_getInstance()));
 	StageEditor_start(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
@@ -104,7 +104,7 @@ static void StageEditorState_execute(StageEditorState this, void* owner)
 static void StageEditorState_exit(StageEditorState this, void* owner)
 {
 	StageEditor_stop(StageEditor_getInstance());
-	Game_resumeClocks(Game_getInstance());
+	GameState_resumeClocks(Game_getCurrentState(Game_getInstance()));
 }
 
 // state's on message
