@@ -19,21 +19,20 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ManagedEntity.h>
+#include <MBackground.h>
 #include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <VPUManager.h>
 #include <MBgmapSprite.h>
-#include <debugConfig.h>
+#include "ManagedMBackground.h"
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the ManagedEntity
-__CLASS_DEFINITION(ManagedEntity, Entity);
+__CLASS_DEFINITION(ManagedMBackground, MBackground);
 
 __CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
@@ -44,12 +43,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
 const extern VBVec3D* _screenPosition;
-const extern VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
-
-static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,16 +52,16 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(ManagedEntity, managedEntityDefinition, id, name);
+__CLASS_NEW_DEFINITION(ManagedMBackground, MBackgroundDefinition* definition, int id, const char* const name)
+__CLASS_NEW_END(ManagedMBackground, definition, id, name);
 
 // class's constructor
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name)
+void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, int id, const char* const name)
 {
-	ASSERT(this, "ManagedEntity::constructor: null this");
+	ASSERT(this, "ManagedMBackground::constructor: null this");
 
-	// construct base Entity
-	__CONSTRUCT_BASE((EntityDefinition*)managedEntityDefinition, id, name);
+	// construct base
+	__CONSTRUCT_BASE(definition, id, name);
 
 	// the sprite must be initialized in the derived class
 	this->managedSprites = __NEW(VirtualList);
@@ -78,9 +73,9 @@ void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* mana
 }
 
 // class's destructor
-void ManagedEntity_destructor(ManagedEntity this)
+void ManagedMBackground_destructor(ManagedMBackground this)
 {
-	ASSERT(this, "ManagedEntity::destructor: null this");
+	ASSERT(this, "ManagedMBackground::destructor: null this");
 
 	if(this->managedSprites)
 	{
@@ -88,15 +83,15 @@ void ManagedEntity_destructor(ManagedEntity this)
 		this->managedSprites = NULL;
 	}
 
-	// destroy the super Entity
+	// delete the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 
-static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
+static void ManagedMBackground_registerSprites(ManagedMBackground this, Entity child)
 {
-	ASSERT(this, "ManagedEntity::registerSprites: null this");
-	ASSERT(child, "ManagedEntity::registerSprites: null child");
+	ASSERT(this, "ManagedMBackground::registerSprites: null this");
+	ASSERT(child, "ManagedMBackground::registerSprites: null child");
 
 	if(child)
 	{
@@ -110,33 +105,33 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 				VirtualList_pushBack(this->managedSprites, sprite);
 			}
 		}
-		
+
 		if(child->children)
 		{
 			VirtualNode childNode = child->children->head;
-			
+
 			for(; childNode; childNode = childNode->next)
 			{
-				ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
+				ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
 			}
 		}
 	}
 }
 
 // transform class
-void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform)
+void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform)
 {
-	ASSERT(this, "ManagedEntity::initialTransform: null this");
-	
+	ASSERT(this, "ManagedMBackground::initialTransform: null this");
+
 	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
-	
+
 	VirtualList_clear(this->managedSprites);
-	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
-	
+	ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
 	VBVec2D position2D;
-	
+
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
@@ -149,17 +144,16 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 }
 
 // transform class
-void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform)
+void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "ManagedEntity::transform: null this");
+	ASSERT(this, "ManagedMBackground::transform: null this");
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
-//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
-		
+
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
@@ -171,12 +165,12 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 		position2D.parallax = 0;
-		
+
 		this->previous2DPosition = position2D;
 
 		return;
 	}
-	
+
 	int updateSpritePosition = Entity_updateSpritePosition(__SAFE_CAST(Entity, this));
 
 	if(updateSpritePosition)
@@ -189,7 +183,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 			// call base class's transform method
 			Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 		}
-		
+
 		// concatenate transform
 		this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
 		this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
@@ -199,41 +193,41 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
 		this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
 		this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
-		
+
 		// propagate scale
 		this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
 		this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
-	
+
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
 		position2D.parallax = 0;
-		
+
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
-	
+
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
-	
+
 		VirtualNode spriteNode = this->managedSprites->head;
-		
+
 		VBVec2D displacement;
 
 		displacement.x = position2D.x - this->previous2DPosition.x;
 		displacement.y = position2D.y - this->previous2DPosition.y;
 		displacement.z = 0;
 		displacement.parallax = 0;
-				
+
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
-			
+
 			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
 		}
-		
+
 		this->previous2DPosition = position2D;
 	}
-	
+
 	this->invalidateGlobalPosition.x = false;
 	this->invalidateGlobalPosition.y = false;
 	this->invalidateGlobalPosition.z = false;

@@ -14,35 +14,35 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MANAGED_ENTITY_H_
-#define MANAGED_ENTITY_H_
+#ifndef MANAGED_M_BACKGROUND_H_
+#define MANAGED_M_BACKGROUND_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
-#include <Sprite.h>
-#include <Telegram.h>
+#include <MBackground.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ManagedEntity_METHODS																			\
-		Entity_METHODS																					\
+#define ManagedMBackground_METHODS																		\
+	MBackground_METHODS;																				\
 
-#define ManagedEntity_SET_VTABLE(ClassName)																\
-		Entity_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, ManagedEntity, initialTransform);										\
-		__VIRTUAL_SET(ClassName, ManagedEntity, transform);												\
+#define ManagedMBackground_SET_VTABLE(ClassName)														\
+	MBackground_SET_VTABLE(ClassName);																	\
+    __VIRTUAL_SET(ClassName, ManagedMBackground, initialTransform);										\
+    __VIRTUAL_SET(ClassName, ManagedMBackground, transform);											\
 
-#define ManagedEntity_ATTRIBUTES																		\
+__CLASS(ManagedMBackground);
+
+#define ManagedMBackground_ATTRIBUTES																	\
 																										\
 	/* it is derived from */																			\
-	Entity_ATTRIBUTES																					\
+	MBackground_ATTRIBUTES																				\
 																										\
 	/* sprites' list */																					\
 	VirtualList managedSprites;																			\
@@ -50,27 +50,17 @@
 	/* previous 2d projected position */																\
 	VBVec2D previous2DPosition;																			\
 
-__CLASS(ManagedEntity);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-typedef EntityDefinition ManagedEntityDefinition;
-typedef const ManagedEntityDefinition ManagedEntityROMDef;
-
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(ManagedMBackground, MBackgroundDefinition* definition, int id, const char* const name);
 
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, const char* const name);
-void ManagedEntity_destructor(ManagedEntity this);
-void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform);
-void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform);
+void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, int id, const char* const name);
+void ManagedMBackground_destructor(ManagedMBackground this);
+void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform);
+void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform);
 
 
 #endif
