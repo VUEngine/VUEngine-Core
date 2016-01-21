@@ -274,7 +274,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 			FIX19_13_MULT(displacement.z, FTOFIX19_13(0.05f))
 	};
 	
-	NM_ASSERT(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z, "Cuboid::getAxisOfCollisionWithCuboid: 0 displacementIncrement");
+	//NM_ASSERT(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z, "Cuboid::getAxisOfCollisionWithCuboid: 0 displacementIncrement");
 
 	// needed to calculate the axis to ignore
 	displacement.x = 0;
@@ -303,106 +303,117 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
         this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down),
         this->rightCuboid.z1 + previousPosition.z - displacement.z,
 	};
-
+	
 	int numberOfAxis = 0;
 	u8 axisOfCollision = 0;
-	u8 axisToIgnore = 0;
+	u8 axisToIgnore = __XAXIS | __YAXIS | __ZAXIS;
 	int passes = 0;
 
 	CACHE_ENABLE;
 
-	// check for a collision on a single axis at a time
-	do
+	if(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z)
 	{
-		numberOfAxis = 0;
-		axisOfCollision = 0;
-
-		if(displacementIncrement.x)
-	    {
-			positionedRightCuboid.x0 += displacement.x;
-			positionedRightCuboid.x1 += displacement.x;
-
-			if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
-            {
-				if(!displacement.x)
-				{
-					axisToIgnore |= __XAXIS;
-				}
-				else
-				{
+		axisToIgnore = 0;
+		
+		// check for a collision on a single axis at a time
+		do
+		{
+			axisOfCollision = 0;
+	
+			if(displacementIncrement.x)
+		    {
+				positionedRightCuboid.x0 += displacement.x;
+				positionedRightCuboid.x1 += displacement.x;
+	
+				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
+	            {
+					if(!displacement.x)
+					{
+						axisToIgnore |= __XAXIS;
+					}
+	
 					axisOfCollision |= __XAXIS;
 					numberOfAxis++;
 				}
+	
+				positionedRightCuboid.x0 -= displacement.x;
+				positionedRightCuboid.x1 -= displacement.x;
 			}
-
-			positionedRightCuboid.x0 -= displacement.x;
-			positionedRightCuboid.x1 -= displacement.x;
-		}
-
-		if(displacementIncrement.y)
-        {
-			positionedRightCuboid.y0 += displacement.y;
-			positionedRightCuboid.y1 += displacement.y;
-
-			// test for collision
-			if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
-            {
-				if(!displacement.y)
-				{
-					axisToIgnore |= __YAXIS;
-				}
-				else
-				{
+			else
+			{
+				axisToIgnore |= __XAXIS;
+			}
+	
+			if(displacementIncrement.y)
+	        {
+				positionedRightCuboid.y0 += displacement.y;
+				positionedRightCuboid.y1 += displacement.y;
+	
+				// test for collision
+				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
+	            {
+					if(!displacement.y)
+					{
+						axisToIgnore |= __YAXIS;
+					}
+	
 					axisOfCollision |= __YAXIS;
 					numberOfAxis++;
-				}			
-			}
-
-			positionedRightCuboid.y0 -= displacement.y;
-			positionedRightCuboid.y1 -= displacement.y;
-		}
-
-		if(displacementIncrement.z)
-        {
-			positionedRightCuboid.z0 += displacement.z;
-			positionedRightCuboid.z1 += displacement.z;
-
-			// test for collision
-			if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
-            {
-				if(!displacement.z)
-				{
-					axisToIgnore |= __ZAXIS;
 				}
-				else
-				{
+	
+				positionedRightCuboid.y0 -= displacement.y;
+				positionedRightCuboid.y1 -= displacement.y;
+			}
+			else
+			{
+				axisToIgnore |= __YAXIS;
+			}
+	
+			if(displacementIncrement.z)
+	        {
+				positionedRightCuboid.z0 += displacement.z;
+				positionedRightCuboid.z1 += displacement.z;
+	
+				// test for collision
+				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
+	            {
+					if(!displacement.z)
+					{
+						axisToIgnore |= __ZAXIS;
+					}
+	
 					axisOfCollision |= __ZAXIS;
 					numberOfAxis++;
 				}
+	
+				positionedRightCuboid.z0 -= displacement.z;
+				positionedRightCuboid.z1 -= displacement.z;
 			}
-
-			positionedRightCuboid.z0 -= displacement.z;
-			positionedRightCuboid.z1 -= displacement.z;
+			else
+			{
+				axisToIgnore |= __ZAXIS;
+			}
+	
+			if(0 == numberOfAxis)
+	        {
+				displacement.x += displacementIncrement.x;
+				displacement.y += displacementIncrement.y;
+				displacement.z += displacementIncrement.z;
+				
+				positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
+				positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
+				positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z - displacement.z;
+				positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
+				positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
+				positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
+			}
 		}
-
-		if(0 == numberOfAxis)
-        {
-			displacement.x += displacementIncrement.x;
-			displacement.y += displacementIncrement.y;
-			displacement.z += displacementIncrement.z;
-			
-			positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
-			positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
-			positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z - displacement.z;
-			positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
-			positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
-			positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
-		}
+		
+		while (0 == numberOfAxis && ++passes < MAX_NUMBER_OF_PASSES);
 	}
-	while (0 == numberOfAxis && ++passes < MAX_NUMBER_OF_PASSES);
 
 	// if not axis of collision was found
-	if(passes >= MAX_NUMBER_OF_PASSES && !axisOfCollision)
+	if((passes >= MAX_NUMBER_OF_PASSES && !axisOfCollision) || (__XAXIS | __YAXIS | __ZAXIS) == axisToIgnore)
 	{
 		axisToIgnore = 0;
 		

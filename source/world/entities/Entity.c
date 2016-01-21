@@ -923,14 +923,13 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 		// update graphical representation
 		Entity_translateSprites(this, updateSpriteTransformations, updateSpritePosition);
 	}
-	
-	
-/*
+
+	/*
 	if(this->shape)
 	{
 		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
-*/
+	*/
 }
 
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)
