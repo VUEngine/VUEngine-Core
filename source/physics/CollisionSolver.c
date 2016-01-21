@@ -201,17 +201,29 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 	if(__XAXIS & axisOfCollision)
     {
 		CollisionSolver_alignTo(this, collidingSpatialObject, __XAXIS, alignThreshold);
+		
+		if(registerObject)
+		{
+			VirtualList_pushBack(this->lastCollidingSpatialObject[kXAxis], collidingSpatialObject);
+		}
 	}
 
 	if(__YAXIS & axisOfCollision)
     {
 		CollisionSolver_alignTo(this, collidingSpatialObject, __YAXIS, alignThreshold);
+		if(registerObject)
+		{
+			VirtualList_pushBack(this->lastCollidingSpatialObject[kYAxis], collidingSpatialObject);
+		}
 	}
 
 	if(__ZAXIS & axisOfCollision)
     {
 		CollisionSolver_alignTo(this, collidingSpatialObject, __ZAXIS, alignThreshold);
-		VirtualList_pushBack(this->lastCollidingSpatialObject[kZAxis], collidingSpatialObject);
+		if(registerObject)
+		{
+			VirtualList_pushBack(this->lastCollidingSpatialObject[kZAxis], collidingSpatialObject);
+		}
 	}	
 	
 	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);

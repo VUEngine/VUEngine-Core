@@ -214,7 +214,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 			__DELETE(collidingObjectsToRemove);
 		}
 		
-		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &scale);
+		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &scale, false);
 
 		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
 		
