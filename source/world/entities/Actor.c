@@ -644,7 +644,7 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 		
 		if(bodyLastDisplacement.x || bodyLastDisplacement.y || bodyLastDisplacement.z)
 		{
-			u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), , &this->transform.globalScale, true);
+			u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), bodyLastDisplacement, &this->transform.globalScale, true);
 	
 			Actor_checkIfMustBounce(this, axisOfAllignement);
 			
