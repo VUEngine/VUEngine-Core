@@ -148,6 +148,10 @@ void VPUManager_interruptHandler(void)
 	VIP_REGS[INTENB]= 0;
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 
+#ifdef __ALERT_STACK_OVERFLOW
+	HardwareManager_checkStackStatus(HardwareManager_getInstance());
+#endif
+
 	// if the VPU is idle
 	if(idle) 
 	{

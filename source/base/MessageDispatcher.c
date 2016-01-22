@@ -184,6 +184,7 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 
 		VirtualList_clear(this->delayedMessagesToDiscard);
 	}
+
 }
 
 // dispatch delayed messages
@@ -272,7 +273,7 @@ void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, C
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
-		if(delayedMessage->clock == clock)
+		if(delayedMessage->clock == clock && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
 		{
 			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}
@@ -291,7 +292,7 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender)
+		if(Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
 		{
 			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}

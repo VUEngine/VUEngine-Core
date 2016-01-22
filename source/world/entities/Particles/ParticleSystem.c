@@ -188,37 +188,40 @@ void ParticleSystem_update(ParticleSystem this)
 	
 	ParticleSystem_processExpiredParticles(this);
 
-    u32 timeElapsed = Clock_getElapsedTime(this->clock);
-
-    // update each particle
-    VirtualNode node = this->particles->head;
-
-    for(; node; node = node->next)
-    {
-        __VIRTUAL_CALL(void, Particle, update, node->data, timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
-    }
-
-	if(!this->paused)
+	if(!Clock_isPaused(this->clock))
 	{
-		// check if it is time to spawn new particles
-		this->nextSpawnTime -= abs(timeElapsed);
-
-		if(0 > this->nextSpawnTime)
+	    u32 timeElapsed = Clock_getElapsedTime(this->clock);
+	
+	    // update each particle
+	    VirtualNode node = this->particles->head;
+	
+	    for(; node; node = node->next)
+	    {
+	        __VIRTUAL_CALL(void, Particle, update, node->data, timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
+	    }
+	
+		if(!this->paused)
 		{
-			if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
+			// check if it is time to spawn new particles
+			this->nextSpawnTime -= abs(timeElapsed);
+	
+			if(0 > this->nextSpawnTime)
 			{
-				if(this->particleSystemDefinition->recycleParticles)
+				if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
 				{
-					VirtualList_pushBack(this->particles, ParticleSystem_recycleParticle(this));
-					this->particleCount++;
+					if(this->particleSystemDefinition->recycleParticles)
+					{
+						VirtualList_pushBack(this->particles, ParticleSystem_recycleParticle(this));
+						this->particleCount++;
+					}
+					else
+					{
+						VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
+						this->particleCount++;
+					}
+					
+					this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 				}
-				else
-				{
-					VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
-					this->particleCount++;
-				}
-				
-				this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 			}
 		}
 	}

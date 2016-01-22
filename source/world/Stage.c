@@ -512,6 +512,16 @@ static void Stage_unloadChild(Stage this, Container child)
 			break;
 		}
 	}
+	
+	if(__SAFE_CAST(Container, this->focusEntity) == child)
+	{
+		if(this->focusEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
+		{
+			Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
+		}
+		
+		this->focusEntity = NULL;
+	}
 }
 
 // preload textures

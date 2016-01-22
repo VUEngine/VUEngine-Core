@@ -488,7 +488,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 		while (0 == numberOfAxis && ++passes < MAX_NUMBER_OF_PASSES);
 	}
 	
-	ASSERT(passes < MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
+	ASSERT(numberOfAxis || passes < MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
 
 	CACHE_DISABLE;
 	

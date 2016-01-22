@@ -108,13 +108,13 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
 }
 
-void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle particle))
+void Particle_update(Particle this, u16 elapsedTime, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "Particle::update: null this");
 
 	if(0 <= this->lifeSpan)
 	{
-		this->lifeSpan -= timeElapsed;
+		this->lifeSpan -= elapsedTime;
 		
 		Sprite_update(__SAFE_CAST(Sprite, this->objectSprite));
 		

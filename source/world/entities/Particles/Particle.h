@@ -130,7 +130,7 @@ __CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, cons
 
 void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void Particle_destructor(Particle this);
-void Particle_update(Particle this, u16 timeElapsed, void (* behavior)(Particle particle));
+void Particle_update(Particle this, u16 elapsedTime, void (* behavior)(Particle particle));
 void Particle_transform(Particle this, bool updateSpritePosition);
 void Particle_addForce(Particle this, const Force* force);
 void Particle_setLifeSpan(Particle this, int lifeSpan);

@@ -270,6 +270,11 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	// process removed bodies
 	PhysicalWorld_processRemovedBodies(this);
+	
+	if(Clock_isPaused(clock))
+	{
+		return;
+	}
 
 	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 

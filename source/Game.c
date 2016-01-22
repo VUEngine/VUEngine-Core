@@ -341,9 +341,6 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
     ASSERT(state, "Game::setState: setting NULL state");
 
-    // set the new state before any call to enter methods take place
-    this->currentState = state;
-    
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
@@ -361,7 +358,7 @@ static void Game_setNextState(Game this, GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(this->currentState));
+				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this))));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 			
@@ -387,13 +384,10 @@ static void Game_setNextState(Game this, GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(this->currentState));
+			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 			
-			// needs to set the current state before the resume method is called
-			this->currentState = __SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine));
-
 			// setup new state
 		    StateMachine_popState(this->stateMachine);
 			break;
@@ -710,15 +704,6 @@ static void Game_updatePhysics(Game this)
 	
 	this->currentProcess = kGameUpdatingPhysics;
 
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
 	// simulate physics
 	GameState_updatePhysics(this->currentState);
 
@@ -746,15 +731,7 @@ static void Game_updateTransformations(Game this)
 #ifdef __DEBUG
 	this->lastProcessName = "apply transformations";
 #endif
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
+
 	// apply world transformations
 	GameState_transform(this->currentState);
 
@@ -765,15 +742,6 @@ static void Game_updateTransformations(Game this)
 	this->lastProcessName = "process collisions";
 #endif
 
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
 	// process collisions
 	GameState_processCollisions(this->currentState);
 
@@ -932,7 +900,7 @@ const Clock Game_getInGameClock(Game this)
 {
 	ASSERT(this, "Game::getInGameClock: null this");
 
-	return GameState_getInGameClock(this->currentState);
+	return GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 // retrieve in game clock
@@ -940,14 +908,14 @@ const Clock Game_getAnimationsClock(Game this)
 {
 	ASSERT(this, "Game::getAnimationsClock: null this");
 
-	return GameState_getAnimationsClock(this->currentState);
+	return GameState_getAnimationsClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 const Clock Game_getPhysicsClock(Game this)
 {
 	ASSERT(this, "Game::getPhysicsClock: null this");
 
-	return GameState_getPhysicsClock(this->currentState);
+	return GameState_getPhysicsClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 // retrieve last process' name
@@ -1064,21 +1032,21 @@ GameState Game_getCurrentState(Game this)
 {
 	ASSERT(this, "Game::getCurrentState: null this");
 
-	return this->currentState;
+	return __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 }
 
 PhysicalWorld Game_getPhysicalWorld(Game this)
 {
 	ASSERT(this, "Game::PhysicalWorld: null this");
 
-	return GameState_getPhysicalWorld(this->currentState);
+	return GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 CollisionManager Game_getCollisionManager(Game this)
 {
 	ASSERT(this, "Game::getCollisionManager: null this");
 
-	return GameState_getCollisionManager(this->currentState);
+	return GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 #ifdef __LOW_BATTERY_INDICATOR

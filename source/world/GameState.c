@@ -429,10 +429,7 @@ void GameState_updatePhysics(GameState this)
 {
 	ASSERT(this, "GameState::updatePhysics: null this");
 	
-	if(!Clock_isPaused(this->physicsClock))
-	{
-		PhysicalWorld_update(this->physicalWorld, this->physicsClock);
-	}
+	PhysicalWorld_update(this->physicalWorld, this->physicsClock);
 }
 
 PhysicalWorld GameState_getPhysicalWorld(GameState this)
@@ -446,10 +443,7 @@ void GameState_processCollisions(GameState this)
 {
 	ASSERT(this, "GameState::processCollisions: null this");
 	
-	if(!Clock_isPaused(this->physicsClock))
-	{
-		CollisionManager_update(this->collisionManager);
-	}
+	CollisionManager_update(this->collisionManager, this->physicsClock);
 }
 
 CollisionManager GameState_getCollisionManager(GameState this)
