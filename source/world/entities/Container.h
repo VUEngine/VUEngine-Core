@@ -34,7 +34,8 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAX_CONTAINER_NAME_LENGTH	16
+#define __MAX_CONTAINER_NAME_LENGTH			16
+#define __EVENT_CONTAINER_DELETED			"containerDeleted"
 
 
 //---------------------------------------------------------------------------------------------------------

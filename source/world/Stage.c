@@ -1121,8 +1121,6 @@ bool Stage_handlePropagatedMessage(Stage this, int message)
     return false;
 }
 
-#define __EVENT_CONTAINER_DELETED		"containerDeleted"
-
 void Stage_onFocusEntityDeleted(Stage this, Object eventFirer)
 {
 	ASSERT(this, "Stage::onFocusEntityDeleted: null this");
@@ -1130,8 +1128,8 @@ void Stage_onFocusEntityDeleted(Stage this, Object eventFirer)
 	this->focusInGameEntity = NULL;
 	
 	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
-	{
-		if(this->focusInGameEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
+	{	
+		if(this->focusInGameEntity == Screen_getFocusInGameEntity(Screen_getInstance()))
 		{
 			Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
 		}

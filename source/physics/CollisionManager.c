@@ -47,6 +47,9 @@
 	/* a list of shapes which must be removed */								\
 	VirtualList	removedShapes;													\
 																				\
+	/* a list of shapes which became inactive */								\
+	VirtualList	inactiveShapes;													\
+																				\
 	/* flag to block removals when traversing the shapes list */				\
 	bool checkingCollisions;													\
 
@@ -63,7 +66,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 Shape SpatialObject_getShape(SpatialObject this);
-
+static void CollisionManager_processInactiveShapes(CollisionManager this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -84,6 +87,7 @@ void CollisionManager_constructor(CollisionManager this)
 	this->activeShapes = __NEW(VirtualList);
 	this->movingShapes = __NEW(VirtualList);
 	this->removedShapes = __NEW(VirtualList);
+	this->inactiveShapes = __NEW(VirtualList);
 	
 	this->checkingCollisions = false;
 }
@@ -108,6 +112,7 @@ void CollisionManager_destructor(CollisionManager this)
 	__DELETE(this->activeShapes);
 	__DELETE(this->movingShapes);
 	__DELETE(this->removedShapes);
+	__DELETE(this->inactiveShapes);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -205,6 +210,27 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 	}
 }
 
+// process inactive shapes
+static void CollisionManager_processInactiveShapes(CollisionManager this)
+{
+	ASSERT(this, "CollisionManager::processInactiveShapes: null this");
+	ASSERT(this->inactiveShapes, "CollisionManager::processInactiveShapes: null inactiveShapes");
+
+	VirtualNode node = this->inactiveShapes->head;
+
+	for(; node; node = node->next)
+	{
+		Shape shape = __SAFE_CAST(Shape, node->data);
+
+		// remove from the list
+		VirtualList_removeElement(this->activeShapes, shape);
+		VirtualList_removeElement(this->movingShapes, shape);
+	}
+
+	// clear the list
+	VirtualList_clear(this->inactiveShapes);
+}
+
 // calculate collisions
 void CollisionManager_update(CollisionManager this, Clock clock)
 {
@@ -214,6 +240,8 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	{
 		return;
 	}
+	
+	CollisionManager_processInactiveShapes(this);
 
 	VirtualNode node = this->movingShapes->head;
 
@@ -363,7 +391,12 @@ void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape)
 		VirtualList_removeElement(this->activeShapes, shape);
 		VirtualList_removeElement(this->movingShapes, shape);
 	}
+	else
+	{
+		VirtualList_pushBack(this->inactiveShapes, shape);
+	}
 }
+
 // draw shapes
 void CollisionManager_drawShapes(CollisionManager this)
 {
