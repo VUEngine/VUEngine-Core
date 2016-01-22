@@ -57,7 +57,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	Body_setFriction(this->body, totalFriction);
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
+	this->shape = CollisionManager_registerShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
 	__VIRTUAL_CALL(void, Shape, setup, this->shape);
 
 	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
@@ -69,7 +69,7 @@ void SolidParticle_destructor(SolidParticle this)
 	ASSERT(this, "SolidParticle::destructor: null this");
 
 	// unregister the shape for collision detection
-	CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
+	CollisionManager_unregisterShape(Game_getCollisionManager(Game_getInstance()), this->shape);
 
 	this->shape = NULL;
 
@@ -237,7 +237,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 			
 		case kBodyStartedMoving:
 
-			CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
+			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, *(u8*)Telegram_getExtraInfo(telegram));
 			return true;
 			break;
@@ -246,7 +246,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 			if(!Body_isMoving(this->body))
             {
-				//CollisionManager_shapeStoppedMoving(CollisionManager_getInstance(), this->shape);
+				//CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			}
 			break;
 

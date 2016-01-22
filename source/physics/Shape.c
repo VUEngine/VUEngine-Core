@@ -20,6 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Shape.h>
+#include <Game.h>
 #include <CollisionManager.h>
 
 
@@ -86,11 +87,11 @@ void Shape_setActive(Shape this, bool active)
 
 	if(active)
 	{
-		CollisionManager_shapeBecameActive(CollisionManager_getInstance(), this);
+		CollisionManager_shapeBecameActive(Game_getCollisionManager(Game_getInstance()), this);
 	}
 	else
 	{
-		CollisionManager_shapeBecameInactive(CollisionManager_getInstance(), this);
+		CollisionManager_shapeBecameInactive(Game_getCollisionManager(Game_getInstance()), this);
 	}
 }
 

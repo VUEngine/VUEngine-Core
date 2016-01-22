@@ -43,11 +43,16 @@ void GameState_constructor(GameState this)
 
 	__CONSTRUCT_BASE();
 
-	// construct the stage
 	this->stage = NULL;
+	
+	// clocks
 	this->inGameClock = __NEW(Clock);
 	this->animationsClock = __NEW(Clock);
 	this->physicsClock = __NEW(Clock);
+
+	// construct the physical world and collision manager
+	this->physicalWorld = __NEW(PhysicalWorld);
+	this->collisionManager = __NEW(CollisionManager);
 
 	// by default can stream
 	this->canStream = true;
@@ -66,6 +71,9 @@ void GameState_destructor(GameState this)
 	__DELETE(this->animationsClock);
 	__DELETE(this->physicsClock);
 	
+	__DELETE(this->physicalWorld);
+	__DELETE(this->collisionManager);
+
 	// destroy the stage
 	if(this->stage)
 	{
@@ -416,3 +424,38 @@ void GameState_pausePhysics(GameState this, bool pause)
 	
 	Clock_pause(this->physicsClock, pause);
 }
+
+void GameState_updatePhysics(GameState this)
+{
+	ASSERT(this, "GameState::updatePhysics: null this");
+	
+	if(!Clock_isPaused(this->physicsClock))
+	{
+		PhysicalWorld_update(this->physicalWorld, this->physicsClock);
+	}
+}
+
+PhysicalWorld GameState_getPhysicalWorld(GameState this)
+{
+	ASSERT(this, "GameState::getPhysicalWorld: null this");
+
+	return this->physicalWorld;
+}
+
+void GameState_processCollisions(GameState this)
+{
+	ASSERT(this, "GameState::processCollisions: null this");
+	
+	if(!Clock_isPaused(this->physicsClock))
+	{
+		CollisionManager_update(this->collisionManager);
+	}
+}
+
+CollisionManager GameState_getCollisionManager(GameState this)
+{
+	ASSERT(this, "GameState::getCollisionManager: null this");
+
+	return this->collisionManager;
+}
+

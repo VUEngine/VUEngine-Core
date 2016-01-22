@@ -20,6 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <TriggerEntity.h>
+#include <Game.h>
 #include <CollisionManager.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -54,7 +55,7 @@ void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* trig
 	this->triggerEntityDefinition = triggerEntityDefinition;
 	
 	// register a shape for collision detection
-	this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __SAFE_CAST(SpatialObject, this), triggerEntityDefinition->shapeType);
+	this->shape = CollisionManager_registerShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), triggerEntityDefinition->shapeType);
 
 	Shape_setCheckForCollisions(this->shape, false);
 

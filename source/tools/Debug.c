@@ -268,7 +268,7 @@ void Debug_show(Debug this, GameState gameState)
 // hide debug screens
 void Debug_hide(Debug this)
 {
-	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
+	CollisionManager_flushShapesDirectDrawData(Game_getCollisionManager(Game_getInstance()));
 	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_lightUpGame(this);
@@ -829,8 +829,8 @@ static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y)
 
 static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y)
 {
-	PhysicalWorld_print(PhysicalWorld_getInstance(), x, y);
-	CollisionManager_print(CollisionManager_getInstance(), x, y + 6);
+	PhysicalWorld_print(Game_getPhysicalWorld(Game_getInstance()), x, y);
+	CollisionManager_print(Game_getCollisionManager(Game_getInstance()), x, y + 6);
 }
 
 static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y)
@@ -841,7 +841,7 @@ static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y
 
 static void Debug_showCollisionShapes(Debug this)
 {
-	CollisionManager_drawShapes(CollisionManager_getInstance());
+	CollisionManager_drawShapes(Game_getCollisionManager(Game_getInstance()));
 }
 
 static void Debug_showHardwareStatus(Debug this, int increment, int x, int y)

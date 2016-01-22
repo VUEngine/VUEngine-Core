@@ -26,6 +26,8 @@
 #include <Clock.h>
 #include <Stage.h>
 #include <GameState.h>
+#include <CollisionManager.h>
+#include <PhysicalWorld.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -77,6 +79,8 @@ void Game_unpause(Game this, GameState pauseState);
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
 void Game_disableKeypad(Game this);
 void Game_enableKeypad(Game this);
+CollisionManager Game_getCollisionManager(Game this);
+PhysicalWorld Game_getPhysicalWorld(Game this);
 
 #ifdef __DEBUG_TOOLS
 bool Game_isInDebugMode(Game this);

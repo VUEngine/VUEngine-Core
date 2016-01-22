@@ -69,17 +69,17 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void PhysicalWorld_constructor(PhysicalWorld this);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__SINGLETON(PhysicalWorld);
+__CLASS_NEW_DEFINITION(PhysicalWorld)
+__CLASS_NEW_END(PhysicalWorld);
 
 // class's constructor
-static void PhysicalWorld_constructor(PhysicalWorld this)
+void PhysicalWorld_constructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::constructor: null this");
 
@@ -118,8 +118,9 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	__DELETE(this->activeBodies);
 	__DELETE(this->removedBodies);
 
-	// allow a new construct
-	__SINGLETON_DESTROY;
+	// destroy the super object
+	// must always be called at the end of the destructor
+	__DESTROY_BASE;
 }
 
 // register a body
@@ -263,12 +264,14 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 }
 
 // calculate collisions
-void PhysicalWorld_update(PhysicalWorld this)
+void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
 	// process removed bodies
 	PhysicalWorld_processRemovedBodies(this);
+
+	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
 	static int checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 
@@ -283,7 +286,7 @@ void PhysicalWorld_update(PhysicalWorld this)
 	// check the bodies
 	for(; node; node = node->next)
 	{
-		Body_update(__SAFE_CAST(Body, node->data), &this->gravity);
+		Body_update(__SAFE_CAST(Body, node->data), &this->gravity, elapsedTime);
 	}
 }
 

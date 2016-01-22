@@ -25,6 +25,7 @@
 #include <Object.h>
 #include <Body.h>
 #include <SpatialObject.h>
+#include <Clock.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -46,14 +47,15 @@ __CLASS(PhysicalWorld);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-PhysicalWorld PhysicalWorld_getInstance();
+__CLASS_NEW_DECLARE(PhysicalWorld);
 
+void PhysicalWorld_constructor(PhysicalWorld this);
 void PhysicalWorld_destructor(PhysicalWorld this);
 Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_13 mass);
 void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 void PhysicalWorld_start(PhysicalWorld this);
-void PhysicalWorld_update(PhysicalWorld this);
+void PhysicalWorld_update(PhysicalWorld this, Clock clock);
 void PhysicalWorld_reset(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);

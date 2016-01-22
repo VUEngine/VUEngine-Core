@@ -422,14 +422,12 @@ void Body_addForce(Body this, const Force* force)
 }
 
 // update movement
-void Body_update(Body this, const Acceleration* gravity)
+void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 {
 	ASSERT(this, "Body::update: null this");
 
-	if(this->awake && this->active && !Clock_isPaused(this->clock))
+	if(this->awake && this->active)
 	{
-		fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
-
 		if(elapsedTime)
 		{
 			int axisStoppedMovement = 0;
@@ -528,7 +526,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 	ASSERT(this, "Body::calculateFriction: null this");
 
 	// get friction fBody from the game world
-	fix19_13 worldFriction = PhysicalWorld_getFriction(PhysicalWorld_getInstance()) * 2;
+	fix19_13 worldFriction = PhysicalWorld_getFriction(Game_getPhysicalWorld(Game_getInstance())) * 2;
 
 	static Force frictionForce = {0, 0, 0};
 	
@@ -899,7 +897,7 @@ static void Body_awake(Body this, int axisStartedMovement)
 	{
 		this->awake = true;
 
-		PhysicalWorld_bodyAwaked(PhysicalWorld_getInstance(), this);
+		PhysicalWorld_bodyAwaked(Game_getPhysicalWorld(Game_getInstance()), this);
 	}
 
 	if(!this->velocity.x && (__XAXIS & axisStartedMovement))
@@ -930,7 +928,7 @@ void Body_sleep(Body this)
 
 	this->awake = false;
 
-	PhysicalWorld_bodySleep(PhysicalWorld_getInstance(), this);
+	PhysicalWorld_bodySleep(Game_getPhysicalWorld(Game_getInstance()), this);
 
 	MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodySleep, NULL);
 }

@@ -101,7 +101,7 @@ __CLASS_NEW_DECLARE(Body, SpatialObject owner, fix19_13 mass);
 void Body_destructor(Body this);
 void Body_setOwner(Body this, SpatialObject owner);
 SpatialObject Body_getOwner(Body this);
-void Body_update(Body this, const Acceleration* gravity);
+void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime);
 VBVec3D Body_getLastDisplacement(Body this);
 u8 Body_getAxisSubjectToGravity(Body this);
 void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity);

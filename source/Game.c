@@ -104,6 +104,9 @@ enum GameCurrentProcess
 	/* game's state machine */																			\
 	StateMachine stateMachine;																			\
 																										\
+	/* game's state machine */																			\
+	GameState currentState;																				\
+																										\
 	/* engine's global timer */																			\
 	Clock clock;																						\
 																										\
@@ -116,8 +119,6 @@ enum GameCurrentProcess
 	SoundManager soundManager;																			\
 	ParamTableManager paramTableManager;																\
 	SpriteManager spriteManager;																		\
-	CollisionManager collisionManager;																	\
-	PhysicalWorld physicalWorld;																		\
 	KeypadManager keypadManager;																		\
 	VPUManager vpuManager;																				\
 	DirectDraw directDraw;																				\
@@ -207,6 +208,7 @@ static void Game_constructor(Game this)
 	// construct the game's state machine
 	this->stateMachine = __NEW(StateMachine, this);
 
+	this->currentState = NULL;
 	this->nextState = NULL;
 	this->automaticPauseState = NULL;
 	this->lastAutoPauseCheckTime = 0;
@@ -221,8 +223,6 @@ static void Game_constructor(Game this)
 	this->screen = Screen_getInstance();
 	this->soundManager = SoundManager_getInstance();
 	this->spriteManager = SpriteManager_getInstance();
-	this->collisionManager = CollisionManager_getInstance();
-	this->physicalWorld = PhysicalWorld_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
 	this->directDraw = DirectDraw_getInstance();
@@ -266,9 +266,6 @@ void Game_initialize(Game this)
 
     // set waveform data
     SoundManager_setWaveForm(this->soundManager);
-
-    // reset collision manager
-    CollisionManager_reset(this->collisionManager);
 
 	// clear sprite memory
     HardwareManager_clearScreen(this->hardwareManager);
@@ -344,6 +341,9 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
     ASSERT(state, "Game::setState: setting NULL state");
 
+    // set the new state before any call to enter methods take place
+    this->currentState = state;
+    
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
@@ -358,10 +358,10 @@ static void Game_setNextState(Game this, GameState state)
 			this->lastProcessName = "kSwapState";
 #endif		
 	
-			if(Game_getCurrentState(this))
+			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
+				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(this->currentState));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 			
@@ -384,12 +384,15 @@ static void Game_setNextState(Game this, GameState state)
 			this->lastProcessName = "kPopState";
 #endif		
 
-			if(Game_getCurrentState(this))
+			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(Game_getCurrentState(this)));
+			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(this->currentState));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
+			
+			// needs to set the current state before the resume method is called
+			this->currentState = __SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine));
 
 			// setup new state
 		    StateMachine_popState(this->stateMachine);
@@ -418,6 +421,9 @@ static void Game_setNextState(Game this, GameState state)
 
 	// no next state now
 	this->nextState = NULL;
+	
+	// save current state
+	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 }
 
 // disable interrupts
@@ -714,7 +720,7 @@ static void Game_updatePhysics(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// simulate physics
-	PhysicalWorld_update(this->physicalWorld);
+	GameState_updatePhysics(this->currentState);
 
 #ifdef __DEBUG
 	this->lastProcessName = "physics ended";
@@ -750,7 +756,7 @@ static void Game_updateTransformations(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// apply world transformations
-	GameState_transform(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	GameState_transform(this->currentState);
 
 	this->currentProcess = kGameCheckingCollisions;
 
@@ -769,7 +775,7 @@ static void Game_updateTransformations(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// process collisions
-	CollisionManager_update(this->collisionManager, Clock_isPaused(Game_getPhysicsClock(this)));
+	GameState_processCollisions(this->currentState);
 
 	this->currentProcess = kGameCheckingCollisionsDone;
 
@@ -786,7 +792,6 @@ static void Game_updateTransformations(Game this)
 // do defragmentation, memory recovery, etc
 static void Game_cleanUp(Game this)
 {
-	
 	this->currentProcess = kGameCleaningUp;
 #ifdef __DEBUG
 	this->lastProcessName = "update param table";
@@ -927,7 +932,7 @@ const Clock Game_getInGameClock(Game this)
 {
 	ASSERT(this, "Game::getInGameClock: null this");
 
-	return GameState_getInGameClock(Game_getCurrentState(this));
+	return GameState_getInGameClock(this->currentState);
 }
 
 // retrieve in game clock
@@ -935,14 +940,14 @@ const Clock Game_getAnimationsClock(Game this)
 {
 	ASSERT(this, "Game::getAnimationsClock: null this");
 
-	return GameState_getAnimationsClock(Game_getCurrentState(this));
+	return GameState_getAnimationsClock(this->currentState);
 }
 
 const Clock Game_getPhysicsClock(Game this)
 {
 	ASSERT(this, "Game::getPhysicsClock: null this");
 
-	return GameState_getPhysicsClock(Game_getCurrentState(this));
+	return GameState_getPhysicsClock(this->currentState);
 }
 
 // retrieve last process' name
@@ -1059,7 +1064,21 @@ GameState Game_getCurrentState(Game this)
 {
 	ASSERT(this, "Game::getCurrentState: null this");
 
-	return StateMachine_getCurrentState(this->stateMachine)? __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)): NULL;
+	return this->currentState;
+}
+
+PhysicalWorld Game_getPhysicalWorld(Game this)
+{
+	ASSERT(this, "Game::PhysicalWorld: null this");
+
+	return GameState_getPhysicalWorld(this->currentState);
+}
+
+CollisionManager Game_getCollisionManager(Game this)
+{
+	ASSERT(this, "Game::getCollisionManager: null this");
+
+	return GameState_getCollisionManager(this->currentState);
 }
 
 #ifdef __LOW_BATTERY_INDICATOR
@@ -1113,14 +1132,14 @@ void Game_unpause(Game this, GameState pauseState)
 {
 	ASSERT(this, "Game::unpause: null this");
 	ASSERT(pauseState, "Game::unpause: null pauseState");
-	ASSERT(pauseState == Game_getCurrentState(this), "Game::unpause: null pauseState sent is not the current one");
+	ASSERT(pauseState == this->currentState, "Game::unpause: null pauseState sent is not the current one");
 
-	if(pauseState && Game_getCurrentState(this) == pauseState)
+	if(pauseState && this->currentState == pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
 		
-		if(Game_getCurrentState(this) == this->automaticPauseState)
+		if(this->currentState == this->automaticPauseState)
 		{
 			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
 			this->lastAutoPauseCheckTime = Clock_getTime(this->clock);

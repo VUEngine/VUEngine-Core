@@ -217,7 +217,7 @@ void StageEditor_stop(StageEditor this)
 {
 	ASSERT(this, "StageEditor::stop: null this");
 
-	CollisionManager_flushShapesDirectDrawData(CollisionManager_getInstance());
+	CollisionManager_flushShapesDirectDrawData(Game_getCollisionManager(Game_getInstance()));
 	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	StageEditor_removePreviousSprite(this);
 	StageEditor_releaseShape(this);
@@ -839,8 +839,8 @@ static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D trans
 	GameState_transform(this->gameState);
 	StageEditor_printScreenPosition(this);
 	Stage_streamAll(GameState_getStage(this->gameState));
-	CollisionManager_processRemovedShapes(CollisionManager_getInstance());
-	PhysicalWorld_processRemovedBodies(PhysicalWorld_getInstance());
+	CollisionManager_processRemovedShapes(Game_getCollisionManager(Game_getInstance()));
+	PhysicalWorld_processRemovedBodies(Game_getPhysicalWorld(Game_getInstance()));
 }
 
 static void StageEditor_printScreenPosition(StageEditor this)

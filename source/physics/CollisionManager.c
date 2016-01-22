@@ -61,17 +61,16 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 Shape SpatialObject_getShape(SpatialObject this);
 
-static void CollisionManager_constructor(CollisionManager this);
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__SINGLETON(CollisionManager);
+__CLASS_NEW_DEFINITION(CollisionManager)
+__CLASS_NEW_END(CollisionManager);
 
 // class's constructor
-static void CollisionManager_constructor(CollisionManager this)
+void CollisionManager_constructor(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::constructor: null this");
 
@@ -105,8 +104,9 @@ void CollisionManager_destructor(CollisionManager this)
 	__DELETE(this->movingShapes);
 	__DELETE(this->removedShapes);
 
-	// allow a new construct
-	__SINGLETON_DESTROY;
+	// destroy the super object
+	// must always be called at the end of the destructor
+	__DESTROY_BASE;
 }
 
 
@@ -201,15 +201,10 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 }
 
 // calculate collisions
-void CollisionManager_update(CollisionManager this, bool physicsClockIsPaused)
+void CollisionManager_update(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
-	if(physicsClockIsPaused)
-	{
-		return;
-	}
-	
 	VirtualNode node = this->movingShapes->head;
 
 	// check the shapes

@@ -21,6 +21,7 @@
 
 #include <string.h>
 #include <Entity.h>
+#include <Game.h>
 #include <InGameEntity.h>
 #include <InanimatedInGameEntity.h>
 #include <Prototypes.h>
@@ -97,7 +98,7 @@ void Entity_destructor(Entity this)
 	// unregister the shape for collision detection
 	if(this->shape)
 	{
-		CollisionManager_unregisterShape(CollisionManager_getInstance(), this->shape);
+		CollisionManager_unregisterShape(Game_getCollisionManager(Game_getInstance()), this->shape);
 	
 		this->shape = NULL;
 	}

@@ -46,14 +46,15 @@ __CLASS(CollisionManager);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-CollisionManager CollisionManager_getInstance();
+__CLASS_NEW_DECLARE(CollisionManager);
 
+void CollisionManager_constructor(CollisionManager this);
 void CollisionManager_destructor(CollisionManager this);
 Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner, int shapeType);
 void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
 Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner);
 void CollisionManager_processRemovedShapes(CollisionManager this);
-void CollisionManager_update(CollisionManager this, bool physicsClockIsPaused);
+void CollisionManager_update(CollisionManager this);
 void CollisionManager_reset(CollisionManager this);
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
 void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);

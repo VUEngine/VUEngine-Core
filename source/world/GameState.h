@@ -26,6 +26,8 @@
 #include <Telegram.h>
 #include <Stage.h>
 #include <Clock.h>
+#include <PhysicalWorld.h>
+#include <CollisionManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,6 +56,12 @@
 	State_ATTRIBUTES;																					\
 																										\
 	/* a pointer to the game's stage */																	\
+	PhysicalWorld physicalWorld;																		\
+																										\
+	/* a pointer to the game's stage */																	\
+	CollisionManager collisionManager;																\
+																										\
+	/* a pointer to the game's stage */																	\
 	Stage stage;																						\
 																										\
 	/* flag to allow streaming */																		\
@@ -77,8 +85,6 @@ __CLASS(GameState);
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
-
-GameState GameState_getInstance(void);
 
 void GameState_constructor(GameState this);
 void GameState_destructor(GameState this);
@@ -106,5 +112,10 @@ void GameState_startPhysics(GameState this);
 void GameState_pauseInGameClock(GameState this, bool pause);
 void GameState_pauseAnimations(GameState this, bool pause);
 void GameState_pausePhysics(GameState this, bool pause);
+
+void GameState_updatePhysics(GameState this);
+PhysicalWorld GameState_getPhysicalWorld(GameState this);
+void GameState_processCollisions(GameState this);
+CollisionManager GameState_getCollisionManager(GameState this);
 
 #endif

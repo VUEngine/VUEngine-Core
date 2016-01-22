@@ -114,8 +114,6 @@ static bool Cuboid_overlapsWithRightCuboid(RightCuboid* first, RightCuboid* seco
 	ASSERT(first, "Cuboid::overlapsWithRightCuboids: null first");
 	ASSERT(second, "Cuboid::overlapsWithRightCuboids: null second");
 
-	const VBVec3D* myOwnerPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, owner);
-
 	// test for collision
 	return !(first->x0 > second->x1 || first->x1 < second->x0 ||
 			 first->y0 > second->y1 || first->y1 < second->y0 ||

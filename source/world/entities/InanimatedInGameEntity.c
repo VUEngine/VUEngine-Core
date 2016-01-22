@@ -20,6 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <InanimatedInGameEntity.h>
+#include <Game.h>
 #include <CollisionManager.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -55,7 +56,7 @@ void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedI
 	if(inanimatedInGameEntityDefinition->registerShape)
 	{
 		// register a shape for collision detection
-		this->shape = CollisionManager_registerShape(CollisionManager_getInstance(), __SAFE_CAST(SpatialObject, this), kCuboid);
+		this->shape = CollisionManager_registerShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), kCuboid);
 
 		ASSERT(this->shape, "InanimatedInGameEntity::constructor: shape not created");
 	}

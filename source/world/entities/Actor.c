@@ -91,7 +91,7 @@ void Actor_destructor(Actor this)
 	if(this->body)
 	{
 		// remove a body
-		PhysicalWorld_unregisterBody(PhysicalWorld_getInstance(), __SAFE_CAST(SpatialObject, this));
+		PhysicalWorld_unregisterBody(Game_getPhysicalWorld(Game_getInstance()), __SAFE_CAST(SpatialObject, this));
 		this->body = NULL;
 	}
 	
@@ -436,7 +436,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 					case kBodyStartedMoving:
 
 						ASSERT(this->shape, "Actor::handleMessage: null shape");
-						CollisionManager_shapeStartedMoving(CollisionManager_getInstance(), this->shape);
+						CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 						Actor_resetCollisionStatus(this, *(u8*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
@@ -446,7 +446,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 						if(!Body_isMoving(this->body))
 	                    {
 							ASSERT(this->shape, "Actor::handleMessage: null shape");
-							CollisionManager_shapeStoppedMoving(CollisionManager_getInstance(), this->shape);
+							CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 						}
 						break;
 
