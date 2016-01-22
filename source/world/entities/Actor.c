@@ -637,13 +637,19 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 	ASSERT(this->body, "Actor::resolveCollision: null body");
 	ASSERT(collidingSpatialObjects, "Actor::resolveCollision: collidingSpatialObjects");
 
+	
 	if(this->collisionSolver)
 	{
-		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &this->transform.globalScale, true);
-
-		Actor_checkIfMustBounce(this, axisOfAllignement);
+		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
 		
-		__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
+		if(bodyLastDisplacement.x || bodyLastDisplacement.y || bodyLastDisplacement.z)
+		{
+			u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), , &this->transform.globalScale, true);
+	
+			Actor_checkIfMustBounce(this, axisOfAllignement);
+			
+			__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
+		}
 	}
 	
 	__VIRTUAL_CALL(void, Actor, collisionsProcessingDone, this, collidingSpatialObjects);
