@@ -23,7 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
-#include <Entity.h>
+#include <InGameEntity.h>
 #include <Texture.h>
 #include <UI.h>
 #include <ObjectSpriteContainerManager.h>
@@ -78,7 +78,7 @@
 	UI ui;																								\
 																										\
 	/* focus entity: needed for streaming */															\
-	Entity focusEntity;																					\
+	InGameEntity focusInGameEntity;																		\
 																										\
 	/* next entity's id */																				\
 	s16 nextEntityId;																					\

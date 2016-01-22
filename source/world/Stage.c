@@ -23,6 +23,7 @@
 
 #include <Stage.h>
 #include <Optics.h>
+#include <Game.h>
 #include <PhysicalWorld.h>
 #include <SoundManager.h>
 #include <Screen.h>
@@ -100,7 +101,8 @@ static void Stage_preloadAssets(Stage this);
 static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
-
+static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
+	
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -127,7 +129,7 @@ static void Stage_constructor(Stage this)
 	this->ui = NULL;
 	this->stageDefinition = NULL;
 
-	this->focusEntity = NULL;
+	this->focusInGameEntity = NULL;
 	
 	this->nextEntityId = 0;
 }
@@ -278,8 +280,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	Stage_loadInRangeEntities(this);
 
 	// retrieve focus entity for streaming
-	InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
-	this->focusEntity = focusInGameEntity ? __SAFE_CAST(Entity, focusInGameEntity) : NULL;
+	Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 
 	// setup ui
 	Stage_setupUI(this);
@@ -512,16 +513,6 @@ static void Stage_unloadChild(Stage this, Container child)
 			break;
 		}
 	}
-	
-	if(__SAFE_CAST(Container, this->focusEntity) == child)
-	{
-		if(this->focusEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
-		{
-			Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
-		}
-		
-		this->focusEntity = NULL;
-	}
 }
 
 // preload textures
@@ -694,18 +685,18 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
-	VBVec3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
-	focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
-	focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
-	focusEntityPosition.z = FIX19_13TOI(focusEntityPosition.z);
+	VBVec3D focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
+	focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);
+	focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
+	focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
 
-	long focusEntityDistance = focusEntityPosition.x * focusEntityPosition.x +
-	focusEntityPosition.y * focusEntityPosition.y +
-	focusEntityPosition.z * focusEntityPosition.z;
+	long focusInGameEntityDistance = focusInGameEntityPosition.x * focusInGameEntityPosition.x +
+	focusInGameEntityPosition.y * focusInGameEntityPosition.y +
+	focusInGameEntityPosition.z * focusInGameEntityPosition.z;
 
 	static long previousFocusEntityDistance = 0;
 
-	u8 direction = previousFocusEntityDistance <= focusEntityDistance;
+	u8 direction = previousFocusEntityDistance <= focusInGameEntityDistance;
 
 	static VirtualNode savedNode = NULL;
 
@@ -727,14 +718,14 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 		{
 			if(direction)
 			{
-				if(focusEntityDistance < stageEntityDescription->distance)
+				if(focusInGameEntityDistance < stageEntityDescription->distance)
 				{
 					savedNode = node;
 				}
 			}
 			else
 			{
-				if(focusEntityDistance > stageEntityDescription->distance)
+				if(focusInGameEntityDistance > stageEntityDescription->distance)
 				{
 					savedNode = node;
 				}
@@ -763,7 +754,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 		}
 	}
 
-	previousFocusEntityDistance = focusEntityDistance;
+	previousFocusEntityDistance = focusInGameEntityDistance;
 }
 
 // load selected entities
@@ -987,15 +978,14 @@ void Stage_stream(Stage this)
 	}
 	else if(streamingCycleCounter == streamingCycleBase)
 	{			
-		if(this->focusEntity)
+		if(this->focusInGameEntity)
 		{
 			// load visible objects
 			Stage_selectEntitiesInLoadRange(this);
 		}
 		else
 		{
-			InGameEntity focusInGameEntity = Screen_getFocusInGameEntity(Screen_getInstance());
-			this->focusEntity = focusInGameEntity ? __SAFE_CAST(Entity, focusInGameEntity) : NULL;
+			Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 		}
 	}			
 	else if(streamingCycleCounter == streamingCycleBase * 2)
@@ -1060,9 +1050,9 @@ void Stage_suspend(Stage this)
 	}
 	
 	// relinquish screen focus priority
-	if(this->focusEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
+	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
 	{
-		if(this->focusEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
+		if(this->focusInGameEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
 		{
 			// relinquish focus entity
 		    Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
@@ -1070,7 +1060,7 @@ void Stage_suspend(Stage this)
 	}
 	else
 	{
-		this->focusEntity = __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance()));
+		Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 	}
 }
 
@@ -1095,10 +1085,10 @@ void Stage_resume(Stage this)
 	// reload textures
 	Stage_preloadAssets(this);
 
-	if(this->focusEntity)
+	if(this->focusInGameEntity)
 	{
 		// recover focus entity
-	    Screen_setFocusInGameEntity(Screen_getInstance(), __SAFE_CAST(InGameEntity, this->focusEntity));
+	    Screen_setFocusInGameEntity(Screen_getInstance(), __SAFE_CAST(InGameEntity, this->focusInGameEntity));
 	}
 
 	// load background music
@@ -1129,4 +1119,32 @@ bool Stage_handlePropagatedMessage(Stage this, int message)
     }
 
     return false;
+}
+
+#define __EVENT_CONTAINER_DELETED		"containerDeleted"
+
+void Stage_onFocusEntityDeleted(Stage this, Object eventFirer)
+{
+	ASSERT(this, "Stage::onFocusEntityDeleted: null this");
+
+	this->focusInGameEntity = NULL;
+	
+	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
+	{
+		if(this->focusInGameEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
+		{
+			Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
+		}
+	}
+}
+
+static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
+{
+	ASSERT(this, "Stage::setFocusEntity: null this");
+	this->focusInGameEntity = focusInGameEntity;
+	
+	if(this->focusInGameEntity)
+	{
+		Object_addEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (void (*)(Object, Object))Stage_onFocusEntityDeleted, __EVENT_CONTAINER_DELETED);
+	}
 }

@@ -99,6 +99,8 @@ void Container_constructor(Container this, s16 id, const char* const name)
 	Container_setName(this, name);
 }
 
+#define __EVENT_CONTAINER_DELETED		"containerDeleted"
+
 // class's destructor
 void Container_destructor(Container this)
 {
@@ -146,6 +148,8 @@ void Container_destructor(Container this)
 	{
 		__DELETE_BASIC(this->name);
 	}
+	
+	Object_fireEvent(this, __EVENT_CONTAINER_DELETED);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor

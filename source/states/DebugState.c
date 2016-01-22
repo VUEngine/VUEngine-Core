@@ -89,7 +89,7 @@ static void DebugState_destructor(DebugState this)
 // state's enter
 static void DebugState_enter(DebugState this, void* owner)
 {
-	GameState_pauseClocks(Game_getCurrentState(Game_getInstance()));
+	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
@@ -103,7 +103,7 @@ static void DebugState_execute(DebugState this, void* owner)
 static void DebugState_exit(DebugState this, void* owner)
 {
 	Debug_hide(Debug_getInstance());
-	GameState_resumeClocks(Game_getCurrentState(Game_getInstance()));
+	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's on message

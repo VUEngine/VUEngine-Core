@@ -274,6 +274,9 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
 
+	PhysicalWorld_reset(this->physicalWorld);
+	CollisionManager_reset(this->collisionManager);
+
 	// disable hardware interrupts
 	Game_disableHardwareInterrupts(Game_getInstance());
 

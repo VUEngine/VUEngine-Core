@@ -46,6 +46,9 @@
 																				\
 	/* a list of shapes which must be removed */								\
 	VirtualList	removedShapes;													\
+																				\
+	/* flag to block removals when traversing the shapes list */				\
+	bool checkingCollisions;													\
 
 // define the CollisionManager
 __CLASS_DEFINITION(CollisionManager, Object);
@@ -81,6 +84,8 @@ void CollisionManager_constructor(CollisionManager this)
 	this->activeShapes = __NEW(VirtualList);
 	this->movingShapes = __NEW(VirtualList);
 	this->removedShapes = __NEW(VirtualList);
+	
+	this->checkingCollisions = false;
 }
 
 // class's destructor
@@ -219,6 +224,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 		__VIRTUAL_CALL(void, Shape, position, __SAFE_CAST(Shape, node->data));
 	}
 
+	this->checkingCollisions = true;
 	// check the shapes
 	node = this->movingShapes->head;
 	for(; node; node = node->next)
@@ -280,6 +286,8 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 
 	// process removed shapes
 	CollisionManager_processRemovedShapes(this);
+	
+	this->checkingCollisions = false;
 }
 
 // unregister all shapes
@@ -350,8 +358,11 @@ void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape)
 
 	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
 
-	VirtualList_removeElement(this->activeShapes, shape);
-	VirtualList_removeElement(this->movingShapes, shape);
+	if(!this->checkingCollisions)
+	{
+		VirtualList_removeElement(this->activeShapes, shape);
+		VirtualList_removeElement(this->movingShapes, shape);
+	}
 }
 // draw shapes
 void CollisionManager_drawShapes(CollisionManager this)

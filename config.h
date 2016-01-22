@@ -137,7 +137,7 @@
 	__BLOCK_DEFINITION(116, 40)																			\
 	__BLOCK_DEFINITION(100, 46)																			\
 	__BLOCK_DEFINITION(84, 32)																			\
-	__BLOCK_DEFINITION(76, 6)																			\
+	__BLOCK_DEFINITION(76, 8)																			\
 	__BLOCK_DEFINITION(68, 72)																			\
 	__BLOCK_DEFINITION(28, 270)																			\
 	__BLOCK_DEFINITION(20, 600)																			\
@@ -155,7 +155,7 @@
 	__SET_MEMORY_POOL_ARRAY(68)																			\
 	__SET_MEMORY_POOL_ARRAY(28)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
-	__SET_MEMORY_POOL_ARRAY(16)																			\
+	__SET_MEMORY_POOL_ARRAY(16)																		\
 
 // percentage (0-100) above which the memory pool's status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD			85

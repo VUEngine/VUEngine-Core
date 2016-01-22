@@ -171,16 +171,16 @@ void StateMachine_popState(StateMachine this)
 	ASSERT(this, "StateMachine::popState: null this");
 	ASSERT(VirtualList_getSize(this->stateStack) > 1, "StateMachine::popState: stack empty");
 
-	// update the stack
-	// remove the state in the top of the stack
-	VirtualList_popFront(this->stateStack);
-
 	// finalize current state
 	if(this->currentState)
 	{
 		// call the exit method from current state
 		__VIRTUAL_CALL(void, State, exit, this->currentState, this->owner);
 	}
+
+	// update the stack
+	// remove the state in the top of the stack
+	VirtualList_popFront(this->stateStack);
 
 	// update current state
 	this->currentState = __SAFE_CAST(State, VirtualList_front(this->stateStack));
