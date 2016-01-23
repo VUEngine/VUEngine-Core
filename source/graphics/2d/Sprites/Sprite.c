@@ -224,7 +224,7 @@ void Sprite_rewrite(Sprite this)
 	}
 	
 	// raise flag to render again
-	Sprite_show(this);
+	this->renderFlag = __UPDATE_HEAD;
 }
 
 // process event
@@ -234,7 +234,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
 
 	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, this);
 	__VIRTUAL_CALL(void, Sprite, applyHbiasTransformations, this);
-	__VIRTUAL_CALL(void, Sprite, show, this);
+	this->renderFlag = __UPDATE_HEAD;
 }
 
 // get displacement
