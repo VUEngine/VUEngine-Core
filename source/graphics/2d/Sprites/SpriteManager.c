@@ -26,6 +26,7 @@
 #include <ObjectSpriteContainerManager.h>
 #include <VPUManager.h>
 #include <Screen.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -385,6 +386,8 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 		// force rendering
 		sprite->initialized = true;
+		
+		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
 }
 
@@ -402,6 +405,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	
 		// force rendering
 		sprite->initialized = true;
+		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
 	
 	SpriteManager_setLastLayer(this);

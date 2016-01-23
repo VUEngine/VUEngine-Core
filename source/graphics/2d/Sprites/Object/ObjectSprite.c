@@ -25,7 +25,7 @@
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Screen.h>
-#include <debugConfig.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -153,6 +153,13 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 
 	this->position = *position;
 
+	if(0 > this->objectIndex)
+	{
+		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
+		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
+		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
+	}
+
 	this->renderFlag |= __UPDATE_G;
 	this->initialized = true;
 }
@@ -218,7 +225,7 @@ void ObjectSprite_render(ObjectSprite this)
 			this->renderFlag = 0;
 			return;
 		}
-
+		
 		int cols = Texture_getCols(__SAFE_CAST(Texture, this->texture));
 		int rows = Texture_getRows(__SAFE_CAST(Texture, this->texture));
 
@@ -267,6 +274,7 @@ void ObjectSprite_render(ObjectSprite this)
 		this->renderFlag = false;
 	}
 }
+
 
 s16 ObjectSprite_getTotalObjects(ObjectSprite this)
 {
@@ -350,6 +358,7 @@ void ObjectSprite_hide(ObjectSprite this)
 u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
+	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
 
 	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)): 0;
 }

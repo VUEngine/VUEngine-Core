@@ -14,7 +14,7 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef __ANIMATION_EDITOR
+//#ifdef __ANIMATION_EDITOR
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -725,6 +725,10 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->animatedSprite));
 	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->animatedSprite)));
 	__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, this->animatedSprite));
+
+	// must set the position after showing the sprite, otherwise 
+	// it will remain non initialized
+	__VIRTUAL_CALL(void, Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
 }
 
 static void AnimationEditor_createSpriteSelector(AnimationEditor this)
@@ -831,4 +835,4 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this)
 }
 
 
-#endif
+//#endif

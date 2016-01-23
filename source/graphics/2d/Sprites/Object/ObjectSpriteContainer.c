@@ -25,6 +25,7 @@
 #include <Optics.h>
 #include <Screen.h>
 #include <SpriteManager.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
