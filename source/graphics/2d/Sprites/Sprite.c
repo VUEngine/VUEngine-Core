@@ -121,6 +121,10 @@ void Sprite_show(Sprite this)
 
 	this->renderFlag = __UPDATE_HEAD;
 	this->hidden = false;
+
+	// since I can have been moved after being hidden, I need to force 
+	// a complete update before showing up
+	this->initialized = false;
 }
 
 // hide

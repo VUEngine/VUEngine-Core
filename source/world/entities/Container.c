@@ -603,7 +603,7 @@ void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
 	this->invalidateGlobalPosition.y = __YAXIS & axisToInvalidate? true: false;
 	this->invalidateGlobalPosition.z = __ZAXIS & axisToInvalidate? true: false;
 
-	if(this->children)
+	if(this->children && axisToInvalidate)
 	{
 		VirtualNode node = this->children->head;
 

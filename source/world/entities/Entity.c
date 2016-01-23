@@ -1174,6 +1174,9 @@ void Entity_show(Entity this)
 			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
 		}
 	}
+	
+	// force invalid position to update sprites and children's sprites
+	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
 }
 
 // make it invisible
