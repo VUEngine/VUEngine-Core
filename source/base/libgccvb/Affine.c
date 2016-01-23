@@ -106,7 +106,6 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = 0;
 
-#define	__MAXIMUM_AFFINE_ROWS_PER_CALL	24
 	for(; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i++, counter++)
 	{
 		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
