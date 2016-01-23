@@ -197,9 +197,10 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
 			// remove from the list
-			VirtualList_removeElement(this->shapes, (BYTE*) shape);
-			VirtualList_removeElement(this->shapes, (BYTE*) this->activeShapes);
-			VirtualList_removeElement(this->shapes, (BYTE*) this->movingShapes);
+			VirtualList_removeElement(this->shapes, shape);
+			VirtualList_removeElement(this->activeShapes, shape);
+			VirtualList_removeElement(this->movingShapes, shape);
+			VirtualList_removeElement(this->inactiveShapes, shape);
 
 			// delete it
 			__DELETE(shape);
@@ -241,6 +242,9 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 		return;
 	}
 	
+	// process removed shapes
+	CollisionManager_processRemovedShapes(this);
+
 	CollisionManager_processInactiveShapes(this);
 
 	VirtualNode node = this->movingShapes->head;
@@ -312,8 +316,6 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 		collidingObjects = NULL;
 	}
 
-	// process removed shapes
-	CollisionManager_processRemovedShapes(this);
 	
 	this->checkingCollisions = false;
 }
@@ -335,6 +337,7 @@ void CollisionManager_reset(CollisionManager this)
 	// empty the lists
 	VirtualList_clear(this->shapes);
 	VirtualList_clear(this->activeShapes);
+	VirtualList_clear(this->inactiveShapes);
 	VirtualList_clear(this->movingShapes);
 	VirtualList_clear(this->removedShapes);
 }
