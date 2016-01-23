@@ -154,6 +154,7 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 	this->position = *position;
 
 	this->renderFlag |= __UPDATE_G;
+	this->initialized = true;
 }
 
 void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
@@ -175,9 +176,11 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 	{
 		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
 		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
+		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
 	}
 	
 	this->renderFlag |= __UPDATE_G;
+	this->initialized = true;
 }
 
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z)
@@ -199,7 +202,7 @@ void ObjectSprite_render(ObjectSprite this)
 	//NM_ASSERT(!this->hidden, "ObjectSprite::render: hidden!");
 
 	// if render flag is set
-	if(this->renderFlag && 0 <= this->objectIndex)
+	if(this->renderFlag && 0 <= this->objectIndex && this->initialized)
 	{
 		if(this->hidden)
 		{

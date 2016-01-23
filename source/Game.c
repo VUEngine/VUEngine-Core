@@ -358,7 +358,7 @@ static void Game_setNextState(Game this, GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this))));
+				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 			

@@ -372,14 +372,19 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 	for(; node; node = node->previous)
 	{
-		if((__SAFE_CAST(Sprite, node->data))->worldLayer != layer)
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		
+		if(sprite->worldLayer != layer)
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, node->data));
+			__VIRTUAL_CALL(void, Sprite, hide, sprite);
 		}
 		else
 		{
-			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
+			__VIRTUAL_CALL(void, Sprite, show, sprite);
 		}
+
+		// force rendering
+		sprite->initialized = true;
 	}
 }
 
@@ -391,7 +396,12 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	VirtualNode node = this->sprites->tail;
 	for(; node; node = node->previous)
 	{
-		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+		__VIRTUAL_CALL(void, Sprite, show, sprite);
+	
+		// force rendering
+		sprite->initialized = true;
 	}
 	
 	SpriteManager_setLastLayer(this);

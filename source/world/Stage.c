@@ -1052,7 +1052,7 @@ void Stage_suspend(Stage this)
 	// relinquish screen focus priority
 	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
 	{
-		if(this->focusInGameEntity == __SAFE_CAST(Entity, Screen_getFocusInGameEntity(Screen_getInstance())))
+		if(this->focusInGameEntity == Screen_getFocusInGameEntity(Screen_getInstance()))
 		{
 			// relinquish focus entity
 		    Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
