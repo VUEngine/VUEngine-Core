@@ -55,6 +55,7 @@ extern const Optical* _optical;
 
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
 static void Entity_releaseSprites(Entity this);
+static void Entity_updateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition);
 
 VBVec3D centerDisplacement;
 //---------------------------------------------------------------------------------------------------------
@@ -796,8 +797,8 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 	}
 }
 
-// transform sprites
-void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition)
+// update sprites
+static void Entity_updateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -875,7 +876,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	}
 	
 	// force sprite translation
-	Entity_translateSprites(this, true, true);
+	Entity_updateSprites(this, true, true);
 
 	if(this->hidden)
 	{
@@ -898,7 +899,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
-
+	
 	bool updateSpritePosition = false;
 	bool updateSpriteTransformations = false;
 
@@ -922,7 +923,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	if(updateSpritePosition || updateSpriteTransformations)
 	{
 		// update graphical representation
-		Entity_translateSprites(this, updateSpriteTransformations, updateSpritePosition);
+		Entity_updateSprites(this, updateSpriteTransformations, updateSpritePosition);
 	}
 
 	/*
@@ -1214,7 +1215,7 @@ void Entity_resume(Entity this)
 	if(this->entityDefinition)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
-		Entity_translateSprites(this, true, true);
+		Entity_updateSprites(this, true, true);
 	}
 	
 	if(this->hidden)

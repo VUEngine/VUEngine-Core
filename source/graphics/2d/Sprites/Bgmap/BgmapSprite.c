@@ -343,6 +343,10 @@ void BgmapSprite_render(BgmapSprite this)
 				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
 				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __WORLD_SIZE_DISPLACEMENT;
 				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __WORLD_SIZE_DISPLACEMENT;
+
+				// start writing to affine table right away
+				this->paramTableRow = 0;
+				BgmapSprite_doApplyAffineTransformations(this);
 			}
 			else
 			{

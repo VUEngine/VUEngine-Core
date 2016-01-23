@@ -129,8 +129,10 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		this->transform.globalPosition.z += displacement.z;
 
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
-		
-		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
+	
+		this->invalidateGlobalPosition.x = displacement.x;
+		this->invalidateGlobalPosition.y = displacement.y;
+		this->invalidateGlobalPosition.z = displacement.z;
 	}
 }
 
@@ -531,10 +533,10 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
     {
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 		
-		Entity_translateSprites(__SAFE_CAST(Entity, this), displacement.x || displacement.y || displacement.z, displacement.x || displacement.y || displacement.z);
+		this->invalidateGlobalPosition.x = displacement.x;
+		this->invalidateGlobalPosition.y = displacement.y;
+		this->invalidateGlobalPosition.z = displacement.z;
 	}
-	
-	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
 }
 
 // retrieve global position
