@@ -429,7 +429,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 			else
 			{
 				worldPointer->gx -= (this->drawSpec.position.parallax);
-				worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
+				worldPointer->w = __SCREEN_WIDTH - 1 + (this->drawSpec.position.parallax << 1);
 			}
 
 			if(!this->mSpriteDefinition->yLoop)
@@ -439,7 +439,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 			}
 			else
 			{
-				worldPointer->h = __SCREEN_HEIGHT;
+				worldPointer->h = __SCREEN_HEIGHT - 1;
 			}
 		}
 
