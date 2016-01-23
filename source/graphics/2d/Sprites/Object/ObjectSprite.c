@@ -209,7 +209,7 @@ void ObjectSprite_render(ObjectSprite this)
 	//NM_ASSERT(!this->hidden, "ObjectSprite::render: hidden!");
 
 	// if render flag is set
-	if(this->renderFlag && 0 <= this->objectIndex && this->initialized)
+	if(this->renderFlag && 0 <= this->objectIndex)
 	{
 		if(this->hidden)
 		{
@@ -226,6 +226,11 @@ void ObjectSprite_render(ObjectSprite this)
 			return;
 		}
 		
+		if(!this->initialized)
+		{
+		//	return;
+		}
+
 		int cols = Texture_getCols(__SAFE_CAST(Texture, this->texture));
 		int rows = Texture_getRows(__SAFE_CAST(Texture, this->texture));
 

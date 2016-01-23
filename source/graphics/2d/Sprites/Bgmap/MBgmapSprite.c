@@ -186,8 +186,6 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 	
 	MBgmapSprite_setPosition(this, &position2D);
-	
-	this->initialized = true;
 }
 
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
@@ -236,6 +234,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	}
 
 	this->renderFlag |= __UPDATE_G | __UPDATE_M;
+	this->initialized = true;
 }
 
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement)

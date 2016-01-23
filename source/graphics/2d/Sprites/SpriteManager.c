@@ -383,10 +383,11 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 		{
 			__VIRTUAL_CALL(void, Sprite, show, sprite);
 		}
-
-		// force rendering
-		sprite->initialized = true;
 		
+		// force inialization
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+		__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
+
 		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
 }
@@ -403,8 +404,10 @@ void SpriteManager_recoverLayers(SpriteManager this)
 
 		__VIRTUAL_CALL(void, Sprite, show, sprite);
 	
-		// force rendering
-		sprite->initialized = true;
+		// force inialization
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+		__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
+
 		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
 	

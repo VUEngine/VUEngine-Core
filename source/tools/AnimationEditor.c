@@ -14,7 +14,7 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-//#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_EDITOR
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -835,4 +835,4 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this)
 }
 
 
-//#endif
+#endif

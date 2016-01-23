@@ -252,13 +252,29 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 {
 	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
 
+	if(this->objectSprites)
+	{
+		VirtualNode node = this->objectSprites->head;
+	
+		for(; node; node = node->next)
+		{
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			
+			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+			__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
+		}
+	}
+
 	this->z = position->z;
 	this->renderFlag |= __UPDATE_G;
+	this->initialized = true;
 }
 
 void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position)
 {
 	ASSERT(this, "ObjectSpriteContainer::position: null this");
+
+	this->initialized = true;
 }
 
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z)
@@ -398,6 +414,8 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 	}
 	
 	this->renderFlag = true;
+	this->hidden = false;
+	this->initialized = false;
 }
 
 void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
@@ -414,6 +432,8 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, node->data));
 		}
 	}
+	
+	this->hidden = true;
 }
 
 u16 ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
