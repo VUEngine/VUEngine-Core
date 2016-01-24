@@ -99,11 +99,11 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 	
 	VirtualNode node = this->textureRegistries->head;
 
-	TextureRegistry* textureRegistry = NULL;
+	TextureRegistry* selectedTextureRegistry = NULL;
 
 	for(; node; node = node->next)
 	{
-		textureRegistry = (TextureRegistry*)node->data;
+		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
 		if(!Texture_getCharSet(textureRegistry->texture))
 		{
@@ -111,28 +111,34 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 				textureDefinition->rows <= textureRegistry->rows
 			)
 			{
-				break;
+				if(!selectedTextureRegistry)
+				{
+					selectedTextureRegistry = textureRegistry;
+				}
+				else if(textureDefinition->cols == textureRegistry->cols && textureDefinition->rows == textureRegistry->rows)
+				{
+					selectedTextureRegistry = textureRegistry;
+					break;
+				}
 			}
 		}
-		
-		textureRegistry = NULL;
 	}
 	
-	if(textureRegistry)
+	if(selectedTextureRegistry)
 	{
 		// free texture found, so replace it
-		Texture_setDefinition(textureRegistry->texture, textureDefinition);
-		Texture_setPalette(textureRegistry->texture, textureDefinition->palette);
-		Texture_rewrite(textureRegistry->texture);
+		Texture_setDefinition(selectedTextureRegistry->texture, textureDefinition);
+		Texture_setPalette(selectedTextureRegistry->texture, textureDefinition->palette);
+		Texture_rewrite(selectedTextureRegistry->texture);
 	}
 	else 
 	{
 		// texture not found, must load it
-		textureRegistry = __NEW_BASIC(TextureRegistry);
-		textureRegistry->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
-		textureRegistry->cols = textureDefinition->cols;
-		textureRegistry->rows = textureDefinition->rows;
-		VirtualList_pushBack(this->textureRegistries, textureRegistry);
+		selectedTextureRegistry = __NEW_BASIC(TextureRegistry);
+		selectedTextureRegistry->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
+		selectedTextureRegistry->cols = textureDefinition->cols;
+		selectedTextureRegistry->rows = textureDefinition->rows;
+		VirtualList_pushBack(this->textureRegistries, selectedTextureRegistry);
 	}
 }
 
