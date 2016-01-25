@@ -91,6 +91,19 @@ __CLASS(Stage);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+
+// defines a game world in ROM memory
+typedef struct StageTextureEntryDefinition
+{
+	TextureDefinition* textureDefinition;
+
+	// is a managed texture
+	bool isManaged;
+	
+} StageTextureEntryDefinition;
+
+typedef const StageTextureEntryDefinition StageTextureEntryROMDef;
+
 // defines a game world in ROM memory
 typedef struct StageDefinition
 {
@@ -139,7 +152,7 @@ typedef struct StageDefinition
 	CharSetDefinition** charSets;
 
 	// textures for preloading
-	TextureDefinition** textures;
+	StageTextureEntryDefinition* stageTextureEntryDefinitions;
 
 	// UI's definition
 	UIDefinition uiDefinition;

@@ -92,7 +92,7 @@ void MBackgroundManager_destructor(MBackgroundManager this)
 }
 
 // register coin
-void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefinition* textureDefinition)
+Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefinition* textureDefinition)
 {
 	ASSERT(this, "MBackgroundManager::registerTexture: null this");
 	ASSERT(textureDefinition, "MBackgroundManager::registerTexture: null texture definition");
@@ -140,6 +140,8 @@ void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefiniti
 		selectedTextureRegistry->rows = textureDefinition->rows;
 		VirtualList_pushBack(this->textureRegistries, selectedTextureRegistry);
 	}
+	
+	return selectedTextureRegistry? selectedTextureRegistry->texture : NULL;
 }
 
 // remove background

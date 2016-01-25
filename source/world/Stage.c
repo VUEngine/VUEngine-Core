@@ -32,6 +32,8 @@
 #include <Texture.h>
 #include <ParamTableManager.h>
 #include <VPUManager.h>
+#include <MBackgroundManager.h>
+
 #include <debugConfig.h>
 
 
@@ -537,19 +539,37 @@ static void Stage_preloadAssets(Stage this)
 		}
 	}
 
-	if(this->stageDefinition->textures)
+	if(this->stageDefinition->stageTextureEntryDefinitions)
 	{
-		for (i = 0; this->stageDefinition->textures[i]; i++)
+		VirtualList managedTextures = __NEW(VirtualList);
+		
+		for (i = 0; this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->textures[i]->charSetDefinition->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
 			{
-				BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->textures[i]);
+				if(this->stageDefinition->stageTextureEntryDefinitions[i].isManaged)
+				{
+					VirtualList_pushBack(managedTextures, MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition));
+				}
+				else
+				{
+					BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition);
+				}
 			}
 			else
 			{
 				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
 			}
 		}
+
+		VirtualNode node = managedTextures->head;
+		
+		for(; node; node = node->next)
+		{
+			MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), __SAFE_CAST(Texture, node->data));
+		}
+
+		__DELETE(managedTextures);
 	}
 
 	BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager_getInstance(), this->stageDefinition->spareBgmapSegments);

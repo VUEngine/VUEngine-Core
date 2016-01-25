@@ -21,8 +21,12 @@
 
 #include <VPUManager.h>
 #include <HardwareManager.h>
-#include <SpriteManager.h>
 #include <Game.h>
+#include <FrameRate.h>
+#include <ParamTableManager.h>
+#include <CharSetManager.h>
+#include <SpriteManager.h>
+
 #include <debugConfig.h>
 
 
@@ -62,6 +66,12 @@ volatile u16* VIP_REGS = (u16*)0x0005F800;
 																										\
 	/* super's attributes */																			\
 	Object_ATTRIBUTES;																					\
+																										\
+	/* DRAM managers */																					\
+	FrameRate frameRate;																				\
+	ParamTableManager paramTableManager;																\
+	CharSetManager charSetManager;																		\
+	SpriteManager spriteManager;																		\
 
 // define the VPUManager
 __CLASS_DEFINITION(VPUManager, Object);
@@ -90,6 +100,12 @@ static void VPUManager_constructor(VPUManager this)
 	ASSERT(this, "VPUManager::constructor: null this");
 
 	__CONSTRUCT_BASE();
+	
+	this->frameRate = FrameRate_getInstance();
+	this->paramTableManager = ParamTableManager_getInstance();
+	this->charSetManager = CharSetManager_getInstance();
+	this->spriteManager = SpriteManager_getInstance();
+
 }
 
 // class's destructor
@@ -161,8 +177,21 @@ void VPUManager_interruptHandler(void)
 
 		while (VIP_REGS[XPSTTS] & XPBSYR);
 		
+		VPUManager this = VPUManager_getInstance();
+		
+		// if performance was good enough in the 
+		// the previous second do some defragmenting
+		if(FrameRate_isFPSHigh(this->frameRate))
+		{
+			if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
+			{
+				CharSetManager_defragmentProgressively(this->charSetManager);
+				// TODO: bgmap memory defragmentation
+			}
+		}
+
 		// write to VRAM
-		SpriteManager_render(SpriteManager_getInstance());
+		SpriteManager_render(this->spriteManager);
 		
 		// enable drawing
 		while (VIP_REGS[XPSTTS] & XPBSYR);

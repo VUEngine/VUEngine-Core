@@ -46,7 +46,7 @@ __CLASS(MBackgroundManager);
 MBackgroundManager MBackgroundManager_getInstance();
 
 void MBackgroundManager_destructor(MBackgroundManager this);
-void MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefinition* textureDefinition);
+Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefinition* textureDefinition);
 void MBackgroundManager_removeTexture(MBackgroundManager this, Texture texture);
 void MBackgroundManager_reset(MBackgroundManager this);
 

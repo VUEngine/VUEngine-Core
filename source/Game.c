@@ -85,8 +85,6 @@ enum GameCurrentProcess
 	kGameUpdatingStageMachineDone,
 	kGameUpdatingPhysics,
 	kGameUpdatingPhysicsDone,
-	kGameCleaningUp,
-	kGameCleaningUpDone,
 	kGameCheckingForNewState,
 	kGameCheckingForNewStateDone,
 };
@@ -162,7 +160,6 @@ static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
 static void Game_updateTransformations(Game this);
 static void Game_checkForNewState(Game this);
-static void Game_cleanUp(Game this);
 static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
 static void Game_checkLowBattery(Game this, u16 keyPressed);
@@ -757,35 +754,6 @@ static void Game_updateTransformations(Game this)
 #endif
 }
 
-// do defragmentation, memory recovery, etc
-static void Game_cleanUp(Game this)
-{
-	this->currentProcess = kGameCleaningUp;
-#ifdef __DEBUG
-	this->lastProcessName = "update param table";
-#endif
-#ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-#ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(this))
-#endif
-	if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
-	{
-#ifdef __DEBUG
-		this->lastProcessName = "defragmenting";
-#endif
-		CharSetManager_defragmentProgressively(this->charSetManager);
-		
-		// TODO: bgmap memory defragmentation
-	}
-	
-	this->currentProcess = kGameCleaningUpDone;
-}
-
 static void Game_checkForNewState(Game this)
 {
 	ASSERT(this, "Game::checkForNewState: null this");
@@ -805,19 +773,13 @@ static void Game_checkForNewState(Game this)
 	this->currentProcess = kGameCheckingForNewStateDone;
 }
 
-#include <Body.h>
 // update game's subsystems
 static void Game_update(Game this)
 {
 	ASSERT(this, "Game::update: null this");
 
-#ifdef __DEBUG
-	char* previousLastProcessName = NULL;
-#endif
-
 	while (true)
 	{
-		
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -849,13 +811,6 @@ static void Game_update(Game this)
 		// needs to be changed
 		Game_checkForNewState(this);
 
-		// if performance was good enough in the 
-		// the previous second do some defragmenting
-		if(!FrameRate_getFPS(this->frameRate) && FrameRate_isFPSHigh(this->frameRate))
-		{
-			Game_cleanUp(this);
-		}
-		
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(this->frameRate);
 #endif
