@@ -147,7 +147,7 @@ void Container_destructor(Container this)
 		__DELETE_BASIC(this->name);
 	}
 	
-	Object_fireEvent(this, __EVENT_CONTAINER_DELETED);
+	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_CONTAINER_DELETED);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
