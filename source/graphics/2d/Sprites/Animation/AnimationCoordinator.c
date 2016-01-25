@@ -52,12 +52,10 @@ void AnimationCoordinator_constructor(AnimationCoordinator this, CharSet charSet
 void AnimationCoordinator_destructor(AnimationCoordinator this)
 {
 	ASSERT(this, "AnimationCoordinator::destructor: null this");
+	ASSERT(this->animationControllers, "AnimationCoordinator::destructor: null animationControllers");
 
-	if(this->animationControllers) 
-	{
-		__DELETE(this->animationControllers);
-		this->animationControllers = NULL;
-	}
+	__DELETE(this->animationControllers);
+	this->animationControllers = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor

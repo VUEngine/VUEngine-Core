@@ -86,9 +86,6 @@ void StateMachine_destructor(StateMachine this)
 		__DELETE(node->data);
 	}
 
-	// empty the list
-	VirtualList_clear(this->stateStack);
-
 	// deallocate the list
 	__DELETE(this->stateStack);
 

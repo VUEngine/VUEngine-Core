@@ -99,7 +99,7 @@ void ClockManager_destructor(ClockManager this)
 	}
 
 	// clear my list
-	VirtualList_clear(this->clocks);
+	__DELETE(this->clocks);
 
 	// allow a new construct
 	__SINGLETON_DESTROY;

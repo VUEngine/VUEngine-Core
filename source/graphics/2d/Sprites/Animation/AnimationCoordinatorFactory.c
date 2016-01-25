@@ -71,6 +71,7 @@ static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory 
 void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::destructor: null this");
+	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
 	
 	AnimationCoordinatorFactory_reset(this);
 	__DELETE(this->animationCoordinators);

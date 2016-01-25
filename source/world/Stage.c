@@ -573,7 +573,7 @@ static void Stage_preloadAssets(Stage this)
 	}
 
 	BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager_getInstance(), this->stageDefinition->spareBgmapSegments);
-
+while(1);
 	if(0 < i)
 	{
 		BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());

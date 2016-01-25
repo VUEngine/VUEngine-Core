@@ -105,23 +105,21 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt, u16 t
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
+	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
 	// remove from sprite manager
 	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 
-	if(this->objectSprites)
+	VirtualNode node = this->objectSprites->head;
+
+	for(; node; node = node->next)
 	{
-		VirtualNode node = this->objectSprites->head;
-
-		for(; node; node = node->next)
-		{
-			ObjectSprite_invalidateObjectSpriteContainer(__SAFE_CAST(ObjectSprite, node->data));
-			__DELETE(node->data);
-		}
-
-		__DELETE(this->objectSprites);
-		this->objectSprites = NULL;
+		ObjectSprite_invalidateObjectSpriteContainer(__SAFE_CAST(ObjectSprite, node->data));
+		__DELETE(node->data);
 	}
+
+	__DELETE(this->objectSprites);
+	this->objectSprites = NULL;
 	
 	// destroy the super object
 	// must always be called at the end of the destructor
