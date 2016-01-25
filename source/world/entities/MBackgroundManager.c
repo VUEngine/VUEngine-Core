@@ -120,6 +120,10 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 					selectedTextureRegistry = textureRegistry;
 					break;
 				}
+				else if(textureRegistry->cols <= selectedTextureRegistry->cols && textureRegistry->rows <= selectedTextureRegistry->rows)
+				{
+					selectedTextureRegistry = textureRegistry;
+				}
 			}
 		}
 	}
