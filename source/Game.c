@@ -110,17 +110,8 @@ enum GameCurrentProcess
 																										\
 	/* managers */																						\
 	ClockManager clockManager;																			\
-	HardwareManager hardwareManager;																	\
-	FrameRate frameRate;																				\
-	BgmapTextureManager bgmapTextureManager;															\
-	CharSetManager charSetManager;																		\
-	SoundManager soundManager;																			\
-	ParamTableManager paramTableManager;																\
-	SpriteManager spriteManager;																		\
 	KeypadManager keypadManager;																		\
 	VPUManager vpuManager;																				\
-	DirectDraw directDraw;																				\
-	I18n i18n;																							\
 	Screen screen;																						\
 																										\
 	/* game's next state */																				\
@@ -212,18 +203,18 @@ static void Game_constructor(Game this)
 	this->isShowingLowBatteryIndicator = false;
 
 	// make sure all managers are initialized now
-	this->frameRate  = FrameRate_getInstance();
-	this->hardwareManager = HardwareManager_getInstance();
-	this->bgmapTextureManager = BgmapTextureManager_getInstance();
-	this->paramTableManager =  ParamTableManager_getInstance();
-	this->charSetManager = CharSetManager_getInstance();
 	this->screen = Screen_getInstance();
-	this->soundManager = SoundManager_getInstance();
-	this->spriteManager = SpriteManager_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
-	this->directDraw = DirectDraw_getInstance();
-	this->i18n = I18n_getInstance();
+	SoundManager_getInstance();
+	CharSetManager_getInstance();
+	BgmapTextureManager_getInstance();
+	FrameRate_getInstance();
+	HardwareManager_getInstance();
+	SpriteManager_getInstance();
+	DirectDraw_getInstance();
+	I18n_getInstance();
+	ParamTableManager_getInstance();
 	
 	// to make debugging easier
 #ifndef __DEBUG
@@ -256,16 +247,16 @@ void Game_initialize(Game this)
 	ASSERT(this, "Game::initialize: null this");
 
 	// setup vectorInterrupts
-	HardwareManager_setInterruptVectors(this->hardwareManager);
+	HardwareManager_setInterruptVectors(HardwareManager_getInstance());
 
 	// make sure timer interrupts are enable
-	HardwareManager_initializeTimer(this->hardwareManager);
+	HardwareManager_initializeTimer(HardwareManager_getInstance());
 
     // set waveform data
-    SoundManager_setWaveForm(this->soundManager);
+    SoundManager_setWaveForm(SoundManager_getInstance());
 
 	// clear sprite memory
-    HardwareManager_clearScreen(this->hardwareManager);
+    HardwareManager_clearScreen(HardwareManager_getInstance());
     
 	// start the game's general clock
 	Clock_start(this->clock);
@@ -280,8 +271,8 @@ void Game_start(Game this, GameState state)
 	// intialize SRAM
 	SRAMManager_getInstance();
 
-	HardwareManager_displayOn(this->hardwareManager);
-    HardwareManager_lowerBrightness(this->hardwareManager);
+	HardwareManager_displayOn(HardwareManager_getInstance());
+    HardwareManager_lowerBrightness(HardwareManager_getInstance());
 
 	if(!StateMachine_getCurrentState(this->stateMachine))
 	{
@@ -342,7 +333,7 @@ static void Game_setNextState(Game this, GameState state)
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
 	// set waveform data
-    SoundManager_setWaveForm(this->soundManager);
+    SoundManager_setWaveForm(SoundManager_getInstance());
 
     switch(this->nextStateOperation)
     {
@@ -392,13 +383,13 @@ static void Game_setNextState(Game this, GameState state)
 
     // TODO: crashes on Mednafen
     // enable hardware pad read
-    //HardwareManager_enableKeypad(this->hardwareManager);
+    //HardwareManager_enableKeypad(HardwareManager_getInstance());
 
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
 
 	// disable rendering
-	HardwareManager_enableRendering(this->hardwareManager);
+	HardwareManager_enableRendering(HardwareManager_getInstance());
 
 	// if automatic pause function is in place
 	if(this->automaticPauseState)
@@ -432,7 +423,7 @@ void Game_enableHardwareInterrupts(Game this)
 	ASSERT(this, "Game::enableHardwareInterrupts: null this");
 
 	// enable rendering
-	HardwareManager_enableRendering(this->hardwareManager);
+	HardwareManager_enableRendering(HardwareManager_getInstance());
 }
 
 // erase engine's current status
@@ -445,17 +436,17 @@ void Game_reset(Game this)
 #endif
 	
 	// setup the display
-    HardwareManager_clearScreen(this->hardwareManager);
-	HardwareManager_setupColumnTable(this->hardwareManager);
-    HardwareManager_displayOn(this->hardwareManager);
-    HardwareManager_lowerBrightness(this->hardwareManager);
+    HardwareManager_clearScreen(HardwareManager_getInstance());
+	HardwareManager_setupColumnTable(HardwareManager_getInstance());
+    HardwareManager_displayOn(HardwareManager_getInstance());
+    HardwareManager_lowerBrightness(HardwareManager_getInstance());
 
 	// reset managers
     Screen_setFocusInGameEntity(this->screen, NULL);
-	BgmapTextureManager_reset(this->bgmapTextureManager);
-	CharSetManager_reset(this->charSetManager);
-	ParamTableManager_reset(this->paramTableManager);
-	SpriteManager_reset(this->spriteManager);
+	BgmapTextureManager_reset(BgmapTextureManager_getInstance());
+	CharSetManager_reset(CharSetManager_getInstance());
+	ParamTableManager_reset(ParamTableManager_getInstance());
+	SpriteManager_reset(SpriteManager_getInstance());
 	MBackgroundManager_reset(MBackgroundManager_getInstance());
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
 
@@ -812,7 +803,7 @@ static void Game_update(Game this)
 		Game_checkForNewState(this);
 
 #ifdef __PRINT_FRAMERATE
-		FrameRate_increaseFPS(this->frameRate);
+		FrameRate_increaseFPS(FrameRate_getInstance());
 #endif
 		
 	}
