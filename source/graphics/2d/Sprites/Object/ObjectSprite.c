@@ -203,10 +203,7 @@ void ObjectSprite_render(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
-	ASSERT(0 <= this->objectIndex, "ObjectSprite::render: 0 > this->objectIndex");
 	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
-
-	//NM_ASSERT(!this->hidden, "ObjectSprite::render: hidden!");
 
 	// if render flag is set
 	if(this->renderFlag && 0 <= this->objectIndex)

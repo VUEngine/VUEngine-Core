@@ -257,8 +257,10 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	}
 
 	this->checkingCollisions = true;
+	
 	// check the shapes
 	node = this->movingShapes->head;
+	
 	for(; node; node = node->next)
 	{
 		// load the current shape
@@ -316,7 +318,6 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 		collidingObjects = NULL;
 	}
 
-	
 	this->checkingCollisions = false;
 }
 
@@ -379,6 +380,7 @@ void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape)
 	if(!VirtualList_find(this->activeShapes, shape))
 	{
 		VirtualList_pushBack(this->activeShapes, shape);
+		VirtualList_removeElement(this->inactiveShapes, shape);
 	}
 }
 

@@ -54,6 +54,9 @@
 																				\
 	/* next world layer	*/														\
 	s8 freeLayer;																\
+																				\
+	/* flag to stop sorting while recovering layers	*/							\
+	s8 recoveringLayers;														\
 
 __CLASS_DEFINITION(SpriteManager, Object);
 
@@ -86,6 +89,7 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->nextNode = NULL;
 
 	this->sprites = NULL;
+	this->recoveringLayers = false;
 
 	SpriteManager_reset(this);
 }
@@ -282,17 +286,24 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 			}
 		}
 
+		// block sorting
+		this->recoveringLayers = true;
+		
 		for(; node; node = node->previous)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 			
-			ASSERT(spriteLayer == sprite->worldLayer + 1, "SpriteManager::removeSprite: wrong layers");
+			NM_ASSERT(spriteLayer == sprite->worldLayer + 1, "SpriteManager::removeSprite: wrong layers");
 
 			spriteLayer--;
 			
 			// move the sprite to the freed layer
 			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
 		}
+		
+		// allow sorting
+		this->recoveringLayers = false;
+
 		
 		// sorting needs to restart
 		this->node = NULL;
@@ -335,8 +346,11 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	// z sorting
-	SpriteManager_sortLayersProgressively(this);
+	if(!this->recoveringLayers)
+	{
+		// z sorting
+		SpriteManager_sortLayersProgressively(this);
+	}
 	
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
