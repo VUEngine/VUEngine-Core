@@ -548,9 +548,9 @@ void Container_setLocalPosition(Container this, const VBVec3D* position)
 	ASSERT(this, "Container::setLocalPosition: null this");
 
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalPosition.x = this->transform.localPosition.x != position->x;
-	this->invalidateGlobalPosition.y = this->transform.localPosition.y != position->y;
-	this->invalidateGlobalPosition.z = this->transform.localPosition.z != position->z;
+	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.x || this->transform.localPosition.x != position->x;
+	this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.y || this->transform.localPosition.y != position->y;
+	this->invalidateGlobalPosition.z = this->invalidateGlobalPosition.z || this->transform.localPosition.z != position->z;
 
 	this->transform.localPosition = *position;
 

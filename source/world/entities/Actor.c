@@ -142,11 +142,16 @@ void Actor_syncPositionWithBody(Actor this)
 
 	// retrieve the body's displacement
 	VBVec3D bodyLastDisplacement = {0, 0, 0};
+	
+	u8 axisToInvalidateGlobalPosition = 0;
 
 	if(!Clock_isPaused(Game_getPhysicsClock(Game_getInstance())) && Body_isActive(this->body))
 	{
 		bodyLastDisplacement = Body_getLastDisplacement(this->body);
+		
+		axisToInvalidateGlobalPosition |= Body_isMoving(this->body);
 	}
+	
 	// modify the global position accorging to the body's displacement
 	VBVec3D globalPosition = this->transform.globalPosition;
 	globalPosition.x += bodyLastDisplacement.x;
@@ -196,15 +201,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 
 	if(this->body)
 	{
-		u8 bodyMovement = Body_isMoving(this->body);
-
 		Actor_syncPositionWithBody(this);
-
-		if(bodyMovement)
-		{
-			// since body is moving
-			Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), bodyMovement);
-		}
     }
 	
 	// call base
