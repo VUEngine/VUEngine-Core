@@ -201,7 +201,6 @@ void Cuboid_position(Cuboid this)
 	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y - ITOFIX19_13(gap.down);
 	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z;
 
-#define __LIGHT_SPEED		ITOFIX19_13(50000)
 	VBVec3D lorentzFactor = 
 	{
 		FIX19_13_DIV(velocity.x, __LIGHT_SPEED),
@@ -257,7 +256,6 @@ u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, 
 	return 0;
 }
 
-#include <InGameEntity.h>
 // determine axis of collision
 static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*))
 {
