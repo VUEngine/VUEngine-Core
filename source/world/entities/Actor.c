@@ -116,24 +116,24 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
 	VBVec3D displacement = this->transform.localPosition;
-	Entity_setLocalPosition(__SAFE_CAST(Entity, this), position);
+	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
+
+	displacement.x -= this->transform.localPosition.x;
+	displacement.y -= this->transform.localPosition.y;
+	displacement.z -= this->transform.localPosition.z;		
+
+	this->transform.globalPosition.x += displacement.x;
+	this->transform.globalPosition.y += displacement.y;
+	this->transform.globalPosition.z += displacement.z;
 
 	if(this->body)
     {
-		displacement.x -= this->transform.localPosition.x;
-		displacement.y -= this->transform.localPosition.y;
-		displacement.z -= this->transform.localPosition.z;		
-
-		this->transform.globalPosition.x += displacement.x;
-		this->transform.globalPosition.y += displacement.y;
-		this->transform.globalPosition.z += displacement.z;
-
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
-	
-		this->invalidateGlobalPosition.x = displacement.x;
-		this->invalidateGlobalPosition.y = displacement.y;
-		this->invalidateGlobalPosition.z = displacement.z;
-	}
+    }	
+
+	this->invalidateGlobalPosition.x = displacement.x;
+	this->invalidateGlobalPosition.y = displacement.y;
+	this->invalidateGlobalPosition.z = displacement.z;
 }
 
 void Actor_syncPositionWithBody(Actor this)

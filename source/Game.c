@@ -669,7 +669,6 @@ inline static void Game_updateLogic(Game this)
 	// process user's input
 	Game_handleInput(this);
 
-
 #ifdef __DEBUG
 	this->lastProcessName = "update state machines";
 #endif
@@ -807,26 +806,21 @@ static void Game_update(Game this)
 	    while(!(VIP_REGS[INTPND] & GAMESTART)); 
 	    VIP_REGS[INTCLR]= GAMESTART;
 
-	    // the engine's game logic is free of racing 
-	    // conditions against the VPU
-	    Game_updateVisuals(this);
-
 		// update each subsystem
 #if __FRAME_CYCLE == 1
 	    if(cycle)
 	    {
 #endif
+	    // the engine's game logic is free of racing 
+	    // conditions against the VPU
+	    Game_updateVisuals(this);
+
 		// this is the moment to check if the game's state
 		// needs to be changed
 		Game_checkForNewState(this);
 
 	    // update game's logic
 	    Game_updateLogic(this);
-		
-		// physics' update takes place after game's logic
-		// has been done
-		Game_updatePhysics(this);
-		
 		// this is the point were the main game's subsystems
 		// have done all their work
 		// at this point save the current time on each 
@@ -839,9 +833,13 @@ static void Game_update(Game this)
 	    else
 	    {
 #endif
-	    // apply transformations from the previous frame
+		// physics' update takes place after game's logic
+		// has been done
+		Game_updatePhysics(this);
+
+	    // apply transformations
 	    Game_updateTransformations(this);
-	    
+
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(FrameRate_getInstance());
 #endif
