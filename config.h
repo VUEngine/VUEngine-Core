@@ -101,7 +101,7 @@
 #define __OPTIMUM_FPS 							(__TARGET_FPS >> __FRAME_CYCLE)
 
 // target frames per second
-#define __MINIMUM_GOOD_FPS 						(__TARGET_FPS - 0)
+#define __MINIMUM_GOOD_FPS 						(__TARGET_FPS - 2)
 
 
 
@@ -127,8 +127,10 @@
 // only use for debugging, proper object's initialization must make this macro unnecessary
 #undef __MEMORY_POOL_CLEAN_UP
 
-#define __MEMORY_POOLS							14
+#undef __MEMORY_POOLS
+#define __MEMORY_POOLS							15
 
+#undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
 	__BLOCK_DEFINITION(192, 1)																			\
 	__BLOCK_DEFINITION(160, 4)																			\
@@ -137,14 +139,16 @@
 	__BLOCK_DEFINITION(120, 32)																			\
 	__BLOCK_DEFINITION(112, 12)																			\
 	__BLOCK_DEFINITION(104, 10)																			\
-	__BLOCK_DEFINITION(100, 32)																			\
+	__BLOCK_DEFINITION(100, 16)																			\
+	__BLOCK_DEFINITION(92, 24)																			\
 	__BLOCK_DEFINITION(84, 30)																			\
 	__BLOCK_DEFINITION(76, 8)																			\
-	__BLOCK_DEFINITION(68, 50)																			\
+	__BLOCK_DEFINITION(68, 55)																			\
 	__BLOCK_DEFINITION(28, 270)																			\
 	__BLOCK_DEFINITION(20, 600)																			\
 	__BLOCK_DEFINITION(16, 280)	
 
+#undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
 	__SET_MEMORY_POOL_ARRAY(192)																		\
 	__SET_MEMORY_POOL_ARRAY(160)																		\
@@ -154,12 +158,13 @@
 	__SET_MEMORY_POOL_ARRAY(112)																		\
 	__SET_MEMORY_POOL_ARRAY(104)																			\
 	__SET_MEMORY_POOL_ARRAY(100)																			\
+	__SET_MEMORY_POOL_ARRAY(92)																			\
 	__SET_MEMORY_POOL_ARRAY(84)																			\
 	__SET_MEMORY_POOL_ARRAY(76)																			\
 	__SET_MEMORY_POOL_ARRAY(68)																			\
 	__SET_MEMORY_POOL_ARRAY(28)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
-	__SET_MEMORY_POOL_ARRAY(16)	
+	__SET_MEMORY_POOL_ARRAY(16)
 														\
 
 // percentage (0-100) above which the memory pool's status shows the pool usage
