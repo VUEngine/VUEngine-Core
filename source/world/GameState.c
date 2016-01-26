@@ -201,6 +201,9 @@ void GameState_resume(GameState this, void* owner)
 
 	// transform everything before showing up
 	GameState_transform(this);
+	
+	// set up visual representation
+	GameState_updateVisuals(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
@@ -315,6 +318,9 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// transform everything
 	GameState_transform(this);
+
+	// set up visual representation
+	GameState_updateVisuals(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance(), false);

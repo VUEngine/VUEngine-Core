@@ -300,15 +300,12 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(void, Container, initialTransform, this, &environmentTransform);
-	__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this);
 
 	if(this->ui)
 	{
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 		__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this->ui);
 	}
-	
-
 }
 
 // retrieve size
@@ -1129,6 +1126,7 @@ void Stage_resume(Stage this)
 		__VIRTUAL_CALL(void, Container, resume, __SAFE_CAST(Container, this->ui));
 		
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
+		__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this->ui);
 	}
 }
 
