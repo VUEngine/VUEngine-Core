@@ -1136,22 +1136,19 @@ void Game_enableKeypad(Game this)
 bool Game_doneDRAMPrecalculations(Game this)
 {
 	ASSERT(this, "Game::doneDRAMPrecalculations: null this");
-	return this->currentProcess != kGameTransforming && this->currentProcess != kGameCheckingCollisions;
+	return this->currentProcess != kGameUpdatingVisuals;
 }
 
 const char* Game_getDRAMPrecalculationsStep(Game this)
 {
 	switch(this->currentProcess)
 	{
-		case kGameTransforming:
+		case kGameUpdatingVisuals:
 			
-			return "Step: transforming";
-			break;
-		case kGameCheckingCollisions:
-			
-			return "Step: check collisions";
+			return "Step: updating visuals";
 			break;
 	}
+
 	return NULL;
 }
 #endif
