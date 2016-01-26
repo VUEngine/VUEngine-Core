@@ -876,8 +876,8 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 		Entity_calculateSize(this);
 	}
 	
-	// force sprite translation
-	Entity_updateSprites(this, true, true);
+	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
+	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 
 	if(this->hidden)
 	{

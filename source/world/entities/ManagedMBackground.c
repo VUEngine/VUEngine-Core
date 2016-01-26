@@ -23,9 +23,9 @@
 #include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
-#include <VPUManager.h>
 #include <MBgmapSprite.h>
-#include "ManagedMBackground.h"
+#include <ManagedMBackground.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -210,6 +210,11 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 
 	if(this->updateSprites)
 	{
+		if(this->updateSprites & __UPDATE_SPRITE_TRANSFORMATIONS)
+		{
+			Entity_updateVisualRepresentation(__SAFE_CAST(Entity, this));
+		}
+
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;

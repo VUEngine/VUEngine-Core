@@ -248,9 +248,9 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 				// when moving from one shape over another
 				Acceleration gravity =
 				{
-					gravitySensibleAxis & __XAXIS ? this->gravity.x: 0,
-					gravitySensibleAxis & __YAXIS ? this->gravity.y: 0,
-					gravitySensibleAxis & __ZAXIS ? this->gravity.z: 0
+					gravitySensibleAxis & __XAXIS ? this->gravity.x >> __FRAME_CYCLE: 0,
+					gravitySensibleAxis & __YAXIS ? this->gravity.y >> __FRAME_CYCLE: 0,
+					gravitySensibleAxis & __ZAXIS ? this->gravity.z >> __FRAME_CYCLE: 0
 				};
 				
 				if(gravity.x || gravity.y || gravity.z)

@@ -797,7 +797,7 @@ static void Game_update(Game this)
 	ASSERT(this, "Game::update: null this");
 
 #if __FRAME_CYCLE == 1
-	bool cycle = false;
+	bool cycle = true;
 #endif
 	while (true)
 	{
@@ -813,7 +813,7 @@ static void Game_update(Game this)
 
 		// update each subsystem
 #if __FRAME_CYCLE == 1
-	    if(!cycle)
+	    if(cycle)
 	    {
 #endif
 		// this is the moment to check if the game's state
@@ -834,7 +834,7 @@ static void Game_update(Game this)
 		// time afterwards
 		ClockManager_saveCurrentTime(this->clockManager);
 #if __FRAME_CYCLE == 1
-		cycle = true;
+		cycle = false;
 	    }
 	    else
 	    {
@@ -847,7 +847,7 @@ static void Game_update(Game this)
 #endif
 		
 #if __FRAME_CYCLE == 1
-		cycle = false;
+		cycle = true;
 	    }
 #endif
 	}
