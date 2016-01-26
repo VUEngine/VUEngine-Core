@@ -256,6 +256,16 @@ void GameState_transform(GameState this)
 	__VIRTUAL_CALL(void, Container, transform, this->stage, &environmentTransform);
 }
 
+// update level entities' positions
+void GameState_updateVisuals(GameState this)
+{
+	ASSERT(this, "GameState::updateVisuals: null this");
+	ASSERT(this->stage, "GameState::updateVisuals: null stage");
+
+	// then transform loaded entities
+	__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this->stage);
+}
+
 // propagate message to all entities in the level
 int GameState_propagateMessage(GameState this, int message)
 {

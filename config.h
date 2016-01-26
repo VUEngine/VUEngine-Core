@@ -130,14 +130,14 @@
 #define __MEMORY_POOLS							14
 
 #define __MEMORY_POOL_ARRAYS																			\
-	__BLOCK_DEFINITION(188, 1)																			\
-	__BLOCK_DEFINITION(156, 4)																			\
-	__BLOCK_DEFINITION(140, 6)																			\
-	__BLOCK_DEFINITION(132, 24)																			\
-	__BLOCK_DEFINITION(116, 6)																			\
-	__BLOCK_DEFINITION(112, 40)																			\
-	__BLOCK_DEFINITION(100, 12)																			\
-	__BLOCK_DEFINITION(96, 32)																			\
+	__BLOCK_DEFINITION(192, 1)																			\
+	__BLOCK_DEFINITION(160, 4)																			\
+	__BLOCK_DEFINITION(144, 6)																			\
+	__BLOCK_DEFINITION(136, 24)																			\
+	__BLOCK_DEFINITION(120, 32)																			\
+	__BLOCK_DEFINITION(112, 12)																			\
+	__BLOCK_DEFINITION(104, 10)																			\
+	__BLOCK_DEFINITION(100, 32)																			\
 	__BLOCK_DEFINITION(84, 30)																			\
 	__BLOCK_DEFINITION(76, 8)																			\
 	__BLOCK_DEFINITION(68, 50)																			\
@@ -146,20 +146,21 @@
 	__BLOCK_DEFINITION(16, 280)	
 
 #define __SET_MEMORY_POOL_ARRAYS																		\
-	__SET_MEMORY_POOL_ARRAY(188)																		\
-	__SET_MEMORY_POOL_ARRAY(156)																		\
-	__SET_MEMORY_POOL_ARRAY(140)																		\
-	__SET_MEMORY_POOL_ARRAY(132)																		\
-	__SET_MEMORY_POOL_ARRAY(116)																		\
+	__SET_MEMORY_POOL_ARRAY(192)																		\
+	__SET_MEMORY_POOL_ARRAY(160)																		\
+	__SET_MEMORY_POOL_ARRAY(144)																		\
+	__SET_MEMORY_POOL_ARRAY(136)																		\
+	__SET_MEMORY_POOL_ARRAY(120)																		\
 	__SET_MEMORY_POOL_ARRAY(112)																		\
+	__SET_MEMORY_POOL_ARRAY(104)																			\
 	__SET_MEMORY_POOL_ARRAY(100)																			\
-	__SET_MEMORY_POOL_ARRAY(96)																			\
 	__SET_MEMORY_POOL_ARRAY(84)																			\
 	__SET_MEMORY_POOL_ARRAY(76)																			\
 	__SET_MEMORY_POOL_ARRAY(68)																			\
 	__SET_MEMORY_POOL_ARRAY(28)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
-	__SET_MEMORY_POOL_ARRAY(16)																\
+	__SET_MEMORY_POOL_ARRAY(16)	
+														\
 
 // percentage (0-100) above which the memory pool's status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD			85
@@ -244,10 +245,6 @@
 // too close values will put the streaming under heavy usage!
 #define __ENTITY_LOAD_PAD 						256
 #define __ENTITY_UNLOAD_PAD 					(__ENTITY_LOAD_PAD + 56)
-
-// the number of entities in the stage's definition to check for streaming in on each preload cycle
-// since there are 32 layers, that's the theoretical limit of entities to display
-#define __STREAMING_AMPLITUDE					16
 
 
 //---------------------------------------------------------------------------------------------------------

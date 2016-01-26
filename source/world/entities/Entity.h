@@ -28,6 +28,13 @@
 #include <StateMachine.h>
 #include <Telegram.h>
 
+//---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __UPDATE_SPRITE_TRANSFORMATIONS		0x01
+#define __UPDATE_SPRITE_POSITION			0x10
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -46,6 +53,7 @@
 		Container_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Entity, initialTransform);												\
 		__VIRTUAL_SET(ClassName, Entity, transform);													\
+		__VIRTUAL_SET(ClassName, Entity, updateVisualRepresentation);									\
 		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);												\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);												\
 		__VIRTUAL_SET(ClassName, Entity, isVisible);													\
@@ -83,6 +91,9 @@
 																										\
 	/* entity's definition */																			\
 	VBVec3D* centerDisplacement;																		\
+																										\
+	/* flag to update sprites' attributes */															\
+	u8 updateSprites;																					\
 
 	__CLASS(Entity);
 
@@ -151,9 +162,9 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
-void Entity_translateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition);
 void Entity_initialTransform(Entity this, Transformation* environmentTransform);
 void Entity_transform(Entity this, const Transformation* environmentTransform);
+void Entity_updateVisualRepresentation(Entity this);
 void Entity_setLocalPosition(Entity this, const VBVec3D* position);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
 const VBVec3D* Entity_getPosition(Entity this);

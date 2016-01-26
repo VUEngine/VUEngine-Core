@@ -55,7 +55,6 @@ extern const Optical* _optical;
 
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
 static void Entity_releaseSprites(Entity this);
-static void Entity_updateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition);
 
 VBVec3D centerDisplacement;
 //---------------------------------------------------------------------------------------------------------
@@ -88,6 +87,8 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	this->size.x = 0;
 	this->size.y = 0;
 	this->size.z = 0;
+	
+	this->updateSprites = 0;
 }
 
 // class's destructor
@@ -798,7 +799,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 }
 
 // update sprites
-static void Entity_updateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition)
+void Entity_updateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -900,31 +901,33 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
 	
-	bool updateSpritePosition = false;
-	bool updateSpriteTransformations = false;
-
 	if(this->invalidateGlobalPosition.x ||
 		this->invalidateGlobalPosition.y ||
 		this->invalidateGlobalPosition.z ||
 		this->children)
 	{
-		updateSpritePosition = true;
-		updateSpriteTransformations = this->invalidateGlobalPosition.z;
+		this->updateSprites |= __UPDATE_SPRITE_POSITION;
+		this->updateSprites |= this->invalidateGlobalPosition.z? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
 
 		// call base class's transform method
 		Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 	}
 	else
 	{
-		updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
-		updateSpriteTransformations = __VIRTUAL_CALL(bool, Entity, updateSpriteTransformations, this);
+		this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
+		this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpriteTransformations, this)? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
 	}
+}
 
-	if(updateSpritePosition || updateSpriteTransformations)
-	{
-		// update graphical representation
-		Entity_updateSprites(this, updateSpriteTransformations, updateSpritePosition);
-	}
+void Entity_updateVisualRepresentation(Entity this)
+{
+	ASSERT(this, "Entity::updateVisualRepresentation: null this");
+
+	Container_updateVisualRepresentation(__SAFE_CAST(Container, this));
+	
+	Entity_updateSprites(this, this->updateSprites & __UPDATE_SPRITE_TRANSFORMATIONS, this->updateSprites & __UPDATE_SPRITE_POSITION);
+
+	this->updateSprites = 0;
 
 	/*
 	if(this->shape)
@@ -933,6 +936,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	}
 	*/
 }
+
 
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 {
@@ -1218,13 +1222,15 @@ void Entity_resume(Entity this)
 	if(this->entityDefinition)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
-		Entity_updateSprites(this, true, true);
 	}
 	
 	if(this->hidden)
 	{
 		Entity_hide(this);
 	}
+
+	// force update sprites on next game's cycle
+	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
 }
 
 // defaults to true

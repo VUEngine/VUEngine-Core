@@ -504,6 +504,24 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	this->invalidateGlobalPosition.z = false;
 }
 
+void Container_updateVisualRepresentation(Container this)
+{
+	ASSERT(this, "Container::updateVisualRepresentation: null this");
+
+	// if I have children
+	if(this->children)
+	{
+		VirtualNode node = this->children->head;
+
+		// update each child
+		for(; node; node = node->next)
+		{
+			__VIRTUAL_CALL(void, Container, updateVisualRepresentation, __SAFE_CAST(Container, node->data));
+		}
+	}
+}
+
+
 // retrieve global position
 const VBVec3D* Container_getGlobalPosition(Container this)
 {

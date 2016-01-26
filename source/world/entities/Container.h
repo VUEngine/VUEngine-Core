@@ -47,6 +47,7 @@
 		SpatialObject_METHODS																			\
 		__VIRTUAL_DEC(update);																			\
 		__VIRTUAL_DEC(transform);																		\
+		__VIRTUAL_DEC(updateVisualRepresentation);														\
 		__VIRTUAL_DEC(initialTransform);																\
 		__VIRTUAL_DEC(setLocalPosition);																\
 		__VIRTUAL_DEC(handlePropagatedMessage);															\
@@ -63,6 +64,7 @@
 		SpatialObject_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, Container, update);													\
 		__VIRTUAL_SET(ClassName, Container, transform);													\
+		__VIRTUAL_SET(ClassName, Container, updateVisualRepresentation);								\
 		__VIRTUAL_SET(ClassName, Container, initialTransform);											\
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);											\
 		__VIRTUAL_SET(ClassName, Container, handlePropagatedMessage);									\
@@ -137,6 +139,7 @@ void Container_concatenateTransform(Transformation *environmentTransform, Transf
 void Container_changeEnvironment(Container this, Transformation* environmentTransform);
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform);
 void Container_transform(Container this, const Transformation* environmentTransform);
+void Container_updateVisualRepresentation(Container this);
 void Container_initialTransform(Container this, Transformation* environmentTransform);
 const VBVec3D* Container_getGlobalPosition(Container this);
 const VBVec3D* Container_getLocalPosition(Container this);

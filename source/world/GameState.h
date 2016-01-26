@@ -95,6 +95,7 @@ void GameState_suspend(GameState this, void* owner);
 void GameState_resume(GameState this, void* owner);
 bool GameState_handleMessage(GameState this, void* owner, Telegram telegram);
 void GameState_transform(GameState this);
+void GameState_updateVisuals(GameState this);
 int GameState_propagateMessage(GameState this, int message);
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 void GameState_setCanStream(GameState this, int canStream);

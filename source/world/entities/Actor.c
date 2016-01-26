@@ -206,11 +206,12 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
-
+/*
   	if(this->shape)
 	{
-//		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+		__VIRTUAL_CALL(void, Shape, draw, this->shape);
 	}
+*/
 }
 
 void Actor_resume(Actor this)
@@ -221,6 +222,8 @@ void Actor_resume(Actor this)
 
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __YAXIS, this->direction.y);
+	
+	Actor_syncPositionWithBody(this);
 }
 
 
@@ -529,11 +532,14 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 	if(this->body)
     {
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
-		
-		this->invalidateGlobalPosition.x = displacement.x;
-		this->invalidateGlobalPosition.y = displacement.y;
-		this->invalidateGlobalPosition.z = displacement.z;
 	}
+
+	this->invalidateGlobalPosition.x = displacement.x? true : false;
+	this->invalidateGlobalPosition.y = displacement.y? true : false;
+	this->invalidateGlobalPosition.z = displacement.z? true : false;
+
+	this->updateSprites |= displacement.x || displacement.y || displacement.z? __UPDATE_SPRITE_POSITION : 0;
+	this->updateSprites |= displacement.z? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
 }
 
 // retrieve global position

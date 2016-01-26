@@ -235,8 +235,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 		}
 		else
 		{
-			this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), abs((FIX7_9TOFIX19_13(this->drawSpec.scale.x))));
-			this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), (FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
+			this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), abs(FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
+			this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), abs(FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
 		}
 	}
 

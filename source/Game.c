@@ -73,6 +73,8 @@ enum StateOperations
 enum GameCurrentProcess
 {
 	kGameStartingUp = 0,
+	kGameUpdatingVisuals,
+	kGameUpdatingVisualsDone,
 	kGameTransforming,
 	kGameTransformingDone,
 	kGameCheckingCollisions,
@@ -147,6 +149,7 @@ static void Game_initialize(Game this);
 static void Game_setNextState(Game this, GameState state);
 static void Game_handleInput(Game this);
 static void Game_update(Game this);
+static void Game_updateVisuals(Game this);
 static void Game_updateLogic(Game this);
 static void Game_updatePhysics(Game this);
 static void Game_updateTransformations(Game this);
@@ -683,6 +686,39 @@ static void Game_updateLogic(Game this)
 #endif
 }
 
+// update game's rendering subsystem
+static void Game_updateVisuals(Game this)
+{
+#ifdef __DEBUG
+	this->lastProcessName = "update visuals";
+#endif
+
+	this->currentProcess = kGameUpdatingVisuals;
+	
+#ifdef __FORCE_VPU_SYNC
+	// disable rendering until collisions have been checked
+	VPUManager_disableInterrupt(this->vpuManager);
+#endif
+	
+#ifdef __DEBUG
+	this->lastProcessName = "update visuals";
+#endif
+
+	// apply transformations to visuals
+	GameState_updateVisuals(this->currentState);
+
+	this->currentProcess = kGameUpdatingVisualsDone;
+
+#ifdef __FORCE_VPU_SYNC
+	// allow rendering
+	VPUManager_enableInterrupt(this->vpuManager);
+#endif
+	
+#ifdef __DEBUG
+	this->lastProcessName = "update visuals ended";
+#endif
+}
+
 // update game's physics subsystem
 static void Game_updatePhysics(Game this)
 {
@@ -712,10 +748,6 @@ static void Game_updateTransformations(Game this)
 
 	this->currentProcess = kGameTransforming;
 
-#ifdef	__FORCE_VPU_SYNC	
-	// disable rendering until collisions have been checked
-	VPUManager_disableInterrupt(this->vpuManager);
-#endif
 #ifdef __DEBUG
 	this->lastProcessName = "apply transformations";
 #endif
@@ -734,11 +766,6 @@ static void Game_updateTransformations(Game this)
 	GameState_processCollisions(this->currentState);
 
 	this->currentProcess = kGameCheckingCollisionsDone;
-
-#ifdef	__FORCE_VPU_SYNC	
-	// allow rendering
-	VPUManager_enableInterrupt(this->vpuManager);
-#endif
 	
 #ifdef __DEBUG
 	this->lastProcessName = "transformations ended";
@@ -778,19 +805,22 @@ static void Game_update(Game this)
 	    VIP_REGS[INTCLR]= GAMESTART;
 
 		// update each subsystem
-		
-		// apply transformations from the previous frame
-		// while the VPU is busy writing the frame buffers
-	    Game_updateTransformations(this);
 	    
 	    // the engine's game logic is free of racing 
 	    // conditions against the VPU
-		Game_updateLogic(this);
+	    Game_updateVisuals(this);
+	    	    
+	    // update game's logic
+	    Game_updateLogic(this);
 		
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
 
+		// apply transformations from the previous frame
+		// while the VPU is busy writing the frame buffers
+	    Game_updateTransformations(this);
+	    
 		// this is the point were the main game's subsystems
 		// have done all their work
 		// at this point save the current time on each 
