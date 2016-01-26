@@ -813,9 +813,13 @@ static void Game_update(Game this)
 
 		// update each subsystem
 #if __FRAME_CYCLE == 1
-	    if(cycle)
+	    if(!cycle)
 	    {
 #endif
+		// this is the moment to check if the game's state
+		// needs to be changed
+		Game_checkForNewState(this);
+
 	    // update game's logic
 	    Game_updateLogic(this);
 		
@@ -823,33 +827,27 @@ static void Game_update(Game this)
 		// has been done
 		Game_updatePhysics(this);
 		
-#if __FRAME_CYCLE == 1
-		cycle = false;
-	    }
-	    else
-	    {
-#endif
-	    // apply transformations from the previous frame
-		// while the VPU is busy writing the frame buffers
-	    Game_updateTransformations(this);
-	    
 		// this is the point were the main game's subsystems
 		// have done all their work
 		// at this point save the current time on each 
 		// clock so they can properly calculate the elapsed
 		// time afterwards
 		ClockManager_saveCurrentTime(this->clockManager);
-		
-		// this is the moment to check if the game's state
-		// needs to be changed
-		Game_checkForNewState(this);
-		
+#if __FRAME_CYCLE == 1
+		cycle = true;
+	    }
+	    else
+	    {
+#endif
+	    // apply transformations from the previous frame
+	    Game_updateTransformations(this);
+	    
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(FrameRate_getInstance());
 #endif
 		
 #if __FRAME_CYCLE == 1
-		cycle = true;
+		cycle = false;
 	    }
 #endif
 	}
