@@ -137,7 +137,9 @@ void UI_initialTransform(UI this, Transformation* environmentTransform)
 	}
 
 	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
-	
+
+	__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this);
+
 	if(screen)
 	{
 		// recover screen

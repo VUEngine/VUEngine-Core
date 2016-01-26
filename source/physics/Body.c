@@ -603,7 +603,6 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 	}
 
 	fix19_13 frictionAcceleration = this->mass? FIX19_13_DIV(frictionForce, this->mass): frictionForce;
-	//frictionAcceleration <<= __FRAME_CYCLE;
 
 	if(appliedForce)
 	{

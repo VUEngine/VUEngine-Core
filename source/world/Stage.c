@@ -304,7 +304,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	if(this->ui)
 	{
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
-		__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this->ui);
 	}
 }
 
@@ -1126,7 +1125,6 @@ void Stage_resume(Stage this)
 		__VIRTUAL_CALL(void, Container, resume, __SAFE_CAST(Container, this->ui));
 		
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
-		__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this->ui);
 	}
 }
 
