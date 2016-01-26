@@ -39,8 +39,8 @@ __CLASS_FRIEND_DEFINITION(InverseCuboid);
 // 												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-#define MAX_NUMBER_OF_PASSES	100
-
+#define __MAX_NUMBER_OF_PASSES			100
+#define __FLOAT_0_05_F					0x019A
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -265,9 +265,9 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 
 	VBVec3D displacementIncrement =
 	{
-			FIX19_13_MULT(displacement.x, FTOFIX19_13(0.05f)),
-			FIX19_13_MULT(displacement.y, FTOFIX19_13(0.05f)),
-			FIX19_13_MULT(displacement.z, FTOFIX19_13(0.05f))
+			FIX19_13_MULT(displacement.x, __FLOAT_0_05_F),
+			FIX19_13_MULT(displacement.y, __FLOAT_0_05_F),
+			FIX19_13_MULT(displacement.z, __FLOAT_0_05_F)
 	};
 	
 	//NM_ASSERT(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z, "Cuboid::getAxisOfCollisionWithCuboid: 0 displacementIncrement");
@@ -405,11 +405,11 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 			}
 		}
 		
-		while (0 == numberOfAxis && ++passes < MAX_NUMBER_OF_PASSES);
+		while (0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
 
 	// if not axis of collision was found
-	if((passes >= MAX_NUMBER_OF_PASSES && !axisOfCollision) || (__XAXIS | __YAXIS | __ZAXIS) == axisToIgnore)
+	if((passes >= __MAX_NUMBER_OF_PASSES && !axisOfCollision) || (__XAXIS | __YAXIS | __ZAXIS) == axisToIgnore)
 	{
 		axisToIgnore = 0;
 		
@@ -483,10 +483,10 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 				positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
 			}
 		}
-		while (0 == numberOfAxis && ++passes < MAX_NUMBER_OF_PASSES);
+		while (0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
 	
-	ASSERT(numberOfAxis || passes < MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
+	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
 
 	CACHE_DISABLE;
 	

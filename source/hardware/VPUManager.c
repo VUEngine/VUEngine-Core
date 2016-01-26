@@ -68,6 +68,7 @@ volatile u16* VIP_REGS = (u16*)0x0005F800;
 	Object_ATTRIBUTES;																					\
 																										\
 	/* DRAM managers */																					\
+	FrameRate frameRate;																				\
 	ParamTableManager paramTableManager;																\
 	CharSetManager charSetManager;																		\
 	SpriteManager spriteManager;																		\
@@ -100,6 +101,7 @@ static void VPUManager_constructor(VPUManager this)
 
 	__CONSTRUCT_BASE();
 	
+	this->frameRate = FrameRate_getInstance();
 	this->paramTableManager = ParamTableManager_getInstance();
 	this->charSetManager = CharSetManager_getInstance();
 	this->spriteManager = SpriteManager_getInstance();
@@ -179,10 +181,13 @@ void VPUManager_interruptHandler(void)
 		
 		// if performance was good enough in the 
 		// the previous second do some defragmenting
-		if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
+		if(FrameRate_isFPSHigh(this->frameRate))
 		{
-			CharSetManager_defragmentProgressively(this->charSetManager);
-			// TODO: bgmap memory defragmentation
+			if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
+			{
+				CharSetManager_defragmentProgressively(this->charSetManager);
+				// TODO: bgmap memory defragmentation
+			}
 		}
 
 		// write to VRAM

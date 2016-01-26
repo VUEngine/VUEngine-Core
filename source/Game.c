@@ -821,12 +821,6 @@ static void Game_update(Game this)
 
 	    // update game's logic
 	    Game_updateLogic(this);
-		// this is the point were the main game's subsystems
-		// have done all their work
-		// at this point save the current time on each 
-		// clock so they can properly calculate the elapsed
-		// time afterwards
-		ClockManager_saveCurrentTime(this->clockManager);
 #if __FRAME_CYCLE == 1
 		cycle = false;
 	    }
@@ -836,6 +830,13 @@ static void Game_update(Game this)
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
+
+		// this is the point were the main game's subsystems
+		// have done all their work
+		// at this point save the current time on each 
+		// clock so they can properly calculate the elapsed
+		// time afterwards
+		ClockManager_saveCurrentTime(this->clockManager);
 
 	    // apply transformations
 	    Game_updateTransformations(this);

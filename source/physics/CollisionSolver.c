@@ -243,10 +243,13 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 
 	VirtualList processedCollidingSpatialObjects = __NEW(VirtualList);
 	
+	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
+	
 	for(; node; node = node->next)
 	{
 		collidingSpatialObject = node->data;
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(Shape, SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, this->ownerPreviousPosition);
+		
+		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(Shape, SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, ownerPreviousPosition);
 		
 		if(axisOfCollision)
 		{
