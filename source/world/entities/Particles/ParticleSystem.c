@@ -317,14 +317,24 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 
 	ParticleSystem_processExpiredParticles(this);
 
-	bool updateSpritePosition = __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this);
+	this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
+
+}
+
+void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
+{
+	ASSERT(this, "ParticleSystem::updateVisualRepresentation: null this");
 
 	VirtualNode node = this->particles->head;
+
+	bool updateSprites = this->updateSprites? true : false;
 	
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, transform, node->data, updateSpritePosition);
+		__VIRTUAL_CALL(void, Particle, updateVisualRepresentation, node->data, updateSprites);
 	}
+	
+	this->updateSprites = 0;
 }
 
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram)

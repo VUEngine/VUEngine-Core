@@ -38,6 +38,7 @@
 		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ParticleSystem, update);												\
 		__VIRTUAL_SET(ClassName, ParticleSystem, transform);											\
+		__VIRTUAL_SET(ClassName, ParticleSystem, updateVisualRepresentation);							\
 		__VIRTUAL_SET(ClassName, ParticleSystem, resume);												\
 		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);												\
 
@@ -137,6 +138,7 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 void ParticleSystem_destructor(ParticleSystem this);
 void ParticleSystem_update(ParticleSystem this);
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform);
+void ParticleSystem_updateVisualRepresentation(ParticleSystem this);
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);
 void ParticleSystem_show(ParticleSystem this);
 void ParticleSystem_hide(ParticleSystem this);

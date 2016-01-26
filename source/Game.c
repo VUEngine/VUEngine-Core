@@ -149,11 +149,11 @@ static void Game_initialize(Game this);
 static void Game_setNextState(Game this, GameState state);
 static void Game_handleInput(Game this);
 static void Game_update(Game this);
-static void Game_updateVisuals(Game this);
-static void Game_updateLogic(Game this);
-static void Game_updatePhysics(Game this);
-static void Game_updateTransformations(Game this);
-static void Game_checkForNewState(Game this);
+inline static void Game_updateVisuals(Game this);
+inline static void Game_updateLogic(Game this);
+inline static void Game_updatePhysics(Game this);
+inline static void Game_updateTransformations(Game this);
+inline static void Game_checkForNewState(Game this);
 static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
 static void Game_checkLowBattery(Game this, u16 keyPressed);
@@ -641,7 +641,7 @@ static void Game_handleInput(Game this)
 }
 
 // update game's logic subsystem
-static void Game_updateLogic(Game this)
+inline static void Game_updateLogic(Game this)
 {
 	
 	this->currentProcess = kGameDispatchingDelayedMessages;
@@ -687,7 +687,7 @@ static void Game_updateLogic(Game this)
 }
 
 // update game's rendering subsystem
-static void Game_updateVisuals(Game this)
+inline static void Game_updateVisuals(Game this)
 {
 #ifdef __DEBUG
 	this->lastProcessName = "update visuals";
@@ -720,7 +720,7 @@ static void Game_updateVisuals(Game this)
 }
 
 // update game's physics subsystem
-static void Game_updatePhysics(Game this)
+inline static void Game_updatePhysics(Game this)
 {
 #ifdef __DEBUG
 	this->lastProcessName = "update physics";
@@ -737,7 +737,7 @@ static void Game_updatePhysics(Game this)
 }
 
 // update game's rendering subsystem
-static void Game_updateTransformations(Game this)
+inline static void Game_updateTransformations(Game this)
 {
 #ifdef __DEBUG
 	this->lastProcessName = "move screen";
@@ -772,7 +772,7 @@ static void Game_updateTransformations(Game this)
 #endif
 }
 
-static void Game_checkForNewState(Game this)
+inline static void Game_checkForNewState(Game this)
 {
 	ASSERT(this, "Game::checkForNewState: null this");
 
@@ -796,6 +796,9 @@ static void Game_update(Game this)
 {
 	ASSERT(this, "Game::update: null this");
 
+#if __FRAME_CYCLE == 1
+	bool cycle = false;
+#endif
 	while (true)
 	{
 		// update each subsystem
@@ -804,20 +807,29 @@ static void Game_update(Game this)
 	    while(!(VIP_REGS[INTPND] & GAMESTART)); 
 	    VIP_REGS[INTCLR]= GAMESTART;
 
-		// update each subsystem
-	    
 	    // the engine's game logic is free of racing 
 	    // conditions against the VPU
 	    Game_updateVisuals(this);
-	    	    
+
+		// update each subsystem
+#if __FRAME_CYCLE == 1
+	    if(cycle)
+	    {
+#endif
 	    // update game's logic
 	    Game_updateLogic(this);
 		
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
-
-		// apply transformations from the previous frame
+		
+#if __FRAME_CYCLE == 1
+		cycle = false;
+	    }
+	    else
+	    {
+#endif
+	    // apply transformations from the previous frame
 		// while the VPU is busy writing the frame buffers
 	    Game_updateTransformations(this);
 	    
@@ -831,11 +843,15 @@ static void Game_update(Game this)
 		// this is the moment to check if the game's state
 		// needs to be changed
 		Game_checkForNewState(this);
-
+		
 #ifdef __PRINT_FRAMERATE
 		FrameRate_increaseFPS(FrameRate_getInstance());
 #endif
 		
+#if __FRAME_CYCLE == 1
+		cycle = true;
+	    }
+#endif
 	}
 }
 

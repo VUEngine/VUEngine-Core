@@ -150,10 +150,11 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
+//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
-
+		
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
@@ -165,71 +166,79 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 		position2D.parallax = 0;
-
+		
 		this->previous2DPosition = position2D;
+
+		this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
 
 		return;
 	}
-
-	int updateSpritePosition = Entity_updateSpritePosition(__SAFE_CAST(Entity, this));
-
-	if(updateSpritePosition)
+	
+	if(this->invalidateGlobalPosition.x ||
+		this->invalidateGlobalPosition.y ||
+		this->invalidateGlobalPosition.z ||
+		this->children)
 	{
-		if(this->invalidateGlobalPosition.x ||
-			this->invalidateGlobalPosition.y ||
-			this->invalidateGlobalPosition.z ||
-			this->children)
-		{
-			// call base class's transform method
-			Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
-		}
+		// call base class's transform method
+		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
+	}
+	
+	// concatenate transform
+	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
 
-		// concatenate transform
-		this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
-		this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
-		this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
+	// propagate rotation
+	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	
+	// propagate scale
+	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
 
-		// propagate rotation
-		this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-		this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
-		this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	this->updateSprites = __UPDATE_SPRITE_POSITION;
 
-		// propagate scale
-		this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
-		this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+	this->invalidateGlobalPosition.x = false;
+	this->invalidateGlobalPosition.y = false;
+	this->invalidateGlobalPosition.z = false;
+}
 
+void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
+{
+	ASSERT(this, "ManagedMBackground::updateVisualRepresentation: null this");
+
+	if(this->updateSprites)
+	{
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
 		position2D.parallax = 0;
-
+		
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
-
+	
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
-
+	
 		VirtualNode spriteNode = this->managedSprites->head;
-
+		
 		VBVec2D displacement;
 
 		displacement.x = position2D.x - this->previous2DPosition.x;
 		displacement.y = position2D.y - this->previous2DPosition.y;
 		displacement.z = 0;
 		displacement.parallax = 0;
-
+				
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
-
+			
 			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
 		}
-
+		
 		this->previous2DPosition = position2D;
 	}
-
-	this->invalidateGlobalPosition.x = false;
-	this->invalidateGlobalPosition.y = false;
-	this->invalidateGlobalPosition.z = false;
-
+	
+	this->updateSprites = 0;
 }

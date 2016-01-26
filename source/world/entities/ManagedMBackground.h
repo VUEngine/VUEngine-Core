@@ -33,9 +33,10 @@
 	MBackground_METHODS;																				\
 
 #define ManagedMBackground_SET_VTABLE(ClassName)														\
-	MBackground_SET_VTABLE(ClassName);																	\
-    __VIRTUAL_SET(ClassName, ManagedMBackground, initialTransform);										\
-    __VIRTUAL_SET(ClassName, ManagedMBackground, transform);											\
+		MBackground_SET_VTABLE(ClassName);																\
+	    __VIRTUAL_SET(ClassName, ManagedMBackground, initialTransform);									\
+	    __VIRTUAL_SET(ClassName, ManagedMBackground, transform);										\
+		__VIRTUAL_SET(ClassName, ManagedMBackground, updateVisualRepresentation);						\
 
 __CLASS(ManagedMBackground);
 
@@ -61,6 +62,7 @@ void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefiniti
 void ManagedMBackground_destructor(ManagedMBackground this);
 void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform);
 void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform);
+void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this);
 
 
 #endif

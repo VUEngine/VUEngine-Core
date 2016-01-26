@@ -232,7 +232,7 @@ void VPUManager_displayOn(VPUManager this)
 	VIP_REGS[REST] = 0;
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	VIP_REGS[DPCTRL] = VIP_REGS[DPSTTS] | (SYNCE | RE | DISP);
-	VIP_REGS[FRMCYC] = __FRAME_CYCLE;
+	VIP_REGS[FRMCYC] = 0;
 }
 
 // turn display off

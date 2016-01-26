@@ -20,6 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SolidParticle.h>
+#include <Game.h>
 #include <CollisionManager.h>
 #include <MessageDispatcher.h>
 

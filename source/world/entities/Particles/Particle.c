@@ -130,12 +130,10 @@ void Particle_update(Particle this, u16 elapsedTime, void (* behavior)(Particle 
 	}
 }
 
-// transform 
-void Particle_transform(Particle this, bool updateSpritePosition)
+void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition)
 {
-	ASSERT(this, "Particle::transform: null this");
-	ASSERT(this->body, "Particle::transform: null body");
-
+	ASSERT(this, "Particle::updateVisualRepresentation: null this");
+	
 	if(updateSpritePosition || Body_isAwake(this->body))
     {
 		const VBVec3D* position = Body_getPosition(this->body);

@@ -38,6 +38,7 @@
 		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ManagedEntity, initialTransform);										\
 		__VIRTUAL_SET(ClassName, ManagedEntity, transform);												\
+		__VIRTUAL_SET(ClassName, ManagedEntity, updateVisualRepresentation);							\
 
 #define ManagedEntity_ATTRIBUTES																		\
 																										\
@@ -71,6 +72,7 @@ void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* mana
 void ManagedEntity_destructor(ManagedEntity this);
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform);
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform);
+void ManagedEntity_updateVisualRepresentation(ManagedEntity this);
 
 
 #endif

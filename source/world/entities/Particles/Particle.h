@@ -42,7 +42,7 @@
 #define Particle_METHODS																				\
 		SpatialObject_METHODS																			\
 		__VIRTUAL_DEC(update);																			\
-		__VIRTUAL_DEC(transform);																		\
+		__VIRTUAL_DEC(updateVisualRepresentation);														\
 		__VIRTUAL_DEC(resume);																			\
 		__VIRTUAL_DEC(suspend);																			\
 
@@ -51,7 +51,7 @@
 #define Particle_SET_VTABLE(ClassName)																	\
 		SpatialObject_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, Particle, update);														\
-		__VIRTUAL_SET(ClassName, Particle, transform);													\
+		__VIRTUAL_SET(ClassName, Particle, updateVisualRepresentation);									\
 		__VIRTUAL_SET(ClassName, Particle, moves);														\
 		__VIRTUAL_SET(ClassName, Particle, canMoveOverAxis);											\
 		__VIRTUAL_SET(ClassName, Particle, resume);														\
@@ -131,7 +131,8 @@ __CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, cons
 void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void Particle_destructor(Particle this);
 void Particle_update(Particle this, u16 elapsedTime, void (* behavior)(Particle particle));
-void Particle_transform(Particle this, bool updateSpritePosition);
+void Particle_transform(Particle this);
+void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition);
 void Particle_addForce(Particle this, const Force* force);
 void Particle_setLifeSpan(Particle this, int lifeSpan);
 void Particle_setMass(Particle this, fix19_13 mass);
