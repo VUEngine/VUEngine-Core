@@ -795,6 +795,8 @@ static void Game_update(Game this)
 {
 	ASSERT(this, "Game::update: null this");
 
+	FrameRate frameRate = FrameRate_getInstance();
+	
 #if __FRAME_CYCLE == 1
 	bool cycle = true;
 #endif
@@ -841,9 +843,8 @@ static void Game_update(Game this)
 	    // apply transformations
 	    Game_updateTransformations(this);
 
-#ifdef __PRINT_FRAMERATE
-		FrameRate_increaseFPS(FrameRate_getInstance());
-#endif
+	    // increase the FPS counter
+		FrameRate_increaseFPS(frameRate);
 		
 #if __FRAME_CYCLE == 1
 		cycle = true;
