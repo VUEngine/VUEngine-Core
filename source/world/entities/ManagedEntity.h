@@ -39,7 +39,6 @@
 		__VIRTUAL_SET(ClassName, ManagedEntity, initialTransform);										\
 		__VIRTUAL_SET(ClassName, ManagedEntity, transform);												\
 		__VIRTUAL_SET(ClassName, ManagedEntity, updateVisualRepresentation);							\
-		__VIRTUAL_SET(ClassName, ManagedEntity, update);												\
 		__VIRTUAL_SET(ClassName, ManagedEntity, passMessage);											\
 
 #define ManagedEntity_ATTRIBUTES																		\
@@ -75,7 +74,6 @@ void ManagedEntity_destructor(ManagedEntity this);
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform);
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform);
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this);
-void ManagedEntity_update(ManagedEntity this);
 int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 
 #endif

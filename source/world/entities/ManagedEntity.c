@@ -252,12 +252,6 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 	this->updateSprites = 0;
 }
 
-// execute logic
-void ManagedEntity_update(ManagedEntity this)
-{
-	ASSERT(this, "ManagedEntity::update: null this");
-}
-
 int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
 	ASSERT(this, "ManagedEntity::passMessage: null this");
