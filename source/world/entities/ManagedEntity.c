@@ -262,5 +262,5 @@ int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler
 {
 	ASSERT(this, "ManagedEntity::passMessage: null this");
 	
-	return true;
+	return false;
 }
