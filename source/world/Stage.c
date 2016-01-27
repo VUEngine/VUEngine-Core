@@ -119,7 +119,6 @@ static void Stage_constructor(Stage this)
 {
 	ASSERT(this, "Stage::constructor: null this");
 
-	entitiesToTransform = __NEW(VirtualList);
 	// construct base object
 	__CONSTRUCT_BASE(-1, NULL);
 
