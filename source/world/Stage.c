@@ -42,7 +42,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 
-#define __STREAMING_CYCLES		4
+#define __STREAMING_CYCLES		5
 
 #define __MAXIMUM_PARALLAX		10
 #define __LOAD_LOW_X_LIMIT		(- __MAXIMUM_PARALLAX - this->stageDefinition->streaming.loadPadding)
@@ -75,12 +75,12 @@ typedef struct StageEntityDescription
 
 } StageEntityDescription;
 
-typedef struct StageEntityToInitialize
+typedef struct StageEntityToSetup
 {
 	PositionedEntity* positionedEntity;
 	Entity entity;
 
-} StageEntityToInitialize;
+} StageEntityToSetup;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -119,6 +119,7 @@ static void Stage_constructor(Stage this)
 {
 	ASSERT(this, "Stage::constructor: null this");
 
+	entitiesToTransform = __NEW(VirtualList);
 	// construct base object
 	__CONSTRUCT_BASE(-1, NULL);
 
@@ -127,7 +128,7 @@ static void Stage_constructor(Stage this)
 	this->removedEntities = NULL;
 	this->entitiesToLoad = __NEW(VirtualList);
 	this->entitiesToInitialize = __NEW(VirtualList);
-	
+	this->entitiesToTransform = __NEW(VirtualList);
 	this->ui = NULL;
 	this->stageDefinition = NULL;
 
@@ -179,15 +180,31 @@ void Stage_destructor(Stage this)
 		
 		for(; node; node = node->next)
 		{
-			StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)node->data;
+			StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
 
-			__DELETE(stageEntityToInitialize->entity);
-			__DELETE_BASIC(stageEntityToInitialize);
+			__DELETE(stageEntityToSetup->entity);
+			__DELETE_BASIC(stageEntityToSetup);
 		}
 		
 		__DELETE(this->entitiesToInitialize);
 		this->entitiesToInitialize = NULL;
 	}
+	
+	if(this->entitiesToTransform)
+		{
+			VirtualNode node = this->entitiesToTransform->head;
+			
+			for(; node; node = node->next)
+			{
+				StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
+
+				__DELETE(stageEntityToSetup->entity);
+				__DELETE_BASIC(stageEntityToSetup);
+			}
+			
+			__DELETE(this->entitiesToTransform);
+			this->entitiesToTransform = NULL;
+		}
 	
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -804,10 +821,10 @@ static void Stage_loadEntities(Stage this)
 
 		if(entity)
 		{
-			StageEntityToInitialize* stageEntityToInitialize = __NEW_BASIC(StageEntityToInitialize);
-			stageEntityToInitialize->positionedEntity = stageEntityDescription->positionedEntity;
-			stageEntityToInitialize->entity = entity;
-			VirtualList_pushBack(this->entitiesToInitialize, stageEntityToInitialize);
+			StageEntityToSetup* stageEntityToSetup = __NEW_BASIC(StageEntityToSetup);
+			stageEntityToSetup->positionedEntity = stageEntityDescription->positionedEntity;
+			stageEntityToSetup->entity = entity;
+			VirtualList_pushBack(this->entitiesToInitialize, stageEntityToSetup);
 			stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
 			VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 			
@@ -829,26 +846,58 @@ static void Stage_initializeEntities(Stage this)
 {
 	ASSERT(this, "Stage::initializeEntities: null this");
 
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-
 	VirtualNode node = this->entitiesToInitialize->head;
 	
 	for(; node; node = node->next)
 	{
-		StageEntityToInitialize* stageEntityToInitialize = (StageEntityToInitialize*)node->data;
+		StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
 
-		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToInitialize->entity);
+		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToSetup->entity);
 		
+		VirtualList_removeElement(this->entitiesToInitialize, stageEntityToSetup);
+		VirtualList_pushBack(this->entitiesToTransform, stageEntityToSetup);
+		break;
+	}
+}
+
+// intialize loaded entities
+static void Stage_transformEntities(Stage this)
+{
+	ASSERT(this, "Stage::transformEntities: null this");
+
+	// static to avoid call to _memcpy
+	static Transformation environmentTransform =
+	{
+			// local position
+			{0, 0, 0},
+			// global position
+			{0, 0, 0},
+			// local rotation
+			{0, 0, 0},
+			// global rotation
+			{0, 0, 0},
+			// local scale
+			{ITOFIX7_9(1), ITOFIX7_9(1)},
+			// global scale
+			{ITOFIX7_9(1), ITOFIX7_9(1)}
+	};
+
+	VirtualNode node = this->entitiesToTransform->head;
+	
+	for(; node; node = node->next)
+	{
+		StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
+
 		// create the entity and add it to the world
-		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, stageEntityToInitialize->entity));
-		
+		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, stageEntityToSetup->entity));
+
 		// apply transformations
-		__VIRTUAL_CALL(void, Container, initialTransform, stageEntityToInitialize->entity, &environmentTransform);
+		__VIRTUAL_CALL(void, Container, initialTransform, stageEntityToSetup->entity, &environmentTransform);
 
-		__VIRTUAL_CALL(void, Entity, ready, stageEntityToInitialize->entity);
+		__VIRTUAL_CALL(void, Entity, ready, stageEntityToSetup->entity);
 
-		VirtualList_removeElement(this->entitiesToInitialize, stageEntityToInitialize);
-		__DELETE_BASIC(stageEntityToInitialize);
+		VirtualList_removeElement(this->entitiesToTransform, stageEntityToSetup);
+		__DELETE_BASIC(stageEntityToSetup);
 		break;
 	}
 }
@@ -1003,7 +1052,6 @@ void Stage_stream(Stage this)
 	{
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
-
 	}
 	else if(streamingCycleCounter == streamingCycleBase)
 	{			
@@ -1023,10 +1071,6 @@ void Stage_stream(Stage this)
 		{
 			Stage_loadEntities(this);
 		}
-		/*else
-		{
-			streamingCycleCounter = streamingCycleBase * 3;
-		}*/
 	}
 	else if(streamingCycleCounter == streamingCycleBase * 3)
 	{		
@@ -1034,8 +1078,13 @@ void Stage_stream(Stage this)
 		{
 			Stage_initializeEntities(this);
 		}
-
-		//streamingCycleCounter = streamingDelayPerCycle;
+	}
+	else if(streamingCycleCounter == streamingCycleBase * 4)
+	{		
+		if(this->entitiesToTransform->head)
+		{
+			Stage_transformEntities(this);
+		}
 	}
 	
 	if(++streamingCycleCounter >= streamingDelayPerCycle)

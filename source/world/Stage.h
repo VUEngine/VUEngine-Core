@@ -74,6 +74,9 @@
 	/* streaming's uninitialized entities */ 															\
 	VirtualList entitiesToInitialize;																	\
 																										\
+	/* streaming's non yet transformed entities */ 														\
+	VirtualList entitiesToTransform;																	\
+																										\
 	/* the UI */ 																						\
 	UI ui;																								\
 																										\
