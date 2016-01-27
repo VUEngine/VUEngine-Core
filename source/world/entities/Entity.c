@@ -56,7 +56,6 @@ extern const Optical* _optical;
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
 static void Entity_releaseSprites(Entity this);
 
-VBVec3D centerDisplacement;
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -877,7 +876,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	}
 	
 	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
-	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
+	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
 
 	if(this->hidden)
 	{

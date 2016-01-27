@@ -37,7 +37,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -642,14 +641,14 @@ int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(C
 
 	va_list args;
     va_start(args, propagatedMessageHandler);
-    int result = Container_passMessage(this, propagatedMessageHandler, args);
+    int result = __VIRTUAL_CALL(int, Container, passMessage, this, propagatedMessageHandler, args);
     va_end(args);
 
     return result;
 }
 
 // pass message to children recursively
-static int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
+int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
 	ASSERT(this, "Container::passMessage: null this");
 
@@ -668,7 +667,7 @@ static int Container_passMessage(Container this, int (*propagatedMessageHandler)
 			for(; node ; node = node->next)
 	        {
 				// pass message to each child
-				if(Container_passMessage(__SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
+				if(__VIRTUAL_CALL_UNSAFE(bool, Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
 	            {
 					return true;
 				}

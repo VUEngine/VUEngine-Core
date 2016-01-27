@@ -247,3 +247,16 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 	
 	this->updateSprites = 0;
 }
+
+// execute logic
+void ManagedMBackground_update(ManagedMBackground this)
+{
+	ASSERT(this, "ManagedMBackground::update: null this");
+}
+
+int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
+{
+	ASSERT(this, "ManagedMBackground::passMessage: null this");
+	
+	return true;
+}

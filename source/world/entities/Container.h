@@ -58,6 +58,8 @@
 		__VIRTUAL_DEC(resume);																			\
 		__VIRTUAL_DEC(show);																			\
 		__VIRTUAL_DEC(hide);																			\
+		__VIRTUAL_DEC(passMessage);																			\
+
 
 // define the virtual methods
 #define Container_SET_VTABLE(ClassName)																	\
@@ -75,6 +77,7 @@
 		__VIRTUAL_SET(ClassName, Container, resume);													\
 		__VIRTUAL_SET(ClassName, Container, show);														\
 		__VIRTUAL_SET(ClassName, Container, hide);														\
+		__VIRTUAL_SET(ClassName, Container, passMessage);														\
 
 #define Container_ATTRIBUTES																			\
 																										\
@@ -167,6 +170,6 @@ void Container_resume(Container this);
 void Container_show(Container this);
 void Container_hide(Container this);
 bool Container_isHidden(Container this);
-
+int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 
 #endif

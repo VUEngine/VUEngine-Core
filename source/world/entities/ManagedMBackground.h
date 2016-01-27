@@ -37,6 +37,8 @@
 	    __VIRTUAL_SET(ClassName, ManagedMBackground, initialTransform);									\
 	    __VIRTUAL_SET(ClassName, ManagedMBackground, transform);										\
 		__VIRTUAL_SET(ClassName, ManagedMBackground, updateVisualRepresentation);						\
+		__VIRTUAL_SET(ClassName, ManagedMBackground, update);											\
+		__VIRTUAL_SET(ClassName, ManagedMBackground, passMessage);										\
 
 __CLASS(ManagedMBackground);
 
@@ -63,6 +65,8 @@ void ManagedMBackground_destructor(ManagedMBackground this);
 void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform);
 void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform);
 void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this);
+void ManagedMBackground_update(ManagedMBackground this);
+int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 
 
 #endif

@@ -229,7 +229,7 @@ void ObjectSprite_render(ObjectSprite this)
 		
 		if(!this->texture->written)
 		{
-			ObjectTexture_write(this->texture);
+			ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
 		}
 		
 		if(!this->initialized)
