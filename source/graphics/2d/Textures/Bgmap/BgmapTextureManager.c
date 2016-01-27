@@ -447,7 +447,7 @@ u8 BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager
 {
 	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegmentForParamTable::print: null this");
 	
-	return this->freeBgmapSegment + this->spareBgmapSegments;
+	return this->availableBgmapSegments;
 }
 
 // retrieve available bgmap segments
@@ -463,15 +463,15 @@ u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getPrintingBgmapSegment: null this");
 	
-	return this->freeBgmapSegment + this->spareBgmapSegments;
+	return this->availableBgmapSegments;
 }
 
-// retrieve available bgmap spare segments
-u8 BgmapTextureManager_getSpareBgmapSegments(BgmapTextureManager this)
+// retrieve available bgmap segments
+u8 BgmapTextureManager_getFreeBgmapSegment(BgmapTextureManager this)
 {
-	ASSERT(this, "BgmapTextureManager::getSpareBgmapSegments::print: null this");
+	ASSERT(this, "BgmapTextureManager::getFreeBgmapSegment: null this");
 	
-	return this->spareBgmapSegments;
+	return this->freeBgmapSegment;
 }
 
 // retrieve available bgmap spare segments
