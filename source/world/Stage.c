@@ -722,15 +722,16 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 
 	VirtualNode node = savedNode ? savedNode : this->stageEntities->head;
 	int counter = 0;
+	int amplitude = this->stageDefinition->streaming.streamingAmplitude;
 
-	for(; node && counter < this->stageDefinition->streaming.streamingAmplitude / 4; node = direction ? VirtualNode_getPrevious(node) : node->next, counter++);
+	for(; node && counter < amplitude >> 1; node = direction ? node->previous : node->next, counter++);
 
 	node = node ? node : direction ? this->stageEntities->head : this->stageEntities->tail;
 	savedNode = NULL;
 
 	int entityLoaded = false;
 
-	for(counter = 0; node && (!savedNode || counter < this->stageDefinition->streaming.streamingAmplitude); node = direction ? node->next : VirtualNode_getPrevious(node), counter++)
+	for(counter = 0; node && (!savedNode || counter < amplitude); node = direction ? node->next : node->previous, counter++)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
@@ -770,6 +771,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 				stageEntityDescription->id = 0x7FFF;
 				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
 				entityLoaded = true;
+				break;
 			}
 		}
 	}
@@ -991,7 +993,6 @@ void Stage_stream(Stage this)
 	
 	if(!streamingCycleCounter)
 	{
-		//Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
 
@@ -1012,7 +1013,6 @@ void Stage_stream(Stage this)
 	{
 		if(this->entitiesToLoad->head)
 		{
-			//Printing_text(Printing_getInstance(), " ", 25, 10, NULL);
 			Stage_loadEntities(this);
 		}
 		/*else
