@@ -108,6 +108,7 @@ void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
 	if(0 <= objectIndex && objectIndex < 1024)
 	{
 		this->objectIndex = objectIndex;
+		this->written = false; 
 	}
 }
 

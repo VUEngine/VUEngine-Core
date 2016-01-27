@@ -63,6 +63,9 @@
 																				\
 	/* number of rows to write in texture's writing	*/							\
 	s8 textureMaximumRowsToWrite;												\
+																				\
+	/* delay before writing again	*/											\
+	s8 waitToWrite;																\
 
 
 __CLASS_DEFINITION(SpriteManager, Object);
@@ -100,6 +103,7 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->recoveringLayers = false;
 	this->textureToWrite = NULL;
 	this->textureMaximumRowsToWrite = -1;
+	this->waitToWrite = 0;
 	
 	SpriteManager_reset(this);
 }
@@ -141,7 +145,8 @@ void SpriteManager_reset(SpriteManager this)
 	this->nextNode = NULL;
 	this->textureToWrite = NULL;
 	this->textureMaximumRowsToWrite = -1;
-
+	this->waitToWrite = 0;
+	
 	SpriteManager_setLastLayer(this);
 }
 
@@ -358,12 +363,9 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	static int waitToWrite = 0;
 	bool textureWereWritten = false;
 	
-	VirtualNode node = this->sprites->head;
-
-	if(!waitToWrite)
+	if(!this->waitToWrite)
 	{
 		if(0 < this->textureMaximumRowsToWrite && this->textureToWrite)
 		{
@@ -371,10 +373,12 @@ void SpriteManager_render(SpriteManager this)
 		
 			this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
 			textureWereWritten = true;
-			waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
+			this->waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
 		}
 		else
 		{
+			VirtualNode node = this->sprites->head;
+
 			for(; node; node = node->next)
 			{
 				Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
@@ -384,12 +388,11 @@ void SpriteManager_render(SpriteManager this)
 					__VIRTUAL_CALL(void, Texture, write, texture);
 					
 					textureWereWritten = true;
-					waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
-					
-					this->textureToWrite = !texture->written? texture : NULL;
+					this->waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
 					
 					if(0 < this->textureMaximumRowsToWrite)
 					{
+						this->textureToWrite = !texture->written? texture : NULL;
 						break;
 					}
 				}
@@ -398,7 +401,7 @@ void SpriteManager_render(SpriteManager this)
 	}
 	else
 	{
-		waitToWrite--;
+		this->waitToWrite--;
 	}
 
 	if(!textureWereWritten && !this->recoveringLayers)
@@ -408,7 +411,7 @@ void SpriteManager_render(SpriteManager this)
 	}
 	
 	// render from WORLD 31 to the lowest active one
-	node = this->sprites->tail;
+	VirtualNode node = this->sprites->tail;
 	
 	for(; node; node = node->previous)
 	{
@@ -507,6 +510,7 @@ void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWrit
 {
 	ASSERT(this, "SpriteManager::print: null this");
 
+	this->waitToWrite = 0;
 	this->textureMaximumRowsToWrite = deferTextureWriting? __MAX_TEXTURE_ROWS_TO_WRITE : -1;
 }
 

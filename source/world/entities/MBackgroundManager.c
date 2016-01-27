@@ -126,6 +126,10 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 				}
 			}
 		}
+		else if(Texture_getTextureDefinition(textureRegistry->texture) == textureDefinition)
+		{
+			return textureRegistry->texture;
+		}
 	}
 	
 	if(selectedTextureRegistry)

@@ -802,6 +802,9 @@ static void Game_update(Game this)
 #endif
 	while (true)
 	{
+		
+		Printing_int(Printing_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), 1, 10, NULL);
+		Printing_int(Printing_getInstance(), BgmapTextureManager_getFreeBgmapSegment(BgmapTextureManager_getInstance()), 1, 11, NULL);
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate

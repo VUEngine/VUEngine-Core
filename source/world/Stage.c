@@ -547,13 +547,21 @@ static void Stage_preloadAssets(Stage this)
 		{
 			if(__ANIMATED_SINGLE != this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
 			{
+				Texture texture = NULL;
+				
 				if(this->stageDefinition->stageTextureEntryDefinitions[i].isManaged)
 				{
-					VirtualList_pushBack(managedTextures, MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition));
+					texture = MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition);
+					VirtualList_pushBack(managedTextures, texture );
 				}
 				else
 				{
-					BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition);
+					texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition));
+				}
+				
+				if(texture)
+				{
+					__VIRTUAL_CALL(void, Texture, write, texture);
 				}
 			}
 			else
@@ -561,12 +569,12 @@ static void Stage_preloadAssets(Stage this)
 				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
 			}
 		}
-
+		
 		VirtualNode node = managedTextures->head;
 		
 		for(; node; node = node->next)
 		{
-			MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), __SAFE_CAST(Texture, node->data));
+			//MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), __SAFE_CAST(Texture, node->data));
 		}
 
 		__DELETE(managedTextures);

@@ -314,8 +314,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 	{
 		// rewrite texture
 		ObjectTexture_setObjectIndex(__SAFE_CAST(ObjectTexture, this->texture), this->objectIndex);
-		ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
-
+		
 		if(0 <= previousObjectIndex)
 		{	
 			if(!this->hidden)
