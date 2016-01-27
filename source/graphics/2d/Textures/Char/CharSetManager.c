@@ -280,14 +280,20 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 			{
 				CharSet charSet = __SAFE_CAST(CharSet, node->data);
 
+				if(this->freedOffset[segment] == CharSet_getOffset(charSet))
+				{
+					this->freedOffset[segment] = 0;
+					return;
+				}
+
 				if(this->freedOffset[segment] < CharSet_getOffset(charSet))
 				{
-//					Mem_copy((u8*)CharSegs((u32)CharSet_getSegment(charSet)) + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
+					Mem_copy((u8*)CharSegs((u32)CharSet_getSegment(charSet)) + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
 
 					CharSet_setOffset(charSet, this->freedOffset[segment]);
+					//write to char memory
 					CharSet_rewrite(charSet);
 					this->freedOffset[segment] += CharSet_getNumberOfChars(charSet) + __CHAR_ROOM;
-					//write to char memory
 					return;	
 				}
 			}
