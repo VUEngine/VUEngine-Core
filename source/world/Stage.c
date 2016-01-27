@@ -574,7 +574,7 @@ static void Stage_preloadAssets(Stage this)
 		
 		for(; node; node = node->next)
 		{
-			//MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), __SAFE_CAST(Texture, node->data));
+			MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), __SAFE_CAST(Texture, node->data));
 		}
 
 		__DELETE(managedTextures);
