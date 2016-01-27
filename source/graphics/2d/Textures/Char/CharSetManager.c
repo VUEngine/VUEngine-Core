@@ -269,7 +269,6 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
-	return;
 	int segment = 0;
 	for(; segment < __CHAR_SEGMENTS ; segment++)
 	{

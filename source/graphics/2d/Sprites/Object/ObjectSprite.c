@@ -156,13 +156,6 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 
 	this->position = *position;
 
-	if(0 > this->objectIndex)
-	{
-		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
-		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
-		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
-	}
-
 	this->renderFlag |= __UPDATE_G;
 	this->initialized = true;
 }
@@ -208,10 +201,16 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
-	this->renderFlag = 1;
 	// if render flag is set
-	if(this->renderFlag && 0 <= this->objectIndex)
+	if(this->renderFlag)
 	{
+		if(0 > this->objectIndex)
+		{
+			this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
+			ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
+			ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
+		}
+
 		if(this->hidden)
 		{
 			if (0 <= this->objectIndex)
