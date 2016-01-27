@@ -48,6 +48,8 @@ __CLASS_NEW_END(Texture, textureDefinition, id);
 // class's constructor
 void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id)
 {
+	ASSERT(this, "Texture::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE();
 
@@ -56,13 +58,15 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 
 	// save the bgmap definition's address
 	this->textureDefinition = textureDefinition;
-	// if the char definition is NULL, it must be a text	
+	this->charSet = NULL;
 	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
-	ASSERT(this->charSet, "Texture::destructor: null charSet");
+	ASSERT(this->charSet, "Texture::constructor: null charSet");
+	// if the char definition is NULL, it must be a text	
 	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 	
 	// set the palette
 	this->palette = textureDefinition->palette;
+	this->written = false;
 }
 
 // class's destructor
@@ -99,6 +103,8 @@ void Texture_releaseCharSet(Texture this)
 		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
 		this->charSet = NULL;
 	}
+
+	this->written = false;
 }
 
 // write into memory the chars and this
@@ -116,6 +122,8 @@ void Texture_write(Texture this)
 			Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (void (*)(Object, Object))Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 		}
 	}
+	
+	this->written = true;
 }
 
 // write into memory the chars and this
@@ -124,9 +132,9 @@ void Texture_rewrite(Texture this)
 	ASSERT(this, "Texture::rewrite: null this");
 
 	// make sure I have a char set
-	Texture_write(this);
+//	Texture_write(this);
 	
-	CharSet_rewrite(this->charSet);
+//	CharSet_rewrite(this->charSet);
 	
 	__VIRTUAL_CALL(void, Texture, write, this);
 }
@@ -156,7 +164,7 @@ int Texture_getNumberOfChars(Texture this)
 	ASSERT(this, "Texture::getNumberOfChars: null this");
 	ASSERT(this->charSet, "Texture::getNumberOfChars: null charset");
 
-	return CharSet_getNumberOfChars(this->charSet);
+	return this->charSet? CharSet_getNumberOfChars(this->charSet) : this->textureDefinition->charSetDefinition->numberOfChars;
 }
 
 
@@ -172,9 +180,11 @@ TextureDefinition* Texture_getTextureDefinition(Texture this)
 u8 Texture_getTotalCols(Texture this)
 {
 	ASSERT(this, "Texture::getTotalCols: null this");
+	
+	int allocationType = this->charSet? CharSet_getAllocationType(this->charSet) : this->textureDefinition->charSetDefinition->allocationType;
 
 	// determine the allocation type
-	switch(CharSet_getAllocationType(this->charSet))
+	switch(allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
@@ -207,8 +217,10 @@ u8 Texture_getTotalRows(Texture this)
 {
 	ASSERT(this, "Texture::getTotalRows: null this");
 
+	int allocationType = this->charSet? CharSet_getAllocationType(this->charSet) : this->textureDefinition->charSetDefinition->allocationType;
+
 	// determine the allocation type
-	switch(CharSet_getAllocationType(this->charSet))
+	switch(allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
@@ -334,3 +346,11 @@ void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BY
 		CharSet_putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
+
+bool Texture_isWritten(Texture this)
+{
+	ASSERT(this, "Texture::isWritten: null this");
+
+	return this->written;
+}
+

@@ -44,6 +44,8 @@
 
 __CLASS_DEFINITION(BgmapSprite, Sprite);
 
+__CLASS_FRIEND_DEFINITION(Texture);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -77,7 +79,6 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 	{
 		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
-
 	}
 	
 	if(this->texture)

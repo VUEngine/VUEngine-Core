@@ -335,11 +335,6 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition->allocationType)
 			)
 			{
-				if(!charSet)
-				{
-					BgmapTexture_write(this->bgmapTextures[i]);
-				}
-				
 				// return if found
 				return this->bgmapTextures[i];
 			}
@@ -366,9 +361,6 @@ static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this
 
 			//if not, then allocate
 			BgmapTextureManager_doAllocate(this, this->bgmapTextures[i]);
-
-			// write texture to graphic memory
-			BgmapTexture_write(this->bgmapTextures[i]);
 
 			return this->bgmapTextures[i];
 		}
@@ -407,11 +399,6 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 			if(bgmapTexture)
 			{
 				BgmapTexture_increaseUsageCount(bgmapTexture);
-				
-				if(!Texture_getCharSet(__SAFE_CAST(Texture, bgmapTexture)))
-				{
-					__VIRTUAL_CALL(void, Texture, write, bgmapTexture);
-				}
 			}
 			else
 			{

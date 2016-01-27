@@ -74,7 +74,10 @@
 	const AnimationFunction* animationFunction;															\
 																										\
 	/* flag to know if playing an animation */															\
-	int playing: 1;																						\
+	u8 playing;																							\
+																										\
+	/* frame changed flag */																			\
+	u8 animationFrameChanged;																			\
 
 __CLASS(AnimationController);
 
@@ -97,7 +100,7 @@ s8 AnimationController_getFrameDelay(AnimationController this);
 void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay);
 u8 AnimationController_geFrameDelayDelta(AnimationController this);
 void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDelayDelta);
-bool AnimationController_animate(AnimationController this);
+void AnimationController_animate(AnimationController this);
 void AnimationController_fx(AnimationController this);
 bool AnimationController_update(AnimationController this, Clock clock);
 u8 AnimationController_getRows(AnimationController this);
@@ -111,6 +114,7 @@ bool AnimationController_isPlayingFunction(AnimationController this, const Anima
 bool AnimationController_isPlaying(AnimationController this);
 void AnimationController_write(AnimationController this);
 void AnimationController_pause(AnimationController this, bool pause);
+bool AnimationController_didAnimationFrameChanged(AnimationController this);
 
 
 #endif

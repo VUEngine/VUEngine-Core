@@ -181,13 +181,10 @@ void VPUManager_interruptHandler(void)
 		
 		// if performance was good enough in the 
 		// the previous second do some defragmenting
-		if(FrameRate_isFPSHigh(this->frameRate))
+		if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
 		{
-			if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
-			{
-				CharSetManager_defragmentProgressively(this->charSetManager);
-				// TODO: bgmap memory defragmentation
-			}
+			CharSetManager_defragmentProgressively(this->charSetManager);
+			// TODO: bgmap memory defragmentation
 		}
 
 		// write to VRAM

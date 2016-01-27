@@ -83,7 +83,6 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	this->clock = Game_getAnimationsClock(Game_getInstance());
 
 	this->currentAnimationName = NULL;
-	this->animationFrameChanged = false;
 }
 
 // class's destructor
@@ -143,7 +142,6 @@ static void AnimatedInGameEntity_removeListeners(AnimatedInGameEntity this)
 // called when one sprite changed its animation
 static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Object firer)
 {
-	this->animationFrameChanged = true;
 }
 
 // updates the animation attributes
@@ -185,7 +183,6 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 
 	if(this->sprites)
 	{
-		this->animationFrameChanged = false;
 		AnimatedInGameEntity_animate(this);
 	}
 }
@@ -201,7 +198,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 		for(; node ; node = node->next)
 		{
 			// first animate the frame
-			Sprite_update(__SAFE_CAST(Sprite, node->data));
+			Sprite_animate(__SAFE_CAST(Sprite, node->data));
 		}
 	}
 }

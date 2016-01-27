@@ -33,7 +33,7 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAX_SPRITE_CLASS_NAME_SIZE	19
+#define __MAX_SPRITE_CLASS_NAME_SIZE			19
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,15 +52,23 @@
 	VirtualNode node;															\
 	VirtualNode nextNode;														\
 																				\
+	/* texture wrinting	*/														\
+	Texture textureToWrite;														\
+																				\
 	/* next world layer	*/														\
 	s8 freeLayer;																\
 																				\
 	/* flag to stop sorting while recovering layers	*/							\
 	s8 recoveringLayers;														\
+																				\
+	/* number of rows to write in texture's writing	*/							\
+	s8 textureMaximumRowsToWrite;												\
+
 
 __CLASS_DEFINITION(SpriteManager, Object);
 
 __CLASS_FRIEND_DEFINITION(Sprite);
+__CLASS_FRIEND_DEFINITION(Texture);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -90,7 +98,9 @@ static void SpriteManager_constructor(SpriteManager this)
 
 	this->sprites = NULL;
 	this->recoveringLayers = false;
-
+	this->textureToWrite = NULL;
+	this->textureMaximumRowsToWrite = -1;
+	
 	SpriteManager_reset(this);
 }
 
@@ -129,6 +139,8 @@ void SpriteManager_reset(SpriteManager this)
 
 	this->node = NULL;
 	this->nextNode = NULL;
+	this->textureToWrite = NULL;
+	this->textureMaximumRowsToWrite = -1;
 
 	SpriteManager_setLastLayer(this);
 }
@@ -346,19 +358,64 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	if(!this->recoveringLayers)
+	static int waitToWrite = 0;
+	bool textureWereWritten = false;
+	
+	VirtualNode node = this->sprites->head;
+
+	if(!waitToWrite)
+	{
+		if(0 < this->textureMaximumRowsToWrite && this->textureToWrite)
+		{
+			__VIRTUAL_CALL(void, Texture, write, this->textureToWrite);
+		
+			this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
+			textureWereWritten = true;
+			waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
+		}
+		else
+		{
+			for(; node; node = node->next)
+			{
+				Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
+		
+				if(texture && !texture->written)
+				{
+					__VIRTUAL_CALL(void, Texture, write, texture);
+					
+					textureWereWritten = true;
+					waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
+					
+					this->textureToWrite = !texture->written? texture : NULL;
+					
+					if(0 < this->textureMaximumRowsToWrite)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		waitToWrite--;
+	}
+
+	if(!textureWereWritten && !this->recoveringLayers)
 	{
 		// z sorting
 		SpriteManager_sortLayersProgressively(this);
 	}
 	
 	// render from WORLD 31 to the lowest active one
-	VirtualNode node = this->sprites->tail;
+	node = this->sprites->tail;
 	
 	for(; node; node = node->previous)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
-		__VIRTUAL_CALL(void, Sprite, render, sprite);
+		Sprite_update(sprite);
+
+		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
 		
 		// must make sure that no sprite has the end world
 		// which can be the case when a new sprite is added
@@ -444,6 +501,20 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 	}
 	
 	return NULL;
+}
+
+void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWriting)
+{
+	ASSERT(this, "SpriteManager::print: null this");
+
+	this->textureMaximumRowsToWrite = deferTextureWriting? __MAX_TEXTURE_ROWS_TO_WRITE : -1;
+}
+
+s8 SpriteManager_getTextureMaximumRowsToWrite(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
+
+	return this->textureMaximumRowsToWrite;
 }
 
 // print status

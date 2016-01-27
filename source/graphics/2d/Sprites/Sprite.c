@@ -259,6 +259,7 @@ void Sprite_rotate(Sprite this, const Rotation* rotation)
 // 										Animation
 //---------------------------------------------------------------------------------------------------------
 
+
 void Sprite_update(Sprite this)
 {
 	ASSERT(this, "Sprite::update: null this");
@@ -266,10 +267,21 @@ void Sprite_update(Sprite this)
 	if(this->animationController)
 	{
 		// first animate the frame
-		if(AnimationController_animate(this->animationController))
+		if(AnimationController_didAnimationFrameChanged(this->animationController))
 		{
 			__VIRTUAL_CALL(void, Sprite, writeAnimation, this);
 		}
+	}
+}
+
+void Sprite_animate(Sprite this)
+{
+	ASSERT(this, "Sprite::animate: null this");
+
+	if(this->animationController)
+	{
+		// first animate the frame
+		AnimationController_animate(this->animationController);
 	}
 }
 
@@ -294,8 +306,6 @@ void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* 
 	{
 		// first animate the frame
 		AnimationController_play(this->animationController, animationDescription, functionName);
-
-		__VIRTUAL_CALL(void, Sprite, writeAnimation, this);
 	}
 }
 

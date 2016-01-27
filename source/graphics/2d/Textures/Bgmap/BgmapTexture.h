@@ -52,6 +52,9 @@
 																										\
 	/* how many textures are using me */																\
 	u8 usageCount;																						\
+																										\
+	/* remaining rows to be written */																	\
+	u8 remainingRowsToBeWritten;																		\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(BgmapTexture);

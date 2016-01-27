@@ -396,7 +396,9 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	VirtualNode node = this->objectSprites->head;
 	for(; node; node = node->next)
 	{
-		ObjectSprite_render(__SAFE_CAST(ObjectSprite, node->data));
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		Sprite_update(sprite);
+		ObjectSprite_render(__SAFE_CAST(ObjectSprite, sprite));
 	}
 }
 

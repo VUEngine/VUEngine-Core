@@ -209,7 +209,9 @@ void GameState_resume(GameState this, void* owner)
 	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
 	// render sprites as soon as possible
+	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
 	SpriteManager_render(SpriteManager_getInstance());
+	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
 #ifdef __DEBUG_TOOLS
 	}
 #endif
@@ -326,7 +328,9 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
 
 	// render sprites as soon as possible
+	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
 	SpriteManager_render(SpriteManager_getInstance());
+	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
 }
 
 // set streaming flag

@@ -82,9 +82,6 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 																										\
 	/* need to save for pausing */																		\
 	char* currentAnimationName;																			\
-																										\
-	/* frame changed flag */																			\
-	u8 animationFrameChanged;																			\
 
 __CLASS(AnimatedInGameEntity);
 

@@ -195,6 +195,7 @@ bool Sprite_isHidden(Sprite this);
 //---------------------------------------------------------------------------------------------------------
 
 void Sprite_update(Sprite this);
+void Sprite_animate(Sprite this);
 void Sprite_pause(Sprite this, bool pause);
 void Sprite_play(Sprite thisa, AnimationDescription* animationDescription, char* functionName);
 bool Sprite_isPlaying(Sprite this);

@@ -40,6 +40,7 @@
 // define the ObjectSprite
 __CLASS_DEFINITION(ObjectSprite, Sprite);
 
+__CLASS_FRIEND_DEFINITION(Texture);
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -138,6 +139,8 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 			}
 			break;
 	}
+	
+	this->texture->written = false;
 }
 
 VBVec2D ObjectSprite_getPosition(ObjectSprite this)
@@ -205,6 +208,7 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
+	this->renderFlag = 1;
 	// if render flag is set
 	if(this->renderFlag && 0 <= this->objectIndex)
 	{
@@ -221,6 +225,11 @@ void ObjectSprite_render(ObjectSprite this)
 
 			this->renderFlag = 0;
 			return;
+		}
+		
+		if(!this->texture->written)
+		{
+			ObjectTexture_write(this->texture);
 		}
 		
 		if(!this->initialized)

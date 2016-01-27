@@ -41,6 +41,7 @@
 
 __CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
 
+__CLASS_FRIEND_DEFINITION(Texture);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

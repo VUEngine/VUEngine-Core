@@ -61,7 +61,10 @@
 	u16 id;																								\
 																										\
 	/* color palette */																					\
-	u8 palette: 2;																						\
+	u8 palette;																						\
+																										\
+	/* written flag */																					\
+	u8 written;																						\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(Texture);
@@ -126,6 +129,6 @@ u8 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
 void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
-
+bool Texture_isWritten(Texture this);
 
 #endif

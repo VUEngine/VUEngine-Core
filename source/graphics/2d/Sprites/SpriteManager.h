@@ -64,6 +64,8 @@ int SpriteManager_getFreeLayer(SpriteManager this);
 void SpriteManager_showLayer(SpriteManager this, u8 layer);
 void SpriteManager_recoverLayers(SpriteManager this);
 Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer);
+void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWriting);
+s8 SpriteManager_getTextureMaximumRowsToWrite(SpriteManager this);
 void SpriteManager_print(SpriteManager this, int x, int y);
 
 

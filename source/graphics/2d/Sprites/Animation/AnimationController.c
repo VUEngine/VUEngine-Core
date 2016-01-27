@@ -71,6 +71,8 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 	// not playing anything yet
 	this->playing = false;
 	
+	this->animationFrameChanged = false;
+	
 	// animation coordinator
 	this->animationCoordinator = AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory_getInstance(), this, sprite, charSet);
 }
@@ -165,21 +167,23 @@ void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDe
 }
 
 // animate the frame
-bool AnimationController_animate(AnimationController this)
+void AnimationController_animate(AnimationController this)
 {
 	ASSERT(this, "AnimationController::animate: null this");
 
+	this->animationFrameChanged = false;
+ 
 	// first check for a valid animation function
 	if(!this->animationFunction)
 	{
-		return false;
+		return;
 	}
 
 	// if the actual frame was set to -1
 	// it means that a not loop animation has been completed
 	if(-1 == this->actualFrame)
 	{
-		return false;
+		return;
 	}
 
 	// show the next frame
@@ -203,17 +207,15 @@ bool AnimationController_animate(AnimationController this)
 			// invalidate animation
 			this->actualFrame = -1;
 
-			return false;
+			return;
 		}
 	}
 
-	bool animateFrameChanged = false;
-	
 	// if the frame has changed
 	if(this->actualFrame != this->previousFrame)
 	{
 		// write the new frame of animation
-		animateFrameChanged = true;
+		this->animationFrameChanged = true;
 
 		// don't write animation each time, only when the animation
 		// has changed
@@ -244,8 +246,6 @@ bool AnimationController_animate(AnimationController this)
 			this->frameDelay = 1 + Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
 	}
-	
-	return animateFrameChanged;
 }
 
 // render frame
@@ -350,6 +350,9 @@ void AnimationController_play(AnimationController this, const AnimationDescripti
 
 			// it's playing now
 			this->playing = true;
+			
+			// force writing in the next render cycle
+			this->animationFrameChanged = true;
 		}
 	}
 }
@@ -391,4 +394,11 @@ void AnimationController_pause(AnimationController this, bool pause)
 	{
 		this->actualFrame = 0;
 	}
+}
+
+bool AnimationController_didAnimationFrameChanged(AnimationController this)
+{
+	ASSERT(this, "AnimationController::didAnimationFrameChanged: null this");
+
+	return this->animationFrameChanged;
 }
