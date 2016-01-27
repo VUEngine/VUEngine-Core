@@ -111,12 +111,12 @@ bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity
 {
 	ASSERT(this, "CollisionsContainerEntity::handlePropagatedMessage: null this");
 
-	return true;
+	return false;
 }
 
 int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
 	ASSERT(this, "CollisionsContainerEntity::passMessage: null this");
 
-	return true;
+	return false;
 }
