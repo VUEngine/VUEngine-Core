@@ -163,7 +163,7 @@ void Container_deleteMyself(Container this)
 	}
 	else
 	{
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 1, 10, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 1, 15, NULL);
 		NM_ASSERT(false, "Container::deleteMyself: I'm orphan");
 	}
 }

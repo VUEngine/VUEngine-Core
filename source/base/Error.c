@@ -25,6 +25,7 @@
 #include <SpriteManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
