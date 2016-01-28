@@ -95,14 +95,6 @@ void Shape_setActive(Shape this, bool active)
 	}
 }
 
-// is active?
-bool Shape_isActive(Shape this)
-{
-	ASSERT(this, "Shape::isActive: null this");
-
-	return false;
-}
-
 // do I move?
 bool Shape_moves(Shape this)
 {

@@ -168,7 +168,6 @@ void CollisionManager_unregisterShape(CollisionManager this, Shape shape)
 
 		// place in  the removed shapes list
 		VirtualList_pushFront(this->removedShapes, (BYTE*)shape);
-		VirtualList_removeElement(this->inactiveShapes, shape);
 	}
 }
 
@@ -380,7 +379,7 @@ void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape)
 
 	if(!VirtualList_find(this->activeShapes, shape))
 	{
-		VirtualList_pushBack(this->activeShapes, shape);
+		VirtualList_pushFront(this->activeShapes, shape);
 		VirtualList_removeElement(this->inactiveShapes, shape);
 	}
 }
