@@ -195,9 +195,11 @@ void ParticleSystem_update(ParticleSystem this)
 	    // update each particle
 	    VirtualNode node = this->particles->head;
 	
+	    void (* behavior)(Particle particle) = this->particleSystemDefinition->particleDefinition->behavior;
+	    	
 	    for(; node; node = node->next)
 	    {
-	        __VIRTUAL_CALL(void, Particle, update, node->data, timeElapsed, this->particleSystemDefinition->particleDefinition->behavior);
+	        __VIRTUAL_CALL(void, Particle, update, node->data, timeElapsed, behavior);
 	    }
 	
 		if(!this->paused)
