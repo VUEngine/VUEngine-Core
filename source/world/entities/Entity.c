@@ -660,11 +660,6 @@ void Entity_initialize(Entity this)
 			__VIRTUAL_CALL(void, Entity, initialize, __SAFE_CAST(Entity, node->data));
 		}
 	}
-	
-	if(this->shape)
-	{
-		Shape_setActive(this->shape, true);
-	}
 }
 
 // entity is initialized
@@ -892,6 +887,8 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	    {
 			__VIRTUAL_CALL(void, Shape, position, this->shape);
 		}
+		
+		Shape_setActive(this->shape, true);
 	}
 }
 
