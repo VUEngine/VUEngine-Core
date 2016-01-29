@@ -267,7 +267,7 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 
 					if(0 < displacement.x)
 					{
-						if(collidingSpatialObjectPosition->x + collidingSpatialObjectPositionHalfWidth < selectedCollidingSpatialObjectPosition->x + selectedCollidingSpatialObjectPositionHalfWidth)
+						if(collidingSpatialObjectPosition->x - collidingSpatialObjectPositionHalfWidth < selectedCollidingSpatialObjectPosition->x - selectedCollidingSpatialObjectPositionHalfWidth)
 						{
 							collidingSpatialObjectsToAlignTo[kXAxis] = collidingSpatialObject;
 						}
@@ -295,7 +295,7 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 
 					if(0 < displacement.y)
 					{
-						if(collidingSpatialObjectPosition->y + collidingSpatialObjectPositionHalfHeight < selectedCollidingSpatialObjectPosition->y + selectedCollidingSpatialObjectPositionHalfHeight)
+						if(collidingSpatialObjectPosition->y - collidingSpatialObjectPositionHalfHeight < selectedCollidingSpatialObjectPosition->y - selectedCollidingSpatialObjectPositionHalfHeight)
 						{
 							collidingSpatialObjectsToAlignTo[kYAxis] = collidingSpatialObject;
 						}
@@ -323,7 +323,7 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 
 					if(0 < displacement.z)
 					{
-						if(collidingSpatialObjectPosition->z + collidingSpatialObjectPositionHalfDepth < selectedCollidingSpatialObjectPosition->z + selectedCollidingSpatialObjectPositionHalfDepth)
+						if(collidingSpatialObjectPosition->z - collidingSpatialObjectPositionHalfDepth < selectedCollidingSpatialObjectPosition->z - selectedCollidingSpatialObjectPositionHalfDepth)
 						{
 							collidingSpatialObjectsToAlignTo[kZAxis] = collidingSpatialObject;
 						}
