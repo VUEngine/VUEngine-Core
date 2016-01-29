@@ -239,21 +239,108 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 
 	VirtualNode node = collidingSpatialObjects->head;
 
-	SpatialObject collidingSpatialObject = NULL;
-
 	VirtualList processedCollidingSpatialObjects = __NEW(VirtualList);
 	
 	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
 	
+	SpatialObject collidingSpatialObjectsToAlignTo[kLastAxis] = {NULL, NULL, NULL};
+	
 	for(; node; node = node->next)
 	{
-		collidingSpatialObject = node->data;
+		SpatialObject collidingSpatialObject = __SAFE_CAST(SpatialObject, node->data);
 		
 		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(Shape, SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, ownerPreviousPosition);
-		
+
 		if(axisOfCollision)
 		{
-			CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObject, axisOfCollision, scale, registerObjects);
+			const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObject);
+			u16 collidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(u16, SpatialObject, getWidth, collidingSpatialObject) >> 1;
+			u16 collidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(u16, SpatialObject, getHeight, collidingSpatialObject) >> 1;
+			u16 collidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(u16, SpatialObject, getDepth, collidingSpatialObject) >> 1;
+
+			if(__XAXIS & axisOfCollision)
+			{
+				if(collidingSpatialObjectsToAlignTo[kXAxis])
+				{
+					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kXAxis]);
+					u16 selectedCollidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(u16, SpatialObject, getWidth, collidingSpatialObjectsToAlignTo[kXAxis]) >> 1;
+
+					if(0 < displacement.x)
+					{
+						if(collidingSpatialObjectPosition->x + collidingSpatialObjectPositionHalfWidth < selectedCollidingSpatialObjectPosition->x + selectedCollidingSpatialObjectPositionHalfWidth)
+						{
+							collidingSpatialObjectsToAlignTo[kXAxis] = collidingSpatialObject;
+						}
+					}
+					else
+					{
+						if(collidingSpatialObjectPosition->x + collidingSpatialObjectPositionHalfWidth > selectedCollidingSpatialObjectPosition->x + selectedCollidingSpatialObjectPositionHalfWidth)
+						{
+							collidingSpatialObjectsToAlignTo[kXAxis] = collidingSpatialObject;
+						}
+					}
+				}
+				else
+				{
+					collidingSpatialObjectsToAlignTo[kXAxis] = collidingSpatialObject;
+				}
+			}
+			
+			if(__YAXIS & axisOfCollision)
+			{
+				if(collidingSpatialObjectsToAlignTo[kYAxis])
+				{
+					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kYAxis]);
+					u16 selectedCollidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(u16, SpatialObject, getHeight, collidingSpatialObjectsToAlignTo[kYAxis]) >> 1;
+
+					if(0 < displacement.y)
+					{
+						if(collidingSpatialObjectPosition->y + collidingSpatialObjectPositionHalfHeight < selectedCollidingSpatialObjectPosition->y + selectedCollidingSpatialObjectPositionHalfHeight)
+						{
+							collidingSpatialObjectsToAlignTo[kYAxis] = collidingSpatialObject;
+						}
+					}
+					else
+					{
+						if(collidingSpatialObjectPosition->y + collidingSpatialObjectPositionHalfHeight > selectedCollidingSpatialObjectPosition->y + selectedCollidingSpatialObjectPositionHalfHeight)
+						{
+							collidingSpatialObjectsToAlignTo[kYAxis] = collidingSpatialObject;
+						}
+					}
+				}
+				else
+				{
+					collidingSpatialObjectsToAlignTo[kYAxis] = collidingSpatialObject;
+				}
+			}
+
+			if(__ZAXIS & axisOfCollision)
+			{
+				if(collidingSpatialObjectsToAlignTo[kZAxis])
+				{
+					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kZAxis]);
+					u16 selectedCollidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(u16, SpatialObject, getDepth, collidingSpatialObjectsToAlignTo[kZAxis]) >> 1;
+
+					if(0 < displacement.z)
+					{
+						if(collidingSpatialObjectPosition->z + collidingSpatialObjectPositionHalfDepth < selectedCollidingSpatialObjectPosition->z + selectedCollidingSpatialObjectPositionHalfDepth)
+						{
+							collidingSpatialObjectsToAlignTo[kZAxis] = collidingSpatialObject;
+						}
+					}
+					else
+					{
+						if(collidingSpatialObjectPosition->z + collidingSpatialObjectPositionHalfDepth > selectedCollidingSpatialObjectPosition->z + selectedCollidingSpatialObjectPositionHalfDepth)
+						{
+							collidingSpatialObjectsToAlignTo[kZAxis] = collidingSpatialObject;
+						}
+					}
+				}
+				else
+				{
+					collidingSpatialObjectsToAlignTo[kZAxis] = collidingSpatialObject;
+				}
+			}
 		}
 		else
 		{
@@ -261,6 +348,21 @@ u8 CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingS
 		}
 	}
 	
+	if(collidingSpatialObjectsToAlignTo[kXAxis])
+	{
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kXAxis], __XAXIS, scale, registerObjects);
+	}
+
+	if(collidingSpatialObjectsToAlignTo[kYAxis])
+	{
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kYAxis], __YAXIS, scale, registerObjects);
+	}
+
+	if(collidingSpatialObjectsToAlignTo[kZAxis])
+	{
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kZAxis], __ZAXIS, scale, registerObjects);
+	}
+
 	node = processedCollidingSpatialObjects->head;
 	
 	for(; node; node = node->next)
