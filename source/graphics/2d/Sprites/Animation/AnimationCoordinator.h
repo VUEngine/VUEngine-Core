@@ -48,8 +48,8 @@
 	/* controllers to sync */																			\
 	VirtualList animationControllers;																	\
 																										\
-	/* char set shared among entities */																\
-	CharSet charSet;																					\
+	/* char set definition shared among entities */														\
+	const CharSetDefinition* charSetDefinition;															\
 
 __CLASS(AnimationCoordinator);
 
@@ -58,11 +58,11 @@ __CLASS(AnimationCoordinator);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void AnimationCoordinator_constructor(AnimationCoordinator this, CharSet charSet);
+void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition);
 void AnimationCoordinator_destructor(AnimationCoordinator this);
 void AnimationCoordinator_addAnimationController(AnimationCoordinator this, AnimationController animationController);
 void AnimationCoordinator_removeAnimationController(AnimationCoordinator this, AnimationController animationController);
-const CharSet AnimationCoordinator_getCharSet(AnimationCoordinator this);
+const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoordinator this);
 bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
 
 

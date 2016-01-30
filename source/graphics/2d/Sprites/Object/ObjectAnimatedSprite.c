@@ -56,10 +56,12 @@ __CLASS_NEW_END(ObjectAnimatedSprite, oSpriteDefinition, owner);
 // class's constructor
 static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
 {
+	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE((SpriteDefinition*)oSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), Texture_getCharSet(this->texture));
+	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), oSpriteDefinition->textureDefinition->charSetDefinition);
 }
 
 //destructor

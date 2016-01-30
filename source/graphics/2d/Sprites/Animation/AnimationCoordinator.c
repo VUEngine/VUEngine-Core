@@ -38,14 +38,14 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 //class constructor
-void AnimationCoordinator_constructor(AnimationCoordinator this, CharSet charSet)
+void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "AnimationCoordinator::constructor: null this");
 
 	__CONSTRUCT_BASE();
 
 	this->animationControllers = __NEW(VirtualList);
-	this->charSet = charSet;
+	this->charSetDefinition = charSetDefinition;
 }
 
 // class destructor
@@ -62,11 +62,11 @@ void AnimationCoordinator_destructor(AnimationCoordinator this)
 	__DESTROY_BASE;
 }
 
-const CharSet AnimationCoordinator_getCharSet(AnimationCoordinator this)
+const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoordinator this)
 {
-	ASSERT(this, "AnimationCoordinator::getCharSet: null this");
+	ASSERT(this, "AnimationCoordinator::getCharSetDefinition: null this");
 
-	return this->charSet;
+	return this->charSetDefinition;
 }
 
 bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)

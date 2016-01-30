@@ -86,9 +86,9 @@ __CLASS(AnimationController);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(AnimationController, Object owner, Sprite sprite, CharSet charSet);
+__CLASS_NEW_DECLARE(AnimationController, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
 
-void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, CharSet charSet);
+void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
 void AnimationController_destructor(AnimationController this);
 void AnimationController_writeAnimation(AnimationController this);
 s8 AnimationController_getActualFrameIndex(AnimationController this);

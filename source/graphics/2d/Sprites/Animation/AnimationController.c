@@ -46,12 +46,14 @@ extern int strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimationController, Object owner, Sprite sprite, CharSet charSet)
-__CLASS_NEW_END(AnimationController, owner, sprite, charSet);
+__CLASS_NEW_DEFINITION(AnimationController, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition)
+__CLASS_NEW_END(AnimationController, owner, sprite, charSetDefinition);
 
 // class's constructor
-void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, CharSet charSet)
+void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
+	ASSERT(this, "AnimationController::constructor: null this");
+
 	__CONSTRUCT_BASE();
 
 	// set the owner
@@ -73,8 +75,10 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 	
 	this->animationFrameChanged = false;
 	
+	ASSERT(charSetDefinition, "AnimationController::constructor: null charSetDefinition");
+
 	// animation coordinator
-	this->animationCoordinator = AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory_getInstance(), this, sprite, charSet);
+	this->animationCoordinator = AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory_getInstance(), this, sprite, charSetDefinition);
 }
 
 //destructor

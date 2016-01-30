@@ -54,13 +54,15 @@ __CLASS_NEW_END(BgmapAnimatedSprite, bSpriteDefinition, owner);
 // class's constructor
 static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
 {
+	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(bSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), Texture_getCharSet(this->texture));
-	
 	if(this->texture)
 	{
+		this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bSpriteDefinition->textureDefinition->charSetDefinition);
+
 		// since the offset will be moved during animation, must save it
 		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;
 		this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;

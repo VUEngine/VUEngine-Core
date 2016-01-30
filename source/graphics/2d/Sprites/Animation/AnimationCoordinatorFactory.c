@@ -95,13 +95,13 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 	VirtualList_clear(this->animationCoordinators);
 }
 
-AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, CharSet charSet)
+AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: null this");
 	ASSERT(sprite, "AnimationCoordinatorFactory::getCoordinator: null sprite");
-	ASSERT(charSet, "AnimationCoordinatorFactory::getCoordinator: null charSet");
+	ASSERT(charSetDefinition, "AnimationCoordinatorFactory::getCoordinator: null charSetDefinition");
 
-	switch(CharSet_getAllocationType(charSet))
+	switch(charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SHARED_COORDINATED:
 			{
@@ -111,7 +111,7 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				{
 					AnimationCoordinator animationCoordinator = __SAFE_CAST(AnimationCoordinator, node->data);
 					
-					if(AnimationCoordinator_getCharSet(animationCoordinator) == charSet)
+					if(AnimationCoordinator_getCharSetDefinition(animationCoordinator) == charSetDefinition)
 					{
 						__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
 						return animationCoordinator;
@@ -122,11 +122,11 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				
 				if(__GET_CAST(BgmapAnimatedSprite, sprite))
 				{
-					animationCoordinator = __SAFE_CAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSet));
+					animationCoordinator = __SAFE_CAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSetDefinition));
 				}
 				else if(__GET_CAST(ObjectAnimatedSprite, sprite))
 				{
-					animationCoordinator = __SAFE_CAST(AnimationCoordinator, __NEW(ObjectAnimationCoordinator, charSet));
+					animationCoordinator = __SAFE_CAST(AnimationCoordinator, __NEW(ObjectAnimationCoordinator, charSetDefinition));
 				}
 				else
 				{

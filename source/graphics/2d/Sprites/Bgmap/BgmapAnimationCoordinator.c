@@ -34,15 +34,15 @@ __CLASS_DEFINITION(BgmapAnimationCoordinator, AnimationCoordinator);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapAnimationCoordinator, const CharSet charSet)
-__CLASS_NEW_END(BgmapAnimationCoordinator, charSet);
+__CLASS_NEW_DEFINITION(BgmapAnimationCoordinator, const CharSetDefinition* charSetDefinition)
+__CLASS_NEW_END(BgmapAnimationCoordinator, charSetDefinition);
 
 //class constructor
-void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSet charSet)
+void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::constructor: null this");
 
-	__CONSTRUCT_BASE(charSet);
+	__CONSTRUCT_BASE(charSetDefinition);
 }
 
 // class destructor

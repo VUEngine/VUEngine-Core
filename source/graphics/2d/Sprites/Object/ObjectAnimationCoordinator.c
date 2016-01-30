@@ -37,15 +37,15 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectAnimationCoordinator, const CharSet charSet)
-__CLASS_NEW_END(ObjectAnimationCoordinator, charSet);
+__CLASS_NEW_DEFINITION(ObjectAnimationCoordinator, const CharSetDefinition* charSetDefinition)
+__CLASS_NEW_END(ObjectAnimationCoordinator, charSetDefinition);
 
 //class constructor
-void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSet charSet)
+void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::constructor: null this");
 
-	__CONSTRUCT_BASE(charSet);
+	__CONSTRUCT_BASE(charSetDefinition);
 }
 
 // class destructor

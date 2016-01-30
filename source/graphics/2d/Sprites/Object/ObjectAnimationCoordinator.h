@@ -50,9 +50,9 @@ __CLASS(ObjectAnimationCoordinator);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ObjectAnimationCoordinator, const CharSet charSet);
+__CLASS_NEW_DECLARE(ObjectAnimationCoordinator, const CharSetDefinition* charSetDefinition);
 
-void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSet charSet);
+void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition);
 void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this);
 void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinator this, AnimationController animationController);
 void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController);
