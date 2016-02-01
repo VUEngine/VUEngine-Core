@@ -94,8 +94,6 @@ __CLASS(Stage);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-
-// defines a game world in ROM memory
 typedef struct StageTextureEntryDefinition
 {
 	TextureDefinition* textureDefinition;
