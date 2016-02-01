@@ -110,9 +110,17 @@ typedef const StageTextureEntryDefinition StageTextureEntryROMDef;
 // defines a game world in ROM memory
 typedef struct StageDefinition
 {
-	// world's size over each axis in pixels
-	Size size;
-	
+	// general level's attributes
+	struct Level
+	{
+		// level's size
+		Size size;
+		
+		// screen's initial position inside the game world
+		VBVec3D screenInitialPosition;
+		
+	} level;
+
 	// streaming
 	struct Streaming 
 	{
@@ -120,47 +128,70 @@ typedef struct StageDefinition
 		u8 loadPadding;
 		u8 unloadPadding;
 		u8 streamingAmplitude;
+		
 	} streaming;
-
-	// physical world's gravity
-	Acceleration gravity;
 	
-	// physical world's friction
-	fix19_13 friction;
+	// rendering
+	struct Rendering
+	{
+		// number of cycles that the texture writing is idle
+		u8 cyclesToWaitForTextureWriting;
+		
+		// maximum number of texture's rows to write each time the 
+		// texture writing is active
+		u8 texturesMaximumRowsToWrite;
+		
+		// palettes' config
+		PaletteConfig paletteConfig;
+		
+	    // BGMAP segments configuration
+	    // number of segments reserved for dynamically allocated textures when preloading
+		u8 spareBgmapSegments;
+
+		// OBJs segments's sizes(SPT0 to SPT3)
+		fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
+
+		// OBJs segments z coordinates (SPT0 to SPT3)
+		fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
+		
+		// engine's optical values structure
+		Optical optical;
+
+	} rendering;
+
+	struct Physics 
+	{
+		// physical world's gravity
+		Acceleration gravity;
+		
+		// physical world's friction
+		fix19_13 friction;
+		
+	} physics;
 	
-	// palettes' config
-	PaletteConfig paletteConfig;
+
+	struct Assets
+	{
+		// char sets for preloading
+		CharSetDefinition** charSets;
+
+		// textures for preloading
+		StageTextureEntryDefinition* stageTextureEntryDefinitions;
+
+		// pointer to the background music
+		const u16 (*bgm)[];
+
+	} assets;
+
+	struct Entities
+	{
+		// UI's definition
+		UIDefinition uiDefinition;
 	
-    // BGMAP segments configuration
-    // number of segments reserved for dynamically allocated textures when preloading
-	u8 spareBgmapSegments;
-
-	// OBJs segments's sizes(SPT0 to SPT3)
-	fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
-
-	// OBJs segments z coordinates (SPT0 to SPT3)
-	fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
-
-	// initial screen's position inside the game world
-	VBVec3D screenPosition;
-	
-	// engine's optical values structure
-	Optical optical;
-
-	// char sets for preloading
-	CharSetDefinition** charSets;
-
-	// textures for preloading
-	StageTextureEntryDefinition* stageTextureEntryDefinitions;
-
-	// UI's definition
-	UIDefinition uiDefinition;
-
-	// each of the stage's entities
-	PositionedEntity* entities;
-
-	// pointer to the background music
-	const u16 (*bgm)[];
+		// each of the stage's entities
+		PositionedEntity* children;
+		
+	} entities;
 
 } StageDefinition;
 

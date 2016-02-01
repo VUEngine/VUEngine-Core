@@ -20,7 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapTexture.h>
-#include <Optics.h>
+#include <SpriteManager.h>
 #include <debugUtilities.h>
 
 
@@ -145,7 +145,7 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 		return;
 	}
 	
-	int counter = SpriteManager_getTextureMaximumRowsToWrite(SpriteManager_getInstance());
+	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
@@ -177,7 +177,7 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 		return;
 	}
 
-	int counter = SpriteManager_getTextureMaximumRowsToWrite(SpriteManager_getInstance());
+	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
@@ -213,7 +213,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 		return;
 	}
 
-	int counter = SpriteManager_getTextureMaximumRowsToWrite(SpriteManager_getInstance());
+	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
@@ -252,7 +252,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 		return;
 	}
 	
-	int counter = SpriteManager_getTextureMaximumRowsToWrite(SpriteManager_getInstance());
+	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)

@@ -65,7 +65,9 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer);
 void SpriteManager_recoverLayers(SpriteManager this);
 Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer);
 void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWriting);
-s8 SpriteManager_getTextureMaximumRowsToWrite(SpriteManager this);
+s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this);
+void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
+void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
 void SpriteManager_print(SpriteManager this, int x, int y);
 
 

@@ -91,7 +91,6 @@ enum GameCurrentProcess
 	kGameCheckingForNewStateDone,
 };
 
-
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -400,8 +399,9 @@ static void Game_setNextState(Game this, GameState state)
 		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock_getTime(this->clock) - this->lastAutoPauseCheckTime);
 		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
 		
+		MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kAutoPause);
 		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
-		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
+		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);		
 	}
 
 	// no next state now

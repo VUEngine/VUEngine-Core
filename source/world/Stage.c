@@ -249,14 +249,14 @@ static void Stage_setObjectSpritesContainers(Stage this)
 {
 	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
 
-	ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->objectSpritesContainersSize, this->stageDefinition->objectSpritesContainersZPosition);
+	ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->rendering.objectSpritesContainersSize, this->stageDefinition->rendering.objectSpritesContainersZPosition);
 }
 
 void Stage_setupPalettes(Stage this)
 {
 	ASSERT(this, "Stage::setupPalettes: null this");
 
-	VPUManager_setupPalettes(VPUManager_getInstance(), &this->stageDefinition->paletteConfig);
+	VPUManager_setupPalettes(VPUManager_getInstance(), &this->stageDefinition->rendering.paletteConfig);
 }
 
 
@@ -269,17 +269,17 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	this->stageDefinition = stageDefinition;
 
 	// set optical values
-	Screen_setOptical(Screen_getInstance(), this->stageDefinition->optical);
+	Screen_setOptical(Screen_getInstance(), this->stageDefinition->rendering.optical);
 
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());
 
 	// set world's limits
-	Screen_setStageSize(Screen_getInstance(), stageDefinition->size);
+	Screen_setStageSize(Screen_getInstance(), stageDefinition->level.size);
 
 	if(overrideScreenPosition)
 	{
-		Screen_setPosition(Screen_getInstance(), stageDefinition->screenPosition);
+		Screen_setPosition(Screen_getInstance(), stageDefinition->level.screenInitialPosition);
 	}
 
 	// set palettes
@@ -287,6 +287,10 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	
 	// setup OBJs
 	Stage_setObjectSpritesContainers(this);
+	
+	// setup SpriteManager's configuration
+	SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager_getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
+	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
 
 	// preload textures
 	Stage_preloadAssets(this);
@@ -304,11 +308,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	Stage_setupUI(this);
 	
 	// set physics
-	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->friction);
-	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->gravity);
+	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.friction);
+	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.gravity);
 
 	// load background music
-	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])stageDefinition->bgm);
+	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])stageDefinition->assets.bgm);
 
 	// setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
@@ -330,7 +334,7 @@ Size Stage_getSize(Stage this)
 	ASSERT(this->stageDefinition, "Stage::getSize: null stageDefinition");
 
 	// set world's limits
-	return this->stageDefinition->size;
+	return this->stageDefinition->level.size;
 }
 
 // setup ui
@@ -345,10 +349,10 @@ static void Stage_setupUI(Stage this)
 		this->ui = NULL;
 	}
 
-	if(this->stageDefinition->uiDefinition.allocator)
+	if(this->stageDefinition->entities.uiDefinition.allocator)
 	{
 		// call the appropriate allocator to support inheritance
-		this->ui = ((UI (*)(UIDefinition*, ...)) this->stageDefinition->uiDefinition.allocator)(&this->stageDefinition->uiDefinition);
+		this->ui = ((UI (*)(UIDefinition*, ...)) this->stageDefinition->entities.uiDefinition.allocator)(&this->stageDefinition->entities.uiDefinition);
 		ASSERT(this->ui, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
@@ -540,13 +544,13 @@ static void Stage_preloadAssets(Stage this)
 
 	int i = 0;
 
-	if(this->stageDefinition->charSets)
+	if(this->stageDefinition->assets.charSets)
 	{
-		for (; this->stageDefinition->charSets[i]; i++)
+		for (; this->stageDefinition->assets.charSets[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->charSets[i]->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSets[i]->allocationType)
 			{
-				CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->charSets[i]);
+				CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->assets.charSets[i]);
 			}
 			else
 			{
@@ -555,24 +559,24 @@ static void Stage_preloadAssets(Stage this)
 		}
 	}
 
-	if(this->stageDefinition->stageTextureEntryDefinitions)
+	if(this->stageDefinition->assets.stageTextureEntryDefinitions)
 	{
 		VirtualList managedTextures = __NEW(VirtualList);
 		
-		for (i = 0; this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition; i++)
+		for (i = 0; this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
 			{
 				Texture texture = NULL;
 				
-				if(this->stageDefinition->stageTextureEntryDefinitions[i].isManaged)
+				if(this->stageDefinition->assets.stageTextureEntryDefinitions[i].isManaged)
 				{
-					texture = MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition);
+					texture = MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition);
 					VirtualList_pushBack(managedTextures, texture );
 				}
 				else
 				{
-					texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->stageTextureEntryDefinitions[i].textureDefinition));
+					texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition));
 				}
 				
 				if(texture)
@@ -596,7 +600,7 @@ static void Stage_preloadAssets(Stage this)
 		__DELETE(managedTextures);
 	}
 
-	BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager_getInstance(), this->stageDefinition->spareBgmapSegments);
+	BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager_getInstance(), this->stageDefinition->rendering.spareBgmapSegments);
 
 	if(0 < i)
 	{
@@ -650,16 +654,16 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 	// position in the stage's definition
 	int weightIncrement = Math_squareRoot(__SCREEN_WIDTH * __SCREEN_WIDTH + __SCREEN_HEIGHT * __SCREEN_HEIGHT);
 	int i = 0;
-	for(;this->stageDefinition->entities[i].entityDefinition; i++)
+	for(;this->stageDefinition->entities.children[i].entityDefinition; i++)
 	{
-		if(this->stageDefinition->entities[i].name && entityNamesToIgnore)
+		if(this->stageDefinition->entities.children[i].name && entityNamesToIgnore)
 		{
 			VirtualNode node = entityNamesToIgnore->head;
 			
 			for(; node; node = node->next)
 			{
 				const char* name = (char*)node->data;
-				if(!strncmp(name, this->stageDefinition->entities[i].name, __MAX_CONTAINER_NAME_LENGTH))
+				if(!strncmp(name, this->stageDefinition->entities.children[i].name, __MAX_CONTAINER_NAME_LENGTH))
 				{
 					break;
 				}
@@ -671,7 +675,7 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 			}
 		}
 		
-		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities[i]);
+		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities.children[i]);
 
 		u8 width = 0;
 		u8 height = 0;
@@ -1146,17 +1150,21 @@ void Stage_resume(Stage this)
 	ASSERT(this, "Stage::resume: null this");
 
 	// set back optical values
-	Screen_setOptical(Screen_getInstance(), this->stageDefinition->optical);
+	Screen_setOptical(Screen_getInstance(), this->stageDefinition->rendering.optical);
 	
 	// set physics
-	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->friction);
-	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->gravity);
+	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.friction);
+	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.gravity);
 
 	// set palettes
 	Stage_setupPalettes(this);
 
 	// set OBJs' z position
 	Stage_setObjectSpritesContainers(this);
+
+	// setup SpriteManager's configuration
+	SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager_getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
+	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
 
 	// reload textures
 	Stage_preloadAssets(this);
@@ -1168,7 +1176,7 @@ void Stage_resume(Stage this)
 	}
 
 	// load background music
-	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->bgm);
+	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->assets.bgm);
 
 	Container_resume(__SAFE_CAST(Container, this));
 

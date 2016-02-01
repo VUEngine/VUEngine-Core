@@ -61,8 +61,14 @@
 	/* flag to stop sorting while recovering layers	*/							\
 	s8 recoveringLayers;														\
 																				\
+	/* number of cycles that the texture writing is idle */						\
+	s8 cyclesToWaitForTextureWriting;											\
+																				\
 	/* number of rows to write in texture's writing	*/							\
-	s8 textureMaximumRowsToWrite;												\
+	s8 texturesMaximumRowsToWrite;												\
+																				\
+	/* flag to control texture's writing deferring	*/							\
+	s8 deferTextureWriting;														\
 																				\
 	/* delay before writing again	*/											\
 	s8 waitToWrite;																\
@@ -102,7 +108,9 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->sprites = NULL;
 	this->recoveringLayers = false;
 	this->textureToWrite = NULL;
-	this->textureMaximumRowsToWrite = -1;
+	this->cyclesToWaitForTextureWriting = 0;
+	this->texturesMaximumRowsToWrite = -1;
+	this->deferTextureWriting = false;
 	this->waitToWrite = 0;
 	
 	SpriteManager_reset(this);
@@ -144,7 +152,9 @@ void SpriteManager_reset(SpriteManager this)
 	this->node = NULL;
 	this->nextNode = NULL;
 	this->textureToWrite = NULL;
-	this->textureMaximumRowsToWrite = -1;
+	this->cyclesToWaitForTextureWriting = 0;
+	this->texturesMaximumRowsToWrite = -1;
+	this->deferTextureWriting = false;
 	this->waitToWrite = 0;
 	
 	SpriteManager_setLastLayer(this);
@@ -367,13 +377,13 @@ void SpriteManager_render(SpriteManager this)
 	
 	if(!this->waitToWrite)
 	{
-		if(0 < this->textureMaximumRowsToWrite && this->textureToWrite)
+		if(0 < this->texturesMaximumRowsToWrite && this->textureToWrite)
 		{
 			__VIRTUAL_CALL(void, Texture, write, this->textureToWrite);
 		
 			this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
 			textureWereWritten = true;
-			this->waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
+			this->waitToWrite = this->cyclesToWaitForTextureWriting;
 		}
 		else
 		{
@@ -388,9 +398,9 @@ void SpriteManager_render(SpriteManager this)
 					__VIRTUAL_CALL(void, Texture, write, texture);
 					
 					textureWereWritten = true;
-					this->waitToWrite = __CYCLES_TO_WAIT_FOR_TEXTURE_WRITING;
+					this->waitToWrite = this->cyclesToWaitForTextureWriting;
 					
-					if(0 < this->textureMaximumRowsToWrite)
+					if(0 < this->texturesMaximumRowsToWrite)
 					{
 						this->textureToWrite = !texture->written? texture : NULL;
 						break;
@@ -511,14 +521,28 @@ void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWrit
 	ASSERT(this, "SpriteManager::print: null this");
 
 	this->waitToWrite = 0;
-	this->textureMaximumRowsToWrite = deferTextureWriting? __MAX_TEXTURE_ROWS_TO_WRITE : -1;
+	this->deferTextureWriting = deferTextureWriting;
 }
 
-s8 SpriteManager_getTextureMaximumRowsToWrite(SpriteManager this)
+s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
 
-	return this->textureMaximumRowsToWrite;
+	return this->deferTextureWriting? this->texturesMaximumRowsToWrite : -1;
+}
+
+void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting)
+{
+	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
+
+	this->cyclesToWaitForTextureWriting = cyclesToWaitForTextureWriting;
+}
+
+void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite)
+{
+	ASSERT(this, "SpriteManager::setMaximumTextureRowsToWrite: null this");
+
+	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
 }
 
 // print status
