@@ -400,7 +400,7 @@ void SpriteManager_render(SpriteManager this)
 					textureWereWritten = true;
 					this->waitToWrite = this->cyclesToWaitForTextureWriting;
 					
-					if(0 < this->texturesMaximumRowsToWrite)
+					if(this->deferTextureWriting)
 					{
 						this->textureToWrite = !texture->written? texture : NULL;
 						break;
