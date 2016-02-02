@@ -8,7 +8,7 @@ TARGET = libvbjae
 TYPE = release
 #TYPE = preprocessor
 
-VBJAENGINE = $(VBDE)/libs/vbjaengine
+VBJAENGINE = $(VBDE)libs/vbjaengine
 
 # Which directories contain source files
 DIRS := $(shell find $(VBJAENGINE)/assets $(VBJAENGINE)/source -type d -print)
@@ -30,7 +30,7 @@ ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h				\
 					-include $(VBJAENGINE)/source/base/VirtualList.h	 			\
 					-include $(VBJAENGINE)/source/graphics/2d/Printing.h
 
-# The next blocks change some variables depending on the build type
+# The next blocks changes some variables depending on the build type
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding  
 CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -include $(CONFIG_FILE) $(ESSENTIALS) 
@@ -57,7 +57,6 @@ endif
 
 
 # Add directories to the include and library paths
-
 INCPATH := $(shell find $(VBJAENGINE) -type d -print)
 						 
 
@@ -70,7 +69,7 @@ OBJCOPY = v810-objcopy
 OBJDUMP = v810-objdump
 AR = v810-ar
 
-# Where to store object and dependancy files.
+# Where to store object and dependency files.
 STORE = .make-$(TYPE)
 
 # Makes a list of the source (.cpp) files.
@@ -82,28 +81,26 @@ HEADERS := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.h))
 # Makes a list of the object files that will have to be created.
 OBJECTS := $(addprefix $(STORE)/, $(SOURCE:.c=.o))
 
-# Same for the .d (dependancy) files.
+# Same for the .d (dependency) files.
 DFILES := $(addprefix $(STORE)/,$(SOURCE:.c=.d))
 
 # Specify phony rules. These are rules that are not real files.
 .PHONY: clean backup dirs
 
-# Main target. The @ in front of a command prevents make from displaying
-# it to the standard output.
+# Main target. The @ in front of a command prevents make from displaying it to the standard output.
 
 all: $(TARGET).a
 
 $(TARGET).a: dirs $(OBJECTS)
 	@echo Config file: $(CONFIG_FILE)
 	@echo Creating $(TARGET).a
-	@$(AR) rcs $@ $(OBJECTS) 
-	@echo Done $@
+	@$(AR) rcs $@ $(OBJECTS)
+	@echo Done creating $@ in $(TYPE) mode
 
-# Rule for creating object file and .d file, the sed magic is to add
-# the object path at the start of the file because the files gcc
-# outputs assume it will be in the same dir as the source file.
+# Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
+# because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: %.c
-	@echo Creating o file for $(TYPE) $*...
+	@echo Creating object file for $*
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd  $(foreach INC,$(INCPATH),-I$(INC))\
             $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -c $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
@@ -129,6 +126,5 @@ dirs:
 		@-$(foreach DIR,$(DIRS), if [ ! -e $(STORE)/$(DIR) ]; \
          then mkdir -p $(STORE)/$(DIR); fi; )
 
-# Includes the .d files so it knows the exact dependencies for every
-# source.
+# Includes the .d files so it knows the exact dependencies for every source
 -include $(DFILES)
