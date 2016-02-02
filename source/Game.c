@@ -217,7 +217,18 @@ static void Game_constructor(Game this)
 	DirectDraw_getInstance();
 	I18n_getInstance();
 	ParamTableManager_getInstance();
+#ifdef __DEBUG_TOOLS
+	DebugState_getInstance();	
+#endif
 	
+#ifdef __STAGE_EDITOR
+	StageEditorState_getInstance();
+#endif
+	
+#ifdef __ANIMATION_EDITOR
+	AnimationEditorState_getInstance();
+#endif
+
 	// to make debugging easier
 #ifndef __DEBUG
 	this->lastProcessName = "not available";
@@ -251,15 +262,15 @@ void Game_initialize(Game this)
 	// setup vectorInterrupts
 	HardwareManager_setInterruptVectors(HardwareManager_getInstance());
 
-	// make sure timer interrupts are enable
-	HardwareManager_initializeTimer(HardwareManager_getInstance());
-
     // set waveform data
     SoundManager_setWaveForm(SoundManager_getInstance());
 
 	// clear sprite memory
     HardwareManager_clearScreen(HardwareManager_getInstance());
     
+	// make sure timer interrupts are enable
+	HardwareManager_initializeTimer(HardwareManager_getInstance());
+
 	// start the game's general clock
 	Clock_start(this->clock);
 }
