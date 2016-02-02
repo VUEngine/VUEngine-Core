@@ -217,6 +217,7 @@ static void Game_constructor(Game this)
 	DirectDraw_getInstance();
 	I18n_getInstance();
 	ParamTableManager_getInstance();
+	
 #ifdef __DEBUG_TOOLS
 	DebugState_getInstance();	
 #endif
@@ -445,10 +446,6 @@ void Game_reset(Game this)
 {
 	ASSERT(this, "Game::reset: null this");
 
-#ifdef	__MEMORY_POOL_CLEAN_UP
-	MemoryPool_cleanUp(MemoryPool_getInstance());
-#endif
-	
 	// setup the display
     HardwareManager_clearScreen(HardwareManager_getInstance());
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
