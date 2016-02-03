@@ -34,6 +34,7 @@
 #include <Screen.h>
 #include <Cuboid.h>
 #include <OptionsSelector.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -156,6 +157,8 @@ static void StageEditor_constructor(StageEditor this)
 	this->userObjectSprite = NULL;
 
 	this->mode = kFirstMode + 1;
+	
+	this->shape = NULL;
 
 	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, "\x0B", kString);
 
@@ -346,6 +349,10 @@ static void StageEditor_releaseShape(StageEditor this)
 		if(this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, entity))
 	    {
 			__DELETE(this->shape);
+		}
+		else
+		{
+			__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, this->shape);
 		}
 
 		this->shape = NULL;
