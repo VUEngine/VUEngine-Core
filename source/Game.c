@@ -446,6 +446,10 @@ void Game_reset(Game this)
 {
 	ASSERT(this, "Game::reset: null this");
 
+#ifdef	__MEMORY_POOL_CLEAN_UP
+	MemoryPool_cleanUp(MemoryPool_getInstance());
+#endif
+
 	// setup the display
     HardwareManager_clearScreen(HardwareManager_getInstance());
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());

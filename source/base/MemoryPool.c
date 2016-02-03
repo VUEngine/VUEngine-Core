@@ -31,7 +31,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // it is necessary for the object to be aligned to 2's multiples
-#define __MEMORY_ALIGNMENT			0
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
@@ -108,10 +107,6 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	int pool = __MEMORY_POOLS - 1;
 	int blockSize = this->poolSizes[pool][eBlockSize];
 	int displacement = 0;
-	int displacementStep = 0;
-
-	// the first 4 bytes are for memory block usage flag
-	numBytes += __MEMORY_ALIGNMENT;
 
 	// seach for the shortest pool which can hold the data
 	for(; numBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
@@ -128,20 +123,19 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	// get the number of allocable objects in the pool
 	numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 
-	// how much must displace on each iteration
-	displacementStep = blockSize;
-
 	// look for a free block
 	for(i = 0, displacement = 0;
 	    i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
-	    i++, displacement += displacementStep);
+	    i++, displacement += blockSize);
 
 	if(i >= numberOfOjects)
 	{
 		Printing_clear(Printing_getInstance());
 		MemoryPool_printDetailedUsage(this, 1, 8);
-		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 12, NULL);
-		Printing_int(Printing_getInstance(), numBytes, 44, 12, NULL);
+		Printing_text(Printing_getInstance(), "Pool's size: ", 20, 12, NULL);
+		Printing_int(Printing_getInstance(), blockSize, 44, 12, NULL);
+		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 13, NULL);
+		Printing_int(Printing_getInstance(), numBytes, 44, 13, NULL);
 
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
@@ -150,7 +144,7 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	*((u32*)&this->poolLocation[pool][displacement]) = __MEMORY_USED_BLOCK_FLAG;
 
 	// return designed address
-	return &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT];
+	return &this->poolLocation[pool][displacement];
 };
 
 // free memory when an object is no longer used
@@ -177,7 +171,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	}
 
 	// look for the pool containing the object
-	for(pool = 0; object >= &this->poolLocation[pool][0 + __MEMORY_ALIGNMENT] && pool < __MEMORY_POOLS; pool++);
+	for(pool = 0; object >= &this->poolLocation[pool][0] && pool < __MEMORY_POOLS; pool++);
 
 	// look for the registry in which the object is
 	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
@@ -192,7 +186,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
 		// if the object has been found
-		if(object == &this->poolLocation[pool][displacement + __MEMORY_ALIGNMENT])
+		if(object == &this->poolLocation[pool][displacement])
 		{
 			// free the block
 			*((u32*)&this->poolLocation[pool][displacement]) = __MEMORY_FREE_BLOCK_FLAG;
@@ -207,7 +201,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 #endif
 
 	// set address as free
-	*((u32*)&object[-__MEMORY_ALIGNMENT]) = __MEMORY_FREE_BLOCK_FLAG;
+	*((u32*)&object[0]) = __MEMORY_FREE_BLOCK_FLAG;
 }
 
 // clear all dynamic memory
@@ -295,7 +289,7 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
 		{
-			if(this->poolLocation[pool][displacement])
+			if(*((u32*)&this->poolLocation[pool][displacement]))
 			{
 				totalUsedBlocks++;
 			}
@@ -303,9 +297,9 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 
 		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
 
-		Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize],  x, ++y, NULL);
+		Printing_text(Printing_getInstance(), "                  ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize],  x, y, NULL);
 		Printing_int(Printing_getInstance(), this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
-		Printing_text(Printing_getInstance(), "      ", x + 14, y, NULL);
 		Printing_int(Printing_getInstance(), totalUsedBlocks, x + 10, y, NULL);
 		
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
