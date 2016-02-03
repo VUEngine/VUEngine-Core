@@ -84,7 +84,7 @@ void Mem_clear (u16* dest,  u16 num )
 	for(i = 0; i < num; i++) *dest++ = 0x0000;
 }
 
-void Mem_substract (u8* dest, const u8* src, u16 num, u16 offset,u8 modifier)
+void Mem_subtract (u8* dest, const u8* src, u16 num, u16 offset,u8 modifier)
 {
 }
 
