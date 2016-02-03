@@ -278,6 +278,11 @@ void Entity_calculateSize(Entity this)
 	
 	if(centerDisplacement.x || centerDisplacement.y || centerDisplacement.z)
 	{
+		if(this->centerDisplacement)
+		{
+			__DELETE_BASIC(this->centerDisplacement);
+		}
+
 		this->centerDisplacement = __NEW_BASIC(VBVec3D);
 		*this->centerDisplacement = centerDisplacement;
 	}
