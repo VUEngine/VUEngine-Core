@@ -121,7 +121,7 @@ void VPUManager_enableDrawing(VPUManager this)
 {
 	ASSERT(this, "VPUManager::enableDrawing: null this");
 
-	while (VIP_REGS[XPSTTS] & XPBSYR);
+	while(VIP_REGS[XPSTTS] & XPBSYR);
 	VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	VPUManager_enableInterrupt(this);
 }
@@ -132,7 +132,7 @@ void VPUManager_disableDrawing(VPUManager this)
 
 	VPUManager_disableInterrupt(this);
 
-	while (VIP_REGS[XPSTTS] & XPBSYR);
+	while(VIP_REGS[XPSTTS] & XPBSYR);
 	VIP_REGS[XPCTRL] |= XPRST;
 	VIP_REGS[XPCTRL] &= ~XPEN;
 }
@@ -175,7 +175,7 @@ void VPUManager_interruptHandler(void)
 		VIP_REGS[XPCTRL] |= XPRST;
 		VIP_REGS[XPCTRL] &= ~XPEN;
 
-		while (VIP_REGS[XPSTTS] & XPBSYR);
+		while(VIP_REGS[XPSTTS] & XPBSYR);
 		
 		VPUManager this = VPUManager_getInstance();
 		
@@ -191,7 +191,7 @@ void VPUManager_interruptHandler(void)
 		SpriteManager_render(this->spriteManager);
 		
 		// enable drawing
-		while (VIP_REGS[XPSTTS] & XPBSYR);
+		while(VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
 

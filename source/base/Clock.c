@@ -96,7 +96,7 @@ void Clock_delay(Clock this, int milliSeconds)
 	{
 		u32 volatile *clockTime = (u32 *)&this->milliSeconds;
 
-		while ((*clockTime - time) < milliSeconds);
+		while((*clockTime - time) < milliSeconds);
 	}
 }
 

@@ -234,7 +234,7 @@ u8 Texture_getTotalRows(Texture this)
 			{
 				// return the total number of chars
 				int totalCols = Texture_getTotalCols(this);
-				return this->textureDefinition->rows + this->textureDefinition->rows * ((int)(totalCols / 64));
+				return this->textureDefinition->rows + this->textureDefinition->rows * ((int)(totalCols >> 6));
 			}
 			break;
 

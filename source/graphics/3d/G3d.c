@@ -578,7 +578,7 @@ void G3d_drawObject(object* o)
 	//Load and render all distinct vertices into the vertex buffer;
 	//This will render all object vertices based on the objects position,rotation etc..
 	_CacheEnable
-	while (v < vertices)
+	while(v < vertices)
 	{
 		v1.x = o->objData->data[v];
 		v1.y = o->objData->data[v+1];
@@ -595,7 +595,7 @@ void G3d_drawObject(object* o)
 	//This reads the "faces" section of the data and draws lines between points.
 	//We'll use the vertex buffer's already rendered vertices
 	v = vertices;
-	while (v < (lines+vertices))
+	while(v < (lines+vertices))
 	{
 		v1p = &vertexBuffer[o->objData->data[v]];
 
@@ -635,7 +635,7 @@ void G3d_renderObject(object* o)
 	//Load and render all distinct vertices into the vertex buffer;
 	//This will render all object vertices based on the objects position,rotation etc..
 	_CacheEnable
-	while (v < vertices)
+	while(v < vertices)
 	{
 		v1.x = o->objData->data[v];
 		v1.y = o->objData->data[v+1];
@@ -1289,7 +1289,7 @@ void  G3d_clipZAxis(vector3d* v1, vector3d* v2)
 	//so it should be less expensive to just loop and subtract under most circumstances
 	if(fracz > 0)
 	{
-		while (diff > 0)
+		while(diff > 0)
 		{
 			diff -= fracz;
 			mult++;
@@ -1723,12 +1723,12 @@ void  G3d_moveObject(object* o)
 	if(o->scale.z != 0)              o->worldScale.z += o->scale.z;
 
 	//Check rotation angles
-	while (o->worldRotation.x > 359)  o->worldRotation.x -= 360;
-	while (o->worldRotation.y > 359)  o->worldRotation.y -= 360;
-	while (o->worldRotation.z > 359)  o->worldRotation.z -= 360;
-	while (o->worldRotation.x < -359) o->worldRotation.x += 360;
-	while (o->worldRotation.y < -359) o->worldRotation.y += 360;
-	while (o->worldRotation.z < -359) o->worldRotation.z += 360;
+	while(o->worldRotation.x > 359)  o->worldRotation.x -= 360;
+	while(o->worldRotation.y > 359)  o->worldRotation.y -= 360;
+	while(o->worldRotation.z > 359)  o->worldRotation.z -= 360;
+	while(o->worldRotation.x < -359) o->worldRotation.x += 360;
+	while(o->worldRotation.y < -359) o->worldRotation.y += 360;
+	while(o->worldRotation.z < -359) o->worldRotation.z += 360;
 
 	//Move the object based on moveto and speed
 	if(o->moveTo.x != o->worldPosition.x)
@@ -1784,12 +1784,12 @@ void  G3d_moveCamera(camera* c)
 	if(c->speed.z != 0)      c->worldSpeed.z += c->speed.z;
 
 	//Check rotation angles
-	while (c->worldRotation.x > 359)  c->worldRotation.x -= 360;
-	while (c->worldRotation.y > 359)  c->worldRotation.y -= 360;
-	while (c->worldRotation.z > 359)  c->worldRotation.z -= 360;
-	while (c->worldRotation.x < -359) c->worldRotation.x += 360;
-	while (c->worldRotation.y < -359) c->worldRotation.y += 360;
-	while (c->worldRotation.z < -359) c->worldRotation.z += 360;
+	while(c->worldRotation.x > 359)  c->worldRotation.x -= 360;
+	while(c->worldRotation.y > 359)  c->worldRotation.y -= 360;
+	while(c->worldRotation.z > 359)  c->worldRotation.z -= 360;
+	while(c->worldRotation.x < -359) c->worldRotation.x += 360;
+	while(c->worldRotation.y < -359) c->worldRotation.y += 360;
+	while(c->worldRotation.z < -359) c->worldRotation.z += 360;
 	//Move camera based on moveto and speed
 	if(c->moveTo.x != c->worldPosition.x)
 	{

@@ -35,7 +35,7 @@ int Utilities_intLength(int value)
 {
 	int length = 0;
 
-	while (value > 0)
+	while(value > 0)
 	{
 		value /= 10;
 
@@ -88,7 +88,7 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 	}
 	
 	i = 0;
-	while (rev[i] == '0')
+	while(rev[i] == '0')
 	{
 		i++;
 	}
@@ -119,7 +119,7 @@ long Utilities_randomSeed()
 	rand = Clock_getTime(clock);
 
 	// repeat through many times to make more random and to allow the CTA value to change multiple times
-	while (count < __RANDOM_SEED_CYCLES)
+	while(count < __RANDOM_SEED_CYCLES)
 	{
 		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
 
@@ -178,7 +178,7 @@ int Utilities_getDigitCount(int value)
 		value /= 10;
 		size++;
 	}
-	while (value);
+	while(value);
 
 	return (size) ? size : 1;
 }

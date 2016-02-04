@@ -144,7 +144,7 @@ void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char*
 	this->currentOptionIndex = 0;
 	this->x = 0;
 	this->y = 0;
-	this->cols = 0 < cols && cols <= __SCREEN_WIDTH >> 3 / 4 ? cols : 1;
+	this->cols = 0 < cols && cols <= __SCREEN_WIDTH >> 5 ? cols : 1;
 	this->rows = 0 < rows && rows <= __SCREEN_WIDTH >> 3 ? rows : __SCREEN_HEIGHT >> 3;
 	this->totalOptions = 0;
 	this->mark = mark;

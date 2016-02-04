@@ -149,15 +149,18 @@ static FontData Printing_getFontByName(Printing this, const char* font)
 static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
     FontData fontData;
-	u16 i = 0, pos = 0, col = x;
-	u8 charOffsetX = 0, charOffsetY = 0;
+	u16 i = 0,
+	    position = 0,
+        startColumn = x;
+	u8  charOffsetX = 0,
+	    charOffsetY = 0;
 
     fontData = Printing_getFontByName(this, font);
     
     // print text
-	while (string[i] && x < __SCREEN_WIDTH / 8)
+	while(string[i] && x < (__SCREEN_WIDTH >> 3))
 	{
-		pos = (y << 6) + x;
+		position = (y << 6) + x;
 
 		switch(string[i])
 		{
@@ -173,7 +176,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 			case 10: // Carriage Return
 
 				y += fontData.fontDefinition->fontSize.y;
-				x = col;
+				x = startColumn;
 				break;
 
 			default:
@@ -182,7 +185,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
                 {
                     for(charOffsetY = 0; charOffsetY < fontData.fontDefinition->fontSize.y; charOffsetY++)
                     {
-                        BGMM[(0x1000 * bgmap) + pos + charOffsetX + (charOffsetY << 6)] =
+                        BGMM[(0x1000 * bgmap) + position + charOffsetX + (charOffsetY << 6)] =
                             (
                                 // start at correct font
                                 fontData.memoryOffset +
@@ -204,7 +207,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 				if(x >= 64)
 				{
 				    y += fontData.fontDefinition->fontSize.y;
-					x = col;
+					x = startColumn;
 				}
 
 				break;
@@ -309,7 +312,7 @@ Size Printing_getTextSize(Printing this, const char* string, const char* font)
     fontData = Printing_getFontByName(this, font);
     size.y =  fontData.fontDefinition->fontSize.y;
 
-	while (string[i])
+	while(string[i])
 	{
 		switch(string[i])
 		{

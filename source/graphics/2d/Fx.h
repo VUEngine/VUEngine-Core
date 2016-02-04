@@ -118,7 +118,7 @@ void generalWave2(u32 param1,int rows)
 			param++;
 			i++;
 		}
-		while (i<rows-1);
+		while(i<rows-1);
 	}
 	//vbPrint(_textBgMap, 44,27, itoa((int)prevDisp,10,4), 0);
 	delay(50);
