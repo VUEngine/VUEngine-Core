@@ -254,7 +254,7 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 	int sign = 1;
 	int i = 0;
 	int length;
-	int size = 10;
+	int size = 1000;
 
 	#define FIX19_13_FRAC(n)	((n)&0x1FFF)
 
@@ -264,9 +264,14 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 	{
 		sign = -1;
 		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
+
+		decimal = (int)(((ITOFIX19_13(1) - (float)FIX19_13_FRAC(FTOFIX19_13(value))) / 8192.f) * 10000.f);
+	}
+	else
+	{
+		decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 	}
 
-	decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
@@ -291,7 +296,7 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 		size /= 10;
 	}
 
-	Printing_out(this, printingBgmap, x + length  + i ,y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
+	Printing_out(this, printingBgmap, x + length  + i, y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
 }
 
 void Printing_text(Printing this, char* string, int x, int y, const char* font)
