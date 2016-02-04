@@ -185,7 +185,7 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 	
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
-	
+
 	MBgmapSprite_setPosition(this, &position2D);
 }
 
