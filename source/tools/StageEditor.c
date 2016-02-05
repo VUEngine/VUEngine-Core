@@ -350,7 +350,7 @@ static void StageEditor_releaseShape(StageEditor this)
 	    {
 			__DELETE(this->shape);
 		}
-		else
+		else if(this->shape)
 		{
 			__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, this->shape);
 		}
@@ -722,6 +722,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		Screen_forceDisplacement(Screen_getInstance(), true);
 		
 		GameState_transform(this->gameState);
+		GameState_updateVisuals(this->gameState);
 
 		StageEditor_positionShape(this);
 
@@ -828,15 +829,15 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(entity), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->x), x + 15, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->y), x + 20, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(globalPosition->z), x + 25, y, NULL);
+		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->x), x + 13, y, NULL);
+		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->y), x + 22, y, NULL);
+		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->z), x + 31, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 15, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 13, y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getDepth(entity), x + 25, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_getDepth(entity), x + 27, y, NULL);
 		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 0, true), x + 15, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 16, true), x + 13, y, NULL);
 	}
 }
 

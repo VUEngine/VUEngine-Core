@@ -275,7 +275,6 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->drawSpec.position);
-	this->drawSpec.position.z = position->z;
 
 	this->renderFlag |= __UPDATE_G;
 	this->initialized = true;
