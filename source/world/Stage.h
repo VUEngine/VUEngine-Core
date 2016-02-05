@@ -139,6 +139,10 @@ typedef struct StageDefinition
 		// texture writing is active
 		u8 texturesMaximumRowsToWrite;
 		
+		// maximum number of rows to compute 
+		// on each call to the affine functions
+		u8 maximumAffineRowsToComputePerCall;
+		
 		// palettes' config
 		PaletteConfig paletteConfig;
 		

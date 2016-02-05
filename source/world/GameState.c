@@ -194,7 +194,8 @@ void GameState_resume(GameState this, void* owner)
 		
 		// must make sure that all textures are completely written
 		SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
-
+		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+		
 		// update the stage
 		__VIRTUAL_CALL(void, Container, resume, this->stage);
 	}
@@ -213,7 +214,10 @@ void GameState_resume(GameState this, void* owner)
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
+
+	// defer rendering again
 	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
+	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 #ifdef __DEBUG_TOOLS
 	}
 #endif
@@ -316,6 +320,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// must make sure that all textures are completely written
 	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
+	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 
 	//load world entities
 	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
@@ -334,7 +339,10 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
+	
+	// defer rendering again
 	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
+	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
 // set streaming flag

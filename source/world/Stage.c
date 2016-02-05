@@ -291,7 +291,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	// setup SpriteManager's configuration
 	SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager_getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
 	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
-
+	SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
+	
 	// preload textures
 	Stage_preloadAssets(this);
 
@@ -1165,6 +1166,7 @@ void Stage_resume(Stage this)
 	// setup SpriteManager's configuration
 	SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager_getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
 	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
+	SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
 
 	// reload textures
 	Stage_preloadAssets(this);

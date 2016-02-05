@@ -70,6 +70,12 @@
 	/* flag to control texture's writing deferring	*/							\
 	s8 deferTextureWriting;														\
 																				\
+	/* number of rows to write in affine transformations	*/					\
+	s8 maximumAffineRowsToComputePerCall;										\
+																				\
+	/* flag to control texture's writing deferring	*/							\
+	s8 deferAffineTransformations;												\
+																				\
 	/* delay before writing again	*/											\
 	s8 waitToWrite;																\
 
@@ -111,6 +117,8 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->cyclesToWaitForTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
 	this->deferTextureWriting = false;
+	this->maximumAffineRowsToComputePerCall = -1;
+	this->deferAffineTransformations = false;
 	this->waitToWrite = 0;
 	
 	SpriteManager_reset(this);
@@ -544,6 +552,28 @@ void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 textures
 
 	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
 }
+
+void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffineTransformations)
+{
+	ASSERT(this, "SpriteManager::deferAffineTransformations: null this");
+
+	this->deferAffineTransformations = deferAffineTransformations;
+}
+
+int SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::getMaximumAffineRowsPerCall: null this");
+
+	return this->deferAffineTransformations? this->maximumAffineRowsToComputePerCall : -1;
+}
+
+void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall)
+{
+	ASSERT(this, "SpriteManager::setMaximumAffineRowsToComputePerCall: null this");
+
+	this->maximumAffineRowsToComputePerCall = maximumAffineRowsToComputePerCall;
+}
+
 
 // print status
 void SpriteManager_print(SpriteManager this, int x, int y)

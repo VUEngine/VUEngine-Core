@@ -104,9 +104,9 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 	// add one row for cleaning up
 	int totalRows = (height << 1) * scaleY + 1;
 	int i = 0 <= paramTableRow? paramTableRow: 0;
-	int counter = 0;
+	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 
-	for(; counter < __MAXIMUM_AFFINE_ROWS_PER_CALL && i < totalRows; i++, counter++)
+	for(; counter && i < totalRows; i++, counter--)
 	{
 		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
 		affine[i].paralax = fixedAffineMatrix.paralax;
