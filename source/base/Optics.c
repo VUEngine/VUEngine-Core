@@ -53,7 +53,7 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 	return FIX19_13TOI(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
 }
 
-// calculate the size of a given magnitud, being it a 8 pixel multiple
+// calculate the size of a given magnitude, being it a 8 pixel multiple
 inline u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
 {
 	if(WRLD_AFFINE != mapMode)
