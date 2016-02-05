@@ -80,7 +80,7 @@ void Error_destructor(Error this)
 // setup the error message and lock program here
 int Error_triggerException(Error this, char* message, char* detail)
 {
-	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 48 / 2 ? __EXCEPTION_COLUMN : 0;
+	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
 	// disable timers
@@ -117,8 +117,8 @@ int Error_triggerException(Error this, char* message, char* detail)
 		Printing_text(Printing_getInstance(), "                                                " , x, ++y + 1, NULL);
 		Printing_text(Printing_getInstance(), " Message:                                       " , x, ++y, NULL);
 	
-		int stringMaxLenght = __SCREEN_WIDTH / 8 - 2;
-		int rowsAvailable  = __SCREEN_HEIGHT / 8 - y;
+		int stringMaxLenght = (__SCREEN_WIDTH >> 3) - 2;
+		int rowsAvailable  = (__SCREEN_HEIGHT >> 3) - y;
 		int stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
 		int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght? 1: 0);
 		int line = 0;
@@ -139,14 +139,14 @@ int Error_triggerException(Error this, char* message, char* detail)
 			Printing_text(Printing_getInstance(), detail, x + 1, ++y, NULL);
 		}	
 		
-		if(y < __SCREEN_HEIGHT / 8 - 1)
+		if(y < (__SCREEN_HEIGHT >> 3) - 1)
 		{
 			Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 		}
 	}
 	
 #ifdef __ALERT_STACK_OVERFLOW
-	HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
+	HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
 #endif
 
 	// error display message
@@ -163,7 +163,7 @@ int Error_triggerException(Error this, char* message, char* detail)
 	VIP_REGS[JPLT3] = __DIMM_VALUE_1;
 	
 	// trap the game here
-	while (true);
+	while(true);
 
 	return false;
 }

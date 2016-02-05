@@ -467,12 +467,12 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 	
 	if(!this->mSpriteDefinition->xLoop)
 	{
-		this->size.x = 64 * 8 * this->sizeMultiplier.x;
+		this->size.x = this->sizeMultiplier.x << 9;
 	}
 
 	if(!this->mSpriteDefinition->yLoop)
 	{
-		this->size.y = (texture? Texture_getRows(texture): 64) * 8 * this->sizeMultiplier.x;
+		this->size.y = ((texture ? Texture_getRows(texture) : 64) << 3) * this->sizeMultiplier.x;
 	}
 }
 

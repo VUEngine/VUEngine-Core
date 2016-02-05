@@ -87,7 +87,6 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 	BYTE* pointer = (BYTE*)buffer;
 
 	// calculate pixel position each column has 16 words, so 16 * 4 bytes = 64, 8 bytes are 4 pixels
-	//pointer += x * 64 + y / 4;
 	pointer += ((x << 6) + (y >> 2));
 
 	// calculate the pixel to be draw
@@ -146,7 +145,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 		int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)) : 0;
 
-		while (fromPoint.x != toPoint.x)
+		while(fromPoint.x != toPoint.x)
 		{
 			if(++counter > 100)
 			{
@@ -177,7 +176,7 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 		int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)) : 0;
 
-		while (fromPoint.y != toPoint.y)
+		while(fromPoint.y != toPoint.y)
 		{
 			if(++counter > 100)
 			{

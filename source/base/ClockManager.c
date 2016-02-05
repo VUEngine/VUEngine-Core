@@ -161,7 +161,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
     		FrameRate frameRate = FrameRate_getInstance();
     		
 #ifdef __DEBUG
-    		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, __SCREEN_HEIGHT / 8 - 1, NULL);
+    		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT >> 3) - 1, NULL);
 #endif
 
 #ifdef __PRINT_FRAMERATE
@@ -181,7 +181,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #ifdef __ALERT_STACK_OVERFLOW
 	    	if(!Game_isInSpecialMode(Game_getInstance()))
 	    	{
-	    		HardwareManager_printStackStatus(HardwareManager_getInstance(), __SCREEN_WIDTH / 8 - 10, 0, true);
+	    		HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
 	    	}
 #endif
 	    	//reset frame rate counters

@@ -526,7 +526,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 	ASSERT(this, "Body::calculateFriction: null this");
 
 	// get friction fBody from the game world
-	fix19_13 worldFriction = PhysicalWorld_getFriction(Game_getPhysicalWorld(Game_getInstance())) * 2;
+	fix19_13 worldFriction = PhysicalWorld_getFriction(Game_getPhysicalWorld(Game_getInstance())) << 1;
 
 	static Force frictionForce = {0, 0, 0};
 	

@@ -812,7 +812,7 @@ static void Game_update(Game this)
 #if __FRAME_CYCLE == 1
 	bool cycle = true;
 #endif
-	while (true)
+	while(true)
 	{
 		// update each subsystem
 		// wait to sync with the game start to render

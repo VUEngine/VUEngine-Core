@@ -134,7 +134,7 @@ void KeypadManager_read(KeypadManager this)
 	HW_REGS[SCR] = (S_INTDIS | S_HW);
 
 	//wait for screen to idle
-	while (*readingStatus & S_STAT);
+	while(*readingStatus & S_STAT);
 
 	// now read the key
 	this->currentKey |= (((HW_REGS[SDHR] << 8)) | HW_REGS[SDLR]) & 0xFFFD;

@@ -92,7 +92,7 @@ void VirtualList_clear(VirtualList this)
 		this->head = this->head->next;
 
 		// while there are nodes
-		while (node)
+		while(node)
 		{
 			// call destructor
 			__DELETE(node);
@@ -206,7 +206,7 @@ int VirtualList_getSize(VirtualList this)
 
 	VirtualNode node = this->head;
 
-	while (node)
+	while(node)
 	{
 		// load next node
 		node = node->next;
@@ -254,7 +254,7 @@ VirtualNode VirtualList_getNode(VirtualList this, int item)
 		{
 			// increase counter while node hasn't reached list's end
 			// and counter hasn't reached the item requested
-			while ((node) && (counter < item))
+			while((node) && (counter < item))
 			{
 				// increase counter
 				counter++;
@@ -295,7 +295,7 @@ void* VirtualList_getObject(VirtualList this, void* const dataPointer)
 	}
 
 	// locate node
-	while (node && node->data != dataPointer)
+	while(node && node->data != dataPointer)
 	{
 		node = node->next;
 	}
@@ -407,7 +407,7 @@ void VirtualList_copy(VirtualList this, VirtualList sourceList)
 
 	VirtualList_clear(this);
 
-	while (node)
+	while(node)
 	{
 		// add next node
 		VirtualList_pushBack(this, node->data);

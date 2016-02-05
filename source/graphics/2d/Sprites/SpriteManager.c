@@ -217,7 +217,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 			}
 		}
 	}
-	while (swap);
+	while(swap);
 }
 
 // check if any entity must be assigned another world layer
@@ -605,7 +605,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 		Printing_text(Printing_getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing_text(Printing_getInstance(), spriteClassName, auxX + 4, auxY, NULL);
 
-		if(__SCREEN_HEIGHT / 8 - 2 <= ++auxY)
+		if((__SCREEN_HEIGHT >> 3) - 2 <= ++auxY)
 		{
 			auxY = y + 2;
 			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 5;

@@ -102,7 +102,7 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAdd
 
 	int i = 0;
 	
-	u16* destination = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
+	u16* destination = (u16*)((int)_userData + (((int)memberAddress - (int)_userData) << 1));
 	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
 	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
 
@@ -119,7 +119,7 @@ void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, i
 
 	int i = 0;
 
-	u16* source = (u16*)((int)_userData + ((int)memberAddress - (int)_userData) * 2);
+	u16* source = (u16*)((int)_userData + (((int)memberAddress - (int)_userData) << 1));
 	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
 	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
 

@@ -405,7 +405,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 			}
 		}
 		
-		while (0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
+		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
 
 	// if not axis of collision was found
@@ -483,7 +483,7 @@ static u8 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3
 				positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
 			}
 		}
-		while (0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
+		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
 	
 	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");

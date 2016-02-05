@@ -738,7 +738,7 @@ static void AnimationEditor_createSpriteSelector(AnimationEditor this)
 		__DELETE(this->spriteSelector);
 	}
 
-	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION / 2, __FRAME_OPTION_MARK, kCount);
+	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kCount);
 
 	VirtualList spriteIndexes = __NEW(VirtualList);
 
@@ -812,7 +812,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 		__DELETE(this->frameEditionSelector);
 	}
 
-	this->frameEditionSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION / 2, __FRAME_OPTION_MARK, kInt);
+	this->frameEditionSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kInt);
 
 	VirtualList framesIndexes = __NEW(VirtualList);
 

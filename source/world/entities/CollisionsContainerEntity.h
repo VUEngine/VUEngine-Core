@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONLLISIONS_CONTAINER_ENTITY_H_
-#define CONLLISIONS_CONTAINER_ENTITY_H_
+#ifndef COLLISIONS_CONTAINER_ENTITY_H_
+#define COLLISIONS_CONTAINER_ENTITY_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -24,17 +24,12 @@
 
 #include <Entity.h>
 
-//---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define CollisionsContainerEntity_METHODS																					\
+#define CollisionsContainerEntity_METHODS																\
 		Entity_METHODS																					\
 
 #define CollisionsContainerEntity_SET_VTABLE(ClassName)													\
@@ -49,7 +44,7 @@
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handlePropagatedMessage);					\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, passMessage);								\
 
-#define CollisionsContainerEntity_ATTRIBUTES																				\
+#define CollisionsContainerEntity_ATTRIBUTES															\
 																										\
 	/* it is derived from */																			\
 	Entity_ATTRIBUTES																					\

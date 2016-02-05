@@ -1069,7 +1069,7 @@ void Stage_stream(Stage this)
 			Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 		}
 	}			
-	else if(streamingCycleCounter == streamingCycleBase * 2)
+	else if(streamingCycleCounter == streamingCycleBase << 1)
 	{
 		if(this->entitiesToLoad->head)
 		{
@@ -1083,7 +1083,7 @@ void Stage_stream(Stage this)
 			Stage_initializeEntities(this);
 		}
 	}
-	else if(streamingCycleCounter == streamingCycleBase * 4)
+	else if(streamingCycleCounter == streamingCycleBase << 2)
 	{		
 		if(this->entitiesToTransform->head)
 		{
