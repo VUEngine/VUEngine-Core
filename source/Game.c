@@ -655,7 +655,6 @@ static void Game_handleInput(Game this)
 // update game's logic subsystem
 inline static void Game_updateLogic(Game this)
 {
-	
 	this->currentProcess = kGameDispatchingDelayedMessages;
 
 #ifdef __DEBUG

@@ -29,6 +29,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __FLIP_X_DISPLACEMENT	6
+#define __FLIP_Y_DISPLACEMENT	6
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -238,8 +246,8 @@ void ObjectSprite_render(ObjectSprite this)
 		int xDirection = this->head & 0x2000 ? -1 : 1;
 		int yDirection = this->head & 0x1000 ? -1 : 1;
 
-		int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x);
-		int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y);
+		int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
+		int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 		int i = 0;
 		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);
