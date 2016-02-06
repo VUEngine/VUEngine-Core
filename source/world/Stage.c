@@ -543,10 +543,10 @@ static void Stage_preloadAssets(Stage this)
 {
 	ASSERT(this, "Stage::preloadAssets: null this");
 
-	int i = 0;
-
 	if(this->stageDefinition->assets.charSets)
 	{
+		int i = 0;
+
 		for (; this->stageDefinition->assets.charSets[i]; i++)
 		{
 			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSets[i]->allocationType)
@@ -559,12 +559,16 @@ static void Stage_preloadAssets(Stage this)
 			}
 		}
 	}
+	
+	bool calculateAvailableBgmapSegments = false;
 
 	if(this->stageDefinition->assets.stageTextureEntryDefinitions)
 	{
 		VirtualList managedTextures = __NEW(VirtualList);
 		
-		for (i = 0; this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition; i++)
+		int i = 0;
+		
+		for (; this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition; i++)
 		{
 			if(__ANIMATED_SINGLE != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
 			{
@@ -599,11 +603,13 @@ static void Stage_preloadAssets(Stage this)
 		}
 
 		__DELETE(managedTextures);
+		
+		calculateAvailableBgmapSegments = 0 < i;
 	}
 
 	BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager_getInstance(), this->stageDefinition->rendering.spareBgmapSegments);
 
-	if(0 < i)
+	if(calculateAvailableBgmapSegments)
 	{
 		BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
 		ParamTableManager_reset(ParamTableManager_getInstance());

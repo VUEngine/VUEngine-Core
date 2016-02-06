@@ -165,7 +165,10 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
-	
+
+	// remove the sprite to prevent rendering afterwards
+	VirtualList_removeElement(this->objectSprites, objectSprite);
+
 	// hide it
 	if (0 <= objectSprite->objectIndex)
 	{
@@ -206,8 +209,6 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;
 	}
 	
-	VirtualList_removeElement(this->objectSprites, objectSprite);
-
 	this->node = this->previousNode = NULL;
 
 	// if was the last node
