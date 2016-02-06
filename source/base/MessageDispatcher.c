@@ -207,7 +207,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
-			if(Clock_getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
+			if(!Clock_isPaused(delayedMessage->clock) && Clock_getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 			{
 				VirtualList_pushFront(telegramsToDispatch, delayedMessage);
 			}
