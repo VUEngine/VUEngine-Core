@@ -106,7 +106,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
-
+	
 	// remove from sprite manager
 	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 
@@ -160,16 +160,19 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 	return -1;
 }
 
+bool removingSprite = false;
+
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s16 numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 
-	// remove the sprite to prevent rendering afterwards
-	VirtualList_removeElement(this->objectSprites, objectSprite);
+	this->removingObjectSprite = true;
 
-	// hide it
+	__VIRTUAL_CALL(void, Sprite, hide, objectSprite);
+
+	// hide it immdiately
 	if (0 <= objectSprite->objectIndex)
 	{
 		int i = 0;
@@ -178,8 +181,6 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 			OAM[((objectSprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 		}
 	}
-	
-	__VIRTUAL_CALL(void, Sprite, hide, objectSprite);
 
 	if(this->objectSpriteToDefragment)
 	{
@@ -208,7 +209,10 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		// move forward before deframenting
 		this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;
 	}
-	
+
+	// remove the sprite to prevent rendering afterwards
+	VirtualList_removeElement(this->objectSprites, objectSprite);
+
 	this->node = this->previousNode = NULL;
 
 	// if was the last node
@@ -219,6 +223,8 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		this->availableObjects += numberOfObjects;
 		this->freedObjectIndex = 0;
 	}
+	
+	this->removingObjectSprite = false;
 }
 
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s16 numberOfObjects)
@@ -315,8 +321,6 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		{
 			this->availableObjects = this->totalObjects;
 		}
-		
-		return;
 	}
 }
 
@@ -385,7 +389,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 
 	// defragmentation takes priority over z sorting
-	if(this->objectSpriteToDefragment)
+	if(!this->removingObjectSprite && this->objectSpriteToDefragment)
 	{
 		ObjectSpriteContainer_defragment(this);
 	}

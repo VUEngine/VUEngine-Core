@@ -87,6 +87,9 @@
 																										\
 	/* spt index */																						\
 	u8 spt;																								\
+																										\
+	/* flag to halt defragmentation while sprite removal is taking place */								\
+	u8 removingObjectSprite;																			\
 
 __CLASS(ObjectSpriteContainer);
 

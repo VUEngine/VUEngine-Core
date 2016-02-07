@@ -97,6 +97,11 @@ void ObjectSprite_destructor(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::destructor: null this");
 
+	// make sure I'm hidden
+	__VIRTUAL_CALL(void, Sprite, hide, this);
+
+	// remove from sprite container before I become invalid
+	// and the VPU triggers a new render cycle
 	if(this->objectSpriteContainer)
 	{
 		ObjectSpriteContainer_removeObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
@@ -320,6 +325,13 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 		
 		if(0 <= previousObjectIndex)
 		{	
+			// hide the previously used objects
+			int j = previousObjectIndex;
+			for(; j < previousObjectIndex + this->totalObjects; j++)
+			{
+				OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+			}
+
 			if(!this->hidden)
 			{
 				__VIRTUAL_CALL(void, Sprite, show, this);
@@ -336,11 +348,6 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 				}
 				else
 				{
-					int j = previousObjectIndex;
-					for(; j < previousObjectIndex + this->totalObjects; j++)
-					{
-						OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-					}
 				}
 			}
 		}
