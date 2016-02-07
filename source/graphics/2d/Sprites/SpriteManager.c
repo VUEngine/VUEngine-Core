@@ -199,7 +199,7 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 				VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, nextSprite);
 
 				// check if z positions are swapped
-				if(FIX19_13TOI(nextPosition.z) + nextSprite->displacement.z < FIX19_13TOI(position.z) + sprite->displacement.z)
+				if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
 				{
 					// get each entity's layer
 					u8 worldLayer1 = sprite->worldLayer;
