@@ -129,15 +129,6 @@ void AnimationController_setActualFrame(AnimationController this, s8 actualFrame
 	this->actualFrame = actualFrame;
 }
 
-// set previous frame index of animation
-void AnimationController_setPreviousFrame(AnimationController this, s8 previousFrame)
-{
-	ASSERT(this, "AnimationController::setPreviousFrame: null this");
-
-	// TODO: this method should not exist
-	this->previousFrame = previousFrame;
-}
-
 // retrieve frame delay
 s8 AnimationController_getFrameDelay(AnimationController this)
 {

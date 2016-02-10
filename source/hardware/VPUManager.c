@@ -187,7 +187,7 @@ void VPUManager_interruptHandler(void)
 			// TODO: bgmap memory defragmentation
 		}
 
-		// write to VRAM
+		// write to DRAM
 		SpriteManager_render(this->spriteManager);
 		
 		// enable drawing

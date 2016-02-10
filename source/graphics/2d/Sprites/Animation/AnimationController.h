@@ -95,7 +95,6 @@ s8 AnimationController_getActualFrameIndex(AnimationController this);
 s8 AnimationController_getActualFrame(AnimationController this);
 s8 AnimationController_getPreviousFrame(AnimationController this);
 void AnimationController_setActualFrame(AnimationController this, s8 actualFrame);
-void AnimationController_setPreviousFrame(AnimationController this, s8 previousFrame);
 s8 AnimationController_getFrameDelay(AnimationController this);
 void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay);
 u8 AnimationController_geFrameDelayDelta(AnimationController this);
