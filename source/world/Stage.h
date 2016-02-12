@@ -59,6 +59,9 @@
 	/* the stage entities */ 																			\
 	VirtualList stageEntities;																			\
 																										\
+	/* the pivot node for streaming */ 																	\
+	VirtualNode streamingHeadNode;																		\
+																										\
 	/* the stage entities to test for streaming */ 														\
 	VirtualList stageEntitiesToTest;																	\
 																										\

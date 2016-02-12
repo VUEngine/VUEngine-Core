@@ -378,12 +378,12 @@ int VirtualList_getNodePosition(VirtualList this, const void* const dataPointer)
 	VirtualNode node = this->head;
     int position = 0;
 
-	for(; node && VirtualNode_getData(node) != (void*)dataPointer; node = VirtualNode_getNext(node))
+	for(; node && node->data != (void*)dataPointer; node = node->next)
 	{
 	    position++;
 	}
 
-	return position;
+	return !node? -1 : position;
 }
 
 // remove a node from the list

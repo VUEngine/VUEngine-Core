@@ -130,8 +130,8 @@ static void Stage_constructor(Stage this)
 	this->entitiesToTransform = __NEW(VirtualList);
 	this->ui = NULL;
 	this->stageDefinition = NULL;
-
 	this->focusInGameEntity = NULL;
+	this->streamingHeadNode = NULL;
 	
 	this->nextEntityId = 0;
 }
@@ -499,6 +499,7 @@ void Stage_removeChild(Stage this, Container child)
 		VirtualList_removeElement(this->stageEntities, node->data);
 		VirtualList_removeElement(this->loadedStageEntities, node->data);
 		__DELETE_BASIC(node->data);
+		this->streamingHeadNode = NULL;
 	}
 }
 
@@ -751,39 +752,37 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 
 	static long previousFocusEntityDistance = 0;
 
-	u8 direction = previousFocusEntityDistance <= focusInGameEntityDistance;
+	u8 advancing = previousFocusEntityDistance <= focusInGameEntityDistance;
 
-	static VirtualNode savedNode = NULL;
-
-	VirtualNode node = savedNode ? savedNode : this->stageEntities->head;
+	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : this->stageEntities->head;
 	int counter = 0;
 	int amplitude = this->stageDefinition->streaming.streamingAmplitude;
 
-	for(; node && counter < amplitude >> 1; node = direction ? node->previous : node->next, counter++);
+	for(; node && counter < amplitude >> 1; node = (advancing ? node->previous : node->next), counter++);
 
-	node = node ? node : direction ? this->stageEntities->head : this->stageEntities->tail;
-	savedNode = NULL;
+	node = node ? node : advancing ? this->stageEntities->head : this->stageEntities->tail;
+	this->streamingHeadNode = NULL;
 
 	int entityLoaded = false;
 
-	for(counter = 0; node && (!savedNode || counter < amplitude); node = direction ? node->next : node->previous, counter++)
+	for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = advancing ? node->next : node->previous, counter++)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(!savedNode)
+		if(!this->streamingHeadNode)
 		{
-			if(direction)
+			if(advancing)
 			{
 				if(focusInGameEntityDistance < stageEntityDescription->distance)
 				{
-					savedNode = node;
+					this->streamingHeadNode = node;
 				}
 			}
 			else
 			{
 				if(focusInGameEntityDistance > stageEntityDescription->distance)
 				{
-					savedNode = node;
+					this->streamingHeadNode = node;
 				}
 			}
 		}
@@ -806,7 +805,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 				stageEntityDescription->id = 0x7FFF;
 				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
 				entityLoaded = true;
-				break;
+				//break;
 			}
 		}
 	}
