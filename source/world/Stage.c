@@ -132,7 +132,7 @@ static void Stage_constructor(Stage this)
 	this->stageDefinition = NULL;
 	this->focusInGameEntity = NULL;
 	this->streamingHeadNode = NULL;
-	
+	this->previousFocusEntityDistance = 0;
 	this->nextEntityId = 0;
 }
 
@@ -496,10 +496,14 @@ void Stage_removeChild(Stage this, Container child)
 
 	if(node)
 	{
+		if(this->streamingHeadNode == node)
+		{
+			this->streamingHeadNode = this->streamingHeadNode->previous;
+		}
+		
 		VirtualList_removeElement(this->stageEntities, node->data);
 		VirtualList_removeElement(this->loadedStageEntities, node->data);
 		__DELETE_BASIC(node->data);
-		this->streamingHeadNode = NULL;
 	}
 }
 
@@ -685,34 +689,14 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 		
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities.children[i]);
 
-		u8 width = 0;
-		u8 height = 0;
+		VBVec3D environmentPosition3D = {0, 0, 0};
+		SmallRightCuboid smallRightCuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
-		int j = 0;
-		for(; stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j]->allocator; j++)
-		{
-			const SpriteDefinition* spriteDefinition = stageEntityDescription->positionedEntity->entityDefinition->spritesDefinitions[j];
+		int x = FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - ((smallRightCuboid.x1 - smallRightCuboid.x0)>> 1);
+		int y = FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - ((smallRightCuboid.y1 - smallRightCuboid.y0)>> 1);
+		int z = FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) - ((smallRightCuboid.z1 - smallRightCuboid.z0)>> 1);
 
-			if(spriteDefinition)
-			{
-				if(spriteDefinition->textureDefinition)
-				{
-					if(width < spriteDefinition->textureDefinition->cols << 3)
-					{
-						width = spriteDefinition->textureDefinition->cols << 3;
-					}
-
-					if(height < spriteDefinition->textureDefinition->rows << 3)
-					{
-						height = spriteDefinition->textureDefinition->rows << 3;
-					}
-				}
-			}
-		}
-
-		stageEntityDescription->distance = (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - (width >> 1)) +
-		(FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) * (FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - (height >> 1)) +
-		FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) * FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
+		stageEntityDescription->distance = x * x + y * y + z * z;
 
 		VirtualNode auxNode = this->stageEntities->head;
 
@@ -746,13 +730,11 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
 	focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
 
-	long focusInGameEntityDistance = focusInGameEntityPosition.x * focusInGameEntityPosition.x +
-	focusInGameEntityPosition.y * focusInGameEntityPosition.y +
-	focusInGameEntityPosition.z * focusInGameEntityPosition.z;
+	long focusInGameEntityDistance = (long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
+									(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
+									(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z;
 
-	static long previousFocusEntityDistance = 0;
-
-	u8 advancing = previousFocusEntityDistance <= focusInGameEntityDistance;
+	u8 advancing = this->previousFocusEntityDistance <= focusInGameEntityDistance;
 
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : this->stageEntities->head;
 	int counter = 0;
@@ -761,14 +743,13 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	for(; node && counter < amplitude >> 1; node = (advancing ? node->previous : node->next), counter++);
 
 	node = node ? node : advancing ? this->stageEntities->head : this->stageEntities->tail;
-	this->streamingHeadNode = NULL;
 
-	int entityLoaded = false;
+	this->streamingHeadNode = NULL;
 
 	for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = advancing ? node->next : node->previous, counter++)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
-
+		
 		if(!this->streamingHeadNode)
 		{
 			if(advancing)
@@ -786,17 +767,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 				}
 			}
 		}
-/*
-		if(entityLoaded)
-		{
-			if(savedNode)
-			{
-				break;
-			}
 
-			continue;
-		}
-*/
 		if(0 > stageEntityDescription->id)
 		{
 			// if entity in load range
@@ -804,13 +775,12 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 			{
 				stageEntityDescription->id = 0x7FFF;
 				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
-				entityLoaded = true;
-				//break;
+				break;
 			}
 		}
 	}
 
-	previousFocusEntityDistance = focusInGameEntityDistance;
+	this->previousFocusEntityDistance = focusInGameEntityDistance;
 }
 
 // load selected entities
@@ -1074,7 +1044,7 @@ void Stage_stream(Stage this)
 			Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 		}
 	}			
-	else if(streamingCycleCounter == streamingCycleBase << 1)
+	else if(streamingCycleCounter == streamingCycleBase * 2)
 	{
 		if(this->entitiesToLoad->head)
 		{
@@ -1088,7 +1058,7 @@ void Stage_stream(Stage this)
 			Stage_initializeEntities(this);
 		}
 	}
-	else if(streamingCycleCounter == streamingCycleBase << 2)
+	else if(streamingCycleCounter == streamingCycleBase * 4)
 	{		
 		if(this->entitiesToTransform->head)
 		{
@@ -1235,5 +1205,14 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 	if(this->focusInGameEntity)
 	{
 		Object_addEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (void (*)(Object, Object))Stage_onFocusEntityDeleted, __EVENT_CONTAINER_DELETED);
+		
+		VBVec3D focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
+		focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);
+		focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
+		focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
+
+		this->previousFocusEntityDistance = (long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
+											(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
+											(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z;
 	}
 }
