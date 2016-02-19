@@ -111,7 +111,7 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	int minutesPosition = col;
 	int secondsPosition = col + 3;
 
-	//print minutes
+	// print minutes
 	if(minutes < 10)
 	{
 		Printing_text(Printing_getInstance(), "0", minutesPosition, row, font);
@@ -123,7 +123,7 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	// print divisor
 	Printing_text(Printing_getInstance(), ":", secondsPosition - 1, row, font);
 
-	//print seconds
+	// print seconds
 	if(seconds < 10)
 	{
 		Printing_text(Printing_getInstance(), "0", secondsPosition, row, font);
@@ -204,7 +204,7 @@ u32 Clock_getPreviousMilliSeconds(Clock this)
 	return this->previousMilliSeconds;
 }
 
-//retrieve clock's seconds
+// retrieve clock's seconds
 u16 Clock_getSeconds(Clock this)
 {
 	ASSERT(this, "Clock::getSeconds: null this");
