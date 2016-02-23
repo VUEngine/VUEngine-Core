@@ -1168,6 +1168,13 @@ void Game_addPostProcessingEffect(Game this, void (*postProcessingEffect) (u32))
     VPUManager_addPostProcessingEffect(this->vpuManager, postProcessingEffect);
 }
 
+void Game_removePostProcessingEffect(Game this, void (*postProcessingEffect) (u32))
+{
+	ASSERT(this, "Game::removePostProcessingEffect: null this");
+
+    VPUManager_removePostProcessingEffect(this->vpuManager, postProcessingEffect);
+}
+
 #ifndef	__FORCE_VPU_SYNC
 bool Game_doneDRAMPrecalculations(Game this)
 {

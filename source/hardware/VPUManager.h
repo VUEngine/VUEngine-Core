@@ -195,6 +195,7 @@ void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this);
 void VPUManager_setBackgroundColor(VPUManager this, u8 color);
 void VPUManager_addPostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
+void VPUManager_removePostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
 void VPUManager_removePostProcessingEffects(VPUManager this);
 void VPUManager_registerCurrentDrawingframeBufferSet(VPUManager this);
 

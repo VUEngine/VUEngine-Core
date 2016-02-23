@@ -370,6 +370,13 @@ void VPUManager_addPostProcessingEffect(VPUManager this, void (*postProcessingEf
 	VirtualList_pushBack(this->postProcessingEffects, postProcessingEffect);
 }
 
+// remove post processing effect
+void VPUManager_removePostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32))
+{
+	ASSERT(this, "VPUManager::removePostProcessingEffect: null this");
+
+	VirtualList_removeElement(this->postProcessingEffects, postProcessingEffect);
+}
 // register post processing effect
 void VPUManager_removePostProcessingEffects(VPUManager this)
 {
