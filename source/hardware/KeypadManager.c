@@ -27,19 +27,19 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define KeypadManager_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/*  */																		\
-	u16 currentKey;																\
-																				\
-	/*  */																		\
-	u16 previousKey;															\
-																				\
-	/*  */																		\
-	u8 enabled;																	\
+#define KeypadManager_ATTRIBUTES																		\
+																										\
+	/* super's attributes */																			\
+	Object_ATTRIBUTES;																					\
+																										\
+	/*  */																								\
+	u16 currentKey;																						\
+																										\
+	/*  */																								\
+	u16 previousKey;																					\
+																										\
+	/*  */																								\
+	u8 enabled;																							\
 
 // define the KeypadManager
 __CLASS_DEFINITION(KeypadManager, Object);
