@@ -136,23 +136,23 @@ static WORLD* const WA = (WORLD*)0x0003D800;
 typedef struct PaletteConfig
 {
 	u8 backgroundColor;
-	
-	struct Bgmap 
+
+	struct Bgmap
 	{
 		u8 gplt0;
 		u8 gplt1;
 		u8 gplt2;
 		u8 gplt3;
 	} bgmap;
-	
-	struct Object 
+
+	struct Object
 	{
 		u8 jplt0;
 		u8 jplt1;
 		u8 jplt2;
 		u8 jplt3;
 	} object;
-	
+
 } PaletteConfig;
 
 
@@ -194,6 +194,8 @@ void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this);
 void VPUManager_setBackgroundColor(VPUManager this, u8 color);
-
+void VPUManager_addPostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
+void VPUManager_removePostProcessingEffects(VPUManager this);
+void VPUManager_registerCurrentDrawingframeBufferSet(VPUManager this);
 
 #endif

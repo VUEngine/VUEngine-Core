@@ -79,6 +79,7 @@ void Game_unpause(Game this, GameState pauseState);
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
 void Game_disableKeypad(Game this);
 void Game_enableKeypad(Game this);
+void Game_addPostProcessingEffect(Game this, void (*postProcessingEffect) (u32));
 CollisionManager Game_getCollisionManager(Game this);
 PhysicalWorld Game_getPhysicalWorld(Game this);
 

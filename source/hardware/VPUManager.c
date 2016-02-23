@@ -72,16 +72,23 @@ volatile u16* VIP_REGS = (u16*)0x0005F800;
 	ParamTableManager paramTableManager;																\
 	CharSetManager charSetManager;																		\
 	SpriteManager spriteManager;																		\
+																										\
+	/* Post processing effects */																		\
+	VirtualList postProcessingEffects;																	\
+	u32 currentDrawingframeBufferSet;																	\
 
 // define the VPUManager
 __CLASS_DEFINITION(VPUManager, Object);
+
+__CLASS_FRIEND_DEFINITION(VirtualNode);
+__CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-#ifndef	__FORCE_VPU_SYNC	
+#ifndef	__FORCE_VPU_SYNC
 bool Game_doneDRAMPrecalculations(Game this);
 const char* Game_getDRAMPrecalculationsStep(Game this);
 #endif
@@ -100,18 +107,22 @@ static void VPUManager_constructor(VPUManager this)
 	ASSERT(this, "VPUManager::constructor: null this");
 
 	__CONSTRUCT_BASE();
-	
+
 	this->frameRate = FrameRate_getInstance();
 	this->paramTableManager = ParamTableManager_getInstance();
 	this->charSetManager = CharSetManager_getInstance();
 	this->spriteManager = SpriteManager_getInstance();
 
+    this->postProcessingEffects = __NEW(VirtualList);
+    this->currentDrawingframeBufferSet = 0;
 }
 
 // class's destructor
 void VPUManager_destructor(VPUManager this)
 {
 	ASSERT(this, "VPUManager::destructor: null this");
+
+    __DELETE(this->postProcessingEffects);
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -159,7 +170,7 @@ void VPUManager_disableInterrupt(VPUManager this)
 void VPUManager_interruptHandler(void)
 {
 	bool idle = VIP_REGS[INTPND] & XPEND;
-	
+
 	// disable interrupts
 	VIP_REGS[INTENB]= 0;
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
@@ -169,17 +180,17 @@ void VPUManager_interruptHandler(void)
 #endif
 
 	// if the VPU is idle
-	if(idle) 
+	if(idle)
 	{
 		// disable drawing
 		VIP_REGS[XPCTRL] |= XPRST;
 		VIP_REGS[XPCTRL] &= ~XPEN;
 
 		while(VIP_REGS[XPSTTS] & XPBSYR);
-		
+
 		VPUManager this = VPUManager_getInstance();
-		
-		// if performance was good enough in the 
+
+		// if performance was good enough in the
 		// the previous second do some defragmenting
 		if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
 		{
@@ -189,13 +200,23 @@ void VPUManager_interruptHandler(void)
 
 		// write to DRAM
 		SpriteManager_render(this->spriteManager);
-		
+
+        if(0xFFFF != this->currentDrawingframeBufferSet)
+        {
+            VirtualNode node = this->postProcessingEffects->head;
+
+            for(; node; node = node->next)
+            {
+                ((void (*)(u32))node->data)(this->currentDrawingframeBufferSet);
+            }
+        }
+
 		// enable drawing
 		while(VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
 
-#ifndef	__FORCE_VPU_SYNC	
+#ifndef	__FORCE_VPU_SYNC
 #ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
 	static int messageDelay = __TARGET_FPS;
 	if(!Game_doneDRAMPrecalculations(Game_getInstance()))
@@ -206,7 +227,7 @@ void VPUManager_interruptHandler(void)
 		Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, 2, NULL);
 		messageDelay = __TARGET_FPS;
 	}
-	
+
 	if(0 == --messageDelay )
 	{
 		Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
@@ -259,7 +280,7 @@ void VPUManager_setupPalettes(VPUManager this, PaletteConfig* paletteConfig)
 	VIP_REGS[JPLT1] = paletteConfig->object.jplt1;
 	VIP_REGS[JPLT2] = paletteConfig->object.jplt2;
 	VIP_REGS[JPLT3] = paletteConfig->object.jplt3;
-	
+
 	VIP_REGS[BKCOL] = paletteConfig->backgroundColor <= __COLOR_BRIGHT_RED? paletteConfig->backgroundColor: __COLOR_BRIGHT_RED;
 }
 
@@ -339,4 +360,39 @@ void VPUManager_setBackgroundColor(VPUManager this, u8 color)
     }
 
 	VIP_REGS[BKCOL] = color;
+}
+
+// register post processing effect
+void VPUManager_addPostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32))
+{
+	ASSERT(this, "VPUManager::addPostProcessingEffect: null this");
+
+	VirtualList_pushBack(this->postProcessingEffects, postProcessingEffect);
+}
+
+// register post processing effect
+void VPUManager_removePostProcessingEffects(VPUManager this)
+{
+	ASSERT(this, "VPUManager::removePostProcessingEffects: null this");
+
+	VirtualList_clear(this->postProcessingEffects);
+}
+
+// register the frame buffer in use by the VPU's drawing process
+void VPUManager_registerCurrentDrawingframeBufferSet(VPUManager this)
+{
+	ASSERT(this, "VPUManager::registerCurrentDrawingframeBufferSet: null this");
+
+    u32 currentDrawingframeBufferSet = VIP_REGS[XPSTTS] & 0x000C;
+
+    this->currentDrawingframeBufferSet = 0xFFFF;
+
+    if(0x0004 == currentDrawingframeBufferSet)
+    {
+        this->currentDrawingframeBufferSet = 0;
+    }
+    else if(0x0008 == currentDrawingframeBufferSet)
+    {
+        this->currentDrawingframeBufferSet = 0x8000;
+    }
 }

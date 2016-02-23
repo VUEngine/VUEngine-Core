@@ -185,7 +185,7 @@ static void Game_constructor(Game this)
 
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();
-	
+
 	// current process
 	this->currentProcess = kGameStartingUp;
 
@@ -217,15 +217,15 @@ static void Game_constructor(Game this)
 	DirectDraw_getInstance();
 	I18n_getInstance();
 	ParamTableManager_getInstance();
-	
+
 #ifdef __DEBUG_TOOLS
-	DebugState_getInstance();	
+	DebugState_getInstance();
 #endif
-	
+
 #ifdef __STAGE_EDITOR
 	StageEditorState_getInstance();
 #endif
-	
+
 #ifdef __ANIMATION_EDITOR
 	AnimationEditorState_getInstance();
 #endif
@@ -268,7 +268,7 @@ void Game_initialize(Game this)
 
 	// clear sprite memory
     HardwareManager_clearScreen(HardwareManager_getInstance());
-    
+
 	// make sure timer interrupts are enable
 	HardwareManager_initializeTimer(HardwareManager_getInstance());
 
@@ -355,33 +355,33 @@ static void Game_setNextState(Game this, GameState state)
 
 #ifdef __DEBUG
 			this->lastProcessName = "kSwapState";
-#endif		
-	
+#endif
+
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
 				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
-			
+
 			// setup new state
 		    StateMachine_swapState(this->stateMachine, (State)state);
 			break;
-	
+
 		case kPushState:
-	
+
 #ifdef __DEBUG
 			this->lastProcessName = "kPushState";
-#endif		
+#endif
 			// setup new state
 		    StateMachine_pushState(this->stateMachine, (State)state);
 			break;
-	
+
 		case kPopState:
-	
+
 #ifdef __DEBUG
 			this->lastProcessName = "kPopState";
-#endif		
+#endif
 
 			if(this->currentState)
 			{
@@ -389,7 +389,7 @@ static void Game_setNextState(Game this, GameState state)
 			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
-			
+
 			// setup new state
 		    StateMachine_popState(this->stateMachine);
 			break;
@@ -410,15 +410,15 @@ static void Game_setNextState(Game this, GameState state)
 	{
 		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock_getTime(this->clock) - this->lastAutoPauseCheckTime);
 		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
-		
+
 		MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kAutoPause);
 		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
-		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);		
+		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
 	}
 
 	// no next state now
 	this->nextState = NULL;
-	
+
 	// save current state
 	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 }
@@ -455,6 +455,7 @@ void Game_reset(Game this)
 	HardwareManager_setupColumnTable(HardwareManager_getInstance());
     HardwareManager_displayOn(HardwareManager_getInstance());
     HardwareManager_lowerBrightness(HardwareManager_getInstance());
+    VPUManager_removePostProcessingEffects(this->vpuManager);
 
 	// reset managers
     Screen_setFocusInGameEntity(this->screen, NULL);
@@ -488,30 +489,30 @@ static void Game_handleInput(Game this)
 	{
 		return;
 	}
-	
+
 	// poll the user's input
 	KeypadManager_read(this->keypadManager);
 
 	u16 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
 	u16 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
 	u16 holdKey = KeypadManager_getHoldKey(this->keypadManager);
-	
-#ifdef __DEBUG_TOOLS 
+
+#ifdef __DEBUG_TOOLS
 	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 #else
-	
-#ifdef __STAGE_EDITOR 
+
+#ifdef __STAGE_EDITOR
 	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 #else
-	
-#ifdef __ANIMATION_EDITOR 
+
+#ifdef __ANIMATION_EDITOR
 	u16 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
 #endif
 
 #endif
-			
+
 #endif
-	
+
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
@@ -646,7 +647,7 @@ static void Game_handleInput(Game this)
 	}
 
 	KeypadManager_clear(this->keypadManager);
-	
+
 #ifdef __LOW_BATTERY_INDICATOR
     Game_checkLowBattery(this, holdKey);
 #endif
@@ -671,7 +672,7 @@ inline static void Game_updateLogic(Game this)
 #endif
 	// dispatch queued messages
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
-	
+
 	this->currentProcess = kGameHandlingUserInput;
 
 #ifdef __DEBUG
@@ -704,12 +705,12 @@ inline static void Game_updateVisuals(Game this)
 #endif
 
 	this->currentProcess = kGameUpdatingVisuals;
-	
+
 #ifdef __FORCE_VPU_SYNC
 	// disable rendering until collisions have been checked
 	VPUManager_disableInterrupt(this->vpuManager);
 #endif
-	
+
 #ifdef __DEBUG
 	this->lastProcessName = "update visuals";
 #endif
@@ -723,7 +724,7 @@ inline static void Game_updateVisuals(Game this)
 	// allow rendering
 	VPUManager_enableInterrupt(this->vpuManager);
 #endif
-	
+
 #ifdef __DEBUG
 	this->lastProcessName = "update visuals ended";
 #endif
@@ -735,7 +736,7 @@ inline static void Game_updatePhysics(Game this)
 #ifdef __DEBUG
 	this->lastProcessName = "update physics";
 #endif
-	
+
 	this->currentProcess = kGameUpdatingPhysics;
 
 	// simulate physics
@@ -776,7 +777,7 @@ inline static void Game_updateTransformations(Game this)
 	GameState_processCollisions(this->currentState);
 
 	this->currentProcess = kGameCheckingCollisionsDone;
-	
+
 #ifdef __DEBUG
 	this->lastProcessName = "transformations ended";
 #endif
@@ -791,13 +792,13 @@ inline static void Game_checkForNewState(Game this)
 	{
 #ifdef __DEBUG
 		this->lastProcessName = "setting next state";
-#endif		
+#endif
 		Game_setNextState(this, this->nextState);
 #ifdef __DEBUG
 		this->lastProcessName = "setting next state done";
-#endif		
+#endif
 	}
-    
+
 	this->currentProcess = kGameCheckingForNewStateDone;
 }
 
@@ -807,7 +808,7 @@ static void Game_update(Game this)
 	ASSERT(this, "Game::update: null this");
 
 	FrameRate frameRate = FrameRate_getInstance();
-	
+
 #if __FRAME_CYCLE == 1
 	bool cycle = true;
 #endif
@@ -816,15 +817,18 @@ static void Game_update(Game this)
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
-	    while(!(VIP_REGS[INTPND] & GAMESTART)); 
+	    while(!(VIP_REGS[INTPND] & GAMESTART));
 	    VIP_REGS[INTCLR]= GAMESTART;
+
+	    // register the frame buffer in use by the VPU's drawing process
+	    VPUManager_registerCurrentDrawingframeBufferSet(this->vpuManager);
 
 		// update each subsystem
 #if __FRAME_CYCLE == 1
 	    if(cycle)
 	    {
 #endif
-	    // the engine's game logic is free of racing 
+	    // the engine's game logic is free of racing
 	    // conditions against the VPU
 	    Game_updateVisuals(this);
 
@@ -846,7 +850,7 @@ static void Game_update(Game this)
 
 		// this is the point were the main game's subsystems
 		// have done all their work
-		// at this point save the current time on each 
+		// at this point save the current time on each
 		// clock so they can properly calculate the elapsed
 		// time afterwards
 		ClockManager_saveCurrentTime(this->clockManager);
@@ -856,7 +860,7 @@ static void Game_update(Game this)
 
 	    // increase the FPS counter
 		FrameRate_increaseFPS(frameRate);
-		
+
 #if __FRAME_CYCLE == 1
 		cycle = true;
 	    }
@@ -873,7 +877,7 @@ bool Game_handleMessage(Game this, Telegram telegram)
 	switch(Telegram_getMessage(telegram))
 	{
 		case kAutoPause:
-			
+
 			Game_autoPause(this);
 			return true;
 			break;
@@ -884,7 +888,7 @@ bool Game_handleMessage(Game this, Telegram telegram)
 			return true;
 			break;
 	}
-	
+
 	return StateMachine_handleMessage(this->stateMachine, telegram);
 }
 
@@ -1107,7 +1111,7 @@ void Game_unpause(Game this, GameState pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
-		
+
 		if(this->currentState == this->automaticPauseState)
 		{
 			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
@@ -1135,7 +1139,7 @@ static void Game_autoPause(Game this)
 		{
 			Game_pause(this, this->automaticPauseState);
 		}
-		else 
+		else
 		{
 			// otherwise just wait a minute to check again
 			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
@@ -1157,7 +1161,14 @@ void Game_enableKeypad(Game this)
 	KeypadManager_enable(this->keypadManager);
 }
 
-#ifndef	__FORCE_VPU_SYNC	
+void Game_addPostProcessingEffect(Game this, void (*postProcessingEffect) (u32))
+{
+	ASSERT(this, "Game::addPostProcessingEffect: null this");
+
+    VPUManager_addPostProcessingEffect(this->vpuManager, postProcessingEffect);
+}
+
+#ifndef	__FORCE_VPU_SYNC
 bool Game_doneDRAMPrecalculations(Game this)
 {
 	ASSERT(this, "Game::doneDRAMPrecalculations: null this");
@@ -1169,7 +1180,7 @@ const char* Game_getDRAMPrecalculationsStep(Game this)
 	switch(this->currentProcess)
 	{
 		case kGameUpdatingVisuals:
-			
+
 			return "Step: updating visuals";
 			break;
 	}
