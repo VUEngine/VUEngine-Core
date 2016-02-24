@@ -19,10 +19,15 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 DEFINITIONS
+// 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <libgccvb.h>
+
+
+//---------------------------------------------------------------------------------------------------------
+// 											 DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
 
 // spacial size
 typedef struct Size
@@ -241,7 +246,7 @@ typedef struct TextureSource
 	s16 mx;
 	s16 mp;
 	s16 my;
-	
+
 }TextureSource;
 
 // a spatial description
@@ -252,10 +257,10 @@ typedef struct DrawSpec
 
 	// bgmap's source coordinates
 	TextureSource textureSource;
-	
+
 	// scale
 	Scale scale;
-	
+
 	// angle with respect to each axis (indexes for the SINLUT array)
 	Rotation rotation;
 
@@ -272,7 +277,7 @@ typedef struct Transformation
 
 	// local rotation
 	Rotation localRotation;
-	
+
 	// global rotation
 	Rotation globalRotation;
 
