@@ -201,6 +201,7 @@ void VPUManager_interruptHandler(void)
 		// write to DRAM
 		SpriteManager_render(this->spriteManager);
 
+        // check if the current frame buffer set is valid
         if(0 == this->currentDrawingframeBufferSet || 0x8000 == this->currentDrawingframeBufferSet)
         {
             VirtualNode node = this->postProcessingEffects->head;
