@@ -80,13 +80,13 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 		flag = true;
 //		num*=(-1);
 	}
-	
+
 	for(; i < __CHAR_HOLDER_SIZE - 1; i++)
 	{
 		rev[__CHAR_HOLDER_SIZE - 2 - i] = numbers[num % base];
 		num /= base;
 	}
-	
+
 	i = 0;
 	while(rev[i] == '0')
 	{
@@ -110,12 +110,12 @@ long Utilities_randomSeed()
 	int	rand, prevnum = 0,	count = 1;
 
 	static Clock clock;
-	
+
 	if(!clock)
 	{
 		clock = Game_getClock(Game_getInstance());
 	}
-	
+
 	rand = Clock_getTime(clock);
 
 	// repeat through many times to make more random and to allow the CTA value to change multiple times
@@ -183,15 +183,15 @@ int Utilities_getDigitCount(int value)
 	return (size) ? size : 1;
 }
 
-/* 
+/*
    A C-program for MT19937, with initialization improved 2002/1/26.
    Coded by Takuji Nishimura and Makoto Matsumoto.
 
-   Before using, initialize the state by using init_genrand(seed)  
+   Before using, initialize the state by using init_genrand(seed)
    or init_by_array(init_key, key_length).
 
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
-   All rights reserved.                          
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
@@ -204,8 +204,8 @@ int Utilities_getDigitCount(int value)
         notice, this list of conditions and the following disclaimer in the
         documentation and/or other materials provided with the distribution.
 
-     3. The names of its contributors may not be used to endorse or promote 
-        products derived from this software without specific prior written 
+     3. The names of its contributors may not be used to endorse or promote
+        products derived from this software without specific prior written
         permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -240,10 +240,10 @@ static int mti=N+1; /* mti==N+1 means mt[N] is not initialized */
 void init_genrand(unsigned long s)
 {
     mt[0]= s & 0xffffffffUL;
-    for (mti=1; mti<N; mti++) 
+    for(mti=1; mti<N; mti++)
     {
-        mt[mti] = 
-	    (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti); 
+        mt[mti] =
+	    (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti);
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array mt[].                        */
@@ -263,23 +263,23 @@ void Utilities_initRandomSeedsByArray(unsigned long init_key[], int key_length)
     init_genrand(19650218UL);
     i=1; j=0;
     k = (N>key_length ? N : key_length);
-    for (; k; k--) {
+    for(; k; k--) {
         mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1664525UL))
           + init_key[j] + j; /* non linear */
         mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
         i++; j++;
-        if (i>=N) { mt[0] = mt[N-1]; i=1; }
-        if (j>=key_length) j=0;
+        if(i>=N) { mt[0] = mt[N-1]; i=1; }
+        if(j>=key_length) j=0;
     }
-    for (k=N-1; k; k--) {
+    for(k=N-1; k; k--) {
         mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1566083941UL))
           - i; /* non linear */
         mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
         i++;
-        if (i>=N) { mt[0] = mt[N-1]; i=1; }
+        if(i>=N) { mt[0] = mt[N-1]; i=1; }
     }
 
-    mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
+    mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
@@ -289,17 +289,17 @@ unsigned long Utilities_generateRandomInt32(void)
     static unsigned long mag01[2]={0x0UL, MATRIX_A};
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-    if (mti >= N) { /* generate N words at one time */
+    if(mti >= N) { /* generate N words at one time */
         int kk;
 
-        if (mti == N+1)   /* if init_genrand() has not been called, */
+        if(mti == N+1)   /* if init_genrand() has not been called, */
             init_genrand(5489UL); /* a default initial seed is used */
 
-        for (kk=0;kk<N-M;kk++) {
+        for(kk=0;kk<N-M;kk++) {
             y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
             mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
         }
-        for (;kk<N-1;kk++) {
+        for(;kk<N-1;kk++) {
             y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
             mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
         }
@@ -308,7 +308,7 @@ unsigned long Utilities_generateRandomInt32(void)
 
         mti = 0;
     }
-  
+
     y = mt[mti++];
 
     /* Tempering */

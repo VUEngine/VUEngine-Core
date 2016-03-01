@@ -44,7 +44,7 @@ void GameState_constructor(GameState this)
 	__CONSTRUCT_BASE();
 
 	this->stage = NULL;
-	
+
 	// clocks
 	this->inGameClock = __NEW(Clock);
 	this->animationsClock = __NEW(Clock);
@@ -56,7 +56,7 @@ void GameState_constructor(GameState this)
 
 	// by default can stream
 	this->canStream = true;
-	
+
 	this->screenPosition.x = 0;
 	this->screenPosition.y = 0;
 	this->screenPosition.z = 0;
@@ -70,7 +70,7 @@ void GameState_destructor(GameState this)
 	__DELETE(this->inGameClock);
 	__DELETE(this->animationsClock);
 	__DELETE(this->physicsClock);
-	
+
 	__DELETE(this->physicalWorld);
 	__DELETE(this->collisionManager);
 
@@ -92,7 +92,7 @@ void GameState_destructor(GameState this)
 void GameState_enter(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::enter: null this");
-	
+
 	Clock_start(this->inGameClock);
 }
 
@@ -104,7 +104,7 @@ void GameState_execute(GameState this, void* owner)
 
 	// update the stage
 	__VIRTUAL_CALL(void, Container, update, this->stage);
-	
+
 	// stream level
 	Stage_stream(this->stage);
 }
@@ -122,7 +122,7 @@ void GameState_exit(GameState this, void* owner)
 	}
 
 	this->stage = NULL;
-	
+
 	Clock_stop(this->inGameClock);
 }
 
@@ -132,7 +132,7 @@ void GameState_suspend(GameState this, void* owner)
 	ASSERT(this, "GameState::suspend: null this");
 
 	Clock_pause(this->inGameClock, true);
-	
+
 #ifdef __DEBUG_TOOLS
 	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
@@ -145,7 +145,7 @@ void GameState_suspend(GameState this, void* owner)
 	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
-	
+
 	// save the screen position for resume reconfiguration
 	this->screenPosition = Screen_getPosition(Screen_getInstance());
 
@@ -153,7 +153,7 @@ void GameState_suspend(GameState this, void* owner)
 	{
 		__VIRTUAL_CALL(void, Container, suspend, this->stage);
 	}
-	
+
 #ifdef __DEBUG_TOOLS
 	}
 #endif
@@ -191,11 +191,11 @@ void GameState_resume(GameState this, void* owner)
 	if(this->stage)
 	{
 		Game_reset(Game_getInstance());
-		
+
 		// must make sure that all textures are completely written
 		SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
 		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
-		
+
 		// update the stage
 		__VIRTUAL_CALL(void, Container, resume, this->stage);
 	}
@@ -205,7 +205,7 @@ void GameState_resume(GameState this, void* owner)
 
 	// transform everything before showing up
 	GameState_transform(this);
-	
+
 	// set up visual representation
 	GameState_updateVisuals(this);
 
@@ -227,7 +227,7 @@ void GameState_resume(GameState this, void* owner)
 #ifdef __ANIMATION_EDITOR
 	}
 #endif
-	
+
 	// unpause clock
 	Clock_pause(this->inGameClock, false);
 }
@@ -322,7 +322,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 
-	//load world entities
+	// load world entities
 	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
 
 	// move the screen to its position
@@ -339,7 +339,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
-	
+
 	// defer rendering again
 	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
@@ -456,14 +456,14 @@ void GameState_pauseAnimations(GameState this, bool pause)
 void GameState_pausePhysics(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pausePhysics: null this");
-	
+
 	Clock_pause(this->physicsClock, pause);
 }
 
 void GameState_updatePhysics(GameState this)
 {
 	ASSERT(this, "GameState::updatePhysics: null this");
-	
+
 	PhysicalWorld_update(this->physicalWorld, this->physicsClock);
 }
 
@@ -477,7 +477,7 @@ PhysicalWorld GameState_getPhysicalWorld(GameState this)
 void GameState_processCollisions(GameState this)
 {
 	ASSERT(this, "GameState::processCollisions: null this");
-	
+
 	CollisionManager_update(this->collisionManager, this->physicsClock);
 }
 

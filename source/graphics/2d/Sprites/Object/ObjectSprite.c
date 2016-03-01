@@ -74,13 +74,13 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	this->objectIndex = -1;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
-	
+
 	// clear position
 	this->position.x = 0;
 	this->position.y = 0;
 	this->position.z = 0;
 	this->position.parallax = 0;
-	
+
 	this->displacement = oSpriteDefinition->displacement;
 
 	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
@@ -148,7 +148,7 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 			}
 			break;
 	}
-	
+
 	this->texture->written = false;
 }
 
@@ -174,7 +174,7 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 	ASSERT(this, "ObjectSprite::position: null this");
 
 	VBVec3D position3D = *position;
-	
+
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
@@ -190,7 +190,7 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
 		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
 	}
-	
+
 	this->renderFlag |= __UPDATE_G;
 	this->initialized = true;
 }
@@ -222,10 +222,10 @@ void ObjectSprite_render(ObjectSprite this)
 
 		if(this->hidden)
 		{
-			if (0 <= this->objectIndex)
+			if(0 <= this->objectIndex)
 			{
 				int i = 0;
-				for (; i < this->totalObjects; i++)
+				for(; i < this->totalObjects; i++)
 				{
 					OAM[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				}
@@ -234,12 +234,12 @@ void ObjectSprite_render(ObjectSprite this)
 			this->renderFlag = 0;
 			return;
 		}
-		
+
 		if(!this->texture->written)
 		{
 			ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
 		}
-		
+
 		if(!this->initialized)
 		{
 		//	return;
@@ -265,7 +265,7 @@ void ObjectSprite_render(ObjectSprite this)
 			{
 				s32 objectIndex = this->objectIndex + i * cols + j;
 				int outputX = x + (j << 3)  * xDirection;
-				
+
 				// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 				// screen's bounds
 				if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
@@ -288,7 +288,7 @@ void ObjectSprite_render(ObjectSprite this)
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
-		
+
 		// make sure to not render again
 		this->renderFlag = false;
 	}
@@ -322,9 +322,9 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 	{
 		// rewrite texture
 		ObjectTexture_setObjectIndex(__SAFE_CAST(ObjectTexture, this->texture), this->objectIndex);
-		
+
 		if(0 <= previousObjectIndex)
-		{	
+		{
 			// hide the previously used objects
 			int j = previousObjectIndex;
 			for(; j < previousObjectIndex + this->totalObjects; j++)
@@ -335,7 +335,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 			if(!this->hidden)
 			{
 				__VIRTUAL_CALL(void, Sprite, show, this);
-	
+
 				// turn off previous OBJs' to avoid ghosting
 				if(this->objectIndex < previousObjectIndex)
 				{
@@ -362,7 +362,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 void ObjectSprite_show(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::show: null this");
-	
+
 	Sprite_show(__SAFE_CAST(Sprite, this));
 }
 

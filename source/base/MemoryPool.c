@@ -157,7 +157,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	{
 		return;
 	}
-	
+
 #ifdef __DEBUG
 
 	int i;
@@ -214,7 +214,7 @@ static void MemoryPool_reset(MemoryPool this)
 
 	// initialize pool's sizes and pointers
 	__SET_MEMORY_POOL_ARRAYS
-	
+
 	// clear all allocable objects usage
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -236,7 +236,7 @@ void MemoryPool_cleanUp(MemoryPool this)
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		int i = 0;
-		for (; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
+		for(; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
 		{
 			if(!*((u32*)&this->poolLocation[pool][i]))
 			{
@@ -301,14 +301,14 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 		Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize],  x, y, NULL);
 		Printing_int(Printing_getInstance(), this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
 		Printing_int(Printing_getInstance(), totalUsedBlocks, x + 10, y, NULL);
-		
+
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
 		Printing_int(Printing_getInstance(), usedBlocksPercentage, x + 17 - Utilities_intLength(usedBlocksPercentage), y, NULL);
 		Printing_text(Printing_getInstance(), "% ", x + 17, y, NULL);
 
 		totalUsedBlocks = 0 ;
 	}
-	
+
 	++y;
 	int poolSize = MemoryPool_getPoolSize(this);
 	Printing_text(Printing_getInstance(), "Pool size: ", x, ++y, NULL);
@@ -316,7 +316,7 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Pool usage: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), totalUsedBytes, x + 18 - Utilities_intLength(totalUsedBytes), y++, NULL);
-	
+
 	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
 	Printing_int(Printing_getInstance(), usedBytesPercentage, x + 17 - Utilities_intLength(usedBytesPercentage), y, NULL);
 	Printing_text(Printing_getInstance(), "% ", x + 17, y++, NULL);
@@ -333,7 +333,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	int totalUsedBytes = 0;
 	int pool;
 	int displacement = 0;
-	
+
 	Printing_text(Printing_getInstance(), "MEM", x, y++, NULL);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
@@ -350,7 +350,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
-		
+
 		Printing_text(Printing_getInstance(), "           ", x, originalY + 1 + pool, NULL);
 
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
@@ -362,7 +362,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 		totalUsedBlocks = 0 ;
 	}
-	
+
 	y = originalY;
 	int poolSize = MemoryPool_getPoolSize(MemoryPool_getInstance());
 	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
