@@ -287,11 +287,11 @@ void HardwareManager_lowerBrightness(HardwareManager this)
 }
 
 // setup default column table
-void HardwareManager_setupColumnTable(HardwareManager this)
+void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition)
 {
 	ASSERT(this, "HardwareManager::setupColumnTable: null this");
 
-	VPUManager_setupColumnTable(this->vpuManager);
+	VPUManager_setupColumnTable(this->vpuManager, columnTableDefinition);
 }
 
 // enable key pad
@@ -319,7 +319,7 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 
 	int auxY = y;
 	int xDisplacement = 6;
-	
+
 	// print registries' status to know the call source
 	Printing_text(Printing_getInstance(), "PSW:" , x, ++auxY, NULL);
 	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(this), x + xDisplacement, auxY, NULL);
@@ -412,7 +412,7 @@ void HardwareManager_checkStackStatus(HardwareManager this)
 
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
-	
+
 	if((0x05000000 & sp) && sp < (int)&_lastDataVariable)
 	{
 		HardwareManager_printStackStatus(HardwareManager_getInstance(), 1, 15, false);
@@ -423,10 +423,10 @@ void HardwareManager_checkStackStatus(HardwareManager this)
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed)
 {
 	ASSERT(this, "HardwareManager::print: null this");
-	
+
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
-	
+
 	int room = sp - (int)&_lastDataVariable;
 
 	if(resumed)
@@ -435,10 +435,10 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 		{
 			x = (__SCREEN_WIDTH >> 3) - Utilities_intLength(room) - 13;
 		}
-		
+
 		Printing_text(Printing_getInstance(), "   STACK'S ROOM        " , x - 3, y, NULL);
 		Printing_int(Printing_getInstance(), room, x + 13, y, NULL);
-	}	
+	}
 	else
 	{
 		if((__SCREEN_WIDTH >> 3) - 1 < Utilities_intLength(room) + 10)

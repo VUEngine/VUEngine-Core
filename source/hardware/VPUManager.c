@@ -34,28 +34,14 @@
 // 											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-const static BYTE columnTable[128] =
-{
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
-	0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xe0, 0xbc,
-	0xa6, 0x96, 0x8a, 0x82, 0x7a, 0x74, 0x6e, 0x6a,
-	0x66, 0x62, 0x60, 0x5c, 0x5a, 0x58, 0x56, 0x54,
-	0x52, 0x50, 0x50, 0x4e, 0x4c, 0x4c, 0x4a, 0x4a,
-	0x48, 0x48, 0x46, 0x46, 0x46, 0x44, 0x44, 0x44,
-	0x42, 0x42, 0x42, 0x40, 0x40, 0x40, 0x40, 0x40,
-	0x3e, 0x3e, 0x3e, 0x3e, 0x3e, 0x3e, 0x3e, 0x3c,
-	0x3c, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c,
-	0x3c, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c
-};
-
-/****** VIP Registers ******/
 volatile u16* VIP_REGS = (u16*)0x0005F800;
+
+
+//---------------------------------------------------------------------------------------------------------
+// 												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,13 +53,16 @@ volatile u16* VIP_REGS = (u16*)0x0005F800;
 	/* super's attributes */																			\
 	Object_ATTRIBUTES;																					\
 																										\
-	/* DRAM managers */																					\
+	/* column table */																					\
+	ColumnTableDefinition* currentColumnTableDefinition;												\
+																										\
+	/* dram managers */																					\
 	FrameRate frameRate;																				\
 	ParamTableManager paramTableManager;																\
 	CharSetManager charSetManager;																		\
 	SpriteManager spriteManager;																		\
 																										\
-	/* Post processing effects */																		\
+	/* post processing effects */																		\
 	VirtualList postProcessingEffects;																	\
 	u32 currentDrawingframeBufferSet;																	\
 
@@ -336,18 +325,59 @@ void VPUManager_clearBgmap(VPUManager this, int bgmap, int size)
 }
 
 // setup default column table
-void VPUManager_setupColumnTable(VPUManager this)
+void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnTableDefinition)
 {
 	ASSERT(this, "VPUManager::setupColumnTable: null this");
 
-	int i;
-	for(i = 0; i < 128; i++)
+    int i;
+
+    // always use the default column table as fallback
+	if(columnTableDefinition == NULL)
 	{
-		CLMN_TBL[i] = columnTable[i];
-		CLMN_TBL[i + 0x0080] = columnTable[127 - i];
-		CLMN_TBL[i + 0x0100] = columnTable[i];
-		CLMN_TBL[i + 0x0180] = columnTable[127 - i];
+	    columnTableDefinition = (ColumnTableDefinition*)&DEFAULT_COLUMN_TABLE;
 	}
+
+    // skip if column table to load is the same as last loaded
+	if(this->currentColumnTableDefinition == columnTableDefinition)
+	{
+	    return;
+	}
+
+    // save pointer to last loaded column table
+	this->currentColumnTableDefinition = columnTableDefinition;
+
+    // write column table (first half)
+    for(i = 0; i < 128; i++)
+    {
+        // left screen
+        CLMN_TBL[i] = columnTableDefinition->columnTable[i];
+        // right screen
+        CLMN_TBL[i + 0x0100] = columnTableDefinition->columnTable[i];
+    }
+
+    // write column table (second half)
+    if(columnTableDefinition->mirror)
+    {
+        // mirror first half
+        for(i = 127; i >= 0; i--)
+        {
+            // left screen
+            CLMN_TBL[i + 0x0080] = columnTableDefinition->columnTable[i];
+            // right screen
+            CLMN_TBL[i + 0x0180] = columnTableDefinition->columnTable[i];
+        }
+    }
+    else
+    {
+        // print second half if provided
+        for(i = 0; i < 128; i++)
+        {
+            // left screen
+            CLMN_TBL[i + 0x0080] = columnTableDefinition->columnTable[i];
+            // right screen
+            CLMN_TBL[i + 0x0180] = columnTableDefinition->columnTable[i];
+        }
+    }
 }
 
 // set background color
@@ -355,7 +385,7 @@ void VPUManager_setBackgroundColor(VPUManager this, u8 color)
 {
 	ASSERT(this, "VPUManager::setBackgroundColor: null this");
 
-    if (color > __COLOR_BRIGHT_RED)
+    if(color > __COLOR_BRIGHT_RED)
     {
         color = __COLOR_BRIGHT_RED;
     }

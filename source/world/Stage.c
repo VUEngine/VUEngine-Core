@@ -104,7 +104,7 @@ static void Stage_loadInRangeEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
-	
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -146,7 +146,7 @@ void Stage_destructor(Stage this)
 		__DELETE(this->ui);
 		this->ui = NULL;
 	}
-	
+
 	if(this->stageEntities)
 	{
 		VirtualNode node = this->stageEntities->head;
@@ -155,7 +155,7 @@ void Stage_destructor(Stage this)
 		{
 			__DELETE_BASIC(node->data);
 		}
-		
+
 		__DELETE(this->stageEntities);
 
 		this->stageEntities = NULL;
@@ -166,17 +166,17 @@ void Stage_destructor(Stage this)
 		__DELETE(this->loadedStageEntities);
 		this->loadedStageEntities = NULL;
 	}
-	
+
 	if(this->entitiesToLoad)
 	{
 		__DELETE(this->entitiesToLoad);
 		this->entitiesToLoad = NULL;
 	}
-	
+
 	if(this->entitiesToInitialize)
 	{
 		VirtualNode node = this->entitiesToInitialize->head;
-		
+
 		for(; node; node = node->next)
 		{
 			StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
@@ -184,15 +184,15 @@ void Stage_destructor(Stage this)
 			__DELETE(stageEntityToSetup->entity);
 			__DELETE_BASIC(stageEntityToSetup);
 		}
-		
+
 		__DELETE(this->entitiesToInitialize);
 		this->entitiesToInitialize = NULL;
 	}
-	
+
 	if(this->entitiesToTransform)
 		{
 			VirtualNode node = this->entitiesToTransform->head;
-			
+
 			for(; node; node = node->next)
 			{
 				StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
@@ -200,11 +200,11 @@ void Stage_destructor(Stage this)
 				__DELETE(stageEntityToSetup->entity);
 				__DELETE_BASIC(stageEntityToSetup);
 			}
-			
+
 			__DELETE(this->entitiesToTransform);
 			this->entitiesToTransform = NULL;
 		}
-	
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -284,15 +284,15 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// set palettes
 	Stage_setupPalettes(this);
-	
+
 	// setup OBJs
 	Stage_setObjectSpritesContainers(this);
-	
+
 	// setup SpriteManager's configuration
 	SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager_getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
 	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
 	SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
-	
+
 	// preload textures
 	Stage_preloadAssets(this);
 
@@ -307,7 +307,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// setup ui
 	Stage_setupUI(this);
-	
+
 	// set physics
 	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.friction);
 	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.gravity);
@@ -316,8 +316,8 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])stageDefinition->assets.bgm);
 
 	// setup the column table
-	HardwareManager_setupColumnTable(HardwareManager_getInstance());
-	
+	HardwareManager_setupColumnTable(HardwareManager_getInstance(), stageDefinition->rendering.columnTableDefinition);
+
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(void, Container, initialTransform, this, &environmentTransform);
@@ -366,7 +366,7 @@ static void Stage_setupUI(Stage this)
 	}
 }
 
-// 
+//
 Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent)
 {
 	ASSERT(this, "Stage::addEntity: null this");
@@ -420,7 +420,7 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -445,7 +445,7 @@ Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const posit
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
-			
+
 			__VIRTUAL_CALL(void, Entity, ready, entity);
 		}
 /*
@@ -500,7 +500,7 @@ void Stage_removeChild(Stage this, Container child)
 		{
 			this->streamingHeadNode = this->streamingHeadNode->previous;
 		}
-		
+
 		VirtualList_removeElement(this->stageEntities, node->data);
 		VirtualList_removeElement(this->loadedStageEntities, node->data);
 		__DELETE_BASIC(node->data);
@@ -552,7 +552,7 @@ static void Stage_preloadAssets(Stage this)
 	{
 		int i = 0;
 
-		for (; this->stageDefinition->assets.charSets[i]; i++)
+		for(; this->stageDefinition->assets.charSets[i]; i++)
 		{
 			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSets[i]->allocationType)
 			{
@@ -564,21 +564,21 @@ static void Stage_preloadAssets(Stage this)
 			}
 		}
 	}
-	
+
 	bool calculateAvailableBgmapSegments = false;
 
 	if(this->stageDefinition->assets.stageTextureEntryDefinitions)
 	{
 		VirtualList managedTextures = __NEW(VirtualList);
-		
+
 		int i = 0;
-		
-		for (; this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition; i++)
+
+		for(; this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition; i++)
 		{
 			if(__ANIMATED_SINGLE != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
 			{
 				Texture texture = NULL;
-				
+
 				if(this->stageDefinition->assets.stageTextureEntryDefinitions[i].isManaged)
 				{
 					texture = MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition);
@@ -588,7 +588,7 @@ static void Stage_preloadAssets(Stage this)
 				{
 					texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition));
 				}
-				
+
 				if(texture)
 				{
 					__VIRTUAL_CALL(void, Texture, write, texture);
@@ -599,16 +599,16 @@ static void Stage_preloadAssets(Stage this)
 				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
 			}
 		}
-		
+
 		VirtualNode node = managedTextures->head;
-		
+
 		for(; node; node = node->next)
 		{
 			MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), __SAFE_CAST(Texture, node->data));
 		}
 
 		__DELETE(managedTextures);
-		
+
 		calculateAvailableBgmapSegments = 0 < i;
 	}
 
@@ -619,7 +619,7 @@ static void Stage_preloadAssets(Stage this)
 		BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
 		ParamTableManager_reset(ParamTableManager_getInstance());
 	}
-	else 
+	else
 	{
 		BgmapTextureManager_resetAvailableBgmapSegments(BgmapTextureManager_getInstance());
 	}
@@ -664,7 +664,7 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 	int x = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.x);
 	int y = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.y);
 	int z = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.z);
-	
+
 	long screenPosition = x * x + y * y + z * z;
 
 	// register entities ordering them according to their distances to the origin
@@ -677,7 +677,7 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 		if(this->stageDefinition->entities.children[i].name && entityNamesToIgnore)
 		{
 			VirtualNode node = entityNamesToIgnore->head;
-			
+
 			for(; node; node = node->next)
 			{
 				const char* name = (char*)node->data;
@@ -686,13 +686,13 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 					break;
 				}
 			}
-			
+
 			if(node)
 			{
 				continue;
 			}
 		}
-		
+
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities.children[i]);
 
 		VBVec3D environmentPosition3D = {0, 0, 0};
@@ -756,7 +756,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = advancing ? node->next : node->previous, counter++)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
-		
+
 		if(!this->streamingHeadNode)
 		{
 			if(advancing)
@@ -796,7 +796,7 @@ static void Stage_loadEntities(Stage this)
 	ASSERT(this, "Stage::loadEntities: null this");
 
 	VirtualNode node = this->entitiesToLoad->head;
-	
+
 	for(; node; node = node->next)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
@@ -813,15 +813,15 @@ static void Stage_loadEntities(Stage this)
 			VirtualList_pushBack(this->entitiesToInitialize, stageEntityToSetup);
 			stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
 			VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-			
+
 			VirtualList_removeElement(this->entitiesToLoad, stageEntityDescription);
 			break;
 		}
-		else 
+		else
 		{
 			// can't load this entity, so remove its definition
 			VirtualList_removeElement(this->stageEntities, stageEntityDescription);
-			
+
 			__DELETE_BASIC(stageEntityDescription);
 		}
 	}
@@ -833,13 +833,13 @@ static void Stage_initializeEntities(Stage this)
 	ASSERT(this, "Stage::initializeEntities: null this");
 
 	VirtualNode node = this->entitiesToInitialize->head;
-	
+
 	for(; node; node = node->next)
 	{
 		StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
 
 		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToSetup->entity);
-		
+
 		VirtualList_removeElement(this->entitiesToInitialize, stageEntityToSetup);
 		VirtualList_pushBack(this->entitiesToTransform, stageEntityToSetup);
 		break;
@@ -869,7 +869,7 @@ static void Stage_transformEntities(Stage this)
 	};
 
 	VirtualNode node = this->entitiesToTransform->head;
-	
+
 	for(; node; node = node->next)
 	{
 		StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
@@ -910,17 +910,17 @@ static void Stage_loadInRangeEntities(Stage this)
 
 				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
-				if(entity) 
+				if(entity)
 				{
 					stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
-	
+
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 				}
-				else 
+				else
 				{
 					// can't load this entity, so remove its definition
 					VirtualList_removeElement(this->stageEntities, stageEntityDescription);
-					
+
 					__DELETE_BASIC(stageEntityDescription);
 					break;
 				}
@@ -997,7 +997,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	ASSERT(this, "Stage::transform: null this");
 
 	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
-	
+
 	if(this->ui)
 	{
 		// static to avoid call to _memcpy
@@ -1016,7 +1016,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 				// global scale
 				{ITOFIX7_9(1), ITOFIX7_9(1)}
 		};
-		
+
 		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
 
 
@@ -1033,14 +1033,14 @@ void Stage_stream(Stage this)
 	static int streamingCycleCounter = 0;
 	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
 	int streamingCycleBase = streamingDelayPerCycle / __STREAMING_CYCLES;
-	
+
 	if(!streamingCycleCounter)
 	{
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
 	}
 	else if(streamingCycleCounter == streamingCycleBase)
-	{			
+	{
 		if(this->focusInGameEntity)
 		{
 			// load visible objects
@@ -1050,7 +1050,7 @@ void Stage_stream(Stage this)
 		{
 			Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 		}
-	}			
+	}
 	else if(streamingCycleCounter == streamingCycleBase * 2)
 	{
 		if(this->entitiesToLoad->head)
@@ -1059,20 +1059,20 @@ void Stage_stream(Stage this)
 		}
 	}
 	else if(streamingCycleCounter == streamingCycleBase * 3)
-	{		
+	{
 		if(this->entitiesToInitialize->head)
 		{
 			Stage_initializeEntities(this);
 		}
 	}
 	else if(streamingCycleCounter == streamingCycleBase * 4)
-	{		
+	{
 		if(this->entitiesToTransform->head)
 		{
 			Stage_transformEntities(this);
 		}
 	}
-	
+
 	if(++streamingCycleCounter >= streamingDelayPerCycle)
 	{
 		streamingCycleCounter  = 0;
@@ -1106,12 +1106,12 @@ void Stage_suspend(Stage this)
 	ASSERT(this, "Stage::suspend: null this");
 
 	Container_suspend(__SAFE_CAST(Container, this));
-	
+
 	if(this->ui)
 	{
 		__VIRTUAL_CALL(void, Container, suspend, __SAFE_CAST(Container, this->ui));
 	}
-	
+
 	// relinquish screen focus priority
 	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
 	{
@@ -1134,7 +1134,7 @@ void Stage_resume(Stage this)
 
 	// set back optical values
 	Screen_setOptical(Screen_getInstance(), this->stageDefinition->rendering.optical);
-	
+
 	// set physics
 	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.friction);
 	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.gravity);
@@ -1171,7 +1171,7 @@ void Stage_resume(Stage this)
 	if(this->ui)
 	{
 		__VIRTUAL_CALL(void, Container, resume, __SAFE_CAST(Container, this->ui));
-		
+
 		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
 	}
 }
@@ -1194,9 +1194,9 @@ void Stage_onFocusEntityDeleted(Stage this, Object eventFirer)
 	ASSERT(this, "Stage::onFocusEntityDeleted: null this");
 
 	this->focusInGameEntity = NULL;
-	
+
 	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
-	{	
+	{
 		if(this->focusInGameEntity == Screen_getFocusInGameEntity(Screen_getInstance()))
 		{
 			Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
@@ -1208,11 +1208,11 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 {
 	ASSERT(this, "Stage::setFocusEntity: null this");
 	this->focusInGameEntity = focusInGameEntity;
-	
+
 	if(this->focusInGameEntity)
 	{
 		Object_addEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (void (*)(Object, Object))Stage_onFocusEntityDeleted, __EVENT_CONTAINER_DELETED);
-		
+
 		VBVec3D focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
 		focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);
 		focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);

@@ -452,7 +452,7 @@ void Game_reset(Game this)
 
 	// setup the display
     HardwareManager_clearScreen(HardwareManager_getInstance());
-	HardwareManager_setupColumnTable(HardwareManager_getInstance());
+	HardwareManager_setupColumnTable(HardwareManager_getInstance(), NULL);
     HardwareManager_displayOn(HardwareManager_getInstance());
     HardwareManager_lowerBrightness(HardwareManager_getInstance());
     VPUManager_removePostProcessingEffects(this->vpuManager);

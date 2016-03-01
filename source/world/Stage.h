@@ -92,7 +92,6 @@
 	/* next entity's id */																				\
 	s16 nextEntityId;																					\
 
-
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
 
@@ -107,7 +106,7 @@ typedef struct StageTextureEntryDefinition
 
 	// is a managed texture
 	bool isManaged;
-	
+
 } StageTextureEntryDefinition;
 
 typedef const StageTextureEntryDefinition StageTextureEntryROMDef;
@@ -120,39 +119,42 @@ typedef struct StageDefinition
 	{
 		// level's size
 		Size size;
-		
+
 		// screen's initial position inside the game world
 		VBVec3D screenInitialPosition;
-		
+
 	} level;
 
 	// streaming
-	struct Streaming 
+	struct Streaming
 	{
 		u8 delayPerCycle;
 		u8 loadPadding;
 		u8 unloadPadding;
 		u8 streamingAmplitude;
-		
+
 	} streaming;
-	
+
 	// rendering
 	struct Rendering
 	{
 		// number of cycles that the texture writing is idle
 		u8 cyclesToWaitForTextureWriting;
-		
-		// maximum number of texture's rows to write each time the 
+
+		// maximum number of texture's rows to write each time the
 		// texture writing is active
 		u8 texturesMaximumRowsToWrite;
-		
-		// maximum number of rows to compute 
+
+		// maximum number of rows to compute
 		// on each call to the affine functions
 		u8 maximumAffineRowsToComputePerCall;
-		
+
+		// column table
+		ColumnTableDefinition* columnTableDefinition;
+
 		// palettes' config
 		PaletteConfig paletteConfig;
-		
+
 	    // BGMAP segments configuration
 	    // number of segments reserved for dynamically allocated textures when preloading
 		u8 spareBgmapSegments;
@@ -162,22 +164,22 @@ typedef struct StageDefinition
 
 		// OBJs segments z coordinates (SPT0 to SPT3)
 		fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
-		
+
 		// engine's optical values structure
 		Optical optical;
 
 	} rendering;
 
-	struct Physics 
+	struct Physics
 	{
 		// physical world's gravity
 		Acceleration gravity;
-		
+
 		// physical world's friction
 		fix19_13 friction;
-		
+
 	} physics;
-	
+
 
 	struct Assets
 	{
@@ -196,10 +198,10 @@ typedef struct StageDefinition
 	{
 		// UI's definition
 		UIDefinition uiDefinition;
-	
+
 		// each of the stage's entities
 		PositionedEntity* children;
-		
+
 	} entities;
 
 } StageDefinition;

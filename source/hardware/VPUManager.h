@@ -155,6 +155,19 @@ typedef struct PaletteConfig
 
 } PaletteConfig;
 
+typedef struct ColumnTableDefinition
+{
+	// defines whether the definitions first half should be mirrored (true)
+	// or if a full 256 entry table is provided (false)
+	bool mirror;
+
+	// column table definition
+	BYTE columnTable[];
+
+} ColumnTableDefinition;
+
+typedef const ColumnTableDefinition ColumnTableROMDef;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -192,7 +205,7 @@ void VPUManager_lowerBrightness(VPUManager this);
 void VPUManager_displayHide(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
-void VPUManager_setupColumnTable(VPUManager this);
+void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnTableDefinition);
 void VPUManager_setBackgroundColor(VPUManager this, u8 color);
 void VPUManager_addPostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
 void VPUManager_removePostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
