@@ -53,9 +53,6 @@ extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
 	/* super's attributes */																			\
 	Object_ATTRIBUTES;																					\
 																										\
-	/* column table */																					\
-	ColumnTableDefinition* currentColumnTableDefinition;												\
-																										\
 	/* dram managers */																					\
 	FrameRate frameRate;																				\
 	ParamTableManager paramTableManager;																\
@@ -337,15 +334,6 @@ void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnT
 	    columnTableDefinition = (ColumnTableDefinition*)&DEFAULT_COLUMN_TABLE;
 	}
 
-    // skip if column table to load is the same as last loaded
-	if(this->currentColumnTableDefinition == columnTableDefinition)
-	{
-	    return;
-	}
-
-    // save pointer to last loaded column table
-	this->currentColumnTableDefinition = columnTableDefinition;
-
     // write column table (first half)
     for(i = 0; i < 128; i++)
     {
@@ -358,24 +346,22 @@ void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnT
     // write column table (second half)
     if(columnTableDefinition->mirror)
     {
-        // mirror first half
-        for(i = 127; i >= 0; i--)
+        for(i = 0; i < 128; i++)
         {
             // left screen
-            CLMN_TBL[i + 0x0080] = columnTableDefinition->columnTable[i];
+            CLMN_TBL[i + 0x0080] = columnTableDefinition->columnTable[127 - i];
             // right screen
-            CLMN_TBL[i + 0x0180] = columnTableDefinition->columnTable[i];
+            CLMN_TBL[i + 0x0180] = columnTableDefinition->columnTable[127 - i];
         }
     }
     else
     {
-        // print second half if provided
         for(i = 0; i < 128; i++)
         {
             // left screen
-            CLMN_TBL[i + 0x0080] = columnTableDefinition->columnTable[i];
+            CLMN_TBL[i + 0x0080] = columnTableDefinition->columnTable[127 + i];
             // right screen
-            CLMN_TBL[i + 0x0180] = columnTableDefinition->columnTable[i];
+            CLMN_TBL[i + 0x0180] = columnTableDefinition->columnTable[127 + i];
         }
     }
 }

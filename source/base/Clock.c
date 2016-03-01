@@ -100,7 +100,7 @@ void Clock_delay(Clock this, int milliSeconds)
 	}
 }
 
-// print formated class's attributes's states
+// print formatted class's attributes's states
 void Clock_print(Clock this, int col, int row, const char* font)
 {
 	ASSERT(this, "Clock::print: null this");
@@ -154,7 +154,7 @@ void Clock_update(Clock this, u32 ticks, bool saveCurrentTime)
 		{
 			this->previousMilliSeconds = this->milliSeconds;
 		}
-		
+
 		this->milliSeconds += ticks;
 
 		u8 currentSecond = Clock_getSeconds(this);
