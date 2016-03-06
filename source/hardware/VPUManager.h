@@ -162,7 +162,7 @@ typedef struct ColumnTableDefinition
 	bool mirror;
 
 	// column table definition
-	BYTE columnTable[];
+	u16 columnTable[];
 
 } ColumnTableDefinition;
 
@@ -206,6 +206,7 @@ void VPUManager_displayHide(VPUManager this);
 void VPUManager_clearScreen(VPUManager this);
 void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
 void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnTableDefinition);
+void VPUManager_useInternalColumnTable(VPUManager this, bool internal);
 void VPUManager_setBackgroundColor(VPUManager this, u8 color);
 void VPUManager_addPostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
 void VPUManager_removePostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));

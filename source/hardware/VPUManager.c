@@ -326,7 +326,7 @@ void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnT
 {
 	ASSERT(this, "VPUManager::setupColumnTable: null this");
 
-    int i;
+    u8 i;
 
     // always use the default column table as fallback
 	if(columnTableDefinition == NULL)
@@ -363,6 +363,24 @@ void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnT
             // right screen
             CLMN_TBL[i + 0x0180] = columnTableDefinition->columnTable[127 + i];
         }
+    }
+}
+
+// use the vip's built-in column table instead of reading the one defined in memory
+void VPUManager_useInternalColumnTable(VPUManager this, bool useInternal)
+{
+	ASSERT(this, "VPUManager::useInternalColumnTable: null this");
+
+    // TODO: why does this not work?
+    if(useInternal)
+    {
+        // set lock bit
+        VIP_REGS[DPCTRL] |= LOCK;
+    }
+    else
+    {
+        // unset lock bit
+        VIP_REGS[DPCTRL] &= LOCK;
     }
 }
 
