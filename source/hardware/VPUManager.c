@@ -328,10 +328,23 @@ void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnT
 
     u8 i;
 
-    // always use the default column table as fallback
+    // use the default column table or the one defined in current stage as fallback
 	if(columnTableDefinition == NULL)
 	{
-	    columnTableDefinition = (ColumnTableDefinition*)&DEFAULT_COLUMN_TABLE;
+	    Stage stage = GameState_getStage(Game_getCurrentState(Game_getInstance()));
+	    if(stage != NULL)
+	    {
+	        StageDefinition* stageDefinition = Stage_stageDefinition(stage);
+	        if(stageDefinition->rendering.columnTableDefinition != NULL)
+	        {
+	            columnTableDefinition = stageDefinition->rendering.columnTableDefinition;
+	        }
+	    }
+
+        if(columnTableDefinition == NULL)
+        {
+            columnTableDefinition = (ColumnTableDefinition*)&DEFAULT_COLUMN_TABLE;
+        }
 	}
 
     // write column table (first half)

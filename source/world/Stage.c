@@ -1223,3 +1223,11 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 											(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z;
 	}
 }
+
+// get stage definition
+StageDefinition* Stage_stageDefinition(Stage this)
+{
+	ASSERT(this, "Stage::getDefinition: null this");
+
+	return this->stageDefinition;
+}
