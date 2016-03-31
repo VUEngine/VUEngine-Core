@@ -901,10 +901,8 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
-	
-	if(this->invalidateGlobalPosition.x ||
-		this->invalidateGlobalPosition.y ||
-		this->invalidateGlobalPosition.z ||
+
+	if(*(u8*)&this->invalidateGlobalPosition ||
 		this->children)
 	{
 		this->updateSprites |= __UPDATE_SPRITE_POSITION;
@@ -1127,7 +1125,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
-	return ((_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z);
+	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (*(u8*)&this->invalidateGlobalPosition); 
 }
 
 // check if necessary to update sprite's scale

@@ -174,9 +174,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 		return;
 	}
 	
-	if(this->invalidateGlobalPosition.x ||
-		this->invalidateGlobalPosition.y ||
-		this->invalidateGlobalPosition.z ||
+	if(*(u8*)&this->invalidateGlobalPosition ||
 		this->children)
 	{
 		// call base class's transform method
@@ -199,9 +197,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 
 	this->updateSprites = __UPDATE_SPRITE_POSITION;
 
-	this->invalidateGlobalPosition.x = false;
-	this->invalidateGlobalPosition.y = false;
-	this->invalidateGlobalPosition.z = false;
+	*(u8*)&this->invalidateGlobalPosition = false;
 }
 
 void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)

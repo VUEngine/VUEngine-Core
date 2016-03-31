@@ -178,9 +178,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		return;
 	}
 	
-	if(this->invalidateGlobalPosition.x ||
-		this->invalidateGlobalPosition.y ||
-		this->invalidateGlobalPosition.z ||
+	if(*(u8*)&this->invalidateGlobalPosition ||
 		this->children)
 	{
 		// call base class's transform method
@@ -203,9 +201,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 	this->updateSprites = __UPDATE_SPRITE_POSITION;
 
-	this->invalidateGlobalPosition.x = false;
-	this->invalidateGlobalPosition.y = false;
-	this->invalidateGlobalPosition.z = false;
+	*(u8*)&this->invalidateGlobalPosition = false;
 }
 
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this)

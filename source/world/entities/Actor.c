@@ -131,9 +131,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
     }	
 
-	this->invalidateGlobalPosition.x = displacement.x;
-	this->invalidateGlobalPosition.y = displacement.y;
-	this->invalidateGlobalPosition.z = displacement.z;
+	*(u8*)&this->invalidateGlobalPosition = (displacement.x ? 0x03: 0) | (displacement.y ? 0x0C: 0) | (displacement.y ? 0x30: 0);
 }
 
 void Actor_syncPositionWithBody(Actor this)
@@ -534,9 +532,7 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
-	this->invalidateGlobalPosition.x = displacement.x? true : false;
-	this->invalidateGlobalPosition.y = displacement.y? true : false;
-	this->invalidateGlobalPosition.z = displacement.z? true : false;
+	*(u8*)&this->invalidateGlobalPosition = (displacement.x ? 0x03: 0) | (displacement.y ? 0x0C: 0) | (displacement.y ? 0x30: 0);
 
 	this->updateSprites |= displacement.x || displacement.y || displacement.z? __UPDATE_SPRITE_POSITION : 0;
 	this->updateSprites |= displacement.z? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
@@ -556,9 +552,7 @@ bool Actor_updateSpritePosition(Actor this)
 	ASSERT(this, "Actor::updateSpritePosition: null this");
 
 	return (
-	    this->invalidateGlobalPosition.x ||
-	    this->invalidateGlobalPosition.y ||
-	    this->invalidateGlobalPosition.z ||
+	    *(u8*)&this->invalidateGlobalPosition ||
 	    Actor_isMoving(this) ||
 	    _screenDisplacement->x ||
 	    _screenDisplacement->y ||

@@ -84,9 +84,7 @@ void Container_constructor(Container this, s16 id, const char* const name)
 	this->transform.globalScale.y = ITOFIX7_9(1);
 
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalPosition.x = true;
-	this->invalidateGlobalPosition.y = true;
-	this->invalidateGlobalPosition.z = true;
+	*(u8*)&this->invalidateGlobalPosition = 0xFF;
 
 	this->parent = NULL;
 	this->children = NULL;
@@ -365,9 +363,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 	Container_setLocalScale(this, &localScale);
 	
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalPosition.x = true;
-	this->invalidateGlobalPosition.y = true;
-	this->invalidateGlobalPosition.z = true;
+	*(u8*)&this->invalidateGlobalPosition = 0xFF;
 }
 
 // initial transform
@@ -402,7 +398,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			child->invalidateGlobalPosition = child->invalidateGlobalPosition.x || child->invalidateGlobalPosition.y || child->invalidateGlobalPosition.z ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
+			child->invalidateGlobalPosition = *(u8*)&child->invalidateGlobalPosition ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
 
 			__VIRTUAL_CALL(void, Container, initialTransform, child, &this->transform);
 		}
@@ -452,9 +448,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	}
 
 	// don't update position on next transform cycle
-	this->invalidateGlobalPosition.x = false;
-	this->invalidateGlobalPosition.y = false;
-	this->invalidateGlobalPosition.z = false;
+	*(u8*)&this->invalidateGlobalPosition = false;
 }
 
 // initial transform
@@ -498,9 +492,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	}
 
 	// don't update position on next transform cycle
-	this->invalidateGlobalPosition.x = false;
-	this->invalidateGlobalPosition.y = false;
-	this->invalidateGlobalPosition.z = false;
+	*(u8*)&this->invalidateGlobalPosition = 0xFF;
 }
 
 void Container_updateVisualRepresentation(Container this)
@@ -571,7 +563,7 @@ void Container_setLocalPosition(Container this, const VBVec3D* position)
 
 	this->transform.localPosition = *position;
 
-	if(this->invalidateGlobalPosition.x || this->invalidateGlobalPosition.y || this->invalidateGlobalPosition.z)
+	if(*(u8*)&this->invalidateGlobalPosition)
 	{
 		Container_propagateInvalidateGlobalPosition(this);
 	}
@@ -616,9 +608,7 @@ void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
 {
 	ASSERT(this, "Container::invalidateGlobalPosition: null this");
 
-	this->invalidateGlobalPosition.x = __XAXIS & axisToInvalidate? true: false;
-	this->invalidateGlobalPosition.y = __YAXIS & axisToInvalidate? true: false;
-	this->invalidateGlobalPosition.z = __ZAXIS & axisToInvalidate? true: false;
+	*(u8*)&this->invalidateGlobalPosition = (__XAXIS & axisToInvalidate ? 0x03: 0) | (__YAXIS & axisToInvalidate ? 0x0C: 0) | (__ZAXIS & axisToInvalidate ? 0x30: 0);
 
 	if(this->children && axisToInvalidate)
 	{
