@@ -192,8 +192,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 	// propagate rotation
 	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
 	
 	// propagate scale
 	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);

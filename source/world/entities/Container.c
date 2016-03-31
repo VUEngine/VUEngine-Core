@@ -378,8 +378,8 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 
 	// propagate rotation
 	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
 	
 	// propagate scale
 	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
@@ -419,8 +419,8 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 
 	// propagate rotation
 	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
 	
 	// propagate scale
 	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
@@ -463,8 +463,8 @@ void Container_transform(Container this, const Transformation* environmentTransf
 
 	// propagate rotation
 	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.x + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.x + this->transform.localRotation.z;
+	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
+	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
 	
 	// propagate scale
 	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
