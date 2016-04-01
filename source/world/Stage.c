@@ -740,7 +740,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 									(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
 									(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z;
 
-	u8 advancing = this->previousFocusEntityDistance <= focusInGameEntityDistance;
+	int advancing = this->previousFocusEntityDistance <= focusInGameEntityDistance;
 
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : this->stageEntities->head;
 
@@ -752,6 +752,8 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	node = node ? node : advancing ? this->stageEntities->head : this->stageEntities->tail;
 
 	this->streamingHeadNode = NULL;
+
+	CACHE_ENABLE;
 
 	for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = advancing ? node->next : node->previous, counter++)
 	{
@@ -786,6 +788,8 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 			}
 		}
 	}
+
+	CACHE_DISABLE;
 
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
 }

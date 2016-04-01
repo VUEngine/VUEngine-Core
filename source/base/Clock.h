@@ -51,10 +51,10 @@
 	u32 previousMilliSeconds;																			\
 																										\
 	/* register */																						\
-	u8 previousSecond;																					\
+	u32 previousSecond;																					\
 																										\
 	/* register */																						\
-	u8 previousMinute;																					\
+	u32 previousMinute;																					\
 																										\
 	/* flag to pause the clock */																		\
 	bool paused;																						\
@@ -88,8 +88,8 @@ void Clock_interrupt();
 void Clock_reset(Clock this);
 u32 Clock_getMilliSeconds(Clock this);
 u32 Clock_getPreviousMilliSeconds(Clock this);
-u16 Clock_getSeconds(Clock this);
-u8 Clock_getMinutes(Clock this);
+u32 Clock_getSeconds(Clock this);
+u32 Clock_getMinutes(Clock this);
 u32 Clock_getTime(Clock this);
 u32 Clock_getElapsedTime(Clock this);
 int Clock_getTimeInCurrentSecond(Clock this);

@@ -363,7 +363,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 	Container_setLocalScale(this, &localScale);
 	
 	// force global position calculation on the next transform cycle
-	*(u8*)&this->invalidateGlobalPosition = 0xFF;
+	*(u8*)&this->invalidateGlobalPosition = 0;
 }
 
 // initial transform
@@ -448,13 +448,15 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	}
 
 	// don't update position on next transform cycle
-	*(u8*)&this->invalidateGlobalPosition = false;
+	*(u8*)&this->invalidateGlobalPosition = 0;
 }
 
 // initial transform
 void Container_transform(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
+
+	CACHE_ENABLE;
 
 	// concatenate transform
 	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
@@ -492,7 +494,9 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	}
 
 	// don't update position on next transform cycle
-	*(u8*)&this->invalidateGlobalPosition = 0xFF;
+	*(u8*)&this->invalidateGlobalPosition = 0;
+	
+	CACHE_DISABLE;
 }
 
 void Container_updateVisualRepresentation(Container this)

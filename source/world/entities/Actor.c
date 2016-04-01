@@ -389,7 +389,7 @@ u8 Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 		return ~CollisionSolver_getAxisOfFutureCollision(this->collisionSolver, acceleration, this->shape);
 	}
 
-	return __VIRTUAL_CALL(bool, Actor, getAxisFreeForMovement, this);
+	return __VIRTUAL_CALL(u8, Actor, getAxisFreeForMovement, this);
 }
 
 // retrieve axis free for movement

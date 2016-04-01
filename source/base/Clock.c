@@ -157,7 +157,7 @@ void Clock_update(Clock this, u32 ticks, bool saveCurrentTime)
 
 		this->milliSeconds += ticks;
 
-		u8 currentSecond = Clock_getSeconds(this);
+		u32 currentSecond = Clock_getSeconds(this);
 
 		if(currentSecond != this->previousSecond)
 		{
@@ -165,7 +165,7 @@ void Clock_update(Clock this, u32 ticks, bool saveCurrentTime)
 
 			Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_SECOND_CHANGED);
 
-			u8 currentMinute = Clock_getMinutes(this);
+			u32 currentMinute = Clock_getMinutes(this);
 
 			if(currentMinute != this->previousMinute)
 			{
@@ -205,19 +205,19 @@ u32 Clock_getPreviousMilliSeconds(Clock this)
 }
 
 // retrieve clock's seconds
-u16 Clock_getSeconds(Clock this)
+u32 Clock_getSeconds(Clock this)
 {
 	ASSERT(this, "Clock::getSeconds: null this");
 
-	return (u16)(this->milliSeconds / 1000);
+	return (u32)(this->milliSeconds / 1000);
 }
 
 // retrieve clock's minutes
-u8 Clock_getMinutes(Clock this)
+u32 Clock_getMinutes(Clock this)
 {
 	ASSERT(this, "Clock::getMinutes: null this");
 
-	return (u8)(this->milliSeconds / (1000 * 60));
+	return (u32)(this->milliSeconds / (1000 * 60));
 }
 
 // retrieve clock's total elapsed time in seconds

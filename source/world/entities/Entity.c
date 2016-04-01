@@ -55,6 +55,7 @@ extern const Optical* _optical;
 
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
 static void Entity_releaseSprites(Entity this);
+static void Entity_updateSprites(Entity this, int updateSpriteTransformations, int updateSpritePosition);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -144,15 +145,15 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 
 	VBVec3D globalPosition3D = this->transform.globalPosition;
 	
-	s16 left = 0;
-	s16 right = 0;
-	s16 top = 0;
-	s16 bottom = 0;
-	s16 front = 0;
-	s16 back = 0;
-	s16 halfWidth = 0;
-	s16 halfHeight = 0;
-	s16 halfDepth = 10;
+	int left = 0;
+	int right = 0;
+	int top = 0;
+	int bottom = 0;
+	int front = 0;
+	int back = 0;
+	int halfWidth = 0;
+	int halfHeight = 0;
+	int halfDepth = 10;
 
 	if((!this->size.x || !this->size.y || !this->size.z) && this->sprites)
 	{
@@ -166,8 +167,8 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 
 			if(texture)
 			{
-				halfWidth = Optics_calculateRealSize(((u16)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
-				halfHeight = Optics_calculateRealSize(((u16)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
+				halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
+				halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
 				halfDepth = this->size.z >> 1;
 			}				
 			
@@ -304,15 +305,15 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		environmentPosition->z + positionedEntity->position.z
 	};
 	
-	s16 left = 0;
-	s16 right = 0;
-	s16 top = 0;
-	s16 bottom = 0;
-	s16 front = 0;
-	s16 back = 0;
-	s16 halfWidth = 0;
-	s16 halfHeight = 0;
-	s16 halfDepth = 5;
+	int left = 0;
+	int right = 0;
+	int top = 0;
+	int bottom = 0;
+	int front = 0;
+	int back = 0;
+	int halfWidth = 0;
+	int halfHeight = 0;
+	int halfDepth = 5;
 
 	if(positionedEntity->entityDefinition->spritesDefinitions && positionedEntity->entityDefinition->spritesDefinitions[0])
 	{
@@ -798,7 +799,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 }
 
 // update sprites
-void Entity_updateSprites(Entity this, bool updateSpriteTransformations, bool updateSpritePosition)
+static void Entity_updateSprites(Entity this, int updateSpriteTransformations, int updateSpritePosition)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -1083,9 +1084,9 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		VBVec2D position2D;
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-		s16 halfWidth = this->size.x >> 1;
-		s16 halfHeight = this->size.y >> 1;
-		s16 halfDepth = this->size.z >> 1;
+		int halfWidth = (int)this->size.x >> 1;
+		int halfHeight = (int)this->size.y >> 1;
+		int halfDepth = (int)this->size.z >> 1;
 
 		x = FIX19_13TOI(position2D.x);
 		y = FIX19_13TOI(position2D.y);

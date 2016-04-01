@@ -201,7 +201,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 	this->updateSprites = __UPDATE_SPRITE_POSITION;
 
-	*(u8*)&this->invalidateGlobalPosition = false;
+	*(u8*)&this->invalidateGlobalPosition = 0;
 }
 
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this)

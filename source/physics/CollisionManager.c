@@ -261,6 +261,8 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	// check the shapes
 	node = this->movingShapes->head;
 	
+	CACHE_ENABLE;
+
 	for(; node; node = node->next)
 	{
 		// load the current shape
@@ -319,6 +321,8 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	}
 
 	this->checkingCollisions = false;
+	
+	CACHE_DISABLE;
 }
 
 // unregister all shapes

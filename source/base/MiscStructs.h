@@ -29,7 +29,7 @@
 // 											 DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-// spacial size
+// spatial size
 typedef struct Size
 {
 	s16 x;
@@ -113,24 +113,6 @@ typedef struct MovementType
 
 } MovementType;
 
-// alignment flag vector
-typedef struct Alignment
-{
-	u8 x;
-	u8 y;
-	u8 z;
-
-} Alignment;
-
-// alignment flag vector
-typedef struct GravitySensibleAxis
-{
-	u8 x;
-	u8 y;
-	u8 z;
-
-} GravitySensibleAxis;
-
 typedef struct Rotation
 {
 	// arount x axis
@@ -162,14 +144,6 @@ typedef struct Direction
 
 } Direction;
 
-typedef struct DirectionChange
-{
-	s8 x: 2;
-	s8 y: 2;
-	s8 z: 2;
-
-} DirectionChange;
-
 // engine's optical values structure
 typedef struct Optical
 {
@@ -188,17 +162,7 @@ typedef struct Point
 	s16 y;
 
 } Point;
-/*
-// define a vector
-typedef struct Vector
-{
-	//vector's components
-	int i;
-	int j;
-	int k;
 
-} Vector;
-*/
 // scaling factor
 typedef struct Scale
 {
@@ -216,16 +180,6 @@ typedef struct Gap
 	int right:8;
 
 } Gap;
-
-/*
-// used to represent a screen position
-typedef struct Vec2D
-{
-	int x;
-	int y;
-
-} Vec2D;
-*/
 
 // used to represent a screen position with parallax info
 typedef struct VBVec2D

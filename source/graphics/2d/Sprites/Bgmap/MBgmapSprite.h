@@ -82,10 +82,10 @@ typedef struct MBgmapSpriteDefinition
 	u16 scValue;
 
 	// flag to loop the x axis
-	u8 xLoop;
+	int xLoop;
 
 	// flag to loop the y axis
-	u8 yLoop;
+	int yLoop;
 
 } MBgmapSpriteDefinition;
 

@@ -54,49 +54,14 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 }
 
 // calculate the size of a given magnitude, being it a 8 pixel multiple
-inline u16 Optics_calculateRealSize(u16 magnitude, u16 mapMode, fix7_9 scale)
+inline int Optics_calculateRealSize(int magnitude, u16 mapMode, fix7_9 scale)
 {
 	if(WRLD_AFFINE != mapMode)
 	{
-		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13((int)magnitude), FIX7_9TOFIX19_13(scale)));
+		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13(magnitude), FIX7_9TOFIX19_13(scale)));
 	}
 
 	return magnitude;
-}
-
-// determine if a point is visible
-inline bool Optics_isVisible(VBVec3D position3D, u16 width, u16 height, int parallax, int pad)
-{
-	int lowLimit = 0 - parallax - pad;
-	int highLimit = __SCREEN_WIDTH + parallax + pad;
-
-	VBVec2D position2D;
-
-	// normalize position
-	__OPTICS_NORMALIZE(position3D);
-
-	// project the position to 2d space
-	__OPTICS_PROJECT_TO_2D(position3D, position2D);
-
-	width >>= 1;
-	height >>= 1;
-
-	// check x visibility
-	if(FIX19_13TOI(position2D.x) + width < lowLimit || FIX19_13TOI(position2D.x) - width > highLimit)
-	{
-		return false;
-	}
-
-	lowLimit = - pad;
-	highLimit = __SCREEN_HEIGHT + pad;
-
-	// check y visibility
-	if(FIX19_13TOI(position2D.y) + height < lowLimit || FIX19_13TOI(position2D.y) - height > highLimit)
-	{
-		return false;
-	}
-
-	return true;
 }
 
 // determine the squared length of a given vector
