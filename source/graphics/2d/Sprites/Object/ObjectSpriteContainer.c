@@ -60,11 +60,11 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectSpriteContainer, u8 spt, u16 totalObjects, u16 firstObjectIndex)
+__CLASS_NEW_DEFINITION(ObjectSpriteContainer, int spt, int totalObjects, int firstObjectIndex)
 __CLASS_NEW_END(ObjectSpriteContainer, spt, totalObjects, firstObjectIndex);
 
 // class's constructor
-void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt, u16 totalObjects, u16 firstObjectIndex)
+void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex)
 {
 	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
@@ -441,7 +441,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 	this->hidden = true;
 }
 
-u16 ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
+int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 

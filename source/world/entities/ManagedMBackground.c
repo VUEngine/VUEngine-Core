@@ -174,7 +174,6 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 
 		return;
 	}
-	
 
 	if(*(u8*)&this->invalidateGlobalPosition ||
 		this->children)

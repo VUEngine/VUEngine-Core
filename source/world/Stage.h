@@ -128,10 +128,10 @@ typedef struct StageDefinition
 	// streaming
 	struct Streaming
 	{
-		u8 delayPerCycle;
-		u8 loadPadding;
-		u8 unloadPadding;
-		u8 streamingAmplitude;
+		int delayPerCycle;
+		int loadPadding;
+		int unloadPadding;
+		int streamingAmplitude;
 
 	} streaming;
 
@@ -139,15 +139,15 @@ typedef struct StageDefinition
 	struct Rendering
 	{
 		// number of cycles that the texture writing is idle
-		u8 cyclesToWaitForTextureWriting;
+		int cyclesToWaitForTextureWriting;
 
 		// maximum number of texture's rows to write each time the
 		// texture writing is active
-		u8 texturesMaximumRowsToWrite;
+		int texturesMaximumRowsToWrite;
 
 		// maximum number of rows to compute
 		// on each call to the affine functions
-		u8 maximumAffineRowsToComputePerCall;
+		int maximumAffineRowsToComputePerCall;
 
 		// column table
 		ColumnTableDefinition* columnTableDefinition;
@@ -157,7 +157,7 @@ typedef struct StageDefinition
 
 	    // BGMAP segments configuration
 	    // number of segments reserved for dynamically allocated textures when preloading
-		u8 spareBgmapSegments;
+		int spareBgmapSegments;
 
 		// OBJs segments's sizes(SPT0 to SPT3)
 		fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];

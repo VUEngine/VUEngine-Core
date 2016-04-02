@@ -74,7 +74,7 @@ ScreenMovementManager ScreenMovementManager_getInstance();
 
 void ScreenMovementManager_constructor(ScreenMovementManager this);
 void ScreenMovementManager_destructor(ScreenMovementManager this);
-void ScreenMovementManager_position(ScreenMovementManager this, u8 checkIfFocusEntityIsMoving);
+void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocusEntityIsMoving);
 void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, int duration);
 void ScreenMovementManager_stopEffect(ScreenMovementManager this, int effect);
 

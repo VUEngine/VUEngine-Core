@@ -85,7 +85,7 @@ void SolidParticle_destructor(SolidParticle this)
 	__DESTROY_BASE;
 }
 
-void SolidParticle_update(SolidParticle this, u16 timeElapsed, void (* behavior)(Particle particle))
+void SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "SolidParticle::update: null this");
 
@@ -111,7 +111,7 @@ Shape SolidParticle_getShape(SolidParticle this)
 }
 
 // get width
-u16 SolidParticle_getWidth(SolidParticle this)
+int SolidParticle_getWidth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getWidth: null this");
 
@@ -119,7 +119,7 @@ u16 SolidParticle_getWidth(SolidParticle this)
 }
 
 // get height
-u16 SolidParticle_getHeight(SolidParticle this)
+int SolidParticle_getHeight(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getHeight: null this");
 
@@ -127,7 +127,7 @@ u16 SolidParticle_getHeight(SolidParticle this)
 }
 
 // get depth
-u16 SolidParticle_getDepth(SolidParticle this)
+int SolidParticle_getDepth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getDepth: null this");
 

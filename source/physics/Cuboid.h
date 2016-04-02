@@ -70,13 +70,13 @@ __CLASS_NEW_DECLARE(Cuboid, SpatialObject owner);
 
 void Cuboid_constructor(Cuboid this, SpatialObject owner);
 void Cuboid_destructor(Cuboid this);
-u8 Cuboid_overlaps(Cuboid this, Shape shape);
+int Cuboid_overlaps(Cuboid this, Shape shape);
 void Cuboid_setup(Cuboid this);
 void Cuboid_position(Cuboid this);
 RightCuboid Cuboid_getRightCuboid(Cuboid this);
 RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this);
-u8 Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);
-u8 Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement);
+int Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);
+int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement);
 void Cuboid_draw(Cuboid this);
 void Cuboid_deleteDirectDrawData(Cuboid this);
 void Cuboid_print(Cuboid this, int x, int y);

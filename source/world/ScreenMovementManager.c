@@ -70,7 +70,7 @@ void ScreenMovementManager_destructor(ScreenMovementManager this)
 }
 
 // center world's screen in function of focus actor's position
-void ScreenMovementManager_position(ScreenMovementManager this, u8 checkIfFocusEntityIsMoving)
+void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "ScreenMovementManager::update: null this");
 

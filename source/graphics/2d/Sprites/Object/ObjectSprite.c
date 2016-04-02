@@ -86,8 +86,8 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
 	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
-	this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-	this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+	this->halfWidth = ITOFIX19_13((int)this->texture->textureDefinition->cols << 2);
+	this->halfHeight = ITOFIX19_13((int)this->texture->textureDefinition->rows << 2);
 	this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
 	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
@@ -245,8 +245,8 @@ void ObjectSprite_render(ObjectSprite this)
 		//	return;
 		}
 
-		int cols = Texture_getCols(__SAFE_CAST(Texture, this->texture));
-		int rows = Texture_getRows(__SAFE_CAST(Texture, this->texture));
+		int cols = this->texture->textureDefinition->cols;
+		int rows = this->texture->textureDefinition->rows;
 
 		int xDirection = this->head & 0x2000 ? -1 : 1;
 		int yDirection = this->head & 0x1000 ? -1 : 1;
@@ -257,8 +257,6 @@ void ObjectSprite_render(ObjectSprite this)
 		int i = 0;
 		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
-
-		CACHE_ENABLE;
 
 		for(; i < rows; i++)
 		{
@@ -290,8 +288,6 @@ void ObjectSprite_render(ObjectSprite this)
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
-		
-		CACHE_DISABLE;
 
 		// make sure to not render again
 		this->renderFlag = false;

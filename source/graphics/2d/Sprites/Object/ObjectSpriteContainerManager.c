@@ -41,7 +41,7 @@ __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ObjectSpriteContainer, u8 spt, u16 totalObjects, u16 firstObjectIndex);
+__CLASS_NEW_DECLARE(ObjectSpriteContainer, int spt, int totalObjects, int firstObjectIndex);
 
 static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this);
 
@@ -187,7 +187,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	}
 }
 
-void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, u8 spt, fix19_13 z)
+void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::position: null this");
 	

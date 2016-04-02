@@ -108,7 +108,7 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
 }
 
-void Particle_update(Particle this, u16 elapsedTime, void (* behavior)(Particle particle))
+void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "Particle::update: null this");
 
@@ -226,11 +226,11 @@ bool Particle_moves(Particle this)
 }
 
 // defaults to true
-u8 Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration)
+int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration)
 {
 	ASSERT(this, "Particle::canMoveOverAxis: null this");
 
-	return Body_getAxisSubjectToGravity(this->body);
+	return (int)Body_getAxisSubjectToGravity(this->body);
 }
 
 void Particle_resume(Particle this)

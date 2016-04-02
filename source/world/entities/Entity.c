@@ -979,7 +979,7 @@ bool Entity_handleMessage(Entity this, Telegram telegram)
 }
 
 // get width
-u16 Entity_getWidth(Entity this)
+int Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
 
@@ -989,11 +989,11 @@ u16 Entity_getWidth(Entity this)
 	}
 
 	// must calculate based on the scale because not affine Container must be enlarged
-	return this->size.x;
+	return (int)this->size.x;
 }
 
 // get height
-u16 Entity_getHeight(Entity this)
+int Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
 
@@ -1002,11 +1002,11 @@ u16 Entity_getHeight(Entity this)
 		Entity_calculateSize(this);
 	}
 	
-	return this->size.y;
+	return (int)this->size.y;
 }
 
 // get depth
-u16 Entity_getDepth(Entity this)
+int Entity_getDepth(Entity this)
 {
 	ASSERT(this, "Entity::getDepth: null this");
 
@@ -1016,7 +1016,7 @@ u16 Entity_getDepth(Entity this)
 	}
 
 	// must calculate based on the scale because not affine object must be enlarged
-	return this->size.z;
+	return (int)this->size.z;
 }
 
 // retrieve gap
@@ -1234,7 +1234,7 @@ void Entity_resume(Entity this)
 }
 
 // defaults to true
-bool Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration)
+int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration)
 {
 	return __XAXIS | __YAXIS | __ZAXIS;
 }

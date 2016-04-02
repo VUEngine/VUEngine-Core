@@ -118,20 +118,20 @@ void Body_setMass(Body this, fix19_13 mass);
 bool Body_isAwake(Body body);
 void Body_sleep(Body body);
 void Body_clearForce(Body this);
-void Body_applyForce(Body this, const Force* force, bool clear);
+void Body_applyForce(Body this, const Force* force, int clearAxis);
 void Body_applyGravity(Body this, const Acceleration* gravity);
 void Body_addForce(Body this, const Force* force);
-u8 Body_isMoving(Body this);
+int Body_isMoving(Body this);
 Velocity Body_getVelocity(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
 MovementType Body_getMovementType(Body this);
-void Body_clearAcceleration(Body this, u8 axis);
-void Body_moveAccelerated(Body this, u8 axis);
+void Body_clearAcceleration(Body this, int axis);
+void Body_moveAccelerated(Body this, int axis);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_printPhysics(Body this, int x, int y);
-void Body_stopMovement(Body this, u8 axis);
-void Body_bounce(Body this, u8 axis, u8 axisAllowedForBouncing, fix19_13 otherBodyElasticity);
+void Body_stopMovement(Body this, int axis);
+void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity);
 void Body_takeHitFrom(Body this, Body other);
 
 

@@ -89,28 +89,28 @@ bool SpatialObject_moves(SpatialObject this)
 }
 
 // defaults to true
-bool SpatialObject_canMoveOverAxis(SpatialObject this, const Acceleration* acceleration)
+int SpatialObject_canMoveOverAxis(SpatialObject this, const Acceleration* acceleration)
 {
 	ASSERT(this, "SpatialObject::canMoveOverAxis: null this");
 
 	return false;
 }
 
-u16 SpatialObject_getWidth(SpatialObject this)
+int SpatialObject_getWidth(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::getWidth: null this");
 
 	return 0;
 }
 
-u16 SpatialObject_getHeight(SpatialObject this)
+int SpatialObject_getHeight(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::getHeight: null this");
 
 	return 0;
 }
 
-u16 SpatialObject_getDepth(SpatialObject this)
+int SpatialObject_getDepth(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::getDepth: null this");
 

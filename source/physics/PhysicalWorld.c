@@ -223,9 +223,9 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		if(body->active)
 		{
 			// check if necessary to apply gravity
-			bool gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(bool, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
+			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(int, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
 			
-			u8 movingState = Body_isMoving(body);
+			int movingState = Body_isMoving(body);
 			
 			gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 	

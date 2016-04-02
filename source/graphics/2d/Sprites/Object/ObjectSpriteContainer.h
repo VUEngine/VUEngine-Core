@@ -77,19 +77,19 @@
 	int freedObjectIndex;																				\
 																										\
 	/* first object index */																			\
-	u16 firstObjectIndex;																				\
+	int firstObjectIndex;																				\
 																										\
 	/* total objects */																					\
-	u16 totalObjects;																					\
+	int totalObjects;																					\
 																										\
 	/* OBJs available */																				\
-	u16 availableObjects;																				\
+	int availableObjects;																				\
 																										\
 	/* spt index */																						\
-	u8 spt;																								\
+	int spt;																								\
 																										\
 	/* flag to halt defragmentation while sprite removal is taking place */								\
-	u8 removingObjectSprite;																			\
+	bool removingObjectSprite;																			\
 
 __CLASS(ObjectSpriteContainer);
 
@@ -98,7 +98,7 @@ __CLASS(ObjectSpriteContainer);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, u8 spt, u16 totalObjects, u16 firstObjectIndex);
+void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
 s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s16 numberOfObjects);
@@ -111,7 +111,7 @@ void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_1
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);
 void ObjectSpriteContainer_hide(ObjectSpriteContainer this);
-u16 ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);

@@ -93,7 +93,7 @@
 	VBVec3D* centerDisplacement;																		\
 																										\
 	/* flag to update sprites' attributes */															\
-	u8 updateSprites;																					\
+	bool updateSprites;																					\
 
 	__CLASS(Entity);
 
@@ -173,9 +173,9 @@ void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, in
 int Entity_getInGameType(Entity this);
 VirtualList Entity_getSprites(Entity this);
 bool Entity_handleMessage(Entity this, Telegram telegram);
-u16 Entity_getWidth(Entity this);
-u16 Entity_getHeight(Entity this);
-u16 Entity_getDepth(Entity this);
+int Entity_getWidth(Entity this);
+int Entity_getHeight(Entity this);
+int Entity_getDepth(Entity this);
 Gap Entity_getGap(Entity this);
 bool Entity_isVisible(Entity this, int pad, bool recursive);
 bool Entity_updateSpritePosition(Entity this);
@@ -186,7 +186,7 @@ void Entity_show(Entity this);
 void Entity_hide(Entity this);
 void Entity_suspend(Entity this);
 void Entity_resume(Entity this);
-bool Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
+int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
 
 
 #endif

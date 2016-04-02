@@ -227,7 +227,7 @@ static void Body_setMovementType(Body this, int movementType, int axis)
 	}
 }
 
-void Body_clearAcceleration(Body this, u8 axis)
+void Body_clearAcceleration(Body this, int axis)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
@@ -251,7 +251,7 @@ void Body_clearAcceleration(Body this, u8 axis)
 }
 
 // set movement type to accelerated
-void Body_moveAccelerated(Body this, u8 axis)
+void Body_moveAccelerated(Body this, int axis)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
@@ -309,7 +309,7 @@ void Body_clearForce(Body this)
 }
 
 // apply force
-void Body_applyForce(Body this, const Force* force, bool clearAxis)
+void Body_applyForce(Body this, const Force* force, int clearAxis)
 {
 	ASSERT(this, "Body::applyForce: null this");
 
@@ -734,11 +734,11 @@ void Body_printPhysics(Body this, int x, int y)
 }
 
 // stop movement over an axis
-void Body_stopMovement(Body this, u8 axis)
+void Body_stopMovement(Body this, int axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
-	u8 axisOfStopping = 0;
+	int axisOfStopping = 0;
 	
 	if(__XAXIS & axis)
 	{
@@ -936,7 +936,7 @@ void Body_sleep(Body this)
 }
 
 // is it moving?
-u8 Body_isMoving(Body this)
+int Body_isMoving(Body this)
 {
 	ASSERT(this, "Body::isMoving: null this");
 
@@ -950,7 +950,7 @@ u8 Body_isMoving(Body this)
 }
 
 // bounce back
-void Body_bounce(Body this, u8 axis, u8 axisAllowedForBouncing, fix19_13 otherBodyElasticity)
+void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
 

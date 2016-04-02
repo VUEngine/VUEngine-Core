@@ -48,7 +48,7 @@ __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 // global
 const extern VBVec3D* _screenDisplacement;
 
-void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision);
+void Actor_checkIfMustBounce(Actor this, int axisOfCollision);
 static void Actor_resolveCollisions(Actor this, VirtualList collidingEntities);
 static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
 
@@ -242,7 +242,7 @@ void Actor_update(Actor this)
 }
 
 // update colliding entities
-void Actor_resetCollisionStatus(Actor this, u8 movementAxis)
+void Actor_resetCollisionStatus(Actor this, int movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 
@@ -367,7 +367,7 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 }
 
 // check if gravity must apply to this actor
-u8 Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
+int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 {
 	ASSERT(this, "Actor::canMoveOverAxis: null this");
 
@@ -376,15 +376,15 @@ u8 Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 		return ~CollisionSolver_getAxisOfFutureCollision(this->collisionSolver, acceleration, this->shape);
 	}
 
-	return __VIRTUAL_CALL(u8, Actor, getAxisFreeForMovement, this);
+	return __VIRTUAL_CALL(int, Actor, getAxisFreeForMovement, this);
 }
 
 // retrieve axis free for movement
-u8 Actor_getAxisFreeForMovement(Actor this)
+int Actor_getAxisFreeForMovement(Actor this)
 {
 	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
 
-	u8 movingState = Body_isMoving(this->body);
+	int movingState = Body_isMoving(this->body);
 	
 	return ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 }
@@ -424,7 +424,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 						ASSERT(this->shape, "Actor::handleMessage: null shape");
 						CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-						Actor_resetCollisionStatus(this, *(u8*)Telegram_getExtraInfo(telegram));
+						Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 						return true;
 						break;
 
@@ -472,14 +472,14 @@ bool Actor_moves(Actor this)
 }
 
 // is it moving?
-u8 Actor_isMoving(Actor this)
+int Actor_isMoving(Actor this)
 {
 	ASSERT(this, "Actor::isMoving: null this");
 
 	return this->body ? Body_isMoving(this->body) : 0;
 }
 
-u8 Actor_getMovementState(Actor this)
+int Actor_getMovementState(Actor this)
 {
 	ASSERT(this, "Actor::getMovementState: null this");
 
@@ -573,7 +573,7 @@ void Actor_stopMovement(Actor this)
 	}
 }
 
-u8 Actor_getAxisAllowedForBouncing(Actor this)
+int Actor_getAxisAllowedForBouncing(Actor this)
 {
 	ASSERT(this, "Actor::getAxisAllowedForBouncing: null this");
 
@@ -581,7 +581,7 @@ u8 Actor_getAxisAllowedForBouncing(Actor this)
 }
 
 // start bouncing after collision with another inGameEntity
-void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
+void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 {
 	ASSERT(this, "Actor::bounce: null this");
 
@@ -589,7 +589,7 @@ void Actor_checkIfMustBounce(Actor this, u8 axisOfCollision)
 	{
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
-		u8 axisAllowedForBouncing = __VIRTUAL_CALL(u8, Actor, getAxisAllowedForBouncing, this);
+		int axisAllowedForBouncing = __VIRTUAL_CALL(int, Actor, getAxisAllowedForBouncing, this);
 		
 		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
@@ -608,7 +608,7 @@ void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject)
 {
 	ASSERT(this, "Actor::alignTo: null this");
 
-	u8 axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, spatialObject, Body_getLastDisplacement(this->body), CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
+	int axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, spatialObject, Body_getLastDisplacement(this->body), CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
 
 	if(axisOfCollision)
 	{
