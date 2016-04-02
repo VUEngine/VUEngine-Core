@@ -34,23 +34,7 @@
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
-#undef __MEMORY_POOL_ARRAYS
-#define __MEMORY_POOL_ARRAYS																			\
-	__BLOCK_DEFINITION(192, 1)																			\
-	__BLOCK_DEFINITION(160, 5)																			\
-	__BLOCK_DEFINITION(144, 6)																			\
-	__BLOCK_DEFINITION(136, 26)																			\
-	__BLOCK_DEFINITION(120, 35)																			\
-	__BLOCK_DEFINITION(112, 12)																			\
-	__BLOCK_DEFINITION(104, 10)																			\
-	__BLOCK_DEFINITION(100, 20)																			\
-	__BLOCK_DEFINITION(92, 24)																			\
-	__BLOCK_DEFINITION(84, 30)																			\
-	__BLOCK_DEFINITION(76, 8)																			\
-	__BLOCK_DEFINITION(68, 56)																			\
-	__BLOCK_DEFINITION(28, 274)																			\
-	__BLOCK_DEFINITION(20, 588)																			\
-	__BLOCK_DEFINITION(16, 276)		
+	
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
