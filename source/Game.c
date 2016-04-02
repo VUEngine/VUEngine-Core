@@ -802,12 +802,25 @@ inline static void Game_checkForNewState(Game this)
 	this->currentProcess = kGameCheckingForNewStateDone;
 }
 
+#ifdef __PROFILING
+u32 updateVisualsTime = 0;
+u32 renderingTime = 0;
+u32 updateLogicTime = 0;
+u32 updatePhysicsTime = 0;
+u32 updateTransformationsTime = 0;
+#endif
+
 // update game's subsystems
 static void Game_update(Game this)
 {
 	ASSERT(this, "Game::update: null this");
 
 	FrameRate frameRate = FrameRate_getInstance();
+
+#ifdef __PROFILING
+    u32 timeBeforeProcess = 0;
+    u32 processTime = 0;
+#endif
 
 #if __FRAME_CYCLE == 1
 	bool cycle = true;
@@ -828,25 +841,51 @@ static void Game_update(Game this)
 	    if(cycle)
 	    {
 #endif
+	    	
+#ifdef __PROFILING
+	    timeBeforeProcess = Clock_getTime(this->clock);
+#endif
+	    	
 	    // the engine's game logic is free of racing
 	    // conditions against the VPU
 	    Game_updateVisuals(this);
 
+#ifdef __PROFILING
+	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    updateVisualsTime = updateVisualsTime < processTime ? processTime : updateVisualsTime;
+#endif
+	    
 		// this is the moment to check if the game's state
 		// needs to be changed
 		Game_checkForNewState(this);
-
+		
+#ifdef __PROFILING
+	    timeBeforeProcess = Clock_getTime(this->clock);
+#endif
 	    // update game's logic
 	    Game_updateLogic(this);
+#ifdef __PROFILING
+	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    updateLogicTime = updateLogicTime < processTime ? processTime : updateLogicTime;
+#endif
+	    
 #if __FRAME_CYCLE == 1
 		cycle = false;
 	    }
 	    else
 	    {
 #endif
+	    	
+#ifdef __PROFILING
+	    timeBeforeProcess = Clock_getTime(this->clock);
+#endif
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
+#ifdef __PROFILING
+	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    updatePhysicsTime = updatePhysicsTime < processTime ? processTime : updatePhysicsTime;
+#endif
 
 		// this is the point were the main game's subsystems
 		// have done all their work
@@ -855,8 +894,15 @@ static void Game_update(Game this)
 		// time afterwards
 		ClockManager_saveCurrentTime(this->clockManager);
 
+#ifdef __PROFILING
+	    timeBeforeProcess = Clock_getTime(this->clock);
+#endif
 	    // apply transformations
 	    Game_updateTransformations(this);
+#ifdef __PROFILING
+	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    updateTransformationsTime = updateTransformationsTime < processTime ? processTime : updateTransformationsTime;
+#endif
 
 	    // increase the FPS counter
 		FrameRate_increaseFPS(frameRate);

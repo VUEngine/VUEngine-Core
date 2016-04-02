@@ -126,6 +126,33 @@ void ClockManager_unregister(ClockManager this, Clock clock)
 	VirtualList_removeElement(this->clocks, clock);
 }
 
+int Clock_test1(int x, int y)
+{
+	int z = x + y;
+	return z;
+}
+
+u8 Clock_test2(u8 x, u8 y)
+{
+	u8 z = x + y;
+	return z;
+}
+
+s8 Clock_test3(s8 x, s8 y)
+{
+	s8 z = x + y;
+	return z;
+}
+u16 Clock_test4(u16 x, u16 y)
+{
+	u16 z = x + y;
+	return z;
+}
+s16 Clock_test5(s16 x, s16 y)
+{
+	s16 z = x + y;
+	return z;
+}
 // update clocks
 void ClockManager_update(ClockManager this, u32 ticksElapsed)
 {
@@ -189,6 +216,39 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 
 			// no need to track this, so prevent a very unlikely overflow
 	    	this->ticks = 0;
+	    	
+#ifdef __PROFILING
+		    extern u32 renderingTime;
+	    	extern u32 updateVisualsTime;
+	    	extern u32 updateLogicTime;
+	    	extern u32 updatePhysicsTime;
+	    	extern u32 updateTransformationsTime;
+	    	
+	    	int x = 0;
+	    	int xDisplacement = 9;
+	    	int y = 3;
+
+		    Printing_text(Printing_getInstance(), "Render:     ", x, y, NULL);
+		    Printing_int(Printing_getInstance(), renderingTime, x + xDisplacement, y++, NULL);
+
+		    Printing_text(Printing_getInstance(), "Visuals:     ", x, y, NULL);
+		    Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
+
+		    Printing_text(Printing_getInstance(), "Logic:       ", x, y, NULL);
+		    Printing_int(Printing_getInstance(), updateLogicTime, x + xDisplacement, y++, NULL);
+
+		    Printing_text(Printing_getInstance(), "Physics:     ", x, y, NULL);
+		    Printing_int(Printing_getInstance(), updatePhysicsTime, x + xDisplacement, y++, NULL);
+
+		    Printing_text(Printing_getInstance(), "Transf.:     ", x, y, NULL);
+		    Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
+
+		    updateVisualsTime = 0;
+		    updateLogicTime = 0;
+		    updatePhysicsTime = 0;
+		    updateTransformationsTime = 0;
+#endif
+
     }	
 
     if(previousHundredthSecond != (int)this->ticks / (10))

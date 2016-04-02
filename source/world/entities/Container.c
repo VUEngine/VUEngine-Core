@@ -372,18 +372,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	ASSERT(this, "Container::initialTransform: null this");
 	
 	// concatenate transform
-	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
-	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
-	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
-
-	// propagate rotation
-	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
-	
-	// propagate scale
-	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
-	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+	Container_applyEnvironmentToTranformation(this, environmentTransform);
 
 	// if I have children
 	if(this->children)
@@ -398,7 +387,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			child->invalidateGlobalPosition = *(u8*)&child->invalidateGlobalPosition ? child->invalidateGlobalPosition : this->invalidateGlobalPosition;
+			*(u8*)&child->invalidateGlobalPosition |= *(u8*)&this->invalidateGlobalPosition;
 
 			__VIRTUAL_CALL(void, Container, initialTransform, child, &this->transform);
 		}
@@ -407,12 +396,11 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
-// initial transform but don't call the virtual method
-void Container_transformNonVirtual(Container this, const Transformation* environmentTransform)
+void Container_applyEnvironmentToTranformation(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
 
-	// concatenate transform
+	// propagate position
 	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
 	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
 	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
@@ -425,13 +413,53 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	// propagate scale
 	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
 	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+	
+}
+
+/*
+static void Container_applyEnvironmentToTranformation1(Container this, const Transformation* environmentTransform)
+{
+	ASSERT(this, "Container::transform: null this");
+
+	VBVec3D* globalPosition = &this->transform.globalPosition;
+	VBVec3D localPosition = this->transform.localPosition;
+	VBVec3D environmentTransformGlobalPosition = environmentTransform->globalPosition;
+
+	Rotation* globalRotation = &this->transform.globalRotation;
+	Rotation localRotation = this->transform.localRotation;
+	Rotation environmentTransformGlobalRotation = environmentTransform->globalRotation;
+
+	Scale* globalScale = &this->transform.globalScale;
+	Scale localScale = this->transform.localScale;
+	Scale environmentTransformGlobalScale = environmentTransform->globalScale;
+	
+	// concatenate transform
+	globalPosition->x = environmentTransformGlobalPosition.x + localPosition.x;
+	globalPosition->y = environmentTransformGlobalPosition.y + localPosition.y;
+	globalPosition->z = environmentTransformGlobalPosition.z + localPosition.z;
+
+	// propagate rotation
+	globalRotation->x = environmentTransformGlobalRotation.x + localRotation.x;
+	globalRotation->y = environmentTransformGlobalRotation.y + localRotation.y;
+	globalRotation->z = environmentTransformGlobalRotation.z + localRotation.z;
+	
+	// propagate scale
+	globalScale->x = FIX7_9_MULT(environmentTransformGlobalScale.x, localScale.x);
+	globalScale->y = FIX7_9_MULT(environmentTransformGlobalScale.y, localScale.y);
+}
+*/
+
+// initial transform but don't call the virtual method
+void Container_transformNonVirtual(Container this, const Transformation* environmentTransform)
+{
+	ASSERT(this, "Container::transform: null this");
+
+	// apply environment transform
+	Container_applyEnvironmentToTranformation(this, environmentTransform);
 
 	// if I have children
 	if(this->children)
 	{
-		// first remove children
-		//Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -439,9 +467,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
-			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
-			child->invalidateGlobalPosition.z = child->invalidateGlobalPosition.z || this->invalidateGlobalPosition.z;
+			*(u8*)&child->invalidateGlobalPosition |= *(u8*)&this->invalidateGlobalPosition;
 
 			Container_transformNonVirtual(child, &this->transform);
 		}
@@ -455,29 +481,13 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 void Container_transform(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
-
-	CACHE_ENABLE;
-
-	// concatenate transform
-	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
-	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
-	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
-
-	// propagate rotation
-	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
 	
-	// propagate scale
-	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
-	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+	// apply environment transform
+	Container_applyEnvironmentToTranformation(this, environmentTransform);
 
 	// if I have children
 	if(this->children)
 	{
-		// first remove children
-		//Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -485,9 +495,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			child->invalidateGlobalPosition.x = child->invalidateGlobalPosition.x || this->invalidateGlobalPosition.x;
-			child->invalidateGlobalPosition.y = child->invalidateGlobalPosition.y || this->invalidateGlobalPosition.y;
-			child->invalidateGlobalPosition.z = child->invalidateGlobalPosition.z || this->invalidateGlobalPosition.z;
+			*(u8*)&child->invalidateGlobalPosition |= *(u8*)&this->invalidateGlobalPosition;
 
 			__VIRTUAL_CALL(void, Container, transform, child, &this->transform);
 		}
@@ -495,8 +503,6 @@ void Container_transform(Container this, const Transformation* environmentTransf
 
 	// don't update position on next transform cycle
 	*(u8*)&this->invalidateGlobalPosition = 0;
-	
-	CACHE_DISABLE;
 }
 
 void Container_updateVisualRepresentation(Container this)
@@ -537,9 +543,7 @@ static void Container_propagateInvalidateGlobalPosition(Container this)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			child->invalidateGlobalPosition.x |= this->invalidateGlobalPosition.x;
-			child->invalidateGlobalPosition.y |= this->invalidateGlobalPosition.y;
-			child->invalidateGlobalPosition.z |= this->invalidateGlobalPosition.z;
+			*(u8*)&child->invalidateGlobalPosition |= *(u8*)&this->invalidateGlobalPosition;
 
 			// make sure children recalculates its global position
 			Container_propagateInvalidateGlobalPosition(child);
@@ -561,9 +565,7 @@ void Container_setLocalPosition(Container this, const VBVec3D* position)
 	ASSERT(this, "Container::setLocalPosition: null this");
 
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalPosition.x = this->invalidateGlobalPosition.x || this->transform.localPosition.x != position->x;
-	this->invalidateGlobalPosition.y = this->invalidateGlobalPosition.y || this->transform.localPosition.y != position->y;
-	this->invalidateGlobalPosition.z = this->invalidateGlobalPosition.z || this->transform.localPosition.z != position->z;
+	*(u8*)&this->invalidateGlobalPosition |= (this->transform.localPosition.x != position->x ? 0x03: 0) | (this->transform.localPosition.y != position->y ? 0x0C: 0) | (this->transform.localPosition.z != position->z ? 0x30: 0);
 
 	this->transform.localPosition = *position;
 

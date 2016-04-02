@@ -183,19 +183,8 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 	}
 	
-	// concatenate transform
-	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
-	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
-	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
-
-	// propagate rotation
-	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
-	
-	// propagate scale
-	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
-	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+	// apply environment transform
+	Container_applyEnvironmentToTranformation(__SAFE_CAST(Container, this), environmentTransform);
 
 	this->updateSprites = __UPDATE_SPRITE_POSITION;
 

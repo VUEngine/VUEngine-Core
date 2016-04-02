@@ -144,6 +144,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 void Container_transform(Container this, const Transformation* environmentTransform);
 void Container_updateVisualRepresentation(Container this);
 void Container_initialTransform(Container this, Transformation* environmentTransform);
+void Container_applyEnvironmentToTranformation(Container this, const Transformation* environmentTransform);
 const VBVec3D* Container_getGlobalPosition(Container this);
 const VBVec3D* Container_getLocalPosition(Container this);
 void Container_setLocalPosition(Container this, const VBVec3D* position);

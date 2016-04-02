@@ -940,7 +940,7 @@ u8 Body_isMoving(Body this)
 {
 	ASSERT(this, "Body::isMoving: null this");
 
-	u8 result = 0;
+	int result = 0;
 
 	result |= ((int)FIX19_13TOI(this->velocity.x) || this->acceleration.x) ? __XAXIS : 0;
 	result |= ((int)FIX19_13TOI(this->velocity.y) || this->acceleration.y) ? __YAXIS : 0;

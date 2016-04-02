@@ -161,6 +161,7 @@ void VPUManager_interruptHandler(void)
 	VIP_REGS[INTENB]= 0;
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 
+	
 #ifdef __ALERT_STACK_OVERFLOW
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
@@ -175,6 +176,11 @@ void VPUManager_interruptHandler(void)
 		while(VIP_REGS[XPSTTS] & XPBSYR);
 
 		VPUManager this = VPUManager_getInstance();
+
+#ifdef __PROFILING
+		Clock gameClock = Game_getClock(Game_getInstance());
+	    u32 timeBeforeProcess = Clock_getTime(gameClock);
+#endif
 
 		// if performance was good enough in the
 		// the previous second do some defragmenting
@@ -198,6 +204,11 @@ void VPUManager_interruptHandler(void)
             }
         }
 
+#ifdef __PROFILING
+	    u32 processTime = Clock_getTime(gameClock) - timeBeforeProcess;
+	    extern u32 renderingTime;
+	    renderingTime = renderingTime < processTime ? processTime : renderingTime;
+#endif
 		// enable drawing
 		while(VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
