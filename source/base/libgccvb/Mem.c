@@ -90,7 +90,6 @@ void Mem_subtract (u8* dest, const u8* src, u16 num, u16 offset,u8 modifier)
 
 void Mem_add (u8* dest, const u8* src, u16 num, u16 offset)
 {
-	CACHE_ENABLE;
 	u16 i;
 	int carry;
 	for(i = 0; i < num; i++)
@@ -98,5 +97,4 @@ void Mem_add (u8* dest, const u8* src, u16 num, u16 offset)
 		*dest++ = carry = *src++ + offset;
 		*dest++ =(*src++ + (offset >> 8)) | (carry >> 8);
 	}
-	CACHE_DISABLE;
 }

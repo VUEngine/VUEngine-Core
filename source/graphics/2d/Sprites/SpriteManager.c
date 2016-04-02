@@ -381,7 +381,7 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	bool textureWereWritten = false;
+	bool textureWasWritten = false;
 	
 	if(!this->waitToWrite)
 	{
@@ -390,7 +390,7 @@ void SpriteManager_render(SpriteManager this)
 			__VIRTUAL_CALL(void, Texture, write, this->textureToWrite);
 		
 			this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
-			textureWereWritten = true;
+			textureWasWritten = true;
 			this->waitToWrite = this->cyclesToWaitForTextureWriting;
 		}
 		else
@@ -405,7 +405,7 @@ void SpriteManager_render(SpriteManager this)
 				{
 					__VIRTUAL_CALL(void, Texture, write, texture);
 					
-					textureWereWritten = true;
+					textureWasWritten = true;
 					this->waitToWrite = this->cyclesToWaitForTextureWriting;
 					
 					if(this->deferTextureWriting)
@@ -422,7 +422,7 @@ void SpriteManager_render(SpriteManager this)
 		this->waitToWrite--;
 	}
 
-	if(!textureWereWritten && !this->recoveringLayers)
+	if(!textureWasWritten && !this->recoveringLayers)
 	{
 		// z sorting
 		SpriteManager_sortLayersProgressively(this);
@@ -550,7 +550,7 @@ void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 textures
 {
 	ASSERT(this, "SpriteManager::setMaximumTextureRowsToWrite: null this");
 
-	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
+	this->texturesMaximumRowsToWrite = 2 > (s8)texturesMaximumRowsToWrite? 2 : texturesMaximumRowsToWrite;
 }
 
 void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffineTransformations)

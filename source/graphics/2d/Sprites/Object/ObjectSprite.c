@@ -258,6 +258,8 @@ void ObjectSprite_render(ObjectSprite this)
 		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);
 		u16 fourthWordValue = (this->head & 0x3000);
 
+		CACHE_ENABLE;
+
 		for(; i < rows; i++)
 		{
 			int j = 0;
@@ -288,6 +290,8 @@ void ObjectSprite_render(ObjectSprite this)
 				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
+		
+		CACHE_DISABLE;
 
 		// make sure to not render again
 		this->renderFlag = false;

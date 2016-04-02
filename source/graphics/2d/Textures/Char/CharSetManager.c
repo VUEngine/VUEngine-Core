@@ -76,7 +76,7 @@ static void CharSetManager_constructor(CharSetManager this)
 	int segment = 0;
 	for(; segment < __CHAR_SEGMENTS; segment++)
 	{
-		this->freedOffset[segment] = 0;
+		this->freedOffset[segment] = 1;
 		this->charSets[segment] = NULL;
 	}
 	
@@ -131,7 +131,7 @@ void CharSetManager_reset(CharSetManager this)
 		}
 		
 		this->charSets[segment] = __NEW(VirtualList);
-		this->freedOffset[segment] = 0;
+		this->freedOffset[segment] = 1;
 	}
 }
 
@@ -282,7 +282,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 
 				if(this->freedOffset[segment] == CharSet_getOffset(charSet))
 				{
-					this->freedOffset[segment] = 0;
+					this->freedOffset[segment] = 1;
 					return;
 				}
 
@@ -298,7 +298,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 				}
 			}
 			
-			this->freedOffset[segment] = 0;
+			this->freedOffset[segment] = 1;
 		}
 	}
 }

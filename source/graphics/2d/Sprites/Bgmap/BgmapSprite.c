@@ -518,7 +518,7 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
 
 	if(this->param)
 	{
-		this->paramTableRow = 0;
+		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
 		
 		BgmapSprite_doApplyAffineTransformations(this);
 	}

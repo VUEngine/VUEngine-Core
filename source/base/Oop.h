@@ -97,8 +97,10 @@
 		/* setup the class's vtable on first call only */								\
 		__SET_CLASS(ClassName);															\
 																						\
-		/* create the object and allocate memory for it */								\
-		ClassName this = ClassName ## _allocator();										\
+		/* allocate object */															\
+		ClassName this = (ClassName) 													\
+						MemoryPool_allocate(MemoryPool_getInstance(), 					\
+						sizeof(ClassName ## _str));										\
 																						\
 		/* check if properly created */													\
 		if(!this) return NULL;															\
@@ -366,10 +368,10 @@
 	__SET_VTABLE(ClassName, BaseClassName)												\
 																						\
 	/* define vtable checker */															\
-	__DEFINE_CHECK_VTABLE(ClassName)													\
+	/*__DEFINE_CHECK_VTABLE(ClassName)*/												\
 																						\
 	/* define allocator */																\
-	__ALLOCATOR_DEFINITION(ClassName, BaseClassName)
+	/*__ALLOCATOR_DEFINITION(ClassName, BaseClassName)*/
 
 // retrieves object's class' name
 #define __GET_CLASS_NAME(object)														\
