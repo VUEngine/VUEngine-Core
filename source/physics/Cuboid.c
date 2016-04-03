@@ -89,14 +89,11 @@ void Cuboid_destructor(Cuboid this)
 	__DESTROY_BASE;
 }
 
-SpatialObject owner = NULL;
 // check if two rects overlap
 int Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
-	owner = this->owner;
-	
 	if(__GET_CAST(InverseCuboid, shape))
 	{
 		return Cuboid_overlapsInverseCuboid(this, __SAFE_CAST(InverseCuboid, shape));

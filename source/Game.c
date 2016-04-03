@@ -827,6 +827,13 @@ static void Game_update(Game this)
 #endif
 	while(true)
 	{
+		// this is the point were the main game's subsystems
+		// have done all their work
+		// at this point save the current time on each
+		// clock so they can properly calculate the elapsed
+		// time afterwards
+		ClockManager_saveCurrentTime(this->clockManager);
+		
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -887,12 +894,6 @@ static void Game_update(Game this)
 	    updatePhysicsTime = updatePhysicsTime < processTime ? processTime : updatePhysicsTime;
 #endif
 
-		// this is the point were the main game's subsystems
-		// have done all their work
-		// at this point save the current time on each
-		// clock so they can properly calculate the elapsed
-		// time afterwards
-		ClockManager_saveCurrentTime(this->clockManager);
 
 #ifdef __PROFILING
 	    timeBeforeProcess = Clock_getTime(this->clock);

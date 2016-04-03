@@ -233,9 +233,9 @@ u32 Clock_getElapsedTime(Clock this)
 {
 	ASSERT(this, "Clock::getTimeElapse: null this");
 
-	int rightShift = 1 == __TIMER_RESOLUTION? 1 : 0;
+	u32 rightShift = 1 == __TIMER_RESOLUTION? 1 : 0;
 
-	int leftShift = !rightShift && 1 == __FRAME_CYCLE? 1 : 0;
+	u32 leftShift = !rightShift && 1 == __FRAME_CYCLE? 1 : 0;
 
 	return this->paused? 0: ((this->milliSeconds - this->previousMilliSeconds) << leftShift ) >> rightShift;
 }

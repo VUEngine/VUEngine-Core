@@ -126,33 +126,6 @@ void ClockManager_unregister(ClockManager this, Clock clock)
 	VirtualList_removeElement(this->clocks, clock);
 }
 
-int Clock_test1(int x, int y)
-{
-	int z = x + y;
-	return z;
-}
-
-u8 Clock_test2(u8 x, u8 y)
-{
-	u8 z = x + y;
-	return z;
-}
-
-s8 Clock_test3(s8 x, s8 y)
-{
-	s8 z = x + y;
-	return z;
-}
-u16 Clock_test4(u16 x, u16 y)
-{
-	u16 z = x + y;
-	return z;
-}
-s16 Clock_test5(s16 x, s16 y)
-{
-	s16 z = x + y;
-	return z;
-}
 // update clocks
 void ClockManager_update(ClockManager this, u32 ticksElapsed)
 {
@@ -169,11 +142,13 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	if(this->clocks)
 	{
 		VirtualNode node = this->clocks->head;
+		
+		bool saveCurrentTime = 10 == __TIMER_RESOLUTION || this->saveCurrentTime;
 
 		// update all registered clocks
 		for(; node ; node = node->next)
 		{
-			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed, 10 == __TIMER_RESOLUTION || this->saveCurrentTime);
+			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed, saveCurrentTime);
 		}
 		
 		this->saveCurrentTime = false;
