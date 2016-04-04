@@ -530,7 +530,7 @@ const VBVec3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
-	return Entity_getPosition(__SAFE_CAST(Entity, this));
+	return this->body? Body_getPosition(this->body) : Entity_getPosition(__SAFE_CAST(Entity, this));
 }
 
 // check if necessary to update sprite's position
