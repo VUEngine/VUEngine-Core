@@ -40,7 +40,7 @@
 // define the TimerManager
 __CLASS_DEFINITION(TimerManager, Object);
 
-#define __TIMER_RESOLUTION						10
+//#define __TIMER_RESOLUTION						10
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
