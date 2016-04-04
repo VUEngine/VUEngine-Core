@@ -379,7 +379,7 @@ void Body_applyGravity(Body this, const Acceleration* gravity)
 {
 	ASSERT(this, "Body::applyGravity: null this");
 
-	if(gravity && !Clock_isPaused(this->clock))
+	if(gravity/* && !Clock_isPaused(this->clock)*/)
 	{
 		int axisStartedMovement = 0;
 
@@ -627,7 +627,7 @@ VBVec3D Body_getLastDisplacement(Body this)
 
 	VBVec3D displacement = {0, 0, 0};
 
-	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 
 	displacement.x = FIX19_13_MULT(this->velocity.x, elapsedTime);
 	displacement.y = FIX19_13_MULT(this->velocity.y, elapsedTime);
@@ -1010,7 +1010,7 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	ASSERT(this, "Body::bounceOnAxis: null this");
 
 	// get the elapsed time
-	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(this->clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;
 	
 	if(ITOFIX19_13(1) < totalElasticity)

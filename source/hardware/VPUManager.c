@@ -176,11 +176,6 @@ void VPUManager_interruptHandler(void)
 
 		VPUManager this = VPUManager_getInstance();
 
-#ifdef __PROFILING
-		Clock gameClock = Game_getClock(Game_getInstance());
-	    u32 timeBeforeProcess = Clock_getTime(gameClock);
-#endif
-
 		// if performance was good enough in the
 		// the previous second do some defragmenting
 		if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
@@ -203,13 +198,8 @@ void VPUManager_interruptHandler(void)
             }
         }
 
-#ifdef __PROFILING
-	    u32 processTime = Clock_getTime(gameClock) - timeBeforeProcess;
-	    extern u32 renderingTime;
-	    renderingTime = renderingTime < processTime ? processTime : renderingTime;
-#endif
 		// enable drawing
-		while(VIP_REGS[XPSTTS] & XPBSYR);
+		//while(VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
 

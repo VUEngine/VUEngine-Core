@@ -26,6 +26,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __BODYS_TO_CHECK_FOR_GRAVITY		10
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -51,6 +58,12 @@
 																										\
 	/* elapsed time on last cycle */																	\
 	fix19_13 elapsedTime;																				\
+																										\
+	/* time on last cycle */																			\
+	fix19_13 previousTime;																				\
+																										\
+	/* body to check for gravity */																		\
+	VirtualNode nextBodyToCheckForGravity;																\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -78,6 +91,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->bodies = __NEW(VirtualList);
 	this->activeBodies = __NEW(VirtualList);
 	this->removedBodies = __NEW(VirtualList);
+	this->nextBodyToCheckForGravity = NULL;
 
 	this->gravity.x = 0;
 	this->gravity.y = 0;
@@ -85,6 +99,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	
 	this->friction = 0;
 	this->elapsedTime = 0;
+	this->previousTime = 0;
 }
 
 // class's destructor
@@ -211,11 +226,13 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 	ASSERT(this, "PhysicalWorld::checkForGravity: null this");
 	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
 
-	VirtualNode node = NULL;
+	VirtualNode node = !this->nextBodyToCheckForGravity ? this->bodies->head: this->nextBodyToCheckForGravity;
 
+	int counter = 0;
+	
 	// prepare bodies which move
 	// this will place the shape in the owner's position
-	for(node = this->bodies->head; node; node = node->next)
+	for(; counter < __BODYS_TO_CHECK_FOR_GRAVITY && node; node = node->next, counter++)
 	{
 		// load the current shape
 		Body body = __SAFE_CAST(Body, node->data);
@@ -250,6 +267,8 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 			}
 		}
 	}
+	
+	this->nextBodyToCheckForGravity = node;
 }
 
 // calculate collisions
@@ -258,16 +277,22 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	ASSERT(this, "PhysicalWorld::update: null this");
 
 	// process removed bodies
-	PhysicalWorld_processRemovedBodies(this);
-	
 	if(Clock_isPaused(clock))
 	{
 		return;
 	}
 
-	fix19_13 elapsedTime = FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(clock)), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	Clock_pause(clock, true);
+
+	fix19_13 currentTime = ITOFIX19_13(Clock_getTime(clock));
+	this->elapsedTime = FIX19_13_DIV(currentTime - this->previousTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	this->previousTime = currentTime;
+
+	Clock_pause(clock, false);
 
 	static int checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
+
+	PhysicalWorld_processRemovedBodies(this);
 
 	if(!--checkForGravity)
 	{
@@ -280,7 +305,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	// check the bodies
 	for(; node; node = node->next)
 	{
-		Body_update(__SAFE_CAST(Body, node->data), &this->gravity, elapsedTime);
+		Body_update(__SAFE_CAST(Body, node->data), &this->gravity, this->elapsedTime);
 	}
 }
 
@@ -386,7 +411,7 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 
-	return FIX19_13_DIV(ITOFIX19_13(Clock_getElapsedTime(Game_getPhysicsClock(Game_getInstance()))), ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	return this->elapsedTime;
 }
 
 // print status

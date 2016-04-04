@@ -57,7 +57,6 @@ static void Clock_constructor(Clock this)
 
 	// initialize time
 	this->milliSeconds = 0;
-	this->previousMilliSeconds = 0;
 
 	// initialize state
 	this->paused = true;
@@ -133,28 +132,14 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	Printing_int(Printing_getInstance(), seconds, secondsPosition, row, font);
 }
 
-// save the current miliseconds
-void Clock_saveCurrentTime(Clock this)
-{
-	ASSERT(this, "Clock::saveCurrentTime: null this");
-
-	this->previousMilliSeconds = this->milliSeconds;
-}
-
 // called on each timer interrupt
-void Clock_update(Clock this, u32 ticks, bool saveCurrentTime)
+void Clock_update(Clock this, u32 ticks)
 {
 	ASSERT(this, "Clock::update: null this");
 
 	// increase count
 	if(!this->paused)
 	{
-		// calculate milliseconds
-		if(saveCurrentTime)
-		{
-			this->previousMilliSeconds = this->milliSeconds;
-		}
-
 		this->milliSeconds += ticks;
 
 		u32 currentSecond = Clock_getSeconds(this);
@@ -183,8 +168,6 @@ void Clock_reset(Clock this)
 	ASSERT(this, "Clock::reset: null this");
 
 	this->milliSeconds = 0;
-	this->previousMilliSeconds = 0;
-
 	this->previousSecond = 0;
 	this->previousMinute = 0;
 }
@@ -195,13 +178,6 @@ u32 Clock_getMilliSeconds(Clock this)
 	ASSERT(this, "Clock::getMilliSeconds: null this");
 
 	return this->milliSeconds;
-}
-
-u32 Clock_getPreviousMilliSeconds(Clock this)
-{
-	ASSERT(this, "Clock::getPreviousMilliSeconds: null this");
-
-	return this->previousMilliSeconds;
 }
 
 // retrieve clock's seconds
@@ -226,18 +202,6 @@ u32 Clock_getTime(Clock this)
 	ASSERT(this, "Clock::getTime: null this");
 
 	return this->milliSeconds;
-}
-
-// retrieve clock's elapsed time in last cycle
-u32 Clock_getElapsedTime(Clock this)
-{
-	ASSERT(this, "Clock::getTimeElapse: null this");
-
-	u32 rightShift = 1 == __TIMER_RESOLUTION? 1 : 0;
-
-	u32 leftShift = !rightShift && 1 == __FRAME_CYCLE? 1 : 0;
-
-	return this->paused? 0: ((this->milliSeconds - this->previousMilliSeconds) << leftShift ) >> rightShift;
 }
 
 // retrieve current elapsed milliseconds in the current second

@@ -47,9 +47,6 @@
 	/* time elapsed */																					\
 	u32 milliSeconds;																					\
 																										\
-	/* time elapsed */																					\
-	u32 previousMilliSeconds;																			\
-																										\
 	/* register */																						\
 	u32 previousSecond;																					\
 																										\
@@ -82,12 +79,10 @@ __CLASS_NEW_DECLARE(Clock);
 void Clock_destructor(Clock this);
 void Clock_delay(Clock this, int milliSeconds);
 void Clock_print(Clock this, int col, int row, const char* font);
-void Clock_saveCurrentTime(Clock this);
-void Clock_update(Clock this, u32 ticks, bool saveCurrentTime);
+void Clock_update(Clock this, u32 ticks);
 void Clock_interrupt();
 void Clock_reset(Clock this);
 u32 Clock_getMilliSeconds(Clock this);
-u32 Clock_getPreviousMilliSeconds(Clock this);
 u32 Clock_getSeconds(Clock this);
 u32 Clock_getMinutes(Clock this);
 u32 Clock_getTime(Clock this);

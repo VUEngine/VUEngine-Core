@@ -63,10 +63,13 @@
 	Clock clock;																						\
 																										\
 	/* next spawn time */																				\
-	s32 nextSpawnTime;																					\
+	int nextSpawnTime;																					\
 																										\
 	/* particle count */																				\
-	s16 particleCount;																					\
+	int particleCount;																					\
+																										\
+	/* previous update time */																			\
+	u32 previousTime;																					\
 																										\
 	/* pause flag */																					\
 	bool paused;																						\

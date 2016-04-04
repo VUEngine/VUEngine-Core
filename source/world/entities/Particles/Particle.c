@@ -125,6 +125,8 @@ void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle 
 		
 		if(0 > this->lifeSpan)
 		{
+			Body_setActive(this->body, false);
+
 			Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_PARTICLE_EXPIRED);
 		}
 	}

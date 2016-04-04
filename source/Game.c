@@ -631,19 +631,19 @@ static void Game_handleInput(Game this)
 	if(pressedKey)
 	{
 		// inform the game about the pressed key
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->stateMachine), kKeyPressed, &pressedKey);
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this->stateMachine), __SAFE_CAST(Object, this->stateMachine), kKeyPressed, &pressedKey);
 	}
 
 	if(releasedKey)
 	{
 		// inform the game about the released key
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->stateMachine), kKeyReleased, &releasedKey);
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this->stateMachine), __SAFE_CAST(Object, this->stateMachine), kKeyReleased, &releasedKey);
 	}
 
 	if(holdKey)
 	{
 		// inform the game about the hold key
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->stateMachine), kKeyHold, &holdKey);
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this->stateMachine), __SAFE_CAST(Object, this->stateMachine), kKeyHold, &holdKey);
 	}
 
 	KeypadManager_clear(this->keypadManager);
@@ -804,7 +804,6 @@ inline static void Game_checkForNewState(Game this)
 
 #ifdef __PROFILING
 u32 updateVisualsTime = 0;
-u32 renderingTime = 0;
 u32 updateLogicTime = 0;
 u32 updatePhysicsTime = 0;
 u32 updateTransformationsTime = 0;
@@ -825,15 +824,9 @@ static void Game_update(Game this)
 #if __FRAME_CYCLE == 1
 	bool cycle = true;
 #endif
+	
 	while(true)
 	{
-		// this is the point were the main game's subsystems
-		// have done all their work
-		// at this point save the current time on each
-		// clock so they can properly calculate the elapsed
-		// time afterwards
-		ClockManager_saveCurrentTime(this->clockManager);
-		
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -929,11 +922,13 @@ bool Game_handleMessage(Game this, Telegram telegram)
 			return true;
 			break;
 
+#ifdef __LOW_BATTERY_INDICATOR
 		case kLowBatteryIndicator:
 
 			Game_printLowBatteryIndicator(this, ((bool)Telegram_getExtraInfo(telegram)));
 			return true;
 			break;
+#endif			
 	}
 
 	return StateMachine_handleMessage(this->stateMachine, telegram);

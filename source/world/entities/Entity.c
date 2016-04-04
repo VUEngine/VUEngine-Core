@@ -914,6 +914,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	}
 	else
 	{
+		this->updateSprites = 0;
 		this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
 		this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpriteTransformations, this)? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
 	}

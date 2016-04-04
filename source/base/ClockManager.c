@@ -43,9 +43,6 @@
 																										\
 	/* */																								\
 	u32 ticks;																							\
-																										\
-	/* */																								\
-	bool saveCurrentTime;																				\
 
 // define the manager
 __CLASS_DEFINITION(ClockManager, Object);
@@ -81,8 +78,6 @@ static void ClockManager_constructor(ClockManager this)
 	this->clocks = NULL;
 
 	this->ticks = 0;
-	
-	this->saveCurrentTime = false;
 }
 
 // class's destructor
@@ -136,29 +131,25 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
 	
-	u32 previousHundredthSecond = (int)this->ticks / (10);
-	u32 previousSecond = (int)this->ticks / __MILLISECONDS_IN_SECOND;
+	u32 previousHundredthSecond = (u32)(this->ticks / 10);
+	u32 previousSecond = (u32)(this->ticks / __MILLISECONDS_IN_SECOND);
 
 	if(this->clocks)
 	{
 		VirtualNode node = this->clocks->head;
 		
-		bool saveCurrentTime = 10 == __TIMER_RESOLUTION || this->saveCurrentTime;
-
 		// update all registered clocks
 		for(; node ; node = node->next)
 		{
-			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed, saveCurrentTime);
+			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed);
 		}
-		
-		this->saveCurrentTime = false;
 	}
 
 	// update tick count
 	this->ticks += ticksElapsed;
-	
-    //if second has changed, set frame rate 
-    if(previousSecond != (int)(this->ticks / __MILLISECONDS_IN_SECOND))
+
+	//if second has changed, set frame rate 
+    if(previousSecond < (u32)(this->ticks / __MILLISECONDS_IN_SECOND))
     {
     		FrameRate frameRate = FrameRate_getInstance();
     		
@@ -193,7 +184,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	    	this->ticks = 0;
 	    	
 #ifdef __PROFILING
-		    extern u32 renderingTime;
 	    	extern u32 updateVisualsTime;
 	    	extern u32 updateLogicTime;
 	    	extern u32 updatePhysicsTime;
@@ -201,10 +191,8 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	    	
 	    	int x = 0;
 	    	int xDisplacement = 9;
-	    	int y = 3;
+	    	int y = 2;
 
-		    Printing_text(Printing_getInstance(), "Render:     ", x, y, NULL);
-		    Printing_int(Printing_getInstance(), renderingTime, x + xDisplacement, y++, NULL);
 
 		    Printing_text(Printing_getInstance(), "Visuals:     ", x, y, NULL);
 		    Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
@@ -218,6 +206,9 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 		    Printing_text(Printing_getInstance(), "Transf.:     ", x, y, NULL);
 		    Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
 
+		    Printing_text(Printing_getInstance(), "TOTAL:     ", x, y, NULL);
+		    Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updateTransformationsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
+
 		    updateVisualsTime = 0;
 		    updateLogicTime = 0;
 		    updatePhysicsTime = 0;
@@ -226,19 +217,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 
     }	
 
-    if(previousHundredthSecond != (int)this->ticks / (10))
+    if(previousHundredthSecond != (u32)(this->ticks / 10))
     {
 	    // update sounds
-	    SoundManager_playSounds(SoundManager_getInstance());
+    	SoundManager_playSounds(SoundManager_getInstance());
     }
-}
-
-// save the current time
-void ClockManager_saveCurrentTime(ClockManager this)
-{
-	ASSERT(this, "ClockManager::fixElapsedTime: null this");
-
-	this->saveCurrentTime = true;
 }
 
 // reset clocks

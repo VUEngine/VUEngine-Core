@@ -89,6 +89,7 @@ void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinit
 	
 	// retrieve clock
 	this->clock = Game_getInGameClock(Game_getInstance());
+	this->previousTime = 0;
 	
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
@@ -190,7 +191,9 @@ void ParticleSystem_update(ParticleSystem this)
 
 	if(!Clock_isPaused(this->clock))
 	{
-	    u32 timeElapsed = Clock_getElapsedTime(this->clock);
+		u32 currentTime = Clock_getTime(this->clock);
+	    u32 elapsedTime = currentTime - this->previousTime;
+	    this->previousTime = currentTime;
 	
 	    // update each particle
 	    VirtualNode node = this->particles->head;
@@ -199,13 +202,13 @@ void ParticleSystem_update(ParticleSystem this)
 	    	
 	    for(; node; node = node->next)
 	    {
-	        __VIRTUAL_CALL(void, Particle, update, node->data, timeElapsed, behavior);
+	        __VIRTUAL_CALL(void, Particle, update, node->data, elapsedTime, behavior);
 	    }
 	
 		if(!this->paused)
 		{
 			// check if it is time to spawn new particles
-			this->nextSpawnTime -= abs(timeElapsed);
+			this->nextSpawnTime -= abs(elapsedTime);
 	
 			if(0 > this->nextSpawnTime)
 			{

@@ -436,7 +436,7 @@ void SpriteManager_render(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 		Sprite_update(sprite);
 
-		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, node->data));
+		__VIRTUAL_CALL(void, Sprite, render, sprite);
 		
 		// must make sure that no sprite has the end world
 		// which can be the case when a new sprite is added
