@@ -207,7 +207,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 		    Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
 
 		    Printing_text(Printing_getInstance(), "TOTAL:       ", x, y, NULL);
-		    Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updateTransformationsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
+		    Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updatePhysicsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
 
 		    updateVisualsTime = 0;
 		    updateLogicTime = 0;
