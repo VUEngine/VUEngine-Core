@@ -56,7 +56,7 @@
 #define __DISTANCE_EYE_SCREEN					384
 
 // maximum view distance (depth) (power of two)
-#define __MAXIMUM_VIEW_DISTANCE_POWER			8
+#define __MAXIMUM_VIEW_DISTANCE_POWER			9
 
 // distance between eyes
 #define __BASE_FACTOR							768
@@ -65,7 +65,7 @@
 #define __HORIZONTAL_VIEW_POINT_CENTER			192
 
 // player's eyes' vertical position
-#define __VERTICAL_VIEW_POINT_CENTER			112
+#define __VERTICAL_VIEW_POINT_CENTER			256
 
 // parallax values are divide by this factor to control their strength
 #define __PARALLAX_CORRECTION_FACTOR			16
@@ -126,18 +126,18 @@
 	__BLOCK_DEFINITION(192, 1)																			\
 	__BLOCK_DEFINITION(160, 5)																			\
 	__BLOCK_DEFINITION(144, 6)																			\
-	__BLOCK_DEFINITION(136, 24)																			\
-	__BLOCK_DEFINITION(120, 34)																			\
+	__BLOCK_DEFINITION(136, 26)																			\
+	__BLOCK_DEFINITION(120, 35)																			\
 	__BLOCK_DEFINITION(112, 12)																			\
 	__BLOCK_DEFINITION(104, 10)																			\
-	__BLOCK_DEFINITION(100, 16)																			\
+	__BLOCK_DEFINITION(100, 20)																			\
 	__BLOCK_DEFINITION(92, 24)																			\
 	__BLOCK_DEFINITION(84, 30)																			\
 	__BLOCK_DEFINITION(76, 8)																			\
-	__BLOCK_DEFINITION(68, 55)																			\
-	__BLOCK_DEFINITION(28, 270)																			\
-	__BLOCK_DEFINITION(20, 600)																			\
-	__BLOCK_DEFINITION(16, 280)																			\
+	__BLOCK_DEFINITION(68, 56)																			\
+	__BLOCK_DEFINITION(28, 276)																			\
+	__BLOCK_DEFINITION(20, 588)																			\
+	__BLOCK_DEFINITION(16, 276)																		\
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
@@ -224,7 +224,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												STREAMING
+// 											    STREAMING
 //---------------------------------------------------------------------------------------------------------
 
 // the number of total calls to the streaming method which completes a cycle
@@ -235,7 +235,7 @@
 // 4) initialize the loaded entity
 #define __STREAM_CYCLE_DURATION					24
 
-// pad to determine if an entity must be loaded/unloaded 
+// pad to determine if an entity must be loaded/unloaded
 // load pad must always be lower than unload pad!
 // too close values will put the streaming under heavy usage!
 #define __ENTITY_LOAD_PAD 						256
@@ -246,10 +246,13 @@
 // 												PHYSICS
 //---------------------------------------------------------------------------------------------------------
 
-#define __GRAVITY								9800 * 4
+#define __GRAVITY								13000
 
-// number of game cycles to wait before checking for gravity on each body
+// number of game cycles to wait before checking for gravity on each cycle
 #define __GRAVITY_CHECK_CYCLE_DELAY	(__TARGET_FPS / 10)
+
+// number of bodies to check for gravity on each cycle
+#define __BODIES_TO_CHECK_FOR_GRAVITY		10
 
 #define __MAX_SHAPES_PER_LEVEL					32
 #define __MAX_BODIES_PER_LEVEL					32
@@ -293,10 +296,10 @@
 #define __BGMAP_PALETTE_2						0b10010000 // background layer
 #define __BGMAP_PALETTE_3						0b01010000 // very dark, used when getting hit
 
-#define __OBJECT_PALETTE_0						0b11100100
-#define __OBJECT_PALETTE_1						0b11100000
-#define __OBJECT_PALETTE_2						0b11010000
-#define __OBJECT_PALETTE_3						0b01010000
+#define __OBJECT_PALETTE_0						__BGMAP_PALETTE_0
+#define __OBJECT_PALETTE_1						__BGMAP_PALETTE_1
+#define __OBJECT_PALETTE_2						__BGMAP_PALETTE_2
+#define __OBJECT_PALETTE_3						__BGMAP_PALETTE_3
 
 
 //---------------------------------------------------------------------------------------------------------

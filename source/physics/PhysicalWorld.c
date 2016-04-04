@@ -29,8 +29,6 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __BODYS_TO_CHECK_FOR_GRAVITY		10
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -232,7 +230,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 	
 	// prepare bodies which move
 	// this will place the shape in the owner's position
-	for(; counter < __BODYS_TO_CHECK_FOR_GRAVITY && node; node = node->next, counter++)
+	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->next, counter++)
 	{
 		// load the current shape
 		Body body = __SAFE_CAST(Body, node->data);

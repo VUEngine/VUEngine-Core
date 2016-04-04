@@ -200,7 +200,6 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 		case __XAXIS:
 
 			this->drawSpec.scale.x = FIX7_9_MULT(abs(this->drawSpec.scale.x), ITOFIX7_9(direction));
-
 			break;
 
 		case __YAXIS:
@@ -208,6 +207,8 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 			this->drawSpec.scale.y = FIX7_9_MULT(abs(this->drawSpec.scale.y), ITOFIX7_9(direction));
 			break;
 	}
+	
+	this->paramTableRow = 0;
 
 	// scale the texture in the next render cycle
 	BgmapSprite_invalidateParamTable(this);
