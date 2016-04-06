@@ -75,8 +75,10 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 #ifndef	__FORCE_VPU_SYNC
+#ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
 bool Game_doneDRAMPrecalculations(Game this);
 const char* Game_getDRAMPrecalculationsStep(Game this);
+#endif
 #endif
 
 static void VPUManager_constructor(VPUManager this);
@@ -199,7 +201,7 @@ void VPUManager_interruptHandler(void)
         }
 
 		// enable drawing
-		//while(VIP_REGS[XPSTTS] & XPBSYR);
+		while(VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
 

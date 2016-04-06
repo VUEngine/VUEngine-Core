@@ -81,7 +81,7 @@ void Printing_destructor(Printing this)
 }
 
 // load font data to char memory
-void Printing_loadFonts(Printing this)
+void __attribute__ ((noinline)) Printing_loadFonts(Printing this)
 {
     int lastFontDefEndPos = CharSeg3 + (512 << 4);
     u16 numCharsToAdd = 0;
@@ -97,7 +97,7 @@ void Printing_loadFonts(Printing this)
 }
 
 // render general print output layer
-void Printing_render(Printing this, int textLayer)
+void __attribute__ ((noinline)) Printing_render(Printing this, int textLayer)
 {
 	if(0 > textLayer || textLayer >= __TOTAL_LAYERS)
 	{
@@ -117,8 +117,9 @@ void Printing_render(Printing this, int textLayer)
 }
 
 // clear printing area
-void Printing_clear(Printing this)
+void __attribute__ ((noinline)) Printing_clear(Printing this)
 {
+	
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	VPUManager_clearBgmap(VPUManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
@@ -146,7 +147,7 @@ static FontData Printing_getFontByName(Printing this, const char* font)
 }
 
 // direct printing out method
-static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
+static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
     FontData fontData;
 	u16 i = 0,
@@ -216,7 +217,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 	}
 }
 
-void Printing_int(Printing this, int value, int x, int y, const char* font)
+void __attribute__ ((noinline)) Printing_int(Printing this, int value, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 	
@@ -233,7 +234,7 @@ void Printing_int(Printing this, int value, int x, int y, const char* font)
 	}
 }
 
-void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
+void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
@@ -250,7 +251,7 @@ void Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 	}
 }
 
-void Printing_float(Printing this, float value, int x, int y, const char* font)
+void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
@@ -302,13 +303,13 @@ void Printing_float(Printing this, float value, int x, int y, const char* font)
 	Printing_out(this, printingBgmap, x + length  + i, y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
 }
 
-void Printing_text(Printing this, char* string, int x, int y, const char* font)
+void __attribute__ ((noinline)) Printing_text(Printing this, char* string, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
 }
 
-Size Printing_getTextSize(Printing this, const char* string, const char* font)
+Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
 {
     Size size = {0, 0};
     FontData fontData;

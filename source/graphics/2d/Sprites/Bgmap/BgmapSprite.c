@@ -70,14 +70,14 @@ __CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefiniti
 __CLASS_NEW_END(BgmapSprite, bSpriteDefinition, owner);
 
 // class's constructor
-void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
+void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE((SpriteDefinition*)bSpriteDefinition, owner);
+	__CONSTRUCT_BASE((SpriteDefinition*)bgmapSpriteDefinition, owner);
 
 	// create the texture
-	if(bSpriteDefinition->textureDefinition)
+	if(bgmapSpriteDefinition->textureDefinition)
 	{
-		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bSpriteDefinition->textureDefinition));
+		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bgmapSpriteDefinition->textureDefinition));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
 	
@@ -110,7 +110,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 	this->drawSpec.rotation.y = 0;
 	this->drawSpec.rotation.z = 0;
 
-	this->displacement = bSpriteDefinition->displacement;
+	this->displacement = bgmapSpriteDefinition->displacement;
 
 	this->param = 0;
 	this->paramTableRow = -1;
@@ -118,19 +118,19 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 	//this->head = bSpriteDefinition->display | WRLD_BGMAP;
 
 	// set world layer's head acording to map's render mode
-	switch(bSpriteDefinition->bgmapMode)
+	switch(bgmapSpriteDefinition->bgmapMode)
 	{
 		case WRLD_BGMAP:
 
 			// set map head
-			this->head = bSpriteDefinition->display | WRLD_BGMAP;
+			this->head = bgmapSpriteDefinition->display | WRLD_BGMAP;
 
 			break;
 
 		case WRLD_AFFINE:
 
 			// set map head
-			this->head = bSpriteDefinition->display | WRLD_AFFINE;
+			this->head = bgmapSpriteDefinition->display | WRLD_AFFINE;
 
 			// allocate param table space
 			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
@@ -140,7 +140,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpr
 		case WRLD_HBIAS:
 
 			// set map head
-			this->head = bSpriteDefinition->display | WRLD_HBIAS | WRLD_OVR;
+			this->head = bgmapSpriteDefinition->display | WRLD_HBIAS | WRLD_OVR;
 
 			break;
 	}

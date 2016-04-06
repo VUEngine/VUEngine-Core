@@ -64,13 +64,13 @@ __CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefini
 __CLASS_NEW_END(ObjectSprite, oSpriteDefinition, owner);
 
 // class's constructor
-void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
+void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
 	ASSERT(this, "ObjectSprite::constructor: null this");
 
-	__CONSTRUCT_BASE((SpriteDefinition*)oSpriteDefinition, owner);
+	__CONSTRUCT_BASE((SpriteDefinition*)objectSpriteDefinition, owner);
 
-	this->head = oSpriteDefinition->display;
+	this->head = objectSpriteDefinition->display;
 	this->objectIndex = -1;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
@@ -81,14 +81,14 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	this->position.z = 0;
 	this->position.parallax = 0;
 
-	this->displacement = oSpriteDefinition->displacement;
+	this->displacement = objectSpriteDefinition->displacement;
 
-	ASSERT(oSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
+	ASSERT(objectSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
-	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, oSpriteDefinition->textureDefinition, 0));
+	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, objectSpriteDefinition->textureDefinition, 0));
 	this->halfWidth = ITOFIX19_13((int)this->texture->textureDefinition->cols << 2);
 	this->halfHeight = ITOFIX19_13((int)this->texture->textureDefinition->rows << 2);
-	this->totalObjects = oSpriteDefinition->textureDefinition->cols * oSpriteDefinition->textureDefinition->rows;
+	this->totalObjects = objectSpriteDefinition->textureDefinition->cols * objectSpriteDefinition->textureDefinition->rows;
 	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
 

@@ -276,9 +276,11 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		// if there are layers being freed up by the recovery algorithm
 		u8 layer = __TOTAL_LAYERS - 1;
 		
-		if(this->sprites->head)
+		VirtualNode head = this->sprites->head;
+		
+		if(head)
 		{
-			layer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
+			layer = (__SAFE_CAST(Sprite, head->data))->worldLayer - 1;
 		}
 		
 		// add to the front: last element corresponds to the 31 WORLD

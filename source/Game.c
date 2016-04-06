@@ -1218,6 +1218,7 @@ void Game_removePostProcessingEffect(Game this, void (*postProcessingEffect) (u3
 }
 
 #ifndef	__FORCE_VPU_SYNC
+#ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
 bool Game_doneDRAMPrecalculations(Game this)
 {
 	ASSERT(this, "Game::doneDRAMPrecalculations: null this");
@@ -1236,4 +1237,5 @@ const char* Game_getDRAMPrecalculationsStep(Game this)
 
 	return NULL;
 }
+#endif
 #endif
