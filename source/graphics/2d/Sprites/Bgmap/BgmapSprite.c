@@ -115,8 +115,6 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->param = 0;
 	this->paramTableRow = -1;
 
-	//this->head = bSpriteDefinition->display | WRLD_BGMAP;
-
 	// set world layer's head acording to map's render mode
 	switch(bgmapSpriteDefinition->bgmapMode)
 	{

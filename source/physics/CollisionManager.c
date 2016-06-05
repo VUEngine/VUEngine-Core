@@ -57,6 +57,7 @@
 __CLASS_DEFINITION(CollisionManager, Object);
 
 __CLASS_FRIEND_DEFINITION(Shape);
+__CLASS_FRIEND_DEFINITION(Clock);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -237,7 +238,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
-	if(Clock_isPaused(clock))
+	if(clock->paused)
 	{
 		return;
 	}

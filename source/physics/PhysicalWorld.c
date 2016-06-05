@@ -67,6 +67,7 @@
 __CLASS_DEFINITION(PhysicalWorld, Object);
 
 __CLASS_FRIEND_DEFINITION(Body);
+__CLASS_FRIEND_DEFINITION(Clock);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -274,8 +275,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
-	// process removed bodies
-	if(Clock_isPaused(clock))
+	if(clock->paused)
 	{
 		return;
 	}

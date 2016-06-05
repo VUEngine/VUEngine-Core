@@ -30,8 +30,8 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ACCOUNT_FOR_BGMAP_PLACEMENT	1
-#define __GX_LIMIT						511
+#define __ACCOUNT_FOR_BGMAP_PLACEMENT		1
+#define __GX_LIMIT							511
 //#define __GY_LIMIT						511
 
 

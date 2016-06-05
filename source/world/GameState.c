@@ -102,11 +102,11 @@ void GameState_execute(GameState this, void* owner)
 	ASSERT(this, "GameState::execute: null this");
 	ASSERT(this->stage, "GameState::execute: null stage");
 
-	// update the stage
-	__VIRTUAL_CALL(void, Container, update, this->stage);
-
-	// stream level
-	Stage_stream(this->stage);
+	if(!Clock_isPaused(this->inGameClock))
+	{
+		// update the stage
+		__VIRTUAL_CALL(void, Container, update, this->stage);
+	}
 }
 
 // state's exit

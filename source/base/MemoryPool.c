@@ -369,3 +369,4 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	Printing_int(Printing_getInstance(), usedBytesPercentage, x + 7 - Utilities_intLength(usedBytesPercentage), y, NULL);
 	Printing_text(Printing_getInstance(), "% ", x + 7, y++, NULL);
 }
+

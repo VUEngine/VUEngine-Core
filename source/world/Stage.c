@@ -472,10 +472,7 @@ void Stage_removeChild(Stage this, Container child)
 	}
 
 	// hide until effectively deleted
-	if(__GET_CAST(Entity, child))
-	{
-		Entity_hide(__SAFE_CAST(Entity, child));
-	}
+	__VIRTUAL_CALL(void, Container, hide, child);
 
 	Container_removeChild(__SAFE_CAST(Container, this), child);
 
@@ -993,6 +990,9 @@ void Stage_update(Stage this)
 	{
 		Container_update(__SAFE_CAST(Container, this->ui));
 	}
+	
+	// stream level
+	Stage_stream(this);
 }
 
 // transform state
