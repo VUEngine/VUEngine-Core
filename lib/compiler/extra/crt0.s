@@ -40,6 +40,10 @@ loop_start1:
 	blt	loop_top1
 
 
+/* cache */
+	ldsr	r0,sr5
+	mov	2,r4
+	ldsr	r4,sr14
 
 /* VIP */
 	movhi	0x0006,r0,r4
