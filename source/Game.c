@@ -857,6 +857,8 @@ static void Game_update(Game this)
             updateLogicTime = 0;
             updatePhysicsTime = 0;
             updateTransformationsTime = 0;
+
+            showProfiling = false;
         }
 #endif
 		// update each subsystem
