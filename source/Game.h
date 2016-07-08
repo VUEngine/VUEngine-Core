@@ -93,5 +93,8 @@ bool Game_isInStageEditor(Game this);
 bool Game_isInAnimationEditor(Game this);
 #endif
 
+#ifdef __PROFILING
+void Game_showProfiling(Game this);
+#endif
 
 #endif

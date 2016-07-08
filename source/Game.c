@@ -806,10 +806,11 @@ inline static void Game_checkForNewState(Game this)
 }
 
 #ifdef __PROFILING
-u32 updateVisualsTime = 0;
-u32 updateLogicTime = 0;
-u32 updatePhysicsTime = 0;
-u32 updateTransformationsTime = 0;
+static u32 updateVisualsTime = 0;
+static u32 updateLogicTime = 0;
+static u32 updatePhysicsTime = 0;
+static u32 updateTransformationsTime = 0;
+static bool showProfiling = false;
 #endif
 
 // update game's subsystems
@@ -827,9 +828,37 @@ static void Game_update(Game this)
 #if __FRAME_CYCLE == 1
 	bool cycle = true;
 #endif
-	
+
 	while(true)
 	{
+#ifdef __PROFILING
+        if(showProfiling)
+        {
+            int x = 0;
+            int xDisplacement = 9;
+            int y = 2;
+
+            Printing_text(Printing_getInstance(), "Visuals:     ", x, y, NULL);
+            Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
+
+            Printing_text(Printing_getInstance(), "Logic:       ", x, y, NULL);
+            Printing_int(Printing_getInstance(), updateLogicTime, x + xDisplacement, y++, NULL);
+
+            Printing_text(Printing_getInstance(), "Physics:     ", x, y, NULL);
+            Printing_int(Printing_getInstance(), updatePhysicsTime, x + xDisplacement, y++, NULL);
+
+            Printing_text(Printing_getInstance(), "Transf.:     ", x, y, NULL);
+            Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
+
+            Printing_text(Printing_getInstance(), "TOTAL:       ", x, y, NULL);
+            Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updatePhysicsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
+
+            updateVisualsTime = 0;
+            updateLogicTime = 0;
+            updatePhysicsTime = 0;
+            updateTransformationsTime = 0;
+        }
+#endif
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -844,11 +873,11 @@ static void Game_update(Game this)
 	    if(cycle)
 	    {
 #endif
-	    	
+
 #ifdef __PROFILING
 	    timeBeforeProcess = Clock_getTime(this->clock);
 #endif
-	    	
+
 	    // the engine's game logic is free of racing
 	    // conditions against the VPU
 	    Game_updateVisuals(this);
@@ -857,11 +886,11 @@ static void Game_update(Game this)
 	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
 	    updateVisualsTime = updateVisualsTime < processTime ? processTime : updateVisualsTime;
 #endif
-	    
+
 		// this is the moment to check if the game's state
 		// needs to be changed
 		Game_checkForNewState(this);
-		
+
 #ifdef __PROFILING
 	    timeBeforeProcess = Clock_getTime(this->clock);
 #endif
@@ -871,14 +900,14 @@ static void Game_update(Game this)
 	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
 	    updateLogicTime = updateLogicTime < processTime ? processTime : updateLogicTime;
 #endif
-	    
+
 #if __FRAME_CYCLE == 1
 		cycle = false;
 	    }
 	    else
 	    {
 #endif
-	    	
+
 #ifdef __PROFILING
 	    timeBeforeProcess = Clock_getTime(this->clock);
 #endif
@@ -931,7 +960,7 @@ bool Game_handleMessage(Game this, Telegram telegram)
 			Game_printLowBatteryIndicator(this, ((bool)Telegram_getExtraInfo(telegram)));
 			return true;
 			break;
-#endif			
+#endif
 	}
 
 	return StateMachine_handleMessage(this->stateMachine, telegram);
@@ -1242,3 +1271,13 @@ const char* Game_getDRAMPrecalculationsStep(Game this)
 }
 #endif
 #endif
+
+#ifdef __PROFILING
+void Game_showProfiling(Game this)
+{
+    ASSERT(this, "Game::showProfiling: this null");
+
+    showProfiling = true;
+}
+#endif
+

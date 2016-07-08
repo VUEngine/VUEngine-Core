@@ -87,7 +87,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	this->size.x = 0;
 	this->size.y = 0;
 	this->size.z = 0;
-	
+
 	this->updateSprites = 0;
 }
 
@@ -101,10 +101,10 @@ void Entity_destructor(Entity this)
 	if(this->shape)
 	{
 		CollisionManager_unregisterShape(Game_getCollisionManager(Game_getInstance()), this->shape);
-	
+
 		this->shape = NULL;
 	}
-	
+
 	if(this->centerDisplacement)
 	{
 		__DELETE_BASIC(this->centerDisplacement);
@@ -144,7 +144,7 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
 	VBVec3D globalPosition3D = this->transform.globalPosition;
-	
+
 	int left = 0;
 	int right = 0;
 	int top = 0;
@@ -170,8 +170,8 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 				halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
 				halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
 				halfDepth = this->size.z >> 1;
-			}				
-			
+			}
+
 			VBVec3D spriteDisplacement = Sprite_getDisplacement(sprite);
 			if(left > -halfWidth + FIX19_13TOI(spriteDisplacement.x))
 			{
@@ -206,7 +206,7 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 	}
 	else
 	{
-		
+
 		right = this->size.x >> 1;
 		left = -right;
 		bottom = this->size.y >> 1;
@@ -218,12 +218,12 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 	int x = FIX19_13TOI(globalPosition3D.x);
 	int y = FIX19_13TOI(globalPosition3D.y);
 	int z = FIX19_13TOI(globalPosition3D.z);
-	
+
 	if(0 == rightCuboid->x0 || x + left < rightCuboid->x0)
 	{
 		rightCuboid->x0 = x + left;
 	}
-	
+
 	if(0 == rightCuboid->x1 || right + x > rightCuboid->x1)
 	{
 		rightCuboid->x1 = right + x;
@@ -233,7 +233,7 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 	{
 		rightCuboid->y0 = y + top;
 	}
-	
+
 	if(0 == rightCuboid->y1 || bottom + y > rightCuboid->y1)
 	{
 		rightCuboid->y1 = bottom + y;
@@ -243,7 +243,7 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 	{
 		rightCuboid->z0 = z + front;
 	}
-	
+
 	if(0 == rightCuboid->z1 || back + z > rightCuboid->z1)
 	{
 		rightCuboid->z1 = back + z;
@@ -276,7 +276,7 @@ void Entity_calculateSize(Entity this)
 		(ITOFIX19_13(rightCuboid.y1 + rightCuboid.y0) >> 1) - this->transform.globalPosition.y,
 		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) >> 1) - this->transform.globalPosition.z
 	};
-	
+
 	if(centerDisplacement.x || centerDisplacement.y || centerDisplacement.z)
 	{
 		if(this->centerDisplacement)
@@ -287,7 +287,7 @@ void Entity_calculateSize(Entity this)
 		this->centerDisplacement = __NEW_BASIC(VBVec3D);
 		*this->centerDisplacement = centerDisplacement;
 	}
-	
+
 	this->size.x = rightCuboid.x1 - rightCuboid.x0;
 	this->size.y = rightCuboid.y1 - rightCuboid.y0;
 	this->size.z = rightCuboid.z1 - rightCuboid.z0;
@@ -304,7 +304,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		environmentPosition->y + positionedEntity->position.y,
 		environmentPosition->z + positionedEntity->position.z
 	};
-	
+
 	int left = 0;
 	int right = 0;
 	int top = 0;
@@ -318,21 +318,21 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	if(positionedEntity->entityDefinition->spritesDefinitions && positionedEntity->entityDefinition->spritesDefinitions[0])
 	{
 		int i = 0;
-		
+
 		for(; positionedEntity->entityDefinition->spritesDefinitions[i]; i++)
 		{
 			if(__TYPE(MBgmapSprite) == positionedEntity->entityDefinition->spritesDefinitions[i]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i])->textureDefinitions[0])
 			{
-				MBgmapSpriteDefinition* mBgmapSpriteDefinition = (MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i]; 
+				MBgmapSpriteDefinition* mBgmapSpriteDefinition = (MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spritesDefinitions[i];
 
 				int j = 0;
-				
+
 				halfWidth = 0;
 				halfHeight = 0;
 				halfDepth = 0;
-				
+
 				for(; mBgmapSpriteDefinition->textureDefinitions[j]; j++)
-				{	
+				{
 					if(halfWidth < mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2)
 					{
 						halfWidth = mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2;
@@ -343,37 +343,37 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 						halfHeight = mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2;
 					}
 				}
-				
+
 				if(left > -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x))
 				{
 					left = -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x);
 				}
-	
+
 				if(right < halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x))
 				{
 					right = halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.x);
 				}
-	
+
 				if(top > -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y))
 				{
 					top = -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y);
 				}
-	
+
 				if(bottom < halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y))
 				{
 					bottom = halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.y);
 				}
-	
+
 				if(front > FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z))
 				{
 					front = FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
 				}
-	
+
 				if(back < halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z))
 				{
 					back = halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.displacement.z);
 				}
-				
+
 			}
 			else if(positionedEntity->entityDefinition->spritesDefinitions[i]->textureDefinition)
 			{
@@ -381,32 +381,32 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 				halfWidth = bgmapSpriteDefinition->textureDefinition->cols << 2;
 				halfHeight = bgmapSpriteDefinition->textureDefinition->rows << 2;
 				halfDepth = 10;
-				
+
 				if(left > -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
 				{
 					left = -halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
 				}
-	
+
 				if(right < halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x))
 				{
 					right = halfWidth + FIX19_13TOI(bgmapSpriteDefinition->displacement.x);
 				}
-	
+
 				if(top > -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
 				{
 					top = -halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
 				}
-	
+
 				if(bottom < halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y))
 				{
 					bottom = halfHeight + FIX19_13TOI(bgmapSpriteDefinition->displacement.y);
 				}
-	
+
 				if(front > -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
 				{
 					front = -halfDepth + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
 				}
-	
+
 				if(back < (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z))
 				{
 					back = (halfDepth << 1) + FIX19_13TOI(bgmapSpriteDefinition->displacement.z);
@@ -417,14 +417,14 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	else if(!positionedEntity->childrenDefinitions)
 	{
 		// TODO: there should be a class which handles these special cases
-		if((int)__TYPE(InGameEntity) == (int)positionedEntity->entityDefinition->allocator || 
-			(int)__TYPE(InanimatedInGameEntity) == (int)positionedEntity->entityDefinition->allocator 
+		if((int)__TYPE(InGameEntity) == (int)positionedEntity->entityDefinition->allocator ||
+			(int)__TYPE(InanimatedInGameEntity) == (int)positionedEntity->entityDefinition->allocator
 		)
 		{
 			halfWidth = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->width >> 1;
 			halfHeight = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->height >> 1;
 			halfDepth = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->depth >> 1;
-			
+
 			left = -halfWidth;
 			right = halfWidth;
 			top = -halfHeight;
@@ -446,12 +446,12 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	int x = FIX19_13TOI(globalPosition3D.x);
 	int y = FIX19_13TOI(globalPosition3D.y);
 	int z = FIX19_13TOI(globalPosition3D.z);
-	
+
 	if(0 == rightCuboid->x0 || x + left < rightCuboid->x0)
 	{
 		rightCuboid->x0 = x + left;
 	}
-	
+
 	if(0 == rightCuboid->x1 || right + x > rightCuboid->x1)
 	{
 		rightCuboid->x1 = right + x;
@@ -461,7 +461,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	{
 		rightCuboid->y0 = y + top;
 	}
-	
+
 	if(0 == rightCuboid->y1 || bottom + y > rightCuboid->y1)
 	{
 		rightCuboid->y1 = bottom + y;
@@ -471,7 +471,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	{
 		rightCuboid->z0 = z + front;
 	}
-	
+
 	if(0 == rightCuboid->z1 || back + z > rightCuboid->z1)
 	{
 		rightCuboid->z1 = back + z;
@@ -510,7 +510,7 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 	ASSERT(childrenDefinitions, "Entity::calculatGlobalPositionFromDefinitionByName: null positionedEntity");
 
 	static VBVec3D position;
-	
+
 	int i = 0;
 	for(; childrenDefinitions[i].entityDefinition; i++)
 	{
@@ -530,7 +530,7 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 			concatenatedEnvironmentPosition.z += childrenDefinitions[i].position.z;
 
 			VBVec3D* position = Entity_calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
-			
+
 			if(position)
 			{
 				return position;
@@ -572,7 +572,7 @@ Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const
 Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
-	
+
 	if(positionedEntity)
 	{
 		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
@@ -581,13 +581,13 @@ Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity,
 		{
 			// set spatial position
 			__VIRTUAL_CALL(void, Container, setLocalPosition, entity, &positionedEntity->position);
-	
+
 			// add children if defined
 			if(positionedEntity->childrenDefinitions)
 			{
 				Entity_addChildren(entity, positionedEntity->childrenDefinitions);
-			}	
-			
+			}
+
 			return entity;
 		}
 	}
@@ -612,18 +612,18 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 		}
-	}	
+	}
 }
 
 // load an entity from a PositionedEntity definition
 Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* const positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinitionWithoutInitilization: null positionedEntity");
-	
+
 	if(positionedEntity)
 	{
 		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
-		
+
 		if(entity)
 		{
 			if(positionedEntity->name)
@@ -633,13 +633,13 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* con
 
 			// set spatial position
 			__VIRTUAL_CALL(void, Container, setLocalPosition, entity, &positionedEntity->position);
-			
+
 			// add children if defined
 			if(positionedEntity->childrenDefinitions)
 			{
 				Entity_addChildrenWithoutInitilization(entity, positionedEntity->childrenDefinitions);
-			}	
-		
+			}
+
 			return entity;
 		}
 	}
@@ -651,7 +651,7 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* con
 void Entity_initialize(Entity this)
 {
 	ASSERT(this, "Entity::initialize: null this");
-	
+
 	if(!this->sprites)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
@@ -672,7 +672,7 @@ void Entity_initialize(Entity this)
 void Entity_ready(Entity this)
 {
 	ASSERT(this, "Entity::initialize: null this");
-	
+
 	if(this->children)
 	{
 		// call ready method on children
@@ -702,7 +702,7 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 		}
-	}	
+	}
 }
 
 // add child from definition
@@ -710,12 +710,12 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 {
 	ASSERT(this, "Entity::addChildFromDefinition: null this");
 
-	PositionedEntity positionedEntity = 
+	PositionedEntity positionedEntity =
 	{
-		(EntityDefinition*)entityDefinition, 
-		{position->x, position->y, position->z}, 
+		(EntityDefinition*)entityDefinition,
+		{position->x, position->y, position->z},
 		(char*)name,
-		NULL, 
+		NULL,
 		extraInfo
 	};
 
@@ -731,14 +731,14 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		if(0 <= this->size.x && 0 <= this->size.y && 0 <= this->size.z)
 		{
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	
+
 			 // apply transformations
 			__VIRTUAL_CALL(void, Container, initialTransform, childEntity, &environmentTransform);
 		}
-		
+
 		// create the entity and add it to the world
 		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
-		
+
 		__VIRTUAL_CALL(void, Entity, ready, childEntity);
 	}
 
@@ -792,7 +792,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 
 		VirtualList_pushBack(this->sprites, (void*)sprite);
 	}
-	else 
+	else
 	{
 		ASSERT(false, "Entity::addSprite: sprite not created");
 	}
@@ -813,13 +813,13 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 			for(; node ; node = node->next)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
-		
+
 				// calculate the scale
 				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
 				// calculate sprite's parallax
 				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
-				
+
 				// update sprite's 2D position
 				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
 
@@ -833,7 +833,7 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 			for(; node ; node = node->next)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
-		
+
 				//update sprite's 2D position
 				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
 
@@ -847,10 +847,10 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 			for(; node ; node = node->next)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
-		
+
 				// calculate the scale
 				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
-	
+
 				// calculate sprite's parallax
 				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 			}
@@ -875,7 +875,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 		// must force size calculation now
 		Entity_calculateSize(this);
 	}
-	
+
 	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
 	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
 
@@ -893,7 +893,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	    {
 			__VIRTUAL_CALL(void, Shape, position, this->shape);
 		}
-		
+
 		Shape_setActive(this->shape, true);
 	}
 }
@@ -925,7 +925,7 @@ void Entity_updateVisualRepresentation(Entity this)
 	ASSERT(this, "Entity::updateVisualRepresentation: null this");
 
 	Container_updateVisualRepresentation(__SAFE_CAST(Container, this));
-	
+
 	Entity_updateSprites(this, this->updateSprites & __UPDATE_SPRITE_TRANSFORMATIONS, this->updateSprites & __UPDATE_SPRITE_POSITION);
 
 	this->updateSprites = 0;
@@ -1002,7 +1002,7 @@ int Entity_getHeight(Entity this)
 	{
 		Entity_calculateSize(this);
 	}
-	
+
 	return (int)this->size.y;
 }
 
@@ -1037,18 +1037,18 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	int x = 0;
 	int y = 0;
 	int z = 0;
-	
+
 	if(this->sprites)
 	{
 		VirtualNode spriteNode = this->sprites->head;
-		
+
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
 			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-			
+
 			x = FIX19_13TOI(spritePosition.x);
 			y = FIX19_13TOI(spritePosition.y);
 			z = FIX19_13TOI(spritePosition.z);
@@ -1068,7 +1068,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			}
 		}
 	}
-	else 
+	else
 	{
 		VBVec3D position3D = this->transform.globalPosition;
 
@@ -1078,7 +1078,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			position3D.y += this->centerDisplacement->y;
 			position3D.z += this->centerDisplacement->z;
 		}
-		
+
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
 
@@ -1092,7 +1092,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		x = FIX19_13TOI(position2D.x);
 		y = FIX19_13TOI(position2D.y);
 		z = FIX19_13TOI(position2D.z);
-		
+
 		if(x + halfWidth > -pad && x - halfWidth < __SCREEN_WIDTH + pad)
 		{
 			// check y visibility
@@ -1110,7 +1110,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	if(recursive && this->children)
 	{
 		VirtualNode childNode = this->children->head;
-		
+
 		for(; childNode; childNode = childNode->next)
 		{
 			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad, true))
@@ -1119,7 +1119,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -1127,7 +1127,8 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
-	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (*(u8*)&this->invalidateGlobalPosition); 
+
+	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (*(u8*)&this->invalidateGlobalPosition);
 }
 
 // check if necessary to update sprite's scale
@@ -1168,7 +1169,7 @@ void Entity_show(Entity this)
 	ASSERT(this, "Entity::show: null this");
 
 	Container_show(__SAFE_CAST(Container, this));
-	
+
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
@@ -1179,7 +1180,7 @@ void Entity_show(Entity this)
 			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
 		}
 	}
-	
+
 	// force invalid position to update sprites and children's sprites
 	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
 }
@@ -1190,7 +1191,7 @@ void Entity_hide(Entity this)
 	ASSERT(this, "Entity::hide: null this");
 
 	Container_hide(__SAFE_CAST(Container, this));
-	
+
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
@@ -1224,7 +1225,7 @@ void Entity_resume(Entity this)
 	{
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 	}
-	
+
 	if(this->hidden)
 	{
 		Entity_hide(this);

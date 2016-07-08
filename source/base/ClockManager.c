@@ -129,14 +129,14 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #ifdef __ALERT_STACK_OVERFLOW
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
-	
+
 	u32 previousHundredthSecond = (u32)(this->ticks / 10);
 	u32 previousSecond = (u32)(this->ticks / __MILLISECONDS_IN_SECOND);
 
 	if(this->clocks)
 	{
 		VirtualNode node = this->clocks->head;
-		
+
 		// update all registered clocks
 		for(; node ; node = node->next)
 		{
@@ -147,11 +147,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	// update tick count
 	this->ticks += ticksElapsed;
 
-	//if second has changed, set frame rate 
+	//if second has changed, set frame rate
     if(previousSecond < (u32)(this->ticks / __MILLISECONDS_IN_SECOND))
     {
     		FrameRate frameRate = FrameRate_getInstance();
-    		
+
 #ifdef __DEBUG
     		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT >> 3) - 1, NULL);
 #endif
@@ -162,14 +162,14 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	    		FrameRate_print(frameRate, 0, 0);
 	    	}
 #endif
-	    	
+
 #ifdef __PRINT_MEMORY_POOL_STATUS
 	    	if(!Game_isInSpecialMode(Game_getInstance()))
 	    	{
 	    		MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
 	    	}
 #endif
-	   
+
 #ifdef __ALERT_STACK_OVERFLOW
 	    	if(!Game_isInSpecialMode(Game_getInstance()))
 	    	{
@@ -181,40 +181,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 
 			// no need to track this, so prevent a very unlikely overflow
 	    	this->ticks = 0;
-	    	
+
 #ifdef __PROFILING
-	    	extern u32 updateVisualsTime;
-	    	extern u32 updateLogicTime;
-	    	extern u32 updatePhysicsTime;
-	    	extern u32 updateTransformationsTime;
-	    	
-	    	int x = 0;
-	    	int xDisplacement = 9;
-	    	int y = 2;
-
-
-		    Printing_text(Printing_getInstance(), "Visuals:     ", x, y, NULL);
-		    Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
-
-		    Printing_text(Printing_getInstance(), "Logic:       ", x, y, NULL);
-		    Printing_int(Printing_getInstance(), updateLogicTime, x + xDisplacement, y++, NULL);
-
-		    Printing_text(Printing_getInstance(), "Physics:     ", x, y, NULL);
-		    Printing_int(Printing_getInstance(), updatePhysicsTime, x + xDisplacement, y++, NULL);
-
-		    Printing_text(Printing_getInstance(), "Transf.:     ", x, y, NULL);
-		    Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
-
-		    Printing_text(Printing_getInstance(), "TOTAL:       ", x, y, NULL);
-		    Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updatePhysicsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
-
-		    updateVisualsTime = 0;
-		    updateLogicTime = 0;
-		    updatePhysicsTime = 0;
-		    updateTransformationsTime = 0;
+            Game_showProfiling(Game_getInstance());
 #endif
-
-    }	
+    }
 
     if(previousHundredthSecond != (u32)(this->ticks / 10))
     {

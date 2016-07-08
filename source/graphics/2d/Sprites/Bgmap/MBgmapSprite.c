@@ -74,20 +74,20 @@ __CLASS_NEW_END(MBgmapSprite, mSpriteDefinition, owner);
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner)
 {
 	__CONSTRUCT_BASE(&mSpriteDefinition->bSpriteDefinition, owner);
-	
+
 	this->mSpriteDefinition = mSpriteDefinition;
 
 	ASSERT(!this->texture, "MBgmapSprite::constructor: texture alrea");
 	this->textures = NULL;
 	MBgmapSprite_loadTextures(this);
-	
+
 	// assume looping
 	this->size.x = 0;
 	this->size.y = 0;
 
 	this->sizeMultiplier.x = 1;
 	this->sizeMultiplier.y = 1;
-	
+
 	MBgmapSprite_calculateSize(this);
 }
 
@@ -111,13 +111,13 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 	if(this->textures)
 	{
 		VirtualNode node = this->textures->head;
-		
+
 		for(; node; node = node->next)
 		{
 			// free the texture
 			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, node->data));
 		}
-		
+
 		__DELETE(this->textures);
 		this->textures = NULL;
 		this->texture = NULL;
@@ -133,14 +133,14 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 	{
 		MBgmapSprite_releaseTextures(this);
 		this->textures = __NEW(VirtualList);
-		
+
 		int i = 0;
-		
+
 		for(; this->mSpriteDefinition->textureDefinitions[i]; i++)
 	    {
 			MBgmapSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
 		}
-		
+
 		this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
 		ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
 
@@ -159,9 +159,9 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 	if(textureDefinition)
 	{
 		BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
-		
+
 		ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
-		
+
 		if(bgmapTexture && this->textures)
 		{
 			VirtualList_pushBack(this->textures, bgmapTexture);
@@ -181,9 +181,9 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 
 	position3D.x -= this->halfWidth;
 	position3D.y -= this->halfHeight;
-	
+
 	VBVec2D position2D;
-	
+
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
@@ -193,7 +193,7 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
-	
+
 	if(this->mSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
@@ -225,7 +225,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 			this->drawSpec.textureSource.my -= FIX19_13TOI(position->y + this->displacement.y);
 		}
 	}
-	
+
 	fix19_13 previousZPosition = this->drawSpec.position.z;
 	this->drawSpec.position.z = position->z;
 
@@ -258,7 +258,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 			this->drawSpec.textureSource.mx -= FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
 		}
 	}
-	
+
 	if(this->mSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
@@ -274,7 +274,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 			this->drawSpec.textureSource.my -= FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 		}
 	}
-	
+
 	this->drawSpec.position.z += displacement->z;
 	this->drawSpec.position.parallax += displacement->parallax;
 
@@ -290,61 +290,61 @@ static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 	switch(this->mSpriteDefinition->scValue)
 	{
 		case WRLD_1x1:
-			
+
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 1;
 			break;
 
 		case WRLD_1x2:
-			
+
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 2;
 			break;
 
 		case WRLD_1x4:
-			
+
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 4;
 			break;
-			
+
 		case WRLD_1x8:
-			
+
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 8;
 			break;
 
 		case WRLD_2x1:
-			
+
 			this->sizeMultiplier.x = 2;
 			this->sizeMultiplier.y = 1;
 			break;
-			
+
 		case WRLD_2x2:
-			
+
 			this->sizeMultiplier.x = 2;
 			this->sizeMultiplier.y = 2;
 			break;
 
 		case WRLD_2x4:
-			
+
 			this->sizeMultiplier.x = 2;
 			this->sizeMultiplier.y = 4;
 			break;
 
 		case WRLD_4x1:
-			
+
 			this->sizeMultiplier.x = 4;
 			this->sizeMultiplier.y = 1;
 			break;
 
 		case WRLD_4x2:
-			
+
 			this->sizeMultiplier.x = 4;
 			this->sizeMultiplier.y = 2;
 			break;
-			
+
 		case WRLD_8x1:
-			
+
 			this->sizeMultiplier.x = 8;
 			this->sizeMultiplier.y = 1;
 			break;
@@ -407,7 +407,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 			this->renderFlag = false;
 			return;
 		}
-		
+
 		// set the world screen position
 		if(this->renderFlag & (__UPDATE_G | __UPDATE_M))
 		{
@@ -452,7 +452,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
-	
+
 	return this->drawSpec.position;
 }
 
@@ -463,9 +463,9 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 	ASSERT(this, "MBgmapSprite::calculateSize: null this");
 
 	MBgmapSprite_calculateSizeMultiplier(this);
-	
+
 	Texture texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
-	
+
 	if(!this->mSpriteDefinition->xLoop)
 	{
 		this->size.x = this->sizeMultiplier.x << 9;

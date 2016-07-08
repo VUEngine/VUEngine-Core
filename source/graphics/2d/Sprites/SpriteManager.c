@@ -120,7 +120,7 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->maximumAffineRowsToComputePerCall = -1;
 	this->deferAffineTransformations = false;
 	this->waitToWrite = 0;
-	
+
 	SpriteManager_reset(this);
 }
 
@@ -164,7 +164,7 @@ void SpriteManager_reset(SpriteManager this)
 	this->texturesMaximumRowsToWrite = -1;
 	this->deferTextureWriting = false;
 	this->waitToWrite = 0;
-	
+
 	SpriteManager_setLastLayer(this);
 }
 
@@ -184,13 +184,13 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 	do
 	{
 		swap = false;
-		
+
 		VirtualNode node = this->sprites->head;
-		
+
 		if(node)
 		{
 			VirtualNode nextNode = node->next;
-			
+
 			for(; nextNode; node = node->next, nextNode = nextNode->next)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
@@ -204,14 +204,14 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 					// get each entity's layer
 					u8 worldLayer1 = sprite->worldLayer;
 					u8 worldLayer2 = nextSprite->worldLayer;
-		
+
 					// swap layers
 					Sprite_setWorldLayer(sprite, worldLayer2);
 					Sprite_setWorldLayer(nextSprite, worldLayer1);
-		
+
 					// swap array entries
 					VirtualNode_swapData(node, nextNode);
-					
+
 					swap = true;
 				}
 			}
@@ -237,14 +237,14 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			Sprite nextSprite = __SAFE_CAST(Sprite, this->nextNode->data);
 			VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 			VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, nextSprite);
-	
+
 			// check if z positions are swapped
 			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
 			{
 				// get each entity's layer
 				u8 worldLayer1 = sprite->worldLayer;
 				u8 worldLayer2 = nextSprite->worldLayer;
-	
+
 				// don't render inmediately, it causes glitches
 				Sprite_setWorldLayer(nextSprite, worldLayer1);
 				Sprite_setWorldLayer(sprite, worldLayer2);
@@ -266,7 +266,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 
 #ifdef __DEBUG
 	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
-	
+
 	ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::addSprite: sprite already registered");
 
 	if(!alreadyLoadedSpriteNode)
@@ -275,14 +275,14 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
 		u8 layer = __TOTAL_LAYERS - 1;
-		
+
 		VirtualNode head = this->sprites->head;
-		
+
 		if(head)
 		{
 			layer = (__SAFE_CAST(Sprite, head->data))->worldLayer - 1;
 		}
-		
+
 		// add to the front: last element corresponds to the 31 WORLD
 		VirtualList_pushFront(this->sprites, sprite);
 
@@ -291,7 +291,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 		this->node = NULL;
 		this->nextNode = NULL;
 
-#ifdef __DEBUG		
+#ifdef __DEBUG
 	}
 #endif
 }
@@ -314,7 +314,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		for(; node; node = node->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
-			
+
 			// search for the next sprite with the closest layer to the freed layer
 			if(spriteLayer < sprite->worldLayer)
 			{
@@ -325,28 +325,28 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 
 		// block sorting
 		this->recoveringLayers = true;
-		
+
 		for(; node; node = node->previous)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
-			
+
 			NM_ASSERT(spriteLayer == sprite->worldLayer + 1, "SpriteManager::removeSprite: wrong layers");
 
 			spriteLayer--;
-			
+
 			// move the sprite to the freed layer
 			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
 		}
-		
+
 		// allow sorting
 		this->recoveringLayers = false;
 
-		
+
 		// sorting needs to restart
 		this->node = NULL;
 		this->nextNode = NULL;
 	}
-	else 
+	else
 	{
 		ASSERT(false, "SpriteManager::removeSprite: sprite not registered");
 	}
@@ -361,17 +361,17 @@ void SpriteManager_setLastLayer(SpriteManager this)
 	{
 		this->freeLayer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
 	}
-	else 
+	else
 	{
 		this->freeLayer = __TOTAL_LAYERS - 1;
 	}
-	
+
 	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
 	NM_ASSERT(__TOTAL_LAYERS > VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
 	Printing_render(Printing_getInstance(), this->freeLayer);
-	
+
 	if(0 < this->freeLayer)
 	{
 		WA[this->freeLayer - 1].head = WRLD_END;
@@ -384,13 +384,13 @@ void SpriteManager_render(SpriteManager this)
 	ASSERT(this, "SpriteManager::render: null this");
 
 	bool textureWasWritten = false;
-	
+
 	if(!this->waitToWrite)
 	{
 		if(0 < this->texturesMaximumRowsToWrite && this->textureToWrite)
 		{
 			__VIRTUAL_CALL(void, Texture, write, this->textureToWrite);
-		
+
 			this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
 			textureWasWritten = true;
 			this->waitToWrite = this->cyclesToWaitForTextureWriting;
@@ -402,14 +402,14 @@ void SpriteManager_render(SpriteManager this)
 			for(; node; node = node->next)
 			{
 				Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
-		
+
 				if(texture && !texture->written)
 				{
 					__VIRTUAL_CALL(void, Texture, write, texture);
-					
+
 					textureWasWritten = true;
 					this->waitToWrite = this->cyclesToWaitForTextureWriting;
-					
+
 					if(this->deferTextureWriting)
 					{
 						this->textureToWrite = !texture->written? texture : NULL;
@@ -429,17 +429,17 @@ void SpriteManager_render(SpriteManager this)
 		// z sorting
 		SpriteManager_sortLayersProgressively(this);
 	}
-	
+
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
-	
+
 	for(; node; node = node->previous)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 		Sprite_update(sprite);
 
 		__VIRTUAL_CALL(void, Sprite, render, sprite);
-		
+
 		// must make sure that no sprite has the end world
 		// which can be the case when a new sprite is added
 		// and the previous end world is assigned to it
@@ -468,7 +468,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 	for(; node; node = node->previous)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
-		
+
 		if(sprite->worldLayer != layer)
 		{
 			__VIRTUAL_CALL(void, Sprite, hide, sprite);
@@ -477,7 +477,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 		{
 			__VIRTUAL_CALL(void, Sprite, show, sprite);
 		}
-		
+
 		// force inialization
 		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 		__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
@@ -497,14 +497,14 @@ void SpriteManager_recoverLayers(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		__VIRTUAL_CALL(void, Sprite, show, sprite);
-	
+
 		// force inialization
 		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
 		__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
 
 		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
-	
+
 	SpriteManager_setLastLayer(this);
 }
 
@@ -512,9 +512,9 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 {
 	ASSERT(this, "SpriteManager::getSpriteAtLayer: null this");
 	ASSERT((unsigned)layer < __TOTAL_LAYERS, "SpriteManager::getSpriteAtLayer: invalid layer");
-	
+
 	VirtualNode node = this->sprites->head;
-	
+
 	for(; node; node = node->next)
 	{
 		if((__SAFE_CAST(Sprite, node->data))->worldLayer == layer)
@@ -522,7 +522,7 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 			return __SAFE_CAST(Sprite, node->data);
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -602,7 +602,7 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 		strncpy(spriteClassName, __GET_CLASS_NAME(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 2] = '.';
-		
+
 		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX, auxY, NULL);
 		Printing_text(Printing_getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing_text(Printing_getInstance(), spriteClassName, auxX + 4, auxY, NULL);
