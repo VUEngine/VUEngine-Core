@@ -23,6 +23,7 @@
 #include <AnimationController.h>
 #include <AnimationCoordinator.h>
 #include <AnimationCoordinatorFactory.h>
+#include <Utilities.h>
 #include <debugConfig.h>
 
 

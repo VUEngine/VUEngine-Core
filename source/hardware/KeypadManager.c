@@ -21,6 +21,8 @@
 
 #include <KeypadManager.h>
 #include <HardwareManager.h>
+#include <VirtualList.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

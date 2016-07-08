@@ -21,6 +21,7 @@
 
 #include <MBgmapSprite.h>
 #include <SpriteManager.h>
+#include <BgmapTextureManager.h>
 #include <Optics.h>
 #include <Screen.h>
 #include <debugConfig.h>

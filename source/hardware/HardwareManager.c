@@ -21,8 +21,14 @@
 
 #include <HardwareManager.h>
 #include <Game.h>
+#include <VIP.h>
+#include <KeypadManager.h>
+#include <SoundManager.h>
+#include <TimerManager.h>
+#include <VPUManager.h>
 #include <ClockManager.h>
 #include <SpriteManager.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

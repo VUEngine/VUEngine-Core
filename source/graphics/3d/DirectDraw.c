@@ -22,6 +22,7 @@
 #include <DirectDraw.h>
 #include <Cuboid.h>
 #include <Polygon.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

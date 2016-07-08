@@ -24,6 +24,9 @@
 #include <Optics.h>
 #include <Polygon.h>
 #include <Math.h>
+#include <HardwareManager.h>
+#include <VirtualList.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

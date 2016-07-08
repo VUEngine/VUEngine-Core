@@ -23,8 +23,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSprite.h>
-#include <MiscStructs.h>
-#include <Texture.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -86,7 +84,7 @@
 	int availableObjects;																				\
 																										\
 	/* spt index */																						\
-	int spt;																								\
+	int spt;																							\
 																										\
 	/* flag to halt defragmentation while sprite removal is taking place */								\
 	bool removingObjectSprite;																			\

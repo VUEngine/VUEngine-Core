@@ -22,7 +22,6 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <HardwareManager.h>
 #include <Clock.h>
 #include <Stage.h>
 #include <GameState.h>

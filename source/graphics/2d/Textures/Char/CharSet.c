@@ -21,7 +21,9 @@
 
 #include <CharSet.h>
 #include <CharSetManager.h>
-#include <MessageDispatcher.h>
+#include <Mem.h>
+#include <VPUManager.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 
 #include <VirtualNode.h>
 #include <VirtualList.h>
+#include <HardwareManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -15,8 +15,16 @@ MEMORY {
    Handlers as system reset
 */
 
-__text_vma = 0x07000000;
-__data_vma = 0x05000000;
+PROVIDE(_key_vector = 0x0500FFC0);
+PROVIDE(_tim_vector = 0x0500FFC4);
+PROVIDE(_cro_vector = 0x0500FFC8);
+PROVIDE(_com_vector = 0x0500FFCC);
+PROVIDE(_vpu_vector = 0x0500FFD0);
+
+__text_vma = ORIGIN(rom);
+__data_vma = ORIGIN(ram);
+__tp = ORIGIN(rom);
+__gp = ORIGIN(ram) + LENGTH(ram) / 2;
 
 SECTIONS
 {
@@ -31,12 +39,6 @@ SECTIONS
     *(.rodata*)
   } >rom = 0xFF
 
-  /* Stop empty section from causing a compiler error */
-  /DISCARD/ :
-  {
-    *(.comment*)
-  }
-  
   v = .;
 
   /* Ram memory */
@@ -48,10 +50,16 @@ SECTIONS
   } >ram = 0xFF
   __data_end = .;
 
+  .sda :
+  {
+    *(.sda*)
+  } >ram = 0xFF
+
   .bss :
   {
     *(.bss*)
   } >ram = 0xFF
+
 
   .after_bss :
   {
@@ -72,7 +80,8 @@ SECTIONS
   v |= v>>8;
   v |= v>>16;
   __vbvectors_end = __text_vma + v;
-  __vbvectors_lma = __vbvectors_end - 0x21F;
+  __vbvectors_lma = 0x0707fde0;
+
 
   /* Place interrupt and reset vector at end of rom */
 

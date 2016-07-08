@@ -21,6 +21,7 @@
 
 #include <CollisionSolver.h>
 #include <Shape.h>
+#include <VirtualList.h>
 #include <debugUtilities.h>
 
 

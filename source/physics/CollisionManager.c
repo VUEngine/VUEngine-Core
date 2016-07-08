@@ -24,6 +24,9 @@
 #include <Cuboid.h>
 #include <InverseCuboid.h>
 #include <MessageDispatcher.h>
+#include <HardwareManager.h>
+#include <VirtualList.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

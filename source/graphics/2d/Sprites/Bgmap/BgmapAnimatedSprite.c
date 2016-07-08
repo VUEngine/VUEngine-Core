@@ -22,8 +22,8 @@
 #include <string.h>
 
 #include <BgmapAnimatedSprite.h>
-#include <Game.h>
 #include <AnimationController.h>
+#include <BgmapTextureManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

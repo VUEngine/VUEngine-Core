@@ -22,6 +22,7 @@
 #include <Sprite.h>
 #include <SpriteManager.h>
 #include <AnimationController.h>
+#include <VPUManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

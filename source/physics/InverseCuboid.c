@@ -23,6 +23,7 @@
 #include <Optics.h>
 #include <Polygon.h>
 #include <Math.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -25,6 +25,7 @@
 #include <Debug.h>
 #include <Game.h>
 #include <Telegram.h>
+#include <KeyPadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

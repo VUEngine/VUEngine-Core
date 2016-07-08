@@ -29,6 +29,8 @@
 #include <Screen.h>
 #include <HardwareManager.h>
 #include <SpriteManager.h>
+#include <BgmapTextureManager.h>
+#include <CharSetManager.h>
 #include <Texture.h>
 #include <ParamTableManager.h>
 #include <VPUManager.h>

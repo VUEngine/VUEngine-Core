@@ -25,7 +25,6 @@
 #include <SoundManager.h>
 #include <HardwareManager.h>
 #include <MessageDispatcher.h>
-#include <HardwareManager.h>
 #include <debugConfig.h>
 
 

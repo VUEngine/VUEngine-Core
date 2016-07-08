@@ -32,6 +32,7 @@
 #include <OptionsSelector.h>
 #include <Texture.h>
 #include <AnimationController.h>
+#include <KeyPadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

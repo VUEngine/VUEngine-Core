@@ -20,6 +20,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapTextureManager.h>
+#include <HardwareManager.h>
+#include <VPUManager.h>
+#include <VirtualList.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -258,7 +261,7 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 {
 	ASSERT(this, "BgmapTextureManager::allocateText: null this");
 
-	int xDisplacement = 0;
+	//int xDisplacement = 0;
 	int yDisplacement = 0;
 
 	u8 length = Texture_getCols(__SAFE_CAST(Texture, bgmapTexture));
@@ -275,7 +278,7 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 	}
 
 	// offset%/64->chars per row inside a bgmap
-	xDisplacement = (this->xOffset[this->freeBgmapSegment][0]) % 64;
+	//xDisplacement = (this->xOffset[this->freeBgmapSegment][0]) % 64;
 
 	// set next offset entry to modify within the free bgmap segment
 	this->xOffset[this->freeBgmapSegment][0] += length;

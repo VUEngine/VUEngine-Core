@@ -27,7 +27,6 @@
 #include <Texture.h>
 #include <UI.h>
 #include <ObjectSpriteContainerManager.h>
-#include <VPUManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

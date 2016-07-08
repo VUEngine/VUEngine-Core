@@ -23,6 +23,7 @@
 #include <Screen.h>
 #include <Game.h>
 #include <Clock.h>
+#include <VIP.h>
 #include <debugConfig.h>
 
 

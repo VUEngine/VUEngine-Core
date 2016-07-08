@@ -25,6 +25,7 @@
 #include <Object.h>
 #include <SpatialObject.h>
 #include <Shape.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

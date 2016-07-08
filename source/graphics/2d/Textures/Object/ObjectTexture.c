@@ -21,6 +21,8 @@
 
 #include <ObjectTexture.h>
 #include <Optics.h>
+#include <VPUManager.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

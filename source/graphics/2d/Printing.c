@@ -21,8 +21,12 @@
 
 #include <string.h>
 #include <Printing.h>
+#include <CharSetManager.h>
+#include <BgmapTextureManager.h>
 #include <HardwareManager.h>
 #include <Utilities.h>
+#include <Mem.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

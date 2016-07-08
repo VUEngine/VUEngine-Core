@@ -34,6 +34,9 @@
 #include <Screen.h>
 #include <Cuboid.h>
 #include <OptionsSelector.h>
+#include <KeyPadManager.h>
+#include <BgmapTextureManager.h>
+#include <Printing.h>
 #include <debugUtilities.h>
 
 

@@ -21,10 +21,13 @@
 
 #include <string.h>
 #include <Error.h>
+#include <VIP.h>
+#include <Globals.h>
 #include <Game.h>
 #include <SpriteManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

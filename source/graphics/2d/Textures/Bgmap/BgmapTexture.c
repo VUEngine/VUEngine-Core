@@ -20,7 +20,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapTexture.h>
+#include <BgmapTextureManager.h>
 #include <SpriteManager.h>
+#include <HardwareManager.h>
+#include <Mem.h>
+#include <VPUManager.h>
 #include <debugUtilities.h>
 
 

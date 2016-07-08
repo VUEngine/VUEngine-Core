@@ -26,6 +26,8 @@
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
 #include <SpriteManager.h>
+#include <VIP.h>
+#include <Mem.h>
 
 #include <debugConfig.h>
 

@@ -8,6 +8,21 @@ TARGET = libvbjae
 TYPE = release
 #TYPE = preprocessor
 
+# compiler
+COMPILER = 4.7
+COMPILER_OUTPUT = c
+COMPILER_NAME = v810
+
+ifeq ($(COMPILER), 4.7)
+COMPILER_NAME = v810-nec-elf32
+endif
+
+GCC = $(COMPILER_NAME)-gcc
+OBJCOPY = $(COMPILER_NAME)-objcopy
+OBJDUMP = $(COMPILER_NAME)-objdump
+
+
+# my home
 VBJAENGINE = $(VBDE)libs/vbjaengine
 
 # Which directories contain source files
@@ -22,14 +37,9 @@ DLIBS =
 # Obligatory headers
 CONFIG_FILE = $(VBJAENGINE)/config.h
 
-ESSENTIALS =  -include $(VBJAENGINE)/source/base/libgccvb/Libgccvb.h				\
-					-include $(VBJAENGINE)/source/base/Constants.h	 				\
-					-include $(VBJAENGINE)/source/hardware/HardwareManager.h		\
-					-include $(VBJAENGINE)/source/base/Error.h 						\
-					-include $(VBJAENGINE)/source/base/MemoryPool.h 				\
-					-include $(VBJAENGINE)/source/base/VirtualList.h	 			\
-					-include $(VBJAENGINE)/source/graphics/2d/Printing.h
+ESSENTIALS =  -include $(VBJAENGINE)/libvbjae.h
 
+					
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding  
@@ -39,13 +49,13 @@ endif
 
 ifeq ($(TYPE), release)
 LDPARAM =  
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS =
 endif
 
 ifeq ($(TYPE), release-tools)
 LDPARAM =  
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS = __TOOLS
 endif
 
@@ -59,18 +69,11 @@ endif
 # Add directories to the include and library paths
 INCPATH := $(shell find $(VBJAENGINE) -type d -print)
 						 
-
 # Which files to add to backups, apart from the source code
 EXTRA_FILES = makefile
 
-# The compiler
-GCC = v810-gcc
-OBJCOPY = v810-objcopy
-OBJDUMP = v810-objdump
-AR = v810-ar
-
 # Where to store object and dependency files.
-STORE = .make-$(TYPE)
+STORE = .make-$(TYPE)-$(COMPILER)-$(COMPILER_OUTPUT)
 
 # Makes a list of the source (.cpp) files.
 SOURCE := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.c))
@@ -95,14 +98,14 @@ $(TARGET).a: dirs $(OBJECTS)
 	@echo Config file: $(CONFIG_FILE)
 	@echo Creating $(TARGET).a
 	@$(AR) rcs $@ $(OBJECTS)
-	@echo Done creating $@ in $(TYPE) mode
+	@echo Done creating $@ in $(TYPE) mode with GCC $(COMPILER)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: %.c
 	@echo Creating object file for $*
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd  $(foreach INC,$(INCPATH),-I$(INC))\
-            $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -c $< -o $@
+            $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd
 

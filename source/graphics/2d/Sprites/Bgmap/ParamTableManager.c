@@ -20,7 +20,9 @@
 // ---------------------------------------------------------------------------------------------------------
 
 #include <ParamTableManager.h>
-#include <HardwareManager.h>
+#include <BgmapTextureManager.h>
+#include <VPUManager.h>
+#include <Printing.h>
 
 // ---------------------------------------------------------------------------------------------------------
 // 											  DECLARATIONS

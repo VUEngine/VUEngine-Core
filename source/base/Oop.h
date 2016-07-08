@@ -29,11 +29,14 @@
 																						\
 	{																					\
 		/* a static flag */																\
-		static bool __callFlag = false;													\
+		static bool __notCalledFlag = true;												\
 																						\
 		/* check if not called */														\
-		if(!__callFlag)																	\
+		if(__notCalledFlag)																\
 		{																				\
+			/* call method */															\
+			__notCalledFlag = false;													\
+																						\
 			/* call method */															\
 			MethodName(__VA_ARGS__);													\
 		}																				\

@@ -24,6 +24,7 @@
 #include <Clock.h>
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 

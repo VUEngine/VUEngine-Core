@@ -24,9 +24,6 @@
 
 #include <stdarg.h>
 #include <Object.h>
-#include <HardwareManager.h>
-#include <MiscStructs.h>
-#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -19,8 +19,10 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <SpriteManager.h>
 #include <Affine.h>
+#include <HardwareManager.h>
+#include <BgmapTextureManager.h>
+#include <SpriteManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -82,12 +84,15 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 
 	float scaleX = FIX7_9TOF(scale->x);
 	float scaleY = FIX7_9TOF(scale->y);
+	float absoluteScaleX = FIX7_9TOF(abs(scale->x));
+	float absoluteScaleY = FIX7_9TOF(abs(scale->y));
 	affineMatrix.pa = COSF(rotation->z) / scaleX;
 	affineMatrix.pb = -SINF(rotation->z) / scaleX;
 	affineMatrix.pc = SINF(rotation->z) / scaleY;
 	affineMatrix.pd = COSF(rotation->z) / scaleY;
-	affineMatrix.dx = (textureSource->mx + width / fabs(scaleX)) - (affineMatrix.pa * width + affineMatrix.pb * height);
-	affineMatrix.dy = (textureSource->my + height / fabs(scaleY)) - (affineMatrix.pc * width + affineMatrix.pd * height);
+	
+	affineMatrix.dx = (textureSource->mx + width / absoluteScaleX) - (affineMatrix.pa * width + affineMatrix.pb * height);
+	affineMatrix.dy = (textureSource->my + height / absoluteScaleY) - (affineMatrix.pc * width + affineMatrix.pd * height);
 	affineMatrix.paralax = 0;
 
 	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);

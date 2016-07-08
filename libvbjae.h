@@ -22,12 +22,11 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <libgccvb.h>
+#include <Libgccvb.h>
+#include <MiscStructs.h>
 #include <Constants.h>
-#include <Game.h>
+#include <Error.h>
 #include <MemoryPool.h>
-#include <Printing.h>
-#include <Prototypes.h>
 
 
 #endif

@@ -25,6 +25,7 @@
 #include <Optics.h>
 #include <Shape.h>
 #include <CollisionManager.h>
+#include <Utilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

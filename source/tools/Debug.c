@@ -43,6 +43,8 @@
 #include <MBgmapSprite.h>
 #include <BgmapAnimationCoordinator.h>
 #include <ObjectAnimationCoordinator.h>
+#include <KeyPadManager.h>
+#include <VIP.h>
 
 #include <Clock.h>
 #include <State.h>

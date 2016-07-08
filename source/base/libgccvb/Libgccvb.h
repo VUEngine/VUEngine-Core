@@ -22,11 +22,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Types.h>
-#include <Affine.h>
-#include <Mem.h>
 #include <Math.h>
 #include <Stdarg.h>
-#include <Utilities.h>
 
 
 #endif

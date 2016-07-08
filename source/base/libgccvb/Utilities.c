@@ -72,15 +72,15 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 #define __CHAR_HOLDER_SIZE		11
 	int i = 0;
 	static char rev[__CHAR_HOLDER_SIZE];
-	int flag = false;
+//	int flag = false;
 //	static char sign='-';
 
-	if((int)num < 0)
+/*	if((int)num < 0)
 	{
 		flag = true;
 //		num*=(-1);
 	}
-
+*/
 	for(; i < __CHAR_HOLDER_SIZE - 1; i++)
 	{
 		rev[__CHAR_HOLDER_SIZE - 2 - i] = numbers[num % base];

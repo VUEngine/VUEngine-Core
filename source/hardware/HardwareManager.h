@@ -23,10 +23,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <VIP.h>
-#include <KeypadManager.h>
-#include <SoundManager.h>
-#include <TimerManager.h>
 #include <VPUManager.h>
 
 

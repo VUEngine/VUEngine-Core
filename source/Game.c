@@ -37,12 +37,15 @@
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
-#include <SoundManager.h>
 #include <MBackgroundManager.h>
 #include <AnimationCoordinatorFactory.h>
 #include <StateMachine.h>
 #include <Screen.h>
 #include <ScreenMovementManager.h>
+#include <VIP.h>
+#include <KeypadManager.h>
+#include <SoundManager.h>
+#include <TimerManager.h>
 #include <VPUManager.h>
 #include <Printing.h>
 #include <I18n.h>

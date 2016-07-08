@@ -22,6 +22,7 @@
 #include <string.h>
 #include <SpatialObject.h>
 #include <Shape.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------

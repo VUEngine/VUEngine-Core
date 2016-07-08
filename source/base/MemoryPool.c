@@ -23,6 +23,7 @@
 #include <Game.h>
 #include <Utilities.h>
 #include <Types.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 
@@ -34,7 +35,7 @@
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
-	
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
