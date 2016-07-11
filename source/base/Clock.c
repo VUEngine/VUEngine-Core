@@ -186,7 +186,7 @@ u32 Clock_getSeconds(Clock this)
 {
 	ASSERT(this, "Clock::getSeconds: null this");
 
-	return (u32)(this->milliSeconds / 1000);
+	return (u32)(this->milliSeconds / __MILLISECONDS_IN_SECOND);
 }
 
 // retrieve clock's minutes
@@ -194,7 +194,7 @@ u32 Clock_getMinutes(Clock this)
 {
 	ASSERT(this, "Clock::getMinutes: null this");
 
-	return (u32)(this->milliSeconds / (1000 * 60));
+	return (u32)(this->milliSeconds / (__MILLISECONDS_IN_SECOND * 60));
 }
 
 // retrieve clock's total elapsed time in seconds
@@ -210,7 +210,7 @@ int Clock_getTimeInCurrentSecond(Clock this)
 {
 	ASSERT(this, "Clock::getTimeInCurrentSecond: null this");
 
-	return 1000 * (this->milliSeconds * 0.001f - F_FLOOR(this->milliSeconds * 0.001f));
+	return __MILLISECONDS_IN_SECOND * (this->milliSeconds * 0.001f - F_FLOOR(this->milliSeconds * 0.001f));
 }
 
 // set clock's total elapsed time from seconds parameters
@@ -218,7 +218,7 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 {
 	ASSERT(this, "Clock::setTimeInSeconds: null this");
 
-	this->milliSeconds = totalSeconds * 1000;
+	this->milliSeconds = totalSeconds * __MILLISECONDS_IN_SECOND;
 }
 
 // start the clock

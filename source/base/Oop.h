@@ -118,9 +118,6 @@
 		/* construct the object */														\
 		ClassName ## _constructor(this, ##__VA_ARGS__);									\
 																						\
-		/* just for safety set it again */												\
-		this->vTable = &ClassName ## _vTable;											\
-																						\
 		/* return the created object */													\
 		return this;																	\
 	}
@@ -221,7 +218,7 @@
 																						\
 		/* try to up cast object */														\
 		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
-#else	
+#else
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
 
@@ -269,13 +266,13 @@
 		/* set the class's virtual methods */											\
 		ClassName ## _SET_VTABLE(ClassName)												\
 																						\
-		/* always set the destructor at the end */										\
+		/* set the destructor */							                			\
 		__VIRTUAL_SET(ClassName, ClassName, destructor);								\
 																						\
-		/* always set the destructor at the end */										\
+		/* set the getBaseClass method */					                			\
 		__VIRTUAL_SET(ClassName, ClassName, getBaseClass);								\
 																						\
-		/* always set the class name methos at the end */								\
+		/* set the getClassName method */					                			\
 		__VIRTUAL_SET(ClassName, ClassName, getClassName);								\
 																						\
 		/* set base class methods */													\
@@ -479,14 +476,6 @@
 		return _instance ## ClassName;													\
 	}
 
-// gcc has a bug, it doesn't move back the sp register after returning from a variadic call
-#define __CALL_VARIADIC(VariadicFunctionCall)											\
-																						\
-	/* variadic function call */														\
-	VariadicFunctionCall;																\
-																						\
-	/* sp fix displacement */															\
-	asm("addi	20, sp, sp")
 
 // MemoryPool's defines
 #define __BLOCK_DEFINITION(BlockSize, Elements)											\

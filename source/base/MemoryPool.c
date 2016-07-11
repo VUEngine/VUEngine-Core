@@ -35,6 +35,47 @@
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
+// defines a singleton (unique instance of a class)
+#define __MEMORY_POOL_SINGLETON(ClassName)												            \
+																						            \
+	/* declare the static instance */													            \
+	static ClassName ## _str _instance ## ClassName __attribute__((section(".bss")));			\
+																		            				\
+	/* a flag to know when to allow constructs */													\
+	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;									\
+																									\
+	/* define get instance method */																\
+	ClassName ClassName ## _getInstance()															\
+	{																								\
+		/* set the vtable */																		\
+		__SET_CLASS(ClassName);																		\
+																									\
+		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)									\
+		{																							\
+			NM_ASSERT(false, ClassName get instance during construction);							\
+		}																							\
+		/* first check if not constructed yet */													\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)									\
+		{																							\
+			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;									\
+																									\
+			/* set the vtable pointer */															\
+			_instance ## ClassName.vTable = &ClassName ## _vTable;									\
+																									\
+			/* call constructor */																	\
+			ClassName ## _constructor(&_instance ## ClassName);										\
+																									\
+			/* set the vtable pointer */															\
+			_instance ## ClassName.vTable = &ClassName ## _vTable;									\
+																									\
+			/* don't allow more constructs */														\
+			_singletonConstructed = __SINGLETON_CONSTRUCTED;										\
+		}																							\
+																									\
+		/* return the created singleton */															\
+		return &_instance ## ClassName;																\
+	}
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -78,7 +119,7 @@ static void MemoryPool_reset(MemoryPool this);
 //---------------------------------------------------------------------------------------------------------
 
 // a singleton
-__SINGLETON(MemoryPool);
+__MEMORY_POOL_SINGLETON(MemoryPool);
 
 // class constructor
 static void MemoryPool_constructor(MemoryPool this)
@@ -335,7 +376,10 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	int pool;
 	int displacement = 0;
 
-	Printing_text(Printing_getInstance(), "MEM", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "MEM:", x, y, NULL);
+	int poolSize = MemoryPool_getPoolSize(MemoryPool_getInstance());
+	Printing_text(Printing_getInstance(), "KB: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), poolSize, x + 8 - Utilities_intLength(poolSize), y++, NULL);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -352,7 +396,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
 
-		Printing_text(Printing_getInstance(), "           ", x, originalY + 1 + pool, NULL);
+		Printing_text(Printing_getInstance(), "           ", x, originalY + 2 + pool, NULL);
 
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
@@ -365,9 +409,10 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	}
 
 	y = originalY;
-	int poolSize = MemoryPool_getPoolSize(MemoryPool_getInstance());
 	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
 	Printing_int(Printing_getInstance(), usedBytesPercentage, x + 7 - Utilities_intLength(usedBytesPercentage), y, NULL);
 	Printing_text(Printing_getInstance(), "% ", x + 7, y++, NULL);
+
+
 }
 

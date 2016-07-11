@@ -27,10 +27,10 @@ VBJAENGINE = $(VBDE)libs/vbjaengine
 
 # Which directories contain source files
 DIRS := $(shell find $(VBJAENGINE)/assets $(VBJAENGINE)/source -type d -print)
-		
+
 # Which libraries are linked
 LIBS =
-ROMHEADER = lib/vb.hdr 
+ROMHEADER = lib/vb.hdr
 # Dynamic libraries
 DLIBS =
 
@@ -39,28 +39,28 @@ CONFIG_FILE = $(VBJAENGINE)/config.h
 
 ESSENTIALS =  -include $(VBJAENGINE)/libvbjae.h
 
-					
+
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE), debug)
-LDPARAM = -fno-builtin -ffreestanding  
-CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -include $(CONFIG_FILE) $(ESSENTIALS) 
+LDPARAM = -fno-builtin -ffreestanding
+CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS = __DEBUG __TOOLS
 endif
 
 ifeq ($(TYPE), release)
-LDPARAM =  
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+LDPARAM =
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS =
 endif
 
 ifeq ($(TYPE), release-tools)
-LDPARAM =  
+LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS = __TOOLS
 endif
 
 ifeq ($(TYPE), preprocessor)
-LDPARAM =  
+LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
 MACROS = __TOOLS
 endif
@@ -68,7 +68,7 @@ endif
 
 # Add directories to the include and library paths
 INCPATH := $(shell find $(VBJAENGINE) -type d -print)
-						 
+
 # Which files to add to backups, apart from the source code
 EXTRA_FILES = makefile
 

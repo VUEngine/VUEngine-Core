@@ -25,6 +25,7 @@
 #include <SoundManager.h>
 #include <HardwareManager.h>
 #include <MessageDispatcher.h>
+#include <Printing.h>
 #include <debugConfig.h>
 
 
@@ -74,7 +75,7 @@ static void ClockManager_constructor(ClockManager this)
 	__CONSTRUCT_BASE();
 
 	// create the clock list
-	this->clocks = NULL;
+    this->clocks = __NEW(VirtualList);
 
 	this->ticks = 0;
 }
@@ -104,11 +105,6 @@ void ClockManager_register(ClockManager this, Clock clock)
 {
 	ASSERT(this, "ClockManager::register: null this");
 
-	if(!this->clocks)
-	{
-		this->clocks = __NEW(VirtualList);
-	}
-
 	VirtualList_pushFront(this->clocks, clock);
 }
 
@@ -130,65 +126,64 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
 
-	u32 previousHundredthSecond = (u32)(this->ticks / 10);
-	u32 previousSecond = (u32)(this->ticks / __MILLISECONDS_IN_SECOND);
+	static u32 previousHundredthSecond = 0;
+	static u32 previousSecond = 0;
 
-	if(this->clocks)
-	{
-		VirtualNode node = this->clocks->head;
+    VirtualNode node = this->clocks->head;
 
-		// update all registered clocks
-		for(; node ; node = node->next)
-		{
-			Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed);
-		}
-	}
+    // update all registered clocks
+    for(; node ; node = node->next)
+    {
+        Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed);
+    }
 
 	// update tick count
 	this->ticks += ticksElapsed;
+	u32 currentSecond = (u32)((this->ticks) / __MILLISECONDS_IN_SECOND);
 
 	//if second has changed, set frame rate
-    if(previousSecond < (u32)(this->ticks / __MILLISECONDS_IN_SECOND))
+    if(previousSecond < currentSecond)
     {
-    		FrameRate frameRate = FrameRate_getInstance();
+        previousSecond = currentSecond;
+    	FrameRate frameRate = FrameRate_getInstance();
 
 #ifdef __DEBUG
-    		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT >> 3) - 1, NULL);
+    	Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT >> 3) - 1, NULL);
 #endif
 
 #ifdef __PRINT_FRAMERATE
-	    	if(!Game_isInSpecialMode(Game_getInstance()))
-	    	{
-	    		FrameRate_print(frameRate, 0, 0);
-	    	}
+        if(!Game_isInSpecialMode(Game_getInstance()))
+        {
+            FrameRate_print(frameRate, 0, 0);
+        }
 #endif
 
 #ifdef __PRINT_MEMORY_POOL_STATUS
-	    	if(!Game_isInSpecialMode(Game_getInstance()))
-	    	{
-	    		MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
-	    	}
+        if(!Game_isInSpecialMode(Game_getInstance()))
+        {
+            MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
+//		        MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 15, 0);
+        }
 #endif
 
 #ifdef __ALERT_STACK_OVERFLOW
-	    	if(!Game_isInSpecialMode(Game_getInstance()))
-	    	{
-	    		HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
-	    	}
+        if(!Game_isInSpecialMode(Game_getInstance()))
+        {
+            HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
+        }
 #endif
-	    	//reset frame rate counters
-			FrameRate_reset(frameRate);
-
-			// no need to track this, so prevent a very unlikely overflow
-	    	this->ticks = 0;
+        //reset frame rate counters
+        FrameRate_reset(frameRate);
 
 #ifdef __PROFILING
-            Game_showProfiling(Game_getInstance());
+        Game_showProfiling(Game_getInstance());
 #endif
     }
 
-    if(previousHundredthSecond != (u32)(this->ticks / 10))
+	u32 currentHundredthSecond = (u32)(this->ticks / 10);
+    if(previousHundredthSecond < currentHundredthSecond)
     {
+        previousHundredthSecond = currentHundredthSecond;
 	    // update sounds
     	SoundManager_playSounds(SoundManager_getInstance());
     }

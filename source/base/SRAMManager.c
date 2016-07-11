@@ -28,12 +28,13 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __SAVE_RAM_ADDRESS				0x06000000
+//#define __SAVE_RAM_ADDRESS				0x06800000
 #define	__SRAM_ACCESS_DELAY				200
 #define	__SRAM_DUMMY_READ_CYCLES		8
 #define	__SRAM_DUMMY_READ_LENGHT		100
 
-const struct UserData* _userData = (void*)__SAVE_RAM_ADDRESS;
+extern u32 _sram_bss_end;
+const struct UserData* _userData = (void*)&_sram_bss_end;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ static void SRAMManager_constructor(SRAMManager this)
 	ASSERT(this, "SRAMManager::constructor: null this");
 
 	__CONSTRUCT_BASE();
-	
+
 	SRAMManager_initialize(this);
 }
 
@@ -85,9 +86,7 @@ void SRAMManager_destructor(SRAMManager this)
 void static SRAMManager_initialize(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::initialize: null this");
-	
-	//Clock_delay(Game_getClock(Game_getInstance()), __SRAM_ACCESS_DELAY);
-	
+
 	int i = __SRAM_DUMMY_READ_CYCLES;
 	for(; i--;)
 	{
@@ -101,15 +100,14 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAdd
 	ASSERT(this, "SRAMManager::save: null this");
 
 	int i = 0;
-	
+
 	u16* destination = (u16*)((int)_userData + (((int)memberAddress - (int)_userData) << 1));
 	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
-	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
+//	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
 
 	for(; i < dataSize; i++)
 	{
 		destination[i] = source[i];
-		
 	}
 }
 
@@ -121,7 +119,7 @@ void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, i
 
 	u16* source = (u16*)((int)_userData + (((int)memberAddress - (int)_userData) << 1));
 	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
-	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
+//	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
 
 	for(; i < dataSize; i++)
 	{

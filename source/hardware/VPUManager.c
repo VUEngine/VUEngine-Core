@@ -164,7 +164,7 @@ void VPUManager_interruptHandler(void)
 	// disable interrupts
 	VIP_REGS[INTENB]= 0;
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-	
+
 #ifdef __ALERT_STACK_OVERFLOW
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
@@ -227,7 +227,7 @@ void VPUManager_interruptHandler(void)
 	}
 #endif
 #endif
-	
+
 	// enable interrupt
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 	VIP_REGS[INTENB]= XPEND;

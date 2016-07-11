@@ -65,7 +65,7 @@ static void TimerManager_constructor(TimerManager this)
 	__CONSTRUCT_BASE();
 
 	this->tcrValue = 0;
-	
+
 	_timerManager = this;
 	_clockManager = ClockManager_getInstance();
 }

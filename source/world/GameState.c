@@ -365,7 +365,6 @@ bool GameState_canStream(GameState this)
 Stage GameState_getStage(GameState this)
 {
 	ASSERT(this, "GameState::getStage: null this");
-	ASSERT(this->stage, "GameState::getStage: null stage");
 
 	return this->stage;
 }

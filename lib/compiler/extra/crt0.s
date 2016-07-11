@@ -39,6 +39,19 @@ loop_start1:
 	cmp	r4,r5
 	blt	loop_top1
 
+/* clear .sram_bss section and unintialized SRAM */
+	movhi	hi(__sram_bss_end),r0,r4
+	movea	lo(__sram_bss_end),r4,r4
+	movhi	hi(__sram_bss_start),r0,r5
+	movea	lo(__sram_bss_start),r5,r5
+	jr	loop_start2
+loop_top2:
+	st.b	r0,0[r5]
+	add	2,r5
+loop_start2:
+	cmp	r4,r5
+	blt	loop_top2
+
 
 /* cache */
 	ldsr	r0,sr5
@@ -114,13 +127,13 @@ loop_start3:
 	st.b	r0,0x0020[r4]
 
 	/* Keypad Control Register */
-	movea	0x0080,r0,r5	
+	movea	0x0080,r0,r5
 	st.b	r5,0x0028[r4]
 
 
 /* Audio regs */
 	movhi	0x0100,r0,r4
-	
+
 	/* Main sound control register */
 	mov	1,r5
 	st.b	r5,0x0580[r4]
@@ -163,7 +176,7 @@ loop_start6:
 	/* XPCTRL */
 	movea	0x0001,r0,r5
 	st.h	r5,0x0042[r4]
-	
+
 	/* DPCTRL */
 	movea	0x0101,r0,r5
 	st.h	r5,0x0022[r4]
@@ -201,7 +214,7 @@ loop_start6:
 	movea	0x0040,r0,r5
 	st.h	r5,0[r4]
 
-	
+
 /* setup stack */
 	movhi	0x0501,r0,sp
 	movea	0xFFC0,sp,sp
@@ -240,7 +253,7 @@ jmp_r1:
 	.global	__inthnd
 
 __inthnd:
-	addi	-0x0074,sp,sp					 
+	addi	-0x0074,sp,sp
 	st.w	lp,0x0000[sp]
 	st.w	r30,0x0004[sp]
 	st.w	r29,0x0008[sp]
@@ -270,14 +283,14 @@ __inthnd:
 	st.w	r5,0x0068[sp]
 	st.w	r4,0x006C[sp]
 	st.w	r2,0x0070[sp]
-	movhi	hi(_key_vector),r0,r1	 
+	movhi	hi(_key_vector),r0,r1
 	movea	lo(_key_vector),r1,r1
-	stsr	sr5,r6			
+	stsr	sr5,r6
 	shr	0x0E,r6
 	andi	0x003C,r6,r6
-	add	r6,r1			
+	add	r6,r1
 	ld.w	-4[r1],r1
-	cmp	r0,r1			
+	cmp	r0,r1
 	be	__inthnd_end
 	jal	jmp_r1
 __inthnd_end:

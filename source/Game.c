@@ -861,6 +861,7 @@ static void Game_update(Game this)
             showProfiling = false;
         }
 #endif
+
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
