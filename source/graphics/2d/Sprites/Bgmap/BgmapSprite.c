@@ -31,7 +31,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
+// 											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __WORLD_SIZE_DISPLACEMENT			1
@@ -82,7 +82,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bgmapSpriteDefinition->textureDefinition));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
-	
+
 	if(this->texture)
 	{
 		Object_addEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (void (*)(Object, Object))Sprite_onTextureRewritten, __EVENT_TEXTURE_REWRITTEN);
@@ -98,7 +98,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->drawSpec.textureSource.my = 0;
 		this->drawSpec.textureSource.mp = 0;
 	}
-	
+
 	// clear position
 	this->drawSpec.position.x = 0;
 	this->drawSpec.position.y = 0;
@@ -144,7 +144,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 
 			break;
 	}
-	
+
 	// register with sprite manager
 	SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 }
@@ -176,7 +176,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, this->texture));
 		this->texture = NULL;
 	}
-	
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -207,7 +207,7 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 			this->drawSpec.scale.y = FIX7_9_MULT(abs(this->drawSpec.scale.y), ITOFIX7_9(direction));
 			break;
 	}
-	
+
 	this->paramTableRow = 0;
 
 	// scale the texture in the next render cycle
@@ -220,17 +220,17 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	ASSERT(this, "BgmapSprite::resize: null this");
 
 	z -= _screenPosition->z;
-	
+
 	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z >> _optical->maximumViewDistancePower));
 
 	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE): ratio;
-	
+
 	this->drawSpec.scale.x = FIX7_9_MULT(scale.x, ratio * (this->drawSpec.scale.x < 0 ? -1 : 1));
 	this->drawSpec.scale.y = FIX7_9_MULT(scale.y, ratio * (this->drawSpec.scale.y < 0 ? -1 : 1));
 
 	ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
 	ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
-	
+
 	if(this->texture)
 	{
 		if(WRLD_AFFINE == Sprite_getMode(__SAFE_CAST(Sprite, this)))
@@ -288,9 +288,9 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 {
 	ASSERT(this, "BgmapSprite::rotate: null this");
 
-	this->drawSpec.rotation.x = rotation->x % __TOTAL_SIN_ENTRIES; 
-	this->drawSpec.rotation.y = rotation->y % __TOTAL_SIN_ENTRIES; 
-	this->drawSpec.rotation.z = rotation->z % __TOTAL_SIN_ENTRIES; 
+	this->drawSpec.rotation.x = rotation->x % __TOTAL_SIN_ENTRIES;
+	this->drawSpec.rotation.y = rotation->y % __TOTAL_SIN_ENTRIES;
+	this->drawSpec.rotation.z = rotation->z % __TOTAL_SIN_ENTRIES;
 }
 
 // calculate the parallax
@@ -325,7 +325,7 @@ void BgmapSprite_render(BgmapSprite this)
 			this->renderFlag = 0;
 			return;
 		}
-		
+
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
@@ -336,7 +336,7 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->mx = this->drawSpec.textureSource.mx;
 			worldPointer->mp = this->drawSpec.textureSource.mp;
 			worldPointer->my = this->drawSpec.textureSource.my;
-		
+
 			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
 			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
 			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
@@ -359,7 +359,7 @@ void BgmapSprite_render(BgmapSprite this)
 				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
 				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
 			}
-			
+
 			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
 			return;
@@ -373,7 +373,7 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->my = this->drawSpec.textureSource.my;
 
 		}
-		
+
 		// set the world screen position
 		if(this->renderFlag & __UPDATE_G)
 		{
@@ -391,7 +391,7 @@ void BgmapSprite_render(BgmapSprite this)
 				if(0 < this->paramTableRow)
 				{
 					BgmapSprite_doApplyAffineTransformations(this);
-					
+
 					if(0 < this->paramTableRow)
 					{
 						this->renderFlag = __UPDATE_SIZE;
@@ -424,7 +424,7 @@ void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
 	this->drawSpec.position.y += displacement->y;
 	this->drawSpec.position.z += displacement->z;
 	this->drawSpec.position.parallax += displacement->parallax;
-	
+
 	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this), __UPDATE_G);
 }
 
@@ -454,7 +454,7 @@ void BgmapSprite_invalidateParamTable(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::invalidateParamTable: null this");
 
 	this->renderFlag |= __UPDATE_SIZE;
-	
+
 	BgmapSprite_applyAffineTransformations(this);
 }
 
@@ -496,10 +496,10 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 		int halfHeight = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
 
 		this->paramTableRow = Affine_applyAll(
-				this->param, 
-				this->paramTableRow, 
-				&this->drawSpec.scale, 
-				&this->drawSpec.rotation, 
+				this->param,
+				this->paramTableRow,
+				&this->drawSpec.scale,
+				&this->drawSpec.rotation,
 				&this->drawSpec.textureSource,
 				halfWidth,
 				halfHeight
@@ -520,7 +520,7 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
 	if(this->param)
 	{
 		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
-		
+
 		BgmapSprite_doApplyAffineTransformations(this);
 	}
 }
@@ -533,7 +533,7 @@ void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
 	if(this->param)
 	{
 		this->paramTableRow = 0;
-		
+
 		BgmapSprite_doApplyHbiasTransformations(this);
 	}
 }

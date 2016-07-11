@@ -41,7 +41,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
+// 											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_OBJECT_SHOW_ROW 				6
@@ -156,11 +156,11 @@ static void StageEditor_constructor(StageEditor this)
 	this->currentEntityNode = NULL;
 
 	this->gameState = NULL;
-	
+
 	this->userObjectSprite = NULL;
 
 	this->mode = kFirstMode + 1;
-	
+
 	this->shape = NULL;
 
 	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, "\x0B", kString);
@@ -456,7 +456,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 	StageEditor_releaseShape(this);
 
 	VirtualList stageEntities = Container_getChildren(__SAFE_CAST(Container, GameState_getStage(this->gameState)));
-	
+
 	if(!this->currentEntityNode)
 	{
 		this->currentEntityNode = stageEntities ? stageEntities->head : NULL;
@@ -584,7 +584,7 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
 	else if(pressedKey & K_RD)
 	{
 		_optical->maximumViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
-		
+
 		if(0 >= _optical->maximumViewDistancePower)
 		{
 			_optical->maximumViewDistancePower = 1;
@@ -723,7 +723,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		// must hack this global, otherwise will need another variable which most likely will only
 		// take up the previous RAM, or another branching computation in the Entity's render method.
 		Screen_forceDisplacement(Screen_getInstance(), true);
-		
+
 		GameState_transform(this->gameState);
 		GameState_updateVisuals(this->gameState);
 
@@ -752,19 +752,19 @@ static void StageEditor_removePreviousSprite(StageEditor this)
 static void StageEditor_showSelectedUserObject(StageEditor this)
 {
 	StageEditor_removePreviousSprite(this);
-	
+
 	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spritesDefinitions[0];
-	
+
 	if(spriteDefinition)
 	{
 		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
 		ASSERT(this->userObjectSprite, "AnimationEditor::createSprite: null animatedSprite");
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationEditor::createSprite: null texture");
-	
+
 		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
 		spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 		spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
-			
+
 		__VIRTUAL_CALL(void, Sprite, setPosition, __SAFE_CAST(Sprite, this->userObjectSprite), &spritePosition);
 		__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->userObjectSprite));
 		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, this->userObjectSprite));
@@ -807,7 +807,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		// select the added entity
 		this->mode = kTranslateEntities;
 		StageEditor_setupMode(this);
-		
+
 		StageEditor_removePreviousSprite(this);
 	}
 }

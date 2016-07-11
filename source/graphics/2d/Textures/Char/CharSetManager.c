@@ -28,7 +28,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
+// 											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __CHAR_SEGMENT_SIZE		(512 / 32)
@@ -82,7 +82,7 @@ static void CharSetManager_constructor(CharSetManager this)
 		this->freedOffset[segment] = 1;
 		this->charSets[segment] = NULL;
 	}
-	
+
 	CharSetManager_reset(this);
 }
 
@@ -97,14 +97,14 @@ void CharSetManager_destructor(CharSetManager this)
 		if(this->charSets[i])
 		{
 			VirtualNode node = this->charSets[i]->head;
-			
+
 			for(; node; node = node->next)
 			{
 				__DELETE(node->data);
 			}
-			
+
 			__DELETE(this->charSets[i]);
-			
+
 			this->charSets[i] = NULL;
 		}
 	}
@@ -124,15 +124,15 @@ void CharSetManager_reset(CharSetManager this)
 		if(this->charSets[segment])
 		{
 			VirtualNode node = this->charSets[segment]->head;
-			
+
 			for(; node; node = node->next)
 			{
 				__DELETE(node->data);
 			}
-			
+
 			__DELETE(this->charSets[segment]);
 		}
-		
+
 		this->charSets[segment] = __NEW(VirtualList);
 		this->freedOffset[segment] = 1;
 	}
@@ -148,18 +148,18 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 	for(; i < __CHAR_SEGMENTS; i++)
 	{
 		VirtualNode node = this->charSets[i]->head;
-		
+
 		for(; node; node = node->next)
 		{
 			CharSet charSet = __SAFE_CAST(CharSet, node->data);
-			
+
 			if(CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
 			{
 				return charSet;
 			}
 		}
 	}
-		
+
 	return NULL;
 }
 
@@ -203,7 +203,7 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 			ASSERT(false, "CharSet::write: with no allocation type");
 			break;
 	}
-	
+
 	return charSet;
 }
 
@@ -216,14 +216,14 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 	{
 		u8 segment = CharSet_getSegment(charSet);
 		u16 offset = CharSet_getOffset(charSet);
-		
+
 		if(!this->freedOffset[segment] || offset < this->freedOffset[segment])
 		{
 			this->freedOffset[segment] = offset;
 		}
 
 		VirtualList_removeElement(this->charSets[segment], charSet);
-	
+
 		__DELETE(charSet);
 	}
 }
@@ -248,13 +248,13 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 			CharSet lastCharSet = __SAFE_CAST(CharSet, VirtualList_back(this->charSets[segment]));
 			offset += CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 		}
-		
+
 		if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_SEGMENT_TOTAL_CHARS)
 		{
 			CharSet charSet = __NEW(CharSet, charSetDefinition, segment, offset);
 
 			CharSet_write(charSet);
-			
+
 			VirtualList_pushBack(this->charSets[segment], charSet);
 
 			return charSet;
@@ -263,7 +263,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 
 	// if there isn't enough memory trown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: char mem depleted");
-	
+
 	return NULL;
 }
 
@@ -278,7 +278,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 		if(this->freedOffset[segment])
 		{
 			VirtualNode node = this->charSets[segment]->head;
-			
+
 			for(; node; node = node->next)
 			{
 				CharSet charSet = __SAFE_CAST(CharSet, node->data);
@@ -297,10 +297,10 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 					//write to char memory
 					CharSet_rewrite(charSet);
 					this->freedOffset[segment] += CharSet_getNumberOfChars(charSet) + __CHAR_ROOM;
-					return;	
+					return;
 				}
 			}
-			
+
 			this->freedOffset[segment] = 1;
 		}
 	}
@@ -316,7 +316,7 @@ int CharSetManager_getTotalUsedChars(CharSetManager this, int segment)
 		CharSet lastCharSet = VirtualList_back(this->charSets[segment]);
 		return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 	}
-	
+
 	return 0;
 }
 
@@ -354,7 +354,7 @@ void CharSetManager_print(CharSetManager this, int x, int y)
 		totalUsedChars += CharSetManager_getTotalUsedChars(this, segment);
 		totalFreeChars += CharSetManager_getTotalFreeChars(this, segment);
 	}
-	
+
 	Printing_text(Printing_getInstance(), "Total CharSets: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), totalCharSets, x + 18, y, NULL);
 	Printing_text(Printing_getInstance(), "Total used chars: ", x, ++y, NULL);

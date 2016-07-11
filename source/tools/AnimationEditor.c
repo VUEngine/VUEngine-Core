@@ -36,7 +36,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
+// 											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_ACTOR_SHOW_ROW 	6
@@ -365,7 +365,7 @@ bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 
 						AnimationEditor_selectSprite(this, pressedKey);
 						break;
-						
+
 					case kSelectAnimation:
 
 						AnimationEditor_selectAnimation(this, pressedKey);
@@ -602,7 +602,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
 
 					Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite));
 					NM_ASSERT(texture, "AnimationEditor::selectAnimation: null texture");
-					
+
 					TextureDefinition* textureDefinition = Texture_getTextureDefinition(texture);
 					NM_ASSERT(textureDefinition, "AnimationEditor::selectAnimation: null textureDefinition");
 
@@ -711,7 +711,7 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	position.z -= 10;
 
 	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[OptionsSelector_getSelectedOption(this->spriteSelector)];
-	
+
 	NM_ASSERT(spriteDefinition, "AnimationEditor::createSprite: null spriteDefinition");
 
 	this->animatedSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
@@ -721,13 +721,13 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, this->animatedSprite));
 	spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 	spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
-		
+
 	__VIRTUAL_CALL(void, Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
 	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->animatedSprite));
 	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->animatedSprite)));
 	__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, this->animatedSprite));
 
-	// must set the position after showing the sprite, otherwise 
+	// must set the position after showing the sprite, otherwise
 	// it will remain non initialized
 	__VIRTUAL_CALL(void, Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
 }

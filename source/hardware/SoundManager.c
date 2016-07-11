@@ -25,7 +25,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
+// 											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 // some wave forms data
@@ -425,7 +425,7 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 					continue;
 				}
 			}
-			
+
 			//if note has changed
 			if(!this->noteWait[fxS + 1])
 			{
