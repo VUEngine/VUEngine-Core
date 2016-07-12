@@ -26,6 +26,7 @@
 #include <ObjectSpriteContainerManager.h>
 #include <VPUManager.h>
 #include <Screen.h>
+#include <Printing.h>
 #include <debugUtilities.h>
 
 
