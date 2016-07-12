@@ -28,6 +28,7 @@ __data_vma = ORIGIN(ram);
 __data_sram_vma = ORIGIN(sram_wram);
 __tp = ORIGIN(rom);
 __gp = ORIGIN(ram) + LENGTH(ram) / 2;
+__gps = ORIGIN(sram) + LENGTH(sram) / 2;
 
 SECTIONS
 {

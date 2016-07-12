@@ -9,86 +9,104 @@
 
 _start:
 
+/* wait for WRAM */
+	movea	0x2000, r0, r6
+dummy_loop:
+	add		-1, r6
+	bnz		dummy_loop
+
+/* dummy SRAM reads */
+    movea	0x00C0, r0, r6
+	movhi   hi(__sram_bss_start),   r0, r5
+	movea   lo(__sram_bss_start),   r5, r5
+sram_dummy_loop:
+	ld.b    0[r5],  r4
+	add	    2,  r5
+	add		-1, r6
+	bnz		sram_dummy_loop
 
 /* setup stack, gp, and tp */
-	movhi	hi(__gps),r0,r5
-/* setup stack, gp, and tp */
-	movhi	hi(__gps),r0,r5
+	movhi   hi(__stack),    r0, sp
+	mov     sp,             gp
+/* __inthnd lives at __tp, but use __inthnd here to keep gcc from optimizing it out */
+	movhi	hi(__inthnd),   r0, tp
+
+/* setup stack, gp, and tp
+	movhi	hi(__gps),  r0, r5
+*/
 
 /* initiallize .data section */
-	movhi	hi(__data_lma),r0,r4
-	movea	lo(__data_lma),r4,r4
-	movhi	hi(__data_end),r0,r5
-	movea	lo(__data_end),r5,r5
-	movhi	hi(__data_vma),r0,r6
-	movea	lo(__data_vma),r6,r6
+	movhi	hi(__data_lma), r0, r4
+	movea	lo(__data_lma), r4, r4
+	movhi	hi(__data_end), r0, r5
+	movea	lo(__data_end), r5, r5
+	movhi	hi(__data_vma), r0, r6
+	movea   lo(__data_vma), r6, r6
 
 	jr	end_initdata
 initdata:
-	ld.b	0[r4],r7
-	st.b	r7,0[r6]
-	add	1,r4
-	add	1,r6
+	ld.b    0[r4],  r7
+	st.b    r7,     0[r6]
+	add     1,      r4
+	add     1,      r6
 end_initdata:
-	cmp	r5,r6
-	blt	initdata
-
-
+	cmp     r5, r6
+	blt     initdata
 
 /* clear .bss section and unintialized RAM */
-	movhi	0x0501,r0,r4
-	jr	loop_start1
+	movhi   0x0500, r0, r4
+	jr      loop_start1
 loop_top1:
-	st.h	r0,0[r5]
-	add	2,r5
+	st.h    r0, 0[r5]
+	add     2,  r5
 loop_start1:
-	cmp	r4,r5
-	blt	loop_top1
+	cmp     r4, r5
+	blt     loop_top1
 
 /* clear .sram_bss section and unintialized SRAM */
-	movhi	hi(__sram_bss_end),r0,r4
-	movea	lo(__sram_bss_end),r4,r4
-	movhi	hi(__sram_bss_start),r0,r5
-	movea	lo(__sram_bss_start),r5,r5
-	jr	loop_start2
+	movhi   hi(__sram_bss_start),   r0, r5
+	movea   lo(__sram_bss_start),   r5, r5
+	movhi   hi(__sram_bss_end),     r0, r4
+	movea   lo(__sram_bss_end),     r4, r4
+	jr      loop_start2
 loop_top2:
-	st.b	r0,0[r5]
-	add	2,r5
+	st.b    r0, 0[r5]
+	add	    1,  r5
 loop_start2:
-	cmp	r4,r5
-	blt	loop_top2
+	cmp     r4, r5
+	blt     loop_top2
 
 
 /* cache */
-	ldsr	r0,sr5
-	mov	2,r4
-	ldsr	r4,sr14
+	ldsr    r0, sr5
+	mov     2,  r4
+	ldsr    r4, sr14
 
 /* VIP */
-	movhi	0x0006,r0,r4
-	movea	0xF800,r4,r4
+	movhi	0x0006, r0, r4
+	movea	0xF800, r4, r4
 
 	/* DPCTRL */
-	ld.h	0x0020[r4],r5
-	ori	0x0101,r5,r5
-	st.h	r5,0x0022[r4]
+	ld.h    0x0020[r4], r5
+	ori     0x0101,     r5, r5
+	st.h    r5,         0x0022[r4]
 
 	/* INTENB */
-	st.h	r0,0x0002[r4]
+	st.h    r0, 0x0002[r4]
 
 	/* INTCLR */
-	movea	0xE01F,r0,r5
-	st.h	r5,0x0004[r4]
+	movea   0xE01F, r0, r5
+	st.h    r5,     0x0004[r4]
 
 	/* XPCTRL */
-	movea	0x0001,r0,r5
-	st.h	r5,0x0042[r4]
+	movea   0x0001, r0, r5
+	st.h    r5,     0x0042[r4]
 
 	/* FRMCYC */
-	st.h	r5,0x002E[r4]
+	st.h	r5, 0x002E[r4]
 
 	/* REST */
-	st.h	r0,0x002A[r4]
+	st.h	r0, 0x002A[r4]
 
 	/* Column Table */
 	/*jal	_setcoltable*/
@@ -96,26 +114,25 @@ loop_start2:
 
 /* wait until !(DTSTTS & 0x40) */
 loop_top4:
-	ld.h	0x0020[r4],r5
-	andi	0x40,r5,r5
-	be	loop_top4
+	ld.h    0x0020[r4], r5
+	andi    0x40,       r5, r5
+	be      loop_top4
 
 
 /* clear VRAM\CHR */
-	movhi	2,r0,r4
-	movea	0xFFFF,r4,r4
-	mov	r0,r5
+	movhi   2,      r0, r4
+	movea	0xFFFF, r4, r4
+	mov     r0,     r5
 	jr	loop_start3
 loop_top3:
-	st.h	r0,0[r5]
-	add	2,r5
+	st.h    r0, 0   [r5]
+	add	    2,  r5
 loop_start3:
-	cmp	r4,r5
-	blt	loop_top3
-
+	cmp	    r4, r5
+	blt     loop_top3
 
 /* HW regs */
-	movhi	0x200,r0,r4
+	movhi   0x200,  r0, r4
 
 	/* Link Port Transmit data */
 	movea	0xFF80,r0,r5
