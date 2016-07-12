@@ -23,6 +23,7 @@
 #include <HardwareManager.h>
 #include <VPUManager.h>
 #include <VirtualList.h>
+#include <Printing.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -134,7 +135,7 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
 		{
 			__DELETE(this->bgmapTextures[i]);
 		}
-		
+
 		this->bgmapTextures[i] = NULL;
 	}
 
@@ -153,7 +154,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 
 	u8 cols = Texture_getTotalCols(__SAFE_CAST(Texture, bgmapTexture));
 	u8 rows = Texture_getTotalRows(__SAFE_CAST(Texture, bgmapTexture));
-	
+
 	cols += cols < 64? 1: 0;
 	rows += rows < 64? 1: 0;
 
@@ -291,28 +292,28 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
 	ASSERT(this, "BgmapTextureManager::free: null this");
-	
+
 	// if no one is using the texture anymore
 	if(bgmapTexture && BgmapTexture_decreaseUsageCount(bgmapTexture))
 	{
 		int i = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
 		CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, bgmapTexture));
-		
+
 		if(charSet)
 		{
 			switch(CharSet_getAllocationType(charSet))
 			{
 				case __ANIMATED_SINGLE:
-	
+
 					__DELETE(bgmapTexture);
 					this->bgmapTextures[i] = NULL;
 					break;
-	
+
 				case __ANIMATED_SHARED:
 				case __ANIMATED_SHARED_COORDINATED:
 				case __ANIMATED_MULTI:
 				case __NOT_ANIMATED:
-	
+
 					Texture_releaseCharSet(__SAFE_CAST(Texture, bgmapTexture));
 					break;
 			}
@@ -328,7 +329,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	int i = 0;
 
 	CACHE_ENABLE;
-	
+
 	// try to find a texture with the same bgmap definition
 	for(; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
@@ -347,7 +348,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	}
 
 	CACHE_DISABLE;
-	
+
 	return NULL;
 }
 
@@ -412,10 +413,10 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 				// load it
 				bgmapTexture = BgmapTextureManager_allocateTexture(this, bgmapTextureDefinition);
 			}
-	
+
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (shared) texture no allocated");
 			break;
-			
+
 		default:
 
 			NM_ASSERT(false, "BgmapTextureManager::getTexture: not valid allocation type");
@@ -453,7 +454,7 @@ u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
 u8 BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegmentForParamTable::print: null this");
-	
+
 	return this->availableBgmapSegments;
 }
 
@@ -461,7 +462,7 @@ u8 BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager
 u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegments: null this");
-	
+
 	return this->availableBgmapSegments;
 }
 
@@ -469,7 +470,7 @@ u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
 u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getPrintingBgmapSegment: null this");
-	
+
 	return this->availableBgmapSegments;
 }
 
@@ -477,7 +478,7 @@ u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
 u8 BgmapTextureManager_getFreeBgmapSegment(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getFreeBgmapSegment: null this");
-	
+
 	return this->freeBgmapSegment;
 }
 
@@ -485,7 +486,7 @@ u8 BgmapTextureManager_getFreeBgmapSegment(BgmapTextureManager this)
 void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 spareBgmapSegments)
 {
 	ASSERT(this, "BgmapTextureManager::setSpareBgmapSegments::print: null this");
-	
+
 	this->spareBgmapSegments = spareBgmapSegments;
 }
 

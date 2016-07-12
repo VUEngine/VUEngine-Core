@@ -9,6 +9,12 @@
 
 _start:
 
+
+/* setup stack, gp, and tp */
+	movhi	hi(__gps),r0,r5
+/* setup stack, gp, and tp */
+	movhi	hi(__gps),r0,r5
+
 /* initiallize .data section */
 	movhi	hi(__data_lma),r0,r4
 	movea	lo(__data_lma),r4,r4

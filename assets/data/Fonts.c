@@ -46,7 +46,7 @@ FontROMDef VBJAENGINE_FONT =
     "VBJaEngineFont",
 };
 
-const FontROMDef* __FONTS[] =
+FontROMDef* const __FONTS[] =
 {
     &VBJAENGINE_FONT,
     NULL

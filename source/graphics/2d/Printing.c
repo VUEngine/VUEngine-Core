@@ -33,7 +33,7 @@
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern FontROMDef* __FONTS[];
+extern FontROMDef* const __FONTS[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void __attribute__ ((noinline)) Printing_render(Printing this, int textLayer)
 		ASSERT(false, "Printing::render: invalid layer");
 		return;
 	}
-	
+
 	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
 	WA[textLayer].mx = 0;
 	WA[textLayer].mp = 0;
@@ -123,7 +123,7 @@ void __attribute__ ((noinline)) Printing_render(Printing this, int textLayer)
 // clear printing area
 void __attribute__ ((noinline)) Printing_clear(Printing this)
 {
-	
+
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	VPUManager_clearBgmap(VPUManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
@@ -161,7 +161,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 	    charOffsetY = 0;
 
     fontData = Printing_getFontByName(this, font);
-    
+
     // print text
 	while(string[i] && x < (__SCREEN_WIDTH >> 3))
 	{
@@ -224,7 +224,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 void __attribute__ ((noinline)) Printing_int(Printing this, int value, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
-	
+
 	if(value < 0)
 	{
 		value *= -1;

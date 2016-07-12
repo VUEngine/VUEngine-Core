@@ -64,6 +64,11 @@ SECTIONS
         *(.sda*)
     } >ram = 0xFF
 
+    .tda :
+    {
+        *(.tda*)
+    } >ram = 0xFF
+
     .bss :
     {
         *(.bss*)

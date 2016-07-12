@@ -39,7 +39,7 @@
 #define __MEMORY_POOL_SINGLETON(ClassName)												            \
 																						            \
 	/* declare the static instance */													            \
-	static ClassName ## _str _instance ## ClassName __attribute__((section(".bss")));			\
+	static ClassName ## _str _instance ## ClassName __attribute__((section(".sda")));		    	\
 																		            				\
 	/* a flag to know when to allow constructs */													\
 	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;									\

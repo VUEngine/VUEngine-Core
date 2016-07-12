@@ -161,8 +161,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #ifdef __PRINT_MEMORY_POOL_STATUS
         if(!Game_isInSpecialMode(Game_getInstance()))
         {
+#ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
+		    MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 30, 1);
+#else if
             MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
-//		        MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 15, 0);
+#endif
         }
 #endif
 
