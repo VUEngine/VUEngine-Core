@@ -274,17 +274,13 @@
 																						\
 		/* set the getClassName method */					                			\
 		__VIRTUAL_SET(ClassName, ClassName, getClassName);								\
-																						\
-		/* set base class methods */													\
-		_baseConstructor = (void (*)(void*, ...))&BaseClassName ## _constructor;		\
-		_baseDestructor = (void (*)(void*))&BaseClassName ## _destructor;				\
 	}
 
 // class's vtable declaration and instantiation
 #define __VTABLE(ClassName)																\
 																						\
 	/* declare the vtable struct */														\
-	struct ClassName ## _vTable 														\
+	struct ClassName ## _vTable 					        							\
 	{																					\
 		/* all destructors are virtual */												\
 		__VIRTUAL_DEC(destructor);														\
@@ -297,9 +293,10 @@
 																						\
 		/* insert class's virtual methods names */										\
 		ClassName ## _METHODS;															\
+	};							                                                        \
 																						\
 	/* create the vtable instance */													\
-	} ClassName ## _vTable;																\
+	extern struct ClassName ## _vTable ClassName ## _vTable;		                    \
 
 // declare a class
 #define __CLASS(ClassName)																\
@@ -343,8 +340,14 @@
 		/* end definition */															\
 	} ClassName ## _str;																\
 																						\
-	static void (*_baseConstructor)(void*, ...) = NULL;									\
-	static void (*_baseDestructor)(void*) = NULL;										\
+	/* class' vtable's definition */								    		    	\
+	struct ClassName ## _vTable ClassName ## _vTable;	                                \
+																						\
+	/* class' base's constructor and destructor */					    		    	\
+	static const void const (*_baseConstructor)(void*, ...) =                           \
+	    (const void (*)(void*, ...))&BaseClassName ## _constructor;		                \
+	static const void const (*_baseDestructor)(void*) =                                 \
+	    (const void (*)(void*))&BaseClassName ## _destructor;				    	    \
 																						\
 	/* define class's getSize method */													\
 	int ClassName ## _getObjectSize()													\
@@ -366,12 +369,6 @@
 																						\
 	/* now add the function which will set the vtable */								\
 	__SET_VTABLE(ClassName, BaseClassName)												\
-																						\
-	/* define vtable checker */															\
-	/*__DEFINE_CHECK_VTABLE(ClassName)*/												\
-																						\
-	/* define allocator */																\
-	/*__ALLOCATOR_DEFINITION(ClassName, BaseClassName)*/
 
 // retrieves object's class' name
 #define __GET_CLASS_NAME(object)														\
@@ -476,6 +473,14 @@
 		return _instance ## ClassName;													\
 	}
 
+// gcc has a bug, it doesn't move back the sp register after returning from a variadic call
+#define __CALL_VARIADIC(VariadicFunctionCall)											\
+																						\
+	/* variadic function call */														\
+	VariadicFunctionCall;																\
+																						\
+	/* sp fix displacement */															\
+	asm("addi	20, sp, sp")
 
 // MemoryPool's defines
 #define __BLOCK_DEFINITION(BlockSize, Elements)											\
