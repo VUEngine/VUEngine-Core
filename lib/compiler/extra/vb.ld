@@ -25,9 +25,10 @@ PROVIDE(_vpu_vector = 0x0500FFD0);
 
 __text_vma = ORIGIN(rom);
 __data_vma = ORIGIN(ram);
-__data_sram_vma = ORIGIN(sram_wram);
-__tp = ORIGIN(rom);
+__sram_vma = ORIGIN(sram);
+__stack = ORIGIN(ram) + LENGTH(ram);
 __gp = ORIGIN(ram) + LENGTH(ram) / 2;
+__tp = ORIGIN(rom);
 __gps = ORIGIN(sram) + LENGTH(sram) / 2;
 
 SECTIONS
@@ -81,6 +82,18 @@ SECTIONS
         __lastDataVariable = .;
     } >ram = 0xFF
 
+    /* SRAM Work RAM */
+    .sram_bss :
+    {
+        . = ALIGN(4);
+        PROVIDE(__sram_bss_start = .);
+        *(.sram_bss)
+        . = ALIGN(4);
+        *(.sram_bss.*)
+        . = ALIGN(4);
+        PROVIDE(__sram_bss_end = .);
+    } >sram
+
     /* These must appear regardless of  .  */
     /* prevent overlaps with vbvectors */
     v += SIZEOF(.data) + SIZEOF(.sda) + SIZEOF(.bss) + SIZEOF(.after_bss);
@@ -104,18 +117,5 @@ SECTIONS
     {
         KEEP (*(.vbvectors))
     } >rom = 0xFF
-
-    /* SRAM Work RAM */
-    __data_sram_lma = .;
-    .sram_bss __data_sram_vma : AT(__data_sram_lma)
-    {
-        . = ALIGN(4);
-        PROVIDE(__sram_bss_start = .);
-        *(.sram_bss)
-        . = ALIGN(4);
-        *(.sram_bss.*)
-        . = ALIGN(4);
-        PROVIDE(__sram_bss_end = .);
-    } >sram_wram
 
 }
