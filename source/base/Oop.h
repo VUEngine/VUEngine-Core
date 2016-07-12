@@ -29,7 +29,7 @@
 																						\
 	{																					\
 		/* a static flag */																\
-		static bool __notCalledFlag = true;												\
+		static bool __notCalledFlag __attribute__((section(".sda"))) = true;			\
 																						\
 		/* check if not called */														\
 		if(__notCalledFlag)																\
@@ -58,31 +58,15 @@
 		}																				\
 	}
 
+#ifdef __CHECK_ABSTRACT_CLASS_INSTANTIATION
 // call to check that the vtable doesn't have null pointers
 #define __CHECK_VTABLE(ClassName)														\
 																						\
 	/* setup the class's vtable on first call only */									\
 	__CALL_ONCE(ClassName  ## _checkVTable);
-
-
-// define the class's method which allocates the instances
-#define __ALLOCATOR_DEFINITION(ClassName, BaseClassName)								\
-																						\
-	/* define allocator */																\
-	ClassName ClassName ## _allocator()													\
-	{																					\
-		/* allocate object */															\
-		ClassName this = (ClassName) 													\
-						MemoryPool_allocate(MemoryPool_getInstance(), 					\
-						sizeof(ClassName ## _str));										\
-																						\
-		/* abstract classes can't be instantiated */									\
-		__CHECK_VTABLE(ClassName);														\
-																						\
-		/* return constructed object's address */										\
-		return this;																	\
-																						\
-	}
+#else
+#define __CHECK_VTABLE(ClassName)
+#endif
 
 // define the class's allocator declaration
 #define __CLASS_NEW_DECLARE(ClassName, ...)												\
@@ -99,6 +83,9 @@
 	{																					\
 		/* setup the class's vtable on first call only */								\
 		__SET_CLASS(ClassName);															\
+																						\
+		/* abstract classes can't be instantiated */									\
+		__CHECK_VTABLE(ClassName);														\
 																						\
 		/* allocate object */															\
 		ClassName this = (ClassName) 													\
@@ -248,8 +235,11 @@
 // call configure class's vtable method
 #define __SET_CLASS(ClassName)															\
 																						\
-	/* setup the class's vtable on first call only */									\
-	__CALL_ONCE(ClassName ## _setVTable)
+	/* setup the class's vtable only if destructor is NULL */							\
+	if(!ClassName ## _vTable.destructor)                                                \
+	{																					\
+	    ClassName ## _setVTable();                                                      \
+	}																					\
 
 // configure class's vtable
 #define __SET_VTABLE(ClassName, BaseClassName)											\
@@ -341,7 +331,7 @@
 	} ClassName ## _str;																\
 																						\
 	/* class' vtable's definition */								    		    	\
-	struct ClassName ## _vTable ClassName ## _vTable;	                                \
+	struct ClassName ## _vTable ClassName ## _vTable __attribute__((section(".sda")));  \
 																						\
 	/* class' base's constructor and destructor */					    		    	\
 	static const void const (*_baseConstructor)(void*, ...) =                           \
@@ -383,13 +373,13 @@
 #define __SINGLETON_CONSTRUCTED				2
 
 // defines a singleton (unique instance of a class)
-#define __SINGLETON(ClassName)															\
+#define __SINGLETON(ClassName, ...)														\
 																						\
 	/* declare the static instance */													\
-	static ClassName ## _str _instance ## ClassName;									\
+	static ClassName ## _str _instance ## ClassName __VA_ARGS__;	                    \
 																						\
 	/* a flag to know when to allow constructs */										\
-	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;						\
+	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;                      \
 																						\
 	/* define get instance method */													\
 	ClassName ClassName ## _getInstance()												\
@@ -437,14 +427,14 @@
 #define __SINGLETON_DYNAMIC(ClassName)													\
 																						\
 	/* declare the static pointer to instance */										\
-	static ClassName _instance ## ClassName;											\
+	static ClassName _instance ## ClassName;			                                \
 																						\
 	/* define allocator */																\
 	__CLASS_NEW_DEFINITION(ClassName);													\
 	__CLASS_NEW_END(ClassName);															\
 																						\
 	/* a flag to know when to allow constructs */										\
-	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;						\
+	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;                      \
 																						\
 	/* define get instance method */													\
 	ClassName ClassName ## _getInstance()												\
