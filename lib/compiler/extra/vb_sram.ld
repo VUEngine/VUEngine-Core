@@ -17,19 +17,12 @@ If not defined, define interrupt
 Handlers as system reset
 */
 
-PROVIDE(_key_vector = 0x0500FFC0);
-PROVIDE(_tim_vector = 0x0500FFC4);
-PROVIDE(_cro_vector = 0x0500FFC8);
-PROVIDE(_com_vector = 0x0500FFCC);
-PROVIDE(_vpu_vector = 0x0500FFD0);
-
 __text_vma = ORIGIN(rom);
 __data_vma = ORIGIN(ram);
 __sram_vma = ORIGIN(sram);
 __stack = ORIGIN(ram) + LENGTH(ram);
 __gp = ORIGIN(ram) + LENGTH(ram) / 2;
 __tp = ORIGIN(rom);
-__gps = ORIGIN(sram) + LENGTH(sram) / 2;
 
 SECTIONS
 {
@@ -69,7 +62,6 @@ SECTIONS
     .bss :
     {
         *(.bss.*)
-        *(COMMON)
     } >ram = 0xFF
 
     .after_bss :
@@ -114,4 +106,5 @@ SECTIONS
     {
         KEEP (*(.vbvectors))
     } >rom = 0xFF
+
 }

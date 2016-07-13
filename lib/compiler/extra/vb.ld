@@ -8,7 +8,7 @@ SEARCH_DIR(.);
 MEMORY
 {
     ram	(!r): ORIGIN =  0x05000000, LENGTH = 64k /*64k*/
-    sram_wram (rw) : ORIGIN = 0x06000000, LENGTH = 8M
+    sram (rw) : ORIGIN = 0x06000000, LENGTH = 8M
     rom	(rx): ORIGIN =  0x07000000, LENGTH = 16M
 }
 
@@ -17,19 +17,12 @@ If not defined, define interrupt
 Handlers as system reset
 */
 
-PROVIDE(_key_vector = 0x0500FFC0);
-PROVIDE(_tim_vector = 0x0500FFC4);
-PROVIDE(_cro_vector = 0x0500FFC8);
-PROVIDE(_com_vector = 0x0500FFCC);
-PROVIDE(_vpu_vector = 0x0500FFD0);
-
 __text_vma = ORIGIN(rom);
 __data_vma = ORIGIN(ram);
 __sram_vma = ORIGIN(sram);
 __stack = ORIGIN(ram) + LENGTH(ram);
 __gp = ORIGIN(ram) + LENGTH(ram) / 2;
 __tp = ORIGIN(rom);
-__gps = ORIGIN(sram) + LENGTH(sram) / 2;
 
 SECTIONS
 {
@@ -66,14 +59,9 @@ SECTIONS
         *(.sda*)
     } >ram = 0xFF
 
-    .tda :
-    {
-        *(.tda*)
-    } >ram = 0xFF
-
     .bss :
     {
-        *(.bss*)
+        *(.bss.*)
     } >ram = 0xFF
 
     .after_bss :
@@ -83,7 +71,7 @@ SECTIONS
     } >ram = 0xFF
 
     /* SRAM Work RAM */
-    .sram_bss :
+    .sram_bss __sram_vma :
     {
         . = ALIGN(4);
         PROVIDE(__sram_bss_start = .);
@@ -91,7 +79,7 @@ SECTIONS
         . = ALIGN(4);
         *(.sram_bss.*)
         . = ALIGN(4);
-        PROVIDE(__sram_bss_end = .);
+        __sram_bss_end = .;
     } >sram
 
     /* These must appear regardless of  .  */
