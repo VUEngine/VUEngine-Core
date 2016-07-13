@@ -163,7 +163,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
         {
 #ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
 		    MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 30, 1);
-#else if
+#else
             MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
 #endif
         }
