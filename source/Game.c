@@ -922,7 +922,6 @@ static void Game_update(Game this)
 	    updatePhysicsTime = updatePhysicsTime < processTime ? processTime : updatePhysicsTime;
 #endif
 
-
 #ifdef __PROFILING
 	    timeBeforeProcess = Clock_getTime(this->clock);
 #endif
@@ -1139,14 +1138,16 @@ static void Game_checkLowBattery(Game this, u16 keypad)
 
     if(keypad & K_PWR)
     {
-        if(!this->isShowingLowBatteryIndicator) {
+        if(!this->isShowingLowBatteryIndicator)
+        {
             MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)true);
             this->isShowingLowBatteryIndicator = true;
         }
     }
     else
     {
-         if(this->isShowingLowBatteryIndicator) {
+         if(this->isShowingLowBatteryIndicator)
+         {
             MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kLowBatteryIndicator);
             Printing_text(Printing_getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
             this->isShowingLowBatteryIndicator = false;

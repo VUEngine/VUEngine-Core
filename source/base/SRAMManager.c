@@ -70,11 +70,6 @@ static void SRAMManager_constructor(SRAMManager this)
 
 	__CONSTRUCT_BASE();
 
-	if(!_userData)
-	{
-	    _userData = 0x06000000;
-	}
-
 	SRAMManager_initialize(this);
 }
 
