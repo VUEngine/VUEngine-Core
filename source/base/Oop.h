@@ -29,7 +29,7 @@
 																						\
 	{																					\
 		/* a static flag */																\
-		static bool __notCalledFlag __attribute__((section(".sda"))) = true;			\
+		static bool __notCalledFlag;			                                        \
 																						\
 		/* check if not called */														\
 		if(__notCalledFlag)																\
@@ -331,13 +331,13 @@
 	} ClassName ## _str;																\
 																						\
 	/* class' vtable's definition */								    		    	\
-	struct ClassName ## _vTable ClassName ## _vTable __attribute__((section(".sda")));  \
+	struct ClassName ## _vTable ClassName ## _vTable __attribute__((section(".bss")));  \
 																						\
 	/* class' base's constructor and destructor */					    		    	\
-	static const void const (*_baseConstructor)(void*, ...) =                           \
-	    (const void (*)(void*, ...))&BaseClassName ## _constructor;		                \
-	static const void const (*_baseDestructor)(void*) =                                 \
-	    (const void (*)(void*))&BaseClassName ## _destructor;				    	    \
+	static void (* const _baseConstructor)(void*, ...) =                                \
+	    (void (*)(void*, ...))&BaseClassName ## _constructor;		                    \
+	static void (* const _baseDestructor)(void*) =                                      \
+	    (void (*)(void*))&BaseClassName ## _destructor;				    	            \
 																						\
 	/* define class's getSize method */													\
 	int ClassName ## _getObjectSize()													\

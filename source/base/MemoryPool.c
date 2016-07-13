@@ -81,7 +81,7 @@ static void MemoryPool_reset(MemoryPool this);
 #ifdef __PUT_MEMORY_POOL_IN_SRAM
 __SINGLETON(MemoryPool);
 #else
-__SINGLETON(MemoryPool, __attribute__((section(".sda"))));
+__SINGLETON(MemoryPool, __attribute__((section(".bss"))));
 #endif
 
 // class constructor

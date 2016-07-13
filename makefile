@@ -18,6 +18,8 @@ COMPILER_NAME = v810-nec-elf32
 endif
 
 GCC = $(COMPILER_NAME)-gcc
+AS = $(COMPILER_NAME)-as
+AR = $(COMPILER_NAME)-ar
 OBJCOPY = $(COMPILER_NAME)-objcopy
 OBJDUMP = $(COMPILER_NAME)-objdump
 
@@ -26,7 +28,7 @@ OBJDUMP = $(COMPILER_NAME)-objdump
 VBJAENGINE = $(VBDE)libs/vbjaengine
 
 # Which directories contain source files
-DIRS := $(shell find $(VBJAENGINE)/assets $(VBJAENGINE)/source -type d -print)
+DIRS := $(shell find $(VBJAENGINE)/assets $(VBJAENGINE)/source $(VBJAENGINE)/lib/compiler/extra -type d -print)
 
 # Which libraries are linked
 LIBS =
@@ -49,7 +51,7 @@ endif
 
 ifeq ($(TYPE), release)
 LDPARAM =
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O3 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS =
 endif
 
@@ -75,14 +77,20 @@ EXTRA_FILES = makefile
 # Where to store object and dependency files.
 STORE = .make-$(TYPE)-$(COMPILER)-$(COMPILER_OUTPUT)
 
-# Makes a list of the source (.cpp) files.
+# Makes a list of the source (.c) files.
 SOURCE := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.c))
+
+# Makes a list of the source (.s) files.
+ASM := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.s))
 
 # List of header files.
 HEADERS := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the object files that will have to be created.
 OBJECTS := $(addprefix $(STORE)/, $(SOURCE:.c=.o))
+
+# Makes a list of the object files that will have to be created.
+ASM_OBJECTS := $(addprefix $(STORE)/, $(ASM:.s=.o))
 
 # Same for the .d (dependency) files.
 DFILES := $(addprefix $(STORE)/,$(SOURCE:.c=.d))
@@ -94,10 +102,10 @@ DFILES := $(addprefix $(STORE)/,$(SOURCE:.c=.d))
 
 all: $(TARGET).a
 
-$(TARGET).a: dirs $(OBJECTS)
+$(TARGET).a: dirs $(OBJECTS) $(ASM_OBJECTS)
 	@echo Config file: $(CONFIG_FILE)
 	@echo Creating $(TARGET).a
-	@$(AR) rcs $@ $(OBJECTS)
+	@$(AR) rcs $@ $(ASM_OBJECTS) $(OBJECTS)
 	@echo Done creating $@ in $(TYPE) mode with GCC $(COMPILER)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
@@ -108,6 +116,10 @@ $(STORE)/%.o: %.c
             $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd
+
+$(STORE)/%.o: %.s
+	@echo Creating object file for $*
+	@$(AS) -o $@ $<
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
