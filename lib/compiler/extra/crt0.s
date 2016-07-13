@@ -46,6 +46,11 @@ sram_dummy_loop:
 	add		-1, r6
 	bnz		sram_dummy_loop
 
+/* setup stack, gp, and tp */
+	movhi	hi(__gp),r0,r5
+	movea   lo(__gp),r5,r5
+	mov	    r5, gp
+
 /* initiallize .data section */
 	movhi	hi(__data_lma),r0,r4
 	movea	lo(__data_lma),r4,r4
@@ -65,7 +70,7 @@ end_initdata:
 	blt	initdata
 
 /* clear .bss section and unintialized RAM */
-	movhi	0x0501,r0,r4
+	movhi	0x0500,r0,r4
 	jr	loop_start1
 loop_top1:
 	st.h	r0,0[r5]
@@ -87,11 +92,18 @@ loop_start2:
 	cmp     r4, r5
 	blt     loop_top2
 
-/* cache */
+/* disable-clear-enable cache GCC 4.7 */
+/*    ldsr    r0,chcw
+    ori     0x8001,r0,r1
+    ldsr    r1,chcw
+    mov     2,r1
+    ldsr    r1,chcw
+*/
+
+/* cache GCC 4.4 */
 	ldsr	r0,sr5
 	mov	2,r4
 	ldsr	r4,sr14
-
 
 /* VIP */
 	movhi	0x0006,r0,r4
