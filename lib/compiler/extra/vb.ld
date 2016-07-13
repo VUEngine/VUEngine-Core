@@ -54,9 +54,16 @@ SECTIONS
     } >ram = 0xFF
     __data_end = .;
 
-    .sda :
+    .sdata :
     {
-        *(.sda*)
+        *(.sdata*)
+        *(.sdata.*)
+    } >ram = 0xFF
+
+    .sbss :
+    {
+        *(.sbss*)
+        *(.sbss.*)
     } >ram = 0xFF
 
     .bss :
@@ -84,7 +91,7 @@ SECTIONS
 
     /* These must appear regardless of  .  */
     /* prevent overlaps with vbvectors */
-    v += SIZEOF(.data) + SIZEOF(.sda) + SIZEOF(.bss) + SIZEOF(.after_bss);
+    v += SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.sbss) + SIZEOF(.bss) + SIZEOF(.after_bss);
 
     /* Compute the vector address */
     /* This promotes . to a power of two */
@@ -98,7 +105,7 @@ SECTIONS
     v |= v>>16;
     __vbvectors_end = __text_vma + v;
     __vbvectors_lma = __vbvectors_end - 0x21F;
-    /*__vbvectors_lma = 0x07FFFFFF - 0x21F;*/
+   /* __vbvectors_lma = 0x070FFFFF - 0x21F;*/
 
     /* Place interrupt and reset vector at end of rom */
     .vbvectors __vbvectors_lma :
