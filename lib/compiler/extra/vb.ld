@@ -47,51 +47,43 @@ SECTIONS
 
     /* Ram memory */
 
-    __data_lma = .;
-    .data __data_vma : AT(__data_lma)
+    __data_start = .;
+    .data __data_vma : AT(__data_start)
     {
         *(.data*)
     } >ram = 0xFF
-    __data_end = .;
 
     .sdata :
     {
         *(.sdata*)
-        *(.sdata.*)
+    } >ram = 0xFF
+    __data_end = .;
+
+    __bss_start = .;
+    .bss :
+    {
+        *(.bss*)
+        *(COMMON)
     } >ram = 0xFF
 
     .sbss :
     {
         *(.sbss*)
-        *(.sbss.*)
     } >ram = 0xFF
-
-    .bss :
-    {
-        *(.bss.*)
-    } >ram = 0xFF
-
-    .after_bss :
-    {
-        *(.after_bss*)
-        __lastDataVariable = .;
-    } >ram = 0xFF
+    __bss_end = .;
 
     /* SRAM Work RAM */
-    .sram_bss __sram_vma :
+    .sram :
     {
         . = ALIGN(4);
-        PROVIDE(__sram_bss_start = .);
-        *(.sram_bss)
-        . = ALIGN(4);
-        *(.sram_bss.*)
-        . = ALIGN(4);
-        __sram_bss_end = .;
+        PROVIDE(__sram_start = .);
+        PROVIDE(__sram_end = .);
     } >sram
+
 
     /* These must appear regardless of  .  */
     /* prevent overlaps with vbvectors */
-    v += SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.sbss) + SIZEOF(.bss) + SIZEOF(.after_bss);
+    v += SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.sbss) + SIZEOF(.bss);
 
     /* Compute the vector address */
     /* This promotes . to a power of two */
@@ -105,7 +97,7 @@ SECTIONS
     v |= v>>16;
     __vbvectors_end = __text_vma + v;
     __vbvectors_lma = __vbvectors_end - 0x21F;
-   /* __vbvectors_lma = 0x070FFFFF - 0x21F;*/
+    /*__vbvectors_lma = 0x070FFFFF - 0x21F;*/
 
     /* Place interrupt and reset vector at end of rom */
     .vbvectors __vbvectors_lma :
