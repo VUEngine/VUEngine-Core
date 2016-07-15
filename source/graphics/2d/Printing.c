@@ -74,7 +74,7 @@ __SINGLETON(Printing);
 // class's constructor
 static void Printing_constructor(Printing this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 }
 
 // class's destructor

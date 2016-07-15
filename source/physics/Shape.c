@@ -42,7 +42,7 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	ASSERT(this, "Shape::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// set the owner
 	this->owner = owner;

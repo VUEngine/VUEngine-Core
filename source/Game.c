@@ -184,7 +184,7 @@ static void Game_constructor(Game this)
 	ASSERT(this, "Game::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// make sure the memory pool is initialized now
 	MemoryPool_getInstance();

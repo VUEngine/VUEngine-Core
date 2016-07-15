@@ -65,7 +65,7 @@ void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* mana
 	ASSERT(this, "ManagedEntity::constructor: null this");
 
 	// construct base Entity
-	__CONSTRUCT_BASE((EntityDefinition*)managedEntityDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, (EntityDefinition*)managedEntityDefinition, id, name);
 
 	// the sprite must be initialized in the derived class
 	this->managedSprites = __NEW(VirtualList);
@@ -109,11 +109,11 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 				VirtualList_pushBack(this->managedSprites, sprite);
 			}
 		}
-		
+
 		if(child->children)
 		{
 			VirtualNode childNode = child->children->head;
-			
+
 			for(; childNode; childNode = childNode->next)
 			{
 				ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
@@ -126,16 +126,16 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform)
 {
 	ASSERT(this, "ManagedEntity::initialTransform: null this");
-	
+
 	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
-	
+
 	VirtualList_clear(this->managedSprites);
 	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
-	
+
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
 	VBVec2D position2D;
-	
+
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
@@ -158,7 +158,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
-		
+
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
@@ -170,16 +170,16 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 		position2D.parallax = 0;
-		
+
 		this->previous2DPosition = position2D;
 
 		this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
 
 		return;
 	}
-	
+
 	this->updateSprites = false;
-	
+
 	if(*(u8*)&this->invalidateGlobalPosition ||
 		this->children)
 	{
@@ -191,7 +191,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 		this->updateSprites = __UPDATE_SPRITE_POSITION;
 	}
-	
+
 	*(u8*)&this->invalidateGlobalPosition = 0;
 }
 
@@ -205,43 +205,43 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 		{
 			Entity_updateVisualRepresentation(__SAFE_CAST(Entity, this));
 		}
-		
+
 		// save new global position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
 		position2D.parallax = 0;
-		
+
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
-	
+
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
-	
+
 		VirtualNode spriteNode = this->managedSprites->head;
-		
+
 		VBVec2D displacement;
 
 		displacement.x = position2D.x - this->previous2DPosition.x;
 		displacement.y = position2D.y - this->previous2DPosition.y;
 		displacement.z = 0;
 		displacement.parallax = 0;
-				
+
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
-			
+
 			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
 		}
-		
+
 		this->previous2DPosition = position2D;
 	}
-	
+
 	this->updateSprites = 0;
 }
 
 int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
 	ASSERT(this, "ManagedEntity::passMessage: null this");
-	
+
 	return false;
 }

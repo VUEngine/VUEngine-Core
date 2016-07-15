@@ -135,7 +135,7 @@ void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char*
 {
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->pages = NULL;
 	this->currentPage = NULL;
@@ -329,7 +329,7 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 		}
 
 		int counter = 0;
-		
+
 		for(; node; node = node->next)
 		{
 			if(y <= __SCREEN_WIDTH >> 3)
@@ -350,7 +350,7 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 					case kFloat:
 						Printing_float(Printing_getInstance(), *((float*)node->data), x + 1, y, NULL);
 						break;
-						
+
 					case kCount:
 						Printing_int(Printing_getInstance(), counter++, x + 1, y, NULL);
 						break;

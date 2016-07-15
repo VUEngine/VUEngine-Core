@@ -58,7 +58,7 @@ __CLASS_NEW_END(Polygon);
 static void Polygon_constructor(Polygon this)
 {
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// don't create the list yet
 	this->vertices = NULL;

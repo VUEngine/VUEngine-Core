@@ -57,7 +57,7 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
 	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(bSpriteDefinition, owner);
+	__CONSTRUCT_BASE(BgmapSprite, bSpriteDefinition, owner);
 
 	if(this->texture)
 	{
@@ -111,12 +111,12 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 
 		case __ANIMATED_MULTI:
 			{
-				int totalColumns = 64 - (this->originalTextureSource.mx >> 3); 
+				int totalColumns = 64 - (this->originalTextureSource.mx >> 3);
 				int frameColumn = Texture_getCols(this->texture) * AnimationController_getActualFrameIndex(this->animationController);
 				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}
-			
+
 			BgmapSprite_invalidateParamTable(__SAFE_CAST(BgmapSprite, this));
 			this->renderFlag |= __UPDATE_M;
 			break;

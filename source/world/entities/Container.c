@@ -54,7 +54,7 @@ void Container_constructor(Container this, s16 id, const char* const name)
 	ASSERT(this, "Container::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(SpatialObject);
 
 	// set ID
 	this->id = id;
@@ -92,7 +92,7 @@ void Container_constructor(Container this, s16 id, const char* const name)
 	this->removedChildren = NULL;
 	this->deleteMe = false;
 	this->hidden = false;
-	
+
 	this->name = NULL;
 	Container_setName(this, name);
 }
@@ -111,7 +111,7 @@ void Container_destructor(Container this)
 		// create a temporary children list
 		VirtualList childrenToDelete = __NEW(VirtualList);
 		VirtualList_copy(childrenToDelete, this->children);
-		
+
 		// delete children list
 		__DELETE(this->children);
 		this->children = NULL;
@@ -138,13 +138,13 @@ void Container_destructor(Container this)
 		this->deleteMe = false;
 		Container_removeChild(this->parent, this);
 	}
-	
+
 	// delete name
 	if(this->name)
 	{
 		__DELETE_BASIC(this->name);
 	}
-	
+
 	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_CONTAINER_DELETED);
 
 	// destroy the super Container
@@ -191,7 +191,7 @@ void Container_addChild(Container this, Container child)
 
 				__VIRTUAL_CALL(void, Container, changeEnvironment, child, &this->transform);
 		    }
-	
+
 			// add to the children list
 			VirtualList_pushBack(this->children, (void*)child);
 
@@ -243,7 +243,7 @@ void Container_processRemovedChildren(Container this)
 			Container child = __SAFE_CAST(Container, node->data);
 
 			VirtualList_removeElement(this->children, child);
-			
+
 			if(child->deleteMe)
 			{
 				child->parent = NULL;
@@ -328,7 +328,7 @@ void Container_concatenateTransform(Transformation* environmentTransform, Transf
 	environmentTransform->globalRotation.x += transform->localRotation.x;
 	environmentTransform->globalRotation.y += transform->localRotation.y;
 	environmentTransform->globalRotation.z += transform->localRotation.z;
-	
+
 	// propagate scale
 	environmentTransform->globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, transform->localScale.x);
 	environmentTransform->globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, transform->localScale.y);
@@ -339,21 +339,21 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 {
 	ASSERT(this, "Container::changeEnvironment: null this");
 
-	VBVec3D localPosition = 
+	VBVec3D localPosition =
 	{
-		this->transform.globalPosition.x - environmentTransform->globalPosition.x, 
-		this->transform.globalPosition.y - environmentTransform->globalPosition.y, 
-		this->transform.globalPosition.z - environmentTransform->globalPosition.z, 
+		this->transform.globalPosition.x - environmentTransform->globalPosition.x,
+		this->transform.globalPosition.y - environmentTransform->globalPosition.y,
+		this->transform.globalPosition.z - environmentTransform->globalPosition.z,
 	};
 
-	Rotation localRotation = 
+	Rotation localRotation =
 	{
 		this->transform.globalRotation.x - environmentTransform->globalRotation.x,
 		this->transform.globalRotation.y - environmentTransform->globalRotation.y,
 		this->transform.globalRotation.z - environmentTransform->globalRotation.z,
 	};
-	
-	Scale localScale = 
+
+	Scale localScale =
 	{
 		FIX7_9_DIV(this->transform.globalScale.x, environmentTransform->globalScale.x),
 		FIX7_9_DIV(this->transform.globalScale.y, environmentTransform->globalScale.y),
@@ -362,7 +362,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 	Container_setLocalPosition(this, &localPosition);
 	Container_setLocalRotation(this, &localRotation);
 	Container_setLocalScale(this, &localScale);
-	
+
 	// force global position calculation on the next transform cycle
 	*(u8*)&this->invalidateGlobalPosition = 0;
 }
@@ -371,7 +371,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 void Container_initialTransform(Container this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::initialTransform: null this");
-	
+
 	// concatenate transform
 	Container_applyEnvironmentToTranformation(this, environmentTransform);
 
@@ -410,11 +410,11 @@ void Container_applyEnvironmentToTranformation(Container this, const Transformat
 	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
 	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
 	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
-	
+
 	// propagate scale
 	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
 	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
-	
+
 }
 
 /*
@@ -433,7 +433,7 @@ static void Container_applyEnvironmentToTranformation1(Container this, const Tra
 	Scale* globalScale = &this->transform.globalScale;
 	Scale localScale = this->transform.localScale;
 	Scale environmentTransformGlobalScale = environmentTransform->globalScale;
-	
+
 	// concatenate transform
 	globalPosition->x = environmentTransformGlobalPosition.x + localPosition.x;
 	globalPosition->y = environmentTransformGlobalPosition.y + localPosition.y;
@@ -443,7 +443,7 @@ static void Container_applyEnvironmentToTranformation1(Container this, const Tra
 	globalRotation->x = environmentTransformGlobalRotation.x + localRotation.x;
 	globalRotation->y = environmentTransformGlobalRotation.y + localRotation.y;
 	globalRotation->z = environmentTransformGlobalRotation.z + localRotation.z;
-	
+
 	// propagate scale
 	globalScale->x = FIX7_9_MULT(environmentTransformGlobalScale.x, localScale.x);
 	globalScale->y = FIX7_9_MULT(environmentTransformGlobalScale.y, localScale.y);
@@ -482,7 +482,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 void Container_transform(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
-	
+
 	// apply environment transform
 	Container_applyEnvironmentToTranformation(this, environmentTransform);
 
@@ -589,7 +589,7 @@ void Container_setLocalRotation(Container this, const Rotation* rotation)
 	ASSERT(this, "Container::setLocalRotation: null this");
 
 	this->transform.localRotation = *rotation;
-	
+
 	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
@@ -606,7 +606,7 @@ void Container_setLocalScale(Container this, const Scale* scale)
 	ASSERT(this, "Container::invalidateGlobalPosition: null this");
 
 	this->transform.localScale = *scale;
-	
+
 	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
@@ -705,7 +705,7 @@ s16 Container_getId(Container this)
 
 // retrieve parent
 Container Container_getParent(Container this)
-{	
+{
 	ASSERT(this, "Container::getParent: null this");
 
 	return this->parent;
@@ -714,7 +714,7 @@ Container Container_getParent(Container this)
 
 // retrieve child count
 int Container_getChildCount(Container this)
-{	
+{
 	ASSERT(this, "Container::getChildCount: null this");
 
 	return this->children ? VirtualList_getSize(this->children) : 0;
@@ -732,7 +732,7 @@ VirtualList Container_getChildren(Container this)
 void Container_setName(Container this, const char* const name)
 {
 	ASSERT(this, "Container::setName: null this");
-	
+
 	if(this->name)
 	{
 		__DELETE_BASIC(this->name);
@@ -742,16 +742,16 @@ void Container_setName(Container this, const char* const name)
 	{
 		return;
 	}
-	
+
 	typedef struct NameWrapper
 	{
 		char name[__MAX_CONTAINER_NAME_LENGTH];
-		
+
 	} NameWrapper;
-	
+
 	NameWrapper* nameWrapper = (NameWrapper*)__NEW_BASIC(NameWrapper);
 	this->name = nameWrapper->name;
-	
+
 	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
 }
 
@@ -841,7 +841,7 @@ Container Container_getChildById(Container this, s16 id)
 			}
         }
 	}
-	
+
 	return NULL;
 }
 
@@ -855,11 +855,11 @@ void Container_suspend(Container this)
 		Container_processRemovedChildren(this);
 
 		VirtualNode node = this->children->head;
-		
+
 		for(; node; node = node->next)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
-			
+
 			__VIRTUAL_CALL(void, Container, suspend, child);
 		}
 	}
@@ -873,15 +873,15 @@ void Container_resume(Container this)
 	if(this->children)
 	{
 		VirtualNode node = this->children->head;
-		
+
 		for(; node; node = node->next)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
-			
+
 			__VIRTUAL_CALL(void, Container, resume, child);
 		}
 	}
-	
+
 	// force translation recalculations
 	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
@@ -892,19 +892,19 @@ void Container_show(Container this)
 	ASSERT(this, "Container::show: null this");
 
 	this->hidden = false;
-	
+
 	if(this->children)
 	{
 		VirtualNode node = this->children->head;
-		
+
 		for(; node; node = node->next)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
-			
+
 			__VIRTUAL_CALL(void, Container, show, child);
 		}
 	}
-	
+
 	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
@@ -913,15 +913,15 @@ void Container_hide(Container this)
 	ASSERT(this, "Container::hide: null this");
 
 	this->hidden = true;
-	
+
 	if(this->children)
 	{
 		VirtualNode node = this->children->head;
-		
+
 		for(; node; node = node->next)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
-			
+
 			__VIRTUAL_CALL(void, Container, hide, child);
 		}
 	}

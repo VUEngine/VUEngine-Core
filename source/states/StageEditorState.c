@@ -77,7 +77,7 @@ __SINGLETON(StageEditorState);
 // class's constructor
 static void StageEditorState_constructor(StageEditorState this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(GameState);
 }
 
 // class's destructor

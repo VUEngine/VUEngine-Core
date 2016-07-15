@@ -61,7 +61,7 @@ void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
@@ -77,7 +77,7 @@ void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 	ASSERT(this, "ObjectSpriteContainerManager::destructor: null this");
 
 	ObjectSpriteContainerManager_reset(this);
-	
+
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
@@ -86,7 +86,7 @@ void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::reset: null this");
-	
+
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
@@ -94,10 +94,10 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 		{
 			__DELETE(this->objectSpriteContainers[i]);
 		}
-		
+
 		this->objectSpriteContainers[i] = NULL;
 	}
-	
+
 	// clean OBJ memory
 	for(i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
@@ -113,7 +113,7 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix19_13 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
-	
+
 	// check if there is need to build the containers
 	int i = __TOTAL_OBJECT_SEGMENTS;
 	for(; i--; )
@@ -124,10 +124,10 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 		}
 	}
 
-	// search for the container with the closes z position and room to 
+	// search for the container with the closes z position and room to
 	// hold the sprite
 	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
-	
+
 	for(i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
 		if(ObjectSpriteContainer_hasRoomFor(this->objectSpriteContainers[i], numberOfObjects))
@@ -143,9 +143,9 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}
 			}
-		}	
+		}
 	}
-	
+
 	NM_ASSERT(suitableObjectSpriteContainer, "ObjectSpriteContainerManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
 
 	return suitableObjectSpriteContainer;
@@ -162,7 +162,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
 void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, fix19_13 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
-	
+
 	fix19_13 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 
@@ -193,7 +193,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::position: null this");
-	
+
 	ASSERT(spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::position: invalid spt");
 
 	if(spt < __TOTAL_OBJECT_SEGMENTS)
@@ -219,7 +219,7 @@ void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x
 	{
 		totalUsedObjects += ObjectSpriteContainer_getTotalUsedObjects(this->objectSpriteContainers[i]);
 	}
-	
+
 	Printing_text(Printing_getInstance(), "Total used objects: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), totalUsedObjects, x + 20, y, NULL);
 }

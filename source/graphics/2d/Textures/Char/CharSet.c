@@ -53,7 +53,7 @@ __CLASS_NEW_END(CharSet, charSetDefinition, segment, offset)
 // class's constructor
 static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// save definition
 	this->charSetDefinition = charSetDefinition;
@@ -198,11 +198,11 @@ void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE
 
 	if(charSetPixel && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM && (unsigned)charSetPixel->x < 8 && (unsigned)charSetPixel->y < 8)
 	{
-		static BYTE auxChar[] = 
+		static BYTE auxChar[] =
 		{
 			0x00, 0x00,
 			0x00, 0x00,
-			0x00, 0x00,  
+			0x00, 0x00,
 			0x00, 0x00,
 			0x00, 0x00,
 			0x00, 0x00,

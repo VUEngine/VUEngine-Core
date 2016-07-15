@@ -107,7 +107,7 @@ __SINGLETON(SpriteManager);
 static void SpriteManager_constructor(SpriteManager this)
 {
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->node = NULL;
 	this->nextNode = NULL;

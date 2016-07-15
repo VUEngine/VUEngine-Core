@@ -84,7 +84,7 @@ void CollisionManager_constructor(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// create the shape list
 	this->shapes = __NEW(VirtualList);
@@ -92,7 +92,7 @@ void CollisionManager_constructor(CollisionManager this)
 	this->movingShapes = __NEW(VirtualList);
 	this->removedShapes = __NEW(VirtualList);
 	this->inactiveShapes = __NEW(VirtualList);
-	
+
 	this->checkingCollisions = false;
 }
 
@@ -245,7 +245,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	{
 		return;
 	}
-	
+
 	// process removed shapes
 	CollisionManager_processRemovedShapes(this);
 
@@ -261,10 +261,10 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	}
 
 	this->checkingCollisions = true;
-	
+
 	// check the shapes
 	node = this->movingShapes->head;
-	
+
 	CACHE_ENABLE;
 
 	for(; node; node = node->next)
@@ -289,7 +289,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 
 		// check the shapes
 		for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
-		{	
+		{
 			// load the current shape to check against
 			Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
 
@@ -325,7 +325,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	}
 
 	this->checkingCollisions = false;
-	
+
 	CACHE_DISABLE;
 }
 
@@ -373,7 +373,7 @@ void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape)
 	ASSERT(shape, "CollisionManager::shapeStoppedMoving: null shape");
 
 	VirtualList_removeElement(this->movingShapes, shape);
-	
+
 	// make sure other moving shapes test for collisions against it
 //	Shape_checked(shape, false);
 }
@@ -452,31 +452,31 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 		direction.y ? 0 < direction.y? ITOFIX19_13(1): ITOFIX19_13(-1): 0,
 		direction.z ? 0 < direction.z? ITOFIX19_13(1): ITOFIX19_13(-1): 0
 	};
-	
+
 	if(0 == abs(direction.x) + abs(direction.y) + abs(direction.z))
 	{
 		return NULL;
 	}
 
 	SpatialObject collidingObject = NULL;
-	
+
 	do
 	{
 		VirtualNode nodeForActiveShapes = this->activeShapes->head;
 
 		// check the shapes
 		for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
-		{	
+		{
 			// load the current shape to check against
 			Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
-	
+
 			if(shape == shapeToCheck)
 			{
 				continue;
 			}
-			
+
 			NM_ASSERT(VirtualList_getSize(this->activeShapes), "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
-	
+
 			// check if shapes overlap
 			if(__VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, shapeToCheck->owner), displacement))
 			{
@@ -484,7 +484,7 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 				break;
 			}
 		}
-		
+
 		displacement.x += 0 < direction.x? ITOFIX19_13(1): ITOFIX19_13(-1);
 		displacement.y += 0 < direction.y? ITOFIX19_13(1): ITOFIX19_13(-1);
 		displacement.z += 0 < direction.z? ITOFIX19_13(1): ITOFIX19_13(-1);

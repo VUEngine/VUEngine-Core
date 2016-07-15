@@ -21,6 +21,10 @@
 
 // alert stack overflows
 #define __ALERT_STACK_OVERFLOW
+// avoid declaration warnings
+#include <HardwareManager.h>
+void HardwareManager_checkStackStatus(HardwareManager this);
+void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
 
 // define to place the whole memory pool in SRAM
 #undef __PUT_MEMORY_POOL_IN_SRAM

@@ -59,7 +59,7 @@ __SINGLETON(FrameRate);
 // class's constructor
 static void FrameRate_constructor(FrameRate this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->FPS = 0;
 	this->lastFPS = 0;

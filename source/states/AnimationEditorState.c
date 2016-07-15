@@ -77,7 +77,7 @@ __SINGLETON(AnimationEditorState);
 // class's constructor
 static void AnimationEditorState_constructor(AnimationEditorState this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(GameState);
 }
 
 // class's destructor

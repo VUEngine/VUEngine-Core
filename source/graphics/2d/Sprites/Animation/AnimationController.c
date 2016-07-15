@@ -55,7 +55,7 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 {
 	ASSERT(this, "AnimationController::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// set the owner
 	this->owner = owner;
@@ -73,9 +73,9 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 
 	// not playing anything yet
 	this->playing = false;
-	
+
 	this->animationFrameChanged = false;
-	
+
 	ASSERT(charSetDefinition, "AnimationController::constructor: null charSetDefinition");
 
 	// animation coordinator
@@ -92,7 +92,7 @@ void AnimationController_destructor(AnimationController this)
 		__VIRTUAL_CALL(void, AnimationCoordinator, removeAnimationController, this->animationCoordinator, this);
 		this->animationCoordinator = NULL;
 	}
-	
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -168,7 +168,7 @@ void AnimationController_animate(AnimationController this)
 	ASSERT(this, "AnimationController::animate: null this");
 
 	this->animationFrameChanged = false;
- 
+
 	// first check for a valid animation function
 	if(!this->animationFunction)
 	{
@@ -216,7 +216,7 @@ void AnimationController_animate(AnimationController this)
 		// don't write animation each time, only when the animation
 		// has changed
 		this->previousFrame = this->actualFrame;
-		
+
 		Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
 	}
 
@@ -255,7 +255,7 @@ bool AnimationController_update(AnimationController this, Clock clock)
 		// first animate the frame
 		return AnimationController_animate(this);
 	}
-	
+
 	return false;
 }
 */
@@ -271,7 +271,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	{
 		Object_removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
 	}
-	
+
 	// setup animation frame
 	this->animationFunction = animationFunction;
 
@@ -305,7 +305,7 @@ void AnimationController_play(AnimationController this, const AnimationDescripti
 	ASSERT(this, "AnimationController::play: null this");
 	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
 	ASSERT(functionName, "AnimationController::play: null functionName");
-	
+
 	if(this->animationCoordinator)
 	{
 		if(!AnimationCoordinator_playAnimation(this->animationCoordinator, this, animationDescription, functionName))
@@ -346,7 +346,7 @@ void AnimationController_play(AnimationController this, const AnimationDescripti
 
 			// it's playing now
 			this->playing = true;
-			
+
 			// force writing in the next render cycle
 			this->animationFrameChanged = true;
 		}

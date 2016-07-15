@@ -54,9 +54,9 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	ASSERT(this, "MBackground::constructor: null this");
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
 	ASSERT(mBackgroundDefinition->spritesDefinitions[0], "MBackground::constructor: null sprite definition");
-	
+
 	// construct base object
-	__CONSTRUCT_BASE((EntityDefinition*)mBackgroundDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, (EntityDefinition*)mBackgroundDefinition, id, name);
 
 	this->mBackgroundDefinition = mBackgroundDefinition;
 }
@@ -67,7 +67,7 @@ void MBackground_destructor(MBackground this)
 	ASSERT(this, "MBackground::destructor: null this");
 
 	VirtualNode node = this->sprites->head;
-	
+
 	for(; node; node = node->next)
 	{
 		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, node->data)));
@@ -87,9 +87,9 @@ void MBackground_initialize(MBackground this)
 	if(this->mBackgroundDefinition->spritesDefinitions[0])
 	{
 		int i = 0;
-		
+
 		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
-		{	
+		{
 			if(__TYPE(BgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
 			{
 				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
@@ -97,15 +97,15 @@ void MBackground_initialize(MBackground this)
 			else if(__TYPE(MBgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
 			{
 				int j = 0;
-				
+
 				for(; ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
-				{	
+				{
 					MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]);
 				}
 			}
 		}
 	}
-	
+
 	Entity_initialize(__SAFE_CAST(Entity, this));
 }
 
@@ -115,7 +115,7 @@ void MBackground_suspend(MBackground this)
 	ASSERT(this, "MBackground::suspend: null this");
 
 	VirtualNode node = this->sprites->head;
-	
+
 	for(; node; node = node->next)
 	{
 		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, node->data)));
@@ -132,9 +132,9 @@ void MBackground_resume(MBackground this)
 	if(this->mBackgroundDefinition->spritesDefinitions[0])
 	{
 		int i = 0;
-		
+
 		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
-		{	
+		{
 			if(__TYPE(BgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
 			{
 				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
@@ -142,9 +142,9 @@ void MBackground_resume(MBackground this)
 			else if(__TYPE(MBgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
 			{
 				int j = 0;
-				
+
 				for(; ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
-				{	
+				{
 					MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]);
 				}
 			}

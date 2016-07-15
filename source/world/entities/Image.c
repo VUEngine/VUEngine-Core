@@ -45,7 +45,7 @@ void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 id, con
 {
 	ASSERT(this, "Image::constructor: null this");
 
-	__CONSTRUCT_BASE(imageDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, imageDefinition, id, name);
 }
 
 // class's destructor

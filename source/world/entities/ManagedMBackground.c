@@ -61,7 +61,7 @@ void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefiniti
 	ASSERT(this, "ManagedMBackground::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(definition, id, name);
+	__CONSTRUCT_BASE(MBackground, definition, id, name);
 
 	// the sprite must be initialized in the derived class
 	this->managedSprites = __NEW(VirtualList);
@@ -167,7 +167,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 		position2D.parallax = 0;
-		
+
 		this->previous2DPosition = position2D;
 
 		this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
@@ -181,7 +181,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 		// call base class's transform method
 		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 	}
-	
+
 	// apply environment transform
 	Container_applyEnvironmentToTranformation(__SAFE_CAST(Container, this), environmentTransform);
 
@@ -205,32 +205,32 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
 		position2D.parallax = 0;
-		
+
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
-	
+
 		// project position to 2D space
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
-	
+
 		VirtualNode spriteNode = this->managedSprites->head;
-		
+
 		VBVec2D displacement;
 
 		displacement.x = position2D.x - this->previous2DPosition.x;
 		displacement.y = position2D.y - this->previous2DPosition.y;
 		displacement.z = 0;
 		displacement.parallax = 0;
-				
+
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
-			
+
 			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
 		}
-		
+
 		this->previous2DPosition = position2D;
 	}
-	
+
 	this->updateSprites = 0;
 }
 
@@ -243,6 +243,6 @@ void ManagedMBackground_update(ManagedMBackground this)
 int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
 	ASSERT(this, "ManagedMBackground::passMessage: null this");
-	
+
 	return true;
 }

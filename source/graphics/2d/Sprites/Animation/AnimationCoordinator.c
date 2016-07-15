@@ -42,7 +42,7 @@ void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDe
 {
 	ASSERT(this, "AnimationCoordinator::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->animationControllers = __NEW(VirtualList);
 	this->charSetDefinition = charSetDefinition;
@@ -88,9 +88,9 @@ bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationCont
 			// first animate the frame
 			AnimationController_play(firstAnimationController, animationDescription, functionName);
 		}
-		
+
 		return false;
 	}
-	
+
 	return true;
 }

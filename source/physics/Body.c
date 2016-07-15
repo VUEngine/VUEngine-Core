@@ -83,7 +83,7 @@ static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 {
 	ASSERT(this, "Body::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->owner = owner;
 	this->clock = Game_getPhysicsClock(Game_getInstance());
@@ -121,7 +121,7 @@ static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 	this->active = true;
 
 	this->elasticity = 0;
-	
+
 	if(!_physhicsClock)
 	{
 		_physhicsClock = Game_getPhysicsClock(Game_getInstance());
@@ -134,7 +134,7 @@ void Body_destructor(Body this)
 	ASSERT(this, "Body::destructor: null this");
 
 	this->clock = NULL;
-	
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -335,7 +335,7 @@ void Body_applyForce(Body this, const Force* force, int clearAxis)
 	this->appliedForce.x = force->x;
 	this->appliedForce.y = force->y;
 	this->appliedForce.z = force->z;
-	
+
 	if(this->mass)
 	{
 		this->acceleration.x += FIX19_13_DIV(this->appliedForce.x, this->mass);
@@ -533,7 +533,7 @@ static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovem
 	fix19_13 worldFriction = PhysicalWorld_getFriction(Game_getPhysicalWorld(Game_getInstance())) << 1;
 
 	static Force frictionForce = {0, 0, 0};
-	
+
 	frictionForce.x = 0;
 	frictionForce.y = 0;
 	frictionForce.z = 0;
@@ -740,7 +740,7 @@ void Body_stopMovement(Body this, int axis)
 	ASSERT(this, "Body::stopMovement: null this");
 
 	int axisOfStopping = 0;
-	
+
 	if(__XAXIS & axis)
 	{
 		// not moving anymore
@@ -1013,7 +1013,7 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	// get the elapsed time
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;
-	
+
 	if(ITOFIX19_13(1) < totalElasticity)
 	{
 		totalElasticity = ITOFIX19_13(1);

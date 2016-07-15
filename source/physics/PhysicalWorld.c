@@ -85,7 +85,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// create the shape list
 	this->bodies = __NEW(VirtualList);
@@ -96,7 +96,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->gravity.x = 0;
 	this->gravity.y = 0;
 	this->gravity.z = 0;
-	
+
 	this->friction = 0;
 	this->elapsedTime = 0;
 	this->previousTime = 0;
@@ -171,7 +171,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
-	
+
 	// process removed bodies
 	PhysicalWorld_processRemovedBodies(this);
 
@@ -229,7 +229,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 	VirtualNode node = !this->nextBodyToCheckForGravity ? this->bodies->head: this->nextBodyToCheckForGravity;
 
 	int counter = 0;
-	
+
 	// prepare bodies which move
 	// this will place the shape in the owner's position
 	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->next, counter++)
@@ -241,14 +241,14 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		{
 			// check if necessary to apply gravity
 			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(int, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
-			
+
 			int movingState = Body_isMoving(body);
-			
+
 			gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
-	
+
 			if(gravitySensibleAxis)
 			{
-				// Must account for the FPS to avoid situations is which 
+				// Must account for the FPS to avoid situations is which
 				// a collision is not detected when a body starts to fall
 				// and doesn't have enough time to detect a shape below
 				// when moving from one shape over another
@@ -258,7 +258,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 					gravitySensibleAxis & __YAXIS ? this->gravity.y >> (__FRAME_CYCLE): 0,
 					gravitySensibleAxis & __ZAXIS ? this->gravity.z >> (__FRAME_CYCLE): 0
 				};
-				
+
 				if(gravity.x || gravity.y || gravity.z)
 				{
 					// add gravity
@@ -267,7 +267,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 			}
 		}
 	}
-	
+
 	this->nextBodyToCheckForGravity = node;
 }
 

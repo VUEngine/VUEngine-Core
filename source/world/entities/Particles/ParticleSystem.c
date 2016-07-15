@@ -62,41 +62,41 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ParticleSystem, const ParticleSystemDefinition* particleSystemDefinition, s16 id)
-__CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id);
+__CLASS_NEW_DEFINITION(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name)
+__CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id, name);
 
 // class's constructor
-void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinition* particleSystemDefinition, s16 id)
+void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "ParticleSystem::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(&particleSystemDefinition->entityDefinition, id);
+	__CONSTRUCT_BASE(Entity, &particleSystemDefinition->entityDefinition, id, name);
 
 	// save definition
 	this->particleSystemDefinition = particleSystemDefinition;
-	
+
 	this->particles = __NEW(VirtualList);
 	this->recyclableParticles = this->particleSystemDefinition->recycleParticles? __NEW(VirtualList) : NULL;
 	this->expiredParticles = __NEW(VirtualList);
-	
+
 	this->particleCount = 0;
 	this->paused = !this->particleSystemDefinition->autoStart;
-	
+
 	// set size from definition if there are not no sprites to be added
 	this->size.x += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x));
 	this->size.y += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
 	this->size.z += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
-	
+
 	// retrieve clock
 	this->clock = Game_getInGameClock(Game_getInstance());
 	this->previousTime = 0;
-	
+
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
 	// calculate the numbe of sprite definitions
 	for(this->numberOfSpriteDefinitions = 0; 0 <= (int)this->numberOfSpriteDefinitions && this->particleSystemDefinition->objectSpriteDefinitions[this->numberOfSpriteDefinitions]; this->numberOfSpriteDefinitions++);
-	
+
 	ASSERT(0 < this->numberOfSpriteDefinitions, "ParticleSystem::constructor: 0 sprite definitions");
 }
 
@@ -108,16 +108,16 @@ void ParticleSystem_destructor(ParticleSystem this)
 	ParticleSystem_hide(this);
 
 	ParticleSystem_processExpiredParticles(this);
-	
+
 	if(this->particles)
 	{
 		VirtualNode node = this->particles->head;
-		
+
 		for(; node; node = node->next)
 		{
 			__DELETE(node->data);
 		}
-		
+
 		__DELETE(this->particles);
 		this->particles = NULL;
 	}
@@ -125,16 +125,16 @@ void ParticleSystem_destructor(ParticleSystem this)
 	if(this->recyclableParticles)
 	{
 		VirtualNode node = this->recyclableParticles->head;
-		
+
 		for(; node; node = node->next)
 		{
 			__DELETE(node->data);
 		}
-		
+
 		__DELETE(this->recyclableParticles);
 		this->recyclableParticles = NULL;
 	}
-	
+
 	if(this->expiredParticles)
 	{
 		ASSERT(!VirtualList_getSize(this->expiredParticles), "ParticleSystem::destructor: expiredParticles not clean");
@@ -173,7 +173,7 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 		{
 			Particle particle = __SAFE_CAST(Particle, node->data);
 			VirtualList_removeElement(this->particles, particle);
-			
+
 			__DELETE(particle);
 			this->particleCount--;
 		}
@@ -185,9 +185,9 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 void ParticleSystem_update(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::update: null this");
-	
+
 	Container_update(__SAFE_CAST(Container, this));
-	
+
 	ParticleSystem_processExpiredParticles(this);
 
 	if(!Clock_isPaused(this->clock))
@@ -195,22 +195,22 @@ void ParticleSystem_update(ParticleSystem this)
 		u32 currentTime = Clock_getTime(this->clock);
 	    u32 elapsedTime = currentTime - this->previousTime;
 	    this->previousTime = currentTime;
-	
+
 	    // update each particle
 	    VirtualNode node = this->particles->head;
-	
+
 	    void (* behavior)(Particle particle) = this->particleSystemDefinition->particleDefinition->behavior;
-	    	
+
 	    for(; node; node = node->next)
 	    {
 	        __VIRTUAL_CALL(void, Particle, update, node->data, elapsedTime, behavior);
 	    }
-	
+
 		if(!this->paused)
 		{
 			// check if it is time to spawn new particles
 			this->nextSpawnTime -= abs(elapsedTime);
-	
+
 			if(0 > this->nextSpawnTime)
 			{
 				if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
@@ -225,7 +225,7 @@ void ParticleSystem_update(ParticleSystem this)
 						VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
 						this->particleCount++;
 					}
-					
+
 					this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 				}
 			}
@@ -241,10 +241,10 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 	if(this->recyclableParticles->head && (VirtualList_getSize(this->particles) + VirtualList_getSize(this->recyclableParticles) >= this->particleSystemDefinition->maximumNumberOfAliveParticles))
 	{
 		long seed = Utilities_randomSeed();
-	
+
 		int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
 		fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
-		
+
 		// call the appropriate allocator to support inheritance
 		Particle particle = __SAFE_CAST(Particle, VirtualList_front(this->recyclableParticles));
 
@@ -253,12 +253,12 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 		Particle_show(particle);
-	
+
 		VirtualList_popFront(this->recyclableParticles);
-		
+
 		return particle;
 	}
-	
+
 	return ParticleSystem_spawnParticle(this);
 }
 
@@ -266,7 +266,7 @@ static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem thi
 {
 	ASSERT(this, "ParticleSystem::getParticleSpawnPosition: null this");
 
-	static VBVec3D position = 
+	static VBVec3D position =
 	{
 		0, 0, 0
 	};
@@ -297,7 +297,7 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
 static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::spawnParticle: null this");
-	
+
 	long seed = Utilities_randomSeed();
 
 	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
@@ -311,14 +311,14 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 
 	Object_addEventListener(__SAFE_CAST(Object, particle), __SAFE_CAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
-	
+
 	return particle;
 }
 
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ParticleSystem::transform: null this");
-	
+
 	Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 
 	ParticleSystem_processExpiredParticles(this);
@@ -333,19 +333,19 @@ void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 	VirtualNode node = this->particles->head;
 
 	bool updateSprites = this->updateSprites? true : false;
-	
+
 	for(; node; node = node->next)
 	{
 		__VIRTUAL_CALL(void, Particle, updateVisualRepresentation, node->data, updateSprites);
 	}
-	
+
 	this->updateSprites = 0;
 }
 
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram)
 {
 	ASSERT(this, "ParticleSystem::handleMessage: null this");
-	
+
 	return false;
 }
 
@@ -354,9 +354,9 @@ void ParticleSystem_show(ParticleSystem this)
 	ASSERT(this, "ParticleSystem::show: null this");
 
 	Entity_show(__SAFE_CAST(Entity, this));
-	
+
 	VirtualNode node = this->particles->head;
-	
+
 	for(; node; node = node->next)
 	{
 		Particle_show(__SAFE_CAST(Particle, node->data));
@@ -366,11 +366,11 @@ void ParticleSystem_show(ParticleSystem this)
 void ParticleSystem_hide(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::hide: null this");
-	
+
 	Entity_hide(__SAFE_CAST(Entity, this));
-	
+
 	VirtualNode node = this->particles->head;
-	
+
 	for(; node; node = node->next)
 	{
 		Particle_hide(__SAFE_CAST(Particle, node->data));
@@ -384,7 +384,7 @@ void ParticleSystem_resume(ParticleSystem this)
 	Entity_resume(__SAFE_CAST(Entity, this));
 
 	VirtualNode node = this->particles->head;
-	
+
 	for(; node; node = node->next)
 	{
 		__VIRTUAL_CALL(void, Particle, resume, node->data);
@@ -393,21 +393,21 @@ void ParticleSystem_resume(ParticleSystem this)
 	if(this->recyclableParticles)
 	{
 		node = this->recyclableParticles->head;
-		
+
 		for(; node; node = node->next)
 		{
 			__VIRTUAL_CALL(void, Particle, resume, node->data);
 		}
 	}
-	
+
 	node = this->expiredParticles->head;
-		
+
 	for(; node; node = node->next)
 	{
 		__VIRTUAL_CALL(void, Particle, resume, node->data);
 		Particle_hide(__SAFE_CAST(Particle, node->data));
 	}
-	
+
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 }
 
@@ -418,9 +418,9 @@ void ParticleSystem_suspend(ParticleSystem this)
 	Entity_suspend(__SAFE_CAST(Entity, this));
 
 	ParticleSystem_processExpiredParticles(this);
-	
+
 	VirtualNode node = this->particles->head;
-	
+
 	for(; node; node = node->next)
 	{
 		__VIRTUAL_CALL(void, Particle, suspend, node->data);
@@ -429,7 +429,7 @@ void ParticleSystem_suspend(ParticleSystem this)
 	if(this->recyclableParticles)
 	{
 		node = this->recyclableParticles->head;
-		
+
 		for(; node; node = node->next)
 		{
 			__VIRTUAL_CALL(void, Particle, suspend, node->data);

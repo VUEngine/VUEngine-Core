@@ -46,7 +46,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 // class's constructor
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// clear values
 	this->worldLayer = 0;
@@ -80,7 +80,7 @@ Scale Sprite_getScale(Sprite this)
 	{
 			ITOFIX7_9(1), ITOFIX7_9(1)
 	};
-	
+
 	//  return the scale
 	return scale;
 }
@@ -123,7 +123,7 @@ void Sprite_show(Sprite this)
 	this->renderFlag = __UPDATE_HEAD;
 	this->hidden = false;
 
-	// since I can have been moved after being hidden, I need to force 
+	// since I can have been moved after being hidden, I need to force
 	// a complete update before showing up
 	this->initialized = false;
 }
@@ -227,7 +227,7 @@ void Sprite_rewrite(Sprite this)
 		// write it in graphical memory
 		Texture_rewrite(this->texture);
 	}
-	
+
 	// raise flag to render again
 	this->renderFlag = __UPDATE_HEAD;
 }
@@ -318,7 +318,7 @@ bool Sprite_isPlaying(Sprite this)
 		// first animate the frame
 		return AnimationController_isPlaying(this->animationController);
 	}
-	
+
 	return false;
 }
 
@@ -331,7 +331,7 @@ bool Sprite_isPlayingFunction(Sprite this, AnimationDescription* animationDescri
 		// first animate the frame
 		return AnimationController_isPlayingFunction(this->animationController, animationDescription, functionName);
 	}
-	
+
 	return false;
 }
 
@@ -355,8 +355,8 @@ s8 Sprite_getActualFrame(Sprite this)
 		// first animate the frame
 		return AnimationController_getActualFrame(this->animationController);
 	}
-	
-	return -1;	
+
+	return -1;
 }
 
 void Sprite_setActualFrame(Sprite this, s8 actualFrame)
@@ -379,8 +379,8 @@ s8 Sprite_getFrameDelay(Sprite this)
 		// first animate the frame
 		return AnimationController_getFrameDelay(this->animationController);
 	}
-	
-	return -1;	
+
+	return -1;
 }
 
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay)

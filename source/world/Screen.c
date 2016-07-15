@@ -62,15 +62,15 @@ static void Screen_constructor(Screen this)
 	ASSERT(this, "Screen::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// initialize world's screen's position
 	this->position.x = 0;
 	this->position.y = 0;
 	this->position.z = 0;
-	
+
 	this->positionBackup = this->position;
-	
+
 	// set the default screen movement manager
 	this->screenMovementManager = ScreenMovementManager_getInstance();
 
@@ -100,7 +100,7 @@ static void Screen_constructor(Screen this)
 
 	// vertical view point center
 	this->optical.verticalViewPointCenter = ITOFIX19_13(__VERTICAL_VIEW_POINT_CENTER);
-	
+
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;
 	_screenPosition = &this->position;
@@ -120,12 +120,12 @@ void Screen_destructor(Screen this)
 void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager)
 {
 	ASSERT(this, "Screen::setScreenMovementManager: null this");
-	
+
 	if(this->screenMovementManager)
 	{
 		__DELETE(this->screenMovementManager);
 	}
-	
+
 	this->screenMovementManager = screenMovementManager;
 
 }

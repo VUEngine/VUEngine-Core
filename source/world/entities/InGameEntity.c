@@ -51,7 +51,7 @@ void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameE
 	ASSERT(this, "InGameEntity::constructor: null this");
 	ASSERT(inGameEntityDefinition, "InGameEntity::constructor: null definition");
 
-	__CONSTRUCT_BASE(&inGameEntityDefinition->entityDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, &inGameEntityDefinition->entityDefinition, id, name);
 
 	this->inGameEntityDefinition = inGameEntityDefinition;
 
@@ -95,20 +95,20 @@ void InGameEntity_setGap(InGameEntity this)
 	{
 		// retrieve the sprite's scale
 		Scale scale = __VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
-	
+
 		// retrieve transforming mode
 		int bgmapMode = Sprite_getMode(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
-	
+
 		// load original gap
 		this->gap = this->inGameEntityDefinition->gap;
-	
+
 		// if facing to the left... swap left / right gap
 		if(__LEFT == this->direction.x && WRLD_AFFINE == bgmapMode)
 		{
 			this->gap.left 	= this->inGameEntityDefinition->gap.right;
 			this->gap.right = this->inGameEntityDefinition->gap.left;
 		}
-	
+
 		ASSERT(scale.x, "InGameEntity::setGap: 0 scale x");
 		ASSERT(scale.y, "InGameEntity::setGap: 0 scale y");
 
@@ -168,7 +168,7 @@ Direction InGameEntity_getDirection(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::getDirection: null this");
 
-	// TODO: must be recursive to account for parenting 
+	// TODO: must be recursive to account for parenting
 	return this->direction;
 }
 

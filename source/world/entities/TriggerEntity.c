@@ -50,10 +50,10 @@ void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* trig
 	ASSERT(triggerEntityDefinition, "TriggerEntity::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(&triggerEntityDefinition->inGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(InGameEntity, &triggerEntityDefinition->inGameEntityDefinition, id, name);
 
 	this->triggerEntityDefinition = triggerEntityDefinition;
-	
+
 	// register a shape for collision detection
 	this->shape = CollisionManager_registerShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), triggerEntityDefinition->shapeType);
 

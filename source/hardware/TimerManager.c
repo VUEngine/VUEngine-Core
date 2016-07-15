@@ -62,7 +62,7 @@ static void TimerManager_constructor(TimerManager this)
 {
 	ASSERT(this, "TimerManager::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->tcrValue = 0;
 

@@ -53,7 +53,7 @@ void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, Colli
 	ASSERT(this, "CollisionsContainerEntity::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(collisionsContainerEntityDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, collisionsContainerEntityDefinition, id, name);
 }
 
 // class's destructor

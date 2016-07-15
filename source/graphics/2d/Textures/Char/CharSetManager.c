@@ -74,7 +74,7 @@ __SINGLETON(CharSetManager);
 // class's constructor
 static void CharSetManager_constructor(CharSetManager this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	int segment = 0;
 	for(; segment < __CHAR_SEGMENTS; segment++)

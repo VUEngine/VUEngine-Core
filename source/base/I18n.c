@@ -73,7 +73,7 @@ static void I18n_constructor(I18n this)
 {
 	ASSERT(this, "I18n::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->activeLanguage = 0;
 }

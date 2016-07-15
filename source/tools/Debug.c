@@ -77,6 +77,7 @@
 #include <GameState.h>
 #include <Stage.h>
 #include <UI.h>
+#include <Mem.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -181,7 +182,7 @@ static void Debug_constructor(Debug this)
 {
 	ASSERT(this, "Debug::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->pages = __NEW(VirtualList);
 	this->subPages = __NEW(VirtualList);

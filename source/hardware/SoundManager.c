@@ -186,7 +186,7 @@ static void SoundManager_constructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	{
 		int i = 0;

@@ -62,7 +62,7 @@ static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory 
 {
 	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->animationCoordinators = __NEW(VirtualList);
 }
@@ -72,7 +72,7 @@ void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::destructor: null this");
 	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
-	
+
 	AnimationCoordinatorFactory_reset(this);
 	__DELETE(this->animationCoordinators);
 	this->animationCoordinators = NULL;
@@ -86,7 +86,7 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 	ASSERT(this, "AnimationCoordinatorFactory::reset: null this");
 
 	VirtualNode node = this->animationCoordinators->head;
-	
+
 	for(; node; node = node->next)
 	{
 		__DELETE(node->data);
@@ -110,16 +110,16 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				for(;node; node = node->next)
 				{
 					AnimationCoordinator animationCoordinator = __SAFE_CAST(AnimationCoordinator, node->data);
-					
+
 					if(AnimationCoordinator_getCharSetDefinition(animationCoordinator) == charSetDefinition)
 					{
 						__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
 						return animationCoordinator;
 					}
 				}
-				
+
 				AnimationCoordinator animationCoordinator = NULL;
-				
+
 				if(__GET_CAST(BgmapAnimatedSprite, sprite))
 				{
 					animationCoordinator = __SAFE_CAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSetDefinition));
@@ -137,12 +137,12 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
 
 				VirtualList_pushBack(this->animationCoordinators, animationCoordinator);
-				
+
 				return animationCoordinator;
 			}
 			break;
 	}
-	
+
 	return NULL;
-	
+
 }

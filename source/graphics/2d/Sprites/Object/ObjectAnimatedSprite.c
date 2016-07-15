@@ -59,7 +59,7 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE((SpriteDefinition*)oSpriteDefinition, owner);
+	__CONSTRUCT_BASE(ObjectSprite, (const ObjectSpriteDefinition*)oSpriteDefinition, owner);
 
 	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), oSpriteDefinition->textureDefinition->charSetDefinition);
 }
@@ -84,22 +84,22 @@ void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");
-	
+
 	if(0 > this->objectIndex)
 	{
 		return;
 	}
-	
+
 	int animationFrame = (int)AnimationController_getActualFrameIndex(this->animationController);
-	
+
 	if(0 > animationFrame)
 	{
 		return;
 	}
-	
+
 	// force rendering
 	this->renderFlag = true;
-	
+
 	// write according to the allocation type
 	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture)))
 	{

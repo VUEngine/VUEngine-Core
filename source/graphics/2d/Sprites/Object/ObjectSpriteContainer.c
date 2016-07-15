@@ -72,7 +72,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Sprite, NULL, NULL);
 
 	this->head = WRLD_OBJ | WRLD_ON;
 	this->spt = spt;

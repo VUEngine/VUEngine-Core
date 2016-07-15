@@ -151,7 +151,7 @@ static void StageEditor_constructor(StageEditor this)
 {
 	ASSERT(this, "StageEditor::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->currentEntityNode = NULL;
 

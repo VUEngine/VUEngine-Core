@@ -42,7 +42,7 @@ __CLASS_NEW_END(State);
 void State_constructor(State this)
 {
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 }
 
 // class's destructor

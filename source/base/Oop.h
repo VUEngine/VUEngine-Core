@@ -29,7 +29,7 @@
 																						\
 	{																					\
 		/* a static flag */																\
-		static bool __notCalledFlag;			                                        \
+		static bool __notCalledFlag = true;                                             \
 																						\
 		/* check if not called */														\
 		if(__notCalledFlag)																\
@@ -141,16 +141,16 @@
 	MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DYNAMIC_STRUCT_PAD)		\
 
 // construct the base object
-#define __CONSTRUCT_BASE(...)															\
+#define __CONSTRUCT_BASE(BaseClass, ...)												\
 																						\
 	/* call base's constructor */														\
-	_baseConstructor((void*)this, ##__VA_ARGS__);										\
+	BaseClass ## _constructor(__SAFE_CAST(BaseClass, this), ##__VA_ARGS__);							\
 
 // must always call base class's destructor
 #define __DESTROY_BASE																	\
 																						\
 	/* since the base destructor is the second element in the virtual table */			\
-	_baseDestructor((void*)this);														\
+	_baseDestructor(__SAFE_CAST(Object, this));														\
 																						\
 	/* free the memory */																\
 	MemoryPool_free(MemoryPool_getInstance(), (void*)this);								\
@@ -333,11 +333,9 @@
 	/* class' vtable's definition */								    		    	\
 	struct ClassName ## _vTable ClassName ## _vTable __attribute__((section(".bss")));  \
 																						\
-	/* class' base's constructor and destructor */					    		    	\
-	static void (* const _baseConstructor)(void*, ...) =                                \
-	    (void (*)(void*, ...))&BaseClassName ## _constructor;		                    \
-	static void (* const _baseDestructor)(void*) =                                      \
-	    (void (*)(void*))&BaseClassName ## _destructor;				    	            \
+	/* class' base's destructor */					    		    	                \
+	static void (* const _baseDestructor)(Object) =                                     \
+	    (void (*)(Object))&BaseClassName ## _destructor;				    	        \
 																						\
 	/* define class's getSize method */													\
 	int ClassName ## _getObjectSize()													\
@@ -378,7 +376,7 @@
 	/* declare the static instance */													\
 	static ClassName ## _str _instance ## ClassName __VA_ARGS__;	                    \
 																						\
-	/* a flag to know when to allow constructs */										\
+	/* a flag to know when to allow construction */										\
 	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;                      \
 																						\
 	/* define get instance method */													\
@@ -433,7 +431,7 @@
 	__CLASS_NEW_DEFINITION(ClassName);													\
 	__CLASS_NEW_END(ClassName);															\
 																						\
-	/* a flag to know when to allow constructs */										\
+	/* a flag to know when to allow construction */										\
 	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;                      \
 																						\
 	/* define get instance method */													\
@@ -462,24 +460,6 @@
 		/* return the created singleton */												\
 		return _instance ## ClassName;													\
 	}
-
-// gcc has a bug, it doesn't move back the sp register after returning from a variadic call
-#define __CALL_VARIADIC(VariadicFunctionCall)											\
-																						\
-	/* variadic function call */														\
-	VariadicFunctionCall;																\
-																						\
-	/* sp fix displacement */															\
-	asm("addi	20, sp, sp")
-
-// MemoryPool's defines
-#define __BLOCK_DEFINITION(BlockSize, Elements)											\
-	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 									\
-
-#define __SET_MEMORY_POOL_ARRAY(BlockSize)												\
-	this->poolLocation[pool] = this->pool ## BlockSize ## B;							\
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);			\
-	this->poolSizes[pool++][eBlockSize] = BlockSize;									\
 
 
 #endif

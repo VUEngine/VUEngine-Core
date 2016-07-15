@@ -32,7 +32,9 @@
 #include <OptionsSelector.h>
 #include <Texture.h>
 #include <AnimationController.h>
+#include <BgmapTextureManager.h>
 #include <KeyPadManager.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -148,7 +150,7 @@ static void AnimationEditor_constructor(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->animatedSprite = NULL;
 	this->gameState = NULL;

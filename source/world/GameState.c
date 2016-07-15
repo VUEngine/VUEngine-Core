@@ -41,7 +41,7 @@ void GameState_constructor(GameState this)
 {
 	ASSERT(this, "GameState::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(State);
 
 	this->stage = NULL;
 

@@ -51,7 +51,7 @@ static void Circle_constructor(Circle this, SpatialObject owner)
 {
 	ASSERT(this, "Circle::constructor: null this");
 
-	__CONSTRUCT_BASE(owner);
+	__CONSTRUCT_BASE(Shape, owner);
 
 	// TODO
 	this->radius = 1;

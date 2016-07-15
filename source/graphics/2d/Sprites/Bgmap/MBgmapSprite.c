@@ -73,7 +73,7 @@ __CLASS_NEW_END(MBgmapSprite, mSpriteDefinition, owner);
 // class's constructor
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE(&mSpriteDefinition->bSpriteDefinition, owner);
+	__CONSTRUCT_BASE(BgmapSprite, &mSpriteDefinition->bSpriteDefinition, owner);
 
 	this->mSpriteDefinition = mSpriteDefinition;
 

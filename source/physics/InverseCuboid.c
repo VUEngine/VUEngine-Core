@@ -55,7 +55,7 @@ static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
 {
 	ASSERT(this, "InverseCuboid::constructor: null this");
 
-	__CONSTRUCT_BASE(owner);
+	__CONSTRUCT_BASE(Shape, owner);
 }
 
 // class's destructor

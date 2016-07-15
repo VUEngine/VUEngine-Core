@@ -88,7 +88,7 @@ __SINGLETON(BgmapTextureManager);
 // class's constructor
 static void BgmapTextureManager_constructor(BgmapTextureManager this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	BgmapTextureManager_reset(this);
 }

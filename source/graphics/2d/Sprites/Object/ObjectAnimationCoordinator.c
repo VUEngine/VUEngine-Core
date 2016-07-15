@@ -45,7 +45,7 @@ void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, con
 {
 	ASSERT(this, "ObjectAnimationCoordinator::constructor: null this");
 
-	__CONSTRUCT_BASE(charSetDefinition);
+	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
 }
 
 // class destructor
@@ -68,7 +68,7 @@ void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinato
 	{
 		AnimationController_stop(animationController);
 	}
-	
+
 	VirtualList_pushBack(this->animationControllers, animationController);
 }
 
@@ -79,11 +79,11 @@ void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordin
 
 	bool mustChangeLeader = animationController == __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
 	VirtualList_removeElement(this->animationControllers, animationController);
-	
+
 	if(mustChangeLeader && this->animationControllers->head)
 	{
 		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
-		
+
 		if(firstAnimationController)
 		{
 			if(AnimationController_isPlaying(animationController))

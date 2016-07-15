@@ -65,7 +65,7 @@ typedef struct DelayedMessage
 
 	// time of arrival
 	u32 timeOfArrival;
-	
+
 	// reference to clock
 	Clock clock;
 
@@ -82,7 +82,7 @@ __SINGLETON(MessageDispatcher);
 // class's constructor
 static void MessageDispatcher_constructor(MessageDispatcher this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->delayedMessages = __NEW(VirtualList);
 	this->delayedMessagesToDiscard = __NEW(VirtualList);
@@ -129,7 +129,7 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 	{
 		MessageDispatcher_dispatchDelayedMessage(MessageDispatcher_getInstance(), delay, sender, receiver, message, extraInfo);
 	}
-	
+
 	return false;
 }
 
@@ -160,12 +160,12 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 	if(this->delayedMessagesToDiscard->head)
 	{
 		VirtualNode node = this->delayedMessagesToDiscard->head;
-		
+
 		for(; node; node = node->next)
 		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 			Telegram telegram = delayedMessage->telegram;
-			
+
 			VirtualList_removeElement(this->delayedMessages, delayedMessage);
 
 			ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
@@ -194,7 +194,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
 	MessageDispatcher_processDiscardedMessages(this);
-	
+
 	if(this->delayedMessages->head)
 	{
 		VirtualList telegramsToDispatch = __NEW(VirtualList);
@@ -221,7 +221,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			Telegram telegram = delayedMessage->telegram;
 
 			VirtualNode auxNode = this->delayedMessagesToDiscard->head;
-			
+
 			for(; auxNode; auxNode = auxNode->next)
 			{
 				if(delayedMessage == auxNode->data)
@@ -251,7 +251,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			{
 				__DELETE(telegram);
 			}
-			
+
 			if(*(u32*)delayedMessage)
 			{
 				__DELETE_BASIC(delayedMessage);

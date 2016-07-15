@@ -68,7 +68,7 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	ASSERT(this, "AnimatedInGameEntity::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(&animatedInGameEntityDefinition->inGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(InGameEntity, &animatedInGameEntityDefinition->inGameEntityDefinition, id, name);
 
 	// save ROM definition
 	this->animatedInGameEntityDefinition = animatedInGameEntityDefinition;
@@ -116,12 +116,12 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
-	
+
 		// setup listeners
 		for(; node ; node = node->next)
 	    {
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
-	
+
 			function(__SAFE_CAST(Object, sprite), __SAFE_CAST(Object, this), (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
 		}
 	}
@@ -193,7 +193,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 	if(!Clock_isPaused(this->clock))
 	{
 		VirtualNode node = this->sprites->head;
-	
+
 		// move each child to a temporary list
 		for(; node ; node = node->next)
 		{
@@ -229,7 +229,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 	if(this->sprites && animationName)
 	{
 		this->currentAnimationName = animationName;
-		
+
 		VirtualNode node = this->sprites->head;
 
 		// play animation on each sprite
@@ -298,7 +298,7 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
 
 	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
-	
+
 	AnimatedInGameEntity_addListeners(this);
 }
 

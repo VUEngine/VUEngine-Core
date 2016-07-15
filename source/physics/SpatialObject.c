@@ -53,7 +53,7 @@ void SpatialObject_constructor(SpatialObject this)
 	ASSERT(this, "SpatialObject::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 }
 
 // class's destructor
@@ -126,19 +126,19 @@ Gap SpatialObject_getGap(SpatialObject this)
 	{
 			0, 0, 0, 0
 	};
-	
+
 	return gap;
 }
 
 const VBVec3D* SpatialObject_getPosition(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::getPosition: null this");
-	
-	static VBVec3D position = 
+
+	static VBVec3D position =
 	{
 		0, 0, 0
 	};
-	
+
 	return &position;
 }
 

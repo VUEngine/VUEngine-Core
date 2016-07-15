@@ -28,7 +28,7 @@
 #include <SpriteManager.h>
 #include <VIP.h>
 #include <Mem.h>
-
+#include <Printing.h>
 #include <debugConfig.h>
 
 
@@ -96,7 +96,7 @@ static void VPUManager_constructor(VPUManager this)
 {
 	ASSERT(this, "VPUManager::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->frameRate = FrameRate_getInstance();
 	this->paramTableManager = ParamTableManager_getInstance();

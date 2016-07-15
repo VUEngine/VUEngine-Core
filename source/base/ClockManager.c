@@ -72,7 +72,7 @@ __SINGLETON(ClockManager);
 // class's constructor
 static void ClockManager_constructor(ClockManager this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// create the clock list
     this->clocks = __NEW(VirtualList);

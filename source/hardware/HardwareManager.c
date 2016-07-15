@@ -29,6 +29,7 @@
 #include <ClockManager.h>
 #include <SpriteManager.h>
 #include <Printing.h>
+#include <Utilities.h>
 #include <debugConfig.h>
 
 
@@ -37,7 +38,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #ifdef __ALERT_STACK_OVERFLOW
-extern u32 _lastDataVariable;
+extern u32 _bss_end;
 #endif
 
 
@@ -98,7 +99,7 @@ static void HardwareManager_constructor(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// set ROM waiting to 1 cycle
 	HW_REGS[WCR] |= 0x0001;
@@ -419,7 +420,7 @@ void HardwareManager_checkStackStatus(HardwareManager this)
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 
-	if((0x05000000 & sp) && sp < (int)&_lastDataVariable)
+	if((0x05000000 & sp) && sp < (int)&_bss_end)
 	{
 		HardwareManager_printStackStatus(HardwareManager_getInstance(), 1, 15, false);
 		NM_ASSERT(false, "HardwareManager::checkStackStatus: stack overflown!");
@@ -433,7 +434,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 
-	int room = sp - (int)&_lastDataVariable;
+	int room = sp - (int)&_bss_end;
 
 	if(resumed)
 	{
@@ -456,7 +457,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 		Printing_text(Printing_getInstance(), "Pointer:" , x, ++y, NULL);
 		Printing_hex(Printing_getInstance(), sp, x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Bss' end:" , x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (int)&_lastDataVariable, x + 10, y, NULL);
+		Printing_hex(Printing_getInstance(), (int)&_bss_end, x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Room:           " , x, ++y, NULL);
 		Printing_int(Printing_getInstance(), room, x + 10, y, NULL);
 	}

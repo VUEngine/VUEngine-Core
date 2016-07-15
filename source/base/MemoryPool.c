@@ -36,6 +36,16 @@
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 
 
+// MemoryPool's defines
+#define __BLOCK_DEFINITION(BlockSize, Elements)											\
+	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 									\
+
+#define __SET_MEMORY_POOL_ARRAY(BlockSize)												\
+	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];						\
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);			\
+	this->poolSizes[pool++][eBlockSize] = BlockSize;									\
+
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -78,6 +88,7 @@ static void MemoryPool_reset(MemoryPool this);
 //---------------------------------------------------------------------------------------------------------
 
 // a singleton
+#undef __PUT_MEMORY_POOL_IN_SRAM
 #ifdef __PUT_MEMORY_POOL_IN_SRAM
 __SINGLETON(MemoryPool);
 #else
@@ -87,7 +98,7 @@ __SINGLETON(MemoryPool, __attribute__((section(".bss"))));
 // class constructor
 static void MemoryPool_constructor(MemoryPool this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	MemoryPool_reset(this);
 	MemoryPool_cleanUp(this);

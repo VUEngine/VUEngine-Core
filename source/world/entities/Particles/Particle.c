@@ -55,14 +55,14 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	ASSERT(this, "Particle::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(SpatialObject);
 
 	this->particleDefinition = particleDefinition;
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
 	this->body = PhysicalWorld_registerBody(Game_getPhysicalWorld(Game_getInstance()), __SAFE_CAST(SpatialObject, this), mass);
 	Body_setAxisSubjectToGravity(this->body, particleDefinition->axisSubjectToGravity);
-	
+
 	this->objectSprite = NULL;
 	Particle_addSprite(this);
 }
@@ -79,13 +79,13 @@ void Particle_destructor(Particle this)
 		PhysicalWorld_unregisterBody(Game_getPhysicalWorld(Game_getInstance()), __SAFE_CAST(SpatialObject, this));
 		this->body = NULL;
 	}
-	
+
 	if(this->objectSprite)
 	{
 		__DELETE(this->objectSprite);
 		this->objectSprite = NULL;
 	}
-	
+
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -115,14 +115,14 @@ void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle 
 	if(0 <= this->lifeSpan)
 	{
 		this->lifeSpan -= elapsedTime;
-		
+
 		Sprite_update(__SAFE_CAST(Sprite, this->objectSprite));
-		
+
 		if(behavior)
 		{
 			behavior(this);
 		}
-		
+
 		if(0 > this->lifeSpan)
 		{
 			Body_setActive(this->body, false);
@@ -135,7 +135,7 @@ void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle 
 void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition)
 {
 	ASSERT(this, "Particle::updateVisualRepresentation: null this");
-	
+
 	if(updateSpritePosition || Body_isAwake(this->body))
     {
 		const VBVec3D* position = Body_getPosition(this->body);
@@ -147,7 +147,7 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 			// calculate sprite's parallax
 			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
 		}
-		
+
 		// update sprite's 2D position
 		__VIRTUAL_CALL(void, Sprite, position, this->objectSprite, position);
     }
@@ -156,21 +156,21 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 void Particle_addForce(Particle this, const Force* force)
 {
 	ASSERT(this, "Particle::addForce: null this");
-	
+
 	Body_addForce(this->body, force);
 }
 
 void Particle_setLifeSpan(Particle this, int lifeSpan)
 {
 	ASSERT(this, "Particle::setLifeSpan: null this");
-	
+
 	this->lifeSpan = lifeSpan;
 }
 
 void Particle_setMass(Particle this, fix19_13 mass)
 {
 	ASSERT(this, "Particle::setMass: null this");
-	
+
 	Body_setMass(this->body, mass);
 }
 
@@ -179,7 +179,7 @@ void Particle_setPosition(Particle this, const VBVec3D* position)
 {
 	ASSERT(this, "Particle::setPosition: null this");
 	ASSERT(this->body, "Particle::setPosition: null body");
-	
+
 	Body_setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
 
 	// sync sprite
@@ -213,7 +213,7 @@ void Particle_hide(Particle this)
 {
 	ASSERT(this, "Particle::hide: null this");
 	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
-	
+
 	ObjectSprite_hide(this->objectSprite);
 	Body_setActive(this->body, false);
 }
@@ -240,7 +240,7 @@ void Particle_resume(Particle this)
 	ASSERT(this, "Particle::resume: null this");
 
 	Particle_addSprite(this);
-	
+
 	NM_ASSERT(this->objectSprite, "Particle::resume: null objectSprite");
 }
 
@@ -249,6 +249,6 @@ void Particle_suspend(Particle this)
 	ASSERT(this, "Particle::suspend: null this");
 
 	__DELETE(this->objectSprite);
-	
+
 	this->objectSprite = NULL;
 }

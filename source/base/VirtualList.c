@@ -59,7 +59,7 @@ __CLASS_NEW_END(VirtualList);
 // class's constructor
 static void VirtualList_constructor(VirtualList this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// set members' default values
 	this->head = NULL;

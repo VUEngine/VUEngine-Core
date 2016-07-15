@@ -66,7 +66,7 @@ __CLASS_NEW_END(Telegram, dispatchTime, sender, receiver, message, extraInfo);
 static void Telegram_constructor(Telegram this, u32 delay, void* sender, void* receiver, int message, void* extraInfo)
 {
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// set the attributes
 	this->sender = sender;

@@ -58,7 +58,7 @@ void ScreenMovementManager_constructor(ScreenMovementManager this)
 	ASSERT(this, "ScreenMovementManager::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 }
 
 // class's destructor
@@ -76,12 +76,12 @@ void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocu
 	ASSERT(this, "ScreenMovementManager::update: null this");
 
 	Screen screen = Screen_getInstance();
-	
+
 	// if focusInGameEntity is defined
 	if(screen && screen->focusInGameEntity)
 	{
 		Container focusInGameEntityParent = Container_getParent(__SAFE_CAST(Container, screen->focusInGameEntity));
-		
+
 		if(focusInGameEntityParent)
 		{
 			// transform focus entity
@@ -89,20 +89,20 @@ void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocu
 
 			// apply transformations
 			__VIRTUAL_CALL(void, Container, transform, screen->focusInGameEntity, &environmentTransform);
-	
+
 			// get focusInGameEntity is moving
 			if(__VIRTUAL_CALL(bool, InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 			{
 				// save last position
 				screen->lastDisplacement = screen->position;
-	
+
 				// get focusInGameEntity's position
 				screen->position = *Entity_getPosition(__SAFE_CAST(Entity, screen->focusInGameEntity));
-				
+
 				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
 				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
 				screen->position.z += screen->focusEntityPositionDisplacement.z - ITOFIX19_13(__SCREEN_DEPTH >> 1);
-	
+
 				if(0 > screen->position.x)
 				{
 					screen->position.x = 0;
@@ -111,7 +111,7 @@ void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocu
 				{
 					screen->position.x = ITOFIX19_13(screen->stageSize.x - __SCREEN_WIDTH);
 				}
-	
+
 				if(0 > screen->position.y)
 				{
 					screen->position.y = 0;
@@ -120,7 +120,7 @@ void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocu
 				{
 					screen->position.y = ITOFIX19_13(screen->stageSize.y - __SCREEN_HEIGHT);
 				}
-	
+
 				screen->lastDisplacement.x = screen->position.x - screen->lastDisplacement.x;
 				screen->lastDisplacement.y = screen->position.y - screen->lastDisplacement.y;
 				screen->lastDisplacement.z = screen->position.z - screen->lastDisplacement.z;
@@ -139,16 +139,16 @@ void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocu
 void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, int duration)
 {
 	ASSERT(this, "ScreenMovementManager::startEffect: null this");
-	
+
 	switch(effect)
 	{
 		case kFadeIn:
-			
+
 			ScreenMovementManager_FXFadeIn(this, duration);
 			break;
 
 		case kFadeOut:
-			
+
 			ScreenMovementManager_FXFadeOut(this, duration);
 			break;
 	}

@@ -59,7 +59,7 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition)
 	ASSERT(this, "UI::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(-1, NULL);
+	__CONSTRUCT_BASE(Container, -1, NULL);
 
 	// add entities in the definition
 	__VIRTUAL_CALL(void, UI, addEntities, this, uiDefinition->entities);
@@ -83,7 +83,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 
 	static int ID = 0;
 	int i = 0;
-	
+
 	for(;entities && entities[i].entityDefinition; i++)
 	{
 		Entity entity = Entity_loadFromDefinition(&entities[i], ID++);
@@ -117,22 +117,22 @@ void UI_initialTransform(UI this, Transformation* environmentTransform)
 	Screen screen = Screen_getInstance();
 	ASSERT(screen, "UI::initialTransform: null screen");
 
-	VBVec3D originalScreenPosition  = 
+	VBVec3D originalScreenPosition  =
 	{
 		0, 0, 0
 	};
-	
+
 	if(screen)
 	{
 		// must hack the screen position for my children's sprites
 		// being properly rendered
 		originalScreenPosition = Screen_getPosition(screen);
-	
-		VBVec3D tempScreenPosition = 
+
+		VBVec3D tempScreenPosition =
 		{
 			0, 0, 0
 		};
-		
+
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 

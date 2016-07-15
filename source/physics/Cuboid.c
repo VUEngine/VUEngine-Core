@@ -75,7 +75,7 @@ void Cuboid_constructor(Cuboid this, SpatialObject owner)
 {
 	ASSERT(this, "Cuboid::constructor: null this");
 
-	__CONSTRUCT_BASE(owner);
+	__CONSTRUCT_BASE(Shape, owner);
 
 	this->polygon = NULL;
 }
@@ -194,7 +194,7 @@ void Cuboid_position(Cuboid this)
 	const VBVec3D* myOwnerPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
 	Velocity velocity = __VIRTUAL_CALL_UNSAFE(Velocity, SpatialObject, getVelocity, this->owner);
 
-	// calculate positioned rightCuboid	
+	// calculate positioned rightCuboid
 	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + ITOFIX19_13(gap.left);
 	this->positionedRightCuboid.y0 = this->rightCuboid.y0 + myOwnerPosition->y + ITOFIX19_13(gap.up);
 	this->positionedRightCuboid.z0 = this->rightCuboid.z0 + myOwnerPosition->z;
@@ -202,13 +202,13 @@ void Cuboid_position(Cuboid this)
 	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y - ITOFIX19_13(gap.down);
 	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z;
 
-	VBVec3D lorentzFactor = 
+	VBVec3D lorentzFactor =
 	{
 		FIX19_13_DIV(velocity.x, __LIGHT_SPEED),
 		FIX19_13_DIV(velocity.y, __LIGHT_SPEED),
 		FIX19_13_DIV(velocity.z, __LIGHT_SPEED)
 	};
-	
+
 	this->positionedRightCuboid.x0 -= 0 > velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
 	this->positionedRightCuboid.y0 -= 0 > velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
 	this->positionedRightCuboid.z0 -= 0 > velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;
@@ -270,7 +270,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			FIX19_13_MULT(displacement.y, __FLOAT_0_05_F),
 			FIX19_13_MULT(displacement.z, __FLOAT_0_05_F)
 	};
-	
+
 	//NM_ASSERT(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z, "Cuboid::getAxisOfCollisionWithCuboid: 0 displacementIncrement");
 
 	// needed to calculate the axis to ignore
@@ -280,7 +280,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	// get colliding entity's rightcuboid
 	RightCuboid otherRightCuboid = {
-				
+
 		cuboid->positionedRightCuboid.x0,
 		cuboid->positionedRightCuboid.y0,
 		cuboid->positionedRightCuboid.z0,
@@ -288,7 +288,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		cuboid->positionedRightCuboid.y1,
 		cuboid->positionedRightCuboid.z1
 	};
-		
+
 	// setup a cuboid representing the previous position
 	RightCuboid positionedRightCuboid =
 	{
@@ -300,7 +300,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
         this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down),
         this->rightCuboid.z1 + previousPosition.z - displacement.z,
 	};
-	
+
 	int numberOfAxis = 0;
 	int axisOfCollision = 0;
 	int axisToIgnore = __XAXIS | __YAXIS | __ZAXIS;
@@ -311,28 +311,28 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	if(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z)
 	{
 		axisToIgnore = 0;
-		
+
 		// check for a collision on a single axis at a time
 		do
 		{
 			axisOfCollision = 0;
-	
+
 			if(displacementIncrement.x)
 		    {
 				positionedRightCuboid.x0 += displacement.x;
 				positionedRightCuboid.x1 += displacement.x;
-	
+
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 	            {
 					if(!displacement.x)
 					{
 						axisToIgnore |= __XAXIS;
 					}
-	
+
 					axisOfCollision |= __XAXIS;
 					numberOfAxis++;
 				}
-	
+
 				positionedRightCuboid.x0 -= displacement.x;
 				positionedRightCuboid.x1 -= displacement.x;
 			}
@@ -340,12 +340,12 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			{
 				axisToIgnore |= __XAXIS;
 			}
-	
+
 			if(displacementIncrement.y)
 	        {
 				positionedRightCuboid.y0 += displacement.y;
 				positionedRightCuboid.y1 += displacement.y;
-	
+
 				// test for collision
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 	            {
@@ -353,11 +353,11 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 					{
 						axisToIgnore |= __YAXIS;
 					}
-	
+
 					axisOfCollision |= __YAXIS;
 					numberOfAxis++;
 				}
-	
+
 				positionedRightCuboid.y0 -= displacement.y;
 				positionedRightCuboid.y1 -= displacement.y;
 			}
@@ -365,12 +365,12 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			{
 				axisToIgnore |= __YAXIS;
 			}
-	
+
 			if(displacementIncrement.z)
 	        {
 				positionedRightCuboid.z0 += displacement.z;
 				positionedRightCuboid.z1 += displacement.z;
-	
+
 				// test for collision
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 	            {
@@ -378,11 +378,11 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 					{
 						axisToIgnore |= __ZAXIS;
 					}
-	
+
 					axisOfCollision |= __ZAXIS;
 					numberOfAxis++;
 				}
-	
+
 				positionedRightCuboid.z0 -= displacement.z;
 				positionedRightCuboid.z1 -= displacement.z;
 			}
@@ -390,13 +390,13 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			{
 				axisToIgnore |= __ZAXIS;
 			}
-	
+
 			if(0 == numberOfAxis)
 	        {
 				displacement.x += displacementIncrement.x;
 				displacement.y += displacementIncrement.y;
 				displacement.z += displacementIncrement.z;
-				
+
 				positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
 				positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
 				positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z - displacement.z;
@@ -405,7 +405,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
 			}
 		}
-		
+
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
 
@@ -413,12 +413,12 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	if((passes >= __MAX_NUMBER_OF_PASSES && !axisOfCollision) || (__XAXIS | __YAXIS | __ZAXIS) == axisToIgnore)
 	{
 		axisToIgnore = 0;
-		
+
 		passes = 0;
 		displacement.x = 0;
 		displacement.y = 0;
 		displacement.z = 0;
-		
+
 		positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
 		positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
 		positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z - displacement.z;
@@ -454,7 +454,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	            {
 					axisOfCollision |= __YAXIS;
 					break;
-		
+
 				}
 			}
 
@@ -475,7 +475,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				displacement.x += displacementIncrement.x;
 				displacement.y += displacementIncrement.y;
 				displacement.z += displacementIncrement.z;
-				
+
 				positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
 				positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
 				positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z - displacement.z;
@@ -486,11 +486,11 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		}
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
-	
+
 	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
 
 	CACHE_DISABLE;
-	
+
 	return axisOfCollision & ~axisToIgnore;
 }
 
@@ -525,7 +525,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 
 	// get colliding entity's rightcuboid
 	RightCuboid otherRightCuboid = {
-			
+
 		cuboid->positionedRightCuboid.x0,
 		cuboid->positionedRightCuboid.y0,
 		cuboid->positionedRightCuboid.z0,
@@ -533,7 +533,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, Gap gap,
 		cuboid->positionedRightCuboid.y1,
 		cuboid->positionedRightCuboid.z1
 	};
-		
+
 	int axisOfPossibleCollision = 0;
 
 	if(displacement.x)

@@ -101,7 +101,7 @@ typedef struct ParticleSystemDefinition
 
 	// maximum total particles
 	u8 maximumNumberOfAliveParticles;
-	
+
 	// array of sprites to select randomly
 	const ObjectSpriteDefinition** objectSpriteDefinitions;
 
@@ -110,7 +110,7 @@ typedef struct ParticleSystemDefinition
 
 	// particle's definition
 	ParticleDefinition* particleDefinition;
-	
+
 	// minimum random distance from the center of the system for spanw
 	VBVec3D minimumSpanDistance;
 
@@ -119,7 +119,7 @@ typedef struct ParticleSystemDefinition
 
 	// maximum relative spawn position
 	VBVec3D maximumRelativeSpanPosition;
-	
+
 	// minimum force to apply (use int values in the definition to avoid overflow)
 	VBVec3D minimumForce;
 
@@ -135,9 +135,8 @@ typedef const ParticleSystemDefinition ParticleSystemROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ParticleSystem, const ParticleSystemDefinition* particleSystemDefinition, s16 ID);
-
-void ParticleSystem_constructor(ParticleSystem this, const ParticleSystemDefinition* particleSystemDefinition, s16 id);
+__CLASS_NEW_DECLARE(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name);
+void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition,  s16 id, const char* const name);
 void ParticleSystem_destructor(ParticleSystem this);
 void ParticleSystem_update(ParticleSystem this);
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform);

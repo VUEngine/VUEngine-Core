@@ -67,7 +67,7 @@ static void KeypadManager_constructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->currentKey = 0;
 	this->previousKey = 0;

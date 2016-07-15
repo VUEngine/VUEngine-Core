@@ -68,7 +68,7 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 {
 	ASSERT(this, "ObjectSprite::constructor: null this");
 
-	__CONSTRUCT_BASE((SpriteDefinition*)objectSpriteDefinition, owner);
+	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)objectSpriteDefinition, owner);
 
 	this->head = objectSpriteDefinition->display;
 	this->objectIndex = -1;

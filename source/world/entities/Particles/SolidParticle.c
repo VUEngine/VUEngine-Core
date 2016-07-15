@@ -50,7 +50,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	ASSERT(this, "SolidParticle::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(&solidParticleDefinition->particleDefinition);
+	__CONSTRUCT_BASE(Particle, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
 	this->solidParticleDefinition = solidParticleDefinition;
 	Body_setElasticity(this->body, solidParticleDefinition->elasticity);
@@ -79,7 +79,7 @@ void SolidParticle_destructor(SolidParticle this)
 		__DELETE(this->collisionSolver);
 		this->collisionSolver = NULL;
 	}
-	
+
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -94,7 +94,7 @@ void SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)
 	if(0 <= this->lifeSpan)
 	{
 		this->position = *Body_getPosition(this->body);
-	
+
 		if(this->collisionSolver)
 		{
 			CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->position);
@@ -142,7 +142,7 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 	ASSERT(this->body, "SolidParticle::updateSurroundingFriction: null body");
 
 	Force totalFriction = {0, 0, 0};
-	
+
 	if(this->collisionSolver)
 	{
 		Force surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
@@ -164,7 +164,7 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
 		Body_bounce(this->body, axisOfCollision, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
-		
+
 		if(!(axisOfCollision & Body_isMoving(this->body)))
 	    {
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
@@ -185,40 +185,40 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 
 	if(this->collisionSolver)
 	{
-		static Scale scale = 
+		static Scale scale =
 		{
 				ITOFIX7_9(1), ITOFIX7_9(1)
 		};
-		
+
 		if(this->solidParticleDefinition->ignoreParticles)
 		{
 			VirtualList collidingObjectsToRemove = __NEW(VirtualList);
 			VirtualNode node = NULL;
-	
+
 			for(node = collidingSpatialObjects->head; node; node = node->next)
 		    {
 				SpatialObject spatialObject = __SAFE_CAST(SpatialObject, node->data);
-				
+
 				if(__GET_CAST(Particle, spatialObject))
 				{
 					VirtualList_pushBack(collidingObjectsToRemove, spatialObject);
 				}
 			}
-	
+
 			for(node = collidingObjectsToRemove->head; node; node = node->next)
 		    {
 				// whenever you process some objects of a collisions list remove them and leave the Actor handle
 				// the ones you don't care about, i.e.: in most cases, the ones which are solid
 				VirtualList_removeElement(collidingSpatialObjects, node->data);
 			}
-			
+
 			__DELETE(collidingObjectsToRemove);
 		}
-		
+
 		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &scale, false);
 
 		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
-		
+
 		SolidParticle_updateSurroundingFriction(this);
 	}
 }
@@ -235,7 +235,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 			SolidParticle_resolveCollision(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
 			return true;
 			break;
-			
+
 		case kBodyStartedMoving:
 
 			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
@@ -263,7 +263,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 {
 	ASSERT(this, "SolidParticle::position: null this");
-	
+
 	Particle_setPosition(__SAFE_CAST(Particle, this), position);
 	CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __XAXIS | __YAXIS | __ZAXIS);
 

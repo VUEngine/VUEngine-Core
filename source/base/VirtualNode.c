@@ -48,7 +48,7 @@ __CLASS_NEW_END(VirtualNode, data);
 // class's constructor
 static void VirtualNode_constructor(VirtualNode this, const void* const data)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// initialize members
 	this->next = NULL;

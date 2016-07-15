@@ -50,7 +50,7 @@ void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedI
 	ASSERT(inanimatedInGameEntityDefinition, "InanimatedInGameEntity::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(&inanimatedInGameEntityDefinition->inGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(InGameEntity, &inanimatedInGameEntityDefinition->inGameEntityDefinition, id, name);
 
 	// check if register for collision detection
 	if(inanimatedInGameEntityDefinition->registerShape)

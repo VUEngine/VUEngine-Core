@@ -74,7 +74,7 @@ __CLASS_NEW_END(BgmapSprite, bSpriteDefinition, owner);
 // class's constructor
 void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE((SpriteDefinition*)bgmapSpriteDefinition, owner);
+	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)bgmapSpriteDefinition, owner);
 
 	// create the texture
 	if(bgmapSpriteDefinition->textureDefinition)

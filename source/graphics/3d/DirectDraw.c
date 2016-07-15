@@ -68,7 +68,7 @@ __SINGLETON(DirectDraw);
 // class's constructor
 static void DirectDraw_constructor(DirectDraw this)
 {
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->fps = 0;
 }

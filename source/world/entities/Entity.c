@@ -72,7 +72,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	ASSERT(this, "Entity::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(id, name);
+	__CONSTRUCT_BASE(Container, id, name);
 
 	// save definition
 	this->entityDefinition = entityDefinition;

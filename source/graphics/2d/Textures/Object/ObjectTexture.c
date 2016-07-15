@@ -52,8 +52,8 @@ __CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
 static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {
 	// construct base object
-	__CONSTRUCT_BASE((TextureDefinition*)objectTextureDefinition, id);
-	
+	__CONSTRUCT_BASE(Texture, (TextureDefinition*)objectTextureDefinition, id);
+
 	this->objectIndex = -1;
 	this->bgmapDisplacement = 0;
 }
@@ -79,9 +79,9 @@ void ObjectTexture_write(ObjectTexture this)
 	{
 		return;
 	}
-	
+
 	Texture_write(__SAFE_CAST(Texture, this));
-	
+
 	int palette = this->palette << 14;
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;
@@ -106,18 +106,18 @@ void ObjectTexture_write(ObjectTexture this)
 void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
 {
 	ASSERT(this, "ObjectTexture::setObjectIndex: null this");
-	
+
 	if(0 <= objectIndex && objectIndex < 1024)
 	{
 		this->objectIndex = objectIndex;
-		this->written = false; 
+		this->written = false;
 	}
 }
 
 void ObjectTexture_resetBgmapDisplacement(ObjectTexture this)
 {
 	ASSERT(this, "ObjectTexture::resetBgmapDisplacement: null this");
-	
+
 	this->bgmapDisplacement = 0;
 }
 

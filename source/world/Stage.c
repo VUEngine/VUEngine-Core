@@ -122,7 +122,7 @@ static void Stage_constructor(Stage this)
 	ASSERT(this, "Stage::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(-1, NULL);
+	__CONSTRUCT_BASE(Container, -1, NULL);
 
 	this->stageEntities = NULL;
 	this->loadedStageEntities = NULL;
@@ -992,7 +992,7 @@ void Stage_update(Stage this)
 	{
 		Container_update(__SAFE_CAST(Container, this->ui));
 	}
-	
+
 	// stream level
 	Stage_stream(this);
 }

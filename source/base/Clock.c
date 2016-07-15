@@ -54,7 +54,7 @@ static void Clock_constructor(Clock this)
 {
 	ASSERT(this, "Clock::constructor: null this");
 
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// initialize time
 	this->milliSeconds = 0;

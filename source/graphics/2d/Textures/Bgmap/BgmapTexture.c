@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
-
+// define the class
 __CLASS_DEFINITION(BgmapTexture, Texture);
 
 
@@ -50,6 +50,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+
 // always call these two macros next to each other
 __CLASS_NEW_DEFINITION(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
 __CLASS_NEW_END(BgmapTexture, bgmapTextureDefinition, id);
@@ -58,8 +59,8 @@ __CLASS_NEW_END(BgmapTexture, bgmapTextureDefinition, id);
 static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
 {
 	// construct base object
-	__CONSTRUCT_BASE((TextureDefinition*)bgmapTextureDefinition, id);
-	
+	__CONSTRUCT_BASE(Texture, (TextureDefinition*)bgmapTextureDefinition, id);
+
 	this->usageCount = 1;
 	this->remainingRowsToBeWritten = 0;
 }
@@ -83,14 +84,14 @@ void BgmapTexture_write(BgmapTexture this)
 	ASSERT(this, "BgmapTexture::write: null this");
 
 	Texture_write(__SAFE_CAST(Texture, this));
-	
+
 	NM_ASSERT(this->charSet, "BgmapTexture::write: null charSet");
 
 	if(0 == this->remainingRowsToBeWritten)
 	{
 		this->remainingRowsToBeWritten = this->textureDefinition->rows;
 	}
-	
+
 	//determine the allocation type
 	switch(CharSet_getAllocationType(this->charSet))
 	{
@@ -122,7 +123,7 @@ void BgmapTexture_write(BgmapTexture this)
 
 			NM_ASSERT(false, "BgmapTexture::write: no allocation type");
 	}
-	
+
 	this->written = !this->remainingRowsToBeWritten;
 }
 
@@ -143,7 +144,7 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 	{
 		return;
 	}
-	
+
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
 	CACHE_ENABLE;
@@ -156,7 +157,7 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-	
+
 	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;
@@ -192,7 +193,7 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-	
+
 	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;
@@ -237,7 +238,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 					(palette) | (charLocation + area * (j - 1)));
 		}
 	}
-	
+
 	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;
@@ -260,7 +261,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	{
 		return;
 	}
-	
+
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
 	CACHE_ENABLE;
@@ -273,7 +274,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-	
+
 	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;

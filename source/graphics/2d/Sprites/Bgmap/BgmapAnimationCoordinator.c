@@ -42,7 +42,7 @@ void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const
 {
 	ASSERT(this, "BgmapAnimationCoordinator::constructor: null this");
 
-	__CONSTRUCT_BASE(charSetDefinition);
+	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
 }
 
 // class destructor
@@ -64,9 +64,9 @@ void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator 
 	if(VirtualList_front(this->animationControllers))
 	{
 		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
-	
+
 		ASSERT(firstAnimationController, "BgmapAnimationCoordinator::addAnimationController: null firstAnimationController");
-	
+
 		if(AnimationController_isPlaying(firstAnimationController))
 		{
 			AnimationController_playAnimationFunction(animationController, AnimationController_getPlayingAnimationFunction(firstAnimationController));
@@ -76,7 +76,7 @@ void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator 
 			AnimationController_setFrameDelay(animationController, frameDelay);
 		}
 	}
-	
+
 	VirtualList_pushBack(this->animationControllers, animationController);
 }
 

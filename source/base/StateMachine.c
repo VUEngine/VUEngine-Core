@@ -63,7 +63,7 @@ __CLASS_NEW_END(StateMachine, owner);
 void StateMachine_constructor(StateMachine this, void* owner)
 {
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	// set pointers
 	this->owner = owner;

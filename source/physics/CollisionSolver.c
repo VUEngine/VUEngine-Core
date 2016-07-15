@@ -67,7 +67,7 @@ void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner, cons
 	ASSERT(owner, "CollisionSolver::constructor: null owner");
 
 	// construct base object
-	__CONSTRUCT_BASE();
+	__CONSTRUCT_BASE(Object);
 
 	this->owner = owner;
 	this->ownerPositionToCheck = ownerPositionToCheck;
@@ -88,11 +88,11 @@ void CollisionSolver_destructor(CollisionSolver this)
 	ASSERT(this, "CollisionSolver::destructor: null this");
 
 	CollisionSolver_resetCollisionStatusOnAxis(this, __XAXIS | __YAXIS | __ZAXIS);
-	
+
 	__DELETE(this->lastCollidingSpatialObject[kXAxis]);
 	__DELETE(this->lastCollidingSpatialObject[kYAxis]);
 	__DELETE(this->lastCollidingSpatialObject[kZAxis]);
-	
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -116,7 +116,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int moveme
 	        {
 				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
 	        }
-	
+
 			VirtualList_clear(this->lastCollidingSpatialObject[i]);
 		}
 	}
@@ -126,7 +126,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int moveme
 const VBVec3D* CollisionSolver_getOwnerPreviousPosition(CollisionSolver this)
 {
 	ASSERT(this, "CollisionSolver::getOwnerPreviousPosition: null this");
-	
+
 	return &this->ownerPreviousPosition;
 }
 
@@ -134,7 +134,7 @@ const VBVec3D* CollisionSolver_getOwnerPreviousPosition(CollisionSolver this)
 void CollisionSolver_setOwnerPreviousPosition(CollisionSolver this, VBVec3D position)
 {
 	ASSERT(this, "CollisionSolver::setOwnerPreviousPosition: null this");
-	
+
 	this->ownerPreviousPosition = position;
 }
 
@@ -169,7 +169,7 @@ int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 	        }
 		}
 	}
-	
+
 	return axisOfCollision;
 }
 
@@ -202,7 +202,7 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 	if(__XAXIS & axisOfCollision)
     {
 		CollisionSolver_alignTo(this, collidingSpatialObject, __XAXIS, alignThreshold);
-		
+
 		if(registerObject)
 		{
 			VirtualList_pushBack(this->lastCollidingSpatialObject[kXAxis], collidingSpatialObject);
@@ -225,8 +225,8 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 		{
 			VirtualList_pushBack(this->lastCollidingSpatialObject[kZAxis], collidingSpatialObject);
 		}
-	}	
-	
+	}
+
 	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
 }
 
@@ -241,15 +241,15 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 	VirtualNode node = collidingSpatialObjects->head;
 
 	VirtualList processedCollidingSpatialObjects = __NEW(VirtualList);
-	
+
 	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
-	
+
 	SpatialObject collidingSpatialObjectsToAlignTo[kLastAxis] = {NULL, NULL, NULL};
-	
+
 	for(; node; node = node->next)
 	{
 		SpatialObject collidingSpatialObject = __SAFE_CAST(SpatialObject, node->data);
-		
+
 		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(Shape, SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, ownerPreviousPosition);
 
 		if(axisOfCollision)
@@ -286,7 +286,7 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 					collidingSpatialObjectsToAlignTo[kXAxis] = collidingSpatialObject;
 				}
 			}
-			
+
 			if(__YAXIS & axisOfCollision)
 			{
 				if(collidingSpatialObjectsToAlignTo[kYAxis])
@@ -348,7 +348,7 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 			VirtualList_pushBack(processedCollidingSpatialObjects, collidingSpatialObject);
 		}
 	}
-	
+
 	if(collidingSpatialObjectsToAlignTo[kXAxis])
 	{
 		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kXAxis], __XAXIS, scale, registerObjects);
@@ -365,14 +365,14 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 	}
 
 	node = processedCollidingSpatialObjects->head;
-	
+
 	for(; node; node = node->next)
 	{
 		VirtualList_removeElement(collidingSpatialObjects, node->data);
 	}
-	
+
 	__DELETE(processedCollidingSpatialObjects);
-	
+
 	return axisOfCollision;
 }
 
@@ -455,7 +455,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 				myHalfSize = 0;
 				otherHalfSize = __VIRTUAL_CALL(int, SpatialObject, getDepth, collidingSpatialObject);
 			}
-			
+
 			myLowGap = 0;
 			myHighGap = 0;
 
@@ -492,7 +492,7 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 {
 	ASSERT(this, "CollisionSolver::updateSurroundingFriction: null this");
 
-	Force friction = 
+	Force friction =
 	{
 		0, 0, 0
 	};
@@ -560,7 +560,7 @@ fix19_13 CollisionSolver_getCollisingSpatialObjectsTotalElasticity(CollisionSolv
 
 	fix19_13 totalElasticiy = 0;
 	int collidingSpatialObjectListIndex = -1;
-	
+
 	if(__XAXIS & axis)
     {
 		collidingSpatialObjectListIndex = kXAxis;
@@ -582,6 +582,6 @@ fix19_13 CollisionSolver_getCollisingSpatialObjectsTotalElasticity(CollisionSolv
 	{
 		totalElasticiy += __VIRTUAL_CALL(fix19_13, SpatialObject, getElasticity, __SAFE_CAST(SpatialObject, node->data));
 	}
-	
+
 	return totalElasticiy;
 }
