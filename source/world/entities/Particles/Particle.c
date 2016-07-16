@@ -98,7 +98,7 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator defined");
 
 	// call the appropriate allocator to support inheritance
-	this->objectSprite = __SAFE_CAST(ObjectSprite, ((Sprite (*)(SpriteDefinition*, ...)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, this));
+	this->objectSprite = __SAFE_CAST(ObjectSprite, ((Sprite (*)(const SpriteDefinition*, Object)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, __SAFE_CAST(Object, this)));
 
 	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
 	{
@@ -145,11 +145,11 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 		if(__ZAXIS & Body_isMoving(this->body))
 		{
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
+			__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
 		}
 
 		// update sprite's 2D position
-		__VIRTUAL_CALL(void, Sprite, position, this->objectSprite, position);
+		__VIRTUAL_CALL(Sprite, position, this->objectSprite, position);
     }
 }
 
@@ -183,10 +183,10 @@ void Particle_setPosition(Particle this, const VBVec3D* position)
 	Body_setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
 
 	// sync sprite
-	__VIRTUAL_CALL(void, Sprite, position, this->objectSprite, position);
+	__VIRTUAL_CALL(Sprite, position, this->objectSprite, position);
 
 	// calculate sprite's parallax
-	__VIRTUAL_CALL(void, Sprite, calculateParallax, this->objectSprite, position->z);
+	__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
 }
 
 // retrieve position

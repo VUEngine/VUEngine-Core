@@ -30,8 +30,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Cuboid_METHODS																					\
-		Shape_METHODS																					\
+#define Cuboid_METHODS(ClassName)																		\
+		Shape_METHODS(ClassName)																		\
 
 #define Cuboid_SET_VTABLE(ClassName)																	\
 		Shape_SET_VTABLE(ClassName)																		\
@@ -46,18 +46,14 @@
 		__VIRTUAL_SET(ClassName, Cuboid, print);														\
 
 #define Cuboid_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Shape_ATTRIBUTES;																					\
-																										\
-	/* the rectangle */																					\
-	RightCuboid rightCuboid;																			\
-																										\
-	/* the rightCuboid to check */																		\
-	RightCuboid positionedRightCuboid;																	\
-																										\
-	/* for debugging purposes */																		\
-	Polygon polygon;																					\
+        /* super's attributes */																		\
+        Shape_ATTRIBUTES;																				\
+        /* the rectangle */																				\
+        RightCuboid rightCuboid;																		\
+        /* the rightCuboid to check */																	\
+        RightCuboid positionedRightCuboid;																\
+        /* for debugging purposes */																	\
+        Polygon polygon;																				\
 
 __CLASS(Cuboid);
 

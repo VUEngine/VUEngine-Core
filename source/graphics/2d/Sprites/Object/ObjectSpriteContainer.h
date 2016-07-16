@@ -37,57 +37,46 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectSpriteContainer_METHODS																	\
-	Sprite_METHODS																						\
+#define ObjectSpriteContainer_METHODS(ClassName)														\
+	    Sprite_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define ObjectSpriteContainer_SET_VTABLE(ClassName)														\
-	Sprite_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);											\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);										\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);										\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);											\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);										\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);									\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);												\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);												\
-	__VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);									\
+        Sprite_SET_VTABLE(ClassName)																	\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);										\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);									\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);									\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);										\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);									\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);								\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
+        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
 
 #define ObjectSpriteContainer_ATTRIBUTES																\
-																										\
-	/* super's attributes */																			\
-	Sprite_ATTRIBUTES;																					\
-																										\
-	/* object sprites */																				\
-	VirtualList objectSprites;																			\
-																										\
-	/* for z sorting */																					\
-	VirtualNode node;																					\
-	VirtualNode previousNode;																			\
-																										\
-	/* next object sprite to defragment */																\
-	VirtualNode objectSpriteToDefragment;																\
-																										\
-	/* for WORLD sorting */																				\
-	fix19_13 z;																							\
-																										\
-	/* used for defragmentation */																		\
-	int freedObjectIndex;																				\
-																										\
-	/* first object index */																			\
-	int firstObjectIndex;																				\
-																										\
-	/* total objects */																					\
-	int totalObjects;																					\
-																										\
-	/* OBJs available */																				\
-	int availableObjects;																				\
-																										\
-	/* spt index */																						\
-	int spt;																							\
-																										\
-	/* flag to halt defragmentation while sprite removal is taking place */								\
-	bool removingObjectSprite;																			\
+        /* super's attributes */																		\
+        Sprite_ATTRIBUTES;																				\
+        /* object sprites */																			\
+        VirtualList objectSprites;																		\
+        /* for z sorting */																				\
+        VirtualNode node;																				\
+        VirtualNode previousNode;																		\
+        /* next object sprite to defragment */															\
+        VirtualNode objectSpriteToDefragment;															\
+        /* for WORLD sorting */																			\
+        fix19_13 z;											    										\
+        /* used for defragmentation */																	\
+        int freedObjectIndex;																			\
+        /* first object index */																		\
+        int firstObjectIndex;																			\
+        /* total objects */																				\
+        int totalObjects;																				\
+        /* OBJs available */																			\
+        int availableObjects;																			\
+        /* spt index */																					\
+        int spt;																						\
+        /* flag to halt defragmentation while sprite removal is taking place */							\
+        bool removingObjectSprite;																		\
 
 __CLASS(ObjectSpriteContainer);
 

@@ -38,28 +38,21 @@ typedef struct ParamTableFreeData
 // 											CLASS'S DEFINITION
 // ---------------------------------------------------------------------------------------------------------
 
-#define ParamTableManager_ATTRIBUTES											\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* total size of param table */												\
-	u32 size;																	\
-																				\
-	/* number of used bytes */													\
-	u32 used;																	\
-																				\
-	/* allocated bSprites */													\
-	VirtualList bSprites;														\
-																				\
-	/* removed bSprites' sizes */												\
-	VirtualList removedBgmapSpritesSizes;											\
-																				\
-	/* user for defragmentation */												\
-	ParamTableFreeData paramTableFreeData;										\
-																				\
-	/* user for defragmentation */												\
-	BgmapSprite previouslyMovedBgmapSprite;												\
+#define ParamTableManager_ATTRIBUTES                                                                    \
+        /* super's attributes */                                                                        \
+        Object_ATTRIBUTES;                                                                              \
+        /* total size of param table */                                                                 \
+        u32 size;                                                                                       \
+        /* number of used bytes */                                                                      \
+        u32 used;                                                                                       \
+        /* allocated bSprites */                                                                        \
+        VirtualList bSprites;                                                                           \
+        /* removed bSprites' sizes */                                                                   \
+        VirtualList removedBgmapSpritesSizes;                                                           \
+        /* user for defragmentation */                                                                  \
+        ParamTableFreeData paramTableFreeData;                                                          \
+        /* user for defragmentation */                                                                  \
+        BgmapSprite previouslyMovedBgmapSprite;                                                         \
 
 __CLASS_DEFINITION(ParamTableManager, Object);
 

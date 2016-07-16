@@ -32,21 +32,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define BgmapAnimatedSprite_METHODS																		\
-	BgmapSprite_METHODS																					\
+#define BgmapAnimatedSprite_METHODS(ClassName)															\
+	    BgmapSprite_METHODS(ClassName)																	\
 
 // declare the virtual methods which are redefined
 #define BgmapAnimatedSprite_SET_VTABLE(ClassName)														\
-	BgmapSprite_SET_VTABLE(ClassName)																	\
-	__VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);										\
+        BgmapSprite_SET_VTABLE(ClassName)																\
+        __VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);									\
 
 #define BgmapAnimatedSprite_ATTRIBUTES																	\
-																										\
-	/* super's attributes */																			\
-	BgmapSprite_ATTRIBUTES;																				\
-																										\
-	/* bgmap's source coordinates */																	\
-	TextureSource originalTextureSource;																\
+        /* super's attributes */																		\
+        BgmapSprite_ATTRIBUTES;																			\
+        /* bgmap's source coordinates */																\
+        TextureSource originalTextureSource;															\
 
 __CLASS(BgmapAnimatedSprite);
 

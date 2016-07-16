@@ -51,20 +51,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define MemoryPool_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* dynamic memory area */																			\
-	/* must always put together the pools! */															\
-	/* first byte is used as a usage flag */															\
-	__MEMORY_POOL_ARRAYS																				\
-																										\
-	/* pointer to the beginning of each memory pool */													\
-	BYTE* poolLocation[__MEMORY_POOLS];																	\
-																										\
-	/* pool's size and pool's block size */																\
-	int poolSizes[__MEMORY_POOLS][2];																	\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* dynamic memory area */																		\
+        /* must always put together the pools! */														\
+        /* first byte is used as a usage flag */														\
+        __MEMORY_POOL_ARRAYS																			\
+        /* pointer to the beginning of each memory pool */												\
+        BYTE* poolLocation[__MEMORY_POOLS];																\
+        /* pool's size and pool's block size */															\
+        int poolSizes[__MEMORY_POOLS][2];																\
 
 __CLASS_DEFINITION(MemoryPool, Object);
 

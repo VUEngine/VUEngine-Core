@@ -322,11 +322,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(void, Container, initialTransform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform);
 
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
+		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform);
 	}
 }
 
@@ -355,7 +355,7 @@ static void Stage_setupUI(Stage this)
 	if(this->stageDefinition->entities.uiDefinition.allocator)
 	{
 		// call the appropriate allocator to support inheritance
-		this->ui = ((UI (*)(UIDefinition*, ...)) this->stageDefinition->entities.uiDefinition.allocator)(&this->stageDefinition->entities.uiDefinition);
+		this->ui = ((UI (*)(UIDefinition*)) this->stageDefinition->entities.uiDefinition.allocator)(&this->stageDefinition->entities.uiDefinition);
 		ASSERT(this->ui, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
@@ -363,7 +363,7 @@ static void Stage_setupUI(Stage this)
 		{
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
+			__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform);
 		}
 	}
 }
@@ -380,24 +380,24 @@ Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinitio
 		if(entity)
 		{
 			// set spatial position
-			__VIRTUAL_CALL(void, Entity, setLocalPosition, entity, position);
+			__VIRTUAL_CALL(Entity, setLocalPosition, entity, position);
 
 			// initialize now
-			__VIRTUAL_CALL(void, Entity, initialize, entity);
+			__VIRTUAL_CALL(Entity, initialize, entity);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
+			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
 /*
 			if(permanent)
 			{
 				// TODO
 			}
 */
-			__VIRTUAL_CALL(void, Entity, ready, entity);
+			__VIRTUAL_CALL(Entity, ready, entity);
 
 			return entity;
 		}
@@ -439,16 +439,16 @@ Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const posit
 		if(entity)
 		{
 			// must initialize after adding the children
-			__VIRTUAL_CALL(void, Entity, initialize, entity);
+			__VIRTUAL_CALL(Entity, initialize, entity);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(void, Container, initialTransform, entity, &environmentTransform);
+			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
 
-			__VIRTUAL_CALL(void, Entity, ready, entity);
+			__VIRTUAL_CALL(Entity, ready, entity);
 		}
 /*
 		if(permanent)
@@ -474,7 +474,7 @@ void Stage_removeChild(Stage this, Container child)
 	}
 
 	// hide until effectively deleted
-	__VIRTUAL_CALL(void, Container, hide, child);
+	__VIRTUAL_CALL(Container, hide, child);
 
 	Container_removeChild(__SAFE_CAST(Container, this), child);
 
@@ -590,7 +590,7 @@ static void Stage_preloadAssets(Stage this)
 
 				if(texture)
 				{
-					__VIRTUAL_CALL(void, Texture, write, texture);
+					__VIRTUAL_CALL(Texture, write, texture);
 				}
 			}
 			else
@@ -841,7 +841,7 @@ static void Stage_initializeEntities(Stage this)
 	{
 		StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
 
-		__VIRTUAL_CALL(void, Entity, initialize, stageEntityToSetup->entity);
+		__VIRTUAL_CALL(Entity, initialize, stageEntityToSetup->entity);
 
 		VirtualList_removeElement(this->entitiesToInitialize, stageEntityToSetup);
 		VirtualList_pushBack(this->entitiesToTransform, stageEntityToSetup);
@@ -881,9 +881,9 @@ static void Stage_transformEntities(Stage this)
 		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, stageEntityToSetup->entity));
 
 		// apply transformations
-		__VIRTUAL_CALL(void, Container, initialTransform, stageEntityToSetup->entity, &environmentTransform);
+		__VIRTUAL_CALL(Container, initialTransform, stageEntityToSetup->entity, &environmentTransform);
 
-		__VIRTUAL_CALL(void, Entity, ready, stageEntityToSetup->entity);
+		__VIRTUAL_CALL(Entity, ready, stageEntityToSetup->entity);
 
 		VirtualList_removeElement(this->entitiesToTransform, stageEntityToSetup);
 		__DELETE_BASIC(stageEntityToSetup);
@@ -954,7 +954,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		Entity entity = __SAFE_CAST(Entity, node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!__VIRTUAL_CALL(bool, Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!__VIRTUAL_CALL(Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 id = Container_getId(__SAFE_CAST(Container, entity));
 
@@ -1026,7 +1026,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
 
 
-		__VIRTUAL_CALL(void, Container, transform, this->ui, &uiEnvironmentTransform);
+		__VIRTUAL_CALL(Container, transform, this->ui, &uiEnvironmentTransform);
 	}
 }
 
@@ -1115,7 +1115,7 @@ void Stage_suspend(Stage this)
 
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, suspend, __SAFE_CAST(Container, this->ui));
+		__VIRTUAL_CALL(Container, suspend, __SAFE_CAST(Container, this->ui));
 	}
 
 	// relinquish screen focus priority
@@ -1172,13 +1172,13 @@ void Stage_resume(Stage this)
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(void, Container, initialTransform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform);
 
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(void, Container, resume, __SAFE_CAST(Container, this->ui));
+		__VIRTUAL_CALL(Container, resume, __SAFE_CAST(Container, this->ui));
 
-		__VIRTUAL_CALL(void, Container, initialTransform, this->ui, &environmentTransform);
+		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform);
 	}
 }
 

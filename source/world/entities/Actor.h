@@ -33,13 +33,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Actor_METHODS																					\
-		AnimatedInGameEntity_METHODS																	\
-		__VIRTUAL_DEC(takeHitFrom);																		\
-		__VIRTUAL_DEC(getAxisFreeForMovement);															\
-		__VIRTUAL_DEC(updateSurroundingFriction);														\
-		__VIRTUAL_DEC(getAxisAllowedForBouncing);														\
-		__VIRTUAL_DEC(collisionsProcessingDone);														\
+#define Actor_METHODS(ClassName)																		\
+		AnimatedInGameEntity_METHODS(ClassName)															\
+		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
+		__VIRTUAL_DEC(ClassName, int, getAxisFreeForMovement);											\
+		__VIRTUAL_DEC(ClassName, void, updateSurroundingFriction);										\
+		__VIRTUAL_DEC(ClassName, int, getAxisAllowedForBouncing);										\
+		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, VirtualList collidingSpatialObjects);	\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedInGameEntity_SET_VTABLE(ClassName)														\
@@ -67,21 +67,16 @@
 
 
 #define Actor_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	AnimatedInGameEntity_ATTRIBUTES;																	\
-																										\
-	/* definition */																					\
-	const ActorDefinition* actorDefinition;																\
-																										\
-	/* a state machine to handle entity's logic	*/														\
-	StateMachine stateMachine;																			\
-																										\
-	/* a physical body	*/																				\
-	Body body;																							\
-																										\
-	/* collision solver */																				\
-	CollisionSolver collisionSolver;																	\
+        /* super's attributes */																		\
+        AnimatedInGameEntity_ATTRIBUTES;																\
+        /* definition */																				\
+        const ActorDefinition* actorDefinition;															\
+        /* a state machine to handle entity's logic	*/													\
+        StateMachine stateMachine;																		\
+        /* a physical body	*/																			\
+        Body body;																						\
+        /* collision solver */																			\
+        CollisionSolver collisionSolver;																\
 
 __CLASS(Actor);
 

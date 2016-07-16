@@ -186,8 +186,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SoundManager_METHODS																			\
-		Object_METHODS																					\
+#define SoundManager_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define SoundManager_SET_VTABLE(ClassName)																\

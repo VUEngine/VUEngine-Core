@@ -31,9 +31,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define UI_METHODS																						\
-		Container_METHODS																				\
-		__VIRTUAL_DEC(addEntities);																		\
+#define UI_METHODS(ClassName)																			\
+		Container_METHODS(ClassName)																	\
+		__VIRTUAL_DEC(ClassName, void, addEntities, PositionedEntity* entities);						\
 
 // declare the virtual methods which are redefined
 #define UI_SET_VTABLE(ClassName)																		\

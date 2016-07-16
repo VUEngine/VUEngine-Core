@@ -29,10 +29,9 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define UI_ATTRIBUTES															\
-																				\
-	/* super's attributes */													\
-	Container_ATTRIBUTES;														\
+#define UI_ATTRIBUTES								    		    		        			        \
+        /* super's attributes */						    		    			    	        	\
+        Container_ATTRIBUTES;								    		    			        	    \
 
 // define the UI
 __CLASS_DEFINITION(UI, Container);
@@ -62,7 +61,7 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition)
 	__CONSTRUCT_BASE(Container, -1, NULL);
 
 	// add entities in the definition
-	__VIRTUAL_CALL(void, UI, addEntities, this, uiDefinition->entities);
+	__VIRTUAL_CALL(UI, addEntities, this, uiDefinition->entities);
 }
 
 // class's destructor
@@ -88,7 +87,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	{
 		Entity entity = Entity_loadFromDefinition(&entities[i], ID++);
 
-		__VIRTUAL_CALL(void, Entity, initialize, entity);
+		__VIRTUAL_CALL(Entity, initialize, entity);
 
 		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 	}
@@ -138,7 +137,7 @@ void UI_initialTransform(UI this, Transformation* environmentTransform)
 
 	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
 
-	__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this);
+	__VIRTUAL_CALL(Container, updateVisualRepresentation, this);
 
 	if(screen)
 	{

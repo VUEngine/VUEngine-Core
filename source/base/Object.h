@@ -22,7 +22,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Stdarg.h>
+#include <stdarg.h>
 #include <Oop.h>
 
 
@@ -30,7 +30,7 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAX_EVENT_NAME_LENGTH	16
+#define __MAX_EVENT_NAME_LENGTH	                16
 
 // events
 #define __EVENT_OBJECT_DESTROYED				"objectDestroyed"
@@ -40,22 +40,20 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the class from which all classes derive
-#define Object_ATTRIBUTES																				\
-																										\
-	/* pointer to the class's virtual table */															\
-	void* vTable;																						\
-																										\
-	/* events */																						\
-	VirtualList events;																					\
-
 // declare the virtual methods
-#define Object_METHODS																					\
-	__VIRTUAL_DEC(handleMessage);																		\
+#define Object_METHODS(ClassName)											    						\
+	    __VIRTUAL_DEC(ClassName, bool, handleMessage, void* telegram);						            \
 
 // define the virtual methods
 #define Object_SET_VTABLE(ClassName)																	\
-	__VIRTUAL_SET(ClassName, Object, handleMessage);													\
+	    __VIRTUAL_SET(ClassName, Object, handleMessage);												\
+
+// declare the class from which all classes derive
+#define Object_ATTRIBUTES																				\
+        /* pointer to the class's virtual table */														\
+        void* vTable;																				    \
+        /* events */																					\
+        VirtualList events;																		    	\
 
 // the root class for everything else!!
 __CLASS(Object);
@@ -67,7 +65,7 @@ __CLASS(Object);
 
 void Object_constructor(Object this);
 void Object_destructor(Object this);
-bool Object_handleMessage(Object this, void* owner, void* telegram);
+bool Object_handleMessage(Object this, void* telegram);
 void Object_addEventListener(Object this, Object listener, void (*method)(Object, Object), char* eventName);
 void Object_removeEventListener(Object this, Object listener, void (*method)(Object, Object), char* eventName);
 void Object_fireEvent(Object this, char* eventName);

@@ -138,7 +138,7 @@ void Texture_rewrite(Texture this)
 
 //	CharSet_rewrite(this->charSet);
 
-	__VIRTUAL_CALL(void, Texture, write, this);
+	__VIRTUAL_CALL(Texture, write, this);
 }
 
 // write map in hbias mode
@@ -317,7 +317,7 @@ u16 Texture_getId(Texture this)
 // process event
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer)
 {
-	__VIRTUAL_CALL(void, Texture, write, this);
+	__VIRTUAL_CALL(Texture, write, this);
 
 	// propagate event
 	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_TEXTURE_REWRITTEN);

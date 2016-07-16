@@ -62,30 +62,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define StageEditor_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* current in game entity */																		\
-	GameState gameState;																				\
-																										\
-	/* current in game entity */																		\
-	VirtualNode currentEntityNode;																		\
-																										\
-	/* current entity's shape */																		\
-	Shape shape;																						\
-																										\
-	/* mode */																							\
-	int mode;																							\
-																										\
-	/* actors selector */																				\
-	OptionsSelector userObjectsSelector;																\
-																										\
-	/* translation step size */																			\
-	int translationStepSize;																			\
-																										\
-	/* current user's object's sprite */																\
-	Sprite userObjectSprite;																			\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* current in game entity */																	\
+        GameState gameState;																			\
+        /* current in game entity */																	\
+        VirtualNode currentEntityNode;																	\
+        /* current entity's shape */																	\
+        Shape shape;																					\
+        /* mode */																						\
+        int mode;																						\
+        /* actors selector */																			\
+        OptionsSelector userObjectsSelector;															\
+        /* translation step size */																		\
+        int translationStepSize;																		\
+        /* current user's object's sprite */															\
+        Sprite userObjectSprite;																		\
 
 // define the StageEditor
 __CLASS_DEFINITION(StageEditor, Object);
@@ -200,7 +192,7 @@ void StageEditor_update(StageEditor this)
 
 	if(this->gameState && this->shape)
 	{
-		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+		__VIRTUAL_CALL(Shape, draw, this->shape);
 	}
 }
 
@@ -349,13 +341,13 @@ static void StageEditor_releaseShape(StageEditor this)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-		if(this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, entity))
+		if(this->shape && this->shape != __VIRTUAL_CALL_UNSAFE(Entity, getShape, entity))
 	    {
 			__DELETE(this->shape);
 		}
 		else if(this->shape)
 		{
-			__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, this->shape);
+			__VIRTUAL_CALL(Shape, deleteDirectDrawData, this->shape);
 		}
 
 		this->shape = NULL;
@@ -371,11 +363,11 @@ static void StageEditor_getShape(StageEditor this)
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-	this->shape = __VIRTUAL_CALL_UNSAFE(Shape, Entity, getShape, entity);
+	this->shape = __VIRTUAL_CALL_UNSAFE(Entity, getShape, entity);
 
 	if(!this->shape)
 	{
-		switch(__VIRTUAL_CALL(int, SpatialObject, getShapeType, entity))
+		switch(__VIRTUAL_CALL(SpatialObject, getShapeType, entity))
 	    {
 			case kCircle:
 
@@ -399,13 +391,13 @@ static void StageEditor_positionShape(StageEditor this)
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-	__VIRTUAL_CALL(void, Shape, setup, this->shape);
+	__VIRTUAL_CALL(Shape, setup, this->shape);
 
 	Shape_setReady(this->shape, false);
 
-	if(__VIRTUAL_CALL(bool, Entity, moves, entity))
+	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{
-		__VIRTUAL_CALL(void, Shape, position, this->shape);
+		__VIRTUAL_CALL(Shape, position, this->shape);
 	}
 }
 
@@ -716,7 +708,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		localPosition.y += translation.y;
 		localPosition.z += translation.z;
 
-		__VIRTUAL_CALL(void, Container, setLocalPosition, container, localPosition);
+		__VIRTUAL_CALL(Container, setLocalPosition, container, localPosition);
 		Container_invalidateGlobalPosition(container, __XAXIS | __YAXIS | __ZAXIS);
 
 		// this hack forces the Entity to recalculate its sprites' value.
@@ -736,7 +728,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		StageEditor_printTranslationStepSize(this);
 
 		// should work
-		//__VIRTUAL_CALL(void, Shape, position, this->shape);
+		//__VIRTUAL_CALL(Shape, position, this->shape);
 	}
 }
 
@@ -757,17 +749,17 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 
 	if(spriteDefinition)
 	{
-		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
+		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
 		ASSERT(this->userObjectSprite, "AnimationEditor::createSprite: null animatedSprite");
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationEditor::createSprite: null texture");
 
-		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
 		spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 		spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
-		__VIRTUAL_CALL(void, Sprite, setPosition, __SAFE_CAST(Sprite, this->userObjectSprite), &spritePosition);
-		__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->userObjectSprite));
-		__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, this->userObjectSprite));
+		__VIRTUAL_CALL(Sprite, setPosition, __SAFE_CAST(Sprite, this->userObjectSprite), &spritePosition);
+		__VIRTUAL_CALL(Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->userObjectSprite));
+		__VIRTUAL_CALL(Sprite, render, __SAFE_CAST(Sprite, this->userObjectSprite));
 	}
 }
 

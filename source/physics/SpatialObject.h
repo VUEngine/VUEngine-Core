@@ -31,21 +31,21 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SpatialObject_METHODS																			\
-		Object_METHODS																					\
-		__VIRTUAL_DEC(getShape);																		\
-		__VIRTUAL_DEC(getShapeType);																	\
-		__VIRTUAL_DEC(moves);																			\
-		__VIRTUAL_DEC(canMoveOverAxis);																	\
-		__VIRTUAL_DEC(getWidth);																		\
-		__VIRTUAL_DEC(getHeight);																		\
-		__VIRTUAL_DEC(getDepth);																		\
-		__VIRTUAL_DEC(getGap);																			\
-		__VIRTUAL_DEC(getPosition);																		\
-		__VIRTUAL_DEC(setPosition);																		\
-		__VIRTUAL_DEC(getElasticity);																	\
-		__VIRTUAL_DEC(getFriction);																		\
-		__VIRTUAL_DEC(getVelocity);																		\
+#define SpatialObject_METHODS(ClassName)																\
+		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void*, getShape);														\
+		__VIRTUAL_DEC(ClassName, int, getShapeType);													\
+		__VIRTUAL_DEC(ClassName, bool, moves);															\
+		__VIRTUAL_DEC(ClassName, int, canMoveOverAxis, const Acceleration* acceleration);				\
+		__VIRTUAL_DEC(ClassName, int, getWidth);														\
+		__VIRTUAL_DEC(ClassName, int, getHeight);														\
+		__VIRTUAL_DEC(ClassName, int, getDepth);														\
+		__VIRTUAL_DEC(ClassName, Gap, getGap);															\
+		__VIRTUAL_DEC(ClassName, const VBVec3D*, getPosition);											\
+		__VIRTUAL_DEC(ClassName, void, setPosition, const VBVec3D* position);							\
+		__VIRTUAL_DEC(ClassName, fix19_13, getElasticity);												\
+		__VIRTUAL_DEC(ClassName, fix19_13, getFriction);												\
+		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 
 // define the virtual methods
 #define SpatialObject_SET_VTABLE(ClassName)																\
@@ -66,9 +66,8 @@
 
 
 #define SpatialObject_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
 
 __CLASS(SpatialObject);
 

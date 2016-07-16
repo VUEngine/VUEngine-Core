@@ -56,39 +56,28 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define AnimationEditor_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* current in game gameState */																		\
-	GameState gameState;																				\
-																										\
-	/* current animated sprite */																		\
-	Sprite animatedSprite;																				\
-																										\
-	/* current animation description */																	\
-	AnimationDescription* animationDescription;															\
-																										\
-	/* current animation function */																	\
-	AnimationFunction animationFunction;																\
-																										\
-	/* animated in game entity selector */																\
-	OptionsSelector animatedInGameEntitySelector;														\
-																										\
-	/* animated sprite selector */																		\
-	OptionsSelector spriteSelector;																		\
-																										\
-	/* animations selector */																			\
-	OptionsSelector animationsSelector;																	\
-																										\
-	/* animation edition selector */																	\
-	OptionsSelector animationEditionSelector;															\
-																										\
-	/* frame edition selector */																		\
-	OptionsSelector frameEditionSelector;																\
-																										\
-	/* mode */																							\
-	int mode;																							\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* current in game gameState */																	\
+        GameState gameState;																			\
+        /* current animated sprite */																	\
+        Sprite animatedSprite;																			\
+        /* current animation description */																\
+        AnimationDescription* animationDescription;														\
+        /* current animation function */																\
+        AnimationFunction animationFunction;															\
+        /* animated in game entity selector */															\
+        OptionsSelector animatedInGameEntitySelector;													\
+        /* animated sprite selector */																	\
+        OptionsSelector spriteSelector;																	\
+        /* animations selector */																		\
+        OptionsSelector animationsSelector;																\
+        /* animation edition selector */																\
+        OptionsSelector animationEditionSelector;														\
+        /* frame edition selector */																	\
+        OptionsSelector frameEditionSelector;															\
+        /* mode */																						\
+        int mode;																						\
 
 // define the AnimationEditor
 __CLASS_DEFINITION(AnimationEditor, Object);
@@ -316,7 +305,7 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 			AnimationEditor_createAnimationEditionSelector(this);
 			AnimationEditor_createFrameEditionSelector(this);
 			AnimationController_playAnimationFunction(Sprite_getAnimationController(this->animatedSprite), &this->animationFunction);
-			__VIRTUAL_CALL(void, Sprite, writeAnimation, this->animatedSprite);
+			__VIRTUAL_CALL(Sprite, writeAnimation, this->animatedSprite);
 			Sprite_pause(this->animatedSprite, true);
 			Sprite_pause(this->animatedSprite, false);
 			AnimationEditor_printAnimationConfig(this);
@@ -716,22 +705,22 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 
 	NM_ASSERT(spriteDefinition, "AnimationEditor::createSprite: null spriteDefinition");
 
-	this->animatedSprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
+	this->animatedSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
 	ASSERT(this->animatedSprite, "AnimationEditor::createSprite: null animatedSprite");
 	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite)), "AnimationEditor::createSprite: null texture");
 
-	VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, this->animatedSprite));
+	VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, __SAFE_CAST(Sprite, this->animatedSprite));
 	spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 	spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 
-	__VIRTUAL_CALL(void, Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
-	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->animatedSprite));
+	__VIRTUAL_CALL(Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
+	__VIRTUAL_CALL(Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->animatedSprite));
 	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->animatedSprite)));
-	__VIRTUAL_CALL(void, Sprite, render, __SAFE_CAST(Sprite, this->animatedSprite));
+	__VIRTUAL_CALL(Sprite, render, __SAFE_CAST(Sprite, this->animatedSprite));
 
 	// must set the position after showing the sprite, otherwise
 	// it will remain non initialized
-	__VIRTUAL_CALL(void, Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
+	__VIRTUAL_CALL(Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
 }
 
 static void AnimationEditor_createSpriteSelector(AnimationEditor this)

@@ -237,8 +237,8 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
 {
 	ASSERT(this, "Sprite::onTextureRewritten: null this");
 
-	__VIRTUAL_CALL(void, Sprite, applyAffineTransformations, this);
-	__VIRTUAL_CALL(void, Sprite, applyHbiasTransformations, this);
+	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this);
+	__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this);
 	this->renderFlag = __UPDATE_HEAD;
 }
 
@@ -269,7 +269,7 @@ void Sprite_update(Sprite this)
 		// first animate the frame
 		if(AnimationController_didAnimationFrameChanged(this->animationController))
 		{
-			__VIRTUAL_CALL(void, Sprite, writeAnimation, this);
+			__VIRTUAL_CALL(Sprite, writeAnimation, this);
 		}
 	}
 }

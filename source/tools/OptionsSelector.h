@@ -31,8 +31,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define OptionsSelector_METHODS																			\
-		Object_METHODS																					\
+#define OptionsSelector_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define OptionsSelector_SET_VTABLE(ClassName)															\

@@ -57,7 +57,7 @@ static void VirtualNode_constructor(VirtualNode this, const void* const data)
 }
 
 // class's destructor
-static void VirtualNode_destructor(VirtualNode this)
+__attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::destructor: null this");
 

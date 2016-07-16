@@ -38,33 +38,27 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Texture_METHODS																					\
-	Object_METHODS																						\
-	__VIRTUAL_DEC(write);																				\
+#define Texture_METHODS(ClassName)																	    \
+        Object_METHODS(ClassName)																		\
+        __VIRTUAL_DEC(ClassName, void, write);															\
 
 #define Texture_SET_VTABLE(ClassName)																	\
-	Object_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, Texture, write);															\
+        Object_SET_VTABLE(ClassName)																	\
+        __VIRTUAL_SET(ClassName, Texture, write);														\
 
 #define Texture_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* char group to use int this texture */															\
-	CharSet charSet;																					\
-																										\
-	/* pointer to ROM definition */																		\
-	TextureDefinition* textureDefinition;																\
-																										\
-	/* texture's id */																					\
-	u16 id;																								\
-																										\
-	/* color palette */																					\
-	u8 palette;																						\
-																										\
-	/* written flag */																					\
-	u8 written;																						\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* char group to use int this texture */														\
+        CharSet charSet;																				\
+        /* pointer to ROM definition */																	\
+        TextureDefinition* textureDefinition;															\
+        /* texture's id */																				\
+        u16 id;																							\
+        /* color palette */																				\
+        u8 palette;																						\
+        /* written flag */																				\
+        u8 written;																						\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(Texture);

@@ -38,8 +38,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ParamTableManager_METHODS																		\
-		Object_METHODS																					\
+#define ParamTableManager_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define ParamTableManager_SET_VTABLE(ClassName)															\

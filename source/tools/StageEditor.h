@@ -34,8 +34,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define StageEditor_METHODS																				\
-		Object_METHODS																					\
+#define StageEditor_METHODS(ClassName)																				\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define StageEditor_SET_VTABLE(ClassName)																\

@@ -57,31 +57,25 @@
 
 // Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
-#define CharSet_METHODS																					\
-		Object_METHODS																					\
+#define CharSet_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
 
 #define CharSet_SET_VTABLE(ClassName)																	\
 		Object_SET_VTABLE(ClassName)																	\
 
 #define CharSet_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* char set definition */																			\
-	CharSetDefinition* charSetDefinition;																\
-																										\
-	/* array definition of the charSet */																\
-	u16 charDefinitionDisplacement;																		\
-																										\
-	/* memory displacement */																			\
-	u16 offset;																							\
-																										\
-	/* how many textures are using me */																\
-	u8 usageCount;																						\
-																										\
-	/* memory segment */																				\
-	u8 segment;																							\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* char set definition */																		\
+        CharSetDefinition* charSetDefinition;															\
+        /* array definition of the charSet */															\
+        u16 charDefinitionDisplacement;																	\
+        /* memory displacement */																		\
+        u16 offset;																						\
+        /* how many textures are using me */															\
+        u8 usageCount;																					\
+        /* memory segment */																			\
+        u8 segment;																						\
 
 __CLASS(CharSet);
 

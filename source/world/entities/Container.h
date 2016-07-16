@@ -43,22 +43,22 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Container_METHODS																				\
-		SpatialObject_METHODS																			\
-		__VIRTUAL_DEC(update);																			\
-		__VIRTUAL_DEC(transform);																		\
-		__VIRTUAL_DEC(updateVisualRepresentation);														\
-		__VIRTUAL_DEC(initialTransform);																\
-		__VIRTUAL_DEC(setLocalPosition);																\
-		__VIRTUAL_DEC(handlePropagatedMessage);															\
-		__VIRTUAL_DEC(addChild);																		\
-		__VIRTUAL_DEC(changeEnvironment);																\
-		__VIRTUAL_DEC(removeChild);																		\
-		__VIRTUAL_DEC(suspend);																			\
-		__VIRTUAL_DEC(resume);																			\
-		__VIRTUAL_DEC(show);																			\
-		__VIRTUAL_DEC(hide);																			\
-		__VIRTUAL_DEC(passMessage);																			\
+#define Container_METHODS(ClassName)																	\
+		SpatialObject_METHODS(ClassName)																\
+		__VIRTUAL_DEC(ClassName, void, update);															\
+		__VIRTUAL_DEC(ClassName, void, transform, const Transformation* environmentTransform);			\
+		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation);										\
+		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation* environmentTransform);	\
+		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const VBVec3D* position);						\
+		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
+		__VIRTUAL_DEC(ClassName, void, addChild, Container child);										\
+		__VIRTUAL_DEC(ClassName, void, removeChild, Container child);									\
+		__VIRTUAL_DEC(ClassName, void, changeEnvironment, Transformation* environmentTransform);		\
+		__VIRTUAL_DEC(ClassName, void, suspend);														\
+		__VIRTUAL_DEC(ClassName, void, resume);															\
+		__VIRTUAL_DEC(ClassName, void, show);															\
+		__VIRTUAL_DEC(ClassName, void, hide);															\
+		__VIRTUAL_DEC(ClassName, int, passMessage, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);\
 
 
 // define the virtual methods
@@ -77,40 +77,30 @@
 		__VIRTUAL_SET(ClassName, Container, resume);													\
 		__VIRTUAL_SET(ClassName, Container, show);														\
 		__VIRTUAL_SET(ClassName, Container, hide);														\
-		__VIRTUAL_SET(ClassName, Container, passMessage);														\
+		__VIRTUAL_SET(ClassName, Container, passMessage);												\
 
 #define Container_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	SpatialObject_ATTRIBUTES;																			\
-																										\
-	/* 3d transformation */																				\
-	Transformation transform;																			\
-																										\
-	/* children list */																					\
-	VirtualList children;																				\
-																										\
-	/* removed children list */																			\
-	VirtualList removedChildren;																		\
-																										\
-	/* parent */																						\
-	Container parent;																					\
-																										\
-	/* name */																							\
-	char* name;																							\
-																										\
-	/* entity's id */																					\
-	s16 id;																								\
-																										\
-	/* flag to recalculate global position */															\
-	VBVec3DFlag invalidateGlobalPosition;																\
-																										\
-	/* flag for parent to know to delete it */															\
-	u8 deleteMe: 1;																						\
-																										\
-	/* flag to hide the entity */																		\
-	u8 hidden: 1;																						\
-																										\
+        /* super's attributes */																		\
+        SpatialObject_ATTRIBUTES;																		\
+        /* 3d transformation */																			\
+        Transformation transform;																		\
+        /* children list */																				\
+        VirtualList children;																			\
+        /* removed children list */																		\
+        VirtualList removedChildren;																	\
+        /* parent */																					\
+        Container parent;																				\
+        /* name */																						\
+        char* name;																						\
+        /* entity's id */																				\
+        s16 id;																							\
+        /* flag to recalculate global position */														\
+        VBVec3DFlag invalidateGlobalPosition;															\
+        /* flag for parent to know to delete it */														\
+        u8 deleteMe: 1;																					\
+        /* flag to hide the entity */																	\
+        u8 hidden: 1;																					\
+
 
 __CLASS(Container);
 

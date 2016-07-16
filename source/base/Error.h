@@ -31,8 +31,8 @@
 
 // error handling class
 // declare the virtual methods
-#define Error_METHODS																					\
-		Object_METHODS																					\
+#define Error_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define Error_SET_VTABLE(ClassName)																		\

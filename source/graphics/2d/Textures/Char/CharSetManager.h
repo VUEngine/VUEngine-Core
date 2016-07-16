@@ -33,8 +33,8 @@
 // Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define CharSetManager_METHODS																			\
-		Object_METHODS																					\
+#define CharSetManager_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define CharSetManager_SET_VTABLE(ClassName)															\

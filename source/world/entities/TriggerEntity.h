@@ -29,20 +29,18 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define TriggerEntity_METHODS																			\
-		InGameEntity_METHODS																			\
+#define TriggerEntity_METHODS(ClassName)																\
+		InGameEntity_METHODS(ClassName)																	\
 
 #define TriggerEntity_SET_VTABLE(ClassName)																\
 		InGameEntity_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, TriggerEntity, moves);													\
 
 #define TriggerEntity_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	InGameEntity_ATTRIBUTES																				\
-																										\
-	/* ROM definition */																				\
-	TriggerEntityDefinition* triggerEntityDefinition;
+        /* super's attributes */																		\
+        InGameEntity_ATTRIBUTES																			\
+        /* ROM definition */																			\
+        TriggerEntityDefinition* triggerEntityDefinition;
 
 __CLASS(TriggerEntity);
 
@@ -59,7 +57,7 @@ typedef struct TriggerEntityDefinition
 
 	// shape type
 	u8 shapeType;
-	
+
 	// moves?
 	u8 moves;
 

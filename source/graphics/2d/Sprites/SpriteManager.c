@@ -41,45 +41,32 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define SpriteManager_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* list of sprites to render */												\
-	VirtualList sprites;														\
-																				\
-	/* sorting nodes	*/														\
-	VirtualNode node;															\
-	VirtualNode nextNode;														\
-																				\
-	/* texture wrinting	*/														\
-	Texture textureToWrite;														\
-																				\
-	/* next world layer	*/														\
-	s8 freeLayer;																\
-																				\
-	/* flag to stop sorting while recovering layers	*/							\
-	s8 recoveringLayers;														\
-																				\
-	/* number of cycles that the texture writing is idle */						\
-	s8 cyclesToWaitForTextureWriting;											\
-																				\
-	/* number of rows to write in texture's writing	*/							\
-	s8 texturesMaximumRowsToWrite;												\
-																				\
-	/* flag to control texture's writing deferring	*/							\
-	s8 deferTextureWriting;														\
-																				\
-	/* number of rows to write in affine transformations	*/					\
-	s8 maximumAffineRowsToComputePerCall;										\
-																				\
-	/* flag to control texture's writing deferring	*/							\
-	s8 deferAffineTransformations;												\
-																				\
-	/* delay before writing again	*/											\
-	s8 waitToWrite;																\
-
+#define SpriteManager_ATTRIBUTES												                        \
+	/* super's attributes */													                        \
+	Object_ATTRIBUTES;															                        \
+	/* list of sprites to render */												                        \
+	VirtualList sprites;														                        \
+	/* sorting nodes	*/														                        \
+	VirtualNode node;															                        \
+	VirtualNode nextNode;														                        \
+	/* texture wrinting	*/														                        \
+	Texture textureToWrite;														                        \
+	/* next world layer	*/														                        \
+	s8 freeLayer;																                        \
+	/* flag to stop sorting while recovering layers	*/							                        \
+	s8 recoveringLayers;														                        \
+	/* number of cycles that the texture writing is idle */						                        \
+	s8 cyclesToWaitForTextureWriting;											                        \
+	/* number of rows to write in texture's writing	*/							                        \
+	s8 texturesMaximumRowsToWrite;												                        \
+	/* flag to control texture's writing deferring	*/							                        \
+	s8 deferTextureWriting;														                        \
+	/* number of rows to write in affine transformations	*/					                        \
+	s8 maximumAffineRowsToComputePerCall;										                        \
+	/* flag to control texture's writing deferring	*/							                        \
+	s8 deferAffineTransformations;												                        \
+	/* delay before writing again	*/											                        \
+	s8 waitToWrite;																                        \
 
 __CLASS_DEFINITION(SpriteManager, Object);
 
@@ -196,8 +183,8 @@ void SpriteManager_sortLayers(SpriteManager this, int progressively)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 				Sprite nextSprite = __SAFE_CAST(Sprite, nextNode->data);
-				VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-				VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, nextSprite);
+				VBVec2D position = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
+				VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, nextSprite);
 
 				// check if z positions are swapped
 				if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
@@ -236,8 +223,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, this->node->data);
 			Sprite nextSprite = __SAFE_CAST(Sprite, this->nextNode->data);
-			VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-			VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, nextSprite);
+			VBVec2D position = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
+			VBVec2D nextPosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, nextSprite);
 
 			// check if z positions are swapped
 			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
@@ -390,7 +377,7 @@ void SpriteManager_render(SpriteManager this)
 	{
 		if(0 < this->texturesMaximumRowsToWrite && this->textureToWrite)
 		{
-			__VIRTUAL_CALL(void, Texture, write, this->textureToWrite);
+			__VIRTUAL_CALL(Texture, write, this->textureToWrite);
 
 			this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
 			textureWasWritten = true;
@@ -406,7 +393,7 @@ void SpriteManager_render(SpriteManager this)
 
 				if(texture && !texture->written)
 				{
-					__VIRTUAL_CALL(void, Texture, write, texture);
+					__VIRTUAL_CALL(Texture, write, texture);
 
 					textureWasWritten = true;
 					this->waitToWrite = this->cyclesToWaitForTextureWriting;
@@ -439,7 +426,7 @@ void SpriteManager_render(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 		Sprite_update(sprite);
 
-		__VIRTUAL_CALL(void, Sprite, render, sprite);
+		__VIRTUAL_CALL(Sprite, render, sprite);
 
 		// must make sure that no sprite has the end world
 		// which can be the case when a new sprite is added
@@ -472,16 +459,16 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 		if(sprite->worldLayer != layer)
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, sprite);
+			__VIRTUAL_CALL(Sprite, hide, sprite);
 		}
 		else
 		{
-			__VIRTUAL_CALL(void, Sprite, show, sprite);
+			__VIRTUAL_CALL(Sprite, show, sprite);
 		}
 
 		// force inialization
-		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-		__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
+		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 
 		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
@@ -497,11 +484,11 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-		__VIRTUAL_CALL(void, Sprite, show, sprite);
+		__VIRTUAL_CALL(Sprite, show, sprite);
 
 		// force inialization
-		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-		__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
+		VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
+		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 
 		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}

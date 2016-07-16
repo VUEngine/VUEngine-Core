@@ -29,34 +29,25 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define BgmapTextureManager_ATTRIBUTES															\
-																								\
-	/* super's attributes */																	\
-	Object_ATTRIBUTES;																			\
-																								\
-	/* number of chars ocuppied */																\
-	u16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];											\
-																								\
-	/* current x offset to set the next bgmap */												\
-	s16 xOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];						\
-																								\
-	/* current y offset to set the next bgmap */												\
-	s16 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];						\
-																								\
-	/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 								\
-	s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][3];					\
-																								\
-	/* free bgmap before segment for text printing */												\
-	u8 spareBgmapSegments;																		\
-																								\
-	/* next free bgmap used for text printing */												\
-	u8 freeBgmapSegment;																		\
-																								\
-	/* the textures allocated */																\
-	BgmapTexture bgmapTextures[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];		\
-																								\
-	/* number of available bgmap segments */													\
-	u8 availableBgmapSegments;																	\
+#define BgmapTextureManager_ATTRIBUTES															        \
+        /* super's attributes */																	    \
+        Object_ATTRIBUTES;																			    \
+        /* number of chars ocuppied */																    \
+        u16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];										    	\
+        /* current x offset to set the next bgmap */											    	\
+        s16 xOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];					    	\
+        /* current y offset to set the next bgmap */											    	\
+        s16 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];					    	\
+        /* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 							    	\
+        s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][3];				    	\
+        /* free bgmap before segment for text printing */												\
+        u8 spareBgmapSegments;																	    	\
+        /* next free bgmap used for text printing */											    	\
+        u8 freeBgmapSegment;																	    	\
+        /* the textures allocated */															    	\
+        BgmapTexture bgmapTextures[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];	    	\
+        /* number of available bgmap segments */												    	\
+        u8 availableBgmapSegments;																    	\
 
 // define the BgmapTextureManager
 __CLASS_DEFINITION(BgmapTextureManager, Object);
@@ -284,7 +275,7 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 	// set next offset entry to modify within the free bgmap segment
 	this->xOffset[this->freeBgmapSegment][0] += length;
 
-	// if there are no more rows in the segment... thrown an exception
+	// if there are no more rows in the segment thrown an exception
 	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 4096, "BgmapTextureManager::allocateText: mem depleted (TextBox)");
 }
 

@@ -30,38 +30,32 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MBgmapSprite_METHODS																			\
-	BgmapSprite_METHODS																					\
+#define MBgmapSprite_METHODS(ClassName)																	\
+	    BgmapSprite_METHODS(ClassName)																	\
 
 // declare the virtual methods which are redefined
 #define MBgmapSprite_SET_VTABLE(ClassName)																\
-	BgmapSprite_SET_VTABLE(ClassName)																	\
-	__VIRTUAL_SET(ClassName, MBgmapSprite, position);													\
-	__VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);												\
-	__VIRTUAL_SET(ClassName, MBgmapSprite, render);														\
-	__VIRTUAL_SET(ClassName, MBgmapSprite, getPosition);												\
-	__VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);												\
+        BgmapSprite_SET_VTABLE(ClassName)																\
+        __VIRTUAL_SET(ClassName, MBgmapSprite, position);												\
+        __VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);											\
+        __VIRTUAL_SET(ClassName, MBgmapSprite, render);													\
+        __VIRTUAL_SET(ClassName, MBgmapSprite, getPosition);											\
+        __VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
 
 #define MBgmapSprite_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	BgmapSprite_ATTRIBUTES;																				\
-																										\
-	/* this is our texture */																			\
-	VirtualList textures;																				\
-																										\
-	/* pinter to definition */																			\
-	const MBgmapSpriteDefinition* mSpriteDefinition;													\
-																										\
-	/* total size of the bgmap, used for loop/not loop */												\
-	Point size;																							\
-																										\
-	/* for total size of the bgmap calculation */														\
-	Point sizeMultiplier;																				\
-																										\
-	/* to speed up rendering */																			\
-	u16 textureXOffset;																					\
-	u16 textureYOffset;																					\
+        /* super's attributes */																		\
+        BgmapSprite_ATTRIBUTES;																			\
+        /* this is our texture */																		\
+        VirtualList textures;																			\
+        /* pinter to definition */																		\
+        const MBgmapSpriteDefinition* mSpriteDefinition;												\
+        /* total size of the bgmap, used for loop/not loop */											\
+        Point size;																						\
+        /* for total size of the bgmap calculation */													\
+        Point sizeMultiplier;																			\
+        /* to speed up rendering */																		\
+        u16 textureXOffset;																				\
+        u16 textureYOffset;																				\
 
 __CLASS(MBgmapSprite);
 
@@ -74,7 +68,7 @@ typedef struct MBgmapSpriteDefinition
 {
 	// the normal sprite definition
 	BgmapSpriteDefinition bSpriteDefinition;
-	
+
 	// texture to use with the sprite
 	TextureDefinition** textureDefinitions;
 

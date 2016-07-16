@@ -57,8 +57,8 @@ static u8* const HW_REGS =			(u8*)0x02000000;
 // Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define HardwareManager_METHODS																			\
-		Object_METHODS																					\
+#define HardwareManager_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define HardwareManager_SET_VTABLE(ClassName)															\

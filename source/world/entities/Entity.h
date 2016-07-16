@@ -40,14 +40,14 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Entity_METHODS																					\
-		Container_METHODS																				\
-		__VIRTUAL_DEC(isVisible);																		\
-		__VIRTUAL_DEC(setExtraInfo);																	\
-		__VIRTUAL_DEC(updateSpritePosition);															\
-		__VIRTUAL_DEC(updateSpriteTransformations);														\
-		__VIRTUAL_DEC(initialize);																		\
-		__VIRTUAL_DEC(ready);																			\
+#define Entity_METHODS(ClassName)																		\
+		Container_METHODS(ClassName)																	\
+		__VIRTUAL_DEC(ClassName, bool, isVisible, int pad, bool recursive);								\
+		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void* extraInfo);									\
+		__VIRTUAL_DEC(ClassName, bool, updateSpritePosition);											\
+		__VIRTUAL_DEC(ClassName, bool, updateSpriteTransformations);									\
+		__VIRTUAL_DEC(ClassName, void, initialize);														\
+		__VIRTUAL_DEC(ClassName, void, ready);															\
 
 #define Entity_SET_VTABLE(ClassName)																	\
 		Container_SET_VTABLE(ClassName)																	\
@@ -73,27 +73,20 @@
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 
 #define Entity_ATTRIBUTES																				\
-																										\
-	/* it is derived from */																			\
-	Container_ATTRIBUTES																				\
-																										\
-	/* sprites' list */																					\
-	VirtualList sprites;																				\
-																										\
-	/* shape for collision detection */																	\
-	Shape shape;																						\
-																										\
-	/* shape for collision detection */																	\
-	Size size;																							\
-																										\
-	/* entity's definition */																			\
-	EntityDefinition *entityDefinition;																	\
-																										\
-	/* entity's definition */																			\
-	VBVec3D* centerDisplacement;																		\
-																										\
-	/* flag to update sprites' attributes */															\
-	bool updateSprites;																					\
+        /* it is derived from */																		\
+        Container_ATTRIBUTES																			\
+        /* sprites' list */																				\
+        VirtualList sprites;																			\
+        /* shape for collision detection */																\
+        Shape shape;																					\
+        /* shape for collision detection */																\
+        Size size;																						\
+        /* entity's definition */																		\
+        EntityDefinition *entityDefinition;																\
+        /* entity's definition */																		\
+        VBVec3D* centerDisplacement;																	\
+        /* flag to update sprites' attributes */														\
+        bool updateSprites;																				\
 
 	__CLASS(Entity);
 
@@ -123,7 +116,7 @@ typedef const struct PositionedEntity
 
 	// position in the world
 	VBVec3D position;
-	
+
 	// name
 	char* name;
 
@@ -132,7 +125,7 @@ typedef const struct PositionedEntity
 
 	// extra info
 	void* extraInfo;
-	
+
 	// force load
 	bool loadRegardlessOfPosition;
 

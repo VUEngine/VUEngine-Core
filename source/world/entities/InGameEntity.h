@@ -31,12 +31,12 @@
 
 struct Shape_str;
 
-#define InGameEntity_METHODS																			\
-		Entity_METHODS																					\
-		__VIRTUAL_DEC(isMoving);																		\
-		__VIRTUAL_DEC(getMovementState);																\
-		__VIRTUAL_DEC(getInGameType);																	\
-		
+#define InGameEntity_METHODS(ClassName)																	\
+		Entity_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, int, isMoving);														\
+		__VIRTUAL_DEC(ClassName, int, getMovementState);												\
+		__VIRTUAL_DEC(ClassName, u16, getInGameType);													\
+
 #define InGameEntity_SET_VTABLE(ClassName)																\
 		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, InGameEntity, moves);													\
@@ -44,20 +44,16 @@ struct Shape_str;
 		__VIRTUAL_SET(ClassName, InGameEntity, getMovementState);										\
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);													\
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);											\
-		
+
 #define InGameEntity_ATTRIBUTES																			\
-																										\
-	/* it is derived from */																			\
-	Entity_ATTRIBUTES																					\
-																										\
-	/* pointer to the ROM definition */																	\
-	InGameEntityDefinition* inGameEntityDefinition;														\
-																										\
-	/* direction */																						\
-	Direction direction;																				\
-																										\
-	/* Gap to calculate collisions */																	\
-	Gap gap;																							\
+        /* it is derived from */																		\
+        Entity_ATTRIBUTES																				\
+        /* pointer to the ROM definition */																\
+        InGameEntityDefinition* inGameEntityDefinition;													\
+        /* direction */																					\
+        Direction direction;																			\
+        /* Gap to calculate collisions */																\
+        Gap gap;																						\
 
 __CLASS(InGameEntity);
 

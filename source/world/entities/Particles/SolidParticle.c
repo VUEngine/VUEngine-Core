@@ -59,7 +59,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 
 	// register a shape for collision detection
 	this->shape = CollisionManager_registerShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
-	__VIRTUAL_CALL(void, Shape, setup, this->shape);
+	__VIRTUAL_CALL(Shape, setup, this->shape);
 
 	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
 }

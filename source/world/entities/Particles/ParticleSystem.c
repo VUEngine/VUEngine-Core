@@ -203,7 +203,7 @@ void ParticleSystem_update(ParticleSystem this)
 
 	    for(; node; node = node->next)
 	    {
-	        __VIRTUAL_CALL(void, Particle, update, node->data, elapsedTime, behavior);
+	        __VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior);
 	    }
 
 		if(!this->paused)
@@ -250,7 +250,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 
 		Particle_setLifeSpan(particle, lifeSpan);
 		Particle_setMass(particle, mass);
-		__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
+		__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 		Particle_show(particle);
 
@@ -306,8 +306,8 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	int spriteDefinitionIndex = Utilities_random(seed, abs(this->numberOfSpriteDefinitions));
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(ParticleDefinition*, ...)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
-	__VIRTUAL_CALL(void, Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
+	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix19_13)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
+	__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 
 	Object_addEventListener(__SAFE_CAST(Object, particle), __SAFE_CAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
@@ -323,7 +323,7 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 
 	ParticleSystem_processExpiredParticles(this);
 
-	this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
+	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
 }
 
 void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
@@ -336,7 +336,7 @@ void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, updateVisualRepresentation, node->data, updateSprites);
+		__VIRTUAL_CALL(Particle, updateVisualRepresentation, node->data, updateSprites);
 	}
 
 	this->updateSprites = 0;
@@ -387,7 +387,7 @@ void ParticleSystem_resume(ParticleSystem this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, resume, node->data);
+		__VIRTUAL_CALL(Particle, resume, node->data);
 	}
 
 	if(this->recyclableParticles)
@@ -396,7 +396,7 @@ void ParticleSystem_resume(ParticleSystem this)
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Particle, resume, node->data);
+			__VIRTUAL_CALL(Particle, resume, node->data);
 		}
 	}
 
@@ -404,7 +404,7 @@ void ParticleSystem_resume(ParticleSystem this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, resume, node->data);
+		__VIRTUAL_CALL(Particle, resume, node->data);
 		Particle_hide(__SAFE_CAST(Particle, node->data));
 	}
 
@@ -423,7 +423,7 @@ void ParticleSystem_suspend(ParticleSystem this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Particle, suspend, node->data);
+		__VIRTUAL_CALL(Particle, suspend, node->data);
 	}
 
 	if(this->recyclableParticles)
@@ -432,7 +432,7 @@ void ParticleSystem_suspend(ParticleSystem this)
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Particle, suspend, node->data);
+			__VIRTUAL_CALL(Particle, suspend, node->data);
 		}
 	}
 }

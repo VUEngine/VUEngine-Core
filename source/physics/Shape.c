@@ -48,7 +48,7 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	this->owner = owner;
 
 	// do I move?
-	this->moves = __VIRTUAL_CALL(bool, SpatialObject, moves, owner);
+	this->moves = __VIRTUAL_CALL(SpatialObject, moves, owner);
 
 	// not checked yet
 	this->checked = false;

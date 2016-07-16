@@ -29,19 +29,17 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Polygon_METHODS																					\
-		Object_METHODS																					\
+#define Polygon_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
 
 #define Polygon_SET_VTABLE(ClassName)																	\
 		Object_SET_VTABLE(ClassName)																	\
 
 #define Polygon_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* vertices */																						\
-	VirtualList vertices;																				\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* vertices */																					\
+        VirtualList vertices;																			\
 
 __CLASS(Polygon);
 

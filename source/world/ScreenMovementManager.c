@@ -88,10 +88,10 @@ void ScreenMovementManager_position(ScreenMovementManager this, bool checkIfFocu
 			Transformation environmentTransform = Container_getEnvironmentTransform(focusInGameEntityParent);
 
 			// apply transformations
-			__VIRTUAL_CALL(void, Container, transform, screen->focusInGameEntity, &environmentTransform);
+			__VIRTUAL_CALL(Container, transform, screen->focusInGameEntity, &environmentTransform);
 
 			// get focusInGameEntity is moving
-			if(__VIRTUAL_CALL(bool, InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
+			if(__VIRTUAL_CALL(InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 			{
 				// save last position
 				screen->lastDisplacement = screen->position;

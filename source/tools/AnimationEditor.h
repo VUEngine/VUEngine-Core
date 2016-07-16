@@ -34,8 +34,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimationEditor_METHODS																			\
-		Object_METHODS																					\
+#define AnimationEditor_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																					\
 
 
 // declare the virtual methods which are redefined

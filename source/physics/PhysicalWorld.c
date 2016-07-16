@@ -36,33 +36,24 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define PhysicalWorld_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* registered of bodies  */																			\
-	VirtualList	bodies;																					\
-																										\
-	/* a list of bodies which must detect collisions */													\
-	VirtualList	activeBodies;																			\
-																										\
-	/* a list of bodies which must be removed */														\
-	VirtualList	removedBodies;																			\
-																										\
-	/* gravity */																						\
-	Acceleration gravity;																				\
-																										\
-	/* friction */																						\
-	fix19_13 friction;																					\
-																										\
-	/* elapsed time on last cycle */																	\
-	fix19_13 elapsedTime;																				\
-																										\
-	/* time on last cycle */																			\
-	fix19_13 previousTime;																				\
-																										\
-	/* body to check for gravity */																		\
-	VirtualNode nextBodyToCheckForGravity;																\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* registered of bodies  */																		\
+        VirtualList	bodies;																				\
+        /* a list of bodies which must detect collisions */												\
+        VirtualList	activeBodies;																		\
+        /* a list of bodies which must be removed */													\
+        VirtualList	removedBodies;																		\
+        /* gravity */																					\
+        Acceleration gravity;																			\
+        /* friction */																					\
+        fix19_13 friction;																				\
+        /* elapsed time on last cycle */																\
+        fix19_13 elapsedTime;																			\
+        /* time on last cycle */																		\
+        fix19_13 previousTime;																			\
+        /* body to check for gravity */																	\
+        VirtualNode nextBodyToCheckForGravity;															\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -240,7 +231,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		if(body->active)
 		{
 			// check if necessary to apply gravity
-			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(int, SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
+			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
 
 			int movingState = Body_isMoving(body);
 
@@ -344,7 +335,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 		// check if current body's owner is the same as the entity calling this method
 		if(__GET_CAST(SpatialObject, owner) == body->owner)
 		{
-			// check if body is active.... maybe a body must be removed
+			// check if body is active, maybe a body must be removed
 			// and a new entity has been loaded in the same memory location
 			// as the owner of the found body
 			return Body_isActive(body);

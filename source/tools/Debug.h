@@ -33,8 +33,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Debug_METHODS																					\
-		Object_METHODS																					\
+#define Debug_METHODS(ClassName)																					\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define Debug_SET_VTABLE(ClassName)																		\

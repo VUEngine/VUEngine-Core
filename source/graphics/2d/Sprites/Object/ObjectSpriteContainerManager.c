@@ -30,12 +30,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ObjectSpriteContainerManager_ATTRIBUTES															\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* object groups */																					\
-	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];								\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* object groups */																				\
+        ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
 
 __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 

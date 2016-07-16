@@ -29,8 +29,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define CollisionsContainerEntity_METHODS																\
-		Entity_METHODS																					\
+#define CollisionsContainerEntity_METHODS(ClassName)													\
+		Entity_METHODS(ClassName)																		\
 
 #define CollisionsContainerEntity_SET_VTABLE(ClassName)													\
 		Entity_SET_VTABLE(ClassName)																	\
@@ -45,9 +45,8 @@
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, passMessage);								\
 
 #define CollisionsContainerEntity_ATTRIBUTES															\
-																										\
-	/* it is derived from */																			\
-	Entity_ATTRIBUTES																					\
+        /* it is derived from */																		\
+        Entity_ATTRIBUTES																				\
 
 __CLASS(CollisionsContainerEntity);
 

@@ -38,23 +38,20 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define BgmapTexture_METHODS																			\
-	Texture_METHODS																						\
+#define BgmapTexture_METHODS(ClassName)																	\
+        Texture_METHODS(ClassName)																		\
 
 #define BgmapTexture_SET_VTABLE(ClassName)																\
-	Texture_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, BgmapTexture, write);														\
+    	Texture_SET_VTABLE(ClassName)																	\
+	    __VIRTUAL_SET(ClassName, BgmapTexture, write);													\
 
 #define BgmapTexture_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Texture_ATTRIBUTES;																					\
-																										\
-	/* how many textures are using me */																\
-	u8 usageCount;																						\
-																										\
-	/* remaining rows to be written */																	\
-	u8 remainingRowsToBeWritten;																		\
+        /* super's attributes */																		\
+        Texture_ATTRIBUTES;																				\
+        /* how many textures are using me */															\
+        u8 usageCount;																					\
+        /* remaining rows to be written */																\
+        u8 remainingRowsToBeWritten;																	\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(BgmapTexture);

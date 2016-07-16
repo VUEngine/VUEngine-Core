@@ -45,25 +45,25 @@ ESSENTIALS =  -include $(VBJAENGINE)/libvbjae.h
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding
-CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS = __DEBUG __TOOLS
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS =
 endif
 
 ifeq ($(TYPE), release-tools)
 LDPARAM =
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -include $(CONFIG_FILE) $(ESSENTIALS)
+CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
 MACROS = __TOOLS
 endif
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =
-CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
+CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
 MACROS = __TOOLS
 endif
 

@@ -29,8 +29,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define InanimatedInGameEntity_METHODS																	\
-		InGameEntity_METHODS																			\
+#define InanimatedInGameEntity_METHODS(ClassName)														\
+		InGameEntity_METHODS(ClassName)																	\
 
 #define InanimatedInGameEntity_SET_VTABLE(ClassName)													\
 		InGameEntity_SET_VTABLE(ClassName)																\
@@ -38,12 +38,10 @@
 		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getFriction);									\
 
 #define InanimatedInGameEntity_ATTRIBUTES																\
-																										\
-	/* super's attributes */																			\
-	InGameEntity_ATTRIBUTES																				\
-																										\
-	/* ROM definition */																				\
-	InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition;									\
+        /* super's attributes */																		\
+        InGameEntity_ATTRIBUTES																			\
+        /* ROM definition */																			\
+        InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition;								\
 
 __CLASS(InanimatedInGameEntity);
 

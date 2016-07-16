@@ -33,28 +33,21 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define CollisionManager_ATTRIBUTES												\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* a list of shapes registeres */											\
-	VirtualList	shapes;															\
-																				\
-	/* a list of shapes which must detect collisions */							\
-	VirtualList	activeShapes;													\
-																				\
-	/* a list of moving shapes */												\
-	VirtualList	movingShapes;													\
-																				\
-	/* a list of shapes which must be removed */								\
-	VirtualList	removedShapes;													\
-																				\
-	/* a list of shapes which became inactive */								\
-	VirtualList	inactiveShapes;													\
-																				\
-	/* flag to block removals when traversing the shapes list */				\
-	bool checkingCollisions;													\
+#define CollisionManager_ATTRIBUTES												                        \
+        /* super's attributes */													                    \
+        Object_ATTRIBUTES;															                    \
+        /* a list of shapes registeres */											                    \
+        VirtualList	shapes;															                    \
+        /* a list of shapes which must detect collisions */							                    \
+        VirtualList	activeShapes;													                    \
+        /* a list of moving shapes */												                    \
+        VirtualList	movingShapes;													                    \
+        /* a list of shapes which must be removed */								                    \
+        VirtualList	removedShapes;													                    \
+        /* a list of shapes which became inactive */								                    \
+        VirtualList	inactiveShapes;													                    \
+        /* flag to block removals when traversing the shapes list */				                    \
+        bool checkingCollisions;													                    \
 
 // define the CollisionManager
 __CLASS_DEFINITION(CollisionManager, Object);
@@ -181,7 +174,7 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
-	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL_UNSAFE(const void* const, SpatialObject, getShape, owner));
+	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL_UNSAFE(SpatialObject, getShape, owner));
 
 	return node? __SAFE_CAST(Shape, node->data): NULL;
 }
@@ -257,7 +250,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	for(; node; node = node->next)
 	{
 		// current to check shape's rectangle
-		__VIRTUAL_CALL(void, Shape, position, __SAFE_CAST(Shape, node->data));
+		__VIRTUAL_CALL(Shape, position, __SAFE_CAST(Shape, node->data));
 	}
 
 	this->checkingCollisions = true;
@@ -298,7 +291,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 			if(shape != shapeToCheck && !shapeToCheck->checked)
 			{
 				// check if shapes overlap
-				collisionResult = __VIRTUAL_CALL(bool, Shape, overlaps, shape, shapeToCheck);
+				collisionResult = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
 
 				if(collisionResult)
 				{
@@ -421,7 +414,7 @@ void CollisionManager_drawShapes(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Shape, draw, node->data);
+		__VIRTUAL_CALL(Shape, draw, node->data);
 	}
 }
 
@@ -437,7 +430,7 @@ void CollisionManager_flushShapesDirectDrawData(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Shape, deleteDirectDrawData, node->data);
+		__VIRTUAL_CALL(Shape, deleteDirectDrawData, node->data);
 	}
 }
 
@@ -478,7 +471,7 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 			NM_ASSERT(VirtualList_getSize(this->activeShapes), "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
 
 			// check if shapes overlap
-			if(__VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, shapeToCheck->owner), displacement))
+			if(__VIRTUAL_CALL(Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, shapeToCheck->owner), displacement))
 			{
 				collidingObject = shapeToCheck->owner;
 				break;

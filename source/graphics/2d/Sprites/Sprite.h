@@ -44,70 +44,60 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Sprite_METHODS																					\
-	Object_METHODS																						\
-	__VIRTUAL_DEC(render);																				\
-	__VIRTUAL_DEC(getPosition);																			\
-	__VIRTUAL_DEC(setPosition);																			\
-	__VIRTUAL_DEC(addDisplacement);																		\
-	__VIRTUAL_DEC(position);																			\
-	__VIRTUAL_DEC(resize);																				\
-	__VIRTUAL_DEC(rotate);																				\
-	__VIRTUAL_DEC(getScale);																			\
-	__VIRTUAL_DEC(setDirection);																		\
-	__VIRTUAL_DEC(applyAffineTransformations);															\
-	__VIRTUAL_DEC(applyHbiasTransformations);															\
-	__VIRTUAL_DEC(calculateParallax);																	\
-	__VIRTUAL_DEC(writeAnimation);																		\
-	__VIRTUAL_DEC(show);																				\
-	__VIRTUAL_DEC(hide);																				\
-	__VIRTUAL_DEC(getWorldLayer);																		\
+#define Sprite_METHODS(ClassName)																		\
+        Object_METHODS(ClassName)													    				\
+        __VIRTUAL_DEC(ClassName, void, render);															\
+        __VIRTUAL_DEC(ClassName, VBVec2D, getPosition);													\
+        __VIRTUAL_DEC(ClassName, void, setPosition, const VBVec2D* position);							\
+        __VIRTUAL_DEC(ClassName, void, addDisplacement, const VBVec2D* displacement);		           	\
+        __VIRTUAL_DEC(ClassName, void, position, const VBVec3D* position);								\
+        __VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix19_13 z);								\
+        __VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
+        __VIRTUAL_DEC(ClassName, Scale, getScale);		                    							\
+        __VIRTUAL_DEC(ClassName, void, setDirection, int axis, int direction);		                   	\
+        __VIRTUAL_DEC(ClassName, void, applyAffineTransformations);						    			\
+        __VIRTUAL_DEC(ClassName, void, applyHbiasTransformations);							            \
+        __VIRTUAL_DEC(ClassName, void, calculateParallax, fix19_13 z);									\
+        __VIRTUAL_DEC(ClassName, void, writeAnimation);													\
+        __VIRTUAL_DEC(ClassName, void, show);															\
+        __VIRTUAL_DEC(ClassName, void, hide);															\
+        __VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
 
 // declare the virtual methods which are redefined
 #define Sprite_SET_VTABLE(ClassName)																	\
-	Object_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, Sprite, getScale);															\
-	__VIRTUAL_SET(ClassName, Sprite, applyAffineTransformations);										\
-	__VIRTUAL_SET(ClassName, Sprite, applyHbiasTransformations);										\
-	__VIRTUAL_SET(ClassName, Sprite, resize);															\
-	__VIRTUAL_SET(ClassName, Sprite, writeAnimation);													\
-	__VIRTUAL_SET(ClassName, Sprite, show);																\
-	__VIRTUAL_SET(ClassName, Sprite, hide);																\
-	__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);													\
-	__VIRTUAL_SET(ClassName, Sprite, rotate);															\
+        Object_SET_VTABLE(ClassName)																	\
+        __VIRTUAL_SET(ClassName, Sprite, getScale);														\
+        __VIRTUAL_SET(ClassName, Sprite, applyAffineTransformations);									\
+        __VIRTUAL_SET(ClassName, Sprite, applyHbiasTransformations);									\
+        __VIRTUAL_SET(ClassName, Sprite, resize);														\
+        __VIRTUAL_SET(ClassName, Sprite, writeAnimation);												\
+        __VIRTUAL_SET(ClassName, Sprite, show);															\
+        __VIRTUAL_SET(ClassName, Sprite, hide);															\
+        __VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
+        __VIRTUAL_SET(ClassName, Sprite, rotate);														\
 
 #define Sprite_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* displacement modifier to achieve better control over display */									\
-	VBVec3D displacement;																				\
-																										\
-	/* super's attributes */																			\
-	AnimationController animationController;															\
-																										\
-	/* this is our texture */																			\
-	Texture texture;																					\
-																										\
-	/* texture's half width */																			\
-	fix19_13 halfWidth;																					\
-																										\
-	/* texture's half height */																			\
-	fix19_13 halfHeight;																				\
-																										\
-	/* head definition for world entry setup */															\
-	u16 head;																							\
-																										\
-	/* world layer where to render the texture */														\
-	u8 worldLayer;																						\
-																										\
-	/* h-bias max amplitude */																			\
-	/* int hbiasAmplitude; */																			\
-																										\
-	bool renderFlag;																					\
-	bool hidden;																						\
-	bool initialized;																						\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* displacement modifier to achieve better control over display */								\
+        VBVec3D displacement;																			\
+        /* super's attributes */																		\
+        AnimationController animationController;														\
+        /* this is our texture */																		\
+        Texture texture;																				\
+        /* texture's half width */																		\
+        fix19_13 halfWidth;																				\
+        /* texture's half height */																		\
+        fix19_13 halfHeight;																			\
+        /* head definition for world entry setup */														\
+        u16 head;																						\
+        /* world layer where to render the texture */													\
+        u8 worldLayer;																					\
+        /* h-bias max amplitude */																		\
+        /* int hbiasAmplitude; */																		\
+        bool renderFlag;																				\
+        bool hidden;																					\
+        bool initialized;																				\
 
 __CLASS(Sprite);
 
@@ -126,7 +116,7 @@ typedef struct SpriteDefinition
 
 	// displacement modifier to achieve better control over display
 	VBVec3D displacement;
-	
+
 } SpriteDefinition;
 
 typedef const SpriteDefinition SpriteROMDef;

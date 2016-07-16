@@ -35,9 +35,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define GameState_METHODS																				\
-		State_METHODS																					\
-		__VIRTUAL_DEC(transform);																		\
+#define GameState_METHODS(ClassName)																	\
+		State_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, transform);														\
 
 // declare the virtual methods which are redefined
 #define GameState_SET_VTABLE(ClassName)																	\
@@ -47,37 +47,28 @@
 		__VIRTUAL_SET(ClassName, GameState, exit);														\
 		__VIRTUAL_SET(ClassName, GameState, suspend);													\
 		__VIRTUAL_SET(ClassName, GameState, resume);													\
-		__VIRTUAL_SET(ClassName, GameState, handleMessage);												\
+		__VIRTUAL_SET(ClassName, GameState, processMessage);											\
 		__VIRTUAL_SET(ClassName, GameState, transform);													\
 
 #define GameState_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	State_ATTRIBUTES;																					\
-																										\
-	/* a pointer to the game's stage */																	\
-	PhysicalWorld physicalWorld;																		\
-																										\
-	/* a pointer to the game's stage */																	\
-	CollisionManager collisionManager;																\
-																										\
-	/* a pointer to the game's stage */																	\
-	Stage stage;																						\
-																										\
-	/* flag to allow streaming */																		\
-	int canStream;																						\
-																										\
-	/* must save to allow pause */																		\
-	VBVec3D screenPosition;																				\
-																										\
-	/* timer to use in game */																			\
-	Clock inGameClock;																					\
-																										\
-	/* timer to use in game for animations */															\
-	Clock animationsClock;																				\
-																										\
-	/* timer to use for physics */																		\
-	Clock physicsClock;																					\
+        /* super's attributes */																		\
+        State_ATTRIBUTES;																				\
+        /* a pointer to the game's stage */																\
+        PhysicalWorld physicalWorld;																	\
+        /* a pointer to the game's stage */																\
+        CollisionManager collisionManager;																\
+        /* a pointer to the game's stage */																\
+        Stage stage;																					\
+        /* flag to allow streaming */																	\
+        int canStream;																					\
+        /* must save to allow pause */																	\
+        VBVec3D screenPosition;																			\
+        /* timer to use in game */																		\
+        Clock inGameClock;																				\
+        /* timer to use in game for animations */														\
+        Clock animationsClock;																			\
+        /* timer to use for physics */																	\
+        Clock physicsClock;																				\
 
 __CLASS(GameState);
 
@@ -93,7 +84,7 @@ void GameState_execute(GameState this, void* owner);
 void GameState_exit(GameState this, void* owner);
 void GameState_suspend(GameState this, void* owner);
 void GameState_resume(GameState this, void* owner);
-bool GameState_handleMessage(GameState this, void* owner, Telegram telegram);
+bool GameState_processMessage(GameState this, void* owner, Telegram telegram);
 void GameState_transform(GameState this);
 void GameState_updateVisuals(GameState this);
 int GameState_propagateMessage(GameState this, int message);

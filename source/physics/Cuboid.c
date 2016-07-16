@@ -153,9 +153,9 @@ void Cuboid_setup(Cuboid this)
 	ASSERT(this, "Cuboid::setup: null this");
 
 	// cuboid's center if placed on P(0, 0, 0)
-	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(int, SpatialObject, getWidth, this->owner) >> 1);
-	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(int, SpatialObject, getHeight, this->owner) >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(int, SpatialObject, getDepth, this->owner) >> 0);
+	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(SpatialObject, getWidth, this->owner) >> 1);
+	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(SpatialObject, getHeight, this->owner) >> 1);
+	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(SpatialObject, getDepth, this->owner) >> 0);
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
@@ -165,8 +165,8 @@ void Cuboid_setup(Cuboid this)
 	if(!this->moves)
 	{
 		// position the shape to avoid in real time calculation
-		const VBVec3D* ownerPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
-		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
+		const VBVec3D* ownerPosition = __VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, this->owner);
+		Gap ownerGap = __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, this->owner);
 
 		// calculate gap on each side of the rightCuboid
 		this->rightCuboid.x0 += ownerPosition->x + ITOFIX19_13(ownerGap.left);
@@ -188,11 +188,11 @@ void Cuboid_position(Cuboid this)
 {
 	ASSERT(this, "Cuboid::position: null this");
 
-	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
+	Gap gap = __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, this->owner);
 
 	// get owner's position
-	const VBVec3D* myOwnerPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
-	Velocity velocity = __VIRTUAL_CALL_UNSAFE(Velocity, SpatialObject, getVelocity, this->owner);
+	const VBVec3D* myOwnerPosition = __VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, this->owner);
+	Velocity velocity = __VIRTUAL_CALL_UNSAFE(SpatialObject, getVelocity, this->owner);
 
 	// calculate positioned rightCuboid
 	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + ITOFIX19_13(gap.left);
@@ -243,7 +243,7 @@ int Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject,
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
 	ASSERT(collidingSpatialObject, "Cuboid::getAxisOfCollision: null collidingSpatialObject");
 
-	Shape shape = __VIRTUAL_CALL(Shape, SpatialObject, getShape, collidingSpatialObject);
+	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
 
 	if(__GET_CAST(InverseCuboid, shape))
 	{
@@ -262,7 +262,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
-	Gap gap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
+	Gap gap = __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, this->owner);
 
 	VBVec3D displacementIncrement =
 	{
@@ -499,11 +499,11 @@ int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VB
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
-	Shape shape = __VIRTUAL_CALL(Shape, SpatialObject, getShape, collidingSpatialObject);
+	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
 
 	if(__GET_CAST(Cuboid, shape))
     {
-		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject), displacement);
+		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, collidingSpatialObject), displacement);
 	}
 
 	return false;

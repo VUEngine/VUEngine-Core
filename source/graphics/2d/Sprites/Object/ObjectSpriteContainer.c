@@ -173,7 +173,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 
 	this->removingObjectSprite = true;
 
-	__VIRTUAL_CALL(void, Sprite, hide, objectSprite);
+	__VIRTUAL_CALL(Sprite, hide, objectSprite);
 
 	// hide it immdiately
 	if(0 <= objectSprite->objectIndex)
@@ -268,8 +268,8 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
-			__VIRTUAL_CALL(void, Sprite, setPosition, sprite, &spritePosition);
+			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
+			__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 		}
 	}
 
@@ -341,8 +341,8 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 		{
 			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
 			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
-			VBVec2D position = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
-			VBVec2D previousPosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
+			VBVec2D position = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
+			VBVec2D previousPosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
 
 			// check if z positions are swapped
 			if(previousPosition.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, previousSprite)).z > position.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, sprite)).z)
@@ -418,7 +418,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
+		__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
 	}
 
 	this->renderFlag = true;
@@ -437,7 +437,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, node->data));
+			__VIRTUAL_CALL(Sprite, hide, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 
@@ -509,7 +509,7 @@ void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBV
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Sprite, addDisplacement, __SAFE_CAST(Sprite, node->data), displacement);
+			__VIRTUAL_CALL(Sprite, addDisplacement, __SAFE_CAST(Sprite, node->data), displacement);
 		}
 	}
 

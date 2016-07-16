@@ -44,41 +44,36 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define BgmapSprite_METHODS																				\
-	Sprite_METHODS																						\
+#define BgmapSprite_METHODS(ClassName)																	\
+    	Sprite_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define BgmapSprite_SET_VTABLE(ClassName)																\
-	Sprite_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, BgmapSprite, render);														\
-	__VIRTUAL_SET(ClassName, BgmapSprite, getPosition);													\
-	__VIRTUAL_SET(ClassName, BgmapSprite, setPosition);													\
-	__VIRTUAL_SET(ClassName, BgmapSprite, position);													\
-	__VIRTUAL_SET(ClassName, BgmapSprite, rotate);														\
-	__VIRTUAL_SET(ClassName, BgmapSprite, getScale);													\
-	__VIRTUAL_SET(ClassName, BgmapSprite, setDirection);												\
-	__VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);									\
-	__VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasTransformations);									\
-	__VIRTUAL_SET(ClassName, BgmapSprite, resize);														\
-	__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);											\
-	__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);												\
+        Sprite_SET_VTABLE(ClassName)																	\
+        __VIRTUAL_SET(ClassName, BgmapSprite, render);													\
+        __VIRTUAL_SET(ClassName, BgmapSprite, getPosition);												\
+        __VIRTUAL_SET(ClassName, BgmapSprite, setPosition);												\
+        __VIRTUAL_SET(ClassName, BgmapSprite, position);												\
+        __VIRTUAL_SET(ClassName, BgmapSprite, rotate);													\
+        __VIRTUAL_SET(ClassName, BgmapSprite, getScale);												\
+        __VIRTUAL_SET(ClassName, BgmapSprite, setDirection);											\
+        __VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);								\
+        __VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasTransformations);								\
+        __VIRTUAL_SET(ClassName, BgmapSprite, resize);													\
+        __VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);										\
+        __VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
 
 #define BgmapSprite_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Sprite_ATTRIBUTES;																					\
-																										\
-	/* 3d world position */																				\
-	DrawSpec drawSpec;																					\
-																										\
-	/* param table offset */																			\
-	u32 param;																							\
-																										\
-	/* param table offset */																			\
-	fix19_13 paramTableRow;																				\
-																										\
-	/* h-bias max amplitude */																			\
-	/* int hbiasAmplitude; */																			\
+        /* super's attributes */																		\
+        Sprite_ATTRIBUTES;																				\
+        /* 3d world position */																			\
+        DrawSpec drawSpec;																				\
+        /* param table offset */																		\
+        u32 param;																						\
+        /* param table offset */																		\
+        fix19_13 paramTableRow;																			\
+        /* h-bias max amplitude */																		\
+        /* int hbiasAmplitude; */																		\
 
 // declare a BgmapSprite, which holds a texture and a drawing specification
 __CLASS(BgmapSprite);

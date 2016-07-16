@@ -32,8 +32,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define StateMachine_METHODS																			\
-		Object_METHODS																					\
+#define StateMachine_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define StateMachine_SET_VTABLE(ClassName)																\

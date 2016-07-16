@@ -39,12 +39,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Particle_METHODS																				\
-		SpatialObject_METHODS																			\
-		__VIRTUAL_DEC(update);																			\
-		__VIRTUAL_DEC(updateVisualRepresentation);														\
-		__VIRTUAL_DEC(resume);																			\
-		__VIRTUAL_DEC(suspend);																			\
+#define Particle_METHODS(ClassName)																		\
+		SpatialObject_METHODS(ClassName)																\
+		__VIRTUAL_DEC(ClassName, void, update, int elapsedTime, void (* behavior)(Particle particle));	\
+		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation, bool updateSpritePosition);			\
+		__VIRTUAL_DEC(ClassName, void, resume);															\
+		__VIRTUAL_DEC(ClassName, void, suspend);														\
 
 
 // define the virtual methods
@@ -61,24 +61,18 @@
 
 
 #define Particle_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	SpatialObject_ATTRIBUTES;																			\
-																										\
-	/* definition */																					\
-	const ParticleDefinition* particleDefinition;														\
-																										\
-	/* definition */																					\
-	const SpriteDefinition* spriteDefinition;															\
-																										\
-	/* OBJ based sprite */																				\
-	ObjectSprite objectSprite;																			\
-																										\
-	/* physical body */																					\
-	Body body;																							\
-																										\
-	/* life span in milliseconds */																		\
-	int lifeSpan;																						\
+        /* super's attributes */																		\
+        SpatialObject_ATTRIBUTES;																		\
+        /* definition */																				\
+        const ParticleDefinition* particleDefinition;													\
+        /* definition */																				\
+        const SpriteDefinition* spriteDefinition;														\
+        /* OBJ based sprite */																			\
+        ObjectSprite objectSprite;																		\
+        /* physical body */																				\
+        Body body;																						\
+        /* life span in milliseconds */																	\
+        int lifeSpan;																					\
 
 __CLASS(Particle);
 

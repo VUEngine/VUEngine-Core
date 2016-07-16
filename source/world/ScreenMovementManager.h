@@ -44,11 +44,11 @@ enum ScreenFX
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ScreenMovementManager_METHODS																	\
-    	Object_METHODS																					\
-		__VIRTUAL_DEC(position);																		\
-		__VIRTUAL_DEC(startEffect);																		\
-		__VIRTUAL_DEC(stopEffect);																		\
+#define ScreenMovementManager_METHODS(ClassName)														\
+    	Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, position, bool checkIfFocusEntityIsMoving);						\
+		__VIRTUAL_DEC(ClassName, void, startEffect, int effect, int duration);							\
+		__VIRTUAL_DEC(ClassName, void, stopEffect, int effect);											\
 
 // declare the virtual methods which are redefined
 #define ScreenMovementManager_SET_VTABLE(ClassName)														\
@@ -58,9 +58,8 @@ enum ScreenFX
 		__VIRTUAL_SET(ClassName, ScreenMovementManager, stopEffect);									\
 
 #define ScreenMovementManager_ATTRIBUTES																\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
 
 // declare a ScreenMovementManager
 __CLASS(ScreenMovementManager);

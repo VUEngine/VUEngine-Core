@@ -42,15 +42,12 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 
 // text box based on bgmaps
 #define MessageDispatcher_ATTRIBUTES																	\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* delayed messages */																				\
-	VirtualList delayedMessages;																		\
-																										\
-	/* delayed messages */																				\
-	VirtualList delayedMessagesToDiscard;																\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* delayed messages */																			\
+        VirtualList delayedMessages;																	\
+        /* delayed messages */																			\
+        VirtualList delayedMessagesToDiscard;															\
 
 __CLASS_DEFINITION(MessageDispatcher, Object);
 
@@ -89,7 +86,7 @@ static void MessageDispatcher_constructor(MessageDispatcher this)
 }
 
 // class's destructor
-void MessageDispatcher_destructor(MessageDispatcher this)
+__attribute__((unused)) void MessageDispatcher_destructor(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::destructor: null this");
 
@@ -120,7 +117,7 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 		Telegram telegram = __NEW(Telegram, 0, sender, receiver, message, extraInfo);
 
 		//send the telegram to the recipient
-		bool result = __VIRTUAL_CALL(bool, Object, handleMessage, receiver, telegram);
+		bool result = __VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
 
 		__DELETE(telegram);
 		return result;
@@ -233,7 +230,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			// check if sender and receiver are still alive
 			if(!auxNode && *(u32*)Telegram_getSender(telegram) && *(u32*)Telegram_getReceiver(telegram))
 			{
-				__VIRTUAL_CALL(bool, Object, handleMessage, Telegram_getReceiver(telegram), telegram);
+				__VIRTUAL_CALL(Object, handleMessage, Telegram_getReceiver(telegram), telegram);
 			}
 		}
 

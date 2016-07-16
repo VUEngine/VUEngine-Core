@@ -37,7 +37,7 @@ static void DebugState_constructor(DebugState this);
 static void DebugState_enter(DebugState this, void* owner);
 static void DebugState_execute(DebugState this, void* owner);
 static void DebugState_exit(DebugState this, void* owner);
-static bool DebugState_handleMessage(DebugState this, void* owner, Telegram telegram);
+static bool DebugState_processMessage(DebugState this, void* owner, Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,9 +60,8 @@ enum Screens
 //---------------------------------------------------------------------------------------------------------
 
 #define DebugState_ATTRIBUTES																			\
-																										\
-	/* inherits */																						\
-	GameState_ATTRIBUTES																				\
+        /* inherits */																					\
+        GameState_ATTRIBUTES																			\
 
 __CLASS_DEFINITION(DebugState, GameState);
 
@@ -108,7 +107,7 @@ static void DebugState_exit(DebugState this, void* owner)
 }
 
 // state's on message
-static bool DebugState_handleMessage(DebugState this, void* owner, Telegram telegram)
+static bool DebugState_processMessage(DebugState this, void* owner, Telegram telegram)
 {
 	// process message
 	switch(Telegram_getMessage(telegram))

@@ -39,55 +39,41 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Body_METHODS																					\
-		Object_METHODS																					\
+#define Body_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																		\
 
 #define Body_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
 
 #define Body_ATTRIBUTES																					\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* owner */																							\
-	SpatialObject owner;																				\
-																										\
-	/* direction */																						\
-	Force appliedForce;																					\
-																										\
-	/* friction surrounding object */																	\
-	Force friction;																						\
-																										\
-	/* spatial position */																				\
-	VBVec3D position;																					\
-																										\
-	/* velocity on each instante */																		\
-	Velocity velocity;																					\
-																										\
-	/* acelearion structure */																			\
-	Acceleration acceleration;																			\
-																										\
-	/* clock */																							\
-	Clock clock;																						\
-																										\
-	/* elasticity */																					\
-	fix19_13 elasticity;																				\
-																										\
-	/* mass */																							\
-	fix19_13 mass;																						\
-																										\
-	/* movement type on each axis */																	\
-	MovementType movementType;																			\
-																										\
-	/* axis that is subject to gravity */																\
-	u8 axisSubjectToGravity;																			\
-																										\
-	/* raise flag to make the body active */															\
-	bool active: true;																					\
-																										\
-	/* raise flag to update body's physics */															\
-	bool awake: true;																					\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* owner */																						\
+        SpatialObject owner;																			\
+        /* direction */																					\
+        Force appliedForce;																				\
+        /* friction surrounding object */																\
+        Force friction;																					\
+        /* spatial position */																			\
+        VBVec3D position;																				\
+        /* velocity on each instante */																	\
+        Velocity velocity;																				\
+        /* acelearion structure */																		\
+        Acceleration acceleration;																		\
+        /* clock */																						\
+        Clock clock;																					\
+        /* elasticity */																				\
+        fix19_13 elasticity;																			\
+        /* mass */																						\
+        fix19_13 mass;																					\
+        /* movement type on each axis */																\
+        MovementType movementType;																		\
+        /* axis that is subject to gravity */															\
+        u8 axisSubjectToGravity;																		\
+        /* raise flag to make the body active */														\
+        bool active: true;																				\
+        /* raise flag to update body's physics */														\
+        bool awake: true;																				\
 
 __CLASS(Body);
 

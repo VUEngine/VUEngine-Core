@@ -31,8 +31,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ManagedEntity_METHODS																			\
-		Entity_METHODS																					\
+#define ManagedEntity_METHODS(ClassName)																\
+		Entity_METHODS(ClassName)																		\
 
 #define ManagedEntity_SET_VTABLE(ClassName)																\
 		Entity_SET_VTABLE(ClassName)																	\
@@ -42,15 +42,12 @@
 		__VIRTUAL_SET(ClassName, ManagedEntity, passMessage);											\
 
 #define ManagedEntity_ATTRIBUTES																		\
-																										\
-	/* it is derived from */																			\
-	Entity_ATTRIBUTES																					\
-																										\
-	/* sprites' list */																					\
-	VirtualList managedSprites;																			\
-																										\
-	/* previous 2d projected position */																\
-	VBVec2D previous2DPosition;																			\
+        /* it is derived from */																		\
+        Entity_ATTRIBUTES																				\
+        /* sprites' list */																				\
+        VirtualList managedSprites;																		\
+        /* previous 2d projected position */															\
+        VBVec2D previous2DPosition;																		\
 
 __CLASS(ManagedEntity);
 

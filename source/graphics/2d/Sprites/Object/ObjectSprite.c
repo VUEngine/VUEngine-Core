@@ -98,7 +98,7 @@ void ObjectSprite_destructor(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::destructor: null this");
 
 	// make sure I'm hidden
-	__VIRTUAL_CALL(void, Sprite, hide, this);
+	__VIRTUAL_CALL(Sprite, hide, this);
 
 	// remove from sprite container before I become invalid
 	// and the VPU triggers a new render cycle
@@ -334,7 +334,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 
 			if(!this->hidden)
 			{
-				__VIRTUAL_CALL(void, Sprite, show, this);
+				__VIRTUAL_CALL(Sprite, show, this);
 
 				// turn off previous OBJs' to avoid ghosting
 				if(this->objectIndex < previousObjectIndex)
@@ -380,7 +380,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
 	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
 
-	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)): 0;
+	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)): 0;
 }
 
 void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement)

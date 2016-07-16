@@ -68,8 +68,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectManager_METHODS																			\
-		Object_METHODS																					\
+#define ObjectManager_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define ObjectManager_SET_VTABLE(ClassName)																\

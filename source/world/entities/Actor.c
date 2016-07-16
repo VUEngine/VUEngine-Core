@@ -194,7 +194,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 /*
   	if(this->shape)
 	{
-		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+		__VIRTUAL_CALL(Shape, draw, this->shape);
 	}
 */
 }
@@ -376,7 +376,7 @@ int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
 		return ~CollisionSolver_getAxisOfFutureCollision(this->collisionSolver, acceleration, this->shape);
 	}
 
-	return __VIRTUAL_CALL(int, Actor, getAxisFreeForMovement, this);
+	return __VIRTUAL_CALL(Actor, getAxisFreeForMovement, this);
 }
 
 // retrieve axis free for movement
@@ -446,7 +446,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 			}
 			else if(otherActor)
 	        {
-				__VIRTUAL_CALL(void, Actor, takeHitFrom, otherActor);
+				__VIRTUAL_CALL(Actor, takeHitFrom, this, otherActor);
 
 				return true;
 			}
@@ -589,7 +589,7 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 	{
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): ITOFIX19_13(1);
 
-		int axisAllowedForBouncing = __VIRTUAL_CALL(int, Actor, getAxisAllowedForBouncing, this);
+		int axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
 
 		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
@@ -608,7 +608,7 @@ void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject)
 {
 	ASSERT(this, "Actor::alignTo: null this");
 
-	int axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, this->shape, spatialObject, Body_getLastDisplacement(this->body), CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
+	int axisOfCollision = __VIRTUAL_CALL(Shape, getAxisOfCollision, this->shape, spatialObject, Body_getLastDisplacement(this->body), *CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
 
 	if(axisOfCollision)
 	{
@@ -634,11 +634,11 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 
 			Actor_checkIfMustBounce(this, axisOfAllignement);
 
-			__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
+			__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 		}
 	}
 
-	__VIRTUAL_CALL(void, Actor, collisionsProcessingDone, this, collidingSpatialObjects);
+	__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collidingSpatialObjects);
 }
 
 // resolve collision against me entities
@@ -667,7 +667,7 @@ static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject colliding
 
 		Actor_checkIfMustBounce(this, axisOfCollision);
 
-		__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
+		__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 	}
 }
 
@@ -732,7 +732,7 @@ void Actor_addForce(Actor this, const Force* force)
 	Body_addForce(this->body, &effectiveForceToApply);
 
 	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
-	__VIRTUAL_CALL(void, Actor, updateSurroundingFriction, this);
+	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 }
 
 // get velocity

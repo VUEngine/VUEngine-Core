@@ -2,7 +2,7 @@
 #define	DEBUG_CONFIG_H_
 
 // print frame rate
-#define __PRINT_FRAMERATE
+#undef __PRINT_FRAMERATE
 
 // define the timer's resolution used by the physics
 #undef __TIMER_RESOLUTION
@@ -13,7 +13,7 @@
 #define	__FRAME_CYCLE		    0
 
 // print memory pool's status
-#define __PRINT_MEMORY_POOL_STATUS
+#undef __PRINT_MEMORY_POOL_STATUS
 #undef __PRINT_DETAILED_MEMORY_POOL_STATUS
 
 // show game's process profiling
@@ -49,8 +49,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 	__BLOCK_DEFINITION(16, 350)
 
 // test memory pool's config
-#undef __MEMORY_POOL_ARRAYS
-#define __MEMORY_POOL_ARRAYS																			\
+#undef __MEMORY_POOL_ARRAYS2
+#define __MEMORY_POOL_ARRAYS2																			\
 	__BLOCK_DEFINITION(192, 1)																			\
 	__BLOCK_DEFINITION(160, 5)																			\
 	__BLOCK_DEFINITION(144, 5)																			\

@@ -53,8 +53,8 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimatedInGameEntity_METHODS																	\
-		InGameEntity_METHODS																			\
+#define AnimatedInGameEntity_METHODS(ClassName)																	\
+		InGameEntity_METHODS(ClassName)																			\
 
 #define AnimatedInGameEntity_SET_VTABLE(ClassName)														\
 		InGameEntity_SET_VTABLE(ClassName)																\
@@ -64,24 +64,18 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, resume);											\
 
 #define AnimatedInGameEntity_ATTRIBUTES																	\
-																										\
-	/* super's attributes */																			\
-	InGameEntity_ATTRIBUTES;																			\
-																										\
-	/* Pointer to the ROM definition */																	\
-	AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;										\
-																										\
-	/* Pointer to the animation description */															\
-	AnimationDescription* animationDescription;															\
-																										\
-	/* used to know if gap must be changed */															\
-	Direction previousDirection;																		\
-																										\
-	/* clock to pass to the animated sprites */															\
-	Clock clock;																						\
-																										\
-	/* need to save for pausing */																		\
-	char* currentAnimationName;																			\
+        /* super's attributes */																		\
+        InGameEntity_ATTRIBUTES;																		\
+        /* Pointer to the ROM definition */																\
+        AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;									\
+        /* Pointer to the animation description */														\
+        AnimationDescription* animationDescription;														\
+        /* used to know if gap must be changed */														\
+        Direction previousDirection;																	\
+        /* clock to pass to the animated sprites */														\
+        Clock clock;																					\
+        /* need to save for pausing */																	\
+        char* currentAnimationName;																		\
 
 __CLASS(AnimatedInGameEntity);
 

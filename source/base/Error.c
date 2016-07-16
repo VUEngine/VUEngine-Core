@@ -44,9 +44,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Error_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
 
 // define the Error
 __CLASS_DEFINITION(Error, Object);

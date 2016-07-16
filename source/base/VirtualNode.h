@@ -34,8 +34,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define VirtualNode_METHODS																				\
-		Object_METHODS																					\
+#define VirtualNode_METHODS(ClassName)																				\
+		Object_METHODS(ClassName)																					\
 
 #define VirtualNode_SET_VTABLE(ClassName)																\
 		Object_SET_VTABLE(ClassName)																	\

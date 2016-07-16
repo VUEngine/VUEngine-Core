@@ -30,8 +30,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MemoryPool_METHODS																				\
-		Object_METHODS																					\
+#define MemoryPool_METHODS(ClassName)																				\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define MemoryPool_SET_VTABLE(ClassName)																\

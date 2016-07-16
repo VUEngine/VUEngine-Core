@@ -30,13 +30,11 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationCoordinatorFactory_ATTRIBUTES									\
-																				\
-	/* super's attributes */													\
-	Object_ATTRIBUTES;															\
-																				\
-	/* entities that use bgmap sprites */										\
-	VirtualList animationCoordinators;											\
+#define AnimationCoordinatorFactory_ATTRIBUTES                                                          \
+        /* super's attributes */                                                                        \
+        Object_ATTRIBUTES;                                                                              \
+        /* entities that use bgmap sprites */                                                           \
+        VirtualList animationCoordinators;                                                              \
 
 __CLASS_DEFINITION(AnimationCoordinatorFactory, Object);
 
@@ -113,7 +111,7 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 
 					if(AnimationCoordinator_getCharSetDefinition(animationCoordinator) == charSetDefinition)
 					{
-						__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
+						__VIRTUAL_CALL(AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
 						return animationCoordinator;
 					}
 				}
@@ -134,7 +132,7 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				}
 
 				// create a new coordinator
-				__VIRTUAL_CALL(void, AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
+				__VIRTUAL_CALL(AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
 
 				VirtualList_pushBack(this->animationCoordinators, animationCoordinator);
 

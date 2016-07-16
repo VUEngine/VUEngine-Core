@@ -37,7 +37,7 @@ static void StageEditorState_constructor(StageEditorState this);
 static void StageEditorState_enter(StageEditorState this, void* owner);
 static void StageEditorState_execute(StageEditorState this, void* owner);
 static void StageEditorState_exit(StageEditorState this, void* owner);
-static bool StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram);
+static bool StageEditorState_processMessage(StageEditorState this, void* owner, Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,9 +60,8 @@ enum Screens
 //---------------------------------------------------------------------------------------------------------
 
 #define StageEditorState_ATTRIBUTES																		\
-																										\
-	/* inherits */																						\
-	GameState_ATTRIBUTES																				\
+        /* inherits */																					\
+        GameState_ATTRIBUTES																			\
 
 __CLASS_DEFINITION(StageEditorState, GameState);
 
@@ -108,7 +107,7 @@ static void StageEditorState_exit(StageEditorState this, void* owner)
 }
 
 // state's on message
-static bool StageEditorState_handleMessage(StageEditorState this, void* owner, Telegram telegram)
+static bool StageEditorState_processMessage(StageEditorState this, void* owner, Telegram telegram)
 {
 	// process message
 	switch(Telegram_getMessage(telegram))

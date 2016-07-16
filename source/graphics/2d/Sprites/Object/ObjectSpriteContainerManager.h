@@ -38,13 +38,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectSpriteContainerManager_METHODS									\
-	Object_METHODS																\
+#define ObjectSpriteContainerManager_METHODS(ClassName)									\
+	Object_METHODS(ClassName)																\
 
 // declare the virtual methods which are redefined
 #define ObjectSpriteContainerManager_SET_VTABLE(ClassName)						\
 	Object_SET_VTABLE(ClassName)												\
-	
+
 
 // declare a ObjectSpriteContainerManager, which holds a texture and a drawing specification
 __CLASS(ObjectSpriteContainerManager);

@@ -158,7 +158,7 @@ void Container_deleteMyself(Container this)
 	if(this->parent)
 	{
 		this->deleteMe = true;
-		__VIRTUAL_CALL(void, Container, removeChild, this->parent, this);
+		__VIRTUAL_CALL(Container, removeChild, this->parent, this);
 	}
 	else
 	{
@@ -189,7 +189,7 @@ void Container_addChild(Container this, Container child)
 		    {
 				Container_removeChild(child->parent, child);
 
-				__VIRTUAL_CALL(void, Container, changeEnvironment, child, &this->transform);
+				__VIRTUAL_CALL(Container, changeEnvironment, child, &this->transform);
 		    }
 
 			// add to the children list
@@ -273,7 +273,7 @@ void Container_update(Container this)
 		// update each child
 		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(void, Container, update, node->data);
+			__VIRTUAL_CALL(Container, update, node->data);
 		}
 	}
 }
@@ -390,7 +390,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 
 			*(u8*)&child->invalidateGlobalPosition |= *(u8*)&this->invalidateGlobalPosition;
 
-			__VIRTUAL_CALL(void, Container, initialTransform, child, &this->transform);
+			__VIRTUAL_CALL(Container, initialTransform, child, &this->transform);
 		}
 	}
 
@@ -498,7 +498,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 
 			*(u8*)&child->invalidateGlobalPosition |= *(u8*)&this->invalidateGlobalPosition;
 
-			__VIRTUAL_CALL(void, Container, transform, child, &this->transform);
+			__VIRTUAL_CALL(Container, transform, child, &this->transform);
 		}
 	}
 
@@ -518,7 +518,7 @@ void Container_updateVisualRepresentation(Container this)
 		// update each child
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Container, updateVisualRepresentation, __SAFE_CAST(Container, node->data));
+			__VIRTUAL_CALL(Container, updateVisualRepresentation, __SAFE_CAST(Container, node->data));
 		}
 	}
 }
@@ -638,7 +638,7 @@ int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(C
 
 	va_list args;
     va_start(args, propagatedMessageHandler);
-    int result = __VIRTUAL_CALL(int, Container, passMessage, this, propagatedMessageHandler, args);
+    int result = __VIRTUAL_CALL(Container, passMessage, this, propagatedMessageHandler, args);
     va_end(args);
 
     return result;
@@ -664,7 +664,7 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 			for(; node ; node = node->next)
 	        {
 				// pass message to each child
-				if(__VIRTUAL_CALL_UNSAFE(bool, Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
+				if(__VIRTUAL_CALL_UNSAFE(Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
 	            {
 					return true;
 				}
@@ -684,7 +684,7 @@ int Container_onPropagatedMessage(Container this, va_list args)
 	ASSERT(this, "Container::onPropagatedMessage: null this");
 
 	int message = va_arg(args, int);
-	return __VIRTUAL_CALL(int, Container, handlePropagatedMessage, this, message);
+	return __VIRTUAL_CALL(Container, handlePropagatedMessage, this, message);
 }
 
 // process message
@@ -860,7 +860,7 @@ void Container_suspend(Container this)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			__VIRTUAL_CALL(void, Container, suspend, child);
+			__VIRTUAL_CALL(Container, suspend, child);
 		}
 	}
 }
@@ -878,7 +878,7 @@ void Container_resume(Container this)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			__VIRTUAL_CALL(void, Container, resume, child);
+			__VIRTUAL_CALL(Container, resume, child);
 		}
 	}
 
@@ -901,7 +901,7 @@ void Container_show(Container this)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			__VIRTUAL_CALL(void, Container, show, child);
+			__VIRTUAL_CALL(Container, show, child);
 		}
 	}
 
@@ -922,7 +922,7 @@ void Container_hide(Container this)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			__VIRTUAL_CALL(void, Container, hide, child);
+			__VIRTUAL_CALL(Container, hide, child);
 		}
 	}
 }

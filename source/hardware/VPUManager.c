@@ -51,19 +51,16 @@ extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
 //---------------------------------------------------------------------------------------------------------
 
 #define VPUManager_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* dram managers */																					\
-	FrameRate frameRate;																				\
-	ParamTableManager paramTableManager;																\
-	CharSetManager charSetManager;																		\
-	SpriteManager spriteManager;																		\
-																										\
-	/* post processing effects */																		\
-	VirtualList postProcessingEffects;																	\
-	u32 currentDrawingframeBufferSet;																	\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* dram managers */																				\
+        FrameRate frameRate;																			\
+        ParamTableManager paramTableManager;															\
+        CharSetManager charSetManager;																	\
+        SpriteManager spriteManager;																	\
+        /* post processing effects */																	\
+        VirtualList postProcessingEffects;																\
+        u32 currentDrawingframeBufferSet;																\
 
 // define the VPUManager
 __CLASS_DEFINITION(VPUManager, Object);

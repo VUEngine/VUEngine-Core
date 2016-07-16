@@ -39,15 +39,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define CharSetManager_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* charsets defined */																				\
-	VirtualList charSets[__CHAR_SEGMENTS];																\
-																										\
-	/* next offset to reclaim */																		\
-	u16 freedOffset[__CHAR_SEGMENTS];																	\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* charsets defined */																			\
+        VirtualList charSets[__CHAR_SEGMENTS];															\
+        /* next offset to reclaim */																	\
+        u16 freedOffset[__CHAR_SEGMENTS];																\
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager, Object);

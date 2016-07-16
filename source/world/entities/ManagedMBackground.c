@@ -225,7 +225,7 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 
-			__VIRTUAL_CALL(void, Sprite, addDisplacement, sprite, displacement);
+			__VIRTUAL_CALL(Sprite, addDisplacement, sprite, &displacement);
 		}
 
 		this->previous2DPosition = position2D;

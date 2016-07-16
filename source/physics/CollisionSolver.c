@@ -165,7 +165,7 @@ int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 			VirtualNode node = this->lastCollidingSpatialObject[i]->head;
 			for(; node; node = node->next)
 	        {
-				axisOfCollision |= __VIRTUAL_CALL(bool, Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, node->data), displacement);
+				axisOfCollision |= __VIRTUAL_CALL(Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, node->data), displacement);
 	        }
 		}
 	}
@@ -250,21 +250,21 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 	{
 		SpatialObject collidingSpatialObject = __SAFE_CAST(SpatialObject, node->data);
 
-		axisOfCollision = __VIRTUAL_CALL(int, Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(Shape, SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, ownerPreviousPosition);
+		axisOfCollision = __VIRTUAL_CALL(Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, ownerPreviousPosition);
 
 		if(axisOfCollision)
 		{
-			const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObject);
-			int collidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(int, SpatialObject, getWidth, collidingSpatialObject) >> 1;
-			int collidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(int, SpatialObject, getHeight, collidingSpatialObject) >> 1;
-			int collidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(int, SpatialObject, getDepth, collidingSpatialObject) >> 1;
+			const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, collidingSpatialObject);
+			int collidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1;
+			int collidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1;
+			int collidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject) >> 1;
 
 			if(__XAXIS & axisOfCollision)
 			{
 				if(collidingSpatialObjectsToAlignTo[kXAxis])
 				{
-					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kXAxis]);
-					int selectedCollidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(int, SpatialObject, getWidth, collidingSpatialObjectsToAlignTo[kXAxis]) >> 1;
+					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kXAxis]);
+					int selectedCollidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObjectsToAlignTo[kXAxis]) >> 1;
 
 					if(0 < displacement.x)
 					{
@@ -291,8 +291,8 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 			{
 				if(collidingSpatialObjectsToAlignTo[kYAxis])
 				{
-					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kYAxis]);
-					int selectedCollidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(int, SpatialObject, getHeight, collidingSpatialObjectsToAlignTo[kYAxis]) >> 1;
+					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kYAxis]);
+					int selectedCollidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObjectsToAlignTo[kYAxis]) >> 1;
 
 					if(0 < displacement.y)
 					{
@@ -319,8 +319,8 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 			{
 				if(collidingSpatialObjectsToAlignTo[kZAxis])
 				{
-					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kZAxis]);
-					int selectedCollidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(int, SpatialObject, getDepth, collidingSpatialObjectsToAlignTo[kZAxis]) >> 1;
+					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kZAxis]);
+					int selectedCollidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObjectsToAlignTo[kZAxis]) >> 1;
 
 					if(0 < displacement.z)
 					{
@@ -382,10 +382,10 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 	ASSERT(this, "CollisionSolver::alignTo: null this");
 
 	// retrieve the colliding spatialObject's position and gap
-	Gap myOwnerGap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, this->owner);
+	Gap myOwnerGap = __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, this->owner);
 	VBVec3D myOwnerPosition = *this->ownerPositionToWrite;
-	const VBVec3D* otherPosition = __VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, collidingSpatialObject);
-	Gap otherGap = __VIRTUAL_CALL_UNSAFE(Gap, SpatialObject, getGap, collidingSpatialObject);
+	const VBVec3D* otherPosition = __VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, collidingSpatialObject);
+	Gap otherGap = __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, collidingSpatialObject);
 
 	// pointers to the dimensions to affect
 	const fix19_13* myPositionAxisToCheck = NULL;
@@ -403,7 +403,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 	int myHighGap = 0;
 
 	// calculate gap again (scale, etc)
-	//__VIRTUAL_CALL(void, SpatialObject, setGap, this->owner);
+	//__VIRTUAL_CALL(SpatialObject, setGap, this->owner);
 
 	// select the axis to affect
 	switch(axis)
@@ -414,8 +414,8 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			myPositionAxis = &myOwnerPosition.x;
 			otherPositionAxis = &otherPosition->x;
 
-			myHalfSize = __VIRTUAL_CALL(int, SpatialObject, getWidth, this->owner) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(int, SpatialObject, getWidth, collidingSpatialObject) >> 1;
+			myHalfSize = __VIRTUAL_CALL(SpatialObject, getWidth, this->owner) >> 1;
+			otherHalfSize = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1;
 
 			otherLowGap = otherGap.left;
 			otherHighGap = otherGap.right;
@@ -429,8 +429,8 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			myPositionAxis = &myOwnerPosition.y;
 			otherPositionAxis = &otherPosition->y;
 
-			myHalfSize = __VIRTUAL_CALL(int, SpatialObject, getHeight, this->owner) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(int, SpatialObject, getHeight, collidingSpatialObject) >> 1;
+			myHalfSize = __VIRTUAL_CALL(SpatialObject, getHeight, this->owner) >> 1;
+			otherHalfSize = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1;
 
 			otherLowGap = otherGap.up;
 			otherHighGap = otherGap.down;
@@ -447,13 +447,13 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			// TODO: must make depth work as the width and high
 			if(this->ownerPositionToCheck->z < otherPosition->z)
 			{
-				myHalfSize = __VIRTUAL_CALL(int, SpatialObject, getDepth, this->owner);
+				myHalfSize = __VIRTUAL_CALL(SpatialObject, getDepth, this->owner);
 				otherHalfSize = 0;
 			}
 			else
 			{
 				myHalfSize = 0;
-				otherHalfSize = __VIRTUAL_CALL(int, SpatialObject, getDepth, collidingSpatialObject);
+				otherHalfSize = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject);
 			}
 
 			myLowGap = 0;
@@ -481,10 +481,10 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 							+ pad);
 	}
 
-	__VIRTUAL_CALL(void, SpatialObject, setPosition, this->owner, &myOwnerPosition);
+	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &myOwnerPosition);
 
 	// save owner's new position
-	this->ownerPreviousPosition = *__VIRTUAL_CALL_UNSAFE(const VBVec3D*, SpatialObject, getPosition, this->owner);
+	this->ownerPreviousPosition = *__VIRTUAL_CALL_UNSAFE(SpatialObject, getPosition, this->owner);
 }
 
 // retrieve friction of colliding objects
@@ -503,14 +503,14 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 		VirtualNode node = this->lastCollidingSpatialObject[kYAxis]->head;
 		for(; node; node = node->next)
 		{
-			friction.x += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+			friction.x += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
 		}
 
 		// get friction in z axis
 		node = this->lastCollidingSpatialObject[kZAxis]->head;
 		for(; node; node = node->next)
 		{
-			friction.x += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+			friction.x += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
 		}
 	}
 
@@ -520,14 +520,14 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 		VirtualNode node = this->lastCollidingSpatialObject[kXAxis]->head;
 		for(; node; node = node->next)
 		{
-			friction.y += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+			friction.y += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
 		}
 
 		// get friction in z axis
 		node = this->lastCollidingSpatialObject[kZAxis]->head;
 		for(; node; node = node->next)
 		{
-			friction.y += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+			friction.y += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
 		}
 	}
 
@@ -537,14 +537,14 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 		VirtualNode node = this->lastCollidingSpatialObject[kXAxis]->head;
 		for(; node; node = node->next)
 		{
-			friction.z += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+			friction.z += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
 		}
 
 		// get friction in y axis
 		node = this->lastCollidingSpatialObject[kYAxis]->head;
 		for(; node; node = node->next)
 		{
-			friction.z += __VIRTUAL_CALL(fix19_13, SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+			friction.z += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
 		}
 	}
 
@@ -580,7 +580,7 @@ fix19_13 CollisionSolver_getCollisingSpatialObjectsTotalElasticity(CollisionSolv
 
 	for(; 0 <= collidingSpatialObjectListIndex && node; node = node->next)
 	{
-		totalElasticiy += __VIRTUAL_CALL(fix19_13, SpatialObject, getElasticity, __SAFE_CAST(SpatialObject, node->data));
+		totalElasticiy += __VIRTUAL_CALL(SpatialObject, getElasticity, __SAFE_CAST(SpatialObject, node->data));
 	}
 
 	return totalElasticiy;

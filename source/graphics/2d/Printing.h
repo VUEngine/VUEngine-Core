@@ -44,8 +44,8 @@ typedef struct FontSize
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Printing_METHODS																				\
-		Object_METHODS																					\
+#define Printing_METHODS(ClassName)																				\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define Printing_SET_VTABLE(ClassName)																	\

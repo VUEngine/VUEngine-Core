@@ -40,8 +40,8 @@ Shape SpatialObject_getShape(SpatialObject this);
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SolidParticle_METHODS																			\
-		Particle_METHODS																				\
+#define SolidParticle_METHODS(ClassName)																			\
+		Particle_METHODS(ClassName)																				\
 
 // define the virtual methods
 #define SolidParticle_SET_VTABLE(ClassName)																\
@@ -56,24 +56,18 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
 
 #define SolidParticle_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	Particle_ATTRIBUTES;																				\
-																										\
-	/* physical body */																					\
-	Shape shape;																						\
-																										\
-	/* shape for collision detection */																	\
-	const SolidParticleDefinition* solidParticleDefinition;												\
-																										\
-	/* previous position for collision handling */														\
-	VBVec3D previousGlobalPosition;																		\
-																										\
-	/* collision solver */																				\
-	CollisionSolver collisionSolver;																	\
-																										\
-	/* position */																						\
-	VBVec3D position;																					\
+        /* super's attributes */																		\
+        Particle_ATTRIBUTES;																			\
+        /* physical body */																				\
+        Shape shape;																					\
+        /* shape for collision detection */																\
+        const SolidParticleDefinition* solidParticleDefinition;											\
+        /* previous position for collision handling */													\
+        VBVec3D previousGlobalPosition;																	\
+        /* collision solver */																			\
+        CollisionSolver collisionSolver;																\
+        /* position */																					\
+        VBVec3D position;																				\
 
 __CLASS(SolidParticle);
 
@@ -90,7 +84,7 @@ typedef struct SolidParticleDefinition
 
 	// shape's type
 	int shapeType;
-	
+
 	// object's size over the x axis
 	u16 width;
 
@@ -99,7 +93,7 @@ typedef struct SolidParticleDefinition
 
 	// object's size over the z axis
 	u16 depth;
-	
+
 	// friction for physics
 	fix19_13 friction;
 

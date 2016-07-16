@@ -49,9 +49,8 @@ extern FontROMDef* const __FONTS[];
 //---------------------------------------------------------------------------------------------------------
 
 #define Printing_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
 
 // define the Printing
 __CLASS_DEFINITION(Printing, Object);

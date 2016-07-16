@@ -67,45 +67,32 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define OptionsSelector_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* pages */																							\
-	VirtualList pages;																					\
-																										\
-	/* current page */																					\
-	VirtualNode currentPage;																			\
-																										\
-	/* current option */																				\
-	VirtualNode currentOption;																			\
-																										\
-	/* current page index */																			\
-	int currentPageIndex;																				\
-																										\
-	/* current option index */																			\
-	int currentOptionIndex;																				\
-																										\
-	/* printing column */																				\
-	int x;																								\
-																										\
-	/* printing row */																					\
-	int y;																								\
-																										\
-	/* cols per page */																					\
-	int cols;																							\
-																										\
-	/* rows per page */																					\
-	int rows;																							\
-																										\
-	/* total options count */																			\
-	int totalOptions;																					\
-																										\
-	/* mark symbol */																					\
-	char* mark;																							\
-																										\
-	/* output type */																					\
-	int type;																							\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* pages */																						\
+        VirtualList pages;																				\
+        /* current page */																				\
+        VirtualNode currentPage;																		\
+        /* current option */																			\
+        VirtualNode currentOption;																		\
+        /* current page index */																		\
+        int currentPageIndex;																			\
+        /* current option index */																		\
+        int currentOptionIndex;																			\
+        /* printing column */																			\
+        int x;																							\
+        /* printing row */																				\
+        int y;																							\
+        /* cols per page */																				\
+        int cols;																						\
+        /* rows per page */																				\
+        int rows;																						\
+        /* total options count */																		\
+        int totalOptions;																				\
+        /* mark symbol */																				\
+        char* mark;																						\
+        /* output type */																				\
+        int type;																						\
 
 // define the OptionsSelector
 __CLASS_DEFINITION(OptionsSelector, Object);

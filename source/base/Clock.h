@@ -40,26 +40,21 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Clock_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* time elapsed */																					\
-	u32 milliSeconds;																					\
-																										\
-	/* register */																						\
-	u32 previousSecond;																					\
-																										\
-	/* register */																						\
-	u32 previousMinute;																					\
-																										\
-	/* flag to pause the clock */																		\
-	bool paused;																						\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* time elapsed */																				\
+        u32 milliSeconds;																				\
+        /* register */																					\
+        u32 previousSecond;																				\
+        /* register */																					\
+        u32 previousMinute;																				\
+        /* flag to pause the clock */															        \
+        bool paused;																					\
 
 // declare the virtual methods
-#define Clock_METHODS																					\
-		Object_METHODS																					\
-		__VIRTUAL_DEC(update);																			\
+#define Clock_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, update, u32 ticks);												\
 
 // declare the virtual methods which are redefined
 #define Clock_SET_VTABLE(ClassName)																		\

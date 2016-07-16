@@ -31,8 +31,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParticleSystem_METHODS																			\
-		Entity_METHODS																					\
+#define ParticleSystem_METHODS(ClassName)																			\
+		Entity_METHODS(ClassName)																					\
 
 #define ParticleSystem_SET_VTABLE(ClassName)															\
 		Entity_SET_VTABLE(ClassName)																	\
@@ -43,39 +43,28 @@
 		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);												\
 
 #define ParticleSystem_ATTRIBUTES																		\
-																										\
-	/* it is derived from */																			\
-	Entity_ATTRIBUTES																					\
-																										\
-	/* system's definition */																			\
-	const ParticleSystemDefinition* particleSystemDefinition;											\
-																										\
-	/* particle list */																					\
-	VirtualList particles;																				\
-																										\
-	/* particle list */																					\
-	VirtualList recyclableParticles;																	\
-																										\
-	/* particle list */																					\
-	VirtualList expiredParticles;																		\
-																										\
-	/* clock  */																						\
-	Clock clock;																						\
-																										\
-	/* next spawn time */																				\
-	int nextSpawnTime;																					\
-																										\
-	/* particle count */																				\
-	int particleCount;																					\
-																										\
-	/* previous update time */																			\
-	u32 previousTime;																					\
-																										\
-	/* pause flag */																					\
-	bool paused;																						\
-																										\
-	/* number of sprite definitions */																	\
-	u8 numberOfSpriteDefinitions;																		\
+        /* it is derived from */																		\
+        Entity_ATTRIBUTES																				\
+        /* system's definition */																		\
+        const ParticleSystemDefinition* particleSystemDefinition;										\
+        /* particle list */																				\
+        VirtualList particles;																			\
+        /* particle list */																				\
+        VirtualList recyclableParticles;																\
+        /* particle list */																				\
+        VirtualList expiredParticles;																	\
+        /* clock  */																					\
+        Clock clock;																					\
+        /* next spawn time */																			\
+        int nextSpawnTime;																				\
+        /* particle count */																			\
+        int particleCount;																				\
+        /* previous update time */																		\
+        u32 previousTime;																				\
+        /* pause flag */																				\
+        bool paused;																					\
+        /* number of sprite definitions */																\
+        u8 numberOfSpriteDefinitions;																	\
 
 __CLASS(ParticleSystem);
 

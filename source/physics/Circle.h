@@ -30,19 +30,17 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Circle_METHODS																					\
-		Shape_METHODS																					\
+#define Circle_METHODS(ClassName)																		\
+		Shape_METHODS(ClassName)																		\
 
 #define Circle_SET_VTABLE(ClassName)																	\
 		Shape_SET_VTABLE(ClassName)																		\
 
 #define Circle_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Shape_ATTRIBUTES;																					\
-																										\
-	/* radius */																						\
-	u8 radius;																							\
+        /* super's attributes */																		\
+        Shape_ATTRIBUTES;																				\
+        /* radius */																					\
+        u8 radius;																						\
 
 __CLASS(Circle);
 

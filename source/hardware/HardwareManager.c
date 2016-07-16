@@ -47,21 +47,16 @@ extern u32 _bss_end;
 //---------------------------------------------------------------------------------------------------------
 
 #define HardwareManager_ATTRIBUTES																		\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* Timer manager */																					\
-	TimerManager timerManager;																			\
-																										\
-	/* VPU manager */																					\
-	VPUManager vpuManager;																				\
-																										\
-	/* VPU manager */																					\
-	KeypadManager keypadManager;																		\
-																										\
-	/* HW registry */																					\
-	u8*  hwRegisters;																					\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* Timer manager */																				\
+        TimerManager timerManager;																		\
+        /* VPU manager */																				\
+        VPUManager vpuManager;																			\
+        /* VPU manager */																				\
+        KeypadManager keypadManager;																	\
+        /* HW registry */																				\
+        u8*  hwRegisters;																				\
 
 // define the HardwareManager
 __CLASS_DEFINITION(HardwareManager, Object);

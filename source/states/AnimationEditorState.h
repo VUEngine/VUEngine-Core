@@ -32,8 +32,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimationEditorState_METHODS																	\
-	GameState_METHODS;																					\
+#define AnimationEditorState_METHODS(ClassName)															\
+	GameState_METHODS(ClassName);																		\
 
 // declare the virtual methods which are redefined
 #define AnimationEditorState_SET_VTABLE(ClassName)														\
@@ -41,7 +41,7 @@
 	__VIRTUAL_SET(ClassName, AnimationEditorState, enter);												\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, execute);											\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, exit);												\
-	__VIRTUAL_SET(ClassName, AnimationEditorState, handleMessage);										\
+	__VIRTUAL_SET(ClassName, AnimationEditorState, processMessage);		                                \
 
 __CLASS(AnimationEditorState);
 

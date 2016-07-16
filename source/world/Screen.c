@@ -146,7 +146,7 @@ void Screen_position(Screen this, u8 checkIfFocusEntityIsMoving)
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
-	__VIRTUAL_CALL(void, ScreenMovementManager, position, this->screenMovementManager, checkIfFocusEntityIsMoving);
+	__VIRTUAL_CALL(ScreenMovementManager, position, this->screenMovementManager, checkIfFocusEntityIsMoving);
 }
 
 // set the focus entity
@@ -356,12 +356,12 @@ void Screen_startEffect(Screen this, int effect, int duration)
 {
 	ASSERT(this, "Screen::forceDisplacement: null this");
 
-	__VIRTUAL_CALL(void, ScreenMovementManager, startEffect, this->screenMovementManager, effect, duration);
+	__VIRTUAL_CALL(ScreenMovementManager, startEffect, this->screenMovementManager, effect, duration);
 }
 
 void Screen_stopEffect(Screen this, int effect)
 {
 	ASSERT(this, "Screen::forceDisplacement: null this");
 
-	__VIRTUAL_CALL(void, ScreenMovementManager, stopEffect, this->screenMovementManager, effect);
+	__VIRTUAL_CALL(ScreenMovementManager, stopEffect, this->screenMovementManager, effect);
 }

@@ -51,8 +51,8 @@
 // Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define TimerManager_METHODS																			\
-		Object_METHODS																					\
+#define TimerManager_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define TimerManager_SET_VTABLE(ClassName)																\

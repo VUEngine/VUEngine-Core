@@ -30,8 +30,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackground_METHODS																				\
-		Entity_METHODS																					\
+#define MBackground_METHODS(ClassName)																	\
+		Entity_METHODS(ClassName)																		\
 
 #define MBackground_SET_VTABLE(ClassName)																\
 		Entity_SET_VTABLE(ClassName)																	\
@@ -40,12 +40,10 @@
 		__VIRTUAL_SET(ClassName, MBackground, resume);													\
 
 #define MBackground_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Entity_ATTRIBUTES;																					\
-																										\
-	/* ROM definition */																				\
-	MBackgroundDefinition* mBackgroundDefinition;														\
+        /* super's attributes */																		\
+        Entity_ATTRIBUTES;																				\
+        /* ROM definition */																			\
+        MBackgroundDefinition* mBackgroundDefinition;													\
 
 __CLASS(MBackground);
 

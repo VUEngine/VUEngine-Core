@@ -32,21 +32,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectAnimatedSprite_METHODS																	\
-	ObjectSprite_METHODS																				\
+#define ObjectAnimatedSprite_METHODS(ClassName)															\
+    	ObjectSprite_METHODS(ClassName)																	\
 
 // declare the virtual methods which are redefined
 #define ObjectAnimatedSprite_SET_VTABLE(ClassName)														\
-	ObjectSprite_SET_VTABLE(ClassName)																	\
-	__VIRTUAL_SET(ClassName, ObjectAnimatedSprite, writeAnimation);										\
+        ObjectSprite_SET_VTABLE(ClassName)																\
+        __VIRTUAL_SET(ClassName, ObjectAnimatedSprite, writeAnimation);									\
 
 #define ObjectAnimatedSprite_ATTRIBUTES																	\
-																										\
-	/* super's attributes */																			\
-	ObjectSprite_ATTRIBUTES;																			\
-																										\
-	/* object's source coordinates */																	\
-	TextureSource originalTextureSource;																\
+        /* super's attributes */																		\
+        ObjectSprite_ATTRIBUTES;																		\
+        /* object's source coordinates */																\
+        TextureSource originalTextureSource;															\
 
 __CLASS(ObjectAnimatedSprite);
 

@@ -176,8 +176,8 @@ typedef const ColumnTableDefinition ColumnTableROMDef;
 // Defines as a pointer to a struct that is not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define VPUManager_METHODS																				\
-		Object_METHODS																					\
+#define VPUManager_METHODS(ClassName)																				\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define VPUManager_SET_VTABLE(ClassName)																\

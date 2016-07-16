@@ -105,7 +105,7 @@ void GameState_execute(GameState this, void* owner)
 	if(!Clock_isPaused(this->inGameClock))
 	{
 		// update the stage
-		__VIRTUAL_CALL(void, Container, update, this->stage);
+		__VIRTUAL_CALL(Container, update, this->stage);
 	}
 }
 
@@ -151,7 +151,7 @@ void GameState_suspend(GameState this, void* owner)
 
 	if(this->stage)
 	{
-		__VIRTUAL_CALL(void, Container, suspend, this->stage);
+		__VIRTUAL_CALL(Container, suspend, this->stage);
 	}
 
 #ifdef __DEBUG_TOOLS
@@ -197,7 +197,7 @@ void GameState_resume(GameState this, void* owner)
 		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 
 		// update the stage
-		__VIRTUAL_CALL(void, Container, resume, this->stage);
+		__VIRTUAL_CALL(Container, resume, this->stage);
 	}
 
 	// move the screen to its previous position
@@ -233,7 +233,7 @@ void GameState_resume(GameState this, void* owner)
 }
 
 // state's on message
-bool GameState_handleMessage(GameState this, void* owner, Telegram telegram)
+bool GameState_processMessage(GameState this, void* owner, Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
@@ -264,7 +264,7 @@ void GameState_transform(GameState this)
 	};
 
 	// then transform loaded entities
-	__VIRTUAL_CALL(void, Container, transform, this->stage, &environmentTransform);
+	__VIRTUAL_CALL(Container, transform, this->stage, &environmentTransform);
 }
 
 // update level entities' positions
@@ -274,7 +274,7 @@ void GameState_updateVisuals(GameState this)
 	ASSERT(this->stage, "GameState::updateVisuals: null stage");
 
 	// then transform loaded entities
-	__VIRTUAL_CALL(void, Container, updateVisualRepresentation, this->stage);
+	__VIRTUAL_CALL(Container, updateVisualRepresentation, this->stage);
 }
 
 // propagate message to all entities in the level

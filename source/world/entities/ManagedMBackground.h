@@ -29,8 +29,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ManagedMBackground_METHODS																		\
-	MBackground_METHODS;																				\
+#define ManagedMBackground_METHODS(ClassName)															\
+	MBackground_METHODS(ClassName);																		\
 
 #define ManagedMBackground_SET_VTABLE(ClassName)														\
 		MBackground_SET_VTABLE(ClassName);																\
@@ -43,15 +43,12 @@
 __CLASS(ManagedMBackground);
 
 #define ManagedMBackground_ATTRIBUTES																	\
-																										\
-	/* it is derived from */																			\
-	MBackground_ATTRIBUTES																				\
-																										\
-	/* sprites' list */																					\
-	VirtualList managedSprites;																			\
-																										\
-	/* previous 2d projected position */																\
-	VBVec2D previous2DPosition;																			\
+        /* it is derived from */																		\
+        MBackground_ATTRIBUTES																			\
+        /* sprites' list */																				\
+        VirtualList managedSprites;																		\
+        /* previous 2d projected position */															\
+        VBVec2D previous2DPosition;																		\
 
 
 //---------------------------------------------------------------------------------------------------------

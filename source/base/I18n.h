@@ -38,8 +38,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define I18n_METHODS																					\
-		Object_METHODS																					\
+#define I18n_METHODS(ClassName)																					\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define I18n_SET_VTABLE(ClassName)																		\

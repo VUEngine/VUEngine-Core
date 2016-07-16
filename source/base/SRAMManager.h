@@ -30,8 +30,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SRAMManager_METHODS																				\
-		Object_METHODS																					\
+#define SRAMManager_METHODS(ClassName)																				\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define SRAMManager_SET_VTABLE(ClassName)																\

@@ -99,45 +99,33 @@ enum GameCurrentProcess
 //---------------------------------------------------------------------------------------------------------
 
 #define Game_ATTRIBUTES																					\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* game's state machine */																			\
-	StateMachine stateMachine;																			\
-																										\
-	/* game's state machine */																			\
-	GameState currentState;																				\
-																										\
-	/* engine's global timer */																			\
-	Clock clock;																						\
-																										\
-	/* managers */																						\
-	ClockManager clockManager;																			\
-	KeypadManager keypadManager;																		\
-	VPUManager vpuManager;																				\
-	Screen screen;																						\
-																										\
-	/* game's next state */																				\
-	GameState nextState;																				\
-																										\
-	/* game's next state operation */																	\
-	int nextStateOperation; 																			\
-																										\
-	/* last process' name */																			\
-	char* lastProcessName;																				\
-																										\
-	/* auto pause state */											 									\
-	GameState automaticPauseState;																		\
-																										\
-	/* auto pause last checked time */																	\
-	u32 lastAutoPauseCheckTime;																			\
-																										\
-	/* current process enum */																			\
-	u32 currentProcess;																					\
-																										\
-	/* low battery indicator showing flag */															\
-	bool isShowingLowBatteryIndicator;																	\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* game's state machine */																		\
+        StateMachine stateMachine;																		\
+        /* game's state machine */																		\
+        GameState currentState;																			\
+        /* engine's global timer */																		\
+        Clock clock;																					\
+        /* managers */																					\
+        ClockManager clockManager;																		\
+        KeypadManager keypadManager;																	\
+        VPUManager vpuManager;																			\
+        Screen screen;																					\
+        /* game's next state */																			\
+        GameState nextState;																			\
+        /* game's next state operation */																\
+        int nextStateOperation; 																		\
+        /* last process' name */																		\
+        char* lastProcessName;																			\
+        /* auto pause state */											 								\
+        GameState automaticPauseState;																	\
+        /* auto pause last checked time */																\
+        u32 lastAutoPauseCheckTime;																		\
+        /* current process enum */																		\
+        u32 currentProcess;																				\
+        /* low battery indicator showing flag */														\
+        bool isShowingLowBatteryIndicator;																\
 
 __CLASS_DEFINITION(Game, Object);
 

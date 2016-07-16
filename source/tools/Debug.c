@@ -85,42 +85,30 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Debug_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* current in game state */																			\
-	GameState gameState;																				\
-																										\
-	/* pages */																							\
-	VirtualList pages;																					\
-																										\
-	/* sub pages */																						\
-	VirtualList subPages;																				\
-																										\
-	/* current page */																					\
-	VirtualNode currentPage;																			\
-																										\
-	/* current subb page */																				\
-	VirtualNode currentSubPage;																			\
-																										\
-	/* current layer */																					\
-	u8 currentLayer;																					\
-																										\
-	/* current bgmap */																					\
-	int bgmapSegment;																					\
-																										\
-	/* current obj segment */																			\
-	int objectSegment;																					\
-																										\
-	/* current char segment */																			\
-	int charSegment;																					\
-																										\
-	/* window to look into bgmap memory */																\
-	VBVec2D bgmapDisplacement;																			\
-																										\
-	/* update function pointer */																		\
-	void (*update)(void *);																				\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* current in game state */																		\
+        GameState gameState;																			\
+        /* pages */																						\
+        VirtualList pages;																				\
+        /* sub pages */																					\
+        VirtualList subPages;																			\
+        /* current page */																				\
+        VirtualNode currentPage;																		\
+        /* current subb page */																			\
+        VirtualNode currentSubPage;																		\
+        /* current layer */																				\
+        u8 currentLayer;																				\
+        /* current bgmap */																				\
+        int bgmapSegment;																				\
+        /* current obj segment */																		\
+        int objectSegment;																				\
+        /* current char segment */																		\
+        int charSegment;																				\
+        /* window to look into bgmap memory */															\
+        VBVec2D bgmapDisplacement;																		\
+        /* update function pointer */																	\
+        void (*update)(void *);																			\
 
 // define the Debug
 __CLASS_DEFINITION(Debug, Object);
@@ -801,9 +789,9 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(sprite), x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D, Sprite, getPosition, sprite).x), x + 10, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(const VBVec3D, Sprite, getPosition, sprite).y), x + 20, y, NULL);
-		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL_UNSAFE(const VBVec3D, Sprite, getPosition, sprite).z + Sprite_getDisplacement(sprite).z), x + 30, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite).x), x + 10, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite).y), x + 20, y, NULL);
+		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite).z + Sprite_getDisplacement(sprite).z), x + 30, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 15, y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 25, y, NULL);

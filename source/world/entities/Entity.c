@@ -167,8 +167,8 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 
 			if(texture)
 			{
-				halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).x)) >> 1;
-				halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Scale, Sprite, getScale, sprite).y)) >> 1;
+				halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Sprite, getScale, sprite).x)) >> 1;
+				halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Sprite, getScale, sprite).y)) >> 1;
 				halfDepth = this->size.z >> 1;
 			}
 
@@ -550,7 +550,7 @@ Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const
 	if(entityDefinition->allocator)
 	{
 		// call the appropriate allocator to support inheritance
-		Entity entity = ((Entity (*)(EntityDefinition*, ...)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, name);
+		Entity entity = ((Entity (*)(EntityDefinition*, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, name);
 
 		// setup entity if allocated and constructed
 		if(entity)
@@ -558,7 +558,7 @@ Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const
 			// process extra info
 			if(extraInfo)
 	        {
-				__VIRTUAL_CALL(void, Entity, setExtraInfo, entity, extraInfo);
+				__VIRTUAL_CALL(Entity, setExtraInfo, entity, extraInfo);
 			}
 
 			return entity;
@@ -580,7 +580,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity,
 		if(entity)
 		{
 			// set spatial position
-			__VIRTUAL_CALL(void, Container, setLocalPosition, entity, &positionedEntity->position);
+			__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
 
 			// add children if defined
 			if(positionedEntity->childrenDefinitions)
@@ -632,7 +632,7 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* con
 			}
 
 			// set spatial position
-			__VIRTUAL_CALL(void, Container, setLocalPosition, entity, &positionedEntity->position);
+			__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
 
 			// add children if defined
 			if(positionedEntity->childrenDefinitions)
@@ -663,7 +663,7 @@ void Entity_initialize(Entity this)
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(void, Entity, initialize, __SAFE_CAST(Entity, node->data));
+			__VIRTUAL_CALL(Entity, initialize, __SAFE_CAST(Entity, node->data));
 		}
 	}
 }
@@ -680,7 +680,7 @@ void Entity_ready(Entity this)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			__VIRTUAL_CALL(void, Entity, ready, __SAFE_CAST(Entity, childNode->data));
+			__VIRTUAL_CALL(Entity, ready, __SAFE_CAST(Entity, childNode->data));
 		}
 	}
 }
@@ -725,7 +725,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 	if(childEntity)
 	{
 		// must initialize after adding the children
-		__VIRTUAL_CALL(void, Entity, initialize, childEntity);
+		__VIRTUAL_CALL(Entity, initialize, childEntity);
 
 		// if already initialized
 		if(0 <= this->size.x && 0 <= this->size.y && 0 <= this->size.z)
@@ -733,13 +733,13 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
 			 // apply transformations
-			__VIRTUAL_CALL(void, Container, initialTransform, childEntity, &environmentTransform);
+			__VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform);
 		}
 
 		// create the entity and add it to the world
 		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
 
-		__VIRTUAL_CALL(void, Entity, ready, childEntity);
+		__VIRTUAL_CALL(Entity, ready, childEntity);
 	}
 
 	return childEntity;
@@ -780,7 +780,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 	if(spriteDefinition->allocator)
 	{
 		// call the appropriate allocator to support inheritance
-		sprite = ((Sprite (*)(SpriteDefinition*, ...)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, this);
+		sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
 	}
 
 	if(sprite)
@@ -815,16 +815,16 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 				// calculate the scale
-				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
 				// calculate sprite's parallax
-				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 
 				// update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
+				__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
 
 				// update sprite's 2D rotation
-				__VIRTUAL_CALL(void, Sprite, rotate, sprite, &this->transform.globalRotation);
+				__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
 			}
 		}
 		else if(!updateSpriteTransformations && updateSpritePosition)
@@ -835,10 +835,10 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 				//update sprite's 2D position
-				__VIRTUAL_CALL(void, Sprite, position, sprite, &this->transform.globalPosition);
+				__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
 
 				// update sprite's 2D rotation
-				__VIRTUAL_CALL(void, Sprite, rotate, sprite, &this->transform.globalRotation);
+				__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
 			}
 		}
 		else if(updateSpriteTransformations && !updateSpritePosition)
@@ -849,10 +849,10 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 				// calculate the scale
-				__VIRTUAL_CALL(void, Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
 				// calculate sprite's parallax
-				__VIRTUAL_CALL(void, Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+				__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
 			}
 		}
 	}
@@ -887,11 +887,11 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	if(this->shape)
 	{
 		// setup shape
-		__VIRTUAL_CALL(void, Shape, setup, this->shape);
+		__VIRTUAL_CALL(Shape, setup, this->shape);
 
-		if(__VIRTUAL_CALL(int, Entity, moves, this))
+		if(__VIRTUAL_CALL(Entity, moves, this))
 	    {
-			__VIRTUAL_CALL(void, Shape, position, this->shape);
+			__VIRTUAL_CALL(Shape, position, this->shape);
 		}
 
 		Shape_setActive(this->shape, true);
@@ -915,8 +915,8 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	else
 	{
 		this->updateSprites = 0;
-		this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
-		this->updateSprites |= __VIRTUAL_CALL(bool, Entity, updateSpriteTransformations, this)? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
+		this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
+		this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteTransformations, this)? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
 	}
 }
 
@@ -933,7 +933,7 @@ void Entity_updateVisualRepresentation(Entity this)
 	/*
 	if(this->shape)
 	{
-		__VIRTUAL_CALL(void, Shape, draw, this->shape);
+		__VIRTUAL_CALL(Shape, draw, this->shape);
 	}
 	*/
 }
@@ -1047,7 +1047,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
-			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(VBVec2D, Sprite, getPosition, sprite);
+			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
 
 			x = FIX19_13TOI(spritePosition.x);
 			y = FIX19_13TOI(spritePosition.y);
@@ -1113,7 +1113,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			if(__VIRTUAL_CALL(bool, Entity, isVisible, VirtualNode_getData(childNode), pad, true))
+			if(__VIRTUAL_CALL(Entity, isVisible, VirtualNode_getData(childNode), pad, true))
 			{
 				return true;
 			}
@@ -1150,7 +1150,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 
 		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(void, Sprite, setDirection, __SAFE_CAST(Sprite, node->data), axis, direction);
+			__VIRTUAL_CALL(Sprite, setDirection, __SAFE_CAST(Sprite, node->data), axis, direction);
 		}
 	}
 }
@@ -1177,7 +1177,7 @@ void Entity_show(Entity this)
 		// move each child to a temporary list
 		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(void, Sprite, show, __SAFE_CAST(Sprite, node->data));
+			__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 
@@ -1199,7 +1199,7 @@ void Entity_hide(Entity this)
 		// move each child to a temporary list
 		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(void, Sprite, hide, __SAFE_CAST(Sprite, node->data));
+			__VIRTUAL_CALL(Sprite, hide, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 }

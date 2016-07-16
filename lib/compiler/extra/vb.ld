@@ -80,29 +80,26 @@ SECTIONS
         PROVIDE(__sram_end = .);
     } >sram
 
-
-    /* These must appear regardless of  .  */
-    /* prevent overlaps with vbvectors */
-    v += SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.sbss) + SIZEOF(.bss);
+    /* Prevent overlaps with vbvectors */
+    /* The use of new variables is because GCC 4.7's linker doesn't override the v value */
+    v1 = v + SIZEOF(.data) + SIZEOF(.sdata);
 
     /* Compute the vector address */
     /* This promotes . to a power of two */
 
-    v += 0x21F; 		/* add size of jump table */
-    v &= 0x00FFFFFF;
-    v |= v>>1;
-    v |= v>>2;
-    v |= v>>4;
-    v |= v>>8;
-    v |= v>>16;
-    __vbvectors_end = __text_vma + v;
-    __vbvectors_lma = __vbvectors_end - 0x21F;
-    /*__vbvectors_lma = 0x070FFFFF - 0x21F;*/
+    v2 = v1 + 0x21F; 		/* add size of jump table */
+    v3 = v2 & 0x00FFFFFF;
+    v4 = v3 | (v3 >> 1);
+    v5 = v4 | (v4 >> 2);
+    v6 = v5 | (v5 >> 4);
+    v7 = v6 | (v6 >> 8);
+    v8 = v7 | (v7 >> 16);
+
+    __vbvectors_vma = __text_vma + v8 - 0x21F;
 
     /* Place interrupt and reset vector at end of rom */
-    .vbvectors __vbvectors_lma :
+    .vbvectors __vbvectors_vma :
     {
         KEEP (*(.vbvectors))
     } >rom = 0xFF
-
 }

@@ -41,40 +41,35 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectSprite_METHODS																			\
-	Sprite_METHODS																						\
+#define ObjectSprite_METHODS(ClassName)																	\
+	    Sprite_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define ObjectSprite_SET_VTABLE(ClassName)																\
-	Sprite_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, ObjectSprite, render);														\
-	__VIRTUAL_SET(ClassName, ObjectSprite, getPosition);												\
-	__VIRTUAL_SET(ClassName, ObjectSprite, setPosition);												\
-	__VIRTUAL_SET(ClassName, ObjectSprite, position);													\
-	__VIRTUAL_SET(ClassName, ObjectSprite, setDirection);												\
-	__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);											\
-	__VIRTUAL_SET(ClassName, ObjectSprite, show);														\
-	__VIRTUAL_SET(ClassName, ObjectSprite, hide);														\
-	__VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);													\
-	__VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);												\
+        Sprite_SET_VTABLE(ClassName)																	\
+        __VIRTUAL_SET(ClassName, ObjectSprite, render);													\
+        __VIRTUAL_SET(ClassName, ObjectSprite, getPosition);											\
+        __VIRTUAL_SET(ClassName, ObjectSprite, setPosition);											\
+        __VIRTUAL_SET(ClassName, ObjectSprite, position);												\
+        __VIRTUAL_SET(ClassName, ObjectSprite, setDirection);											\
+        __VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);										\
+        __VIRTUAL_SET(ClassName, ObjectSprite, show);													\
+        __VIRTUAL_SET(ClassName, ObjectSprite, hide);													\
+        __VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);											\
+        __VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
 
 #define ObjectSprite_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Sprite_ATTRIBUTES;																					\
-																										\
-	/* parent sprite */																					\
-	ObjectSpriteContainer objectSpriteContainer;														\
-																										\
-	/* positioning */																					\
-	VBVec2D position;																					\
-																										\
-	/* object index */																					\
-	s16 objectIndex;																					\
-																										\
-	/* number of objects */																				\
-	s16 totalObjects;																					\
-	
+        /* super's attributes */																		\
+        Sprite_ATTRIBUTES;																				\
+        /* parent sprite */																				\
+        ObjectSpriteContainer objectSpriteContainer;													\
+        /* positioning */																				\
+        VBVec2D position;																				\
+        /* object index */																				\
+        s16 objectIndex;																				\
+        /* number of objects */																			\
+        s16 totalObjects;																				\
+
 __CLASS(ObjectSprite);
 
 

@@ -31,8 +31,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Image_METHODS																					\
-		Entity_METHODS																					\
+#define Image_METHODS(ClassName)																		\
+		Entity_METHODS(ClassName)																		\
 
 #define Image_SET_VTABLE(ClassName)																		\
 		Entity_SET_VTABLE(ClassName)																	\

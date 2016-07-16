@@ -77,7 +77,7 @@ void Object_destructor(Object this)
 }
 
 // on message
-bool Object_handleMessage(Object this, void* owner, void* telegram)
+bool Object_handleMessage(Object this, void* telegram)
 {
 	ASSERT(this, "Object::handleMessage: null this");
 
@@ -174,15 +174,15 @@ Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), voi
 
 	if(!baseClassGetClassMethod)
 	{
-		if(targetClassGetClassMethod == __VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
+		if(targetClassGetClassMethod == (void* (*)(void))__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
 		{
 			return this;
 		}
 
-		baseClassGetClassMethod = __VIRTUAL_CALL_UNSAFE(void*, Object, getBaseClass, this);
+		baseClassGetClassMethod = __VIRTUAL_CALL_UNSAFE(Object, getBaseClass, this);
 	}
 
-	if(!baseClassGetClassMethod || (Object_getBaseClass == baseClassGetClassMethod && Object_getBaseClass != targetClassGetClassMethod))
+	if(!baseClassGetClassMethod || ((void* (*)(void))Object_getBaseClass == baseClassGetClassMethod && (void* (*)(void))Object_getBaseClass != targetClassGetClassMethod))
 	{
 		return NULL;
 	}

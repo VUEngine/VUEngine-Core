@@ -156,7 +156,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 	ASSERT(__SAFE_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
 	// make sure I'm hidden
-	__VIRTUAL_CALL(void, Sprite, hide, this);
+	__VIRTUAL_CALL(Sprite, hide, this);
 
 	// remove from sprite manager before I become invalid
 	// and the VPU triggers a new render cycle

@@ -34,8 +34,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Stage_METHODS																					\
-		Container_METHODS																				\
+#define Stage_METHODS(ClassName)																		\
+		Container_METHODS(ClassName)																	\
 
 // declare the virtual methods which are redefined
 #define Stage_SET_VTABLE(ClassName)																		\
@@ -48,48 +48,34 @@
 		__VIRTUAL_SET(ClassName, Stage, handlePropagatedMessage);										\
 
 #define Stage_ATTRIBUTES																				\
-																										\
-	/* super's attributes */																			\
-	Container_ATTRIBUTES;																				\
-																										\
-	/* world's definition pointer */																	\
-	StageDefinition* stageDefinition;																	\
-																										\
-	/* the stage entities */ 																			\
-	VirtualList stageEntities;																			\
-																										\
-	/* the pivot node for streaming */ 																	\
-	VirtualNode streamingHeadNode;																		\
-																										\
-	/* the stage entities to test for streaming */ 														\
-	VirtualList stageEntitiesToTest;																	\
-																										\
-	/* the stage entities to test for streaming */ 														\
-	VirtualList loadedStageEntities;																	\
-																										\
-	/* the removed entities */ 																			\
-	VirtualList removedEntities;																		\
-																										\
-	/* streaming's preloaded entities */ 																\
-	VirtualList entitiesToLoad;																			\
-																										\
-	/* streaming's uninitialized entities */ 															\
-	VirtualList entitiesToInitialize;																	\
-																										\
-	/* streaming's non yet transformed entities */ 														\
-	VirtualList entitiesToTransform;																	\
-																										\
-	/* the UI */ 																						\
-	UI ui;																								\
-																										\
-	/* focus entity: needed for streaming */															\
-	InGameEntity focusInGameEntity;																		\
-																										\
-	/* focus entity: previous distance. Used for the streaming */										\
-	long previousFocusEntityDistance;																	\
-																										\
-	/* next entity's id */																				\
-	s16 nextEntityId;																					\
+        /* super's attributes */																		\
+        Container_ATTRIBUTES;																			\
+        /* world's definition pointer */																\
+        StageDefinition* stageDefinition;																\
+        /* the stage entities */ 																		\
+        VirtualList stageEntities;																		\
+        /* the pivot node for streaming */ 																\
+        VirtualNode streamingHeadNode;																	\
+        /* the stage entities to test for streaming */ 													\
+        VirtualList stageEntitiesToTest;																\
+        /* the stage entities to test for streaming */ 													\
+        VirtualList loadedStageEntities;																\
+        /* the removed entities */ 																		\
+        VirtualList removedEntities;																	\
+        /* streaming's preloaded entities */ 															\
+        VirtualList entitiesToLoad;																		\
+        /* streaming's uninitialized entities */ 														\
+        VirtualList entitiesToInitialize;																\
+        /* streaming's non yet transformed entities */ 													\
+        VirtualList entitiesToTransform;																\
+        /* the UI */ 																					\
+        UI ui;																							\
+        /* focus entity: needed for streaming */														\
+        InGameEntity focusInGameEntity;																	\
+        /* focus entity: previous distance. Used for the streaming */									\
+        long previousFocusEntityDistance;																\
+        /* next entity's id */																			\
+        s16 nextEntityId;																				\
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);

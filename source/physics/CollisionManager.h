@@ -33,8 +33,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define CollisionManager_METHODS																		\
-		Object_METHODS																					\
+#define CollisionManager_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
 #define CollisionManager_SET_VTABLE(ClassName)															\

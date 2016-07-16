@@ -41,12 +41,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define DirectDraw_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/* actual frames per second */																		\
-	int fps;
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /* actual frames per second */																	\
+        int fps;                                                                                        \
 
 __CLASS_DEFINITION(DirectDraw, Object);
 
@@ -94,7 +92,7 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 	*pointer |= (palette << ((y & 3) << 1));
 }
 
-// line draw algorithm from ....
+// line draw algorithm from
 void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int palette)
 {
 	fromPoint.x = FIX19_13TOI(fromPoint.x);

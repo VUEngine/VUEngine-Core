@@ -29,15 +29,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define FrameRate_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
-																										\
-	/*  frames per second */																			\
-	u16 FPS;																							\
-																										\
-	/* previous frames per second */																	\
-	u16 lastFPS;																						\
+        /* super's attributes */																		\
+        Object_ATTRIBUTES;																				\
+        /*  frames per second */																		\
+        u16 FPS;																						\
+        /* previous frames per second */																\
+        u16 lastFPS;																					\
 
 // define the FrameRate
 __CLASS_DEFINITION(FrameRate, Object);
