@@ -84,12 +84,20 @@ static void MemoryPool_reset(MemoryPool this);
 //---------------------------------------------------------------------------------------------------------
 
 // a singleton
-#undef __PUT_MEMORY_POOL_IN_SRAM
 #ifdef __PUT_MEMORY_POOL_IN_SRAM
-__SINGLETON(MemoryPool);
+    __SINGLETON(MemoryPool);
 #else
-__SINGLETON(MemoryPool, __attribute__((section(".bss"))));
+    #ifdef __PUT_BSS_IN_SRAM
+        #ifdef __SMALL_DATA_SECTION
+            __SINGLETON(MemoryPool, __attribute__((section(".sbss"))));
+        #else
+            __SINGLETON(MemoryPool, __attribute__((section(".data"))));
+        #endif
+    #else
+        __SINGLETON(MemoryPool, __attribute__((section(".bss"))));
+    #endif
 #endif
+
 
 // class constructor
 static void MemoryPool_constructor(MemoryPool this)

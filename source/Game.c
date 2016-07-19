@@ -856,6 +856,9 @@ static void Game_update(Game this)
 	    while(!(VIP_REGS[INTPND] & GAMESTART));
 	    VIP_REGS[INTCLR]= GAMESTART;
 
+        // update the clocks
+        ClockManager_update(this->clockManager, TimerManager_getAndResetTicks(TimerManager_getInstance()));
+
 	    // register the frame buffer in use by the VPU's drawing process
 	    VPUManager_registerCurrentDrawingframeBufferSet(this->vpuManager);
 

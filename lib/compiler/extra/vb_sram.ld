@@ -21,7 +21,7 @@ __text_vma = ORIGIN(rom);
 __data_vma = ORIGIN(ram);
 __sram_vma = ORIGIN(sram);
 __stack = ORIGIN(ram) + LENGTH(ram);
-__gp = ORIGIN(ram) + LENGTH(ram) / 2;
+__gp = ORIGIN(ram) + LENGTH(ram);
 __tp = ORIGIN(rom);
 
 SECTIONS
@@ -60,10 +60,6 @@ SECTIONS
     __data_end = .;
 
     __bss_start = .;
-    .bss :
-    {
-        *(.bss.*)
-    } >ram = 0xFF
     .sbss :
     {
         *(.sbss*)
@@ -76,7 +72,9 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(__sram_start = .);
         . = ALIGN(4);
-        *(.bss)
+        *(.bss*)
+        . = ALIGN(4);
+        *(COMMON)
         . = ALIGN(4);
         PROVIDE(__sram_end = .);
     } >sram

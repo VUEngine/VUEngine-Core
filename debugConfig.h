@@ -2,7 +2,7 @@
 #define	DEBUG_CONFIG_H_
 
 // print frame rate
-#undef __PRINT_FRAMERATE
+#define __PRINT_FRAMERATE
 
 // define the timer's resolution used by the physics
 #undef __TIMER_RESOLUTION
@@ -26,27 +26,24 @@
 void HardwareManager_checkStackStatus(HardwareManager this);
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
 
-// define to place the whole memory pool in SRAM
-#undef __PUT_MEMORY_POOL_IN_SRAM
-
 // test memory pool's config
-#undef __MEMORY_POOL_ARRAYS1
-#define __MEMORY_POOL_ARRAYS1																	        \
+#undef __MEMORY_POOL_ARRAYS
+#define __MEMORY_POOL_ARRAYS																	        \
 	__BLOCK_DEFINITION(192, 1)																			\
-	__BLOCK_DEFINITION(160, 10)																			\
-	__BLOCK_DEFINITION(144, 15)																			\
-	__BLOCK_DEFINITION(136, 35)																			\
-	__BLOCK_DEFINITION(120, 40)																			\
-	__BLOCK_DEFINITION(112, 15)																			\
+	__BLOCK_DEFINITION(160, 5)																			\
+	__BLOCK_DEFINITION(144, 6)																			\
+	__BLOCK_DEFINITION(136, 26)																			\
+	__BLOCK_DEFINITION(120, 35)																			\
+	__BLOCK_DEFINITION(112, 12)																			\
 	__BLOCK_DEFINITION(104, 10)																			\
-	__BLOCK_DEFINITION(100, 25)																			\
-	__BLOCK_DEFINITION(92, 30)																			\
+	__BLOCK_DEFINITION(100, 20)																			\
+	__BLOCK_DEFINITION(92, 24)																			\
 	__BLOCK_DEFINITION(84, 30)																			\
-	__BLOCK_DEFINITION(76, 10)																			\
+	__BLOCK_DEFINITION(76, 8)																			\
 	__BLOCK_DEFINITION(68, 60)																			\
-	__BLOCK_DEFINITION(28, 300)																			\
-	__BLOCK_DEFINITION(20, 600)																			\
-	__BLOCK_DEFINITION(16, 350)
+	__BLOCK_DEFINITION(28, 276)																			\
+	__BLOCK_DEFINITION(20, 588)																			\
+	__BLOCK_DEFINITION(16, 276)					    													\
 
 // test memory pool's config
 #undef __MEMORY_POOL_ARRAYS2

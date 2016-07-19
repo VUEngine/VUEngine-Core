@@ -22,9 +22,9 @@
 #include <ClockManager.h>
 #include <FrameRate.h>
 #include <Game.h>
-#include <SoundManager.h>
 #include <HardwareManager.h>
 #include <MessageDispatcher.h>
+#include <TimerManager.h>
 #include <Printing.h>
 #include <debugConfig.h>
 
@@ -52,8 +52,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// extern
-void SoundManager_playSounds(SoundManager this);
 
 //class's constructor
 static void ClockManager_constructor(ClockManager this);
@@ -119,11 +117,9 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
-#ifdef __ALERT_STACK_OVERFLOW
-	HardwareManager_checkStackStatus(HardwareManager_getInstance());
-#endif
+	//disable interrupts
+	TimerManager_setInterrupt(TimerManager_getInstance(), false);
 
-	static u32 previousHundredthSecond = 0;
 	static u32 previousSecond = 0;
 
     VirtualNode node = this->clocks->head;
@@ -180,13 +176,8 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #endif
     }
 
-	u32 currentHundredthSecond = (u32)(this->ticks / 10);
-    if(previousHundredthSecond < currentHundredthSecond)
-    {
-        previousHundredthSecond = currentHundredthSecond;
-	    // update sounds
-    	SoundManager_playSounds(SoundManager_getInstance());
-    }
+    //disable interrupts
+    TimerManager_setInterrupt(TimerManager_getInstance(), true);
 }
 
 // reset clocks

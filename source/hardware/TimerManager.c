@@ -22,6 +22,7 @@
 #include <TimerManager.h>
 #include <HardwareManager.h>
 #include <ClockManager.h>
+#include <SoundManager.h>
 #include <debugConfig.h>
 
 
@@ -32,6 +33,8 @@
 #define TimerManager_ATTRIBUTES																			\
         /* super's attributes */																		\
         Object_ATTRIBUTES;																				\
+        /*  */																							\
+        u32 ticks;																					    \
         /*  */																							\
         u8 tcrValue;																					\
 
@@ -100,13 +103,33 @@ void TimerManager_interruptHandler(void)
 	//disable interrupts
 	TimerManager_setInterrupt(_timerManager, false);
 
+#ifdef __ALERT_STACK_OVERFLOW
+	HardwareManager_checkStackStatus(HardwareManager_getInstance());
+#endif
+
+	static u32 previousHundredthSecond = 0;
+	u32 currentHundredthSecond = (u32)(_timerManager->ticks / 10);
+    if(previousHundredthSecond < currentHundredthSecond)
+    {
+        previousHundredthSecond = currentHundredthSecond;
+	    // update sounds
+    	SoundManager_playSounds(SoundManager_getInstance());
+    }
+
 	// update clocks
-	ClockManager_update(_clockManager, __TIMER_RESOLUTION);
+	_timerManager->ticks += __TIMER_RESOLUTION;
 
 	// enable interrupts
 	TimerManager_setInterrupt(_timerManager, true);
 }
 
+u32 TimerManager_getAndResetTicks(TimerManager this)
+{
+	ASSERT(this, "TimerManager::getTicks: null this");
+    u32 ticks = _timerManager->ticks;
+    _timerManager->ticks = 0;
+    return ticks;
+}
 
 // enable timer
 void TimerManager_enable(TimerManager this, int value)

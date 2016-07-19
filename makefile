@@ -32,6 +32,17 @@ SMALL_DATA_SECTION_SUFIX = $(SMALL_DATA_SECTION)
 SMALL_DATA_SECTION_MACRO = __SMALL_DATA_SECTION=\"$(SMALL_DATA_SECTION)\"
 endif
 
+PUT_BSS_IN_SRAM =
+ifeq ($(BSS_IN_SRAM), 1)
+PUT_BSS_IN_SRAM = __PUT_BSS_IN_SRAM
+endif
+
+PUT_MEMORY_POOL_IN_SRAM =
+ifeq ($(MEMORY_POOL_IN_SRAM), 1)
+PUT_MEMORY_POOL_IN_SRAM = __PUT_MEMORY_POOL_IN_SRAM
+endif
+
+
 # my home
 VBJAENGINE = $(VBDE)libs/vbjaengine
 
@@ -54,25 +65,25 @@ ESSENTIALS =  -include $(VBJAENGINE)/libvbjae.h
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding
 CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = __DEBUG __TOOLS $(SMALL_DATA_SECTION_MACRO)
+MACROS = __DEBUG __TOOLS $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = $(SMALL_DATA_SECTION_MACRO)
+MACROS = $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
 endif
 
 ifeq ($(TYPE), release-tools)
 LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO)
+MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
 endif
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
-MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO)
+MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
 endif
 
 

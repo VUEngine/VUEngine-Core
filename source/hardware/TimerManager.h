@@ -69,6 +69,7 @@ TimerManager TimerManager_getInstance();
 
 void TimerManager_destructor(TimerManager this);
 void TimerManager_setInterrupt(TimerManager this, int value);
+u32 TimerManager_getAndResetTicks(TimerManager this);
 void TimerManager_enable(TimerManager this, int value);
 u16 TimerManager_getTime(TimerManager this);
 void TimerManager_setTime(TimerManager this, u16 time);

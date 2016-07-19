@@ -60,16 +60,23 @@ __CLASS(Object);
 
 
 //---------------------------------------------------------------------------------------------------------
+// 											    TYPEDEFS
+//---------------------------------------------------------------------------------------------------------
+
+typedef void (*EventListener)(Object, Object);
+
+
+//---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 void Object_constructor(Object this);
 void Object_destructor(Object this);
 bool Object_handleMessage(Object this, void* telegram);
-void Object_addEventListener(Object this, Object listener, void (*method)(Object, Object), char* eventName);
-void Object_removeEventListener(Object this, Object listener, void (*method)(Object, Object), char* eventName);
+void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName);
+void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName);
 void Object_fireEvent(Object this, char* eventName);
-Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void));
+Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (*baseClassGetClassMethod)());
 
 
 #endif

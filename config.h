@@ -121,9 +121,6 @@
 // 												MEMORY POOL
 //---------------------------------------------------------------------------------------------------------
 
-// select when SRAM can hold the whole memory pool
-#undef __PUT_MEMORY_POOL_IN_SRAM
-
 // reset to 0 each byte of each free block on resetting game
 // only use for debugging, proper object's initialization must make this macro unnecessary
 #undef __MEMORY_POOL_CLEAN_UP
