@@ -114,7 +114,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int moveme
 			VirtualNode node = this->lastCollidingSpatialObject[i]->head;
 			for(; node; node = node->next)
 	        {
-				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
+				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
 	        }
 
 			VirtualList_clear(this->lastCollidingSpatialObject[i]);
@@ -227,7 +227,7 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 		}
 	}
 
-	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (void (*)(Object, Object))CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
+	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
 }
 
 // resolve collision against other entities

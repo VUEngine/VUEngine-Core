@@ -715,7 +715,7 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 
 	__VIRTUAL_CALL(Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->animatedSprite));
-	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(u8, Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->animatedSprite)));
+	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL_UNSAFE(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->animatedSprite)));
 	__VIRTUAL_CALL(Sprite, render, __SAFE_CAST(Sprite, this->animatedSprite));
 
 	// must set the position after showing the sprite, otherwise

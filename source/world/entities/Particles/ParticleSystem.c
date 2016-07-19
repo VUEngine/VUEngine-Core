@@ -310,7 +310,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
 
-	Object_addEventListener(__SAFE_CAST(Object, particle), __SAFE_CAST(Object, this), (void (*)(Object, Object))ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
+	Object_addEventListener(__SAFE_CAST(Object, particle), __SAFE_CAST(Object, this), (EventListener)ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
 
 	return particle;
 }

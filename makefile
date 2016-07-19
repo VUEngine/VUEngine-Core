@@ -13,6 +13,10 @@ COMPILER = 4.7
 COMPILER_OUTPUT = c
 COMPILER_NAME = v810
 
+# Small data sections' usage
+SMALL_DATA_SECTION =
+SMALL_DATA_SECTION_SUFIX = $(SMALL_DATA_SECTION)
+
 ifeq ($(COMPILER), 4.7)
 COMPILER_NAME = v810-nec-elf32
 endif
@@ -23,6 +27,10 @@ AR = $(COMPILER_NAME)-ar
 OBJCOPY = $(COMPILER_NAME)-objcopy
 OBJDUMP = $(COMPILER_NAME)-objdump
 
+ifneq ($(SMALL_DATA_SECTION),)
+SMALL_DATA_SECTION_SUFIX = $(SMALL_DATA_SECTION)
+SMALL_DATA_SECTION_MACRO = __SMALL_DATA_SECTION=\"$(SMALL_DATA_SECTION)\"
+endif
 
 # my home
 VBJAENGINE = $(VBDE)libs/vbjaengine
@@ -46,25 +54,25 @@ ESSENTIALS =  -include $(VBJAENGINE)/libvbjae.h
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding
 CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = __DEBUG __TOOLS
+MACROS = __DEBUG __TOOLS $(SMALL_DATA_SECTION_MACRO)
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS =
+MACROS = $(SMALL_DATA_SECTION_MACRO)
 endif
 
 ifeq ($(TYPE), release-tools)
 LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = __TOOLS
+MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO)
 endif
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =
 CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
-MACROS = __TOOLS
+MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO)
 endif
 
 
@@ -75,7 +83,7 @@ INCPATH := $(shell find $(VBJAENGINE) -type d -print)
 EXTRA_FILES = makefile
 
 # Where to store object and dependency files.
-STORE = .make-$(TYPE)-$(COMPILER)-$(COMPILER_OUTPUT)
+STORE = .make-$(TYPE)-$(COMPILER)-$(COMPILER_OUTPUT)$(SMALL_DATA_SECTION_SUFIX)
 
 # Makes a list of the source (.c) files.
 SOURCE := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.c))
@@ -113,7 +121,7 @@ $(TARGET).a: dirs $(OBJECTS) $(ASM_OBJECTS)
 $(STORE)/%.o: %.c
 	@echo Creating object file for $*
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd  $(foreach INC,$(INCPATH),-I$(INC))\
-            $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -$(COMPILER_OUTPUT) $< -o $@
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(CCPARAM) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd
 

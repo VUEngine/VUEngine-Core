@@ -23,6 +23,12 @@
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
 #define __CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
+#ifdef __SMALL_DATA_SECTION
+#define __NON_INITIALIZED_DATA_SECTION  __SMALL_DATA_SECTION
+#else
+#define __NON_INITIALIZED_DATA_SECTION   ".bss"
+#endif
+
 
 // call to this method only once
 #define __CALL_ONCE(MethodName, ...)															        \
@@ -100,11 +106,14 @@
 #define __CLASS_NEW_END(ClassName, ...)															        \
 																								        \
 		/* set the vtable pointer */															        \
-		this->vTable = &ClassName ## _vTable;													        \
+		this->vTable = (void*)&ClassName ## _vTable;													\
 																								        \
 		/* construct the object */																        \
 		ClassName ## _constructor(this, ##__VA_ARGS__);											        \
 																								        \
+		ASSERT(this->vTable == &ClassName ## _vTable,                                                   \
+		   __MAKE_STRING(ClassName) "::new: vTable not set properly");                                  \
+																						                \
 		/* return the created object */															        \
 		return this;																			        \
 	}
@@ -156,27 +165,27 @@
 	MemoryPool_free(MemoryPool_getInstance(), (void*)this);										        \
 
 // retrieve virtual method's address
-#define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object, ...)								        \
+#define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)                                           \
 																								        \
 	/* call derived implementation */															        \
 	(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)							        \
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
 #ifdef __DEBUG
-#define __VIRTUAL_CALL(ReturnType, ClassName, MethodName, object, ...)							        \
+#define __VIRTUAL_CALL(ClassName, MethodName, object, ...)							                    \
 		(																						        \
-			(__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object, ...))?						        \
+			__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)?						                \
 			/* call derived implementation */													        \
-			(((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))				        \
+			((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))				        \
 				(																				        \
 						__SAFE_CAST(ClassName, object), ##__VA_ARGS__							        \
 				):																				        \
 			/* trigger exception */																        \
-			(ReturnType)Error_triggerException(Error_getInstance(),								        \
+			Error_triggerException(Error_getInstance(),								                    \
 				"Virtual Call: " __MAKE_STRING(ClassName ## _ ##  MethodName) 					        \
 				" on object of type: ", 														        \
 				object? 																		        \
-					__VIRTUAL_CALL_UNSAFE(char*, Object, getClassName, (Object)object)			        \
+					__VIRTUAL_CALL_UNSAFE(Object, getClassName, (Object)object)			                \
 				: "NULL")																		        \
 		)
 
@@ -194,14 +203,14 @@
 		/* to bypass checking on DEBUG */														        \
 		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))					        \
 			(																					        \
-					object, ##__VA_ARGS__														        \
+					(ClassName)object, ##__VA_ARGS__												    \
 			)																					        \
 
 #ifdef __DEBUG
 #define __SAFE_CAST(ClassName, object)															        \
 																								        \
 		/* try to up cast object */																        \
-		(ClassName)Object_getCast((Object)object, ClassName ## _getBaseClass, NULL)
+		(ClassName)Object_getCast((Object)object, (void* (*)())ClassName ## _getBaseClass, NULL)
 #else
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
@@ -209,7 +218,7 @@
 #define __GET_CAST(ClassName, object)															        \
 																								        \
 		/* try to up cast object */																        \
-		(ClassName)Object_getCast((Object)object, (void* (*)(void))ClassName ## _getBaseClass, NULL)				        \
+		(ClassName)Object_getCast((Object)object, (void* (*)())ClassName ## _getBaseClass, NULL)		\
 
 // declare a virtual method
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)									        \
@@ -219,21 +228,8 @@
 
 // override a virtual method
 #define __VIRTUAL_SET(ClassVTable, ClassName, MethodName)										        \
-	{																							        \
-        /* type-punning to avoid breaking string aliasing rules */                                      \
-        typedef union                                                                                   \
-        {                                                                                               \
-            u32* methodPointer;                                                                         \
-            u32 methodAddress;                                                                          \
-        } TypePunningUnion;                                                                             \
-                                                                                                        \
-        volatile TypePunningUnion typePunningUnion =                                                    \
-        {                                                                                               \
-            .methodAddress = (u32)&ClassVTable ## _vTable.MethodName                                    \
-        };                                                                                              \
-        /* set the virtual method's address in its correspoiding vtable offset */                       \
-        *typePunningUnion.methodPointer = (u32)&ClassName ## _ ## MethodName;		                    \
-	}																							        \
+																								        \
+        ClassVTable ## _vTable.MethodName = (void*)&ClassName ## _ ## MethodName;                       \
 
 // override a virtual method
 #define __VIRTUAL_BASE_SET(ClassVTable, ClassName, MethodName, BaseClassMethodName)				        \
@@ -257,7 +253,7 @@
 	void ClassName ## _setVTable()																        \
 	{																							        \
 		/* set the base class's virtual methods */												        \
-		if(ClassName ## _setVTable != BaseClassName ## _setVTable)								        \
+		if(&ClassName ## _setVTable != &BaseClassName ## _setVTable)                                    \
 		{																						        \
 			BaseClassName ## _setVTable();														        \
 		}																						        \
@@ -314,7 +310,7 @@
 	int ClassName ## _getObjectSize(ClassName);													        \
 																								        \
 	/* declare getBaseClass method */															        \
-	void* ClassName ## _getBaseClass(ClassName);												        \
+	void* ClassName ## _getBaseClass();									            			        \
 																								        \
 	/* declare getClass name method */															        \
 	char* ClassName ## _getClassName(ClassName)
@@ -342,7 +338,8 @@
 	} ClassName ## _str;																		        \
 																								        \
 	/* class' vtable's definition */								    		    			        \
-	struct ClassName ## _vTable ClassName ## _vTable __attribute__((section(".bss")));  		        \
+	struct ClassName ## _vTable ClassName ## _vTable                                                    \
+	    __attribute__((section(__NON_INITIALIZED_DATA_SECTION)));  		                                \
 																								        \
 	/* class' base's destructor */					    		    	                		        \
 	static void (* const _baseDestructor)(Object) =                                     		        \
@@ -355,7 +352,7 @@
 	}																							        \
 																								        \
 	/* define class's getBaseClass method */													        \
-	void* ClassName ## _getBaseClass(ClassName this)											        \
+	void* ClassName ## _getBaseClass()						                					        \
 	{																							        \
 		return (void*)BaseClassName ## _getBaseClass;											        \
 	}																							        \
@@ -373,6 +370,11 @@
 #define __GET_CLASS_NAME(object)																        \
 																								        \
 	__VIRTUAL_CALL(Object, getClassName, (Object)object)
+
+// retrieves object's class' name
+#define __GET_CLASS_NAME_UNSAFE(object)                                                                 \
+																								        \
+	__VIRTUAL_CALL_UNSAFE(Object, getClassName, (Object)object)
 
 // declare an object type
 #define __TYPE(ClassName)	ClassName ## _new

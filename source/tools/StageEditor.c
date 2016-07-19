@@ -708,7 +708,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		localPosition.y += translation.y;
 		localPosition.z += translation.z;
 
-		__VIRTUAL_CALL(Container, setLocalPosition, container, localPosition);
+		__VIRTUAL_CALL(Container, setLocalPosition, container, &localPosition);
 		Container_invalidateGlobalPosition(container, __XAXIS | __YAXIS | __ZAXIS);
 
 		// this hack forces the Entity to recalculate its sprites' value.
@@ -822,7 +822,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Container_getId(__SAFE_CAST(Container, entity)), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(entity), x + 6, y, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(entity), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
 		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->x), x + 13, y, NULL);
 		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->y), x + 22, y, NULL);

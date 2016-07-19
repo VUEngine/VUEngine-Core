@@ -122,7 +122,7 @@ static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, v
 	    {
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			function(__SAFE_CAST(Object, sprite), __SAFE_CAST(Object, this), (void (*)(Object, Object))AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
+			function(__SAFE_CAST(Object, sprite), __SAFE_CAST(Object, this), (EventListener)AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
 		}
 	}
 }

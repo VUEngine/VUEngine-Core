@@ -96,7 +96,7 @@ void StateMachine_update(StateMachine this)
 
 	if(this->currentState)
 	{
-					__VIRTUAL_CALL(State, execute, this->currentState, this->owner);
+		__VIRTUAL_CALL(State, execute, this->currentState, this->owner);
 	}
 }
 

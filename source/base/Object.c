@@ -22,6 +22,7 @@
 #include <string.h>
 #include <Object.h>
 #include <VirtualList.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 typedef struct Event
 {
 	Object listener;
-	void (*method)(Object, Object);
+	EventListener method;
 	char name[__MAX_EVENT_NAME_LENGTH];
 
 } Event;
@@ -85,7 +86,7 @@ bool Object_handleMessage(Object this, void* telegram)
 }
 
 // register an event listener
-void Object_addEventListener(Object this, Object listener, void (*method)(Object, Object),  char* eventName)
+void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName)
 {
 	ASSERT(this, "Object::addEventListener: null this");
 
@@ -114,7 +115,7 @@ void Object_addEventListener(Object this, Object listener, void (*method)(Object
 }
 
 // remove an event listener
-void Object_removeEventListener(Object this, Object listener, void (*method)(Object, Object),  char* eventName)
+void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName)
 {
 	ASSERT(this, "Object::removeEventListener: null this");
 
@@ -159,7 +160,7 @@ void Object_fireEvent(Object this,  char* eventName)
 }
 
 // cast object to base class
-Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), void* (*baseClassGetClassMethod)(void))
+Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (*baseClassGetClassMethod)())
 {
 	ASSERT(this, "Object::getCast: null this");
 
@@ -168,7 +169,12 @@ Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(void), voi
 		return NULL;
 	}
 
-	ASSERT(*(u32*)this, "Object::getCast: deleted this");
+    if(!*(u32*)this)
+    {
+        Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
+        Printing_hex(Printing_getInstance(), (u32)this, 18, 15, NULL);
+        NM_ASSERT(false, "Object::getCast: deleted this");
+	}
 	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, this), "Object::getCast: null getClassName");
 	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this), "Object::getCast: null getBaseClass");
 

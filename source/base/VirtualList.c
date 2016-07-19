@@ -351,8 +351,6 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node)
 		// free dynamic memory
 		__DELETE(node);
 
-		CACHE_DISABLE;
-
 		return true;
 	}
 

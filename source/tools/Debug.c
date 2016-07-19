@@ -516,21 +516,23 @@ static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, i
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
+//	typedef int (*int (*)(Object))(Object this);
+
 	ClassSizeData classesSizeData[] =
 	{
-		{&Container_getObjectSize, "Container"},
-		{&Entity_getObjectSize, "Entity"},
-		{&Image_getObjectSize, "Image"},
-		{&ManagedEntity_getObjectSize, "ManagedEntity"},
-		{&MBackground_getObjectSize, "MBackground"},
-		{&InGameEntity_getObjectSize, "InGameEntity"},
-		{&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
-		{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
-		{&Actor_getObjectSize, "Actor"},
-		{&Particle_getObjectSize, "Particle"},
-		{&ParticleSystem_getObjectSize, "ParticleSystem"},
-		{&GameState_getObjectSize, "GameState"},
-		{&GameState_getObjectSize, "Stage"},
+		{(int (*)(Object))&Container_getObjectSize, "Container"},
+		{(int (*)(Object))&Entity_getObjectSize, "Entity"},
+		{(int (*)(Object))&Image_getObjectSize, "Image"},
+		{(int (*)(Object))&ManagedEntity_getObjectSize, "ManagedEntity"},
+		{(int (*)(Object))&MBackground_getObjectSize, "MBackground"},
+		{(int (*)(Object))&InGameEntity_getObjectSize, "InGameEntity"},
+		{(int (*)(Object))&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
+		{(int (*)(Object))&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
+		{(int (*)(Object))&Actor_getObjectSize, "Actor"},
+		{(int (*)(Object))&Particle_getObjectSize, "Particle"},
+		{(int (*)(Object))&ParticleSystem_getObjectSize, "ParticleSystem"},
+		{(int (*)(Object))&GameState_getObjectSize, "GameState"},
+		{(int (*)(Object))&GameState_getObjectSize, "Stage"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
