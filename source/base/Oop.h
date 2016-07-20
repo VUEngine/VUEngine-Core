@@ -23,13 +23,6 @@
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
 #define __CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
-#ifdef __SMALL_DATA_SECTION
-#define __NON_INITIALIZED_DATA_SECTION  __SMALL_DATA_SECTION
-#else
-#define __NON_INITIALIZED_DATA_SECTION   ".bss"
-#endif
-
-
 // call to this method only once
 #define __CALL_ONCE(MethodName, ...)															        \
 																								        \
@@ -291,7 +284,7 @@
 	};							                                                        		        \
 																								        \
 	/* create the vtable instance */															        \
-	extern struct ClassName ## _vTable ClassName ## _vTable;		                    		        \
+	extern struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;    \
 
 
 // declare a class
@@ -338,8 +331,7 @@
 	} ClassName ## _str;																		        \
 																								        \
 	/* class' vtable's definition */								    		    			        \
-	struct ClassName ## _vTable ClassName ## _vTable                                                    \
-	    __attribute__((section(__NON_INITIALIZED_DATA_SECTION)));  		                                \
+	struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;           \
 																								        \
 	/* class' base's destructor */					    		    	                		        \
 	static void (* const _baseDestructor)(Object) =                                     		        \
@@ -387,10 +379,10 @@
 #define __SINGLETON(ClassName, ...)																        \
 																								        \
 	/* declare the static instance */															        \
-	static ClassName ## _str _instance ## ClassName __VA_ARGS__;	                    		        \
+	static ClassName ## _str _instance ## ClassName __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;         \
 																								        \
 	/* a flag to know when to allow construction */												        \
-	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;                      		        \
+	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE = __SINGLETON_NOT_CONSTRUCTED; \
 																								        \
 	/* define get instance method */															        \
 	ClassName ClassName ## _getInstance()														        \
@@ -438,14 +430,14 @@
 #define __SINGLETON_DYNAMIC(ClassName)															        \
 																								        \
 	/* declare the static pointer to instance */												        \
-	static ClassName _instance ## ClassName;			                                		        \
+	static ClassName _instance ## ClassName __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE;                   \
 																								        \
 	/* define allocator */																		        \
 	__CLASS_NEW_DEFINITION(ClassName);															        \
 	__CLASS_NEW_END(ClassName);																	        \
 																								        \
 	/* a flag to know when to allow construction */												        \
-	static s8 _singletonConstructed = __SINGLETON_NOT_CONSTRUCTED;                      		        \
+	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE = __SINGLETON_NOT_CONSTRUCTED; \
 																								        \
 	/* define get instance method */															        \
 	ClassName ClassName ## _getInstance()														        \

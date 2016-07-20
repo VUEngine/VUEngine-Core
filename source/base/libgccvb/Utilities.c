@@ -29,7 +29,7 @@
 // 											DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-static const char numbers[17] = "0123456789ABCDEF";
+static const char numbers[17] __attribute__((section(".rodata"))) = "0123456789ABCDEF";
 
 int Utilities_intLength(int value)
 {
@@ -71,7 +71,7 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 {
 #define __CHAR_HOLDER_SIZE		11
 	int i = 0;
-	static char rev[__CHAR_HOLDER_SIZE];
+	static char rev[__CHAR_HOLDER_SIZE] __attribute__((section(".bss")));
 //	int flag = false;
 //	static char sign='-';
 
@@ -81,6 +81,7 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 //		num*=(-1);
 	}
 */
+
 	for(; i < __CHAR_HOLDER_SIZE - 1; i++)
 	{
 		rev[__CHAR_HOLDER_SIZE - 2 - i] = numbers[num % base];
@@ -224,19 +225,18 @@ int Utilities_getDigitCount(int value)
    Any feedback is very welcome.
    http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
    email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
-*/
 
-/* Period parameters */
+// Period parameters
 #define N 624
 #define M 397
-#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
-#define UPPER_MASK 0x80000000UL /* most significant w-r bits */
-#define LOWER_MASK 0x7fffffffUL /* least significant r bits */
+#define MATRIX_A 0x9908b0dfUL   // constant vector a
+#define UPPER_MASK 0x80000000UL // most significant w-r bits
+#define LOWER_MASK 0x7fffffffUL // least significant r bits
 
-static unsigned long mt[N]; /* the array for the state vector  */
-static int mti=N+1; /* mti==N+1 means mt[N] is not initialized */
+static unsigned long mt[N]; // the array for the state vector
+static int mti=N+1; // mti==N+1 means mt[N] is not initialized
 
-/* initializes mt[N] with a seed */
+// initializes mt[N] with a seed
 void init_genrand(unsigned long s)
 {
     mt[0]= s & 0xffffffffUL;
@@ -244,19 +244,19 @@ void init_genrand(unsigned long s)
     {
         mt[mti] =
 	    (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti);
-        /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-        /* In the previous versions, MSBs of the seed affect   */
-        /* only MSBs of the array mt[].                        */
-        /* 2002/01/09 modified by Makoto Matsumoto             */
+        // See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier.
+        // In the previous versions, MSBs of the seed affect
+        // only MSBs of the array mt[].
+        // 2002/01/09 modified by Makoto Matsumoto
         mt[mti] &= 0xffffffffUL;
-        /* for >32 bit machines */
+        // for >32 bit machines
     }
 }
 
-/* initialize by an array with array-length */
-/* init_key is the array for initializing keys */
-/* key_length is its length */
-/* slight change for C++, 2004/2/26 */
+// initialize by an array with array-length
+// init_key is the array for initializing keys
+// key_length is its length
+// slight change for C++, 2004/2/26
 void Utilities_initRandomSeedsByArray(unsigned long init_key[], int key_length)
 {
     int i, j, k;
@@ -265,35 +265,35 @@ void Utilities_initRandomSeedsByArray(unsigned long init_key[], int key_length)
     k = (N>key_length ? N : key_length);
     for(; k; k--) {
         mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1664525UL))
-          + init_key[j] + j; /* non linear */
-        mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+          + init_key[j] + j; // non linear
+        mt[i] &= 0xffffffffUL; // for WORDSIZE > 32 machines
         i++; j++;
         if(i>=N) { mt[0] = mt[N-1]; i=1; }
         if(j>=key_length) j=0;
     }
     for(k=N-1; k; k--) {
         mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1566083941UL))
-          - i; /* non linear */
-        mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+          - i; // non linear
+        mt[i] &= 0xffffffffUL; // for WORDSIZE > 32 machines
         i++;
         if(i>=N) { mt[0] = mt[N-1]; i=1; }
     }
 
-    mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
+    mt[0] = 0x80000000UL; // MSB is 1; assuring non-zero initial array
 }
 
-/* generates a random number on [0,0xffffffff]-interval */
+// generates a random number on [0,0xffffffff]-interval
 unsigned long Utilities_generateRandomInt32(void)
 {
     unsigned long y;
     static unsigned long mag01[2]={0x0UL, MATRIX_A};
-    /* mag01[x] = x * MATRIX_A  for x=0,1 */
+    // mag01[x] = x * MATRIX_A  for x=0,1
 
-    if(mti >= N) { /* generate N words at one time */
+    if(mti >= N) { // generate N words at one time
         int kk;
 
-        if(mti == N+1)   /* if init_genrand() has not been called, */
-            init_genrand(5489UL); /* a default initial seed is used */
+        if(mti == N+1)   // if init_genrand() has not been called,
+            init_genrand(5489UL); // a default initial seed is used
 
         for(kk=0;kk<N-M;kk++) {
             y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
@@ -311,7 +311,7 @@ unsigned long Utilities_generateRandomInt32(void)
 
     y = mt[mti++];
 
-    /* Tempering */
+    // Tempering
     y ^= (y >> 11);
     y ^= (y << 7) & 0x9d2c5680UL;
     y ^= (y << 15) & 0xefc60000UL;
@@ -319,8 +319,9 @@ unsigned long Utilities_generateRandomInt32(void)
 
     return y? y: 1;
 }
+*/
 
-/* These real versions are due to Isaku Wada, 2002/01/09 added */
+// These real versions are due to Isaku Wada, 2002/01/09 added
 int Utilities_random(long seed, int randnums)
 {
 //    unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;

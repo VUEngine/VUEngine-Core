@@ -168,7 +168,7 @@ Velocity SpatialObject_getVelocity(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::getVelocity: null this");
 
-	static Velocity velocity = {0, 0, 0};
+	static Velocity velocity __attribute__((section(".rodata"))) = {0, 0, 0};
 	return velocity;
 }
 

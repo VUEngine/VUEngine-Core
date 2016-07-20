@@ -43,7 +43,7 @@ volatile u16* VIP_REGS = (u16*)0x0005F800;
 // 												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
+extern ColumnTableROMDef DEFAULT_COLUMN_TABLE __attribute__((section(".rodata")));
 
 
 //---------------------------------------------------------------------------------------------------------

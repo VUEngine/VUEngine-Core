@@ -83,21 +83,50 @@ static void MemoryPool_reset(MemoryPool this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
-#ifdef __PUT_MEMORY_POOL_IN_SRAM
-    __SINGLETON(MemoryPool);
-#else
-    #ifdef __PUT_BSS_IN_SRAM
-        #ifdef __SMALL_DATA_SECTION
-            __SINGLETON(MemoryPool, __attribute__((section(".sbss"))));
-        #else
-            __SINGLETON(MemoryPool, __attribute__((section(".data"))));
-        #endif
-    #else
-        __SINGLETON(MemoryPool, __attribute__((section(".bss"))));
-    #endif
-#endif
 
+// defines a singleton (unique instance of a class)
+#define __MEMORY_POOL_SINGLETON(ClassName)																\
+																								        \
+	/* declare the static instance */															        \
+	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;                    \
+																								        \
+	/* a flag to know when to allow construction */												        \
+	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE = __SINGLETON_NOT_CONSTRUCTED; \
+																								        \
+	/* define get instance method */															        \
+	ClassName ClassName ## _getInstance()														        \
+	{																							        \
+		/* set the vtable */																	        \
+		__SET_CLASS(ClassName);																	        \
+																								        \
+		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)								        \
+		{																						        \
+			NM_ASSERT(false, ClassName get instance during construction);						        \
+		}																						        \
+		/* first check if not constructed yet */												        \
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)								        \
+		{																						        \
+			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;								        \
+																								        \
+			/* set the vtable pointer */														        \
+			_instance ## ClassName.vTable = &ClassName ## _vTable;								        \
+																								        \
+			/* call constructor */																        \
+			ClassName ## _constructor(&_instance ## ClassName);									        \
+																								        \
+			/* set the vtable pointer */														        \
+			_instance ## ClassName.vTable = &ClassName ## _vTable;								        \
+																								        \
+			/* don't allow more constructs */													        \
+			_singletonConstructed = __SINGLETON_CONSTRUCTED;									        \
+		}																						        \
+																								        \
+		/* return the created singleton */														        \
+		return &_instance ## ClassName;															        \
+	}
+
+// a singleton
+__MEMORY_POOL_SINGLETON(MemoryPool);
 
 // class constructor
 static void MemoryPool_constructor(MemoryPool this)

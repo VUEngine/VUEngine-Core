@@ -59,7 +59,7 @@
 
 
 /****** VIP Registers ******/
-extern volatile u16* VIP_REGS;
+extern volatile u16* VIP_REGS __attribute__((section(".data")));
 
 /****** VIP Register Mnemonics ******/
 #define	INTPND	0x00

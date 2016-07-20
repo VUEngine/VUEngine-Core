@@ -60,6 +60,12 @@ SECTIONS
     __data_end = .;
 
     __bss_start = .;
+    .bss :
+    {
+        *(.bss*)
+        *(COMMON)
+    } >ram = 0xFF
+
     .sbss :
     {
         *(.sbss*)
@@ -72,16 +78,14 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(__sram_start = .);
         . = ALIGN(4);
-        *(.bss*)
-        . = ALIGN(4);
-        *(COMMON)
+        *(.sram*)
         . = ALIGN(4);
         PROVIDE(__sram_end = .);
     } >sram
 
     /* Prevent overlaps with vbvectors */
     /* The use of new variables is because GCC 4.7's linker doesn't override the v value */
-    v1 = v + SIZEOF(.data) + SIZEOF(.sdata);
+    v1 = v + SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.sram);
 
     /* Compute the vector address */
     /* This promotes . to a power of two */

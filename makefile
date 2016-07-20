@@ -14,8 +14,18 @@ COMPILER_OUTPUT = c
 COMPILER_NAME = v810
 
 # Small data sections' usage
-SMALL_DATA_SECTION =
-SMALL_DATA_SECTION_SUFIX = $(SMALL_DATA_SECTION)
+DATA_SECTION_ATTRIBUTES =
+
+# Data size to allocate in the small data section
+MSDA_SIZE = 0
+
+# include overrides
+include config.make
+
+CONFIG_MAKE_FILE =
+ifneq ($(CONFIG_MAKE_FILE),)
+COMPILER_NAME = v810-nec-elf32
+endif
 
 ifeq ($(COMPILER), 4.7)
 COMPILER_NAME = v810-nec-elf32
@@ -27,20 +37,33 @@ AR = $(COMPILER_NAME)-ar
 OBJCOPY = $(COMPILER_NAME)-objcopy
 OBJDUMP = $(COMPILER_NAME)-objdump
 
-ifneq ($(SMALL_DATA_SECTION),)
-SMALL_DATA_SECTION_SUFIX = $(SMALL_DATA_SECTION)
-SMALL_DATA_SECTION_MACRO = __SMALL_DATA_SECTION=\"$(SMALL_DATA_SECTION)\"
+MEMORY_POOL_SECTION_ATTRIBUTE               = __MEMORY_POOL_SECTION_ATTRIBUTE=
+NON_INITIALIZED_DATA_SECTION_ATTRIBUTE      = __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE=
+INITIALIZED_DATA_SECTION_ATTRIBUTE          = __INITIALIZED_DATA_SECTION_ATTRIBUTE=
+STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE    = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE=
+VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE       = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE=
+
+ifneq ($(MEMORY_POOL_SECTION),)
+MEMORY_POOL_SECTION_ATTRIBUTE = __MEMORY_POOL_SECTION_ATTRIBUTE="__attribute__((section(\"$(MEMORY_POOL_SECTION)\")))"
 endif
 
-PUT_BSS_IN_SRAM =
-ifeq ($(BSS_IN_SRAM), 1)
-PUT_BSS_IN_SRAM = __PUT_BSS_IN_SRAM
+ifneq ($(NON_INITIALIZED_DATA_SECTION),)
+NON_INITIALIZED_DATA_SECTION_ATTRIBUTE = __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(NON_INITIALIZED_DATA_SECTION)\")))"
 endif
 
-PUT_MEMORY_POOL_IN_SRAM =
-ifeq ($(MEMORY_POOL_IN_SRAM), 1)
-PUT_MEMORY_POOL_IN_SRAM = __PUT_MEMORY_POOL_IN_SRAM
+ifneq ($(INITIALIZED_DATA_SECTION),)
+INITIALIZED_DATA_SECTION_ATTRIBUTE = __INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(INITIALIZED_DATA_SECTION)\")))"
 endif
+
+ifneq ($(STATIC_SINGLETONS_DATA_SECTION),)
+STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(STATIC_SINGLETONS_DATA_SECTION)\")))"
+endif
+
+ifneq ($(VIRTUAL_TABLES_DATA_SECTION),)
+VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(VIRTUAL_TABLES_DATA_SECTION)\")))"
+endif
+
+DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DATA_SECTION_ATTRIBUTE) $(INITIALIZED_DATA_SECTION_ATTRIBUTE) $(STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE) $(VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE)
 
 
 # my home
@@ -61,29 +84,32 @@ CONFIG_FILE = $(VBJAENGINE)/config.h
 ESSENTIALS =  -include $(VBJAENGINE)/libvbjae.h
 
 
+# Common macros for all build types
+COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
+
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE), debug)
 LDPARAM = -fno-builtin -ffreestanding
-CCPARAM = -nodefaultlibs -mv810 -Wall -O0 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = __DEBUG __TOOLS $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
+CCPARAM = -msda=$(MSDA_SIZE) -nodefaultlibs -mv810 -Wall -O0 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
+MACROS = __DEBUG __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), release)
 LDPARAM =
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
+CCPARAM = -msda=$(MSDA_SIZE) -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
+MACROS = $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), release-tools)
 LDPARAM =
-CCPARAM = -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
-MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
+CCPARAM = -msda=$(MSDA_SIZE) -nodefaultlibs -mv810 -finline-functions -Wall -O2 -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS)
+MACROS = __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), preprocessor)
 LDPARAM =
-CCPARAM = -nodefaultlibs -mv810 -Wall -O -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
-MACROS = __TOOLS $(SMALL_DATA_SECTION_MACRO) $(PUT_MEMORY_POOL_IN_SRAM) $(PUT_BSS_IN_SRAM)
+CCPARAM = -msda=$(MSDA_SIZE) -nodefaultlibs -mv810 -Wall -O -Winline -std=gnu99 -fstrict-aliasing -include $(CONFIG_FILE) $(ESSENTIALS) -E -P
+MACROS = __TOOLS $(COMMON_MACROS)
 endif
 
 
@@ -94,7 +120,7 @@ INCPATH := $(shell find $(VBJAENGINE) -type d -print)
 EXTRA_FILES = makefile
 
 # Where to store object and dependency files.
-STORE = .make-$(TYPE)-$(COMPILER)-$(COMPILER_OUTPUT)$(SMALL_DATA_SECTION_SUFIX)
+STORE = .make-$(TYPE)-$(COMPILER)-$(COMPILER_OUTPUT)
 
 # Makes a list of the source (.c) files.
 SOURCE := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.c))

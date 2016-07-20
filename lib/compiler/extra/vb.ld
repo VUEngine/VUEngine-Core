@@ -37,11 +37,10 @@ SECTIONS
         *(.rodata*)
     } >rom = 0xFF
 
-    /* Stop empty section from causing a compiler error */
-    /DISCARD/ :
+    .rosdata :
     {
-        *(.comment*)
-    }
+        *(.rosdata*)
+    } >rom = 0xFF
 
     v = .;
 
@@ -60,26 +59,30 @@ SECTIONS
     __data_end = .;
 
     __bss_start = .;
-    .bss :
+    .bss (NOLOAD):
     {
         *(.bss*)
         *(COMMON)
     } >ram = 0xFF
 
-    .sbss :
+    .sbss (NOLOAD):
     {
         *(.sbss*)
+        *(.scommon*)
     } >ram = 0xFF
     __bss_end = .;
 
     /* SRAM Work RAM */
-    .sram :
+    .sram (NOLOAD):
     {
         . = ALIGN(4);
         PROVIDE(__sram_start = .);
         . = ALIGN(4);
+        *(.sram*)
+        . = ALIGN(4);
         PROVIDE(__sram_end = .);
     } >sram
+
 
     /* Prevent overlaps with vbvectors */
     /* The use of new variables is because GCC 4.7's linker doesn't override the v value */

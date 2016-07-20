@@ -1007,7 +1007,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	if(this->ui)
 	{
 		// static to avoid call to _memcpy
-		static Transformation uiEnvironmentTransform =
+		static Transformation uiEnvironmentTransform __attribute__((section(".rodata"))) =
 		{
 				// local position
 				{0, 0, 0},
@@ -1037,6 +1037,7 @@ void Stage_stream(Stage this)
 
 	// if the screen is moving
 	static int streamingCycleCounter = 0;
+//	int streamingCycleCounter;
 	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
 	int streamingCycleBase = streamingDelayPerCycle / __STREAMING_CYCLES;
 
