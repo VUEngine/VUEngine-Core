@@ -7,9 +7,9 @@ SEARCH_DIR(.);
 
 MEMORY
 {
-    ram	(!r): ORIGIN =  0x05000000, LENGTH = 64k /*64k*/
-    sram (rw) : ORIGIN = 0x06000000, LENGTH = 8M
-    rom	(rx): ORIGIN =  0x07000000, LENGTH = 16M
+    ram	(!r)    : ORIGIN =  0x05000000, LENGTH = 64k /*64k*/
+    sram (rw)   : ORIGIN =  0x06000000, LENGTH = 8M
+    rom	(rx)    : ORIGIN =  0x07000000, LENGTH = 16M
 }
 
 /*
@@ -21,7 +21,6 @@ __text_vma = ORIGIN(rom);
 __data_vma = ORIGIN(ram);
 __sram_vma = ORIGIN(sram);
 __stack = ORIGIN(ram) + LENGTH(ram);
-__gp = ORIGIN(ram) + LENGTH(ram);
 __tp = ORIGIN(rom);
 
 SECTIONS
@@ -36,12 +35,7 @@ SECTIONS
     {
         *(.rodata*)
     } >rom = 0xFF
-/*
-    .rosdata :
-    {
-        *(.rosdata*)
-    } >rom = 0xFF
-*/
+
     v = .;
 
     /* Ram memory */
@@ -54,22 +48,22 @@ SECTIONS
 
     .sdata :
     {
+    	PROVIDE (__gp = . + 0x8000);
         *(.sdata*)
     } >ram = 0xFF
     __data_end = .;
 
     __bss_start = .;
+    .sbss (NOLOAD):
+    {
+        *(.sbss*)
+        *(.scommon*)
+    } >ram = 0xFF
 
     .bss (NOLOAD):
     {
         *(.bss*)
         *(COMMON)
-    } >ram = 0xFF
-
-    .sbss (NOLOAD):
-    {
-        *(.sbss*)
-        *(.scommon*)
     } >ram = 0xFF
     __bss_end = .;
 

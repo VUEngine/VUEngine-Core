@@ -83,7 +83,6 @@ static void MemoryPool_reset(MemoryPool this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 // defines a singleton (unique instance of a class)
 #define __MEMORY_POOL_SINGLETON(ClassName)																\
 																								        \
