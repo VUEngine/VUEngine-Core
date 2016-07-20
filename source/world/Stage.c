@@ -1007,7 +1007,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	if(this->ui)
 	{
 		// static to avoid call to _memcpy
-		static Transformation uiEnvironmentTransform __attribute__((section(".rodata"))) =
+		static Transformation uiEnvironmentTransform =
 		{
 				// local position
 				{0, 0, 0},

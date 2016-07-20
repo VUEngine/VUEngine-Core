@@ -29,7 +29,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // some wave forms data
-const static unsigned char sawSquareWave[32] __attribute__((section(".rodata"))) =
+const static unsigned char sawSquareWave[32] =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Saw + Square */
 	0x00, 0x00, 0x00, 0x00, 0x08, 0x10, 0x18, 0x20,
@@ -37,7 +37,7 @@ const static unsigned char sawSquareWave[32] __attribute__((section(".rodata")))
 	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-const static unsigned char glockenWave[32] __attribute__((section(".rodata"))) =
+const static unsigned char glockenWave[32] =
 {
 	0x20, 0x35, 0x26, 0x2d, 0x32, 0x19, 0x1d, 0x2a,	/* Glocken */
 	0x24, 0x30, 0x3e, 0x2e, 0x25, 0x21, 0x17, 0x18,
@@ -45,7 +45,7 @@ const static unsigned char glockenWave[32] __attribute__((section(".rodata"))) =
 	0x1c, 0x16, 0x23, 0x27, 0x0f, 0x13, 0x1a, 0x0b,
 };
 
-const static unsigned char square0Wave[32] __attribute__((section(".rodata"))) =
+const static unsigned char square0Wave[32] =
 {
 	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -53,7 +53,7 @@ const static unsigned char square0Wave[32] __attribute__((section(".rodata"))) =
 	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-const static unsigned char square1Wave[32] __attribute__((section(".rodata"))) =
+const static unsigned char square1Wave[32] =
 {
 	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave (Duty 75%) */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -61,7 +61,7 @@ const static unsigned char square1Wave[32] __attribute__((section(".rodata"))) =
 	0x1b, 0x2a, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-const static unsigned char organWave[32] __attribute__((section(".rodata"))) =
+const static unsigned char organWave[32] =
 {
 	0x20, 0x3f, 0x38, 0x38, 0x27, 0x23, 0x27, 0x11,	/* Organ (2+3)*/
 	0x13, 0x26, 0x0c, 0x26, 0x23, 0x22, 0x1e, 0x00,
@@ -69,7 +69,7 @@ const static unsigned char organWave[32] __attribute__((section(".rodata"))) =
 	0x2c, 0x2f, 0x1a, 0x1d, 0x1a, 0x08, 0x09, 0x00,
 };
 
-const static unsigned char sinAlphaWave[32] __attribute__((section(".rodata"))) =
+const static unsigned char sinAlphaWave[32] =
 {
 	0x20, 0x29, 0x30, 0x33, 0x33, 0x31, 0x31, 0x35,	/* Sin Wave + alpha */
 	0x39, 0x3e, 0x3e, 0x3a, 0x33, 0x2a, 0x23, 0x20,
@@ -77,7 +77,7 @@ const static unsigned char sinAlphaWave[32] __attribute__((section(".rodata"))) 
 	0x06, 0x0b, 0x0f, 0x0f, 0x0e, 0x0d, 0x10, 0x17,
 };
 
-const static unsigned char sawWave[32] __attribute__((section(".rodata"))) =
+const static unsigned char sawWave[32] =
 {
 	0x01, 0x03, 0x05, 0x07, 0x09, 0x0b, 0x0d, 0x0f,	/* Saw Wave */
 	0x31, 0x13, 0x15, 0x17, 0x19, 0x1b, 0x1d, 0x1f,
@@ -85,7 +85,7 @@ const static unsigned char sawWave[32] __attribute__((section(".rodata"))) =
 	0x11, 0x33, 0x35, 0x37, 0x39, 0x3b, 0x3d, 0x3f,
 };
 
-const static unsigned char sinWave[32] __attribute__((section(".rodata"))) =
+const static unsigned char sinWave[32] =
 {
 	0x00, 0x06, 0x0C, 0x11, 0x16, 0x1A, 0x1D, 0x1E,
 	0x1F, 0x1E, 0x29, 0x1D, 0x16, 0x11, 0x0C, 0x06,
@@ -120,14 +120,14 @@ typedef struct SOUNDREG
 } SOUNDREG;
 
 //reserved for world's background
-static u8* const WAVEDATA1 __attribute__((section(".rodata"))) =		(u8*)0x01000000;
-static u8* const WAVEDATA2 __attribute__((section(".rodata"))) =		(u8*)0x01000080;
+static u8* const WAVEDATA1 =		(u8*)0x01000000;
+static u8* const WAVEDATA2 =		(u8*)0x01000080;
 //reserved for world's background
-static u8* const WAVEDATA3 __attribute__((section(".rodata"))) =		(u8*)0x01000100;
-static u8* const WAVEDATA4 __attribute__((section(".rodata"))) =		(u8*)0x01000180;
-static u8* const WAVEDATA5 __attribute__((section(".rodata"))) =		(u8*)0x01000200;
-static u8* const MODDATA __attribute__((section(".rodata"))) =			(u8*)0x01000280;
-static SOUNDREG* const SND_REGS __attribute__((section(".rodata"))) =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0;
+static u8* const WAVEDATA3 =		(u8*)0x01000100;
+static u8* const WAVEDATA4 =		(u8*)0x01000180;
+static u8* const WAVEDATA5 =		(u8*)0x01000200;
+static u8* const MODDATA =			(u8*)0x01000280;
+static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0;
 #define SSTOP					   *(u8*)0x01000580
 
 #define __MAXIMUM_OUTPUT_LEVEL		0xF

@@ -29,7 +29,7 @@
 // 											DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-static const char numbers[17] __attribute__((section(".rodata"))) = "0123456789ABCDEF";
+static const char numbers[17] = "0123456789ABCDEF";
 
 int Utilities_intLength(int value)
 {
