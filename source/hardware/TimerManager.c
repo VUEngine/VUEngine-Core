@@ -49,8 +49,9 @@ __CLASS_DEFINITION(TimerManager, Object);
 static void TimerManager_constructor(TimerManager this);
 
 
+// use static globals instead of class' members to avoid dereferencing
 static TimerManager _timerManager;
-static ClockManager _clockManager;
+static SoundManager _soundManager;
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -68,7 +69,7 @@ static void TimerManager_constructor(TimerManager this)
 	this->tcrValue = 0;
 
 	_timerManager = this;
-	_clockManager = ClockManager_getInstance();
+	_soundManager = SoundManager_getInstance();
 }
 
 // class's destructor
@@ -107,17 +108,20 @@ void TimerManager_interruptHandler(void)
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
 
-	static u32 previousHundredthSecond = 0;
-	u32 currentHundredthSecond = (u32)(_timerManager->ticks / 10);
-    if(previousHundredthSecond < currentHundredthSecond)
-    {
-        previousHundredthSecond = currentHundredthSecond;
-	    // update sounds
-    	SoundManager_playSounds(SoundManager_getInstance());
-    }
-
 	// update clocks
 	_timerManager->ticks += __TIMER_RESOLUTION;
+
+    // play sounds
+	static u32 previousHundredthSecond = 0;
+	static u32 currentHundredthSecond = 0;
+	currentHundredthSecond += __TIMER_RESOLUTION;
+
+    if(previousHundredthSecond < (u32)(currentHundredthSecond / 10))
+    {
+        previousHundredthSecond = (u32)(currentHundredthSecond / 10);
+	    // update sounds
+    	SoundManager_playSounds(_soundManager);
+    }
 
 	// enable interrupts
 	TimerManager_setInterrupt(_timerManager, true);
