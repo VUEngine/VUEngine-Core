@@ -136,6 +136,7 @@ static void Stage_constructor(Stage this)
 	this->streamingHeadNode = NULL;
 	this->previousFocusEntityDistance = 0;
 	this->nextEntityId = 0;
+	this->streamingCycleCounter = 0;
 }
 
 // class's destructor
@@ -1036,17 +1037,15 @@ void Stage_stream(Stage this)
 	ASSERT(this, "Stage::stream: null this");
 
 	// if the screen is moving
-	static int streamingCycleCounter = 0;
-//	int streamingCycleCounter;
 	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
 	int streamingCycleBase = streamingDelayPerCycle / __STREAMING_CYCLES;
 
-	if(!streamingCycleCounter)
+	if(!this->streamingCycleCounter)
 	{
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
 	}
-	else if(streamingCycleCounter == streamingCycleBase)
+	else if(this->streamingCycleCounter == streamingCycleBase)
 	{
 		if(this->focusInGameEntity)
 		{
@@ -1058,21 +1057,21 @@ void Stage_stream(Stage this)
 			Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 		}
 	}
-	else if(streamingCycleCounter == streamingCycleBase * 2)
+	else if(this->streamingCycleCounter == streamingCycleBase * 2)
 	{
 		if(this->entitiesToLoad->head)
 		{
 			Stage_loadEntities(this);
 		}
 	}
-	else if(streamingCycleCounter == streamingCycleBase * 3)
+	else if(this->streamingCycleCounter == streamingCycleBase * 3)
 	{
 		if(this->entitiesToInitialize->head)
 		{
 			Stage_initializeEntities(this);
 		}
 	}
-	else if(streamingCycleCounter == streamingCycleBase * 4)
+	else if(this->streamingCycleCounter == streamingCycleBase * 4)
 	{
 		if(this->entitiesToTransform->head)
 		{
@@ -1080,9 +1079,9 @@ void Stage_stream(Stage this)
 		}
 	}
 
-	if(++streamingCycleCounter >= streamingDelayPerCycle)
+	if(++this->streamingCycleCounter >= streamingDelayPerCycle)
 	{
-		streamingCycleCounter  = 0;
+		this->streamingCycleCounter  = 0;
 	}
 }
 

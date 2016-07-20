@@ -74,8 +74,11 @@
         InGameEntity focusInGameEntity;																	\
         /* focus entity: previous distance. Used for the streaming */									\
         long previousFocusEntityDistance;																\
+        /* counter to control the streaming phses */													\
+        int streamingCycleCounter;																		\
         /* next entity's id */																			\
         s16 nextEntityId;																				\
+
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);
