@@ -54,6 +54,8 @@
         fix19_13 previousTime;																			\
         /* body to check for gravity */																	\
         VirtualNode nextBodyToCheckForGravity;															\
+        /* flag to test gravity on bodies */															\
+        int checkForGravity;                                                                            \
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -91,6 +93,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->friction = 0;
 	this->elapsedTime = 0;
 	this->previousTime = 0;
+    this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 }
 
 // class's destructor
@@ -280,13 +283,11 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	Clock_pause(clock, false);
 
-	static int checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
-
 	PhysicalWorld_processRemovedBodies(this);
 
-	if(!--checkForGravity)
+	if(0 > --this->checkForGravity)
 	{
-		checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
+		this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 		PhysicalWorld_checkForGravity(this);
 	}
 
@@ -317,6 +318,8 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualList_clear(this->bodies);
 	VirtualList_clear(this->activeBodies);
 	VirtualList_clear(this->removedBodies);
+
+    this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 }
 
 // check if an entity has been registered
