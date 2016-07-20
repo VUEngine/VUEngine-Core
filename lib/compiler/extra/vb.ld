@@ -36,12 +36,12 @@ SECTIONS
     {
         *(.rodata*)
     } >rom = 0xFF
-
+/*
     .rosdata :
     {
         *(.rosdata*)
     } >rom = 0xFF
-
+*/
     v = .;
 
     /* Ram memory */
@@ -59,6 +59,7 @@ SECTIONS
     __data_end = .;
 
     __bss_start = .;
+
     .bss (NOLOAD):
     {
         *(.bss*)
@@ -82,7 +83,6 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(__sram_end = .);
     } >sram
-
 
     /* Prevent overlaps with vbvectors */
     /* The use of new variables is because GCC 4.7's linker doesn't override the v value */
