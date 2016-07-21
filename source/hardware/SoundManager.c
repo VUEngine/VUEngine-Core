@@ -289,7 +289,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 				SND_REGS[channel].SxINT = 0x00;
 
 				//grab note
-				for(;i<2 && !this->bgm[this->actualNote[0]+3][i];i++);
+				for(; i < 2 && !this->bgm[this->actualNote[0] + 3][i]; i++);
 
 				if(i<2)
 				{
@@ -406,7 +406,7 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 				this->noteWait[fxS + 1] = 0;
 
 				//if note if greater than song's length
-				if(this->actualNote[fxS+1] > this->fxSound[fxS][0])
+				if(this->actualNote[fxS + 1] > this->fxSound[fxS][0])
 				{
 					//stop sound
 					this->fxSound[fxS] = NULL;
@@ -431,7 +431,7 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 				SND_REGS[fxS + 2].SxINT = 0x00;
 
 				//grab note
-				note=this->fxSound[fxS][this->actualNote[fxS+1]+6];
+				note=this->fxSound[fxS][this->actualNote[fxS + 1] + 6];
 
 				//if note is not off
 				if(note != 0)
