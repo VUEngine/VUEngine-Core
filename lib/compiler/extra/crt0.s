@@ -53,7 +53,7 @@ sram_dummy_loop:
 	movea	lo(__data_end),   r1, r1
 	movhi	hi(__data_vma),   r0, r6
 	movea	lo(__data_vma),   r6, r6
-	jr	end_init_data
+	jr	    end_init_data
 
 top_init_data:
 	ld.b	0[r7], r8
@@ -113,7 +113,7 @@ end_init_sram:
 
 	movhi	hi(_main),r0,r1
 	movea	lo(_main),r1,r1
-	jmp	[r1]
+	jmp	    [r1]
 __end:
 
 /* Reset when main returns */
@@ -124,7 +124,7 @@ __end:
 /* interrupt handler*/
 
 __interrupt_handler:
-	jmp	[r1]
+	jmp	    [r1]
 
 	.global	__interrupt_handler_prolog
 
@@ -167,10 +167,10 @@ __interrupt_handler_prolog:
 	add	    r6,r1
 	ld.w	-4[r1],r1
 	cmp	    r0,r1
-	be	    __interrupt_handler_epilog
+	be	    __interrupt_handler_epilogue
 	jal	    __interrupt_handler
 
-__interrupt_handler_epilog:
+__interrupt_handler_epilogue:
 	ld.w	0x0000[sp],lp
 	ld.w	0x0004[sp],r30
 	ld.w	0x0008[sp],r29
@@ -222,39 +222,39 @@ _rom_title:
 _interrupt_table:
 
     /* INTKEY (7FFFE00h) - Controller Interrupt */
-	add	-4, sp
+	add	    -4, sp
 	st.w	r1, 0[sp]
 	movhi	hi(__interrupt_handler_prolog), r0, r1
 	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	[r1]
+	jmp	    [r1]
 
     /* INTTIM (7FFFE10h) - Timer Interrupt */
-	add	-4, sp
+	add	    -4, sp
 	st.w	r1, 0[sp]
 	movhi	hi(__interrupt_handler_prolog), r0, r1
 	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	[r1]
+	jmp	    [r1]
 
     /* INTCRO (7FFFE20h) - Expansion Port Interrupt */
-	add	-4, sp
+	add	    -4, sp
 	st.w	r1, 0[sp]
 	movhi	hi(__interrupt_handler_prolog), r0, r1
 	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	[r1]
+	jmp	    [r1]
 
     /* INTCOM (7FFFE30h) - Link Port Interrupt */
-	add	-4, sp
+	add	    -4, sp
 	st.w	r1, 0[sp]
 	movhi	hi(__interrupt_handler_prolog), r0, r1
 	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	[r1]
+	jmp	    [r1]
 
     /* INTVPU (7FFFE40h) - Video Retrace Interrupt */
-	add	-4, sp
+	add	    -4, sp
 	st.w	r1, 0[sp]
 	movhi	hi(__interrupt_handler_prolog), r0, r1
 	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	[r1]
+	jmp	    [r1]
 
     /* Unused vectors (7FFFE50h-7FFFF5Fh) */
 	.fill	0x010F
