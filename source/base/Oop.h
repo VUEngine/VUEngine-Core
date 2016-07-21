@@ -282,10 +282,6 @@
 		/* insert class's virtual methods names */												        \
 		ClassName ## _METHODS(ClassName);							                			        \
 	};							                                                        		        \
-																								        \
-	/* create the vtable instance */															        \
-	extern struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;    \
-
 
 // declare a class
 #define __CLASS(ClassName)              														        \
