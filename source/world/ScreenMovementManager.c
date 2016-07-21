@@ -176,7 +176,7 @@ void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
 		if(duration)
 		{
 			// create time delay
-			Clock_delay(Game_getClock(Game_getInstance()), duration);
+			//Clock_delay(Game_getClock(Game_getInstance()), duration);
 		}
 
 		// increase brightness
@@ -201,7 +201,7 @@ void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
 		if(duration)
 		{
 			// create time delay
-			Clock_delay(Game_getClock(Game_getInstance()), duration);
+			//Clock_delay(Game_getClock(Game_getInstance()), duration);
 		}
 		// decrease brightness
 		SET_BRIGHT(i, i << 1, i);

@@ -46,11 +46,6 @@ sram_dummy_loop:
 	add		-1,    r6
 	bnz		sram_dummy_loop
 
-/* setup stack, gp, and tp */
-	movhi	hi(__gp), r0, r1
-	movea   lo(__gp), r1, r1
-	mov	    r1,       gp
-
 /* initiallize .data section */
 	movhi	hi(__data_start), r0, r7
 	movea	lo(__data_start), r7, r7
@@ -96,179 +91,21 @@ end_init_sram:
 	blt     top_init_sram
 
 /* disable-clear-enable cache GCC 4.7 */
-    ldsr    r0,chcw
-    ori     0x8001,r0,r1
-    ldsr    r1,chcw
-    mov     2,r1
-    ldsr    r1,chcw
+	ldsr	r0, sr5
+    ldsr    r0, chcw
+    mov     2, r1
+    ldsr    r1, chcw
+    ldsr    r0, chcw
 
+/* setup stack, gp, and tp */
+	movhi	hi(__stack),r0,sp
+	movea	lo(__stack),sp,sp
 
-/* cache GCC 4.4 */
-	ldsr	r0,sr5
-	mov	    2,r7
-    ldsr    r1,chcw
-/*	ldsr	r7,sr14*/
+	movhi	hi(__gp), r0, gp
+	movea   lo(__gp), gp, gp
 
-/* VIP */
-	movhi	0x0006,r0,r7
-	movea	0xF800,r7,r7
-
-	/* DPCTRL */
-	ld.h	0x0020[r7],r1
-	ori	0x0101,r1,r1
-	st.h	r1,0x0022[r7]
-
-	/* INTENB */
-	st.h	r0,0x0002[r7]
-
-	/* INTCLR */
-	movea	0xE01F,r0,r1
-	st.h	r1,0x0004[r7]
-
-	/* XPCTRL */
-	movea	0x0001,r0,r1
-	st.h	r1,0x0042[r7]
-
-	/* FRMCYC */
-	st.h	r1,0x002E[r7]
-
-	/* REST */
-	st.h	r0,0x002A[r7]
-
-	/* Column Table */
-	/*jal	_setcoltable*/
-
-
-/* wait until !(DTSTTS & 0x40) */
-loop_top4:
-	ld.h	0x0020[r7],r1
-	andi	0x40,r1,r1
-	be	loop_top4
-
-
-/* clear VRAM\CHR */
-	movhi	2,r0,r7
-	movea	0xFFFF,r7,r7
-	mov	r0,r1
-	jr	end_clear_vram
-top_clear_vram:
-	st.h	r0,0[r1]
-	add	2,r1
-end_clear_vram:
-	cmp	r7,r1
-	blt	top_clear_vram
-
-
-/* HW regs */
-	movhi	0x200,r0,r7
-
-	/* Link Port Transmit data */
-	movea	0xFF80,r0,r1
-	st.b	r1,0x0008[r7]
-
-	/* Link Port Control Register */
-	movea	0x0014,r0,r1
-	st.b	r1,0x0000[r7]
-
-	/* Link Port Control Register 2 */
-	mov	-1,r1
-	st.b	r1,0x0004[r7]
-
-	/* Timer Control Register */
-	st.b	r0,0x0020[r7]
-
-	/* Keypad Control Register */
-	movea	0x0080,r0,r1
-	st.b	r1,0x0028[r7]
-
-
-/* Audio regs */
-	movhi	0x0100,r0,r7
-
-	/* Main sound control register */
-	mov	1,r1
-	st.b	r1,0x0580[r7]
-
-/* clear channel length and control registers */
-	mov	r0,r1
-	jr	end_clear_channel_and_control_registers
-top_clear_channel_and_control_registers:
-	mov	r1,r6
-
-	shl	6,r6
-	movhi	0x0100,r6,r7
-	st.b	r0,0x0404[r7]
-	st.b	r0,0x0400[r7]
-	add	1,r1
-end_clear_channel_and_control_registers:
-	cmp	6,r1
-	blt	top_clear_channel_and_control_registers
-
-
-/* Main sound control register */
-	movhi	0x0100,r0,r7
-	st.b	r0,0x0580[r7]
-
-
-/* VIP */
-	movhi	6, r0, r7
-	movea	0xF800, r7, r7
-
-	/* XPCTRL */
-	movea	0x0001,r0,r1
-	st.h	r1,0x0042[r7]
-
-	/* DPCTRL */
-	movea	0x0101,r0,r1
-	st.h	r1,0x0022[r7]
-
-	/* BRTx */
-	movea	0x0020,r0,r1
-	st.h	r1,0x0024[r7]
-	st.h	r1,0x0028[r7]
-	movea	0x0040,r0,r1
-	st.h	r1,0x0026[r7]
-
-	/* JPLTx\GPLTx */
-	movea	0x00E4,r0,r1
-	st.h	r1,0x0060[r7]
-	st.h	r1,0x0062[r7]
-	st.h	r1,0x0064[r7]
-	st.h	r1,0x0066[r7]
-	st.h	r1,0x0068[r7]
-	st.h	r1,0x006A[r7]
-	st.h	r1,0x006C[r7]
-	st.h	r1,0x006E[r7]
-
-	/* BKCOL */
-	st.h	r0,0x0070[r7]
-
-	/* SPTx */
-	st.h	r0,0x004E[r7]
-	st.h	r0,0x004C[r7]
-	st.h	r0,0x004A[r7]
-	st.h	r0,0x0048[r7]
-
-	/* WORLD(31) = WRLD_END */
-	movhi	4,r0,r7
-	movea	0xDBE0,r7,r7
-	movea	0x0040,r0,r1
-	st.h	r1,0[r7]
-
-
-/* setup stack */
-	movhi	0x0501,r0,sp
-	movea	0xFFC0,sp,sp
-
-/* clear interrupt vectors */
-	mov	sp,r7
-	movea	0x0010,r0,r1
-loop_clear_interrupts:
-	st.w	r0,0[r7]
-	add	4,r7
-	add	-1,r1
-	bne	loop_clear_interrupts
-
+	movhi	hi(__tp),r0,tp
+	movea   lo(__tp), tp, tp
 
 /* long call main function */
 	movhi	hi(__end),r0,lp
@@ -277,23 +114,21 @@ loop_clear_interrupts:
 	movhi	hi(_main),r0,r1
 	movea	lo(_main),r1,r1
 	jmp	[r1]
-
 __end:
 
 /* Reset when main returns */
 	movhi   hi(0xFFFFFFF0),r0,lp
 	movea	lo(0xffffFFF0),lp,lp
-	jmp	[lp]
-
+	jmp	    [lp]
 
 /* interrupt handler*/
 
-jmp_r1:
+__interrupt_handler:
 	jmp	[r1]
 
-	.global	__interrupt_handler_top
+	.global	__interrupt_handler_prolog
 
-__interrupt_handler_top:
+__interrupt_handler_prolog:
 	addi	-0x0074,sp,sp
 	st.w	lp,0x0000[sp]
 	st.w	r30,0x0004[sp]
@@ -327,14 +162,15 @@ __interrupt_handler_top:
 	movhi	hi(_key_vector),r0,r1
 	movea	lo(_key_vector),r1,r1
 	stsr	sr5,r6
-	shr	0x0E,r6
+	shr	    0x0E,r6
 	andi	0x003C,r6,r6
-	add	r6,r1
+	add	    r6,r1
 	ld.w	-4[r1],r1
-	cmp	r0,r1
-	be	__interrupt_handler_end
-	jal	jmp_r1
-__interrupt_handler_end:
+	cmp	    r0,r1
+	be	    __interrupt_handler_epilog
+	jal	    __interrupt_handler
+
+__interrupt_handler_epilog:
 	ld.w	0x0000[sp],lp
 	ld.w	0x0004[sp],r30
 	ld.w	0x0008[sp],r29
@@ -368,58 +204,56 @@ __interrupt_handler_end:
 	addi	0x0078,sp,sp
 	reti
 
-
 	.section ".vbvectors","ax"
 	.align	1
 
 
 .global _rom_title
 
-    /* Rom info table (07FFFDE0h) */
-
+/* Rom info table (07FFFDE0h) */
 _rom_title:
-	.ascii "change this title   "	/* Game Title          */
-	.byte  0x00,0x00,0x00,0x00,0x00 /* Reserved            */
-	.ascii "MFGMID"			/* Manufacture/Game ID */
-	.byte  0x01			/* Rom Version         */
+	.ascii  "change this title   "	/* Game Title          */
+	.byte   0x00,0x00,0x00,0x00,0x00 /* Reserved            */
+	.ascii  "MFGMID"			/* Manufacture/Game ID */
+	.byte   0x01			/* Rom Version         */
 
-    /* Hardware Interupt Vectors */
 
-_int_table:
+/* Hardware Interupt Vectors */
+_interrupt_table:
 
     /* INTKEY (7FFFE00h) - Controller Interrupt */
 	add	-4, sp
 	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_top), r0, r1
-	movea	lo(__interrupt_handler_top), r1, r1
+	movhi	hi(__interrupt_handler_prolog), r0, r1
+	movea	lo(__interrupt_handler_prolog), r1, r1
 	jmp	[r1]
 
     /* INTTIM (7FFFE10h) - Timer Interrupt */
 	add	-4, sp
 	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_top), r0, r1
-	movea	lo(__interrupt_handler_top), r1, r1
+	movhi	hi(__interrupt_handler_prolog), r0, r1
+	movea	lo(__interrupt_handler_prolog), r1, r1
 	jmp	[r1]
 
     /* INTCRO (7FFFE20h) - Expansion Port Interrupt */
 	add	-4, sp
 	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_top), r0, r1
-	movea	lo(__interrupt_handler_top), r1, r1
+	movhi	hi(__interrupt_handler_prolog), r0, r1
+	movea	lo(__interrupt_handler_prolog), r1, r1
 	jmp	[r1]
 
     /* INTCOM (7FFFE30h) - Link Port Interrupt */
 	add	-4, sp
 	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_top), r0, r1
-	movea	lo(__interrupt_handler_top), r1, r1
+	movhi	hi(__interrupt_handler_prolog), r0, r1
+	movea	lo(__interrupt_handler_prolog), r1, r1
 	jmp	[r1]
 
     /* INTVPU (7FFFE40h) - Video Retrace Interrupt */
 	add	-4, sp
 	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_top), r0, r1
-	movea	lo(__interrupt_handler_top), r1, r1
+	movhi	hi(__interrupt_handler_prolog), r0, r1
+	movea	lo(__interrupt_handler_prolog), r1, r1
 	jmp	[r1]
 
     /* Unused vectors (7FFFE50h-7FFFF5Fh) */
@@ -462,5 +296,5 @@ _int_table:
     /* Reset Vector (7FFFFF0h) - This is how the ROM boots */
 	movhi	hi(_start), r0, r1
 	movea	lo(_start), r1, r1
-	jmp	[r1]
+	jmp	    [r1]
 	.fill	0x06

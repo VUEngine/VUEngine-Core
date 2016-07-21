@@ -82,24 +82,6 @@ void Clock_destructor(Clock this)
 	__DESTROY_BASE;
 }
 
-// time delay
-void Clock_delay(Clock this, int milliSeconds)
-{
-	ASSERT(this, "Clock::delay: null this");
-	u32 time = this->milliSeconds;
-
-	if(this->paused)
-	{
-		return;
-	}
-	else
-	{
-		u32 volatile *clockTime = (u32 *)&this->milliSeconds;
-
-		//while((*clockTime - time) < milliSeconds);
-	}
-}
-
 // print formatted class's attributes's states
 void Clock_print(Clock this, int col, int row, const char* font)
 {

@@ -20,14 +20,14 @@ Handlers as system reset
 __text_vma = ORIGIN(rom);
 __data_vma = ORIGIN(ram);
 __sram_vma = ORIGIN(sram);
-__stack = ORIGIN(ram) + LENGTH(ram);
-__tp = ORIGIN(rom);
+__stack = ORIGIN(ram) + LENGTH(ram) - 64;
 
 SECTIONS
 {
     /* Read-only sections, merged into text segment: */
     .text __text_vma :
     {
+    	PROVIDE (__tp = .);
         *(.text*)
     } >rom = 0xFF
 
