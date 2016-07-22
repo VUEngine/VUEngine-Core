@@ -320,6 +320,8 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualList_clear(this->removedBodies);
 
     this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
+    this->elapsedTime = 0;
+    this->previousTime = 0;
 }
 
 // check if an entity has been registered
