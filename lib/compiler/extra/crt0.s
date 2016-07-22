@@ -97,7 +97,7 @@ end_init_sram:
     ldsr    r1, chcw
     ldsr    r0, chcw
 
-/* setup stack, gp, and tp */
+/* setup sp, fp, gp, and tp */
 	movhi	hi(__stack),r0,sp
 	movea	lo(__stack),sp,sp
 
@@ -129,7 +129,7 @@ __interrupt_handler:
 	.global	__interrupt_handler_prolog
 
 __interrupt_handler_prolog:
-	addi	-0x0074,sp,sp
+	addi	-0x0078,sp,sp
 	st.w	lp,0x0000[sp]
 	st.w	r30,0x0004[sp]
 	st.w	r29,0x0008[sp]
@@ -159,6 +159,7 @@ __interrupt_handler_prolog:
 	st.w	r5,0x0068[sp]
 	st.w	r4,0x006C[sp]
 	st.w	r2,0x0070[sp]
+	st.w	r1,0x0074[sp]
 	movhi	hi(_key_vector),r0,r1
 	movea	lo(_key_vector),r1,r1
 	stsr	sr5,r6
@@ -169,6 +170,7 @@ __interrupt_handler_prolog:
 	cmp	    r0,r1
 	be	    __interrupt_handler_epilogue
 	jal	    __interrupt_handler
+
 
 __interrupt_handler_epilogue:
 	ld.w	0x0000[sp],lp
@@ -207,54 +209,38 @@ __interrupt_handler_epilogue:
 	.section ".vbvectors","ax"
 	.align	1
 
-
 .global _rom_title
 
 /* Rom info table (07FFFDE0h) */
 _rom_title:
-	.ascii  "change this title   "	/* Game Title          */
-	.byte   0x00,0x00,0x00,0x00,0x00 /* Reserved            */
-	.ascii  "MFGMID"			/* Manufacture/Game ID */
-	.byte   0x01			/* Rom Version         */
+	.ascii  "change this title   "		/* Game Title          */
+	.byte   0x00,0x00,0x00,0x00,0x00 	/* Reserved            */
+	.ascii  "MFGMID"					/* Manufacture/Game ID */
+	.byte   0x01						/* Rom Version         */
 
 
 /* Hardware Interupt Vectors */
 _interrupt_table:
 
     /* INTKEY (7FFFE00h) - Controller Interrupt */
-	add	    -4, sp
-	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_prolog), r0, r1
-	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	    [r1]
+	jr __interrupt_handler_prolog
+	.fill	0x0c
 
     /* INTTIM (7FFFE10h) - Timer Interrupt */
-	add	    -4, sp
-	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_prolog), r0, r1
-	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	    [r1]
+	jr __interrupt_handler_prolog
+	.fill	0x0c
 
     /* INTCRO (7FFFE20h) - Expansion Port Interrupt */
-	add	    -4, sp
-	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_prolog), r0, r1
-	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	    [r1]
+	jr __interrupt_handler_prolog
+	.fill	0x0c
 
     /* INTCOM (7FFFE30h) - Link Port Interrupt */
-	add	    -4, sp
-	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_prolog), r0, r1
-	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	    [r1]
+	jr __interrupt_handler_prolog
+	.fill	0x0c
 
     /* INTVPU (7FFFE40h) - Video Retrace Interrupt */
-	add	    -4, sp
-	st.w	r1, 0[sp]
-	movhi	hi(__interrupt_handler_prolog), r0, r1
-	movea	lo(__interrupt_handler_prolog), r1, r1
-	jmp	    [r1]
+	jr __interrupt_handler_prolog
+	.fill	0x0c
 
     /* Unused vectors (7FFFE50h-7FFFF5Fh) */
 	.fill	0x010F

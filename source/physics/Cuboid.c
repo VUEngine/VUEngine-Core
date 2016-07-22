@@ -306,11 +306,11 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	int axisToIgnore = __XAXIS | __YAXIS | __ZAXIS;
 	int passes = 0;
 
-	CACHE_ENABLE;
-
 	if(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z)
 	{
 		axisToIgnore = 0;
+
+    	CACHE_ENABLE;
 
 		// check for a collision on a single axis at a time
 		do
@@ -407,7 +407,10 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		}
 
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
+
+        CACHE_DISABLE;
 	}
+
 
 	// if not axis of collision was found
 	if((passes >= __MAX_NUMBER_OF_PASSES && !axisOfCollision) || (__XAXIS | __YAXIS | __ZAXIS) == axisToIgnore)
@@ -425,6 +428,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
 		positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
 		positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
+
+	    CACHE_ENABLE;
 
 		// test for collision carrying the displacement across all axixes
 		do
@@ -485,11 +490,11 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			}
 		}
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
+
+        CACHE_DISABLE;
 	}
 
 	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
-
-	CACHE_DISABLE;
 
 	return axisOfCollision & ~axisToIgnore;
 }

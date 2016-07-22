@@ -124,6 +124,7 @@ static void MemoryPool_reset(MemoryPool this);
 		return &_instance ## ClassName;															        \
 	}
 
+	
 // a singleton
 __MEMORY_POOL_SINGLETON(MemoryPool);
 

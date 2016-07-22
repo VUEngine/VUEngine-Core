@@ -408,6 +408,9 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		Sprite_update(sprite);
 		ObjectSprite_render(__SAFE_CAST(ObjectSprite, sprite));
 	}
+
+	// the cache is enabled in the ObjectSprite's main render bucle
+	CACHE_DISABLE;
 }
 
 void ObjectSpriteContainer_show(ObjectSpriteContainer this)

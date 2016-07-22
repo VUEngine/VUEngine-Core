@@ -903,6 +903,8 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
 
+    CACHE_ENABLE;
+
 	if(*(u8*)&this->invalidateGlobalPosition ||
 		this->children)
 	{

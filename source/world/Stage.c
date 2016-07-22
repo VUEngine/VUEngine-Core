@@ -943,10 +943,10 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 		return;
 	}
 
-	CACHE_ENABLE;
-
 	// need a temporal list to remove and delete entities
 	VirtualNode node = this->children->head;
+
+	CACHE_ENABLE;
 
 	// check which actors must be unloaded
 	for(; node; node = node->next)

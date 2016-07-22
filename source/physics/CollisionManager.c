@@ -317,9 +317,10 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 		collidingObjects = NULL;
 	}
 
+	CACHE_DISABLE;
+
 	this->checkingCollisions = false;
 
-	CACHE_DISABLE;
 }
 
 // unregister all shapes
