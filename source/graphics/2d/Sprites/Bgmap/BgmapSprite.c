@@ -375,8 +375,8 @@ void BgmapSprite_render(BgmapSprite this)
         worldPointer->mp = this->drawSpec.textureSource.mp;
 
         // -1 because 0 means 1 pixel for width
-        w = w -__WORLD_SIZE_DISPLACEMENT - (worldPointer->mx - this->drawSpec.textureSource.mx);
-        h = h -__WORLD_SIZE_DISPLACEMENT - (worldPointer->my - this->drawSpec.textureSource.my);
+        w = w - __WORLD_SIZE_DISPLACEMENT - (worldPointer->mx - this->drawSpec.textureSource.mx);
+        h = h - __WORLD_SIZE_DISPLACEMENT - (worldPointer->my - this->drawSpec.textureSource.my);
 
         worldPointer->w = w + worldPointer->gx >= __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
         worldPointer->h = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
