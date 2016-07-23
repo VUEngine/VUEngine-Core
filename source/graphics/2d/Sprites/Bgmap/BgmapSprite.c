@@ -329,31 +329,23 @@ void BgmapSprite_render(BgmapSprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-        CACHE_ENABLE;
-
 		// set the world screen position
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
-        int w = ((int)Texture_getCols(this->texture)<< 3);
-        int h = ((int)Texture_getRows(this->texture)<< 3);
+        int gxValueIfLessThanZero = 0;
+        fix19_13 xScaleFactor = ITOFIX19_13(1);
+        fix19_13 yScaleFactor = ITOFIX19_13(1);
 
-        int mxDisplacement = 0 > gx? -gx : 0;
-        int myDisplacement = 0 > gy? -gy : 0;
-
-        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
-        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-
-        worldPointer->mx = this->drawSpec.textureSource.mx;
-        worldPointer->my = this->drawSpec.textureSource.my;
-        worldPointer->mp = this->drawSpec.textureSource.mp;
+        u16 mDisplacementMask = 0xFFFF;
 
         bool clearRenderFlagValue = false;
 
         // set the world size according to the zoom
         if(WRLD_AFFINE & this->head)
         {
-            worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx;
+            gxValueIfLessThanZero = gx;
+            mDisplacementMask = 0;
 
             if(0 < this->paramTableRow)
             {
@@ -368,16 +360,30 @@ void BgmapSprite_render(BgmapSprite this)
 	        // move the param table reference -gy * 16 bytes down when 0 > gy
             worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) + ((0 > gy? -gy: 0) << 4) - 0x20000) >> 1) & 0xFFF0;
 
-            w *= FIX7_9TOF(abs(this->drawSpec.scale.x));
-            h *= FIX7_9TOF(abs(this->drawSpec.scale.y));
+//            xScaleFactor = FIX7_9TOFIX19_13((this->drawSpec.scale.x & 0x7FFF));
+//            yScaleFactor = FIX7_9TOFIX19_13((this->drawSpec.scale.y & 0x7FFF));
+            xScaleFactor = FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x));
+            yScaleFactor = FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y));
         }
-        else
-        {
-            worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
 
-            worldPointer->mx += mxDisplacement;
-            worldPointer->my += myDisplacement;
-        }
+        CACHE_ENABLE;
+
+        int w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(Texture_getCols(this->texture)<< 3), xScaleFactor));
+        int h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(Texture_getRows(this->texture)<< 3), yScaleFactor));
+
+        int mxDisplacement = 0 > gx? -gx : 0;
+        int myDisplacement = 0 > gy? -gy : 0;
+
+        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? gxValueIfLessThanZero: gx;
+        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+
+        worldPointer->mx = this->drawSpec.textureSource.mx;
+        worldPointer->my = this->drawSpec.textureSource.my;
+        worldPointer->mp = this->drawSpec.textureSource.mp;
+
+        worldPointer->mx += (mxDisplacement & mDisplacementMask);
+        worldPointer->my += (myDisplacement & mDisplacementMask);
 
         // -1 because 0 means 1 pixel for width
         w = w - __WORLD_SIZE_DISPLACEMENT - (mxDisplacement);
