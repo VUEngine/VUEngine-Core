@@ -338,6 +338,12 @@ void BgmapSprite_render(BgmapSprite this)
         int w = ((int)Texture_getCols(this->texture)<< 3);
         int h = ((int)Texture_getRows(this->texture)<< 3);
 
+        int mxDisplacement = 0 > gx? -gx : 0;
+        int myDisplacement = 0 > gy? -gy : 0;
+
+        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+
         worldPointer->mx = this->drawSpec.textureSource.mx;
         worldPointer->my = this->drawSpec.textureSource.my;
         worldPointer->mp = this->drawSpec.textureSource.mp;
@@ -368,19 +374,20 @@ void BgmapSprite_render(BgmapSprite this)
         else
         {
             worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
-            worldPointer->mx += 0 > gx? - gx : 0;
-            worldPointer->my += 0 > gy? - gy : 0;
+
+            worldPointer->mx += mxDisplacement;
+            worldPointer->my += myDisplacement;
         }
 
-        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
-        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-
         // -1 because 0 means 1 pixel for width
-        w = w - __WORLD_SIZE_DISPLACEMENT - (worldPointer->mx - this->drawSpec.textureSource.mx);
-        h = h - __WORLD_SIZE_DISPLACEMENT - (worldPointer->my - this->drawSpec.textureSource.my);
+        w = w - __WORLD_SIZE_DISPLACEMENT - (mxDisplacement);
+        h = h - __WORLD_SIZE_DISPLACEMENT - (myDisplacement);
 
-        worldPointer->w = w + gx >= __SCREEN_WIDTH? __SCREEN_WIDTH - gx: 0 > w? 0: w;
-        worldPointer->h = h + gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - gy: 0 > h? 0: h;
+        w = w + worldPointer->gx >= __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: w;
+        h = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: h;
+
+        worldPointer->w = 0 > w? 0: w;
+        worldPointer->h = 0 > h? 0: h;
 
         worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 

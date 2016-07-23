@@ -784,7 +784,6 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 			{
 				stageEntityDescription->id = 0x7FFF;
 				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
-			//	break;
 			}
 		}
 	}
