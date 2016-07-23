@@ -95,6 +95,8 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 
 	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);
 
+	CACHE_ENABLE;
+
 	FixedAffineMatrix fixedAffineMatrix;
 	fixedAffineMatrix.pa = FTOFIX7_9(affineMatrix.pa);
 	fixedAffineMatrix.pb = FTOFIX13_3(affineMatrix.pb);
@@ -109,8 +111,6 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 
-	CACHE_ENABLE;
-
 	for(; counter && i < totalRows; i++, counter--)
 	{
 		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
@@ -119,8 +119,6 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 		affine[i].pa = fixedAffineMatrix.pa;
 		affine[i].pc = fixedAffineMatrix.pc;
 	}
-
-	CACHE_DISABLE;
 
 	return i < totalRows? i: -1;
 }

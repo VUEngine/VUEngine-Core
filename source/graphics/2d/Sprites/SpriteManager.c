@@ -425,8 +425,6 @@ void SpriteManager_render(SpriteManager this)
 	// render from WORLD 31 to the lowest active one
 	VirtualNode node = this->sprites->tail;
 
-    CACHE_ENABLE;
-
 	for(; node; node = node->previous)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
@@ -439,8 +437,6 @@ void SpriteManager_render(SpriteManager this)
 		// and the previous end world is assigned to it
 		WA[sprite->worldLayer].head &= ~WRLD_END;
 	}
-
-    CACHE_DISABLE;
 
 	// configure printing layer and shutdown unused layers
 	SpriteManager_setLastLayer(this);

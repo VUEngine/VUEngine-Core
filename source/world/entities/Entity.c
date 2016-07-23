@@ -803,58 +803,37 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 {
 	ASSERT(this, "Entity::transform: null this");
 
+    // called recursively
+    CACHE_ENABLE;
+
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
 
-		if(updateSpriteTransformations && updateSpritePosition)
-		{
-			// move each child to a temporary list
-			for(; node ; node = node->next)
-			{
-				Sprite sprite = __SAFE_CAST(Sprite, node->data);
+        // move each child to a temporary list
+        for(; node ; node = node->next)
+        {
+            Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-				// calculate the scale
-				__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+            if(updateSpriteTransformations)
+            {
+                // calculate the scale
+                __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
-				// calculate sprite's parallax
-				__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+                // calculate sprite's parallax
+                __VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+            }
 
-				// update sprite's 2D position
-				__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+            if(updateSpritePosition)
+            {
+                // update sprite's 2D position
+                __VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
 
-				// update sprite's 2D rotation
-				__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
-			}
-		}
-		else if(!updateSpriteTransformations && updateSpritePosition)
-		{
-			// move each child to a temporary list
-			for(; node ; node = node->next)
-			{
-				Sprite sprite = __SAFE_CAST(Sprite, node->data);
+                // update sprite's 2D rotation
+                __VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
 
-				//update sprite's 2D position
-				__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
-
-				// update sprite's 2D rotation
-				__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
-			}
-		}
-		else if(updateSpriteTransformations && !updateSpritePosition)
-		{
-			// move each child to a temporary list
-			for(; node ; node = node->next)
-			{
-				Sprite sprite = __SAFE_CAST(Sprite, node->data);
-
-				// calculate the scale
-				__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
-
-				// calculate sprite's parallax
-				__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
-			}
-		}
+            }
+        }
 	}
 }
 
@@ -902,8 +881,6 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
-
-    CACHE_ENABLE;
 
 	if(*(u8*)&this->invalidateGlobalPosition ||
 		this->children)

@@ -265,8 +265,11 @@ void Container_update(Container this)
 	// if I have children
 	if(this->children)
 	{
-		// first remove children
-		Container_processRemovedChildren(this);
+	    if(this->removedChildren)
+	    {
+            // first remove children
+            Container_processRemovedChildren(this);
+        }
 
 		VirtualNode node = this->children->head;
 
@@ -397,9 +400,13 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	Container_invalidateGlobalPosition(this, __XAXIS | __YAXIS | __ZAXIS);
 }
 
-void Container_applyEnvironmentToTranformation(Container this, const Transformation* environmentTransform)
+inline void Container_applyEnvironmentToTranformation(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
+
+    // this method is called recursively as part of the transformation process of the game's cycle
+    // so place its code in the cache
+    CACHE_ENABLE;
 
 	// propagate position
 	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;

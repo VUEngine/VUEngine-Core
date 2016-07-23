@@ -97,6 +97,8 @@ int Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
+    CACHE_ENABLE;
+
 	if(__GET_CAST(InverseCuboid, shape))
 	{
 		return Cuboid_overlapsInverseCuboid(this, __SAFE_CAST(InverseCuboid, shape));
@@ -508,6 +510,9 @@ int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VB
 
 	if(__GET_CAST(Cuboid, shape))
     {
+        // this method is most likely called a couple of times in the same process
+        // so place it in the cache (because the compiler will inline the method below)
+        CACHE_ENABLE;
 		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, collidingSpatialObject), displacement);
 	}
 

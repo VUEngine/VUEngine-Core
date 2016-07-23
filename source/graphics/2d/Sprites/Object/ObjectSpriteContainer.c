@@ -171,6 +171,10 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 
+    // particle systems use object based sprites, when one is remove, it is probable that
+    // more will be inmediately removed too
+    CACHE_ENABLE;
+
 	this->removingObjectSprite = true;
 
 	__VIRTUAL_CALL(Sprite, hide, objectSprite);
