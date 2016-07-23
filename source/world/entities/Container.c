@@ -424,39 +424,6 @@ inline void Container_applyEnvironmentToTranformation(Container this, const Tran
 
 }
 
-/*
-static void Container_applyEnvironmentToTranformation1(Container this, const Transformation* environmentTransform)
-{
-	ASSERT(this, "Container::transform: null this");
-
-	VBVec3D* globalPosition = &this->transform.globalPosition;
-	VBVec3D localPosition = this->transform.localPosition;
-	VBVec3D environmentTransformGlobalPosition = environmentTransform->globalPosition;
-
-	Rotation* globalRotation = &this->transform.globalRotation;
-	Rotation localRotation = this->transform.localRotation;
-	Rotation environmentTransformGlobalRotation = environmentTransform->globalRotation;
-
-	Scale* globalScale = &this->transform.globalScale;
-	Scale localScale = this->transform.localScale;
-	Scale environmentTransformGlobalScale = environmentTransform->globalScale;
-
-	// concatenate transform
-	globalPosition->x = environmentTransformGlobalPosition.x + localPosition.x;
-	globalPosition->y = environmentTransformGlobalPosition.y + localPosition.y;
-	globalPosition->z = environmentTransformGlobalPosition.z + localPosition.z;
-
-	// propagate rotation
-	globalRotation->x = environmentTransformGlobalRotation.x + localRotation.x;
-	globalRotation->y = environmentTransformGlobalRotation.y + localRotation.y;
-	globalRotation->z = environmentTransformGlobalRotation.z + localRotation.z;
-
-	// propagate scale
-	globalScale->x = FIX7_9_MULT(environmentTransformGlobalScale.x, localScale.x);
-	globalScale->y = FIX7_9_MULT(environmentTransformGlobalScale.y, localScale.y);
-}
-*/
-
 // initial transform but don't call the virtual method
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform)
 {

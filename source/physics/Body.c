@@ -422,54 +422,31 @@ void Body_addForce(Body this, const Force* force)
 	Body_applyForce(this, force, ~Body_isMoving(this));
 }
 
-bool TEZT(Body this, int movementTypeOverXAxis, const Acceleration* gravity)
-{
-    return (this->velocity.x || this->acceleration.x || this->appliedForce.x || (__ACCELERATED_MOVEMENT == movementTypeOverXAxis && gravity->x && this->acceleration.x));
-}
-
-bool TEZT1(Body this, int movementTypeOverXAxis, const Acceleration* gravity)
-{
-    return (this->velocity.x | this->acceleration.x | this->appliedForce.x | (__ACCELERATED_MOVEMENT == movementTypeOverXAxis & gravity->x & this->acceleration.x));
-}
-
 // update movement
 void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 {
 	ASSERT(this, "Body::update: null this");
+
+    CACHE_ENABLE;
 
 	if(this->awake && this->active)
 	{
 		if(elapsedTime)
 		{
 			int axisStoppedMovement = 0;
-			int axisOfMovement = 0;
  			int axisOfChangeOfMovement = 0;
- 			int movementTypeOverXAxis = this->movementType.x;
- 			int movementTypeOverYAxis = this->movementType.y;
- 			int movementTypeOverZAxis = this->movementType.z;
 
-//			if(this->velocity.x || this->acceleration.x || this->appliedForce.x || (__ACCELERATED_MOVEMENT == movementTypeOverXAxis && gravity->x && this->acceleration.x))
-			{
-				axisOfMovement |= __XAXIS & (0xFFFF * (this->velocity.x || this->acceleration.x || this->appliedForce.x || (__ACCELERATED_MOVEMENT == movementTypeOverXAxis && gravity->x && this->acceleration.x)));
-			}
-
-//			if(this->velocity.y || this->acceleration.y || this->appliedForce.y || (__ACCELERATED_MOVEMENT == movementTypeOverYAxis && gravity->y && this->acceleration.y))
-			{
-				axisOfMovement |= __YAXIS & (0xFFFF * (this->velocity.y || this->acceleration.y || this->appliedForce.y || (__ACCELERATED_MOVEMENT == movementTypeOverXAxis && gravity->y && this->acceleration.y)));
-			}
-
-//		 	if(this->velocity.z || this->acceleration.z || this->appliedForce.z || (__ACCELERATED_MOVEMENT == movementTypeOverZAxis && gravity->z && this->acceleration.z))
-			{
-				axisOfMovement |= __ZAXIS & (0xFFFF * (this->velocity.z || this->acceleration.z || this->appliedForce.z || (__ACCELERATED_MOVEMENT == movementTypeOverXAxis && gravity->z && this->acceleration.z)));
-//				axisOfMovement |= __ZAXIS;
-		 	}
+			u32 axisOfMovement =
+                (__XAXIS & (0xFFFFFFFF * (this->velocity.x || this->acceleration.x || this->appliedForce.x || (__ACCELERATED_MOVEMENT == this->movementType.x && gravity->x && this->acceleration.x)))) |
+                (__YAXIS & (0xFFFFFFFF * (this->velocity.y || this->acceleration.y || this->appliedForce.y || (__ACCELERATED_MOVEMENT == this->movementType.y && gravity->y && this->acceleration.y)))) |
+                (__ZAXIS & (0xFFFFFFFF * (this->velocity.z || this->acceleration.z || this->appliedForce.z || (__ACCELERATED_MOVEMENT == this->movementType.z && gravity->z && this->acceleration.z))));
 
 			const Force* const frictionForce = Body_calculateFrictionForce(this, axisOfMovement, gravity);
 
 			// update each axis
 	 	 	if(__XAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __XAXIS & this->axisSubjectToGravity? gravity->x: 0, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, movementTypeOverXAxis, frictionForce->x);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __XAXIS & this->axisSubjectToGravity? gravity->x: 0, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, frictionForce->x);
 
 	 	 		if(movementStatus)
 				{
@@ -486,7 +463,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 
 	 	 	if(__YAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __YAXIS & this->axisSubjectToGravity? gravity->y: 0, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, movementTypeOverYAxis, frictionForce->y);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __YAXIS & this->axisSubjectToGravity? gravity->y: 0, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, frictionForce->y);
 
 	 	 		if(movementStatus)
 				{
@@ -503,7 +480,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 
 	 	 	if(__ZAXIS & axisOfMovement)
 			{
-	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __ZAXIS & this->axisSubjectToGravity? gravity->z: 0, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, movementTypeOverZAxis, frictionForce->z);
+	 	 		int movementStatus = Body_updateMovement(this, elapsedTime, __ZAXIS & this->axisSubjectToGravity? gravity->z: 0, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, frictionForce->z);
 
 	 	 		if(movementStatus)
 				{
@@ -539,8 +516,6 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovement, const Acceleration* const gravity)
 {
 	ASSERT(this, "Body::calculateFriction: null this");
-
-    CACHE_ENABLE;
 
 	// get friction fBody from the game world
 	fix19_13 worldFriction = PhysicalWorld_getFriction(Game_getPhysicalWorld(Game_getInstance())) << 1;

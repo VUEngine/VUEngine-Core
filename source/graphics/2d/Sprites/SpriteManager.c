@@ -507,7 +507,6 @@ void SpriteManager_render(SpriteManager this)
 
     VirtualNode node = this->spritesPerType->head;
 
-int ii = 0;
     for(; node; node = node->next)
     {
         // render from WORLD 31 to the lowest active one

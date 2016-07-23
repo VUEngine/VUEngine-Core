@@ -218,6 +218,8 @@ inline static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, cons
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
+    CACHE_ENABLE;
+
 	VBVec2D position2D;
 
 	__OPTICS_NORMALIZE(position3D);
@@ -753,8 +755,6 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 
 	this->streamingHeadNode = NULL;
 
-	CACHE_ENABLE;
-
 	for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = advancing ? node->next : node->previous, counter++)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
@@ -946,8 +946,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 	// need a temporal list to remove and delete entities
 	VirtualNode node = this->children->head;
 
-	CACHE_ENABLE;
-
 	// check which actors must be unloaded
 	for(; node; node = node->next)
 	{
@@ -978,8 +976,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 		}
 	}
-
-	CACHE_DISABLE;
 }
 
 // execute stage's logic
