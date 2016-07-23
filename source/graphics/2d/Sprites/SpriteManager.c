@@ -41,11 +41,19 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+typedef struct SpritesList
+{
+	const void* spriteClassVTable;
+	VirtualList sprites;
+
+} SpritesList;
+
 #define SpriteManager_ATTRIBUTES												                        \
 	/* super's attributes */													                        \
 	Object_ATTRIBUTES;															                        \
 	/* list of sprites to render */												                        \
 	VirtualList sprites;														                        \
+	VirtualList spritesPerType;														                    \
 	/* sorting nodes	*/														                        \
 	VirtualNode node;															                        \
 	VirtualNode nextNode;														                        \
@@ -76,6 +84,7 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
@@ -100,6 +109,8 @@ static void SpriteManager_constructor(SpriteManager this)
 	this->nextNode = NULL;
 
 	this->sprites = NULL;
+	this->spritesPerType = NULL;
+
 	this->recoveringLayers = false;
 	this->textureToWrite = NULL;
 	this->cyclesToWaitForTextureWriting = 0;
@@ -123,6 +134,21 @@ void SpriteManager_destructor(SpriteManager this)
 		this->sprites = NULL;
 	}
 
+    if(this->spritesPerType)
+    {
+        VirtualNode node = this->spritesPerType->head;
+
+        for(; node; node = node->next)
+        {
+            SpritesList* spritesList = (SpritesList*)node->data;
+            __DELETE(spritesList->sprites);
+            __DELETE_BASIC(spritesList);
+        }
+
+        __DELETE(this->spritesPerType);
+        this->spritesPerType = NULL;
+    }
+
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
@@ -141,7 +167,23 @@ void SpriteManager_reset(SpriteManager this)
 		this->sprites = NULL;
 	}
 
+    if(this->spritesPerType)
+    {
+        VirtualNode node = this->spritesPerType->head;
+
+        for(; node; node = node->next)
+        {
+            SpritesList* spritesList = (SpritesList*)node->data;
+            __DELETE(spritesList->sprites);
+            __DELETE_BASIC(spritesList);
+        }
+
+        __DELETE(this->spritesPerType);
+        this->spritesPerType = NULL;
+    }
+
 	this->sprites = __NEW(VirtualList);
+    this->spritesPerType = __NEW(VirtualList);
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -264,6 +306,31 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 	if(!alreadyLoadedSpriteNode)
 	{
 #endif
+        // add to the right sprite list
+        const void* spriteClassVTable = Object_getVTable(__SAFE_CAST(Object, sprite));
+
+        VirtualNode node = this->spritesPerType->head;
+
+        for(; node; node = node->next)
+        {
+            SpritesList* spritesList = (SpritesList*)node->data;
+
+            if(spritesList->spriteClassVTable == spriteClassVTable)
+            {
+                VirtualList_pushBack(spritesList->sprites, sprite);
+                break;
+            }
+        }
+
+        if(!node)
+        {
+            SpritesList* spritesList = __NEW_BASIC(SpritesList);
+            spritesList->spriteClassVTable = spriteClassVTable;
+            spritesList->sprites = __NEW(VirtualList);
+            VirtualList_pushBack(spritesList->sprites, sprite);
+            VirtualList_pushBack(this->spritesPerType, spritesList);
+        }
+
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
 		u8 layer = __TOTAL_LAYERS - 1;
@@ -299,9 +366,25 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	// check if exists
 	if(VirtualList_removeElement(this->sprites, sprite))
 	{
+	    // remove from the rendering list
+        const void* spriteClassVTable = Object_getVTable(__SAFE_CAST(Object, sprite));
+
+        VirtualNode node = this->spritesPerType->head;
+
+        for(; node; node = node->next)
+        {
+            SpritesList* spritesList = (SpritesList*)node->data;
+
+            if(spritesList->spriteClassVTable == spriteClassVTable)
+            {
+                VirtualList_removeElement(spritesList->sprites, sprite);
+                break;
+            }
+        }
+
 		u8 spriteLayer = sprite->worldLayer;
 
-		VirtualNode node = this->sprites->head;
+		node = this->sprites->head;
 
 		for(; node; node = node->next)
 		{
@@ -422,21 +505,27 @@ void SpriteManager_render(SpriteManager this)
 		SpriteManager_sortLayersProgressively(this);
 	}
 
-	// render from WORLD 31 to the lowest active one
-	VirtualNode node = this->sprites->tail;
+    VirtualNode node = this->spritesPerType->head;
 
-	for(; node; node = node->previous)
-	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
-		Sprite_update(sprite);
+int ii = 0;
+    for(; node; node = node->next)
+    {
+        // render from WORLD 31 to the lowest active one
+        VirtualNode spriteNode = (__SAFE_CAST(VirtualList, ((SpritesList*)node->data)->sprites))->head;
 
-		__VIRTUAL_CALL(Sprite, render, sprite);
+        for(; spriteNode; spriteNode = spriteNode->next)
+        {
+            Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 
-		// must make sure that no sprite has the end world
-		// which can be the case when a new sprite is added
-		// and the previous end world is assigned to it
-		WA[sprite->worldLayer].head &= ~WRLD_END;
-	}
+            Sprite_update(sprite);
+            __VIRTUAL_CALL(Sprite, render, sprite);
+
+            // must make sure that no sprite has the end world
+            // which can be the case when a new sprite is added
+            // and the previous end world is assigned to it
+            WA[sprite->worldLayer].head &= ~WRLD_END;
+        }
+    }
 
 	// configure printing layer and shutdown unused layers
 	SpriteManager_setLastLayer(this);

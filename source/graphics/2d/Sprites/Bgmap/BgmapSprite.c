@@ -329,90 +329,62 @@ void BgmapSprite_render(BgmapSprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-		if(__UPDATE_HEAD == this->renderFlag)
-		{
-			// assume that WORLD has been previously turned off
-			// so can write at any time
-			worldPointer->mx = this->drawSpec.textureSource.mx;
-			worldPointer->mp = this->drawSpec.textureSource.mp;
-			worldPointer->my = this->drawSpec.textureSource.my;
-
-			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-			worldPointer->gx = gx > __GX_LIMIT? __GX_LIMIT : gx < -__GX_LIMIT? -__GX_LIMIT : gx;
-			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
-
-			// set the world size according to the zoom
-			if(WRLD_AFFINE & this->head)
-			{
-				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __WORLD_SIZE_DISPLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __WORLD_SIZE_DISPLACEMENT;
-
-				// start writing to affine table right away
-				this->paramTableRow = 0;
-				BgmapSprite_doApplyAffineTransformations(this);
-			}
-			else
-			{
-				// -1 because 0 means 1 pixel for width
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
-			}
-
-			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
-			this->renderFlag = 0 < this->paramTableRow? __UPDATE_SIZE: false;
-			return;
-		}
+        CACHE_ENABLE;
 
 		// set the world screen position
-		if(this->renderFlag & __UPDATE_M)
-		{
-			worldPointer->mx = this->drawSpec.textureSource.mx;
-			worldPointer->mp = this->drawSpec.textureSource.mp;
-			worldPointer->my = this->drawSpec.textureSource.my;
+        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
-		}
+        int w = ((int)Texture_getCols(this->texture)<< 3);
+        int h = ((int)Texture_getRows(this->texture)<< 3);
 
-		// set the world screen position
-		if(this->renderFlag & __UPDATE_G)
-		{
-			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-			worldPointer->gx = gx > __GX_LIMIT ? __GX_LIMIT : gx < -__GX_LIMIT ? -__GX_LIMIT : gx;
-			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
-		}
+        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
 
-		if(this->renderFlag & __UPDATE_SIZE)
-		{
-			// set the world size according to the zoom
-			if(WRLD_AFFINE & this->head)
-			{
-				if(0 < this->paramTableRow)
-				{
-					BgmapSprite_doApplyAffineTransformations(this);
+        bool clearRenderFlagValue = false;
 
-					if(0 < this->paramTableRow)
-					{
-						this->renderFlag = __UPDATE_SIZE;
-						return;
-					}
-				}
+        // set the world size according to the zoom
+        if(WRLD_AFFINE & this->head)
+        {
+            worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx;
 
-				worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-				worldPointer->w = ((int)Texture_getCols(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.x)) - __WORLD_SIZE_DISPLACEMENT;
-				worldPointer->h = ((int)Texture_getRows(this->texture)<< 3) * FIX7_9TOF(abs(this->drawSpec.scale.y)) - __WORLD_SIZE_DISPLACEMENT;
-			}
-			else
-			{
-				// -1 because 0 means 1 pixel for width
-				worldPointer->w = (((int)Texture_getCols(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
-				worldPointer->h = (((int)Texture_getRows(this->texture))<< 3) - __WORLD_SIZE_DISPLACEMENT;
-			}
-		}
+            if(0 < this->paramTableRow)
+            {
+                BgmapSprite_doApplyAffineTransformations(this);
+
+                if(0 < this->paramTableRow)
+                {
+                    clearRenderFlagValue = __UPDATE_SIZE;
+                }
+            }
+
+	        // move the param table reference -gy * 16 bytes down when 0 > gy
+            worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) + ((0 > gy? -gy: 0) << 4) - 0x20000) >> 1) & 0xFFF0;
+
+            w *= FIX7_9TOF(abs(this->drawSpec.scale.x));
+            h *= FIX7_9TOF(abs(this->drawSpec.scale.y));
+        }
+        else
+        {
+            worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
+        }
+
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+
+        worldPointer->mx = 0 > gx? this->drawSpec.textureSource.mx - gx : this->drawSpec.textureSource.mx;
+        worldPointer->my = 0 > gy? this->drawSpec.textureSource.my - gy : this->drawSpec.textureSource.my;
+        worldPointer->mp = this->drawSpec.textureSource.mp;
+
+        // -1 because 0 means 1 pixel for width
+        w = w -__WORLD_SIZE_DISPLACEMENT - (worldPointer->mx - this->drawSpec.textureSource.mx);
+        h = h -__WORLD_SIZE_DISPLACEMENT - (worldPointer->my - this->drawSpec.textureSource.my);
+
+        worldPointer->w = w + worldPointer->gx >= __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
+        worldPointer->h = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
+
+        worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 
 		// make sure to not render again
-		this->renderFlag = false;
+		this->renderFlag = clearRenderFlagValue;
 	}
 }
 

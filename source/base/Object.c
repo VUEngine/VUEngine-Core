@@ -200,3 +200,10 @@ Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (
 
 	return Object_getCast((Object)this, targetClassGetClassMethod, (void* (*)(void))baseClassGetClassMethod());
 }
+
+const void* Object_getVTable(Object this)
+{
+	ASSERT(this, "Object::getVTable: null this");
+
+    return this->vTable;
+}

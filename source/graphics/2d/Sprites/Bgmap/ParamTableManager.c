@@ -139,8 +139,8 @@ static int ParamTableManager_calculateSize(ParamTableManager this, BgmapSprite b
 	ASSERT(this, "ParamTableManager::allocate: null this");
 	ASSERT(bSprite, "ParamTableManager::allocate: null sprite");
 
-	//calculate necessary space to allocate
-	//size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
+	// calculate necessary space to allocate
+	// size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
 	// add one row as padding to make sure not ovewriting take place
 	return (((int)Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bSprite))) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
 }

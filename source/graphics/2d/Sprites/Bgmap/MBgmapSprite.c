@@ -366,83 +366,45 @@ void MBgmapSprite_render(MBgmapSprite this)
 			return;
 		}
 
+        CACHE_ENABLE;
+
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-		if(__UPDATE_HEAD == this->renderFlag)
-		{
-			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-			worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
-			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
-			worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
+        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
+        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
 
-			worldPointer->mx = this->drawSpec.textureSource.mx;
-			worldPointer->mp = this->drawSpec.textureSource.mp;
-			worldPointer->my = this->drawSpec.textureSource.my;
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 
-			// set the world size
-			if(!this->mSpriteDefinition->xLoop)
-			{
-				int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
-				worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
-			}
-			else
-			{
-				worldPointer->gx -= (this->drawSpec.position.parallax);
-				worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
-			}
+        worldPointer->mx = this->drawSpec.textureSource.mx;
+        worldPointer->my = this->drawSpec.textureSource.my;
+        worldPointer->mp = this->drawSpec.textureSource.mp;
 
-			if(!this->mSpriteDefinition->yLoop)
-			{
-				int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
-				worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
-			}
-			else
-			{
-				worldPointer->h = __SCREEN_HEIGHT;
-			}
+        // set the world size
+        if(!this->mSpriteDefinition->xLoop)
+        {
+            int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
+            worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
+        }
+        else
+        {
+            worldPointer->gx -= (this->drawSpec.position.parallax);
+            worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
+        }
 
-			worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
-			this->renderFlag = false;
-			return;
-		}
+        if(!this->mSpriteDefinition->yLoop)
+        {
+            int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
+            worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
+        }
+        else
+        {
+            worldPointer->h = __SCREEN_HEIGHT;
+        }
 
-		// set the world screen position
-		if(this->renderFlag & (__UPDATE_G | __UPDATE_M))
-		{
-			int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-			worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
-			worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
-			int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
-			worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
-
-			worldPointer->mx = this->drawSpec.textureSource.mx;
-			worldPointer->mp = this->drawSpec.textureSource.mp;
-			worldPointer->my = this->drawSpec.textureSource.my;
-
-			// set the world size
-			if(!this->mSpriteDefinition->xLoop)
-			{
-				int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
-				worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
-			}
-			else
-			{
-				worldPointer->gx -= (this->drawSpec.position.parallax);
-				worldPointer->w = __SCREEN_WIDTH - 1 + (this->drawSpec.position.parallax << 1);
-			}
-
-			if(!this->mSpriteDefinition->yLoop)
-			{
-				int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
-				worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
-			}
-			else
-			{
-				worldPointer->h = __SCREEN_HEIGHT - 1;
-			}
-		}
+        worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 
 		// make sure to not render again
 		this->renderFlag = false;
