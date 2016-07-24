@@ -116,6 +116,8 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 		//create the telegram
 		Telegram telegram = __NEW(Telegram, 0, sender, receiver, message, extraInfo);
 
+        Printing(Printing_getInstance(), __GET_CLASS_NAME(sender), 30, 15, NULL);
+
 		//send the telegram to the recipient
 		bool result = __VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
 
@@ -227,10 +229,16 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 				}
 			}
 
+			Object sender = __SAFE_CAST(Object, Telegram_getSender(telegram));
+			Object receiver = __SAFE_CAST(Object, Telegram_getReceiver(telegram));
+
+        	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null sender");
+        	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null receiver");
+
 			// check if sender and receiver are still alive
-			if(!auxNode && *(u32*)Telegram_getSender(telegram) && *(u32*)Telegram_getReceiver(telegram))
+			if(!auxNode && (sender && *(u32*)sender) && (receiver && *(u32*)receiver))
 			{
-				__VIRTUAL_CALL(Object, handleMessage, Telegram_getReceiver(telegram), telegram);
+				__VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
 			}
 		}
 
