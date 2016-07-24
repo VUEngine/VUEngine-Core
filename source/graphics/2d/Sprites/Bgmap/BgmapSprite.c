@@ -329,6 +329,8 @@ void BgmapSprite_render(BgmapSprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
+        CACHE_ENABLE;
+
 		// set the world screen position
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
@@ -360,13 +362,9 @@ void BgmapSprite_render(BgmapSprite this)
 	        // move the param table reference -gy * 16 bytes down when 0 > gy
             worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) + ((0 > gy? -gy: 0) << 4) - 0x20000) >> 1) & 0xFFF0;
 
-//            xScaleFactor = FIX7_9TOFIX19_13((this->drawSpec.scale.x & 0x7FFF));
-//            yScaleFactor = FIX7_9TOFIX19_13((this->drawSpec.scale.y & 0x7FFF));
             xScaleFactor = FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x));
             yScaleFactor = FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y));
         }
-
-        CACHE_ENABLE;
 
         int w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(Texture_getCols(this->texture)<< 3), xScaleFactor));
         int h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(Texture_getRows(this->texture)<< 3), yScaleFactor));

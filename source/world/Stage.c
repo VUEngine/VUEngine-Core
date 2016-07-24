@@ -975,6 +975,8 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 		}
 	}
+
+	CACHE_DISABLE;
 }
 
 // execute stage's logic
