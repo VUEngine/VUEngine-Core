@@ -116,8 +116,6 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 		//create the telegram
 		Telegram telegram = __NEW(Telegram, 0, sender, receiver, message, extraInfo);
 
-        Printing(Printing_getInstance(), __GET_CLASS_NAME(sender), 30, 15, NULL);
-
 		//send the telegram to the recipient
 		bool result = __VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
 
