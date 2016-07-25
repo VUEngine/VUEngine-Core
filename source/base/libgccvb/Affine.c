@@ -81,7 +81,7 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
 
 	float scaleX = FIX7_9TOF(scale->x);
-	float scaleY = FIX7_9TOF(scale->x);
+	float scaleY = FIX7_9TOF(scale->y);
 	float absoluteScaleX = FIX7_9TOF(abs(scale->x));
 	float absoluteScaleY = FIX7_9TOF(abs(scale->y));
 
@@ -113,7 +113,7 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
-
+counter = 10000;
 	for(; i < finalRow; i++, counter--)
 	{
 		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
