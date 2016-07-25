@@ -209,6 +209,6 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D  pos
 int SoundManager_playingSound(SoundManager this, const u16* fxSound);
 void SoundManager_stopSound(SoundManager this, BYTE *sound);
 void SoundManager_stopAllSound(SoundManager this);
-
+void SoundManager_playSounds(SoundManager this);
 
 #endif
