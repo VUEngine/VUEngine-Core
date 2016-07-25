@@ -77,6 +77,6 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName);
 void Object_fireEvent(Object this, char* eventName);
 Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (*baseClassGetClassMethod)());
-
+const void* Object_getVTable(Object this);
 
 #endif
