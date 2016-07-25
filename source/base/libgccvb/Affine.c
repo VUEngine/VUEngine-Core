@@ -73,7 +73,7 @@ typedef struct FixedAffineMatrix
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer)
+fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer, int finalRow)
 {
 	AffineMatrix affineMatrix;
 
@@ -81,7 +81,7 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
 
 	float scaleX = FIX7_9TOF(scale->x);
-	float scaleY = FIX7_9TOF(scale->y);
+	float scaleY = FIX7_9TOF(scale->x);
 	float absoluteScaleX = FIX7_9TOF(abs(scale->x));
 	float absoluteScaleY = FIX7_9TOF(abs(scale->y));
 
@@ -97,7 +97,7 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 	affineMatrix.dy = ((s16)worldPointer->my + (s16)halfheight / absoluteScaleY) - (affineMatrix.pc * (s16)halfWidth + affineMatrix.pd * (s16)halfheight);
 	affineMatrix.paralax = 0;
 
-	AffineEntry* affine = (AffineEntry*)((worldPointer->param << 1) + 0x20000);
+	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(worldPointer->param);
 
 	FixedAffineMatrix fixedAffineMatrix;
 	fixedAffineMatrix.pa = FTOFIX7_9(affineMatrix.pa);
@@ -109,11 +109,12 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 	fixedAffineMatrix.paralax = affineMatrix.paralax;
 
 	// add one row for cleaning up
-	int totalRows = ((s16)worldPointer->h) * scaleY + 1;
+    finalRow = finalRow * scaleY + 1;
+
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
-
-	for(; counter && i < totalRows; i++, counter--)
+counter = 10000;
+	for(; i < finalRow; i++, counter--)
 	{
 		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
 		affine[i].paralax = fixedAffineMatrix.paralax;
@@ -122,5 +123,5 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 		affine[i].pc = fixedAffineMatrix.pc;
 	}
 
-	return i < totalRows? i: -1;
+	return i < finalRow? i: -1;
 }
