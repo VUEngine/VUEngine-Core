@@ -30,12 +30,11 @@
 void Mem_copy (u8* dest, const u8* src, u16 num)
 {
 	u16 i;
-	CACHE_ENABLE;
+
 	for(i = 0; i < num; i++)
 	{
 		*dest++ = *src++;
 	}
-	CACHE_DISABLE;
 }
 
 // Set each byte in a block of data to a given value.
@@ -44,7 +43,7 @@ void Mem_set (u8* dest, u16 src, u16 num)
 	u16 i;
 	for(i = 0; i < num; i++,dest++)
 	{
-		*dest += src;	
+		*dest += src;
 		dest++;
 		*dest = src >> 8;
 	}

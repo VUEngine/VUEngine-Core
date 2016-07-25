@@ -73,7 +73,7 @@ typedef struct FixedAffineMatrix
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const TextureSource* textureSource, s16 width, s16 height)
+fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer)
 {
 	AffineMatrix affineMatrix;
 
@@ -84,16 +84,20 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 	float scaleY = FIX7_9TOF(scale->y);
 	float absoluteScaleX = FIX7_9TOF(abs(scale->x));
 	float absoluteScaleY = FIX7_9TOF(abs(scale->y));
+
+	s16 halfWidth = ((s16)worldPointer->w) >> 1;
+	s16 halfheight = ((s16)worldPointer->h) >> 1;
+
 	affineMatrix.pa = COSF(rotation->z) / scaleX;
 	affineMatrix.pb = -SINF(rotation->z) / scaleX;
 	affineMatrix.pc = SINF(rotation->z) / scaleY;
 	affineMatrix.pd = COSF(rotation->z) / scaleY;
 
-	affineMatrix.dx = (textureSource->mx + width / absoluteScaleX) - (affineMatrix.pa * width + affineMatrix.pb * height);
-	affineMatrix.dy = (textureSource->my + height / absoluteScaleY) - (affineMatrix.pc * width + affineMatrix.pd * height);
+	affineMatrix.dx = ((s16)worldPointer->mx + (s16)halfWidth / absoluteScaleX) - (affineMatrix.pa * (s16)halfWidth + affineMatrix.pb * (s16)halfheight);
+	affineMatrix.dy = ((s16)worldPointer->my + (s16)halfheight / absoluteScaleY) - (affineMatrix.pc * (s16)halfWidth + affineMatrix.pd * (s16)halfheight);
 	affineMatrix.paralax = 0;
 
-	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);
+	AffineEntry* affine = (AffineEntry*)((worldPointer->param << 1) + 0x20000);
 
 	FixedAffineMatrix fixedAffineMatrix;
 	fixedAffineMatrix.pa = FTOFIX7_9(affineMatrix.pa);
@@ -105,7 +109,7 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, const Scale* scale, 
 	fixedAffineMatrix.paralax = affineMatrix.paralax;
 
 	// add one row for cleaning up
-	int totalRows = (height << 1) * scaleY + 1;
+	int totalRows = ((s16)worldPointer->h) * scaleY + 1;
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 

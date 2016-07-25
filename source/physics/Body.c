@@ -427,8 +427,6 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 {
 	ASSERT(this, "Body::update: null this");
 
-    CACHE_ENABLE;
-
 	if(this->awake && this->active)
 	{
 		if(elapsedTime)

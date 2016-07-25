@@ -95,7 +95,6 @@ end_init_sram:
     ldsr    r0, chcw
     mov     2, r1
     ldsr    r1, chcw
-    ldsr    r0, chcw
 
 /* setup sp, fp, gp, and tp */
 	movhi	hi(__stack),r0,sp

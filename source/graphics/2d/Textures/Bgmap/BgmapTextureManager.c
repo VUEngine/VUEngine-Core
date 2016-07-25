@@ -319,8 +319,6 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 
 	int i = 0;
 
-	CACHE_ENABLE;
-
 	// try to find a texture with the same bgmap definition
 	for(; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
@@ -337,8 +335,6 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 			}
 		}
 	}
-
-	CACHE_DISABLE;
 
 	return NULL;
 }

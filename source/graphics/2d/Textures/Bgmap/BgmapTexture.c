@@ -147,8 +147,6 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
-	CACHE_ENABLE;
-
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
@@ -157,8 +155,6 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-
-	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;
 }
@@ -183,8 +179,6 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
-	CACHE_ENABLE;
-
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
@@ -193,8 +187,6 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-
-	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;
 }
@@ -222,8 +214,6 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
-	CACHE_ENABLE;
-
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
@@ -238,8 +228,6 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 					(palette) | (charLocation + area * (j - 1)));
 		}
 	}
-
-	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;
 }
@@ -264,8 +252,6 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
 
-	CACHE_ENABLE;
-
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
@@ -274,8 +260,6 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-
-	CACHE_DISABLE;
 
 	this->remainingRowsToBeWritten++;
 }

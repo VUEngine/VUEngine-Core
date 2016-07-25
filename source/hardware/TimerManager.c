@@ -127,11 +127,21 @@ void TimerManager_interruptHandler(void)
 	TimerManager_setInterrupt(_timerManager, true);
 }
 
+u32 TimerManager_getTicks(TimerManager this)
+{
+	ASSERT(this, "TimerManager::getTicks: null this");
+
+    return this->ticks;
+}
+
 u32 TimerManager_getAndResetTicks(TimerManager this)
 {
 	ASSERT(this, "TimerManager::getTicks: null this");
-    u32 ticks = _timerManager->ticks;
-    _timerManager->ticks = 0;
+
+    u32 ticks = this->ticks;
+
+    this->ticks = 0;
+
     return ticks;
 }
 

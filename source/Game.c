@@ -111,6 +111,7 @@ enum GameCurrentProcess
         ClockManager clockManager;																		\
         KeypadManager keypadManager;																	\
         VPUManager vpuManager;																			\
+        TimerManager timerManager;																		\
         Screen screen;																					\
         /* game's next state */																			\
         GameState nextState;																			\
@@ -199,6 +200,7 @@ static void Game_constructor(Game this)
 	this->screen = Screen_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
 	this->vpuManager = VPUManager_getInstance();
+	this->timerManager = TimerManager_getInstance();
 	SoundManager_getInstance();
 	CharSetManager_getInstance();
 	BgmapTextureManager_getInstance();
@@ -857,7 +859,7 @@ static void Game_update(Game this)
 	    VIP_REGS[INTCLR]= GAMESTART;
 
         // update the clocks
-        ClockManager_update(this->clockManager, TimerManager_getAndResetTicks(TimerManager_getInstance()));
+        ClockManager_update(this->clockManager, TimerManager_getAndResetTicks(this->timerManager));
 
 	    // register the frame buffer in use by the VPU's drawing process
 	    VPUManager_registerCurrentDrawingframeBufferSet(this->vpuManager);
@@ -869,7 +871,7 @@ static void Game_update(Game this)
 #endif
 
 #ifdef __PROFILING
-	    timeBeforeProcess = Clock_getTime(this->clock);
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 
 	    // the engine's game logic is free of racing
@@ -877,7 +879,7 @@ static void Game_update(Game this)
 	    Game_updateVisuals(this);
 
 #ifdef __PROFILING
-	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 	    updateVisualsTime = updateVisualsTime < processTime ? processTime : updateVisualsTime;
 #endif
 
@@ -886,12 +888,12 @@ static void Game_update(Game this)
 		Game_checkForNewState(this);
 
 #ifdef __PROFILING
-	    timeBeforeProcess = Clock_getTime(this->clock);
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 	    // update game's logic
 	    Game_updateLogic(this);
 #ifdef __PROFILING
-	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 	    updateLogicTime = updateLogicTime < processTime ? processTime : updateLogicTime;
 #endif
 
@@ -903,23 +905,23 @@ static void Game_update(Game this)
 #endif
 
 #ifdef __PROFILING
-	    timeBeforeProcess = Clock_getTime(this->clock);
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
 #ifdef __PROFILING
-	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 	    updatePhysicsTime = updatePhysicsTime < processTime ? processTime : updatePhysicsTime;
 #endif
 
 #ifdef __PROFILING
-	    timeBeforeProcess = Clock_getTime(this->clock);
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 	    // apply transformations
 	    Game_updateTransformations(this);
 #ifdef __PROFILING
-	    processTime = Clock_getTime(this->clock) - timeBeforeProcess;
+	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 	    updateTransformationsTime = updateTransformationsTime < processTime ? processTime : updateTransformationsTime;
 #endif
 

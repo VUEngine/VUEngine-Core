@@ -257,8 +257,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 	this->node = this->node ? this->nextNode ? this->node : this->node->next: this->sprites->head;
 
-    CACHE_ENABLE;
-
 	for(; this->node; this->node = this->node->next)
 	{
 		this->nextNode = this->node->next;
@@ -289,8 +287,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			}
 		}
 	}
-
-    CACHE_DISABLE;
 }
 
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite)

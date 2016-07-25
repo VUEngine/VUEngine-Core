@@ -124,7 +124,7 @@ static void MemoryPool_reset(MemoryPool this);
 		return &_instance ## ClassName;															        \
 	}
 
-	
+
 // a singleton
 __MEMORY_POOL_SINGLETON(MemoryPool);
 
@@ -419,7 +419,4 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
 	Printing_int(Printing_getInstance(), usedBytesPercentage, x + 7 - Utilities_intLength(usedBytesPercentage), y, NULL);
 	Printing_text(Printing_getInstance(), "% ", x + 7, y++, NULL);
-
-
 }
-

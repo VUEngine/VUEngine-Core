@@ -218,8 +218,6 @@ inline static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, cons
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
-    CACHE_ENABLE;
-
 	VBVec2D position2D;
 
 	__OPTICS_NORMALIZE(position3D);
@@ -788,8 +786,6 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 		}
 	}
 
-	CACHE_DISABLE;
-
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
 }
 
@@ -975,8 +971,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 		}
 	}
-
-	CACHE_DISABLE;
 }
 
 // execute stage's logic

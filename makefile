@@ -28,7 +28,7 @@ COMPILER_NAME = v810-nec-elf32
 endif
 
 ifeq ($(COMPILER), 4.7)
-COMPILER_NAME = v810-nec-elf32
+COMPILER_NAME = v810
 endif
 
 GCC = $(COMPILER_NAME)-gcc

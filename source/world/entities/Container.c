@@ -404,10 +404,6 @@ inline void Container_applyEnvironmentToTranformation(Container this, const Tran
 {
 	ASSERT(this, "Container::transform: null this");
 
-    // this method is called recursively as part of the transformation process of the game's cycle
-    // so place its code in the cache
-    CACHE_ENABLE;
-
 	// propagate position
 	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
 	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;

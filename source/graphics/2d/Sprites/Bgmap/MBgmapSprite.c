@@ -366,8 +366,6 @@ void MBgmapSprite_render(MBgmapSprite this)
 			return;
 		}
 
-        CACHE_ENABLE;
-
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 

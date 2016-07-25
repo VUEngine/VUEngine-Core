@@ -17,7 +17,7 @@
 #undef __PRINT_DETAILED_MEMORY_POOL_STATUS
 
 // show game's process profiling
-#undef __PROFILING
+#define __PROFILING
 
 // alert stack overflows
 #define __ALERT_STACK_OVERFLOW

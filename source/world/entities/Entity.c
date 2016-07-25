@@ -803,9 +803,6 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 {
 	ASSERT(this, "Entity::transform: null this");
 
-    // called recursively
-    CACHE_ENABLE;
-
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
@@ -1016,9 +1013,6 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	int x = 0;
 	int y = 0;
 	int z = 0;
-
-	CACHE_ENABLE;
-
 	if(this->sprites)
 	{
 		VirtualNode spriteNode = this->sprites->head;

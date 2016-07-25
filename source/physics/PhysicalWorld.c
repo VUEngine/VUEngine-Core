@@ -224,7 +224,6 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 	int counter = 0;
 
-    CACHE_ENABLE;
 	// prepare bodies which move
 	// this will place the shape in the owner's position
 	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->next, counter++)
@@ -262,8 +261,6 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 			}
 		}
 	}
-
-    CACHE_DISABLE;
 
 	this->nextBodyToCheckForGravity = node;
 }

@@ -97,8 +97,6 @@ int Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
-    CACHE_ENABLE;
-
 	if(__GET_CAST(InverseCuboid, shape))
 	{
 		return Cuboid_overlapsInverseCuboid(this, __SAFE_CAST(InverseCuboid, shape));
@@ -312,8 +310,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	{
 		axisToIgnore = 0;
 
-    	CACHE_ENABLE;
-
 		// check for a collision on a single axis at a time
 		do
 		{
@@ -409,8 +405,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		}
 
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
-
-        CACHE_DISABLE;
 	}
 
 
@@ -430,8 +424,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
 		positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
 		positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
-
-	    CACHE_ENABLE;
 
 		// test for collision carrying the displacement across all axixes
 		do
@@ -492,8 +484,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			}
 		}
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
-
-        CACHE_DISABLE;
 	}
 
 	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
@@ -510,9 +500,6 @@ int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VB
 
 	if(__GET_CAST(Cuboid, shape))
     {
-        // this method is most likely called a couple of times in the same process
-        // so place it in the cache (because the compiler will inline the method below)
-        CACHE_ENABLE;
 		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), __VIRTUAL_CALL_UNSAFE(SpatialObject, getGap, collidingSpatialObject), displacement);
 	}
 

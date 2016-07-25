@@ -27,6 +27,7 @@
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
 #include <Screen.h>
+#include <VPUManager.h>
 #include <debugConfig.h>
 
 
@@ -59,8 +60,8 @@ extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
-static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, const WORLD* worldPointer);
+static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this, const WORLD* worldPointer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -329,71 +330,81 @@ void BgmapSprite_render(BgmapSprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-        CACHE_ENABLE;
-
 		// set the world screen position
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
         int gxValueIfLessThanZero = 0;
-        fix19_13 xScaleFactor = ITOFIX19_13(1);
-        fix19_13 yScaleFactor = ITOFIX19_13(1);
-
-        u16 mDisplacementMask = 0xFFFF;
 
         bool clearRenderFlagValue = false;
 
-        // set the world size according to the zoom
-        if(WRLD_AFFINE & this->head)
-        {
-            gxValueIfLessThanZero = gx;
-            mDisplacementMask = 0;
-
-            if(0 < this->paramTableRow)
-            {
-                BgmapSprite_doApplyAffineTransformations(this);
-
-                if(0 < this->paramTableRow)
-                {
-                    clearRenderFlagValue = __UPDATE_SIZE;
-                }
-            }
-
-	        // move the param table reference -gy * 16 bytes down when 0 > gy
-            worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) + ((0 > gy? -gy: 0) << 4) - 0x20000) >> 1) & 0xFFF0;
-
-            xScaleFactor = FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x));
-            yScaleFactor = FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y));
-        }
-
-        int w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(Texture_getCols(this->texture)<< 3), xScaleFactor));
-        int h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(Texture_getRows(this->texture)<< 3), yScaleFactor));
+        int w = Texture_getCols(this->texture)<< 3;
+        int h = Texture_getRows(this->texture)<< 3;
 
         int mxDisplacement = 0 > gx? -gx : 0;
         int myDisplacement = 0 > gy? -gy : 0;
-
-        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? gxValueIfLessThanZero: gx;
-        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
-        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 
         worldPointer->mx = this->drawSpec.textureSource.mx;
         worldPointer->my = this->drawSpec.textureSource.my;
         worldPointer->mp = this->drawSpec.textureSource.mp;
 
-        worldPointer->mx += (mxDisplacement & mDisplacementMask);
-        worldPointer->my += (myDisplacement & mDisplacementMask);
+
+        // set the world size according to the zoom
+        if(WRLD_AFFINE & this->head)
+        {
+            gxValueIfLessThanZero = gx;
+
+            mxDisplacement = 0;
+            myDisplacement = 0;
+
+            if(0 <= this->paramTableRow)
+            {
+                worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(w), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x))));
+                worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(h), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y))));
+
+                worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
+
+                this->paramTableRow = this->paramTableRow? this->paramTableRow : 0 > gy? -gy: 0;
+
+                BgmapSprite_doApplyAffineTransformations(this, worldPointer);
+
+                worldPointer->w = 0 > w? 0: w;
+                worldPointer->h = 0 > h? 0: h;
+
+                if(0 < this->paramTableRow)
+                {
+                    clearRenderFlagValue = __UPDATE_SIZE;
+                }
+                else
+                {
+                    this->paramTableRow = -1;
+                }
+            }
+        }
+
+        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? gxValueIfLessThanZero: gx;
+        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+
+        worldPointer->mx += mxDisplacement;
+        worldPointer->my += myDisplacement;
 
         // -1 because 0 means 1 pixel for width
-        w = w - __WORLD_SIZE_DISPLACEMENT - (mxDisplacement);
-        h = h - __WORLD_SIZE_DISPLACEMENT - (myDisplacement);
+        w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
+        h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
 
-        w = w + worldPointer->gx >= __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: w;
+        w = w + worldPointer->gx && !(WRLD_AFFINE & this->head) >= __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: w;
         h = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: h;
 
         worldPointer->w = 0 > w? 0: w;
         worldPointer->h = 0 > h? 0: h;
 
+        // move the param table reference -gy * 16 bytes down when 0 > gy
+        worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) + ((0 > gy? -gy: 0) << 4) - 0x20000) >> 1) & 0xFFF0;
+
         worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+
+
 
 		// make sure to not render again
 		this->renderFlag = clearRenderFlagValue;
@@ -469,29 +480,23 @@ void BgmapSprite_noAFX(BgmapSprite this, int direction)
 }
 
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, const WORLD* worldPointer)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
 	if(this->param)
 	{
-		int halfWidth = (int)Texture_getCols(this->texture) << 2;
-		int halfHeight = ((int)Texture_getRows(this->texture) + __PARAM_TABLE_PADDING) << 2;
-
 		this->paramTableRow = Affine_applyAll(
-				this->param,
-				this->paramTableRow,
-				&this->drawSpec.scale,
-				&this->drawSpec.rotation,
-				&this->drawSpec.textureSource,
-				halfWidth,
-				halfHeight
+            this->paramTableRow,
+            &this->drawSpec.scale,
+            &this->drawSpec.rotation,
+            worldPointer
 		);
 	}
 }
 
-static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this)
+static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this, const WORLD* worldPointer)
 {
 	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
 }
@@ -505,7 +510,7 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
 	{
 		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
 
-		BgmapSprite_doApplyAffineTransformations(this);
+		//BgmapSprite_doApplyAffineTransformations(this);
 	}
 }
 
@@ -518,6 +523,6 @@ void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
 	{
 		this->paramTableRow = 0;
 
-		BgmapSprite_doApplyHbiasTransformations(this);
+		//BgmapSprite_doApplyHbiasTransformations(this);
 	}
 }

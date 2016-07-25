@@ -112,10 +112,6 @@ void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle 
 {
 	ASSERT(this, "Particle::update: null this");
 
-    // since most likely a single particle system will have a couple of active particles
-    // cache this method to speed things up
-    CACHE_ENABLE;
-
 	if(0 <= this->lifeSpan)
 	{
 		this->lifeSpan -= elapsedTime;
@@ -139,8 +135,6 @@ void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle 
 void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition)
 {
 	ASSERT(this, "Particle::updateVisualRepresentation: null this");
-
-    CACHE_ENABLE;
 
 	if(updateSpritePosition || Body_isAwake(this->body))
     {
