@@ -67,7 +67,7 @@ __SINGLETON(I18n);
  *
  *  @param  I18n    this    I18n instance
  */
-static void I18n_constructor(I18n this)
+static void __attribute__ ((noinline)) I18n_constructor(I18n this)
 {
 	ASSERT(this, "I18n::constructor: null this");
 

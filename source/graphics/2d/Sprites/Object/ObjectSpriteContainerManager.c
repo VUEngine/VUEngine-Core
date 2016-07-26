@@ -55,7 +55,7 @@ static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManage
 __SINGLETON(ObjectSpriteContainerManager);
 
 //class constructor
-void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
+void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::constructor: null this");
 

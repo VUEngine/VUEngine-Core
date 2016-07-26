@@ -74,7 +74,7 @@ __CLASS_DEFINITION(DebugState, GameState);
 __SINGLETON(DebugState);
 
 // class's constructor
-static void DebugState_constructor(DebugState this)
+static void __attribute__ ((noinline)) DebugState_constructor(DebugState this)
 {
 	__CONSTRUCT_BASE(GameState);
 }

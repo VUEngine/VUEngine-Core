@@ -57,7 +57,7 @@ const VBVec3D* _screenDisplacement = NULL;
 __SINGLETON(Screen);
 
 // class's constructor
-static void Screen_constructor(Screen this)
+static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 {
 	ASSERT(this, "Screen::constructor: null this");
 

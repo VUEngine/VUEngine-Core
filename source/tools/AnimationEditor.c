@@ -135,7 +135,7 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this);
 __SINGLETON(AnimationEditor);
 
 // class's constructor
-static void AnimationEditor_constructor(AnimationEditor this)
+static void __attribute__ ((noinline)) AnimationEditor_constructor(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::constructor: null this");
 

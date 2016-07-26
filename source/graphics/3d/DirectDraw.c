@@ -64,7 +64,7 @@ static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int p
 __SINGLETON(DirectDraw);
 
 // class's constructor
-static void DirectDraw_constructor(DirectDraw this)
+static void __attribute__ ((noinline)) DirectDraw_constructor(DirectDraw this)
 {
 	__CONSTRUCT_BASE(Object);
 

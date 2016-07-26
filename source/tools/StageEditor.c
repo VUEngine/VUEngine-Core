@@ -139,7 +139,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this);
 __SINGLETON(StageEditor);
 
 // class's constructor
-static void StageEditor_constructor(StageEditor this)
+static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 {
 	ASSERT(this, "StageEditor::constructor: null this");
 

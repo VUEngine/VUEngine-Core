@@ -69,7 +69,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 __SINGLETON(CharSetManager);
 
 // class's constructor
-static void CharSetManager_constructor(CharSetManager this)
+static void __attribute__ ((noinline)) CharSetManager_constructor(CharSetManager this)
 {
 	__CONSTRUCT_BASE(Object);
 

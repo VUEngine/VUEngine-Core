@@ -71,7 +71,7 @@ static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* stri
 __SINGLETON(Printing);
 
 // class's constructor
-static void Printing_constructor(Printing this)
+static void __attribute__ ((noinline)) Printing_constructor(Printing this)
 {
 	__CONSTRUCT_BASE(Object);
 }

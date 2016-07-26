@@ -166,7 +166,7 @@ static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increm
 __SINGLETON(Debug);
 
 // class's constructor
-static void Debug_constructor(Debug this)
+static void __attribute__ ((noinline)) Debug_constructor(Debug this)
 {
 	ASSERT(this, "Debug::constructor: null this");
 

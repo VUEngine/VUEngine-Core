@@ -59,7 +59,7 @@ static unsigned int volatile* readingStatus = NULL;
 __SINGLETON(KeypadManager);
 
 // class's constructor
-static void KeypadManager_constructor(KeypadManager this)
+static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::constructor: null this");
 

@@ -74,7 +74,7 @@ __CLASS_DEFINITION(StageEditorState, GameState);
 __SINGLETON(StageEditorState);
 
 // class's constructor
-static void StageEditorState_constructor(StageEditorState this)
+static void __attribute__ ((noinline)) StageEditorState_constructor(StageEditorState this)
 {
 	__CONSTRUCT_BASE(GameState);
 }

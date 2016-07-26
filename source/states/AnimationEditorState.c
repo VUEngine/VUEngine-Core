@@ -74,7 +74,7 @@ __CLASS_DEFINITION(AnimationEditorState, GameState);
 __SINGLETON(AnimationEditorState);
 
 // class's constructor
-static void AnimationEditorState_constructor(AnimationEditorState this)
+static void __attribute__ ((noinline)) AnimationEditorState_constructor(AnimationEditorState this)
 {
 	__CONSTRUCT_BASE(GameState);
 }

@@ -68,7 +68,7 @@ bool Game_isConstructed();
 __SINGLETON(Error);
 
 // class's constructor
-static void Error_constructor(Error this)
+static void __attribute__ ((noinline)) Error_constructor(Error this)
 {
 	__CONSTRUCT_BASE(Object);
 }

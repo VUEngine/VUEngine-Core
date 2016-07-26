@@ -63,7 +63,7 @@ void static SRAMManager_initialize(SRAMManager this);
 __SINGLETON(SRAMManager);
 
 // class's constructor
-static void SRAMManager_constructor(SRAMManager this)
+static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::constructor: null this");
 

@@ -65,7 +65,7 @@ __SINGLETON(ClockManager);
 
 
 // class's constructor
-static void ClockManager_constructor(ClockManager this)
+static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager this)
 {
 	__CONSTRUCT_BASE(Object);
 

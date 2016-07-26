@@ -53,7 +53,7 @@ void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration);
 __SINGLETON(ScreenMovementManager);
 
 // class's constructor
-void ScreenMovementManager_constructor(ScreenMovementManager this)
+void __attribute__ ((noinline)) ScreenMovementManager_constructor(ScreenMovementManager this)
 {
 	ASSERT(this, "ScreenMovementManager::constructor: null this");
 

@@ -77,7 +77,7 @@ static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this
 __SINGLETON(BgmapTextureManager);
 
 // class's constructor
-static void BgmapTextureManager_constructor(BgmapTextureManager this)
+static void __attribute__ ((noinline)) BgmapTextureManager_constructor(BgmapTextureManager this)
 {
 	__CONSTRUCT_BASE(Object);
 

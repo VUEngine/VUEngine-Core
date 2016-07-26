@@ -76,7 +76,7 @@ static int ParamTableManager_calculateSize(ParamTableManager this, BgmapSprite b
 __SINGLETON(ParamTableManager);
 
 //class constructor
-void ParamTableManager_constructor(ParamTableManager this)
+void __attribute__ ((noinline)) ParamTableManager_constructor(ParamTableManager this)
 {
 	__CONSTRUCT_BASE(Object);
 

@@ -362,8 +362,8 @@ void BgmapSprite_render(BgmapSprite this)
 
             if(0 <= this->paramTableRow)
             {
-                worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(w), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x))));
-                worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(h), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y))));
+                w = worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(w), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x))));
+                h = worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(h), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y))));
 
                 worldPointer->param = this->param;
 

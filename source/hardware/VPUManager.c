@@ -89,7 +89,7 @@ static void VPUManager_constructor(VPUManager this);
 __SINGLETON(VPUManager);
 
 // class's constructor
-static void VPUManager_constructor(VPUManager this)
+static void __attribute__ ((noinline)) VPUManager_constructor(VPUManager this)
 {
 	ASSERT(this, "VPUManager::constructor: null this");
 

@@ -100,7 +100,7 @@ static void SpriteManager_constructor(SpriteManager this);
 __SINGLETON(SpriteManager);
 
 // class's constructor
-static void SpriteManager_constructor(SpriteManager this)
+static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager this)
 {
 	// construct base object
 	__CONSTRUCT_BASE(Object);

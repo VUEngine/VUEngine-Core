@@ -60,7 +60,7 @@ static SoundManager _soundManager;
 __SINGLETON(TimerManager);
 
 // class's constructor
-static void TimerManager_constructor(TimerManager this)
+static void __attribute__ ((noinline)) TimerManager_constructor(TimerManager this)
 {
 	ASSERT(this, "TimerManager::constructor: null this");
 

@@ -56,7 +56,7 @@ static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory 
 __SINGLETON(AnimationCoordinatorFactory);
 
 //class constructor
-static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory this)
+static void __attribute__ ((noinline)) AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
 

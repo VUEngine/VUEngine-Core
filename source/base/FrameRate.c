@@ -54,7 +54,7 @@ static void FrameRate_constructor(FrameRate this);
 __SINGLETON(FrameRate);
 
 // class's constructor
-static void FrameRate_constructor(FrameRate this)
+static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
 {
 	__CONSTRUCT_BASE(Object);
 

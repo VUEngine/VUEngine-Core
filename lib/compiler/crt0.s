@@ -128,37 +128,25 @@ __interrupt_handler:
 	.global	__interrupt_handler_prolog
 
 __interrupt_handler_prolog:
-	addi	-0x0078,sp,sp
+	addi	-0x0048,sp,sp
 	st.w	lp,0x0000[sp]
 	st.w	r30,0x0004[sp]
-	st.w	r29,0x0008[sp]
-	st.w	r28,0x000C[sp]
-	st.w	r27,0x0010[sp]
-	st.w	r26,0x0014[sp]
-	st.w	r25,0x0018[sp]
-	st.w	r24,0x001C[sp]
-	st.w	r23,0x0020[sp]
-	st.w	r22,0x0024[sp]
-	st.w	r21,0x0028[sp]
-	st.w	r20,0x002C[sp]
-	st.w	r19,0x0030[sp]
-	st.w	r18,0x0034[sp]
-	st.w	r17,0x0038[sp]
-	st.w	r16,0x003C[sp]
-	st.w	r15,0x0040[sp]
-	st.w	r14,0x0044[sp]
-	st.w	r13,0x0048[sp]
-	st.w	r12,0x004C[sp]
-	st.w	r11,0x0050[sp]
-	st.w	r10,0x0054[sp]
-	st.w	r9,0x0058[sp]
-	st.w	r8,0x005C[sp]
-	st.w	r7,0x0060[sp]
-	st.w	r6,0x0064[sp]
-	st.w	r5,0x0068[sp]
-	st.w	r4,0x006C[sp]
-	st.w	r2,0x0070[sp]
-	st.w	r1,0x0074[sp]
+	st.w	r19,0x0008[sp]
+	st.w	r18,0x000c[sp]
+	st.w	r17,0x0010[sp]
+	st.w	r16,0x0014[sp]
+	st.w	r15,0x0018[sp]
+	st.w	r14,0x001c[sp]
+	st.w	r13,0x0020[sp]
+	st.w	r12,0x0024[sp]
+	st.w	r11,0x0028[sp]
+	st.w	r10,0x002c[sp]
+	st.w	r9,0x0030[sp]
+	st.w	r8,0x0034[sp]
+	st.w	r7,0x0038[sp]
+	st.w	r6,0x003c[sp]
+	st.w	r2,0x0040[sp]
+	st.w	r1,0x0044[sp]
 	movhi	hi(_key_vector),r0,r1
 	movea	lo(_key_vector),r1,r1
 	stsr	sr5,r6
@@ -174,35 +162,23 @@ __interrupt_handler_prolog:
 __interrupt_handler_epilogue:
 	ld.w	0x0000[sp],lp
 	ld.w	0x0004[sp],r30
-	ld.w	0x0008[sp],r29
-	ld.w	0x000C[sp],r28
-	ld.w	0x0010[sp],r27
-	ld.w	0x0014[sp],r26
-	ld.w	0x0018[sp],r25
-	ld.w	0x001C[sp],r24
-	ld.w	0x0020[sp],r23
-	ld.w	0x0024[sp],r22
-	ld.w	0x0028[sp],r21
-	ld.w	0x002C[sp],r20
-	ld.w	0x0030[sp],r19
-	ld.w	0x0034[sp],r18
-	ld.w	0x0038[sp],r17
-	ld.w	0x003C[sp],r16
-	ld.w	0x0040[sp],r15
-	ld.w	0x0044[sp],r14
-	ld.w	0x0048[sp],r13
-	ld.w	0x004C[sp],r12
-	ld.w	0x0050[sp],r11
-	ld.w	0x0054[sp],r10
-	ld.w	0x0058[sp],r9
-	ld.w	0x005C[sp],r8
-	ld.w	0x0060[sp],r7
-	ld.w	0x0064[sp],r6
-	ld.w	0x0068[sp],r5
-	ld.w	0x006C[sp],r4
-	ld.w	0x0070[sp],r2
-	ld.w	0x0074[sp],r1
-	addi	0x0078,sp,sp
+	ld.w	0x0008[sp],r19
+	ld.w	0x000c[sp],r18
+	ld.w	0x0010[sp],r17
+	ld.w	0x0014[sp],r16
+	ld.w	0x0018[sp],r15
+	ld.w	0x001c[sp],r14
+	ld.w	0x0020[sp],r13
+	ld.w	0x0024[sp],r12
+	ld.w	0x0028[sp],r11
+	ld.w	0x002c[sp],r10
+	ld.w	0x0030[sp],r9
+	ld.w	0x0034[sp],r8
+	ld.w	0x0038[sp],r7
+	ld.w	0x003c[sp],r6
+	ld.w	0x0040[sp],r2
+	ld.w	0x0044[sp],r1
+	addi	0x0048,sp,sp
 	reti
 
 	.section ".vbvectors","ax"

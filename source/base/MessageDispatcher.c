@@ -77,7 +77,7 @@ typedef struct DelayedMessage
 __SINGLETON(MessageDispatcher);
 
 // class's constructor
-static void MessageDispatcher_constructor(MessageDispatcher this)
+static void __attribute__ ((noinline)) MessageDispatcher_constructor(MessageDispatcher this)
 {
 	__CONSTRUCT_BASE(Object);
 

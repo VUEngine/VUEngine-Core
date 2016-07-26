@@ -176,7 +176,7 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this);
 __SINGLETON(SoundManager);
 
 // class's constructor
-static void SoundManager_constructor(SoundManager this)
+static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::constructor: null this");
 

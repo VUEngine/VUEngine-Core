@@ -45,7 +45,7 @@
 #define __DEFINE_CHECK_VTABLE(ClassName)														        \
 																								        \
 	/* define the checking method */															        \
-	void ClassName  ## _checkVTable()															        \
+	void __attribute__ ((noinline)) ClassName  ## _checkVTable()										\
 	{																							        \
 		/* check that each entry in the table is not NULL */									        \
 		int i = 0;																				        \
@@ -243,7 +243,7 @@
 #define __SET_VTABLE(ClassName, BaseClassName)													        \
 																								        \
 	/* define the static method */																        \
-	void ClassName ## _setVTable()																        \
+	void __attribute__ ((noinline)) ClassName ## _setVTable()								            \
 	{																							        \
 		/* set the base class's virtual methods */												        \
 		if(&ClassName ## _setVTable != &BaseClassName ## _setVTable)                                    \
@@ -381,31 +381,36 @@
 	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE = __SINGLETON_NOT_CONSTRUCTED; \
 																								        \
 	/* define get instance method */															        \
-	ClassName ClassName ## _getInstance()														        \
+	static void __attribute__ ((noinline)) ClassName ## _instantiate()									\
 	{																							        \
+        NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,                               \
+            ClassName get instance during construction);						                        \
+                                                                                                        \
 		/* set the vtable */																	        \
 		__SET_CLASS(ClassName);																	        \
-																								        \
-		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)								        \
-		{																						        \
-			NM_ASSERT(false, ClassName get instance during construction);						        \
-		}																						        \
+                                                                                                        \
+        _singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;								            \
+                                                                                                        \
+        /* set the vtable pointer */														            \
+        _instance ## ClassName.vTable = &ClassName ## _vTable;								            \
+                                                                                                        \
+        /* call constructor */																            \
+        ClassName ## _constructor(&_instance ## ClassName);									            \
+                                                                                                        \
+        /* set the vtable pointer */														            \
+        _instance ## ClassName.vTable = &ClassName ## _vTable;								            \
+                                                                                                        \
+        /* don't allow more constructs */													            \
+        _singletonConstructed = __SINGLETON_CONSTRUCTED;									            \
+    }																						            \
+                                                                                                        \
+	/* define get instance method */															        \
+	ClassName ClassName ## _getInstance()														        \
+	{																							        \
 		/* first check if not constructed yet */												        \
 		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)								        \
 		{																						        \
-			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;								        \
-																								        \
-			/* set the vtable pointer */														        \
-			_instance ## ClassName.vTable = &ClassName ## _vTable;								        \
-																								        \
-			/* call constructor */																        \
-			ClassName ## _constructor(&_instance ## ClassName);									        \
-																								        \
-			/* set the vtable pointer */														        \
-			_instance ## ClassName.vTable = &ClassName ## _vTable;								        \
-																								        \
-			/* don't allow more constructs */													        \
-			_singletonConstructed = __SINGLETON_CONSTRUCTED;									        \
+		    ClassName ## _instantiate();                                                                \
 		}																						        \
 																								        \
 		/* return the created singleton */														        \
@@ -436,26 +441,30 @@
 	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE = __SINGLETON_NOT_CONSTRUCTED; \
 																								        \
 	/* define get instance method */															        \
+	static void __attribute__ ((noinline)) ClassName ## _instantiate()									\
+	{																							        \
+        NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,                               \
+            ClassName get instance during construction);						                        \
+                                                                                                        \
+        /* set the vtable */																	        \
+        __SET_CLASS(ClassName);																	        \
+                                                                                                        \
+        _singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;								            \
+                                                                                                        \
+        /* allocate */																		            \
+        _instance ## ClassName = ClassName ## _new();										            \
+                                                                                                        \
+        /* don't allow more constructs */													            \
+        _singletonConstructed = __SINGLETON_CONSTRUCTED;									            \
+	}																							        \
+																								        \
+	/* define get instance method */															        \
 	ClassName ClassName ## _getInstance()														        \
 	{																							        \
-		/* set the vtable */																	        \
-		__SET_CLASS(ClassName);																	        \
-																								        \
-		if(__SINGLETON_BEING_CONSTRUCTED == _singletonConstructed)								        \
-		{																						        \
-			NM_ASSERT(false, ClassName get instance during construction);						        \
-		}																						        \
-																								        \
 		/* first check if not constructed yet */												        \
 		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)								        \
 		{																						        \
-			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;								        \
-																								        \
-			/* allocate */																		        \
-			_instance ## ClassName = ClassName ## _new();										        \
-																								        \
-			/* don't allow more constructs */													        \
-			_singletonConstructed = __SINGLETON_CONSTRUCTED;									        \
+		    ClassName ## _instantiate();                                                                \
 		}																						        \
 																								        \
 		/* return the created singleton */														        \

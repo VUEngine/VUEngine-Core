@@ -168,7 +168,7 @@ bool Game_isConstructed()
 }
 
 // class's constructor
-static void Game_constructor(Game this)
+static void __attribute__ ((noinline)) Game_constructor(Game this)
 {
 	ASSERT(this, "Game::constructor: null this");
 

@@ -90,7 +90,7 @@ static void HardwareManager_constructor(HardwareManager this);
 __SINGLETON(HardwareManager);
 
 // class's constructor
-static void HardwareManager_constructor(HardwareManager this)
+static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::constructor: null this");
 
