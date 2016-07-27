@@ -91,12 +91,16 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 	        FIX19_13_MULT(highPrecisionPb, halfheight)
         );
 
-	fixedAffineMatrix.dy = ITOFIX13_3(worldPointer->my) + FIX19_13TOFIX13_3(FIX19_13_DIV(halfheight, FIX7_9TOFIX19_13(abs(scale->y))))
-	- (
-	    FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, halfWidth))
+	fixedAffineMatrix.dy =
+	    ITOFIX13_3(worldPointer->my)
 	    +
-	    FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, halfheight))
-	);
+	    FIX19_13TOFIX13_3(FIX19_13_DIV(halfheight, FIX7_9TOFIX19_13(abs(scale->y))))
+	    -
+	    (
+	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, halfWidth))
+	        +
+	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, halfheight))
+    	);
 
 	fixedAffineMatrix.paralax = 0;
 

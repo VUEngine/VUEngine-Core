@@ -879,21 +879,12 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
 
-	if(*(u8*)&this->invalidateGlobalPosition ||
-		this->children)
-	{
-		this->updateSprites |= __UPDATE_SPRITE_POSITION;
-		this->updateSprites |= this->invalidateGlobalPosition.z? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
+    this->updateSprites = 0;
+    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
+    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteTransformations, this)? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
 
-		// call base class's transform method
-		Container_transform(__SAFE_CAST(Container, this), environmentTransform);
-	}
-	else
-	{
-		this->updateSprites = 0;
-		this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
-		this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteTransformations, this)? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
-	}
+    // call base class's transform method
+    Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 }
 
 void Entity_updateVisualRepresentation(Entity this)

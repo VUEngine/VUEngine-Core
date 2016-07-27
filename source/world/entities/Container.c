@@ -426,7 +426,10 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	ASSERT(this, "Container::transform: null this");
 
 	// apply environment transform
-	Container_applyEnvironmentToTranformation(this, environmentTransform);
+	if(*(u8*)&this->invalidateGlobalPosition)
+	{
+	    Container_applyEnvironmentToTranformation(this, environmentTransform);
+    }
 
 	// if I have children
 	if(this->children)
@@ -454,7 +457,10 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	ASSERT(this, "Container::transform: null this");
 
 	// apply environment transform
-	Container_applyEnvironmentToTranformation(this, environmentTransform);
+	if(*(u8*)&this->invalidateGlobalPosition)
+	{
+	    Container_applyEnvironmentToTranformation(this, environmentTransform);
+    }
 
 	// if I have children
 	if(this->children)
