@@ -178,19 +178,10 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		return;
 	}
 
-	this->updateSprites = false;
+    this->updateSprites = (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z)  || *(u8*)&this->invalidateGlobalPosition? __UPDATE_SPRITE_POSITION : 0;
 
-	if(*(u8*)&this->invalidateGlobalPosition ||
-		this->children)
-	{
-		// call base class's transform method
-		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
-
-		// apply environment transform
-		Container_applyEnvironmentToTranformation(__SAFE_CAST(Container, this), environmentTransform);
-
-		this->updateSprites = __UPDATE_SPRITE_POSITION;
-	}
+    // call base class's transform method
+    Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 
 	*(u8*)&this->invalidateGlobalPosition = 0;
 }
