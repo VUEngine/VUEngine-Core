@@ -46,17 +46,6 @@ typedef struct AffineEntry
     u16 spacer[3];		//unknown
 } AffineEntry ;
 
-typedef struct AffineMatrix
-{
-	float pa;
-	float pb;
-	float pc;
-	float pd;
-	float dx;
-	float dy;
-	s16   paralax;
-} AffineMatrix ;
-
 typedef struct FixedAffineMatrix
 {
 	fix7_9 pa;
@@ -75,53 +64,55 @@ typedef struct FixedAffineMatrix
 
 fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer, int finalRow)
 {
-	AffineMatrix affineMatrix;
-
 	ASSERT(scale->x, "Affine::applyAll: 0 x scale");
 	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
 
-	float scaleX = FIX7_9TOF(scale->x);
-	float scaleY = FIX7_9TOF(scale->y);
-	float absoluteScaleX = FIX7_9TOF(abs(scale->x));
-	float absoluteScaleY = FIX7_9TOF(abs(scale->y));
+	fix19_13 halfWidth = ITOFIX19_13(worldPointer->w >> 1);
+	fix19_13 halfheight = ITOFIX19_13(worldPointer->h >> 1);
 
-	s16 halfWidth = ((s16)worldPointer->w) >> 1;
-	s16 halfheight = ((s16)worldPointer->h) >> 1;
-
-	affineMatrix.pa = COSF(rotation->z) / scaleX;
-	affineMatrix.pb = -SINF(rotation->z) / scaleX;
-	affineMatrix.pc = SINF(rotation->z) / scaleY;
-	affineMatrix.pd = COSF(rotation->z) / scaleY;
-
-	affineMatrix.dx = ((s16)worldPointer->mx + (s16)halfWidth / absoluteScaleX) - (affineMatrix.pa * (s16)halfWidth + affineMatrix.pb * (s16)halfheight);
-	affineMatrix.dy = ((s16)worldPointer->my + (s16)halfheight / absoluteScaleY) - (affineMatrix.pc * (s16)halfWidth + affineMatrix.pd * (s16)halfheight);
-	affineMatrix.paralax = 0;
-
-	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(worldPointer->param);
+    fix19_13 highPrecisionPa = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->x));
+    fix19_13 highPrecisionPb = -FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->x));
+    fix19_13 highPrecisionPc = FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->y));
+    fix19_13 highPrecisionPd = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->y));
 
 	FixedAffineMatrix fixedAffineMatrix;
-	fixedAffineMatrix.pa = FTOFIX7_9(affineMatrix.pa);
-	fixedAffineMatrix.pb = FTOFIX13_3(affineMatrix.pb);
-	fixedAffineMatrix.pc = FTOFIX7_9(affineMatrix.pc);
-	fixedAffineMatrix.pd = FTOFIX13_3(affineMatrix.pd);
-	fixedAffineMatrix.dx = FTOFIX13_3(affineMatrix.dx);
-	fixedAffineMatrix.dy = FTOFIX13_3(affineMatrix.dy);
-	fixedAffineMatrix.paralax = affineMatrix.paralax;
+	fixedAffineMatrix.pa = FIX19_13TOFIX7_9(highPrecisionPa);
+	fixedAffineMatrix.pc = FIX19_13TOFIX7_9(highPrecisionPc);
 
-	// add one row for cleaning up
-    finalRow = finalRow * scaleY + 1;
+	fixedAffineMatrix.dx =
+	    ITOFIX13_3(worldPointer->mx)
+	    +
+	    FIX19_13TOFIX13_3(FIX19_13_DIV(halfWidth, FIX7_9TOFIX19_13(abs(scale->x))))
+	    -
+	    FIX19_13TOFIX13_3
+	    (
+	        FIX19_13_MULT(highPrecisionPa, halfWidth)
+	        +
+	        FIX19_13_MULT(highPrecisionPb, halfheight)
+        );
 
+	fixedAffineMatrix.dy = ITOFIX13_3(worldPointer->my) + FIX19_13TOFIX13_3(FIX19_13_DIV(halfheight, FIX7_9TOFIX19_13(abs(scale->y))))
+	- (
+	    FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, halfWidth))
+	    +
+	    FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, halfheight))
+	);
+
+	fixedAffineMatrix.paralax = 0;
+
+	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(worldPointer->param);
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
-counter = 20;
+
 	for(;0 <= counter && i < finalRow; i++, counter--)
 	{
-		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
+		affine[i].pb_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPb)) + fixedAffineMatrix.dx;
 		affine[i].paralax = fixedAffineMatrix.paralax;
-		affine[i].pd_y = FTOFIX13_3(i * affineMatrix.pd) + fixedAffineMatrix.dy;
+		affine[i].pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPd)) + fixedAffineMatrix.dy;
 		affine[i].pa = fixedAffineMatrix.pa;
 		affine[i].pc = fixedAffineMatrix.pc;
 	}
 
 	return i < finalRow? i: -1;
 }
+
