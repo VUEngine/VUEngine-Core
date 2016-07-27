@@ -32,7 +32,7 @@
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer, int finalRow);
+fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer, int finalRow, int mxDisplacement, int myDisplacement);
 
 
 #endif

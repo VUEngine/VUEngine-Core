@@ -62,13 +62,13 @@ typedef struct FixedAffineMatrix
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer, int finalRow)
+fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer, int finalRow, int mxDisplacement, int myDisplacement)
 {
 	ASSERT(scale->x, "Affine::applyAll: 0 x scale");
 	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
 
-	fix19_13 halfWidth = ITOFIX19_13(worldPointer->w >> 1);
-	fix19_13 halfheight = ITOFIX19_13(worldPointer->h >> 1);
+	fix19_13 halfWidth = ITOFIX19_13((worldPointer->w - (mxDisplacement? worldPointer->mx: 0)) >> 1);
+	fix19_13 halfheight = ITOFIX19_13((worldPointer->h - (myDisplacement? worldPointer->my: 0)) >> 1);
 
     fix19_13 highPrecisionPa = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->x));
     fix19_13 highPrecisionPb = -FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->x));
