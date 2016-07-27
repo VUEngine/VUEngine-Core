@@ -175,6 +175,7 @@ Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (
         Printing_hex(Printing_getInstance(), (u32)this, 18, 15, NULL);
         NM_ASSERT(false, "Object::getCast: deleted this");
 	}
+
 	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, this), "Object::getCast: null getClassName");
 	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this), "Object::getCast: null getBaseClass");
 

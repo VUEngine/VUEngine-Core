@@ -259,3 +259,5 @@ _interrupt_table:
 	movea	lo(_start), r1, r1
 	jmp	    [r1]
 	.fill	0x06
+
+	

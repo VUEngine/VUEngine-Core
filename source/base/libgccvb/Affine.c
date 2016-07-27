@@ -113,8 +113,8 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
-
-	for(; i < finalRow; i++, counter--)
+counter = 20;
+	for(;0 <= counter && i < finalRow; i++, counter--)
 	{
 		affine[i].pb_y = FTOFIX13_3(i * affineMatrix.pb) + fixedAffineMatrix.dx;
 		affine[i].paralax = fixedAffineMatrix.paralax;

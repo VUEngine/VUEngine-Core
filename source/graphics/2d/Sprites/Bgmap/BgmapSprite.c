@@ -367,9 +367,9 @@ void BgmapSprite_render(BgmapSprite this)
 
                 worldPointer->param = this->param;
 
-                this->paramTableRow = this->paramTableRow? this->paramTableRow : 0 > gy? -gy: 0;
+                this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
-                int finalRow = worldPointer->h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + this->paramTableRow: worldPointer->h;
+                int finalRow = worldPointer->h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: worldPointer->h;
 
                 BgmapSprite_doApplyAffineTransformations(this, worldPointer, finalRow);
 
@@ -382,6 +382,9 @@ void BgmapSprite_render(BgmapSprite this)
                     this->paramTableRow = -1;
                 }
             }
+
+            // move the param table reference -gy * 16 bytes down when 0 > gy
+            worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) + ((0 > gy? -gy: 0) << 4) - 0x20000) >> 1) & 0xFFF0;
         }
 
         worldPointer->gx = 0 > gx? gxValueIfLessThanZero: gx;
@@ -398,9 +401,6 @@ void BgmapSprite_render(BgmapSprite this)
 
         worldPointer->w = 0 > w? 0: w;
         worldPointer->h = 0 > h? 0: h;
-
-        // move the param table reference -gy * 16 bytes down when 0 > gy
-        worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) + ((0 > gy? -gy: 0) << 4) - 0x20000) >> 1) & 0xFFF0;
 
         worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 
