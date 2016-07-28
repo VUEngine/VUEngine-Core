@@ -61,8 +61,8 @@ extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, int lastRow);
-static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this, const WORLD* worldPointer, int totalRows);
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
+static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -318,6 +318,7 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
+this->renderFlag |= __UPDATE_G;
 	// if render flag is set
 	if(this->renderFlag && this->initialized)
 	{
@@ -331,68 +332,69 @@ void BgmapSprite_render(BgmapSprite this)
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
 
-		// set the world screen position
+		// get coordinates
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
-        bool clearRenderFlagValue = false;
-
+        // get sprite's size
         int width = Texture_getCols(this->texture)<< 3;
-        int height = Texture_getCols(this->texture)<< 3;
+        int height = Texture_getRows(this->texture)<< 3;
         int w = width;
         int h = height;
 
-        int mxDisplacement = 0 > gx? -gx : 0;
-        int myDisplacement = 0 > gy? -gy : 0;
-
+        // cap coordinates to screen space
         worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
         worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
         worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+
+        // clip texture's source to screen space
+        int mxDisplacement = 0 > gx? -gx : 0;
+        int myDisplacement = 0 > gy? -gy : 0;
 
         worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
         worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
         worldPointer->mp = this->drawSpec.textureSource.mp;
 
-        // -1 because 0 means 1 pixel for width
+        // clip sprite's size to screen space
+        // reduce by 1 since 0 means 1 in the VB
         w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
         h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
 
-        worldPointer->w = 0;
-        worldPointer->h = 0;
+        w = w + worldPointer->gx >= __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx : w;
+        h = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy : h;
 
-        if(w + worldPointer->gx >= __SCREEN_WIDTH)
+        if (0 > w)
         {
-            worldPointer->w = __SCREEN_WIDTH - worldPointer->gx;
-        }
-        else if (0 <= w)
-        {
-            worldPointer->w = w;
+            w = 0;
         }
 
-        if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+        if (0 > h)
         {
-            worldPointer->h = __SCREEN_HEIGHT - worldPointer->gy;
+            h = 0;
         }
-        else if (0 <= h)
-        {
-            worldPointer->h = h;
-        }
+
+        worldPointer->w = w;
+        worldPointer->h = h;
+
+        // affine transformations may be deferred
+        bool clearRenderFlagValue = false;
 
         // set the world size according to the zoom
         if(WRLD_AFFINE & this->head)
         {
+            // set param table's souce
+            worldPointer->param = (u16)((__PARAM_DISPLACEMENT((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
+            // un-cap x coordinate in affine mode
             if(0 > gx)
             {
                 worldPointer->gx = gx;
-                worldPointer->w = Texture_getCols(this->texture)<< 3;
+                worldPointer->w = width;
             }
 
-            if(_screenDisplacement->y && 0 > this->paramTableRow)
-            {
-                this->paramTableRow = 0;
-            }
+            float scaleY = FIX7_9TOF(abs(this->drawSpec.scale.y));
 
+            // apply scaling
             worldPointer->w *= FIX7_9TOF(abs(this->drawSpec.scale.x));
             worldPointer->h *= FIX7_9TOF(abs(this->drawSpec.scale.y));
 
@@ -405,10 +407,13 @@ void BgmapSprite_render(BgmapSprite this)
                 // int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
                 // this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
-                BgmapSprite_doApplyAffineTransformations(this, height);
+                // apply affine transformation
+                BgmapSprite_doApplyAffineTransformations(this);
 
                 if(0 < this->paramTableRow)
                 {
+                    // keep rendering in the next cycle if affine transformation
+                    // is deferred
                     clearRenderFlagValue = __UPDATE_SIZE;
                 }
                 else
@@ -416,10 +421,9 @@ void BgmapSprite_render(BgmapSprite this)
                     this->paramTableRow = -1;
                 }
             }
-
-            worldPointer->param = ((__PARAM_DISPLACEMENT(this->param + (myDisplacement << 4)) - 0x20000) >> 1) & 0xFFF0;
         }
 
+        // set the head
         worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 
 		// make sure to not render again
@@ -610,7 +614,7 @@ void BgmapSprite_noAFX(BgmapSprite this, int direction)
 }
 
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, int lastRow)
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
@@ -622,7 +626,6 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, int lastR
 		this->paramTableRow = Affine_applyAll(
 		    this->param,
             this->paramTableRow,
-            lastRow,
             // geometrically accurate, but kills the CPU
             // (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
             // (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
@@ -639,7 +642,7 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, int lastR
 	}
 }
 
-static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this, const WORLD* worldPointer, int totalRows)
+static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
 }
