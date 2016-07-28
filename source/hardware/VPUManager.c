@@ -162,6 +162,24 @@ void VPUManager_interruptHandler(void)
 	VIP_REGS[INTENB]= 0;
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 
+#ifdef __ALERT_VPU_OVERTIME
+    {
+        static int messageDelay = __TARGET_FPS;
+
+        if(VIP_REGS[XPSTTS] & OVERTIME)
+        {
+            Printing_text(Printing_getInstance(), "VPU Overtime!   ", 0, 1, NULL);
+            messageDelay = __TARGET_FPS;
+        }
+
+        if(0 == --messageDelay )
+        {
+            Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
+            messageDelay = -1;
+        }
+    }
+#endif
+
 #ifdef __ALERT_STACK_OVERFLOW
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
 #endif
@@ -201,33 +219,40 @@ void VPUManager_interruptHandler(void)
 
 		// enable drawing
 		while(VIP_REGS[XPSTTS] & XPBSYR);
+
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
 
 #ifndef	__FORCE_VPU_SYNC
 #ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
-	static int messageDelay = __TARGET_FPS;
-	if(!Game_doneDRAMPrecalculations(Game_getInstance()))
-	{
-		Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
-		Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
-		Printing_text(Printing_getInstance(), "VPU: out of budget", 0, 1, NULL);
-		Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, 2, NULL);
-		messageDelay = __TARGET_FPS;
-	}
+    {
+        static int messageDelay = __TARGET_FPS;
+        if(!Game_doneDRAMPrecalculations(Game_getInstance()))
+        {
+            Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
+            Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
+            Printing_text(Printing_getInstance(), "VPU: out of budget", 0, 1, NULL);
+            Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, 2, NULL);
+            messageDelay = __TARGET_FPS;
+        }
 
-	if(0 == --messageDelay )
-	{
-		Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
-		Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
-		messageDelay = -1;
-	}
+        if(0 == --messageDelay )
+        {
+            Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
+            Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
+            messageDelay = -1;
+        }
+    }
 #endif
 #endif
 
 	// enable interrupt
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
+#ifdef __ALERT_VPU_OVERTIME
+	VIP_REGS[INTENB]= XPEND | TIMEERR;
+#else
 	VIP_REGS[INTENB]= XPEND;
+#endif
 }
 
 // turn display on

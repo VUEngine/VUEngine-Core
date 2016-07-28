@@ -21,6 +21,13 @@
 
 // alert stack overflows
 #define __ALERT_STACK_OVERFLOW
+
+// alert VPU's overtime
+#define __ALERT_VPU_OVERTIME
+
+// alert transformation - VPU unsync warning
+#undef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
+
 // avoid declaration warnings
 #include <HardwareManager.h>
 void HardwareManager_checkStackStatus(HardwareManager this);
