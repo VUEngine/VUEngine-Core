@@ -58,17 +58,29 @@ typedef struct FixedAffineMatrix
 } FixedAffineMatrix ;
 
 
+typedef struct AffineInfo
+{
+	fix19_13 x;
+	fix19_13 y;
+	fix13_3 mx;
+	fix13_3 my;
+	fix13_3 halfWidth;
+	fix13_3 halfHeight;
+	Rotation* rotation;
+	Scale* scale;
+	u32 param;
+	s16   paralax;
+} AffineInfo ;
+
 //---------------------------------------------------------------------------------------------------------
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotation* rotation, const WORLD* worldPointer, int finalRow, int mxDisplacement, int myDisplacement)
+
+fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, int lastRow, fix19_13 x, fix19_13 y, fix13_3 mx, fix13_3 my, fix19_13 halfWidth, fix19_13 halfHeight, const Scale* scale, const Rotation* rotation)
 {
 	ASSERT(scale->x, "Affine::applyAll: 0 x scale");
 	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
-
-	fix19_13 halfWidth = ITOFIX19_13((worldPointer->w - (mxDisplacement? worldPointer->mx: 0)) >> 1);
-	fix19_13 halfheight = ITOFIX19_13((worldPointer->h - (myDisplacement? worldPointer->my: 0)) >> 1);
 
     fix19_13 highPrecisionPa = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->x));
     fix19_13 highPrecisionPb = -FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->x));
@@ -80,35 +92,35 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 	fixedAffineMatrix.pc = FIX19_13TOFIX7_9(highPrecisionPc);
 
 	fixedAffineMatrix.dx =
-	    ITOFIX13_3(worldPointer->mx)
+	    mx
 	    +
 	    FIX19_13TOFIX13_3(FIX19_13_DIV(halfWidth, FIX7_9TOFIX19_13(abs(scale->x))))
 	    -
 	    FIX19_13TOFIX13_3
 	    (
-	        FIX19_13_MULT(highPrecisionPa, halfWidth)
+	        FIX19_13_MULT(highPrecisionPa, x)
 	        +
-	        FIX19_13_MULT(highPrecisionPb, halfheight)
+	        FIX19_13_MULT(highPrecisionPb, y)
         );
 
 	fixedAffineMatrix.dy =
-	    ITOFIX13_3(worldPointer->my)
+	    my
 	    +
-	    FIX19_13TOFIX13_3(FIX19_13_DIV(halfheight, FIX7_9TOFIX19_13(abs(scale->y))))
+	    FIX19_13TOFIX13_3(FIX19_13_DIV(halfHeight, FIX7_9TOFIX19_13(abs(scale->y))))
 	    -
 	    (
-	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, halfWidth))
+	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, x))
 	        +
-	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, halfheight))
+	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, y))
     	);
 
 	fixedAffineMatrix.paralax = 0;
 
-	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(worldPointer->param);
+	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);
 	int i = 0 <= paramTableRow? paramTableRow: 0;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 
-	for(;0 <= counter && i < finalRow; i++, counter--)
+	for(;0 <= counter && i < lastRow; i++, counter--)
 	{
 		affine[i].pb_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPb)) + fixedAffineMatrix.dx;
 		affine[i].paralax = fixedAffineMatrix.paralax;
@@ -117,6 +129,6 @@ fix19_13 Affine_applyAll(fix19_13 paramTableRow, const Scale* scale, const Rotat
 		affine[i].pc = fixedAffineMatrix.pc;
 	}
 
-	return i < finalRow? i: -1;
+	return i < lastRow? i: -1;
 }
 

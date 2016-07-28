@@ -60,7 +60,7 @@ extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, const WORLD* worldPointer, int totalRows, int mxDisplacement, int myDisplacement);
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, int lastRow);
 static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this, const WORLD* worldPointer, int totalRows);
 
 
@@ -334,8 +334,6 @@ void BgmapSprite_render(BgmapSprite this)
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
-        int gxValueIfLessThanZero = 0;
-
         bool clearRenderFlagValue = false;
 
         int w = Texture_getCols(this->texture)<< 3;
@@ -348,18 +346,13 @@ void BgmapSprite_render(BgmapSprite this)
         worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
         worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 
-        worldPointer->mx = this->drawSpec.textureSource.mx;
-        worldPointer->my = this->drawSpec.textureSource.my;
+        worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
+        worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
         worldPointer->mp = this->drawSpec.textureSource.mp;
-        worldPointer->mx += mxDisplacement;
-        worldPointer->my += myDisplacement;
 
         // -1 because 0 means 1 pixel for width
         w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
         h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
-
-        bool outOfScreenX = false;
-        bool outOfScreenY = false;
 
         worldPointer->w = 0;
         worldPointer->h = 0;
@@ -367,7 +360,6 @@ void BgmapSprite_render(BgmapSprite this)
         if(w + worldPointer->gx >= __SCREEN_WIDTH)
         {
             worldPointer->w = __SCREEN_WIDTH - worldPointer->gx;
-            outOfScreenX = true;
         }
         else if (0 <= w)
         {
@@ -377,7 +369,6 @@ void BgmapSprite_render(BgmapSprite this)
         if(h + worldPointer->gy >= __SCREEN_HEIGHT)
         {
             worldPointer->h = __SCREEN_HEIGHT - worldPointer->gy;
-            outOfScreenY = true;
         }
         else if (0 <= h)
         {
@@ -389,44 +380,9 @@ void BgmapSprite_render(BgmapSprite this)
         {
             if(0 <= this->paramTableRow)
             {
-                worldPointer->param = this->param;
+                int lastRow = worldPointer->h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: worldPointer->h;
 
-                w = worldPointer->w;
-                h = worldPointer->h;
-
-                int finalRow = worldPointer->h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: worldPointer->h;
-
-                if(outOfScreenX)
-                {
-                    worldPointer->w = Texture_getCols(this->texture)<< 3;
-                }
-
-                if(outOfScreenY)
-                {
-                    worldPointer->h = Texture_getRows(this->texture)<< 3;
-                }
-/*
-                Printing_text(Printing_getInstance(), "X,Y:             ", 5, 10, NULL);
-                Printing_text(Printing_getInstance(), "M:               ", 5, 11, NULL);
-                Printing_text(Printing_getInstance(), "W,H:             ", 5, 12, NULL);
-                Printing_text(Printing_getInstance(), "DIS:             ", 5, 13, NULL);
-                Printing_text(Printing_getInstance(), "PTR:             ", 5, 14, NULL);
-                Printing_text(Printing_getInstance(), "FLR:             ", 5, 15, NULL);
-                Printing_int(Printing_getInstance(), worldPointer->gx, 10, 10, NULL);
-                Printing_int(Printing_getInstance(), worldPointer->gy, 15, 10, NULL);
-                Printing_int(Printing_getInstance(), worldPointer->mx, 10, 11, NULL);
-                Printing_int(Printing_getInstance(), worldPointer->my, 15, 11, NULL);
-                //Printing_int(Printing_getInstance(), worldPointer->w, 10, 12, NULL);
-                //Printing_int(Printing_getInstance(), worldPointer->h, 15, 12, NULL);
-                Printing_int(Printing_getInstance(), mxDisplacement, 10, 13, NULL);
-                Printing_int(Printing_getInstance(), myDisplacement, 15, 13, NULL);
-                Printing_int(Printing_getInstance(), this->paramTableRow, 10, 14, NULL);
-                Printing_int(Printing_getInstance(), finalRow, 10, 15, NULL);
-*/
-                BgmapSprite_doApplyAffineTransformations(this, worldPointer, finalRow, mxDisplacement, myDisplacement);
-
-                worldPointer->w = w;
-                worldPointer->h = h;
+                BgmapSprite_doApplyAffineTransformations(this, lastRow);
 
                 if(0 < this->paramTableRow)
                 {
@@ -436,12 +392,8 @@ void BgmapSprite_render(BgmapSprite this)
                 {
                     this->paramTableRow = -1;
                 }
-
-//                Printing_int(Printing_getInstance(), worldPointer->w, 10, 12, NULL);
-//                Printing_int(Printing_getInstance(), worldPointer->h, 15, 12, NULL);
             }
 
-            // move the param table reference -gy * 16 bytes down when 0 > gy
             worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
         }
 
@@ -521,21 +473,27 @@ void BgmapSprite_noAFX(BgmapSprite this, int direction)
 }
 
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, const WORLD* worldPointer, int totalRows, int mxDisplacement, int myDisplacement)
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, int lastRow)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
 	if(this->param)
 	{
+	    fix19_13 gx =  gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
+
 		this->paramTableRow = Affine_applyAll(
+		    this->param,
             this->paramTableRow,
+            lastRow,
+            (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
+            (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
+            ITOFIX13_3(this->drawSpec.textureSource.mx),
+            ITOFIX13_3(this->drawSpec.textureSource.my),
+            this->halfWidth,
+            this->halfHeight,
             &this->drawSpec.scale,
-            &this->drawSpec.rotation,
-            worldPointer,
-            totalRows,
-            mxDisplacement,
-            myDisplacement
+            &this->drawSpec.rotation
 		);
 	}
 }
