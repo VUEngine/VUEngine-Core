@@ -21,7 +21,7 @@
 
 // concatenate two strings
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
-#define __CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
+#define __CSTOM_CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
 // call to this method only once
 #define __CALL_ONCE(MethodName, ...)															        \

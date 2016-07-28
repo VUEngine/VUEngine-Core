@@ -44,7 +44,7 @@ static bool DebugState_processMessage(DebugState this, void* owner, Telegram tel
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern State __CONCAT(START_LEVEL, _getInstance)();
+extern State __CSTOM_CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens
 {

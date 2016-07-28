@@ -44,7 +44,7 @@ static bool StageEditorState_processMessage(StageEditorState this, void* owner, 
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern State __CONCAT(START_LEVEL, _getInstance)();
+extern State __CSTOM_CONCAT(START_LEVEL, _getInstance)();
 
 enum Screens
 {
