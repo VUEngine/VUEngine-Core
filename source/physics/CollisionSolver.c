@@ -145,7 +145,7 @@ int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 	ASSERT(this, "CollisionSolver::canMoveOverAxis: null this");
 
 	int axisOfCollision = 0;
-	int collisionCheckDistance = 1;
+	int collisionCheckDistance = 2;
 
 	VBVec3D displacement =
     {
