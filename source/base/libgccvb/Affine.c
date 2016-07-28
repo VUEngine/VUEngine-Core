@@ -91,6 +91,7 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, int lastRow, fix19_1
 	fixedAffineMatrix.pa = FIX19_13TOFIX7_9(highPrecisionPa);
 	fixedAffineMatrix.pc = FIX19_13TOFIX7_9(highPrecisionPc);
 
+    // bgX + bgWidth - pa * dispX - pb * dispY
 	fixedAffineMatrix.dx =
 	    mx
 	    +
@@ -103,6 +104,7 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, int lastRow, fix19_1
 	        FIX19_13_MULT(highPrecisionPb, y)
         );
 
+    // bgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
 	    my
 	    +
@@ -118,6 +120,7 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, int lastRow, fix19_1
 
 	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);
 	int i = 0 <= paramTableRow? paramTableRow: 0;
+	lastRow = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(lastRow), FIX7_9TOFIX19_13(scale->y)));
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 
 	for(;0 <= counter && i < lastRow; i++, counter--)

@@ -56,6 +56,7 @@ __CLASS_FRIEND_DEFINITION(Texture);
 
 // global
 extern const VBVec3D* _screenPosition;
+const extern VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
@@ -336,6 +337,124 @@ void BgmapSprite_render(BgmapSprite this)
 
         bool clearRenderFlagValue = false;
 
+        int width = Texture_getCols(this->texture)<< 3;
+        int height = Texture_getCols(this->texture)<< 3;
+        int w = width;
+        int h = height;
+
+        int mxDisplacement = 0 > gx? -gx : 0;
+        int myDisplacement = 0 > gy? -gy : 0;
+
+        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
+        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+
+        worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
+        worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
+        worldPointer->mp = this->drawSpec.textureSource.mp;
+
+        // -1 because 0 means 1 pixel for width
+        w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
+        h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
+
+        worldPointer->w = 0;
+        worldPointer->h = 0;
+
+        if(w + worldPointer->gx >= __SCREEN_WIDTH)
+        {
+            worldPointer->w = __SCREEN_WIDTH - worldPointer->gx;
+        }
+        else if (0 <= w)
+        {
+            worldPointer->w = w;
+        }
+
+        if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+        {
+            worldPointer->h = __SCREEN_HEIGHT - worldPointer->gy;
+        }
+        else if (0 <= h)
+        {
+            worldPointer->h = h;
+        }
+
+        // set the world size according to the zoom
+        if(WRLD_AFFINE & this->head)
+        {
+
+            if(0 > gx)
+            {
+                worldPointer->gx = gx;
+                worldPointer->w = Texture_getCols(this->texture)<< 3;
+            }
+
+            if(_screenDisplacement->y && 0 > this->paramTableRow)
+            {
+                this->paramTableRow = 0;
+            }
+
+            worldPointer->w *= FIX7_9TOF(abs(this->drawSpec.scale.x));
+            worldPointer->h *= FIX7_9TOF(abs(this->drawSpec.scale.y));
+
+             if(0 <= this->paramTableRow)
+            {
+
+                // provide a little bit of performance gain by only calculation transform equations
+                // for the visible rows, but causes that some sprites not be rendered completely when the
+                // screen moves vertically
+                // int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
+                // this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
+
+                BgmapSprite_doApplyAffineTransformations(this, height);
+
+                if(0 < this->paramTableRow)
+                {
+                    clearRenderFlagValue = __UPDATE_SIZE;
+                }
+                else
+                {
+                    this->paramTableRow = -1;
+                }
+            }
+
+            worldPointer->param = ((__PARAM_DISPLACEMENT(this->param + (myDisplacement << 4)) - 0x20000) >> 1) & 0xFFF0;
+        }
+
+        worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+
+		// make sure to not render again
+		this->renderFlag = clearRenderFlagValue;
+	}
+}
+
+// handles affine transformations accurately by translating using translations
+// to clip the image to the screen space, but kill the CPU
+/*
+// render a world layer with the map's information
+void BgmapSprite_render(BgmapSprite this)
+{
+	ASSERT(this, "BgmapSprite::render: null this");
+	ASSERT(this->texture, "BgmapSprite::render: null texture");
+
+	// if render flag is set
+	if(this->renderFlag && this->initialized)
+	{
+		if(this->hidden)
+		{
+			WORLD_HEAD(this->worldLayer, 0x0000);
+			this->renderFlag = 0;
+			return;
+		}
+
+		static WORLD* worldPointer = NULL;
+		worldPointer = &WA[this->worldLayer];
+
+		// set the world screen position
+        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+
+        bool clearRenderFlagValue = false;
+
         int w = Texture_getCols(this->texture)<< 3;
         int h = Texture_getRows(this->texture)<< 3;
 
@@ -378,9 +497,26 @@ void BgmapSprite_render(BgmapSprite this)
         // set the world size according to the zoom
         if(WRLD_AFFINE & this->head)
         {
-            if(0 <= this->paramTableRow)
+            if(this->renderFlag & __UPDATE_G)
             {
-                int lastRow = worldPointer->h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: worldPointer->h;
+                if(0 > this->paramTableRow && (0 > gx || 0 > gy))
+                {
+                    this->paramTableRow = 0;
+                }
+            }
+
+            if(_screenDisplacement->y && 0 > this->paramTableRow)
+            {
+                this->paramTableRow = 0;
+            }
+
+            worldPointer->w *= FIX7_9TOF(abs(this->drawSpec.scale.x));
+            worldPointer->h *= FIX7_9TOF(abs(this->drawSpec.scale.y));
+
+             if(0 <= this->paramTableRow)
+            {
+                h = Texture_getRows(this->texture)<< 3;
+                int lastRow = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: h;
 
                 BgmapSprite_doApplyAffineTransformations(this, lastRow);
 
@@ -403,6 +539,7 @@ void BgmapSprite_render(BgmapSprite this)
 		this->renderFlag = clearRenderFlagValue;
 	}
 }
+*/
 
 void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
 {
@@ -486,8 +623,12 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this, int lastR
 		    this->param,
             this->paramTableRow,
             lastRow,
-            (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
-            (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
+            // geometrically accurate, but kills the CPU
+            // (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
+            // (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
+            // don't do translations
+            this->halfWidth,
+            this->halfHeight,
             ITOFIX13_3(this->drawSpec.textureSource.mx),
             ITOFIX13_3(this->drawSpec.textureSource.my),
             this->halfWidth,
