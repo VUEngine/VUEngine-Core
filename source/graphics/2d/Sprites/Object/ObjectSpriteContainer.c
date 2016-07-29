@@ -101,7 +101,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 		OAM[(i << 2) + 3] = 0;
 	}
 
-	VIP_REGS[SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+    if(this->totalObjects)
+    {
+    	VIP_REGS[SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+    }
 }
 
 // class's destructor
@@ -156,8 +159,6 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 
 		this->node = NULL;
 		this->previousNode = NULL;
-
-    	this->renderFlag = true;
 
 		return lastObjectIndex;
 	}
@@ -387,7 +388,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->renderFlag)
 	{
 		// make sure to not render again
-		WA[this->worldLayer].head = this->objectSprites->head? this->head | WRLD_OVR : WRLD_OFF;
+		WA[this->worldLayer].head = this->totalObjects? this->head | WRLD_OVR : WRLD_OFF;
 
 		// make sure to not render again
 		this->renderFlag = false;
