@@ -44,8 +44,6 @@ static bool AnimationEditorState_processMessage(AnimationEditorState this, void*
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern State __CSTOM_CONCAT(START_LEVEL, _getInstance)();
-
 enum Screens
 {
 	kPvbScreen = 0,

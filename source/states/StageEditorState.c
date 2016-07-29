@@ -44,8 +44,6 @@ static bool StageEditorState_processMessage(StageEditorState this, void* owner, 
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern State __CSTOM_CONCAT(START_LEVEL, _getInstance)();
-
 enum Screens
 {
 	kPvbScreen = 0,
