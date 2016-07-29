@@ -508,7 +508,7 @@ static void Game_handleInput(Game this)
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RU))
+	if((previousKey & K_LT) && (previousKey & K_LU) && (pressedKey & K_RU))
 	{
 		if(Game_isInDebugMode(this))
 		{
@@ -538,7 +538,7 @@ static void Game_handleInput(Game this)
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RD))
+	if((previousKey & K_LT) && (previousKey & K_LD) && (pressedKey & K_RD))
 	{
 		if(Game_isInStageEditor(this))
 		{
@@ -568,8 +568,9 @@ static void Game_handleInput(Game this)
 #ifdef __ANIMATION_EDITOR
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RR))
+	if((previousKey & K_LT) && (previousKey & K_LR) && (releasedKey & K_RR))
 	{
+
 		if(Game_isInAnimationEditor(this))
 		{
 			this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
@@ -585,6 +586,7 @@ static void Game_handleInput(Game this)
 				this->nextState = NULL;
 			}
 
+Printing_text(Printing_getInstance(), "Got to animator", 1, 10, NULL);
 			this->nextState = __SAFE_CAST(GameState, AnimationEditorState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
