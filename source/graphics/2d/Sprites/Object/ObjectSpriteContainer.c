@@ -157,6 +157,8 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 		this->node = NULL;
 		this->previousNode = NULL;
 
+    	this->renderFlag = true;
+
 		return lastObjectIndex;
 	}
 
@@ -385,7 +387,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->renderFlag)
 	{
 		// make sure to not render again
-		WA[this->worldLayer].head = this->head | WRLD_OVR;
+		WA[this->worldLayer].head = this->objectSprites->head? this->head | WRLD_OVR : WRLD_OFF;
 
 		// make sure to not render again
 		this->renderFlag = false;
@@ -421,7 +423,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 		__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
 	}
 
-	this->renderFlag = this->objectSprites->head? true : false;
+	this->renderFlag = true;
 	this->hidden = false;
 	this->initialized = false;
 }
