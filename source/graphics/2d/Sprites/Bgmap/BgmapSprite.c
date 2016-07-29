@@ -210,8 +210,6 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 			break;
 	}
 
-	this->paramTableRow = 0;
-
 	// scale the texture in the next render cycle
 	BgmapSprite_invalidateParamTable(this);
 }
@@ -392,11 +390,9 @@ this->renderFlag |= __UPDATE_G;
                 worldPointer->w = width;
             }
 
-            float scaleY = FIX7_9TOF(abs(this->drawSpec.scale.y));
-
             // apply scaling
-            worldPointer->w *= FIX7_9TOF(abs(this->drawSpec.scale.x));
-            worldPointer->h *= FIX7_9TOF(abs(this->drawSpec.scale.y));
+            worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x))));
+            worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y))));
 
              if(0 <= this->paramTableRow)
             {

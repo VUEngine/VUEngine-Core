@@ -260,9 +260,10 @@ void Screen_setPosition(Screen this, VBVec3D position)
 
 	this->position = position;
 
-	this->lastDisplacement.x = 0;
-	this->lastDisplacement.y = 0;
-	this->lastDisplacement.z = 0;
+    this->lastDisplacement.x = ITOFIX19_13(1);
+    this->lastDisplacement.y = ITOFIX19_13(1);
+    this->lastDisplacement.z = ITOFIX19_13(1);
+
 
 	Screen_capPosition(this);
 }

@@ -237,7 +237,7 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
 	u32 waitStartTime = this->ticks;
     u32 volatile *ticks = (u32*)&this->ticks;
 
-   // while ((*ticks - waitStartTime) < milliSeconds);
+    while ((*ticks - waitStartTime) < milliSeconds);
 
     this->ticks = currentTicks;
 }

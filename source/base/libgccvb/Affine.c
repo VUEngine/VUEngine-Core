@@ -122,7 +122,7 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, fix19_13 x, fix19_13
     int lastRow = FIX19_13TOI(FIX19_13_MULT((halfHeight << 1), FIX7_9TOFIX19_13(scale->y)));
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 
-	for(;0 <= counter && i < lastRow; i++, counter--)
+	for(;counter && i < lastRow; i++, counter--)
 	{
 		affine[i].pb_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPb)) + fixedAffineMatrix.dx;
 		affine[i].paralax = fixedAffineMatrix.paralax;

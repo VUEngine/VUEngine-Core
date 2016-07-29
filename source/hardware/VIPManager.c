@@ -30,7 +30,6 @@
 #include <Printing.h>
 #include <debugConfig.h>
 
-
 //---------------------------------------------------------------------------------------------------------
 // 											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
@@ -195,12 +194,12 @@ void VIPManager_interruptHandler(void)
 	// if the VPU is idle
 	if(idle)
 	{
-	/*
-        VIP_REGS[XPCTRL] |= XPRST;
-        VIP_REGS[XPCTRL] &= ~XPEN;
+		// disable drawing
+		VIP_REGS[XPCTRL] |= XPRST;
+		VIP_REGS[XPCTRL] &= ~XPEN;
 
-        while(VIP_REGS[XPSTTS] & XPBSYR);
-*/
+		while(VIP_REGS[XPSTTS] & XPBSYR);
+
 		// if performance was good enough in the
 		// the previous second do some defragmenting
 		if(!ParamTableManager_processRemovedSprites(_paramTableManager))
@@ -224,28 +223,32 @@ void VIPManager_interruptHandler(void)
         }
 
 		// enable drawing
-        //while(VIP_REGS[XPSTTS] & XPBSYR);
-
+		while (VIP_REGS[XPSTTS] & XPBSYR);
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
 
 #ifndef	__FORCE_VPU_SYNC
 #ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
     {
+#ifdef __ALERT_VPU_OVERTIME
+        int y = 2;
+#else
+        int y = 1;
+#endif
         static int messageDelay = __TARGET_FPS;
         if(!Game_doneDRAMPrecalculations(Game_getInstance()))
         {
-            Printing_text(Printing_getInstance(), "                      ", 0, 2, NULL);
-            Printing_text(Printing_getInstance(), "                               ", 0, 3, NULL);
-            Printing_text(Printing_getInstance(), "VPU: out of budget", 0, 2, NULL);
-            Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, 3, NULL);
+            Printing_text(Printing_getInstance(), "                      ", 0, y, NULL);
+            Printing_text(Printing_getInstance(), "                               ", 0, y + 1, NULL);
+            Printing_text(Printing_getInstance(), "VPU: out of budget", 0, y, NULL);
+            Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, y + 1, NULL);
             messageDelay = __TARGET_FPS;
         }
 
         if(0 == --messageDelay)
         {
-            Printing_text(Printing_getInstance(), "                      ", 0, 2, NULL);
-            Printing_text(Printing_getInstance(), "                               ", 0, 3, NULL);
+            Printing_text(Printing_getInstance(), "                      ", 0, y, NULL);
+            Printing_text(Printing_getInstance(), "                               ", 0, y + 1, NULL);
             messageDelay = -1;
         }
     }
@@ -253,6 +256,7 @@ void VIPManager_interruptHandler(void)
 #endif
 
 	// enable interrupt
+    VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 #ifdef __ALERT_VPU_OVERTIME
 	VIP_REGS[INTENB]= XPEND | TIMEERR;
 #else
