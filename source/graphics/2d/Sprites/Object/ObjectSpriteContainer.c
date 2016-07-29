@@ -421,7 +421,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 		__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
 	}
 
-	this->renderFlag = true;
+	this->renderFlag = this->objectSprites->head? true : false;
 	this->hidden = false;
 	this->initialized = false;
 }

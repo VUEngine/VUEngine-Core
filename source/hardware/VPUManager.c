@@ -54,10 +54,6 @@ extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
         /* super's attributes */																		\
         Object_ATTRIBUTES;																				\
         /* dram managers */																				\
-        FrameRate frameRate;																			\
-        ParamTableManager paramTableManager;															\
-        CharSetManager charSetManager;																	\
-        SpriteManager spriteManager;																	\
         /* post processing effects */																	\
         VirtualList postProcessingEffects;																\
         u32 currentDrawingframeBufferSet;																\
@@ -80,6 +76,11 @@ const char* Game_getDRAMPrecalculationsStep(Game this);
 #endif
 #endif
 
+static VPUManager _vpuManager;
+static ParamTableManager _paramTableManager;
+static CharSetManager _charSetManager;
+static SpriteManager _spriteManager;
+
 static void VPUManager_constructor(VPUManager this);
 
 //---------------------------------------------------------------------------------------------------------
@@ -95,13 +96,13 @@ static void __attribute__ ((noinline)) VPUManager_constructor(VPUManager this)
 
 	__CONSTRUCT_BASE(Object);
 
-	this->frameRate = FrameRate_getInstance();
-	this->paramTableManager = ParamTableManager_getInstance();
-	this->charSetManager = CharSetManager_getInstance();
-	this->spriteManager = SpriteManager_getInstance();
-
     this->postProcessingEffects = __NEW(VirtualList);
     this->currentDrawingframeBufferSet = 0;
+
+    _vpuManager = this;
+	_paramTableManager = ParamTableManager_getInstance();
+	_charSetManager = CharSetManager_getInstance();
+	_spriteManager = SpriteManager_getInstance();
 }
 
 // class's destructor
@@ -141,8 +142,11 @@ void VPUManager_enableInterrupt(VPUManager this)
 	ASSERT(this, "VPUManager::enableInterrupt: null this");
 
 	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
-//	VIP_REGS[INTENB]= XPEND | TIMEERR;
+#ifdef __ALERT_VPU_OVERTIME
+	VIP_REGS[INTENB]= XPEND | TIMEERR;
+#else
 	VIP_REGS[INTENB]= XPEND;
+#endif
 }
 
 // disable interrupt
@@ -157,6 +161,9 @@ void VPUManager_disableInterrupt(VPUManager this)
 void VPUManager_interruptHandler(void)
 {
 	bool idle = VIP_REGS[INTPND] & XPEND;
+#ifdef __ALERT_VPU_OVERTIME
+	bool overtime = VIP_REGS[INTPND] & TIMEERR;
+#endif
 
 	// disable interrupts
 	VIP_REGS[INTENB]= 0;
@@ -166,13 +173,15 @@ void VPUManager_interruptHandler(void)
     {
         static int messageDelay = __TARGET_FPS;
 
-        if(VIP_REGS[XPSTTS] & OVERTIME)
+        if(overtime)
         {
             Printing_text(Printing_getInstance(), "VPU Overtime!   ", 0, 1, NULL);
             messageDelay = __TARGET_FPS;
-        }
 
-        if(0 == --messageDelay )
+            // force normal rendering
+            idle = true;
+        }
+        else if(0 == --messageDelay)
         {
             Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
             messageDelay = -1;
@@ -187,38 +196,42 @@ void VPUManager_interruptHandler(void)
 	// if the VPU is idle
 	if(idle)
 	{
-		// disable drawing
-		VIP_REGS[XPCTRL] |= XPRST;
-		VIP_REGS[XPCTRL] &= ~XPEN;
+#ifdef __ALERT_VPU_OVERTIME
+    	// disable drawing
+        if(overtime)
+        {
 
-		while(VIP_REGS[XPSTTS] & XPBSYR);
+            VIP_REGS[XPCTRL] |= XPRST;
+            VIP_REGS[XPCTRL] &= ~XPEN;
 
-		VPUManager this = VPUManager_getInstance();
+		//    while(VIP_REGS[XPSTTS] & XPBSYR);
+		}
+#endif
 
 		// if performance was good enough in the
 		// the previous second do some defragmenting
-		if(!ParamTableManager_processRemovedSprites(this->paramTableManager))
+		if(!ParamTableManager_processRemovedSprites(_paramTableManager))
 		{
-			CharSetManager_defragmentProgressively(this->charSetManager);
+			CharSetManager_defragmentProgressively(_charSetManager);
 			// TODO: bgmap memory defragmentation
 		}
 
 		// write to DRAM
-		SpriteManager_render(this->spriteManager);
+		SpriteManager_render(_spriteManager);
 
         // check if the current frame buffer set is valid
-        if(0 == this->currentDrawingframeBufferSet || 0x8000 == this->currentDrawingframeBufferSet)
+        if(0 == _vpuManager->currentDrawingframeBufferSet || 0x8000 == _vpuManager->currentDrawingframeBufferSet)
         {
-            VirtualNode node = this->postProcessingEffects->head;
+            VirtualNode node = _vpuManager->postProcessingEffects->head;
 
             for(; node; node = node->next)
             {
-                ((void (*)(u32))node->data)(this->currentDrawingframeBufferSet);
+                ((void (*)(u32))node->data)(_vpuManager->currentDrawingframeBufferSet);
             }
         }
 
 		// enable drawing
-		while(VIP_REGS[XPSTTS] & XPBSYR);
+		//while(VIP_REGS[XPSTTS] & XPBSYR);
 
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
@@ -229,17 +242,17 @@ void VPUManager_interruptHandler(void)
         static int messageDelay = __TARGET_FPS;
         if(!Game_doneDRAMPrecalculations(Game_getInstance()))
         {
-            Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
-            Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
-            Printing_text(Printing_getInstance(), "VPU: out of budget", 0, 1, NULL);
-            Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, 2, NULL);
+            Printing_text(Printing_getInstance(), "                      ", 0, 2, NULL);
+            Printing_text(Printing_getInstance(), "                               ", 0, 3, NULL);
+            Printing_text(Printing_getInstance(), "VPU: out of budget", 0, 2, NULL);
+            Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, 3, NULL);
             messageDelay = __TARGET_FPS;
         }
 
-        if(0 == --messageDelay )
+        if(0 == --messageDelay)
         {
-            Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
-            Printing_text(Printing_getInstance(), "                               ", 0, 2, NULL);
+            Printing_text(Printing_getInstance(), "                      ", 0, 2, NULL);
+            Printing_text(Printing_getInstance(), "                               ", 0, 3, NULL);
             messageDelay = -1;
         }
     }
@@ -247,7 +260,6 @@ void VPUManager_interruptHandler(void)
 #endif
 
 	// enable interrupt
-	VIP_REGS[INTCLR] = VIP_REGS[INTPND];
 #ifdef __ALERT_VPU_OVERTIME
 	VIP_REGS[INTENB]= XPEND | TIMEERR;
 #else
