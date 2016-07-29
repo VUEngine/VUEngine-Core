@@ -296,7 +296,7 @@
 	void ClassName ## _setVTable();																        \
 																								        \
 	/* declare getSize method */																        \
-	int ClassName ## _getObjectSize(ClassName);													        \
+	int ClassName ## _getObjectSize();													                \
 																								        \
 	/* declare getBaseClass method */															        \
 	void* ClassName ## _getBaseClass();									            			        \
@@ -334,7 +334,7 @@
 	    (void (*)(Object))&BaseClassName ## _destructor;				    	        		        \
 																								        \
 	/* define class's getSize method */															        \
-	int ClassName ## _getObjectSize(ClassName this)												        \
+	int ClassName ## _getObjectSize()												                    \
 	{																							        \
 		return sizeof(ClassName ## _str);														        \
 	}																							        \

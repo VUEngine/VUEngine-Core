@@ -21,7 +21,7 @@
 
 #include <CharSetManager.h>
 #include <VirtualList.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <Mem.h>
 #include <Printing.h>
 #include <debugUtilities.h>

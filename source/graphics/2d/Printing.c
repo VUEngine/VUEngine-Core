@@ -125,7 +125,7 @@ void __attribute__ ((noinline)) Printing_clear(Printing this)
 
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
-	VPUManager_clearBgmap(VPUManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmap(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
 // get font definition and starting position in character memory

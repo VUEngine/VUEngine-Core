@@ -21,7 +21,7 @@
 
 #include <BgmapTextureManager.h>
 #include <HardwareManager.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <VirtualList.h>
 #include <Printing.h>
 

@@ -24,7 +24,7 @@
 #include <SpriteManager.h>
 #include <HardwareManager.h>
 #include <Mem.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <debugUtilities.h>
 
 

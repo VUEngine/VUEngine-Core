@@ -227,3 +227,17 @@ void TimerManager_initialize(TimerManager this)
 	TimerManager_setInterrupt(this, true);
 	TimerManager_enable(this, true);
 }
+
+// produce a wait
+void TimerManager_wait(TimerManager this, u32 milliSeconds)
+{
+	ASSERT(this, "ClockManager::wait: null this");
+
+    u32 currentTicks = this->ticks;
+	u32 waitStartTime = this->ticks;
+    u32 volatile *ticks = (u32*)&this->ticks;
+
+   // while ((*ticks - waitStartTime) < milliSeconds);
+
+    this->ticks = currentTicks;
+}

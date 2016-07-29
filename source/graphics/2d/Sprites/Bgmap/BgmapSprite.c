@@ -27,7 +27,7 @@
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
 #include <Screen.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 

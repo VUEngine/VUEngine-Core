@@ -25,7 +25,7 @@
 #include <Types.h>
 #include <Math.h>
 #include <MiscStructs.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -21,7 +21,7 @@
 
 #include <string.h>
 #include <Error.h>
-#include <VIP.h>
+#include <VIPManager.h>
 #include <Globals.h>
 #include <Game.h>
 #include <SpriteManager.h>

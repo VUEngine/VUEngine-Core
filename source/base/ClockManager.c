@@ -132,6 +132,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 
 	// update tick count
 	this->ticks += ticksElapsed;
+
 	u32 currentSecond = (u32)((this->ticks) / __MILLISECONDS_IN_SECOND);
 
 	//if second has changed, set frame rate

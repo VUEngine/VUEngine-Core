@@ -82,6 +82,7 @@ void Game_addPostProcessingEffect(Game this, void (*postProcessingEffect) (u32))
 void Game_removePostProcessingEffect(Game this, void (*postProcessingEffect) (u32));
 CollisionManager Game_getCollisionManager(Game this);
 PhysicalWorld Game_getPhysicalWorld(Game this);
+void Game_wait(Game this, u32 milliSeconds);
 
 #ifdef __DEBUG_TOOLS
 bool Game_isInDebugMode(Game this);

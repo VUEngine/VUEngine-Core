@@ -21,11 +21,10 @@
 
 #include <HardwareManager.h>
 #include <Game.h>
-#include <VIP.h>
 #include <KeypadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <ClockManager.h>
 #include <SpriteManager.h>
 #include <Printing.h>
@@ -52,7 +51,7 @@ extern u32 _bss_end;
         /* Timer manager */																				\
         TimerManager timerManager;																		\
         /* VPU manager */																				\
-        VPUManager vpuManager;																			\
+        VIPManager vipManager;																			\
         /* VPU manager */																				\
         KeypadManager keypadManager;																	\
         /* HW registry */																				\
@@ -78,7 +77,7 @@ int _sp = 0;
 
 void TimerManager_interruptHandler(void);
 void KeypadManager_interruptHandler(void);
-void VPUManager_interruptHandler(void);
+void VIPManager_interruptHandler(void);
 
 static void HardwareManager_constructor(HardwareManager this);
 
@@ -101,7 +100,7 @@ static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManag
 
 	this->hwRegisters =	(u8*)0x02000000;
 	this->timerManager = TimerManager_getInstance();
-	this->vpuManager = VPUManager_getInstance();
+	this->vipManager = VIPManager_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
 }
 
@@ -133,7 +132,7 @@ void HardwareManager_setInterruptVectors(HardwareManager this)
 	tim_vector = (u32)TimerManager_interruptHandler;
 	cro_vector = (u32)HardwareManager_croInterruptHandler;
 	com_vector = (u32)HardwareManager_communicationInterruptHandler;
-	vpu_vector = (u32)VPUManager_interruptHandler;
+	vpu_vector = (u32)VIPManager_interruptHandler;
 }
 
 // set interruption level
@@ -234,7 +233,7 @@ void HardwareManager_clearScreen(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::clearScreen: null this");
 
-	VPUManager_clearScreen(this->vpuManager);
+	VIPManager_clearScreen(this->vipManager);
 }
 
 // display on
@@ -242,7 +241,7 @@ void HardwareManager_displayOn(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::displayOn: null this");
 
-	VPUManager_displayOn(this->vpuManager);
+	VIPManager_displayOn(this->vipManager);
 }
 
 // display off
@@ -250,7 +249,7 @@ void HardwareManager_displayOff(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::displayOff: null this");
 
-	VPUManager_displayOff(this->vpuManager);
+	VIPManager_displayOff(this->vipManager);
 }
 
 // disable VPU interrupts
@@ -259,7 +258,7 @@ void HardwareManager_disableRendering(HardwareManager this)
 	ASSERT(this, "HardwareManager::disableRendering: null this");
 
 	// disable interrupt
-	VPUManager_disableInterrupt(this->vpuManager);
+	VIPManager_disableInterrupt(this->vipManager);
 }
 
 // enable VPU interrupts
@@ -268,8 +267,8 @@ void HardwareManager_enableRendering(HardwareManager this)
 	ASSERT(this, "HardwareManager::enableRendering: null this");
 
 	// turn on display
-	VPUManager_displayOn(this->vpuManager);
-	VPUManager_enableInterrupt(VPUManager_getInstance());
+	VIPManager_displayOn(this->vipManager);
+	VIPManager_enableInterrupt(VIPManager_getInstance());
 }
 
 // make sure the brightness is ok
@@ -277,7 +276,7 @@ void HardwareManager_upBrightness(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::upBrightness: null this");
 
-	VPUManager_upBrightness(this->vpuManager);
+	VIPManager_upBrightness(this->vipManager);
 }
 
 // lower display brightness
@@ -285,7 +284,7 @@ void HardwareManager_lowerBrightness(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::lowerBrightness: null this");
 
-	VPUManager_lowerBrightness(this->vpuManager);
+	VIPManager_lowerBrightness(this->vipManager);
 }
 
 // setup default column table
@@ -293,7 +292,7 @@ void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinitio
 {
 	ASSERT(this, "HardwareManager::setupColumnTable: null this");
 
-	VPUManager_setupColumnTable(this->vpuManager, columnTableDefinition);
+	VIPManager_setupColumnTable(this->vipManager, columnTableDefinition);
 }
 
 // enable key pad

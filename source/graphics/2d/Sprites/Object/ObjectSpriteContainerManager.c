@@ -20,8 +20,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSpriteContainerManager.h>
-#include <VIP.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <Printing.h>
 
 

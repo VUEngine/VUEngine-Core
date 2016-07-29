@@ -33,7 +33,7 @@
 #include <CharSetManager.h>
 #include <Texture.h>
 #include <ParamTableManager.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <MBackgroundManager.h>
 
 #include <debugConfig.h>
@@ -259,7 +259,7 @@ void Stage_setupPalettes(Stage this)
 {
 	ASSERT(this, "Stage::setupPalettes: null this");
 
-	VPUManager_setupPalettes(VPUManager_getInstance(), &this->stageDefinition->rendering.paletteConfig);
+	VIPManager_setupPalettes(VIPManager_getInstance(), &this->stageDefinition->rendering.paletteConfig);
 }
 
 

@@ -42,11 +42,10 @@
 #include <StateMachine.h>
 #include <Screen.h>
 #include <ScreenMovementManager.h>
-#include <VIP.h>
 #include <KeypadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <Printing.h>
 #include <I18n.h>
 #include <debugConfig.h>
@@ -110,7 +109,7 @@ enum GameCurrentProcess
         /* managers */																					\
         ClockManager clockManager;																		\
         KeypadManager keypadManager;																	\
-        VPUManager vpuManager;																			\
+        VIPManager vipManager;																			\
         TimerManager timerManager;																		\
         Screen screen;																					\
         /* game's next state */																			\
@@ -199,7 +198,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	// make sure all managers are initialized now
 	this->screen = Screen_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
-	this->vpuManager = VPUManager_getInstance();
+	this->vipManager = VIPManager_getInstance();
 	this->timerManager = TimerManager_getInstance();
 	SoundManager_getInstance();
 	CharSetManager_getInstance();
@@ -448,7 +447,7 @@ void Game_reset(Game this)
 	HardwareManager_setupColumnTable(HardwareManager_getInstance(), NULL);
     HardwareManager_displayOn(HardwareManager_getInstance());
     HardwareManager_lowerBrightness(HardwareManager_getInstance());
-    VPUManager_removePostProcessingEffects(this->vpuManager);
+    VIPManager_removePostProcessingEffects(this->vipManager);
 
 	// reset managers
     Screen_setFocusInGameEntity(this->screen, NULL);
@@ -701,7 +700,7 @@ inline static void Game_updateVisuals(Game this)
 
 #ifdef __FORCE_VPU_SYNC
 	// disable rendering until collisions have been checked
-	VPUManager_disableInterrupt(this->vpuManager);
+	VIPManager_disableInterrupt(this->vipManager);
 #endif
 
 #ifdef __DEBUG
@@ -715,7 +714,7 @@ inline static void Game_updateVisuals(Game this)
 
 #ifdef __FORCE_VPU_SYNC
 	// allow rendering
-	VPUManager_enableInterrupt(this->vpuManager);
+	VIPManager_enableInterrupt(this->vipManager);
 #endif
 
 #ifdef __DEBUG
@@ -862,7 +861,7 @@ static void Game_update(Game this)
         ClockManager_update(this->clockManager, TimerManager_getAndResetTicks(this->timerManager));
 
 	    // register the frame buffer in use by the VPU's drawing process
-	    VPUManager_registerCurrentDrawingframeBufferSet(this->vpuManager);
+	    VIPManager_registerCurrentDrawingframeBufferSet(this->vipManager);
 
 		// update each subsystem
 #if __FRAME_CYCLE == 1
@@ -1236,14 +1235,21 @@ void Game_addPostProcessingEffect(Game this, void (*postProcessingEffect) (u32))
 {
 	ASSERT(this, "Game::addPostProcessingEffect: null this");
 
-    VPUManager_addPostProcessingEffect(this->vpuManager, postProcessingEffect);
+    VIPManager_addPostProcessingEffect(this->vipManager, postProcessingEffect);
 }
 
 void Game_removePostProcessingEffect(Game this, void (*postProcessingEffect) (u32))
 {
 	ASSERT(this, "Game::removePostProcessingEffect: null this");
 
-    VPUManager_removePostProcessingEffect(this->vpuManager, postProcessingEffect);
+    VIPManager_removePostProcessingEffect(this->vipManager, postProcessingEffect);
+}
+
+void Game_wait(Game this, u32 milliSeconds)
+{
+    ASSERT(this, "Game::wait: this null");
+
+    TimerManager_wait(this->timerManager, milliSeconds);
 }
 
 #ifndef	__FORCE_VPU_SYNC
@@ -1277,4 +1283,3 @@ void Game_showProfiling(Game this)
     showProfiling = true;
 }
 #endif
-

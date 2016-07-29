@@ -22,8 +22,8 @@
 #include <ScreenMovementManager.h>
 #include <Screen.h>
 #include <Game.h>
-#include <Clock.h>
-#include <VIP.h>
+#include <ClockManager.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 
@@ -176,7 +176,7 @@ void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
 		if(duration)
 		{
 			// create time delay
-			//Clock_delay(Game_getClock(Game_getInstance()), duration);
+			Game_wait(Game_getInstance(), duration);
 		}
 
 		// increase brightness
@@ -201,7 +201,7 @@ void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
 		if(duration)
 		{
 			// create time delay
-			//Clock_delay(Game_getClock(Game_getInstance()), duration);
+			Game_wait(Game_getInstance(), duration);
 		}
 		// decrease brightness
 		SET_BRIGHT(i, i << 1, i);

@@ -29,6 +29,75 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+
+/* Defines for INTPND\INTENB\INTCLR */
+#define	TIMEERR		0x8000
+#define	XPEND		0x4000
+#define	SBHIT		0x2000
+#define	FRAMESTART	0x0010
+#define	GAMESTART	0x0008
+#define	RFBEND		0x0004
+#define	LFBEND		0x0002
+#define	SCANERR		0x0001
+
+/* Defines for DPSTTS\DPCTRL */
+#define	LOCK		0x0400	// VPU SELECT CTA
+#define	SYNCE		0x0200	// L,R_SYNC TO VPU
+#define	RE			0x0100	// MEMORY REFLASH CYCLE ON
+#define	FCLK		0x0080
+#define	SCANRDY		0x0040
+#define	DISP		0x0002	// DISPLAY ON
+#define	DPRST		0x0001	// RESET VPU COUNTER AND WAIT FCLK
+
+/* Defines for XPSTTS\XPCTRL */
+#define	SBOUT		0x8000	// In FrameBuffer drawing included
+#define	OVERTIME	0x0010	// Processing
+#define	XPBSYR		0x000C	// In the midst of drawing processing reset
+#define	XPBSY1		0x0008	// In the midst of FrameBuffer1 picture editing
+#define	XPBSY0		0x0004	// In the midst of FrameBuffer0 picture editing
+#define	XPEN		0x0002	// Start of drawing
+#define	XPRST		0x0001	// Forcing idling
+
+
+/****** VIP Registers ******/
+extern volatile u16* VIP_REGS __INITIALIZED_DATA_SECTION_ATTRIBUTE;
+
+/****** VIP Register Mnemonics ******/
+#define	INTPND	0x00
+#define	INTENB	0x01
+#define	INTCLR	0x02
+
+#define	DPSTTS	0x10
+#define	DPCTRL	0x11
+#define	BRTA	0x12
+#define	BRTB	0x13
+#define	BRTC	0x14
+#define	REST	0x15
+
+#define	FRMCYC	0x17
+#define	CTA		0x18
+
+#define	XPSTTS	0x20
+#define	XPCTRL	0x21
+#define	VER		0x22
+
+#define	SPT0	0x24
+#define	SPT1	0x25
+#define	SPT2	0x26
+#define	SPT3	0x27
+
+#define	GPLT0	0x30
+#define	GPLT1	0x31
+#define	GPLT2	0x32
+#define	GPLT3	0x33
+
+#define	JPLT0	0x34
+#define	JPLT1	0x35
+#define	JPLT2	0x36
+#define	JPLT3	0x37
+
+#define	BKCOL	0x38
+
 // Display RAM
 /*@null@*/
 static u32* const	L_FRAME0 =	(u32*)0x00000000;				// Left Frame Buffer 0
@@ -176,41 +245,41 @@ typedef const ColumnTableDefinition ColumnTableROMDef;
 // Defines as a pointer to a struct that is not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define VPUManager_METHODS(ClassName)																				\
+#define VIPManager_METHODS(ClassName)																				\
 		Object_METHODS(ClassName)																					\
 
 // declare the virtual methods which are redefined
-#define VPUManager_SET_VTABLE(ClassName)																\
+#define VIPManager_SET_VTABLE(ClassName)																\
 		Object_SET_VTABLE(ClassName)																	\
 
-__CLASS(VPUManager);
+__CLASS(VIPManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-VPUManager VPUManager_getInstance();
+VIPManager VIPManager_getInstance();
 
-void VPUManager_destructor(VPUManager this);
-void VPUManager_enableDrawing(VPUManager this);
-void VPUManager_disableDrawing(VPUManager this);
-void VPUManager_enableInterrupt(VPUManager this);
-void VPUManager_disableInterrupt(VPUManager this);
-void VPUManager_displayOn(VPUManager this);
-void VPUManager_displayOff(VPUManager this);
-void VPUManager_setupPalettes(VPUManager this, PaletteConfig* paletteConfig);
-void VPUManager_upBrightness(VPUManager this);
-void VPUManager_lowerBrightness(VPUManager this);
-void VPUManager_displayHide(VPUManager this);
-void VPUManager_clearScreen(VPUManager this);
-void VPUManager_clearBgmap(VPUManager this, int bgmap, int size);
-void VPUManager_setupColumnTable(VPUManager this, ColumnTableDefinition* columnTableDefinition);
-void VPUManager_useInternalColumnTable(VPUManager this, bool internal);
-void VPUManager_setBackgroundColor(VPUManager this, u8 color);
-void VPUManager_addPostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
-void VPUManager_removePostProcessingEffect(VPUManager this, void (*postProcessingEffect) (u32));
-void VPUManager_removePostProcessingEffects(VPUManager this);
-void VPUManager_registerCurrentDrawingframeBufferSet(VPUManager this);
+void VIPManager_destructor(VIPManager this);
+void VIPManager_enableDrawing(VIPManager this);
+void VIPManager_disableDrawing(VIPManager this);
+void VIPManager_enableInterrupt(VIPManager this);
+void VIPManager_disableInterrupt(VIPManager this);
+void VIPManager_displayOn(VIPManager this);
+void VIPManager_displayOff(VIPManager this);
+void VIPManager_setupPalettes(VIPManager this, PaletteConfig* paletteConfig);
+void VIPManager_upBrightness(VIPManager this);
+void VIPManager_lowerBrightness(VIPManager this);
+void VIPManager_displayHide(VIPManager this);
+void VIPManager_clearScreen(VIPManager this);
+void VIPManager_clearBgmap(VIPManager this, int bgmap, int size);
+void VIPManager_setupColumnTable(VIPManager this, ColumnTableDefinition* columnTableDefinition);
+void VIPManager_useInternalColumnTable(VIPManager this, bool internal);
+void VIPManager_setBackgroundColor(VIPManager this, u8 color);
+void VIPManager_addPostProcessingEffect(VIPManager this, void (*postProcessingEffect) (u32));
+void VIPManager_removePostProcessingEffect(VIPManager this, void (*postProcessingEffect) (u32));
+void VIPManager_removePostProcessingEffects(VIPManager this);
+void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this);
 
 #endif

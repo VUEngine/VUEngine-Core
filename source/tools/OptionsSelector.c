@@ -33,7 +33,7 @@
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
 #include <Printing.h>

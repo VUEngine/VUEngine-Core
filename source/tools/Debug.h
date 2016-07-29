@@ -46,7 +46,7 @@ __CLASS(Debug);
 // for debugging
 typedef struct ClassSizeData
 {
-	int (*classSizeFunction)(Object);
+	int (*classSizeFunction)(void);
 	char* name;
 
 } ClassSizeData;

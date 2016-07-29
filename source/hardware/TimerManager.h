@@ -78,6 +78,7 @@ void TimerManager_setFrequency(TimerManager this, int frequency);
 int TimerManager_getStat(TimerManager this);
 void TimerManager_clearStat(TimerManager this);
 void TimerManager_initialize(TimerManager this);
+void TimerManager_wait(TimerManager this, u32 milliSeconds);
 
 
 #endif

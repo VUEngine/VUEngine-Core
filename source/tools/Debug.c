@@ -35,7 +35,7 @@
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
 #include <Printing.h>
@@ -44,7 +44,6 @@
 #include <BgmapAnimationCoordinator.h>
 #include <ObjectAnimationCoordinator.h>
 #include <KeyPadManager.h>
-#include <VIP.h>
 
 #include <Clock.h>
 #include <State.h>
@@ -247,7 +246,7 @@ void Debug_update(Debug this)
 // show debug screens
 void Debug_show(Debug this, GameState gameState)
 {
-	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 	this->gameState = gameState;
@@ -260,7 +259,7 @@ void Debug_show(Debug this, GameState gameState)
 void Debug_hide(Debug this)
 {
 	CollisionManager_flushShapesDirectDrawData(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
-	VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_lightUpGame(this);
 }
@@ -350,7 +349,7 @@ static void Debug_showPage(Debug this, int increment)
 	{
 		this->update = NULL;
 
-		VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+		VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 
         Debug_printHeader(this);
@@ -369,7 +368,7 @@ static void Debug_showSubPage(Debug this, int increment)
 	{
 		this->update = NULL;
 
-		VPUManager_clearBgmap(VPUManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+		VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
         Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
@@ -520,19 +519,19 @@ static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, i
 
 	ClassSizeData classesSizeData[] =
 	{
-		{(int (*)(Object))&Container_getObjectSize, "Container"},
-		{(int (*)(Object))&Entity_getObjectSize, "Entity"},
-		{(int (*)(Object))&Image_getObjectSize, "Image"},
-		{(int (*)(Object))&ManagedEntity_getObjectSize, "ManagedEntity"},
-		{(int (*)(Object))&MBackground_getObjectSize, "MBackground"},
-		{(int (*)(Object))&InGameEntity_getObjectSize, "InGameEntity"},
-		{(int (*)(Object))&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
-		{(int (*)(Object))&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
-		{(int (*)(Object))&Actor_getObjectSize, "Actor"},
-		{(int (*)(Object))&Particle_getObjectSize, "Particle"},
-		{(int (*)(Object))&ParticleSystem_getObjectSize, "ParticleSystem"},
-		{(int (*)(Object))&GameState_getObjectSize, "GameState"},
-		{(int (*)(Object))&GameState_getObjectSize, "Stage"},
+		{&Container_getObjectSize, "Container"},
+		{&Entity_getObjectSize, "Entity"},
+		{&Image_getObjectSize, "Image"},
+		{&ManagedEntity_getObjectSize, "ManagedEntity"},
+		{&MBackground_getObjectSize, "MBackground"},
+		{&InGameEntity_getObjectSize, "InGameEntity"},
+		{&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
+		{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
+		{&Actor_getObjectSize, "Actor"},
+		{&Particle_getObjectSize, "Particle"},
+		{&ParticleSystem_getObjectSize, "ParticleSystem"},
+		{&GameState_getObjectSize, "GameState"},
+		{&GameState_getObjectSize, "Stage"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");

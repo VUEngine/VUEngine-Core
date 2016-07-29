@@ -22,7 +22,7 @@
 #include <CharSet.h>
 #include <CharSetManager.h>
 #include <Mem.h>
-#include <VPUManager.h>
+#include <VIPManager.h>
 #include <VirtualList.h>
 
 
