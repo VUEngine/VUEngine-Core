@@ -370,19 +370,16 @@ VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
 }
 
 // get position of node in the list
-int VirtualList_getNodePosition(VirtualList this, const void* const dataPointer)
+int VirtualList_getNodePosition(VirtualList this, VirtualNode node)
 {
 	ASSERT(this, "VirtualList::removeElement: null this");
 
-	VirtualNode node = this->head;
+	VirtualNode currentNode = this->head;
     int position = 0;
 
-	for(; node && node->data != (void*)dataPointer; node = node->next)
-	{
-	    position++;
-	}
+	for(; currentNode && currentNode != node; currentNode = currentNode->next, position++);
 
-	return !node? -1 : position;
+	return !currentNode? -1 : position;
 }
 
 // remove a node from the list
