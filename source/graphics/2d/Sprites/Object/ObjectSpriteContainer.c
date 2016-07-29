@@ -25,7 +25,7 @@
 #include <Optics.h>
 #include <Screen.h>
 #include <SpriteManager.h>
-#include <VIP.h>
+#include <VIPManager.h>
 #include <Printing.h>
 #include <Utilities.h>
 #include <debugUtilities.h>
@@ -113,8 +113,11 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
-	// remove from sprite manager
-	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+    if(this->totalObjects)
+    {
+        // remove from sprite manager
+        SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+    }
 
 	VirtualNode node = this->objectSprites->head;
 
