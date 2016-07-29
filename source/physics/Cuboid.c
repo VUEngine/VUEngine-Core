@@ -243,7 +243,7 @@ int Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject,
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
 	ASSERT(collidingSpatialObject, "Cuboid::getAxisOfCollision: null collidingSpatialObject");
 
-	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
+	Shape shape = __VIRTUAL_CALL_UNSAFE(SpatialObject, getShape, collidingSpatialObject);
 
 	if(__GET_CAST(InverseCuboid, shape))
 	{
@@ -496,7 +496,7 @@ int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VB
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
-	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
+	Shape shape = __VIRTUAL_CALL_UNSAFE(SpatialObject, getShape, collidingSpatialObject);
 
 	if(__GET_CAST(Cuboid, shape))
     {

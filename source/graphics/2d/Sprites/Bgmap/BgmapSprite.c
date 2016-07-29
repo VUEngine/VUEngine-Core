@@ -617,8 +617,6 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 
 	if(this->param)
 	{
-	    fix19_13 gx =  gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
-
 		this->paramTableRow = Affine_applyAll(
 		    this->param,
             this->paramTableRow,

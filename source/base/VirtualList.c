@@ -369,6 +369,20 @@ VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
 	return node;
 }
 
+// get position of data in the list
+int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer)
+{
+	ASSERT(this, "VirtualList::getDataPosition: null this");
+
+	VirtualNode node = this->head;
+    int position = 0;
+
+	for(; node && node->data != (void*)dataPointer; node = node->next, position++);
+
+	return !node? -1 : position;
+}
+
+
 // get position of node in the list
 int VirtualList_getNodePosition(VirtualList this, VirtualNode node)
 {

@@ -338,7 +338,7 @@ static void Debug_printHeader(Debug this)
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
     Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
     Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->pages, this->currentPage->data) + 1, 17, 0, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->pages, this->currentPage) + 1, 17, 0, NULL);
     Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
 }
 
@@ -788,7 +788,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), this->currentLayer, x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(sprite), x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(sprite), x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite).x), x + 10, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite).y), x + 20, y, NULL);

@@ -63,6 +63,7 @@ void* VirtualList_getNodeData(VirtualList this, int item);
 VirtualNode VirtualList_getNode(VirtualList this, int item);
 void* VirtualList_getObject(VirtualList this, void* const dataPointer);
 VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer);
+int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer);
 int VirtualList_getNodePosition(VirtualList this, VirtualNode node);
 int VirtualList_removeElement(VirtualList this, const void* const dataPointer);
 void VirtualList_copy(VirtualList this, VirtualList sourceList);
