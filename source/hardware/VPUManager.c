@@ -196,18 +196,12 @@ void VPUManager_interruptHandler(void)
 	// if the VPU is idle
 	if(idle)
 	{
-#ifdef __ALERT_VPU_OVERTIME
-    	// disable drawing
-        if(overtime)
-        {
+	/*
+        VIP_REGS[XPCTRL] |= XPRST;
+        VIP_REGS[XPCTRL] &= ~XPEN;
 
-            VIP_REGS[XPCTRL] |= XPRST;
-            VIP_REGS[XPCTRL] &= ~XPEN;
-
-		//    while(VIP_REGS[XPSTTS] & XPBSYR);
-		}
-#endif
-
+        while(VIP_REGS[XPSTTS] & XPBSYR);
+*/
 		// if performance was good enough in the
 		// the previous second do some defragmenting
 		if(!ParamTableManager_processRemovedSprites(_paramTableManager))
@@ -231,7 +225,7 @@ void VPUManager_interruptHandler(void)
         }
 
 		// enable drawing
-		//while(VIP_REGS[XPSTTS] & XPBSYR);
+        //while(VIP_REGS[XPSTTS] & XPBSYR);
 
 		VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] | XPEN;
 	}
