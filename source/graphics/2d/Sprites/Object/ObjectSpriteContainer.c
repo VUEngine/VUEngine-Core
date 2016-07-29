@@ -87,9 +87,6 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	this->node = NULL;
 	this->previousNode = NULL;
 
-	// register to sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-
 	// clear OBJ memory
 	int i = firstObjectIndex;
 
@@ -104,6 +101,9 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
     if(this->totalObjects)
     {
     	VIP_REGS[SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+
+        // register to sprite manager
+        SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
     }
 }
 
