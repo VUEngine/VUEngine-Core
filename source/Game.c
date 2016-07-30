@@ -1255,7 +1255,7 @@ void Game_wait(Game this, u32 milliSeconds)
 }
 
 #ifndef	__FORCE_VPU_SYNC
-#ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
+#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
 bool Game_doneDRAMPrecalculations(Game this)
 {
 	ASSERT(this, "Game::doneDRAMPrecalculations: null this");

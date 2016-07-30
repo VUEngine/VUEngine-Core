@@ -68,7 +68,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 #ifndef	__FORCE_VPU_SYNC
-#ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
+#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
 bool Game_doneDRAMPrecalculations(Game this);
 const char* Game_getDRAMPrecalculationsStep(Game this);
 #endif
@@ -228,7 +228,7 @@ void VIPManager_interruptHandler(void)
 	}
 
 #ifndef	__FORCE_VPU_SYNC
-#ifdef __PRINT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU_WARNING
+#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
     {
 #ifdef __ALERT_VPU_OVERTIME
         int y = 2;
