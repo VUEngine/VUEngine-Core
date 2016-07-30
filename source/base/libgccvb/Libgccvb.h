@@ -23,7 +23,6 @@
 
 #include <Types.h>
 #include <Math.h>
-#include <Stdarg.h>
 
 
 #endif
