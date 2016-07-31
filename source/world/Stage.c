@@ -937,8 +937,6 @@ static void Stage_loadInRangeEntities(Stage this)
 			}
 		}
 	}
-
-	NM_ASSERT(this->streamingHeadNode, "Stage::loadInRangeEntities: null streamingHeadNode");
 }
 
 // unload non visible entities
