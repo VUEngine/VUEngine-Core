@@ -917,6 +917,11 @@ static void Stage_loadInRangeEntities(Stage this)
 
 				if(entity)
 				{
+				    if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+				    {
+                        this->streamingHeadNode = node;
+				    }
+
 					stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
 
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
@@ -932,6 +937,8 @@ static void Stage_loadInRangeEntities(Stage this)
 			}
 		}
 	}
+
+	NM_ASSERT(this->streamingHeadNode, "Stage::loadInRangeEntities: null streamingHeadNode");
 }
 
 // unload non visible entities
