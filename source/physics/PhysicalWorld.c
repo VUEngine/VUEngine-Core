@@ -272,32 +272,41 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	if(clock->paused)
 	{
+	    // prevent that the initial update after unpausing the clock
+	    // gets a bigger that usual elapsed time
+	    this->previousTime = 0;
 		return;
 	}
 
 	Clock_pause(clock, true);
 
 	fix19_13 currentTime = ITOFIX19_13(Clock_getTime(clock));
-	this->elapsedTime = FIX19_13_DIV(currentTime - this->previousTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
-	this->previousTime = currentTime;
+	fix19_13 elapsedTime = FIX19_13_DIV(currentTime - this->previousTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
 	Clock_pause(clock, false);
 
 	PhysicalWorld_processRemovedBodies(this);
 
-	if(0 >= --this->checkForGravity)
-	{
-		this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
-		PhysicalWorld_checkForGravity(this);
-	}
+    if(this->previousTime)
+    {
+        this->elapsedTime = elapsedTime;
 
-	VirtualNode node = this->activeBodies->head;
+        if(0 >= --this->checkForGravity)
+        {
+            this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
+            PhysicalWorld_checkForGravity(this);
+        }
 
-	// check the bodies
-	for(; node; node = node->next)
-	{
-		Body_update(__SAFE_CAST(Body, node->data), &this->gravity, this->elapsedTime);
-	}
+        VirtualNode node = this->activeBodies->head;
+
+        // check the bodies
+        for(; node; node = node->next)
+        {
+            Body_update(__SAFE_CAST(Body, node->data), &this->gravity, this->elapsedTime);
+        }
+    }
+
+	this->previousTime = currentTime;
 }
 
 // unregister all bodies
