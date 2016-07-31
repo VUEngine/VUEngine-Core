@@ -51,7 +51,7 @@ void GameState_constructor(GameState this)
 	this->physicsClock = __NEW(Clock);
 
 	// construct the physical world and collision manager
-	this->physicalWorld = __NEW(PhysicalWorld);
+	this->physicalWorld = __NEW(PhysicalWorld, this->physicsClock);
 	this->collisionManager = __NEW(CollisionManager);
 
 	// by default can stream
@@ -92,6 +92,8 @@ void GameState_destructor(GameState this)
 void GameState_enter(GameState this, void* owner)
 {
 	ASSERT(this, "GameState::enter: null this");
+
+    GameState_pauseClocks(this);
 
 	Clock_start(this->inGameClock);
 }
@@ -454,6 +456,8 @@ void GameState_pausePhysics(GameState this, bool pause)
 	ASSERT(this, "GameState::pausePhysics: null this");
 
 	Clock_pause(this->physicsClock, pause);
+
+    PhysicalWorld_clearTimeRegisters(this->physicalWorld);
 }
 
 void GameState_updatePhysics(GameState this)

@@ -239,5 +239,5 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
 
     while ((*ticks - waitStartTime) < milliSeconds);
 
-    this->ticks = currentTicks;
+    this->ticks = 0;
 }

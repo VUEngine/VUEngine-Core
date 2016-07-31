@@ -275,6 +275,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	    // prevent that the initial update after unpausing the clock
 	    // gets a bigger that usual elapsed time
 	    this->previousTime = 0;
+        this->elapsedTime = 0;
 		return;
 	}
 
@@ -306,7 +307,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
         }
     }
 
-	this->previousTime = currentTime;
+	this->previousTime = ITOFIX19_13(Clock_getTime(clock));
 }
 
 // unregister all bodies
@@ -327,6 +328,15 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualList_clear(this->bodies);
 	VirtualList_clear(this->activeBodies);
 	VirtualList_clear(this->removedBodies);
+
+    this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
+    this->elapsedTime = 0;
+    this->previousTime = 0;
+}
+
+void PhysicalWorld_clearTimeRegisters(PhysicalWorld this)
+{
+	ASSERT(this, "PhysicalWorld::clearTimeRegisters: null this");
 
     this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
     this->elapsedTime = 0;

@@ -33,8 +33,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define PhysicalWorld_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
+#define PhysicalWorld_METHODS(ClassName)																\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define PhysicalWorld_SET_VTABLE(ClassName)																\
@@ -57,6 +57,7 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 void PhysicalWorld_start(PhysicalWorld this);
 void PhysicalWorld_update(PhysicalWorld this, Clock clock);
 void PhysicalWorld_reset(PhysicalWorld this);
+void PhysicalWorld_clearTimeRegisters(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
