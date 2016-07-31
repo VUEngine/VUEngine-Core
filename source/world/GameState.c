@@ -201,7 +201,7 @@ void GameState_resume(GameState this, void* owner)
 	}
 
 	// move the screen to its previous position
-	Screen_position(Screen_getInstance(), false);
+	Screen_focus(Screen_getInstance(), false);
 
 	// transform everything before showing up
 	GameState_transform(this);
@@ -324,9 +324,6 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// load world entities
 	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
-
-	// move the screen to its position
-	Screen_position(Screen_getInstance(), false);
 
 	// transform everything
 	GameState_transform(this);

@@ -37,7 +37,6 @@ __CLASS_DEFINITION(Screen, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void Screen_constructor(Screen this);
-static void Screen_capPosition(Screen this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -131,10 +130,10 @@ void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMo
 }
 
 // center world's screen in function of focus actor's position
-void Screen_position(Screen this, u8 checkIfFocusEntityIsMoving)
+void Screen_focus(Screen this, u8 checkIfFocusEntityIsMoving)
 {
-	ASSERT(this, "Screen::update: null this");
-	ASSERT(this->screenMovementManager, "Screen::update: null screenMovementManager");
+	ASSERT(this, "Screen::focus: null this");
+	ASSERT(this->screenMovementManager, "Screen::focus: null screenMovementManager");
 
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(Game_getInstance()))
@@ -146,7 +145,7 @@ void Screen_position(Screen this, u8 checkIfFocusEntityIsMoving)
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
-	__VIRTUAL_CALL(ScreenMovementManager, position, this->screenMovementManager, checkIfFocusEntityIsMoving);
+	__VIRTUAL_CALL(ScreenMovementManager, focus, this->screenMovementManager, checkIfFocusEntityIsMoving);
 }
 
 // set the focus entity
@@ -156,8 +155,11 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity)
 
 	this->focusInGameEntity = focusInGameEntity;
 
-	// make sure that any other entity knows about the change
-	Screen_forceDisplacement(this, true);
+    if(focusInGameEntity)
+    {
+        // focus now
+        Screen_focus(this, false);
+	}
 }
 
 // unset the focus entity
@@ -210,7 +212,7 @@ void Screen_move(Screen this, VBVec3D translation, int cap)
 }
 
 // translate screen
-static void Screen_capPosition(Screen this)
+void Screen_capPosition(Screen this)
 {
 	ASSERT(this, "Screen::capPosition: null this");
 
@@ -263,7 +265,6 @@ void Screen_setPosition(Screen this, VBVec3D position)
     this->lastDisplacement.x = ITOFIX19_13(1);
     this->lastDisplacement.y = ITOFIX19_13(1);
     this->lastDisplacement.z = ITOFIX19_13(1);
-
 
 	Screen_capPosition(this);
 }
@@ -348,9 +349,9 @@ void Screen_forceDisplacement(Screen this, int flag)
 {
 	ASSERT(this, "Screen::forceDisplacement: null this");
 
-	this->lastDisplacement.x = flag ? 1 : 0;
-	this->lastDisplacement.y = flag ? 1 : 0;
-	this->lastDisplacement.z = flag ? 1 : 0;
+	this->lastDisplacement.x = flag ? ITOFIX19_13(1) : 0;
+	this->lastDisplacement.y = flag ? ITOFIX19_13(1) : 0;
+	this->lastDisplacement.z = flag ? ITOFIX19_13(1) : 0;
 }
 
 void Screen_startEffect(Screen this, int effect, int duration)

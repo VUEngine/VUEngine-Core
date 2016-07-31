@@ -749,7 +749,7 @@ inline static void Game_updateTransformations(Game this)
 #endif
 
 	// position the screen
-	Screen_position(this->screen, true);
+	Screen_focus(this->screen, true);
 
 	this->currentProcess = kGameTransforming;
 
