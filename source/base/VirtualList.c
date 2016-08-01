@@ -391,9 +391,9 @@ int VirtualList_getNodePosition(VirtualList this, VirtualNode node)
 	VirtualNode currentNode = this->head;
     int position = 0;
 
-	for(; currentNode && currentNode != node; currentNode = currentNode->next, position++);
+	for(; node && currentNode && currentNode != node; currentNode = currentNode->next, position++);
 
-	return !currentNode? -1 : position;
+	return !node|| !currentNode ? -1 : position;
 }
 
 // remove a node from the list

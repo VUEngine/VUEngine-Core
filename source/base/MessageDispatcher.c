@@ -202,7 +202,8 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
-			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
+			NM_ASSERT(*(u32*)delayedMessage->telegram, "MessageDispatcher::dispatchDelayedMessages: deleted telegram");
+//			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
 			if(!Clock_isPaused(delayedMessage->clock) && Clock_getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 			{
@@ -227,15 +228,17 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 				}
 			}
 
-			Object sender = __SAFE_CAST(Object, Telegram_getSender(telegram));
-			Object receiver = __SAFE_CAST(Object, Telegram_getReceiver(telegram));
+			Object sender = (Object)Telegram_getSender(telegram);
+			Object receiver = (Object)Telegram_getReceiver(telegram);
 
-        	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null sender");
-        	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null receiver");
+        	ASSERT(sender, "MessageDispatcher::dispatchDelayedMessages: null sender");
+        	ASSERT(receiver, "MessageDispatcher::dispatchDelayedMessages: null receiver");
 
 			// check if sender and receiver are still alive
 			if(!auxNode && (sender && *(u32*)sender) && (receiver && *(u32*)receiver))
 			{
+                ASSERT(*(u32*)sender, "MessageDispatcher::dispatchDelayedMessages: deleted sender");
+                ASSERT(*(u32*)receiver, "MessageDispatcher::dispatchDelayedMessages: deleted receiver");
 				__VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
 			}
 		}
