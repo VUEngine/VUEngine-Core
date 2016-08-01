@@ -170,8 +170,7 @@ DFILES := $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
 all: $(TARGET).a
 
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
-	@echo Config file: $(CONFIG_FILE)
-	@echo Creating $(TARGET).a
+	@echo Linking $(TARGET).a
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS)
 	@echo Done creating $@ in $(TYPE) mode with GCC $(COMPILER)
 
