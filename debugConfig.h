@@ -1,6 +1,9 @@
 #ifndef	DEBUG_CONFIG_H_
 #define	DEBUG_CONFIG_H_
 
+#include <debugUtilities.h>
+
+/*
 // print frame rate
 #define __PRINT_FRAMERATE
 
@@ -52,24 +55,6 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 	__BLOCK_DEFINITION(20, 588)																			\
 	__BLOCK_DEFINITION(16, 276)					    													\
 
-// test memory pool's config
-#undef __MEMORY_POOL_ARRAYS2
-#define __MEMORY_POOL_ARRAYS2																			\
-	__BLOCK_DEFINITION(192, 1)																			\
-	__BLOCK_DEFINITION(160, 5)																			\
-	__BLOCK_DEFINITION(144, 5)																			\
-	__BLOCK_DEFINITION(136, 24)																			\
-	__BLOCK_DEFINITION(120, 30)																			\
-	__BLOCK_DEFINITION(112, 12)																			\
-	__BLOCK_DEFINITION(104, 10)																			\
-	__BLOCK_DEFINITION(100, 20)																			\
-	__BLOCK_DEFINITION(92, 22)																			\
-	__BLOCK_DEFINITION(84, 25)																			\
-	__BLOCK_DEFINITION(76, 8)																			\
-	__BLOCK_DEFINITION(68, 52)																			\
-	__BLOCK_DEFINITION(28, 250)																			\
-	__BLOCK_DEFINITION(20, 550)																			\
-	__BLOCK_DEFINITION(16, 250)																		\
-
+*/
 
 #endif
