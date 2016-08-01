@@ -211,6 +211,8 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 
 		// clear the list
 		VirtualList_clear(this->removedBodies);
+
+		this->nextBodyToCheckForGravity = NULL;
 	}
 }
 
