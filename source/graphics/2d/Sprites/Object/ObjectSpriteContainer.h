@@ -61,8 +61,8 @@
         /* for z sorting */																				\
         VirtualNode node;																				\
         VirtualNode previousNode;																		\
-        /* next object sprite to defragment */															\
-        VirtualNode objectSpriteToDefragment;															\
+        /* next object sprite node to defragment */														\
+        VirtualNode objectSpriteNodeToDefragment;														\
         /* for WORLD sorting */																			\
         fix19_13 z;											    										\
         /* used for defragmentation */																	\

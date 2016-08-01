@@ -80,9 +80,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	this->availableObjects = this->totalObjects;
 	this->firstObjectIndex = firstObjectIndex;
 	this->objectSprites = __NEW(VirtualList);
-	this->objectSpriteToDefragment = NULL;
+	this->objectSpriteNodeToDefragment = NULL;
 	this->freedObjectIndex = 0;
 	this->z = 0;
+	this->removingObjectSprite = false;
 
 	this->node = NULL;
 	this->previousNode = NULL;
@@ -169,8 +170,6 @@ s16 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 	return -1;
 }
 
-bool removingSprite = false;
-
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s16 numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
@@ -191,32 +190,32 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		}
 	}
 
-	if(this->objectSpriteToDefragment)
+	if(this->objectSpriteNodeToDefragment)
 	{
 		int objectSpritePosition = VirtualList_getDataPosition(this->objectSprites, objectSprite);
-		int objectSpriteToDefragmentPosition =  VirtualList_getDataPosition(this->objectSprites, this->objectSpriteToDefragment);
+		int objectSpriteNodeToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, this->objectSpriteNodeToDefragment);
 
-		if(objectSpritePosition <= objectSpriteToDefragmentPosition)
+		if(objectSpritePosition <= objectSpriteNodeToDefragmentPosition)
 		{
-			this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
+			this->objectSpriteNodeToDefragment = VirtualList_find(this->objectSprites, objectSprite);
 			this->freedObjectIndex = objectSprite->objectIndex;
 
-			ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
+			ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteNodeToDefragment");
 
 			// move forward before deframenting
-			this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;
+			this->objectSpriteNodeToDefragment = this->objectSpriteNodeToDefragment->next;
 		}
 	}
 	else
 	{
 		// find the node to remove to defragment object memory
-		this->objectSpriteToDefragment = VirtualList_find(this->objectSprites, objectSprite);
+		this->objectSpriteNodeToDefragment = VirtualList_find(this->objectSprites, objectSprite);
 		this->freedObjectIndex = objectSprite->objectIndex;
 
-		ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteToDefragment");
+		ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::removeObjectSprite: null objectSpriteNodeToDefragment");
 
 		// move forward before deframenting
-		this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;
+		this->objectSpriteNodeToDefragment = this->objectSpriteNodeToDefragment->next;
 	}
 
 	// remove the sprite to prevent rendering afterwards
@@ -225,13 +224,15 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	this->node = this->previousNode = NULL;
 
 	// if was the last node
-	if(!this->objectSpriteToDefragment || !this->objectSprites->head)
+	if(!this->objectSpriteNodeToDefragment || !this->objectSprites->head)
 	{
 		// just update the measures
-		this->objectSpriteToDefragment = NULL;
+		this->objectSpriteNodeToDefragment = NULL;
 		this->availableObjects += numberOfObjects;
 		this->freedObjectIndex = 0;
 	}
+
+	ASSERT(!this->objectSpriteNodeToDefragment || *(u32*)VirtualNode_getData(this->objectSpriteNodeToDefragment), "ObjectSpriteContainer::removeObjectSprite: deleted objectSpriteNodeToDefragment data");
 
 	this->removingObjectSprite = false;
 }
@@ -299,10 +300,11 @@ void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_1
 static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::defragment: null this");
-	ASSERT(this->objectSpriteToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteToDefragment");
+	ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteNodeToDefragment");
+	NM_ASSERT(*(u32*)VirtualNode_getData(this->objectSpriteNodeToDefragment), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
 
 	// get the next sprite to move
-	ObjectSprite objectSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteToDefragment));
+	ObjectSprite objectSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteNodeToDefragment));
 
 	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
 
@@ -313,9 +315,9 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	this->freedObjectIndex += objectSprite->totalObjects;
 
 	// move to the next sprite to move
-	this->objectSpriteToDefragment = this->objectSpriteToDefragment->next;
+	this->objectSpriteNodeToDefragment = this->objectSpriteNodeToDefragment->next;
 
-	if(!this->objectSpriteToDefragment)
+	if(!this->objectSpriteNodeToDefragment)
 	{
 		this->freedObjectIndex = 0;
 
@@ -398,7 +400,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 
 	// defragmentation takes priority over z sorting
-	if(!this->removingObjectSprite && this->objectSpriteToDefragment)
+	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
 	{
 		ObjectSpriteContainer_defragment(this);
 	}
