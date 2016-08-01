@@ -227,8 +227,8 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 				}
 			}
 
-			Object sender = (Object)Telegram_getSender(telegram);
-			Object receiver = (Object)Telegram_getReceiver(telegram);
+			void* sender = Telegram_getSender(telegram);
+			void* receiver = Telegram_getReceiver(telegram);
 
         	ASSERT(sender, "MessageDispatcher::dispatchDelayedMessages: null sender");
         	ASSERT(receiver, "MessageDispatcher::dispatchDelayedMessages: null receiver");
@@ -236,9 +236,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			// check if sender and receiver are still alive
 			if(!auxNode && (sender && *(u32*)sender) && (receiver && *(u32*)receiver))
 			{
-                ASSERT(*(u32*)sender, "MessageDispatcher::dispatchDelayedMessages: deleted sender");
-                ASSERT(*(u32*)receiver, "MessageDispatcher::dispatchDelayedMessages: deleted receiver");
-				__VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
+				__VIRTUAL_CALL(Object, handleMessage, __SAFE_CAST(Object, receiver), telegram);
 			}
 		}
 
