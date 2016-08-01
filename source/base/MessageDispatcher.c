@@ -202,8 +202,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
-			NM_ASSERT(*(u32*)delayedMessage->telegram, "MessageDispatcher::dispatchDelayedMessages: deleted telegram");
-//			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
+			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
 			if(!Clock_isPaused(delayedMessage->clock) && Clock_getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 			{
