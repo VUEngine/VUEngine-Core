@@ -79,6 +79,7 @@ int TimerManager_getStat(TimerManager this);
 void TimerManager_clearStat(TimerManager this);
 void TimerManager_initialize(TimerManager this);
 void TimerManager_wait(TimerManager this, u32 milliSeconds);
+void TimerManager_repeatMethodCall(TimerManager this, int callTimes, u32 delayBetweenCalls, Object object, void (*method)(Object));
 
 
 #endif

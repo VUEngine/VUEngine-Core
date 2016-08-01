@@ -67,6 +67,7 @@ static void __attribute__ ((noinline)) TimerManager_constructor(TimerManager thi
 	__CONSTRUCT_BASE(Object);
 
 	this->tcrValue = 0;
+	this->ticks = 0;
 
 	_timerManager = this;
 	_soundManager = SoundManager_getInstance();
@@ -239,5 +240,23 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
 
     while ((*ticks - waitStartTime) < milliSeconds);
 
-    this->ticks = 0;
+    this->ticks = currentTicks;
+}
+
+void TimerManager_repeatMethodCall(TimerManager this, int callTimes, u32 delayBetweenCalls, Object object, void (*method)(Object))
+{
+    u32 currentTicks = this->ticks;
+
+    int i = 0;
+
+    if(object && method)
+    {
+        for(; i < callTimes; i++)
+        {
+            TimerManager_wait(this, delayBetweenCalls);
+            method(object);
+        }
+    }
+
+    this->ticks = currentTicks;
 }

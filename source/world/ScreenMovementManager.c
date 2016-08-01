@@ -23,7 +23,9 @@
 #include <Screen.h>
 #include <Game.h>
 #include <ClockManager.h>
+#include <TimerManager.h>
 #include <VIPManager.h>
+
 #include <debugConfig.h>
 
 
@@ -159,6 +161,12 @@ void ScreenMovementManager_stopEffect(ScreenMovementManager this, int effect)
 	ASSERT(this, "ScreenMovementManager::stopEffect: null this");
 }
 
+void ScreenMovementManager_doFXFadeIn(ScreenMovementManager this, int callNumber)
+{
+    // increase brightness
+    SET_BRIGHT(callNumber, callNumber << 1, callNumber);
+}
+
 // fade in the screen
 void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
 {
@@ -168,20 +176,13 @@ void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
 	return;
 #endif
 
-	int i = 0;
+    TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object))&ScreenMovementManager_doFXFadeIn);
+}
 
-	// create the delay
-	for(; i <= 32; i++)
-	{
-		if(duration)
-		{
-			// create time delay
-			Game_wait(Game_getInstance(), duration);
-		}
-
-		// increase brightness
-		SET_BRIGHT(i, i << 1, i);
-	}
+void ScreenMovementManager_doFXFadeOut(ScreenMovementManager this, int callNumber)
+{
+    // increase brightness
+    SET_BRIGHT(32 - callNumber, (32 - callNumber) << 1, 32 -callNumber);
 }
 
 // fade out the screen
@@ -193,17 +194,5 @@ void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
 	return;
 #endif
 
-	int i = 32;
-
-	// create the delay
-	for(; i >= 0; i--)
-	{
-		if(duration)
-		{
-			// create time delay
-			Game_wait(Game_getInstance(), duration);
-		}
-		// decrease brightness
-		SET_BRIGHT(i, i << 1, i);
-	}
+    TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object))ScreenMovementManager_doFXFadeOut);
 }
