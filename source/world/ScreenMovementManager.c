@@ -43,8 +43,8 @@ __CLASS_FRIEND_DEFINITION(Screen);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration);
-void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration);
+void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, u32 duration);
+void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, u32 duration);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -146,12 +146,20 @@ void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, i
 	{
 		case kFadeIn:
 
-			ScreenMovementManager_FXFadeIn(this, duration);
+#ifdef __DEBUG_NO_FADE
+            return;
+#endif
+
+            TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeIn);
 			break;
 
 		case kFadeOut:
 
-			ScreenMovementManager_FXFadeOut(this, duration);
+#ifdef __DEBUG_NO_FADE
+            return;
+#endif
+
+            TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeOut);
 			break;
 	}
 }
@@ -161,38 +169,14 @@ void ScreenMovementManager_stopEffect(ScreenMovementManager this, int effect)
 	ASSERT(this, "ScreenMovementManager::stopEffect: null this");
 }
 
-void ScreenMovementManager_doFXFadeIn(ScreenMovementManager this, int callNumber)
+void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, u32 callNumber)
 {
     // increase brightness
     SET_BRIGHT(callNumber, callNumber << 1, callNumber);
 }
 
-// fade in the screen
-void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, int duration)
-{
-	ASSERT(this, "ScreenMovementManager::FXFadeIn: null this");
-
-#ifdef __DEBUG_NO_FADE
-	return;
-#endif
-
-    TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object))&ScreenMovementManager_doFXFadeIn);
-}
-
-void ScreenMovementManager_doFXFadeOut(ScreenMovementManager this, int callNumber)
+void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, u32 callNumber)
 {
     // increase brightness
     SET_BRIGHT(32 - callNumber, (32 - callNumber) << 1, 32 -callNumber);
-}
-
-// fade out the screen
-void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, int duration)
-{
-	ASSERT(this, "ScreenMovementManager::FXFadeOut: null this");
-
-#ifdef __DEBUG_NO_FADE
-	return;
-#endif
-
-    TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object))ScreenMovementManager_doFXFadeOut);
 }

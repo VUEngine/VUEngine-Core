@@ -243,20 +243,20 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
     this->ticks = currentTicks;
 }
 
-void TimerManager_repeatMethodCall(TimerManager this, int callTimes, u32 delayBetweenCalls, Object object, void (*method)(Object))
+void TimerManager_repeatMethodCall(TimerManager this, u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
 {
-    u32 currentTicks = this->ticks;
-
-    int i = 0;
-
     if(object && method)
     {
+        u32 currentTicks = this->ticks;
+
+        int i = 0;
+
         for(; i < callTimes; i++)
         {
-            TimerManager_wait(this, delayBetweenCalls);
-            method(object);
+            TimerManager_wait(this, __TIMER_RESOLUTION * duration / callTimes);
+            method(object, i);
         }
-    }
 
-    this->ticks = currentTicks;
+        this->ticks = currentTicks;
+    }
 }
