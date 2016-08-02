@@ -336,15 +336,6 @@ void PhysicalWorld_reset(PhysicalWorld this)
     this->previousTime = 0;
 }
 
-void PhysicalWorld_clearTimeRegisters(PhysicalWorld this)
-{
-	ASSERT(this, "PhysicalWorld::clearTimeRegisters: null this");
-
-    this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
-    this->elapsedTime = 0;
-    this->previousTime = 0;
-}
-
 // check if an entity has been registered
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner)
 {

@@ -456,8 +456,6 @@ void GameState_pausePhysics(GameState this, bool pause)
 	ASSERT(this, "GameState::pausePhysics: null this");
 
 	Clock_pause(this->physicsClock, pause);
-
-    PhysicalWorld_clearTimeRegisters(this->physicalWorld);
 }
 
 void GameState_updatePhysics(GameState this)
