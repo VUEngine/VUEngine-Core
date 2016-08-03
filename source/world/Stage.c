@@ -805,10 +805,6 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
         }
     }
 
-
-	Printing_int(Printing_getInstance(), advancing, 30, 10, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->stageEntities, this->streamingHeadNode), 30, 11, NULL);
-
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
 }
 
