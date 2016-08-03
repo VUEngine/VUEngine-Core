@@ -661,12 +661,6 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 
 	this->loadedStageEntities = __NEW(VirtualList);
 
-	int x = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.x);
-	int y = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.y);
-	int z = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.z);
-
-	long screenPosition = x * x + y * y + z * z;
-
 	// register entities ordering them according to their distances to the origin
 	// givin increasing weight (more distance) to the objects according to their
 	// position in the stage's definition
@@ -702,7 +696,7 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 		int y = FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - ((smallRightCuboid.y1 - smallRightCuboid.y0)>> 1);
 		int z = FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) - ((smallRightCuboid.z1 - smallRightCuboid.z0)>> 1);
 
-		stageEntityDescription->distance = screenPosition - (x * x + y * y + z * z);
+		stageEntityDescription->distance = (x * x + y * y + z * z);
 
 		VirtualNode auxNode = this->stageEntities->head;
 
@@ -736,13 +730,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
 	focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
 
-	int x = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.x);
-	int y = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.y);
-	int z = FIX19_13TOI(this->stageDefinition->level.screenInitialPosition.z);
-
-	long screenPosition = x * x + y * y + z * z;
-
-	long focusInGameEntityDistance = screenPosition - ((long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
+	long focusInGameEntityDistance = ((long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
 									(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
 									(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z);
 
