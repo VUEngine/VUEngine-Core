@@ -364,6 +364,7 @@ void BgmapSprite_render(BgmapSprite this)
         {
             w = 0;
             worldPointer->gx -= __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
+            worldPointer->gp = 0;
         }
 
         if (0 > h)

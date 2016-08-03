@@ -368,10 +368,11 @@ void MBgmapSprite_render(MBgmapSprite this)
 
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
-#define __GX_DISPLACEMENT_BECAUSE_W_0_EQUALS_1  0
+
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-        worldPointer->gx = (gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx) - __GX_DISPLACEMENT_BECAUSE_W_0_EQUALS_1;
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+
+        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
         worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
 
         worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
@@ -389,6 +390,7 @@ void MBgmapSprite_render(MBgmapSprite this)
             if(!worldPointer->w)
             {
                 worldPointer->gx -= __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
+                worldPointer->gp = 0;
             }
         }
         else
