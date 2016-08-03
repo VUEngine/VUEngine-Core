@@ -140,9 +140,9 @@ static u16* const	OAM =		(u16*)OAMBase;					// Pointer to OAM
 typedef struct WORLD
 {
 	u16 head;
-	u16 gx;
+	s16 gx;
 	s16 gp;
-	u16 gy;
+	s16 gy;
 	u16 mx;
 	s16 mp;
 	u16 my;
