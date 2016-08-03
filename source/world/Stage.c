@@ -753,7 +753,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 	    advancing = this->previousFocusEntityDistance < focusInGameEntityDistance;
 	}
 
-	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : this->stageEntities->head;
+	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntities->head : this->stageEntities->tail;
 
 	int counter = 0;
 	int amplitude = this->stageDefinition->streaming.streamingAmplitude;
@@ -818,6 +818,10 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
             }
         }
     }
+
+
+	Printing_int(Printing_getInstance(), advancing, 30, 10, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->stageEntities, this->streamingHeadNode), 30, 11, NULL);
 
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
 }
