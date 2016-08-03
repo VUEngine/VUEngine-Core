@@ -746,51 +746,78 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 									(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
 									(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z);
 
-	int advancing = this->previousFocusEntityDistance <= focusInGameEntityDistance;
+	static int advancing = true;
+
+	if(this->previousFocusEntityDistance != focusInGameEntityDistance)
+	{
+	    advancing = this->previousFocusEntityDistance < focusInGameEntityDistance;
+	}
 
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : this->stageEntities->head;
 
 	int counter = 0;
 	int amplitude = this->stageDefinition->streaming.streamingAmplitude;
 
-	for(; node && counter < amplitude >> 1; node = (advancing ? node->previous : node->next), counter++);
-
-	node = node ? node : advancing ? this->stageEntities->head : this->stageEntities->tail;
-
 	this->streamingHeadNode = NULL;
 
-	for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = advancing ? node->next : node->previous, counter++)
-	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
+    if(advancing)
+    {
+        for(; node && counter < amplitude >> 1; node = node->previous, counter++);
 
-		if(!this->streamingHeadNode)
-		{
-			if(advancing)
-			{
-				if(focusInGameEntityDistance < stageEntityDescription->distance)
-				{
-					this->streamingHeadNode = node;
-				}
-			}
-			else
-			{
-				if(focusInGameEntityDistance > stageEntityDescription->distance)
-				{
-					this->streamingHeadNode = node;
-				}
-			}
-		}
+	    node = node ? node : this->stageEntities->head;
 
-		if(0 > stageEntityDescription->id)
-		{
-			// if entity in load range
-			if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
-			{
-				stageEntityDescription->id = 0x7FFF;
-				VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
-			}
-		}
-	}
+        for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->next, counter++)
+        {
+            StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
+
+            if(0 > stageEntityDescription->id)
+            {
+                if(!this->streamingHeadNode)
+                {
+                    if(focusInGameEntityDistance < stageEntityDescription->distance)
+                    {
+                        this->streamingHeadNode = node;
+                    }
+                }
+
+                // if entity in load range
+                if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
+                {
+                    stageEntityDescription->id = 0x7FFF;
+                    VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
+                }
+            }
+        }
+    }
+    else
+    {
+    	for(; node && counter < amplitude >> 1; node = node->next, counter++);
+
+        node = node ? node : this->stageEntities->tail;
+
+        for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->previous, counter++)
+        {
+            StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
+
+            if(0 > stageEntityDescription->id)
+            {
+                if(!this->streamingHeadNode)
+                {
+                    if(focusInGameEntityDistance > stageEntityDescription->distance)
+                    {
+                        this->streamingHeadNode = node;
+                    }
+                }
+
+                // if entity in load range
+                if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
+                {
+                    stageEntityDescription->id = 0x7FFF;
+                    VirtualList_pushBack(this->entitiesToLoad, stageEntityDescription);
+                }
+            }
+        }
+    }
 
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
 }
@@ -907,7 +934,6 @@ static void Stage_loadInRangeEntities(Stage this)
 
 		if(-1 == stageEntityDescription->id)
 		{
-
 			// if entity in load range
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
