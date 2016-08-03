@@ -230,6 +230,17 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
 }
 
+// get axis of collision
+int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject collidingSpatialObject, int movementAxis, VBVec3D displacement)
+{
+	ASSERT(this, "CollisionSolver::getAxisOfCollision: null this");
+	ASSERT(collidingSpatialObject, "CollisionSolver::getAxisOfCollision: collidingEntities");
+
+	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
+
+    return __VIRTUAL_CALL(Shape, getAxisOfCollision, __VIRTUAL_CALL_UNSAFE(SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, ownerPreviousPosition);
+}
+
 // resolve collision against other entities
 int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, int movementAxis, VBVec3D displacement, const Scale* scale, bool registerObjects)
 {

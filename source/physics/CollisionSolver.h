@@ -82,6 +82,7 @@ const VBVec3D* CollisionSolver_getOwnerPreviousPosition(CollisionSolver this);
 void CollisionSolver_setOwnerPreviousPosition(CollisionSolver this, VBVec3D position);
 int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
 void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale, bool registerObject);
+int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject collidingSpatialObject, int movementAxis, VBVec3D displacement);
 int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, int movementAxis, VBVec3D displacement, const Scale* scale, bool registerObjects);
 void CollisionSolver_alignTo(CollisionSolver this, SpatialObject spatialObject, int axis, int pad);
 Force CollisionSolver_getSurroundingFriction(CollisionSolver this);
