@@ -428,17 +428,9 @@ void SpriteManager_setLastLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
-	if(this->sprites->head)
-	{
-		this->freeLayer = (__SAFE_CAST(Sprite, VirtualList_front(this->sprites)))->worldLayer - 1;
-	}
-	else
-	{
-		this->freeLayer = __TOTAL_LAYERS - 1;
-	}
+    ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
+    ASSERT(__TOTAL_LAYERS > VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
 
-	NM_ASSERT(0 <= this->freeLayer, "SpriteManager::setLastLayer: no more layers");
-	NM_ASSERT(__TOTAL_LAYERS > VirtualList_getSize(this->sprites), "SpriteManager::setLastLayer: no more free layers");
 	this->freeLayer = 0 < this->freeLayer ? this->freeLayer : 0;
 
 	Printing_render(Printing_getInstance(), this->freeLayer);
@@ -503,6 +495,8 @@ void SpriteManager_render(SpriteManager this)
 
     VirtualNode node = this->spritesPerType->head;
 
+    this->freeLayer = __TOTAL_LAYERS - 1;
+
     for(; node; node = node->next)
     {
         // render from WORLD 31 to the lowest active one
@@ -519,8 +513,12 @@ void SpriteManager_render(SpriteManager this)
             // which can be the case when a new sprite is added
             // and the previous end world is assigned to it
             WA[sprite->worldLayer].head &= ~WRLD_END;
+
+            this->freeLayer = sprite->initialized && sprite->worldLayer < this->freeLayer ? sprite->worldLayer: this->freeLayer;
         }
     }
+
+    this->freeLayer--;
 
 	// configure printing layer and shutdown unused layers
 	SpriteManager_setLastLayer(this);
