@@ -233,16 +233,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 	if(this->texture)
 	{
-		if(WRLD_AFFINE == Sprite_getMode(__SAFE_CAST(Sprite, this)))
-		{
-			this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-			this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
-		}
-		else
-		{
-			this->halfWidth = FIX19_13_DIV(ITOFIX19_13((int)Texture_getCols(this->texture) << 2), abs(FIX7_9TOFIX19_13(this->drawSpec.scale.x)));
-			this->halfHeight = FIX19_13_DIV(ITOFIX19_13((int)Texture_getRows(this->texture) << 2), abs(FIX7_9TOFIX19_13(this->drawSpec.scale.y)));
-		}
+        this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+        this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 
 	BgmapSprite_invalidateParamTable(this);
@@ -274,11 +266,11 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 
 	ASSERT(this->texture, "BgmapSprite::setPosition: null texture");
 
-	position3D.x -= this->halfWidth;
-	position3D.y -= this->halfHeight;
-
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->drawSpec.position);
+
+	this->drawSpec.position.x -= this->halfWidth;
+	this->drawSpec.position.y -= this->halfHeight;
 
 	this->renderFlag |= __UPDATE_G;
 	this->initialized = true;

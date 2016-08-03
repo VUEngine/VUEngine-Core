@@ -179,13 +179,13 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
-	position3D.x -= this->halfWidth;
-	position3D.y -= this->halfHeight;
-
 	VBVec2D position2D;
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+	position2D.x -= this->halfWidth;
+	position2D.y -= this->halfHeight;
 
 	MBgmapSprite_setPosition(this, &position2D);
 }
