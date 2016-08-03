@@ -184,7 +184,7 @@ u8 Sprite_getWorldLayer(Sprite this)
 }
 
 // get sprite's render head
-u16 Sprite_getHead(Sprite this)
+s16 Sprite_getHead(Sprite this)
 {
 	ASSERT(this, "Sprite::getHead: null this");
 
@@ -192,11 +192,29 @@ u16 Sprite_getHead(Sprite this)
 }
 
 // get sprite's render mode
-u16 Sprite_getMode(Sprite this)
+s16 Sprite_getMode(Sprite this)
 {
 	ASSERT(this, "Sprite::getMode: null this");
 
 	return this->head & 0x3000;
+}
+
+// get sprites's layer's width
+u16 Sprite_getWorldX(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldWidth: null this");
+
+	WORLD* worldPointer = &WA[this->worldLayer];
+	return worldPointer->gx;
+}
+
+// get sprites's layer's width
+u16 Sprite_getWorldY(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldHeight: null this");
+
+	WORLD* worldPointer = &WA[this->worldLayer];
+	return worldPointer->gy;
 }
 
 // get sprites's layer's width
