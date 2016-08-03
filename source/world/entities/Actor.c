@@ -630,7 +630,7 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 
 		if(bodyLastDisplacement.x || bodyLastDisplacement.y || bodyLastDisplacement.z)
 		{
-			u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), bodyLastDisplacement, &this->transform.globalScale, true);
+			int axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), bodyLastDisplacement, &this->transform.globalScale, true);
 
 			Actor_checkIfMustBounce(this, axisOfAllignement);
 
@@ -662,7 +662,7 @@ static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject colliding
 		};
 
 		// invent the colliding object's displacement to simulate that it was me
-		u8 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), fakeLastDisplacement, &this->transform.globalScale, true);
+		int axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), fakeLastDisplacement, &this->transform.globalScale, true);
 		__DELETE(collidingSpatialObjects);
 
 		Actor_checkIfMustBounce(this, axisOfCollision);
