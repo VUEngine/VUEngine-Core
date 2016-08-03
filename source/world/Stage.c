@@ -662,10 +662,8 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 	this->loadedStageEntities = __NEW(VirtualList);
 
 	// register entities ordering them according to their distances to the origin
-	// givin increasing weight (more distance) to the objects according to their
-	// position in the stage's definition
-	int weightIncrement = Math_squareRoot(__SCREEN_WIDTH * __SCREEN_WIDTH + __SCREEN_HEIGHT * __SCREEN_HEIGHT);
 	int i = 0;
+
 	for(;this->stageDefinition->entities.children[i].entityDefinition; i++)
 	{
 		if(this->stageDefinition->entities.children[i].name && entityNamesToIgnore)
@@ -692,9 +690,9 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 		VBVec3D environmentPosition3D = {0, 0, 0};
 		SmallRightCuboid smallRightCuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
-		int x = FIX19_13TOI(stageEntityDescription->positionedEntity->position.x) - ((smallRightCuboid.x1 - smallRightCuboid.x0)>> 1);
-		int y = FIX19_13TOI(stageEntityDescription->positionedEntity->position.y) - ((smallRightCuboid.y1 - smallRightCuboid.y0)>> 1);
-		int z = FIX19_13TOI(stageEntityDescription->positionedEntity->position.z) - ((smallRightCuboid.z1 - smallRightCuboid.z0)>> 1);
+		int x = FIX19_13TOI(stageEntityDescription->positionedEntity->position.x);
+		int y = FIX19_13TOI(stageEntityDescription->positionedEntity->position.y);
+		int z = FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
 
 		stageEntityDescription->distance = (x * x + y * y + z * z);
 
@@ -704,7 +702,7 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 		{
 			StageEntityDescription* auxStageEntityDescription = (StageEntityDescription*)auxNode->data;
 
-			if(stageEntityDescription->distance + weightIncrement * i > auxStageEntityDescription->distance)
+			if(stageEntityDescription->distance > auxStageEntityDescription->distance)
 			{
 				continue;
 			}
