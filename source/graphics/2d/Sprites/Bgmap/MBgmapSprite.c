@@ -368,9 +368,9 @@ void MBgmapSprite_render(MBgmapSprite this)
 
 		static WORLD* worldPointer = NULL;
 		worldPointer = &WA[this->worldLayer];
-
+#define __GX_DISPLACEMENT_BECAUSE_W_0_EQUALS_1  0
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
+        worldPointer->gx = (gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx) - __GX_DISPLACEMENT_BECAUSE_W_0_EQUALS_1;
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
         worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
 
@@ -385,6 +385,11 @@ void MBgmapSprite_render(MBgmapSprite this)
         {
             int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
             worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
+
+            if(!worldPointer->w)
+            {
+                worldPointer->gx -= __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
+            }
         }
         else
         {
@@ -396,11 +401,17 @@ void MBgmapSprite_render(MBgmapSprite this)
         {
             int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
             worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
+
+            if(!worldPointer->h)
+            {
+                worldPointer->gy -= __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
+            }
         }
         else
         {
             worldPointer->h = __SCREEN_HEIGHT;
         }
+
 
         worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 

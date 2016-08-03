@@ -316,7 +316,6 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
-this->renderFlag |= __UPDATE_G;
 	// if render flag is set
 	if(this->renderFlag && this->initialized)
 	{
@@ -364,11 +363,13 @@ this->renderFlag |= __UPDATE_G;
         if (0 > w)
         {
             w = 0;
+            worldPointer->gx -= __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
         }
 
         if (0 > h)
         {
             h = 0;
+            worldPointer->gy -= __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
         }
 
         worldPointer->w = w;
