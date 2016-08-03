@@ -160,7 +160,6 @@ all: printBuildingInfo $(TARGET).a
 printBuildingInfo:
 	@echo Building $(TARGET).a
 	@echo Build type: $(TYPE)
-	@echo Compiler: $(COMPILER_NAME)
 	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 	@echo Compiler\'s output: $(COMPILER_OUTPUT)
 
