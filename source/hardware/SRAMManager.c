@@ -42,7 +42,7 @@ const struct UserData* _userData = (void*)&_sram_end;
 
 #define SRAMManager_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
 
 // define the manager
 __CLASS_DEFINITION(SRAMManager, Object);

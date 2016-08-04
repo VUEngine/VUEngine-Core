@@ -62,7 +62,7 @@
 
 #define Particle_ATTRIBUTES																				\
         /* super's attributes */																		\
-        SpatialObject_ATTRIBUTES;																		\
+        SpatialObject_ATTRIBUTES																		\
         /* definition */																				\
         const ParticleDefinition* particleDefinition;													\
         /* definition */																				\
@@ -84,8 +84,8 @@ __CLASS(Particle);
 // defines a Particle in ROM memory
 typedef struct ParticleDefinition
 {
-	// the class type
-	void* allocator;
+	// the class allocator
+	AllocatorPointer allocator;
 
 	// particle's minimum life span in milliseconds
 	u16 minimumLifeSpan;

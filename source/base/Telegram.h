@@ -30,8 +30,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Telegram_METHODS(ClassName)																				\
-		Object_METHODS(ClassName)																					\
+#define Telegram_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define Telegram_SET_VTABLE(ClassName)																	\

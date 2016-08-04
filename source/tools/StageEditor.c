@@ -63,7 +63,7 @@
 
 #define StageEditor_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* current in game entity */																	\
         GameState gameState;																			\
         /* current in game entity */																	\

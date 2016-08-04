@@ -30,16 +30,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define BgmapAnimationCoordinator_METHODS(ClassName)													\
-	    AnimationCoordinator_METHODS(ClassName);														\
+	    AnimationCoordinator_METHODS(ClassName)	    													\
 
 #define BgmapAnimationCoordinator_SET_VTABLE(ClassName)													\
-        AnimationCoordinator_SET_VTABLE(ClassName);														\
+        AnimationCoordinator_SET_VTABLE(ClassName)														\
         __VIRTUAL_SET(ClassName, BgmapAnimationCoordinator, addAnimationController);					\
         __VIRTUAL_SET(ClassName, BgmapAnimationCoordinator, removeAnimationController);					\
 
 #define BgmapAnimationCoordinator_ATTRIBUTES															\
         /* super's attributes */																		\
-        AnimationCoordinator_ATTRIBUTES;																\
+        AnimationCoordinator_ATTRIBUTES																\
 
 __CLASS(BgmapAnimationCoordinator);
 

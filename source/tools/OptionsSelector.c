@@ -68,7 +68,7 @@
 
 #define OptionsSelector_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* pages */																						\
         VirtualList pages;																				\
         /* current page */																				\

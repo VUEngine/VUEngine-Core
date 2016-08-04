@@ -56,8 +56,8 @@ typedef struct UIDefinition
 	// ui's entities
 	PositionedEntity* entities;
 
-	// the class type
-	void* allocator;
+	// the class allocator
+	AllocatorPointer allocator;
 
 } UIDefinition;
 

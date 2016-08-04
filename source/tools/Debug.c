@@ -85,7 +85,7 @@
 
 #define Debug_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* current in game state */																		\
         GameState gameState;																			\
         /* pages */																						\

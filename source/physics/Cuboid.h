@@ -47,7 +47,7 @@
 
 #define Cuboid_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Shape_ATTRIBUTES;																				\
+        Shape_ATTRIBUTES																				\
         /* the rectangle */																				\
         RightCuboid rightCuboid;																		\
         /* the rightCuboid to check */																	\

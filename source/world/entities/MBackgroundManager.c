@@ -29,7 +29,7 @@
 
 #define MBackgroundManager_ATTRIBUTES																	\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* textureRegistries */																			\
         VirtualList textureRegistries;																	\
 

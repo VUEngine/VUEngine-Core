@@ -30,10 +30,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ManagedMBackground_METHODS(ClassName)															\
-	MBackground_METHODS(ClassName);																		\
+	MBackground_METHODS(ClassName)																		\
 
 #define ManagedMBackground_SET_VTABLE(ClassName)														\
-		MBackground_SET_VTABLE(ClassName);																\
+		MBackground_SET_VTABLE(ClassName)																\
 	    __VIRTUAL_SET(ClassName, ManagedMBackground, initialTransform);									\
 	    __VIRTUAL_SET(ClassName, ManagedMBackground, transform);										\
 		__VIRTUAL_SET(ClassName, ManagedMBackground, updateVisualRepresentation);						\

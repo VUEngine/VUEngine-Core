@@ -32,8 +32,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define StageEditorState_METHODS(ClassName)																		\
-	GameState_METHODS(ClassName);																					\
+#define StageEditorState_METHODS(ClassName)																\
+	GameState_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define StageEditorState_SET_VTABLE(ClassName)															\

@@ -30,11 +30,11 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define VirtualList_METHODS(ClassName)																				\
-	Object_METHODS(ClassName);																						\
+#define VirtualList_METHODS(ClassName)																	\
+	Object_METHODS(ClassName)																			\
 
 #define VirtualList_SET_VTABLE(ClassName)																\
-	Object_SET_VTABLE(ClassName);																		\
+	Object_SET_VTABLE(ClassName)																		\
 
 #define VirtualList_ATTRIBUTES																			\
         /* it is derived from */																		\

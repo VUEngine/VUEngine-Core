@@ -57,7 +57,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 
 #define SolidParticle_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Particle_ATTRIBUTES;																			\
+        Particle_ATTRIBUTES																			\
         /* physical body */																				\
         Shape shape;																					\
         /* shape for collision detection */																\

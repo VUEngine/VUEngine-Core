@@ -54,7 +54,7 @@ enum Axis
 
 #define CollisionSolver_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* owner */																						\
         SpatialObject owner;																			\
         /* last collinding object */																	\

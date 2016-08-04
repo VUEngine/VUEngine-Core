@@ -154,7 +154,7 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 {
 	ASSERT(this, "MBgmapSprite::loadTexture: null this");
 
-	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: no sprite allocator defined");
+	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: null textureDefinition");
 
 	if(textureDefinition)
 	{

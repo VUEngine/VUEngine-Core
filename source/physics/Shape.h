@@ -46,7 +46,7 @@
 
 #define Shape_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* the entity to which the shape belongs */														\
         SpatialObject owner;																			\
         /* flag to know if the shapes below to an entity which moves */									\

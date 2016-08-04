@@ -231,7 +231,7 @@ typedef struct ColumnTableDefinition
 	bool mirror;
 
 	// column table definition
-	u16 columnTable[];
+	const u16* columnTable;
 
 } ColumnTableDefinition;
 

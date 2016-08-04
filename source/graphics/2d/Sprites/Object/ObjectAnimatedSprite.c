@@ -61,7 +61,7 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 	// construct base object
 	__CONSTRUCT_BASE(ObjectSprite, (const ObjectSpriteDefinition*)oSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), oSpriteDefinition->textureDefinition->charSetDefinition);
+	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), oSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
 
 //destructor

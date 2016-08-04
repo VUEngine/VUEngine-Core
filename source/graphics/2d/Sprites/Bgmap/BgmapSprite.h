@@ -66,7 +66,7 @@
 
 #define BgmapSprite_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Sprite_ATTRIBUTES;																				\
+        Sprite_ATTRIBUTES																				\
         /* 3d world position */																			\
         DrawSpec drawSpec;																				\
         /* param table offset */																		\
@@ -86,14 +86,8 @@ __CLASS(BgmapSprite);
 
 typedef struct BgmapSpriteDefinition
 {
-	// the class type
-	void* allocator;
-
-	// texture to use with the sprite
-	TextureDefinition* textureDefinition;
-
-	// displacement modifier to achieve better control over display
-	VBVec3D displacement;
+	// it has a Sprite definition at the beginning
+	SpriteDefinition spriteDefinition;
 
 	// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;

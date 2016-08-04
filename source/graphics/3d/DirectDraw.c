@@ -42,7 +42,7 @@
 
 #define DirectDraw_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* actual frames per second */																	\
         int fps;                                                                                        \
 

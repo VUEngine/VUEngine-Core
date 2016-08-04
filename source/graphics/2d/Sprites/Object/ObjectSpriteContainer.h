@@ -55,7 +55,7 @@
 
 #define ObjectSpriteContainer_ATTRIBUTES																\
         /* super's attributes */																		\
-        Sprite_ATTRIBUTES;																				\
+        Sprite_ATTRIBUTES																				\
         /* object sprites */																			\
         VirtualList objectSprites;																		\
         /* for z sorting */																				\

@@ -99,7 +99,7 @@ enum GameCurrentProcess
 
 #define Game_ATTRIBUTES																					\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* game's state machine */																		\
         StateMachine stateMachine;																		\
         /* game's state machine */																		\

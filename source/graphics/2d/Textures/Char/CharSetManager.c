@@ -40,7 +40,7 @@
 
 #define CharSetManager_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* charsets defined */																			\
         VirtualList charSets[__CHAR_SEGMENTS];															\
         /* next offset to reclaim */																	\

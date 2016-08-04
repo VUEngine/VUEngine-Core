@@ -31,7 +31,7 @@
 
 #define KeypadManager_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /*  */																							\
         u16 currentKey;																					\
         /*  */																							\

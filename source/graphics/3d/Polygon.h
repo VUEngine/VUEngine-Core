@@ -37,7 +37,7 @@
 
 #define Polygon_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* vertices */																					\
         VirtualList vertices;																			\
 

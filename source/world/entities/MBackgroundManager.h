@@ -30,11 +30,11 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackgroundManager_METHODS(ClassName)																		\
-	Object_METHODS(ClassName);																						\
+#define MBackgroundManager_METHODS(ClassName)															\
+	Object_METHODS(ClassName)																			\
 
 #define MBackgroundManager_SET_VTABLE(ClassName)														\
-	Object_SET_VTABLE(ClassName);																		\
+	Object_SET_VTABLE(ClassName)																		\
 
 __CLASS(MBackgroundManager);
 

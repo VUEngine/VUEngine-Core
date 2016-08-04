@@ -42,7 +42,7 @@
 
 #define ObjectAnimatedSprite_ATTRIBUTES																	\
         /* super's attributes */																		\
-        ObjectSprite_ATTRIBUTES;																		\
+        ObjectSprite_ATTRIBUTES																		\
         /* object's source coordinates */																\
         TextureSource originalTextureSource;															\
 

@@ -43,7 +43,7 @@
 #define VirtualNode_ATTRIBUTES																			\
 																										\
 	/* super's attributes */																			\
-	Object_ATTRIBUTES;																					\
+	Object_ATTRIBUTES																					\
 																										\
 	/* pointer to next node */																			\
 	VirtualNode next;																					\

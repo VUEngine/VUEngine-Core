@@ -38,7 +38,7 @@
 
 #define InverseCuboid_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Cuboid_ATTRIBUTES;																				\
+        Cuboid_ATTRIBUTES																				\
 
 __CLASS(InverseCuboid);
 

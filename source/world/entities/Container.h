@@ -81,7 +81,7 @@
 
 #define Container_ATTRIBUTES																			\
         /* super's attributes */																		\
-        SpatialObject_ATTRIBUTES;																		\
+        SpatialObject_ATTRIBUTES																		\
         /* 3d transformation */																			\
         Transformation transform;																		\
         /* children list */																				\

@@ -43,7 +43,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 // text box based on bgmaps
 #define MessageDispatcher_ATTRIBUTES																	\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* delayed messages */																			\
         VirtualList delayedMessages;																	\
         /* delayed messages */																			\

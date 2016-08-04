@@ -48,7 +48,7 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 
 // always call these two macros next to each other
 __CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition, u8 segment, u16 offset)
-__CLASS_NEW_END(CharSet, charSetDefinition, segment, offset)
+__CLASS_NEW_END(CharSet, charSetDefinition, segment, offset);
 
 // class's constructor
 static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset)

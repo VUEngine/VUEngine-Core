@@ -50,7 +50,7 @@ typedef struct SpritesList
 
 #define SpriteManager_ATTRIBUTES												                        \
 	/* super's attributes */													                        \
-	Object_ATTRIBUTES;															                        \
+	Object_ATTRIBUTES															                        \
 	/* list of sprites to render */												                        \
 	VirtualList sprites;														                        \
 	VirtualList spritesPerType;														                    \

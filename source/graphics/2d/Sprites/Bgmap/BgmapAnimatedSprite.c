@@ -61,7 +61,7 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
 
 	if(this->texture)
 	{
-		this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bSpriteDefinition->textureDefinition->charSetDefinition);
+		this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 
 		// since the offset will be moved during animation, must save it
 		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;

@@ -68,7 +68,7 @@
 
 #define Actor_ATTRIBUTES																				\
         /* super's attributes */																		\
-        AnimatedInGameEntity_ATTRIBUTES;																\
+        AnimatedInGameEntity_ATTRIBUTES																\
         /* definition */																				\
         const ActorDefinition* actorDefinition;															\
         /* a state machine to handle entity's logic	*/													\

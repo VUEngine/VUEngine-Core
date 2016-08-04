@@ -65,7 +65,7 @@
 
 #define CharSet_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* char set definition */																		\
         CharSetDefinition* charSetDefinition;															\
         /* array definition of the charSet */															\

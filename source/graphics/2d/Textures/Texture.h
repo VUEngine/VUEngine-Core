@@ -48,7 +48,7 @@
 
 #define Texture_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* char group to use int this texture */														\
         CharSet charSet;																				\
         /* pointer to ROM definition */																	\

@@ -47,7 +47,7 @@
 
 #define Body_ATTRIBUTES																					\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* owner */																						\
         SpatialObject owner;																			\
         /* direction */																					\

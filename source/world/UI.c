@@ -31,7 +31,7 @@
 
 #define UI_ATTRIBUTES								    		    		        			        \
         /* super's attributes */						    		    			    	        	\
-        Container_ATTRIBUTES;								    		    			        	    \
+        Container_ATTRIBUTES								    		    			        	    \
 
 // define the UI
 __CLASS_DEFINITION(UI, Container);

@@ -47,7 +47,7 @@ extern u32 _bss_end;
 
 #define HardwareManager_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* Timer manager */																				\
         TimerManager timerManager;																		\
         /* VPU manager */																				\

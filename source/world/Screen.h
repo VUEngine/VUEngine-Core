@@ -51,7 +51,7 @@
 
 #define Screen_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* optic values used in projection values */													\
         Optical optical;																				\
         /* screen position */																			\

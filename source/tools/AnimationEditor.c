@@ -57,7 +57,7 @@
 
 #define AnimationEditor_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* current in game gameState */																	\
         GameState gameState;																			\
         /* current animated sprite */																	\

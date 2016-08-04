@@ -47,7 +47,7 @@
 
 #define ObjectTexture_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Texture_ATTRIBUTES;																				\
+        Texture_ATTRIBUTES																				\
         /* object index */																				\
         int objectIndex;																				\
         /* bgmap displacement */																		\

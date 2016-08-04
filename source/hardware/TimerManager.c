@@ -32,7 +32,7 @@
 
 #define TimerManager_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /*  */																							\
         u32 ticks;																					    \
         /*  */																							\

@@ -35,7 +35,7 @@
 
 #define CollisionManager_ATTRIBUTES												                        \
         /* super's attributes */													                    \
-        Object_ATTRIBUTES;															                    \
+        Object_ATTRIBUTES															                    \
         /* a list of shapes registeres */											                    \
         VirtualList	shapes;															                    \
         /* a list of shapes which must detect collisions */							                    \

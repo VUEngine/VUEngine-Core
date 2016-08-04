@@ -1,3 +1,4 @@
+#ifdef __3D_ENGINE
 #ifndef G3d_H_
 #define G3d_H_
 /*******************************
@@ -131,4 +132,5 @@ void G3d_renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube);
 void G3d_renderObject(object* o);
 /********************************************************/
 
+#endif
 #endif

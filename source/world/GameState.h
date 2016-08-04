@@ -52,7 +52,7 @@
 
 #define GameState_ATTRIBUTES																			\
         /* super's attributes */																		\
-        State_ATTRIBUTES;																				\
+        State_ATTRIBUTES																				\
         /* a pointer to the game's stage */																\
         PhysicalWorld physicalWorld;																	\
         /* a pointer to the game's stage */																\

@@ -59,7 +59,7 @@ enum ScreenFX
 
 #define ScreenMovementManager_ATTRIBUTES																\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
 
 // declare a ScreenMovementManager
 __CLASS(ScreenMovementManager);

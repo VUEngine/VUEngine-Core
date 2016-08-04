@@ -37,7 +37,7 @@
 
 #define PhysicalWorld_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* registered of bodies  */																		\
         VirtualList	bodies;																				\
         /* a list of bodies which must detect collisions */												\

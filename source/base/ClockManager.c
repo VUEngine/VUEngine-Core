@@ -35,7 +35,7 @@
 
 #define ClockManager_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* register clocks */																			\
         VirtualList clocks;																				\
         /* */																							\

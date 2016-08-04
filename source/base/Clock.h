@@ -41,7 +41,7 @@
 
 #define Clock_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* time elapsed */																				\
         u32 milliSeconds;																				\
         /* register */																					\

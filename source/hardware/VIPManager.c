@@ -44,13 +44,19 @@ volatile u16* VIP_REGS __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F800;
 extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
 
 
+typedef struct PostProcessingEffect
+{
+    void (*function) (u32);
+
+} PostProcessingEffect;
+
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define VIPManager_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* dram managers */																				\
         /* post processing effects */																	\
         VirtualList postProcessingEffects;																\
@@ -218,7 +224,7 @@ void VIPManager_interruptHandler(void)
 
             for(; node; node = node->next)
             {
-                ((void (*)(u32))node->data)(_vipManager->currentDrawingframeBufferSet);
+                ((PostProcessingEffect*)node->data)->function(_vipManager->currentDrawingframeBufferSet);
             }
         }
 
@@ -446,24 +452,61 @@ void VIPManager_setBackgroundColor(VIPManager this, u8 color)
 }
 
 // register post processing effect
-void VIPManager_addPostProcessingEffect(VIPManager this, void (*postProcessingEffect) (u32))
+void VIPManager_addPostProcessingEffect(VIPManager this, void (*postProcessingEffectFunction) (u32))
 {
 	ASSERT(this, "VIPManager::addPostProcessingEffect: null this");
 
-	VirtualList_pushBack(this->postProcessingEffects, postProcessingEffect);
+    VirtualNode node = this->postProcessingEffects->head;
+
+    for(; node; node = node->next)
+    {
+        PostProcessingEffect* postProcessingEffect = (PostProcessingEffect*)node->data;
+
+        if(postProcessingEffect->function == postProcessingEffectFunction)
+        {
+            break;
+        }
+    }
+
+    if(!node)
+    {
+        PostProcessingEffect* postProcessingEffect = __NEW_BASIC(PostProcessingEffect);
+        postProcessingEffect->function = postProcessingEffectFunction;
+
+        VirtualList_pushBack(this->postProcessingEffects, postProcessingEffect);
+    }
 }
 
 // remove post processing effect
-void VIPManager_removePostProcessingEffect(VIPManager this, void (*postProcessingEffect) (u32))
+void VIPManager_removePostProcessingEffect(VIPManager this, void (*postProcessingEffectFunction) (u32))
 {
 	ASSERT(this, "VIPManager::removePostProcessingEffect: null this");
 
-	VirtualList_removeElement(this->postProcessingEffects, postProcessingEffect);
+    VirtualNode node = this->postProcessingEffects->head;
+
+    for(; node; node = node->next)
+    {
+        PostProcessingEffect* postProcessingEffect = (PostProcessingEffect*)node->data;
+        if(postProcessingEffect->function == postProcessingEffectFunction)
+        {
+            VirtualList_removeElement(this->postProcessingEffects, postProcessingEffect);
+
+            __DELETE_BASIC(postProcessingEffect);
+            break;
+        }
+    }
 }
 // register post processing effect
 void VIPManager_removePostProcessingEffects(VIPManager this)
 {
 	ASSERT(this, "VIPManager::removePostProcessingEffects: null this");
+
+    VirtualNode node = this->postProcessingEffects->head;
+
+    for(; node; node = node->next)
+    {
+        __DELETE_BASIC(node->data);
+    }
 
 	VirtualList_clear(this->postProcessingEffects);
 }

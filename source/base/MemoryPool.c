@@ -52,7 +52,7 @@
 
 #define MemoryPool_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* dynamic memory area */																		\
         /* must always put together the pools! */														\
         /* first byte is used as a usage flag */														\
@@ -131,7 +131,7 @@ static void MemoryPool_reset(MemoryPool this);
 
 
 // a singleton
-__MEMORY_POOL_SINGLETON(MemoryPool);
+__MEMORY_POOL_SINGLETON(MemoryPool)
 
 // class constructor
 static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
@@ -199,7 +199,7 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 
 	// return designed address
 	return &this->poolLocation[pool][displacement];
-};
+}
 
 // free memory when an object is no longer used
 // remove an object from heap

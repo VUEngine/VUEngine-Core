@@ -160,7 +160,7 @@ void Object_fireEvent(Object this,  char* eventName)
 }
 
 // cast object to base class
-Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (*baseClassGetClassMethod)())
+Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
 	ASSERT(this, "Object::getCast: null this");
 
@@ -181,15 +181,15 @@ Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (
 
 	if(!baseClassGetClassMethod)
 	{
-		if(targetClassGetClassMethod == (void* (*)(void))__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
+		if(targetClassGetClassMethod == (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
 		{
 			return this;
 		}
 
-		baseClassGetClassMethod = __VIRTUAL_CALL_UNSAFE(Object, getBaseClass, this);
+		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_UNSAFE(Object, getBaseClass, this);
 	}
 
-	if(!baseClassGetClassMethod || ((void* (*)(void))Object_getBaseClass == baseClassGetClassMethod && (void* (*)(void))Object_getBaseClass != targetClassGetClassMethod))
+	if(!baseClassGetClassMethod || ((ObjectBaseClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ObjectBaseClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
 	{
 		return NULL;
 	}
@@ -199,7 +199,7 @@ Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (
 		return this;
 	}
 
-	return Object_getCast((Object)this, targetClassGetClassMethod, (void* (*)(void))baseClassGetClassMethod());
+	return Object_getCast((Object)this, targetClassGetClassMethod, baseClassGetClassMethod(this));
 }
 
 const void* Object_getVTable(Object this)
@@ -208,3 +208,4 @@ const void* Object_getVTable(Object this)
 
     return this->vTable;
 }
+

@@ -54,7 +54,7 @@
         /* events */																					\
         VirtualList events;																		    	\
 
-// the root class for everything else!!
+// the root class for everything else!
 __CLASS(Object);
 
 
@@ -63,6 +63,7 @@ __CLASS(Object);
 //---------------------------------------------------------------------------------------------------------
 
 typedef void (*EventListener)(Object, Object);
+typedef Object (*AllocatorPointer)();
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,7 +76,7 @@ bool Object_handleMessage(Object this, void* telegram);
 void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName);
 void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName);
 void Object_fireEvent(Object this, char* eventName);
-Object Object_getCast(Object this, void* (*targetClassGetClassMethod)(), void* (*baseClassGetClassMethod)());
+Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
 const void* Object_getVTable(Object this);
 
 #endif

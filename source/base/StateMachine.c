@@ -30,7 +30,7 @@
 // a state machine
 #define StateMachine_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* that which owns this instance */																\
         void* owner;																					\
         /* pointer to the current state */																\

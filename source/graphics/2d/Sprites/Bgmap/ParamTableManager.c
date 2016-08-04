@@ -40,7 +40,7 @@ typedef struct ParamTableFreeData
 
 #define ParamTableManager_ATTRIBUTES                                                                    \
         /* super's attributes */                                                                        \
-        Object_ATTRIBUTES;                                                                              \
+        Object_ATTRIBUTES                                                                              \
         /* total size of param table */                                                                 \
         u32 size;                                                                                       \
         /* number of used bytes */                                                                      \

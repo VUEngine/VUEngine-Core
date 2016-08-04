@@ -29,7 +29,7 @@
 
 #define Telegram_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* the message itself. These are all enumerated in a file */									\
         int message;																					\
         /* any additional information that may accompany the message */									\

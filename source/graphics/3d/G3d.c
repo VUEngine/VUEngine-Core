@@ -1,3 +1,5 @@
+#ifdef __3D_ENGINE
+
 #include <G3d.h>
 
 //Game camera
@@ -1831,3 +1833,5 @@ void  G3d_moveCamera(camera* c)
 		}
 	}
 }
+
+#endif

@@ -79,9 +79,9 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)bgmapSpriteDefinition, owner);
 
 	// create the texture
-	if(bgmapSpriteDefinition->textureDefinition)
+	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)
 	{
-		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bgmapSpriteDefinition->textureDefinition));
+		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
 
@@ -114,7 +114,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->drawSpec.rotation.y = 0;
 	this->drawSpec.rotation.z = 0;
 
-	this->displacement = bgmapSpriteDefinition->displacement;
+	this->displacement = bgmapSpriteDefinition->spriteDefinition.displacement;
 
 	this->param = 0;
 	this->paramTableRow = -1;

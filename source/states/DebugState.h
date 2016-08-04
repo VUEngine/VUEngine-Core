@@ -32,8 +32,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define DebugState_METHODS(ClassName)																				\
-	GameState_METHODS(ClassName);																					\
+#define DebugState_METHODS(ClassName)																	\
+	GameState_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define DebugState_SET_VTABLE(ClassName)																\

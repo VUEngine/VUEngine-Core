@@ -33,7 +33,7 @@
 
 // declare the virtual methods
 #define AnimationEditorState_METHODS(ClassName)															\
-	GameState_METHODS(ClassName);																		\
+	GameState_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define AnimationEditorState_SET_VTABLE(ClassName)														\

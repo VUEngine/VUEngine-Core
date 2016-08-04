@@ -47,7 +47,7 @@
 
 #define BgmapTexture_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Texture_ATTRIBUTES;																				\
+        Texture_ATTRIBUTES																				\
         /* how many textures are using me */															\
         u8 usageCount;																					\
         /* remaining rows to be written */																\

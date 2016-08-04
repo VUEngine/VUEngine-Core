@@ -65,7 +65,7 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 
 #define AnimatedInGameEntity_ATTRIBUTES																	\
         /* super's attributes */																		\
-        InGameEntity_ATTRIBUTES;																		\
+        InGameEntity_ATTRIBUTES																		\
         /* Pointer to the ROM definition */																\
         AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;									\
         /* Pointer to the animation description */														\

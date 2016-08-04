@@ -38,7 +38,7 @@
 
 #define Circle_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Shape_ATTRIBUTES;																				\
+        Shape_ATTRIBUTES																				\
         /* radius */																					\
         u8 radius;																						\
 

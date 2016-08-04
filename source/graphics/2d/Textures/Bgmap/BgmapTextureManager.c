@@ -31,7 +31,7 @@
 
 #define BgmapTextureManager_ATTRIBUTES															        \
         /* super's attributes */																	    \
-        Object_ATTRIBUTES;																			    \
+        Object_ATTRIBUTES																			    \
         /* number of chars ocuppied */																    \
         u16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];										    	\
         /* current x offset to set the next bgmap */											    	\

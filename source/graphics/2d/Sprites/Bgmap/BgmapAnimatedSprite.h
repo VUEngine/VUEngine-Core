@@ -42,7 +42,7 @@
 
 #define BgmapAnimatedSprite_ATTRIBUTES																	\
         /* super's attributes */																		\
-        BgmapSprite_ATTRIBUTES;																			\
+        BgmapSprite_ATTRIBUTES																			\
         /* bgmap's source coordinates */																\
         TextureSource originalTextureSource;															\
 

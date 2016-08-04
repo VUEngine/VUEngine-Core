@@ -42,7 +42,7 @@ extern LangROMDef* __LANGUAGES[];
 
 #define I18n_ATTRIBUTES																					\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* currently active language */																	\
         u8 activeLanguage;																				\
 

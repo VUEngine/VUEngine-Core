@@ -49,7 +49,7 @@
 
 #define Stage_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Container_ATTRIBUTES;																			\
+        Container_ATTRIBUTES																			\
         /* world's definition pointer */																\
         StageDefinition* stageDefinition;																\
         /* the stage entities */ 																		\

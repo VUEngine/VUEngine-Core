@@ -30,7 +30,7 @@
 
 #define ObjectSpriteContainerManager_ATTRIBUTES															\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* object groups */																				\
         ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
 

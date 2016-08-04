@@ -687,8 +687,8 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities.children[i]);
 
-		VBVec3D environmentPosition3D = {0, 0, 0};
-		SmallRightCuboid smallRightCuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
+//		VBVec3D environmentPosition3D = {0, 0, 0};
+//		SmallRightCuboid smallRightCuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
 		int x = FIX19_13TOI(stageEntityDescription->positionedEntity->position.x);
 		int y = FIX19_13TOI(stageEntityDescription->positionedEntity->position.y);

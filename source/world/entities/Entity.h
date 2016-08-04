@@ -98,8 +98,8 @@
 // defines an entity in ROM memory
 typedef struct EntityDefinition
 {
-	// the class type
-	void* allocator;
+	// the class allocator
+	AllocatorPointer allocator;
 
 	// the sprite
 	const SpriteDefinition** spritesDefinitions;

@@ -32,7 +32,7 @@
 
 #define AnimationCoordinatorFactory_ATTRIBUTES                                                          \
         /* super's attributes */                                                                        \
-        Object_ATTRIBUTES;                                                                              \
+        Object_ATTRIBUTES                                                                              \
         /* entities that use bgmap sprites */                                                           \
         VirtualList animationCoordinators;                                                              \
 

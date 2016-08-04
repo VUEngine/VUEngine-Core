@@ -44,7 +44,7 @@
 
 #define MBgmapSprite_ATTRIBUTES																			\
         /* super's attributes */																		\
-        BgmapSprite_ATTRIBUTES;																			\
+        BgmapSprite_ATTRIBUTES																			\
         /* this is our texture */																		\
         VirtualList textures;																			\
         /* pinter to definition */																		\

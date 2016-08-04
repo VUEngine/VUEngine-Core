@@ -60,7 +60,7 @@
 
 #define ObjectSprite_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Sprite_ATTRIBUTES;																				\
+        Sprite_ATTRIBUTES																				\
         /* parent sprite */																				\
         ObjectSpriteContainer objectSpriteContainer;													\
         /* positioning */																				\
@@ -79,14 +79,8 @@ __CLASS(ObjectSprite);
 
 typedef struct ObjectSpriteDefinition
 {
-	// the class type
-	void* allocator;
-
-	// texture to use with the sprite
-	TextureDefinition* textureDefinition;
-
-	// displacement modifier to achieve better control over display
-	VBVec3D displacement;
+	// it has a Sprite definition at the beginning
+	SpriteDefinition spriteDefinition;
 
 	// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;

@@ -41,7 +41,7 @@
 
 #define MBackground_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Entity_ATTRIBUTES;																				\
+        Entity_ATTRIBUTES																				\
         /* ROM definition */																			\
         MBackgroundDefinition* mBackgroundDefinition;													\
 

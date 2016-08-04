@@ -19,6 +19,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <Object.h>
 #include <MBackground.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -90,11 +91,11 @@ void MBackground_initialize(MBackground this)
 
 		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
 		{
-			if(__TYPE(BgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
 				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
 			}
-			else if(__TYPE(MBgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
 				int j = 0;
 
@@ -135,11 +136,11 @@ void MBackground_resume(MBackground this)
 
 		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
 		{
-			if(__TYPE(BgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
 				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
 			}
-			else if(__TYPE(MBgmapSprite) == this->mBackgroundDefinition->spritesDefinitions[i]->allocator)
+			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
 				int j = 0;
 

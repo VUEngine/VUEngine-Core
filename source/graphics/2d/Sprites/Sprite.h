@@ -78,7 +78,7 @@
 
 #define Sprite_ATTRIBUTES																				\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /* displacement modifier to achieve better control over display */								\
         VBVec3D displacement;																			\
         /* super's attributes */																		\
@@ -108,8 +108,8 @@ __CLASS(Sprite);
 
 typedef struct SpriteDefinition
 {
-	// the class type
-	void* allocator;
+	// the class allocator
+	AllocatorPointer allocator;
 
 	// texture to use with the sprite
 	TextureDefinition* textureDefinition;
@@ -137,7 +137,7 @@ typedef struct AnimationFunction
 	int loop;
 
 	// method to call function completion
-	void* onAnimationComplete;
+	EventListener onAnimationComplete;
 
 	// function's name
 	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];

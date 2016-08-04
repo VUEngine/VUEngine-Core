@@ -30,7 +30,7 @@
 
 #define FrameRate_ATTRIBUTES																			\
         /* super's attributes */																		\
-        Object_ATTRIBUTES;																				\
+        Object_ATTRIBUTES																				\
         /*  frames per second */																		\
         u16 FPS;																						\
         /* previous frames per second */																\

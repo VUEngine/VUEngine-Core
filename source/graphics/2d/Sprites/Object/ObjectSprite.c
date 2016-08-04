@@ -81,14 +81,14 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	this->position.z = 0;
 	this->position.parallax = 0;
 
-	this->displacement = objectSpriteDefinition->displacement;
+	this->displacement = objectSpriteDefinition->spriteDefinition.displacement;
 
-	ASSERT(objectSpriteDefinition->textureDefinition, "ObjectSprite::constructor: null textureDefinition");
+	ASSERT(objectSpriteDefinition->spriteDefinition.textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
-	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, objectSpriteDefinition->textureDefinition, 0));
+	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
 	this->halfWidth = ITOFIX19_13((int)this->texture->textureDefinition->cols << 2);
 	this->halfHeight = ITOFIX19_13((int)this->texture->textureDefinition->rows << 2);
-	this->totalObjects = objectSpriteDefinition->textureDefinition->cols * objectSpriteDefinition->textureDefinition->rows;
+	this->totalObjects = objectSpriteDefinition->spriteDefinition.textureDefinition->cols * objectSpriteDefinition->spriteDefinition.textureDefinition->rows;
 	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
 
