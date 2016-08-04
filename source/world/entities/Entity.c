@@ -167,8 +167,8 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 
 			if(texture)
 			{
-				halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Sprite, getScale, sprite).x)) >> 1;
-				halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL_UNSAFE(Sprite, getScale, sprite).y)) >> 1;
+				halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).x)) >> 1;
+				halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).y)) >> 1;
 				halfDepth = this->size.z >> 1;
 			}
 
@@ -1013,7 +1013,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
-			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
+			VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 
 			x = FIX19_13TOI(spritePosition.x);
 			y = FIX19_13TOI(spritePosition.y);

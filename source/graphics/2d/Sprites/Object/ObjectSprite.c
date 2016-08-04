@@ -380,7 +380,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
 	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
 
-	return this->objectSpriteContainer? __VIRTUAL_CALL_UNSAFE(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)): 0;
+	return this->objectSpriteContainer? __VIRTUAL_CALL(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)): 0;
 }
 
 void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement)

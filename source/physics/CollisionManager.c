@@ -174,7 +174,7 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
-	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL_UNSAFE(SpatialObject, getShape, owner));
+	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL(SpatialObject, getShape, owner));
 
 	return node? __SAFE_CAST(Shape, node->data): NULL;
 }

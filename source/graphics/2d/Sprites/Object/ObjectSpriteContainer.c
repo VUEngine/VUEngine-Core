@@ -275,7 +275,7 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			VBVec2D spritePosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, sprite);
+			VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 			__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 		}
 	}
@@ -349,8 +349,8 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 		{
 			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
 			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
-			VBVec2D position = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
-			VBVec2D previousPosition = __VIRTUAL_CALL_UNSAFE(Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
+			VBVec2D position = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
+			VBVec2D previousPosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
 
 			// check if z positions are swapped
 			if(previousPosition.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, previousSprite)).z > position.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, sprite)).z)

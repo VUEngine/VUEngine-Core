@@ -169,25 +169,6 @@
         (((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)							    \
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
-#ifdef __DEBUG
-#define __VIRTUAL_CALL(ClassName, MethodName, object, ...)							                    \
-		(																						        \
-			__VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)?						                \
-			/* call derived implementation */													        \
-			((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))				        \
-				(																				        \
-						__SAFE_CAST(ClassName, object), ##__VA_ARGS__							        \
-				):																				        \
-			/* trigger exception */																        \
-			Error_triggerException(Error_getInstance(),								                    \
-				"Virtual Call: " __MAKE_STRING(ClassName ## _ ##  MethodName) 					        \
-				" on object of type: ", 														        \
-				object? 																		        \
-					__VIRTUAL_CALL_UNSAFE(Object, getClassName, (Object)object)			                \
-				: "NULL")																		        \
-		)
-
-#else
 #define __VIRTUAL_CALL(ClassName, MethodName, object, ...)							                    \
 		/* release implementation */															        \
 		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))					        \
@@ -196,13 +177,6 @@
 			)																					        \
 
 #endif
-
-#define __VIRTUAL_CALL_UNSAFE(ClassName, MethodName, object, ...)					                    \
-		/* to bypass checking on DEBUG */														        \
-		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))					        \
-			(																					        \
-					(ClassName)object, ##__VA_ARGS__												    \
-			)																					        \
 
 #ifdef __DEBUG
 #define __SAFE_CAST(ClassName, object)															        \

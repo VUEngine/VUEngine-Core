@@ -640,7 +640,7 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 			for(; node ; node = node->next)
 	        {
 				// pass message to each child
-				if(__VIRTUAL_CALL_UNSAFE(Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
+				if(__VIRTUAL_CALL(Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
 	            {
 					return true;
 				}

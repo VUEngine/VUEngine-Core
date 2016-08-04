@@ -186,7 +186,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 			return this;
 		}
 
-		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_UNSAFE(Object, getBaseClass, this);
+		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL(Object, getBaseClass, this);
 	}
 
 	if(!baseClassGetClassMethod || ((ObjectBaseClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ObjectBaseClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
