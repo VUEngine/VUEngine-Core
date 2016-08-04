@@ -176,7 +176,6 @@
 				__SAFE_CAST(ClassName, object), ##__VA_ARGS__									        \
 			)																					        \
 
-#endif
 
 #ifdef __DEBUG
 #define __SAFE_CAST(ClassName, object)															        \
@@ -344,7 +343,7 @@
 // retrieves object's class' name
 #define __GET_CLASS_NAME_UNSAFE(object)                                                                 \
                                                                                                         \
-        __VIRTUAL_CALL_UNSAFE(Object, getClassName, (Object)object)
+        __VIRTUAL_CALL(Object, getClassName, (Object)object)
 
 // declare an object type
 #define __TYPE(ClassName)	                            (AllocatorPointer)&ClassName ## _new
