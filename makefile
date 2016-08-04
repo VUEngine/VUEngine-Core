@@ -108,19 +108,19 @@ COMMON_MACROS := $(DATA_SECTION_ATTRIBUTES)
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE),debug)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := -pedantic $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0
 MACROS := __DEBUG __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), release)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := -pedantic $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O3 -finline-functions -Winline
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O3 -finline-functions -Winline
 MACROS := $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), tools)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := -pedantic $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0 -finline-functions -Winline
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0 -finline-functions -Winline
 MACROS := __TOOLS $(COMMON_MACROS)
 endif
 
