@@ -306,7 +306,7 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x
 	Printing_out(this, printingBgmap, x + length  + i, y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
 }
 
-void __attribute__ ((noinline)) Printing_text(Printing this, char* string, int x, int y, const char* font)
+void __attribute__ ((noinline)) Printing_text(Printing this, const char* string, int x, int y, const char* font)
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);

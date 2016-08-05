@@ -125,7 +125,7 @@ static void AnimationEditor_createSpriteSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this);
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this);
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this);
-static void AnimationEditor_onAnimationComplete(AnimationEditor this);
+static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -687,7 +687,7 @@ static void AnimationEditor_loadAnimationFunction(AnimationEditor this)
 	this->animationFunction.numberOfFrames = animationFunction->numberOfFrames;
 	this->animationFunction.delay = animationFunction->delay;
 	this->animationFunction.loop = animationFunction->loop;
-	this->animationFunction.onAnimationComplete = &AnimationEditor_onAnimationComplete;
+	this->animationFunction.onAnimationComplete = (EventListener)&AnimationEditor_onAnimationComplete;
 }
 extern const VBVec3D* _screenPosition;
 
@@ -818,7 +818,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 	__DELETE(framesIndexes);
 }
 
-static void AnimationEditor_onAnimationComplete(AnimationEditor this)
+static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eventFirer)
 {
 	if(!this->animationFunction.loop)
 	{

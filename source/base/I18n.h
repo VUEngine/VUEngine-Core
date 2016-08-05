@@ -68,7 +68,7 @@ typedef const LangDefinition LangROMDef;
 I18n I18n_getInstance();
 
 void I18n_destructor(I18n this);
-char* I18n_getText(I18n this, int string);
+const char* I18n_getText(I18n this, int string);
 void I18n_setActiveLanguage(I18n this, u8 languageId);
 LangDefinition * I18n_getLanguages(I18n this);
 u8 I18n_getActiveLanguage(I18n this);

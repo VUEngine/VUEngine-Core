@@ -97,7 +97,7 @@ void I18n_destructor(I18n this)
  *
  *  @return localized string or NULL if no translation could be found
  */
-char* I18n_getText(I18n this, int string)
+const char* I18n_getText(I18n this, int string)
 {
 	ASSERT(this, "I18n::getText: null this");
 
