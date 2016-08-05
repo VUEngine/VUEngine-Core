@@ -178,12 +178,12 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		return;
 	}
 
-    this->updateSprites = (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z)  || *(u8*)&this->invalidateGlobalPosition? __UPDATE_SPRITE_POSITION : 0;
+    this->updateSprites = (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z)  || this->invalidateGlobalPosition? __UPDATE_SPRITE_POSITION : 0;
 
     // call base class's transform method
     Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 
-	*(u8*)&this->invalidateGlobalPosition = 0;
+	this->invalidateGlobalPosition = 0;
 }
 
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this)

@@ -1094,7 +1094,7 @@ bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 
-	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (*(u8*)&this->invalidateGlobalPosition);
+	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (this->invalidateGlobalPosition);
 }
 
 // check if necessary to update sprite's scale
@@ -1102,7 +1102,7 @@ bool Entity_updateSpriteTransformations(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteTransformations: null this");
 
-	return (_screenDisplacement->z || this->invalidateGlobalPosition.z);
+	return (_screenDisplacement->z || (this->invalidateGlobalPosition & __ZAXIS));
 }
 
 // set the direction

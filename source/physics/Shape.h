@@ -50,13 +50,13 @@
         /* the entity to which the shape belongs */														\
         SpatialObject owner;																			\
         /* flag to know if the shapes below to an entity which moves */									\
-        bool moves: true;																				\
+        u8 moves;																				        \
         /* whether it has been checked for collision in current update */								\
-        bool checked: true;																				\
+        u8 checked;																				        \
         /* flag to know if setup is needed */															\
-        bool ready: true;																				\
+        u8 ready;																				        \
         /* flag to check agains other shapes */															\
-        bool checkForCollisions: true;																	\
+        u8 checkForCollisions;																	        \
 
 __CLASS(Shape);
 

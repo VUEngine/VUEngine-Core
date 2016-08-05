@@ -93,14 +93,13 @@
         /* name */																						\
         char* name;																						\
         /* entity's id */																				\
-        s16 id;																							\
-        /* flag to recalculate global position */														\
-        VBVec3DFlag invalidateGlobalPosition;															\
+        s16 id;																						    \
         /* flag for parent to know to delete it */														\
-        u8 deleteMe: 1;																					\
+        u8 deleteMe;																				    \
         /* flag to hide the entity */																	\
-        u8 hidden: 1;																					\
-
+        u8 hidden;                                                                                      \
+        /* flag to recalculate global position */														\
+        u8 invalidateGlobalPosition;															        \
 
 __CLASS(Container);
 

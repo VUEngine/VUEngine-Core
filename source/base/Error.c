@@ -35,8 +35,8 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __DIMM_VALUE_1	0b01010100
-#define __DIMM_VALUE_2	0b01010000
+#define __DIMM_VALUE_1	0x54
+#define __DIMM_VALUE_2	0x50
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ int Error_triggerException(Error this, char* message, char* detail)
 	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 
 	// dimm game
-	VIP_REGS[GPLT0] = 0b11100100;
+	VIP_REGS[GPLT0] = 0xE4;
 	VIP_REGS[GPLT1] = __DIMM_VALUE_2;
 	VIP_REGS[GPLT2] = __DIMM_VALUE_1;
 	VIP_REGS[GPLT3] = __DIMM_VALUE_1;

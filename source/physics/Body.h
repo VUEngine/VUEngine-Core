@@ -68,12 +68,12 @@
         fix19_13 mass;																					\
         /* movement type on each axis */																\
         MovementType movementType;																		\
+        /* raise flag to make the body active */														\
+        u8 active;																				        \
+        /* raise flag to update body's physics */														\
+        u8 awake;																				        \
         /* axis that is subject to gravity */															\
         u8 axisSubjectToGravity;																		\
-        /* raise flag to make the body active */														\
-        bool active: true;																				\
-        /* raise flag to update body's physics */														\
-        bool awake: true;																				\
 
 __CLASS(Body);
 

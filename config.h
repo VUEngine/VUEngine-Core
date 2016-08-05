@@ -299,10 +299,10 @@
 
 // default palette values, actual values are set in stage definitions
 
-#define __BGMAP_PALETTE_0						0b11100100 // normal progression
-#define __BGMAP_PALETTE_1						0b11100000 // show dark red as black
-#define __BGMAP_PALETTE_2						0b10010000 // background layer
-#define __BGMAP_PALETTE_3						0b01010000 // very dark, used when getting hit
+#define __BGMAP_PALETTE_0						0xE4 // normal progression
+#define __BGMAP_PALETTE_1						0xE0 // show dark red as black
+#define __BGMAP_PALETTE_2						0x90 // background layer
+#define __BGMAP_PALETTE_3						0x50 // very dark, used when getting hit
 
 #define __OBJECT_PALETTE_0						__BGMAP_PALETTE_0
 #define __OBJECT_PALETTE_1						__BGMAP_PALETTE_1

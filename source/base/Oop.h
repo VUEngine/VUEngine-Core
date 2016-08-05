@@ -189,7 +189,8 @@
 #define __GET_CAST(ClassName, object)															        \
 																								        \
 		/* try to up cast object */																        \
-		(ClassName)Object_getCast((Object)object, (ObjectBaseClassPointer)&ClassName ## _getBaseClass, NULL)	\
+		(ClassName)Object_getCast((Object)object,                                                       \
+		    (ObjectBaseClassPointer)&ClassName ## _getBaseClass, NULL)	                                \
 
 // declare a virtual method
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)									        \
@@ -277,7 +278,7 @@
         int ClassName ## _getObjectSize();													            \
                                                                                                         \
         /* declare getBaseClass method */															    \
-        ObjectBaseClassPointer ClassName ## _getBaseClass(Object);									        \
+        ObjectBaseClassPointer ClassName ## _getBaseClass(Object);									    \
                                                                                                         \
         /* declare getClass name method */															    \
         char* ClassName ## _getClassName(ClassName)
@@ -318,9 +319,9 @@
         }																							    \
                                                                                                         \
         /* define class's getBaseClass method */													    \
-        ObjectBaseClassPointer ClassName ## _getBaseClass(Object this)				                		\
+        ObjectBaseClassPointer ClassName ## _getBaseClass(Object this)				                	\
         {																							    \
-            return (ObjectBaseClassPointer)&BaseClassName ## _getBaseClass;									\
+            return (ObjectBaseClassPointer)&BaseClassName ## _getBaseClass;								\
         }																							    \
                                                                                                         \
         /* define class's getSize method */															    \

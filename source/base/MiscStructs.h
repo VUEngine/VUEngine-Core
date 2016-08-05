@@ -60,9 +60,9 @@ typedef struct VBVec3D
 
 typedef struct VBVec3DFlag
 {
-	u8 x: 2;
-	u8 y: 2;
-	u8 z: 2;
+	int x: 2;
+	int y: 2;
+	int z: 2;
 
 } VBVec3DFlag;
 
@@ -107,9 +107,9 @@ typedef struct Force
 // movement type flag vector
 typedef struct MovementType
 {
-	s8 x: 2;
-	s8 y: 2;
-	s8 z: 2;
+	s8 x;
+	s8 y;
+	s8 z;
 
 } MovementType;
 
@@ -129,9 +129,9 @@ typedef struct Rotation
 // spacial direction vector
 typedef struct Direction
 {
-	s8 x: 2;
-	s8 y: 2;
-	s8 z: 2;
+	s8 x;
+	s8 y;
+	s8 z;
 
 	/*
 	//angle between vector and X axis
@@ -174,10 +174,10 @@ typedef struct Scale
 // collision detection gap space
 typedef struct Gap
 {
-	int up:8;
-	int down:8;
-	int left:8;
-	int right:8;
+	s8 up;
+	s8 down;
+	s8 left;
+	s8 right;
 
 } Gap;
 
@@ -274,9 +274,9 @@ typedef struct SmallRightCuboid
 //spacial state vector
 typedef struct GeneralAxisFlag
 {
-	int x: 2;
-	int y: 2;
-	int z: 2;
+	s8 x;
+	s8 y;
+	s8 z;
 
 } GeneralAxisFlag;
 
