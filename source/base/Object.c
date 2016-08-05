@@ -186,7 +186,9 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 			return this;
 		}
 
-		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL(Object, getBaseClass, this);
+        // make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
+        // __SAFE_CAST check
+		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this)(this);
 	}
 
 	if(!baseClassGetClassMethod || ((ObjectBaseClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ObjectBaseClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
