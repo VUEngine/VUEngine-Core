@@ -87,10 +87,11 @@ static void MemoryPool_reset(MemoryPool this);
 #define __MEMORY_POOL_SINGLETON(ClassName)																\
 																								        \
 	/* declare the static instance */															        \
-	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;                    \
+	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;                     \
 																								        \
 	/* a flag to know when to allow construction */												        \
-	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE = __SINGLETON_NOT_CONSTRUCTED; \
+	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE                                \
+	                                = __SINGLETON_NOT_CONSTRUCTED;                                      \
 																								        \
 	/* define get instance method */															        \
 	static void __attribute__ ((noinline)) ClassName ## _instantiate()									\

@@ -36,25 +36,17 @@ INITIALIZED_DATA_SECTION_ATTRIBUTE          := __INITIALIZED_DATA_SECTION_ATTRIB
 STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE    := __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE=
 VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE       := __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE=
 
-
-MEMORY_POOL_IN_SRAM :=
-
 # include overrides
 CONFIG_MAKE_FILE :=
 ifneq ($(CONFIG_MAKE_FILE),)
 include $(CONFIG_MAKE_FILE)
 endif
 
-DUMP_TARGET :=
-ifeq ($(DUMP_ELF), 1)
-DUMP_TARGET := dump
-endif
 
-PAD :=
-ifeq ($(PAD_ROM), 1)
-PAD := pad
+PEDANTIC_WARNINGS_FLAG =
+ifeq ($(OUTPUT_PEDANTIC_WARNINGS), 1)
+PEDANTIC_WARNINGS_FLAG := -pedantic
 endif
-
 
 STORE_SUFIX :=
 PROLOG_FUNCTIONS_FLAG :=
@@ -108,19 +100,19 @@ COMMON_MACROS := $(DATA_SECTION_ATTRIBUTES)
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE),debug)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0
 MACROS := __DEBUG __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), release)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O3 -finline-functions -Winline
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O3 -finline-functions -Winline
 MACROS := $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), tools)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0 -finline-functions -Winline
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -fstrict-aliasing -O0 -finline-functions -Winline
 MACROS := __TOOLS $(COMMON_MACROS)
 endif
 
@@ -173,7 +165,7 @@ $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 $(STORE)/%.o: %.c
 	@echo Compiling $<
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VBJAENGINE_INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS)  -$(COMPILER_OUTPUT) $< -o $@
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS)  -$(COMPILER_OUTPUT) $< -o $@ 2>> $(STORE)/warnings.txt
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd
 

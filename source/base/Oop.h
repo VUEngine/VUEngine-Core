@@ -250,7 +250,7 @@
             __VIRTUAL_DEC(ClassName, void, destructor);		    									    \
                                                                                                         \
             /* get super class method */															    \
-            __VIRTUAL_DEC(ClassName, ObjectBaseClassPointer, getBaseClass);									\
+            __VIRTUAL_DEC(ClassName, ObjectBaseClassPointer, getBaseClass);								\
                                                                                                         \
             /* all destructors are virtual */														    \
             __VIRTUAL_DEC(ClassName, char*, getClassName);											    \
@@ -306,7 +306,7 @@
         } ClassName ## _str;																		    \
                                                                                                         \
         /* class' vtable's definition */								    		    			    \
-        struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;       \
+        struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;        \
                                                                                                         \
         static void (* const _baseDestructor)(Object) =                                     		    \
         /* class' base's destructor */					    		    	                		    \
@@ -362,8 +362,8 @@
         static ClassName ## _str _instance ## ClassName __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;     \
                                                                                                         \
         /* a flag to know when to allow construction */												    \
-        static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE =                          \
-                __SINGLETON_NOT_CONSTRUCTED;                                                            \
+        static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE                            \
+                                        = __SINGLETON_NOT_CONSTRUCTED;                                  \
                                                                                                         \
         /* define get instance method */															    \
         static void __attribute__ ((noinline)) ClassName ## _instantiate()								\
@@ -419,15 +419,15 @@
 #define __SINGLETON_DYNAMIC(ClassName)															        \
 																								        \
         /* declare the static pointer to instance */												    \
-        static ClassName _instance ## ClassName __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE;               \
+        static ClassName _instance ## ClassName __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE;                \
                                                                                                         \
         /* define allocator */																		    \
         __CLASS_NEW_DEFINITION(ClassName)															    \
         __CLASS_NEW_END(ClassName);																	    \
                                                                                                         \
         /* a flag to know when to allow construction */												    \
-        static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE =                          \
-            __SINGLETON_NOT_CONSTRUCTED;                                                                \
+        static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE                            \
+                                        = __SINGLETON_NOT_CONSTRUCTED;                                  \
                                                                                                         \
         /* define get instance method */															    \
         static void __attribute__ ((noinline)) ClassName ## _instantiate()								\

@@ -60,7 +60,7 @@
 
 
 /****** VIP Registers ******/
-extern volatile u16* VIP_REGS __INITIALIZED_DATA_SECTION_ATTRIBUTE;
+extern volatile u16* VIP_REGS;
 
 /****** VIP Register Mnemonics ******/
 #define	INTPND	0x00

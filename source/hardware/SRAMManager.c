@@ -32,8 +32,8 @@
 #define	__SRAM_DUMMY_READ_CYCLES		8
 #define	__SRAM_DUMMY_READ_LENGHT		100
 
-extern u32 _sram_end;
-const struct UserData* _userData = (void*)&_sram_end;
+extern u32 _sram_bss_end;
+const struct UserData* _userData = (void*)&_sram_bss_end;
 
 
 //---------------------------------------------------------------------------------------------------------
