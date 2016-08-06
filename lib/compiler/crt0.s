@@ -37,8 +37,8 @@ wait_for_wram_loop:
 	bnz		wait_for_wram_loop
 
 /* dummy SRAM reads */
-	movhi   hi(__sram_start), r0, r1
-	movea   lo(__sram_start), r1, r1
+	movhi   hi(__sram_data_start), r0, r1
+	movea   lo(__sram_data_start), r1, r1
     movea	0x00C0,           r0, r6
 sram_dummy_loop:
 	ld.b    0[r1], r7
@@ -47,48 +47,65 @@ sram_dummy_loop:
 	bnz		sram_dummy_loop
 
 /* initiallize .data section */
-	movhi	hi(__data_start), r0, r7
-	movea	lo(__data_start), r7, r7
-	movhi	hi(__data_end),   r0, r1
-	movea	lo(__data_end),   r1, r1
-	movhi	hi(__data_vma),   r0, r6
-	movea	lo(__data_vma),   r6, r6
+	movhi	hi(__data_lma), r0, r6
+	movea	lo(__data_lma), r6, r6
+	movhi	hi(__data_start),   r0, r7
+	movea	lo(__data_start),   r7, r7
+	movhi	hi(__data_end),   r0, r8
+	movea	lo(__data_end),   r8, r8
 	jr	    end_init_data
 
 top_init_data:
-	ld.b	0[r7], r8
-	st.b	r8,    0[r6]
-	add	    1,     r7
+	ld.b	0[r6], r9
+	st.b	r9,    0[r7]
 	add	    1,     r6
+	add	    1,     r7
 end_init_data:
-	cmp	    r1,    r6
+	cmp	    r8,    r7
 	blt	    top_init_data
 
+
+/* initiallize .sram_data section */
+	movhi	hi(__sram_data_start), r0, r7
+	movea	lo(__sram_data_start), r7, r7
+	movhi	hi(__sram_data_end),   r0, r8
+	movea	lo(__sram_data_end),   r8, r8
+	jr	    end_init_sram_data
+
+top_init_sram_data:
+	ld.b	0[r6], r9
+	st.b	r9,    0[r7]
+	add	    1,     r6
+	add	    1,     r7
+end_init_sram_data:
+	cmp	    r8,    r7
+	blt	    top_init_sram_data
+
 /* clear .bss section and unintialized RAM */
-	movhi	hi(__bss_start), r0, r1
-	movea	lo(__bss_start), r1, r1
+	movhi	hi(__bss_start), r0, r6
+	movea	lo(__bss_start), r6, r6
 	movhi	hi(__bss_end),   r0, r7
 	movea	lo(__bss_end),   r7, r7
 	jr	    end_init_bss
 top_init_bss:
-	st.h	r0, 0[r1]
-	add	    1,  r1
+	st.h	r0, 0[r6]
+	add	    1,  r6
 end_init_bss:
-	cmp	    r7, r1
+	cmp	    r7, r6
 	blt	    top_init_bss
 
 /* clear .sram section and unintialized SRAM */
-	movhi   hi(__sram_start),   r0, r1
-	movea   lo(__sram_start),   r1, r1
-	movhi   hi(__sram_end),     r0, r7
-	movea   lo(__sram_end),     r7, r7
-	jr      end_init_sram
-top_init_sram:
-	st.b    r0, 0[r1]
-	add	    1,  r1
-end_init_sram:
-	cmp     r7, r1
-	blt     top_init_sram
+	movhi   hi(__sram_bss_start),   r0, r6
+	movea   lo(__sram_bss_start),   r6, r6
+	movhi   hi(__sram_bss_end),     r0, r7
+	movea   lo(__sram_bss_end),     r7, r7
+	jr      end_init_sram_bss
+top_init_sram_bss:
+	st.b    r0, 0[r6]
+	add	    1,  r6
+end_init_sram_bss:
+	cmp     r7, r6
+	blt     top_init_sram_bss
 
 /* disable-clear-enable cache GCC 4.7 */
 	ldsr	r0, sr5
@@ -260,4 +277,3 @@ _interrupt_table:
 	jmp	    [r1]
 	.fill	0x06
 
-	
