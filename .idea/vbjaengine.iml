@@ -6,9 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/.make-debug" />
-      <excludeFolder url="file://$MODULE_DIR$/.make-release" />
-      <excludeFolder url="file://$MODULE_DIR$/.make-release-tools" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
