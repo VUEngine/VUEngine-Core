@@ -419,7 +419,7 @@
 #define __SINGLETON_DYNAMIC(ClassName)															        \
 																								        \
         /* declare the static pointer to instance */												    \
-        static ClassName _instance ## ClassName __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE;                \
+        static ClassName _instance ## ClassName __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE;               \
                                                                                                         \
         /* define allocator */																		    \
         __CLASS_NEW_DEFINITION(ClassName)															    \

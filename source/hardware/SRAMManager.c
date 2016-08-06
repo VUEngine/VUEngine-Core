@@ -43,7 +43,7 @@ extern u32 _sram_bss_end;
         /* super's attributes */																		\
         Object_ATTRIBUTES																				\
         /* save space start address */																	\
-        BYTE* saveSpaceStartAddress;																	\
+        u32* saveSpaceStartAddress;																	    \
 
 // define the manager
 __CLASS_DEFINITION(SRAMManager, Object);
@@ -70,7 +70,7 @@ static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
 
 	__CONSTRUCT_BASE(Object);
 
-    this->saveSpaceStartAddress = (BYTE*)&_sram_bss_end;
+    this->saveSpaceStartAddress = (u32*)&_sram_bss_end;
 
 	SRAMManager_initialize(this);
 }
@@ -102,14 +102,12 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffs
 
 	int i = 0;
 
-	BYTE* destination = this->saveSpaceStartAddress + (memberOffset << 1);
+	u32* destination = this->saveSpaceStartAddress + memberOffset;
 	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
-//	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
 
 	for(; i < dataSize; i++)
 	{
-		*destination = source[i];
-		destination += 2;
+		destination[i] = source[i];
 	}
 }
 
@@ -119,13 +117,11 @@ void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int
 
 	int i = 0;
 
-	BYTE* source = this->saveSpaceStartAddress + (memberOffset << 1);
+	u32* source = this->saveSpaceStartAddress + memberOffset;
 	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
-//	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
 
 	for(; i < dataSize; i++)
 	{
-		destination[i] = *source;
-		source += 2;
+		destination[i] = source[i] & 0x00FF;
 	}
 }
