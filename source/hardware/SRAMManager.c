@@ -102,14 +102,14 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffs
 
 	int i = 0;
 
-	BYTE* destination = this->saveSpaceStartAddress + (memberOffset << 2);
+	BYTE* destination = this->saveSpaceStartAddress + (memberOffset << 1);
 	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
 //	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
 
 	for(; i < dataSize; i++)
 	{
 		*destination = source[i];
-		destination += 4;
+		destination += 2;
 	}
 }
 
@@ -119,13 +119,13 @@ void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int
 
 	int i = 0;
 
-	BYTE* source = this->saveSpaceStartAddress + (memberOffset << 2);
+	BYTE* source = this->saveSpaceStartAddress + (memberOffset << 1);
 	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
 //	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
 
 	for(; i < dataSize; i++)
 	{
 		destination[i] = *source;
-		source += 4;
+		source += 2;
 	}
 }
