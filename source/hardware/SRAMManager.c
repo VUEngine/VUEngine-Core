@@ -89,38 +89,40 @@ void static SRAMManager_initialize(SRAMManager this)
 	for(; i--;)
 	{
 		u32 dummyChar[__SRAM_DUMMY_READ_LENGHT];
-		SRAMManager_read(this, (BYTE*)&dummyChar, NULL, sizeof(dummyChar));
+		SRAMManager_read(this, (BYTE*)&dummyChar, i, sizeof(dummyChar));
 	}
 }
 
-void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberDisplacement, int dataSize)
+void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize)
 {
 	ASSERT(this, "SRAMManager::save: null this");
 
 	int i = 0;
 
-	u16* destination = (u16*)((int)_userData + ((int)memberDisplacement << 1));
+	BYTE* destination = (BYTE*)((int)_userData + (memberOffset << 2));
 	ASSERT(0 == ((int)destination % 2), "SRAMManager::save: odd destination");
 //	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)destination[dataSize - 1]), "SRAMManager::save: destination out of bounds");
 
 	for(; i < dataSize; i++)
 	{
-		destination[i] = source[i];
+		*destination = source[i];
+		destination += 4;
 	}
 }
 
-void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberDisplacement, int dataSize)
+void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize)
 {
 	ASSERT(this, "SRAMManager::read: null this");
 
 	int i = 0;
 
-	u16* source = (u16*)((int)_userData + ((int)memberDisplacement << 1));
+	BYTE* source = (BYTE*)((int)_userData + (memberOffset << 2));
 	ASSERT(0 == ((int)source % 2), "SRAMManager::constructor: odd source");
 //	ASSERT(__SAVE_RAM_ADDRESS + 8192 > ((int)source[dataSize - 1]), "SRAMManager::save: source out of bounds");
 
 	for(; i < dataSize; i++)
 	{
-		destination[i] = source[i] & 0xFF;
+		destination[i] = *source & 0xFF;
+		source += 4;
 	}
 }

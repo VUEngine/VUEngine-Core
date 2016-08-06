@@ -52,8 +52,8 @@ extern const struct UserData* _userData;
 SRAMManager SRAMManager_getInstance();
 
 void SRAMManager_destructor(SRAMManager this);
-void SRAMManager_save(SRAMManager this, const BYTE* const source, u16* memberAddress, int dataSize);
-void SRAMManager_read(SRAMManager this, BYTE* destination, u16* memberAddress, int dataSize);
+void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize);
+void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize);
 
 
 #endif
