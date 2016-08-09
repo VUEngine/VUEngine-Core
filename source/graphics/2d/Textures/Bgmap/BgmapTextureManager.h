@@ -27,6 +27,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __BGMAP_SEGMENT_SIZE        8192
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -57,14 +64,11 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 s8 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id);
 s8 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id);
 u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id);
-u8 BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager this);
-u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this);
-void BgmapTextureManager_setAvailableBgmapSegments(BgmapTextureManager this, u8 availableBgmapSegments);
 void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this);
-void BgmapTextureManager_resetAvailableBgmapSegments(BgmapTextureManager this);
+u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this);
 u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this);
 u8 BgmapTextureManager_getSpareBgmapSegments(BgmapTextureManager this);
-void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 spareBgmapSegments);
+void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 paramTableSegments);
 void BgmapTextureManager_print(BgmapTextureManager this, int x, int y);
 
 

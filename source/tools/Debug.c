@@ -217,14 +217,14 @@ static void Debug_setupPages(Debug this)
 
 static void Debug_dimmGame(Debug this)
 {
-	VIP_REGS[GPLT0] = 0x50;
-	VIP_REGS[GPLT1] = 0x50;
-	VIP_REGS[GPLT2] = 0x54;
-	VIP_REGS[GPLT3] = 0x54;
-	VIP_REGS[JPLT0] = 0x54;
-	VIP_REGS[JPLT1] = 0x54;
-	VIP_REGS[JPLT2] = 0x54;
-	VIP_REGS[JPLT3] = 0x54;
+	VIP_REGS[__GPLT0] = 0x50;
+	VIP_REGS[__GPLT1] = 0x50;
+	VIP_REGS[__GPLT2] = 0x54;
+	VIP_REGS[__GPLT3] = 0x54;
+	VIP_REGS[__JPLT0] = 0x54;
+	VIP_REGS[__JPLT1] = 0x54;
+	VIP_REGS[__JPLT2] = 0x54;
+	VIP_REGS[__JPLT3] = 0x54;
 
 	VIP_REGS[0x30 | __PRINTING_PALETTE] = 0xE4;
 }
@@ -616,7 +616,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
 	// put the map into memory calculating the number of char for each reference
 	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 48; i++)
 	{
-		Mem_add((u8*)BGMap(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
+		Mem_add((u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
 				(const u8*)CHAR_MEMORY_MP,
 				__SCREEN_WIDTH >> 3,
 				(this->charSegment << 9) + i * (__SCREEN_WIDTH >> 3));
@@ -648,15 +648,15 @@ static void Debug_showDebugBgmap(Debug this)
 	}
 
 	// write the head
-	WA[__TOTAL_LAYERS - 1].head = WRLD_ON | this->bgmapSegment;
-	WA[__TOTAL_LAYERS - 1].mx = this->bgmapDisplacement.x;
-	WA[__TOTAL_LAYERS - 1].mp = 0;
-	WA[__TOTAL_LAYERS - 1].my = this->bgmapDisplacement.y;
-	WA[__TOTAL_LAYERS - 1].gx = 0;
-	WA[__TOTAL_LAYERS - 1].gp = 3;
-	WA[__TOTAL_LAYERS - 1].gy = 0;
-	WA[__TOTAL_LAYERS - 1].w = __SCREEN_WIDTH;
-	WA[__TOTAL_LAYERS - 1].h = __SCREEN_HEIGHT;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].head = __WORLD_ON | this->bgmapSegment;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = this->bgmapDisplacement.x;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mp = 0;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].my = this->bgmapDisplacement.y;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gx = 0;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gp = 3;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gy = 0;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].w = __SCREEN_WIDTH;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].h = __SCREEN_HEIGHT;
 }
 
 static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)

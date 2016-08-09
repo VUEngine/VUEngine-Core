@@ -57,7 +57,7 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 // calculate the size of a given magnitude, being it a 8 pixel multiple
 inline int Optics_calculateRealSize(int magnitude, u16 mapMode, fix7_9 scale)
 {
-	if(WRLD_AFFINE != mapMode)
+	if(__WORLD_AFFINE != mapMode)
 	{
 		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13(magnitude), FIX7_9TOFIX19_13(scale)));
 	}

@@ -859,8 +859,8 @@ static void Game_update(Game this)
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
-	    while(!(VIP_REGS[INTPND] & GAMESTART));
-	    VIP_REGS[INTCLR]= GAMESTART;
+	    while(!(VIP_REGS[__INTPND] & GAMESTART));
+	    VIP_REGS[__INTCLR]= GAMESTART;
 
         // update the clocks
         ClockManager_update(this->clockManager, TimerManager_getAndResetTicks(this->timerManager));

@@ -36,16 +36,6 @@ wait_for_wram_loop:
 	add		-1, r6
 	bnz		wait_for_wram_loop
 
-/* dummy SRAM reads */
-	movhi   hi(__sram_data_start), r0, r1
-	movea   lo(__sram_data_start), r1, r1
-    movea	0x00C0,           r0, r6
-sram_dummy_loop:
-	ld.b    0[r1], r7
-	add	    2,     r1
-	add		-1,    r6
-	bnz		sram_dummy_loop
-
 /* initiallize .data section */
 	movhi	hi(__data_lma), r0, r6
 	movea	lo(__data_lma), r6, r6
@@ -65,6 +55,22 @@ end_init_data:
 	blt	    top_init_data
 
 
+/* initiallize .vram_data section */
+	movhi	hi(__vram_data_start), r0, r7
+	movea	lo(__vram_data_start), r7, r7
+	movhi	hi(__vram_data_end),   r0, r8
+	movea	lo(__vram_data_end),   r8, r8
+	jr	    end_init_vram_data
+
+top_init_vram_data:
+	ld.b	0[r6], r9
+	st.b	r9,    0[r7]
+	add	    1,     r6
+	add	    1,     r7
+end_init_vram_data:
+	cmp	    r8,    r7
+	blt	    top_init_vram_data
+
 /* initiallize .sram_data section */
 	movhi	hi(__sram_data_start), r0, r7
 	movea	lo(__sram_data_start), r7, r7
@@ -81,7 +87,7 @@ end_init_sram_data:
 	cmp	    r8,    r7
 	blt	    top_init_sram_data
 
-/* clear .bss section and unintialized RAM */
+/* clear .bss section */
 	movhi	hi(__bss_start), r0, r6
 	movea	lo(__bss_start), r6, r6
 	movhi	hi(__bss_end),   r0, r7
@@ -94,7 +100,20 @@ end_init_bss:
 	cmp	    r7, r6
 	blt	    top_init_bss
 
-/* clear .sram section and unintialized SRAM */
+/* clear .vram_bss section */
+	movhi   hi(__vram_bss_start),   r0, r6
+	movea   lo(__vram_bss_start),   r6, r6
+	movhi   hi(__vram_bss_end),     r0, r7
+	movea   lo(__vram_bss_end),     r7, r7
+	jr      end_init_vram_bss
+top_init_vram_bss:
+	st.b    r0, 0[r6]
+	add	    1,  r6
+end_init_vram_bss:
+	cmp     r7, r6
+	blt     top_init_vram_bss
+
+/* clear .sram_bss section */
 	movhi   hi(__sram_bss_start),   r0, r6
 	movea   lo(__sram_bss_start),   r6, r6
 	movhi   hi(__sram_bss_end),     r0, r7

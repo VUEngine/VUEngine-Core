@@ -8,8 +8,6 @@ TYPE := debug
 # output dir
 BUILD_DIR := build
 
-# Specify the main target
-TARGET := $(BUILD_DIR)/libvbjae
 
 # compiler
 COMPILER_VERSION := 4.7
@@ -146,6 +144,10 @@ ASSEMBLY_OBJECTS := $(addprefix $(STORE)/, $(ASSEMBLY_SOURCE:.s=.o))
 # Same for the .d (dependency) files.
 D_FILES := $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
 
+# the target file
+TARGET_FILE = libvbjae
+TARGET := $(STORE)/$(TARGET_FILE)-$(TYPE)
+
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
 all: printBuildingInfo $(TARGET).a
 
@@ -158,7 +160,8 @@ printBuildingInfo:
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 	@echo Linking $(TARGET).a
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS)
-	@echo Done creating $@ in $(TYPE) mode with GCC $(COMPILER_VERSION)
+	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
+	@echo Done creating $(BUILD_DIR)/$(TARGET_FILE).a in $(TYPE) mode with GCC $(COMPILER_VERSION)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.

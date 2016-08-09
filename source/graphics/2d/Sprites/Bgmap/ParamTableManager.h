@@ -38,8 +38,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ParamTableManager_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																					\
+#define ParamTableManager_METHODS(ClassName)															\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define ParamTableManager_SET_VTABLE(ClassName)															\
@@ -56,10 +56,11 @@ ParamTableManager ParamTableManager_getInstance();
 
 void ParamTableManager_destructor(ParamTableManager this);
 void ParamTableManager_reset(ParamTableManager this);
+void ParamTableManager_calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable);
+u32 ParamTableManager_getParamTableBase(ParamTableManager this);
 int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bsprite);
 void ParamTableManager_free(ParamTableManager this, BgmapSprite bsprite);
 bool ParamTableManager_processRemovedSprites(ParamTableManager this);
 void ParamTableManager_print(ParamTableManager this,int x, int y);
-
 
 #endif

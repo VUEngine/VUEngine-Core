@@ -150,7 +150,7 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
-		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
+		Mem_add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
@@ -182,7 +182,7 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
-		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
+		Mem_add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
@@ -222,7 +222,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 		//specifying the char displacement inside the char mem
 		for(; j <= frames; j++)
 		{
-			Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (this->remainingRowsToBeWritten << 6)) << 1),
+			Mem_add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (this->remainingRowsToBeWritten << 6)) << 1),
 					(const u8*)(this->textureDefinition->bgmapDefinition + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
 					this->textureDefinition->cols,
 					(palette) | (charLocation + area * (j - 1)));
@@ -255,7 +255,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
-		Mem_add ((u8*)BGMap(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
+		Mem_add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
 				(const u8*)(this->textureDefinition->bgmapDefinition + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols,
 				(palette) | (charLocation));

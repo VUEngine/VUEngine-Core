@@ -204,7 +204,7 @@ s16 Sprite_getWorldX(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldWidth: null this");
 
-	WORLD* worldPointer = &WA[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gx;
 }
 
@@ -213,7 +213,7 @@ s16 Sprite_getWorldY(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldHeight: null this");
 
-	WORLD* worldPointer = &WA[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gy;
 }
 
@@ -222,7 +222,7 @@ u16 Sprite_getWorldWidth(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldWidth: null this");
 
-	WORLD* worldPointer = &WA[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->w;
 }
 
@@ -231,7 +231,7 @@ u16 Sprite_getWorldHeight(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldHeight: null this");
 
-	WORLD* worldPointer = &WA[this->worldLayer];
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->h;
 }
 

@@ -437,7 +437,7 @@ void SpriteManager_setLastLayer(SpriteManager this)
 
 	if(0 < this->freeLayer)
 	{
-		WA[this->freeLayer - 1].head = WRLD_END;
+		_worldAttributesBaseAddress[this->freeLayer - 1].head = __WORLD_END;
 	}
 }
 
@@ -512,7 +512,7 @@ void SpriteManager_render(SpriteManager this)
             // must make sure that no sprite has the end world
             // which can be the case when a new sprite is added
             // and the previous end world is assigned to it
-            WA[sprite->worldLayer].head &= ~WRLD_END;
+            _worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 
             this->freeLayer = sprite->initialized && sprite->worldLayer < this->freeLayer ? sprite->worldLayer: this->freeLayer;
         }
@@ -556,7 +556,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 
-		WA[sprite->worldLayer].head &= ~WRLD_END;
+		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 	}
 }
 
@@ -576,7 +576,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 
-		WA[sprite->worldLayer].head &= ~WRLD_END;
+		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 	}
 
 	SpriteManager_setLastLayer(this);

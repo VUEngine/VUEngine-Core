@@ -64,7 +64,7 @@ void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectS
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		this->objectSpriteContainers[i] = NULL;
-		VIP_REGS[SPT3 - i] = 0;
+		VIP_REGS[__SPT3 - i] = 0;
 	}
 }
 
@@ -98,10 +98,10 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 	// clean OBJ memory
 	for(i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
-		OAM[(i << 2) + 0] = 0;
-		OAM[(i << 2) + 1] = 0;
-		OAM[(i << 2) + 2] = 0;
-		OAM[(i << 2) + 3] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 0] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 1] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 2] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
 }
@@ -163,7 +163,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	fix19_13 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 
-	// must add them from SPT3 to SPT0
+	// must add them from __SPT3 to __SPT0
 	// so each they start presorted in the WORLDS
 	int i = __TOTAL_OBJECT_SEGMENTS;
 	for(; i--; )

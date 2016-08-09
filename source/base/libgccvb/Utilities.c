@@ -46,27 +46,6 @@ int Utilities_intLength(int value)
 	return length;
 }
 
-WORD Utilities_rotateBits(WORD invalue, int places, int direction)
-{
-	WORD outvalue;
-
-    // Rotating left or right?
-    if(__ROT_LEFT == direction)
-	{
-        // First a normal shift
-        outvalue = invalue << (places & ((sizeof(int) << 3) - 1));
-        outvalue |= invalue >> ((sizeof(int) << 3) - (places & ((sizeof(int) << 3) - 1)));
-    }
-    else
-	{
-        // First a normal shift
-        outvalue = invalue >> (places & ((sizeof(int) << 3) - 1));
-        // Then place the part that's shifted off the screen at the end
-        outvalue |= invalue << ((sizeof(int) << 3) - (places & ((sizeof(int) << 3) - 1)));
-    }
-    return outvalue;
-}
-
 char* Utilities_itoa(u32 num, u8 base, u8 digits)
 {
 #define __CHAR_HOLDER_SIZE		11
@@ -103,7 +82,7 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 }
 
 /*
- * When run at startup gets a random number based on the changing CTA
+ * When run at startup gets a random number based on the changing __CTA
  */
 long Utilities_randomSeed()
 {
@@ -119,7 +98,7 @@ long Utilities_randomSeed()
 
 	rand = Clock_getTime(clock);
 
-	// repeat through many times to make more random and to allow the CTA value to change multiple times
+	// repeat through many times to make more random and to allow the __CTA value to change multiple times
 	while(count < __RANDOM_SEED_CYCLES)
 	{
 		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
@@ -140,7 +119,7 @@ long Utilities_randomSeed()
 
 		if(rand == prevnum)
 		{
-			// if the CTA value doesnt change then count up
+			// if the __CTA value doesnt change then count up
 			count++;
 		}
 		else

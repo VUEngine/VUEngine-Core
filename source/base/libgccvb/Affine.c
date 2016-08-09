@@ -76,7 +76,7 @@ typedef struct AffineInfo
 // 											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, fix19_13 x, fix19_13 y, fix13_3 mx, fix13_3 my, fix19_13 halfWidth, fix19_13 halfHeight, const Scale* scale, const Rotation* rotation)
+fix19_13 Affine_applyAll(u32 param, fix19_13 paramTableRow, fix19_13 x, fix19_13 y, fix13_3 mx, fix13_3 my, fix19_13 halfWidth, fix19_13 halfHeight, const Scale* scale, const Rotation* rotation)
 {
 	ASSERT(scale->x, "Affine::applyAll: 0 x scale");
 	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
@@ -117,7 +117,8 @@ fix19_13 Affine_applyAll(u16 param, fix19_13 paramTableRow, fix19_13 x, fix19_13
 
 	fixedAffineMatrix.paralax = 0;
 
-	AffineEntry* affine = (AffineEntry*)__PARAM_DISPLACEMENT(param);
+	AffineEntry* affine = (AffineEntry*)(param & 0xFFFFFFF0);
+
 	int i = 0 <= paramTableRow? paramTableRow: 0;
     int lastRow = FIX19_13TOI(FIX19_13_MULT((halfHeight << 1), FIX7_9TOFIX19_13(scale->y)));
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());

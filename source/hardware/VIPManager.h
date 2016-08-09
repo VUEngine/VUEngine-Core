@@ -30,7 +30,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 
-/* Defines for INTPND\INTENB\INTCLR */
+/* Defines for __INTPND\__INTENB\__INTCLR */
 #define	TIMEERR		0x8000
 #define	XPEND		0x4000
 #define	SBHIT		0x2000
@@ -40,8 +40,8 @@
 #define	LFBEND		0x0002
 #define	SCANERR		0x0001
 
-/* Defines for DPSTTS\DPCTRL */
-#define	LOCK		0x0400	// VPU SELECT CTA
+/* Defines for __DPSTTS\__DPCTRL */
+#define	LOCK		0x0400	// VPU SELECT __CTA
 #define	SYNCE		0x0200	// L,R_SYNC TO VPU
 #define	RE			0x0100	// MEMORY REFLASH CYCLE ON
 #define	FCLK		0x0080
@@ -49,7 +49,7 @@
 #define	DISP		0x0002	// DISPLAY ON
 #define	DPRST		0x0001	// RESET VPU COUNTER AND WAIT FCLK
 
-/* Defines for XPSTTS\XPCTRL */
+/* Defines for __XPSTTS\__XPCTRL */
 #define	SBOUT		0x8000	// In FrameBuffer drawing included
 #define	OVERTIME	0x0010	// Processing
 #define	XPBSYR		0x000C	// In the midst of drawing processing reset
@@ -63,81 +63,74 @@
 extern volatile u16* VIP_REGS;
 
 /****** VIP Register Mnemonics ******/
-#define	INTPND	0x00
-#define	INTENB	0x01
-#define	INTCLR	0x02
+#define	__INTPND	0x00
+#define	__INTENB	0x01
+#define	__INTCLR	0x02
 
-#define	DPSTTS	0x10
-#define	DPCTRL	0x11
-#define	BRTA	0x12
-#define	BRTB	0x13
-#define	BRTC	0x14
-#define	REST	0x15
+#define	__DPSTTS	0x10
+#define	__DPCTRL	0x11
+#define	__BRTA		0x12
+#define	__BRTB		0x13
+#define	__BRTC		0x14
+#define	__REST		0x15
 
-#define	FRMCYC	0x17
-#define	CTA		0x18
+#define	__FRMCYC	0x17
+#define	__CTA		0x18
 
-#define	XPSTTS	0x20
-#define	XPCTRL	0x21
-#define	VER		0x22
+#define	__XPSTTS	0x20
+#define	__XPCTRL	0x21
+#define	__VER		0x22
 
-#define	SPT0	0x24
-#define	SPT1	0x25
-#define	SPT2	0x26
-#define	SPT3	0x27
+#define	__SPT0		0x24
+#define	__SPT1		0x25
+#define	__SPT2		0x26
+#define	__SPT3		0x27
 
-#define	GPLT0	0x30
-#define	GPLT1	0x31
-#define	GPLT2	0x32
-#define	GPLT3	0x33
+#define	__GPLT0		0x30
+#define	__GPLT1		0x31
+#define	__GPLT2		0x32
+#define	__GPLT3		0x33
 
-#define	JPLT0	0x34
-#define	JPLT1	0x35
-#define	JPLT2	0x36
-#define	JPLT3	0x37
+#define	__JPLT0		0x34
+#define	__JPLT1		0x35
+#define	__JPLT2		0x36
+#define	__JPLT3		0x37
 
-#define	BKCOL	0x38
+#define	__BACKGROUND_COLOR	0x38
 
 // Display RAM
 /*@null@*/
-static u32* const	L_FRAME0 =	(u32*)0x00000000;				// Left Frame Buffer 0
-#define		CharSeg0		 0x00006000					// Characters 0-511
-static u32* const	L_FRAME1 =	(u32*)0x00008000;				// Left Frame Buffer 1
-#define		CharSeg1		 0x0000E000					// Characters 512-1023
-static u32* const	R_FRAME0 =	(u32*)0x00010000;				// Right Frame Buffer 0
-#define		CharSeg2		 0x00016000					// Characters 1024-1535
-static u32* const	R_FRAME1 =	(u32*)0x00018000;				// Right Frame Buffer 1
-#define		CharSeg3		 0x0001E000					// Characters 1536-2047
-#define		BGMMBase		 0x00020000					// Base address of BGMap Memory
-static u16* const	BGMM =		(u16*)BGMMBase;					// Pointer to BGMM
-#define		BGMap(b)		 (BGMMBase + (b * 0x2000))	// Address of BGMap b (0 <= b <= 13)
+#define __LEFT_FRAME_BUFFER_0               0x00000000				// Left Frame Buffer 0
+#define __LEFT_FRAME_BUFFER_1               0x00008000				// Left Frame Buffer 1
+#define __RIGHT_FRAME_BUFFER_0              0x00010000				// Right Frame Buffer 0
+#define __RIGHT_FRAME_BUFFER_1              0x00018000				// Right Frame Buffer 1
 
-#define		CHARBase		0x00006000
-//#define		CHARBase		0x00078000
-static u16* const	CHARB =		(u16*)CHARBase;
-#define		CharSegs(b)	(CHARBase + (b*0x8000))		// Address of CharSet b (0 <= b <= 3)
+#define __CHAR_SEGMENT_0_BASE_ADDRESS       0x00006000					// Characters 0-511
+#define __CHAR_SEGMENT_1_BASE_ADDRESS		0x0000E000					// Characters 512-1023
+#define __CHAR_SEGMENT_2_BASE_ADDRESS		0x00016000					// Characters 1024-1535
+#define __CHAR_SEGMENT_3_BASE_ADDRESS		0x0001E000					// Characters 1536-2047
 
-#define		WAMBase			 0x0003D800					// Base address of World Attribute Memory
-static u16* const	WAM =		(u16*)WAMBase;					// Pointer to WAM
-#define		World(w)		 (WAMBase + (w * 0x0020))	// Address of World w (0 <= w <= 31)
-static u16* const	CLMN_TBL =	(u16*)0x0003DC00;				// Base address of Column Tables
-#define		OAMBase			 0x0003E000					// Base address of Object Attribute Memory
-static u16* const	OAM =		(u16*)OAMBase;					// Pointer to OAM
-#define		Object(o)		 (OAMBase + (o * 0x0008))	// Address of Obj o (0 <= o <= 1023)
+#define __BGMAP_SPACE_BASE_ADDRESS		    0x00020000					// Base address of BGMap Memory
+#define __BGMAP_SEGMENT(b)		                    (__BGMAP_SPACE_BASE_ADDRESS + (b * 0x2000))	// Address of BGMap b (0 <= b <= 13)
+
+#define __CHAR_SPACE_BASE_ADDRESS		0x00006000
+#define __CHAR_SEGMENT(b)	(__CHAR_SPACE_BASE_ADDRESS + (b*0x8000))		// Address of CharSet b (0 <= b <= 3)
+
+#define __OBJECT_SPACE_BASE_ADDRESS		0x0003E000  // Base address of Object Attribute Memory
+
+#define __WORLD_SPACE_BASE_ADDRESS		0x0003D800  // Base address of World Attribute Memory
+
 
 // Macro to set the brightness registers
-#define	SET_BRIGHT(a,b,c)       VIP_REGS[BRTA]=(u16)(a); VIP_REGS[BRTB]=(u16)(b); VIP_REGS[BRTC]=(u16)(c)
+#define	__SET_BRIGHT(a,b,c)       VIP_REGS[__BRTA]=(u16)(a); VIP_REGS[__BRTB]=(u16)(b); VIP_REGS[__BRTC]=(u16)(c)
 
 // Macro to set the GPLT (BGMap palette)
-#define	SET_GPLT(n,pal)         VIP_REGS[GPLT0+n]=pal
+#define	__SET_G_PALETTE(n,pal)         VIP_REGS[__GPLT0+n]=pal
 
 // Macro to set the JPLT (OBJ palette)
-#define	SET_JPLT(n,pal)         VIP_REGS[JPLT0+n]=pal
+#define	__SET_J_PALETTE(n,pal)         VIP_REGS[__JPLT0+n]=pal
 
-#define __ROT_LEFT 0x00
-#define __ROT_RIGHT !__ROT_LEFT
-
-typedef struct WORLD
+typedef struct WorldAttributes
 {
 	u16 head;
 	s16 gx;
@@ -152,50 +145,42 @@ typedef struct WORLD
 	u16 ovr;
 	u16 spacer[5];
 
-} WORLD;
+} WorldAttributes;
 
-static WORLD* const WA = (WORLD*)0x0003D800;
+// pointers to access the VRAM base address
+static WorldAttributes* const _worldAttributesBaseAddress   =   (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
+static u16* const	_columnTableBaseAddress                 =   (u16*)0x0003DC00;				// Base address of Column Tables
+static u16* const	_objecAttributesBaseAddress             =   (u16*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objecAttributesBaseAddress
 
 // "vbSetWorld" header flags
 // (OR these together to build a World Header)
 
-#define	WRLD_OFF	0x3FFF
-#define	WRLD_ON		0xC000
-#define	WRLD_LON	0x8000
-#define	WRLD_RON	0x4000
-#define	WRLD_OBJ	0x3000
-#define	WRLD_AFFINE	0x2000
-#define	WRLD_HBIAS	0x1000
-#define	WRLD_BGMAP	0x0000
+#define	__WORLD_OFF		0x3FFF
+#define	__WORLD_ON		0xC000
+#define	__WORLD_LON		0x8000
+#define	__WORLD_RON		0x4000
+#define	__WORLD_OBJ		0x3000
+#define	__WORLD_AFFINE	0x2000
+#define	__WORLD_HBIAS	0x1000
+#define	__WORLD_BGMAP	0x0000
 
-#define	WRLD_1x1	0x0000
-#define	WRLD_1x2	0x0100
-#define	WRLD_1x4	0x0200
-#define	WRLD_1x8	0x0300
-#define	WRLD_2x1	0x0400
-#define	WRLD_2x2	0x0500
-#define	WRLD_2x4	0x0600
-#define	WRLD_4x2	0x0900
-#define	WRLD_4x1	0x0800
-#define	WRLD_8x1	0x0C00
+#define	__WORLD_1x1		0x0000
+#define	__WORLD_1x2		0x0100
+#define	__WORLD_1x4		0x0200
+#define	__WORLD_1x8		0x0300
+#define	__WORLD_2x1		0x0400
+#define	__WORLD_2x2		0x0500
+#define	__WORLD_2x4		0x0600
+#define	__WORLD_4x2		0x0900
+#define	__WORLD_4x1		0x0800
+#define	__WORLD_8x1		0x0C00
 
-#define	WRLD_OVR	0x0080
-#define	WRLD_END	0x0040
+#define	__WORLD_OVR		0x0080
+#define	__WORLD_END		0x0040
 
-// Macros for world manipulation
-// (Obsoleted by the WA array of WORLD structures...)
-
-#define	WORLD_HEAD(n,head)		WAM[(n << 4)    ] = head
-#define	WORLD_GSET(n,gx,gp,gy)	WAM[(n << 4) + 1] = gx;WAM[(n << 4) + 2] = gp;WAM[(n << 4) + 3] = gy
-#define	WORLD_MSET(n,mx,mp,my)	WAM[(n << 4) + 4] = mx;WAM[(n << 4) + 5] = mp;WAM[(n << 4) + 6] = my
-#define	WORLD_SIZE(n,w,h)		WAM[(n << 4) + 7] = w;WAM[(n << 4) + 8] = h
-#define WORLD_PARAM(n,p)		WAM[(n << 4) + 9] = ((p - 0x20000) >> 1) & 0xFFF0
-#define WORLD_OVER(n,o)			WAM[(n << 4) + 10] = o
-
-#define WORLD_SPACER(n,x,o)		WAM[(n << 4) + 11+x] = o
-
-#define	__PARAM_BASE	(__PARAM_TABLE_END - 0x00002000 * (__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - BgmapTextureManager_getAvailableBgmapSegmentForParamTable(BgmapTextureManager_getInstance())) - __PRINTABLE_BGMAP_AREA)
-#define	__PARAM_DISPLACEMENT(param)	(__PARAM_BASE + (param & 0xFFF0))
+// param table for affine and hbias render
+extern u32 _vram_data_start;
+#define __PARAM_TABLE_END 		((u32)&_vram_data_start)
 
 #define	__COLOR_BLACK			0x00
 #define	__COLOR_DARK_RED		0x01
@@ -245,8 +230,8 @@ typedef const ColumnTableDefinition ColumnTableROMDef;
 // Defines as a pointer to a struct that is not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define VIPManager_METHODS(ClassName)																				\
-		Object_METHODS(ClassName)																					\
+#define VIPManager_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define VIPManager_SET_VTABLE(ClassName)																\

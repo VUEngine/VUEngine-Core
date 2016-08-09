@@ -98,7 +98,7 @@ void ObjectTexture_write(ObjectTexture this)
 			s32 objectIndex = this->objectIndex + i * cols + j;
 			s32 charNumberIndex = (i * cols + j) << 1;
 			u16 charNumber = charLocation + (framePointer[charNumberIndex] | (framePointer[charNumberIndex + 1] << 8));
-			OAM[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
+			_objecAttributesBaseAddress[(objectIndex << 2) + 3] = palette | (charNumber & 0x7FF);
 		}
 	}
 }

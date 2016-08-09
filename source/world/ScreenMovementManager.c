@@ -172,11 +172,11 @@ void ScreenMovementManager_stopEffect(ScreenMovementManager this, int effect)
 void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, u32 callNumber)
 {
     // increase brightness
-    SET_BRIGHT(callNumber, callNumber << 1, callNumber);
+    __SET_BRIGHT(callNumber, callNumber << 1, callNumber);
 }
 
 void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, u32 callNumber)
 {
     // increase brightness
-    SET_BRIGHT(32 - callNumber, (32 - callNumber) << 1, 32 -callNumber);
+    __SET_BRIGHT(32 - callNumber, (32 - callNumber) << 1, 32 -callNumber);
 }

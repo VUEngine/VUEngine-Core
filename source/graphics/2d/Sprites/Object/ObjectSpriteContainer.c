@@ -74,7 +74,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 
 	__CONSTRUCT_BASE(Sprite, NULL, NULL);
 
-	this->head = WRLD_OBJ | WRLD_ON;
+	this->head = __WORLD_OBJ | __WORLD_ON;
 	this->spt = spt;
 	this->totalObjects = totalObjects;
 	this->availableObjects = this->totalObjects;
@@ -93,15 +93,15 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 
 	for(; i < this->firstObjectIndex + this->totalObjects; i++)
 	{
-		OAM[(i << 2) + 0] = 0;
-		OAM[(i << 2) + 1] = 0;
-		OAM[(i << 2) + 2] = 0;
-		OAM[(i << 2) + 3] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 0] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 1] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 2] = 0;
+		_objecAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
     if(this->totalObjects)
     {
-    	VIP_REGS[SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+    	VIP_REGS[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 
         // register to sprite manager
         SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
@@ -186,7 +186,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		int i = 0;
 		for(; i < objectSprite->totalObjects; i++)
 		{
-			OAM[((objectSprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+			_objecAttributesBaseAddress[((objectSprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 		}
 	}
 
@@ -370,7 +370,7 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 					int i = 0;
 					for(; i < sprite->totalObjects; i++)
 					{
-						OAM[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						_objecAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					}
 
 					// swap array entries
@@ -393,7 +393,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->renderFlag)
 	{
 		// make sure to not render again
-		WA[this->worldLayer].head = this->totalObjects? this->head | WRLD_OVR : WRLD_OFF;
+		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects? this->head | __WORLD_OVR : __WORLD_OFF;
 
 		// make sure to not render again
 		this->renderFlag = false;

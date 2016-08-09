@@ -31,14 +31,14 @@
 
 // Object Manipulation Macros
 
-#define	OBJ_XSET(n,x)		OAM[ (n) << 2]      = (x)
-#define	OBJ_YSET(n,y)		OAM[((n) << 2) + 2] = (y)
-#define OBJ_PSET(n,p)		OAM[((n) << 2) + 1] = (OAM[((n) << 2) + 1] & 0xC000) | ((u16)(p) & 0x3FFF)
-#define	OBJ_CSET(n,c)		OAM[((n) << 2) + 3] = (OAM[((n) << 2) + 3] & 0xF000) | ((u16)(c) & 0x07FF)
-#define	OBJ_HSET(n,h)		OAM[((n) << 2) + 3] = (OAM[((n) << 2) + 3] & 0xDFFF) | (((u16)(h) << 13) & 0x2000)
-#define	OBJ_VSET(n,v)		OAM[((n) << 2) + 3] = (OAM[((n) << 2) + 3] & 0xEFFF) | (((u16)(v) << 12) & 0x1000)
-#define OBJ_PALSET(n,pal)	OAM[((n) << 2) + 3] = (((pal) << 14) & 0xC000) | (OAM[((n) << 2) + 3] & 0x3FFF)
-#define OBJ_VIS(n,v)		OAM[((n) << 2) + 1] = (((v) << 14) & 0xC000) | (OAM[((n) << 2) + 1] & 0x3FFF)
+#define	OBJ_XSET(n,x)		_objecAttributesBaseAddress[ (n) << 2]      = (x)
+#define	OBJ_YSET(n,y)		_objecAttributesBaseAddress[((n) << 2) + 2] = (y)
+#define OBJ_PSET(n,p)		_objecAttributesBaseAddress[((n) << 2) + 1] = (_objecAttributesBaseAddress[((n) << 2) + 1] & 0xC000) | ((u16)(p) & 0x3FFF)
+#define	OBJ_CSET(n,c)		_objecAttributesBaseAddress[((n) << 2) + 3] = (_objecAttributesBaseAddress[((n) << 2) + 3] & 0xF000) | ((u16)(c) & 0x07FF)
+#define	OBJ_HSET(n,h)		_objecAttributesBaseAddress[((n) << 2) + 3] = (_objecAttributesBaseAddress[((n) << 2) + 3] & 0xDFFF) | (((u16)(h) << 13) & 0x2000)
+#define	OBJ_VSET(n,v)		_objecAttributesBaseAddress[((n) << 2) + 3] = (_objecAttributesBaseAddress[((n) << 2) + 3] & 0xEFFF) | (((u16)(v) << 12) & 0x1000)
+#define OBJ_PALSET(n,pal)	_objecAttributesBaseAddress[((n) << 2) + 3] = (((pal) << 14) & 0xC000) | (_objecAttributesBaseAddress[((n) << 2) + 3] & 0x3FFF)
+#define OBJ_VIS(n,v)		_objecAttributesBaseAddress[((n) << 2) + 1] = (((v) << 14) & 0xC000) | (_objecAttributesBaseAddress[((n) << 2) + 1] & 0x3FFF)
 
 // Object attributes
 #define	JX			0 // Display pointer X

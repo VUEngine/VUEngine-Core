@@ -565,8 +565,6 @@ static void Stage_preloadAssets(Stage this)
 		}
 	}
 
-	bool calculateAvailableBgmapSegments = false;
-
 	if(this->stageDefinition->assets.stageTextureEntryDefinitions)
 	{
 		VirtualList managedTextures = __NEW(VirtualList);
@@ -608,21 +606,9 @@ static void Stage_preloadAssets(Stage this)
 		}
 
 		__DELETE(managedTextures);
-
-		calculateAvailableBgmapSegments = 0 < i;
 	}
 
-	BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager_getInstance(), this->stageDefinition->rendering.spareBgmapSegments);
-
-	if(calculateAvailableBgmapSegments)
-	{
-		BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
-		ParamTableManager_reset(ParamTableManager_getInstance());
-	}
-	else
-	{
-		BgmapTextureManager_resetAvailableBgmapSegments(BgmapTextureManager_getInstance());
-	}
+    ParamTableManager_calculateParamTableBase(ParamTableManager_getInstance(), this->stageDefinition->rendering.paramTableSegments);
 }
 
 // register an entity in the streaming list

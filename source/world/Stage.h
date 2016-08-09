@@ -144,13 +144,13 @@ typedef struct StageDefinition
 		PaletteConfig paletteConfig;
 
 	    // BGMAP segments configuration
-	    // number of segments reserved for dynamically allocated textures when preloading
-		int spareBgmapSegments;
+	    // number of segments reserved for the param tables
+		int paramTableSegments;
 
-		// OBJs segments's sizes(SPT0 to SPT3)
+		// OBJs segments's sizes(__SPT0 to __SPT3)
 		fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
-		// OBJs segments z coordinates (SPT0 to SPT3)
+		// OBJs segments z coordinates (__SPT0 to __SPT3)
 		fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 		// engine's optical values structure

@@ -354,54 +354,40 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 	Printing_hex(Printing_getInstance(), HW_REGS[WCR], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "SCR:", x, ++auxY, NULL);
 	Printing_hex(Printing_getInstance(), HW_REGS[SCR], x + xDisplacement, auxY, NULL);
-/*
-#define		0x01
-#define		0x02
-#define		0x10
-#define		0x11
-#define		0x12
-#define	BRTB	0x13
-#define	BRTC	0x14
-#define		0x15
-#define		0x17
-#define			0x18
-#define		0x20
-#define		0x21
-#define			0x22
-*/
+
 	auxY = y;
 	x += 17;
 	xDisplacement = 8;
 
 	Printing_text(Printing_getInstance(), "VIP_REGS", x, ++auxY, NULL);
 	Printing_text(Printing_getInstance(), "INTPND:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[INTPND], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__INTPND], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "INTENB:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[INTENB], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__INTENB], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "INTCLR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[INTCLR], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__INTCLR], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "DPSTTS:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[DPSTTS], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__DPSTTS], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "DPCTRL:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[DPCTRL], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__DPCTRL], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "BRTA:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[BRTA], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__BRTA], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "BRTB:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[BRTB], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__BRTB], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "BRTC:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[BRTC], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__BRTC], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "REST:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[REST], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__REST], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "FRMCYC:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[FRMCYC], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__FRMCYC], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "CTA:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[CTA], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__CTA], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "XPSTTS:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[XPSTTS], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__XPSTTS], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "XPCTRL:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[XPCTRL], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__XPCTRL], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "VER:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), VIP_REGS[VER], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), VIP_REGS[__VER], x + xDisplacement, auxY, NULL);
 
 //	Printing_hex(Printing_getInstance(), HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5, NULL);
 }

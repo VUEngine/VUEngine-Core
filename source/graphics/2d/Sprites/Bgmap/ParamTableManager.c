@@ -42,7 +42,7 @@ typedef struct ParamTableFreeData
         /* super's attributes */                                                                        \
         Object_ATTRIBUTES                                                                              \
         /* total size of param table */                                                                 \
-        u32 size;                                                                                       \
+        int size;                                                                                       \
         /* number of used bytes */                                                                      \
         u32 used;                                                                                       \
         /* allocated bSprites */                                                                        \
@@ -53,6 +53,8 @@ typedef struct ParamTableFreeData
         ParamTableFreeData paramTableFreeData;                                                          \
         /* user for defragmentation */                                                                  \
         BgmapSprite previouslyMovedBgmapSprite;                                                         \
+        /* user for defragmentation */                                                                  \
+        u32 paramTableBase;                                                                             \
 
 __CLASS_DEFINITION(ParamTableManager, Object);
 
@@ -65,7 +67,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // ---------------------------------------------------------------------------------------------------------
 
 void ParamTableManager_constructor(ParamTableManager this);
-static int ParamTableManager_calculateSize(ParamTableManager this, BgmapSprite bSprite);
+static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this, BgmapSprite bSprite);
 
 
 // ---------------------------------------------------------------------------------------------------------
@@ -120,21 +122,53 @@ void ParamTableManager_reset(ParamTableManager this)
 
 	VirtualList_clear(this->removedBgmapSpritesSizes);
 
-	// set the size of the paramtable
-	this->size = __PARAM_TABLE_END - __PARAM_BASE;
+	this->paramTableBase = __PARAM_TABLE_END;
 
-	NM_ASSERT(0 < __PARAM_TABLE_END - __PARAM_BASE, "ParamTableManager::reset: param table size is negative");
+	// set the size of the paramtable
+	this->size = __PARAM_TABLE_END - this->paramTableBase;
+
+	NM_ASSERT(0 <= __PARAM_TABLE_END - this->paramTableBase, "ParamTableManager::reset: param table size is negative");
 
 	// all the memory is free
 	this->used = 1;
+
 
 	this->paramTableFreeData.param = 0;
 	this->paramTableFreeData.recoveredSize = 0;
 	this->previouslyMovedBgmapSprite = NULL;
 }
 
+void ParamTableManager_calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable)
+{
+	ASSERT(this, "ParamTableManager::calculateParamTableBase: null this");
+
+	if(!availableBgmapSegmentsForParamTable)
+	{
+	    this->paramTableBase = __PARAM_TABLE_END;
+	}
+    else
+    {
+        this->paramTableBase = __PARAM_TABLE_END - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
+    }
+
+    for(; (this->paramTableBase - (__PRINTABLE_BGMAP_AREA << 1)) % __BGMAP_SEGMENT_SIZE && this->paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; this->paramTableBase--);
+
+	NM_ASSERT(this->paramTableBase <= __PARAM_TABLE_END, "ParamTableManager::calculateParamTableBase: param table size is negative");
+
+    this->size = __PARAM_TABLE_END - this->paramTableBase;
+
+    BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
+}
+
+u32 ParamTableManager_getParamTableBase(ParamTableManager this)
+{
+	ASSERT(this, "ParamTableManager::getParamTableBase: null this");
+
+    return this->paramTableBase;
+}
+
 // calculate size of param table
-static int ParamTableManager_calculateSize(ParamTableManager this, BgmapSprite bSprite)
+static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this, BgmapSprite bSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
 	ASSERT(bSprite, "ParamTableManager::allocate: null sprite");
@@ -152,13 +186,13 @@ int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bSprite)
 	ASSERT(bSprite, "ParamTableManager::allocate: null sprite");
 
 	//calculate necessary space to allocate
-	int size = ParamTableManager_calculateSize(this, bSprite);
+	int size = ParamTableManager_calculateSpriteParamTableSize(this, bSprite);
 
 	//if there is space in the param table, allocate
-	if(__PARAM_DISPLACEMENT((this->used + size)) < (__PARAM_TABLE_END))
+	if(this->paramTableBase + this->used + size < (__PARAM_TABLE_END))
 	{
 		//set sprite param
-		BgmapSprite_setParam(bSprite, this->used);
+		BgmapSprite_setParam(bSprite, this->paramTableBase + this->used);
 
 		//record sprite
 		VirtualList_pushBack(this->bSprites, bSprite);
@@ -171,7 +205,7 @@ int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bSprite)
 	}
 
 	Printing_text(Printing_getInstance(), "Total size: ", 20, 7, NULL);
-	Printing_int(Printing_getInstance(), __PARAM_TABLE_END - (int)__PARAM_BASE, 20 + 19, 7, NULL);
+	Printing_int(Printing_getInstance(), __PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
 
 	NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
 
@@ -195,13 +229,13 @@ void ParamTableManager_free(ParamTableManager this, BgmapSprite bSprite)
 	if(this->paramTableFreeData.param && this->paramTableFreeData.param <= BgmapSprite_getParam(bSprite))
 	{
 		// but increase the space recovered
-		this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSize(this, bSprite);
+		this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bSprite);
 
 		return;
 	}
 
 	this->paramTableFreeData.param = BgmapSprite_getParam(bSprite);
-	this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSize(this, bSprite);
+	this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bSprite);
 }
 
 // relocate bSprites
@@ -222,7 +256,7 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 			// retrieve param
 			if(spriteParam > this->paramTableFreeData.param)
 			{
-				int size = ParamTableManager_calculateSize(this, sprite);
+				int size = ParamTableManager_calculateSpriteParamTableSize(this, sprite);
 
 				// check that the sprite won't override itself
 				if(this->paramTableFreeData.param + size > spriteParam)
@@ -280,7 +314,7 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 	Printing_int(Printing_getInstance(), this->used, x + xDisplacement, y, NULL);
 
 	Printing_text(Printing_getInstance(), "ParamBase:          ", x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), __PARAM_BASE, x + xDisplacement, y, NULL);
+	Printing_hex(Printing_getInstance(), this->paramTableBase, x + xDisplacement, y, NULL);
 	Printing_text(Printing_getInstance(), "ParamEnd:           ", x, ++y, NULL);
 	Printing_hex(Printing_getInstance(), __PARAM_TABLE_END, x + xDisplacement, y, NULL);
 }

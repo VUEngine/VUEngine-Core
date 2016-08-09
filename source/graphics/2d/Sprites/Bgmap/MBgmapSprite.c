@@ -289,61 +289,61 @@ static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 
 	switch(this->mSpriteDefinition->scValue)
 	{
-		case WRLD_1x1:
+		case __WORLD_1x1:
 
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 1;
 			break;
 
-		case WRLD_1x2:
+		case __WORLD_1x2:
 
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 2;
 			break;
 
-		case WRLD_1x4:
+		case __WORLD_1x4:
 
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 4;
 			break;
 
-		case WRLD_1x8:
+		case __WORLD_1x8:
 
 			this->sizeMultiplier.x = 1;
 			this->sizeMultiplier.y = 8;
 			break;
 
-		case WRLD_2x1:
+		case __WORLD_2x1:
 
 			this->sizeMultiplier.x = 2;
 			this->sizeMultiplier.y = 1;
 			break;
 
-		case WRLD_2x2:
+		case __WORLD_2x2:
 
 			this->sizeMultiplier.x = 2;
 			this->sizeMultiplier.y = 2;
 			break;
 
-		case WRLD_2x4:
+		case __WORLD_2x4:
 
 			this->sizeMultiplier.x = 2;
 			this->sizeMultiplier.y = 4;
 			break;
 
-		case WRLD_4x1:
+		case __WORLD_4x1:
 
 			this->sizeMultiplier.x = 4;
 			this->sizeMultiplier.y = 1;
 			break;
 
-		case WRLD_4x2:
+		case __WORLD_4x2:
 
 			this->sizeMultiplier.x = 4;
 			this->sizeMultiplier.y = 2;
 			break;
 
-		case WRLD_8x1:
+		case __WORLD_8x1:
 
 			this->sizeMultiplier.x = 8;
 			this->sizeMultiplier.y = 1;
@@ -359,15 +359,15 @@ void MBgmapSprite_render(MBgmapSprite this)
 	// if render flag is set
 	if(this->texture && this->renderFlag && this->initialized)
 	{
+		static WorldAttributes* worldPointer = NULL;
+		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+
 		if(this->hidden)
 		{
-			WORLD_HEAD(this->worldLayer, 0x0000);
+			worldPointer->head = 0x0000;
 			this->renderFlag = 0;
 			return;
 		}
-
-		static WORLD* worldPointer = NULL;
-		worldPointer = &WA[this->worldLayer];
 
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);

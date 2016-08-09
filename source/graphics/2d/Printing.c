@@ -86,7 +86,7 @@ void Printing_destructor(Printing this)
 // load font data to char memory
 void __attribute__ ((noinline)) Printing_loadFonts(Printing this)
 {
-    int lastFontDefEndPos = CharSeg3 + (512 << 4);
+    int lastFontDefEndPos = __CHAR_SEGMENT_3_BASE_ADDRESS + (512 << 4);
     u16 numCharsToAdd = 0;
     u8 i = 0;
 
@@ -108,15 +108,15 @@ void __attribute__ ((noinline)) Printing_render(Printing this, int textLayer)
 		return;
 	}
 
-	WA[textLayer].head = WRLD_ON | WRLD_BGMAP | WRLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
-	WA[textLayer].mx = 0;
-	WA[textLayer].mp = 0;
-	WA[textLayer].my = 0;
-	WA[textLayer].gx = __PRINTING_BGMAP_X_OFFSET;
-	WA[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
-	WA[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
-	WA[textLayer].w = __SCREEN_WIDTH;
-	WA[textLayer].h = __SCREEN_HEIGHT;
+	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
+	_worldAttributesBaseAddress[textLayer].mx = 0;
+	_worldAttributesBaseAddress[textLayer].mp = 0;
+	_worldAttributesBaseAddress[textLayer].my = 0;
+	_worldAttributesBaseAddress[textLayer].gx = __PRINTING_BGMAP_X_OFFSET;
+	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
+	_worldAttributesBaseAddress[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
+	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH;
+	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT;
 }
 
 // clear printing area
@@ -161,6 +161,8 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 
     fontData = Printing_getFontByName(this, font);
 
+    u16* const	bgmapSpaceBaseAddress =	(u16*)__BGMAP_SPACE_BASE_ADDRESS;
+
     // print text
 	while(string[i] && x < (__SCREEN_WIDTH >> 3))
 	{
@@ -189,7 +191,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
                 {
                     for(charOffsetY = 0; charOffsetY < fontData.fontDefinition->fontSize.y; charOffsetY++)
                     {
-                        BGMM[(0x1000 * bgmap) + position + charOffsetX + (charOffsetY << 6)] =
+                        bgmapSpaceBaseAddress[(0x1000 * bgmap) + position + charOffsetX + (charOffsetY << 6)] =
                             (
                                 // start at correct font
                                 fontData.memoryOffset +

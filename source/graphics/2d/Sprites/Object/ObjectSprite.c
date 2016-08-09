@@ -227,7 +227,7 @@ void ObjectSprite_render(ObjectSprite this)
 				int i = 0;
 				for(; i < this->totalObjects; i++)
 				{
-					OAM[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+					_objecAttributesBaseAddress[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				}
 			}
 
@@ -270,7 +270,7 @@ void ObjectSprite_render(ObjectSprite this)
 				// screen's bounds
 				if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
 				{
-					OAM[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+					_objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					continue;
 				}
 
@@ -278,14 +278,14 @@ void ObjectSprite_render(ObjectSprite this)
 
 				if((unsigned)outputY > __SCREEN_HEIGHT + 8)
 				{
-					OAM[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+					_objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					continue;
 				}
 
-				OAM[(objectIndex << 2)] = outputX;
-				OAM[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
-				OAM[(objectIndex << 2) + 2] = outputY;
-				OAM[(objectIndex << 2) + 3] |= fourthWordValue;
+				_objecAttributesBaseAddress[(objectIndex << 2)] = outputX;
+				_objecAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
+				_objecAttributesBaseAddress[(objectIndex << 2) + 2] = outputY;
+				_objecAttributesBaseAddress[(objectIndex << 2) + 3] |= fourthWordValue;
 			}
 		}
 
@@ -329,7 +329,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 			int j = previousObjectIndex;
 			for(; j < previousObjectIndex + this->totalObjects; j++)
 			{
-				OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objecAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 			}
 
 			if(!this->hidden)
@@ -343,7 +343,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 					int j = previousObjectIndex + this->totalObjects - 1;
 					for(; j >= this->objectIndex + this->totalObjects && counter < this->totalObjects; j--, counter++)
 					{
-						OAM[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						_objecAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					}
 				}
 				else

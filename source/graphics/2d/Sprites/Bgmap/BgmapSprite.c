@@ -122,27 +122,27 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	// set world layer's head acording to map's render mode
 	switch(bgmapSpriteDefinition->bgmapMode)
 	{
-		case WRLD_BGMAP:
+		case __WORLD_BGMAP:
 
 			// set map head
-			this->head = bgmapSpriteDefinition->display | WRLD_BGMAP;
+			this->head = bgmapSpriteDefinition->display | __WORLD_BGMAP;
 
 			break;
 
-		case WRLD_AFFINE:
+		case __WORLD_AFFINE:
 
 			// set map head
-			this->head = bgmapSpriteDefinition->display | WRLD_AFFINE;
+			this->head = bgmapSpriteDefinition->display | __WORLD_AFFINE;
 
 			// allocate param table space
 			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
 
 			break;
 
-		case WRLD_HBIAS:
+		case __WORLD_HBIAS:
 
 			// set map head
-			this->head = bgmapSpriteDefinition->display | WRLD_HBIAS | WRLD_OVR;
+			this->head = bgmapSpriteDefinition->display | __WORLD_HBIAS | __WORLD_OVR;
 
 			break;
 	}
@@ -165,7 +165,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 
 	// if affine or bgmap
-	if(WRLD_AFFINE & this->head)
+	if(__WORLD_AFFINE & this->head)
 	{
 		// free param table space
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
@@ -311,15 +311,15 @@ void BgmapSprite_render(BgmapSprite this)
 	// if render flag is set
 	if(this->renderFlag && this->initialized)
 	{
+		static WorldAttributes* worldPointer = NULL;
+		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+
 		if(this->hidden)
 		{
-			WORLD_HEAD(this->worldLayer, 0x0000);
+			worldPointer->head = 0x0000;
 			this->renderFlag = 0;
 			return;
 		}
-
-		static WORLD* worldPointer = NULL;
-		worldPointer = &WA[this->worldLayer];
 
 		// get coordinates
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
@@ -372,10 +372,10 @@ void BgmapSprite_render(BgmapSprite this)
         bool clearRenderFlagValue = false;
 
         // set the world size according to the zoom
-        if(WRLD_AFFINE & this->head)
+        if(__WORLD_AFFINE & this->head)
         {
             // set param table's souce
-            worldPointer->param = (u16)((__PARAM_DISPLACEMENT((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+            worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
             // un-cap x coordinate in affine mode
             if(0 > gx)
@@ -440,8 +440,8 @@ void BgmapSprite_render(BgmapSprite this)
 			return;
 		}
 
-		static WORLD* worldPointer = NULL;
-		worldPointer = &WA[this->worldLayer];
+		static WorldAttributes* worldPointer = NULL;
+		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
 		// set the world screen position
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
@@ -489,7 +489,7 @@ void BgmapSprite_render(BgmapSprite this)
         }
 
         // set the world size according to the zoom
-        if(WRLD_AFFINE & this->head)
+        if(__WORLD_AFFINE & this->head)
         {
             if(this->renderFlag & __UPDATE_G)
             {

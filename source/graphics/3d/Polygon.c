@@ -173,5 +173,5 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
 		}
 	}
-	//VIP_REGS[XPCTRL] = VIP_REGS[XPSTTS] & ~XPEN;
+	//VIP_REGS[__XPCTRL] = VIP_REGS[__XPSTTS] & ~XPEN;
 }
