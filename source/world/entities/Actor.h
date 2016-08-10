@@ -130,7 +130,6 @@ bool Actor_updateSpriteTransformations(Actor this);
 void Actor_stopMovement(Actor this);
 int Actor_getAxisAllowedForBouncing(Actor this);
 void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject);
-const Body Actor_getBody(Actor this);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 fix19_13 Actor_getFriction(Actor this);

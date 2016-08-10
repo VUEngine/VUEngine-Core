@@ -186,8 +186,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SoundManager_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
+#define SoundManager_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define SoundManager_SET_VTABLE(ClassName)																\
@@ -207,7 +207,7 @@ void SoundManager_setWaveForm(SoundManager this);
 void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[]);
 int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D  position);
 int SoundManager_playingSound(SoundManager this, const u16* fxSound);
-void SoundManager_stopSound(SoundManager this, BYTE *sound);
+void SoundManager_stopSound(SoundManager this);
 void SoundManager_stopAllSound(SoundManager this);
 void SoundManager_playSounds(SoundManager this);
 

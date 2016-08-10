@@ -43,7 +43,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-const extern VBVec3D* _screenPosition;
+extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 
 
@@ -235,12 +235,12 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 }
 
 // execute logic
-void ManagedMBackground_update(ManagedMBackground this)
+void ManagedMBackground_update(ManagedMBackground this __attribute__ ((unused)))
 {
 	ASSERT(this, "ManagedMBackground::update: null this");
 }
 
-int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
+int ManagedMBackground_passMessage(ManagedMBackground this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
 	ASSERT(this, "ManagedMBackground::passMessage: null this");
 

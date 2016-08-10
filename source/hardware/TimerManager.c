@@ -89,14 +89,14 @@ void TimerManager_setInterrupt(TimerManager this, int value)
 
 	if(value)
 	{
-		this->tcrValue |= TIMER_INT;
+		this->tcrValue |= __TIMER_INT;
 	}
 	else
 	{
-		this->tcrValue &= ~TIMER_INT;
+		this->tcrValue &= ~__TIMER_INT;
 	}
 
-	HW_REGS[TCR] = this->tcrValue;
+	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
 // timer's interrupt handler
@@ -153,31 +153,31 @@ void TimerManager_enable(TimerManager this, int value)
 
 	if(value)
 	{
-		this->tcrValue |= TIMER_ENB;
+		this->tcrValue |= __TIMER_ENB;
 	}
 	else
 	{
-		this->tcrValue &= ~TIMER_ENB;
+		this->tcrValue &= ~__TIMER_ENB;
 	}
 
-	HW_REGS[TCR] = this->tcrValue;
+	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
 // get time
-u16 TimerManager_getTime(TimerManager this)
+u16 TimerManager_getTime(TimerManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "TimerManager::getTime: null this");
 
-	return (HW_REGS[TLR] | (HW_REGS[THR] << 8));
+	return (_hardwareRegisters[__TLR] | (_hardwareRegisters[__THR] << 8));
 }
 
 // sest time
-void TimerManager_setTime(TimerManager this, u16 time)
+void TimerManager_setTime(TimerManager this __attribute__ ((unused)), u16 time)
 {
 	ASSERT(this, "TimerManager::setTime: null this");
 
-	HW_REGS[TLR] = (time & 0xFF);
-	HW_REGS[THR] = (time >> 8);
+	_hardwareRegisters[__TLR] = (time & 0xFF);
+	_hardwareRegisters[__THR] = (time >> 8);
 }
 
 // set frequency
@@ -187,23 +187,23 @@ void TimerManager_setFrequency(TimerManager this, int frequency)
 
 	if(frequency)
 	{
-		this->tcrValue |= TIMER_20US;
+		this->tcrValue |= __TIMER_20US;
 	}
 	else
 	{
-		this->tcrValue &= ~TIMER_20US;
+		this->tcrValue &= ~__TIMER_20US;
 	}
 
-	HW_REGS[TCR] = this->tcrValue;
+	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
 
 // get stat
-int TimerManager_getStat(TimerManager this)
+int TimerManager_getStat(TimerManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "TimerManager::getStat: null this");
 
-	return (HW_REGS[TCR] & TIMER_ZSTAT);
+	return (_hardwareRegisters[__TCR] & __TIMER_ZSTAT);
 }
 
 // clear stat
@@ -211,7 +211,7 @@ void TimerManager_clearStat(TimerManager this)
 {
 	ASSERT(this, "TimerManager::clearStat: null this");
 
-	HW_REGS[TCR] = (this->tcrValue | TIMER_ZCLR);
+	_hardwareRegisters[__TCR] = (this->tcrValue | __TIMER_ZCLR);
 }
 
 // initialize
@@ -222,8 +222,8 @@ void TimerManager_initialize(TimerManager this)
 	//setup timer interrupts
 	HardwareManager_setInterruptLevel(HardwareManager_getInstance(), 0);
 	//setup timer
-	TimerManager_setFrequency(this, TIMER_100US);
-	TimerManager_setTime(this, TIME_MS(__TIMER_RESOLUTION));
+	TimerManager_setFrequency(this, __TIMER_100US);
+	TimerManager_setTime(this, __TIME_MS(__TIMER_RESOLUTION));
 	TimerManager_clearStat(this);
 	TimerManager_setInterrupt(this, true);
 	TimerManager_enable(this, true);
@@ -249,7 +249,7 @@ void TimerManager_repeatMethodCall(TimerManager this, u32 callTimes, u32 duratio
     {
         u32 currentTicks = this->ticks;
 
-        int i = 0;
+        u32 i = 0;
 
         for(; i < callTimes; i++)
         {

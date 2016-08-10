@@ -219,7 +219,7 @@ void Particle_hide(Particle this)
 }
 
 // does it move?
-bool Particle_moves(Particle this)
+bool Particle_moves(Particle this __attribute__ ((unused)))
 {
 	ASSERT(this, "Particle::moves: null this");
 
@@ -228,7 +228,7 @@ bool Particle_moves(Particle this)
 }
 
 // defaults to true
-int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration)
+int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
 {
 	ASSERT(this, "Particle::canMoveOverAxis: null this");
 

@@ -217,16 +217,16 @@ static void Debug_setupPages(Debug this)
 
 static void Debug_dimmGame(Debug this)
 {
-	VIP_REGS[__GPLT0] = 0x50;
-	VIP_REGS[__GPLT1] = 0x50;
-	VIP_REGS[__GPLT2] = 0x54;
-	VIP_REGS[__GPLT3] = 0x54;
-	VIP_REGS[__JPLT0] = 0x54;
-	VIP_REGS[__JPLT1] = 0x54;
-	VIP_REGS[__JPLT2] = 0x54;
-	VIP_REGS[__JPLT3] = 0x54;
+	_vipRegisters[__GPLT0] = 0x50;
+	_vipRegisters[__GPLT1] = 0x50;
+	_vipRegisters[__GPLT2] = 0x54;
+	_vipRegisters[__GPLT3] = 0x54;
+	_vipRegisters[__JPLT0] = 0x54;
+	_vipRegisters[__JPLT1] = 0x54;
+	_vipRegisters[__JPLT2] = 0x54;
+	_vipRegisters[__JPLT3] = 0x54;
 
-	VIP_REGS[0x30 | __PRINTING_PALETTE] = 0xE4;
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
 }
 
 static void Debug_lightUpGame(Debug this)

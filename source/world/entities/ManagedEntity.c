@@ -44,8 +44,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-const extern VBVec3D* _screenPosition;
-const extern VBVec3D* _screenDisplacement;
+extern const VBVec3D* _screenPosition;
+extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
@@ -230,7 +230,7 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 	this->updateSprites = 0;
 }
 
-int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
+int ManagedEntity_passMessage(ManagedEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
 	ASSERT(this, "ManagedEntity::passMessage: null this");
 

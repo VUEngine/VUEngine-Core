@@ -370,7 +370,7 @@ static void Stage_setupUI(Stage this)
 }
 
 //
-Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent)
+Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
@@ -429,7 +429,7 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 
 
 // add entity to the stage
-Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent)
+Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
@@ -612,7 +612,7 @@ static void Stage_preloadAssets(Stage this)
 }
 
 // register an entity in the streaming list
-static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity)
+static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((unused)), PositionedEntity* positionedEntity)
 {
 	ASSERT(this, "Stage::registerEntities: null this");
 	ASSERT(positionedEntity, "Stage::registerEntities: null positionedEntity");
@@ -1095,7 +1095,7 @@ void Stage_streamAll(Stage this)
 	Stage_unloadOutOfRangeEntities(this);
 	Stage_loadInRangeEntities(this);
 	//SpriteManager_processFreedLayers(SpriteManager_getInstance());
-	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+	SpriteManager_sortLayers(SpriteManager_getInstance());
 }
 
 // retrieve ui
@@ -1195,7 +1195,7 @@ bool Stage_handlePropagatedMessage(Stage this, int message)
     return false;
 }
 
-void Stage_onFocusEntityDeleted(Stage this, Object eventFirer)
+void Stage_onFocusEntityDeleted(Stage this, Object eventFirer __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::onFocusEntityDeleted: null this");
 

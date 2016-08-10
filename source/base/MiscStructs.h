@@ -82,7 +82,6 @@ typedef struct Velocity
 	fix19_13 x;
 	fix19_13 y;
 	fix19_13 z;
-	fix19_13 V;
 
 } Velocity;
 

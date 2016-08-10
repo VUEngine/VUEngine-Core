@@ -101,7 +101,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 
     if(this->totalObjects)
     {
-    	VIP_REGS[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+    	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 
         // register to sprite manager
         SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
@@ -244,7 +244,7 @@ bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s16 numberOfOb
 	return this->availableObjects >= numberOfObjects;
 }
 
-void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction)
+void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this __attribute__ ((unused)), int axis __attribute__ ((unused)), int direction __attribute__ ((unused)))
 {
 	ASSERT(this, "ObjectSpriteContainer::setDirection: null this");
 }
@@ -285,14 +285,14 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 	this->initialized = true;
 }
 
-void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position)
+void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position __attribute__ ((unused)))
 {
 	ASSERT(this, "ObjectSpriteContainer::position: null this");
 
 	this->initialized = true;
 }
 
-void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z)
+void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
 {
 	ASSERT(this, "ObjectSpriteContainer::calculateParallax: null this");
 }

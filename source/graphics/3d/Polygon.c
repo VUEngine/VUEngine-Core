@@ -124,8 +124,8 @@ void Polygon_draw(Polygon this, int calculateParallax)
 		VBVec3D toVertex3D = {0, 0, 0};
 
 		// 2d vertices
-		VBVec2D fromVertex2D = {0, 0, 0};
-		VBVec2D toVertex2D = {0, 0, 0};
+		VBVec2D fromVertex2D = {0, 0, 0, 0};
+		VBVec2D toVertex2D = {0, 0, 0, 0};
 
 		// draw the lines
 		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
@@ -173,5 +173,5 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
 		}
 	}
-	//VIP_REGS[__XPCTRL] = VIP_REGS[__XPSTTS] & ~XPEN;
+	//_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] & ~XPEN;
 }

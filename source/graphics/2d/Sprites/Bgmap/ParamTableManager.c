@@ -127,7 +127,7 @@ void ParamTableManager_reset(ParamTableManager this)
 	// set the size of the paramtable
 	this->size = __PARAM_TABLE_END - this->paramTableBase;
 
-	NM_ASSERT(0 <= __PARAM_TABLE_END - this->paramTableBase, "ParamTableManager::reset: param table size is negative");
+	NM_ASSERT(__PARAM_TABLE_END >= this->paramTableBase, "ParamTableManager::reset: param table size is negative");
 
 	// all the memory is free
 	this->used = 1;
@@ -168,7 +168,7 @@ u32 ParamTableManager_getParamTableBase(ParamTableManager this)
 }
 
 // calculate size of param table
-static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this, BgmapSprite bSprite)
+static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this __attribute__ ((unused)), BgmapSprite bSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
 	ASSERT(bSprite, "ParamTableManager::allocate: null sprite");

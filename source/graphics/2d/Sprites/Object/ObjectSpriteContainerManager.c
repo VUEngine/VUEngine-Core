@@ -64,7 +64,7 @@ void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectS
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
 		this->objectSpriteContainers[i] = NULL;
-		VIP_REGS[__SPT3 - i] = 0;
+		_vipRegisters[__SPT3 - i] = 0;
 	}
 }
 

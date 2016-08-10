@@ -80,7 +80,7 @@ void Error_destructor(Error this)
 }
 
 // setup the error message and lock program here
-int Error_triggerException(Error this, char* message, char* detail)
+int Error_triggerException(Error this __attribute__ ((unused)), char* message, char* detail)
 {
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
@@ -155,14 +155,14 @@ int Error_triggerException(Error this, char* message, char* detail)
 	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 
 	// dimm game
-	VIP_REGS[__GPLT0] = 0xE4;
-	VIP_REGS[__GPLT1] = __DIMM_VALUE_2;
-	VIP_REGS[__GPLT2] = __DIMM_VALUE_1;
-	VIP_REGS[__GPLT3] = __DIMM_VALUE_1;
-	VIP_REGS[__JPLT0] = __DIMM_VALUE_1;
-	VIP_REGS[__JPLT1] = __DIMM_VALUE_1;
-	VIP_REGS[__JPLT2] = __DIMM_VALUE_1;
-	VIP_REGS[__JPLT3] = __DIMM_VALUE_1;
+	_vipRegisters[__GPLT0] = 0xE4;
+	_vipRegisters[__GPLT1] = __DIMM_VALUE_2;
+	_vipRegisters[__GPLT2] = __DIMM_VALUE_1;
+	_vipRegisters[__GPLT3] = __DIMM_VALUE_1;
+	_vipRegisters[__JPLT0] = __DIMM_VALUE_1;
+	_vipRegisters[__JPLT1] = __DIMM_VALUE_1;
+	_vipRegisters[__JPLT2] = __DIMM_VALUE_1;
+	_vipRegisters[__JPLT3] = __DIMM_VALUE_1;
 
 	// trap the game here
 	while(true);

@@ -437,7 +437,7 @@ VirtualNode VirtualList_begin(VirtualList this)
 }
 
 // retrieve the first element
-void* const VirtualList_front(VirtualList this)
+void* VirtualList_front(VirtualList this)
 {
 	ASSERT(this, "VirtualList::front: null this");
 
@@ -453,7 +453,7 @@ VirtualNode VirtualList_end(VirtualList this)
 }
 
 // retrieve the last element
-void* const VirtualList_back(VirtualList this)
+void* VirtualList_back(VirtualList this)
 {
 	ASSERT(this, "VirtualList::back: null this");
 

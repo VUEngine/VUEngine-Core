@@ -30,18 +30,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 // use with 20us timer (range = 0 to 1300)
-#define TIME_US(n)		(((n)/20)-1)
+#define __TIME_US(n)		(((n)/20)-1)
 
 // use with 100us timer (range = 0 to 6500, and 0 to 6.5)
-#define TIME_MS(n)		(((n)*10)-1)
-#define TIME_SEC(n)		(((n)*10000)-1)
+#define __TIME_MS(n)		(((n)*10)-1)
+#define __TIME_SEC(n)		(((n)*10000)-1)
 
-#define TIMER_ENB		0x01
-#define TIMER_ZSTAT		0x02
-#define TIMER_ZCLR		0x04
-#define TIMER_INT		0x08
-#define TIMER_20US		0x10
-#define TIMER_100US		0x00
+#define __TIMER_ENB			0x01
+#define __TIMER_ZSTAT		0x02
+#define __TIMER_ZCLR		0x04
+#define __TIMER_INT			0x08
+#define __TIMER_20US		0x10
+#define __TIMER_100US		0x00
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,8 +51,8 @@
 // Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define TimerManager_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
+#define TimerManager_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define TimerManager_SET_VTABLE(ClassName)																\

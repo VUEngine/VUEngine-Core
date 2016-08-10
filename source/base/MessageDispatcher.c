@@ -114,7 +114,7 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 	if(0 >= delay)
 	{
 		//create the telegram
-		Telegram telegram = __NEW(Telegram, 0, sender, receiver, message, extraInfo);
+		Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
 
 		//send the telegram to the recipient
 		bool result = __VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
@@ -137,7 +137,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
 
 	//create the telegram
-	Telegram telegram = __NEW(Telegram, delay, sender, receiver, message, extraInfo);
+	Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
 
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 

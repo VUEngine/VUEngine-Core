@@ -34,7 +34,7 @@
 // 											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-volatile u16* VIP_REGS __attribute__((section(".sdata"))) = (u16*)0x0005F800;
+volatile u16* _vipRegisters __attribute__((section(".sdata"))) = (u16*)0x0005F800;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -124,8 +124,8 @@ void VIPManager_enableDrawing(VIPManager this)
 {
 	ASSERT(this, "VIPManager::enableDrawing: null this");
 
-	while(VIP_REGS[__XPSTTS] & XPBSYR);
-	VIP_REGS[__XPCTRL] = VIP_REGS[__XPSTTS] | XPEN;
+	while(_vipRegisters[__XPSTTS] & XPBSYR);
+	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | XPEN;
 	VIPManager_enableInterrupt(this);
 }
 
@@ -135,43 +135,43 @@ void VIPManager_disableDrawing(VIPManager this)
 
 	VIPManager_disableInterrupt(this);
 
-	while(VIP_REGS[__XPSTTS] & XPBSYR);
-	VIP_REGS[__XPCTRL] |= XPRST;
-	VIP_REGS[__XPCTRL] &= ~XPEN;
+	while(_vipRegisters[__XPSTTS] & XPBSYR);
+	_vipRegisters[__XPCTRL] |= XPRST;
+	_vipRegisters[__XPCTRL] &= ~XPEN;
 }
 
 // enable interrupt
-void VIPManager_enableInterrupt(VIPManager this)
+void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::enableInterrupt: null this");
 
-	VIP_REGS[__INTCLR] = VIP_REGS[__INTPND];
+	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 #ifdef __ALERT_VPU_OVERTIME
-	VIP_REGS[__INTENB]= XPEND | TIMEERR;
+	_vipRegisters[__INTENB]= XPEND | TIMEERR;
 #else
-	VIP_REGS[__INTENB]= XPEND;
+	_vipRegisters[__INTENB]= XPEND;
 #endif
 }
 
 // disable interrupt
-void VIPManager_disableInterrupt(VIPManager this)
+void VIPManager_disableInterrupt(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::disableInterrupt: null this");
 
-	VIP_REGS[__INTENB]= 0;
-	VIP_REGS[__INTCLR] = VIP_REGS[__INTPND];
+	_vipRegisters[__INTENB]= 0;
+	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 }
 
 void VIPManager_interruptHandler(void)
 {
-	bool idle = VIP_REGS[__INTPND] & XPEND;
+	bool idle = _vipRegisters[__INTPND] & XPEND;
 #ifdef __ALERT_VPU_OVERTIME
-	bool overtime = VIP_REGS[__INTPND] & TIMEERR;
+	bool overtime = _vipRegisters[__INTPND] & TIMEERR;
 #endif
 
 	// disable interrupts
-	VIP_REGS[__INTENB]= 0;
-	VIP_REGS[__INTCLR] = VIP_REGS[__INTPND];
+	_vipRegisters[__INTENB]= 0;
+	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
 #ifdef __ALERT_VPU_OVERTIME
     {
@@ -201,10 +201,10 @@ void VIPManager_interruptHandler(void)
 	if(idle)
 	{
 		// disable drawing
-		VIP_REGS[__XPCTRL] |= XPRST;
-		VIP_REGS[__XPCTRL] &= ~XPEN;
+		_vipRegisters[__XPCTRL] |= XPRST;
+		_vipRegisters[__XPCTRL] &= ~XPEN;
 
-		while(VIP_REGS[__XPSTTS] & XPBSYR);
+		while(_vipRegisters[__XPSTTS] & XPBSYR);
 
 		// if performance was good enough in the
 		// the previous second do some defragmenting
@@ -229,8 +229,8 @@ void VIPManager_interruptHandler(void)
         }
 
 		// enable drawing
-		while (VIP_REGS[__XPSTTS] & XPBSYR);
-		VIP_REGS[__XPCTRL] = VIP_REGS[__XPSTTS] | XPEN;
+		while (_vipRegisters[__XPSTTS] & XPBSYR);
+		_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | XPEN;
 	}
 
 #ifndef	__FORCE_VPU_SYNC
@@ -262,23 +262,23 @@ void VIPManager_interruptHandler(void)
 #endif
 
 	// enable interrupt
-    VIP_REGS[__INTCLR] = VIP_REGS[__INTPND];
+    _vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 #ifdef __ALERT_VPU_OVERTIME
-	VIP_REGS[__INTENB]= XPEND | TIMEERR;
+	_vipRegisters[__INTENB]= XPEND | TIMEERR;
 #else
-	VIP_REGS[__INTENB]= XPEND;
+	_vipRegisters[__INTENB]= XPEND;
 #endif
 }
 
 // turn display on
-void VIPManager_displayOn(VIPManager this)
+void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::displayOn: null this");
 
-	VIP_REGS[__REST] = 0;
-	VIP_REGS[__XPCTRL] = VIP_REGS[__XPSTTS] | XPEN;
-	VIP_REGS[__DPCTRL] = VIP_REGS[__DPSTTS] | (SYNCE | RE | DISP);
-	VIP_REGS[__FRMCYC] = 0;
+	_vipRegisters[__REST] = 0;
+	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | XPEN;
+	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (SYNCE | RE | DISP);
+	_vipRegisters[__FRMCYC] = 0;
 }
 
 // turn display off
@@ -286,40 +286,40 @@ void VIPManager_displayOff(VIPManager this)
 {
 	ASSERT(this, "VIPManager::displayOff: null this");
 
-	VIP_REGS[__REST] = 0;
-	VIP_REGS[__XPCTRL] = 0;
-	VIP_REGS[__DPCTRL] = 0;
-	VIP_REGS[__FRMCYC] = 1;
+	_vipRegisters[__REST] = 0;
+	_vipRegisters[__XPCTRL] = 0;
+	_vipRegisters[__DPCTRL] = 0;
+	_vipRegisters[__FRMCYC] = 1;
 
 	VIPManager_disableInterrupt(this);
 }
 
 // setup backgorund color
-void VIPManager_setupPalettes(VIPManager this, PaletteConfig* paletteConfig)
+void VIPManager_setupPalettes(VIPManager this __attribute__ ((unused)), PaletteConfig* paletteConfig)
 {
 	ASSERT(this, "VIPManager::setupPalettes: null this");
 
-	VIP_REGS[__GPLT0] = paletteConfig->bgmap.gplt0;
-	VIP_REGS[__GPLT1] = paletteConfig->bgmap.gplt1;
-	VIP_REGS[__GPLT2] = paletteConfig->bgmap.gplt2;
-	VIP_REGS[__GPLT3] = paletteConfig->bgmap.gplt3;
+	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
+	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
+	_vipRegisters[__GPLT2] = paletteConfig->bgmap.gplt2;
+	_vipRegisters[__GPLT3] = paletteConfig->bgmap.gplt3;
 
-	VIP_REGS[__JPLT0] = paletteConfig->object.jplt0;
-	VIP_REGS[__JPLT1] = paletteConfig->object.jplt1;
-	VIP_REGS[__JPLT2] = paletteConfig->object.jplt2;
-	VIP_REGS[__JPLT3] = paletteConfig->object.jplt3;
+	_vipRegisters[__JPLT0] = paletteConfig->object.jplt0;
+	_vipRegisters[__JPLT1] = paletteConfig->object.jplt1;
+	_vipRegisters[__JPLT2] = paletteConfig->object.jplt2;
+	_vipRegisters[__JPLT3] = paletteConfig->object.jplt3;
 
-	VIP_REGS[__BACKGROUND_COLOR] = paletteConfig->backgroundColor <= __COLOR_BRIGHT_RED? paletteConfig->backgroundColor: __COLOR_BRIGHT_RED;
+	_vipRegisters[__BACKGROUND_COLOR] = paletteConfig->backgroundColor <= __COLOR_BRIGHT_RED? paletteConfig->backgroundColor: __COLOR_BRIGHT_RED;
 }
 
 // set brightness all the way up
-void VIPManager_upBrightness(VIPManager this)
+void VIPManager_upBrightness(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::upBrightness: null this");
 
-	VIP_REGS[__BRTA] = 32;
-	VIP_REGS[__BRTB] = 64;
-	VIP_REGS[__BRTC] = 32;
+	_vipRegisters[__BRTA] = 32;
+	_vipRegisters[__BRTB] = 64;
+	_vipRegisters[__BRTC] = 32;
 }
 
 // set brightness all way down
@@ -327,22 +327,22 @@ void VIPManager_lowerBrightness(VIPManager this)
 {
 	ASSERT(this, "VIPManager::displayHide: null this");
 
-	VIP_REGS[__BRTA] = 0;
-	VIP_REGS[__BRTB] = 0;
-	VIP_REGS[__BRTC] = 0;
+	_vipRegisters[__BRTA] = 0;
+	_vipRegisters[__BRTB] = 0;
+	_vipRegisters[__BRTC] = 0;
 
 	VIPManager_setBackgroundColor(this, __COLOR_BLACK);
 }
 
 
 // clear screen
-void VIPManager_clearScreen(VIPManager this)
+void VIPManager_clearScreen(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::clearScreen: null this");
-	u16* bgmapStartAddress = __BGMAP_SPACE_BASE_ADDRESS;
+	u16* bgmapStartAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	//clear every bgmap segment
-    for(bgmapStartAddress = 0; bgmapStartAddress < __PARAM_TABLE_END; bgmapStartAddress++)
+    for(bgmapStartAddress = 0; bgmapStartAddress < (u16*)__PARAM_TABLE_END; bgmapStartAddress++)
 	{
         *bgmapStartAddress = 0;
     }
@@ -355,7 +355,7 @@ void VIPManager_clearScreen(VIPManager this)
 }
 
 // clear bgmap
-void VIPManager_clearBgmap(VIPManager this, int bgmap, int size)
+void VIPManager_clearBgmap(VIPManager this __attribute__ ((unused)), int bgmap, int size)
 {
 	ASSERT(this, "VIPManager::clearBgmap: null this");
 
@@ -363,7 +363,7 @@ void VIPManager_clearBgmap(VIPManager this, int bgmap, int size)
 }
 
 // setup default column table
-void VIPManager_setupColumnTable(VIPManager this, ColumnTableDefinition* columnTableDefinition)
+void VIPManager_setupColumnTable(VIPManager this __attribute__ ((unused)), ColumnTableDefinition* columnTableDefinition)
 {
 	ASSERT(this, "VIPManager::setupColumnTable: null this");
 
@@ -421,7 +421,7 @@ void VIPManager_setupColumnTable(VIPManager this, ColumnTableDefinition* columnT
 }
 
 // use the vip's built-in column table instead of reading the one defined in memory
-void VIPManager_useInternalColumnTable(VIPManager this, bool useInternal)
+void VIPManager_useInternalColumnTable(VIPManager this __attribute__ ((unused)), bool useInternal)
 {
 	ASSERT(this, "VIPManager::useInternalColumnTable: null this");
 
@@ -429,17 +429,17 @@ void VIPManager_useInternalColumnTable(VIPManager this, bool useInternal)
     if(useInternal)
     {
         // set lock bit
-        VIP_REGS[__DPCTRL] |= LOCK;
+        _vipRegisters[__DPCTRL] |= LOCK;
     }
     else
     {
         // unset lock bit
-        VIP_REGS[__DPCTRL] &= LOCK;
+        _vipRegisters[__DPCTRL] &= LOCK;
     }
 }
 
 // set background color
-void VIPManager_setBackgroundColor(VIPManager this, u8 color)
+void VIPManager_setBackgroundColor(VIPManager this __attribute__ ((unused)), u8 color)
 {
 	ASSERT(this, "VIPManager::setBackgroundColor: null this");
 
@@ -448,7 +448,7 @@ void VIPManager_setBackgroundColor(VIPManager this, u8 color)
         color = __COLOR_BRIGHT_RED;
     }
 
-	VIP_REGS[__BACKGROUND_COLOR] = color;
+	_vipRegisters[__BACKGROUND_COLOR] = color;
 }
 
 // register post processing effect
@@ -516,7 +516,7 @@ void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this)
 {
 	ASSERT(this, "VIPManager::registerCurrentDrawingframeBufferSet: null this");
 
-    u32 currentDrawingframeBufferSet = VIP_REGS[__XPSTTS] & 0x000C;
+    u32 currentDrawingframeBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
 
     this->currentDrawingframeBufferSet = 0xFFFF;
 

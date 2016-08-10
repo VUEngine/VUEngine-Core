@@ -198,14 +198,8 @@ void SpriteManager_reset(SpriteManager this)
 	SpriteManager_setLastLayer(this);
 }
 
-// check if any entity must be assigned another world layer
-void SpriteManager_spriteChangedPosition(SpriteManager this)
-{
-	ASSERT(this, "SpriteManager::spriteChangedPosition: null this");
-}
-
 // sort all layers
-void SpriteManager_sortLayers(SpriteManager this, int progressively)
+void SpriteManager_sortLayers(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayers: null this");
 

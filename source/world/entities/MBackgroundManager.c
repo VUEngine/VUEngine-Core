@@ -152,7 +152,7 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 }
 
 // remove background
-void MBackgroundManager_removeTexture(MBackgroundManager this, Texture texture)
+void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((unused)), Texture texture)
 {
 	ASSERT(this, "MBackgroundManager::removeTexture: null this");
 

@@ -69,7 +69,7 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
 	this->previousKey = 0;
 	this->enabled = false;
 
-	readingStatus = (unsigned int *)&HW_REGS[SCR];
+	readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
 
 // class's destructor
@@ -82,21 +82,21 @@ void KeypadManager_destructor(KeypadManager this)
 }
 
 // enable keypad reads
-void KeypadManager_enableInterrupt(KeypadManager this)
+void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::enable: null this");
 
-	HW_REGS[SCR] = 0;
-	HW_REGS[SCR] &= ~(S_HWDIS | S_INTDIS);
-//	HW_REGS[SCR] |= S_HW;
+	_hardwareRegisters[__SCR] = 0;
+	_hardwareRegisters[__SCR] &= ~(__S_HWDIS | __S_INTDIS);
+//	_hardwareRegisters[__SCR] |= __S_HW;
 }
 
 // disable keypad reads
-void KeypadManager_disableInterrupt(KeypadManager this)
+void KeypadManager_disableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::disable: null this");
 
-	HW_REGS[SCR] = (S_INTDIS | S_HW);
+	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 }
 
 // enable keypad reads
@@ -129,13 +129,13 @@ void KeypadManager_read(KeypadManager this)
 	ASSERT(this, "KeypadManager::read: null this");
 
 	// disable interrupt
-	HW_REGS[SCR] = (S_INTDIS | S_HW);
+	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
 	//wait for screen to idle
-	while(*readingStatus & S_STAT);
+	while(*readingStatus & __S_STAT);
 
 	// now read the key
-	this->currentKey |= (((HW_REGS[SDHR] << 8)) | HW_REGS[SDLR]) & 0xFFFD;
+	this->currentKey |= (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0xFFFD;
 }
 
 // clear previous saved key

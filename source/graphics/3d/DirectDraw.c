@@ -79,7 +79,7 @@ void DirectDraw_destructor(DirectDraw this)
 }
 
 // draw a pixel on the screen (DirectDraw)
-static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int palette)
+static void DirectDraw_putPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, int x, int y, int palette)
 {
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;

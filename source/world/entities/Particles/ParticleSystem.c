@@ -45,7 +45,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 // global
 extern const VBVec3D* _screenPosition;
-const extern VBVec3D* _screenDisplacement;
+extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 static Particle ParticleSystem_recycleParticle(ParticleSystem this);
@@ -94,8 +94,8 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
-	// calculate the numbe of sprite definitions
-	for(this->numberOfSpriteDefinitions = 0; 0 <= (int)this->numberOfSpriteDefinitions && this->particleSystemDefinition->objectSpriteDefinitions[this->numberOfSpriteDefinitions]; this->numberOfSpriteDefinitions++);
+	// calculate the number of sprite definitions
+	for(this->numberOfSpriteDefinitions = 0; 0 <= this->numberOfSpriteDefinitions && this->particleSystemDefinition->objectSpriteDefinitions[this->numberOfSpriteDefinitions]; this->numberOfSpriteDefinitions++);
 
 	ASSERT(0 < this->numberOfSpriteDefinitions, "ParticleSystem::constructor: 0 sprite definitions");
 }
@@ -342,7 +342,7 @@ void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 	this->updateSprites = 0;
 }
 
-bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram)
+bool ParticleSystem_handleMessage(ParticleSystem this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "ParticleSystem::handleMessage: null this");
 

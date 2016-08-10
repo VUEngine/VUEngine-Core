@@ -66,14 +66,14 @@ void SpatialObject_destructor(SpatialObject this)
 	__DESTROY_BASE;
 }
 
-Shape SpatialObject_getShape(SpatialObject this)
+Shape SpatialObject_getShape(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getShape: null this");
 
 	return NULL;
 }
 
-int SpatialObject_getShapeType(SpatialObject this)
+int SpatialObject_getShapeType(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getShapeType: null this");
 
@@ -81,7 +81,7 @@ int SpatialObject_getShapeType(SpatialObject this)
 }
 
 // does it move?
-bool SpatialObject_moves(SpatialObject this)
+bool SpatialObject_moves(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::moves: null this");
 
@@ -90,35 +90,35 @@ bool SpatialObject_moves(SpatialObject this)
 }
 
 // defaults to true
-int SpatialObject_canMoveOverAxis(SpatialObject this, const Acceleration* acceleration)
+int SpatialObject_canMoveOverAxis(SpatialObject this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::canMoveOverAxis: null this");
 
 	return false;
 }
 
-int SpatialObject_getWidth(SpatialObject this)
+int SpatialObject_getWidth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getWidth: null this");
 
 	return 0;
 }
 
-int SpatialObject_getHeight(SpatialObject this)
+int SpatialObject_getHeight(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getHeight: null this");
 
 	return 0;
 }
 
-int SpatialObject_getDepth(SpatialObject this)
+int SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getDepth: null this");
 
 	return 0;
 }
 
-Gap SpatialObject_getGap(SpatialObject this)
+Gap SpatialObject_getGap(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getGap: null this");
 
@@ -130,7 +130,7 @@ Gap SpatialObject_getGap(SpatialObject this)
 	return gap;
 }
 
-const VBVec3D* SpatialObject_getPosition(SpatialObject this)
+const VBVec3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getPosition: null this");
 
@@ -142,13 +142,13 @@ const VBVec3D* SpatialObject_getPosition(SpatialObject this)
 	return &position;
 }
 
-void SpatialObject_setPosition(SpatialObject this, const VBVec3D* position)
+void SpatialObject_setPosition(SpatialObject this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::setPosition: null this");
 }
 
 // get elasticiy
-fix19_13 SpatialObject_getElasticity(SpatialObject this)
+fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getElasticity: null this");
 
@@ -156,7 +156,7 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this)
 }
 
 // get friction
-fix19_13 SpatialObject_getFriction(SpatialObject this)
+fix19_13 SpatialObject_getFriction(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getFriction: null this");
 
@@ -164,7 +164,7 @@ fix19_13 SpatialObject_getFriction(SpatialObject this)
 }
 
 // get velocity
-Velocity SpatialObject_getVelocity(SpatialObject this)
+Velocity SpatialObject_getVelocity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getVelocity: null this");
 

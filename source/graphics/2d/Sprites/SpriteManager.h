@@ -50,8 +50,7 @@ SpriteManager SpriteManager_getInstance();
 
 void SpriteManager_destructor(SpriteManager this);
 void SpriteManager_reset(SpriteManager this);
-void SpriteManager_sortLayers(SpriteManager this, int progressively);
-void SpriteManager_spriteChangedPosition(SpriteManager this);
+void SpriteManager_sortLayers(SpriteManager this);
 void SpriteManager_addSprite(SpriteManager this, Sprite sprite);
 void SpriteManager_removeSprite(SpriteManager this, Sprite sprite);
 void SpriteManager_processLayers(SpriteManager this);

@@ -106,7 +106,7 @@ enum AnimationProperties
 //---------------------------------------------------------------------------------------------------------
 
 extern UserAnimatedInGameEntity _userAnimatedInGameEntities[];
-const AnimationController const Sprite_getAnimationController(Sprite this);
+AnimationController Sprite_getAnimationController(Sprite this);
 
 static void AnimationEditor_constructor(AnimationEditor this);
 static void AnimationEditor_setupMode(AnimationEditor this);

@@ -56,7 +56,7 @@ __CLASS_FRIEND_DEFINITION(Texture);
 
 // global
 extern const VBVec3D* _screenPosition;
-const extern VBVec3D* _screenDisplacement;
+extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
@@ -412,6 +412,10 @@ void BgmapSprite_render(BgmapSprite this)
                 }
             }
         }
+		else if(__WORLD_HBIAS & this->head)
+		{
+			BgmapSprite_doApplyHbiasTransformations(this);
+		}
 
         // set the head
         worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
@@ -596,14 +600,6 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
 // 										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
-// Affine FX
-
-void BgmapSprite_noAFX(BgmapSprite this, int direction)
-{
-	ASSERT(this, "BgmapSprite::noAFX: null this");
-}
-
-
 static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
@@ -630,7 +626,7 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 	}
 }
 
-static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this)
+static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
 }

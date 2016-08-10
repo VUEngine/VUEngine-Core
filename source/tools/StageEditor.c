@@ -723,7 +723,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 
 		StageEditor_printEntityPosition(this);
 
-		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+		SpriteManager_sortLayers(SpriteManager_getInstance());
 
 		StageEditor_printTranslationStepSize(this);
 
@@ -791,7 +791,7 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 		position.z += ITOFIX19_13(0);
 
 		Stage_addEntity(GameState_getStage(this->gameState), _userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition, NULL, &position, NULL, false);
-		SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+		SpriteManager_sortLayers(SpriteManager_getInstance());
 
 		VirtualList stageEntities = Container_getChildren(__SAFE_CAST(Container, GameState_getStage(this->gameState)));
 		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;

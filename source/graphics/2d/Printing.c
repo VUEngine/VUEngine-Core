@@ -84,7 +84,7 @@ void Printing_destructor(Printing this)
 }
 
 // load font data to char memory
-void __attribute__ ((noinline)) Printing_loadFonts(Printing this)
+void __attribute__ ((noinline)) Printing_loadFonts(Printing this __attribute__ ((unused)))
 {
     int lastFontDefEndPos = __CHAR_SEGMENT_3_BASE_ADDRESS + (512 << 4);
     u16 numCharsToAdd = 0;
@@ -100,7 +100,7 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this)
 }
 
 // render general print output layer
-void __attribute__ ((noinline)) Printing_render(Printing this, int textLayer)
+void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((unused)), int textLayer)
 {
 	if(0 > textLayer || textLayer >= __TOTAL_LAYERS)
 	{
@@ -120,16 +120,15 @@ void __attribute__ ((noinline)) Printing_render(Printing this, int textLayer)
 }
 
 // clear printing area
-void __attribute__ ((noinline)) Printing_clear(Printing this)
+void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unused)))
 {
-
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	VIPManager_clearBgmap(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
 // get font definition and starting position in character memory
-static FontData Printing_getFontByName(Printing this, const char* font)
+static FontData Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
 {
     FontData fontData = {NULL, 2048};
 
@@ -243,17 +242,7 @@ void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, int x, i
 {
 	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
-	if(0 && value<0)
-	{
-		value *= -1;
-
-		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
-		Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
-	}
-	else
-	{
-		Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
-	}
+	Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
 }
 
 void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x, int y, const char* font)
@@ -316,7 +305,7 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
 
 Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
 {
-    Size size = {0, 0};
+    Size size = {0, 0, 0};
     FontData fontData;
 	u16 i = 0, currentLineLength = 0;
 

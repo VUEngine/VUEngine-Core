@@ -319,16 +319,6 @@ void Game_addState(Game this, GameState state)
 	this->nextStateOperation = kPushState;
 }
 
-// add a state to the game's state machine's stack
-void Game_removeState(Game this, GameState state)
-{
-	ASSERT(this, "Game::changeState: null this");
-
-	// state changing must be done when no other process
-	// may be affecting the game's general state
-	this->nextStateOperation = kPopState;
-}
-
 // set game's state
 static void Game_setNextState(Game this, GameState state)
 {
@@ -419,7 +409,7 @@ static void Game_setNextState(Game this, GameState state)
 }
 
 // disable interrupts
-void Game_disableHardwareInterrupts(Game this)
+void Game_disableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::disableHardwareInterrupts: null this");
 
@@ -428,7 +418,7 @@ void Game_disableHardwareInterrupts(Game this)
 }
 
 // enable interrupts
-void Game_enableHardwareInterrupts(Game this)
+void Game_enableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::enableHardwareInterrupts: null this");
 
@@ -695,7 +685,7 @@ inline static void Game_updateLogic(Game this)
 }
 
 // update game's rendering subsystem
-inline static void Game_updateVisuals(Game this)
+inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 {
 #ifdef __DEBUG
 	this->lastProcessName = "update visuals";
@@ -859,8 +849,8 @@ static void Game_update(Game this)
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
-	    while(!(VIP_REGS[__INTPND] & GAMESTART));
-	    VIP_REGS[__INTCLR]= GAMESTART;
+	    while(!(_vipRegisters[__INTPND] & __GAMESTART));
+	    _vipRegisters[__INTCLR]= __GAMESTART;
 
         // update the clocks
         ClockManager_update(this->clockManager, TimerManager_getAndResetTicks(this->timerManager));
@@ -965,31 +955,40 @@ bool Game_handleMessage(Game this, Telegram telegram)
 	return StateMachine_handleMessage(this->stateMachine, telegram);
 }
 
+// retrieve time
+u32 Game_getTime(Game this)
+{
+	ASSERT(this, "Game::getTime: null this");
+
+	return Clock_getTime(this->clock);
+}
+
 // retrieve clock
-const Clock Game_getClock(Game this)
+Clock Game_getClock(Game this)
 {
 	ASSERT(this, "Game::getClock: null this");
 
 	return this->clock;
 }
 
-// retrieve clock
-const Clock Game_getInGameClock(Game this)
+// retrieve in game clock
+Clock Game_getInGameClock(Game this)
 {
 	ASSERT(this, "Game::getInGameClock: null this");
 
 	return GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
-// retrieve in game clock
-const Clock Game_getAnimationsClock(Game this)
+// retrieve animations' clock
+Clock Game_getAnimationsClock(Game this)
 {
 	ASSERT(this, "Game::getAnimationsClock: null this");
 
 	return GameState_getAnimationsClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
-const Clock Game_getPhysicsClock(Game this)
+// retrieve in physics' clock
+Clock Game_getPhysicsClock(Game this)
 {
 	ASSERT(this, "Game::getPhysicsClock: null this");
 
@@ -1032,7 +1031,7 @@ bool Game_isInAnimationEditor(Game this)
 #endif
 
 // whether if a special mode is active
-bool Game_isInSpecialMode(Game this)
+bool Game_isInSpecialMode(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::isInSpecialMode: null this");
 
@@ -1052,7 +1051,7 @@ bool Game_isInSpecialMode(Game this)
 }
 
 // whether if a special mode is being started
-bool Game_isEnteringSpecialMode(Game this)
+bool Game_isEnteringSpecialMode(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::isInSpecialMode: null this");
 
@@ -1071,7 +1070,7 @@ bool Game_isEnteringSpecialMode(Game this)
 }
 
 // whether if a special mode is being started
-bool Game_isExitingSpecialMode(Game this)
+bool Game_isExitingSpecialMode(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::isInSpecialMode: null this");
 

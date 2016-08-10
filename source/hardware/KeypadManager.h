@@ -29,13 +29,13 @@
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// Hardware reg SCR definitions
-#define	S_INTDIS	0x80 	// Disable Interrups
-#define	S_SW		0x20 	// Software Reading
-#define	S_SWCK		0x10 	// Software Clock, Interrupt?
-#define	S_HW		0x04 	// Hardware Reading
-#define	S_STAT		0x02 	// Hardware Reading Status
-#define	S_HWDIS		0x01	// Disable Hardware Reading
+// Hardware reg __SCR definitions
+#define	__S_INTDIS	0x80 	// Disable Interrups
+#define	__S_SW		0x20 	// Software Reading
+#define	__S_SWCK	0x10 	// Software Clock, Interrupt?
+#define	__S_HW		0x04 	// Hardware Reading
+#define	__S_STAT	0x02 	// Hardware Reading Status
+#define	__S_HWDIS	0x01	// Disable Hardware Reading
 
 // Keypad Definitions
 #define	K_PWR	0x0001		// Low Battery
@@ -68,8 +68,8 @@
 // Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define KeypadManager_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
+#define KeypadManager_METHODS(ClassName)																\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define KeypadManager_SET_VTABLE(ClassName)																\

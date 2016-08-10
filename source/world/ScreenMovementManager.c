@@ -73,7 +73,7 @@ void ScreenMovementManager_destructor(ScreenMovementManager this)
 }
 
 // center world's screen in function of focus actor's position
-void ScreenMovementManager_focus(ScreenMovementManager this, bool checkIfFocusEntityIsMoving)
+void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unused)), bool checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "ScreenMovementManager::update: null this");
 
@@ -164,18 +164,18 @@ void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, i
 	}
 }
 
-void ScreenMovementManager_stopEffect(ScreenMovementManager this, int effect)
+void ScreenMovementManager_stopEffect(ScreenMovementManager this __attribute__ ((unused)), int effect __attribute__ ((unused)))
 {
 	ASSERT(this, "ScreenMovementManager::stopEffect: null this");
 }
 
-void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, u32 callNumber)
+void ScreenMovementManager_FXFadeIn(ScreenMovementManager this __attribute__ ((unused)), u32 callNumber)
 {
     // increase brightness
     __SET_BRIGHT(callNumber, callNumber << 1, callNumber);
 }
 
-void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, u32 callNumber)
+void ScreenMovementManager_FXFadeOut(ScreenMovementManager this __attribute__ ((unused)), u32 callNumber)
 {
     // increase brightness
     __SET_BRIGHT(32 - callNumber, (32 - callNumber) << 1, 32 -callNumber);

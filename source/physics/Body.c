@@ -58,8 +58,8 @@ static void Body_awake(Body this, int axisStartedMovement);
 static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 appliedForce, fix19_13 frictionForce);
 static int Body_updateMovement(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 frictionForce);
 static void Body_setMovementType(Body this, int movementType, int axis);
-static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity);
-static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovement, const Acceleration* const gravity);
+static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, fix19_13 otherBodyElasticity);
+static Force* Body_calculateFrictionForce(Body this, int axisOfMovement);
 
 enum CollidingObjectIndexes
 {
@@ -86,7 +86,6 @@ static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 	__CONSTRUCT_BASE(Object);
 
 	this->owner = owner;
-	this->clock = Game_getPhysicsClock(Game_getInstance());
 	this->mass = mass;
 
 	this->awake = false;
@@ -132,8 +131,6 @@ static void Body_constructor(Body this, SpatialObject owner, fix19_13 mass)
 void Body_destructor(Body this)
 {
 	ASSERT(this, "Body::destructor: null this");
-
-	this->clock = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -380,7 +377,7 @@ void Body_applyGravity(Body this, const Acceleration* gravity)
 {
 	ASSERT(this, "Body::applyGravity: null this");
 
-	if(gravity/* && !Clock_isPaused(this->clock)*/)
+	if(gravity)
 	{
 		int axisStartedMovement = 0;
 
@@ -439,7 +436,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
                 (__YAXIS & (0xFFFFFFFF * (this->velocity.y || this->acceleration.y || this->appliedForce.y || (__ACCELERATED_MOVEMENT == this->movementType.y && gravity->y && this->acceleration.y)))) |
                 (__ZAXIS & (0xFFFFFFFF * (this->velocity.z || this->acceleration.z || this->appliedForce.z || (__ACCELERATED_MOVEMENT == this->movementType.z && gravity->z && this->acceleration.z))));
 
-			const Force* const frictionForce = Body_calculateFrictionForce(this, axisOfMovement, gravity);
+			Force* frictionForce = Body_calculateFrictionForce(this, axisOfMovement);
 
 			// update each axis
 	 	 	if(__XAXIS & axisOfMovement)
@@ -511,7 +508,7 @@ void Body_update(Body this, const Acceleration* gravity, fix19_13 elapsedTime)
 }
 
 // update force
-static const Force* const Body_calculateFrictionForce(Body this, int axisOfMovement, const Acceleration* const gravity)
+static Force* Body_calculateFrictionForce(Body this, int axisOfMovement)
 {
 	ASSERT(this, "Body::calculateFriction: null this");
 
@@ -946,7 +943,7 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 
 	if((__XAXIS & axis))
 	{
-		if((__XAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x, axis, otherBodyElasticity))
+		if((__XAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __XAXIS;
 		}
@@ -958,7 +955,7 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 
 	if((__YAXIS & axis))
 	{
-		if((__YAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, axis, otherBodyElasticity))
+		if((__YAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __YAXIS;
 		}
@@ -970,7 +967,7 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 
 	if((__ZAXIS & axis))
 	{
-		if((__ZAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, axis, otherBodyElasticity))
+		if((__ZAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __ZAXIS;
 		}
@@ -992,7 +989,7 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 }
 
 // bounce back
-static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, int axis, fix19_13 otherBodyElasticity)
+static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounceOnAxis: null this");
 
@@ -1016,7 +1013,7 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 }
 
 // take a hit
-void Body_takeHitFrom(Body this, Body other)
+void Body_takeHitFrom(Body this __attribute__ ((unused)), Body other __attribute__ ((unused)))
 {
 	ASSERT(this, "Body::takeHitFrom: null this");
 

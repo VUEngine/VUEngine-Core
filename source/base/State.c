@@ -56,31 +56,31 @@ void State_destructor(State this)
 }
 
 // state's enter
-void State_enter(State this, void* owner)
+void State_enter(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::enter: null this");
 }
 
 // state's execute
-void State_execute(State this, void* owner)
+void State_execute(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::execute: null this");
 }
 
 // state's exit
-void State_exit(State this, void* owner)
+void State_exit(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::exit: null this");
 }
 
 // state's suspend
-void State_suspend(State this, void* owner)
+void State_suspend(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::suspend: null this");
 }
 
 // state's resume
-void State_resume(State this, void* owner)
+void State_resume(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::resume: null this");
 }

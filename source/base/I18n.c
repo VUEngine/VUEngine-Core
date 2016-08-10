@@ -124,7 +124,7 @@ void I18n_setActiveLanguage(I18n this, u8 languageId)
  *
  *  @return Array of LangDefinition pointers
  */
-LangDefinition * I18n_getLanguages(I18n this)
+LangDefinition * I18n_getLanguages(I18n this __attribute__ ((unused)))
 {
 	ASSERT(this, "I18n::getLanguages: null this");
 

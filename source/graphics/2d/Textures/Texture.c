@@ -137,7 +137,7 @@ void Texture_rewrite(Texture this)
 }
 
 // write map in hbias mode
-void Texture_writeHBiasMode(Texture this)
+void Texture_writeHBiasMode(Texture this __attribute__ ((unused)))
 {
 	ASSERT(this, "Texture::writeHBiasMode: null this");
 
@@ -310,7 +310,7 @@ u16 Texture_getId(Texture this)
 }
 
 // process event
-static void Texture_onCharSetRewritten(Texture this, Object eventFirer)
+static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribute__ ((unused)))
 {
 	__VIRTUAL_CALL(Texture, write, this);
 

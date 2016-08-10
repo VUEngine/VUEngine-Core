@@ -44,7 +44,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, Object owner)
+void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __attribute__ ((unused)), Object owner __attribute__ ((unused)))
 {
 	__CONSTRUCT_BASE(Object);
 
@@ -72,7 +72,7 @@ void Sprite_destructor(Sprite this)
 	__DESTROY_BASE;
 }
 
-Scale Sprite_getScale(Sprite this)
+Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::getScale: null this");
 
@@ -86,7 +86,7 @@ Scale Sprite_getScale(Sprite this)
 }
 
 // calculate zoom scaling factor
-void Sprite_resize(Sprite this, Scale scale, fix19_13 z)
+void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::resize: null this");
 
@@ -145,7 +145,7 @@ bool Sprite_isHidden(Sprite this)
 }
 
 // retrieve animation controller
-const AnimationController const Sprite_getAnimationController(Sprite this)
+AnimationController Sprite_getAnimationController(Sprite this)
 {
 	ASSERT(this, "Sprite::hide: getAnimationController this");
 
@@ -251,7 +251,7 @@ void Sprite_rewrite(Sprite this)
 }
 
 // process event
-void Sprite_onTextureRewritten(Sprite this, Object eventFirer)
+void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::onTextureRewritten: null this");
 
@@ -268,7 +268,7 @@ VBVec3D Sprite_getDisplacement(Sprite this)
 	return this->displacement;
 }
 
-void Sprite_rotate(Sprite this, const Rotation* rotation)
+void Sprite_rotate(Sprite this __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::rotate: null this");
 }
@@ -340,14 +340,14 @@ bool Sprite_isPlaying(Sprite this)
 	return false;
 }
 
-bool Sprite_isPlayingFunction(Sprite this, AnimationDescription* animationDescription, char* functionName)
+bool Sprite_isPlayingFunction(Sprite this, char* functionName)
 {
 	ASSERT(this, "Sprite::isPlayingFunction: null this");
 
 	if(this->animationController)
 	{
 		// first animate the frame
-		return AnimationController_isPlayingFunction(this->animationController, animationDescription, functionName);
+		return AnimationController_isPlayingFunction(this->animationController, functionName);
 	}
 
 	return false;
@@ -412,7 +412,7 @@ void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
 	}
 }
 
-void Sprite_writeAnimation(Sprite this)
+void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::writeAnimation: null this");
 }
@@ -448,12 +448,12 @@ void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE
  * Affine FX
  */
 
-void Sprite_applyAffineTransformations(Sprite this)
+void Sprite_applyAffineTransformations(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::applyAffineTransformations: null this");
 }
 
-void Sprite_applyHbiasTransformations(Sprite this)
+void Sprite_applyHbiasTransformations(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::applyHbiasTransformations: null this");
 }

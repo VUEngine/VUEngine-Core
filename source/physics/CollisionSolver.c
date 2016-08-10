@@ -46,7 +46,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-const extern VBVec3D* _screenDisplacement;
+extern const VBVec3D* _screenDisplacement;
 
 static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this, Object eventFirer);
 
@@ -184,19 +184,10 @@ static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this
 }
 
 // align to colliding spatialObject
-void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, const Scale* scale, bool registerObject)
+void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, bool registerObject)
 {
 	ASSERT(this, "CollisionSolver::alignToCollidingSpatialObject: null this");
-	ASSERT(scale->y, "CollisionSolver::alignToCollidingSpatialObject: 0 scale y");
 
-	/*
-	int alignThreshold = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(1), scale->y));
-
-	if(1 > alignThreshold)
-	{
-		alignThreshold = 1;
-	}
-	*/
 	int alignThreshold = __ALIGN_PADDING;
 
 	if(__XAXIS & axisOfCollision)
@@ -231,7 +222,7 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 }
 
 // get axis of collision
-int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject collidingSpatialObject, int movementAxis, VBVec3D displacement)
+int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject collidingSpatialObject, VBVec3D displacement)
 {
 	ASSERT(this, "CollisionSolver::getAxisOfCollision: null this");
 	ASSERT(collidingSpatialObject, "CollisionSolver::getAxisOfCollision: collidingEntities");
@@ -242,7 +233,7 @@ int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject colli
 }
 
 // resolve collision against other entities
-int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, int movementAxis, VBVec3D displacement, const Scale* scale, bool registerObjects)
+int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, VBVec3D displacement, bool registerObjects)
 {
 	ASSERT(this, "CollisionSolver::resolveCollision: null this");
 	ASSERT(collidingSpatialObjects, "CollisionSolver::resolveCollision: collidingEntities");
@@ -362,17 +353,17 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 
 	if(collidingSpatialObjectsToAlignTo[kXAxis])
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kXAxis], __XAXIS, scale, registerObjects);
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kXAxis], __XAXIS, registerObjects);
 	}
 
 	if(collidingSpatialObjectsToAlignTo[kYAxis])
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kYAxis], __YAXIS, scale, registerObjects);
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kYAxis], __YAXIS, registerObjects);
 	}
 
 	if(collidingSpatialObjectsToAlignTo[kZAxis])
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kZAxis], __ZAXIS, scale, registerObjects);
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kZAxis], __ZAXIS, registerObjects);
 	}
 
 	node = processedCollidingSpatialObjects->head;

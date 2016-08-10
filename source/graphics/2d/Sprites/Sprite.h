@@ -191,7 +191,7 @@ void Sprite_animate(Sprite this);
 void Sprite_pause(Sprite this, bool pause);
 void Sprite_play(Sprite thisa, AnimationDescription* animationDescription, char* functionName);
 bool Sprite_isPlaying(Sprite this);
-bool Sprite_isPlayingFunction(Sprite this, AnimationDescription* animationDescription, char* functionName);
+bool Sprite_isPlayingFunction(Sprite this, char* functionName);
 void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta);
 s8 Sprite_getActualFrame(Sprite this);
 void Sprite_setActualFrame(Sprite this, s8 actualFrame);

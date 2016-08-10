@@ -664,7 +664,7 @@ int Container_onPropagatedMessage(Container this, va_list args)
 }
 
 // process message
-bool Container_handlePropagatedMessage(Container this, int message)
+bool Container_handlePropagatedMessage(Container this __attribute__ ((unused)), int message __attribute__ ((unused)))
 {
 	ASSERT(this, "Container::handlePropagatedMessage: null this");
 

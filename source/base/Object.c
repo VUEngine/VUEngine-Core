@@ -78,7 +78,7 @@ void Object_destructor(Object this)
 }
 
 // on message
-bool Object_handleMessage(Object this, void* telegram)
+bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "Object::handleMessage: null this");
 
@@ -201,7 +201,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 		return this;
 	}
 
-	return Object_getCast((Object)this, targetClassGetClassMethod, baseClassGetClassMethod(this));
+	return Object_getCast((Object)this, targetClassGetClassMethod, (ObjectBaseClassPointer)baseClassGetClassMethod(this));
 }
 
 const void* Object_getVTable(Object this)

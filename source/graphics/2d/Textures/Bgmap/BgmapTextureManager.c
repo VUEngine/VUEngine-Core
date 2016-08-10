@@ -36,9 +36,9 @@
         /* number of chars ocuppied */																    \
         u16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];										    	\
         /* current x offset to set the next bgmap */											    	\
-        s16 xOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];					    	\
+        s8 xOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];					    	\
         /* current y offset to set the next bgmap */											    	\
-        s16 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];					    	\
+        s8 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];					    	\
         /* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 							    	\
         s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][3];				    	\
         /* next free bgmap used for text printing */											    	\

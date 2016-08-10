@@ -140,7 +140,7 @@ static void AnimatedInGameEntity_removeListeners(AnimatedInGameEntity this)
 }
 
 // called when one sprite changed its animation
-static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Object firer)
+static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this __attribute__ ((unused)), Object evetnFirer __attribute__ ((unused)))
 {
 }
 
@@ -258,7 +258,7 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head));
 
-		return Sprite_isPlayingFunction(__SAFE_CAST(Sprite, sprite), this->animationDescription, functionName);
+		return Sprite_isPlayingFunction(__SAFE_CAST(Sprite, sprite), functionName);
 	}
 
 	return false;

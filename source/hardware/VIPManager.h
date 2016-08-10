@@ -35,7 +35,7 @@
 #define	XPEND		0x4000
 #define	SBHIT		0x2000
 #define	FRAMESTART	0x0010
-#define	GAMESTART	0x0008
+#define	__GAMESTART	0x0008
 #define	RFBEND		0x0004
 #define	LFBEND		0x0002
 #define	SCANERR		0x0001
@@ -60,7 +60,7 @@
 
 
 /****** VIP Registers ******/
-extern volatile u16* VIP_REGS;
+extern volatile u16* _vipRegisters;
 
 /****** VIP Register Mnemonics ******/
 #define	__INTPND	0x00
@@ -122,13 +122,13 @@ extern volatile u16* VIP_REGS;
 
 
 // Macro to set the brightness registers
-#define	__SET_BRIGHT(a,b,c)       VIP_REGS[__BRTA]=(u16)(a); VIP_REGS[__BRTB]=(u16)(b); VIP_REGS[__BRTC]=(u16)(c)
+#define	__SET_BRIGHT(a,b,c)       _vipRegisters[__BRTA]=(u16)(a); _vipRegisters[__BRTB]=(u16)(b); _vipRegisters[__BRTC]=(u16)(c)
 
 // Macro to set the GPLT (BGMap palette)
-#define	__SET_G_PALETTE(n,pal)         VIP_REGS[__GPLT0+n]=pal
+#define	__SET_G_PALETTE(n,pal)         _vipRegisters[__GPLT0+n]=pal
 
 // Macro to set the JPLT (OBJ palette)
-#define	__SET_J_PALETTE(n,pal)         VIP_REGS[__JPLT0+n]=pal
+#define	__SET_J_PALETTE(n,pal)         _vipRegisters[__JPLT0+n]=pal
 
 typedef struct WorldAttributes
 {

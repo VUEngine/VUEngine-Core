@@ -60,8 +60,6 @@
         Velocity velocity;																				\
         /* acelearion structure */																		\
         Acceleration acceleration;																		\
-        /* clock */																						\
-        Clock clock;																					\
         /* elasticity */																				\
         fix19_13 elasticity;																			\
         /* mass */																						\

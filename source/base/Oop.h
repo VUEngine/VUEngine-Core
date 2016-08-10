@@ -253,7 +253,7 @@
             __VIRTUAL_DEC(ClassName, ObjectBaseClassPointer, getBaseClass);								\
                                                                                                         \
             /* all destructors are virtual */														    \
-            __VIRTUAL_DEC(ClassName, char*, getClassName);											    \
+            __VIRTUAL_DEC(ClassName, const char*, getClassName);										\
                                                                                                         \
             /* insert class's virtual methods names */												    \
             ClassName ## _METHODS(ClassName)							                			    \
@@ -265,8 +265,11 @@
         /* declare a const pointer */																    \
         typedef struct ClassName ## _str* ClassName;												    \
                                                                                                         \
+        /* declare a const pointer */																    \
+        typedef struct ClassName ## _str const* Const ## ClassName;										\
+                                                                                                        \
         /* typedef for RTTI */																            \
-        typedef void* (*(*ClassName ## BaseClassPointer)(Object))(Object);                               \
+        typedef void* (*(*ClassName ## BaseClassPointer)(Object))(Object);                              \
                                                                                                         \
         /* declare vtable */																		    \
         __VTABLE(ClassName);								            							    \
@@ -281,7 +284,7 @@
         ObjectBaseClassPointer ClassName ## _getBaseClass(Object);									    \
                                                                                                         \
         /* declare getClass name method */															    \
-        char* ClassName ## _getClassName(ClassName)
+        const char* ClassName ## _getClassName(ClassName)                                               \
 
 
 // to being able to friend a class
@@ -319,13 +322,13 @@
         }																							    \
                                                                                                         \
         /* define class's getBaseClass method */													    \
-        ObjectBaseClassPointer ClassName ## _getBaseClass(Object this)				                	\
+        ObjectBaseClassPointer ClassName ## _getBaseClass(Object this __attribute__ ((unused)))         \
         {																							    \
             return (ObjectBaseClassPointer)&BaseClassName ## _getBaseClass;								\
         }																							    \
                                                                                                         \
         /* define class's getSize method */															    \
-        char* ClassName ## _getClassName(ClassName this)										        \
+        const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))					\
         {																							    \
             return #ClassName;																		    \
         }																							    \

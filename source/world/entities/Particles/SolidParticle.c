@@ -185,11 +185,6 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 
 	if(this->collisionSolver)
 	{
-		static Scale scale =
-		{
-				ITOFIX7_9(1), ITOFIX7_9(1)
-		};
-
 		if(this->solidParticleDefinition->ignoreParticles)
 		{
 			VirtualList collidingObjectsToRemove = __NEW(VirtualList);
@@ -215,7 +210,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 			__DELETE(collidingObjectsToRemove);
 		}
 
-		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_isMoving(this->body), Body_getLastDisplacement(this->body), &scale, false);
+		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_getLastDisplacement(this->body), false);
 
 		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
 

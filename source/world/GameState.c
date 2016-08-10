@@ -89,7 +89,7 @@ void GameState_destructor(GameState this)
 }
 
 // state's enter
-void GameState_enter(GameState this, void* owner)
+void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::enter: null this");
 
@@ -99,7 +99,7 @@ void GameState_enter(GameState this, void* owner)
 }
 
 // state's execute
-void GameState_execute(GameState this, void* owner)
+void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::execute: null this");
 	ASSERT(this->stage, "GameState::execute: null stage");
@@ -112,7 +112,7 @@ void GameState_execute(GameState this, void* owner)
 }
 
 // state's exit
-void GameState_exit(GameState this, void* owner)
+void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::exit: null this");
 
@@ -129,7 +129,7 @@ void GameState_exit(GameState this, void* owner)
 }
 
 // state's suspend
-void GameState_suspend(GameState this, void* owner)
+void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::suspend: null this");
 
@@ -168,7 +168,7 @@ void GameState_suspend(GameState this, void* owner)
 }
 
 // state's execute
-void GameState_resume(GameState this, void* owner)
+void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::resume: null this");
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
@@ -212,7 +212,7 @@ void GameState_resume(GameState this, void* owner)
 	GameState_updateVisuals(this);
 
 	// sort all sprites' layers
-	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+	SpriteManager_sortLayers(SpriteManager_getInstance());
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
@@ -235,7 +235,7 @@ void GameState_resume(GameState this, void* owner)
 }
 
 // state's on message
-bool GameState_processMessage(GameState this, void* owner, Telegram telegram)
+bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
@@ -286,7 +286,7 @@ int GameState_propagateMessage(GameState this, int message)
 }
 
 // process user input
-void GameState_onPropagatedMessage(GameState this, int message)
+void GameState_onPropagatedMessage(GameState this __attribute__ ((unused)), int message __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::onPropagatedMessage: null this");
 
@@ -334,7 +334,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	GameState_updateVisuals(this);
 
 	// sort all sprites' layers
-	SpriteManager_sortLayers(SpriteManager_getInstance(), false);
+	SpriteManager_sortLayers(SpriteManager_getInstance());
 
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
@@ -368,21 +368,21 @@ Stage GameState_getStage(GameState this)
 	return this->stage;
 }
 
-const Clock GameState_getInGameClock(GameState this)
+Clock GameState_getInGameClock(GameState this)
 {
 	ASSERT(this, "GameState::getInGameClock: null this");
 
 	return this->inGameClock;
 }
 
-const Clock GameState_getAnimationsClock(GameState this)
+Clock GameState_getAnimationsClock(GameState this)
 {
 	ASSERT(this, "GameState::getAnimationsClock: null this");
 
 	return this->animationsClock;
 }
 
-const Clock GameState_getPhysicsClock(GameState this)
+Clock GameState_getPhysicsClock(GameState this)
 {
 	ASSERT(this, "GameState::getAnimationsClock: null this");
 

@@ -61,10 +61,10 @@
         int particleCount;																				\
         /* previous update time */																		\
         u32 previousTime;																				\
+        /* number of sprite definitions */																\
+        s16 numberOfSpriteDefinitions;																	\
         /* pause flag */																				\
         bool paused;																					\
-        /* number of sprite definitions */																\
-        u8 numberOfSpriteDefinitions;																	\
 
 __CLASS(ParticleSystem);
 

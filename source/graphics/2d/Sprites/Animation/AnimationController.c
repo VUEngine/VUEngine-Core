@@ -364,7 +364,7 @@ void AnimationController_stop(AnimationController this)
 }
 
 // is play animation
-bool AnimationController_isPlayingFunction(AnimationController this, const AnimationDescription* animationDescription, const char* functionName)
+bool AnimationController_isPlayingFunction(AnimationController this, const char* functionName)
 {
 	ASSERT(this, "AnimationController::isPlayingFunction: null this");
 

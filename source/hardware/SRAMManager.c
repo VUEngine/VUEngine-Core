@@ -54,7 +54,7 @@ __CLASS_DEFINITION(SRAMManager, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void SRAMManager_constructor(SRAMManager this);
-void static SRAMManager_initialize(SRAMManager this);
+static void SRAMManager_initialize(SRAMManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ void SRAMManager_destructor(SRAMManager this)
 	__SINGLETON_DESTROY;
 }
 
-void static SRAMManager_initialize(SRAMManager this)
+static void SRAMManager_initialize(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::initialize: null this");
 

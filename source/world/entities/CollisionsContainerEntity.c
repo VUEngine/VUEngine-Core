@@ -66,55 +66,55 @@ void CollisionsContainerEntity_destructor(CollisionsContainerEntity this)
 	__DESTROY_BASE;
 }
 
-void CollisionsContainerEntity_ready(CollisionsContainerEntity this)
+void CollisionsContainerEntity_ready(CollisionsContainerEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::ready: null this");
 }
 
-void CollisionsContainerEntity_update(CollisionsContainerEntity this)
+void CollisionsContainerEntity_update(CollisionsContainerEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::update: null this");
 }
 
-void CollisionsContainerEntity_transform(CollisionsContainerEntity this, const Transformation* environmentTransform)
+void CollisionsContainerEntity_transform(CollisionsContainerEntity this __attribute__ ((unused)), const Transformation* environmentTransform __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::transform: null this");
 }
 
-void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this)
+void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::updateVisualRepresentation: null this");
 }
 
-bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this, Telegram telegram)
+bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::handleMessage: null this");
 
 	return true;
 }
 
-bool CollisionsContainerEntity_updateSpritePosition(CollisionsContainerEntity this)
+bool CollisionsContainerEntity_updateSpritePosition(CollisionsContainerEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::updateSpritePosition: null this");
 
 	return false;
 }
 
-bool CollisionsContainerEntity_updateSpriteTransformations(CollisionsContainerEntity this)
+bool CollisionsContainerEntity_updateSpriteTransformations(CollisionsContainerEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::updateSpriteTransformations: null this");
 
 	return false;
 }
 
-bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this, int message)
+bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this __attribute__ ((unused)), int message __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::handlePropagatedMessage: null this");
 
 	return false;
 }
 
-int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
+int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::passMessage: null this");
 

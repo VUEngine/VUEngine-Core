@@ -89,19 +89,14 @@ long Utilities_randomSeed()
 	long random = 1;
 	int	rand, prevnum = 0,	count = 1;
 
-	static Clock clock;
+	Game game = Game_getInstance();
 
-	if(!clock)
-	{
-		clock = Game_getClock(Game_getInstance());
-	}
-
-	rand = Clock_getTime(clock);
+	rand = Game_getTime(game);
 
 	// repeat through many times to make more random and to allow the __CTA value to change multiple times
 	while(count < __RANDOM_SEED_CYCLES)
 	{
-		rand |= (HW_REGS[TLR] | (HW_REGS[THR] << 8));
+		rand |= (_hardwareRegisters[__TLR] | (_hardwareRegisters[__THR] << 8));
 
 		// prevent division by zero
 		if(random == 0)
@@ -130,7 +125,7 @@ long Utilities_randomSeed()
 
 		// keep track of the last number
 		prevnum = rand;
-		rand = Clock_getTime(clock);
+		rand = Game_getTime(game);
 	}
 
 	// returns the random seed

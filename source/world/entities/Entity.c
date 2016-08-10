@@ -50,7 +50,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 // global
 extern const VBVec3D* _screenPosition;
-const extern VBVec3D* _screenDisplacement;
+extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
@@ -139,7 +139,7 @@ static void Entity_releaseSprites(Entity this)
 	}
 }
 
-static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environmentPosition, SmallRightCuboid* rightCuboid)
+static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
@@ -255,7 +255,7 @@ static void Entity_calculateSizeFromChildren(Entity this, const VBVec3D* environ
 
 		for(; childNode; childNode = childNode->next)
 		{
-			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), &globalPosition3D, rightCuboid);
+			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), rightCuboid);
 		}
 	}
 }
@@ -267,8 +267,7 @@ void Entity_calculateSize(Entity this)
 
 	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
 
-	VBVec3D environmentPosition = {0, 0, 0};
-	Entity_calculateSizeFromChildren(this, &environmentPosition, &rightCuboid);
+	Entity_calculateSizeFromChildren(this, &rightCuboid);
 
 	VBVec3D centerDisplacement =
 	{
@@ -716,7 +715,8 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		{position->x, position->y, position->z},
 		(char*)name,
 		NULL,
-		extraInfo
+		extraInfo,
+		false
 	};
 
     // create the hint entity and add it to the hero as a child entity
@@ -728,7 +728,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 		__VIRTUAL_CALL(Entity, initialize, childEntity);
 
 		// if already initialized
-		if(0 <= this->size.x && 0 <= this->size.y && 0 <= this->size.z)
+		if(this->size.x && this->size.y && this->size.z)
 		{
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
@@ -746,7 +746,7 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 }
 
 // process extra info in intialization
-void Entity_setExtraInfo(Entity this, void* extraInfo)
+void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::setExtraInfo: null this");
 }
@@ -939,7 +939,7 @@ VirtualList Entity_getSprites(Entity this)
 }
 
 // process a telegram
-bool Entity_handleMessage(Entity this, Telegram telegram)
+bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::handleMessage: null this");
 
@@ -988,7 +988,7 @@ int Entity_getDepth(Entity this)
 }
 
 // retrieve gap
-Gap Entity_getGap(Entity this)
+Gap Entity_getGap(Entity this __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::getGap: null this");
 
@@ -1202,7 +1202,8 @@ void Entity_resume(Entity this)
 }
 
 // defaults to true
-int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration)
+int Entity_canMoveOverAxis(Entity this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
 {
 	return __XAXIS | __YAXIS | __ZAXIS;
 }
+

@@ -92,9 +92,9 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 void GameState_setCanStream(GameState this, int canStream);
 bool GameState_canStream(GameState this);
 Stage GameState_getStage(GameState this);
-const Clock GameState_getInGameClock(GameState this);
-const Clock GameState_getAnimationsClock(GameState this);
-const Clock GameState_getPhysicsClock(GameState this);
+Clock GameState_getInGameClock(GameState this);
+Clock GameState_getAnimationsClock(GameState this);
+Clock GameState_getPhysicsClock(GameState this);
 void GameState_startClocks(GameState this);
 void GameState_pauseClocks(GameState this);
 void GameState_resumeClocks(GameState this);

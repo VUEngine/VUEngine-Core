@@ -133,7 +133,7 @@ u16 InGameEntity_getInGameType(InGameEntity this)
 }
 
 // does it moves?
-bool InGameEntity_moves(InGameEntity this)
+bool InGameEntity_moves(InGameEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "InGameEntity::moves: null this");
 
@@ -141,14 +141,14 @@ bool InGameEntity_moves(InGameEntity this)
 }
 
 // is it moving?
-int InGameEntity_isMoving(InGameEntity this)
+int InGameEntity_isMoving(InGameEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "InGameEntity::isMoving: null this");
 
 	return false;
 }
 
-int InGameEntity_getMovementState(InGameEntity this)
+int InGameEntity_getMovementState(InGameEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "InGameEntity::getMovementState: null this");
 

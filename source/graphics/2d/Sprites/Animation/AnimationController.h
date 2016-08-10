@@ -99,7 +99,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
 void AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
 void AnimationController_stop(AnimationController this);
-bool AnimationController_isPlayingFunction(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
+bool AnimationController_isPlayingFunction(AnimationController this, const char* functionName);
 bool AnimationController_isPlaying(AnimationController this);
 void AnimationController_write(AnimationController this);
 void AnimationController_pause(AnimationController this, bool pause);
