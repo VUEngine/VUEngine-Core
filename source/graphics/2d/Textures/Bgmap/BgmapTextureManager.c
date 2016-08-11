@@ -222,7 +222,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 								// update the number of chars defined inside the bgmap segment
 								this->numberOfChars[i] += area;
 
-								if(this->availableBgmapSegments >= __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i + 1 > this->freeBgmapSegment)
+								if(this->availableBgmapSegmentsForTextures >= __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i + 1 > this->freeBgmapSegment)
 								{
 									this->freeBgmapSegment = i + 1;
 								}
@@ -332,7 +332,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	int i = 0;
 
 	// try to find a texture with the same bgmap definition
-	for(; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
+	for(; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
 		if(this->bgmapTextures[i])
 		{
@@ -359,7 +359,7 @@ static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this
 	int i = 0;
 
 	// find an empty slot
-	for(; i < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; i++)
+	for(; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
 	{
 		if(!this->bgmapTextures[i])
 		{
@@ -506,7 +506,7 @@ void BgmapTextureManager_print(BgmapTextureManager this, int x, int y)
 	ASSERT(this, "BgmapTextureManager::print: null this");
 
 	int textureCount = 0;
-	for(;this->bgmapTextures[textureCount] && textureCount < this->availableBgmapSegments * __NUM_BGMAPS_PER_SEGMENT; textureCount++);
+	for(;this->bgmapTextures[textureCount] && textureCount < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; textureCount++);
 
 	Printing_text(Printing_getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Segments for textures: ", x, ++y, NULL);

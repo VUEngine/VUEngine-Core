@@ -49,7 +49,7 @@
         /* super's attributes */																		\
         Texture_ATTRIBUTES																				\
         /* how many textures are using me */															\
-        u8 usageCount;																					\
+        s8 usageCount;																					\
         /* remaining rows to be written */																\
         u8 remainingRowsToBeWritten;																	\
 

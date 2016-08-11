@@ -71,7 +71,7 @@ void BgmapTexture_destructor(BgmapTexture this)
 	ASSERT(this, "BgmapTexture::destructor: null this");
 
 	// make sure that I'm not destroyed again
-	this->usageCount = 0xFF;
+	this->usageCount = -1;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -309,6 +309,6 @@ bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::decreaseUsageCoung: null this");
 
-	return 0 == --this->usageCount;
+	return 0 >= --this->usageCount;
 }
 
