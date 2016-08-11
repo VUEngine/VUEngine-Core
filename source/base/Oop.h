@@ -24,49 +24,6 @@
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
 #define __CSTOM_CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
-// call to this method only once
-#define __CALL_ONCE(MethodName, ...)															        \
-                                                                                                        \
-        {																							    \
-            /* a static flag */																		    \
-            static bool __notCalledFlag = true;                                             		    \
-                                                                                                        \
-            /* check if not called */																    \
-            if(__notCalledFlag)																		    \
-            {																						    \
-                /* call method */																	    \
-                __notCalledFlag = false;															    \
-                                                                                                        \
-                /* call method */																	    \
-                MethodName(__VA_ARGS__);															    \
-            }																						    \
-        }
-
-// to support in run time abstract class instantiation and debug
-#define __DEFINE_CHECK_VTABLE(ClassName)														        \
-                                                                                                        \
-        /* define the checking method */															    \
-        void __attribute__ ((noinline)) ClassName  ## _checkVTable()									\
-        {																							    \
-            /* check that each entry in the table is not NULL */									    \
-            int i = 0;																				    \
-            for(; i < sizeof(ClassName ## _vTable) / sizeof(void*); i++)							    \
-            {																						    \
-                /* check each entry */																    \
-                NM_ASSERT(((void**)&ClassName ## _vTable)[i],										    \
-                        ClassName ##  is abstract);													    \
-            }																						    \
-        }
-
-#ifdef __CHECK_ABSTRACT_CLASS_INSTANTIATION
-// call to check that the vtable doesn't have null pointers
-#define __CHECK_VTABLE(ClassName)																        \
-                                                                                                        \
-        /* setup the class's vtable on first call only */											    \
-        __CALL_ONCE(ClassName  ## _checkVTable);
-#else
-#define __CHECK_VTABLE(ClassName)
-#endif
 
 // define the class's allocator declaration
 #define __CLASS_NEW_DECLARE(ClassName, ...)														        \
@@ -83,9 +40,6 @@
         {																							    \
             /* setup the class's vtable on first call only */										    \
             __SET_CLASS(ClassName);																	    \
-                                                                                                        \
-            /* abstract classes can't be instantiated */											    \
-            __CHECK_VTABLE(ClassName);																    \
                                                                                                         \
             /* allocate object */																	    \
             ClassName this = (ClassName) 															    \
@@ -213,14 +167,36 @@
         if(!ClassName ## _vTable.destructor)                                                		    \
         {																							    \
             ClassName ## _setVTable();                                                      		    \
+            ClassName ## _checkVTable();                                                      		    \
         }																							    \
 
 // configure class's vtable
-#define __SET_VTABLE(ClassName, BaseClassName)													        \
+#define __CHECK_VTABLE_DEFINITION(ClassName)										        			\
+                                                                                                        \
+        /* define the static method */																    \
+        void __attribute__ ((noinline)) ClassName ## _checkVTable()								        \
+        {																							    \
+            /* check that no method is null */					                					    \
+            u32 i = 0;																				    \
+            for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
+            {																						    \
+                NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ##  is abstract);		\
+            }																						    \
+		}																							    \
+		
+// configure class's vtable
+#define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)										        \
                                                                                                         \
         /* define the static method */																    \
         void __attribute__ ((noinline)) ClassName ## _setVTable()								        \
         {																							    \
+            /* clean up the vtable */					                					    		\
+            u32 i = 0;																				    \
+            for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
+            {																						    \
+                ((void (*(*))())&ClassName ## _vTable)[i] = NULL;										\
+            }																						    \
+                                                                                                        \
             /* set the base class's virtual methods */												    \
             if(&ClassName ## _setVTable != &BaseClassName ## _setVTable)                                \
             {																						    \
@@ -333,8 +309,9 @@
             return #ClassName;																		    \
         }																							    \
                                                                                                         \
-        /* now add the function which will set the vtable */										    \
-        __SET_VTABLE(ClassName, BaseClassName)														    \
+        /* now add the function which will handle the vtable */										    \
+        __SET_VTABLE_DEFINITION(ClassName, BaseClassName)											    \
+        __CHECK_VTABLE_DEFINITION(ClassName)											    			\
                                                                                                         \
         /* dummy redeclaration to avoid warning when compiling with -pedantic */                        \
         void ClassName ## _dummyMethodClassDefinition()
