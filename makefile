@@ -110,7 +110,7 @@ endif
 
 ifeq ($(TYPE), tools)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -O0 -finline-functions -Winline
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -O2 -finline-functions -Winline
 MACROS := __TOOLS $(COMMON_MACROS)
 endif
 

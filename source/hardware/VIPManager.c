@@ -34,7 +34,7 @@
 // 											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-volatile u16* _vipRegisters __attribute__((section(".sdata"))) = (u16*)0x0005F800;
+volatile u16* _vipRegisters __attribute__((section(".data"))) = (u16*)0x0005F800;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -107,6 +107,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	_paramTableManager = ParamTableManager_getInstance();
 	_charSetManager = CharSetManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
+	
 }
 
 // class's destructor
