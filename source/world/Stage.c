@@ -718,7 +718,7 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 									(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
 									(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z);
 
-	static int advancing = true;
+	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
 
 	if(this->previousFocusEntityDistance != focusInGameEntityDistance)
 	{
@@ -856,7 +856,7 @@ static void Stage_transformEntities(Stage this)
 	ASSERT(this, "Stage::transformEntities: null this");
 
 	// static to avoid call to _memcpy
-	static Transformation environmentTransform =
+	static Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 	{
 			// local position
 			{0, 0, 0},
@@ -1008,7 +1008,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	if(this->ui)
 	{
 		// static to avoid call to _memcpy
-		static Transformation uiEnvironmentTransform =
+		static Transformation uiEnvironmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 		{
 				// local position
 				{0, 0, 0},

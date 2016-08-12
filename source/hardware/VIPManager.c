@@ -34,7 +34,7 @@
 // 											 CLASS'S GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
-volatile u16* _vipRegisters __attribute__((section(".data"))) = (u16*)0x0005F800;
+volatile u16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F800;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	_paramTableManager = ParamTableManager_getInstance();
 	_charSetManager = CharSetManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
-	
+
 }
 
 // class's destructor
@@ -176,7 +176,7 @@ void VIPManager_interruptHandler(void)
 
 #ifdef __ALERT_VPU_OVERTIME
     {
-        static int messageDelay = __TARGET_FPS;
+        static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
 
         if(overtime)
         {
@@ -242,7 +242,7 @@ void VIPManager_interruptHandler(void)
 #else
         int y = 1;
 #endif
-        static int messageDelay = __TARGET_FPS;
+        static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
         if(!Game_doneDRAMPrecalculations(Game_getInstance()))
         {
             Printing_text(Printing_getInstance(), "                      ", 0, y, NULL);
