@@ -288,7 +288,7 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 	this->xOffset[this->freeBgmapSegment][0] += length;
 
 	// if there are no more rows in the segment thrown an exception
-	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 4096, "BgmapTextureManager::allocateText: mem depleted (TextBox)");
+	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 64, "BgmapTextureManager::allocateText: mem depleted (TextBox)");
 }
 
 // deallocate texture from bgmap graphic memory

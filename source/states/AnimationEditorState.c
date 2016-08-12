@@ -34,10 +34,10 @@
 
 static void AnimationEditorState_destructor(AnimationEditorState this);
 static void AnimationEditorState_constructor(AnimationEditorState this);
-static void AnimationEditorState_enter(AnimationEditorState this, void* owner);
-static void AnimationEditorState_execute(AnimationEditorState this, void* owner);
-static void AnimationEditorState_exit(AnimationEditorState this, void* owner);
-static bool AnimationEditorState_processMessage(AnimationEditorState this, void* owner, Telegram telegram);
+static void AnimationEditorState_enter(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
+static void AnimationEditorState_execute(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
+static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
+static bool AnimationEditorState_processMessage(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,27 +85,27 @@ static void AnimationEditorState_destructor(AnimationEditorState this)
 }
 
 // state's enter
-static void AnimationEditorState_enter(AnimationEditorState this, void* owner)
+static void AnimationEditorState_enter(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	AnimationEditor_start(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute
-static void AnimationEditorState_execute(AnimationEditorState this, void* owner)
+static void AnimationEditorState_execute(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
 {
 	AnimationEditor_update(AnimationEditor_getInstance());
 }
 
 // state's exit
-static void AnimationEditorState_exit(AnimationEditorState this, void* owner)
+static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
 {
 	AnimationEditor_stop(AnimationEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's on message
-static bool AnimationEditorState_processMessage(AnimationEditorState this, void* owner, Telegram telegram)
+static bool AnimationEditorState_processMessage(AnimationEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram)
 {
 	// process message
 	switch(Telegram_getMessage(telegram))

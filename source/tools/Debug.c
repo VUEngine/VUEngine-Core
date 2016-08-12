@@ -215,7 +215,7 @@ static void Debug_setupPages(Debug this)
 	this->currentPage = this->pages->head;
 }
 
-static void Debug_dimmGame(Debug this)
+static void Debug_dimmGame(Debug this __attribute__ ((unused)))
 {
 	_vipRegisters[__GPLT0] = 0x50;
 	_vipRegisters[__GPLT1] = 0x50;
@@ -414,7 +414,7 @@ static void Debug_removeSubPages(Debug this)
 	this->currentSubPage = NULL;
 }
 
-static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
+static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	Debug_removeSubPages(this);
 	Printing_text(Printing_getInstance(), "GENERAL STATUS", 1, y++, NULL);
@@ -435,7 +435,7 @@ static void Debug_showGeneralStatus(Debug this, int increment, int x, int y)
 	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 34, y + 3, NULL);
 }
 
-static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
+static void Debug_showMemoryStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
 
@@ -451,7 +451,7 @@ static void Debug_showMemoryStatus(Debug this, int increment, int x, int y)
 }
 
 
-static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y)
+static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
@@ -469,7 +469,7 @@ static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, in
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
 }
 
-static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y)
+static void Debug_memoryStatusShowSecondPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
@@ -493,7 +493,7 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
 }
 
-static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y)
+static void Debug_memoryStatusShowThirdPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
@@ -511,7 +511,7 @@ static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, in
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
 }
 
-static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y)
+static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
@@ -537,14 +537,14 @@ static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, i
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VBJaEngine classes:");
 }
 
-static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y)
+static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
 	Debug_printClassSizes(_userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }
 
-static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y)
+static void Debug_showCharMemoryStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
 
@@ -557,7 +557,7 @@ static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y)
 	Debug_showSubPage(this, 0);
 }
 
-static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y)
+static void Debug_charMemoryShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	this->charSegment += increment;
 
@@ -596,7 +596,7 @@ static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y)
 	}
 }
 
-static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
+static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
@@ -623,7 +623,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y)
 	}
 }
 
-static void Debug_showTextureStatus(Debug this, int increment, int x, int y)
+static void Debug_showTextureStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int  __attribute__ ((unused))y)
 {
 	Debug_removeSubPages(this);
 
@@ -701,7 +701,7 @@ static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
 	}
 }
 
-static void Debug_showObjectStatus(Debug this, int increment, int x, int y)
+static void Debug_showObjectStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
 
@@ -753,7 +753,7 @@ static void Debug_objectsShowStatus(Debug this, int increment, int x, int y)
 	}
 }
 
-static void Debug_showSpritesStatus(Debug this, int increment, int x, int y)
+static void Debug_showSpritesStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
 
@@ -811,7 +811,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 	}
 }
 
-static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y)
+static void Debug_showPhysicsStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
 
@@ -822,24 +822,24 @@ static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y)
 	Debug_showSubPage(this, 0);
 }
 
-static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y)
+static void Debug_physicStatusShowStatistics(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	PhysicalWorld_print(GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), x, y);
 	CollisionManager_print(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), x, y + 6);
 }
 
-static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y)
+static void Debug_physicStatusShowShapes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	Printing_text(Printing_getInstance(), "COLLISION SHAPES", x, y++, NULL);
 	this->update = (void (*)(void *))&Debug_showCollisionShapes;
 }
 
-static void Debug_showCollisionShapes(Debug this)
+static void Debug_showCollisionShapes(Debug this __attribute__ ((unused)))
 {
 	CollisionManager_drawShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 }
 
-static void Debug_showHardwareStatus(Debug this, int increment, int x, int y)
+static void Debug_showHardwareStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	Debug_removeSubPages(this);
 

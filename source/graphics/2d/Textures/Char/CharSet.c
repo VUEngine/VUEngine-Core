@@ -114,7 +114,7 @@ u16 CharSet_getOffset(CharSet this)
 void CharSet_setOffset(CharSet this, u16 offset)
 {
 	ASSERT(this, "CharSet::setOffset: null this");
-	ASSERT(0 <= offset, "CharSet::setOffset: offset less than 0");
+	ASSERT(offset < 512, "CharSet::setOffset: offset out of bounds");
 
 	this->offset = offset;
 }

@@ -105,7 +105,7 @@ enum Modes
 // globals
 extern Optical* _optical;
 extern UserObject _userObjects[];
-const extern VBVec3D* _screenDisplacement;
+extern const VBVec3D* _screenDisplacement;
 
 void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate);
 
@@ -846,7 +846,7 @@ static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D trans
 	PhysicalWorld_processRemovedBodies(GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 }
 
-static void StageEditor_printScreenPosition(StageEditor this)
+static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unused)))
 {
 	int x = 1;
 	int y = 2;
@@ -863,7 +863,7 @@ static void StageEditor_printScreenPosition(StageEditor this)
 	Printing_int(Printing_getInstance(), FIX19_13TOI(position.z), x + 20, y, NULL);
 }
 
-static void StageEditor_printProjectionValues(StageEditor this)
+static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((unused)))
 {
 	int x = 1;
 	int y = 2;

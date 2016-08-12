@@ -34,10 +34,10 @@
 
 static void DebugState_destructor(DebugState this);
 static void DebugState_constructor(DebugState this);
-static void DebugState_enter(DebugState this, void* owner);
-static void DebugState_execute(DebugState this, void* owner);
-static void DebugState_exit(DebugState this, void* owner);
-static bool DebugState_processMessage(DebugState this, void* owner, Telegram telegram);
+static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
+static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
+static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
+static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,27 +85,27 @@ static void DebugState_destructor(DebugState this)
 }
 
 // state's enter
-static void DebugState_enter(DebugState this, void* owner)
+static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute
-static void DebugState_execute(DebugState this, void* owner)
+static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
 {
 	Debug_update(Debug_getInstance());
 }
 
 // state's exit
-static void DebugState_exit(DebugState this, void* owner)
+static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
 {
 	Debug_hide(Debug_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's on message
-static bool DebugState_processMessage(DebugState this, void* owner, Telegram telegram)
+static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram)
 {
 	// process message
 	switch(Telegram_getMessage(telegram))

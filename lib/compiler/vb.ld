@@ -41,7 +41,6 @@ SECTIONS
     v = .;
 
     /* Ram memory */
-
     __data_lma = .;
     .data __data_vma : AT(__data_lma)
     {
@@ -49,7 +48,7 @@ SECTIONS
         *(.data*)
     } >wram = 0xFF
 
-    .sdata :
+    .sdata ALIGN(2):
     {
     	PROVIDE (__gp = . + 0x8000);
         *(.sdata*)

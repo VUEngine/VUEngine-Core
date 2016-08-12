@@ -300,7 +300,6 @@ u8 BgmapTexture_getUsageCount(BgmapTexture this)
 void BgmapTexture_increaseUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::increaseUsageCoung: null this");
-	ASSERT(255 > (int)this->usageCount, "BgmapTexture::increaseUsageCoung: null this");
 
 	this->usageCount++;
 }

@@ -818,7 +818,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 	__DELETE(framesIndexes);
 }
 
-static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eventFirer)
+static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{

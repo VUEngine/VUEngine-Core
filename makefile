@@ -98,7 +98,7 @@ COMMON_MACROS := $(DATA_SECTION_ATTRIBUTES)
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE),debug)
 LD_PARAMS := -T$(LINKER_SCRIPT) -lm
-C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -O0
+C_PARAMS := $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -O2
 MACROS := __DEBUG __TOOLS $(COMMON_MACROS)
 endif
 
