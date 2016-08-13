@@ -193,7 +193,11 @@ void AnimationEditor_update(AnimationEditor this)
 
 	if(this->gameState && this->animatedSprite)
 	{
+        Sprite_animate(this->animatedSprite);
 		Sprite_update(this->animatedSprite);
+    	Sprite_setRenderFlag(this->animatedSprite, __UPDATE_HEAD);
+    	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
+    	__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this->animatedSprite);
 	}
 }
 
@@ -230,6 +234,9 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	this->mode = kFirstMode + 1;
 	AnimationEditor_setupMode(this);
 	SpriteManager_showLayer(SpriteManager_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
+
+	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
+    SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 }
 
 // hide editor screens
@@ -266,6 +273,8 @@ void AnimationEditor_stop(AnimationEditor this)
 	}
 
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
+	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
+    SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
 // print title

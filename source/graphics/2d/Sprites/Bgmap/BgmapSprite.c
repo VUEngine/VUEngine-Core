@@ -93,6 +93,9 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->drawSpec.textureSource.mx = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
+
+        this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+        this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 	else
 	{

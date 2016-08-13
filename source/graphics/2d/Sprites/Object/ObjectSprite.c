@@ -54,6 +54,8 @@ __CLASS_FRIEND_DEFINITION(Texture);
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
 
+static void ObjectSprite_checkForContainer(ObjectSprite this);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -167,6 +169,8 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 
 	this->renderFlag |= __UPDATE_G;
 	this->initialized = true;
+
+	ObjectSprite_checkForContainer(this);
 }
 
 void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
@@ -184,15 +188,22 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);
 	this->position.z = position->z;
 
+	this->renderFlag |= __UPDATE_G;
+	this->initialized = true;
+
+	ObjectSprite_checkForContainer(this);
+}
+
+static void ObjectSprite_checkForContainer(ObjectSprite this)
+{
+    ASSERT(this, "ObjectSprite::checkForContainer: null this");
+
 	if(0 > this->objectIndex)
 	{
 		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
 		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
 		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
 	}
-
-	this->renderFlag |= __UPDATE_G;
-	this->initialized = true;
 }
 
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z)
