@@ -229,6 +229,11 @@ int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject colli
 
 	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
 
+    if(!displacement.x && !displacement.y && !displacement.z)
+    {
+        return 0;
+    }
+
     return __VIRTUAL_CALL(Shape, getAxisOfCollision, __VIRTUAL_CALL(SpatialObject, getShape, this->owner), collidingSpatialObject, displacement, ownerPreviousPosition);
 }
 

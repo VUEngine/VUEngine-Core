@@ -42,8 +42,8 @@ __CLASS_FRIEND_DEFINITION(InverseCuboid);
 // 												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAX_NUMBER_OF_PASSES			100
-#define __FLOAT_0_05_F					0x019A
+#define __MAX_NUMBER_OF_PASSES			10
+#define __FLOAT_0_5_F					0x00001000
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -266,9 +266,9 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 	VBVec3D displacementIncrement =
 	{
-			FIX19_13_MULT(displacement.x, __FLOAT_0_05_F),
-			FIX19_13_MULT(displacement.y, __FLOAT_0_05_F),
-			FIX19_13_MULT(displacement.z, __FLOAT_0_05_F)
+			FIX19_13_MULT(displacement.x, __FLOAT_0_5_F),
+			FIX19_13_MULT(displacement.y, __FLOAT_0_5_F),
+			FIX19_13_MULT(displacement.z, __FLOAT_0_5_F)
 	};
 
 	//NM_ASSERT(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z, "Cuboid::getAxisOfCollisionWithCuboid: 0 displacementIncrement");
@@ -485,6 +485,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		}
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
+
+    Printing_hex(Printing_getInstance(), FTOFIX19_13(1.0f), 1, 15, NULL);
 
 	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
 
