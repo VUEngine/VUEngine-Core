@@ -501,7 +501,7 @@ static void Game_handleInput(Game this)
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_LU) && (pressedKey & K_RU))
+	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RU))
 	{
 		if(Game_isInDebugMode(this))
 		{
@@ -531,7 +531,7 @@ static void Game_handleInput(Game this)
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_LD) && (pressedKey & K_RD))
+	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RD))
 	{
 		if(Game_isInStageEditor(this))
 		{
@@ -561,7 +561,7 @@ static void Game_handleInput(Game this)
 #ifdef __ANIMATION_EDITOR
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_LR) && (releasedKey & K_RR))
+	if((previousKey & K_LT) && (previousKey & K_RT) && (releasedKey & K_RR))
 	{
 
 		if(Game_isInAnimationEditor(this))
