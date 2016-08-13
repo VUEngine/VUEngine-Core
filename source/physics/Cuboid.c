@@ -486,8 +486,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		while(0 == numberOfAxis && ++passes < __MAX_NUMBER_OF_PASSES);
 	}
 
-    Printing_hex(Printing_getInstance(), FTOFIX19_13(1.0f), 1, 15, NULL);
-
 	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
 
 	return axisOfCollision & ~axisToIgnore;
