@@ -202,6 +202,14 @@ typedef struct TextureSource
 
 }TextureSource;
 
+
+typedef struct TexturePadding
+{
+	u8 cols;
+	u8 rows;
+
+}TexturePadding;
+
 // a spatial description
 typedef struct DrawSpec
 {

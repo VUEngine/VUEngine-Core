@@ -149,7 +149,7 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
 // allocate texture in bgmap graphic memory
 static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
-	ASSERT(this, "BgmapTextureManager::allocate: null this");
+	ASSERT(this, "BgmapTextureManager::doAllocate: null this");
 
 	int i = 0;
 	int j = 0;
@@ -158,10 +158,15 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 	u8 cols = Texture_getTotalCols(__SAFE_CAST(Texture, bgmapTexture));
 	u8 rows = Texture_getTotalRows(__SAFE_CAST(Texture, bgmapTexture));
 
-	cols += cols < 64? 1: 0;
-	rows += rows < 64? 1: 0;
+    TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
 
-	u16 area = rows * cols;
+	u8 colsPad = textureDefinition->padding.cols;
+	u8 rowsPad = textureDefinition->padding.rows;
+
+	cols += cols + colsPad < 64? 1: 0;
+	rows += rows + rowsPad < 64? 1: 0;
+
+	u16 area = (cols + colsPad) * (rows + rowsPad);
 
 	//if texture already defined, don't allocate
 	if(Texture_getNumberOfChars(__SAFE_CAST(Texture, bgmapTexture)))
@@ -187,27 +192,27 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 					}
 
 					//determine if there is still mem space (columns) in the current y offset
-					if(rows <= aux - this->yOffset[i][j] || (!this->yOffset[i][j + 1]))
+					if(rows + rowsPad <= aux - this->yOffset[i][j] || (!this->yOffset[i][j + 1]))
 					{
-						if(rows <= 64 - this->yOffset[i][j])
+						if(rows + rowsPad <= 64 - this->yOffset[i][j])
 						{
-							if(cols <= 64 - this->xOffset[i][j])
+							if(cols + colsPad <= 64 - this->xOffset[i][j])
 							{
 								u16 id = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
 
-								//registry bgmap definition
-								this->offset[id][kXOffset] = this->xOffset[i][j];
-								this->offset[id][kYOffset] = this->yOffset[i][j];
+								// register bgmap definition
+								this->offset[id][kXOffset] = this->xOffset[i][j] + (colsPad >> 1);
+								this->offset[id][kYOffset] = this->yOffset[i][j] + (rowsPad >> 1);
 								this->offset[id][kBgmapSegment] = i;
 
 								//increment the x offset
-								this->xOffset[i][j] += cols;
+								this->xOffset[i][j] += cols + colsPad;
 
 								//if the number of rows of the bgmap definition is greater than the
 								//next y offset defined, increase the next y offset
-								if(this->yOffset[i][j + 1] - this->yOffset[i][j] < rows)
+								if(this->yOffset[i][j + 1] - this->yOffset[i][j] < rows + rowsPad)
 								{
-									this->yOffset[i][j + 1] = this->yOffset[i][j] + rows ;
+									this->yOffset[i][j + 1] = this->yOffset[i][j] + rows + rowsPad;
 								}
 								else
 								{
@@ -238,7 +243,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 					}
 					else
 					{
-						if(rows > 64 - this->yOffset[i][j])
+						if(rows + rowsPad > 64 - this->yOffset[i][j])
 						{
 							break;
 						}
@@ -248,11 +253,11 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 		}
 
 		// throw an exception if there is no enough space to allocate the bgmap definition
-		NM_ASSERT(false, "BgmapTextureManager::allocate: bgmap segments depleted");
+		NM_ASSERT(false, "BgmapTextureManager::doAllocate: bgmap segments depleted");
 	}
 
 	// through exception if texture has 0 chars
-	ASSERT(false, "BgmapTextureManager::allocate: map has 0 chars");
+	ASSERT(false, "BgmapTextureManager::doAllocate: map has 0 chars");
 
 	return false;
 }
@@ -337,9 +342,11 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 		if(this->bgmapTextures[i])
 		{
 			CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]));
+            TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i]));
 
 			if(Texture_getBgmapDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
-				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition->allocationType)
+				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition->allocationType) &&
+				(textureDefinition->padding.cols == bgmapTextureDefinition->padding.cols && textureDefinition->padding.cols == bgmapTextureDefinition->padding.rows)
 			)
 			{
 				// return if found
