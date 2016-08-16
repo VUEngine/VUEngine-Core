@@ -8,7 +8,7 @@ SEARCH_DIR(.);
 MEMORY
 {
     wram    (!r)    : ORIGIN =  0x05000000, LENGTH = 64k /*64k*/
-    vram    (!r)    : ORIGIN =  0x0003B800, LENGTH = 8k
+    vram    (!r)    : ORIGIN =  0x0003D800, LENGTH = 0k
     sram    (!r)    : ORIGIN =  0x06000000, LENGTH = 16M
     rom     (rx)    : ORIGIN =  0x07000000, LENGTH = 16M
 }
