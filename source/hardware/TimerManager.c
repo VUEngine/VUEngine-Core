@@ -234,20 +234,25 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
 {
 	ASSERT(this, "ClockManager::wait: null this");
 
-    u32 currentTicks = this->ticks;
+    // declare as volatile to prevent the compiler to optimize currentTicks away
+    // making the last assignment invalid
+    volatile u32 currentTicks = this->ticks;
 	u32 waitStartTime = this->ticks;
-    u32 volatile *ticks = (u32*)&this->ticks;
+    volatile u32 *ticks = (u32*)&this->ticks;
 
     while ((*ticks - waitStartTime) < milliSeconds);
 
     this->ticks = currentTicks;
+
 }
 
 void TimerManager_repeatMethodCall(TimerManager this, u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
 {
     if(object && method)
     {
-        u32 currentTicks = this->ticks;
+        // declare as volatile to prevent the compiler to optimize currentTicks away
+        // making the last assignment invalid
+        volatile u32 currentTicks = this->ticks;
 
         u32 i = 0;
 
