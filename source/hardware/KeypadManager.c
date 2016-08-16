@@ -86,6 +86,8 @@ void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::enable: null this");
 
+    KeypadManager_flush(this);
+
 	_hardwareRegisters[__SCR] = 0;
 	_hardwareRegisters[__SCR] &= ~(__S_HWDIS | __S_INTDIS);
 //	_hardwareRegisters[__SCR] |= __S_HW;
