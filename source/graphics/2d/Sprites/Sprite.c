@@ -58,6 +58,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->texture = NULL;
 	this->displacement = (VBVec3D){0, 0, 0};
 	this->hidden = false;
+    this->writeAnimationFrame = false;
 }
 
 // class's destructor
@@ -280,9 +281,10 @@ void Sprite_update(Sprite this)
 	if(this->animationController)
 	{
 		// first animate the frame
-		if(AnimationController_didAnimationFrameChanged(this->animationController))
+		if(this->writeAnimationFrame)
 		{
 			__VIRTUAL_CALL(Sprite, writeAnimation, this);
+        	this->writeAnimationFrame = false;
 		}
 	}
 }
@@ -294,7 +296,7 @@ void Sprite_animate(Sprite this)
 	if(this->animationController)
 	{
 		// first animate the frame
-		AnimationController_animate(this->animationController);
+		this->writeAnimationFrame |= AnimationController_animate(this->animationController);
 	}
 }
 
@@ -317,8 +319,7 @@ void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* 
 
 	if(this->animationController)
 	{
-		// first animate the frame
-		AnimationController_play(this->animationController, animationDescription, functionName);
+		this->writeAnimationFrame = AnimationController_play(this->animationController, animationDescription, functionName);
 	}
 }
 

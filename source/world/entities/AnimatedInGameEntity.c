@@ -30,6 +30,7 @@
 #include <Cuboid.h>
 #include <Prototypes.h>
 #include <Game.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -46,11 +47,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, void (*function)(Object this, Object listener, void (*method)(Object, Object),  char* eventName));
-static void AnimatedInGameEntity_addListeners(AnimatedInGameEntity this);
-static void AnimatedInGameEntity_removeListeners(AnimatedInGameEntity this);
 static void AnimatedInGameEntity_animate(AnimatedInGameEntity this);
-static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this, Object firer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -90,8 +87,6 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::destructor: null this");
 
-	AnimatedInGameEntity_removeListeners(this);
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -105,43 +100,7 @@ void AnimatedInGameEntity_initialize(AnimatedInGameEntity this)
 
 	Entity_initialize(__SAFE_CAST(Entity, this));
 
-	AnimatedInGameEntity_addListeners(this);
-
 	AnimatedInGameEntity_playAnimation(this, this->animatedInGameEntityDefinition->initialAnimation);
-}
-
-// add listeners to sprites
-static void AnimatedInGameEntity_doProcessListeners(AnimatedInGameEntity this, void (*function)(Object this, Object listener, void (*method)(Object, Object),  char* eventName))
-{
-	if(this->sprites)
-	{
-		VirtualNode node = this->sprites->head;
-
-		// setup listeners
-		for(; node ; node = node->next)
-	    {
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
-
-			function(__SAFE_CAST(Object, sprite), __SAFE_CAST(Object, this), (EventListener)AnimatedInGameEntity_onFrameChanged, __EVENT_ANIMATION_FRAME_CHANGED);
-		}
-	}
-}
-
-// add listeners to sprites
-static void AnimatedInGameEntity_addListeners(AnimatedInGameEntity this)
-{
-	AnimatedInGameEntity_doProcessListeners(this, Object_addEventListener);
-}
-
-// remove listeners to sprites
-static void AnimatedInGameEntity_removeListeners(AnimatedInGameEntity this)
-{
-	AnimatedInGameEntity_doProcessListeners(this, Object_removeEventListener);
-}
-
-// called when one sprite changed its animation
-static void AnimatedInGameEntity_onFrameChanged(AnimatedInGameEntity this __attribute__ ((unused)), Object evetnFirer __attribute__ ((unused)))
-{
 }
 
 // updates the animation attributes
@@ -298,7 +257,5 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
 
 	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
-
-	AnimatedInGameEntity_addListeners(this);
 }
 

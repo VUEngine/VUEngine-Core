@@ -74,8 +74,6 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 	// not playing anything yet
 	this->playing = false;
 
-	this->animationFrameChanged = false;
-
 	ASSERT(charSetDefinition, "AnimationController::constructor: null charSetDefinition");
 
 	// animation coordinator
@@ -163,23 +161,21 @@ void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDe
 }
 
 // animate the frame
-void AnimationController_animate(AnimationController this)
+bool AnimationController_animate(AnimationController this)
 {
 	ASSERT(this, "AnimationController::animate: null this");
-
-	this->animationFrameChanged = false;
 
 	// first check for a valid animation function
 	if(!this->animationFunction)
 	{
-		return;
+		return false;
 	}
 
 	// if the actual frame was set to -1
 	// it means that a not loop animation has been completed
 	if(-1 == this->actualFrame)
 	{
-		return;
+		return false;
 	}
 
 	// show the next frame
@@ -203,21 +199,23 @@ void AnimationController_animate(AnimationController this)
 			// invalidate animation
 			this->actualFrame = -1;
 
-			return;
+			return false;
 		}
 	}
+
+	bool animationFrameChanged = false;
 
 	// if the frame has changed
 	if(this->actualFrame != this->previousFrame)
 	{
-		// write the new frame of animation
-		this->animationFrameChanged = true;
+        animationFrameChanged = true;
 
-		// don't write animation each time, only when the animation
+			// don't write animation each time, only when the animation
 		// has changed
 		this->previousFrame = this->actualFrame;
 
-		Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
+        // inform about the change of animation frame to any listener
+        Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
 	}
 
 	this->frameDelay -= this->frameDelayDelta;
@@ -242,6 +240,8 @@ void AnimationController_animate(AnimationController this)
 			this->frameDelay = 1 + Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
 	}
+
+	return animationFrameChanged;
 }
 
 // render frame
@@ -276,7 +276,10 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	this->animationFunction = animationFunction;
 
 	// register event callback
-	Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+	if(this->animationFunction && this->animationFunction->onAnimationComplete)
+	{
+    	Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+	}
 
 	// force frame writing in the next update
 	this->previousFrame = 0;
@@ -300,7 +303,7 @@ const AnimationFunction* AnimationController_getPlayingAnimationFunction(Animati
 }
 
 // play animation
-void AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName)
+bool AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName)
 {
 	ASSERT(this, "AnimationController::play: null this");
 	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
@@ -310,7 +313,7 @@ void AnimationController_play(AnimationController this, const AnimationDescripti
 	{
 		if(!AnimationCoordinator_playAnimation(this->animationCoordinator, this, animationDescription, functionName))
 		{
-			return;
+			return false;
 		}
 	}
 
@@ -347,10 +350,11 @@ void AnimationController_play(AnimationController this, const AnimationDescripti
 			// it's playing now
 			this->playing = true;
 
-			// force writing in the next render cycle
-			this->animationFrameChanged = true;
+			return true;
 		}
 	}
+
+	return false;
 }
 
 // stop animation
@@ -390,11 +394,4 @@ void AnimationController_pause(AnimationController this, bool pause)
 	{
 		this->actualFrame = 0;
 	}
-}
-
-bool AnimationController_didAnimationFrameChanged(AnimationController this)
-{
-	ASSERT(this, "AnimationController::didAnimationFrameChanged: null this");
-
-	return this->animationFrameChanged;
 }

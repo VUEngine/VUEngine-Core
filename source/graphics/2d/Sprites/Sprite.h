@@ -97,6 +97,8 @@
         /* int hbiasAmplitude; */																		\
         bool renderFlag;																				\
         bool hidden;																					\
+        /* update animation */																            \
+        bool writeAnimationFrame;															            \
 
 __CLASS(Sprite);
 

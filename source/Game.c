@@ -281,13 +281,6 @@ void Game_start(Game this, GameState state)
 	HardwareManager_displayOn(HardwareManager_getInstance());
     HardwareManager_lowerBrightness(HardwareManager_getInstance());
 
-    // perform a dummy read to flush the input in the real hardware
-    KeypadManager_enable(this->keypadManager);
-    KeypadManager_read(this->keypadManager);
-	KeypadManager_clear(this->keypadManager);
-	KeypadManager_flush(this->keypadManager);
-    KeypadManager_disable(this->keypadManager);
-
 	if(!StateMachine_getCurrentState(this->stateMachine))
 	{
 		// register start time for auto pause check

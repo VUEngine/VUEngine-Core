@@ -89,7 +89,7 @@ s8 AnimationController_getFrameDelay(AnimationController this);
 void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay);
 u8 AnimationController_geFrameDelayDelta(AnimationController this);
 void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDelayDelta);
-void AnimationController_animate(AnimationController this);
+bool AnimationController_animate(AnimationController this);
 void AnimationController_fx(AnimationController this);
 bool AnimationController_update(AnimationController this, Clock clock);
 u8 AnimationController_getRows(AnimationController this);
@@ -97,13 +97,13 @@ u8 AnimationController_getCols(AnimationController this);
 int AnimationController_getMapType(AnimationController this);
 void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction);
 const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
-void AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
+bool AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
 void AnimationController_stop(AnimationController this);
 bool AnimationController_isPlayingFunction(AnimationController this, const char* functionName);
 bool AnimationController_isPlaying(AnimationController this);
 void AnimationController_write(AnimationController this);
 void AnimationController_pause(AnimationController this, bool pause);
-bool AnimationController_didAnimationFrameChanged(AnimationController this);
+
 
 
 #endif
