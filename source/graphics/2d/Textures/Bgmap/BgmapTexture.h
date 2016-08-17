@@ -76,8 +76,8 @@ __CLASS_NEW_DECLARE(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition
 
 void BgmapTexture_destructor(BgmapTexture this);
 void BgmapTexture_write(BgmapTexture this);
-u8 BgmapTexture_getXOffset(BgmapTexture this);
-u8 BgmapTexture_getYOffset(BgmapTexture this);
+s8 BgmapTexture_getXOffset(BgmapTexture this);
+s8 BgmapTexture_getYOffset(BgmapTexture this);
 u8 BgmapTexture_getBgmapSegment(BgmapTexture this);
 void BgmapTexture_increaseUsageCount(BgmapTexture this);
 bool BgmapTexture_decreaseUsageCount(BgmapTexture this);

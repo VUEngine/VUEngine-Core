@@ -267,19 +267,19 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 
 
 // get texture's x offset within bgmap mem
-u8 BgmapTexture_getXOffset(BgmapTexture this)
+s8 BgmapTexture_getXOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getXOffset: null this");
 
-	return abs(BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id));
+	return BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 }
 
 // get texture's y offset within bgmap mem
-u8 BgmapTexture_getYOffset(BgmapTexture this)
+s8 BgmapTexture_getYOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getYOffset: null this");
 
-	return abs(BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id));
+	return BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 }
 
 //get texture's bgmap segment

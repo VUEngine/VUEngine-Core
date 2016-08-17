@@ -149,9 +149,6 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 
 			break;
 	}
-
-	// register with sprite manager
-	SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 }
 
 // class's destructor
@@ -163,9 +160,12 @@ void BgmapSprite_destructor(BgmapSprite this)
 	// make sure I'm hidden
 	__VIRTUAL_CALL(Sprite, hide, this);
 
-	// remove from sprite manager before I become invalid
-	// and the VPU triggers a new render cycle
-	SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+    if(this->worldLayer)
+    {
+        // remove from sprite manager before I become invalid
+        // and the VPU triggers a new render cycle
+        SpriteManager_relinquishWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+	}
 
 	// if affine or bgmap
 	if(__WORLD_AFFINE & this->head)
@@ -255,7 +255,11 @@ void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
 	ASSERT(this, "BgmapSprite::setPosition: null this");
 
 	this->drawSpec.position = *position;
-	this->initialized = true;
+
+	if(!this->worldLayer)
+	{
+    	Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+    }
 }
 
 void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
@@ -276,7 +280,12 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 	this->drawSpec.position.y -= this->halfHeight;
 
 	this->renderFlag |= __UPDATE_G;
-	this->initialized = true;
+
+	if(!this->worldLayer)
+	{
+		// register with sprite manager
+    	Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+    }
 }
 
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
@@ -312,7 +321,7 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
 	// if render flag is set
-	if(this->renderFlag && this->initialized)
+	if(this->renderFlag && this->worldLayer)
 	{
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
@@ -387,9 +396,9 @@ void BgmapSprite_render(BgmapSprite this)
                 worldPointer->w = width;
             }
 
-            // apply scaling
-            worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x))));
-            worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y))));
+            // apply scaling and add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
+            worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x)))) + 1;
+            worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y)))) + 1;
 
              if(0 <= this->paramTableRow)
             {

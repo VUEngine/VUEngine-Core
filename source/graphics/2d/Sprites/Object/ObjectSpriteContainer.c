@@ -104,7 +104,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
     	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 
         // register to sprite manager
-        SpriteManager_addSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+    	Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
     }
 }
 
@@ -114,10 +114,10 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
-    if(this->totalObjects)
+    if(this->totalObjects && this->worldLayer)
     {
         // remove from sprite manager
-        SpriteManager_removeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+        SpriteManager_relinquishWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
     }
 
 	VirtualNode node = this->objectSprites->head;
@@ -177,8 +177,6 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 
 	this->removingObjectSprite = true;
-
-	__VIRTUAL_CALL(Sprite, hide, objectSprite);
 
 	// hide it immdiately
 	if(0 <= objectSprite->objectIndex)
@@ -282,14 +280,11 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 
 	this->z = position->z;
 	this->renderFlag |= __UPDATE_G;
-	this->initialized = true;
 }
 
-void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position __attribute__ ((unused)))
+void ObjectSpriteContainer_position(ObjectSpriteContainer this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
 {
 	ASSERT(this, "ObjectSpriteContainer::position: null this");
-
-	this->initialized = true;
 }
 
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
@@ -390,7 +385,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
 	//if render flag is set
-	if(this->renderFlag)
+	if(this->renderFlag && this->worldLayer)
 	{
 		// make sure to not render again
 		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects? this->head | __WORLD_OVR : __WORLD_OFF;
@@ -431,7 +426,6 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 
 	this->renderFlag = true;
 	this->hidden = false;
-	this->initialized = false;
 }
 
 void ObjectSpriteContainer_hide(ObjectSpriteContainer this)

@@ -58,7 +58,6 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->texture = NULL;
 	this->displacement = (VBVec3D){0, 0, 0};
 	this->hidden = false;
-	this->initialized = false;
 }
 
 // class's destructor
@@ -122,10 +121,6 @@ void Sprite_show(Sprite this)
 
 	this->renderFlag = __UPDATE_HEAD;
 	this->hidden = false;
-
-	// since I can have been moved after being hidden, I need to force
-	// a complete update before showing up
-	this->initialized = false;
 }
 
 // hide

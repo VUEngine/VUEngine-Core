@@ -283,15 +283,15 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 	}
 }
 
-void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
+u8 SpriteManager_getWorldLayer(SpriteManager this, Sprite sprite)
 {
-	ASSERT(this, "SpriteManager::addSprite: null this");
-	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::addSprite: adding no sprite");
+	ASSERT(this, "SpriteManager::getWorldLayer: null this");
+	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::getWorldLayer: adding no sprite");
 
 #ifdef __DEBUG
 	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
 
-	ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::addSprite: sprite already registered");
+	ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::getWorldLayer: sprite already registered");
 
 	if(!alreadyLoadedSpriteNode)
 	{
@@ -323,7 +323,7 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
-		u8 layer = __TOTAL_LAYERS - 1;
+		s8 layer = __TOTAL_LAYERS - 1;
 
 		VirtualNode head = this->sprites->head;
 
@@ -332,26 +332,30 @@ void SpriteManager_addSprite(SpriteManager this, Sprite sprite)
 			layer = (__SAFE_CAST(Sprite, head->data))->worldLayer - 1;
 		}
 
+    	NM_ASSERT(0 < layer, "SpriteManager::getWorldLayer: no more layers");
+
 		// add to the front: last element corresponds to the 31 WORLD
 		VirtualList_pushFront(this->sprites, sprite);
-
-		Sprite_setWorldLayer(sprite, layer);
 
 		this->node = NULL;
 		this->nextNode = NULL;
 
+		return (u8)layer;
+
 #ifdef __DEBUG
 	}
 #endif
+
+    return 0;
 }
 
 // remove sprite
-void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
+void SpriteManager_relinquishWorldLayer(SpriteManager this, Sprite sprite)
 {
-	ASSERT(this, "SpriteManager::removeSprite: null this");
-	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::removeSprite: removing no sprite");
+	ASSERT(this, "SpriteManager::relinquishWorldLayer: null this");
+	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::relinquishWorldLayer: removing no sprite");
 
-	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::removeSprite: sprite not found");
+	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::relinquishWorldLayer: sprite not found");
 
 	// check if exists
 	if(VirtualList_removeElement(this->sprites, sprite))
@@ -395,7 +399,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			NM_ASSERT(spriteLayer == sprite->worldLayer + 1, "SpriteManager::removeSprite: wrong layers");
+			NM_ASSERT(spriteLayer == sprite->worldLayer + 1, "SpriteManager::relinquishWorldLayer: wrong layers");
 
 			spriteLayer--;
 
@@ -413,7 +417,7 @@ void SpriteManager_removeSprite(SpriteManager this, Sprite sprite)
 	}
 	else
 	{
-		ASSERT(false, "SpriteManager::removeSprite: sprite not registered");
+		ASSERT(false, "SpriteManager::relinquishWorldLayer: sprite not registered");
 	}
 }
 
@@ -508,7 +512,7 @@ void SpriteManager_render(SpriteManager this)
             // and the previous end world is assigned to it
             _worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 
-            this->freeLayer = sprite->initialized && sprite->worldLayer < this->freeLayer ? sprite->worldLayer: this->freeLayer;
+            this->freeLayer = sprite->worldLayer && sprite->worldLayer < this->freeLayer ? sprite->worldLayer: this->freeLayer;
         }
     }
 

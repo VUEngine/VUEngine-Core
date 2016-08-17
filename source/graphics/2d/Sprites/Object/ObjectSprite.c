@@ -168,7 +168,6 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 	this->position = *position;
 
 	this->renderFlag |= __UPDATE_G;
-	this->initialized = true;
 
 	ObjectSprite_checkForContainer(this);
 }
@@ -189,7 +188,6 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 	this->position.z = position->z;
 
 	this->renderFlag |= __UPDATE_G;
-	this->initialized = true;
 
 	ObjectSprite_checkForContainer(this);
 }
@@ -249,11 +247,6 @@ void ObjectSprite_render(ObjectSprite this)
 		if(!this->texture->written)
 		{
 			ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
-		}
-
-		if(!this->initialized)
-		{
-		//	return;
 		}
 
 		int cols = this->texture->textureDefinition->cols;

@@ -77,7 +77,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 
 	this->mSpriteDefinition = mSpriteDefinition;
 
-	ASSERT(!this->texture, "MBgmapSprite::constructor: texture alrea");
+	ASSERT(!this->texture, "MBgmapSprite::constructor: texture already loaded");
 	this->textures = NULL;
 	MBgmapSprite_loadTextures(this);
 
@@ -236,7 +236,12 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	}
 
 	this->renderFlag |= __UPDATE_G | __UPDATE_M;
-	this->initialized = true;
+
+	if(!this->worldLayer)
+	{
+		// register with sprite manager
+    	Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+    }
 }
 
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement)
@@ -357,7 +362,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 	ASSERT(this, "MBgmapSprite::render: null this");
 
 	// if render flag is set
-	if(this->texture && this->renderFlag && this->initialized)
+	if(this->texture && this->renderFlag && this->worldLayer)
 	{
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];

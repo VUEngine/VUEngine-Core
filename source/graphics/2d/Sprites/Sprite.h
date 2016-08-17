@@ -97,7 +97,6 @@
         /* int hbiasAmplitude; */																		\
         bool renderFlag;																				\
         bool hidden;																					\
-        bool initialized;																				\
 
 __CLASS(Sprite);
 

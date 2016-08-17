@@ -277,8 +277,16 @@ void Game_start(Game this, GameState state)
 	// intialize SRAM
 	SRAMManager_getInstance();
 
+    // initialize VPU and turn of the brightness
 	HardwareManager_displayOn(HardwareManager_getInstance());
     HardwareManager_lowerBrightness(HardwareManager_getInstance());
+
+    // perform a dummy read to flush the input in the real hardware
+    KeypadManager_enable(this->keypadManager);
+    KeypadManager_read(this->keypadManager);
+	KeypadManager_clear(this->keypadManager);
+	KeypadManager_flush(this->keypadManager);
+    KeypadManager_disable(this->keypadManager);
 
 	if(!StateMachine_getCurrentState(this->stateMachine))
 	{
@@ -579,7 +587,6 @@ static void Game_handleInput(Game this)
 				this->nextState = NULL;
 			}
 
-Printing_text(Printing_getInstance(), "Got to animator", 1, 10, NULL);
 			this->nextState = __SAFE_CAST(GameState, AnimationEditorState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
