@@ -75,6 +75,7 @@ void Object_destructor(Object this);
 bool Object_handleMessage(Object this, void* telegram);
 void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName);
 void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName);
+void Object_removeEventListeners(Object this, Object listener, char* eventName);
 void Object_fireEvent(Object this, char* eventName);
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
 const void* Object_getVTable(Object this);
