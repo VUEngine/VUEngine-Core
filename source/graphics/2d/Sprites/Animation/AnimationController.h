@@ -34,7 +34,6 @@
 
 // event
 #define __EVENT_ANIMATION_COMPLETE				"animationComplete"
-#define __EVENT_ANIMATION_FRAME_CHANGED			"animationFrameChanged"
 
 
 //---------------------------------------------------------------------------------------------------------

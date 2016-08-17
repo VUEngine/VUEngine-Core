@@ -160,13 +160,12 @@ void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDe
 	this->frameDelayDelta = frameDelayDelta << __FRAME_CYCLE;
 }
 
-// animate the frame
 bool AnimationController_animate(AnimationController this)
 {
 	ASSERT(this, "AnimationController::animate: null this");
 
 	// first check for a valid animation function
-	if(!this->animationFunction)
+	if(!this->playing || !this->animationFunction)
 	{
 		return false;
 	}
@@ -178,46 +177,6 @@ bool AnimationController_animate(AnimationController this)
 		return false;
 	}
 
-	// show the next frame
-	if(this->actualFrame >= this->animationFunction->numberOfFrames)
-	{
-		// the last frame has been reached
-		if(this->animationFunction->onAnimationComplete)
-		{
-			Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_COMPLETE);
-		}
-
-		// rewind to first frame
-		this->actualFrame = 0;
-
-		// if the animation is not a loop
-		if(!this->animationFunction->loop)
-		{
-			// not playing anymore
-			this->playing = false;
-
-			// invalidate animation
-			this->actualFrame = -1;
-
-			return false;
-		}
-	}
-
-	bool animationFrameChanged = false;
-
-	// if the frame has changed
-	if(this->actualFrame != this->previousFrame)
-	{
-        animationFrameChanged = true;
-
-			// don't write animation each time, only when the animation
-		// has changed
-		this->previousFrame = this->actualFrame;
-
-        // inform about the change of animation frame to any listener
-        Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_FRAME_CHANGED);
-	}
-
 	this->frameDelay -= this->frameDelayDelta;
 
 	// reduce frame delay count
@@ -225,6 +184,29 @@ bool AnimationController_animate(AnimationController this)
 	{
 		// incrase the frame to show
 		this->previousFrame = this->actualFrame++;
+
+        // check if the actual frame is out of bounds
+        if(this->actualFrame >= this->animationFunction->numberOfFrames)
+        {
+            // the last frame has been reached
+            if(this->animationFunction->onAnimationComplete)
+            {
+                Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_COMPLETE);
+            }
+
+            // rewind to first frame
+            this->actualFrame = 0;
+
+            // if the animation is not a loop
+            if(!this->animationFunction->loop)
+            {
+                // not playing anymore
+                this->playing = false;
+
+                // invalidate animation
+                this->actualFrame = this->animationFunction->numberOfFrames - 1;
+            }
+        }
 
 		// reset frame delay
 		this->frameDelay = this->animationFunction->delay;
@@ -239,11 +221,12 @@ bool AnimationController_animate(AnimationController this)
 			// pick up a random delay
 			this->frameDelay = 1 + Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
 		}
+
+		return true;
 	}
 
-	return animationFrameChanged;
+    return false;
 }
-
 // render frame
 /*
 bool AnimationController_update(AnimationController this, Clock clock)
