@@ -138,6 +138,30 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 	}
 }
 
+// remove event listeners without specifying method
+void Object_removeEventListeners(Object this, Object listener, char* eventName)
+{
+	ASSERT(this, "Object::removeEventListeners: null this");
+
+	if(this->events)
+	{
+		VirtualNode node = this->events->head;
+
+		for(; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+			if(listener == event->listener && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+			{
+				VirtualList_removeElement(this->events, event);
+
+				__DELETE_BASIC(event);
+				break;
+			}
+		}
+	}
+}
+
 // fire event
 void Object_fireEvent(Object this,  char* eventName)
 {
