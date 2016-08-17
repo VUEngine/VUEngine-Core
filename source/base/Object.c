@@ -156,7 +156,6 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 				VirtualList_removeElement(this->events, event);
 
 				__DELETE_BASIC(event);
-				break;
 			}
 		}
 	}
