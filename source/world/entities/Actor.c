@@ -31,7 +31,6 @@
 #include <Cuboid.h>
 #include <Prototypes.h>
 #include <Game.h>
-#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

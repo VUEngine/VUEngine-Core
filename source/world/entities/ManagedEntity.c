@@ -24,7 +24,6 @@
 #include <Optics.h>
 #include <Shape.h>
 #include <MBgmapSprite.h>
-#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

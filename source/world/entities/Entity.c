@@ -30,7 +30,6 @@
 #include <CollisionManager.h>
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
-#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------

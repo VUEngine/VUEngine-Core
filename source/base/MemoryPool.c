@@ -37,13 +37,13 @@
 
 
 // MemoryPool's defines
-#define __BLOCK_DEFINITION(BlockSize, Elements)											\
-	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 									\
+#define __BLOCK_DEFINITION(BlockSize, Elements)											                \
+	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 									                \
 
-#define __SET_MEMORY_POOL_ARRAY(BlockSize)												\
-	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];						\
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);			\
-	this->poolSizes[pool++][eBlockSize] = BlockSize;									\
+#define __SET_MEMORY_POOL_ARRAY(BlockSize)												                \
+	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];						                \
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);			                \
+	this->poolSizes[pool++][eBlockSize] = BlockSize;									                \
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ static void MemoryPool_reset(MemoryPool this);
 #define __MEMORY_POOL_SINGLETON(ClassName)																\
 																								        \
 	/* declare the static instance */															        \
-	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;                     \
+	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;                    \
 																								        \
 	/* a flag to know when to allow construction */												        \
 	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE                                \

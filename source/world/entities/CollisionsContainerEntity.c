@@ -21,7 +21,6 @@
 
 #include <string.h>
 #include <CollisionsContainerEntity.h>
-#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
