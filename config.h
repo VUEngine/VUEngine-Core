@@ -247,14 +247,14 @@
 #define __GRAVITY								13000
 
 // number of bodies to check for gravity on each cycle
-#define __BODIES_TO_CHECK_FOR_GRAVITY		10
+#define __BODIES_TO_CHECK_FOR_GRAVITY		    10
 
 #define __MAX_SHAPES_PER_LEVEL					32
 #define __MAX_BODIES_PER_LEVEL					32
 
 // used to make an approximation of Lorentz' contraction
 // to handle collisions on very fast moving shapes
-#define __LIGHT_SPEED		ITOFIX19_13(50000)
+#define __LIGHT_SPEED		                    ITOFIX19_13(50000)
 
 
 //---------------------------------------------------------------------------------------------------------
