@@ -54,8 +54,6 @@
         fix19_13 previousTime;																			\
         /* body to check for gravity */																	\
         VirtualNode nextBodyToCheckForGravity;															\
-        /* flag to test gravity on bodies */															\
-        int checkForGravity;                                                                            \
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -93,7 +91,6 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->friction = 0;
 	this->elapsedTime = 0;
 	this->previousTime = 0;
-    this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
 }
 
 // class's destructor
@@ -296,13 +293,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
     if(this->previousTime)
     {
         this->elapsedTime = elapsedTime;
-/*
-        if(0 >= --this->checkForGravity)
-        {
-            this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
-            PhysicalWorld_checkForGravity(this);
-        }
-*/
+
         PhysicalWorld_checkForGravity(this);
 
         VirtualNode node = this->activeBodies->head;
@@ -336,7 +327,6 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualList_clear(this->activeBodies);
 	VirtualList_clear(this->removedBodies);
 
-    this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
     this->elapsedTime = 0;
     this->previousTime = 0;
 }

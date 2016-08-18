@@ -246,9 +246,6 @@
 
 #define __GRAVITY								13000
 
-// number of game cycles to wait before checking for gravity on each cycle
-#define __GRAVITY_CHECK_CYCLE_DELAY	(__TARGET_FPS / 10)
-
 // number of bodies to check for gravity on each cycle
 #define __BODIES_TO_CHECK_FOR_GRAVITY		10
 
