@@ -648,10 +648,7 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
 
-	if(this->param)
-	{
-		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
-	}
+	this->paramTableRow = 0;
 }
 
 void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
@@ -659,8 +656,5 @@ void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
 
-	if(this->param)
-	{
-		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
-	}
+	this->paramTableRow = 0;
 }

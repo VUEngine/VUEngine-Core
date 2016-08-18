@@ -48,6 +48,7 @@
 		__VIRTUAL_DEC(ClassName, bool, updateSpriteTransformations);									\
 		__VIRTUAL_DEC(ClassName, void, initialize);														\
 		__VIRTUAL_DEC(ClassName, void, ready);															\
+		__VIRTUAL_DEC(ClassName, void, getAxisForFlipping);												\
 
 #define Entity_SET_VTABLE(ClassName)																	\
 		Container_SET_VTABLE(ClassName)																	\
@@ -71,6 +72,7 @@
 		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);												\
 		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
+		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 
 #define Entity_ATTRIBUTES																				\
         /* it is derived from */																		\
@@ -180,6 +182,6 @@ void Entity_hide(Entity this);
 void Entity_suspend(Entity this);
 void Entity_resume(Entity this);
 int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
-
+u8 Entity_getAxisForFlipping(Entity this);
 
 #endif

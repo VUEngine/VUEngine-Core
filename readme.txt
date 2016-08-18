@@ -42,11 +42,11 @@ Some source code in this release that may not be covered by the GPL:
 GENERAL NOTES
 =============
 
-Description: 
-	
-	VBJaEngine is an attempt to provide other indie programmers the base 
-	functionality to facilitate the creation of content for the Nintendo 
-	Virtual Boy by taking care of most hardware management task to create 
+Description:
+
+	VBJaEngine is an attempt to provide other indie programmers the base
+	functionality to facilitate the creation of content for the Nintendo
+	Virtual Boy by taking care of most hardware management task to create
 	3D games with 2D graphics or "sprites".
 
 
@@ -63,7 +63,7 @@ Features:
 		* Easy to use printing functions to facilitate debug
 	� Debugging
 		* Memory usage
-		* Hardware registers' usage 
+		* Hardware registers' usage
 		* Real time tools to check:
 			- Char memory status
 			- BGMap memory status
@@ -108,7 +108,7 @@ Features:
 		* Entity: a container with a list of sprites (a "visual object")
 		* InGameEntity: interactive entities in the levels (collision detection)
 		* AnimatedInGameEntity: an entity with animated sprites.
-		* InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.) 
+		* InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
 		* Actor: animated in game entity which coordinates a physical body with a collision shape
 		* Image: handy entity to display non interactive images
 		* ScrollBackground: infinite loop image (currently only supports looping over the x axe)
@@ -130,11 +130,11 @@ http://www.vr32.de/modules/dokuwiki/doku.php?id=vbjaengine_programmer_s_guide
 COMPILING ON WIN32
 ==================
 
-Requirements: 
+Requirements:
 
 	� Minimal Linux environment (i.e: CygWin) that includes make and git
-	
-	� GCCVB 4.4.2 for V810 
+
+	� GCCVB 4.4.2 for V810
 
 
 1. Create a CygWin environment variable called VBDE which must point to the VBJaEngine's parent folder.
@@ -143,7 +143,7 @@ Requirements:
 
 	$ cp -f /usr/local/v810/lib/crt0.o /usr/local/v810/lib/crt0.o.bak
 	$ cp -f ../vbjaengine/lib/crt0.o /usr/local/v810/lib/crt0.o
- 
+
 3. To compile the execute the following command inside the engine's folder:
 
 	$ make
@@ -155,22 +155,26 @@ ACKNOWLEDGMENTS
 ==================
 
 	� David Tucker, for always being open to answer all my questions (even the silly ones).
-	
+
 	� DogP, for all the performace tips which really helped this project to be feasible, and
-	  for providing the code necessary to make sound support possible in the engine. 
-	
+	  for providing the code necessary to make sound support possible in the engine.
+
 	� Christian Radke (KR155E):
 		* Debugging and testing
 		* Documentation
 		* Engine's features and structure advisor
-	  
-	� RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums 
-	  who always are kind enough to share their knowledge. 
+
+	� RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums
+	  who always are kind enough to share their knowledge.
+
+	� ElmerPCFX, for giving access to a much better compiler through his GCC 4.7 patches, and for all
+	  the tips, suggestions and knowledge about best practices and bad practices (of which the engine was
+	  previously plaged with).
 
 	� Libgccvb has been refactored to accomodate better to this engine, all it's code is credited to
 	  it's creators and Jorge Eremiev doesn't take any credit on it.
 
-==================  
+==================
 
 V810 is a trade mark of NEC.
 Virtual Boy is a trade mark of Nintendo.

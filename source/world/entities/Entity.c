@@ -1109,7 +1109,9 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 {
 	ASSERT(this, "Entity::setSpritesDirection: null this");
 
-	if(this->sprites)
+	u8 axisForFlipping = __VIRTUAL_CALL(Entity, getAxisForFlipping, this);
+
+	if(this->sprites && (axis & ))
 	{
 		VirtualNode node = this->sprites->head;
 
@@ -1206,3 +1208,7 @@ int Entity_canMoveOverAxis(Entity this __attribute__ ((unused)), const Accelerat
 	return __XAXIS | __YAXIS | __ZAXIS;
 }
 
+u8 Entity_getAxisForFlipping(Entity this)
+{
+	return __XAXIS | __YAXIS;
+}
