@@ -23,6 +23,7 @@
 #include <Game.h>
 #include <Screen.h>
 #include <SpriteManager.h>
+#include <ParticleRemover.h>
 
 
 //---------------------------------------------------------------------------------------------------------
