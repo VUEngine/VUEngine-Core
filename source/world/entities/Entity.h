@@ -48,7 +48,7 @@
 		__VIRTUAL_DEC(ClassName, bool, updateSpriteTransformations);									\
 		__VIRTUAL_DEC(ClassName, void, initialize);														\
 		__VIRTUAL_DEC(ClassName, void, ready);															\
-		__VIRTUAL_DEC(ClassName, void, getAxisForFlipping);												\
+		__VIRTUAL_DEC(ClassName, u8, getAxisForFlipping);												\
 
 #define Entity_SET_VTABLE(ClassName)																	\
 		Container_SET_VTABLE(ClassName)																	\

@@ -1111,7 +1111,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 
 	u8 axisForFlipping = __VIRTUAL_CALL(Entity, getAxisForFlipping, this);
 
-	if(this->sprites && (axis & ))
+	if(this->sprites && (axis & axisForFlipping))
 	{
 		VirtualNode node = this->sprites->head;
 
