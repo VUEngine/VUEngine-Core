@@ -104,7 +104,11 @@ void ParticleRemover_update(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::update: null this");
 
-    if(0 >= --this->leftRemoveDelayCicles)
+	if(0 > this->removalDelayCicles)
+	{
+        ParticleRemover_reset(this);
+    }
+    else if(0 >= --this->leftRemoveDelayCicles)
     {
         if(this->particles->head)
         {
