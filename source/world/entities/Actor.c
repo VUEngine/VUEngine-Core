@@ -308,12 +308,12 @@ int Actor_changedDirection(Actor this, int axis)
 
 		case __YAXIS:
 
-			return this->direction.x != this->previousDirection.x;
+			return this->direction.y != this->previousDirection.y;
 			break;
 
 		case __ZAXIS:
 
-			return this->direction.x != this->previousDirection.x;
+			return this->direction.z != this->previousDirection.z;
 			break;
 	}
 
