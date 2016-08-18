@@ -1208,7 +1208,7 @@ int Entity_canMoveOverAxis(Entity this __attribute__ ((unused)), const Accelerat
 	return __XAXIS | __YAXIS | __ZAXIS;
 }
 
-u8 Entity_getAxisForFlipping(Entity this)
+u8 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
 {
 	return __XAXIS | __YAXIS;
 }
