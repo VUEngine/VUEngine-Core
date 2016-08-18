@@ -76,7 +76,7 @@ enum MessagesTypes
 	kKeyReleased,
 	kKeyHold,
 
-	// don't place messages below this:
+	// don't place messages below this
 	kLastEngineMessage
 };
 

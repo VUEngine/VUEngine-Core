@@ -138,6 +138,31 @@ void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unus
 	}
 }
 
+Brightness ScreenMovementManager_getDefaultTargetBrightness(ScreenMovementManager this __attribute__ ((unused)))
+{
+	ASSERT(this, "ScreenMovementManager::getDefaultTargetBrightness: null this");
+
+    // default brightness settings
+    Brightness brightness = (Brightness) {
+        __BRIGHTNESS_DARK_RED,
+        __BRIGHTNESS_MEDIUM_RED,
+        __BRIGHTNESS_BRIGHT_RED,
+    };
+
+    // if exists, get brightness settings from stage definition
+    Stage stage = GameState_getStage(Game_getCurrentState(Game_getInstance()));
+    if(stage != NULL)
+    {
+        StageDefinition* stageDefinition = Stage_stageDefinition(stage);
+        brightness = stageDefinition->rendering.colorConfig.brightness;
+    }
+
+    // convert brightness settings to vip format
+    brightness.brightRed -= (brightness.darkRed + brightness.mediumRed);
+
+    return brightness;
+}
+
 void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, int duration)
 {
 	ASSERT(this, "ScreenMovementManager::startEffect: null this");
@@ -145,22 +170,28 @@ void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, i
 	switch(effect)
 	{
 		case kFadeIn:
+        {
 
 #ifdef __DEBUG_NO_FADE
             return;
 #endif
 
-            TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeIn);
+            Brightness fadeInTargetBrightness = ScreenMovementManager_getDefaultTargetBrightness(this);
+            TimerManager_repeatMethodCall(TimerManager_getInstance(), fadeInTargetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeIn);
 			break;
+        }
 
 		case kFadeOut:
+		{
 
 #ifdef __DEBUG_NO_FADE
             return;
 #endif
 
-            TimerManager_repeatMethodCall(TimerManager_getInstance(), 32, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeOut);
+            Brightness fadeOutTargetBrightness = ScreenMovementManager_getDefaultTargetBrightness(this);
+            TimerManager_repeatMethodCall(TimerManager_getInstance(), fadeOutTargetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeOut);
 			break;
+        }
 	}
 }
 

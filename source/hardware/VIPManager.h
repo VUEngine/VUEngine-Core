@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VPU_MANAGER_H_
-#define VPU_MANAGER_H_
+#ifndef VIP_MANAGER_H_
+#define VIP_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -149,7 +149,8 @@ typedef struct WorldAttributes
 
 // pointers to access the VRAM base address
 static WorldAttributes* const _worldAttributesBaseAddress   =   (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
-static u16* const	_columnTableBaseAddress                 =   (u16*)0x0003DC00;				// Base address of Column Tables
+static u16* const	_columnTableBaseAddressLeft             =   (u16*)0x0003DC00; // base address of Column Table (Left Eye)
+static u16* const	_columnTableBaseAddressRight            =   (u16*)0x0003DE00; // base address of Column Table (Right Eye)
 static u16* const	_objecAttributesBaseAddress             =   (u16*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objecAttributesBaseAddress
 
 // "vbSetWorld" header flags
@@ -187,10 +188,47 @@ extern u32 _vram_data_start;
 #define	__COLOR_MEDIUM_RED		0x02
 #define	__COLOR_BRIGHT_RED		0x03
 
-typedef struct PaletteConfig
+typedef struct ColumnTableDefinition
 {
+	// defines whether the definition's first half should be mirrored (true)
+	// or if a full 256 entry table is provided (false)
+	bool mirror;
+
+	// column table definition
+	BYTE columnTable[];
+
+} ColumnTableDefinition;
+
+typedef const ColumnTableDefinition ColumnTableROMDef;
+
+typedef struct BrightnessRepeatDefinition
+{
+	// defines whether the definition's first half should be mirrored (true)
+	// or if a full 96 entry table is provided (false)
+	bool mirror;
+
+	// brightness repeat values
+	u8 brightnessRepeat[];
+
+} BrightnessRepeatDefinition;
+
+typedef const BrightnessRepeatDefinition BrightnessRepeatROMDef;
+
+typedef struct ColorConfig
+{
+    // background color
 	u8 backgroundColor;
 
+    // brightness config
+    Brightness brightness;
+
+    // brightness repeat values
+    BrightnessRepeatDefinition* brightnessRepeat;
+
+} ColorConfig;
+
+typedef struct PaletteConfig
+{
 	struct Bgmap
 	{
 		u8 gplt0;
@@ -208,19 +246,6 @@ typedef struct PaletteConfig
 	} object;
 
 } PaletteConfig;
-
-typedef struct ColumnTableDefinition
-{
-	// defines whether the definitions first half should be mirrored (true)
-	// or if a full 256 entry table is provided (false)
-	bool mirror;
-
-	// column table definition
-	const u16* columnTable;
-
-} ColumnTableDefinition;
-
-typedef const ColumnTableDefinition ColumnTableROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -261,10 +286,12 @@ void VIPManager_clearScreen(VIPManager this);
 void VIPManager_clearBgmap(VIPManager this, int bgmap, int size);
 void VIPManager_setupColumnTable(VIPManager this, ColumnTableDefinition* columnTableDefinition);
 void VIPManager_useInternalColumnTable(VIPManager this, bool internal);
+void VIPManager_setupBrightnessRepeat(VIPManager this, BrightnessRepeatDefinition* brightnessRepeat);
 void VIPManager_setBackgroundColor(VIPManager this, u8 color);
 void VIPManager_addPostProcessingEffect(VIPManager this, void (*postProcessingEffect) (u32));
 void VIPManager_removePostProcessingEffect(VIPManager this, void (*postProcessingEffect) (u32));
 void VIPManager_removePostProcessingEffects(VIPManager this);
 void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this);
+
 
 #endif
