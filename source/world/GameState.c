@@ -125,7 +125,11 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 
 	this->stage = NULL;
 
-	Clock_stop(this->inGameClock);
+    // make sure all my particles are deleted before I'm done
+    ParticleRemover_reset(ParticleRemover_getInstance());
+
+    // stop my clocks
+    GameState_stopClocks(this);
 }
 
 // state's suspend
@@ -396,6 +400,15 @@ void GameState_startClocks(GameState this)
 	Clock_start(this->inGameClock);
 	Clock_start(this->animationsClock);
 	Clock_start(this->physicsClock);
+}
+
+void GameState_stopClocks(GameState this)
+{
+	ASSERT(this, "GameState::stopClocks: null this");
+
+	Clock_stop(this->inGameClock);
+	Clock_stop(this->animationsClock);
+	Clock_stop(this->physicsClock);
 }
 
 void GameState_pauseClocks(GameState this)

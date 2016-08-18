@@ -96,6 +96,7 @@ Clock GameState_getInGameClock(GameState this);
 Clock GameState_getAnimationsClock(GameState this);
 Clock GameState_getPhysicsClock(GameState this);
 void GameState_startClocks(GameState this);
+void GameState_stopClocks(GameState this);
 void GameState_pauseClocks(GameState this);
 void GameState_resumeClocks(GameState this);
 void GameState_startInGameClock(GameState this);
