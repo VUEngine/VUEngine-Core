@@ -240,7 +240,10 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
         this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 
-	BgmapSprite_invalidateParamTable(this);
+	if(this->param)
+	{
+		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
+	}
 }
 
 VBVec2D BgmapSprite_getPosition(BgmapSprite this)
