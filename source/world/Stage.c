@@ -35,6 +35,7 @@
 #include <ParamTableManager.h>
 #include <VIPManager.h>
 #include <MBackgroundManager.h>
+#include <ParticleRemover.h>
 
 #include <debugConfig.h>
 
@@ -320,6 +321,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// setup the column table
 	HardwareManager_setupColumnTable(HardwareManager_getInstance(), stageDefinition->rendering.columnTableDefinition);
+
+	// set particle removal delay
+	ParticleRemover_setRemovalDelayCicles(ParticleRemover_getInstance(), stageDefinition->streaming.particleRemovalDelayCicles);
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));

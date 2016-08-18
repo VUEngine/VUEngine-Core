@@ -622,7 +622,6 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 	ASSERT(this->body, "Actor::resolveCollision: null body");
 	ASSERT(collidingSpatialObjects, "Actor::resolveCollision: collidingSpatialObjects");
 
-
 	if(this->collisionSolver)
 	{
 		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);

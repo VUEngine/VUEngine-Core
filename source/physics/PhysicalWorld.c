@@ -238,29 +238,32 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 			// check if necessary to apply gravity
 			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
 
-			int movingState = Body_isMoving(body);
+            if(gravitySensibleAxis)
+            {
+                int movingState = Body_isMoving(body);
 
-			gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
+                gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 
-			if(gravitySensibleAxis)
-			{
-				// Must account for the FPS to avoid situations is which
-				// a collision is not detected when a body starts to fall
-				// and doesn't have enough time to detect a shape below
-				// when moving from one shape over another
-				Acceleration gravity =
-				{
-					gravitySensibleAxis & __XAXIS ? this->gravity.x >> (__FRAME_CYCLE): 0,
-					gravitySensibleAxis & __YAXIS ? this->gravity.y >> (__FRAME_CYCLE): 0,
-					gravitySensibleAxis & __ZAXIS ? this->gravity.z >> (__FRAME_CYCLE): 0
-				};
+                if(gravitySensibleAxis)
+                {
+                    // Must account for the FPS to avoid situations is which
+                    // a collision is not detected when a body starts to fall
+                    // and doesn't have enough time to detect a shape below
+                    // when moving from one shape over another
+                    Acceleration gravity =
+                    {
+                        gravitySensibleAxis & __XAXIS ? this->gravity.x >> (__FRAME_CYCLE): 0,
+                        gravitySensibleAxis & __YAXIS ? this->gravity.y >> (__FRAME_CYCLE): 0,
+                        gravitySensibleAxis & __ZAXIS ? this->gravity.z >> (__FRAME_CYCLE): 0
+                    };
 
-				if(gravity.x || gravity.y || gravity.z)
-				{
-					// add gravity
-					Body_applyGravity(body, &gravity);
-				}
-			}
+                    if(gravity.x || gravity.y || gravity.z)
+                    {
+                        // add gravity
+                        Body_applyGravity(body, &gravity);
+                    }
+                }
+            }
 		}
 	}
 
@@ -293,12 +296,14 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
     if(this->previousTime)
     {
         this->elapsedTime = elapsedTime;
-
+/*
         if(0 >= --this->checkForGravity)
         {
             this->checkForGravity = __GRAVITY_CHECK_CYCLE_DELAY;
             PhysicalWorld_checkForGravity(this);
         }
+*/
+        PhysicalWorld_checkForGravity(this);
 
         VirtualNode node = this->activeBodies->head;
 

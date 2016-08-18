@@ -120,6 +120,7 @@ typedef struct StageDefinition
 		int loadPadding;
 		int unloadPadding;
 		int streamingAmplitude;
+		int particleRemovalDelayCicles;
 
 	} streaming;
 

@@ -21,6 +21,7 @@
 
 #include <ParticleSystem.h>
 #include <Game.h>
+#include <ParticleRemover.h>
 #include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
@@ -109,13 +110,15 @@ void ParticleSystem_destructor(ParticleSystem this)
 
 	ParticleSystem_processExpiredParticles(this);
 
+	ParticleRemover particleRemover = ParticleRemover_getInstance();
+
 	if(this->particles)
 	{
 		VirtualNode node = this->particles->head;
 
 		for(; node; node = node->next)
 		{
-			__DELETE(node->data);
+		    ParticleRemover_registerParticle(particleRemover, __SAFE_CAST(Particle, node->data));
 		}
 
 		__DELETE(this->particles);
@@ -128,7 +131,7 @@ void ParticleSystem_destructor(ParticleSystem this)
 
 		for(; node; node = node->next)
 		{
-			__DELETE(node->data);
+		    ParticleRemover_registerParticle(particleRemover, __SAFE_CAST(Particle, node->data));
 		}
 
 		__DELETE(this->recyclableParticles);
