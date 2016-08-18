@@ -133,7 +133,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	this->invalidateGlobalPosition = (displacement.x ? __XAXIS: 0) | (displacement.y ? __YAXIS: 0) | (displacement.y ? __ZAXIS: 0);
 }
 
-void Actor_syncPositionWithBody(Actor this)
+void Actor_syncWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
@@ -165,6 +165,39 @@ void Actor_syncPositionWithBody(Actor this)
 	localPosition.y += bodyLastDisplacement.y;
 	localPosition.z += bodyLastDisplacement.z;
 
+    // sync direction with velocity
+    if(Body_isMoving(this->body))
+    {
+        Velocity velocity = Body_getVelocity(this->body);
+
+        if(0 < velocity.x)
+        {
+            this->direction.x = __RIGHT;
+        }
+        else if(0 > velocity.x)
+        {
+            this->direction.x = __LEFT;
+        }
+
+        if(0 < velocity.y)
+        {
+            this->direction.y = __DOWN;
+        }
+        else if(0 > velocity.y)
+        {
+            this->direction.y = __UP;
+        }
+
+        if(0 < velocity.z)
+        {
+            this->direction.z = __FAR;
+        }
+        else if(0 > velocity.z)
+        {
+            this->direction.z = __NEAR;
+        }
+    }
+
 	Entity_setLocalPosition(__SAFE_CAST(Entity, this), &localPosition);
 }
 
@@ -185,7 +218,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 
 	if(this->body)
 	{
-		Actor_syncPositionWithBody(this);
+		Actor_syncWithBody(this);
     }
 
 	// call base
@@ -207,7 +240,7 @@ void Actor_resume(Actor this)
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __YAXIS, this->direction.y);
 
-	Actor_syncPositionWithBody(this);
+	Actor_syncWithBody(this);
 }
 
 
@@ -218,21 +251,6 @@ void Actor_update(Actor this)
 
 	// call base
 	AnimatedInGameEntity_update(__SAFE_CAST(AnimatedInGameEntity, this));
-
-	// sync direction with velocity
-	if(this->body && Body_isMoving(this->body))
-	{
-	    Velocity velocity = Body_getVelocity(this->body);
-
-		if(0 < velocity.x)
-	    {
-			this->direction.x = __RIGHT;
-		}
-		else if(0 > velocity.x)
-	    {
-			this->direction.x = __LEFT;
-		}
-	}
 
 	if(this->stateMachine)
 	{

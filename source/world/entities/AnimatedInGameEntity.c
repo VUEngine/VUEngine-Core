@@ -116,8 +116,20 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 		Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
 
 		// save current direction
-		this->previousDirection = this->direction;
+		this->previousDirection.x = this->direction.x;
 	}
+
+
+	if(this->direction.y != this->previousDirection.y)
+	{
+		// change sprite's direction
+		Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __YAXIS, this->direction.y);
+
+		// save current direction
+		this->previousDirection.y = this->direction.y;
+	}
+
+    this->previousDirection.z = this->direction.z;
 
 	// call base
 	Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
@@ -132,7 +144,10 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this)
 	Container_update(__SAFE_CAST(Container, this));
 
 	// if direction changed
-	if(this->direction.x != this->previousDirection.x)
+	if(this->direction.x != this->previousDirection.x ||
+	   this->direction.y != this->previousDirection.y ||
+	   this->direction.z != this->previousDirection.z
+	)
 	{
 		ASSERT(this->sprites, "AnimatedInGameEntity::update: null sprites");
 
