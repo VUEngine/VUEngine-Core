@@ -319,8 +319,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	// load background music
 	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])stageDefinition->assets.bgm);
 
-	// setup the column table
-	HardwareManager_setupColumnTable(HardwareManager_getInstance(), stageDefinition->rendering.columnTableDefinition);
+	// setup colors and brightness
+    VIPManager_setBackgroundColor(VIPManager_getInstance(), stageDefinition->rendering.colorConfig.backgroundColor);
+	VIPManager_setupBrightnessRepeat(VIPManager_getInstance(), stageDefinition->rendering.colorConfig.brightnessRepeat);
 
 	// set particle removal delay
 	ParticleRemover_setRemovalDelayCicles(ParticleRemover_getInstance(), stageDefinition->streaming.particleRemovalDelayCicles);

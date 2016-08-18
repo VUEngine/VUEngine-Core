@@ -138,20 +138,20 @@ typedef struct StageDefinition
 		// on each call to the affine functions
 		int maximumAffineRowsToComputePerCall;
 
-		// column table
-		ColumnTableDefinition* columnTableDefinition;
+        // color config
+        ColorConfig colorConfig;
 
 		// palettes' config
 		PaletteConfig paletteConfig;
 
-	    // BGMAP segments configuration
+	    // bgmap segments configuration
 	    // number of segments reserved for the param tables
 		int paramTableSegments;
 
-		// OBJs segments's sizes(__SPT0 to __SPT3)
+		// obj segments' sizes (__spt0 to __spt3)
 		fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
-		// OBJs segments z coordinates (__SPT0 to __SPT3)
+		// obj segments z coordinates (__spt0 to __spt3)
 		fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 		// engine's optical values structure
@@ -185,7 +185,7 @@ typedef struct StageDefinition
 
 	struct Entities
 	{
-		// UI's definition
+		// ui's definition
 		UIDefinition uiDefinition;
 
 		// each of the stage's entities

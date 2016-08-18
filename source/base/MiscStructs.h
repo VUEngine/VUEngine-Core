@@ -29,6 +29,15 @@
 // 											 DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+// brightness setting
+typedef struct Brightness
+{
+	u8 darkRed;
+	u8 mediumRed;
+	u8 brightRed;
+
+} Brightness;
+
 // spatial size
 typedef struct Size
 {
@@ -38,7 +47,7 @@ typedef struct Size
 
 } Size;
 
-// spacial position
+// spatial position
 typedef struct VBVec3DReal
 {
 	// fps increases a lot in hardware with ints
@@ -48,7 +57,7 @@ typedef struct VBVec3DReal
 
 } VBVec3DReal;
 
-// spacial position
+// spatial position
 typedef struct VBVec3D
 {
 	// fps increases a lot in hardware with ints
@@ -75,7 +84,7 @@ typedef struct IntegralPosition
 
 } IntegralPosition;
 
-// spacial movement vector
+// spatial movement vector
 typedef struct Velocity
 {
 	// fps increases a lot in hardware with ints
@@ -85,7 +94,7 @@ typedef struct Velocity
 
 } Velocity;
 
-// spacial velocity variation vector
+// spatial velocity variation vector
 typedef struct Acceleration
 {
 	fix19_13 x;
@@ -94,7 +103,7 @@ typedef struct Acceleration
 
 } Acceleration;
 
-// spacial velocity variation vector
+// spatial velocity variation vector
 typedef struct Force
 {
 	fix19_13 x;
@@ -125,7 +134,7 @@ typedef struct Rotation
 
 } Rotation;
 
-// spacial direction vector
+// spatial direction vector
 typedef struct Direction
 {
 	s8 x;
@@ -278,7 +287,7 @@ typedef struct SmallRightCuboid
 
 } SmallRightCuboid;
 
-//spacial state vector
+// spatial state vector
 typedef struct GeneralAxisFlag
 {
 	s8 x;

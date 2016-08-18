@@ -42,13 +42,14 @@ volatile u16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F
 //---------------------------------------------------------------------------------------------------------
 
 extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
-
+extern BrightnessRepeatROMDef DEFAULT_BRIGHTNESS_REPEAT;
 
 typedef struct PostProcessingEffect
 {
     void (*function) (u32);
 
 } PostProcessingEffect;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -87,6 +88,7 @@ static SpriteManager _spriteManager;
 
 static void VIPManager_constructor(VIPManager this);
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -107,7 +109,6 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	_paramTableManager = ParamTableManager_getInstance();
 	_charSetManager = CharSetManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
-
 }
 
 // class's destructor
@@ -295,7 +296,7 @@ void VIPManager_displayOff(VIPManager this)
 	VIPManager_disableInterrupt(this);
 }
 
-// setup backgorund color
+// setup palettes
 void VIPManager_setupPalettes(VIPManager this __attribute__ ((unused)), PaletteConfig* paletteConfig)
 {
 	ASSERT(this, "VIPManager::setupPalettes: null this");
@@ -309,8 +310,6 @@ void VIPManager_setupPalettes(VIPManager this __attribute__ ((unused)), PaletteC
 	_vipRegisters[__JPLT1] = paletteConfig->object.jplt1;
 	_vipRegisters[__JPLT2] = paletteConfig->object.jplt2;
 	_vipRegisters[__JPLT3] = paletteConfig->object.jplt3;
-
-	_vipRegisters[__BACKGROUND_COLOR] = paletteConfig->backgroundColor <= __COLOR_BRIGHT_RED? paletteConfig->backgroundColor: __COLOR_BRIGHT_RED;
 }
 
 // set brightness all the way up
@@ -363,61 +362,28 @@ void VIPManager_clearBgmap(VIPManager this __attribute__ ((unused)), int bgmap, 
 	Mem_clear((u16*)__BGMAP_SEGMENT(bgmap), size);
 }
 
-// setup default column table
+// write column table (without repeat values)
 void VIPManager_setupColumnTable(VIPManager this __attribute__ ((unused)), ColumnTableDefinition* columnTableDefinition)
 {
 	ASSERT(this, "VIPManager::setupColumnTable: null this");
 
-    u8 i;
+    int i, value;
 
-    // use the default column table or the one defined in current stage as fallback
+    // use the default column table as fallback
 	if(columnTableDefinition == NULL)
 	{
-	    Stage stage = GameState_getStage(Game_getCurrentState(Game_getInstance()));
-	    if(stage != NULL)
-	    {
-	        StageDefinition* stageDefinition = Stage_stageDefinition(stage);
-	        if(stageDefinition->rendering.columnTableDefinition != NULL)
-	        {
-	            columnTableDefinition = stageDefinition->rendering.columnTableDefinition;
-	        }
-	    }
-
-        if(columnTableDefinition == NULL)
-        {
-            columnTableDefinition = (ColumnTableDefinition*)&DEFAULT_COLUMN_TABLE;
-        }
+	    columnTableDefinition = (ColumnTableDefinition*)&DEFAULT_COLUMN_TABLE;
 	}
 
-    // write column table (first half)
-    for(i = 0; i < 128; i++)
+    // write column table
+    for(i = 0; i < 256; i++)
     {
-        // left screen
-        _columnTableBaseAddress[i] = columnTableDefinition->columnTable[i];
-        // right screen
-        _columnTableBaseAddress[i + 0x0100] = columnTableDefinition->columnTable[i];
-    }
+        value = (columnTableDefinition->mirror && (i > 127))
+            ? columnTableDefinition->columnTable[255 - i]
+            : columnTableDefinition->columnTable[i];
 
-    // write column table (second half)
-    if(columnTableDefinition->mirror)
-    {
-        for(i = 0; i < 128; i++)
-        {
-            // left screen
-            _columnTableBaseAddress[i + 0x0080] = columnTableDefinition->columnTable[127 - i];
-            // right screen
-            _columnTableBaseAddress[i + 0x0180] = columnTableDefinition->columnTable[127 - i];
-        }
-    }
-    else
-    {
-        for(i = 0; i < 128; i++)
-        {
-            // left screen
-            _columnTableBaseAddress[i + 0x0080] = columnTableDefinition->columnTable[127 + i];
-            // right screen
-            _columnTableBaseAddress[i + 0x0180] = columnTableDefinition->columnTable[127 + i];
-        }
+        _columnTableBaseAddressLeft[i] = value;
+        _columnTableBaseAddressRight[i] = value;
     }
 }
 
@@ -439,17 +405,39 @@ void VIPManager_useInternalColumnTable(VIPManager this __attribute__ ((unused)),
     }
 }
 
+// write brightness repeat values to column table
+void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), BrightnessRepeatDefinition* brightnessRepeatDefinition)
+{
+ 	ASSERT(this, "VIPManager::setupBrightnessRepeat: null this");
+
+    int i, value;
+
+    // use the default repeat values as fallback
+	if(brightnessRepeatDefinition == NULL)
+	{
+	    brightnessRepeatDefinition = (BrightnessRepeatDefinition*)&DEFAULT_BRIGHTNESS_REPEAT;
+	}
+
+    // write repeat values to column table
+    for(i = 0; i < 96; i++)
+    {
+        value = (brightnessRepeatDefinition->mirror && (i > 47))
+         ? brightnessRepeatDefinition->brightnessRepeat[95 - i] << 8
+         : brightnessRepeatDefinition->brightnessRepeat[i] << 8;
+
+        _columnTableBaseAddressLeft[255-i] = (_columnTableBaseAddressLeft[i] & 0xff) | value;
+        _columnTableBaseAddressRight[255-i] = (_columnTableBaseAddressRight[i] & 0xff) | value;
+    }
+}
+
 // set background color
 void VIPManager_setBackgroundColor(VIPManager this __attribute__ ((unused)), u8 color)
 {
 	ASSERT(this, "VIPManager::setBackgroundColor: null this");
 
-    if(color > __COLOR_BRIGHT_RED)
-    {
-        color = __COLOR_BRIGHT_RED;
-    }
-
-	_vipRegisters[__BACKGROUND_COLOR] = color;
+	_vipRegisters[__BACKGROUND_COLOR] = (color <= __COLOR_BRIGHT_RED)
+ 	    ? color
+ 	    : __COLOR_BRIGHT_RED;
 }
 
 // register post processing effect
@@ -512,7 +500,7 @@ void VIPManager_removePostProcessingEffects(VIPManager this)
 	VirtualList_clear(this->postProcessingEffects);
 }
 
-// register the frame buffer in use by the VPU's drawing process
+// register the frame buffer in use by the VIP's drawing process
 void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this)
 {
 	ASSERT(this, "VIPManager::registerCurrentDrawingframeBufferSet: null this");
