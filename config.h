@@ -63,10 +63,10 @@
 #define __BASE_FACTOR							768
 
 // player's eyes' horizontal position
-#define __HORIZONTAL_VIEW_POINT_CENTER			192
+#define __HORIZONTAL_VIEW_POINT_CENTER			__SCREEN_WIDTH / 2
 
 // player's eyes' vertical position
-#define __VERTICAL_VIEW_POINT_CENTER			256
+#define __VERTICAL_VIEW_POINT_CENTER			__SCREEN_HEIGHT / 2
 
 // parallax values are divide by this factor to control their strength
 #define __PARALLAX_CORRECTION_FACTOR			16

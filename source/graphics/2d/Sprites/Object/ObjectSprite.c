@@ -255,8 +255,8 @@ void ObjectSprite_render(ObjectSprite this)
 		int xDirection = this->head & 0x2000 ? -1 : 1;
 		int yDirection = this->head & 0x1000 ? -1 : 1;
 
-		int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-		int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+		int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + 0x0001000) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
+		int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + 0x0001000) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 		int i = 0;
 		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);
@@ -280,7 +280,7 @@ void ObjectSprite_render(ObjectSprite this)
 
 				int outputY = y + (i << 3)  * yDirection;
 
-				if((unsigned)outputY > __SCREEN_HEIGHT + 8)
+				if((unsigned)(outputY + 8) > __SCREEN_HEIGHT + 8)
 				{
 					_objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					continue;

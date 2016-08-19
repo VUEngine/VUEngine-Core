@@ -316,6 +316,9 @@ void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityP
 
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
 
+    // focus now
+    Screen_focus(this, false);
+
 	// make sure that any other entity knows about the change
 	Screen_forceDisplacement(this, true);
 }

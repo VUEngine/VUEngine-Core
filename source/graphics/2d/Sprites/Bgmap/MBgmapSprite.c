@@ -374,8 +374,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 			return;
 		}
 
-        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + 0x0001000);
+        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + 0x0001000);
 
         worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
         worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
