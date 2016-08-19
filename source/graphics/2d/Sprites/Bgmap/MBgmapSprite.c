@@ -260,7 +260,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 
 		if(0 > this->drawSpec.position.x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+			this->drawSpec.textureSource.mx -= FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
 		}
 	}
 
@@ -276,7 +276,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 
 		if(0 > this->drawSpec.position.y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+			this->drawSpec.textureSource.my -= FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 		}
 	}
 
@@ -374,8 +374,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 			return;
 		}
 
-        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + 0x0001000);
-        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + 0x0001000);
+        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
         worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
         worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;

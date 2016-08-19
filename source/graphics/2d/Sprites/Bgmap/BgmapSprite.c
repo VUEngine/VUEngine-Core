@@ -337,8 +337,8 @@ void BgmapSprite_render(BgmapSprite this)
 		}
 
 		// get coordinates
-        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + 0x0001000);
-        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + 0x0001000);
+        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
         // get sprite's size
         int width = Texture_getCols(this->texture)<< 3;
