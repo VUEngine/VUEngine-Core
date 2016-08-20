@@ -197,7 +197,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	if(this->mSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
-		this->drawSpec.textureSource.mx = FIX19_13TOI(-position->x);
+		this->drawSpec.textureSource.mx = -FIX19_13TOI(position->x + __0_5F_FIX19_13);
 	}
 	else
 	{
@@ -206,14 +206,14 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 
 		if(0 > position->x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= FIX19_13TOI(position->x + this->displacement.x);
+			this->drawSpec.textureSource.mx -= FIX19_13TOI(position->x + this->displacement.x + __0_5F_FIX19_13);
 		}
 	}
 
 	if(this->mSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
-		this->drawSpec.textureSource.my = FIX19_13TOI(-position->y);
+		this->drawSpec.textureSource.my = -FIX19_13TOI(position->y + __0_5F_FIX19_13);
 	}
 	else
 	{
@@ -222,7 +222,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 
 		if(0 > position->y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= FIX19_13TOI(position->y + this->displacement.y);
+			this->drawSpec.textureSource.my -= FIX19_13TOI(position->y + this->displacement.y + __0_5F_FIX19_13);
 		}
 	}
 
