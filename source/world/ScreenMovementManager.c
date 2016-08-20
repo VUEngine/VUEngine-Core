@@ -33,18 +33,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the ScreenMovementManager
 __CLASS_DEFINITION(ScreenMovementManager, Object);
-
 __CLASS_FRIEND_DEFINITION(Screen);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void ScreenMovementManager_FXFadeIn(ScreenMovementManager this, u32 duration);
-void ScreenMovementManager_FXFadeOut(ScreenMovementManager this, u32 duration);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -136,78 +126,4 @@ void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unus
 			}
 		}
 	}
-}
-
-Brightness ScreenMovementManager_getDefaultTargetBrightness(ScreenMovementManager this __attribute__ ((unused)))
-{
-	ASSERT(this, "ScreenMovementManager::getDefaultTargetBrightness: null this");
-
-    // default brightness settings
-    Brightness brightness = (Brightness) {
-        __BRIGHTNESS_DARK_RED,
-        __BRIGHTNESS_MEDIUM_RED,
-        __BRIGHTNESS_BRIGHT_RED,
-    };
-
-    // if exists, get brightness settings from stage definition
-    Stage stage = GameState_getStage(Game_getCurrentState(Game_getInstance()));
-    if(stage != NULL)
-    {
-        StageDefinition* stageDefinition = Stage_stageDefinition(stage);
-        brightness = stageDefinition->rendering.colorConfig.brightness;
-    }
-
-    // convert brightness settings to vip format
-    brightness.brightRed -= (brightness.darkRed + brightness.mediumRed);
-
-    return brightness;
-}
-
-void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, int duration)
-{
-	ASSERT(this, "ScreenMovementManager::startEffect: null this");
-
-	switch(effect)
-	{
-		case kFadeIn:
-        {
-
-#ifdef __DEBUG_NO_FADE
-            return;
-#endif
-
-            Brightness fadeInTargetBrightness = ScreenMovementManager_getDefaultTargetBrightness(this);
-            TimerManager_repeatMethodCall(TimerManager_getInstance(), fadeInTargetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeIn);
-			break;
-        }
-
-		case kFadeOut:
-		{
-
-#ifdef __DEBUG_NO_FADE
-            return;
-#endif
-
-            Brightness fadeOutTargetBrightness = ScreenMovementManager_getDefaultTargetBrightness(this);
-            TimerManager_repeatMethodCall(TimerManager_getInstance(), fadeOutTargetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenMovementManager_FXFadeOut);
-			break;
-        }
-	}
-}
-
-void ScreenMovementManager_stopEffect(ScreenMovementManager this __attribute__ ((unused)), int effect __attribute__ ((unused)))
-{
-	ASSERT(this, "ScreenMovementManager::stopEffect: null this");
-}
-
-void ScreenMovementManager_FXFadeIn(ScreenMovementManager this __attribute__ ((unused)), u32 callNumber)
-{
-    // increase brightness
-    __SET_BRIGHT(callNumber, callNumber << 1, callNumber);
-}
-
-void ScreenMovementManager_FXFadeOut(ScreenMovementManager this __attribute__ ((unused)), u32 callNumber)
-{
-    // increase brightness
-    __SET_BRIGHT(32 - callNumber, (32 - callNumber) << 1, 32 -callNumber);
 }

@@ -26,6 +26,7 @@
 #include <Telegram.h>
 #include <InGameEntity.h>
 #include <ScreenMovementManager.h>
+#include <ScreenEffectManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,6 +60,8 @@
         VBVec3D positionBackup;																			\
         /* screen position displacement manager */														\
         ScreenMovementManager screenMovementManager;													\
+	    /* screen effect manager */																		\
+    	ScreenEffectManager screenEffectManager;														\
         /* screen position displacement */																\
         VBVec3D focusEntityPositionDisplacement;														\
         /* actor to center the screen around */															\
@@ -80,6 +83,7 @@ Screen Screen_getInstance();
 
 void Screen_destructor(Screen this);
 void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager);
+void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffectManager);
 void Screen_focus(Screen this, u8 checkIfFocusEntityIsMoving);
 Optical Screen_getOptical(Screen this);
 void Screen_setOptical(Screen this, Optical optical);
@@ -98,7 +102,7 @@ VBVec3D Screen_getLastDisplacement(Screen this);
 Size Screen_getStageSize(Screen this);
 void Screen_setStageSize(Screen this, Size size);
 void Screen_forceDisplacement(Screen this, int flag);
-void Screen_startEffect(Screen this, int effect, int duration);
+void Screen_startEffect(Screen this, int effect, ...);
 void Screen_stopEffect(Screen this, int effect);
 
 

@@ -289,6 +289,10 @@
 #define __BRIGHTNESS_MEDIUM_RED					64
 #define __BRIGHTNESS_BRIGHT_RED					128
 
+// default values for fade effects
+#define __FADE_DURATION							1000
+#define __FADE_ASYNC_DELAY					    16
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											COLOR PALETTES

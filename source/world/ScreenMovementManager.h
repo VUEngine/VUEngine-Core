@@ -28,18 +28,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-enum ScreenFX
-{
-	kFadeIn = 0,
-	kFadeOut,
-	kScreenLastFX
-};
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -47,15 +35,11 @@ enum ScreenFX
 #define ScreenMovementManager_METHODS(ClassName)														\
     	Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, focus, bool checkIfFocusEntityIsMoving);						    \
-		__VIRTUAL_DEC(ClassName, void, startEffect, int effect, int duration);							\
-		__VIRTUAL_DEC(ClassName, void, stopEffect, int effect);											\
 
 // declare the virtual methods which are redefined
 #define ScreenMovementManager_SET_VTABLE(ClassName)														\
     	Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ScreenMovementManager, focus); 										\
-		__VIRTUAL_SET(ClassName, ScreenMovementManager, startEffect);									\
-		__VIRTUAL_SET(ClassName, ScreenMovementManager, stopEffect);									\
 
 #define ScreenMovementManager_ATTRIBUTES																\
         /* super's attributes */																		\
@@ -74,8 +58,6 @@ ScreenMovementManager ScreenMovementManager_getInstance();
 void ScreenMovementManager_constructor(ScreenMovementManager this);
 void ScreenMovementManager_destructor(ScreenMovementManager this);
 void ScreenMovementManager_focus(ScreenMovementManager this, bool checkIfFocusEntityIsMoving);
-void ScreenMovementManager_startEffect(ScreenMovementManager this, int effect, int duration);
-void ScreenMovementManager_stopEffect(ScreenMovementManager this, int effect);
 
 
 #endif

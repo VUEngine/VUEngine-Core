@@ -137,7 +137,7 @@ typedef struct AnimationFunction
 	// whether to play it in loop or not
 	int loop;
 
-	// method to call function completion
+	// method to call on function completion
 	EventListener onAnimationComplete;
 
 	// function's name

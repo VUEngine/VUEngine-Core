@@ -23,6 +23,7 @@
 #include <Optics.h>
 #include <Game.h>
 #include <ScreenMovementManager.h>
+#include <ScreenEffectManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,6 +73,9 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 
 	// set the default screen movement manager
 	this->screenMovementManager = ScreenMovementManager_getInstance();
+
+    // set the default screen effect manager
+	this->screenEffectManager = ScreenEffectManager_getInstance();
 
 	this->focusEntityPositionDisplacement.x = 0;
 	this->focusEntityPositionDisplacement.y = 0;
@@ -126,7 +130,19 @@ void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMo
 	}
 
 	this->screenMovementManager = screenMovementManager;
+}
 
+// set the effect manager
+void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffectManager)
+{
+	ASSERT(this, "Screen::setScreenEffectManager: null this");
+
+	if(this->screenEffectManager)
+	{
+		__DELETE(this->screenEffectManager);
+	}
+
+	this->screenEffectManager = screenEffectManager;
 }
 
 // center world's screen in function of focus actor's position
@@ -357,16 +373,19 @@ void Screen_forceDisplacement(Screen this, int flag)
 	this->lastDisplacement.z = flag ? ITOFIX19_13(1) : 0;
 }
 
-void Screen_startEffect(Screen this, int effect, int duration)
+void Screen_startEffect(Screen this, int effect, ...)
 {
-	ASSERT(this, "Screen::forceDisplacement: null this");
+	ASSERT(this, "Screen::startEffect: null this");
 
-	__VIRTUAL_CALL(ScreenMovementManager, startEffect, this->screenMovementManager, effect, duration);
+	va_list args;
+    va_start(args, effect);
+    __VIRTUAL_CALL(ScreenEffectManager, startEffect, this->screenEffectManager, effect, args);
+    va_end(args);
 }
 
 void Screen_stopEffect(Screen this, int effect)
 {
-	ASSERT(this, "Screen::forceDisplacement: null this");
+	ASSERT(this, "Screen::stopEffect: null this");
 
-	__VIRTUAL_CALL(ScreenMovementManager, stopEffect, this->screenMovementManager, effect);
+	__VIRTUAL_CALL(ScreenEffectManager, stopEffect, this->screenEffectManager, effect);
 }
