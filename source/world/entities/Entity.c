@@ -1135,6 +1135,14 @@ void Entity_show(Entity this)
 {
 	ASSERT(this, "Entity::show: null this");
 
+    // update transformation before hiding
+	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+    __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
+
+    // and update the visual representation
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATIONS | __UPDATE_SPRITE_POSITION;
+    Entity_updateVisualRepresentation(this);
+
 	Container_show(__SAFE_CAST(Container, this));
 
 	if(this->sprites)
@@ -1156,6 +1164,14 @@ void Entity_show(Entity this)
 void Entity_hide(Entity this)
 {
 	ASSERT(this, "Entity::hide: null this");
+
+    // update transformation before hiding
+	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+    __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
+
+    // and update the visual representation
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATIONS | __UPDATE_SPRITE_POSITION;
+    Entity_updateVisualRepresentation(this);
 
 	Container_hide(__SAFE_CAST(Container, this));
 

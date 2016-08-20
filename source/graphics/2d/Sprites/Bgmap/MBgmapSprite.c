@@ -367,13 +367,6 @@ void MBgmapSprite_render(MBgmapSprite this)
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
-		if(this->hidden)
-		{
-			worldPointer->head = 0x0000;
-			this->renderFlag = 0;
-			return;
-		}
-
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
@@ -419,8 +412,14 @@ void MBgmapSprite_render(MBgmapSprite this)
             worldPointer->h = __SCREEN_HEIGHT;
         }
 
-
-        worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		if(this->hidden)
+		{
+			worldPointer->head = 0x0000;
+		}
+		else
+		{
+            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		}
 
 		// make sure to not render again
 		this->renderFlag = false;

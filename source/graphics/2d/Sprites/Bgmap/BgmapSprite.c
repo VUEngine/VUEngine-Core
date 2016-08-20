@@ -329,13 +329,6 @@ void BgmapSprite_render(BgmapSprite this)
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
-		if(this->hidden)
-		{
-			worldPointer->head = 0x0000;
-			this->renderFlag = 0;
-			return;
-		}
-
 		// get coordinates
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
@@ -432,11 +425,19 @@ void BgmapSprite_render(BgmapSprite this)
 			BgmapSprite_doApplyHbiasTransformations(this);
 		}
 
-        // set the head
-        worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+        // make sure to not render again
+        this->renderFlag = clearRenderFlagValue;
 
-		// make sure to not render again
-		this->renderFlag = clearRenderFlagValue;
+		if(this->hidden)
+		{
+			worldPointer->head = 0x0000;
+			this->renderFlag = 0;
+		}
+		else
+		{
+            // set the head
+            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		}
 	}
 }
 
