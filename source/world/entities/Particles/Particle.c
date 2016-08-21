@@ -116,8 +116,6 @@ void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle 
 	{
 		this->lifeSpan -= elapsedTime;
 
-		Sprite_update(__SAFE_CAST(Sprite, this->objectSprite));
-
 		if(behavior)
 		{
 			behavior(this);
