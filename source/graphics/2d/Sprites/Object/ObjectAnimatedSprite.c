@@ -85,9 +85,6 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");
 
-    // call base
-    Sprite_writeAnimation(__SAFE_CAST(Sprite, this));
-
 	if(0 > this->objectIndex)
 	{
 		return;

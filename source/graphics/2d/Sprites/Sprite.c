@@ -278,7 +278,7 @@ void Sprite_update(Sprite this)
 {
 	ASSERT(this, "Sprite::update: null this");
 
-	if(this->animationController)
+	if(this->animationController && Texture_isWritten(this->texture))
 	{
 		// first animate the frame
 		if(this->writeAnimationFrame)
@@ -408,13 +408,9 @@ void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
 	}
 }
 
-void Sprite_writeAnimation(Sprite this)
+void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::writeAnimation: null this");
-	ASSERT(this->texture, "Sprite::writeAnimation: null texture");
-
-    // make sure that the texture and its charset are properly loaded
-	Texture_write(this->texture);
 }
 
 
