@@ -97,7 +97,7 @@ TextureDefinition* Texture_getDefinition(Texture this)
 // free char memory
 void Texture_releaseCharSet(Texture this)
 {
-	ASSERT(this, "Texture::freeCharMemory: null this");
+	ASSERT(this, "Texture::releaseCharSet: null this");
 
 	if(this->charSet)
 	{
