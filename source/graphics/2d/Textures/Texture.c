@@ -119,6 +119,8 @@ void Texture_write(Texture this)
 		// if the char definition is NULL, it must be a text
 		this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
 
+    	ASSERT(this->charSet, "Texture::write: null charset");
+
 		if(this->charSet)
 		{
 			Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);

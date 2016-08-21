@@ -377,7 +377,7 @@ void BgmapSprite_render(BgmapSprite this)
         worldPointer->h = h;
 
         // affine transformations may be deferred
-        this->renderFlag = false;
+        bool clearRenderFlagValue = false;
 
         // set the world size according to the zoom
         if(__WORLD_AFFINE & this->head)
@@ -412,7 +412,7 @@ void BgmapSprite_render(BgmapSprite this)
                 {
                     // keep rendering in the next cycle if affine transformation
                     // is deferred
-                    this->renderFlag = true;
+                    clearRenderFlagValue = __UPDATE_SIZE;
                 }
                 else
                 {
@@ -429,6 +429,7 @@ void BgmapSprite_render(BgmapSprite this)
 		{
 			worldPointer->head = 0x0000;
 			this->renderFlag = 0;
+			return;
 		}
 		else
 		{

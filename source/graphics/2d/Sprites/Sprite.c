@@ -408,9 +408,13 @@ void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
 	}
 }
 
-void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
+void Sprite_writeAnimation(Sprite this)
 {
 	ASSERT(this, "Sprite::writeAnimation: null this");
+	ASSERT(this->texture, "Sprite::writeAnimation: null texture");
+
+    // make sure that the texture and its charset are properly loaded
+	Texture_write(this->texture);
 }
 
 
