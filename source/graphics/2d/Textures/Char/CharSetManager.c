@@ -214,7 +214,7 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 		u8 segment = CharSet_getSegment(charSet);
 		u16 offset = CharSet_getOffset(charSet);
 
-		if(!this->freedOffset[segment] || offset < this->freedOffset[segment])
+		if(1 == this->freedOffset[segment] || offset < this->freedOffset[segment])
 		{
 			this->freedOffset[segment] = offset;
 		}
