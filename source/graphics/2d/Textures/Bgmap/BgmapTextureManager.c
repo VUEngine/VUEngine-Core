@@ -361,7 +361,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 // load a texture
 static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {
-	ASSERT(this, "BgmapTextureManager::writeTexture: null this");
+	ASSERT(this, "BgmapTextureManager::allocateTexture: null this");
 
 	int i = 0;
 
