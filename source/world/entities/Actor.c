@@ -536,10 +536,8 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
-	this->invalidateGlobalPosition = (displacement.x ? __XAXIS: 0) | (displacement.y ? __YAXIS: 0) | (displacement.y ? __ZAXIS: 0);
-
-	this->updateSprites |= displacement.x || displacement.y || displacement.z? __UPDATE_SPRITE_POSITION : 0;
-	this->updateSprites |= displacement.z? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
+    this->invalidateGlobalPosition = true;
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATIONS | __UPDATE_SPRITE_POSITION;
 }
 
 // retrieve global position
