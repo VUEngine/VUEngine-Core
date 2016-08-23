@@ -44,7 +44,7 @@ void ScreenEffectManager_FXFadeIn(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int duration);
 void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this);
-void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope);
+void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope);
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this);
 
 
@@ -75,7 +75,7 @@ void ScreenEffectManager_destructor(ScreenEffectManager this)
 	ASSERT(this, "ScreenEffectManager::destructor: null this");
 
     // stop any effects
-    ScreenEffectManager_stopEffect(this, kFadeToAsync);
+    ScreenEffectManager_stopEffect(this, kFadeTo);
 
 	// destroy base
 	__SINGLETON_DESTROY;
@@ -111,53 +111,45 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeStart: null this");
 
-    Brightness targetBrightness;
+    Brightness targetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
 
     switch(effect)
     {
         case kFadeIn:
-            targetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
             TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeIn);
             break;
 
         case kFadeOut:
-            targetBrightness = (Brightness){0, 0, 0};
             TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeOut);
             break;
     }
 }
 
-void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope)
+void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope)
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStart: null this");
 
     // stop previous effect
-    ScreenEffectManager_stopEffect(this, kFadeToAsync);
+    ScreenEffectManager_stopEffect(this, kFadeTo);
 
-    // set target brightness according to effect
-    if(targetBrightness)
+    // set target brightness
+    if(targetBrightness == NULL)
+    {
+        this->fxFadeTargetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
+    }
+    else
     {
         this->fxFadeTargetBrightness = *targetBrightness;
     }
-    else if(effect == kFadeInAsync)
-    {
-        _vipRegisters[__BRTA] = _vipRegisters[__BRTA] > 32? 0: _vipRegisters[__BRTA];
-        _vipRegisters[__BRTB] = _vipRegisters[__BRTB] > 64? 0: _vipRegisters[__BRTB];
-        _vipRegisters[__BRTC] = _vipRegisters[__BRTC] > 32? 0: _vipRegisters[__BRTC];
 
-        this->fxFadeTargetBrightness = (Brightness) {32, 64, 32};//ScreenEffectManager_getDefaultTargetBrightness(this);
-    }
-    else if(effect == kFadeOutAsync)
-    {
-        _vipRegisters[__BRTA] = _vipRegisters[__BRTA] > 32? 32: _vipRegisters[__BRTA];
-        _vipRegisters[__BRTB] = _vipRegisters[__BRTB] > 64? 64: _vipRegisters[__BRTB];
-        _vipRegisters[__BRTC] = _vipRegisters[__BRTC] > 32? 32: _vipRegisters[__BRTC];
+/*
+    _vipRegisters[__BRTA] = _vipRegisters[__BRTA] > 32 ? 0 : _vipRegisters[__BRTA];
+    _vipRegisters[__BRTB] = _vipRegisters[__BRTB] > 64 ? 0 : _vipRegisters[__BRTB];
+    _vipRegisters[__BRTC] = _vipRegisters[__BRTC] > 32 ? 0 : _vipRegisters[__BRTC];
+*/
 
-        this->fxFadeTargetBrightness = (Brightness) {0, 0, 0};
-    }
-
-   // set effect parameters
-    this->fxFadeDelay = 0 >= delay? 1: delay;
+    // set effect parameters
+    this->fxFadeDelay = 0 >= delay ? 1 : delay;
 
     // set callback
     if(callback != NULL && callbackScope != NULL)
@@ -166,12 +158,13 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, 
         Object_addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, __EVENT_EFFECT_FADE_COMPLETE);
     }
 
+    // start effect
+    // TODO: check if the message really needs to be delayed.
+    MessageDispatcher_dispatchMessage(1, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
+
     // fire effect started event
     Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_START);
 
-    // start effect
-    // TODO: check if the message really needs to be delayed.
-    MessageDispatcher_dispatchMessage(1, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeToAsync, NULL);
 }
 
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
@@ -179,7 +172,7 @@ void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
 	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStop: null this");
 
     // discard pending delayed messages to stop effect
-    MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kFadeToAsync);
+    MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kFadeTo);
 
     // reset effect variables
     this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
@@ -202,11 +195,9 @@ void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_li
             ScreenEffectManager_FXFadeStart(this, effect, va_arg(args, int));
 			break;
 
-		case kFadeInAsync:
-		case kFadeOutAsync:
-		case kFadeToAsync:
+		case kFadeTo:
 
-            ScreenEffectManager_FXFadeAsyncStart(this, effect, va_arg(args, int), va_arg(args, Brightness*), va_arg(args, void*), va_arg(args, Object));
+            ScreenEffectManager_FXFadeAsyncStart(this, va_arg(args, int), va_arg(args, Brightness*), va_arg(args, void*), va_arg(args, Object));
             break;
 	}
 }
@@ -217,9 +208,7 @@ void ScreenEffectManager_stopEffect(ScreenEffectManager this, int effect)
 
 	switch(effect)
 	{
-		case kFadeInAsync:
-		case kFadeOutAsync:
-		case kFadeToAsync:
+		case kFadeTo:
 
             ScreenEffectManager_FXFadeAsyncStop(this);
 	        break;
@@ -251,21 +240,17 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
         _vipRegisters[__BRTA] += 1;
         _vipRegisters[__BRTB] += 2;
         _vipRegisters[__BRTC] += 1;
-        MessageDispatcher_dispatchMessage(this->fxFadeDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeToAsync, NULL);
+        MessageDispatcher_dispatchMessage(this->fxFadeDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
     }
     else if((u8)_vipRegisters[__BRTC] > this->fxFadeTargetBrightness.brightRed)
     {
         _vipRegisters[__BRTA] -= 1;
         _vipRegisters[__BRTB] -= 2;
         _vipRegisters[__BRTC] -= 1;
-        MessageDispatcher_dispatchMessage(this->fxFadeDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeToAsync, NULL);
+        MessageDispatcher_dispatchMessage(this->fxFadeDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
     }
     else
     {
-        _vipRegisters[__BRTA] = this->fxFadeTargetBrightness.brightRed;
-        _vipRegisters[__BRTB] = this->fxFadeTargetBrightness.brightRed * 2;
-        _vipRegisters[__BRTC] = this->fxFadeTargetBrightness.brightRed;
-
         // fire effect ended event
 	    Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_COMPLETE);
 
@@ -284,7 +269,7 @@ bool ScreenEffectManager_handleMessage(ScreenEffectManager this, Telegram telegr
 
 	switch(Telegram_getMessage(telegram))
 	{
-		case kFadeToAsync:
+		case kFadeTo:
 			ScreenEffectManager_FXFadeAsync(this);
 			break;
 	}

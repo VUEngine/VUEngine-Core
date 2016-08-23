@@ -35,9 +35,7 @@ enum ScreenFX
 {
 	kFadeIn = 0,
 	kFadeOut,
-	kFadeInAsync,
-	kFadeOutAsync,
-	kFadeToAsync,
+	kFadeTo,
 
 	kScreenLastFX
 };
