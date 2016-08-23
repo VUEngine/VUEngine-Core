@@ -111,15 +111,19 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeStart: null this");
 
-    Brightness targetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
+    Brightness targetBrightness;
 
     switch(effect)
     {
         case kFadeIn:
+
+            targetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
             TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeIn);
             break;
 
         case kFadeOut:
+
+            targetBrightness = (Brightness){0, 0, 0};
             TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeOut);
             break;
     }
@@ -237,6 +241,7 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
     // Need to cast to u8 because only the lower 8 bits of the registers are valid
     if((u8)_vipRegisters[__BRTC] < this->fxFadeTargetBrightness.brightRed)
     {
+    Printing_text(Printing_getInstance(), "ADD", 1, 11, NULL);
         _vipRegisters[__BRTA] += 1;
         _vipRegisters[__BRTB] += 2;
         _vipRegisters[__BRTC] += 1;
@@ -244,6 +249,7 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
     }
     else if((u8)_vipRegisters[__BRTC] > this->fxFadeTargetBrightness.brightRed)
     {
+    Printing_text(Printing_getInstance(), "LOW", 1, 11, NULL);
         _vipRegisters[__BRTA] -= 1;
         _vipRegisters[__BRTB] -= 2;
         _vipRegisters[__BRTC] -= 1;
@@ -260,6 +266,10 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
             Object_removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, __EVENT_EFFECT_FADE_COMPLETE);
         }
     }
+
+    Printing_text(Printing_getInstance(), "                    ", 1, 10, NULL);
+    Printing_int(Printing_getInstance(), _vipRegisters[__BRTC], 1, 10, NULL);
+    Printing_int(Printing_getInstance(), this->fxFadeTargetBrightness.brightRed, 6, 10, NULL);
 }
 
 // process a telegram
