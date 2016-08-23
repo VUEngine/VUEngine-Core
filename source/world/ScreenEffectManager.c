@@ -111,10 +111,6 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeStart: null this");
 
-#ifdef __DEBUG_NO_FADE
-    return;
-#endif
-
     Brightness targetBrightness;
 
     switch(effect)
@@ -135,10 +131,6 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, 
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStart: null this");
 
-#ifdef __DEBUG_NO_FADE
-    return;
-#endif
-
     // stop previous effect
     ScreenEffectManager_stopEffect(this, kFadeToAsync);
 
@@ -149,18 +141,23 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, 
     }
     else if(effect == kFadeInAsync)
     {
-        this->fxFadeTargetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
+        _vipRegisters[__BRTA] = _vipRegisters[__BRTA] > 32? 0: _vipRegisters[__BRTA];
+        _vipRegisters[__BRTB] = _vipRegisters[__BRTB] > 64? 0: _vipRegisters[__BRTB];
+        _vipRegisters[__BRTC] = _vipRegisters[__BRTC] > 32? 0: _vipRegisters[__BRTC];
+
+        this->fxFadeTargetBrightness = (Brightness) {32, 64, 32};//ScreenEffectManager_getDefaultTargetBrightness(this);
     }
     else if(effect == kFadeOutAsync)
     {
+        _vipRegisters[__BRTA] = _vipRegisters[__BRTA] > 32? 32: _vipRegisters[__BRTA];
+        _vipRegisters[__BRTB] = _vipRegisters[__BRTB] > 64? 64: _vipRegisters[__BRTB];
+        _vipRegisters[__BRTC] = _vipRegisters[__BRTC] > 32? 32: _vipRegisters[__BRTC];
+
         this->fxFadeTargetBrightness = (Brightness) {0, 0, 0};
     }
 
    // set effect parameters
     this->fxFadeDelay = 0 >= delay? 1: delay;
-
-    // fire effect started event
-    Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_START);
 
     // set callback
     if(callback != NULL && callbackScope != NULL)
@@ -168,6 +165,9 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, 
         this->fxFadeCallbackScope = callbackScope;
         Object_addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, __EVENT_EFFECT_FADE_COMPLETE);
     }
+
+    // fire effect started event
+    Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_START);
 
     // start effect
     // TODO: check if the message really needs to be delayed.
@@ -242,20 +242,18 @@ void ScreenEffectManager_FXFadeOut(ScreenEffectManager this __attribute__ ((unus
 void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeAsync: null this");
-
-#ifdef __DEBUG_NO_FADE
-	return;
-#endif
+	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeAsync: invalid this");
 
     // TODO rework this logic for freely defined target brightness
-    if(_vipRegisters[__BRTC] < this->fxFadeTargetBrightness.brightRed)
+    // Need to cast to u8 because only the lower 8 bits of the registers are valid
+    if((u8)_vipRegisters[__BRTC] < this->fxFadeTargetBrightness.brightRed)
     {
         _vipRegisters[__BRTA] += 1;
         _vipRegisters[__BRTB] += 2;
         _vipRegisters[__BRTC] += 1;
         MessageDispatcher_dispatchMessage(this->fxFadeDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeToAsync, NULL);
     }
-    else if(_vipRegisters[__BRTC] > this->fxFadeTargetBrightness.brightRed)
+    else if((u8)_vipRegisters[__BRTC] > this->fxFadeTargetBrightness.brightRed)
     {
         _vipRegisters[__BRTA] -= 1;
         _vipRegisters[__BRTB] -= 2;

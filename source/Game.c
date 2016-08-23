@@ -462,13 +462,6 @@ void Game_reset(Game this)
 	// load chars into graphic memory
 	Printing_loadFonts(Printing_getInstance());
 
-#ifdef __DEBUG_NO_FADE
-    HardwareManager_displayOn(HardwareManager_getInstance());
-
-	// make sure the brightness is ok
-    HardwareManager_upBrightness(HardwareManager_getInstance());
-#endif
-
 	// TODO
 	//SoundManager_getInstance();
 }
