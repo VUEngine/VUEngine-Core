@@ -155,7 +155,7 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, 
     }
 
    // set effect parameters
-    this->fxFadeDelay = 0 >= delay: 1? delay;
+    this->fxFadeDelay = 0 >= delay? 1: delay;
 
     // fire effect started event
     Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_START);
