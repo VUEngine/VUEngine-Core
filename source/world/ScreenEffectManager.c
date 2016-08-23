@@ -115,15 +115,17 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
     return;
 #endif
 
-    Brightness targetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
+    Brightness targetBrightness;
 
     switch(effect)
     {
         case kFadeIn:
+            targetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
             TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeIn);
             break;
 
         case kFadeOut:
+            targetBrightness = (Brightness){0, 0, 0};
             TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeOut);
             break;
     }
