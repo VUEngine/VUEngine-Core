@@ -371,11 +371,11 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 	Printing_text(Printing_getInstance(), "DPCTRL:", x, ++auxY, NULL);
 	Printing_hex(Printing_getInstance(), _vipRegisters[__DPCTRL], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "BRTA:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__BRTA], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTA], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "BRTB:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__BRTB], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTB], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "BRTC:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__BRTC], x + xDisplacement, auxY, NULL);
+	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTC], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "REST:", x, ++auxY, NULL);
 	Printing_hex(Printing_getInstance(), _vipRegisters[__REST], x + xDisplacement, auxY, NULL);
 	Printing_text(Printing_getInstance(), "FRMCYC:", x, ++auxY, NULL);
