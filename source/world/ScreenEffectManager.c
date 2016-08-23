@@ -44,7 +44,7 @@ void ScreenEffectManager_FXFadeIn(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int duration);
 void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this);
-void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, int delay, Brightness targetBrightness, void (*callback)(Object, Object), Object callbackScope);
+void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope);
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this);
 
 
@@ -86,7 +86,8 @@ Brightness ScreenEffectManager_getDefaultTargetBrightness(ScreenEffectManager th
 	ASSERT(this, "ScreenEffectManager::getDefaultTargetBrightness: null this");
 
     // default brightness settings
-    Brightness brightness = (Brightness) {
+    Brightness brightness = (Brightness)
+    {
         __BRIGHTNESS_DARK_RED,
         __BRIGHTNESS_MEDIUM_RED,
         __BRIGHTNESS_BRIGHT_RED,
@@ -128,7 +129,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
     }
 }
 
-void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, int delay, Brightness targetBrightness, void (*callback)(Object, Object), Object callbackScope)
+void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope)
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStart: null this");
 
@@ -136,25 +137,25 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, 
     return;
 #endif
 
-    // set target brightness according to effect
-    if(effect == kFadeInAsync)
-    {
-        targetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
-    }
-    else if(effect == kFadeOutAsync)
-    {
-        targetBrightness = (Brightness) {0, 0, 0};
-    }
-
     // stop previous effect
     ScreenEffectManager_stopEffect(this, kFadeToAsync);
 
-    // set effect parameters
-    this->fxFadeDelay = delay;
-    this->fxFadeTargetBrightness = targetBrightness;
+    // set target brightness according to effect
+    if(targetBrightness)
+    {
+        this->fxFadeTargetBrightness = *targetBrightness;
+    }
+    else if(effect == kFadeInAsync)
+    {
+        this->fxFadeTargetBrightness = ScreenEffectManager_getDefaultTargetBrightness(this);
+    }
+    else if(effect == kFadeOutAsync)
+    {
+        this->fxFadeTargetBrightness = (Brightness) {0, 0, 0};
+    }
 
-    // start effect
-    MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeToAsync, NULL);
+   // set effect parameters
+    this->fxFadeDelay = 0 >= delay: 1? delay;
 
     // fire effect started event
     Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_START);
@@ -165,6 +166,10 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int effect, 
         this->fxFadeCallbackScope = callbackScope;
         Object_addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, __EVENT_EFFECT_FADE_COMPLETE);
     }
+
+    // start effect
+    // TODO: check if the message really needs to be delayed.
+    MessageDispatcher_dispatchMessage(1, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeToAsync, NULL);
 }
 
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
@@ -199,7 +204,7 @@ void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_li
 		case kFadeOutAsync:
 		case kFadeToAsync:
 
-            ScreenEffectManager_FXFadeAsyncStart(this, effect, va_arg(args, int), va_arg(args, Brightness), va_arg(args, void*), va_arg(args, Object));
+            ScreenEffectManager_FXFadeAsyncStart(this, effect, va_arg(args, int), va_arg(args, Brightness*), va_arg(args, void*), va_arg(args, Object));
             break;
 	}
 }
@@ -257,6 +262,10 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
     }
     else
     {
+        _vipRegisters[__BRTA] = this->fxFadeTargetBrightness.brightRed;
+        _vipRegisters[__BRTB] = this->fxFadeTargetBrightness.brightRed * 2;
+        _vipRegisters[__BRTC] = this->fxFadeTargetBrightness.brightRed;
+
         // fire effect ended event
 	    Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_COMPLETE);
 
