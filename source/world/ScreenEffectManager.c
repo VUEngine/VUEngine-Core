@@ -44,7 +44,7 @@ void ScreenEffectManager_FXFadeIn(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int duration);
 void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this);
-void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope);
+void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope);
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this);
 
 
@@ -128,7 +128,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
     }
 }
 
-void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int delay, const Brightness* targetBrightness, void (*callback)(Object, Object), Object callbackScope)
+void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope)
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStart: null this");
 
@@ -146,7 +146,7 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int delay, c
     }
 
     // set effect parameters
-    this->fxFadeDelay = 0 >= delay ? 1 : delay;
+    this->fxFadeDelay = 0 >= delayBetweenSteps ? 1 : delayBetweenSteps;
 
     // set callback
     if(callback != NULL && callbackScope != NULL)
@@ -157,7 +157,8 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int delay, c
 
     // start effect
     // TODO: check if the message really needs to be delayed.
-    MessageDispatcher_dispatchMessage(1, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
+    initialDelay = 0 >= initialDelay ? 1 : initialDelay;
+    MessageDispatcher_dispatchMessage(initialDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
 
     // fire effect started event
     Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_START);
@@ -193,7 +194,13 @@ void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_li
 
 		case kFadeTo:
 
-            ScreenEffectManager_FXFadeAsyncStart(this, va_arg(args, int), va_arg(args, Brightness*), va_arg(args, void*), va_arg(args, Object));
+            ScreenEffectManager_FXFadeAsyncStart(this,
+                va_arg(args, int),
+                va_arg(args, Brightness*),
+                va_arg(args, int),
+                va_arg(args, void*),
+                va_arg(args, Object)
+            );
             break;
 	}
 }
