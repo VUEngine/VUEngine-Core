@@ -87,6 +87,7 @@ void ScreenEffectManager_destructor(ScreenEffectManager this);
 void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_list args);
 void ScreenEffectManager_stopEffect(ScreenEffectManager this, int effect);
 bool ScreenEffectManager_handleMessage(ScreenEffectManager this, Telegram telegram);
+Brightness ScreenEffectManager_getDefaultBrightness(ScreenEffectManager this);
 
 
 #endif
