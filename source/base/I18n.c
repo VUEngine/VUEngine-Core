@@ -35,15 +35,17 @@ extern LangROMDef* __LANGUAGES[];
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * I18n
+ * @class I18n
+ * @extends Object
+ * @brief Handles internationalization of text output and thus allows multiple selectable languages.
  *
- * Handles internationalization of text output and thus allows multiple selectable languages.
+ * @var u8  activeLanguage
+ * @brief Currently active language
+ * @memberof I18n
  */
 
 #define I18n_ATTRIBUTES																					\
-        /* super's attributes */																		\
         Object_ATTRIBUTES																				\
-        /* currently active language */																	\
         u8 activeLanguage;																				\
 
 __CLASS_DEFINITION(I18n, Object);
@@ -63,9 +65,11 @@ static void I18n_constructor(I18n this);
 __SINGLETON(I18n);
 
 /**
- *  Class constructor
+ * Class constructor
  *
- *  @param  I18n    this    I18n instance
+ * @memberof I18n
+ * @public
+ * @param  I18n    this    Function scope
  */
 static void __attribute__ ((noinline)) I18n_constructor(I18n this)
 {
@@ -77,9 +81,11 @@ static void __attribute__ ((noinline)) I18n_constructor(I18n this)
 }
 
 /**
- *  Class destructor
+ * Class destructor
  *
- *  @param  I18n    this    I18n instance
+ * @memberof I18n
+ * @public
+ * @param  I18n    this    Function scope
  */
 void I18n_destructor(I18n this)
 {
@@ -90,12 +96,13 @@ void I18n_destructor(I18n this)
 }
 
 /**
- *  Get localized string
+ * Get localized string
  *
- *  @param  I18n    this    I18n instance
- *  @param  int     string  The identifier of the string to localize
- *
- *  @return localized string or NULL if no translation could be found
+ * @memberof I18n
+ * @public
+ * @param  I18n    this    Function scope
+ * @param  int     string  The identifier of the string to localize
+ * @return localized string or NULL if no translation could be found
  */
 const char* I18n_getText(I18n this, int string)
 {
@@ -105,10 +112,12 @@ const char* I18n_getText(I18n this, int string)
 }
 
 /**
- *  Set the active language
+ * Set the active language
  *
- *  @param  I18n    this        I18n instance
- *  @param  u8      languageId  ID of the language to make active
+ * @memberof I18n
+ * @public
+ * @param  I18n    this        Function scope
+ * @param  u8      languageId  ID of the language to make active
  */
 void I18n_setActiveLanguage(I18n this, u8 languageId)
 {
@@ -118,11 +127,12 @@ void I18n_setActiveLanguage(I18n this, u8 languageId)
 }
 
 /**
- *  Get all registered languages
+ * Get all registered languages
  *
- *  @param  I18n    this    I18n instance
- *
- *  @return Array of LangDefinition pointers
+ * @memberof I18n
+ * @public
+ * @param  I18n    this    Function scope
+ * @return Array of LangDefinition pointers
  */
 LangDefinition * I18n_getLanguages(I18n this __attribute__ ((unused)))
 {
@@ -132,11 +142,12 @@ LangDefinition * I18n_getLanguages(I18n this __attribute__ ((unused)))
 }
 
 /**
- *  Retrieves ID of the currently active language
+ * Retrieves ID of the currently active language
  *
- *  @param  I18n    this    I18n instance
- *
- *  @return ID of currently active language
+ * @memberof I18n
+ * @public
+ * @param  I18n    this    Function scope
+ * @return ID of currently active language
  */
 u8 I18n_getActiveLanguage(I18n this)
 {
@@ -146,11 +157,12 @@ u8 I18n_getActiveLanguage(I18n this)
 }
 
 /**
- *  Retrieves name of the currently active language
+ * Retrieves name of the currently active language
  *
- *  @param  I18n    this    I18n instance
- *
- *  @return Name of currently active language
+ * @memberof I18n
+ * @public
+ * @param  I18n    this    Function scope
+ * @return Name of currently active language
  */
 char* I18n_getActiveLanguageName(I18n this)
 {

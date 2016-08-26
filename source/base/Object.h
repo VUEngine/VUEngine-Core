@@ -51,10 +51,9 @@
 #define Object_ATTRIBUTES																				\
         /* pointer to the class's virtual table */														\
         void* vTable;																				    \
-        /* events */																					\
         VirtualList events;																		    	\
 
-// the root class for everything else!
+// the root class for everything else
 __CLASS(Object);
 
 
