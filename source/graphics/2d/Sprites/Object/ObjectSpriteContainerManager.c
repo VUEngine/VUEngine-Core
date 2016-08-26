@@ -127,7 +127,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 
 	for(i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
-		if(ObjectSpriteContainer_hasRoomFor(this->objectSpriteContainers[i], numberOfObjects))
+		if(this->objectSpriteContainers[i] && ObjectSpriteContainer_hasRoomFor(this->objectSpriteContainers[i], numberOfObjects))
 		{
 			if(!suitableObjectSpriteContainer)
 			{
@@ -170,20 +170,23 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	{
 		NM_ASSERT(z[i] <= previousZ, "ObjectSpriteContainerManager::setupObjectSpriteContainers: wrong z");
 
-		if(!this->objectSpriteContainers[i])
+		if(size[i] && !this->objectSpriteContainers[i])
 		{
 			availableObjects -= size[i];
 			NM_ASSERT(0 <= availableObjects, "ObjectSpriteContainerManager::setupObjectSpriteContainers: OBJs depleted");
 			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i, size[i], availableObjects);
 		}
 
-		VBVec2D position =
-		{
-				0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
-		};
+        if(this->objectSpriteContainers[i])
+        {
+            VBVec2D position =
+            {
+                    0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
+            };
 
-		ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
-		previousZ = z[i];
+            ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
+            previousZ = z[i];
+        }
 	}
 }
 
