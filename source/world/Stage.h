@@ -220,7 +220,7 @@ UI Stage_getUI(Stage this);
 void Stage_suspend(Stage this);
 void Stage_resume(Stage this);
 bool Stage_handlePropagatedMessage(Stage this, int message);
-StageDefinition* Stage_stageDefinition(Stage this);
+StageDefinition* Stage_getStageDefinition(Stage this);
 
 
 #endif

@@ -806,13 +806,14 @@ static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
 
 static void StageEditor_printEntityPosition(StageEditor this)
 {
-	int y = 2;
 	int x = 1;
+	int y = 2;
+
 	Printing_text(Printing_getInstance(), "MOVE OBJECT", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
 	Printing_text(Printing_getInstance(), "Next   \x17\x18", 38, 2, NULL);
 	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 3, NULL);
-	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
+	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 4, NULL);
 
 	if(this->currentEntityNode)
 	{
