@@ -97,7 +97,7 @@ Brightness ScreenEffectManager_getDefaultBrightness(ScreenEffectManager this __a
     Stage stage = GameState_getStage(Game_getCurrentState(Game_getInstance()));
     if(stage != NULL)
     {
-        StageDefinition* stageDefinition = Stage_stageDefinition(stage);
+        StageDefinition* stageDefinition = Stage_getStageDefinition(stage);
         brightness = stageDefinition->rendering.colorConfig.brightness;
     }
 

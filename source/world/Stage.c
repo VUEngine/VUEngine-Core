@@ -1236,7 +1236,7 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 }
 
 // get stage definition
-StageDefinition* Stage_stageDefinition(Stage this)
+StageDefinition* Stage_getStageDefinition(Stage this)
 {
 	ASSERT(this, "Stage::getDefinition: null this");
 

@@ -29,19 +29,28 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// it is the base class for everything.. so it does derives from nothing but itself
-__CLASS_DEFINITION(Object, Object);
+/**
+ * @class Object
+ * @brief Base class for all other classes in the engine.
+ *
+ * @var VirtualList events
+ * @brief List of registered events.
+ * @memberof Object
+ */
 
+// this is the base class for everything, so it derives from nothing but itself
+__CLASS_DEFINITION(Object, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
-
+/**
+ * An event
+ */
 typedef struct Event
 {
 	Object listener;
 	EventListener method;
 	char name[__MAX_EVENT_NAME_LENGTH];
-
 } Event;
 
 
@@ -49,13 +58,25 @@ typedef struct Event
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof Object
+ * @public
+ * @param Object    this    Function scope
+ */
 void Object_constructor(Object this)
 {
 	this->events = NULL;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof Object
+ * @public
+ * @param Object    this    Function scope
+ */
 void Object_destructor(Object this)
 {
 	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_OBJECT_DESTROYED);
@@ -77,7 +98,15 @@ void Object_destructor(Object this)
 	ASSERT(this, "Object::destructor: null this");
 }
 
-// on message
+/**
+ * Handles incoming messages
+ *
+ * @memberof Object
+ * @public
+ * @param this     Function scope
+ * @param telegram The received message
+ * @return Always returns false, this is meant to be used only in derived classes
+ */
 bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "Object::handleMessage: null this");
@@ -85,7 +114,16 @@ bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram _
 	return false;
 }
 
-// register an event listener
+/**
+ * Registers an event listener
+ *
+ * @memberof Object
+ * @public
+ * @param this         Function scope
+ * @param listener     Object to register event listener at
+ * @param method       The method to execute on event
+ * @param eventName    The name of the event to listen to
+ */
 void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName)
 {
 	ASSERT(this, "Object::addEventListener: null this");
@@ -114,7 +152,16 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 	VirtualList_pushBack(this->events, event);
 }
 
-// remove an event listener
+/**
+ * Removes an event listener
+ *
+ * @memberof Object
+ * @public
+ * @param this         Function scope
+ * @param listener     Object where event listener is registered at
+ * @param method       The method attached to event listener
+ * @param eventName    The name of the event
+ */
 void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName)
 {
 	ASSERT(this, "Object::removeEventListener: null this");
@@ -138,7 +185,15 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 	}
 }
 
-// remove event listeners without specifying method
+/**
+ * Removes event listeners without specifying a method
+ *
+ * @memberof Object
+ * @public
+ * @param this         Function scope
+ * @param listener     Object where event listener is registered at
+ * @param eventName    The name of the event
+ */
 void Object_removeEventListeners(Object this, Object listener, char* eventName)
 {
 	ASSERT(this, "Object::removeEventListeners: null this");
@@ -161,7 +216,14 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 	}
 }
 
-// fire event
+/**
+ * Fires an event
+ *
+ * @memberof Object
+ * @public
+ * @param this         Function scope
+ * @param eventName    The name of the event
+ */
 void Object_fireEvent(Object this,  char* eventName)
 {
 	ASSERT(this, "Object::fireEvent: null this");
@@ -182,7 +244,15 @@ void Object_fireEvent(Object this,  char* eventName)
 	}
 }
 
-// cast object to base class
+/**
+ * Casts an object to base class
+ *
+ * @memberof Object
+ * @public
+ * @param this                         Function scope
+ * @param targetClassGetClassMethod
+ * @param baseClassGetClassMethod
+ */
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
 	ASSERT(this, "Object::getCast: null this");
@@ -227,6 +297,13 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 	return Object_getCast((Object)this, targetClassGetClassMethod, (ObjectBaseClassPointer)baseClassGetClassMethod(this));
 }
 
+/**
+ * Get an Object's vTable
+ *
+ * @memberof Object
+ * @public
+ * @param this     Function scope
+ */
 const void* Object_getVTable(Object this)
 {
 	ASSERT(this, "Object::getVTable: null this");
