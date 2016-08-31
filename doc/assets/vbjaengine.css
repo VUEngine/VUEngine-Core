@@ -1,0 +1,26 @@
+.navbar {
+	background-color: #111 !important;
+	border-radius: 0 !important;
+}
+
+.navbar-brand {
+	color: #e0313f !important;
+	font-size: 32px !important;
+	height: auto !important;
+	line-height: 40px !important;
+}
+
+.col-sm-12 > div:first-child > div:first-child {
+	background-color: #eee;
+	border-radius: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+address.footer {
+	background-color: #eee;
+	border-top: 1px solid #ccc;
+	margin: 0 !important;
+	padding: 15px !important;
+	text-align: center !important;
+}
