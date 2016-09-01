@@ -146,15 +146,10 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 	__CONSTRUCT_BASE(Object);
 
 	this->currentEntityNode = NULL;
-
 	this->gameState = NULL;
-
 	this->userObjectSprite = NULL;
-
 	this->mode = kFirstMode + 1;
-
 	this->shape = NULL;
-
 	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, "\x0B", kString);
 
 	VirtualList userObjects = __NEW(VirtualList);
@@ -819,11 +814,14 @@ static void StageEditor_printEntityPosition(StageEditor this)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 		const VBVec3D* globalPosition = Container_getGlobalPosition(__SAFE_CAST(Container, entity));
+		char* entityName = Container_getName(__SAFE_CAST(Container, entity));
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Container_getId(__SAFE_CAST(Container, entity)), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(entity), x + 6, y, NULL);
+		Printing_text(Printing_getInstance(), "Name:                                  ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
 		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->x), x + 13, y, NULL);
 		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->y), x + 22, y, NULL);

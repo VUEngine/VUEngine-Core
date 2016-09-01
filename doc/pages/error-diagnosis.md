@@ -41,7 +41,7 @@ One of the most difficult, and common source of hard to diagnose bugs are uninit
 MemoryPool's size
 -----------------
 
-Another source of strange behavior and crashes occurs when the stack is overflowed. Try to reduce the memory pool's size by a few KB in order to dismiss this stack's overflow as the source of the issue.
+Another source of strange behavior and crashes occurs when the stack is overflown. Try to reduce the memory pool's size by a few KB in order to dismiss this stack's overflow as the source of the issue.
 
 
 Cast everything
@@ -85,6 +85,6 @@ Debug Tools
 Other useful macros
 -------------------
 
-### __GET_CLASS_NAME
+### __GET_CLASS_NAME()
 
 Get the class of an object using this macro. 
