@@ -68,7 +68,7 @@ __SINGLETON(I18n);
  * Class constructor
  *
  * @memberof I18n
- * @public
+ * @private
  * @param this  Function scope
  */
 static void __attribute__ ((noinline)) I18n_constructor(I18n this)

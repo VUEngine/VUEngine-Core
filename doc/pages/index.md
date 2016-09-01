@@ -52,3 +52,7 @@ TODO
 - Tile based collision detection
 - BGMAP defragmentation
 - More collision shapes: spheres, complex polyhedrons, etc.
+
+
+> This document is a work in progress and thus contains incomplete or partially outdated information.
+> If you have any problems which this document is unable to help you resolve, please refer to the (http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0 "VBJaEngine support forum")</a>.
