@@ -117,9 +117,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
-	//disable interrupts
-	TimerManager_setInterrupt(TimerManager_getInstance(), false);
-
     VirtualNode node = this->clocks->head;
 
     // update all registered clocks
@@ -174,10 +171,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #ifdef __PROFILING
         Game_showProfiling(Game_getInstance());
 #endif
+        extern u32 gameFrameTotalTime;
+    	Printing_text(Printing_getInstance(), "      ", 21, 2, NULL);
+    	Printing_int(Printing_getInstance(), gameFrameTotalTime, 21, 2, NULL);
+        gameFrameTotalTime = 0;
     }
-
-    //disable interrupts
-    TimerManager_setInterrupt(TimerManager_getInstance(), true);
 }
 
 // reset clocks
