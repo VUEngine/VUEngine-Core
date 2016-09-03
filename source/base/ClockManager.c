@@ -171,10 +171,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 #ifdef __PROFILING
         Game_showProfiling(Game_getInstance());
 #endif
-        extern u32 gameFrameTotalTime;
-    	Printing_text(Printing_getInstance(), "      ", 21, 2, NULL);
-    	Printing_int(Printing_getInstance(), gameFrameTotalTime, 21, 2, NULL);
-        gameFrameTotalTime = 0;
     }
 }
 

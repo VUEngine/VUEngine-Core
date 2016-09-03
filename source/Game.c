@@ -800,11 +800,13 @@ inline static void Game_checkForNewState(Game this)
 }
 
 #ifdef __PROFILING
+static u32 gameFrameTotalTime = 0;
 static u32 updateVisualsTime = 0;
 static u32 updateLogicTime = 0;
 static u32 updatePhysicsTime = 0;
 static u32 updateTransformationsTime = 0;
 #endif
+
 
 // update game's subsystems
 static void Game_update(Game this)
@@ -829,8 +831,26 @@ static void Game_update(Game this)
 	    while(!(_vipRegisters[__INTPND] & __GAMESTART));
 	    _vipRegisters[__INTCLR]= __GAMESTART;
 
+#ifdef __CAP_FRAMERATE
+	    // cap framerate
+	    volatile u32 gameFrameTime = 0;
+
+	    do
+	    {
+	        gameFrameTime = TimerManager_getTicks(this->timerManager);
+	    }
+	    while(gameFrameTime < 20);
+
+        TimerManager_getAndResetTicks(this->timerManager);
+#else
+	    u32 gameFrameTime = TimerManager_getAndResetTicks(this->timerManager);
+#endif
+
+#ifdef __PROFILING
+    	gameFrameTotalTime += gameFrameTime;
+#endif
         // update the clocks
-        ClockManager_update(this->clockManager, TimerManager_getAndResetTicks(this->timerManager));
+        ClockManager_update(this->clockManager, gameFrameTime);
 
 	    // register the frame buffer in use by the VPU's drawing process
 	    VIPManager_registerCurrentDrawingframeBufferSet(this->vipManager);
@@ -1258,26 +1278,30 @@ void Game_showProfiling(Game this __attribute__ ((unused)))
     ASSERT(this, "Game::showProfiling: this null");
 
     int x = 0;
-    int xDisplacement = 9;
+    int xDisplacement = 11;
     int y = 2;
 
     Printing_text(Printing_getInstance(), "GAME PROFILING", x, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Visuals:     ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Total time:      ", x, y, NULL);
+    Printing_int(Printing_getInstance(), gameFrameTotalTime, x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Visuals:         ", x, y, NULL);
     Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Logic:       ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Logic:           ", x, y, NULL);
     Printing_int(Printing_getInstance(), updateLogicTime, x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Physics:     ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Physics:         ", x, y, NULL);
     Printing_int(Printing_getInstance(), updatePhysicsTime, x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Transf.:     ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Transf.:         ", x, y, NULL);
     Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "TOTAL:       ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "TOTAL:           ", x, y, NULL);
     Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updatePhysicsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
 
+    gameFrameTotalTime = 0;
     updateVisualsTime = 0;
     updateLogicTime = 0;
     updatePhysicsTime = 0;

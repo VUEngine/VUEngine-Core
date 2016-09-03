@@ -29,16 +29,41 @@
 //---------------------------------------------------------------------------------------------------------
 
 #ifdef __TOOLS
+
+// print frame rate
 #define __PRINT_FRAMERATE
+
+// print memory pool's status
 #define __PRINT_MEMORY_POOL_STATUS
+#define __PRINT_DETAILED_MEMORY_POOL_STATUS
+
+// alert stack overflows
 #define __ALERT_STACK_OVERFLOW
+
+// alert VPU's overtime
 #define __ALERT_VPU_OVERTIME
+
+// alert transformation - VPU unsync warning
 #define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
+
+// tools
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
 #define __ANIMATION_EDITOR
 #endif
 
+//---------------------------------------------------------------------------------------------------------
+// 											PROFILING
+//---------------------------------------------------------------------------------------------------------
+
+// print frame rate
+#undef __PRINT_FRAMERATE
+
+// show game's process profiling
+#define __PROFILING
+
+// show stage streaming's process profiling
+#undef __STREAMING_PROFILING
 
 //---------------------------------------------------------------------------------------------------------
 // 											OPTICS / PROJECTION
@@ -75,6 +100,9 @@
 //---------------------------------------------------------------------------------------------------------
 // 											FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
+
+// cap the framerate
+#define __CAP_FRAMERATE
 
 // disable VPU's XPEND interrupt, and thus rendering while transformation operations have not finished
 #undef __FORCE_VPU_SYNC
@@ -125,20 +153,20 @@
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
 	__BLOCK_DEFINITION(192, 1)																			\
-	__BLOCK_DEFINITION(160, 5)																			\
-	__BLOCK_DEFINITION(144, 6)																			\
-	__BLOCK_DEFINITION(136, 26)																			\
+	__BLOCK_DEFINITION(160, 8)																			\
+	__BLOCK_DEFINITION(144, 8)																			\
+	__BLOCK_DEFINITION(136, 30)																			\
 	__BLOCK_DEFINITION(120, 35)																			\
-	__BLOCK_DEFINITION(112, 12)																			\
-	__BLOCK_DEFINITION(104, 10)																			\
-	__BLOCK_DEFINITION(100, 20)																			\
-	__BLOCK_DEFINITION(92, 24)																			\
-	__BLOCK_DEFINITION(84, 30)																			\
-	__BLOCK_DEFINITION(76, 8)																			\
-	__BLOCK_DEFINITION(68, 56)																			\
-	__BLOCK_DEFINITION(28, 276)																			\
-	__BLOCK_DEFINITION(20, 588)																			\
-	__BLOCK_DEFINITION(16, 276)																		\
+	__BLOCK_DEFINITION(112, 16)																			\
+	__BLOCK_DEFINITION(104, 18)																			\
+	__BLOCK_DEFINITION(100, 25)																			\
+	__BLOCK_DEFINITION(96, 50)																			\
+	__BLOCK_DEFINITION(84, 40)																			\
+	__BLOCK_DEFINITION(76, 10)																			\
+	__BLOCK_DEFINITION(68, 70)																			\
+	__BLOCK_DEFINITION(28, 340)																			\
+	__BLOCK_DEFINITION(20, 630)																			\
+	__BLOCK_DEFINITION(16, 300)						    												\
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
@@ -150,7 +178,7 @@
 	__SET_MEMORY_POOL_ARRAY(112)																		\
 	__SET_MEMORY_POOL_ARRAY(104)																		\
 	__SET_MEMORY_POOL_ARRAY(100)																		\
-	__SET_MEMORY_POOL_ARRAY(92)																			\
+	__SET_MEMORY_POOL_ARRAY(96)																			\
 	__SET_MEMORY_POOL_ARRAY(84)																			\
 	__SET_MEMORY_POOL_ARRAY(76)																			\
 	__SET_MEMORY_POOL_ARRAY(68)																			\
@@ -296,7 +324,6 @@
 #define __FADE_DELAY					        16
 
 
-
 //---------------------------------------------------------------------------------------------------------
 // 											COLOR PALETTES
 //---------------------------------------------------------------------------------------------------------
@@ -305,10 +332,10 @@
 
 // default palette values, actual values are set in stage definitions
 
-#define __BGMAP_PALETTE_0						0b11100100
-#define __BGMAP_PALETTE_1						0b11100000
-#define __BGMAP_PALETTE_2						0b10010000
-#define __BGMAP_PALETTE_3						0b01010000
+#define __BGMAP_PALETTE_0						0b11100100 // normal progression
+#define __BGMAP_PALETTE_1						0b11100000 // show dark red as black
+#define __BGMAP_PALETTE_2						0b10010000 // background layer
+#define __BGMAP_PALETTE_3						0b01010000 // very dark, used when getting hit
 
 #define __OBJECT_PALETTE_0						__BGMAP_PALETTE_0
 #define __OBJECT_PALETTE_1						__BGMAP_PALETTE_1
