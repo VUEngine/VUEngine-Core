@@ -1057,12 +1057,14 @@ void Stage_showProfiling(Stage this)
     Printing_int(Printing_getInstance(), unloadOutOfRangeEntitiesTime, x + xDisplacement, y++, NULL);
     Printing_text(Printing_getInstance(), "Select:           ", x, y, NULL);
     Printing_int(Printing_getInstance(), selectEntitiesInLoadRangeTime, x + xDisplacement, y++, NULL);
-    Printing_text(Printing_getInstance(), "Load:           ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Load:             ", x, y, NULL);
     Printing_int(Printing_getInstance(), loadEntitiesTime, x + xDisplacement, y++, NULL);
-    Printing_text(Printing_getInstance(), "Initialize:           ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Initialize:       ", x, y, NULL);
     Printing_int(Printing_getInstance(), initializeEntitiesTime, x + xDisplacement, y++, NULL);
-    Printing_text(Printing_getInstance(), "Transform:           ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Transform:        ", x, y, NULL);
     Printing_int(Printing_getInstance(), transformEntitiesTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "TOTAL:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), unloadOutOfRangeEntitiesTime + selectEntitiesInLoadRangeTime + loadEntitiesTime + initializeEntitiesTime + transformEntitiesTime, x + xDisplacement, y++, NULL);
 
     unloadOutOfRangeEntitiesTime = 0;
     selectEntitiesInLoadRangeTime = 0;
