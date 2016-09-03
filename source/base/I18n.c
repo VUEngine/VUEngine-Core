@@ -68,8 +68,8 @@ __SINGLETON(I18n);
  * Class constructor
  *
  * @memberof I18n
- * @public
- * @param  I18n    this    Function scope
+ * @private
+ * @param this  Function scope
  */
 static void __attribute__ ((noinline)) I18n_constructor(I18n this)
 {
@@ -85,7 +85,7 @@ static void __attribute__ ((noinline)) I18n_constructor(I18n this)
  *
  * @memberof I18n
  * @public
- * @param  I18n    this    Function scope
+ * @param this  Function scope
  */
 void I18n_destructor(I18n this)
 {
@@ -100,8 +100,8 @@ void I18n_destructor(I18n this)
  *
  * @memberof I18n
  * @public
- * @param  I18n    this    Function scope
- * @param  int     string  The identifier of the string to localize
+ * @param this      Function scope
+ * @param string    The identifier of the string to localize
  * @return localized string or NULL if no translation could be found
  */
 const char* I18n_getText(I18n this, int string)
@@ -116,8 +116,8 @@ const char* I18n_getText(I18n this, int string)
  *
  * @memberof I18n
  * @public
- * @param  I18n    this        Function scope
- * @param  u8      languageId  ID of the language to make active
+ * @param this          Function scope
+ * @param languageId    ID of the language to make active
  */
 void I18n_setActiveLanguage(I18n this, u8 languageId)
 {
@@ -131,7 +131,7 @@ void I18n_setActiveLanguage(I18n this, u8 languageId)
  *
  * @memberof I18n
  * @public
- * @param  I18n    this    Function scope
+ * @param this  Function scope
  * @return Array of LangDefinition pointers
  */
 LangDefinition * I18n_getLanguages(I18n this __attribute__ ((unused)))
@@ -146,7 +146,7 @@ LangDefinition * I18n_getLanguages(I18n this __attribute__ ((unused)))
  *
  * @memberof I18n
  * @public
- * @param  I18n    this    Function scope
+ * @param this  Function scope
  * @return ID of currently active language
  */
 u8 I18n_getActiveLanguage(I18n this)
@@ -161,7 +161,7 @@ u8 I18n_getActiveLanguage(I18n this)
  *
  * @memberof I18n
  * @public
- * @param  I18n    this    Function scope
+ * @param this  Function scope
  * @return Name of currently active language
  */
 char* I18n_getActiveLanguageName(I18n this)

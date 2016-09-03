@@ -48,6 +48,11 @@
 // declare a I18n
 __CLASS(I18n);
 
+/**
+ * @typedef struct  LangDefinition
+ * @brief Currently active language
+ * @memberof I18n
+ */
 typedef struct LangDefinition
 {
 	// language name
@@ -65,6 +70,13 @@ typedef const LangDefinition LangROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @memberof I18n
+ * @public
+ * @return I18n instance
+ */
 I18n I18n_getInstance();
 
 void I18n_destructor(I18n this);

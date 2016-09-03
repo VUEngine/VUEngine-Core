@@ -63,7 +63,7 @@ typedef struct Event
  *
  * @memberof Object
  * @public
- * @param Object    this    Function scope
+ * @param this  Function scope
  */
 void Object_constructor(Object this)
 {
@@ -75,7 +75,7 @@ void Object_constructor(Object this)
  *
  * @memberof Object
  * @public
- * @param Object    this    Function scope
+ * @param this  Function scope
  */
 void Object_destructor(Object this)
 {
@@ -302,7 +302,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
  *
  * @memberof Object
  * @public
- * @param this     Function scope
+ * @param this  Function scope
  */
 const void* Object_getVTable(Object this)
 {

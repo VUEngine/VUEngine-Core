@@ -1,0 +1,77 @@
+Printing
+========
+
+The Printing Layer
+------------------
+
+Out of the VB's 32 available Worlds, the VBJaEngine reserves the highest one for text output.
+It provides methods to output different variable types to this so-called *Printing Layer*.
+
+- `Printing_text`
+- `Printing_int`
+- `Printing_float`
+- `Printing_hex`
+
+Here's an example that outputs the string "Hello, World!" at position {10, 0} using a custom font
+registered under the name "CustomFont".
+
+    Printing_text(
+        Printing_getInstance(), // Printing instance
+        "Hello, World!", // text
+        10, // x position
+        0, // y position
+        "CustomFont", // font name
+    );
+
+The whole printing layer can be cleared with the `Printing_clear` method.
+
+Some aspects of the Printing Layer can be modified in your projects's `config.h` file.
+
+The palette for printing can be set to one of the 4 available one with the
+`__PRINTING_PALETTE` setting.
+
+An offset of the printing layer can be defined using the
+`__PRINTING_BGMAP_X_OFFSET`, `__PRINTING_BGMAP_Y_OFFSET` and
+`__PRINTING_BGMAP_Z_OFFSET` settings.
+
+
+Font management
+---------------
+
+The VBJaEngine comes with a default font for writing to the Printing Layer, but you can replace it with any number of custom fonts. To tell the engine to ignore the default font and load your custom font(s) instead, you have to define the `__CUSTOM_FONTS` macro in your game's `config.h` file.
+
+    #define __CUSTOM_FONTS
+
+With that macro defined, the engine expects you to define a *NULL terminated* array of pointers to `FontROMDef` definitions called `__FONTS`. The following example defines a single 8x8 pixel font as a direct replacement for the built-in default font.
+
+    extern BYTE font8x8Tiles[];
+    
+    FontROMDef FONT_8x8 =
+    {
+        // font chars definition pointer
+        font8x8Tiles,
+        
+        // number of characters in font
+        256,
+        
+        // character number at which the font starts, allows you to skip the control characters for example
+        0,
+        
+        // size of a single character (in chars) ({width, height})
+        {1, 1},
+        
+        // font's name
+        "Font8x8",
+    };
+    
+    const FontROMDef* __FONTS[] =
+    {
+        &FONT_8x8,
+        NULL
+    };
+
+Note that the first font in the `__FONTS` array is always the default one, and is used when `NULL` is passed to the various Printing methods instead of a font name.
+
+The engine's default font will not be loaded when custom fonts are enabled. If you still want to use it, simply add `&VBJAENGINE_FONT` to your `__FONTS` array. It will then be accessible under the name "VBJaEngineFont". Don't forget to also declare it as extern in your font definition file, like so:
+
+    extern FontROMDef VBJAENGINE_FONT;
