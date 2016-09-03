@@ -36,8 +36,11 @@
 #include <VIPManager.h>
 #include <MBackgroundManager.h>
 #include <ParticleRemover.h>
-
 #include <debugConfig.h>
+#ifdef __STREAMING_PROFILING
+#include <TimerManager.h>
+#include <Printing.h>
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -1036,6 +1039,39 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	}
 }
 
+#ifdef __STREAMING_PROFILING
+u32 unloadOutOfRangeEntitiesTime = 0;
+u32 selectEntitiesInLoadRangeTime = 0;
+u32 loadEntitiesTime = 0;
+u32 initializeEntitiesTime = 0;
+u32 transformEntitiesTime = 0;
+
+void Stage_showProfiling(Stage this)
+{
+    int x = 0;
+    int xDisplacement = 11;
+    int y = 10;
+    Printing_text(Printing_getInstance(), "STREAMING PROFILING", x, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Unload:           ", x, y, NULL);
+    Printing_int(Printing_getInstance(), unloadOutOfRangeEntitiesTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Select:           ", x, y, NULL);
+    Printing_int(Printing_getInstance(), selectEntitiesInLoadRangeTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Load:           ", x, y, NULL);
+    Printing_int(Printing_getInstance(), loadEntitiesTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Initialize:           ", x, y, NULL);
+    Printing_int(Printing_getInstance(), initializeEntitiesTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Transform:           ", x, y, NULL);
+    Printing_int(Printing_getInstance(), transformEntitiesTime, x + xDisplacement, y++, NULL);
+
+    unloadOutOfRangeEntitiesTime = 0;
+    selectEntitiesInLoadRangeTime = 0;
+    loadEntitiesTime = 0;
+    initializeEntitiesTime = 0;
+    transformEntitiesTime = 0;
+}
+#endif
+
 // stream entities according to screen's position
 void Stage_stream(Stage this)
 {
@@ -1045,10 +1081,18 @@ void Stage_stream(Stage this)
 	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
 	int streamingCycleBase = streamingDelayPerCycle / __STREAMING_CYCLES;
 
+#ifdef __STREAMING_PROFILING
+    u32 timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+#endif
+
 	if(!this->streamingCycleCounter)
 	{
 		// unload not visible objects
 		Stage_unloadOutOfRangeEntities(this);
+
+#ifdef __STREAMING_PROFILING
+	    unloadOutOfRangeEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+#endif
 	}
 	else if(this->streamingCycleCounter == streamingCycleBase)
 	{
@@ -1061,6 +1105,10 @@ void Stage_stream(Stage this)
 		{
 			Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 		}
+
+#ifdef __STREAMING_PROFILING
+	    selectEntitiesInLoadRangeTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+#endif
 	}
 	else if(this->streamingCycleCounter == streamingCycleBase * 2)
 	{
@@ -1068,6 +1116,10 @@ void Stage_stream(Stage this)
 		{
 			Stage_loadEntities(this);
 		}
+
+#ifdef __STREAMING_PROFILING
+	    loadEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+#endif
 	}
 	else if(this->streamingCycleCounter == streamingCycleBase * 3)
 	{
@@ -1075,6 +1127,10 @@ void Stage_stream(Stage this)
 		{
 			Stage_initializeEntities(this);
 		}
+
+#ifdef __STREAMING_PROFILING
+	    initializeEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+#endif
 	}
 	else if(this->streamingCycleCounter == streamingCycleBase * 4)
 	{
@@ -1082,6 +1138,10 @@ void Stage_stream(Stage this)
 		{
 			Stage_transformEntities(this);
 		}
+
+#ifdef __STREAMING_PROFILING
+	    transformEntitiesTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+#endif
 	}
 
 	if(++this->streamingCycleCounter >= streamingDelayPerCycle)

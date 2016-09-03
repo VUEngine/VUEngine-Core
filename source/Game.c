@@ -804,7 +804,6 @@ static u32 updateVisualsTime = 0;
 static u32 updateLogicTime = 0;
 static u32 updatePhysicsTime = 0;
 static u32 updateTransformationsTime = 0;
-static bool showProfiling = false;
 #endif
 
 // update game's subsystems
@@ -816,7 +815,6 @@ static void Game_update(Game this)
 
 #ifdef __PROFILING
     u32 timeBeforeProcess = 0;
-    u32 processTime = 0;
 #endif
 
 #if __FRAME_CYCLE == 1
@@ -825,37 +823,6 @@ static void Game_update(Game this)
 
 	while(true)
 	{
-#ifdef __PROFILING
-        if(showProfiling)
-        {
-            int x = 0;
-            int xDisplacement = 9;
-            int y = 2;
-
-            Printing_text(Printing_getInstance(), "Visuals:     ", x, y, NULL);
-            Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
-
-            Printing_text(Printing_getInstance(), "Logic:       ", x, y, NULL);
-            Printing_int(Printing_getInstance(), updateLogicTime, x + xDisplacement, y++, NULL);
-
-            Printing_text(Printing_getInstance(), "Physics:     ", x, y, NULL);
-            Printing_int(Printing_getInstance(), updatePhysicsTime, x + xDisplacement, y++, NULL);
-
-            Printing_text(Printing_getInstance(), "Transf.:     ", x, y, NULL);
-            Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
-
-            Printing_text(Printing_getInstance(), "TOTAL:       ", x, y, NULL);
-            Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updatePhysicsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
-
-            updateVisualsTime = 0;
-            updateLogicTime = 0;
-            updatePhysicsTime = 0;
-            updateTransformationsTime = 0;
-
-            showProfiling = false;
-        }
-#endif
-
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -883,8 +850,7 @@ static void Game_update(Game this)
 	    Game_updateVisuals(this);
 
 #ifdef __PROFILING
-	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-	    updateVisualsTime = updateVisualsTime < processTime ? processTime : updateVisualsTime;
+	    updateVisualsTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 #endif
 
 		// this is the moment to check if the game's state
@@ -897,8 +863,7 @@ static void Game_update(Game this)
 	    // update game's logic
 	    Game_updateLogic(this);
 #ifdef __PROFILING
-	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-	    updateLogicTime = updateLogicTime < processTime ? processTime : updateLogicTime;
+	    updateLogicTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 #endif
 
 #if __FRAME_CYCLE == 1
@@ -915,8 +880,7 @@ static void Game_update(Game this)
 		// has been done
 		Game_updatePhysics(this);
 #ifdef __PROFILING
-	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-	    updatePhysicsTime = updatePhysicsTime < processTime ? processTime : updatePhysicsTime;
+	    updatePhysicsTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 #endif
 
 #ifdef __PROFILING
@@ -925,8 +889,7 @@ static void Game_update(Game this)
 	    // apply transformations
 	    Game_updateTransformations(this);
 #ifdef __PROFILING
-	    processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-	    updateTransformationsTime = updateTransformationsTime < processTime ? processTime : updateTransformationsTime;
+	    updateTransformationsTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
 #endif
 
 	    // increase the FPS counter
@@ -1290,10 +1253,38 @@ const char* Game_getDRAMPrecalculationsStep(Game this)
 #endif
 
 #ifdef __PROFILING
-void Game_showProfiling(Game this)
+void Game_showProfiling(Game this __attribute__ ((unused)))
 {
     ASSERT(this, "Game::showProfiling: this null");
 
-    showProfiling = true;
+    int x = 0;
+    int xDisplacement = 9;
+    int y = 2;
+
+    Printing_text(Printing_getInstance(), "GAME PROFILING", x, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Visuals:     ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Logic:       ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateLogicTime, x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Physics:     ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updatePhysicsTime, x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Transf.:     ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "TOTAL:       ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updatePhysicsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
+
+    updateVisualsTime = 0;
+    updateLogicTime = 0;
+    updatePhysicsTime = 0;
+    updateTransformationsTime = 0;
+
+#ifdef __STREAMING_PROFILING
+    Stage_showProfiling(Game_getStage(this));
+#endif
 }
 #endif
