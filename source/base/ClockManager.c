@@ -120,8 +120,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	//disable interrupts
 	TimerManager_setInterrupt(TimerManager_getInstance(), false);
 
-	static u32 previousSecond = 0;
-
     VirtualNode node = this->clocks->head;
 
     // update all registered clocks
@@ -133,10 +131,11 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	// update tick count
 	this->ticks += ticksElapsed;
 
+	static u32 previousSecond = 0;
 	u32 currentSecond = (u32)((this->ticks) / __MILLISECONDS_IN_SECOND);
 
 	//if second has changed, set frame rate
-    if(previousSecond < currentSecond)
+    if(previousSecond != currentSecond)
     {
         previousSecond = currentSecond;
     	FrameRate frameRate = FrameRate_getInstance();
