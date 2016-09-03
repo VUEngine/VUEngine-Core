@@ -831,6 +831,10 @@ static void Game_update(Game this)
 	    while(!(_vipRegisters[__INTPND] & __GAMESTART));
 	    _vipRegisters[__INTCLR]= __GAMESTART;
 
+#ifdef __PROFILING
+    	gameFrameTotalTime += TimerManager_getTicks(this->timerManager);
+#endif
+
 #ifdef __CAP_FRAMERATE
 	    // cap framerate
 	    volatile u32 gameFrameTime = 0;
@@ -846,9 +850,6 @@ static void Game_update(Game this)
 	    u32 gameFrameTime = TimerManager_getAndResetTicks(this->timerManager);
 #endif
 
-#ifdef __PROFILING
-    	gameFrameTotalTime += gameFrameTime;
-#endif
         // update the clocks
         ClockManager_update(this->clockManager, gameFrameTime);
 

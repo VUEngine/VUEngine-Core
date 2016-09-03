@@ -60,7 +60,8 @@
 #undef __PRINT_FRAMERATE
 
 // show game's process profiling
-#define __PROFILING
+// it is only useful when __TIMER_RESOLUTION is 1
+#undef __PROFILING
 
 // show stage streaming's process profiling
 #undef __STREAMING_PROFILING
