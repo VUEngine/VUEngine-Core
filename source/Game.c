@@ -841,8 +841,30 @@ static void Game_update(Game this)
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
-	    while(!(_vipRegisters[__INTPND] & __GAMESTART));
+		if(TimerManager_getTicks(this->timerManager) <=  __MILLISECONDS_IN_SECOND / __TARGET_FPS)
+		{
+	        while(!(_vipRegisters[__INTPND] & __GAMESTART));
+	    }
+
 	    _vipRegisters[__INTCLR]= __GAMESTART;
+
+#ifdef __PROFILING
+        u32 gameFrameTotalTime = 0;
+
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#endif
+
+	    // the engine's game logic is free of racing
+	    // conditions against the VPU
+	    Game_updateVisuals(this);
+
+#ifdef __PROFILING
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        updateVisualsHighestTime = processTime > updateVisualsHighestTime? processTime: updateVisualsHighestTime;
+	    updateVisualsTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
+#endif
+
 
 #ifdef __CAP_FRAMERATE
 	    // cap framerate
@@ -852,7 +874,7 @@ static void Game_update(Game this)
 	    {
 	        gameFrameTime = TimerManager_getTicks(this->timerManager);
 	    }
-	    while(gameFrameTime < 20);
+	    while(gameFrameTime < __MILLISECONDS_IN_SECOND / __TARGET_FPS);
 
         TimerManager_getAndResetTicks(this->timerManager);
 #else
@@ -902,7 +924,7 @@ static void Game_update(Game this)
             FrameRate_reset(frameRate);
         }
 
-        // update the clocksx
+        // update the clocks
         ClockManager_update(this->clockManager, gameFrameTime);
 
 	    // register the frame buffer in use by the VPU's drawing process
@@ -912,23 +934,6 @@ static void Game_update(Game this)
 #if __FRAME_CYCLE == 1
 	    if(cycle)
 	    {
-#endif
-
-#ifdef __PROFILING
-        u32 gameFrameTotalTime = 0;
-
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
-#endif
-
-	    // the engine's game logic is free of racing
-	    // conditions against the VPU
-	    Game_updateVisuals(this);
-
-#ifdef __PROFILING
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-        updateVisualsHighestTime = processTime > updateVisualsHighestTime? processTime: updateVisualsHighestTime;
-	    updateVisualsTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
 #endif
 
 		// this is the moment to check if the game's state
