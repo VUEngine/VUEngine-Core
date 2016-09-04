@@ -38,8 +38,6 @@
         Object_ATTRIBUTES																				\
         /* register clocks */																			\
         VirtualList clocks;																				\
-        /* */																							\
-        u32 ticks;																						\
 
 // define the manager
 __CLASS_DEFINITION(ClockManager, Object);
@@ -71,8 +69,6 @@ static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager thi
 
 	// create the clock list
     this->clocks = __NEW(VirtualList);
-
-	this->ticks = 0;
 }
 
 // class's destructor
@@ -124,54 +120,6 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
     {
         Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed);
     }
-
-	// update tick count
-	this->ticks += ticksElapsed;
-
-	static u32 previousSecond = 0;
-	u32 currentSecond = (u32)((this->ticks) / __MILLISECONDS_IN_SECOND);
-
-	//if second has changed, set frame rate
-    if(previousSecond != currentSecond)
-    {
-        previousSecond = currentSecond;
-    	FrameRate frameRate = FrameRate_getInstance();
-
-#ifdef __DEBUG
-    	Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT >> 3) - 1, NULL);
-#endif
-
-#ifdef __PRINT_FRAMERATE
-        if(!Game_isInSpecialMode(Game_getInstance()))
-        {
-            FrameRate_print(frameRate, 0, 0);
-        }
-#endif
-
-#ifdef __PRINT_MEMORY_POOL_STATUS
-        if(!Game_isInSpecialMode(Game_getInstance()))
-        {
-#ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
-		    MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 30, 1);
-#else
-            MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
-#endif
-        }
-#endif
-
-#ifdef __ALERT_STACK_OVERFLOW
-        if(!Game_isInSpecialMode(Game_getInstance()))
-        {
-            HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
-        }
-#endif
-        //reset frame rate counters
-        FrameRate_reset(frameRate);
-
-#ifdef __PROFILING
-        Game_showProfiling(Game_getInstance());
-#endif
-    }
 }
 
 // reset clocks
@@ -187,6 +135,4 @@ void ClockManager_reset(ClockManager this)
 	{
 		Clock_reset(__SAFE_CAST(Clock, node->data));
 	}
-
-	this->ticks = 0;
 }

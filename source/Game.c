@@ -128,6 +128,8 @@ enum GameCurrentProcess
         u32 lastAutoPauseCheckTime;																		\
         /* current process enum */																		\
         u32 currentProcess;																				\
+        /* elapsed time in current 50hz cycle */														\
+        u32 gameFrameTotalTime;																            \
         /* low battery indicator showing flag */														\
         bool isShowingLowBatteryIndicator;																\
 
@@ -152,6 +154,9 @@ static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
 static void Game_checkLowBattery(Game this, u16 keyPressed);
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
+#endif
+#ifdef __PROFILING
+static void Game_showProfiling(Game this);
 #endif
 
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
@@ -183,6 +188,8 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 
 	// current process
 	this->currentProcess = kGameStartingUp;
+
+	this->gameFrameTotalTime = 0;
 
 	// force construction now
 	this->clockManager = ClockManager_getInstance();
@@ -800,11 +807,16 @@ inline static void Game_checkForNewState(Game this)
 }
 
 #ifdef __PROFILING
-static u32 gameFrameTotalTime = 0;
-static u32 updateVisualsTime = 0;
-static u32 updateLogicTime = 0;
-static u32 updatePhysicsTime = 0;
-static u32 updateTransformationsTime = 0;
+static u32 updateVisualsTotalTime = 0;
+static u32 updateLogicTotalTime = 0;
+static u32 updatePhysicsTotalTime = 0;
+static u32 updateTransformationsTotalTime = 0;
+
+static u32 gameFrameHighestTime = 0;
+static u32 updateVisualsHighestTime = 0;
+static u32 updateLogicHighestTime = 0;
+static u32 updatePhysicsHighestTime = 0;
+static u32 updateTransformationsHighestTime = 0;
 #endif
 
 
@@ -817,6 +829,7 @@ static void Game_update(Game this)
 
 #ifdef __PROFILING
     u32 timeBeforeProcess = 0;
+    u32 processTime = 0;
 #endif
 
 #if __FRAME_CYCLE == 1
@@ -830,10 +843,6 @@ static void Game_update(Game this)
 		// this wait actually controls the frame rate
 	    while(!(_vipRegisters[__INTPND] & __GAMESTART));
 	    _vipRegisters[__INTCLR]= __GAMESTART;
-
-#ifdef __PROFILING
-    	gameFrameTotalTime += TimerManager_getTicks(this->timerManager);
-#endif
 
 #ifdef __CAP_FRAMERATE
 	    // cap framerate
@@ -850,7 +859,50 @@ static void Game_update(Game this)
 	    u32 gameFrameTime = TimerManager_getAndResetTicks(this->timerManager);
 #endif
 
-        // update the clocks
+        // inclease game frame total time
+    	this->gameFrameTotalTime += gameFrameTime;
+
+        if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
+        {
+#ifdef __PROFILING
+            Game_showProfiling(this);
+#endif
+
+            this->gameFrameTotalTime = 0;
+
+#ifdef __DEBUG
+        	Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT >> 3) - 1, NULL);
+#endif
+
+#ifdef __PRINT_FRAMERATE
+            if(!Game_isInSpecialMode(this))
+            {
+                FrameRate_print(frameRate, 0, 0);
+            }
+#endif
+
+#ifdef __PRINT_MEMORY_POOL_STATUS
+            if(!Game_isInSpecialMode(this))
+            {
+#ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
+    		    MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 30, 1);
+#else
+                MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
+#endif
+            }
+#endif
+
+#ifdef __ALERT_STACK_OVERFLOW
+            if(!Game_isInSpecialMode(this))
+            {
+                HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
+            }
+#endif
+            //reset frame rate counters
+            FrameRate_reset(frameRate);
+        }
+
+        // update the clocksx
         ClockManager_update(this->clockManager, gameFrameTime);
 
 	    // register the frame buffer in use by the VPU's drawing process
@@ -863,6 +915,8 @@ static void Game_update(Game this)
 #endif
 
 #ifdef __PROFILING
+        u32 gameFrameTotalTime = 0;
+
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 
@@ -871,7 +925,10 @@ static void Game_update(Game this)
 	    Game_updateVisuals(this);
 
 #ifdef __PROFILING
-	    updateVisualsTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        updateVisualsHighestTime = processTime > updateVisualsHighestTime? processTime: updateVisualsHighestTime;
+	    updateVisualsTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
 #endif
 
 		// this is the moment to check if the game's state
@@ -884,7 +941,10 @@ static void Game_update(Game this)
 	    // update game's logic
 	    Game_updateLogic(this);
 #ifdef __PROFILING
-	    updateLogicTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
+	    updateLogicTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
 #endif
 
 #if __FRAME_CYCLE == 1
@@ -901,7 +961,10 @@ static void Game_update(Game this)
 		// has been done
 		Game_updatePhysics(this);
 #ifdef __PROFILING
-	    updatePhysicsTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        updatePhysicsHighestTime = processTime > updatePhysicsHighestTime? processTime: updatePhysicsHighestTime;
+	    updatePhysicsTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
 #endif
 
 #ifdef __PROFILING
@@ -910,7 +973,12 @@ static void Game_update(Game this)
 	    // apply transformations
 	    Game_updateTransformations(this);
 #ifdef __PROFILING
-	    updateTransformationsTime += TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        updateTransformationsHighestTime = processTime > updateTransformationsHighestTime? processTime: updateTransformationsHighestTime;
+	    updateTransformationsTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
+
+        gameFrameHighestTime = gameFrameHighestTime < gameFrameTotalTime?  gameFrameTotalTime: gameFrameHighestTime;
 #endif
 
 	    // increase the FPS counter
@@ -1274,7 +1342,7 @@ const char* Game_getDRAMPrecalculationsStep(Game this)
 #endif
 
 #ifdef __PROFILING
-void Game_showProfiling(Game this __attribute__ ((unused)))
+static void Game_showProfiling(Game this __attribute__ ((unused)))
 {
     ASSERT(this, "Game::showProfiling: this null");
 
@@ -1285,28 +1353,38 @@ void Game_showProfiling(Game this __attribute__ ((unused)))
     Printing_text(Printing_getInstance(), "GAME PROFILING", x, y++, NULL);
 
     Printing_text(Printing_getInstance(), "Total time:      ", x, y, NULL);
-    Printing_int(Printing_getInstance(), gameFrameTotalTime, x + xDisplacement, y++, NULL);
+    Printing_int(Printing_getInstance(), this->gameFrameTotalTime, x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Visuals:         ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateVisualsTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Visuals:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsHighestTime, x + xDisplacement + 4, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Logic:           ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateLogicTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Logic:              ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateLogicTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updateLogicHighestTime, x + xDisplacement + 4, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Physics:         ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updatePhysicsTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Physics:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updatePhysicsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updatePhysicsHighestTime, x + xDisplacement + 4, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Transf.:         ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateTransformationsTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "Transf.:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updateTransformationsHighestTime, x + xDisplacement + 4, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "TOTAL:           ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateVisualsTime + updateLogicTime + updatePhysicsTime + updateTransformationsTime, x + xDisplacement, y++, NULL);
+    Printing_text(Printing_getInstance(), "TOTAL:              ", x, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTotalTime + updateLogicTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + 4, y++, NULL);
 
-    gameFrameTotalTime = 0;
-    updateVisualsTime = 0;
-    updateLogicTime = 0;
-    updatePhysicsTime = 0;
-    updateTransformationsTime = 0;
+    updateVisualsTotalTime = 0;
+    updateLogicTotalTime = 0;
+    updatePhysicsTotalTime = 0;
+    updateTransformationsTotalTime = 0;
+
+    gameFrameHighestTime = 0;
+    updateVisualsHighestTime = 0;
+    updateLogicHighestTime = 0;
+    updatePhysicsHighestTime = 0;
+    updateTransformationsHighestTime = 0;
 
 #ifdef __STREAMING_PROFILING
     Stage_showProfiling(Game_getStage(this));
