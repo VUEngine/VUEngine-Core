@@ -425,8 +425,10 @@ void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), 
          ? brightnessRepeatDefinition->brightnessRepeat[95 - i] << 8
          : brightnessRepeatDefinition->brightnessRepeat[i] << 8;
 
-        _columnTableBaseAddressLeft[255-i] = (_columnTableBaseAddressLeft[i] & 0x00ff) | value;
-        _columnTableBaseAddressRight[255-i] = (_columnTableBaseAddressRight[i] & 0x00ff) | value;
+        // need to write in the middle of the column table
+        // 256 / 2 = 128, 128 - 96 / 2 = 80
+        _columnTableBaseAddressLeft[i + 80] = (_columnTableBaseAddressLeft[i + 80] & 0xff) | value;
+        _columnTableBaseAddressRight[i + 80] = (_columnTableBaseAddressRight[i + 80] & 0xff) | value;
     }
 }
 
