@@ -854,8 +854,8 @@ static void Game_update(Game this)
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 
-	    // the engine's game logic is free of racing
-	    // conditions against the VPU
+	    // the engine's game logic must be free of racing
+	    // conditions against the VIP
 	    Game_updateVisuals(this);
 
 #ifdef __PROFILING
@@ -864,7 +864,6 @@ static void Game_update(Game this)
 	    updateVisualsTotalTime += processTime;
 	    gameFrameTotalTime += processTime;
 #endif
-
 
 #ifdef __CAP_FRAMERATE
 	    // cap framerate
