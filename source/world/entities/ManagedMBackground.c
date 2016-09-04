@@ -244,5 +244,5 @@ int ManagedMBackground_passMessage(ManagedMBackground this __attribute__ ((unuse
 {
 	ASSERT(this, "ManagedMBackground::passMessage: null this");
 
-	return true;
+	return false;
 }
