@@ -74,8 +74,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-#ifndef	__FORCE_VPU_SYNC
-#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
+#ifndef	__FORCE_VIP_SYNC
+#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 bool Game_doneDRAMPrecalculations(Game this);
 const char* Game_getDRAMPrecalculationsStep(Game this);
 #endif
@@ -126,8 +126,8 @@ void VIPManager_enableDrawing(VIPManager this)
 {
 	ASSERT(this, "VIPManager::enableDrawing: null this");
 
-	while(_vipRegisters[__XPSTTS] & XPBSYR);
-	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | XPEN;
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 	VIPManager_enableInterrupt(this);
 }
 
@@ -137,9 +137,9 @@ void VIPManager_disableDrawing(VIPManager this)
 
 	VIPManager_disableInterrupt(this);
 
-	while(_vipRegisters[__XPSTTS] & XPBSYR);
-	_vipRegisters[__XPCTRL] |= XPRST;
-	_vipRegisters[__XPCTRL] &= ~XPEN;
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	_vipRegisters[__XPCTRL] |= __XPRST;
+	_vipRegisters[__XPCTRL] &= ~__XPEN;
 }
 
 // enable interrupt
@@ -148,10 +148,10 @@ void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)))
 	ASSERT(this, "VIPManager::enableInterrupt: null this");
 
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
-#ifdef __ALERT_VPU_OVERTIME
-	_vipRegisters[__INTENB]= XPEND | TIMEERR;
+#ifdef __ALERT_VIP_OVERTIME
+	_vipRegisters[__INTENB]= __XPEND | __TIMEERR;
 #else
-	_vipRegisters[__INTENB]= XPEND;
+	_vipRegisters[__INTENB]= __XPEND;
 #endif
 }
 
@@ -166,16 +166,16 @@ void VIPManager_disableInterrupt(VIPManager this __attribute__ ((unused)))
 
 void VIPManager_interruptHandler(void)
 {
-	bool idle = _vipRegisters[__INTPND] & XPEND;
-#ifdef __ALERT_VPU_OVERTIME
-	bool overtime = _vipRegisters[__INTPND] & TIMEERR;
+	bool idle = _vipRegisters[__INTPND] & __XPEND;
+#ifdef __ALERT_VIP_OVERTIME
+	bool overtime = _vipRegisters[__INTPND] & __TIMEERR;
 #endif
 
 	// disable interrupts
 	_vipRegisters[__INTENB]= 0;
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
-#ifdef __ALERT_VPU_OVERTIME
+#ifdef __ALERT_VIP_OVERTIME
     {
         static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
 
@@ -203,10 +203,10 @@ void VIPManager_interruptHandler(void)
 	if(idle)
 	{
 		// disable drawing
-		_vipRegisters[__XPCTRL] |= XPRST;
-		_vipRegisters[__XPCTRL] &= ~XPEN;
+		_vipRegisters[__XPCTRL] |= __XPRST;
+		_vipRegisters[__XPCTRL] &= ~__XPEN;
 
-		while(_vipRegisters[__XPSTTS] & XPBSYR);
+		while(_vipRegisters[__XPSTTS] & __XPBSYR);
 
 		// if performance was good enough in the
 		// the previous second do some defragmenting
@@ -231,14 +231,14 @@ void VIPManager_interruptHandler(void)
         }
 
 		// enable drawing
-		while (_vipRegisters[__XPSTTS] & XPBSYR);
-		_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | XPEN;
+		while (_vipRegisters[__XPSTTS] & __XPBSYR);
+		_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 	}
 
-#ifndef	__FORCE_VPU_SYNC
-#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
+#ifndef	__FORCE_VIP_SYNC
+#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
     {
-#ifdef __ALERT_VPU_OVERTIME
+#ifdef __ALERT_VIP_OVERTIME
         int y = 2;
 #else
         int y = 1;
@@ -265,10 +265,10 @@ void VIPManager_interruptHandler(void)
 
 	// enable interrupt
     _vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
-#ifdef __ALERT_VPU_OVERTIME
-	_vipRegisters[__INTENB]= XPEND | TIMEERR;
+#ifdef __ALERT_VIP_OVERTIME
+	_vipRegisters[__INTENB]= __XPEND | __TIMEERR;
 #else
-	_vipRegisters[__INTENB]= XPEND;
+	_vipRegisters[__INTENB]= __XPEND;
 #endif
 }
 
@@ -278,8 +278,8 @@ void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
 	ASSERT(this, "VIPManager::displayOn: null this");
 
 	_vipRegisters[__REST] = 0;
-	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | XPEN;
-	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (SYNCE | RE | DISP);
+	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
+	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 	_vipRegisters[__FRMCYC] = 0;
 }
 
@@ -396,12 +396,12 @@ void VIPManager_useInternalColumnTable(VIPManager this __attribute__ ((unused)),
     if(useInternal)
     {
         // set lock bit
-        _vipRegisters[__DPCTRL] |= LOCK;
+        _vipRegisters[__DPCTRL] |= __LOCK;
     }
     else
     {
         // unset lock bit
-        _vipRegisters[__DPCTRL] &= LOCK;
+        _vipRegisters[__DPCTRL] &= __LOCK;
     }
 }
 
@@ -425,8 +425,8 @@ void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), 
          ? brightnessRepeatDefinition->brightnessRepeat[95 - i] << 8
          : brightnessRepeatDefinition->brightnessRepeat[i] << 8;
 
-        _columnTableBaseAddressLeft[255-i] = (_columnTableBaseAddressLeft[i] & 0xff) | value;
-        _columnTableBaseAddressRight[255-i] = (_columnTableBaseAddressRight[i] & 0xff) | value;
+        _columnTableBaseAddressLeft[255-i] = (_columnTableBaseAddressLeft[i] & 0x00ff) | value;
+        _columnTableBaseAddressRight[255-i] = (_columnTableBaseAddressRight[i] & 0x00ff) | value;
     }
 }
 

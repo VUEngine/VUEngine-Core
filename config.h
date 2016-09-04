@@ -40,11 +40,11 @@
 // alert stack overflows
 #define __ALERT_STACK_OVERFLOW
 
-// alert VPU's overtime
-#define __ALERT_VPU_OVERTIME
+// alert VIP's overtime
+#define __ALERT_VIP_OVERTIME
 
 // alert transformation - VPU unsync warning
-#define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
+#define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 
 // tools
 #define __DEBUG_TOOLS
@@ -105,8 +105,8 @@
 // cap the framerate
 #define __CAP_FRAMERATE
 
-// disable VPU's XPEND interrupt, and thus rendering while transformation operations have not finished
-#undef __FORCE_VPU_SYNC
+// disable VPU's __XPEND interrupt, and thus rendering while transformation operations have not finished
+#undef __FORCE_VIP_SYNC
 
 // clock resolution
 #define __TIMER_RESOLUTION						10

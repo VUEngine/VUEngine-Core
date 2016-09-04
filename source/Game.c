@@ -710,7 +710,7 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 
 	this->currentProcess = kGameUpdatingVisuals;
 
-#ifdef __FORCE_VPU_SYNC
+#ifdef __FORCE_VIP_SYNC
 	// disable rendering until collisions have been checked
 	VIPManager_disableInterrupt(this->vipManager);
 #endif
@@ -724,7 +724,7 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 
 	this->currentProcess = kGameUpdatingVisualsDone;
 
-#ifdef __FORCE_VPU_SYNC
+#ifdef __FORCE_VIP_SYNC
 	// allow rendering
 	VIPManager_enableInterrupt(this->vipManager);
 #endif
@@ -1323,8 +1323,8 @@ void Game_wait(Game this, u32 milliSeconds)
     TimerManager_wait(this->timerManager, milliSeconds);
 }
 
-#ifndef	__FORCE_VPU_SYNC
-#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VPU
+#ifndef	__FORCE_VIP_SYNC
+#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 bool Game_doneDRAMPrecalculations(Game this)
 {
 	ASSERT(this, "Game::doneDRAMPrecalculations: null this");

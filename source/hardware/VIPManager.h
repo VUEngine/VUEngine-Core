@@ -31,32 +31,32 @@
 
 
 /* Defines for __INTPND\__INTENB\__INTCLR */
-#define	TIMEERR		0x8000
-#define	XPEND		0x4000
-#define	SBHIT		0x2000
-#define	FRAMESTART	0x0010
-#define	__GAMESTART	0x0008
-#define	RFBEND		0x0004
-#define	LFBEND		0x0002
-#define	SCANERR		0x0001
+#define	__TIMEERR		0x8000
+#define	__XPEND		    0x4000
+#define	__SBHIT		    0x2000
+#define	__FRAMESTART	0x0010
+#define	__GAMESTART	    0x0008
+#define	__RFBEND		0x0004
+#define	__LFBEND		0x0002
+#define	__SCANERR		0x0001
 
 /* Defines for __DPSTTS\__DPCTRL */
-#define	LOCK		0x0400	// VPU SELECT __CTA
-#define	SYNCE		0x0200	// L,R_SYNC TO VPU
-#define	RE			0x0100	// MEMORY REFLASH CYCLE ON
-#define	FCLK		0x0080
-#define	SCANRDY		0x0040
-#define	DISP		0x0002	// DISPLAY ON
-#define	DPRST		0x0001	// RESET VPU COUNTER AND WAIT FCLK
+#define	__LOCK		    0x0400	// VPU SELECT __CTA
+#define	__SYNCE		    0x0200	// L,R_SYNC TO VPU
+#define	__RE		    0x0100	// MEMORY REFLASH CYCLE ON
+#define	__FCLK		    0x0080
+#define	__SCANRDY	    0x0040
+#define	__DISP		    0x0002	// DISPLAY ON
+#define	__DPRST		    0x0001	// RESET VPU COUNTER AND WAIT __FCLK
 
 /* Defines for __XPSTTS\__XPCTRL */
-#define	SBOUT		0x8000	// In FrameBuffer drawing included
-#define	OVERTIME	0x0010	// Processing
-#define	XPBSYR		0x000C	// In the midst of drawing processing reset
-#define	XPBSY1		0x0008	// In the midst of FrameBuffer1 picture editing
-#define	XPBSY0		0x0004	// In the midst of FrameBuffer0 picture editing
-#define	XPEN		0x0002	// Start of drawing
-#define	XPRST		0x0001	// Forcing idling
+#define	__SBOUT		    0x8000	// In FrameBuffer drawing included
+#define	__OVERTIME	    0x0010	// Processing
+#define	__XPBSYR		0x000C	// In the midst of drawing processing reset
+#define	__XPBSY1		0x0008	// In the midst of FrameBuffer1 picture editing
+#define	__XPBSY0		0x0004	// In the midst of FrameBuffer0 picture editing
+#define	__XPEN		    0x0002	// Start of drawing
+#define	__XPRST		    0x0001	// Forcing idling
 
 
 /****** VIP Registers ******/
