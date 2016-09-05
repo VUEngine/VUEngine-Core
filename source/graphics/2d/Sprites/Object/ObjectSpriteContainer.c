@@ -192,8 +192,9 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	{
 		int objectSpritePosition = VirtualList_getDataPosition(this->objectSprites, objectSprite);
 		int objectSpriteNodeToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, this->objectSpriteNodeToDefragment);
+    	ASSERT(0 <= objectSpriteNodeToDefragmentPosition, "ObjectSpriteContainer::removeObjectSprite: position not found");
 
-		if(objectSpritePosition <= objectSpriteNodeToDefragmentPosition)
+		if(0 <= objectSpriteNodeToDefragmentPosition && objectSpritePosition <= objectSpriteNodeToDefragmentPosition)
 		{
 			this->objectSpriteNodeToDefragment = VirtualList_find(this->objectSprites, objectSprite);
 			this->freedObjectIndex = objectSprite->objectIndex;
