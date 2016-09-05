@@ -91,6 +91,7 @@ void Object_destructor(Object this)
 		}
 
 		__DELETE(this->events);
+		this->events = NULL;
 	}
 
 	// an Object can not be instantiated, so there is no memory to free
@@ -200,6 +201,8 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 
 	if(this->events)
 	{
+	    VirtualList eventsToRemove = __NEW(VirtualList);
+
 		VirtualNode node = this->events->head;
 
 		for(; node; node = node->next)
@@ -208,11 +211,20 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 
 			if(listener == event->listener && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
 			{
-				VirtualList_removeElement(this->events, event);
-
-				__DELETE_BASIC(event);
+				VirtualList_pushBack(eventsToRemove, event);
 			}
 		}
+
+		for(node = eventsToRemove->head; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+            VirtualList_removeElement(this->events, event);
+
+            __DELETE_BASIC(event);
+		}
+
+		__DELETE(eventsToRemove);
 	}
 }
 
