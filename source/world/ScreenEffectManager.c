@@ -168,6 +168,11 @@ void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStop: null this");
 
+    if(this->fxFadeCallbackScope)
+    {
+        Object_removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, __EVENT_EFFECT_FADE_COMPLETE);
+    }
+
     // discard pending delayed messages to stop effect
     MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kFadeTo);
 
