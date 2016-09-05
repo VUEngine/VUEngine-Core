@@ -107,6 +107,7 @@ void KeypadManager_enable(KeypadManager this)
 	ASSERT(this, "KeypadManager::enable: null this");
 
 	this->enabled = true;
+	this->currentKey = this->previousKey = 0;
 }
 
 // disable keypad reads
