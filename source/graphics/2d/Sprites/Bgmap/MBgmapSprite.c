@@ -67,15 +67,15 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner)
-__CLASS_NEW_END(MBgmapSprite, mSpriteDefinition, owner);
+__CLASS_NEW_DEFINITION(MBgmapSprite, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
+__CLASS_NEW_END(MBgmapSprite, mBgmapSpriteDefinition, owner);
 
 // class's constructor
-void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner)
+void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
 {
-	__CONSTRUCT_BASE(BgmapSprite, &mSpriteDefinition->bSpriteDefinition, owner);
+	__CONSTRUCT_BASE(BgmapSprite, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
 
-	this->mSpriteDefinition = mSpriteDefinition;
+	this->mBgmapSpriteDefinition = mBgmapSpriteDefinition;
 
 	ASSERT(!this->texture, "MBgmapSprite::constructor: texture already loaded");
 	this->textures = NULL;
@@ -129,16 +129,16 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::loadTextures: null this");
 
-	if(this->mSpriteDefinition)
+	if(this->mBgmapSpriteDefinition)
 	{
 		MBgmapSprite_releaseTextures(this);
 		this->textures = __NEW(VirtualList);
 
 		int i = 0;
 
-		for(; this->mSpriteDefinition->textureDefinitions[i]; i++)
+		for(; this->mBgmapSpriteDefinition->textureDefinitions[i]; i++)
 	    {
-			MBgmapSprite_loadTexture(this, this->mSpriteDefinition->textureDefinitions[i]);
+			MBgmapSprite_loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
 		}
 
 		this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
@@ -194,7 +194,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
 
-	if(this->mSpriteDefinition->xLoop)
+	if(this->mBgmapSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
 		this->drawSpec.textureSource.mx = -FIX19_13TOI(position->x + __0_5F_FIX19_13);
@@ -210,7 +210,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 		}
 	}
 
-	if(this->mSpriteDefinition->yLoop)
+	if(this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
 		this->drawSpec.textureSource.my = -FIX19_13TOI(position->y + __0_5F_FIX19_13);
@@ -248,7 +248,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 {
 	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
 
-	if(this->mSpriteDefinition->xLoop)
+	if(this->mBgmapSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
 		this->drawSpec.textureSource.mx -= FIX19_13TOI(displacement->x + __0_5F_FIX19_13);
@@ -264,7 +264,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 		}
 	}
 
-	if(this->mSpriteDefinition->yLoop)
+	if(this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
 		this->drawSpec.textureSource.my -= FIX19_13TOI(displacement->y + __0_5F_FIX19_13);
@@ -292,7 +292,7 @@ static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::calculateSizeMultiplier: null this");
 
-	switch(this->mSpriteDefinition->scValue)
+	switch(this->mBgmapSpriteDefinition->scValue)
 	{
 		case __WORLD_1x1:
 
@@ -380,7 +380,7 @@ void MBgmapSprite_render(MBgmapSprite this)
         worldPointer->mp = this->drawSpec.textureSource.mp;
 
         // set the world size
-        if(!this->mSpriteDefinition->xLoop)
+        if(!this->mBgmapSpriteDefinition->xLoop)
         {
             int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
             worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
@@ -397,7 +397,7 @@ void MBgmapSprite_render(MBgmapSprite this)
             worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
         }
 
-        if(!this->mSpriteDefinition->yLoop)
+        if(!this->mBgmapSpriteDefinition->yLoop)
         {
             int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
             worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
@@ -443,12 +443,12 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 
 	Texture texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
 
-	if(!this->mSpriteDefinition->xLoop)
+	if(!this->mBgmapSpriteDefinition->xLoop)
 	{
 		this->size.x = this->sizeMultiplier.x << 9;
 	}
 
-	if(!this->mSpriteDefinition->yLoop)
+	if(!this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->size.y = ((texture ? Texture_getRows(texture) : 64) << 3) * this->sizeMultiplier.x;
 	}

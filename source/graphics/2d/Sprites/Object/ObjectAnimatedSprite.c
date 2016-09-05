@@ -42,7 +42,7 @@ __CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
 
 extern int strcmp(const char *, const char *);
 
-static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
+static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,18 +50,18 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectAnimatedSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
-__CLASS_NEW_END(ObjectAnimatedSprite, oSpriteDefinition, owner);
+__CLASS_NEW_DEFINITION(ObjectAnimatedSprite, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+__CLASS_NEW_END(ObjectAnimatedSprite, objectSpriteDefinition, owner);
 
 // class's constructor
-static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
+static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
 	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(ObjectSprite, (const ObjectSpriteDefinition*)oSpriteDefinition, owner);
+	__CONSTRUCT_BASE(ObjectSprite, (const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), oSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
 
 //destructor

@@ -40,7 +40,7 @@ __CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 
 extern int strcmp(const char *, const char *);
 
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner);
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,20 +48,20 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
-__CLASS_NEW_END(BgmapAnimatedSprite, bSpriteDefinition, owner);
+__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+__CLASS_NEW_END(BgmapAnimatedSprite, bgmapSpriteDefinition, owner);
 
 // class's constructor
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
+static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
 	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(BgmapSprite, bSpriteDefinition, owner);
+	__CONSTRUCT_BASE(BgmapSprite, bgmapSpriteDefinition, owner);
 
 	if(this->texture)
 	{
-		this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+		this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 
 		// since the offset will be moved during animation, must save it
 		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;

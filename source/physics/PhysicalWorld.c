@@ -145,7 +145,13 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
+#ifdef __DEBUG
+    if(!body)
+    {
+        Printing_text(Printing_getInstance(), __GET_CLASS_NAME(owner), 1, 15, NULL);
+    }
 	ASSERT(body, "PhysicalWorld::unregisterBody: body not found");
+#endif
 
 	if(body)
 	{

@@ -62,8 +62,8 @@ static void ObjectSprite_checkForContainer(ObjectSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner)
-__CLASS_NEW_END(ObjectSprite, oSpriteDefinition, owner);
+__CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+__CLASS_NEW_END(ObjectSprite, objectSpriteDefinition, owner);
 
 // class's constructor
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)

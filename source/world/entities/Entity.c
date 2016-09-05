@@ -342,34 +342,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 					}
 				}
 
-				if(left > -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.x))
+				if(left > -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
 				{
-					left = -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.x);
+					left = -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
 				}
 
-				if(right < halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.x))
+				if(right < halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
 				{
-					right = halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.x);
+					right = halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
 				}
 
-				if(top > -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.y))
+				if(top > -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
 				{
-					top = -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.y);
+					top = -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
 				}
 
-				if(bottom < halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.y))
+				if(bottom < halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
 				{
-					bottom = halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.y);
+					bottom = halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
 				}
 
-				if(front > FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.z))
+				if(front > FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
 				{
-					front = FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.z);
+					front = FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
 				}
 
-				if(back < halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.z))
+				if(back < halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
 				{
-					back = halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bSpriteDefinition.spriteDefinition.displacement.z);
+					back = halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
 				}
 
 			}

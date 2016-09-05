@@ -45,9 +45,9 @@ typedef struct ParamTableFreeData
         int size;                                                                                       \
         /* number of used bytes */                                                                      \
         u32 used;                                                                                       \
-        /* allocated bSprites */                                                                        \
-        VirtualList bSprites;                                                                           \
-        /* removed bSprites' sizes */                                                                   \
+        /* allocated bgmapSprites */                                                                        \
+        VirtualList bgmapSprites;                                                                           \
+        /* removed bgmapSprites' sizes */                                                                   \
         VirtualList removedBgmapSpritesSizes;                                                           \
         /* user for defragmentation */                                                                  \
         ParamTableFreeData paramTableFreeData;                                                          \
@@ -67,7 +67,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // ---------------------------------------------------------------------------------------------------------
 
 void ParamTableManager_constructor(ParamTableManager this);
-static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this, BgmapSprite bSprite);
+static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this, BgmapSprite bgmapSprite);
 
 
 // ---------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void __attribute__ ((noinline)) ParamTableManager_constructor(ParamTableManager 
 {
 	__CONSTRUCT_BASE(Object);
 
-	this->bSprites = __NEW(VirtualList);
+	this->bgmapSprites = __NEW(VirtualList);
 	this->removedBgmapSpritesSizes = __NEW(VirtualList);
 	this->previouslyMovedBgmapSprite = NULL;
 
@@ -96,8 +96,8 @@ void ParamTableManager_destructor(ParamTableManager this)
 
 	ParamTableManager_reset(this);
 
-	__DELETE(this->bSprites);
-	this->bSprites = NULL;
+	__DELETE(this->bgmapSprites);
+	this->bgmapSprites = NULL;
 
 	__DELETE(this->removedBgmapSpritesSizes);
 	this->removedBgmapSpritesSizes = NULL;
@@ -111,7 +111,7 @@ void ParamTableManager_reset(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::reset: null this");
 
-	VirtualList_clear(this->bSprites);
+	VirtualList_clear(this->bgmapSprites);
 
 	VirtualNode node = this->removedBgmapSpritesSizes->head;
 
@@ -168,34 +168,34 @@ u32 ParamTableManager_getParamTableBase(ParamTableManager this)
 }
 
 // calculate size of param table
-static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this __attribute__ ((unused)), BgmapSprite bSprite)
+static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this __attribute__ ((unused)), BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
-	ASSERT(bSprite, "ParamTableManager::allocate: null sprite");
+	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	// calculate necessary space to allocate
 	// size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
 	// add one row as padding to make sure not ovewriting take place
-	return (((int)Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bSprite))) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
+	return (((int)Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bgmapSprite))) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
 }
 
 // allocate param table space for sprite
-int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bSprite)
+int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
-	ASSERT(bSprite, "ParamTableManager::allocate: null sprite");
+	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	//calculate necessary space to allocate
-	int size = ParamTableManager_calculateSpriteParamTableSize(this, bSprite);
+	int size = ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 
 	//if there is space in the param table, allocate
 	if(this->paramTableBase + this->used + size < (__PARAM_TABLE_END))
 	{
 		//set sprite param
-		BgmapSprite_setParam(bSprite, this->paramTableBase + this->used);
+		BgmapSprite_setParam(bgmapSprite, this->paramTableBase + this->used);
 
 		//record sprite
-		VirtualList_pushBack(this->bSprites, bSprite);
+		VirtualList_pushBack(this->bgmapSprites, bgmapSprite);
 
 		//update the param bytes ocupied
 		this->size -= size;
@@ -213,39 +213,39 @@ int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bSprite)
 }
 
 // deallocate param table space
-void ParamTableManager_free(ParamTableManager this, BgmapSprite bSprite)
+void ParamTableManager_free(ParamTableManager this, BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::free: null this");
-	ASSERT(VirtualList_find(this->bSprites, bSprite), "ParamTableManager::free: sprite not found");
+	ASSERT(VirtualList_find(this->bgmapSprites, bgmapSprite), "ParamTableManager::free: sprite not found");
 
-	VirtualList_removeElement(this->bSprites, bSprite);
+	VirtualList_removeElement(this->bgmapSprites, bgmapSprite);
 
-	if(this->previouslyMovedBgmapSprite == bSprite)
+	if(this->previouslyMovedBgmapSprite == bgmapSprite)
 	{
 		this->previouslyMovedBgmapSprite = NULL;
 	}
 
 	// accounted for
-	if(this->paramTableFreeData.param && this->paramTableFreeData.param <= BgmapSprite_getParam(bSprite))
+	if(this->paramTableFreeData.param && this->paramTableFreeData.param <= BgmapSprite_getParam(bgmapSprite))
 	{
 		// but increase the space recovered
-		this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bSprite);
+		this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 
 		return;
 	}
 
-	this->paramTableFreeData.param = BgmapSprite_getParam(bSprite);
-	this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bSprite);
+	this->paramTableFreeData.param = BgmapSprite_getParam(bgmapSprite);
+	this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 }
 
-// relocate bSprites
+// relocate bgmapSprites
 bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 
 	if(this->paramTableFreeData.param)
 	{
-		VirtualNode node = this->bSprites->head;
+		VirtualNode node = this->bgmapSprites->head;
 
 		for(; node; node = node->next)
 		{

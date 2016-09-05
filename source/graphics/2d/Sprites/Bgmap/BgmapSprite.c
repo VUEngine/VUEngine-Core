@@ -70,8 +70,8 @@ static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner)
-__CLASS_NEW_END(BgmapSprite, bSpriteDefinition, owner);
+__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+__CLASS_NEW_END(BgmapSprite, bgmapSpriteDefinition, owner);
 
 // class's constructor
 void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)

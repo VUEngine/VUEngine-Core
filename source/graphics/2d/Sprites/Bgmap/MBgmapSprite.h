@@ -48,7 +48,7 @@
         /* this is our texture */																		\
         VirtualList textures;																			\
         /* pinter to definition */																		\
-        const MBgmapSpriteDefinition* mSpriteDefinition;												\
+        const MBgmapSpriteDefinition* mBgmapSpriteDefinition;											\
         /* total size of the bgmap, used for loop/not loop */											\
         Point size;																						\
         /* for total size of the bgmap calculation */													\
@@ -67,7 +67,7 @@ __CLASS(MBgmapSprite);
 typedef struct MBgmapSpriteDefinition
 {
 	// the normal sprite definition
-	BgmapSpriteDefinition bSpriteDefinition;
+	BgmapSpriteDefinition bgmapSpriteDefinition;
 
 	// texture to use with the sprite
 	TextureDefinition** textureDefinitions;
@@ -90,9 +90,9 @@ typedef const MBgmapSpriteDefinition MBgmapSpriteROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mSpriteDefinition, Object );
+__CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object );
 
-void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mSpriteDefinition, Object owner);
+void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
 void MBgmapSprite_destructor(MBgmapSprite this);
 void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position);
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position);

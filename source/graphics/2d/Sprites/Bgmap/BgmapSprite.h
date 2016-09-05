@@ -104,9 +104,9 @@ typedef const BgmapSpriteDefinition BgmapSpriteROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(BgmapSprite, const BgmapSpriteDefinition* bSpriteDefinition, Object owner);
+__CLASS_NEW_DECLARE(BgmapSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 
-void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bSpriteDefinition, Object owner);
+void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 void BgmapSprite_destructor(BgmapSprite this);
 Scale BgmapSprite_getScale(BgmapSprite this);
 void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
