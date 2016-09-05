@@ -124,12 +124,15 @@ void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMo
 {
 	ASSERT(this, "Screen::setScreenMovementManager: null this");
 
-	if(this->screenMovementManager)
-	{
-		__DELETE(this->screenMovementManager);
-	}
+    if(this->screenMovementManager != screenMovementManager)
+    {
+        if(this->screenMovementManager)
+        {
+            __DELETE(this->screenMovementManager);
+        }
 
-	this->screenMovementManager = screenMovementManager;
+        this->screenMovementManager = screenMovementManager;
+	}
 }
 
 // set the effect manager
@@ -137,12 +140,15 @@ void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffect
 {
 	ASSERT(this, "Screen::setScreenEffectManager: null this");
 
-	if(this->screenEffectManager)
-	{
-		__DELETE(this->screenEffectManager);
-	}
+    if(this->screenEffectManager != screenEffectManager)
+    {
+        if(this->screenEffectManager)
+        {
+            __DELETE(this->screenEffectManager);
+        }
 
-	this->screenEffectManager = screenEffectManager;
+        this->screenEffectManager = screenEffectManager;
+    }
 }
 
 // center world's screen in function of focus actor's position
