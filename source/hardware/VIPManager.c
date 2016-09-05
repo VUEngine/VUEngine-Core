@@ -206,7 +206,7 @@ void VIPManager_interruptHandler(void)
 		_vipRegisters[__XPCTRL] |= __XPRST;
 		_vipRegisters[__XPCTRL] &= ~__XPEN;
 
-		while(_vipRegisters[__XPSTTS] & __XPBSYR);
+		//while(_vipRegisters[__XPSTTS] & __XPBSYR);
 
 		// if performance was good enough in the
 		// the previous second do some defragmenting
@@ -231,7 +231,7 @@ void VIPManager_interruptHandler(void)
         }
 
 		// enable drawing
-		while (_vipRegisters[__XPSTTS] & __XPBSYR);
+		//while (_vipRegisters[__XPSTTS] & __XPBSYR);
 		_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 	}
 
