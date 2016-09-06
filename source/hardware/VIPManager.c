@@ -61,7 +61,7 @@ typedef struct PostProcessingEffect
         /* dram managers */																				\
         /* post processing effects */																	\
         VirtualList postProcessingEffects;																\
-        u32 currentDrawingframeBufferSet;																\
+        u32 currentDrawingFrameBufferSet;																\
 
 // define the VIPManager
 __CLASS_DEFINITION(VIPManager, Object);
@@ -103,7 +103,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	__CONSTRUCT_BASE(Object);
 
     this->postProcessingEffects = __NEW(VirtualList);
-    this->currentDrawingframeBufferSet = 0;
+    this->currentDrawingFrameBufferSet = 0;
 
     _vipManager = this;
 	_paramTableManager = ParamTableManager_getInstance();
@@ -220,13 +220,13 @@ void VIPManager_interruptHandler(void)
 		SpriteManager_render(_spriteManager);
 
         // check if the current frame buffer set is valid
-        if(0 == _vipManager->currentDrawingframeBufferSet || 0x8000 == _vipManager->currentDrawingframeBufferSet)
+        if(0 == _vipManager->currentDrawingFrameBufferSet || 0x8000 == _vipManager->currentDrawingFrameBufferSet)
         {
             VirtualNode node = _vipManager->postProcessingEffects->head;
 
             for(; node; node = node->next)
             {
-                ((PostProcessingEffect*)node->data)->function(_vipManager->currentDrawingframeBufferSet);
+                ((PostProcessingEffect*)node->data)->function(_vipManager->currentDrawingFrameBufferSet);
             }
         }
 
@@ -507,16 +507,16 @@ void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this)
 {
 	ASSERT(this, "VIPManager::registerCurrentDrawingframeBufferSet: null this");
 
-    u32 currentDrawingframeBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
+    u32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
 
-    this->currentDrawingframeBufferSet = 0xFFFF;
+    this->currentDrawingFrameBufferSet = 0xFFFF;
 
-    if(0x0004 == currentDrawingframeBufferSet)
+    if(0x0004 == currentDrawingFrameBufferSet)
     {
-        this->currentDrawingframeBufferSet = 0;
+        this->currentDrawingFrameBufferSet = 0;
     }
-    else if(0x0008 == currentDrawingframeBufferSet)
+    else if(0x0008 == currentDrawingFrameBufferSet)
     {
-        this->currentDrawingframeBufferSet = 0x8000;
+        this->currentDrawingFrameBufferSet = 0x8000;
     }
 }
