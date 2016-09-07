@@ -869,11 +869,15 @@ static void Game_update(Game this)
 	    // cap framerate
 	    volatile u32 gameFrameTime = 0;
 
+#if __FRAME_CYCLE != 1
 	    do
 	    {
-	        gameFrameTime = TimerManager_getTicks(this->timerManager);
+#endif
+            gameFrameTime = TimerManager_getTicks(this->timerManager);
+#if __FRAME_CYCLE != 1
 	    }
 	    while(gameFrameTime < __MILLISECONDS_IN_SECOND / __TARGET_FPS);
+#endif
 
         TimerManager_getAndResetTicks(this->timerManager);
 #else
