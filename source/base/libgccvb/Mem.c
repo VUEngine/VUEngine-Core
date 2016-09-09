@@ -30,14 +30,10 @@
 void Mem_copy(u8* dest, const u8* src, u32 num)
 {
 	u32 i;
-	num /= 4;
-
-	u32* dest32 = (u32*)dest;
-	u32* src32 = (u32*)src;
 
 	for(i = 0; i < num; i++)
 	{
-		*dest32++ = *src32++;
+		*dest++ = *src++;
 	}
 }
 
