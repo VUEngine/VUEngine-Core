@@ -95,7 +95,7 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this __attribute__ (
     {
         numCharsToAdd = (__FONTS[i]->characterCount * __FONTS[i]->fontSize.x * __FONTS[i]->fontSize.y) << 4;
         lastFontDefEndPos -= numCharsToAdd;
-	    Mem_copy((u32*)(lastFontDefEndPos), (u32*)(__FONTS[i]->fontCharDefinition), numCharsToAdd);
+	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(__FONTS[i]->fontCharDefinition), numCharsToAdd);
     }
 }
 
