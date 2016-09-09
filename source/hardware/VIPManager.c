@@ -410,7 +410,7 @@ void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), 
 {
  	ASSERT(this, "VIPManager::setupBrightnessRepeat: null this");
 
-    int i, value;
+    int i, leftCta, rightCta, value;
 
     // use the default repeat values as fallback
 	if(brightnessRepeatDefinition == NULL)
@@ -422,13 +422,14 @@ void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), 
     for(i = 0; i < 96; i++)
     {
         value = (brightnessRepeatDefinition->mirror && (i > 47))
-         ? brightnessRepeatDefinition->brightnessRepeat[95 - i] << 8
-         : brightnessRepeatDefinition->brightnessRepeat[i] << 8;
+            ? brightnessRepeatDefinition->brightnessRepeat[95 - i] << 8
+            : brightnessRepeatDefinition->brightnessRepeat[i] << 8;
 
-        // need to write in the middle of the column table
-        // 256 / 2 = 128, 128 - 96 / 2 = 80
-        _columnTableBaseAddressLeft[i + 80] = (_columnTableBaseAddressLeft[i + 80] & 0xff) | value;
-        _columnTableBaseAddressRight[i + 80] = (_columnTableBaseAddressRight[i + 80] & 0xff) | value;
+        leftCta = _vipRegisters[__CTA] & 0xFF;
+        rightCta = _vipRegisters[__CTA] >> 8;
+
+        _columnTableBaseAddressLeft[leftCta - i] = (_columnTableBaseAddressLeft[leftCta - i] & 0xff) | value;
+        _columnTableBaseAddressRight[rightCta - i] = (_columnTableBaseAddressRight[rightCta - i] & 0xff) | value;
     }
 }
 
