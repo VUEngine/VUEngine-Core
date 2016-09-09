@@ -418,15 +418,16 @@ void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), 
 	    brightnessRepeatDefinition = (BrightnessRepeatDefinition*)&DEFAULT_BRIGHTNESS_REPEAT;
 	}
 
+	// column table offsets
+    leftCta = _vipRegisters[__CTA] & 0xFF;
+    rightCta = _vipRegisters[__CTA] >> 8;
+
     // write repeat values to column table
     for(i = 0; i < 96; i++)
     {
         value = (brightnessRepeatDefinition->mirror && (i > 47))
             ? brightnessRepeatDefinition->brightnessRepeat[95 - i] << 8
             : brightnessRepeatDefinition->brightnessRepeat[i] << 8;
-
-        leftCta = _vipRegisters[__CTA] & 0xFF;
-        rightCta = _vipRegisters[__CTA] >> 8;
 
         _columnTableBaseAddressLeft[leftCta - i] = (_columnTableBaseAddressLeft[leftCta - i] & 0xff) | value;
         _columnTableBaseAddressRight[rightCta - i] = (_columnTableBaseAddressRight[rightCta - i] & 0xff) | value;
