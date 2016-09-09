@@ -41,9 +41,9 @@ typedef struct Brightness
 // spatial size
 typedef struct Size
 {
-	u16 x;
-	u16 y;
-	u16 z;
+	u32 x;
+	u32 y;
+	u32 z;
 
 } Size;
 
@@ -205,9 +205,9 @@ typedef struct VBVec2D
 // used to representthe m coordinates of the bgmaps
 typedef struct TextureSource
 {
-	s16 mx;
-	s16 mp;
-	s16 my;
+	s32 mx;
+	s32 mp;
+	s32 my;
 
 }TextureSource;
 
@@ -228,11 +228,11 @@ typedef struct DrawSpec
 	// bgmap's source coordinates
 	TextureSource textureSource;
 
-	// scale
-	Scale scale;
-
 	// angle with respect to each axis (indexes for the SINLUT array)
 	Rotation rotation;
+
+	// scale
+	Scale scale;
 
 } DrawSpec;
 

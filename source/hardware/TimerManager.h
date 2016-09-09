@@ -72,7 +72,6 @@ void TimerManager_setInterrupt(TimerManager this, int value);
 u32 TimerManager_getTicks(TimerManager this);
 u32 TimerManager_getAndResetTicks(TimerManager this);
 void TimerManager_enable(TimerManager this, int value);
-u16 TimerManager_getTime(TimerManager this);
 void TimerManager_setTime(TimerManager this, u16 time);
 void TimerManager_setFrequency(TimerManager this, int frequency);
 int TimerManager_getStat(TimerManager this);

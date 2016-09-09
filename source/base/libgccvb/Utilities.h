@@ -24,7 +24,7 @@
 
 long Utilities_randomSeed();
 int Utilities_random(long seed, int randnums);
-char* Utilities_itoa(u32 num, u8 base, u8 digits);
+char* Utilities_itoa(u32 num, u32 base, u32 digits);
 int Utilities_equalSign(int a, int b);
 int Utilities_getDigitCount(int value);
 int Utilities_intLength(int value);

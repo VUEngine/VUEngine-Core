@@ -152,7 +152,7 @@ void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffect
 }
 
 // center world's screen in function of focus actor's position
-void Screen_focus(Screen this, u8 checkIfFocusEntityIsMoving)
+void Screen_focus(Screen this, u32 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "Screen::focus: null this");
 	ASSERT(this->screenMovementManager, "Screen::focus: null screenMovementManager");

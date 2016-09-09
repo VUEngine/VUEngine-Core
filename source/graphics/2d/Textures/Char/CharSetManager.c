@@ -211,8 +211,8 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 
 	if(CharSet_decreaseUsageCount(charSet))
 	{
-		u8 segment = CharSet_getSegment(charSet);
-		u16 offset = CharSet_getOffset(charSet);
+		u32 segment = CharSet_getSegment(charSet);
+		u32 offset = CharSet_getOffset(charSet);
 
 		if(1 == this->freedOffset[segment] || offset < this->freedOffset[segment])
 		{
@@ -288,7 +288,7 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 
 				if(this->freedOffset[segment] < CharSet_getOffset(charSet))
 				{
-					Mem_copy((u8*)__CHAR_SEGMENT((u32)CharSet_getSegment(charSet)) + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
+					Mem_copy((u32*)__CHAR_SEGMENT((u32)CharSet_getSegment(charSet)) + (((u32)CharSet_getOffset(charSet)) << 4), (u32*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
 
 					CharSet_setOffset(charSet, this->freedOffset[segment]);
 					//write to char memory

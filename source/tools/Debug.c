@@ -616,8 +616,8 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 	// put the map into memory calculating the number of char for each reference
 	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 48; i++)
 	{
-		Mem_add((u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
-				(const u8*)CHAR_MEMORY_MP,
+		Mem_add((u16*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
+				(u16*)CHAR_MEMORY_MP,
 				__SCREEN_WIDTH >> 3,
 				(this->charSegment << 9) + i * (__SCREEN_WIDTH >> 3));
 	}

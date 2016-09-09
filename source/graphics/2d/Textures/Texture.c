@@ -176,7 +176,7 @@ TextureDefinition* Texture_getTextureDefinition(Texture this)
 }
 
 // get texture's cols
-u8 Texture_getTotalCols(Texture this)
+u32 Texture_getTotalCols(Texture this)
 {
 	ASSERT(this, "Texture::getTotalCols: null this");
 
@@ -212,7 +212,7 @@ u8 Texture_getTotalCols(Texture this)
 }
 
 //get texture's rows
-u8 Texture_getTotalRows(Texture this)
+u32 Texture_getTotalRows(Texture this)
 {
 	ASSERT(this, "Texture::getTotalRows: null this");
 
@@ -248,7 +248,7 @@ u8 Texture_getTotalRows(Texture this)
 }
 
 // get number of frames of animation
-u8 Texture_getNumberOfFrames(Texture this)
+u32 Texture_getNumberOfFrames(Texture this)
 {
 	ASSERT(this, "Texture::getNumberOfFrames: null this");
 
@@ -287,7 +287,7 @@ u8 Texture_getPalette(Texture this)
 }
 
 // retrieve texture's rows
-u8 Texture_getRows(Texture this)
+u32 Texture_getRows(Texture this)
 {
 	ASSERT(this, "Texture::getRows: null this");
 	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
@@ -296,7 +296,7 @@ u8 Texture_getRows(Texture this)
 }
 
 // retrieve texture's cols
-u8 Texture_getCols(Texture this)
+u32 Texture_getCols(Texture this)
 {
 	ASSERT(this, "Texture::getCols: null this");
 
@@ -327,8 +327,8 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 
 	if(texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
-		u16 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
-		u16 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
+		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
+		u32 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
 		CharSet_putChar(this->charSet, charToReplace, newChar);
 	}
 }
@@ -340,8 +340,8 @@ void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BY
 
 	if(texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
-		u16 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
-		u16 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
+		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
+		u32 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
 		CharSet_putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }

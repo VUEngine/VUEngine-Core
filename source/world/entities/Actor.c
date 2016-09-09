@@ -140,13 +140,9 @@ void Actor_syncWithBody(Actor this)
 	// retrieve the body's displacement
 	VBVec3D bodyLastDisplacement = {0, 0, 0};
 
-	u8 axisToInvalidateGlobalPosition = 0;
-
 	if(!Clock_isPaused(Game_getPhysicsClock(Game_getInstance())) && Body_isActive(this->body))
 	{
 		bodyLastDisplacement = Body_getLastDisplacement(this->body);
-
-		axisToInvalidateGlobalPosition |= Body_isMoving(this->body);
 	}
 
 	// modify the global position accorging to the body's displacement

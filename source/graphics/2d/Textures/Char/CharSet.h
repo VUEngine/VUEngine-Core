@@ -92,10 +92,10 @@ typedef struct CharSetDefinition
     // __ANIMATED_SHARED_COORDINATED: number of chars of a single animation frame (cols * rows)
     // __ANIMATED_MULTI: sum of chars of all animation frames
     // __NOT_ANIMATED: number of chars of whole image
-	u16 numberOfChars;
+	u32 numberOfChars;
 
 	// the way its chars and bgtexture will be allocated in graphic memory
-	u16 allocationType;
+	u32 allocationType;
 
 	// pointer to the char definition in ROM
 	BYTE* charDefinition;
@@ -114,18 +114,18 @@ __CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, u8 segment, u
 void CharSet_destructor(CharSet this);
 void CharSet_increaseUsageCount(CharSet this);
 bool CharSet_decreaseUsageCount(CharSet this);
-int CharSet_getAllocationType(CharSet this);
-u16 CharSet_getOffset(CharSet this);
+u32 CharSet_getAllocationType(CharSet this);
+u32 CharSet_getOffset(CharSet this);
 void CharSet_setOffset(CharSet this, u16 offset);
 void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition);
 CharSetDefinition* CharSet_getCharSetDefinition(CharSet this);
-u16 CharSet_getNumberOfChars(CharSet this);
-u8 CharSet_getSegment(CharSet this);
+u32 CharSet_getNumberOfChars(CharSet this);
+u32 CharSet_getSegment(CharSet this);
 void CharSet_write(CharSet this);
 void CharSet_rewrite(CharSet this);
 void CharSet_setCharDefinitionDisplacement(CharSet this, u16 charDefinitionDisplacement);
-void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar);
-void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE newPixelColor);
+void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar);
+void CharSet_putPixel(CharSet this, u32 charToReplace, Point* charSetPixel, BYTE newPixelColor);
 
 
 #endif

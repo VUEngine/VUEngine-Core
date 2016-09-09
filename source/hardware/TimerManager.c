@@ -163,14 +163,6 @@ void TimerManager_enable(TimerManager this, int value)
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
-// get time
-u16 TimerManager_getTime(TimerManager this __attribute__ ((unused)))
-{
-	ASSERT(this, "TimerManager::getTime: null this");
-
-	return (_hardwareRegisters[__TLR] | (_hardwareRegisters[__THR] << 8));
-}
-
 // sest time
 void TimerManager_setTime(TimerManager this __attribute__ ((unused)), u16 time)
 {

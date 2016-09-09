@@ -87,15 +87,15 @@ void Printing_destructor(Printing this)
 void __attribute__ ((noinline)) Printing_loadFonts(Printing this __attribute__ ((unused)))
 {
     int lastFontDefEndPos = __CHAR_SEGMENT_3_BASE_ADDRESS + (512 << 4);
-    u16 numCharsToAdd = 0;
-    u8 i = 0;
+    u32 numCharsToAdd = 0;
+    u32 i = 0;
 
     // load registered fonts to (end of) char memory
     for(; __FONTS[i]; i++)
     {
         numCharsToAdd = (__FONTS[i]->characterCount * __FONTS[i]->fontSize.x * __FONTS[i]->fontSize.y) << 4;
         lastFontDefEndPos -= numCharsToAdd;
-	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(__FONTS[i]->fontCharDefinition), numCharsToAdd);
+	    Mem_copy((u32*)(lastFontDefEndPos), (u32*)(__FONTS[i]->fontCharDefinition), numCharsToAdd);
     }
 }
 
@@ -122,7 +122,7 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
 // clear printing area
 void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unused)))
 {
-	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	VIPManager_clearBgmap(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
@@ -133,7 +133,7 @@ static FontData Printing_getFontByName(Printing this __attribute__ ((unused)), c
     FontData fontData = {NULL, 2048};
 
 	// iterate over registered fonts to find memory offset of font to use
-	u8 j = 0;
+	u32 j = 0;
     for(; __FONTS[j]; j++)
     {
         fontData.fontDefinition = __FONTS[j];
@@ -152,10 +152,10 @@ static FontData Printing_getFontByName(Printing this __attribute__ ((unused)), c
 static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
     FontData fontData;
-	u16 i = 0,
+	u32 i = 0,
 	    position = 0,
         startColumn = x;
-	u8  charOffsetX = 0,
+	u32  charOffsetX = 0,
 	    charOffsetY = 0;
 
     fontData = Printing_getFontByName(this, font);
@@ -223,7 +223,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 
 void __attribute__ ((noinline)) Printing_int(Printing this, int value, int x, int y, const char* font)
 {
-	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	if(value < 0)
 	{
@@ -240,14 +240,14 @@ void __attribute__ ((noinline)) Printing_int(Printing this, int value, int x, in
 
 void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, int x, int y, const char* font)
 {
-	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
 }
 
 void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x, int y, const char* font)
 {
-	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	int sign = 1;
 	int i = 0;
@@ -299,7 +299,7 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x
 
 void __attribute__ ((noinline)) Printing_text(Printing this, const char* string, int x, int y, const char* font)
 {
-	u8 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
 }
 

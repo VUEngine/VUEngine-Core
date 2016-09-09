@@ -141,16 +141,16 @@ static void StageEditor_positionShape(StageEditor this);
 static void StageEditor_highLightEntity(StageEditor this);
 static void StageEditor_selectPreviousEntity(StageEditor this);
 static void StageEditor_selectNextEntity(StageEditor this);
-static void StageEditor_translateEntity(StageEditor this, u16 pressedKey);
-static void StageEditor_moveScreen(StageEditor this, u16 pressedKey);
-static void StageEditor_changeProjection(StageEditor this, u16 pressedKey);
+static void StageEditor_translateEntity(StageEditor this, u32 pressedKey);
+static void StageEditor_moveScreen(StageEditor this, u32 pressedKey);
+static void StageEditor_changeProjection(StageEditor this, u32 pressedKey);
 static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D translation);
 static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation);
 static void StageEditor_printEntityPosition(StageEditor this);
 static void StageEditor_printScreenPosition(StageEditor this);
 static void StageEditor_printProjectionValues(StageEditor this);
 static void StageEditor_printUserObjects(StageEditor this);
-static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey);
+static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey);
 static void StageEditor_printTranslationStepSize(StageEditor this);
 static void StageEditor_removePreviousSprite(StageEditor this);
 static void StageEditor_showSelectedUserObject(StageEditor this);
@@ -294,7 +294,7 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 	{
 		case kKeyPressed:
 		{
-            u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+            u32 pressedKey = *((u32*)Telegram_getExtraInfo(telegram));
 
             if(pressedKey & K_SEL)
             {
@@ -588,7 +588,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
-static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
+static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -666,7 +666,7 @@ static void StageEditor_moveScreen(StageEditor this, u16 pressedKey)
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
-static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
+static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -731,7 +731,7 @@ static void StageEditor_changeProjection(StageEditor this, u16 pressedKey)
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
-static void StageEditor_translateEntity(StageEditor this, u16 pressedKey)
+static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -923,7 +923,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
-static void StageEditor_selectUserObject(StageEditor this, u16 pressedKey)
+static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LU)
 	{

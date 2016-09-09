@@ -267,7 +267,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 
 
 // get texture's x offset within bgmap mem
-s8 BgmapTexture_getXOffset(BgmapTexture this)
+s32 BgmapTexture_getXOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getXOffset: null this");
 
@@ -275,7 +275,7 @@ s8 BgmapTexture_getXOffset(BgmapTexture this)
 }
 
 // get texture's y offset within bgmap mem
-s8 BgmapTexture_getYOffset(BgmapTexture this)
+s32 BgmapTexture_getYOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getYOffset: null this");
 
@@ -283,7 +283,7 @@ s8 BgmapTexture_getYOffset(BgmapTexture this)
 }
 
 //get texture's bgmap segment
-u8 BgmapTexture_getBgmapSegment(BgmapTexture this)
+u32 BgmapTexture_getBgmapSegment(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getBgmapSegment: null this");
 
@@ -310,4 +310,3 @@ bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
 
 	return 0 >= --this->usageCount;
 }
-

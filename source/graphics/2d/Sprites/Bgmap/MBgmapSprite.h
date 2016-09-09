@@ -54,8 +54,8 @@
         /* for total size of the bgmap calculation */													\
         Point sizeMultiplier;																			\
         /* to speed up rendering */																		\
-        u16 textureXOffset;																				\
-        u16 textureYOffset;																				\
+        u32 textureXOffset;																				\
+        u32 textureYOffset;																				\
 
 __CLASS(MBgmapSprite);
 
@@ -73,7 +73,7 @@ typedef struct MBgmapSpriteDefinition
 	TextureDefinition** textureDefinitions;
 
 	// SCX/SCY value
-	u16 scValue;
+	u32 scValue;
 
 	// flag to loop the x axis
 	int xLoop;

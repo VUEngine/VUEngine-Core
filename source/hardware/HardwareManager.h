@@ -90,7 +90,6 @@ void HardwareManager_lowerBrightness(HardwareManager this);
 void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition);
 void HardwareManager_enableKeypad(HardwareManager this);
 void HardwareManager_disableKeypad(HardwareManager this);
-u16 HardwareManager_readKeypad(HardwareManager this);
 void HardwareManager_print(HardwareManager this, int x, int y);
 #ifdef __ALERT_STACK_OVERFLOW
 void HardwareManager_checkStackStatus(HardwareManager this);

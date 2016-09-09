@@ -81,19 +81,19 @@ typedef struct TextureDefinition
 	BYTE* bgmapDefinition;
 
 	// x size, 1 column represents 8 pixels
-	u8 cols;
+	u32 cols;
 
 	// y size, 1 row represents 8 pixels
-	u8 rows;
+	u32 rows;
 
 	// padding for affine transformations
 	TexturePadding padding;
 
 	// number of frames
-	u8 numberOfFrames;
+	u32 numberOfFrames;
 
 	// palette index to use
-	u8 palette;
+	u32 palette;
 
 } TextureDefinition;
 
@@ -114,15 +114,15 @@ void Texture_rewrite(Texture this);
 void Texture_writeHBiasMode(Texture this);
 int Texture_getNumberOfChars(Texture this);
 TextureDefinition* Texture_getTextureDefinition(Texture this);
-u8 Texture_getTotalCols(Texture this);
-u8 Texture_getTotalRows(Texture this);
-u8 Texture_getNumberOfFrames(Texture this);
+u32 Texture_getTotalCols(Texture this);
+u32 Texture_getTotalRows(Texture this);
+u32 Texture_getNumberOfFrames(Texture this);
 CharSet Texture_getCharSet(Texture this);
 BYTE* Texture_getBgmapDefinition(Texture this);
 void Texture_setPalette(Texture this, u8 palette);
 u8 Texture_getPalette(Texture this);
-u8 Texture_getRows(Texture this);
-u8 Texture_getCols(Texture this);
+u32 Texture_getRows(Texture this);
+u32 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
 void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);

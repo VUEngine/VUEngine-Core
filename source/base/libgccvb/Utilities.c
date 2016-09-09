@@ -46,7 +46,7 @@ int Utilities_intLength(int value)
 	return length;
 }
 
-char* Utilities_itoa(u32 num, u8 base, u8 digits)
+char* Utilities_itoa(u32 num, u32 base, u32 digits)
 {
 #define __CHAR_HOLDER_SIZE		11
 	int i = 0;
@@ -72,9 +72,9 @@ char* Utilities_itoa(u32 num, u8 base, u8 digits)
 	{
 		i++;
 	}
-	if(i >= (__CHAR_HOLDER_SIZE - 1 - digits))
+	if(i >= (__CHAR_HOLDER_SIZE - 1 - (int)digits))
 	{
-		i = __CHAR_HOLDER_SIZE - 1 - digits;
+		i = __CHAR_HOLDER_SIZE - 1 - (int)digits;
 	}
 
 	rev[__CHAR_HOLDER_SIZE - 1] = 0;

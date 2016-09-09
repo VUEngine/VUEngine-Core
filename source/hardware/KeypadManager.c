@@ -33,11 +33,11 @@
         /* super's attributes */																		\
         Object_ATTRIBUTES																				\
         /*  */																							\
-        u16 currentKey;																					\
+        u32 currentKey;																					\
         /*  */																							\
-        u16 previousKey;																				\
+        u32 previousKey;																				\
         /*  */																							\
-        u8 enabled;																						\
+        u32 enabled;																						\
 
 // define the KeypadManager
 __CLASS_DEFINITION(KeypadManager, Object);
@@ -138,7 +138,7 @@ void KeypadManager_read(KeypadManager this)
 	while(*readingStatus & __S_STAT);
 
 	// now read the key
-	this->currentKey |= (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0xFFFD;
+	this->currentKey |= (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0x0000FFFD;
 }
 
 // clear previous saved key
@@ -160,7 +160,7 @@ void KeypadManager_flush(KeypadManager this)
 }
 
 // get pressed key
-u16 KeypadManager_getPressedKey(KeypadManager this)
+u32 KeypadManager_getPressedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPressedKey: null this");
 
@@ -168,7 +168,7 @@ u16 KeypadManager_getPressedKey(KeypadManager this)
 }
 
 // get released key
-u16 KeypadManager_getReleasedKey(KeypadManager this)
+u32 KeypadManager_getReleasedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
@@ -176,7 +176,7 @@ u16 KeypadManager_getReleasedKey(KeypadManager this)
 }
 
 // get hold key
-u16 KeypadManager_getHoldKey(KeypadManager this)
+u32 KeypadManager_getHoldKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getHoldKey: null this");
 
@@ -184,7 +184,7 @@ u16 KeypadManager_getHoldKey(KeypadManager this)
 }
 
 // get previous key
-u16 KeypadManager_getPreviousKey(KeypadManager this)
+u32 KeypadManager_getPreviousKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPreviousKey: null this");
 

@@ -84,7 +84,7 @@ Screen Screen_getInstance();
 void Screen_destructor(Screen this);
 void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager);
 void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffectManager);
-void Screen_focus(Screen this, u8 checkIfFocusEntityIsMoving);
+void Screen_focus(Screen this, u32 checkIfFocusEntityIsMoving);
 Optical Screen_getOptical(Screen this);
 void Screen_setOptical(Screen this, Optical optical);
 void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity);

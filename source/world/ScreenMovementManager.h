@@ -34,7 +34,7 @@
 // declare the virtual methods
 #define ScreenMovementManager_METHODS(ClassName)														\
     	Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, focus, bool checkIfFocusEntityIsMoving);						    \
+		__VIRTUAL_DEC(ClassName, void, focus, u32 checkIfFocusEntityIsMoving);						    \
 
 // declare the virtual methods which are redefined
 #define ScreenMovementManager_SET_VTABLE(ClassName)														\
@@ -57,7 +57,7 @@ ScreenMovementManager ScreenMovementManager_getInstance();
 
 void ScreenMovementManager_constructor(ScreenMovementManager this);
 void ScreenMovementManager_destructor(ScreenMovementManager this);
-void ScreenMovementManager_focus(ScreenMovementManager this, bool checkIfFocusEntityIsMoving);
+void ScreenMovementManager_focus(ScreenMovementManager this, u32 checkIfFocusEntityIsMoving);
 
 
 #endif

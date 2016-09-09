@@ -72,16 +72,16 @@ typedef struct InGameEntityDefinition
 	Gap gap;
 
 	// gameworld's character's type
-	u16 inGameType;
+	u32 inGameType;
 
 	// object's size over the x axis
-	u16 width;
+	u32 width;
 
 	// object's size over the y axis
-	u16 height;
+	u32 height;
 
 	// object's size over the z axis
-	u16 depth;
+	u32 depth;
 
 } InGameEntityDefinition;
 
@@ -99,7 +99,7 @@ void InGameEntity_destructor(InGameEntity this);
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);
 Gap InGameEntity_getGap(InGameEntity this);
 void InGameEntity_setGap(InGameEntity this);
-u16 InGameEntity_getInGameType(InGameEntity this);
+u32 InGameEntity_getInGameType(InGameEntity this);
 bool InGameEntity_moves(InGameEntity this);
 int InGameEntity_isMoving(InGameEntity this);
 int InGameEntity_getMovementState(InGameEntity this);

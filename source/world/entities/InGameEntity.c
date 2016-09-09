@@ -125,7 +125,7 @@ void InGameEntity_setGap(InGameEntity this)
 }
 
 // retrieve in game type
-u16 InGameEntity_getInGameType(InGameEntity this)
+u32 InGameEntity_getInGameType(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::getInGameType: null this");
 

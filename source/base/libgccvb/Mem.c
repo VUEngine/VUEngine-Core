@@ -27,69 +27,35 @@
 //---------------------------------------------------------------------------------------------------------
 
 // Copy a block of data from one area in memory to another.
-void Mem_copy (u8* dest, const u8* src, u16 num)
+void Mem_copy(u8* dest, const u8* src, u32 num)
 {
-	u16 i;
+	u32 i;
+	num /= 4;
+
+	u32* dest32 = (u32*)dest;
+	u32* src32 = (u32*)src;
 
 	for(i = 0; i < num; i++)
 	{
-		*dest++ = *src++;
+		*dest32++ = *src32++;
 	}
 }
 
-// Set each byte in a block of data to a given value.
-void Mem_set (u8* dest, u16 src, u16 num)
+void Mem_clear(u32* dest,  u32 num )
 {
-	u16 i;
-	for(i = 0; i < num; i++,dest++)
-	{
-		*dest += src;
-		dest++;
-		*dest = src >> 8;
-	}
+	u32 i;
+	for(i = 0; i < num; i++) *dest++ = 0;
 }
 
-void Mem_clearFast(u32* dest,  u16 num )
+void Mem_add(u8* dest, const u8* src, u32 num, u32 offset)
 {
-	u16 i;
-	num >>= 1;
+	u16* dest16 = (u16*)dest;
+	u16* src16 = (u16*)src;
 
-	//memset(dest, 0, num);
-	for(i = 0; i < num; i += 16)
-	{
-		//*dest++ = 0x00000000;
-		dest[i]    = 0x00000000;
-		dest[i+1]  = 0x00000000;
-		dest[i+2]  = 0x00000000;
-		dest[i+3]  = 0x00000000;
-		dest[i+4]  = 0x00000000;
-		dest[i+5]  = 0x00000000;
-		dest[i+6]  = 0x00000000;
-		dest[i+7]  = 0x00000000;
-		dest[i+8]  = 0x00000000;
-		dest[i+9]  = 0x00000000;
-		dest[i+10] = 0x00000000;
-		dest[i+11] = 0x00000000;
-		dest[i+12] = 0x00000000;
-		dest[i+13] = 0x00000000;
-		dest[i+14] = 0x00000000;
-		dest[i+15] = 0x00000000;
-	}
-}
+	u32 i;
 
-void Mem_clear (u16* dest,  u16 num )
-{
-	u16 i;
-	for(i = 0; i < num; i++) *dest++ = 0x0000;
-}
-
-void Mem_add (u8* dest, const u8* src, u16 num, u16 offset)
-{
-	u16 i;
-	int carry;
 	for(i = 0; i < num; i++)
 	{
-		*dest++ = carry = *src++ + offset;
-		*dest++ =(*src++ + (offset >> 8)) | (carry >> 8);
+	    *dest16++ = *src16++ + offset;
 	}
 }

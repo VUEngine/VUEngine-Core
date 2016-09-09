@@ -114,11 +114,11 @@ static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this
 static void AnimationEditor_printSprites(AnimationEditor this);
 static void AnimationEditor_printActorAnimations(AnimationEditor this);
 static void AnimationEditor_printAnimationConfig(AnimationEditor this);
-static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey);
-static void AnimationEditor_selectSprite(AnimationEditor this, u16 pressedKey);
+static void AnimationEditor_selectActor(AnimationEditor this, u32 pressedKey);
+static void AnimationEditor_selectSprite(AnimationEditor this, u32 pressedKey);
 static void AnimationEditor_removePreviousSprite(AnimationEditor this);
-static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey);
-static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey);
+static void AnimationEditor_selectAnimation(AnimationEditor this, u32 pressedKey);
+static void AnimationEditor_editAnimation(AnimationEditor this, u32 pressedKey);
 static void AnimationEditor_loadAnimationFunction(AnimationEditor this);
 static void AnimationEditor_createSprite(AnimationEditor this);
 static void AnimationEditor_createSpriteSelector(AnimationEditor this);
@@ -337,7 +337,7 @@ bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 		case kKeyPressed:
 
 			{
-				u16 pressedKey = *((u16*)Telegram_getExtraInfo(telegram));
+				u32 pressedKey = *((u32*)Telegram_getExtraInfo(telegram));
 
 				if(pressedKey & K_B)
 				{
@@ -382,7 +382,7 @@ bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 	return true;
 }
 
-static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
+static void AnimationEditor_selectActor(AnimationEditor this, u32 pressedKey)
 {
 	int userAnimatedInGameEntitiesCount = 0;
 	for(; _userAnimatedInGameEntities[userAnimatedInGameEntitiesCount].animatedInGameEntityDefinition; userAnimatedInGameEntitiesCount++);
@@ -403,7 +403,7 @@ static void AnimationEditor_selectActor(AnimationEditor this, u16 pressedKey)
 	}
 }
 
-static void AnimationEditor_selectSprite(AnimationEditor this, u16 pressedKey)
+static void AnimationEditor_selectSprite(AnimationEditor this, u32 pressedKey)
 {
 	int userAnimatedInGameEntitiesCount = 0;
 	for(; _userAnimatedInGameEntities[userAnimatedInGameEntitiesCount].animatedInGameEntityDefinition; userAnimatedInGameEntitiesCount++);
@@ -435,7 +435,7 @@ static void AnimationEditor_removePreviousSprite(AnimationEditor this)
 	}
 }
 
-static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey)
+static void AnimationEditor_selectAnimation(AnimationEditor this, u32 pressedKey)
 {
 	this->animationDescription = _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->animationDescription;
 
@@ -457,7 +457,7 @@ static void AnimationEditor_selectAnimation(AnimationEditor this, u16 pressedKey
 	}
 }
 
-static void AnimationEditor_editAnimation(AnimationEditor this, u16 pressedKey)
+static void AnimationEditor_editAnimation(AnimationEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_A)
 	{

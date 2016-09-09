@@ -34,7 +34,7 @@
         /* super's attributes */																	    \
         Object_ATTRIBUTES																			    \
         /* number of chars ocuppied */																    \
-        u16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];										    	\
+        u32 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];										    	\
         /* current x offset to set the next bgmap */											    	\
         s8 xOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];					    	\
         /* current y offset to set the next bgmap */											    	\
@@ -42,15 +42,15 @@
         /* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 							    	\
         s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][3];				    	\
         /* next free bgmap used for text printing */											    	\
-        u8 freeBgmapSegment;																	    	\
+        s32 freeBgmapSegment;																	    	\
         /* the textures allocated */															    	\
         BgmapTexture bgmapTextures[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];	    	\
         /* number of available bgmap segments */												    	\
-        u8 availableBgmapSegments;																    	\
+        s32 availableBgmapSegments;																    	\
         /* number of available bgmap segments */												    	\
-        u8 availableBgmapSegmentsForTextures;															\
+        s32 availableBgmapSegmentsForTextures;															\
         /* segment for printing */												    	                \
-        u8 printingBgmapSegment;															            \
+        s32 printingBgmapSegment;															            \
 
 // define the BgmapTextureManager
 __CLASS_DEFINITION(BgmapTextureManager, Object);
@@ -102,7 +102,7 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
 	ASSERT(this, "BgmapTextureManager::reset: null this");
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
-    this->availableBgmapSegments = (u8)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
+    this->availableBgmapSegments = (u32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
     this->availableBgmapSegmentsForTextures = this->availableBgmapSegments;
 
@@ -155,18 +155,18 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 	int j = 0;
 	int aux = 0;
 
-	u8 cols = Texture_getTotalCols(__SAFE_CAST(Texture, bgmapTexture));
-	u8 rows = Texture_getTotalRows(__SAFE_CAST(Texture, bgmapTexture));
+	int cols = Texture_getTotalCols(__SAFE_CAST(Texture, bgmapTexture));
+	int rows = Texture_getTotalRows(__SAFE_CAST(Texture, bgmapTexture));
 
     TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
 
-	u8 colsPad = textureDefinition->padding.cols;
-	u8 rowsPad = textureDefinition->padding.rows;
+	int colsPad = textureDefinition->padding.cols;
+	int rowsPad = textureDefinition->padding.rows;
 
 	cols += cols + colsPad < 64? 1: 0;
 	rows += rows + rowsPad < 64? 1: 0;
 
-	u16 area = (cols + colsPad) * (rows + rowsPad);
+	int area = (cols + colsPad) * (rows + rowsPad);
 
 	//if texture already defined, don't allocate
 	if(Texture_getNumberOfChars(__SAFE_CAST(Texture, bgmapTexture)))
@@ -273,7 +273,7 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 	//int xDisplacement = 0;
 	int yDisplacement = 0;
 
-	u8 length = Texture_getCols(__SAFE_CAST(Texture, bgmapTexture));
+	u32 length = Texture_getCols(__SAFE_CAST(Texture, bgmapTexture));
 
 	// if there is space in the first row
 	// calculate y displacement
@@ -433,7 +433,7 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 }
 
 // retrieve x offset
-s8 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id)
+s32 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id)
 {
 	ASSERT(this, "BgmapTextureManager::getXOffset: null this");
 
@@ -441,7 +441,7 @@ s8 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id)
 }
 
 // retrieve y offset
-s8 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
+s32 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
 {
 	ASSERT(this, "BgmapTextureManager::getYOffset: null this");
 
@@ -449,7 +449,7 @@ s8 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
 }
 
 // retrieve bgmap segment
-u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
+u32 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
 {
 	ASSERT(this, "BgmapTextureManager::getBgmapSegment: null this");
 
@@ -457,7 +457,7 @@ u8 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
 }
 
 // retrieve available bgmap segments
-u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
+s32 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegments: null this");
 
@@ -465,7 +465,7 @@ u8 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
 }
 
 // retrieve available bgmap segments
-u8 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager this)
+s32 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegmentsForTextures: null this");
 
@@ -473,19 +473,11 @@ u8 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager 
 }
 
 // retrieve available bgmap segments
-u8 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
+s32 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getPrintingBgmapSegment: null this");
 
     return this->printingBgmapSegment;
-}
-
-// retrieve available bgmap segments
-u8 BgmapTextureManager_getFreeBgmapSegment(BgmapTextureManager this)
-{
-	ASSERT(this, "BgmapTextureManager::getFreeBgmapSegment: null this");
-
-	return this->freeBgmapSegment;
 }
 
 // calculate the available bgmap segments based on usage
@@ -495,11 +487,11 @@ void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager thi
 
     u32 paramTableBase = ParamTableManager_getParamTableBase(ParamTableManager_getInstance());
 
-    this->printingBgmapSegment = (u8)((paramTableBase  - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
+    this->printingBgmapSegment = (u32)((paramTableBase  - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
 
     for(; (paramTableBase % __BGMAP_SEGMENT_SIZE || paramTableBase + __BGMAP_SEGMENT_SIZE > __PARAM_TABLE_END) && paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; paramTableBase--);
 
-    this->availableBgmapSegmentsForTextures = (u8)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
+    this->availableBgmapSegmentsForTextures = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
     if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
     {

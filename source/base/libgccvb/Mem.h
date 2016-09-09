@@ -29,11 +29,9 @@
 // 											PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-void Mem_copy (u8* dest, const u8* src, u16 num);
-void Mem_set (u8* dest, u16 src, u16 num);
-void Mem_clearFast(u32* dest,  u16 num );
-void Mem_clear (u16* dest,  u16 num );
-void Mem_add (u8* dest, const u8* src, u16 num, u16 offset);
+void Mem_copy(u8* dest, const u8* src, u32 num);
+void Mem_clear(u16* dest,  u32 num);
+void Mem_add(u8* dest, const u8* src, u32 num, u32 offset);
 
 
 #endif

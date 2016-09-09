@@ -331,12 +331,12 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 
 				for(; mBgmapSpriteDefinition->textureDefinitions[j]; j++)
 				{
-					if(halfWidth < mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2)
+					if(halfWidth < (int)mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2)
 					{
 						halfWidth = mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2;
 					}
 
-					if(halfHeight < mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2)
+					if(halfHeight < (int)mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2)
 					{
 						halfHeight = mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2;
 					}
@@ -1019,13 +1019,13 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			z = FIX19_13TOI(spritePosition.z);
 
 			// check x visibility
-			if(x + this->size.x >= -pad && x <= __SCREEN_WIDTH + pad)
+			if(x + (int)this->size.x >= -pad && x <= __SCREEN_WIDTH + pad)
 			{
 				// check y visibility
-				if(y + this->size.y >= -pad && y <= __SCREEN_HEIGHT + pad)
+				if(y + (int)this->size.y >= -pad && y <= __SCREEN_HEIGHT + pad)
 				{
 					// check z visibility
-					if(z + this->size.z >= -pad && z <= __SCREEN_DEPTH + pad)
+					if(z + (int)this->size.z >= -pad && z <= __SCREEN_DEPTH + pad)
 					{
 						return true;
 					}

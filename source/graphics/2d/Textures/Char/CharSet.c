@@ -95,7 +95,7 @@ bool CharSet_decreaseUsageCount(CharSet this)
 
 
 // retrieve charset's allocation type
-int CharSet_getAllocationType(CharSet this)
+u32 CharSet_getAllocationType(CharSet this)
 {
 	ASSERT(this, "CharSet::getAllocationType: null this");
 
@@ -103,7 +103,7 @@ int CharSet_getAllocationType(CharSet this)
 }
 
 // retrieve charset's offset within char segment
-u16 CharSet_getOffset(CharSet this)
+u32 CharSet_getOffset(CharSet this)
 {
 	ASSERT(this, "CharSet::getOffset: null this");
 
@@ -136,7 +136,7 @@ void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefini
 }
 
 // retrieve chargrop's number of chars
-u16 CharSet_getNumberOfChars(CharSet this)
+u32 CharSet_getNumberOfChars(CharSet this)
 {
 	ASSERT(this, "CharSet::getNumberOfChars: null this");
 
@@ -144,7 +144,7 @@ u16 CharSet_getNumberOfChars(CharSet this)
 }
 
 // get charset's segment
-u8 CharSet_getSegment(CharSet this)
+u32 CharSet_getSegment(CharSet this)
 {
 	ASSERT(this, "CharSet::getSegment: null this");
 
@@ -181,7 +181,7 @@ void CharSet_setCharDefinitionDisplacement(CharSet this, u16 charDefinitionDispl
 }
 
 // write to char memory
-void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar)
+void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
 {
 	ASSERT(this, "CharSet::putChar: null this");
 
@@ -192,7 +192,7 @@ void CharSet_putChar(CharSet this, u16 charToReplace, BYTE* newChar)
 }
 
 // write to char memory
-void CharSet_putPixel(CharSet this, u16 charToReplace, Point* charSetPixel, BYTE newPixelColor)
+void CharSet_putPixel(CharSet this, u32 charToReplace, Point* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "CharSet::putPixel: null this");
 
