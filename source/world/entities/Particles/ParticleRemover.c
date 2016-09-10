@@ -129,6 +129,16 @@ void ParticleRemover_registerParticle(ParticleRemover this, Particle particle)
 	VirtualList_pushBack(this->particles, particle);
 }
 
+void ParticleRemover_registerParticles(ParticleRemover this, VirtualList particles)
+{
+	ASSERT(this, "ParticleRemover::registerParticles: null this");
+
+    if(__SAFE_CAST(VirtualList, particles))
+    {
+	    VirtualList_copy(this->particles, particles);
+	}
+}
+
 void ParticleRemover_setRemovalDelayCicles(ParticleRemover this, int removalDelayCicles)
 {
 	ASSERT(this, "ParticleRemover::registerParticle: null this");

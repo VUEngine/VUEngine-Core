@@ -41,6 +41,7 @@
 		__VIRTUAL_SET(ClassName, ParticleSystem, updateVisualRepresentation);							\
 		__VIRTUAL_SET(ClassName, ParticleSystem, resume);												\
 		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);												\
+		__VIRTUAL_SET(ClassName, ParticleSystem, hide);												    \
 
 #define ParticleSystem_ATTRIBUTES																		\
         /* it is derived from */																		\

@@ -302,12 +302,21 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
         PhysicalWorld_checkForGravity(this);
 
-        VirtualNode node = this->activeBodies->head;
-
-        // check the bodies
-        for(; node; node = node->next)
+        if(elapsedTime)
         {
-            Body_update(__SAFE_CAST(Body, node->data), &this->gravity, this->elapsedTime);
+            VirtualNode node = this->activeBodies->head;
+
+            fix19_13 friction = this->friction;
+
+            Body_setCurrentWorldFriction(this->friction);
+            Body_setCurrentElapsedTime(elapsedTime);
+            Body_setCurrentGravity(&this->gravity);
+
+            // check the bodies
+            for(; node; node = node->next)
+            {
+                Body_update(__SAFE_CAST(Body, node->data));
+            }
         }
     }
 

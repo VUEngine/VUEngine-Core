@@ -106,20 +106,13 @@ void ParticleSystem_destructor(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::destructor: null this");
 
-	ParticleSystem_hide(this);
-
 	ParticleSystem_processExpiredParticles(this);
 
 	ParticleRemover particleRemover = ParticleRemover_getInstance();
 
 	if(this->particles)
 	{
-		VirtualNode node = this->particles->head;
-
-		for(; node; node = node->next)
-		{
-		    ParticleRemover_registerParticle(particleRemover, __SAFE_CAST(Particle, node->data));
-		}
+	    ParticleRemover_registerParticles(particleRemover, this->particles);
 
 		__DELETE(this->particles);
 		this->particles = NULL;
@@ -127,12 +120,7 @@ void ParticleSystem_destructor(ParticleSystem this)
 
 	if(this->recyclableParticles)
 	{
-		VirtualNode node = this->recyclableParticles->head;
-
-		for(; node; node = node->next)
-		{
-		    ParticleRemover_registerParticle(particleRemover, __SAFE_CAST(Particle, node->data));
-		}
+	    ParticleRemover_registerParticles(particleRemover, this->recyclableParticles);
 
 		__DELETE(this->recyclableParticles);
 		this->recyclableParticles = NULL;

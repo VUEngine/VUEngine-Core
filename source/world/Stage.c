@@ -526,8 +526,7 @@ static void Stage_unloadChild(Stage this, Container child)
 		return;
 	}
 
-	// hide until effectively deleted
-    __VIRTUAL_CALL(Container, hide, __SAFE_CAST(Container, child));
+	__VIRTUAL_CALL(Container, hide, child);
 
 	child->deleteMe = true;
 	Container_removeChild(__SAFE_CAST(Container, this), child);
@@ -1009,7 +1008,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	ASSERT(this, "Stage::transform: null this");
 
 	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
-return;
+
 	if(this->ui)
 	{
 		// static to avoid call to _memcpy
