@@ -48,7 +48,7 @@
 		__VIRTUAL_DEC(ClassName, bool, updateSpriteTransformations);									\
 		__VIRTUAL_DEC(ClassName, void, initialize);														\
 		__VIRTUAL_DEC(ClassName, void, ready);															\
-		__VIRTUAL_DEC(ClassName, u8, getAxisForFlipping);												\
+		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
 
 #define Entity_SET_VTABLE(ClassName)																	\
 		Container_SET_VTABLE(ClassName)																	\
@@ -165,7 +165,6 @@ EntityDefinition* Entity_getEntityDefinition(Entity this);
 const VBVec3D* Entity_getPosition(Entity this);
 int Entity_getMapParallax(Entity this);
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
-int Entity_getInGameType(Entity this);
 VirtualList Entity_getSprites(Entity this);
 bool Entity_handleMessage(Entity this, Telegram telegram);
 int Entity_getWidth(Entity this);
@@ -182,6 +181,6 @@ void Entity_hide(Entity this);
 void Entity_suspend(Entity this);
 void Entity_resume(Entity this);
 int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
-u8 Entity_getAxisForFlipping(Entity this);
+u32 Entity_getAxisForFlipping(Entity this);
 
 #endif

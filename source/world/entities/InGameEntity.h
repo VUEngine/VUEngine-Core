@@ -35,7 +35,7 @@ struct Shape_str;
 		Entity_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, int, isMoving);														\
 		__VIRTUAL_DEC(ClassName, int, getMovementState);												\
-		__VIRTUAL_DEC(ClassName, u16, getInGameType);													\
+		__VIRTUAL_DEC(ClassName, u32, getInGameType);													\
 
 #define InGameEntity_SET_VTABLE(ClassName)																\
 		Entity_SET_VTABLE(ClassName)																	\

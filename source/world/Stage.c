@@ -1046,7 +1046,7 @@ u32 loadEntitiesTime = 0;
 u32 initializeEntitiesTime = 0;
 u32 transformEntitiesTime = 0;
 
-void Stage_showProfiling(Stage this)
+void Stage_showProfiling(Stage this __attribute__ ((unused)))
 {
     int x = 0;
     int xDisplacement = 11;
