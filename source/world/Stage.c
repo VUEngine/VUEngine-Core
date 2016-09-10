@@ -527,10 +527,12 @@ static void Stage_unloadChild(Stage this, Container child)
 	}
 
 	// hide until effectively deleted
+	/*
 	if(__GET_CAST(Entity, child))
 	{
 		Entity_hide(__SAFE_CAST(Entity, child));
 	}
+	*/
 
 	child->deleteMe = true;
 	Container_removeChild(__SAFE_CAST(Container, this), child);

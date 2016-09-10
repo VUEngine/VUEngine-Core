@@ -183,7 +183,7 @@
                 NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ##  is abstract);		\
             }																						    \
 		}																							    \
-		
+
 // configure class's vtable
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)										        \
                                                                                                         \
@@ -250,6 +250,9 @@
         /* declare vtable */																		    \
         __VTABLE(ClassName);								            							    \
                                                                                                         \
+        /* define class's isInstance method */															\
+        u32 ClassName ## _isInstance(Object object);												    \
+                                                                                                        \
         /* declare vtable */																		    \
         void ClassName ## _setVTable();																    \
                                                                                                         \
@@ -291,6 +294,12 @@
         /* class' base's destructor */					    		    	                		    \
             (void (*)(Object))&BaseClassName ## _destructor;				    	        		    \
                                                                                                         \
+        /* define class's isInstance method */															\
+        u32 ClassName ## _isInstance(Object object)												        \
+        {																							    \
+            return (void*)&ClassName ## _vTable == (void*)*((void**)object);					        \
+        }																							    \
+                                                                                                        \
         /* define class's getSize method */															    \
         int ClassName ## _getObjectSize()												                \
         {																							    \
@@ -312,9 +321,6 @@
         /* now add the function which will handle the vtable */										    \
         __SET_VTABLE_DEFINITION(ClassName, BaseClassName)											    \
         __CHECK_VTABLE_DEFINITION(ClassName)											    			\
-                                                                                                        \
-        /* dummy redeclaration to avoid warning when compiling with -pedantic */                        \
-        void ClassName ## _dummyMethodClassDefinition()
 
 // retrieves object's class' name
 #define __GET_CLASS_NAME(object)																        \

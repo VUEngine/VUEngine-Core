@@ -73,7 +73,7 @@ int InverseCuboid_overlaps(InverseCuboid this, Shape shape)
 {
 	ASSERT(this, "InverseCuboid::overlaps: null this");
 
-	if(__GET_CAST(InverseCuboid, shape))
+    if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape)))
 	{
 		return InverseCuboid_overlapsCuboid(this, __SAFE_CAST(Cuboid, shape));
 	}

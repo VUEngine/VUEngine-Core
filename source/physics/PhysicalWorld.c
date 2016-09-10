@@ -351,7 +351,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 		Body body = __SAFE_CAST(Body, node->data);
 
 		// check if current body's owner is the same as the entity calling this method
-		if(__GET_CAST(SpatialObject, owner) == body->owner)
+		if(__SAFE_CAST(SpatialObject, owner) == body->owner)
 		{
 			// check if body is active, maybe a body must be removed
 			// and a new entity has been loaded in the same memory location

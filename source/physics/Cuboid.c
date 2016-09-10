@@ -97,13 +97,13 @@ int Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
-	if(__GET_CAST(InverseCuboid, shape))
-	{
-		return Cuboid_overlapsInverseCuboid(this, __SAFE_CAST(InverseCuboid, shape));
-	}
-	else if(__GET_CAST(Cuboid, shape))
+	if(Cuboid_isInstance(__SAFE_CAST(Object, shape)))
 	{
 		return Cuboid_overlapsCuboid(this, __SAFE_CAST(Cuboid, shape));
+	}
+	else if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape)))
+	{
+		return Cuboid_overlapsInverseCuboid(this, __SAFE_CAST(InverseCuboid, shape));
 	}
 
 	return false;
@@ -245,13 +245,13 @@ int Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject,
 
 	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
 
-	if(__GET_CAST(InverseCuboid, shape))
-	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithInverseRightCuboid);
-	}
-	else if(__GET_CAST(Cuboid, shape))
+    if(Cuboid_isInstance(__SAFE_CAST(Object, shape)))
 	{
 		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithRightCuboid);
+	}
+	else if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape)))
+	{
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithInverseRightCuboid);
 	}
 
 	return 0;
@@ -498,10 +498,17 @@ int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VB
 
 	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
 
-	if(__GET_CAST(Cuboid, shape))
+    if(Cuboid_isInstance(__SAFE_CAST(Object, shape)))
     {
 		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement);
 	}
+	// TODO: implement
+	/*
+	else if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape))
+	{
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithInverseRightCuboid);
+	}
+	*/
 
 	return false;
 }
