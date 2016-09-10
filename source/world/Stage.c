@@ -527,12 +527,7 @@ static void Stage_unloadChild(Stage this, Container child)
 	}
 
 	// hide until effectively deleted
-	/*
-	if(__GET_CAST(Entity, child))
-	{
-		Entity_hide(__SAFE_CAST(Entity, child));
-	}
-	*/
+    __VIRTUAL_CALL(Container, hide, __SAFE_CAST(Container, child));
 
 	child->deleteMe = true;
 	Container_removeChild(__SAFE_CAST(Container, this), child);
@@ -1014,7 +1009,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	ASSERT(this, "Stage::transform: null this");
 
 	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
-
+return;
 	if(this->ui)
 	{
 		// static to avoid call to _memcpy
@@ -1048,7 +1043,7 @@ u32 loadEntitiesTime = 0;
 u32 initializeEntitiesTime = 0;
 u32 transformEntitiesTime = 0;
 
-void Stage_showProfiling(Stage this __attribute__ ((unused)))
+void Stage_showProfiling(Stage this)
 {
     int x = 0;
     int xDisplacement = 11;

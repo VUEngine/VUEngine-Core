@@ -73,6 +73,7 @@
 		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
+		__VIRTUAL_SET(ClassName, Entity, hide);											                \
 
 #define Entity_ATTRIBUTES																				\
         /* it is derived from */																		\
