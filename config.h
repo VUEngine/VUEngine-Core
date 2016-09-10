@@ -43,7 +43,7 @@
 // alert VIP's overtime
 #define __ALERT_VIP_OVERTIME
 
-// alert transformation - VPU unsync warning
+// alert transformation - VIP unsync warning
 #define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 
 // tools
@@ -105,7 +105,7 @@
 // cap the framerate
 #define __CAP_FRAMERATE
 
-// disable VPU's __XPEND interrupt, and thus rendering while transformation operations have not finished
+// disable VIP's __XPEND interrupt, and thus rendering while transformation operations have not finished
 #undef __FORCE_VIP_SYNC
 
 // clock resolution
@@ -149,21 +149,20 @@
 #undef __MEMORY_POOL_CLEAN_UP
 
 #undef __MEMORY_POOLS
-#define __MEMORY_POOLS							15
+#define __MEMORY_POOLS							13
 
+// test memory pool's config
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
-	__BLOCK_DEFINITION(192, 1)																			\
-	__BLOCK_DEFINITION(160, 8)																			\
+	__BLOCK_DEFINITION(196, 1)																			\
+	__BLOCK_DEFINITION(164, 8)																			\
 	__BLOCK_DEFINITION(144, 8)																			\
-	__BLOCK_DEFINITION(136, 30)																			\
-	__BLOCK_DEFINITION(120, 35)																			\
-	__BLOCK_DEFINITION(112, 16)																			\
-	__BLOCK_DEFINITION(104, 18)																			\
+	__BLOCK_DEFINITION(140, 40)																			\
+	__BLOCK_DEFINITION(132, 45)																			\
+	__BLOCK_DEFINITION(112, 20)																			\
+	__BLOCK_DEFINITION(108, 25)																			\
 	__BLOCK_DEFINITION(100, 25)																			\
-	__BLOCK_DEFINITION(96, 50)																			\
-	__BLOCK_DEFINITION(84, 40)																			\
-	__BLOCK_DEFINITION(76, 10)																			\
+	__BLOCK_DEFINITION(88, 60)																			\
 	__BLOCK_DEFINITION(68, 70)																			\
 	__BLOCK_DEFINITION(28, 340)																			\
 	__BLOCK_DEFINITION(20, 630)																			\
@@ -171,21 +170,20 @@
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
-	__SET_MEMORY_POOL_ARRAY(192)																		\
-	__SET_MEMORY_POOL_ARRAY(160)																		\
+	__SET_MEMORY_POOL_ARRAY(196)																		\
+	__SET_MEMORY_POOL_ARRAY(164)																		\
 	__SET_MEMORY_POOL_ARRAY(144)																		\
-	__SET_MEMORY_POOL_ARRAY(136)																		\
-	__SET_MEMORY_POOL_ARRAY(120)																		\
+	__SET_MEMORY_POOL_ARRAY(140)																		\
+	__SET_MEMORY_POOL_ARRAY(132)																		\
 	__SET_MEMORY_POOL_ARRAY(112)																		\
-	__SET_MEMORY_POOL_ARRAY(104)																		\
+	__SET_MEMORY_POOL_ARRAY(108)																		\
 	__SET_MEMORY_POOL_ARRAY(100)																		\
-	__SET_MEMORY_POOL_ARRAY(96)																			\
-	__SET_MEMORY_POOL_ARRAY(84)																			\
-	__SET_MEMORY_POOL_ARRAY(76)																			\
+	__SET_MEMORY_POOL_ARRAY(88)																			\
 	__SET_MEMORY_POOL_ARRAY(68)																			\
 	__SET_MEMORY_POOL_ARRAY(28)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
-	__SET_MEMORY_POOL_ARRAY(16)																			\
+	__SET_MEMORY_POOL_ARRAY(16)
+
 
 // percentage (0-100) above which the memory pool's status shows the pool usage
 #define __MEMORY_POOL_WARNING_THRESHOLD			85
