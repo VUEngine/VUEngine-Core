@@ -1411,7 +1411,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     Printing_int(Printing_getInstance(), updateTransformationsHighestTime, x + xDisplacement + 4, y++, NULL);
 
     Printing_text(Printing_getInstance(), "TOTAL:              ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateVisualsTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTotalTime + handleInputTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + 4, y++, NULL);
 
     updateVisualsTotalTime = 0;
