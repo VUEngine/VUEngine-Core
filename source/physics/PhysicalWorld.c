@@ -119,7 +119,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 }
 
 // register a body
-Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_13 mass)
+Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass)
 {
 	ASSERT(this, "PhysicalWorld::registerBody: null this");
 
@@ -131,11 +131,17 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_1
 		return body;
 	}
 
-	VirtualList_pushFront(this->bodies, (void*)__NEW(Body, owner, mass));
-	ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::registerBody: bad class body");
+	if(bodyAllocator)
+	{
+	    Body body = bodyAllocator(owner, mass);
+        VirtualList_pushFront(this->bodies, body);
+        ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::registerBody: bad class body");
 
-	// return created shape
-	return __SAFE_CAST(Body, VirtualList_front(this->bodies));
+        // return created shape
+        return __SAFE_CAST(Body, VirtualList_front(this->bodies));
+	}
+
+	return NULL;
 }
 
 // remove a body
@@ -306,8 +312,6 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
         {
             VirtualNode node = this->activeBodies->head;
 
-            fix19_13 friction = this->friction;
-
             Body_setCurrentWorldFriction(this->friction);
             Body_setCurrentElapsedTime(elapsedTime);
             Body_setCurrentGravity(&this->gravity);
@@ -315,7 +319,8 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
             // check the bodies
             for(; node; node = node->next)
             {
-                Body_update(__SAFE_CAST(Body, node->data));
+                //Body_update(__SAFE_CAST(Body, node->data));
+                __VIRTUAL_CALL(Body, update, __SAFE_CAST(Body, node->data));
             }
         }
     }

@@ -127,7 +127,7 @@ void Particle_destructor(Particle this);
 void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle particle));
 void Particle_transform(Particle this);
 void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition);
-void Particle_addForce(Particle this, const Force* force);
+void Particle_addForce(Particle this, const Force* force, u32 movementType);
 void Particle_setLifeSpan(Particle this, int lifeSpan);
 void Particle_setMass(Particle this, fix19_13 mass);
 void Particle_show(Particle this);

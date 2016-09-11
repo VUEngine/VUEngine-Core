@@ -41,9 +41,13 @@
 
 #define Body_METHODS(ClassName)																			\
 		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, update);															\
+		__VIRTUAL_DEC(ClassName, Force, calculateFrictionForce);										\
 
 #define Body_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Body, update);														    \
+		__VIRTUAL_SET(ClassName, Body, calculateFrictionForce);										    \
 
 #define Body_ATTRIBUTES																					\
         /* super's attributes */																		\
@@ -95,6 +99,7 @@ void Body_setCurrentGravity(const Acceleration* currentGravity);
 
 __CLASS_NEW_DECLARE(Body, SpatialObject owner, fix19_13 mass);
 
+void Body_constructor(Body this, SpatialObject owner, fix19_13 mass);
 void Body_destructor(Body this);
 void Body_setOwner(Body this, SpatialObject owner);
 SpatialObject Body_getOwner(Body this);
@@ -130,6 +135,7 @@ void Body_printPhysics(Body this, int x, int y);
 void Body_stopMovement(Body this, int axis);
 void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity);
 void Body_takeHitFrom(Body this, Body other);
+Force Body_calculateFrictionForce(Body this);
 
 
 #endif

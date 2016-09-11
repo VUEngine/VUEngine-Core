@@ -24,6 +24,7 @@
 #include <ObjectAnimatedSprite.h>
 #include <Game.h>
 #include <Clock.h>
+#include <ParticleBody.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +61,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->particleDefinition = particleDefinition;
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
-	this->body = PhysicalWorld_registerBody(Game_getPhysicalWorld(Game_getInstance()), __SAFE_CAST(SpatialObject, this), mass);
+	this->body = PhysicalWorld_registerBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), mass);
 	Body_setAxisSubjectToGravity(this->body, particleDefinition->axisSubjectToGravity);
 
 	this->objectSprite = NULL;
@@ -151,11 +152,42 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
     }
 }
 
-void Particle_addForce(Particle this, const Force* force)
+void Particle_addForce(Particle this, const Force* force, u32 movementType)
 {
 	ASSERT(this, "Particle::addForce: null this");
 
-	Body_addForce(this->body, force);
+	if(__UNIFORM_MOVEMENT == movementType)
+	{
+	    fix19_13 mass = Body_getMass(this->body);
+
+	    Acceleration acceleration =
+	    {
+	        force->x,
+	        force->y,
+	        force->z
+	    };
+
+	    if(mass)
+	    {
+    	    acceleration.x = FIX19_13_DIV(acceleration.x, mass);
+    	    acceleration.x = FIX19_13_DIV(acceleration.y, mass);
+    	    acceleration.x = FIX19_13_DIV(acceleration.z, mass);
+	    };
+
+		Velocity velocity =
+        {
+        	acceleration.x,
+        	acceleration.y,
+        	acceleration.z
+		};
+
+        Body_moveUniformly(this->body, velocity);
+
+	}
+    else
+    {
+	    Body_addForce(this->body, force);
+	}
 }
 
 void Particle_setLifeSpan(Particle this, int lifeSpan)

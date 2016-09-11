@@ -116,6 +116,9 @@ typedef struct ParticleSystemDefinition
 	// maximum force to apply (use int values in the definition to avoid overflow)
 	VBVec3D maximumForce;
 
+	// type of movement for the particles
+	u32 movementType;
+
 } ParticleSystemDefinition;
 
 typedef const ParticleSystemDefinition ParticleSystemROMDef;

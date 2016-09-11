@@ -242,7 +242,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		Particle_setLifeSpan(particle, lifeSpan);
 		Particle_setMass(particle, mass);
 		__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
-		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
+		Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
 		Particle_show(particle);
 
 		VirtualList_popFront(this->recyclableParticles);
@@ -299,7 +299,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix19_13)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
 	__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
-	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed));
+	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
 
 	Object_addEventListener(__SAFE_CAST(Object, particle), __SAFE_CAST(Object, this), (EventListener)ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
 

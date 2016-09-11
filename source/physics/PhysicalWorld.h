@@ -43,6 +43,8 @@
 __CLASS(PhysicalWorld);
 
 
+typedef Body (*BodyAllocator)(SpatialObject, fix19_13);
+
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
@@ -51,7 +53,7 @@ __CLASS_NEW_DECLARE(PhysicalWorld);
 
 void PhysicalWorld_constructor(PhysicalWorld this);
 void PhysicalWorld_destructor(PhysicalWorld this);
-Body PhysicalWorld_registerBody(PhysicalWorld this, SpatialObject owner, fix19_13 mass);
+Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass);
 void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
 void PhysicalWorld_start(PhysicalWorld this);
