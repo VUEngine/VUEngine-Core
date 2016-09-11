@@ -248,7 +248,7 @@ bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused
 }
 
 // state's execute
-void GameState_stream(GameState this, void* owner __attribute__ ((unused)))
+void GameState_stream(GameState this)
 {
     Stage_stream(this->stage);
 }
