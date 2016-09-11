@@ -180,8 +180,8 @@ static u16* const	_objecAttributesBaseAddress             =   (u16*)__OBJECT_SPA
 #define	__WORLD_END		0x0040
 
 // param table for affine and hbias render
-extern u32 _vram_data_start;
-#define __PARAM_TABLE_END 		((u32)&_vram_data_start)
+extern u32 _dram_data_start;
+#define __PARAM_TABLE_END 		((u32)&_dram_data_start)
 
 #define	__COLOR_BLACK			0x00
 #define	__COLOR_DARK_RED		0x01
