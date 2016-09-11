@@ -108,6 +108,7 @@ void KeypadManager_enable(KeypadManager this)
 
 	this->enabled = true;
 	this->currentKey = this->previousKey = 0;
+	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_SW | __S_HWDIS);
 }
 
 // disable keypad reads
@@ -132,10 +133,10 @@ void KeypadManager_read(KeypadManager this)
 	ASSERT(this, "KeypadManager::read: null this");
 
 	// disable interrupt
-	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
+//	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
 	//wait for screen to idle
-	//while(*readingStatus & __S_STAT);
+	while(*readingStatus & __S_STAT);
 
 	// now read the key
 	this->currentKey |= (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0x0000FFFD;
