@@ -117,10 +117,10 @@ typedef void (*StreamingPhase)(Stage);
 
 static const StreamingPhase _streamingPhases[] =
 {
-    &Stage_unloadOutOfRangeEntities,
+    &Stage_initializeEntities,
     &Stage_selectEntitiesInLoadRange,
     &Stage_loadSelectedEntities,
-    &Stage_initializeEntities,
+    &Stage_unloadOutOfRangeEntities,
     &Stage_transformEntities,
 };
 
