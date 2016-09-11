@@ -300,7 +300,7 @@ void HardwareManager_enableKeypad(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::enableKeypad: null this");
 
-	KeypadManager_enableInterrupt(this->keypadManager);
+	KeypadManager_enable(this->keypadManager);
 }
 
 // disable key pad
@@ -308,7 +308,7 @@ void HardwareManager_disableKeypad(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::disableKeypad: null this");
 
-	KeypadManager_disableInterrupt(this->keypadManager);
+	KeypadManager_disable(this->keypadManager);
 }
 
 // print hardware's states

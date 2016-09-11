@@ -643,7 +643,7 @@ static void Game_handleInput(Game this)
 	KeypadManager_clear(this->keypadManager);
 
 #ifdef __LOW_BATTERY_INDICATOR
-    //Game_checkLowBattery(this, holdKey);
+    Game_checkLowBattery(this, holdKey);
 #endif
 }
 
