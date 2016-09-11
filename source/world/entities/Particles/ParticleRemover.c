@@ -31,7 +31,7 @@
         /* it is derived from */																		\
         Object_ATTRIBUTES																				\
         /* particle list */																				\
-        VirtualList particles;																			\
+        VirtualList particlesLists;																		\
         /* remove delay */																				\
         int removalDelayCicles;																			\
         /* remove delay */																				\
@@ -65,7 +65,7 @@ static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemov
 	// construct base
 	__CONSTRUCT_BASE(Object);
 
-	this->particles = __NEW(VirtualList);
+	this->particlesLists = __NEW(VirtualList);
 	this->removalDelayCicles = 0;
 	this->leftRemoveDelayCicles = this->removalDelayCicles;
 }
@@ -77,8 +77,8 @@ void ParticleRemover_destructor(ParticleRemover this)
 
     ParticleRemover_reset(this);
 
-    __DELETE(this->particles);
-    this->particles = NULL;
+    __DELETE(this->particlesLists);
+    this->particlesLists = NULL;
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -88,14 +88,22 @@ void ParticleRemover_reset(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::reset: null this");
 
-    VirtualNode node = this->particles->head;
+    VirtualNode node = this->particlesLists->head;
 
     for(; node; node = node->next)
     {
-        __DELETE(node->data);
+        VirtualList particlesList = node->data;
+        VirtualNode particleNode = particlesList->head;
+
+        for(; particleNode; particleNode = particleNode->next)
+        {
+            __DELETE(particleNode->data);
+        }
+
+        __DELETE(particlesList);
     }
 
-    VirtualList_clear(this->particles);
+    VirtualList_clear(this->particlesLists);
 
     this->leftRemoveDelayCicles = this->removalDelayCicles;
 }
@@ -110,41 +118,44 @@ void ParticleRemover_update(ParticleRemover this)
     }
     else if(0 >= --this->leftRemoveDelayCicles)
     {
-        if(this->particles->head)
+        if(this->particlesLists->head)
         {
-            __DELETE(VirtualList_front(this->particles));
-            VirtualList_popFront(this->particles);
+            VirtualList particlesList = VirtualList_front(this->particlesLists);
+
+            if(particlesList->head)
+            {
+                __DELETE(VirtualList_front(particlesList));
+                VirtualList_popFront(particlesList);
+
+                if(!VirtualList_getSize(particlesList))
+                {
+                    VirtualList_popFront(this->particlesLists);
+                    __DELETE(particlesList);
+                }
+            }
     	}
 
     	this->leftRemoveDelayCicles = this->removalDelayCicles;
     }
 }
 
-void ParticleRemover_registerParticle(ParticleRemover this, Particle particle)
-{
-	ASSERT(this, "ParticleRemover::registerParticle: null this");
-
-    ASSERT(!VirtualList_find(this->particles, particle), "ParticleRemover::registerParticle: particle already registerd for deletion");
-
-	VirtualList_pushBack(this->particles, particle);
-}
-
-void ParticleRemover_registerParticles(ParticleRemover this, VirtualList particles)
+void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles)
 {
 	ASSERT(this, "ParticleRemover::registerParticles: null this");
 
     if(__SAFE_CAST(VirtualList, particles))
     {
-        VirtualNode node = particles->head;
+        VirtualList particlesList = __NEW(VirtualList);
 
-        for(; node; node = node->next)
-        {
-            if(!VirtualList_find(this->particles, node->data))
-            {
-        	    VirtualList_pushBack(this->particles, node->data);
-            }
-        }
+        particlesList->head = particles->head;
+        particlesList->tail = particles->tail;
 
+        particles->head = NULL;
+        particles->tail = NULL;
+
+        __DELETE(particles);
+
+        VirtualList_pushBack(this->particlesLists, particlesList);
 	}
 }
 

@@ -1109,7 +1109,7 @@ void Stage_showProfiling(Stage this __attribute__ ((unused)))
 {
     int x = 0;
     int xDisplacement = 11;
-    int y = 12;
+    int y = 13;
     Printing_text(Printing_getInstance(), "STREAMING PROFILING", x, y++, NULL);
 
     Printing_text(Printing_getInstance(), "Unload:           ", x, y, NULL);

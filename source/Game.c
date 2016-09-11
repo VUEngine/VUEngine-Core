@@ -671,7 +671,7 @@ inline static void Game_updateLogic(Game this)
 	if(!Game_isInSpecialMode(this))
 #endif
 	// dispatch queued messages
-    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+//    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
@@ -812,6 +812,7 @@ static u32 updatePhysicsTotalTime = 0;
 static u32 updateTransformationsTotalTime = 0;
 static u32 streamingTotalTime = 0;
 static u32 handleInputTotalTime = 0;
+static u32 dispatchDelayedMessageTotalTime = 0;
 
 static u32 gameFrameHighestTime = 0;
 static u32 updateVisualsHighestTime = 0;
@@ -820,6 +821,7 @@ static u32 streamingHighestTime = 0;
 static u32 updatePhysicsHighestTime = 0;
 static u32 updateTransformationsHighestTime = 0;
 static u32 handleInputHighestTime = 0;
+static u32 dispatchDelayedMessageHighestTime = 0;
 #endif
 
 // update game's subsystems
@@ -954,6 +956,17 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         handleInputHighestTime = processTime > handleInputHighestTime? processTime: handleInputHighestTime;
 	    handleInputTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
+#endif
+
+#ifdef __PROFILING
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#endif
+        MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+#ifdef __PROFILING
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        dispatchDelayedMessageHighestTime = processTime > dispatchDelayedMessageHighestTime? processTime: dispatchDelayedMessageHighestTime;
+	    dispatchDelayedMessageTotalTime += processTime;
 	    gameFrameTotalTime += processTime;
 #endif
 
@@ -1396,6 +1409,10 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     Printing_int(Printing_getInstance(), handleInputTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), handleInputHighestTime, x + xDisplacement + 4, y++, NULL);
 
+    Printing_text(Printing_getInstance(), "Messaging:              ", x, y, NULL);
+    Printing_int(Printing_getInstance(), dispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), dispatchDelayedMessageHighestTime, x + xDisplacement + 4, y++, NULL);
+
     Printing_text(Printing_getInstance(), "Logic:              ", x, y, NULL);
     Printing_int(Printing_getInstance(), updateLogicTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), updateLogicHighestTime, x + xDisplacement + 4, y++, NULL);
@@ -1413,7 +1430,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     Printing_int(Printing_getInstance(), updateTransformationsHighestTime, x + xDisplacement + 4, y++, NULL);
 
     Printing_text(Printing_getInstance(), "TOTAL:              ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateVisualsTotalTime + handleInputTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTotalTime + handleInputTotalTime + dispatchDelayedMessageTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + 4, y++, NULL);
 
     updateVisualsTotalTime = 0;
@@ -1422,6 +1439,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     updateTransformationsTotalTime = 0;
     streamingTotalTime = 0;
     handleInputTotalTime = 0;
+    dispatchDelayedMessageTotalTime = 0;
 
     gameFrameHighestTime = 0;
     updateVisualsHighestTime = 0;
@@ -1430,6 +1448,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     updateTransformationsHighestTime = 0;
     streamingHighestTime = 0;
     handleInputHighestTime = 0;
+    dispatchDelayedMessageHighestTime = 0;
 
 #ifdef __STREAMING_PROFILING
     Stage_showProfiling(Game_getStage(this));

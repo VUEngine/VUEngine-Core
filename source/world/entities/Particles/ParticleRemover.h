@@ -49,8 +49,7 @@ ParticleRemover ParticleRemover_getInstance();
 void ParticleRemover_destructor(ParticleRemover this);
 void ParticleRemover_reset(ParticleRemover this);
 void ParticleRemover_update(ParticleRemover this);
-void ParticleRemover_registerParticle(ParticleRemover this, Particle particle);
-void ParticleRemover_registerParticles(ParticleRemover this, VirtualList particles);
+void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles);
 void ParticleRemover_setRemovalDelayCicles(ParticleRemover this, int removalDelayCicles);
 
 #endif

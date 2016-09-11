@@ -112,17 +112,15 @@ void ParticleSystem_destructor(ParticleSystem this)
 
 	if(this->particles)
 	{
-	    ParticleRemover_registerParticles(particleRemover, this->particles);
-
-		__DELETE(this->particles);
+	    // the remover handles all the cleaning
+	    ParticleRemover_deleteParticles(particleRemover, this->particles);
 		this->particles = NULL;
 	}
 
 	if(this->recyclableParticles)
 	{
-	    ParticleRemover_registerParticles(particleRemover, this->recyclableParticles);
-
-		__DELETE(this->recyclableParticles);
+	    // the remover handles all the cleaning
+	    ParticleRemover_deleteParticles(particleRemover, this->recyclableParticles);
 		this->recyclableParticles = NULL;
 	}
 
