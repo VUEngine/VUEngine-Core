@@ -85,6 +85,7 @@ void GameState_exit(GameState this, void* owner);
 void GameState_suspend(GameState this, void* owner);
 void GameState_resume(GameState this, void* owner);
 bool GameState_processMessage(GameState this, void* owner, Telegram telegram);
+void GameState_stream(GameState this, void* owner);
 void GameState_transform(GameState this);
 void GameState_updateVisuals(GameState this);
 int GameState_propagateMessage(GameState this, int message);

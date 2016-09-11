@@ -182,7 +182,6 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 		};
 
         Body_moveUniformly(this->body, velocity);
-
 	}
     else
     {

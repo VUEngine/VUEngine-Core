@@ -200,7 +200,7 @@ void ParticleSystem_update(ParticleSystem this)
 		if(!this->paused)
 		{
 			// check if it is time to spawn new particles
-			this->nextSpawnTime -= abs(elapsedTime);
+			this->nextSpawnTime -= elapsedTime;
 
 			if(0 > this->nextSpawnTime)
 			{
@@ -294,7 +294,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
 	fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 
-	int spriteDefinitionIndex = Utilities_random(seed, abs(this->numberOfSpriteDefinitions));
+	int spriteDefinitionIndex = Utilities_random(seed, this->numberOfSpriteDefinitions);
 
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix19_13)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);

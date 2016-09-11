@@ -247,6 +247,12 @@ bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused
 	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, Telegram_getMessage(telegram));
 }
 
+// state's execute
+void GameState_stream(GameState this, void* owner __attribute__ ((unused)))
+{
+    Stage_stream(this->stage);
+}
+
 // update level entities' positions
 void GameState_transform(GameState this)
 {

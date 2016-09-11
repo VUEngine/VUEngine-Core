@@ -88,7 +88,6 @@ typedef struct StageEntityToSetup
 
 } StageEntityToSetup;
 
-
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
@@ -103,14 +102,39 @@ static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
 static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore);
-static void Stage_selectEntitiesInLoadRange(Stage this);
 static void Stage_setObjectSpritesContainers(Stage this);
 static void Stage_preloadAssets(Stage this);
-static void Stage_loadInRangeEntities(Stage this);
-static void Stage_unloadOutOfRangeEntities(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
+static void Stage_loadInRangeEntities(Stage this);
+static void Stage_unloadOutOfRangeEntities(Stage this);
+static void Stage_selectEntitiesInLoadRange(Stage this);
+static void Stage_loadSelectedEntities(Stage this);
+static void Stage_initializeEntities(Stage this);
+static void Stage_transformEntities(Stage this);
 
+typedef void (*StreamingPhase)(Stage);
+
+static const StreamingPhase _streamingPhases[] =
+{
+    &Stage_unloadOutOfRangeEntities,
+    &Stage_selectEntitiesInLoadRange,
+    &Stage_loadSelectedEntities,
+    &Stage_initializeEntities,
+    &Stage_transformEntities,
+};
+
+u32 streamingPhase = 0;
+
+#ifdef __STREAMING_PROFILING
+u32 unloadOutOfRangeEntitiesTime = 0;
+u32 selectEntitiesInLoadRangeTime = 0;
+u32 loadEntitiesTime = 0;
+u32 initializeEntitiesTime = 0;
+u32 transformEntitiesTime = 0;
+
+u32 timeBeforeStreamingProcess = 0;
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -713,6 +737,11 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
+    if(!this->focusInGameEntity)
+    {
+        Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
+    }
+
 	VBVec3D focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
 	focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);
 	focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
@@ -796,10 +825,14 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
     }
 
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
+
+#ifdef __STREAMING_PROFILING
+    selectEntitiesInLoadRangeTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
+#endif
 }
 
 // load selected entities
-static void Stage_loadEntities(Stage this)
+static void Stage_loadSelectedEntities(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
@@ -833,6 +866,11 @@ static void Stage_loadEntities(Stage this)
 			__DELETE_BASIC(stageEntityDescription);
 		}
 	}
+
+#ifdef __STREAMING_PROFILING
+        loadEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
+#endif
+
 }
 
 // intialize loaded entities
@@ -852,6 +890,10 @@ static void Stage_initializeEntities(Stage this)
 		VirtualList_pushBack(this->entitiesToTransform, stageEntityToSetup);
 		break;
 	}
+
+#ifdef __STREAMING_PROFILING
+    initializeEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
+#endif
 }
 
 // intialize loaded entities
@@ -894,6 +936,10 @@ static void Stage_transformEntities(Stage this)
 		__DELETE_BASIC(stageEntityToSetup);
 		break;
 	}
+
+#ifdef __STREAMING_PROFILING
+    transformEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
+#endif
 }
 
 // load all visible entities
@@ -984,6 +1030,10 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 		}
 	}
+
+#ifdef __STREAMING_PROFILING
+    unloadOutOfRangeEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
+#endif
 }
 
 // execute stage's logic
@@ -997,9 +1047,28 @@ void Stage_update(Stage this)
 	{
 		Container_update(__SAFE_CAST(Container, this->ui));
 	}
+}
 
-	// stream level
-	Stage_stream(this);
+void Stage_stream(Stage this)
+{
+    static u32 streamingCycles = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+	u32 streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
+	u32 streamingCycleDuration = streamingDelayPerCycle / streamingCycles;
+
+	if(++this->streamingCycleCounter >= streamingCycleDuration)
+	{
+		this->streamingCycleCounter  = 0;
+
+        if(++streamingPhase >= streamingCycles)
+        {
+            streamingPhase = 0;
+        }
+
+#ifdef __STREAMING_PROFILING
+        timeBeforeStreamingProcess = TimerManager_getTicks(TimerManager_getInstance());
+#endif
+        _streamingPhases[streamingPhase](this);
+	}
 }
 
 // transform state
@@ -1036,17 +1105,11 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 }
 
 #ifdef __STREAMING_PROFILING
-u32 unloadOutOfRangeEntitiesTime = 0;
-u32 selectEntitiesInLoadRangeTime = 0;
-u32 loadEntitiesTime = 0;
-u32 initializeEntitiesTime = 0;
-u32 transformEntitiesTime = 0;
-
-void Stage_showProfiling(Stage this)
+void Stage_showProfiling(Stage this __attribute__ ((unused)))
 {
     int x = 0;
     int xDisplacement = 11;
-    int y = 10;
+    int y = 12;
     Printing_text(Printing_getInstance(), "STREAMING PROFILING", x, y++, NULL);
 
     Printing_text(Printing_getInstance(), "Unload:           ", x, y, NULL);
@@ -1069,84 +1132,6 @@ void Stage_showProfiling(Stage this)
     transformEntitiesTime = 0;
 }
 #endif
-
-// stream entities according to screen's position
-void Stage_stream(Stage this)
-{
-	ASSERT(this, "Stage::stream: null this");
-
-	// if the screen is moving
-	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
-	int streamingCycleBase = streamingDelayPerCycle / __STREAMING_CYCLES;
-
-#ifdef __STREAMING_PROFILING
-    u32 timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
-#endif
-
-	if(!this->streamingCycleCounter)
-	{
-		// unload not visible objects
-		Stage_unloadOutOfRangeEntities(this);
-
-#ifdef __STREAMING_PROFILING
-	    unloadOutOfRangeEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-#endif
-	}
-	else if(this->streamingCycleCounter == streamingCycleBase)
-	{
-		if(this->focusInGameEntity)
-		{
-			// load visible objects
-			Stage_selectEntitiesInLoadRange(this);
-		}
-		else
-		{
-			Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
-		}
-
-#ifdef __STREAMING_PROFILING
-	    selectEntitiesInLoadRangeTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-#endif
-	}
-	else if(this->streamingCycleCounter == streamingCycleBase * 2)
-	{
-		if(this->entitiesToLoad->head)
-		{
-			Stage_loadEntities(this);
-		}
-
-#ifdef __STREAMING_PROFILING
-	    loadEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-#endif
-	}
-	else if(this->streamingCycleCounter == streamingCycleBase * 3)
-	{
-		if(this->entitiesToInitialize->head)
-		{
-			Stage_initializeEntities(this);
-		}
-
-#ifdef __STREAMING_PROFILING
-	    initializeEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-#endif
-	}
-	else if(this->streamingCycleCounter == streamingCycleBase * 4)
-	{
-		if(this->entitiesToTransform->head)
-		{
-			Stage_transformEntities(this);
-		}
-
-#ifdef __STREAMING_PROFILING
-	    transformEntitiesTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-#endif
-	}
-
-	if(++this->streamingCycleCounter >= streamingDelayPerCycle)
-	{
-		this->streamingCycleCounter  = 0;
-	}
-}
 
 // stream entities according to screen's position
 void Stage_streamAll(Stage this)

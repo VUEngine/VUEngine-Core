@@ -643,7 +643,7 @@ static void Game_handleInput(Game this)
 	KeypadManager_clear(this->keypadManager);
 
 #ifdef __LOW_BATTERY_INDICATOR
-    Game_checkLowBattery(this, holdKey);
+    //Game_checkLowBattery(this, holdKey);
 #endif
 }
 
@@ -673,7 +673,7 @@ inline static void Game_updateLogic(Game this)
 	this->lastProcessName = "handle input";
 #endif
 	// process user's input
-	Game_handleInput(this);
+//	Game_handleInput(this);
 
 #ifdef __DEBUG
 	this->lastProcessName = "update state machines";
@@ -811,14 +811,17 @@ static u32 updateVisualsTotalTime = 0;
 static u32 updateLogicTotalTime = 0;
 static u32 updatePhysicsTotalTime = 0;
 static u32 updateTransformationsTotalTime = 0;
+static u32 streamingTotalTime = 0;
+static u32 handleInputTotalTime = 0;
 
 static u32 gameFrameHighestTime = 0;
 static u32 updateVisualsHighestTime = 0;
 static u32 updateLogicHighestTime = 0;
+static u32 streamingHighestTime = 0;
 static u32 updatePhysicsHighestTime = 0;
 static u32 updateTransformationsHighestTime = 0;
+static u32 handleInputHighestTime = 0;
 #endif
-
 
 // update game's subsystems
 static void Game_update(Game this)
@@ -946,12 +949,33 @@ static void Game_update(Game this)
 #ifdef __PROFILING
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
+        // process user's input
+        Game_handleInput(this);
+#ifdef __PROFILING
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        handleInputHighestTime = processTime > handleInputHighestTime? processTime: handleInputHighestTime;
+	    handleInputTotalTime += processTime;
+#endif
+
+#ifdef __PROFILING
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#endif
 	    // update game's logic
 	    Game_updateLogic(this);
 #ifdef __PROFILING
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
 	    updateLogicTotalTime += processTime;
+#endif
+
+#ifdef __PROFILING
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#endif
+        GameState_stream(this->currentState);
+#ifdef __PROFILING
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        streamingHighestTime = processTime > streamingTotalTime? processTime: streamingHighestTime;
+	    streamingTotalTime += processTime;
 	    gameFrameTotalTime += processTime;
 #endif
 
@@ -1367,9 +1391,17 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     Printing_int(Printing_getInstance(), updateVisualsTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), updateVisualsHighestTime, x + xDisplacement + 4, y++, NULL);
 
+    Printing_text(Printing_getInstance(), "Input:              ", x, y, NULL);
+    Printing_int(Printing_getInstance(), handleInputTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), handleInputHighestTime, x + xDisplacement + 4, y++, NULL);
+
     Printing_text(Printing_getInstance(), "Logic:              ", x, y, NULL);
     Printing_int(Printing_getInstance(), updateLogicTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), updateLogicHighestTime, x + xDisplacement + 4, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Streaming:          ", x, y, NULL);
+    Printing_int(Printing_getInstance(), streamingTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), streamingHighestTime, x + xDisplacement + 4, y++, NULL);
 
     Printing_text(Printing_getInstance(), "Physics:            ", x, y, NULL);
     Printing_int(Printing_getInstance(), updatePhysicsTotalTime, x + xDisplacement, y, NULL);
@@ -1380,19 +1412,23 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     Printing_int(Printing_getInstance(), updateTransformationsHighestTime, x + xDisplacement + 4, y++, NULL);
 
     Printing_text(Printing_getInstance(), "TOTAL:              ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateVisualsTotalTime + updateLogicTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + 4, y++, NULL);
 
     updateVisualsTotalTime = 0;
     updateLogicTotalTime = 0;
     updatePhysicsTotalTime = 0;
     updateTransformationsTotalTime = 0;
+    streamingTotalTime = 0;
+    handleInputTotalTime = 0;
 
     gameFrameHighestTime = 0;
     updateVisualsHighestTime = 0;
     updateLogicHighestTime = 0;
     updatePhysicsHighestTime = 0;
     updateTransformationsHighestTime = 0;
+    streamingHighestTime = 0;
+    handleInputHighestTime = 0;
 
 #ifdef __STREAMING_PROFILING
     Stage_showProfiling(Game_getStage(this));
