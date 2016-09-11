@@ -954,6 +954,7 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         handleInputHighestTime = processTime > handleInputHighestTime? processTime: handleInputHighestTime;
 	    handleInputTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
 #endif
 
 #ifdef __PROFILING
@@ -965,6 +966,7 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
 	    updateLogicTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
 #endif
 
 #ifdef __PROFILING
