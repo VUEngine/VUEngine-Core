@@ -621,6 +621,12 @@ static void Game_handleInput(Game this)
 	}
 #endif
 
+	this->currentProcess = kGameHandlingUserInput;
+
+#ifdef __DEBUG
+	this->lastProcessName = "handle input";
+#endif
+
 	// check for a new key pressed
 	if(pressedKey)
 	{
@@ -667,21 +673,14 @@ inline static void Game_updateLogic(Game this)
 	// dispatch queued messages
     MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 
-	this->currentProcess = kGameHandlingUserInput;
-
-#ifdef __DEBUG
-	this->lastProcessName = "handle input";
-#endif
-	// process user's input
-//	Game_handleInput(this);
-
-#ifdef __DEBUG
-	this->lastProcessName = "update state machines";
-#endif
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
 
 	this->currentProcess = kGameUpdatingStageMachine;
+
+#ifdef __DEBUG
+	this->lastProcessName = "updating state machine";
+#endif
 
 	// update the game's logic
 	StateMachine_update(this->stateMachine);

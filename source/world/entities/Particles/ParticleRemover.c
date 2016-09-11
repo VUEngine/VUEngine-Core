@@ -135,7 +135,16 @@ void ParticleRemover_registerParticles(ParticleRemover this, VirtualList particl
 
     if(__SAFE_CAST(VirtualList, particles))
     {
-	    VirtualList_copy(this->particles, particles);
+        VirtualNode node = particles->head;
+
+        for(; node; node = node->next)
+        {
+            if(!VirtualList_find(this->particles, node->data))
+            {
+        	    VirtualList_pushBack(this->particles, node->data);
+            }
+        }
+
 	}
 }
 
