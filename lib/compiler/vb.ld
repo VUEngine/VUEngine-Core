@@ -8,7 +8,7 @@ SEARCH_DIR(.);
 MEMORY
 {
     wram    (!r)    : ORIGIN =  0x05000000, LENGTH = 64k /*64k*/
-    vram    (!r)    : ORIGIN =  0x0003D800, LENGTH = 0k
+    dram    (!r)    : ORIGIN =  0x0003D800, LENGTH = 0k
     sram    (!r)    : ORIGIN =  0x06000000, LENGTH = 16M
     rom     (rx)    : ORIGIN =  0x07000000, LENGTH = 16M
 }
@@ -21,7 +21,7 @@ Handlers as system reset
 __text_vma = ORIGIN(rom);
 __data_vma = ORIGIN(wram);
 __sram_vma = ORIGIN(sram);
-__vram_vma = ORIGIN(vram);
+__dram_vma = ORIGIN(dram);
 __stack = ORIGIN(wram) + LENGTH(wram) - 64;
 
 SECTIONS
@@ -55,14 +55,14 @@ SECTIONS
     	PROVIDE (__data_end = .);
     } >wram = 0xFF
 
-    .vram_data __vram_vma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
+    .dram_data __dram_vma : AT(v + SIZEOF(.data) + SIZEOF(.sdata))
     {
-    	PROVIDE (__vram_data_start = .);
-        *(.vram_data*)
-    	PROVIDE (__vram_data_end = .);
-    } >vram = 0xFF
+    	PROVIDE (__dram_data_start = .);
+        *(.dram_data*)
+    	PROVIDE (__dram_data_end = .);
+    } >dram = 0xFF
 
-    .sram_data __sram_vma : AT(v + SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.vram_data)) SUBALIGN(2)
+    .sram_data __sram_vma : AT(v + SIZEOF(.data) + SIZEOF(.sdata) + SIZEOF(.dram_data)) SUBALIGN(2)
     {
     	PROVIDE (__sram_data_start = .);
         *(.sram_data*)
@@ -83,12 +83,12 @@ SECTIONS
     	PROVIDE (__bss_end = .);
     } >wram = 0xFF
 
-    .vram_bss (NOLOAD):
+    .dram_bss (NOLOAD):
     {
-        PROVIDE(__vram_bss_start = .);
-        *(.vram_bss*)
-        PROVIDE(__vram_bss_end = .);
-    } >vram = 0xFF
+        PROVIDE(__dram_bss_start = .);
+        *(.dram_bss*)
+        PROVIDE(__dram_bss_end = .);
+    } >dram = 0xFF
 
     /* SRAM Work RAM */
     .sram_bss (NOLOAD): SUBALIGN(2)
