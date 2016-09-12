@@ -149,7 +149,7 @@
 #undef __MEMORY_POOL_CLEAN_UP
 
 #undef __MEMORY_POOLS
-#define __MEMORY_POOLS							15
+#define __MEMORY_POOLS							16
 
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
@@ -157,7 +157,8 @@
 	__BLOCK_DEFINITION(164, 8)																			\
 	__BLOCK_DEFINITION(144, 8)																			\
 	__BLOCK_DEFINITION(140, 25)																			\
-	__BLOCK_DEFINITION(132, 40)																			\
+	__BLOCK_DEFINITION(132, 10)																			\
+	__BLOCK_DEFINITION(124, 45)																			\
 	__BLOCK_DEFINITION(112, 15)																			\
 	__BLOCK_DEFINITION(108, 20)																			\
 	__BLOCK_DEFINITION(100, 20)																			\
@@ -176,9 +177,10 @@
 	__SET_MEMORY_POOL_ARRAY(144)																		\
 	__SET_MEMORY_POOL_ARRAY(140)																		\
 	__SET_MEMORY_POOL_ARRAY(132)																		\
+	__SET_MEMORY_POOL_ARRAY(124)																		\
 	__SET_MEMORY_POOL_ARRAY(112)																		\
 	__SET_MEMORY_POOL_ARRAY(108)																		\
-	__SET_MEMORY_POOL_ARRAY(100)																		\
+	__SET_MEMORY_POOL_ARRAY(100)																			\
 	__SET_MEMORY_POOL_ARRAY(88)																			\
 	__SET_MEMORY_POOL_ARRAY(76)																			\
 	__SET_MEMORY_POOL_ARRAY(68)																			\
@@ -186,7 +188,6 @@
 	__SET_MEMORY_POOL_ARRAY(24)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
 	__SET_MEMORY_POOL_ARRAY(16)
-
 
 
 // percentage (0-100) above which the memory pool's status shows the pool usage
