@@ -124,7 +124,7 @@ static const StreamingPhase _streamingPhases[] =
     &Stage_transformEntities,
 };
 
-u32 streamingPhase = 0;
+int _streamingPhase = 0;
 
 #ifdef __STREAMING_PROFILING
 u32 unloadOutOfRangeEntitiesTime = 0;
@@ -406,37 +406,35 @@ Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinitio
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
-	if(entityDefinition)
+	if(!entityDefinition)
 	{
-		Entity entity = Entity_load(entityDefinition, this->nextEntityId++, name, extraInfo);
+	    return NULL;
+    }
 
-		if(entity)
-		{
-			// set spatial position
-			__VIRTUAL_CALL(Entity, setLocalPosition, entity, position);
+    Entity entity = Entity_load(entityDefinition, this->nextEntityId++, name, extraInfo);
+    ASSERT(entity, "Stage::addEntity: entity not loaded");
 
-			// initialize now
-			__VIRTUAL_CALL(Entity, initialize, entity);
+    // set spatial position
+    __VIRTUAL_CALL(Entity, setLocalPosition, entity, position);
 
-			// create the entity and add it to the world
-			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+    // initialize now
+    __VIRTUAL_CALL(Entity, initialize, entity);
 
-			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
+    // create the entity and add it to the world
+    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+
+    // apply transformations
+    Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+    __VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
 /*
-			if(permanent)
-			{
-				// TODO
-			}
+    if(permanent)
+    {
+        // TODO
+    }
 */
-			__VIRTUAL_CALL(Entity, ready, entity);
+    __VIRTUAL_CALL(Entity, ready, entity);
 
-			return entity;
-		}
-	}
-
-	return NULL;
+    return entity;
 }
 
 bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition)
@@ -737,12 +735,17 @@ static void Stage_selectEntitiesInLoadRange(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
+	VBVec3D focusInGameEntityPosition = Screen_getPosition(Screen_getInstance());
+
     if(!this->focusInGameEntity)
     {
         Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
     }
+    else
+    {
+        focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
+    }
 
-	VBVec3D focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
 	focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);
 	focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
 	focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
@@ -836,41 +839,30 @@ static void Stage_loadSelectedEntities(Stage this)
 {
 	ASSERT(this, "Stage::loadEntities: null this");
 
-	VirtualNode node = this->entitiesToLoad->head;
-
-	for(; node; node = node->next)
+	if(!this->entitiesToLoad->head)
 	{
-		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
-
-		ASSERT(stageEntityDescription, "Stage::loadEntities: null stageEntityDescription");
-		ASSERT(stageEntityDescription->positionedEntity, "Stage::loadEntities: null positionedEntity");
-		Entity entity = Entity_loadFromDefinitionWithoutInitilization(stageEntityDescription->positionedEntity, this->nextEntityId++);
-
-		if(entity)
-		{
-			StageEntityToSetup* stageEntityToSetup = __NEW_BASIC(StageEntityToSetup);
-			stageEntityToSetup->positionedEntity = stageEntityDescription->positionedEntity;
-			stageEntityToSetup->entity = entity;
-			VirtualList_pushBack(this->entitiesToInitialize, stageEntityToSetup);
-			stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
-			VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-
-			VirtualList_removeElement(this->entitiesToLoad, stageEntityDescription);
-			break;
-		}
-		else
-		{
-			// can't load this entity, so remove its definition
-			VirtualList_removeElement(this->stageEntities, stageEntityDescription);
-
-			__DELETE_BASIC(stageEntityDescription);
-		}
+	    return;
 	}
 
-#ifdef __STREAMING_PROFILING
-        loadEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
-#endif
+    StageEntityDescription* stageEntityDescription = (StageEntityDescription*)this->entitiesToLoad->head->data;
 
+    ASSERT(stageEntityDescription, "Stage::loadEntities: null stageEntityDescription");
+    ASSERT(stageEntityDescription->positionedEntity, "Stage::loadEntities: null positionedEntity");
+    Entity entity = Entity_loadFromDefinitionWithoutInitilization(stageEntityDescription->positionedEntity, this->nextEntityId++);
+    ASSERT(entity, "Stage::loadEntities: null entity loaded");
+
+    StageEntityToSetup* stageEntityToSetup = __NEW_BASIC(StageEntityToSetup);
+    stageEntityToSetup->positionedEntity = stageEntityDescription->positionedEntity;
+    stageEntityToSetup->entity = entity;
+    VirtualList_pushBack(this->entitiesToInitialize, stageEntityToSetup);
+    stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
+    VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
+
+    VirtualList_removeElement(this->entitiesToLoad, stageEntityDescription);
+
+#ifdef __STREAMING_PROFILING
+    loadEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
+#endif
 }
 
 // intialize loaded entities
@@ -878,18 +870,17 @@ static void Stage_initializeEntities(Stage this)
 {
 	ASSERT(this, "Stage::initializeEntities: null this");
 
-	VirtualNode node = this->entitiesToInitialize->head;
-
-	for(; node; node = node->next)
+	if(!this->entitiesToInitialize->head)
 	{
-		StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
-
-		__VIRTUAL_CALL(Entity, initialize, stageEntityToSetup->entity);
-
-		VirtualList_removeElement(this->entitiesToInitialize, stageEntityToSetup);
-		VirtualList_pushBack(this->entitiesToTransform, stageEntityToSetup);
-		break;
+	    return;
 	}
+
+    StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)this->entitiesToInitialize->head->data;
+
+    __VIRTUAL_CALL(Entity, initialize, stageEntityToSetup->entity);
+
+    VirtualList_removeElement(this->entitiesToInitialize, stageEntityToSetup);
+    VirtualList_pushBack(this->entitiesToTransform, stageEntityToSetup);
 
 #ifdef __STREAMING_PROFILING
     initializeEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
@@ -900,6 +891,11 @@ static void Stage_initializeEntities(Stage this)
 static void Stage_transformEntities(Stage this)
 {
 	ASSERT(this, "Stage::transformEntities: null this");
+
+    if(!this->entitiesToTransform->head)
+    {
+        return;
+    }
 
 	// static to avoid call to _memcpy
 	static Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
@@ -918,24 +914,18 @@ static void Stage_transformEntities(Stage this)
 			{ITOFIX7_9(1), ITOFIX7_9(1)}
 	};
 
-	VirtualNode node = this->entitiesToTransform->head;
+    StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)this->entitiesToTransform->head->data;
 
-	for(; node; node = node->next)
-	{
-		StageEntityToSetup* stageEntityToSetup = (StageEntityToSetup*)node->data;
+    // create the entity and add it to the world
+    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, stageEntityToSetup->entity));
 
-		// create the entity and add it to the world
-		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, stageEntityToSetup->entity));
+    // apply transformations
+    __VIRTUAL_CALL(Container, initialTransform, stageEntityToSetup->entity, &environmentTransform);
 
-		// apply transformations
-		__VIRTUAL_CALL(Container, initialTransform, stageEntityToSetup->entity, &environmentTransform);
+    __VIRTUAL_CALL(Entity, ready, stageEntityToSetup->entity);
 
-		__VIRTUAL_CALL(Entity, ready, stageEntityToSetup->entity);
-
-		VirtualList_removeElement(this->entitiesToTransform, stageEntityToSetup);
-		__DELETE_BASIC(stageEntityToSetup);
-		break;
-	}
+    VirtualList_removeElement(this->entitiesToTransform, stageEntityToSetup);
+    __DELETE_BASIC(stageEntityToSetup);
 
 #ifdef __STREAMING_PROFILING
     transformEntitiesTime += TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeStreamingProcess;
@@ -960,28 +950,16 @@ static void Stage_loadInRangeEntities(Stage this)
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
 				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
-
 				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
-				if(entity)
-				{
-				    if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
-				    {
-                        this->streamingHeadNode = node;
-				    }
+                if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+                {
+                    this->streamingHeadNode = node;
+                }
 
-					stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
+                stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
 
-					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-				}
-				else
-				{
-					// can't load this entity, so remove its definition
-					VirtualList_removeElement(this->stageEntities, stageEntityDescription);
-
-					__DELETE_BASIC(stageEntityDescription);
-					break;
-				}
+                VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 			}
 		}
 	}
@@ -1051,23 +1029,23 @@ void Stage_update(Stage this)
 
 void Stage_stream(Stage this)
 {
-    static u32 streamingCycles = sizeof(_streamingPhases) / sizeof(StreamingPhase);
-	u32 streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
-	u32 streamingCycleDuration = streamingDelayPerCycle / streamingCycles;
+    static int streamingCycles = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
+	int streamingCycleDuration = streamingDelayPerCycle / streamingCycles;
 
 	if(++this->streamingCycleCounter >= streamingCycleDuration)
 	{
 		this->streamingCycleCounter  = 0;
 
-        if(++streamingPhase >= streamingCycles)
+        if(++_streamingPhase >= streamingCycles)
         {
-            streamingPhase = 0;
+            _streamingPhase = 0;
         }
 
 #ifdef __STREAMING_PROFILING
         timeBeforeStreamingProcess = TimerManager_getTicks(TimerManager_getInstance());
 #endif
-        _streamingPhases[streamingPhase](this);
+        _streamingPhases[_streamingPhase](this);
 	}
 }
 

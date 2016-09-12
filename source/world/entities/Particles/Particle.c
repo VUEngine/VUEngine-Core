@@ -96,7 +96,7 @@ void Particle_destructor(Particle this)
 static void Particle_addSprite(Particle this)
 {
 	ASSERT(this, "Particle::addSprite: null this");
-	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator defined");
+	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator");
 
 	// call the appropriate allocator to support inheritance
 	this->objectSprite = __SAFE_CAST(ObjectSprite, ((Sprite (*)(const SpriteDefinition*, Object)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, __SAFE_CAST(Object, this)));

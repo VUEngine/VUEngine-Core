@@ -89,6 +89,9 @@ static void MemoryPool_reset(MemoryPool this);
 	/* declare the static instance */															        \
 	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;                    \
 																								        \
+	/* global pointer to speed up allocation and free */												\
+	ClassName _memoryPool __INITIALIZED_DATA_SECTION_ATTRIBUTE = &_instance ## ClassName;               \
+																								        \
 	/* a flag to know when to allow construction */												        \
 	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE                                \
 	                                = __SINGLETON_NOT_CONSTRUCTED;                                      \
@@ -226,7 +229,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	}
 
 	// look for the pool containing the object
-	for(pool = 0; object >= &this->poolLocation[pool][0] && pool < __MEMORY_POOLS; pool++);
+	for(pool = 0; pool < __MEMORY_POOLS && object >= &this->poolLocation[pool][0]; pool++);
 
 	// look for the registry in which the object is
 	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");

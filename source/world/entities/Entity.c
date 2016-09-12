@@ -52,7 +52,7 @@ extern const VBVec3D* _screenPosition;
 extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
-static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[]);
+static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions);
 static void Entity_releaseSprites(Entity this);
 static void Entity_updateSprites(Entity this, int updateSpriteTransformations, int updateSpritePosition);
 
@@ -507,6 +507,11 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 {
 	ASSERT(childrenDefinitions, "Entity::calculatGlobalPositionFromDefinitionByName: null positionedEntity");
 
+	if(!childrenDefinitions)
+	{
+	    return NULL;
+	}
+
 	static VBVec3D position;
 
 	int i = 0;
@@ -545,25 +550,21 @@ Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
 
-	if(entityDefinition->allocator)
+	if(!entityDefinition || !entityDefinition->allocator)
 	{
-		// call the appropriate allocator to support inheritance
-		Entity entity = ((Entity (*)(EntityDefinition*, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, name);
-
-		// setup entity if allocated and constructed
-		if(entity)
-	    {
-			// process extra info
-			if(extraInfo)
-	        {
-				__VIRTUAL_CALL(Entity, setExtraInfo, entity, extraInfo);
-			}
-
-			return entity;
-		}
+	    return NULL;
 	}
 
-	return NULL;
+    // call the appropriate allocator to support inheritance
+    Entity entity = ((Entity (*)(EntityDefinition*, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, name);
+
+    // process extra info
+    if(extraInfo)
+    {
+        __VIRTUAL_CALL(Entity, setExtraInfo, entity, extraInfo);
+    }
+
+    return entity;
 }
 
 // load an entity from a PositionedEntity definition
@@ -571,46 +572,47 @@ Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity,
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 
-	if(positionedEntity)
+	if(!positionedEntity)
 	{
-		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
-
-		if(entity)
-		{
-			// set spatial position
-			__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
-
-			// add children if defined
-			if(positionedEntity->childrenDefinitions)
-			{
-				Entity_addChildren(entity, positionedEntity->childrenDefinitions);
-			}
-
-			return entity;
-		}
+	    return NULL;
 	}
 
-	return NULL;
+    Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
+	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
+
+    // set spatial position
+    __VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
+
+    // add children if defined
+    if(positionedEntity->childrenDefinitions)
+    {
+        Entity_addChildren(entity, positionedEntity->childrenDefinitions);
+    }
+
+    return entity;
 }
 
 // load children
 void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity* childrenDefinitions)
 {
-	ASSERT(this, "Entity::loadChildren: null this");
+	ASSERT(this, "Entity::addChildrenWithoutInitilization: null this");
+	ASSERT(childrenDefinitions, "Entity::addChildrenWithoutInitilization: null childrenDefinitions");
 
-	if(childrenDefinitions)
+	if(!childrenDefinitions)
 	{
-		int i = 0;
-
-		//go through n sprites in entity's definition
-		for(; childrenDefinitions[i].entityDefinition; i++)
-	    {
-			Entity entity = Entity_loadFromDefinitionWithoutInitilization(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
-
-			// create the entity and add it to the world
-			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
-		}
+	    return;
 	}
+
+    int i = 0;
+
+    //go through n sprites in entity's definition
+    for(; childrenDefinitions[i].entityDefinition; i++)
+    {
+        Entity entity = Entity_loadFromDefinitionWithoutInitilization(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+
+        // create the entity and add it to the world
+        Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+    }
 }
 
 // load an entity from a PositionedEntity definition
@@ -618,31 +620,29 @@ Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* con
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinitionWithoutInitilization: null positionedEntity");
 
-	if(positionedEntity)
-	{
-		Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
+    if(!positionedEntity)
+    {
+        return NULL;
+    }
 
-		if(entity)
-		{
-			if(positionedEntity->name)
-			{
-				Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
-			}
+    Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
+	ASSERT(entity, "Entity::loadFromDefinitionWithoutInitilization: entity not loaded");
 
-			// set spatial position
-			__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
+    if(positionedEntity->name)
+    {
+        Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
+    }
 
-			// add children if defined
-			if(positionedEntity->childrenDefinitions)
-			{
-				Entity_addChildrenWithoutInitilization(entity, positionedEntity->childrenDefinitions);
-			}
+    // set spatial position
+    __VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
 
-			return entity;
-		}
-	}
+    // add children if defined
+    if(positionedEntity->childrenDefinitions)
+    {
+        Entity_addChildrenWithoutInitilization(entity, positionedEntity->childrenDefinitions);
+    }
 
-	return NULL;
+    return entity;
 }
 
 // initialize from definition
@@ -688,18 +688,21 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 {
 	ASSERT(this, "Entity::loadChildren: null this");
 
-	if(childrenDefinitions)
+	if(!childrenDefinitions)
 	{
-		int i = 0;
+	    return;
+	}
 
-		//go through n sprites in entity's definition
-		for(; childrenDefinitions[i].entityDefinition; i++)
-	    {
-			Entity entity = Entity_loadFromDefinition(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+    int i = 0;
 
-			// create the entity and add it to the world
-			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
-		}
+    //go through n sprites in entity's definition
+    for(; childrenDefinitions[i].entityDefinition; i++)
+    {
+        Entity child = Entity_loadFromDefinition(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+    	ASSERT(child, "Entity::loadChildren: entity not loaded");
+
+        // create the entity and add it to the world
+        Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
 	}
 }
 
@@ -707,6 +710,12 @@ void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions
 Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
 {
 	ASSERT(this, "Entity::addChildFromDefinition: null this");
+	ASSERT(entityDefinition, "Entity::addChildFromDefinition: null entityDefinition");
+
+	if(!entityDefinition)
+	{
+	    return NULL;
+	}
 
 	PositionedEntity positionedEntity =
 	{
@@ -720,26 +729,24 @@ Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entity
 
     // create the hint entity and add it to the hero as a child entity
 	Entity childEntity = Entity_loadFromDefinition(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+	ASSERT(childEntity, "Entity::addChildFromDefinition: childEntity no created");
 
-	if(childEntity)
-	{
-		// must initialize after adding the children
-		__VIRTUAL_CALL(Entity, initialize, childEntity);
+    // must initialize after adding the children
+    __VIRTUAL_CALL(Entity, initialize, childEntity);
 
-		// if already initialized
-		if(this->size.x && this->size.y && this->size.z)
-		{
-			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+    // if already initialized
+    if(this->size.x && this->size.y && this->size.z)
+    {
+        Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
-			 // apply transformations
-			__VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform);
-		}
+         // apply transformations
+        __VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform);
+    }
 
-		// create the entity and add it to the world
-		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
+    // create the entity and add it to the world
+    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
 
-		__VIRTUAL_CALL(Entity, ready, childEntity);
-	}
+    __VIRTUAL_CALL(Entity, ready, childEntity);
 
 	return childEntity;
 }
@@ -751,20 +758,22 @@ void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo _
 }
 
 // add sprite
-static void Entity_addSprites(Entity this, const SpriteDefinition* spritesDefinitions[])
+static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions)
 {
 	ASSERT(this, "Entity::addSprites: null this");
 
-	if(spritesDefinitions)
-	{
-		int i = 0;
+    if(!spritesDefinitions)
+    {
+        return;
+    }
 
-		//go through n sprites in entity's definition
-		for(; spritesDefinitions[i]; i++)
-	    {
-			Entity_addSprite(this, spritesDefinitions[i]);
-		}
-	}
+    int i = 0;
+
+    //go through n sprites in entity's definition
+    for(; spritesDefinitions[i]; i++)
+    {
+        Entity_addSprite(this, spritesDefinitions[i]);
+    }
 }
 
 // add sprite
@@ -772,29 +781,26 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 {
 	ASSERT(this, "Entity::addSprite: null this");
 
+	ASSERT(spriteDefinition, "Entity::load: null spriteDefinition");
+	ASSERT(spriteDefinition->allocator, "Entity::load: no sprite allocator");
+
+	if(!spriteDefinition || !spriteDefinition->allocator)
+	{
+	    return;
+    }
+
 	Sprite sprite = NULL;
 
-	ASSERT(spriteDefinition->allocator, "Entity::load: no sprite allocator defined");
+    // call the appropriate allocator to support inheritance
+    sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
+    ASSERT(sprite, "Entity::addSprite: sprite not created");
 
-	if(spriteDefinition->allocator)
-	{
-		// call the appropriate allocator to support inheritance
-		sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
-	}
+    if(!this->sprites)
+    {
+        this->sprites = __NEW(VirtualList);
+    }
 
-	if(sprite)
-	{
-		if(!this->sprites)
-	    {
-			this->sprites = __NEW(VirtualList);
-		}
-
-		VirtualList_pushBack(this->sprites, (void*)sprite);
-	}
-	else
-	{
-		ASSERT(false, "Entity::addSprite: sprite not created");
-	}
+    VirtualList_pushBack(this->sprites, (void*)sprite);
 }
 
 // update sprites
@@ -802,35 +808,37 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 {
 	ASSERT(this, "Entity::transform: null this");
 
-	if(this->sprites)
+	if(!this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
+	    return;
+    }
 
-        // move each child to a temporary list
-        for(; node ; node = node->next)
+    VirtualNode node = this->sprites->head;
+
+    // move each child to a temporary list
+    for(; node ; node = node->next)
+    {
+        Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+        if(updateSpriteTransformations)
         {
-            Sprite sprite = __SAFE_CAST(Sprite, node->data);
+            // calculate the scale
+            __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
-            if(updateSpriteTransformations)
-            {
-                // calculate the scale
-                __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
-
-                // calculate sprite's parallax
-                __VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
-            }
-
-            if(updateSpritePosition)
-            {
-                // update sprite's 2D position
-                __VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
-
-                // update sprite's 2D rotation
-                __VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
-
-            }
+            // calculate sprite's parallax
+            __VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
         }
-	}
+
+        if(updateSpritePosition)
+        {
+            // update sprite's 2D position
+            __VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+
+            // update sprite's 2D rotation
+            __VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+
+        }
+    }
 }
 
 // initial transformation
@@ -904,14 +912,12 @@ void Entity_updateVisualRepresentation(Entity this)
 	*/
 }
 
-
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 {
 	ASSERT(this, "Entity::setLocalPosition: null this");
 
 	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
 }
-
 
 // retrieve EntityDefinition
 EntityDefinition* Entity_getEntityDefinition(Entity this)
@@ -1003,6 +1009,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	int x = 0;
 	int y = 0;
 	int z = 0;
+
 	if(this->sprites)
 	{
 		VirtualNode spriteNode = this->sprites->head;

@@ -486,7 +486,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u32 pressedKey)
 		{
 			case kNumberOfFrames:
 
-				if(0 >= --this->animationFunction.numberOfFrames)
+				if(0 == --this->animationFunction.numberOfFrames)
 				{
 					this->animationFunction.numberOfFrames = 1;
 				}

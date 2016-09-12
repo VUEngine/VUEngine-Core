@@ -41,13 +41,16 @@
             /* setup the class's vtable on first call only */										    \
             __SET_CLASS(ClassName);																	    \
                                                                                                         \
+            /* to speed things up */										                            \
+            extern MemoryPool _memoryPool;                                                              \
+                                                                                                        \
             /* allocate object */																	    \
             ClassName this = (ClassName) 															    \
-                            MemoryPool_allocate(MemoryPool_getInstance(), 							    \
+                            MemoryPool_allocate(_memoryPool, 							                \
                             sizeof(ClassName ## _str));												    \
                                                                                                         \
             /* check if properly created */															    \
-            if(!this) return NULL;																	    \
+            ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");					            \
 
 
 // end class's allocator
@@ -99,7 +102,10 @@
         /* free the memory */																		    \
         ASSERT(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD), 								    \
                 "Oop: deleting null basic object");													    \
-        MemoryPool_free(MemoryPool_getInstance(), (BYTE*)object - __DYNAMIC_STRUCT_PAD)				    \
+                                                                                                        \
+        /* to speed things up */										                                \
+        extern MemoryPool _memoryPool;                                                                  \
+        MemoryPool_free(_memoryPool, (BYTE*)object - __DYNAMIC_STRUCT_PAD)				                \
 
 // construct the base object
 #define __CONSTRUCT_BASE(BaseClass, ...)														        \
@@ -113,8 +119,11 @@
         /* since the base destructor is the second element in the virtual table */					    \
         _baseDestructor(__SAFE_CAST(Object, this));														\
                                                                                                         \
+        /* to speed things up */										                                \
+        extern MemoryPool _memoryPool;                                                                  \
+                                                                                                        \
         /* free the memory */																		    \
-        MemoryPool_free(MemoryPool_getInstance(), (void*)this);										    \
+        MemoryPool_free(_memoryPool, (void*)this);										                \
 
 // retrieve virtual method's address
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)                                           \
