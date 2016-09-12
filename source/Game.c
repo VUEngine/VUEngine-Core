@@ -847,19 +847,11 @@ static void Game_update(Game this)
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
-		if(TimerManager_getTicks(this->timerManager) <=  __MILLISECONDS_IN_SECOND / __TARGET_FPS)
-		{
-	        while(!(_vipRegisters[__INTPND] & __GAMESTART));
-	    }
-
-	    _vipRegisters[__INTCLR]= __GAMESTART;
+		while(VIPManager_waitForGameFrame(this->vipManager));
 
 #ifdef __PROFILING
-        u32 gameFrameTotalTime = 0;
-
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
-
 	    // the engine's game logic must be free of racing
 	    // conditions against the VIP
 	    Game_updateVisuals(this);
@@ -868,7 +860,6 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateVisualsHighestTime = processTime > updateVisualsHighestTime? processTime: updateVisualsHighestTime;
 	    updateVisualsTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
 #endif
 
 #ifdef __CAP_FRAMERATE
@@ -958,7 +949,6 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         handleInputHighestTime = processTime > handleInputHighestTime? processTime: handleInputHighestTime;
 	    handleInputTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
 #endif
 
 #ifdef __PROFILING
@@ -969,7 +959,6 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         dispatchDelayedMessageHighestTime = processTime > dispatchDelayedMessageHighestTime? processTime: dispatchDelayedMessageHighestTime;
 	    dispatchDelayedMessageTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
 #endif
 
 #ifdef __PROFILING
@@ -981,9 +970,6 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
 	    updateLogicTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
-
-	    u32 updateLogicCurrentTime = processTime;
 #endif
 
 #if __FRAME_CYCLE == 1
@@ -1003,7 +989,6 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updatePhysicsHighestTime = processTime > updatePhysicsHighestTime? processTime: updatePhysicsHighestTime;
 	    updatePhysicsTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
 #endif
 
 #ifdef __PROFILING
@@ -1015,22 +1000,26 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateTransformationsHighestTime = processTime > updateTransformationsHighestTime? processTime: updateTransformationsHighestTime;
 	    updateTransformationsTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
 
 #endif
 
 #ifdef __PROFILING
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
+
         if(!suspendStreaming && TimerManager_getTicks(this->timerManager) < __MILLISECONDS_IN_SECOND / __TARGET_FPS / 2)
         {
             GameState_stream(this->currentState);
-        }
+
 #ifdef __PROFILING
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-        streamingHighestTime = processTime > streamingTotalTime? processTime: streamingHighestTime;
-	    streamingTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
+            processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+            streamingHighestTime = processTime > streamingTotalTime? processTime: streamingHighestTime;
+            streamingTotalTime += processTime;
+#endif
+        }
+
+#ifdef __PROFILING
+        u32 gameFrameTotalTime = TimerManager_getTicks(this->timerManager);
 
         gameFrameHighestTime = gameFrameHighestTime < gameFrameTotalTime?  gameFrameTotalTime: gameFrameHighestTime;
 #endif

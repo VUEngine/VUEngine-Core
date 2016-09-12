@@ -272,6 +272,7 @@ __CLASS(VIPManager);
 VIPManager VIPManager_getInstance();
 
 void VIPManager_destructor(VIPManager this);
+u32 VIPManager_waitForGameFrame(VIPManager this)
 void VIPManager_enableDrawing(VIPManager this);
 void VIPManager_disableDrawing(VIPManager this);
 void VIPManager_enableInterrupt(VIPManager this);

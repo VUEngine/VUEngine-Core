@@ -370,11 +370,13 @@ void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape)
 
 	ASSERT(shape, "CollisionManager::shapeBecameActive: null shape");
 
-	if(!VirtualList_find(this->activeShapes, shape))
+	if(VirtualList_find(this->activeShapes, shape))
 	{
-		VirtualList_pushFront(this->activeShapes, shape);
-		VirtualList_removeElement(this->inactiveShapes, shape);
-	}
+	    return;
+    }
+
+    VirtualList_pushFront(this->activeShapes, shape);
+    VirtualList_removeElement(this->inactiveShapes, shape);
 }
 
 // inform of a change in the shape
@@ -388,11 +390,10 @@ void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape)
 	{
 		VirtualList_removeElement(this->activeShapes, shape);
 		VirtualList_removeElement(this->movingShapes, shape);
+		return;
 	}
-	else
-	{
-		VirtualList_pushBack(this->inactiveShapes, shape);
-	}
+
+    VirtualList_pushBack(this->inactiveShapes, shape);
 }
 
 // draw shapes

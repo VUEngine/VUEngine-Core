@@ -268,11 +268,8 @@ void Container_update(Container this)
 	// if I have children
 	if(this->children)
 	{
-	    if(this->removedChildren)
-	    {
-            // first remove children
-            Container_processRemovedChildren(this);
-        }
+        // first remove children
+        Container_processRemovedChildren(this);
 
 		VirtualNode node = this->children->head;
 

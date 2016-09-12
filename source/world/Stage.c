@@ -1006,6 +1006,8 @@ static void Stage_unloadOutOfRangeEntities(Stage this)
 
 			// unload it
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
+
+			break;
 		}
 	}
 
