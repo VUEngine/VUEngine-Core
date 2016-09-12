@@ -135,7 +135,7 @@ void VIPManager_enableDrawing(VIPManager this)
 
 void VIPManager_disableDrawing(VIPManager this)
 {
-	NM_ASSERT(false, "VIPManager::idleDrawing: null this");
+	ASSERT(this, "VIPManager::disableDrawing: null this");
 
 	VIPManager_disableInterrupt(this);
 
@@ -545,4 +545,11 @@ void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this)
     {
         this->currentDrawingFrameBufferSet = 0x8000;
     }
+}
+
+u32 VIPManager_getCurrentDrawingframeBufferSet(VIPManager this)
+{
+	ASSERT(this, "VIPManager::getCurrentDrawingframeBufferSet: null this");
+
+    return this->currentDrawingFrameBufferSet;
 }

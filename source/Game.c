@@ -935,7 +935,6 @@ static void Game_update(Game this)
 	    if(cycle)
 	    {
 #endif
-
 		// this is the moment to check if the game's state
 		// needs to be changed
 		Game_checkForNewState(this);
@@ -990,6 +989,8 @@ static void Game_update(Game this)
         updatePhysicsHighestTime = processTime > updatePhysicsHighestTime? processTime: updatePhysicsHighestTime;
 	    updatePhysicsTotalTime += processTime;
 #endif
+        // suspend streaming if up to this point the game frame has taken half the budget time
+        suspendStreaming |= TimerManager_getTicks(this->timerManager) >= __MILLISECONDS_IN_SECOND / __TARGET_FPS / 2;
 
 #ifdef __PROFILING
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
@@ -1007,7 +1008,7 @@ static void Game_update(Game this)
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 
-        if(!suspendStreaming && TimerManager_getTicks(this->timerManager) < __MILLISECONDS_IN_SECOND / __TARGET_FPS / 2)
+        if(!suspendStreaming)
         {
             GameState_stream(this->currentState);
 
