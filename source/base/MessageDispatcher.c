@@ -48,6 +48,8 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
         VirtualList delayedMessages;																	\
         /* delayed messages */																			\
         VirtualList delayedMessagesToDiscard;															\
+        /* delayed messages */																			\
+        VirtualList delayedMessagesToDispatch;															\
 
 __CLASS_DEFINITION(MessageDispatcher, Object);
 
@@ -83,6 +85,7 @@ static void __attribute__ ((noinline)) MessageDispatcher_constructor(MessageDisp
 
 	this->delayedMessages = __NEW(VirtualList);
 	this->delayedMessagesToDiscard = __NEW(VirtualList);
+	this->delayedMessagesToDispatch = __NEW(VirtualList);
 }
 
 // class's destructor
@@ -194,8 +197,6 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 	if(this->delayedMessages->head)
 	{
-		VirtualList telegramsToDispatch = __NEW(VirtualList);
-
 		VirtualNode node = this->delayedMessages->head;
 
 		for(; node; node = node->next)
@@ -206,11 +207,11 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 			if(!Clock_isPaused(delayedMessage->clock) && Clock_getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 			{
-				VirtualList_pushFront(telegramsToDispatch, delayedMessage);
+				VirtualList_pushFront(this->delayedMessagesToDispatch, delayedMessage);
 			}
 		}
 
-		node = telegramsToDispatch->head;
+		node = this->delayedMessagesToDispatch->head;
 
 		for(; node; node = node->next)
 		{
@@ -238,17 +239,13 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			{
 				__VIRTUAL_CALL(Object, handleMessage, __SAFE_CAST(Object, receiver), telegram);
 			}
-		}
-
-		node = telegramsToDispatch->head;
-
-		for(; node; node = node->next)
-		{
-			DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
-			Telegram telegram = delayedMessage->telegram;
 
 			VirtualList_removeElement(this->delayedMessages, delayedMessage);
-			VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
+
+			if(auxNode)
+			{
+			    VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
+            }
 
 			if(*(u32*)telegram)
 			{
@@ -261,7 +258,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			}
 		}
 
-		__DELETE(telegramsToDispatch);
+		VirtualList_clear(this->delayedMessagesToDispatch);
 	}
 }
 
