@@ -188,10 +188,12 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 }
 
 // dispatch delayed messages
-void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
+u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
+
+    u32 messagesDispatched = false;
 
 	MessageDispatcher_processDiscardedMessages(this);
 
@@ -237,6 +239,7 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			// check if sender and receiver are still alive
 			if(!auxNode && (sender && *(u32*)sender) && (receiver && *(u32*)receiver))
 			{
+    			messagesDispatched |= true;
 				__VIRTUAL_CALL(Object, handleMessage, __SAFE_CAST(Object, receiver), telegram);
 			}
 
@@ -260,6 +263,8 @@ void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 		VirtualList_clear(this->delayedMessagesToDispatch);
 	}
+
+	return messagesDispatched;
 }
 
 // discard delayed messages

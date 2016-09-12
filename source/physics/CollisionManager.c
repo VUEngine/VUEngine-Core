@@ -187,25 +187,22 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 
 	VirtualNode node = this->removedShapes->head;
 
-	if(node)
-	{
-		for(; node; node = node->next)
-		{
-			Shape shape = __SAFE_CAST(Shape, node->data);
+    for(; node; node = node->next)
+    {
+        Shape shape = __SAFE_CAST(Shape, node->data);
 
-			// remove from the list
-			VirtualList_removeElement(this->shapes, shape);
-			VirtualList_removeElement(this->activeShapes, shape);
-			VirtualList_removeElement(this->movingShapes, shape);
-			VirtualList_removeElement(this->inactiveShapes, shape);
+        // remove from the list
+        VirtualList_removeElement(this->shapes, shape);
+        VirtualList_removeElement(this->activeShapes, shape);
+        VirtualList_removeElement(this->movingShapes, shape);
+        VirtualList_removeElement(this->inactiveShapes, shape);
 
-			// delete it
-			__DELETE(shape);
-		}
+        // delete it
+        __DELETE(shape);
+    }
 
-		// clear the list
-		VirtualList_clear(this->removedShapes);
-	}
+    // clear the list
+    VirtualList_clear(this->removedShapes);
 }
 
 // process inactive shapes
@@ -263,56 +260,54 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 		// load the current shape
 		Shape shape = __SAFE_CAST(Shape, node->data);
 
-		if(!shape->checkForCollisions)
+		if(shape->checkForCollisions)
 		{
-			continue;
-		}
+            VirtualList collidingObjects = NULL;
 
-		VirtualList collidingObjects = NULL;
+            // the result thrown by the collision algorithm
+            int collisionResult = kNoCollision;
 
-		// the result thrown by the collision algorithm
-		int collisionResult = kNoCollision;
+            // dont' check again the current shape when processing other movable shapes
+            Shape_checked(shape, true);
 
-		// dont' check again the current shape when processing other movable shapes
-		Shape_checked(shape, true);
+            VirtualNode nodeForActiveShapes = this->activeShapes->head;
 
-		VirtualNode nodeForActiveShapes = this->activeShapes->head;
+            // check the shapes
+            for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
+            {
+                // load the current shape to check against
+                Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
 
-		// check the shapes
-		for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
-		{
-			// load the current shape to check against
-			Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
+                // don't compare with current movable shape, when the shape already has been checked
+                // and when it is not active
+                if(shape != shapeToCheck && !shapeToCheck->checked)
+                {
+                    // check if shapes overlap
+                    collisionResult = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
 
-			// don't compare with current movable shape, when the shape already has been checked
-			// and when it is not active
-			if(shape != shapeToCheck && !shapeToCheck->checked)
-			{
-				// check if shapes overlap
-				collisionResult = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
+                    if(collisionResult)
+                    {
+                        if(!collidingObjects)
+                        {
+                            collidingObjects = __NEW(VirtualList);
+                        }
 
-				if(collisionResult)
-				{
-					if(!collidingObjects)
-					{
-						collidingObjects = __NEW(VirtualList);
-					}
+                        // add object to list
+                        VirtualList_pushFront(collidingObjects, shapeToCheck->owner);
+                    }
+                }
+            }
 
-					// add object to list
-					VirtualList_pushFront(collidingObjects, shapeToCheck->owner);
-				}
-			}
-		}
+            if(collidingObjects)
+            {
+                // inform the owner about the collision
+                MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
 
-		if(collidingObjects)
-		{
-			// inform the owner about the collision
-			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
+                __DELETE(collidingObjects);
+            }
 
-			__DELETE(collidingObjects);
-		}
-
-		collidingObjects = NULL;
+            collidingObjects = NULL;
+        }
 	}
 
 	this->checkingCollisions = false;

@@ -143,7 +143,7 @@ __CLASS_DEFINITION(Game, Object);
 static void Game_constructor(Game this);
 static void Game_initialize(Game this);
 static void Game_setNextState(Game this, GameState state);
-static void Game_handleInput(Game this);
+static u32 Game_handleInput(Game this);
 static void Game_update(Game this);
 inline static void Game_updateVisuals(Game this);
 inline static void Game_updateLogic(Game this);
@@ -474,13 +474,13 @@ void Game_reset(Game this)
 }
 
 // process input data according to the actual game status
-static void Game_handleInput(Game this)
+static u32 Game_handleInput(Game this)
 {
 	ASSERT(this, "Game::handleInput: null this");
 
 	if(!KeypadManager_isEnabled(this->keypadManager))
 	{
-		return;
+		return false;
 	}
 
 	// poll the user's input
@@ -532,7 +532,7 @@ static void Game_handleInput(Game this)
 		}
 
 		KeypadManager_clear(this->keypadManager);
-		return;
+		return true;
 	}
 #endif
 
@@ -562,7 +562,7 @@ static void Game_handleInput(Game this)
 		}
 
 		KeypadManager_clear(this->keypadManager);
-		return;
+		return true;
 	}
 #endif
 
@@ -593,7 +593,7 @@ static void Game_handleInput(Game this)
 		}
 
 		KeypadManager_clear(this->keypadManager);
-		return;
+		return true;
 	}
 #endif
 
@@ -601,7 +601,7 @@ static void Game_handleInput(Game this)
 	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
-		return;
+		return true;
 	}
 #endif
 
@@ -609,7 +609,7 @@ static void Game_handleInput(Game this)
 	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
-		return;
+		return true;
 	}
 #endif
 
@@ -617,7 +617,7 @@ static void Game_handleInput(Game this)
 	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
 	{
 		KeypadManager_clear(this->keypadManager);
-		return;
+		return true;
 	}
 #endif
 
@@ -651,6 +651,8 @@ static void Game_handleInput(Game this)
 #ifdef __LOW_BATTERY_INDICATOR
     Game_checkLowBattery(this, holdKey);
 #endif
+
+    return pressedKey | releasedKey;
 }
 
 // update game's logic subsystem
@@ -951,7 +953,7 @@ static void Game_update(Game this)
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
         // process user's input
-        Game_handleInput(this);
+        u32 suspendStreaming = Game_handleInput(this);
 #ifdef __PROFILING
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         handleInputHighestTime = processTime > handleInputHighestTime? processTime: handleInputHighestTime;
@@ -962,7 +964,7 @@ static void Game_update(Game this)
 #ifdef __PROFILING
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
-        MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+        suspendStreaming |= MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 #ifdef __PROFILING
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         dispatchDelayedMessageHighestTime = processTime > dispatchDelayedMessageHighestTime? processTime: dispatchDelayedMessageHighestTime;
@@ -980,17 +982,8 @@ static void Game_update(Game this)
         updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
 	    updateLogicTotalTime += processTime;
 	    gameFrameTotalTime += processTime;
-#endif
 
-#ifdef __PROFILING
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
-#endif
-        GameState_stream(this->currentState);
-#ifdef __PROFILING
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-        streamingHighestTime = processTime > streamingTotalTime? processTime: streamingHighestTime;
-	    streamingTotalTime += processTime;
-	    gameFrameTotalTime += processTime;
+	    u32 updateLogicCurrentTime = processTime;
 #endif
 
 #if __FRAME_CYCLE == 1
@@ -1022,6 +1015,21 @@ static void Game_update(Game this)
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateTransformationsHighestTime = processTime > updateTransformationsHighestTime? processTime: updateTransformationsHighestTime;
 	    updateTransformationsTotalTime += processTime;
+	    gameFrameTotalTime += processTime;
+
+#endif
+
+#ifdef __PROFILING
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#endif
+        if(!suspendStreaming && TimerManager_getTicks(this->timerManager) < __MILLISECONDS_IN_SECOND / __TARGET_FPS / 2)
+        {
+            GameState_stream(this->currentState);
+        }
+#ifdef __PROFILING
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        streamingHighestTime = processTime > streamingTotalTime? processTime: streamingHighestTime;
+	    streamingTotalTime += processTime;
 	    gameFrameTotalTime += processTime;
 
         gameFrameHighestTime = gameFrameHighestTime < gameFrameTotalTime?  gameFrameTotalTime: gameFrameHighestTime;

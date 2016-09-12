@@ -49,7 +49,7 @@ __CLASS(MessageDispatcher);
 
 MessageDispatcher MessageDispatcher_getInstance();
 bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
-void MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
+u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
 void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message);
 void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock);
 
