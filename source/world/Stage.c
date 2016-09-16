@@ -735,17 +735,17 @@ static int Stage_unloadOutOfRangeEntities(Stage this, int defer)
 					stageEntityDescription->id = -1;
 
 					VirtualList_removeElement(this->loadedStageEntities, stageEntityDescription);
-
-					if(defer)
-					{
-					    break;
-                    }
+                    break;
 				}
 			}
 
 			// unload it
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
-			return true;
+
+            if(defer)
+            {
+                return true;
+            }
 		}
 	}
 
