@@ -756,8 +756,6 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
             }
 		}
 	}
-
-    return;
 }
 
 static void Stage_loadInRangeEntities(Stage this, int defer)

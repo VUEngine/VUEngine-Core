@@ -34,9 +34,27 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
+/*
+// position
+       1 X = 01
+      10 Y = 02
+     100 Z = 04
+// rotation
+    1000 X = 08
+   10000 Y = 10
+  100000 Z = 20
+//scale
+ 1000000 X = 40
+10000000 Y = 80
+*/
+
+#define __INVALIDATE_POSITION			    0x07
+#define __INVALIDATE_ROTATION			    0x38
+#define __INVALIDATE_SCALE			        0xC0
+
+
 #define __MAX_CONTAINER_NAME_LENGTH			16
 #define __EVENT_CONTAINER_DELETED			"containerDeleted"
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -98,8 +116,8 @@
         u8 deleteMe;																				    \
         /* flag to hide the entity */																	\
         u8 hidden;                                                                                      \
-        /* flag to recalculate global position */														\
-        u8 invalidateGlobalPosition;															        \
+        /* flag to recalculate global transformations */												\
+        u8 invalidateGlobalTransformation;														        \
 
 __CLASS(Container);
 
@@ -141,7 +159,10 @@ const Rotation* Container_getLocalRotation(Container this);
 void Container_setLocalRotation(Container this, const Rotation* rotation);
 const Scale* Container_getLocalScale(Container this);
 void Container_setLocalScale(Container this, const Scale* scale);
+void Container_invalidateGlobalTransformation(Container this);
 void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate);
+void Container_invalidateGlobalRotation(Container this, u8 axisToInvalidate);
+void Container_invalidateGlobalScale(Container this, u8 axisToInvalidate);
 int Container_onPropagatedMessage(Container this, va_list args);
 int Container_doKeyPressed(Container this, int pressedKey);
 int Container_doKeyUp(Container this, int pressedKey);

@@ -130,7 +130,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
     }
 
-	this->invalidateGlobalPosition = (displacement.x ? __XAXIS: 0) | (displacement.y ? __YAXIS: 0) | (displacement.y ? __ZAXIS: 0);
+	this->invalidateGlobalTransformation = (displacement.x ? __XAXIS: 0) | (displacement.y ? __YAXIS: 0) | (displacement.y ? __ZAXIS: 0);
 }
 
 void Actor_syncWithBody(Actor this)
@@ -532,7 +532,7 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
-    this->invalidateGlobalPosition = true;
+    this->invalidateGlobalTransformation = __INVALIDATE_POSITION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
     this->updateSprites = __UPDATE_SPRITE_TRANSFORMATIONS | __UPDATE_SPRITE_POSITION;
 }
 
@@ -550,7 +550,7 @@ bool Actor_updateSpritePosition(Actor this)
 	ASSERT(this, "Actor::updateSpritePosition: null this");
 
 	return (
-	    this->invalidateGlobalPosition ||
+	    this->invalidateGlobalTransformation ||
 	    Actor_isMoving(this) ||
 	    _screenDisplacement->x ||
 	    _screenDisplacement->y ||

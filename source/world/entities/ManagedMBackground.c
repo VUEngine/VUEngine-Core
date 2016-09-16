@@ -154,7 +154,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
-		this->invalidateGlobalPosition = 0;
+		this->invalidateGlobalTransformation = 0;
 
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
@@ -175,7 +175,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 		return;
 	}
 
-	if(this->invalidateGlobalPosition ||
+	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation ||
 		this->children)
 	{
 		// call base class's transform method
@@ -187,7 +187,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 
 	this->updateSprites = __UPDATE_SPRITE_POSITION;
 
-	this->invalidateGlobalPosition = 0;
+	this->invalidateGlobalTransformation = 0;
 }
 
 void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)

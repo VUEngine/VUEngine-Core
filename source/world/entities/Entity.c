@@ -847,7 +847,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	ASSERT(this, "Entity::initialTransform: null this");
 
 	// force invalid position in all children
-	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
+	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
 
 	// call base class's transform method
 	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
@@ -860,7 +860,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	}
 
 	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
-	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
+	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
 
 	if(this->hidden)
 	{
@@ -1100,7 +1100,7 @@ bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 
-	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (this->invalidateGlobalPosition);
+	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
 }
 
 // check if necessary to update sprite's scale
@@ -1108,7 +1108,7 @@ bool Entity_updateSpriteTransformations(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteTransformations: null this");
 
-	return (_screenDisplacement->z || (this->invalidateGlobalPosition & __ZAXIS));
+	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & __ZAXIS));
 }
 
 // set the direction
@@ -1164,7 +1164,7 @@ void Entity_show(Entity this)
 	}
 
 	// force invalid position to update sprites and children's sprites
-	Container_invalidateGlobalPosition(__SAFE_CAST(Container, this), __XAXIS | __YAXIS | __ZAXIS);
+	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
 }
 
 // make it invisible
