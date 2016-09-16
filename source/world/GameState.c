@@ -250,6 +250,8 @@ bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused
 // state's execute
 void GameState_stream(GameState this)
 {
+    ASSERT(this, "GameState::stream: null this");
+
     Stage_stream(this->stage);
 }
 

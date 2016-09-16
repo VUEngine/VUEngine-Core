@@ -24,6 +24,7 @@
 
 #include <Container.h>
 #include <InGameEntity.h>
+#include <EntityFactory.h>
 #include <Texture.h>
 #include <UI.h>
 #include <ObjectSpriteContainerManager.h>
@@ -52,30 +53,22 @@
         Container_ATTRIBUTES																			\
         /* world's definition pointer */																\
         StageDefinition* stageDefinition;																\
+        /* entity factory */																            \
+        EntityFactory entityFactory;                                                                    \
         /* the stage entities */ 																		\
         VirtualList stageEntities;																		\
         /* the pivot node for streaming */ 																\
         VirtualNode streamingHeadNode;																	\
         /* the stage entities to test for streaming */ 													\
-        VirtualList stageEntitiesToTest;																\
-        /* the stage entities to test for streaming */ 													\
         VirtualList loadedStageEntities;																\
-        /* the removed entities */ 																		\
-        VirtualList removedEntities;																	\
         /* streaming's preloaded entities */ 															\
         VirtualList entitiesToLoad;																		\
-        /* streaming's uninitialized entities */ 														\
-        VirtualList entitiesToInitialize;																\
-        /* streaming's non yet transformed entities */ 													\
-        VirtualList entitiesToTransform;																\
         /* the UI */ 																					\
         UI ui;																							\
         /* focus entity: needed for streaming */														\
         InGameEntity focusInGameEntity;																	\
         /* focus entity: previous distance. Used for the streaming */									\
         long previousFocusEntityDistance;																\
-        /* counter to control the streaming phses */													\
-        int streamingCycleCounter;																		\
         /* next entity's id */																			\
         s16 nextEntityId;																				\
 
@@ -209,6 +202,7 @@ void Stage_setupPalettes(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 Size Stage_getSize(Stage this);
 bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition);
+void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Object requester, EventListener callback);
 Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);
 Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent);
 void Stage_removeChild(Stage this, Container child);

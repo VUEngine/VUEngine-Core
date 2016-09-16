@@ -35,6 +35,8 @@
 #define __UPDATE_SPRITE_TRANSFORMATIONS		0x01
 #define __UPDATE_SPRITE_POSITION			0x10
 
+#define __EVENT_ENTITY_LOADED	            "entityLoaded"
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

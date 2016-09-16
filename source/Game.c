@@ -1447,9 +1447,5 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     streamingHighestTime = 0;
     handleInputHighestTime = 0;
     dispatchDelayedMessageHighestTime = 0;
-
-#ifdef __STREAMING_PROFILING
-    Stage_showProfiling(Game_getStage(this));
-#endif
 }
 #endif
