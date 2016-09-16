@@ -115,7 +115,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 	// if I have some vertex, draw them
 	if(this->vertices && 2 < VirtualList_getSize(this->vertices))
 	{
-		// the node's which hold the vertices
+		// the nodes which hold the vertices
 		VirtualNode fromNode = this->vertices->head;
 		VirtualNode toNode = fromNode->next;
 
