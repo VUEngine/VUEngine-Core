@@ -218,6 +218,8 @@ static void EntityFactory_transformEntities(EntityFactory this)
     __DELETE_BASIC(entityDescription);
 
     Object_fireEvent(__SAFE_CAST(Object, entityDescription->entity), __EVENT_ENTITY_LOADED);
+
+    Object_removeAllEventListeners(__SAFE_CAST(Object, entityDescription), __EVENT_ENTITY_LOADED);
 }
 
 void EntityFactory_prepareEntities(EntityFactory this)

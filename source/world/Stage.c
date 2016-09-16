@@ -877,8 +877,6 @@ static void Stage_onStreamedEntityLoaded(Stage this, Object eventFirer)
 
     // create the entity and add it to the world
     Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, eventFirer));
-
-    Object_removeEventListener(__SAFE_CAST(Object, eventFirer), __SAFE_CAST(Object, this), (EventListener)Stage_onStreamedEntityLoaded, __EVENT_ENTITY_LOADED);
 }
 
 void Stage_stream(Stage this)

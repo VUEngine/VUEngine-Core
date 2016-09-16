@@ -418,7 +418,6 @@ inline void Container_applyEnvironmentToTranformation(Container this, const Tran
 	// propagate scale
 	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
 	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
-
 }
 
 // initial transform but don't call the virtual method
@@ -458,7 +457,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	ASSERT(this, "Container::transform: null this");
 
 	// apply environment transform
-	if(this->invalidateGlobalPosition)
+//	if(this->invalidateGlobalPosition)
 	{
 	    Container_applyEnvironmentToTranformation(this, environmentTransform);
     }

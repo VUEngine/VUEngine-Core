@@ -229,6 +229,47 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 }
 
 /**
+ * Removes event listeners without specifying a method nor a listener
+ *
+ * @memberof Object
+ * @public
+ * @param this         Function scope
+ * @param eventName    The name of the event
+ */
+void Object_removeAllEventListeners(Object this, char* eventName)
+{
+	ASSERT(this, "Object::removeEventListeners: null this");
+
+	if(this->events)
+	{
+	    VirtualList eventsToRemove = __NEW(VirtualList);
+
+		VirtualNode node = this->events->head;
+
+		for(; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+			if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+			{
+				VirtualList_pushBack(eventsToRemove, event);
+			}
+		}
+
+		for(node = eventsToRemove->head; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+            VirtualList_removeElement(this->events, event);
+
+            __DELETE_BASIC(event);
+		}
+
+		__DELETE(eventsToRemove);
+	}
+}
+
+/**
  * Fires an event
  *
  * @memberof Object
