@@ -63,9 +63,6 @@
 // it is only useful when __TIMER_RESOLUTION is 1
 #undef __PROFILING
 
-// show stage streaming's process profiling
-#undef __STREAMING_PROFILING
-
 //---------------------------------------------------------------------------------------------------------
 // 											OPTICS / PROJECTION
 //---------------------------------------------------------------------------------------------------------
@@ -168,8 +165,7 @@
 	__BLOCK_DEFINITION(28, 380)																			\
 	__BLOCK_DEFINITION(24, 70)																			\
 	__BLOCK_DEFINITION(20, 650)																			\
-	__BLOCK_DEFINITION(16, 300)						    												\
-					    												                                \
+	__BLOCK_DEFINITION(16, 360)						    												\
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
@@ -181,14 +177,14 @@
 	__SET_MEMORY_POOL_ARRAY(124)																		\
 	__SET_MEMORY_POOL_ARRAY(112)																		\
 	__SET_MEMORY_POOL_ARRAY(108)																		\
-	__SET_MEMORY_POOL_ARRAY(100)																			\
+	__SET_MEMORY_POOL_ARRAY(100)																		\
 	__SET_MEMORY_POOL_ARRAY(88)																			\
 	__SET_MEMORY_POOL_ARRAY(76)																			\
 	__SET_MEMORY_POOL_ARRAY(68)																			\
 	__SET_MEMORY_POOL_ARRAY(28)																			\
 	__SET_MEMORY_POOL_ARRAY(24)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
-	__SET_MEMORY_POOL_ARRAY(16)
+	__SET_MEMORY_POOL_ARRAY(16)																			\
 
 
 // percentage (0-100) above which the memory pool's status shows the pool usage
