@@ -97,11 +97,19 @@ static void Stage_preloadAssets(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
 static void Stage_loadInitialEntities(Stage this);
-static int Stage_unloadOutOfRangeEntities(Stage this, int defer);
-static int Stage_loadInRangeEntities(Stage this, int defer);
+static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
+static void Stage_loadInRangeEntities(Stage this, int defer);
+static void Stage_prepareLoadedEntities(Stage this, int defer);
 static void Stage_onStreamedEntityLoaded(Stage this, Object eventFirer);
 
-typedef void (*StreamingPhase)(Stage);
+typedef void (*StreamingPhase)(Stage, int);
+
+static const StreamingPhase _streamingPhases[] =
+{
+    &Stage_unloadOutOfRangeEntities,
+    &Stage_loadInRangeEntities,
+    &Stage_prepareLoadedEntities
+};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -129,6 +137,8 @@ static void Stage_constructor(Stage this)
 	this->streamingHeadNode = NULL;
 	this->previousFocusEntityDistance = 0;
 	this->nextEntityId = 0;
+    this->streamingPhase = 0;
+    this->streamingCycleCounter = 0;
 }
 
 // class's destructor
@@ -701,13 +711,13 @@ static void Stage_loadInitialEntities(Stage this)
 }
 
 // unload non visible entities
-static int Stage_unloadOutOfRangeEntities(Stage this, int defer)
+static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 {
 	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
 
 	if(!this->children)
 	{
-		return false;
+		return;
 	}
 
 	// need a temporal list to remove and delete entities
@@ -744,21 +754,19 @@ static int Stage_unloadOutOfRangeEntities(Stage this, int defer)
 
             if(defer)
             {
-                return true;
+                return;
             }
 		}
 	}
 
-    return false;
+    return;
 }
 
-int Stage_loadInRangeEntities(Stage this, int defer)
+static void Stage_loadInRangeEntities(Stage this, int defer)
 {
 	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
 
 	VBVec3D focusInGameEntityPosition = Screen_getPosition(Screen_getInstance());
-
-	int loaded = false;
 
     if(!this->focusInGameEntity)
     {
@@ -817,7 +825,6 @@ int Stage_loadInRangeEntities(Stage this, int defer)
                     stageEntityDescription->id = this->nextEntityId;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Object, this), (EventListener)Stage_onStreamedEntityLoaded, this->nextEntityId++);
-                    loaded = true;
 
 					if(defer)
 					{
@@ -853,7 +860,6 @@ int Stage_loadInRangeEntities(Stage this, int defer)
                     stageEntityDescription->id = this->nextEntityId;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Object, this), (EventListener)Stage_onStreamedEntityLoaded, this->nextEntityId++);
-                    loaded = true;
 
 					if(defer)
 					{
@@ -865,8 +871,13 @@ int Stage_loadInRangeEntities(Stage this, int defer)
     }
 
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
+}
 
-	return loaded;
+static void Stage_prepareLoadedEntities(Stage this, int defer __attribute__ ((unused)))
+{
+	ASSERT(this, "Stage::prepareLoadedEntities: null this");
+
+	EntityFactory_prepareEntities(this->entityFactory);
 }
 
 static void Stage_onStreamedEntityLoaded(Stage this, Object eventFirer)
@@ -883,13 +894,21 @@ void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
 
-    if(!Stage_unloadOutOfRangeEntities(this, true))
-    {
-        if(!Stage_loadInRangeEntities(this, true))
+    static int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
+	int streamingCycleDuration = streamingDelayPerCycle / streamingPhases;
+
+	if(++this->streamingCycleCounter >= streamingCycleDuration)
+	{
+		this->streamingCycleCounter  = 0;
+
+        if(++this->streamingPhase >= streamingPhases)
         {
-            EntityFactory_prepareEntities(this->entityFactory);
+            this->streamingPhase = 0;
         }
-    }
+
+        _streamingPhases[this->streamingPhase](this, true);
+	}
 }
 
 void Stage_streamAll(Stage this)

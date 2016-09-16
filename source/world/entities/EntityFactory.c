@@ -61,10 +61,10 @@ typedef struct EntityDescription
 
 // global
 static void EntityFactory_constructor(EntityFactory this);
-static int EntityFactory_initializeEntities(EntityFactory this);
-static int EntityFactory_transformEntities(EntityFactory this);
+static void EntityFactory_initializeEntities(EntityFactory this);
+static void EntityFactory_transformEntities(EntityFactory this);
 
-typedef int (*StreamingPhase)(EntityFactory);
+typedef void (*StreamingPhase)(EntityFactory);
 
 static const StreamingPhase _streamingPhases[] =
 {
@@ -93,6 +93,7 @@ static void EntityFactory_constructor(EntityFactory this)
 	this->entitiesToTransform = __NEW(VirtualList);
 	this->delayPerCycle = 0;
     this->streamingPhase = 0;
+    this->streamingCycleCounter = 0;
 }
 
 // class's destructor
@@ -161,13 +162,13 @@ void EntityFactory_setDelayPerCycle(EntityFactory this, int delayPerCycle)
 }
 
 // initialize loaded entities
-static int EntityFactory_initializeEntities(EntityFactory this)
+static void EntityFactory_initializeEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::initializeEntities: null this");
 
 	if(!this->entitiesToInitialize->head)
 	{
-	    return false;
+	    return;
 	}
 
     EntityDescription* entityDescription = (EntityDescription*)this->entitiesToInitialize->head->data;
@@ -176,18 +177,16 @@ static int EntityFactory_initializeEntities(EntityFactory this)
 
     VirtualList_removeElement(this->entitiesToInitialize, entityDescription);
     VirtualList_pushBack(this->entitiesToTransform, entityDescription);
-
-    return true;
 }
 
 // intialize loaded entities
-static int EntityFactory_transformEntities(EntityFactory this)
+static void EntityFactory_transformEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::transformEntities: null this");
 
     if(!this->entitiesToTransform->head)
     {
-        return false;
+        return;
     }
 
 	// static to avoid call to _memcpy
@@ -219,11 +218,9 @@ static int EntityFactory_transformEntities(EntityFactory this)
     __DELETE_BASIC(entityDescription);
 
     Object_fireEvent(__SAFE_CAST(Object, entityDescription->entity), __EVENT_ENTITY_LOADED);
-
-    return true;
 }
 
-int EntityFactory_prepareEntities(EntityFactory this)
+void EntityFactory_prepareEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::prepareEntities: null this");
 
@@ -240,10 +237,8 @@ int EntityFactory_prepareEntities(EntityFactory this)
             this->streamingPhase = 0;
         }
 
-        return _streamingPhases[this->streamingPhase](this);
+        _streamingPhases[this->streamingPhase](this);
 	}
-
-	return false;
 }
 
 void EntityFactory_prepareAllEntities(EntityFactory this)

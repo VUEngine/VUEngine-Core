@@ -69,7 +69,7 @@ __CLASS(EntityFactory);
 __CLASS_NEW_DECLARE(EntityFactory);
 
 void EntityFactory_destructor(EntityFactory this);
-int EntityFactory_prepareEntities(EntityFactory this);
+void EntityFactory_prepareEntities(EntityFactory this);
 void EntityFactory_prepareAllEntities(EntityFactory this);
 void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Object requester, EventListener callback, s16 id);
 void EntityFactory_setDelayPerCycle(EntityFactory this, int delayPerCycle);

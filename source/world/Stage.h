@@ -61,6 +61,10 @@
         VirtualNode streamingHeadNode;																	\
         /* the stage entities to test for streaming */ 													\
         VirtualList loadedStageEntities;																\
+        /* counter to control the streaming phses */													\
+        int streamingCycleCounter;																		\
+        /* index for method to execute */													            \
+        int streamingPhase;                                                                             \
         /* streaming's preloaded entities */ 															\
         VirtualList entitiesToLoad;																		\
         /* the UI */ 																					\
