@@ -99,7 +99,6 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
 static void Stage_loadInitialEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static void Stage_loadInRangeEntities(Stage this, int defer);
-static void Stage_prepareLoadedEntities(Stage this, int defer);
 static void Stage_onStreamedEntityLoaded(Stage this, Object eventFirer);
 
 typedef void (*StreamingPhase)(Stage, int);
@@ -107,8 +106,7 @@ typedef void (*StreamingPhase)(Stage, int);
 static const StreamingPhase _streamingPhases[] =
 {
     &Stage_unloadOutOfRangeEntities,
-    &Stage_loadInRangeEntities,
-    &Stage_prepareLoadedEntities
+    &Stage_loadInRangeEntities
 };
 
 
@@ -873,13 +871,6 @@ static void Stage_loadInRangeEntities(Stage this, int defer)
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
 }
 
-static void Stage_prepareLoadedEntities(Stage this, int defer __attribute__ ((unused)))
-{
-	ASSERT(this, "Stage::prepareLoadedEntities: null this");
-
-	EntityFactory_prepareEntities(this->entityFactory);
-}
-
 static void Stage_onStreamedEntityLoaded(Stage this, Object eventFirer)
 {
 	ASSERT(this, "Stage::onStreamedEntityLoaded: null this");
@@ -908,6 +899,10 @@ void Stage_stream(Stage this)
         }
 
         _streamingPhases[this->streamingPhase](this, true);
+	}
+	else
+	{
+		EntityFactory_prepareEntities(this->entityFactory);
 	}
 }
 
