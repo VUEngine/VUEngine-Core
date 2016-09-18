@@ -104,7 +104,7 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 	{
 		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
-		if(!Texture_getCharSet(textureRegistry->texture))
+		if(!Texture_getTextureDefinition(textureRegistry->texture))
 		{
 			if(textureDefinition->cols <= textureRegistry->cols &&
 				textureDefinition->rows <= textureRegistry->rows
@@ -148,6 +148,9 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 		VirtualList_pushBack(this->textureRegistries, selectedTextureRegistry);
 	}
 
+	ASSERT(selectedTextureRegistry, "MBackgroundManager::registerTexture: null selectedTextureRegistry");
+	ASSERT(selectedTextureRegistry->texture, "MBackgroundManager::registerTexture: null selectedTextureRegistry");
+
 	return selectedTextureRegistry? selectedTextureRegistry->texture : NULL;
 }
 
@@ -155,6 +158,7 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((unused)), Texture texture)
 {
 	ASSERT(this, "MBackgroundManager::removeTexture: null this");
+	ASSERT(texture, "MBackgroundManager::removeTexture: null texture");
 
 #ifdef __DEBUG
 	VirtualNode node = this->textureRegistries->head;
@@ -174,7 +178,8 @@ void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((un
 
 	if(texture)
 	{
-		Texture_releaseCharSet(texture);
+	    Texture_releaseCharSet(texture);
+	    Texture_setDefinition(texture, NULL);
 	}
 }
 

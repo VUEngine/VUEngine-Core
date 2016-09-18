@@ -92,13 +92,13 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 	__DESTROY_BASE;
 }
 
-// initialize method
-void AnimatedInGameEntity_initialize(AnimatedInGameEntity this)
+// ready method
+void AnimatedInGameEntity_ready(AnimatedInGameEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::initialize: null this");
+	ASSERT(this, "AnimatedInGameEntity::ready: null this");
 	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::initialize: null animatedInGameEntityDefinition");
 
-	Entity_initialize(__SAFE_CAST(Entity, this));
+	Entity_ready(__SAFE_CAST(Entity, this));
 
 	AnimatedInGameEntity_playAnimation(this, this->animatedInGameEntityDefinition->initialAnimation);
 }

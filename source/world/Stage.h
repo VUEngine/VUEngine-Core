@@ -57,6 +57,8 @@
         EntityFactory entityFactory;                                                                    \
         /* the stage entities */ 																		\
         VirtualList stageEntities;																		\
+        /* the selected entities to be streamed in */ 													\
+        VirtualList inRangeEntities;																	\
         /* the pivot node for streaming */ 																\
         VirtualNode streamingHeadNode;																	\
         /* the stage entities to test for streaming */ 													\
@@ -206,7 +208,7 @@ void Stage_setupPalettes(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 Size Stage_getSize(Stage this);
 bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition);
-void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Object requester, EventListener callback);
+void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
 Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);
 Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent);
 void Stage_removeChild(Stage this, Container child);

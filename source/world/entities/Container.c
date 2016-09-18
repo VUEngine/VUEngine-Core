@@ -81,11 +81,11 @@ void Container_constructor(Container this, s16 id, const char* const name)
 	this->transform.globalRotation.z = 0;
 
 	// set scale
-	this->transform.localScale.x = ITOFIX7_9(1);
-	this->transform.localScale.y = ITOFIX7_9(1);
+	this->transform.localScale.x = __1I_FIX7_9;
+	this->transform.localScale.y = __1I_FIX7_9;
 
-	this->transform.globalScale.x = ITOFIX7_9(1);
-	this->transform.globalScale.y = ITOFIX7_9(1);
+	this->transform.globalScale.x = __1I_FIX7_9;
+	this->transform.globalScale.y = __1I_FIX7_9;
 
 	// force global position calculation on the next transform cycle
 	this->invalidateGlobalTransformation = __INVALIDATE_POSITION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
@@ -199,11 +199,13 @@ void Container_addChild(Container this, Container child)
             __VIRTUAL_CALL(Container, changeEnvironment, child, &this->transform);
         }
 
+        // set new parent
+        child->parent = this;
+
         // add to the children list
         VirtualList_pushBack(this->children, (void*)child);
 
-        // set new parent
-        child->parent = this;
+    	Container_invalidateGlobalTransformation(child);
     }
 }
 
@@ -302,9 +304,9 @@ Transformation Container_getEnvironmentTransform(Container this)
                 // global rotation
                 {0, 0, 0},
                 // local scale
-                {ITOFIX7_9(1), ITOFIX7_9(1)},
+                {__1I_FIX7_9, __1I_FIX7_9},
                 // global scale
-                {ITOFIX7_9(1), ITOFIX7_9(1)}
+                {__1I_FIX7_9, __1I_FIX7_9}
         };
 
         Container_concatenateTransform(&environmentTransform, &this->transform);
@@ -371,7 +373,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 	Container_setLocalScale(this, &localScale);
 
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalTransformation = 0;
+	Container_invalidateGlobalTransformation(this);
 }
 
 // initial transform

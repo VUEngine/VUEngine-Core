@@ -128,9 +128,6 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
 
-	VirtualList_clear(this->managedSprites);
-	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
-
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
 	VBVec2D position2D;
@@ -144,6 +141,16 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	position2D.parallax = 0;
 
 	this->previous2DPosition = position2D;
+}
+
+void ManagedEntity_ready(ManagedEntity this)
+{
+	ASSERT(this, "ManagedEntity::ready: null this");
+
+    Entity_ready(__SAFE_CAST(Entity, this));
+
+	VirtualList_clear(this->managedSprites);
+	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
 }
 
 // transform class
@@ -181,8 +188,6 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
     // call base class's transform method
     Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
-
-	this->invalidateGlobalTransformation = 0;
 }
 
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this)

@@ -125,9 +125,6 @@ void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation
 
 	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
 
-	VirtualList_clear(this->managedSprites);
-	ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
-
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
 	VBVec2D position2D;
@@ -141,6 +138,16 @@ void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation
 	position2D.parallax = 0;
 
 	this->previous2DPosition = position2D;
+}
+
+void ManagedMBackground_ready(ManagedMBackground this)
+{
+	ASSERT(this, "ManagedMBackground::ready: null this");
+
+    Entity_ready(__SAFE_CAST(Entity, this));
+
+	VirtualList_clear(this->managedSprites);
+	ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
 }
 
 // transform class

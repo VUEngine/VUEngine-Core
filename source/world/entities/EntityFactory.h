@@ -23,7 +23,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <Entity.h>
+#include <Sprite.h>
+#include <Container.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -44,13 +45,15 @@
         /* the pivot node for streaming */ 																\
         VirtualNode streamingHeadNode;																	\
         /* the EntityFactory entities to test for streaming */ 											\
-        VirtualList entitiesToTest;																        \
-        /* the removed entities */ 																		\
-        VirtualList removedEntities;																	\
+        VirtualList entitiesToSpawn;																    \
         /* streaming's uninitialized entities */ 														\
         VirtualList entitiesToInitialize;																\
         /* streaming's non yet transformed entities */ 													\
         VirtualList entitiesToTransform;																\
+        /* streaming's non yet transformed entities */ 													\
+        VirtualList entitiesToMakeReady;															    \
+        /* streaming's non yet transformed entities */ 													\
+        VirtualList loadedEntities;															            \
         /* counter to control the streaming phses */													\
         int streamingCycleCounter;																		\
         /* index for method to execute */													            \
@@ -61,6 +64,48 @@
 // declare a EntityFactory, which holds the objects in a game world
 __CLASS(EntityFactory);
 
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S ROM DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+// defines an entity in ROM memory
+typedef struct EntityDefinition
+{
+	// the class allocator
+	AllocatorPointer allocator;
+
+	// the sprite
+	const SpriteDefinition** spritesDefinitions;
+
+} EntityDefinition;
+
+typedef const EntityDefinition EntityROMDef;
+
+
+// an entity associated with a position
+typedef const struct PositionedEntity
+{
+	// pointer to the entity definition in ROM
+	EntityDefinition* entityDefinition;
+
+	// position in the world
+	VBVec3D position;
+
+	// name
+	char* name;
+
+	// the children
+	struct PositionedEntity* childrenDefinitions;
+
+	// extra info
+	void* extraInfo;
+
+	// force load
+	bool loadRegardlessOfPosition;
+
+} PositionedEntity;
+
+typedef const PositionedEntity PositionedEntityROMDef;
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
@@ -69,9 +114,8 @@ __CLASS(EntityFactory);
 __CLASS_NEW_DECLARE(EntityFactory);
 
 void EntityFactory_destructor(EntityFactory this);
-void EntityFactory_prepareEntities(EntityFactory this);
+int EntityFactory_prepareEntities(EntityFactory this);
 void EntityFactory_prepareAllEntities(EntityFactory this);
-void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Object requester, EventListener callback, s16 id);
-void EntityFactory_setDelayPerCycle(EntityFactory this, int delayPerCycle);
+void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
 
 #endif

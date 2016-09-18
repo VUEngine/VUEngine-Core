@@ -835,9 +835,9 @@ void Body_setElasticity(Body this, fix19_13 elasticity)
 	{
 		elasticity = 0;
 	}
-	else if(ITOFIX19_13(1) < elasticity)
+	else if(__1I_FIX19_13 < elasticity)
 	{
-		elasticity = ITOFIX19_13(1);
+		elasticity = __1I_FIX19_13;
 	}
 
 	this->elasticity = elasticity;
@@ -1006,12 +1006,12 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;
 
-	if(ITOFIX19_13(1) < totalElasticity)
+	if(__1I_FIX19_13 < totalElasticity)
 	{
-		totalElasticity = ITOFIX19_13(1);
+		totalElasticity = __1I_FIX19_13;
 	}
 
-	fix19_13 bounceCoeficient = ITOFIX19_13(1) - totalElasticity;
+	fix19_13 bounceCoeficient = __1I_FIX19_13 - totalElasticity;
 	fix19_13 velocityDelta = FIX19_13_MULT(*acceleration, elapsedTime);
 	*velocity += velocityDelta;
 	*velocity = FIX19_13_MULT(-*velocity, bounceCoeficient);

@@ -105,8 +105,6 @@ void Texture_releaseCharSet(Texture this)
 		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
 		this->charSet = NULL;
 	}
-
-	this->written = false;
 }
 
 // write into memory the chars and this
@@ -135,7 +133,7 @@ void Texture_rewrite(Texture this)
 {
 	ASSERT(this, "Texture::rewrite: null this");
 
-	__VIRTUAL_CALL(Texture, write, this);
+    this->written = false;
 }
 
 // write map in hbias mode

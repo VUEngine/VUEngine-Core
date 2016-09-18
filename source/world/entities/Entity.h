@@ -23,9 +23,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
+#include <EntityFactory.h>
 #include <BgmapSprite.h>
 #include <ObjectSprite.h>
-#include <StateMachine.h>
 #include <Telegram.h>
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,6 +80,8 @@
 #define Entity_ATTRIBUTES																				\
         /* it is derived from */																		\
         Container_ATTRIBUTES																			\
+        /* entity factory */																            \
+        EntityFactory entityFactory;                                                                    \
         /* sprites' list */																				\
         VirtualList sprites;																			\
         /* shape for collision detection */																\
@@ -94,49 +96,6 @@
         bool updateSprites;																				\
 
 	__CLASS(Entity);
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-// defines an entity in ROM memory
-typedef struct EntityDefinition
-{
-	// the class allocator
-	AllocatorPointer allocator;
-
-	// the sprite
-	const SpriteDefinition** spritesDefinitions;
-
-} EntityDefinition;
-
-typedef const EntityDefinition EntityROMDef;
-
-// an actor associated with a position
-typedef const struct PositionedEntity
-{
-	// pointer to the entity definition in ROM
-	EntityDefinition* entityDefinition;
-
-	// position in the world
-	VBVec3D position;
-
-	// name
-	char* name;
-
-	// the children
-	struct PositionedEntity* childrenDefinitions;
-
-	// extra info
-	void* extraInfo;
-
-	// force load
-	bool loadRegardlessOfPosition;
-
-} PositionedEntity;
-
-typedef const PositionedEntity PositionedEntityROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -156,6 +115,11 @@ void Entity_initialize(Entity this);
 void Entity_ready(Entity this);
 void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity* childrenDefinitions);
+u32 Entity_allChildrenSpawned(Entity this);
+u32 Entity_allChildrenInitialized(Entity this);
+u32 Entity_allChildrenTransformed(Entity this);
+u32 Entity_allChildrenReady(Entity this);
+u32 Entity_allChildrenLoaded(Entity this);
 Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));

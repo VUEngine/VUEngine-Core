@@ -38,7 +38,10 @@
 #include <MBackgroundManager.h>
 #include <ParticleRemover.h>
 #include <debugConfig.h>
-
+#ifdef __PROFILE_STREAMING
+#include <TimerManager.h>
+#include <Printing.h>
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
@@ -99,15 +102,21 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
 static void Stage_loadInitialEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static void Stage_loadInRangeEntities(Stage this, int defer);
-static void Stage_onStreamedEntityLoaded(Stage this, Object eventFirer);
 
 typedef void (*StreamingPhase)(Stage, int);
 
 static const StreamingPhase _streamingPhases[] =
 {
     &Stage_unloadOutOfRangeEntities,
-    &Stage_loadInRangeEntities
+    &Stage_loadInRangeEntities,
 };
+
+#ifdef __PROFILE_STREAMING
+static u32 unloadOutOfRangeEntitiesHighestTime = 0;
+static u32 loadInRangeEntitiesHighestTime = 0;
+static u32 entityFactoryHighestTime = 0;
+static u32 timeBeforeProcess = 0;
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -289,9 +298,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	// set particle removal delay
 	ParticleRemover_setRemovalDelayCicles(ParticleRemover_getInstance(), stageDefinition->streaming.particleRemovalDelayCicles);
 
-    // set streaming config values
-    EntityFactory_setDelayPerCycle(this->entityFactory, this->stageDefinition->streaming.delayPerCycle);
-
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform);
@@ -396,7 +402,7 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 	return false;
 }
 
-void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Object requester, EventListener callback)
+void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback)
 {
 	ASSERT(this, "Stage::spawnEntity: null this");
 
@@ -752,13 +758,18 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 
             if(defer)
             {
-                return;
+                break;
             }
 		}
 	}
+
+#ifdef __PROFILE_STREAMING
+        u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+        unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime? processTime: unloadOutOfRangeEntitiesHighestTime;
+#endif
 }
 
-static void Stage_loadInRangeEntities(Stage this, int defer)
+static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
 
@@ -818,14 +829,9 @@ static void Stage_loadInRangeEntities(Stage this, int defer)
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
-                    stageEntityDescription->id = this->nextEntityId;
+                    stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Object, this), (EventListener)Stage_onStreamedEntityLoaded, this->nextEntityId++);
-
-					if(defer)
-					{
-					    break;
-                    }
+                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
                 }
             }
         }
@@ -853,52 +859,79 @@ static void Stage_loadInRangeEntities(Stage this, int defer)
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
-                    stageEntityDescription->id = this->nextEntityId;
+                    stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Object, this), (EventListener)Stage_onStreamedEntityLoaded, this->nextEntityId++);
-
-					if(defer)
-					{
-					    break;
-                    }
+                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
                 }
             }
         }
     }
 
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
-}
 
-static void Stage_onStreamedEntityLoaded(Stage this, Object eventFirer)
-{
-	ASSERT(this, "Stage::onStreamedEntityLoaded: null this");
-
-    // create the entity and add it to the world
-    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, eventFirer));
+#ifdef __PROFILE_STREAMING
+        u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+        loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime? processTime: loadInRangeEntitiesHighestTime;
+#endif
 }
 
 void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
 
-    static int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
-	int streamingDelayPerCycle = this->stageDefinition->streaming.delayPerCycle >> __FRAME_CYCLE;
-	int streamingCycleDuration = streamingDelayPerCycle / streamingPhases;
+    int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
 
-	if(++this->streamingCycleCounter >= streamingCycleDuration)
-	{
-		this->streamingCycleCounter  = 0;
+    if(++this->streamingPhase >= streamingPhases)
+    {
+        this->streamingPhase = 0;
+    }
 
-        if(++this->streamingPhase >= streamingPhases)
+#ifdef __PROFILE_STREAMING
+    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+#endif
+
+    _streamingPhases[this->streamingPhase](this, true);
+
+#ifdef __PROFILE_STREAMING
+	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+#endif
+
+    EntityFactory_prepareEntities(this->entityFactory);
+
+#ifdef __PROFILE_STREAMING
+    u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+    entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
+#endif
+}
+
+void Stage_stream8(Stage this)
+{
+	ASSERT(this, "Stage::stream: null this");
+
+    int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+
+    ++this->streamingPhase;
+
+#ifdef __PROFILE_STREAMING
+	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+#endif
+
+    if(this->streamingPhase >= streamingPhases)
+    {
+        if(EntityFactory_prepareEntities(this->entityFactory))
         {
-            this->streamingPhase = 0;
+            this->streamingPhase = -1;
         }
 
+        #ifdef __PROFILE_STREAMING
+                u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+                entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
+        #endif
+
+    }
+    else
+    {
         _streamingPhases[this->streamingPhase](this, true);
-	}
-	else
-	{
-		EntityFactory_prepareEntities(this->entityFactory);
 	}
 }
 
@@ -950,9 +983,9 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 				// global rotation
 				{0, 0, 0},
 				// local scale
-				{ITOFIX7_9(1), ITOFIX7_9(1)},
+				{__1I_FIX7_9, __1I_FIX7_9},
 				// global scale
-				{ITOFIX7_9(1), ITOFIX7_9(1)}
+				{__1I_FIX7_9, __1I_FIX7_9}
 		};
 
 		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
@@ -1101,3 +1134,26 @@ StageDefinition* Stage_getStageDefinition(Stage this)
 
 	return this->stageDefinition;
 }
+
+#ifdef __PROFILE_STREAMING
+void Stage_showStreamingProfiling(Stage this, int x, int y)
+{
+    ASSERT(this, "Stage::showStreamingProfiling: null this");
+    int xDisplacement = 11;
+
+    Printing_text(Printing_getInstance(), "STREAMING PROFILING", x, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Unload:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement + 4, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Load:              ", x, y, NULL);
+    Printing_int(Printing_getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement + 4, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Facotyr:              ", x, y, NULL);
+    Printing_int(Printing_getInstance(), entityFactoryHighestTime, x + xDisplacement + 4, y++, NULL);
+
+    unloadOutOfRangeEntitiesHighestTime = 0;
+    loadInRangeEntitiesHighestTime = 0;
+    entityFactoryHighestTime = 0;
+}
+#endif

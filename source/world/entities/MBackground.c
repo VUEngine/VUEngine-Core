@@ -42,6 +42,13 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
+
+static void MBackground_registerTextures(MBackground this);
+
+
+//---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -85,31 +92,10 @@ void MBackground_initialize(MBackground this)
 	ASSERT(this->mBackgroundDefinition->spritesDefinitions[0], "MBackground::initialize: null sprite list");
 
 	// first register with the manager so it handles the texture loading process
-	if(this->mBackgroundDefinition->spritesDefinitions[0])
-	{
-		int i = 0;
-
-		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
-		{
-			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
-			{
-				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
-			}
-			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
-			{
-				int j = 0;
-
-				for(; ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
-				{
-					MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]);
-				}
-			}
-		}
-	}
+	MBackground_registerTextures(this);
 
 	Entity_initialize(__SAFE_CAST(Entity, this));
 }
-
 
 void MBackground_suspend(MBackground this)
 {
@@ -130,6 +116,15 @@ void MBackground_resume(MBackground this)
 	ASSERT(this, "MBackground::resume: null this");
 
 	// first register with the manager so it handles the texture loading process
+	MBackground_registerTextures(this);
+
+	Entity_resume(__SAFE_CAST(Entity, this));
+}
+
+static void MBackground_registerTextures(MBackground this)
+{
+	ASSERT(this, "MBackground::registerTextures: null this");
+
 	if(this->mBackgroundDefinition->spritesDefinitions[0])
 	{
 		int i = 0;
@@ -138,7 +133,7 @@ void MBackground_resume(MBackground this)
 		{
 			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
-				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+			    MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
 			}
 			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
@@ -151,6 +146,4 @@ void MBackground_resume(MBackground this)
 			}
 		}
 	}
-
-	Entity_resume(__SAFE_CAST(Entity, this));
 }

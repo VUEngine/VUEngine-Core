@@ -24,6 +24,7 @@
 
 #include <AnimatedInGameEntity.h>
 #include <Body.h>
+#include <StateMachine.h>
 #include <CollisionSolver.h>
 #include <Clock.h>
 

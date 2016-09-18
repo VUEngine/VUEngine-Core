@@ -263,7 +263,7 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x
 		sign = -1;
 		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
 
-		decimal = (int)(((ITOFIX19_13(1) - (float)FIX19_13_FRAC(FTOFIX19_13(value))) / 8192.f) * 10000.f);
+		decimal = (int)(((__1I_FIX19_13 - (float)FIX19_13_FRAC(FTOFIX19_13(value))) / 8192.f) * 10000.f);
 	}
 	else
 	{

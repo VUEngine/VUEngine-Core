@@ -149,14 +149,19 @@ inline static void Game_updateVisuals(Game this);
 inline static void Game_updateLogic(Game this);
 inline static void Game_updatePhysics(Game this);
 inline static void Game_updateTransformations(Game this);
+inline static void Game_updateCollisions(Game this);
 inline static void Game_checkForNewState(Game this);
 static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
 static void Game_checkLowBattery(Game this, u16 keyPressed);
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 static void Game_showProfiling(Game this);
+#endif
+
+#ifdef __PROFILE_STREAMING
+void Stage_showStreamingProfiling(Stage this, int x, int y);
 #endif
 
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
@@ -752,13 +757,11 @@ inline static void Game_updatePhysics(Game this)
 #endif
 }
 
-// update game's rendering subsystem
 inline static void Game_updateTransformations(Game this)
 {
 #ifdef __DEBUG
 	this->lastProcessName = "move screen";
 #endif
-
 	// position the screen
 	Screen_focus(this->screen, true);
 
@@ -771,6 +774,13 @@ inline static void Game_updateTransformations(Game this)
 	// apply world transformations
 	GameState_transform(this->currentState);
 
+#ifdef __DEBUG
+	this->lastProcessName = "transformations ended";
+#endif
+}
+
+inline static void Game_updateCollisions(Game this)
+{
 	this->currentProcess = kGameCheckingCollisions;
 
 	// process the collisions after the transformations have taken place
@@ -784,7 +794,7 @@ inline static void Game_updateTransformations(Game this)
 	this->currentProcess = kGameCheckingCollisionsDone;
 
 #ifdef __DEBUG
-	this->lastProcessName = "transformations ended";
+	this->lastProcessName = "processing collisions ended";
 #endif
 }
 
@@ -807,7 +817,7 @@ inline static void Game_checkForNewState(Game this)
 	this->currentProcess = kGameCheckingForNewStateDone;
 }
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 static u32 updateVisualsTotalTime = 0;
 static u32 updateLogicTotalTime = 0;
 static u32 updatePhysicsTotalTime = 0;
@@ -824,6 +834,8 @@ static u32 updatePhysicsHighestTime = 0;
 static u32 updateTransformationsHighestTime = 0;
 static u32 handleInputHighestTime = 0;
 static u32 dispatchDelayedMessageHighestTime = 0;
+static u32 processCollisionsTotalTime = 0;
+static u32 processCollisionsHighestTime = 0;
 #endif
 
 // update game's subsystems
@@ -833,7 +845,7 @@ static void Game_update(Game this)
 
 	FrameRate frameRate = FrameRate_getInstance();
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
     u32 timeBeforeProcess = 0;
     u32 processTime = 0;
 #endif
@@ -849,14 +861,14 @@ static void Game_update(Game this)
 		// this wait actually controls the frame rate
 		while(VIPManager_waitForGameFrame(this->vipManager));
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 	    // the engine's game logic must be free of racing
 	    // conditions against the VIP
 	    Game_updateVisuals(this);
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateVisualsHighestTime = processTime > updateVisualsHighestTime? processTime: updateVisualsHighestTime;
 	    updateVisualsTotalTime += processTime;
@@ -886,7 +898,7 @@ static void Game_update(Game this)
 
         if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
         {
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
             Game_showProfiling(this);
 #endif
 
@@ -939,33 +951,34 @@ static void Game_update(Game this)
 		// needs to be changed
 		Game_checkForNewState(this);
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
         // process user's input
-        u32 suspendStreaming = Game_handleInput(this);
-#ifdef __PROFILING
+        Game_handleInput(this);
+
+#ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         handleInputHighestTime = processTime > handleInputHighestTime? processTime: handleInputHighestTime;
 	    handleInputTotalTime += processTime;
 #endif
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
-        suspendStreaming |= MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
-#ifdef __PROFILING
+        MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+#ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         dispatchDelayedMessageHighestTime = processTime > dispatchDelayedMessageHighestTime? processTime: dispatchDelayedMessageHighestTime;
 	    dispatchDelayedMessageTotalTime += processTime;
 #endif
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 	    // update game's logic
 	    Game_updateLogic(this);
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
 	    updateLogicTotalTime += processTime;
@@ -978,48 +991,53 @@ static void Game_update(Game this)
 	    {
 #endif
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updatePhysicsHighestTime = processTime > updatePhysicsHighestTime? processTime: updatePhysicsHighestTime;
 	    updatePhysicsTotalTime += processTime;
 #endif
-        // suspend streaming if up to this point the game frame has taken half the budget time
-        suspendStreaming |= TimerManager_getTicks(this->timerManager) >= __MILLISECONDS_IN_SECOND / __TARGET_FPS / 2;
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 	    // apply transformations
 	    Game_updateTransformations(this);
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateTransformationsHighestTime = processTime > updateTransformationsHighestTime? processTime: updateTransformationsHighestTime;
 	    updateTransformationsTotalTime += processTime;
-
 #endif
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
+	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#endif
+        Game_updateCollisions(this);
+#ifdef __PROFILE_GAME
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        processCollisionsHighestTime = processTime > processCollisionsHighestTime? processTime: processCollisionsHighestTime;
+	    processCollisionsTotalTime += processTime;
+#endif
+
+
+#ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 
-        if(!suspendStreaming)
-        {
-            GameState_stream(this->currentState);
+        GameState_stream(this->currentState);
 
-#ifdef __PROFILING
-            processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-            streamingHighestTime = processTime > streamingTotalTime? processTime: streamingHighestTime;
-            streamingTotalTime += processTime;
+#ifdef __PROFILE_GAME
+        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+        streamingHighestTime = processTime > streamingHighestTime? processTime: streamingHighestTime;
+        streamingTotalTime += processTime;
 #endif
-        }
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
         u32 gameFrameTotalTime = TimerManager_getTicks(this->timerManager);
 
         gameFrameHighestTime = gameFrameHighestTime < gameFrameTotalTime?  gameFrameTotalTime: gameFrameHighestTime;
@@ -1385,7 +1403,7 @@ const char* Game_getDRAMPrecalculationsStep(Game this)
 #endif
 #endif
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 static void Game_showProfiling(Game this __attribute__ ((unused)))
 {
     ASSERT(this, "Game::showProfiling: this null");
@@ -1427,8 +1445,12 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     Printing_int(Printing_getInstance(), updateTransformationsTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), updateTransformationsHighestTime, x + xDisplacement + 4, y++, NULL);
 
+    Printing_text(Printing_getInstance(), "Collis.:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), processCollisionsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), processCollisionsHighestTime, x + xDisplacement + 4, y++, NULL);
+
     Printing_text(Printing_getInstance(), "TOTAL:              ", x, y, NULL);
-    Printing_int(Printing_getInstance(), updateVisualsTotalTime + handleInputTotalTime + dispatchDelayedMessageTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+    Printing_int(Printing_getInstance(), updateVisualsTotalTime + handleInputTotalTime + dispatchDelayedMessageTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime + processCollisionsTotalTime, x + xDisplacement, y, NULL);
     Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + 4, y++, NULL);
 
     updateVisualsTotalTime = 0;
@@ -1438,6 +1460,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     streamingTotalTime = 0;
     handleInputTotalTime = 0;
     dispatchDelayedMessageTotalTime = 0;
+    processCollisionsTotalTime = 0;
 
     gameFrameHighestTime = 0;
     updateVisualsHighestTime = 0;
@@ -1447,5 +1470,10 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     streamingHighestTime = 0;
     handleInputHighestTime = 0;
     dispatchDelayedMessageHighestTime = 0;
+    processCollisionsHighestTime = 0;
+
+#ifdef __PROFILE_STREAMING
+    Stage_showStreamingProfiling(Game_getStage(this), x, ++y);
+#endif
 }
 #endif

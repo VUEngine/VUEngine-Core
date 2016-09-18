@@ -434,9 +434,9 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 
 	VBVec3D displacement =
     {
-    	direction.x ? 0 < direction.x? ITOFIX19_13(1): ITOFIX19_13(-1): 0,
-		direction.y ? 0 < direction.y? ITOFIX19_13(1): ITOFIX19_13(-1): 0,
-		direction.z ? 0 < direction.z? ITOFIX19_13(1): ITOFIX19_13(-1): 0
+    	direction.x ? 0 < direction.x? __1I_FIX19_13: ITOFIX19_13(-1): 0,
+		direction.y ? 0 < direction.y? __1I_FIX19_13: ITOFIX19_13(-1): 0,
+		direction.z ? 0 < direction.z? __1I_FIX19_13: ITOFIX19_13(-1): 0
 	};
 
 	if(0 == abs(direction.x) + abs(direction.y) + abs(direction.z))
@@ -471,9 +471,9 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 			}
 		}
 
-		displacement.x += 0 < direction.x? ITOFIX19_13(1): ITOFIX19_13(-1);
-		displacement.y += 0 < direction.y? ITOFIX19_13(1): ITOFIX19_13(-1);
-		displacement.z += 0 < direction.z? ITOFIX19_13(1): ITOFIX19_13(-1);
+		displacement.x += 0 < direction.x? __1I_FIX19_13: ITOFIX19_13(-1);
+		displacement.y += 0 < direction.y? __1I_FIX19_13: ITOFIX19_13(-1);
+		displacement.z += 0 < direction.z? __1I_FIX19_13: ITOFIX19_13(-1);
 	}
 	while(!collidingObject && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.x) && ITOFIX19_13(__SCREEN_HEIGHT) > abs(displacement.y) && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.z));
 

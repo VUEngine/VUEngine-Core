@@ -25,6 +25,7 @@
 #include <Clock.h>
 #include <Stage.h>
 #include <GameState.h>
+#include <StateMachine.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
 
@@ -94,7 +95,7 @@ bool Game_isInStageEditor(Game this);
 bool Game_isInAnimationEditor(Game this);
 #endif
 
-#ifdef __PROFILING
+#ifdef __PROFILE_GAME
 void Game_showProfiling(Game this);
 #endif
 

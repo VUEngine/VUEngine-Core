@@ -52,9 +52,17 @@ extern const VBVec3D* _screenPosition;
 extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
+u32 EntityFactory_spawnEntities(EntityFactory this);
+u32 EntityFactory_initializeEntities(EntityFactory this);
+u32 EntityFactory_transformEntities(EntityFactory this);
+u32 EntityFactory_makeReadyEntities(EntityFactory this);
+u32 EntityFactory_callLoadedEntities(EntityFactory this);
+
 static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions);
 static void Entity_releaseSprites(Entity this);
 static void Entity_updateSprites(Entity this, int updateSpriteTransformations, int updateSpritePosition);
+static void Entity_onChildAdded(Entity this, Object eventFirer);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -80,6 +88,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	this->sprites = NULL;
 	this->shape = NULL;
 	this->centerDisplacement = NULL;
+	this->entityFactory = NULL;
 
 	// initialize to 0 for the engine to know that
 	// size must be set
@@ -107,6 +116,11 @@ void Entity_destructor(Entity this)
 	if(this->centerDisplacement)
 	{
 		__DELETE_BASIC(this->centerDisplacement);
+	}
+
+	if(this->entityFactory)
+	{
+	    __DELETE(this->entityFactory);
 	}
 
 	Entity_releaseSprites(this);
@@ -603,15 +617,94 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
 	    return;
 	}
 
+	if(!this->entityFactory)
+	{
+	    this->entityFactory = __NEW(EntityFactory);
+	}
+
     int i = 0;
 
     //go through n sprites in entity's definition
     for(; childrenDefinitions[i].entityDefinition; i++)
     {
-        Entity entity = Entity_loadFromDefinitionWithoutInitilization(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+        EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), (EventListener)Entity_onChildAdded, this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+    }
+}
 
-        // create the entity and add it to the world
-        Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+#define __LIST_EMPTY                    0x01
+
+u32 Entity_allChildrenSpawned(Entity this)
+{
+	ASSERT(this, "Entity::allChildrenSpawned: null this");
+
+    if(this->entityFactory)
+    {
+        return __LIST_EMPTY == EntityFactory_spawnEntities(this->entityFactory);
+    }
+
+    return true;
+}
+
+u32 Entity_allChildrenInitialized(Entity this)
+{
+	ASSERT(this, "Entity::allChildrenInitialized: null this");
+
+    if(this->entityFactory)
+    {
+        return __LIST_EMPTY == EntityFactory_initializeEntities(this->entityFactory);
+    }
+
+    return true;
+}
+
+u32 Entity_allChildrenTransformed(Entity this)
+{
+	ASSERT(this, "Entity::allChildrenInitialized: null this");
+
+    if(this->entityFactory)
+    {
+        return __LIST_EMPTY == EntityFactory_transformEntities(this->entityFactory);
+    }
+
+    return true;
+}
+
+u32 Entity_allChildrenReady(Entity this)
+{
+	ASSERT(this, "Entity::allChildrenReady: null this");
+
+    if(this->entityFactory)
+    {
+        return __LIST_EMPTY == EntityFactory_makeReadyEntities(this->entityFactory);
+    }
+
+    return true;
+}
+
+u32 Entity_allChildrenLoaded(Entity this)
+{
+	ASSERT(this, "Entity::allChildrenReady: null this");
+
+    if(this->entityFactory)
+    {
+        return __LIST_EMPTY == EntityFactory_callLoadedEntities(this->entityFactory);
+    }
+
+    return true;
+}
+
+static void Entity_onChildAdded(Entity this, Object eventFirer)
+{
+	ASSERT(this, "Entity::onChildLoaded: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::onChildLoaded: this is not an Entity");
+	ASSERT(__SAFE_CAST(Container, eventFirer), "Entity::onChildLoaded: eventFirer is not a Container");
+
+    // must recalculate size
+    Entity_calculateSize(this);
+
+    if(this->hidden)
+    {
+        __VIRTUAL_CALL(Container, hide, __SAFE_CAST(Container, eventFirer));
     }
 }
 
@@ -769,10 +862,20 @@ static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefin
 
     int i = 0;
 
+    if(!this->sprites)
+    {
+        this->sprites = __NEW(VirtualList);
+    }
+
     //go through n sprites in entity's definition
     for(; spritesDefinitions[i]; i++)
     {
-        Entity_addSprite(this, spritesDefinitions[i]);
+    	ASSERT(spritesDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");
+
+        Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spritesDefinitions[i]->allocator)((SpriteDefinition*)spritesDefinitions[i], __SAFE_CAST(Object, this));
+        ASSERT(sprite, "Entity::addSprite: sprite not created");
+
+        VirtualList_pushBack(this->sprites, (void*)sprite);
     }
 }
 
@@ -781,8 +884,8 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 {
 	ASSERT(this, "Entity::addSprite: null this");
 
-	ASSERT(spriteDefinition, "Entity::load: null spriteDefinition");
-	ASSERT(spriteDefinition->allocator, "Entity::load: no sprite allocator");
+	ASSERT(spriteDefinition, "Entity::addSprite: null spriteDefinition");
+	ASSERT(spriteDefinition->allocator, "Entity::addSprite: no sprite allocator");
 
 	if(!spriteDefinition || !spriteDefinition->allocator)
 	{
@@ -860,7 +963,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform)
 	}
 
 	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
-	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
+//	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
 
 	if(this->hidden)
 	{
@@ -904,12 +1007,12 @@ void Entity_updateVisualRepresentation(Entity this)
 
 	this->updateSprites = 0;
 
-	/*
+/*
 	if(this->shape)
 	{
 		__VIRTUAL_CALL(Shape, draw, this->shape);
 	}
-	*/
+*/
 }
 
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)

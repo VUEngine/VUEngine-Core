@@ -225,6 +225,12 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 		}
 
 		__DELETE(eventsToRemove);
+
+		if(!VirtualList_getSize(this->events))
+		{
+            __DELETE(this->events);
+            this->events = NULL;
+		}
 	}
 }
 
@@ -266,6 +272,12 @@ void Object_removeAllEventListeners(Object this, char* eventName)
 		}
 
 		__DELETE(eventsToRemove);
+
+		if(!VirtualList_getSize(this->events))
+		{
+            __DELETE(this->events);
+            this->events = NULL;
+		}
 	}
 }
 
@@ -283,17 +295,37 @@ void Object_fireEvent(Object this,  char* eventName)
 
 	if(this->events)
 	{
+	    VirtualList eventsToRemove = __NEW(VirtualList);
+
 		VirtualNode node = this->events->head;
 
 		for(; node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 
-			if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
-			{
-				event->method(event->listener, this);
-			}
+		    if(*(u32*)event->listener)
+		    {
+                if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+                {
+                    event->method(event->listener, this);
+                }
+            }
+            else
+            {
+                VirtualList_pushBack(eventsToRemove, event);
+            }
 		}
+
+		for(node = eventsToRemove->head; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+            VirtualList_removeElement(this->events, event);
+
+            __DELETE_BASIC(event);
+		}
+
+		__DELETE(eventsToRemove);
 	}
 }
 

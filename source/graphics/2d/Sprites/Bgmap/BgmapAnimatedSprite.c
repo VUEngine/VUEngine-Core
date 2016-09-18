@@ -64,8 +64,8 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
 		this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 
 		// since the offset will be moved during animation, must save it
-		this->originalTextureSource.mx = abs(BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;
-		this->originalTextureSource.my = abs(BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture))) << 3;
+		this->originalTextureSource.mx = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+		this->originalTextureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 	}
 }
 

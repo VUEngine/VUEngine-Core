@@ -30,7 +30,9 @@
 // 												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-// use for faster rounding on fix19_13 values
+// use for faster rounding on fix* values
+#define __1I_FIX7_9 		0x00000200
+#define __1I_FIX19_13		0x00002000
 #define __0_5F_FIX19_13		0x00001000
 
 // override null definition (because we don't want to include standard C libraries)

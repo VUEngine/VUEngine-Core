@@ -284,9 +284,9 @@ void Screen_setPosition(Screen this, VBVec3D position)
 
 	this->position = position;
 
-    this->lastDisplacement.x = ITOFIX19_13(1);
-    this->lastDisplacement.y = ITOFIX19_13(1);
-    this->lastDisplacement.z = ITOFIX19_13(1);
+    this->lastDisplacement.x = __1I_FIX19_13;
+    this->lastDisplacement.y = __1I_FIX19_13;
+    this->lastDisplacement.z = __1I_FIX19_13;
 
 	Screen_capPosition(this);
 }
@@ -374,9 +374,9 @@ void Screen_forceDisplacement(Screen this, int flag)
 {
 	ASSERT(this, "Screen::forceDisplacement: null this");
 
-	this->lastDisplacement.x = flag ? ITOFIX19_13(1) : 0;
-	this->lastDisplacement.y = flag ? ITOFIX19_13(1) : 0;
-	this->lastDisplacement.z = flag ? ITOFIX19_13(1) : 0;
+	this->lastDisplacement.x = flag ? __1I_FIX19_13 : 0;
+	this->lastDisplacement.y = flag ? __1I_FIX19_13 : 0;
+	this->lastDisplacement.z = flag ? __1I_FIX19_13 : 0;
 }
 
 void Screen_startEffect(Screen this, int effect, ...)

@@ -110,8 +110,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->drawSpec.position.z = 0;
 	this->drawSpec.position.parallax = 0;
 
-	this->drawSpec.scale.x = ITOFIX7_9(1);
-	this->drawSpec.scale.y = ITOFIX7_9(1);
+	this->drawSpec.scale.x = __1I_FIX7_9;
+	this->drawSpec.scale.y = __1I_FIX7_9;
 
 	this->drawSpec.rotation.x = 0;
 	this->drawSpec.rotation.y = 0;

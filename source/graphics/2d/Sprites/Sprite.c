@@ -78,7 +78,7 @@ Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
 
 	Scale scale =
 	{
-			ITOFIX7_9(1), ITOFIX7_9(1)
+			__1I_FIX7_9, __1I_FIX7_9
 	};
 
 	//  return the scale
