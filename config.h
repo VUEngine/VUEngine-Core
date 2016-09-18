@@ -61,7 +61,11 @@
 
 // show game's process profiling
 // it is only useful when __TIMER_RESOLUTION is 1
-#undef __PROFILING
+#undef __PROFILE_GAME
+
+// show streaming's process profiling
+#undef __PROFILE_STREAMING
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											OPTICS / PROJECTION
@@ -150,41 +154,41 @@
 
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
-	__BLOCK_DEFINITION(196, 1)																			\
-	__BLOCK_DEFINITION(164, 8)																			\
-	__BLOCK_DEFINITION(144, 8)																			\
-	__BLOCK_DEFINITION(140, 25)																			\
-	__BLOCK_DEFINITION(132, 10)																			\
-	__BLOCK_DEFINITION(124, 45)																			\
-	__BLOCK_DEFINITION(112, 15)																			\
-	__BLOCK_DEFINITION(108, 20)																			\
+	__BLOCK_DEFINITION(200, 1)																			\
+	__BLOCK_DEFINITION(168, 8)																			\
+	__BLOCK_DEFINITION(148, 8)																			\
+	__BLOCK_DEFINITION(144, 25)																			\
+	__BLOCK_DEFINITION(136, 10)																			\
+	__BLOCK_DEFINITION(128, 40)																			\
+	__BLOCK_DEFINITION(112, 30)																			\
 	__BLOCK_DEFINITION(100, 20)																			\
-	__BLOCK_DEFINITION(88, 70)																			\
+	__BLOCK_DEFINITION(88, 80)																			\
 	__BLOCK_DEFINITION(76, 10)																			\
-	__BLOCK_DEFINITION(68, 60)																			\
-	__BLOCK_DEFINITION(28, 380)																			\
-	__BLOCK_DEFINITION(24, 70)																			\
+	__BLOCK_DEFINITION(68, 50)																			\
+	__BLOCK_DEFINITION(48, 20)																			\
+	__BLOCK_DEFINITION(28, 320)																			\
+	__BLOCK_DEFINITION(24, 100)																			\
 	__BLOCK_DEFINITION(20, 650)																			\
-	__BLOCK_DEFINITION(16, 360)						    												\
+	__BLOCK_DEFINITION(16, 300)						    												\
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
-	__SET_MEMORY_POOL_ARRAY(196)																		\
-	__SET_MEMORY_POOL_ARRAY(164)																		\
+	__SET_MEMORY_POOL_ARRAY(200)																		\
+	__SET_MEMORY_POOL_ARRAY(168)																		\
+	__SET_MEMORY_POOL_ARRAY(148)																		\
 	__SET_MEMORY_POOL_ARRAY(144)																		\
-	__SET_MEMORY_POOL_ARRAY(140)																		\
-	__SET_MEMORY_POOL_ARRAY(132)																		\
-	__SET_MEMORY_POOL_ARRAY(124)																		\
+	__SET_MEMORY_POOL_ARRAY(136)																		\
+	__SET_MEMORY_POOL_ARRAY(128)																		\
 	__SET_MEMORY_POOL_ARRAY(112)																		\
-	__SET_MEMORY_POOL_ARRAY(108)																		\
 	__SET_MEMORY_POOL_ARRAY(100)																		\
 	__SET_MEMORY_POOL_ARRAY(88)																			\
 	__SET_MEMORY_POOL_ARRAY(76)																			\
 	__SET_MEMORY_POOL_ARRAY(68)																			\
+	__SET_MEMORY_POOL_ARRAY(48)																			\
 	__SET_MEMORY_POOL_ARRAY(28)																			\
 	__SET_MEMORY_POOL_ARRAY(24)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
-	__SET_MEMORY_POOL_ARRAY(16)																			\
+	__SET_MEMORY_POOL_ARRAY(16)                                                                         \
 
 
 // percentage (0-100) above which the memory pool's status shows the pool usage
