@@ -346,7 +346,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 
 			if(Texture_getBgmapDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
 				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition->allocationType) &&
-				(textureDefinition->padding.cols == bgmapTextureDefinition->padding.cols && textureDefinition->padding.cols == bgmapTextureDefinition->padding.rows)
+				(textureDefinition->padding.cols == bgmapTextureDefinition->padding.cols && textureDefinition->padding.rows == bgmapTextureDefinition->padding.rows)
 			)
 			{
 				// return if found
