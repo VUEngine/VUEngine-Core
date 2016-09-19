@@ -494,11 +494,11 @@ PhysicalWorld GameState_getPhysicalWorld(GameState this)
 	return this->physicalWorld;
 }
 
-void GameState_processCollisions(GameState this)
+u32 GameState_processCollisions(GameState this)
 {
 	ASSERT(this, "GameState::processCollisions: null this");
 
-	CollisionManager_update(this->collisionManager, this->physicsClock);
+	return CollisionManager_update(this->collisionManager, this->physicsClock);
 }
 
 CollisionManager GameState_getCollisionManager(GameState this)

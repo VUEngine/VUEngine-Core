@@ -108,7 +108,7 @@ void GameState_pauseAnimations(GameState this, bool pause);
 void GameState_pausePhysics(GameState this, bool pause);
 void GameState_updatePhysics(GameState this);
 PhysicalWorld GameState_getPhysicalWorld(GameState this);
-void GameState_processCollisions(GameState this);
+u32 GameState_processCollisions(GameState this);
 CollisionManager GameState_getCollisionManager(GameState this);
 
 

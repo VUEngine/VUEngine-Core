@@ -149,7 +149,7 @@ inline static void Game_updateVisuals(Game this);
 inline static void Game_updateLogic(Game this);
 inline static void Game_updatePhysics(Game this);
 inline static void Game_updateTransformations(Game this);
-inline static void Game_updateCollisions(Game this);
+inline static u32 Game_updateCollisions(Game this);
 inline static void Game_checkForNewState(Game this);
 static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
@@ -779,7 +779,7 @@ inline static void Game_updateTransformations(Game this)
 #endif
 }
 
-inline static void Game_updateCollisions(Game this)
+inline static u32 Game_updateCollisions(Game this)
 {
 	this->currentProcess = kGameCheckingCollisions;
 
@@ -789,13 +789,15 @@ inline static void Game_updateCollisions(Game this)
 #endif
 
 	// process collisions
-	GameState_processCollisions(this->currentState);
+	u32 returnValue = GameState_processCollisions(this->currentState);
 
 	this->currentProcess = kGameCheckingCollisionsDone;
 
 #ifdef __DEBUG
 	this->lastProcessName = "processing collisions ended";
 #endif
+
+    return returnValue;
 }
 
 inline static void Game_checkForNewState(Game this)
@@ -1003,9 +1005,6 @@ static void Game_update(Game this)
 	    updatePhysicsTotalTime += processTime;
 #endif
 
-        // suspend streaming if up to this point the game frame has taken half the budget time
-        suspendStreaming |= TimerManager_getTicks(this->timerManager) >= __MILLISECONDS_IN_SECOND / __TARGET_FPS / 2;
-
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
@@ -1020,13 +1019,12 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
-        Game_updateCollisions(this);
+        suspendStreaming |= Game_updateCollisions(this);
 #ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         processCollisionsHighestTime = processTime > processCollisionsHighestTime? processTime: processCollisionsHighestTime;
 	    processCollisionsTotalTime += processTime;
 #endif
-
 
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);

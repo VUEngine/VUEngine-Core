@@ -61,7 +61,6 @@ u32 EntityFactory_callLoadedEntities(EntityFactory this);
 static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions);
 static void Entity_releaseSprites(Entity this);
 static void Entity_updateSprites(Entity this, int updateSpriteTransformations, int updateSpritePosition);
-static void Entity_onChildAdded(Entity this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -627,7 +626,7 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
     //go through n sprites in entity's definition
     for(; childrenDefinitions[i].entityDefinition; i++)
     {
-        EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), (EventListener)Entity_onChildAdded, this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+        EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
     }
 }
 
@@ -677,21 +676,6 @@ u32 Entity_areAllChildrenReady(Entity this)
     }
 
     return true;
-}
-
-static void Entity_onChildAdded(Entity this, Object eventFirer)
-{
-	ASSERT(this, "Entity::onChildLoaded: null this");
-	ASSERT(__SAFE_CAST(Entity, this), "Entity::onChildLoaded: this is not an Entity");
-	ASSERT(__SAFE_CAST(Container, eventFirer), "Entity::onChildLoaded: eventFirer is not a Container");
-
-    // must recalculate size
-    Entity_calculateSize(this);
-
-    if(this->hidden)
-    {
-        __VIRTUAL_CALL(Container, hide, __SAFE_CAST(Container, eventFirer));
-    }
 }
 
 // load an entity from a PositionedEntity definition

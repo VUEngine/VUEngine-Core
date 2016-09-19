@@ -227,13 +227,13 @@ static void CollisionManager_processInactiveShapes(CollisionManager this)
 }
 
 // calculate collisions
-void CollisionManager_update(CollisionManager this, Clock clock)
+u32 CollisionManager_update(CollisionManager this, Clock clock)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
 	if(clock->paused)
 	{
-		return;
+		return false;
 	}
 
 	// process removed shapes
@@ -251,6 +251,8 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 	}
 
 	this->checkingCollisions = true;
+
+	u32 returnValue = false;
 
 	// check the shapes
 	node = this->movingShapes->head;
@@ -287,6 +289,8 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 
                     if(collisionResult)
                     {
+                        returnValue = true;
+
                         if(!collidingObjects)
                         {
                             collidingObjects = __NEW(VirtualList);
@@ -312,6 +316,7 @@ void CollisionManager_update(CollisionManager this, Clock clock)
 
 	this->checkingCollisions = false;
 
+    return returnValue;
 }
 
 // unregister all shapes
