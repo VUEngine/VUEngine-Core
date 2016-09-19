@@ -296,7 +296,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	VIPManager_setupBrightnessRepeat(VIPManager_getInstance(), stageDefinition->rendering.colorConfig.brightnessRepeat);
 
 	// set particle removal delay
-	ParticleRemover_setRemovalDelayCicles(ParticleRemover_getInstance(), stageDefinition->streaming.particleRemovalDelayCicles);
+	ParticleRemover_setRemovalDelayCycles(ParticleRemover_getInstance(), stageDefinition->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));

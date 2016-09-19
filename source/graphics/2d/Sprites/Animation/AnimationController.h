@@ -57,7 +57,7 @@
         s8 actualFrame;																					\
         /* previous animation's frame shown */															\
         s8 previousFrame;																				\
-        /* actual frame cicle in a given direction (i.e. when walking) */								\
+        /* actual frame cycle in a given direction (i.e. when walking) */								\
         s8 frameDelay;																					\
         /* frame delay increment update cycle */														\
         s8 frameDelayDelta;																				\

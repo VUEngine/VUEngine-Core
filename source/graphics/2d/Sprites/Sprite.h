@@ -131,7 +131,7 @@ typedef struct AnimationFunction
 	// frames to play in animation
 	u32 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
 
-	// number of cicles a frame of animation is displayed
+	// number of cycles a frame of animation is displayed
 	int delay;
 
 	// whether to play it in loop or not

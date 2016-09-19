@@ -98,6 +98,7 @@ typedef struct StageTextureEntryDefinition
 
 typedef const StageTextureEntryDefinition StageTextureEntryROMDef;
 
+
 // defines a game world in ROM memory
 typedef struct StageDefinition
 {
@@ -118,7 +119,7 @@ typedef struct StageDefinition
 		int loadPadding;
 		int unloadPadding;
 		int streamingAmplitude;
-		int particleRemovalDelayCicles;
+		int particleRemovalDelayCycles;
 
 	} streaming;
 

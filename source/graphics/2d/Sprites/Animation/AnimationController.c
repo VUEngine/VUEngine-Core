@@ -136,7 +136,7 @@ s8 AnimationController_getFrameDelay(AnimationController this)
 	return this->frameDelay;
 }
 
-// set frame cicle
+// set frame cycle
 void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay)
 {
 	ASSERT(this, "AnimationController::setFrameDelay: null this");
@@ -147,7 +147,7 @@ void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay)
 // retrieve frame delay delta
 u8 AnimationController_geFrameDelayDelta(AnimationController this)
 {
-	ASSERT(this, "AnimationController::getAnimationControllerCicleDelta: null this");
+	ASSERT(this, "AnimationController::getAnimationControllerCycleDelta: null this");
 
 	return this->frameDelayDelta;
 }
@@ -155,7 +155,7 @@ u8 AnimationController_geFrameDelayDelta(AnimationController this)
 // set frame delay delta
 void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDelayDelta)
 {
-	ASSERT(this, "AnimationController::setAnimationControllerCicleDelta: null this");
+	ASSERT(this, "AnimationController::setAnimationControllerCycleDelta: null this");
 
 	this->frameDelayDelta = frameDelayDelta << __FRAME_CYCLE;
 }

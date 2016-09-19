@@ -33,9 +33,9 @@
         /* particle list */																				\
         VirtualList particlesLists;																		\
         /* remove delay */																				\
-        int removalDelayCicles;																			\
+        int removalDelayCycles;																			\
         /* remove delay */																				\
-        int leftRemoveDelayCicles;																		\
+        int leftRemoveDelayCycles;																		\
 
 // define the ParticleRemover
 __CLASS_DEFINITION(ParticleRemover, Object);
@@ -66,8 +66,8 @@ static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemov
 	__CONSTRUCT_BASE(Object);
 
 	this->particlesLists = __NEW(VirtualList);
-	this->removalDelayCicles = 0;
-	this->leftRemoveDelayCicles = this->removalDelayCicles;
+	this->removalDelayCycles = 0;
+	this->leftRemoveDelayCycles = this->removalDelayCycles;
 }
 
 // class's destructor
@@ -105,18 +105,18 @@ void ParticleRemover_reset(ParticleRemover this)
 
     VirtualList_clear(this->particlesLists);
 
-    this->leftRemoveDelayCicles = this->removalDelayCicles;
+    this->leftRemoveDelayCycles = this->removalDelayCycles;
 }
 
 void ParticleRemover_update(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::update: null this");
 
-	if(0 > this->removalDelayCicles)
+	if(0 > this->removalDelayCycles)
 	{
         ParticleRemover_reset(this);
     }
-    else if(0 >= --this->leftRemoveDelayCicles)
+    else if(0 >= --this->leftRemoveDelayCycles)
     {
         if(this->particlesLists->head)
         {
@@ -135,7 +135,7 @@ void ParticleRemover_update(ParticleRemover this)
             }
     	}
 
-    	this->leftRemoveDelayCicles = this->removalDelayCicles;
+    	this->leftRemoveDelayCycles = this->removalDelayCycles;
     }
 }
 
@@ -159,9 +159,9 @@ void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles
 	}
 }
 
-void ParticleRemover_setRemovalDelayCicles(ParticleRemover this, int removalDelayCicles)
+void ParticleRemover_setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles)
 {
 	ASSERT(this, "ParticleRemover::registerParticle: null this");
 
-    this->removalDelayCicles = removalDelayCicles;
+    this->removalDelayCycles = removalDelayCycles;
 }
