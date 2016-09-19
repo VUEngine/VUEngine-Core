@@ -36,6 +36,18 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class           VirtualList
+ * @brief
+ *
+ * @var VirtualNode head
+ * @brief           A pointer to the head of the list
+ * @memberof        VirtualList
+ *
+ * @var VirtualNode tail
+ * @brief           A pointer to the tail of the list
+ * @memberof        VirtualList
+ */
 
 __CLASS_DEFINITION(VirtualList, Object);
 
@@ -56,7 +68,14 @@ static void VirtualList_constructor(VirtualList this);
 __CLASS_NEW_DEFINITION(VirtualList)
 __CLASS_NEW_END(VirtualList);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    VirtualList
+ * @private
+ *
+ * @param this  Function scope
+ */
 static void VirtualList_constructor(VirtualList this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -66,7 +85,14 @@ static void VirtualList_constructor(VirtualList this)
 	this->tail  = NULL;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ */
 void VirtualList_destructor(VirtualList this)
 {
 	ASSERT(this, "VirtualList::destructor: null this");
@@ -79,7 +105,14 @@ void VirtualList_destructor(VirtualList this)
 	__DESTROY_BASE;
 }
 
-// remove all nodes from the list
+/**
+ * Remove all nodes from the list
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ */
 void VirtualList_clear(VirtualList this)
 {
 	ASSERT(this, "VirtualList::clear: null this");
@@ -110,7 +143,15 @@ void VirtualList_clear(VirtualList this)
 	}
 }
 
-// add a new node to the begging of the list
+/**
+ * Add a new node to the beginning of the list
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ * @param data
+ */
 int VirtualList_pushFront(VirtualList this, const void* const data)
 {
 	ASSERT(this, "VirtualList::pushFront: null this");
@@ -138,7 +179,14 @@ int VirtualList_pushFront(VirtualList this, const void* const data)
 	return true;
 }
 
-// remove the first element in the list
+/**
+ * Remove the first element from the list
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ */
 void VirtualList_popFront(VirtualList this)
 {
 	ASSERT(this, "VirtualList::popFront: null this");
@@ -166,7 +214,15 @@ void VirtualList_popFront(VirtualList this)
 	}
 }
 
-// add a new node to the end of the list
+/**
+ * Add a new node to the end of the list
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ * @param data
+ */
 int VirtualList_pushBack(VirtualList this, const void* const data)
 {
 	ASSERT(this, "VirtualList::pushBack: null this");
@@ -198,7 +254,16 @@ int VirtualList_pushBack(VirtualList this, const void* const data)
 	return true;
 }
 
-// retrieve the number of objects the list has
+/**
+ * Retrieve the number of objects the list has
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Number of objects
+ */
 int VirtualList_getSize(VirtualList this)
 {
 	ASSERT(this, "VirtualList::getSize: null this");
@@ -222,7 +287,17 @@ int VirtualList_getSize(VirtualList this)
 	return counter;
 }
 
-// return data pointer of object in the given index node
+/**
+ * Return data pointer of object in the given index node
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ * @param item
+ *
+ * @return      Data pointer of object in the given index node
+ */
 void* VirtualList_getNodeData(VirtualList this, int item)
 {
 	ASSERT(this, "VirtualList::getNodeData: null this");
@@ -234,7 +309,17 @@ void* VirtualList_getNodeData(VirtualList this, int item)
 	return (node) ? node->data : NULL;
 }
 
-// get node at item position
+/**
+ * Get node at item position
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ * @param item  Numeric position of node
+ *
+ * @return      Node
+ */
 VirtualNode VirtualList_getNode(VirtualList this, int item)
 {
 	ASSERT(this, "VirtualList::getNode: null this");
@@ -282,7 +367,17 @@ VirtualNode VirtualList_getNode(VirtualList this, int item)
 	return NULL;
 }
 
-// get node's address of node containing datapointer
+/**
+ * Get address of node containing dataPointer
+ *
+ * @memberof            VirtualList
+ * @public
+ *
+ * @param this          Function scope
+ * @param dataPointer
+ *
+ * @return              Node
+ */
 void* VirtualList_getObject(VirtualList this, void* const dataPointer)
 {
 	ASSERT(this, "VirtualList::getObject: null this");
@@ -304,8 +399,18 @@ void* VirtualList_getObject(VirtualList this, void* const dataPointer)
 	return node;
 }
 
-// remove a node
-static int VirtualList_removeNode(VirtualList this, VirtualNode node)
+/**
+ * Remove a node
+ *
+ * @memberof    VirtualList
+ * @private
+ *
+ * @param this  Function scope
+ * @param node  Node to be removed from list
+ *
+ * @return      Flag whether action was successful or not
+ */
+static bool VirtualList_removeNode(VirtualList this, VirtualNode node)
 {
 	ASSERT(this, "VirtualList::removeNode: null this");
 
@@ -357,7 +462,17 @@ static int VirtualList_removeNode(VirtualList this, VirtualNode node)
 	return false;
 }
 
-// find a node in the list
+/**
+ * Find a node in the list
+ *
+ * @memberof            VirtualList
+ * @public
+ *
+ * @param this          Function scope
+ * @param dataPointer
+ *
+ * @return              Node
+ */
 VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
 {
 	ASSERT(this, "VirtualList::find: null this");
@@ -369,7 +484,17 @@ VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
 	return node;
 }
 
-// get position of data in the list
+/**
+ * Get position of data in the list
+ *
+ * @memberof            VirtualList
+ * @public
+ *
+ * @param this          Function scope
+ * @param dataPointer
+ *
+ * @return              Numeric position of node
+ */
 int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer)
 {
 	ASSERT(this, "VirtualList::getDataPosition: null this");
@@ -382,7 +507,17 @@ int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer)
 	return !node ? -1 : position;
 }
 
-// get position of node in the list
+/**
+ * Get position of node in the list
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ * @param node
+ *
+ * @return      Numeric position of node
+ */
 int VirtualList_getNodePosition(VirtualList this, VirtualNode node)
 {
 	ASSERT(this, "VirtualList::removeElement: null this");
@@ -395,15 +530,33 @@ int VirtualList_getNodePosition(VirtualList this, VirtualNode node)
 	return !node || !currentNode ? -1 : position;
 }
 
-// remove a node from the list
-int VirtualList_removeElement(VirtualList this, const void* const dataPointer)
+/**
+ * Remove a node from the list
+ *
+ * @memberof            VirtualList
+ * @public
+ *
+ * @param this          Function scope
+ * @param dataPointer
+ *
+ * @return              Flag whether action was successful or not
+ */
+bool VirtualList_removeElement(VirtualList this, const void* const dataPointer)
 {
 	ASSERT(this, "VirtualList::removeElement: null this");
 
 	return VirtualList_removeNode(this, VirtualList_find(this, dataPointer));
 }
 
-// copy source list's elements to destiny list
+/**
+ * Copy source list's elements to destination list
+ *
+ * @memberof            VirtualList
+ * @public
+ *
+ * @param this          Function scope
+ * @param sourceList
+ */
 void VirtualList_copy(VirtualList this, VirtualList sourceList)
 {
 	ASSERT(this, "VirtualList::copy: null this");
@@ -427,7 +580,16 @@ void VirtualList_copy(VirtualList this, VirtualList sourceList)
 	}
 }
 
-// retrieve list's head's address
+/**
+ * Retrieve list's head's address
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Node
+ */
 VirtualNode VirtualList_begin(VirtualList this)
 {
 	ASSERT(this, "VirtualList::begin: null this");
@@ -435,7 +597,16 @@ VirtualNode VirtualList_begin(VirtualList this)
 	return this->head;
 }
 
-// retrieve the first element
+/**
+ * Retrieve the first element
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Head data
+ */
 void* VirtualList_front(VirtualList this)
 {
 	ASSERT(this, "VirtualList::front: null this");
@@ -443,7 +614,16 @@ void* VirtualList_front(VirtualList this)
 	return this->head->data;
 }
 
-// retrieve last list's node
+/**
+ * Retrieve list's last node
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Node
+ */
 VirtualNode VirtualList_end(VirtualList this)
 {
 	ASSERT(this, "VirtualList::end: null this");
@@ -451,7 +631,16 @@ VirtualNode VirtualList_end(VirtualList this)
 	return this->tail;
 }
 
-// retrieve the last element
+/**
+ * Retrieve the last element
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Tail data
+ */
 void* VirtualList_back(VirtualList this)
 {
 	ASSERT(this, "VirtualList::back: null this");
@@ -459,7 +648,18 @@ void* VirtualList_back(VirtualList this)
 	return this->tail->data;
 }
 
-// insert a node after the node specified
+/**
+ * Insert a node after the node specified
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ * @param node  Insert after this node
+ * @param data  Data for new node
+ *
+ * @return      Newly inserted Node
+ */
 VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const void* const data)
 {
 	ASSERT(this, "VirtualList::insertAfter: null this");
@@ -497,7 +697,18 @@ VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const vo
 	return newNode;
 }
 
-// insert a node before the node specified
+/**
+ * Insert a node before the node specified
+ *
+ * @memberof    VirtualList
+ * @public
+ *
+ * @param this  Function scope
+ * @param node  Insert before this node
+ * @param data  Data for new node
+ *
+ * @return      Newly inserted Node
+ */
 VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const void* const data)
 {
 	ASSERT(this, "VirtualList::insertBefore: null this");
@@ -529,7 +740,15 @@ VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const v
 	return newNode;
 }
 
-// swap two lists heads and tails
+/**
+ * Swap two lists' heads and tails
+ *
+ * @memberof            VirtualList
+ * @public
+ *
+ * @param this          Function scope
+ * @param secondList    Function scope
+ */
 void VirtualList_swap(VirtualList this, VirtualList secondList)
 {
 	ASSERT(this, "VirtualList::swap: null this");
@@ -547,10 +766,19 @@ void VirtualList_swap(VirtualList this, VirtualList secondList)
 	this->tail = secondList->tail;
 
 	secondList->tail = aux;
-
 }
 
-// get node's address at given position
+/**
+ * Get node's address at given position
+ *
+ * @memberof        VirtualList
+ * @public
+ *
+ * @param this      Function scope
+ * @param position  Function scope
+ *
+ * @return          Node data or NULL if no node could be found at position
+ */
 void* VirtualList_getObjectAtPosition(VirtualList this, int position)
 {
 	ASSERT(this, "VirtualList::getObjectAtPosition: null this");

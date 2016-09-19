@@ -38,12 +38,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define I18n_METHODS(ClassName)																					\
-		Object_METHODS(ClassName)																					\
+#define I18n_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define I18n_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
+
+#define I18n_ATTRIBUTES																					\
+        Object_ATTRIBUTES																				\
+        u8 activeLanguage;																				\
 
 // declare a I18n
 __CLASS(I18n);

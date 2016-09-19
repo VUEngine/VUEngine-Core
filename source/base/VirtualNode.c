@@ -35,6 +35,23 @@ static void VirtualNode_destructor(VirtualNode this);
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class           VirtualNode
+ * @brief
+ *
+ * @var VirtualNode next
+ * @brief           pointer to next node
+ * @memberof        VirtualNode
+
+ * @var VirtualNode previous
+ * @brief           pointer to previous node
+ * @memberof        VirtualNode
+
+ * @var void*       data
+ * @brief           pointer to the data
+ * @memberof        VirtualNode
+ */
+
 __CLASS_DEFINITION(VirtualNode, Object);
 
 
@@ -45,7 +62,15 @@ __CLASS_DEFINITION(VirtualNode, Object);
 __CLASS_NEW_DEFINITION(VirtualNode, const void* const data)
 __CLASS_NEW_END(VirtualNode, data);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    VirtualNode
+ * @private
+ *
+ * @param this  Function scope
+ * @param data
+ */
 static void VirtualNode_constructor(VirtualNode this, const void* const data)
 {
 	__CONSTRUCT_BASE(Object);
@@ -56,7 +81,14 @@ static void VirtualNode_constructor(VirtualNode this, const void* const data)
 	this->data = (void*)data;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    VirtualNode
+ * @public
+ *
+ * @param this  Function scope
+ */
 __attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::destructor: null this");
@@ -66,7 +98,15 @@ __attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
 	__DESTROY_BASE;
 }
 
-// set node's data pointer
+/**
+ * Set node's data pointer
+ *
+ * @memberof    VirtualNode
+ * @public
+ *
+ * @param this  Function scope
+ * @param data
+ */
 void VirtualNode_setData(VirtualNode this, const void* const data)
 {
 	ASSERT(this, "VirtualNode::destructor: null this");
@@ -74,7 +114,16 @@ void VirtualNode_setData(VirtualNode this, const void* const data)
 	this->data = (void*)data;
 }
 
-// retrieve data pointer
+/**
+ * Retrieve node's data pointer
+ *
+ * @memberof    VirtualNode
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Data pointer
+ */
 void* VirtualNode_getData(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::getData: null this");
@@ -82,7 +131,16 @@ void* VirtualNode_getData(VirtualNode this)
 	return this->data;
 }
 
-// get next node's address
+/**
+ * Get next node's address
+ *
+ * @memberof    VirtualNode
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Node
+ */
 VirtualNode VirtualNode_getNext(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::getNext: null this");
@@ -90,7 +148,15 @@ VirtualNode VirtualNode_getNext(VirtualNode this)
 	return this->next;
 }
 
-// set node's next node's address
+/**
+ * set next node's address
+ *
+ * @memberof    VirtualNode
+ * @public
+ *
+ * @param this  Function scope
+ * @param next
+ */
 void VirtualNode_setNext(VirtualNode this, VirtualNode next)
 {
 	ASSERT(this, "VirtualNode::setNext: null this");
@@ -98,7 +164,16 @@ void VirtualNode_setNext(VirtualNode this, VirtualNode next)
 	this->next = next;
 }
 
-// set node's previous node's address
+/**
+ * Get previous node's address
+ *
+ * @memberof    VirtualNode
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Node
+ */
 VirtualNode VirtualNode_getPrevious(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::getPrevious: null this");
@@ -106,7 +181,15 @@ VirtualNode VirtualNode_getPrevious(VirtualNode this)
 	return this->previous;
 }
 
-// set node's previous node's address
+/**
+ * Set previous node's address
+ *
+ * @memberof        VirtualNode
+ * @public
+ *
+ * @param this      Function scope
+ * @param previous
+ */
 void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
 {
 	ASSERT(this, "VirtualNode::setPrevious: null this");
@@ -114,7 +197,15 @@ void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
 	this->previous = previous;
 }
 
-// swap the data between two nodes
+/**
+ * Swap the data between two nodes
+ *
+ * @memberof    VirtualNode
+ * @public
+ *
+ * @param this  Function scope
+ * @param node
+ */
 void VirtualNode_swapData(VirtualNode this, VirtualNode node)
 {
 	ASSERT(this, "VirtualNode::swapData: null this");

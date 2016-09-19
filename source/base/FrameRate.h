@@ -30,8 +30,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define FrameRate_METHODS(ClassName)																				\
-		Object_METHODS(ClassName)																					\
+#define FrameRate_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define FrameRate_SET_VTABLE(ClassName)																	\

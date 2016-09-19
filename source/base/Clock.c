@@ -29,7 +29,27 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Clock
+/**
+ * @class       Clock
+ * @extends     Object
+ *
+ * @var u32     milliSeconds
+ * @brief       time elapsed
+ * @memberof    Clock
+ *
+ * @var u32     previousSecond
+ * @brief       register
+ * @memberof    Clock
+ *
+ * @var u32     previousMinute
+ * @brief       register
+ * @memberof    Clock
+ *
+ * @var bool    paused
+ * @brief       flag to pause the clock
+ * @memberof    Clock
+ */
+
 __CLASS_DEFINITION(Clock, Object);
 
 
@@ -48,7 +68,14 @@ static void Clock_constructor(Clock this);
 __CLASS_NEW_DEFINITION(Clock)
 __CLASS_NEW_END(Clock);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    Clock
+ * @private
+ *
+ * @param this  Function scope
+ */
 static void Clock_constructor(Clock this)
 {
 	ASSERT(this, "Clock::constructor: null this");
@@ -68,7 +95,14 @@ static void Clock_constructor(Clock this)
 	ClockManager_register(ClockManager_getInstance(), this);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ */
 void Clock_destructor(Clock this)
 {
 	ASSERT(this, "Clock::destructor: null this");
@@ -81,7 +115,17 @@ void Clock_destructor(Clock this)
 	__DESTROY_BASE;
 }
 
-// print formatted class's attributes's states
+/**
+ * Print formatted class' attributes's states
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ * @param col
+ * @param row
+ * @param font
+ */
 void Clock_print(Clock this, int col, int row, const char* font)
 {
 	ASSERT(this, "Clock::print: null this");
@@ -114,7 +158,15 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	Printing_int(Printing_getInstance(), seconds, secondsPosition, row, font);
 }
 
-// called on each timer interrupt
+/**
+ * Called on each timer interrupt
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ * @param ticks
+ */
 void Clock_update(Clock this, u32 ticks)
 {
 	ASSERT(this, "Clock::update: null this");
@@ -144,7 +196,14 @@ void Clock_update(Clock this, u32 ticks)
 	}
 }
 
-// reset clock's attributes
+/**
+ * Reset clock's attributes
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ */
 void Clock_reset(Clock this)
 {
 	ASSERT(this, "Clock::reset: null this");
@@ -154,7 +213,16 @@ void Clock_reset(Clock this)
 	this->previousMinute = 0;
 }
 
-// retrieve clock's milliseconds
+/**
+ * Retrieve clock's milliseconds
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Current milliseconds
+ */
 u32 Clock_getMilliSeconds(Clock this)
 {
 	ASSERT(this, "Clock::getMilliSeconds: null this");
@@ -162,7 +230,16 @@ u32 Clock_getMilliSeconds(Clock this)
 	return this->milliSeconds;
 }
 
-// retrieve clock's seconds
+/**
+ * Retrieve clock's seconds
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Current seconds
+ */
 u32 Clock_getSeconds(Clock this)
 {
 	ASSERT(this, "Clock::getSeconds: null this");
@@ -170,7 +247,16 @@ u32 Clock_getSeconds(Clock this)
 	return (u32)(this->milliSeconds / __MILLISECONDS_IN_SECOND);
 }
 
-// retrieve clock's minutes
+/**
+ * Retrieve clock's minutes
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Current minutes
+ */
 u32 Clock_getMinutes(Clock this)
 {
 	ASSERT(this, "Clock::getMinutes: null this");
@@ -178,7 +264,16 @@ u32 Clock_getMinutes(Clock this)
 	return (u32)(this->milliSeconds / (__MILLISECONDS_IN_SECOND * 60));
 }
 
-// retrieve clock's total elapsed time in seconds
+/**
+ * Retrieve clock's total elapsed time in milliseconds
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Current milliseconds
+ */
 u32 Clock_getTime(Clock this)
 {
 	ASSERT(this, "Clock::getTime: null this");
@@ -186,7 +281,16 @@ u32 Clock_getTime(Clock this)
 	return this->milliSeconds;
 }
 
-// retrieve current elapsed milliseconds in the current second
+/**
+ * Retrieve current elapsed milliseconds in the current second
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Elapsed milliseconds in the current second
+ */
 int Clock_getTimeInCurrentSecond(Clock this)
 {
 	ASSERT(this, "Clock::getTimeInCurrentSecond: null this");
@@ -194,7 +298,15 @@ int Clock_getTimeInCurrentSecond(Clock this)
 	return __MILLISECONDS_IN_SECOND * (this->milliSeconds * 0.001f - F_FLOOR(this->milliSeconds * 0.001f));
 }
 
-// set clock's total elapsed time from seconds parameters
+/**
+ * Set clock's total elapsed time from seconds parameters
+ *
+ * @memberof            Clock
+ * @public
+ *
+ * @param this          Function scope
+ * @param totalSeconds
+ */
 void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 {
 	ASSERT(this, "Clock::setTimeInSeconds: null this");
@@ -202,7 +314,14 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 	this->milliSeconds = totalSeconds * __MILLISECONDS_IN_SECOND;
 }
 
-// start the clock
+/**
+ * Start the clock
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ */
 void Clock_start(Clock this)
 {
 	ASSERT(this, "Clock::start: null this");
@@ -211,7 +330,14 @@ void Clock_start(Clock this)
 	this->paused = false;
 }
 
-// stop the clock
+/**
+ * Stop the clock
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ */
 void Clock_stop(Clock this)
 {
 	ASSERT(this, "Clock::stop: null this");
@@ -220,7 +346,15 @@ void Clock_stop(Clock this)
 	this->paused = true;
 }
 
-// pause the clock
+/**
+ * Pause the clock
+ *
+ * @memberof        Clock
+ * @public
+ *
+ * @param this      Function scope
+ * @param paused    Set to paused or unpaused?
+ */
 void Clock_pause(Clock this, bool paused)
 {
 	ASSERT(this, "Clock::pause: null this");
@@ -228,7 +362,16 @@ void Clock_pause(Clock this, bool paused)
 	this->paused = paused;
 }
 
-// whether the clock is running or not
+/**
+ * Whether the clock is running or not
+ *
+ * @memberof    Clock
+ * @public
+ *
+ * @param this  Function scope
+ *
+ * @return      Paused flag
+ */
 bool Clock_isPaused(Clock this)
 {
 	ASSERT(this, "Clock::isPaused: null this");

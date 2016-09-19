@@ -34,25 +34,17 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define VirtualNode_METHODS(ClassName)																				\
-		Object_METHODS(ClassName)																					\
+#define VirtualNode_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 #define VirtualNode_SET_VTABLE(ClassName)																\
 		Object_SET_VTABLE(ClassName)																	\
 
 #define VirtualNode_ATTRIBUTES																			\
-																										\
-	/* super's attributes */																			\
-	Object_ATTRIBUTES																					\
-																										\
-	/* pointer to next node */																			\
-	VirtualNode next;																					\
-																										\
-	/* pointer to previos node */																		\
-	VirtualNode previous;																				\
-																										\
-	/* pointer to the data */																			\
-	void* data;																							\
+	    Object_ATTRIBUTES																				\
+	    VirtualNode next;																				\
+	    VirtualNode previous;																			\
+	    void* data;																						\
 
 __CLASS(VirtualNode);
 

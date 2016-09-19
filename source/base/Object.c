@@ -30,12 +30,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class Object
- * @brief Base class for all other classes in the engine.
+ * @class               Object
+ * @brief               Base class for all other classes in the engine.
  *
- * @var VirtualList events
- * @brief List of registered events.
- * @memberof Object
+ * @var VirtualList     events
+ * @brief               List of registered events.
+ * @memberof            Object
  */
 
 // this is the base class for everything, so it derives from nothing but itself
@@ -61,8 +61,9 @@ typedef struct Event
 /**
  * Class constructor
  *
- * @memberof Object
+ * @memberof    Object
  * @public
+ *
  * @param this  Function scope
  */
 void Object_constructor(Object this)
@@ -73,8 +74,9 @@ void Object_constructor(Object this)
 /**
  * Class destructor
  *
- * @memberof Object
+ * @memberof    Object
  * @public
+ *
  * @param this  Function scope
  */
 void Object_destructor(Object this)
@@ -102,10 +104,12 @@ void Object_destructor(Object this)
 /**
  * Handles incoming messages
  *
- * @memberof Object
+ * @memberof        Object
  * @public
- * @param this     Function scope
- * @param telegram The received message
+ *
+ * @param this      Function scope
+ * @param telegram  The received message
+ *
  * @return Always returns false, this is meant to be used only in derived classes
  */
 bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
@@ -118,12 +122,13 @@ bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram _
 /**
  * Registers an event listener
  *
- * @memberof Object
+ * @memberof            Object
  * @public
- * @param this         Function scope
- * @param listener     Object to register event listener at
- * @param method       The method to execute on event
- * @param eventName    The name of the event to listen to
+ *
+ * @param this          Function scope
+ * @param listener      Object to register event listener at
+ * @param method        The method to execute on event
+ * @param eventName     The name of the event to listen to
  */
 void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName)
 {
@@ -156,12 +161,13 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 /**
  * Removes an event listener
  *
- * @memberof Object
+ * @memberof            Object
  * @public
- * @param this         Function scope
- * @param listener     Object where event listener is registered at
- * @param method       The method attached to event listener
- * @param eventName    The name of the event
+ *
+ * @param this          Function scope
+ * @param listener      Object where event listener is registered at
+ * @param method        The method attached to event listener
+ * @param eventName     The name of the event
  */
 void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName)
 {
@@ -189,11 +195,12 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 /**
  * Removes event listeners without specifying a method
  *
- * @memberof Object
+ * @memberof            Object
  * @public
- * @param this         Function scope
- * @param listener     Object where event listener is registered at
- * @param eventName    The name of the event
+ *
+ * @param this          Function scope
+ * @param listener      Object where event listener is registered at
+ * @param eventName     The name of the event
  */
 void Object_removeEventListeners(Object this, Object listener, char* eventName)
 {
@@ -237,10 +244,11 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 /**
  * Removes event listeners without specifying a method nor a listener
  *
- * @memberof Object
+ * @memberof            Object
  * @public
- * @param this         Function scope
- * @param eventName    The name of the event
+ *
+ * @param this          Function scope
+ * @param eventName     The name of the event
  */
 void Object_removeAllEventListeners(Object this, char* eventName)
 {
@@ -284,10 +292,11 @@ void Object_removeAllEventListeners(Object this, char* eventName)
 /**
  * Fires an event
  *
- * @memberof Object
+ * @memberof            Object
  * @public
- * @param this         Function scope
- * @param eventName    The name of the event
+ *
+ * @param this          Function scope
+ * @param eventName     The name of the event
  */
 void Object_fireEvent(Object this,  char* eventName)
 {
@@ -332,11 +341,14 @@ void Object_fireEvent(Object this,  char* eventName)
 /**
  * Casts an object to base class
  *
- * @memberof Object
+ * @memberof                            Object
  * @public
- * @param this                         Function scope
+ *
+ * @param this                          Function scope
  * @param targetClassGetClassMethod
  * @param baseClassGetClassMethod
+ *
+ * @return                              Casted Object
  */
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
@@ -385,9 +397,12 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 /**
  * Get an Object's vTable
  *
- * @memberof Object
+ * @memberof    Object
  * @public
+ *
  * @param this  Function scope
+ *
+ * @return      vTable pointer
  */
 const void* Object_getVTable(Object this)
 {

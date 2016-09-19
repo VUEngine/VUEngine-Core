@@ -37,11 +37,8 @@
 	Object_SET_VTABLE(ClassName)																		\
 
 #define VirtualList_ATTRIBUTES																			\
-        /* it is derived from */																		\
         Object_ATTRIBUTES																				\
-        /* a pointer to the head of the list */ 														\
         VirtualNode head;																				\
-        /* a pointer to the tail of the list */															\
         VirtualNode tail;																				\
 
 __CLASS(VirtualList);
@@ -65,7 +62,7 @@ void* VirtualList_getObject(VirtualList this, void* const dataPointer);
 VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer);
 int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer);
 int VirtualList_getNodePosition(VirtualList this, VirtualNode node);
-int VirtualList_removeElement(VirtualList this, const void* const dataPointer);
+bool VirtualList_removeElement(VirtualList this, const void* const dataPointer);
 void VirtualList_copy(VirtualList this, VirtualList sourceList);
 VirtualNode VirtualList_begin(VirtualList this);
 void* VirtualList_front(VirtualList this);

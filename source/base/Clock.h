@@ -39,18 +39,6 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Clock_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* time elapsed */																				\
-        u32 milliSeconds;																				\
-        /* register */																					\
-        u32 previousSecond;																				\
-        /* register */																					\
-        u32 previousMinute;																				\
-        /* flag to pause the clock */															        \
-        bool paused;																					\
-
 // declare the virtual methods
 #define Clock_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
@@ -60,6 +48,13 @@
 #define Clock_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Clock, update);														\
+
+#define Clock_ATTRIBUTES																				\
+        Object_ATTRIBUTES																				\
+        u32 milliSeconds;																				\
+        u32 previousSecond;																				\
+        u32 previousMinute;																				\
+        bool paused;																					\
 
 // declare a Clock
 __CLASS(Clock);
@@ -72,10 +67,8 @@ __CLASS(Clock);
 __CLASS_NEW_DECLARE(Clock);
 
 void Clock_destructor(Clock this);
-void Clock_delay(Clock this, int milliSeconds);
 void Clock_print(Clock this, int col, int row, const char* font);
 void Clock_update(Clock this, u32 ticks);
-void Clock_interrupt();
 void Clock_reset(Clock this);
 u32 Clock_getMilliSeconds(Clock this);
 u32 Clock_getSeconds(Clock this);
