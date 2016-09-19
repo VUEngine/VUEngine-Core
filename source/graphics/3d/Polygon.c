@@ -148,7 +148,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			}
 
 			// draw the line in both buffers
-			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
+			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
 		}
 
 		if(fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
@@ -170,7 +170,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			}
 
 			// draw the line in both buffers
-			DirectDraw_lineFast(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
+			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
 		}
 	}
 }

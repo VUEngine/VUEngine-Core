@@ -93,7 +93,7 @@ static void DirectDraw_putPixel(DirectDraw this __attribute__ ((unused)), u32 bu
 }
 
 // line draw algorithm from
-void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int palette)
+void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int palette)
 {
 	fromPoint.x = FIX19_13TOI(fromPoint.x);
 	fromPoint.y = FIX19_13TOI(fromPoint.y);
