@@ -74,7 +74,7 @@ void DirectDraw_destructor(DirectDraw this)
 	__SINGLETON_DESTROY;
 }
 
-// draw a pixel on the screen (DirectDraw)
+// draw a pixel on the screen
 static void DirectDraw_putPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, int x, int y, int palette)
 {
 	// a pointer to the buffer
@@ -84,11 +84,11 @@ static void DirectDraw_putPixel(DirectDraw this __attribute__ ((unused)), u32 bu
 	// calculate pixel position each column has 16 words, so 16 * 4 bytes = 64, 8 bytes are 4 pixels
 	pointer += ((x << 6) + (y >> 2));
 
-	// calculate the pixel to be draw
+	// calculate the pixel to be drawn
 	*pointer |= (palette << ((y & 3) << 1));
 }
 
-// line draw algorithm from
+// line a draw between two given points
 void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int palette)
 {
 	fromPoint.x = FIX19_13TOI(fromPoint.x);
@@ -133,7 +133,6 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 		DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
 	}
 
-	int counter = 0;
 	if(dx > dy)
 	{
 		int fraction = dy - (dx >> 1);
