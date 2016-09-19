@@ -960,8 +960,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
             false
         };
 
-
-		Stage_addChildEntity(GameState_getStage(this->gameState), DUMMY_ENTITY, NULL, &position, NULL, false);
+		Stage_addChildEntity(GameState_getStage(this->gameState), &DUMMY_ENTITY, false);
 		SpriteManager_sortLayers(SpriteManager_getInstance());
 
 		VirtualList stageEntities = Container_getChildren(__SAFE_CAST(Container, GameState_getStage(this->gameState)));
