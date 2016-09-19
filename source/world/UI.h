@@ -71,7 +71,7 @@ __CLASS_NEW_DECLARE(UI, UIDefinition* uiDefinition);
 void UI_destructor(UI this);
 void UI_addEntities(UI this, PositionedEntity* entities);
 void UI_transform(UI this, const Transformation* environmentTransform);
-void UI_initialTransform(UI this, Transformation* environmentTransform);
+void UI_initialTransform(UI this, Transformation* environmentTransform, u32 recursive);
 
 
 #endif

@@ -60,12 +60,12 @@ __CLASS_NEW_DECLARE(ManagedMBackground, MBackgroundDefinition* definition, int i
 
 void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, int id, const char* const name);
 void ManagedMBackground_destructor(ManagedMBackground this);
-void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform);
+void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform, u32 recursive);
 void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform);
 void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this);
 void ManagedMBackground_update(ManagedMBackground this);
 int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
-void ManagedMBackground_ready(ManagedMBackground this);
+void ManagedMBackground_ready(ManagedMBackground this, u32 recursive);
 
 
 #endif

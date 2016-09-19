@@ -709,7 +709,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	ASSERT(childEntity, "Entity::addChildFromDefinition: childEntity no created");
 
     // must initialize after adding the children
-    __VIRTUAL_CALL(Entity, initialize, childEntity);
+    __VIRTUAL_CALL(Entity, initialize, childEntity, true);
 
     // if already initialized
     if(this->size.x && this->size.y && this->size.z)
@@ -717,13 +717,13 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
         Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
          // apply transformations
-        __VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform);
+        __VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform, true);
     }
 
     // create the entity and add it to the world
     Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
 
-    __VIRTUAL_CALL(Entity, ready, childEntity);
+    __VIRTUAL_CALL(Entity, ready, childEntity, true);
 
 	return childEntity;
 }
@@ -777,7 +777,7 @@ u32 Entity_areAllChildrenReady(Entity this)
 }
 
 // initialize from definition
-void Entity_initialize(Entity this)
+void Entity_initialize(Entity this, u32 recursive)
 {
 	ASSERT(this, "Entity::initialize: null this");
 
@@ -786,30 +786,30 @@ void Entity_initialize(Entity this)
 		Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 	}
 
-	if(this->children)
+	if(recursive && this->children)
 	{
 		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Entity, initialize, __SAFE_CAST(Entity, node->data));
+			__VIRTUAL_CALL(Entity, initialize, __SAFE_CAST(Entity, node->data), recursive);
 		}
 	}
 }
 
 // entity is initialized
-void Entity_ready(Entity this)
+void Entity_ready(Entity this, u32 recursive)
 {
 	ASSERT(this, "Entity::initialize: null this");
 
-	if(this->children)
+	if(recursive && this->children)
 	{
 		// call ready method on children
 		VirtualNode childNode = this->children->head;
 
 		for(; childNode; childNode = childNode->next)
 		{
-			__VIRTUAL_CALL(Entity, ready, __SAFE_CAST(Entity, childNode->data));
+			__VIRTUAL_CALL(Entity, ready, __SAFE_CAST(Entity, childNode->data), recursive);
 		}
 	}
 }
@@ -915,15 +915,12 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 }
 
 // initial transformation
-void Entity_initialTransform(Entity this, Transformation* environmentTransform)
+void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
 
-	// force invalid position in all children
-	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
-
 	// call base class's transform method
-	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
+	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform, recursive);
 
 	// now can calculate the size
 	if(!this->size.x || !this->size.y || !this->size.z)

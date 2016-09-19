@@ -87,7 +87,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	{
 		Entity entity = Entity_loadEntity(&entities[i], ID++);
 
-		__VIRTUAL_CALL(Entity, initialize, entity);
+		__VIRTUAL_CALL(Entity, initialize, entity, true);
 
 		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 	}
@@ -109,7 +109,7 @@ void UI_transform(UI this, const Transformation* environmentTransform)
 }
 
 // transform
-void UI_initialTransform(UI this, Transformation* environmentTransform)
+void UI_initialTransform(UI this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "UI::initialTransform: null this");
 
@@ -135,7 +135,7 @@ void UI_initialTransform(UI this, Transformation* environmentTransform)
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 
-	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform);
+	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform, recursive);
 
 	__VIRTUAL_CALL(Container, updateVisualRepresentation, this);
 

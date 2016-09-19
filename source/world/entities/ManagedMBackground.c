@@ -119,11 +119,11 @@ static void ManagedMBackground_registerSprites(ManagedMBackground this, Entity c
 }
 
 // transform class
-void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform)
+void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "ManagedMBackground::initialTransform: null this");
 
-	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
+	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform, recursive);
 
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
@@ -140,14 +140,16 @@ void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation
 	this->previous2DPosition = position2D;
 }
 
-void ManagedMBackground_ready(ManagedMBackground this)
+void ManagedMBackground_ready(ManagedMBackground this, u32 recursive)
 {
 	ASSERT(this, "ManagedMBackground::ready: null this");
 
-    Entity_ready(__SAFE_CAST(Entity, this));
+    Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
-	VirtualList_clear(this->managedSprites);
-	ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+	if(!VirtualList_getSize(this->managedSprites))
+	{
+	    ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+    }
 }
 
 // transform class

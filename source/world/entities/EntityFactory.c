@@ -260,7 +260,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 
         if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
         {
-            __VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity);
+            __VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
 
             VirtualList_pushBack(this->entitiesToTransform, positionedEntityDescription);
             VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
@@ -305,7 +305,7 @@ u32 EntityFactory_transformEntities(EntityFactory this)
         {
             Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
 
-            __VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, &environmentTransform);
+            __VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, &environmentTransform, false);
 
             VirtualList_pushBack(this->entitiesToMakeReady, positionedEntityDescription);
             VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
@@ -349,11 +349,14 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
             __VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
 
             // call ready method
-            __VIRTUAL_CALL(Entity, ready, positionedEntityDescription->entity);
+            __VIRTUAL_CALL(Entity, ready, positionedEntityDescription->entity, false);
 
-            Object_fireEvent(__SAFE_CAST(Object, positionedEntityDescription->entity), __EVENT_ENTITY_LOADED);
+            if(positionedEntityDescription->callback)
+            {
+                Object_fireEvent(__SAFE_CAST(Object, positionedEntityDescription->entity), __EVENT_ENTITY_LOADED);
 
-            Object_removeAllEventListeners(__SAFE_CAST(Object, positionedEntityDescription->entity), __EVENT_ENTITY_LOADED);
+                Object_removeAllEventListeners(__SAFE_CAST(Object, positionedEntityDescription->entity), __EVENT_ENTITY_LOADED);
+            }
 
             VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
             __DELETE_BASIC(positionedEntityDescription);

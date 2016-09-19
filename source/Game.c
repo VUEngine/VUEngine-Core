@@ -1026,12 +1026,11 @@ static void Game_update(Game this)
 	    processCollisionsTotalTime += processTime;
 #endif
 
-#ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
-#endif
-
         if(!suspendStreaming)
         {
+#ifdef __PROFILE_GAME
+    	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#endif
             GameState_stream(this->currentState);
 
 #ifdef __PROFILE_GAME

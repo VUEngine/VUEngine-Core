@@ -87,14 +87,17 @@ void MBackground_destructor(MBackground this)
 }
 
 // initialize method
-void MBackground_initialize(MBackground this)
+void MBackground_initialize(MBackground this, u32 recursive)
 {
 	ASSERT(this->mBackgroundDefinition->spritesDefinitions[0], "MBackground::initialize: null sprite list");
 
 	// first register with the manager so it handles the texture loading process
-	MBackground_registerTextures(this);
+	if(!this->sprites)
+	{
+	    MBackground_registerTextures(this);
+    }
 
-	Entity_initialize(__SAFE_CAST(Entity, this));
+	Entity_initialize(__SAFE_CAST(Entity, this), recursive);
 }
 
 void MBackground_suspend(MBackground this)

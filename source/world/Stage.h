@@ -57,8 +57,6 @@
         EntityFactory entityFactory;                                                                    \
         /* the stage entities */ 																		\
         VirtualList stageEntities;																		\
-        /* the selected entities to be streamed in */ 													\
-        VirtualList inRangeEntities;																	\
         /* the pivot node for streaming */ 																\
         VirtualNode streamingHeadNode;																	\
         /* the stage entities to test for streaming */ 													\
@@ -67,8 +65,8 @@
         int streamingCycleCounter;																		\
         /* index for method to execute */													            \
         int streamingPhase;                                                                             \
-        /* streaming's preloaded entities */ 															\
-        VirtualList entitiesToLoad;																		\
+        /* flag to control streaming */ 															    \
+        u32 hasNotRemovedChildren;                                                                      \
         /* the UI */ 																					\
         UI ui;																							\
         /* focus entity: needed for streaming */														\
@@ -77,7 +75,6 @@
         long previousFocusEntityDistance;																\
         /* next entity's id */																			\
         s16 nextEntityId;																				\
-
 
 // declare a Stage, which holds the objects in a game world
 __CLASS(Stage);

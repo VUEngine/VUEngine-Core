@@ -64,9 +64,9 @@
 #define Container_METHODS(ClassName)																	\
 		SpatialObject_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, update);															\
-		__VIRTUAL_DEC(ClassName, void, transform, const Transformation* environmentTransform);			\
+		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*);			                    \
 		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation);										\
-		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation* environmentTransform);	\
+		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);	                \
 		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const VBVec3D* position);						\
 		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
 		__VIRTUAL_DEC(ClassName, void, addChild, Container child);										\
@@ -150,7 +150,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform);
 void Container_transform(Container this, const Transformation* environmentTransform);
 void Container_updateVisualRepresentation(Container this);
-void Container_initialTransform(Container this, Transformation* environmentTransform);
+void Container_initialTransform(Container this, Transformation* environmentTransform, u32 recursive);
 void Container_applyEnvironmentToTranformation(Container this, const Transformation* environmentTransform);
 const VBVec3D* Container_getGlobalPosition(Container this);
 const VBVec3D* Container_getLocalPosition(Container this);

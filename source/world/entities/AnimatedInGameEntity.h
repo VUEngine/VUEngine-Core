@@ -88,7 +88,7 @@ __CLASS_NEW_DECLARE(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animat
 
 void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, const char* const name);
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
-void AnimatedInGameEntity_ready(AnimatedInGameEntity this);
+void AnimatedInGameEntity_ready(AnimatedInGameEntity this, u32 recursive);
 void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform);
 void AnimatedInGameEntity_update(AnimatedInGameEntity this);
 void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause);

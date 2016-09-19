@@ -67,7 +67,7 @@ __CLASS_NEW_DECLARE(CollisionsContainerEntity, CollisionsContainerEntityDefiniti
 
 void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, const char* const name);
 void CollisionsContainerEntity_destructor(CollisionsContainerEntity this);
-void CollisionsContainerEntity_ready(CollisionsContainerEntity this);
+void CollisionsContainerEntity_ready(CollisionsContainerEntity this, u32 recursive);
 void CollisionsContainerEntity_update(CollisionsContainerEntity this);
 void CollisionsContainerEntity_transform(CollisionsContainerEntity this, const Transformation* environmentTransform);
 void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this);

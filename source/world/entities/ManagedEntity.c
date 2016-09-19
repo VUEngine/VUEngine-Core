@@ -122,11 +122,11 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 }
 
 // transform class
-void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform)
+void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "ManagedEntity::initialTransform: null this");
 
-	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform);
+	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform, recursive);
 
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
@@ -143,11 +143,11 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	this->previous2DPosition = position2D;
 }
 
-void ManagedEntity_ready(ManagedEntity this)
+void ManagedEntity_ready(ManagedEntity this, u32 recursive)
 {
 	ASSERT(this, "ManagedEntity::ready: null this");
 
-    Entity_ready(__SAFE_CAST(Entity, this));
+    Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
 	VirtualList_clear(this->managedSprites);
 	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));

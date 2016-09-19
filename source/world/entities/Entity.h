@@ -44,12 +44,12 @@
 
 #define Entity_METHODS(ClassName)																		\
 		Container_METHODS(ClassName)																	\
-		__VIRTUAL_DEC(ClassName, bool, isVisible, int pad, bool recursive);								\
-		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void* extraInfo);									\
+		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);								            \
+		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);									        \
 		__VIRTUAL_DEC(ClassName, bool, updateSpritePosition);											\
 		__VIRTUAL_DEC(ClassName, bool, updateSpriteTransformations);									\
-		__VIRTUAL_DEC(ClassName, void, initialize);														\
-		__VIRTUAL_DEC(ClassName, void, ready);															\
+		__VIRTUAL_DEC(ClassName, void, initialize, u32);												\
+		__VIRTUAL_DEC(ClassName, void, ready, u32);														\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
 
 #define Entity_SET_VTABLE(ClassName)																	\
@@ -111,8 +111,8 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 Entity Entity_instantiate(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo);
 Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 id);
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 id);
-void Entity_initialize(Entity this);
-void Entity_ready(Entity this);
+void Entity_initialize(Entity this, u32 recursive);
+void Entity_ready(Entity this, u32 recursive);
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions);
 u32 Entity_areAllChildrenSpawned(Entity this);
@@ -123,7 +123,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
-void Entity_initialTransform(Entity this, Transformation* environmentTransform);
+void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive);
 void Entity_transform(Entity this, const Transformation* environmentTransform);
 void Entity_updateVisualRepresentation(Entity this);
 void Entity_setLocalPosition(Entity this, const VBVec3D* position);

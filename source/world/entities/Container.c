@@ -377,7 +377,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 }
 
 // initial transform
-void Container_initialTransform(Container this, Transformation* environmentTransform)
+void Container_initialTransform(Container this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Container::initialTransform: null this");
 
@@ -386,8 +386,10 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
     Container_applyEnvironmentToRotation(this, environmentTransform);
     Container_applyEnvironmentToScale(this, environmentTransform);
 
+	Container_invalidateGlobalTransformation(this);
+
 	// if I have children
-	if(this->children)
+	if(recursive && this->children)
 	{
 		// first remove children
 		Container_processRemovedChildren(this);
@@ -401,11 +403,9 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
-			__VIRTUAL_CALL(Container, initialTransform, child, &this->transform);
+			__VIRTUAL_CALL(Container, initialTransform, child, &this->transform, true);
 		}
 	}
-
-	Container_invalidateGlobalTransformation(this);
 }
 
 void Container_applyEnvironmentToTranformation(Container this, const Transformation* environmentTransform)

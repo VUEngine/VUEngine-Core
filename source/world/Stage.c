@@ -146,6 +146,7 @@ static void Stage_constructor(Stage this)
 	this->nextEntityId = 0;
     this->streamingPhase = 0;
     this->streamingCycleCounter = 0;
+    this->hasNotRemovedChildren = true;
 }
 
 // class's destructor
@@ -300,11 +301,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform, true);
 
 	if(this->ui)
 	{
-		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform);
+		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform, true);
 	}
 }
 
@@ -341,7 +342,7 @@ static void Stage_setupUI(Stage this)
 		{
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform);
+			__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform, true);
 		}
 	}
 }
@@ -358,16 +359,16 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 		if(entity)
 		{
 			// must initialize after adding the children
-			__VIRTUAL_CALL(Entity, initialize, entity);
+			__VIRTUAL_CALL(Entity, initialize, entity, true);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
+			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform, true);
 
-			__VIRTUAL_CALL(Entity, ready, entity);
+			__VIRTUAL_CALL(Entity, ready, entity, true);
 		}
 /*
 		if(permanent)
@@ -688,10 +689,10 @@ static u32 Stage_unloadOutOfRangeEntities(Stage this, int defer)
 		return false;
 	}
 
-    u32 returnValue = false;
-
 	// need a temporal list to remove and delete entities
 	VirtualNode node = this->children->head;
+
+    u32 value = false;
 
 	// check which actors must be unloaded
 	for(; node; node = node->next)
@@ -722,7 +723,7 @@ static u32 Stage_unloadOutOfRangeEntities(Stage this, int defer)
 			// unload it
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 
-			returnValue = true;
+			value = true;
 
             if(defer)
             {
@@ -736,7 +737,7 @@ static u32 Stage_unloadOutOfRangeEntities(Stage this, int defer)
         unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime? processTime: unloadOutOfRangeEntitiesHighestTime;
 #endif
 
-    return returnValue;
+    return value;
 }
 
 static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
@@ -776,7 +777,7 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
 
 	this->streamingHeadNode = NULL;
 
-	u32 returnValue = false;
+    u32 value = false;
 
     if(advancing)
     {
@@ -784,12 +785,14 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
 
 	    node = node ? node : this->stageEntities->head;
 
-        for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->next, counter++)
+        for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->next)
         {
             StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
             if(0 > stageEntityDescription->id)
             {
+                counter++;
+
                 if(!this->streamingHeadNode)
                 {
                     if(focusInGameEntityDistance < stageEntityDescription->distance)
@@ -801,15 +804,10 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
+                    value = true;
                     stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
-                    returnValue = true;
-
-                    if(defer)
-                    {
-                        break;
-                    }
                 }
             }
         }
@@ -820,12 +818,14 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
 
         node = node ? node : this->stageEntities->tail;
 
-        for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->previous, counter++)
+        for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->previous)
         {
             StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
             if(0 > stageEntityDescription->id)
             {
+                counter++;
+
                 if(!this->streamingHeadNode)
                 {
                     if(focusInGameEntityDistance > stageEntityDescription->distance)
@@ -837,15 +837,10 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
+                    value = true;
                     stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
-                    returnValue = true;
-
-                    if(defer)
-                    {
-                        break;
-                    }
                }
             }
         }
@@ -858,7 +853,7 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
         loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime? processTime: loadInRangeEntitiesHighestTime;
 #endif
 
-    return returnValue;
+    return value;
 }
 
 void Stage_stream(Stage this)
@@ -875,10 +870,8 @@ void Stage_stream(Stage this)
 #ifdef __PROFILE_STREAMING
     timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
 #endif
-
-    if(!_streamingPhases[this->streamingPhase](this, true))
+    if(!_streamingPhases[this->streamingPhase](this, true) && this->hasNotRemovedChildren)
     {
-
 #ifdef __PROFILE_STREAMING
 	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
 #endif
@@ -910,6 +903,9 @@ void Stage_streamAll(Stage this)
 void Stage_update(Stage this)
 {
 	ASSERT(this, "Stage::update: null this");
+
+    // set now to control the streaming
+    this->hasNotRemovedChildren = !this->removedChildren || !VirtualList_getSize(this->removedChildren);
 
 	Container_update(__SAFE_CAST(Container, this));
 
@@ -1026,13 +1022,13 @@ void Stage_resume(Stage this)
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform, true);
 
 	if(this->ui)
 	{
 		__VIRTUAL_CALL(Container, resume, __SAFE_CAST(Container, this->ui));
 
-		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform);
+		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform, true);
 	}
 }
 
@@ -1093,7 +1089,7 @@ StageDefinition* Stage_getStageDefinition(Stage this)
 }
 
 #ifdef __PROFILE_STREAMING
-void Stage_showStreamingProfiling(Stage this, int x, int y)
+void Stage_showStreamingProfiling(Stage this __attribute__ ((unused)), int x, int y)
 {
     ASSERT(this, "Stage::showStreamingProfiling: null this");
     int xDisplacement = 11;
@@ -1106,7 +1102,7 @@ void Stage_showStreamingProfiling(Stage this, int x, int y)
     Printing_text(Printing_getInstance(), "Load:              ", x, y, NULL);
     Printing_int(Printing_getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement + 4, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Facotyr:              ", x, y, NULL);
+    Printing_text(Printing_getInstance(), "Factory:              ", x, y, NULL);
     Printing_int(Printing_getInstance(), entityFactoryHighestTime, x + xDisplacement + 4, y++, NULL);
 
     unloadOutOfRangeEntitiesHighestTime = 0;

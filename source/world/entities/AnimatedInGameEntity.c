@@ -93,12 +93,12 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 }
 
 // ready method
-void AnimatedInGameEntity_ready(AnimatedInGameEntity this)
+void AnimatedInGameEntity_ready(AnimatedInGameEntity this, u32 recursive)
 {
 	ASSERT(this, "AnimatedInGameEntity::ready: null this");
 	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::initialize: null animatedInGameEntityDefinition");
 
-	Entity_ready(__SAFE_CAST(Entity, this));
+	Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
 	AnimatedInGameEntity_playAnimation(this, this->animatedInGameEntityDefinition->initialAnimation);
 }
