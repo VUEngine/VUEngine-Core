@@ -85,7 +85,7 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 
 	for(;entities && entities[i].entityDefinition; i++)
 	{
-		Entity entity = Entity_loadFromDefinition(&entities[i], ID++);
+		Entity entity = Entity_loadEntity(&entities[i], ID++);
 
 		__VIRTUAL_CALL(Entity, initialize, entity);
 

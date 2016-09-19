@@ -557,8 +557,8 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
     return NULL;
 }
 
-// create an entity in gameengine's memory
-Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo)
+// instantiate and entity using the provided allocator
+Entity Entity_instantiate(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -580,8 +580,31 @@ Entity Entity_load(const EntityDefinition* const entityDefinition, int id, const
     return entity;
 }
 
-// load an entity from a PositionedEntity definition
-Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity, s16 id)
+// add children to the instance from the definitions array
+void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions)
+{
+	ASSERT(this, "Entity::loadChildren: null this");
+
+	if(!childrenDefinitions)
+	{
+	    return;
+	}
+
+    int i = 0;
+
+    //go through n sprites in entity's definition
+    for(; childrenDefinitions[i].entityDefinition; i++)
+    {
+        Entity child = Entity_loadEntity(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+    	ASSERT(child, "Entity::loadChildren: entity not loaded");
+
+        // create the entity and add it to the world
+        Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
+	}
+}
+
+// load an entity and instantiate all its children
+Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 id)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 
@@ -590,7 +613,7 @@ Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity,
 	    return NULL;
 	}
 
-    Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
+    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
 
     // set spatial position
@@ -599,14 +622,14 @@ Entity Entity_loadFromDefinition(const PositionedEntity* const positionedEntity,
     // add children if defined
     if(positionedEntity->childrenDefinitions)
     {
-        Entity_addChildren(entity, positionedEntity->childrenDefinitions);
+        Entity_addChildEntities(entity, positionedEntity->childrenDefinitions);
     }
 
     return entity;
 }
 
-// load children
-void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity* childrenDefinitions)
+// add children to instance from the definitions array, but deferredly
+void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions)
 {
 	ASSERT(this, "Entity::addChildrenWithoutInitilization: null this");
 	ASSERT(childrenDefinitions, "Entity::addChildrenWithoutInitilization: null childrenDefinitions");
@@ -628,6 +651,81 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
     {
         EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
     }
+}
+
+// load an entity and instantiate all its children deferredly
+Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 id)
+{
+	ASSERT(positionedEntity, "Entity::loadFromDefinitionWithoutInitilization: null positionedEntity");
+
+    if(!positionedEntity)
+    {
+        return NULL;
+    }
+
+    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
+	ASSERT(entity, "Entity::loadFromDefinitionWithoutInitilization: entity not loaded");
+
+    if(positionedEntity->name)
+    {
+        Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
+    }
+
+    // set spatial position
+    __VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
+
+    // add children if defined
+    if(positionedEntity->childrenDefinitions)
+    {
+        Entity_addChildEntitiesDeferred(entity, positionedEntity->childrenDefinitions);
+    }
+
+    return entity;
+}
+
+// add child entity from definition
+Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
+{
+	ASSERT(this, "Entity::addChildFromDefinition: null this");
+	ASSERT(entityDefinition, "Entity::addChildFromDefinition: null entityDefinition");
+
+	if(!entityDefinition)
+	{
+	    return NULL;
+	}
+
+	PositionedEntity positionedEntity =
+	{
+		(EntityDefinition*)entityDefinition,
+		{position->x, position->y, position->z},
+		(char*)name,
+		NULL,
+		extraInfo,
+		false
+	};
+
+    // create the hint entity and add it to the hero as a child entity
+	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+	ASSERT(childEntity, "Entity::addChildFromDefinition: childEntity no created");
+
+    // must initialize after adding the children
+    __VIRTUAL_CALL(Entity, initialize, childEntity);
+
+    // if already initialized
+    if(this->size.x && this->size.y && this->size.z)
+    {
+        Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+
+         // apply transformations
+        __VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform);
+    }
+
+    // create the entity and add it to the world
+    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
+
+    __VIRTUAL_CALL(Entity, ready, childEntity);
+
+	return childEntity;
 }
 
 u32 Entity_areAllChildrenSpawned(Entity this)
@@ -678,36 +776,6 @@ u32 Entity_areAllChildrenReady(Entity this)
     return true;
 }
 
-// load an entity from a PositionedEntity definition
-Entity Entity_loadFromDefinitionWithoutInitilization(const PositionedEntity* const positionedEntity, s16 id)
-{
-	ASSERT(positionedEntity, "Entity::loadFromDefinitionWithoutInitilization: null positionedEntity");
-
-    if(!positionedEntity)
-    {
-        return NULL;
-    }
-
-    Entity entity = Entity_load(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
-	ASSERT(entity, "Entity::loadFromDefinitionWithoutInitilization: entity not loaded");
-
-    if(positionedEntity->name)
-    {
-        Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
-    }
-
-    // set spatial position
-    __VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
-
-    // add children if defined
-    if(positionedEntity->childrenDefinitions)
-    {
-        Entity_addChildrenWithoutInitilization(entity, positionedEntity->childrenDefinitions);
-    }
-
-    return entity;
-}
-
 // initialize from definition
 void Entity_initialize(Entity this)
 {
@@ -744,74 +812,6 @@ void Entity_ready(Entity this)
 			__VIRTUAL_CALL(Entity, ready, __SAFE_CAST(Entity, childNode->data));
 		}
 	}
-}
-
-// load children
-void Entity_addChildren(Entity this, const PositionedEntity* childrenDefinitions)
-{
-	ASSERT(this, "Entity::loadChildren: null this");
-
-	if(!childrenDefinitions)
-	{
-	    return;
-	}
-
-    int i = 0;
-
-    //go through n sprites in entity's definition
-    for(; childrenDefinitions[i].entityDefinition; i++)
-    {
-        Entity child = Entity_loadFromDefinition(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
-    	ASSERT(child, "Entity::loadChildren: entity not loaded");
-
-        // create the entity and add it to the world
-        Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
-	}
-}
-
-// add child from definition
-Entity Entity_addChildFromDefinition(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
-{
-	ASSERT(this, "Entity::addChildFromDefinition: null this");
-	ASSERT(entityDefinition, "Entity::addChildFromDefinition: null entityDefinition");
-
-	if(!entityDefinition)
-	{
-	    return NULL;
-	}
-
-	PositionedEntity positionedEntity =
-	{
-		(EntityDefinition*)entityDefinition,
-		{position->x, position->y, position->z},
-		(char*)name,
-		NULL,
-		extraInfo,
-		false
-	};
-
-    // create the hint entity and add it to the hero as a child entity
-	Entity childEntity = Entity_loadFromDefinition(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
-	ASSERT(childEntity, "Entity::addChildFromDefinition: childEntity no created");
-
-    // must initialize after adding the children
-    __VIRTUAL_CALL(Entity, initialize, childEntity);
-
-    // if already initialized
-    if(this->size.x && this->size.y && this->size.z)
-    {
-        Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-
-         // apply transformations
-        __VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform);
-    }
-
-    // create the entity and add it to the world
-    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
-
-    __VIRTUAL_CALL(Entity, ready, childEntity);
-
-	return childEntity;
 }
 
 // process extra info in intialization

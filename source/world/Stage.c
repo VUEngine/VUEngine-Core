@@ -346,40 +346,39 @@ static void Stage_setupUI(Stage this)
 	}
 }
 
-//
-Entity Stage_addEntity(Stage this, const EntityDefinition* const entityDefinition, const char* const name, const VBVec3D* const position, void* const extraInfo, bool permanent __attribute__ ((unused)))
+// add entity to the stage
+Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
-	if(!entityDefinition)
+	if(positionedEntity)
 	{
-	    return NULL;
-    }
+		Entity entity = Entity_loadEntity(positionedEntity, this->nextEntityId++);
 
-    Entity entity = Entity_load(entityDefinition, this->nextEntityId++, name, extraInfo);
-    ASSERT(entity, "Stage::addEntity: entity not loaded");
+		if(entity)
+		{
+			// must initialize after adding the children
+			__VIRTUAL_CALL(Entity, initialize, entity);
 
-    // set spatial position
-    __VIRTUAL_CALL(Entity, setLocalPosition, entity, position);
+			// create the entity and add it to the world
+			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
-    // initialize now
-    __VIRTUAL_CALL(Entity, initialize, entity);
+			// apply transformations
+			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
 
-    // create the entity and add it to the world
-    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
-
-    // apply transformations
-    Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-    __VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
+			__VIRTUAL_CALL(Entity, ready, entity);
+		}
 /*
-    if(permanent)
-    {
-        // TODO
-    }
+		if(permanent)
+		{
+			// TODO
+		}
 */
-    __VIRTUAL_CALL(Entity, ready, entity);
+		return entity;
+	}
 
-    return entity;
+	return NULL;
 }
 
 bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition)
@@ -407,41 +406,6 @@ void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container
 	ASSERT(this, "Stage::spawnEntity: null this");
 
     EntityFactory_spawnEntity(this->entityFactory, positionedEntity, requester, callback, this->nextEntityId++);
-}
-
-// add entity to the stage
-Entity Stage_addPositionedEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)))
-{
-	ASSERT(this, "Stage::addEntity: null this");
-
-	if(positionedEntity)
-	{
-		Entity entity = Entity_loadFromDefinition(positionedEntity, this->nextEntityId++);
-
-		if(entity)
-		{
-			// must initialize after adding the children
-			__VIRTUAL_CALL(Entity, initialize, entity);
-
-			// create the entity and add it to the world
-			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
-
-			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform);
-
-			__VIRTUAL_CALL(Entity, ready, entity);
-		}
-/*
-		if(permanent)
-		{
-			// TODO
-		}
-*/
-		return entity;
-	}
-
-	return NULL;
 }
 
 // add entity to the stage
@@ -698,7 +662,7 @@ static void Stage_loadInitialEntities(Stage this)
 			// if entity in load range
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
-				Entity entity = Stage_addPositionedEntity(this, stageEntityDescription->positionedEntity, false);
+				Entity entity = Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false);
 				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
                 if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)

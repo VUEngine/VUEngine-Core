@@ -224,7 +224,7 @@ u32 EntityFactory_spawnEntities(EntityFactory this)
         }
         else
         {
-            positionedEntityDescription->entity = Entity_loadFromDefinitionWithoutInitilization(positionedEntityDescription->positionedEntity, positionedEntityDescription->id);
+            positionedEntityDescription->entity = Entity_loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->id);
             ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
 
             if(positionedEntityDescription->callback)
