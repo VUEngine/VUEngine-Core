@@ -43,8 +43,6 @@
 #define DirectDraw_ATTRIBUTES																			\
         /* super's attributes */																		\
         Object_ATTRIBUTES																				\
-        /* actual frames per second */																	\
-        int fps;                                                                                        \
 
 __CLASS_DEFINITION(DirectDraw, Object);
 
@@ -67,8 +65,6 @@ __SINGLETON(DirectDraw);
 static void __attribute__ ((noinline)) DirectDraw_constructor(DirectDraw this)
 {
 	__CONSTRUCT_BASE(Object);
-
-	this->fps = 0;
 }
 
 // class's destructor
