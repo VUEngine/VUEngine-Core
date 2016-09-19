@@ -146,11 +146,6 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 		while(fromPoint.x != toPoint.x)
 		{
-			if(++counter > 100)
-			{
-				break;
-			}
-
 			if(fraction >= 0)
 			{
 				fromPoint.y += stepY;
@@ -177,11 +172,6 @@ void DirectDraw_lineFast(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 		while(fromPoint.y != toPoint.y)
 		{
-			if(++counter > 100)
-			{
-				break;
-			}
-
 			if(fraction >= 0)
 			{
 				fromPoint.x += stepX;
