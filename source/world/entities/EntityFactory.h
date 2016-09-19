@@ -51,8 +51,6 @@
 #define EntityFactory_ATTRIBUTES																		\
         /* super's attributes */																		\
         Object_ATTRIBUTES																			    \
-        /* the pivot node for streaming */ 																\
-        VirtualNode streamingHeadNode;																	\
         /* the EntityFactory entities to test for streaming */ 											\
         VirtualList entitiesToSpawn;																    \
         /* streaming's uninitialized entities */ 														\
@@ -61,10 +59,6 @@
         VirtualList entitiesToTransform;																\
         /* streaming's non yet transformed entities */ 													\
         VirtualList entitiesToMakeReady;															    \
-        /* streaming's non yet transformed entities */ 													\
-        VirtualList loadedEntities;															            \
-        /* counter to control the streaming phses */													\
-        int streamingCycleCounter;																		\
         /* index for method to execute */													            \
         int streamingPhase;                                                                             \
 

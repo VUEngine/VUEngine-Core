@@ -631,7 +631,7 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
     }
 }
 
-u32 Entity_allChildrenSpawned(Entity this)
+u32 Entity_areAllChildrenSpawned(Entity this)
 {
 	ASSERT(this, "Entity::allChildrenSpawned: null this");
 
@@ -643,7 +643,7 @@ u32 Entity_allChildrenSpawned(Entity this)
     return true;
 }
 
-u32 Entity_allChildrenInitialized(Entity this)
+u32 Entity_areAllChildrenInitialized(Entity this)
 {
 	ASSERT(this, "Entity::allChildrenInitialized: null this");
 
@@ -655,7 +655,7 @@ u32 Entity_allChildrenInitialized(Entity this)
     return true;
 }
 
-u32 Entity_allChildrenTransformed(Entity this)
+u32 Entity_areAllChildrenTransformed(Entity this)
 {
 	ASSERT(this, "Entity::allChildrenInitialized: null this");
 
@@ -667,25 +667,13 @@ u32 Entity_allChildrenTransformed(Entity this)
     return true;
 }
 
-u32 Entity_allChildrenReady(Entity this)
+u32 Entity_areAllChildrenReady(Entity this)
 {
 	ASSERT(this, "Entity::allChildrenReady: null this");
 
     if(this->entityFactory)
     {
         return __LIST_EMPTY == EntityFactory_makeReadyEntities(this->entityFactory);
-    }
-
-    return true;
-}
-
-u32 Entity_allChildrenLoaded(Entity this)
-{
-	ASSERT(this, "Entity::allChildrenReady: null this");
-
-    if(this->entityFactory)
-    {
-        return __LIST_EMPTY == EntityFactory_callLoadedEntities(this->entityFactory);
     }
 
     return true;

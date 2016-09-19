@@ -832,6 +832,11 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
                     stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
+
+                    if(defer)
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -862,6 +867,11 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
                     stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
+
+                    if(defer)
+                    {
+                        break;
+                    }
                 }
             }
         }

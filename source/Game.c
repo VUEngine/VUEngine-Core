@@ -955,7 +955,7 @@ static void Game_update(Game this)
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
         // process user's input
-        Game_handleInput(this);
+        u32 suspendStreaming = Game_handleInput(this);
 
 #ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
@@ -966,7 +966,7 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
-        MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+        suspendStreaming |= MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 #ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         dispatchDelayedMessageHighestTime = processTime > dispatchDelayedMessageHighestTime? processTime: dispatchDelayedMessageHighestTime;
@@ -1003,6 +1003,9 @@ static void Game_update(Game this)
 	    updatePhysicsTotalTime += processTime;
 #endif
 
+        // suspend streaming if up to this point the game frame has taken half the budget time
+        suspendStreaming |= TimerManager_getTicks(this->timerManager) >= __MILLISECONDS_IN_SECOND / __TARGET_FPS / 2;
+
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
@@ -1029,13 +1032,16 @@ static void Game_update(Game this)
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
 
-        GameState_stream(this->currentState);
+        if(!suspendStreaming)
+        {
+            GameState_stream(this->currentState);
 
 #ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
-        streamingHighestTime = processTime > streamingHighestTime? processTime: streamingHighestTime;
-        streamingTotalTime += processTime;
+            processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+            streamingHighestTime = processTime > streamingHighestTime? processTime: streamingHighestTime;
+            streamingTotalTime += processTime;
 #endif
+        }
 
 #ifdef __PROFILE_GAME
         u32 gameFrameTotalTime = TimerManager_getTicks(this->timerManager);
