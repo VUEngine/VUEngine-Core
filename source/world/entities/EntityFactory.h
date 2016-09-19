@@ -28,6 +28,15 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __ENTITY_PENDING_PROCESSING     0x00
+#define __LIST_EMPTY                    0x01
+#define __ENTITY_PROCESSED              0x02
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -58,8 +67,6 @@
         int streamingCycleCounter;																		\
         /* index for method to execute */													            \
         int streamingPhase;                                                                             \
-        /* cycle delay */													                            \
-		int delayPerCycle;
 
 // declare a EntityFactory, which holds the objects in a game world
 __CLASS(EntityFactory);

@@ -631,8 +631,6 @@ void Entity_addChildrenWithoutInitilization(Entity this, const PositionedEntity*
     }
 }
 
-#define __LIST_EMPTY                    0x01
-
 u32 Entity_allChildrenSpawned(Entity this)
 {
 	ASSERT(this, "Entity::allChildrenSpawned: null this");

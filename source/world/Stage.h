@@ -115,7 +115,6 @@ typedef struct StageDefinition
 	// streaming
 	struct Streaming
 	{
-		int delayPerCycle;
 		int loadPadding;
 		int unloadPadding;
 		int streamingAmplitude;

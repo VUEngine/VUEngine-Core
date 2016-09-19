@@ -97,7 +97,6 @@ static void EntityFactory_constructor(EntityFactory this)
 	this->entitiesToMakeReady = __NEW(VirtualList);
 	this->loadedEntities = __NEW(VirtualList);
 
-	this->delayPerCycle = 0;
     this->streamingPhase = 0;
     this->streamingCycleCounter = 0;
 }
@@ -216,10 +215,6 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
 
     VirtualList_pushBack(this->entitiesToSpawn, positionedEntityDescription);
 }
-
-#define __ENTITY_PENDING_PROCESSING     0x00
-#define __LIST_EMPTY                    0x01
-#define __ENTITY_PROCESSED              0x02
 
 u32 EntityFactory_spawnEntities(EntityFactory this)
 {

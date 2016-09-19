@@ -879,6 +879,17 @@ void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
 
+#ifdef __PROFILE_STREAMING
+	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+#endif
+
+    EntityFactory_prepareEntities(this->entityFactory);
+
+#ifdef __PROFILE_STREAMING
+    u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+    entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
+#endif
+
     int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
 
     if(++this->streamingPhase >= streamingPhases)
@@ -891,48 +902,6 @@ void Stage_stream(Stage this)
 #endif
 
     _streamingPhases[this->streamingPhase](this, true);
-
-#ifdef __PROFILE_STREAMING
-	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
-#endif
-
-    EntityFactory_prepareEntities(this->entityFactory);
-
-#ifdef __PROFILE_STREAMING
-    u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-    entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
-#endif
-}
-
-void Stage_stream8(Stage this)
-{
-	ASSERT(this, "Stage::stream: null this");
-
-    int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
-
-    ++this->streamingPhase;
-
-#ifdef __PROFILE_STREAMING
-	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
-#endif
-
-    if(this->streamingPhase >= streamingPhases)
-    {
-        if(EntityFactory_prepareEntities(this->entityFactory))
-        {
-            this->streamingPhase = -1;
-        }
-
-        #ifdef __PROFILE_STREAMING
-                u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-                entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
-        #endif
-
-    }
-    else
-    {
-        _streamingPhases[this->streamingPhase](this, true);
-	}
 }
 
 void Stage_streamAll(Stage this)
