@@ -28,6 +28,7 @@
 #include <StateMachine.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,8 +80,8 @@ void Game_unpause(Game this, GameState pauseState);
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
 void Game_disableKeypad(Game this);
 void Game_enableKeypad(Game this);
-void Game_addPostProcessingEffect(Game this, void (*postProcessingEffect) (u32));
-void Game_removePostProcessingEffect(Game this, void (*postProcessingEffect) (u32));
+void Game_addPostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+void Game_removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 CollisionManager Game_getCollisionManager(Game this);
 PhysicalWorld Game_getPhysicalWorld(Game this);
 void Game_wait(Game this, u32 milliSeconds);

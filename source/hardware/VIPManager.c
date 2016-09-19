@@ -44,11 +44,12 @@ volatile u16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F
 extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
 extern BrightnessRepeatROMDef DEFAULT_BRIGHTNESS_REPEAT;
 
-typedef struct PostProcessingEffect
+typedef struct PostProcessingEffectRegistry
 {
-    void (*function) (u32);
+    PostProcessingEffect postProcessingEffect;
+    SpatialObject spatialObject;
 
-} PostProcessingEffect;
+} PostProcessingEffectRegistry;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -250,7 +251,7 @@ void VIPManager_interruptHandler(void)
 
             for(; node; node = node->next)
             {
-                ((PostProcessingEffect*)node->data)->function(_vipManager->currentDrawingFrameBufferSet);
+                ((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(_vipManager->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
             }
         }
 
@@ -469,7 +470,7 @@ void VIPManager_setBackgroundColor(VIPManager this __attribute__ ((unused)), u8 
 }
 
 // register post processing effect
-void VIPManager_addPostProcessingEffect(VIPManager this, void (*postProcessingEffectFunction) (u32))
+void VIPManager_addPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	ASSERT(this, "VIPManager::addPostProcessingEffect: null this");
 
@@ -477,9 +478,9 @@ void VIPManager_addPostProcessingEffect(VIPManager this, void (*postProcessingEf
 
     for(; node; node = node->next)
     {
-        PostProcessingEffect* postProcessingEffect = (PostProcessingEffect*)node->data;
+        PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
-        if(postProcessingEffect->function == postProcessingEffectFunction)
+        if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
         {
             break;
         }
@@ -487,15 +488,16 @@ void VIPManager_addPostProcessingEffect(VIPManager this, void (*postProcessingEf
 
     if(!node)
     {
-        PostProcessingEffect* postProcessingEffect = __NEW_BASIC(PostProcessingEffect);
-        postProcessingEffect->function = postProcessingEffectFunction;
+        PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);
+        postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
+        postProcessingEffectRegistry->spatialObject = spatialObject;
 
-        VirtualList_pushBack(this->postProcessingEffects, postProcessingEffect);
+        VirtualList_pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
     }
 }
 
 // remove post processing effect
-void VIPManager_removePostProcessingEffect(VIPManager this, void (*postProcessingEffectFunction) (u32))
+void VIPManager_removePostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	ASSERT(this, "VIPManager::removePostProcessingEffect: null this");
 
@@ -503,12 +505,13 @@ void VIPManager_removePostProcessingEffect(VIPManager this, void (*postProcessin
 
     for(; node; node = node->next)
     {
-        PostProcessingEffect* postProcessingEffect = (PostProcessingEffect*)node->data;
-        if(postProcessingEffect->function == postProcessingEffectFunction)
-        {
-            VirtualList_removeElement(this->postProcessingEffects, postProcessingEffect);
+        PostProcessingEffectRegistry* postProcessingEffectRegistry = (PostProcessingEffectRegistry*)node->data;
 
-            __DELETE_BASIC(postProcessingEffect);
+        if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
+        {
+            VirtualList_removeElement(this->postProcessingEffects, postProcessingEffectRegistry);
+
+            __DELETE_BASIC(postProcessingEffectRegistry);
             break;
         }
     }

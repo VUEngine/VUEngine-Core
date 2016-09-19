@@ -72,6 +72,8 @@ static const StreamingPhase _streamingPhases[] =
     &EntityFactory_makeReadyEntities
 };
 
+static int _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPhase);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -271,7 +273,12 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
     else
     {
         VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
-        __DELETE(positionedEntityDescription->entity);
+
+        if(*(u32*)positionedEntityDescription->entity)
+        {
+            __DELETE(positionedEntityDescription->entity);
+        }
+
         __DELETE_BASIC(positionedEntityDescription);
     }
 
@@ -311,8 +318,14 @@ u32 EntityFactory_transformEntities(EntityFactory this)
     else
     {
         VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
-        __DELETE(positionedEntityDescription->entity);
+
+        if(*(u32*)positionedEntityDescription->entity)
+        {
+            __DELETE(positionedEntityDescription->entity);
+        }
+
         __DELETE_BASIC(positionedEntityDescription);
+
     }
 
     return __ENTITY_PROCESSED;
@@ -353,27 +366,28 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
     else
     {
         VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
-        __DELETE(positionedEntityDescription->entity);
+
+        if(*(u32*)positionedEntityDescription->entity)
+        {
+            __DELETE(positionedEntityDescription->entity);
+        }
+
         __DELETE_BASIC(positionedEntityDescription);
     }
 
     return __ENTITY_PROCESSED;
 }
 
-int EntityFactory_prepareEntities(EntityFactory this)
+void EntityFactory_prepareEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::prepareEntities: null this");
 
-    int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
-
-    if(this->streamingPhase >= streamingPhases)
+    if(this->streamingPhase >= _streamingPhasesCount)
     {
         this->streamingPhase = 0;
     }
 
     this->streamingPhase += __ENTITY_PENDING_PROCESSING != _streamingPhases[this->streamingPhase](this)? 1 : 0;
-
-    return this->streamingPhase >= streamingPhases - 1;
 }
 
 void EntityFactory_prepareAllEntities(EntityFactory this)
