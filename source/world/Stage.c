@@ -875,7 +875,6 @@ void Stage_stream(Stage this)
 #ifdef __PROFILE_STREAMING
 	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
 #endif
-
         EntityFactory_prepareEntities(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING

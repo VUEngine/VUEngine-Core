@@ -340,11 +340,11 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// load world entities
 	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
 
-	// transform everything
-	GameState_transform(this);
-
 	// set up visual representation
 	GameState_updateVisuals(this);
+
+	// transform everything
+	GameState_transform(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());
