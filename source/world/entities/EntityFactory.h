@@ -52,13 +52,15 @@
         /* super's attributes */																		\
         Object_ATTRIBUTES																			    \
         /* the EntityFactory entities to test for streaming */ 											\
-        VirtualList entitiesToSpawn;																    \
+        VirtualList entitiesToInstantiate;																    \
         /* streaming's uninitialized entities */ 														\
         VirtualList entitiesToInitialize;																\
         /* streaming's non yet transformed entities */ 													\
         VirtualList entitiesToTransform;																\
         /* streaming's non yet transformed entities */ 													\
         VirtualList entitiesToMakeReady;															    \
+        /* entities loaded */ 													                        \
+        VirtualList spawnedEntities;															        \
         /* index for method to execute */													            \
         int streamingPhase;                                                                             \
 
