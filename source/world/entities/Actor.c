@@ -532,8 +532,8 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
-    this->invalidateGlobalTransformation = __INVALIDATE_POSITION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATIONS | __UPDATE_SPRITE_POSITION;
+    this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
 // retrieve global position
@@ -559,16 +559,16 @@ bool Actor_updateSpritePosition(Actor this)
 }
 
 // check if necessary to update sprite's scale
-bool Actor_updateSpriteTransformations(Actor this)
+bool Actor_updateSpriteScale(Actor this)
 {
-	ASSERT(this, "Actor::updateSpriteTransformations: null this");
+	ASSERT(this, "Actor::updateSpriteScale: null this");
 
 	if(this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
 	{
 		return true;
 	}
 
-	return Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this));
+	return Entity_updateSpriteScale(__SAFE_CAST(Entity, this));
 }
 
 // stop movement completelty

@@ -635,7 +635,7 @@ void Container_invalidateGlobalTransformation(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalTransformation: null this");
 
-	this->invalidateGlobalTransformation = __INVALIDATE_POSITION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
+	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 
 	if(this->children)
 	{

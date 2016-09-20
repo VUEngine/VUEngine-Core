@@ -48,6 +48,7 @@
 10000000 Y = 80
 */
 
+#define __INVALIDATE_TRANSFORMATION			0xFF
 #define __INVALIDATE_POSITION			    0x07
 #define __INVALIDATE_ROTATION			    0x38
 #define __INVALIDATE_SCALE			        0xC0

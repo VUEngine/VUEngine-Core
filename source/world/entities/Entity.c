@@ -52,7 +52,7 @@ extern const VBVec3D* _screenPosition;
 extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
-u32 EntityFactory_spawnEntities(EntityFactory this);
+u32 EntityFactory_instantiateEntities(EntityFactory this);
 u32 EntityFactory_initializeEntities(EntityFactory this);
 u32 EntityFactory_transformEntities(EntityFactory this);
 u32 EntityFactory_makeReadyEntities(EntityFactory this);
@@ -60,7 +60,7 @@ u32 EntityFactory_callLoadedEntities(EntityFactory this);
 
 static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions);
 static void Entity_releaseSprites(Entity this);
-static void Entity_updateSprites(Entity this, int updateSpriteTransformations, int updateSpritePosition);
+static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -728,13 +728,13 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	return childEntity;
 }
 
-u32 Entity_areAllChildrenSpawned(Entity this)
+u32 Entity_areAllChildrenInstantiated(Entity this)
 {
 	ASSERT(this, "Entity::allChildrenSpawned: null this");
 
     if(this->entityFactory)
     {
-        return __LIST_EMPTY == EntityFactory_spawnEntities(this->entityFactory);
+        return __LIST_EMPTY == EntityFactory_instantiateEntities(this->entityFactory);
     }
 
     return true;
@@ -877,7 +877,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 }
 
 // update sprites
-static void Entity_updateSprites(Entity this, int updateSpriteTransformations, int updateSpritePosition)
+static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -886,6 +886,8 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
 	    return;
     }
 
+    updatePosition |= updateRotation;
+
     VirtualNode node = this->sprites->head;
 
     // move each child to a temporary list
@@ -893,23 +895,24 @@ static void Entity_updateSprites(Entity this, int updateSpriteTransformations, i
     {
         Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-        if(updateSpriteTransformations)
+        if(updatePosition)
+        {
+            // update sprite's 2D position
+            __VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+        }
+
+        if(updateRotation)
+        {
+            __VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+        }
+
+        if(updateScale)
         {
             // calculate the scale
             __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
             // calculate sprite's parallax
             __VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
-        }
-
-        if(updateSpritePosition)
-        {
-            // update sprite's 2D position
-            __VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
-
-            // update sprite's 2D rotation
-            __VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
-
         }
     }
 }
@@ -929,8 +932,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 		Entity_calculateSize(this);
 	}
 
-	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
-//	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
+	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 
 	if(this->hidden)
 	{
@@ -958,7 +960,8 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 
     this->updateSprites = 0;
     this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
-    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteTransformations, this)? __UPDATE_SPRITE_TRANSFORMATIONS : 0;
+    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteRotation, this)? __UPDATE_SPRITE_ROTATION : 0;
+    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteScale, this)? __UPDATE_SPRITE_SCALE : 0;
 
     // call base class's transform method
     Container_transform(__SAFE_CAST(Container, this), environmentTransform);
@@ -970,7 +973,7 @@ void Entity_updateVisualRepresentation(Entity this)
 
 	Container_updateVisualRepresentation(__SAFE_CAST(Container, this));
 
-	Entity_updateSprites(this, this->updateSprites & __UPDATE_SPRITE_TRANSFORMATIONS, this->updateSprites & __UPDATE_SPRITE_POSITION);
+	Entity_updateSprites(this, this->updateSprites & __UPDATE_SPRITE_POSITION, this->updateSprites & __UPDATE_SPRITE_SCALE, this->updateSprites & __UPDATE_SPRITE_ROTATION);
 
 	this->updateSprites = 0;
 
@@ -1173,12 +1176,20 @@ bool Entity_updateSpritePosition(Entity this)
 	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
 }
 
-// check if necessary to update sprite's scale
-bool Entity_updateSpriteTransformations(Entity this)
+// check if necessary to update sprite's rotation
+bool Entity_updateSpriteRotation(Entity this)
 {
-	ASSERT(this, "Entity::updateSpriteTransformations: null this");
+	ASSERT(this, "Entity::updateSpriteRotation: null this");
 
-	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & __ZAXIS));
+	return this->invalidateGlobalTransformation & __INVALIDATE_ROTATION;
+}
+
+// check if necessary to update sprite's scale
+bool Entity_updateSpriteScale(Entity this)
+{
+	ASSERT(this, "Entity::updateSpriteScale: null this");
+
+	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & (__ZAXIS | __INVALIDATE_SCALE)));
 }
 
 // set the direction
@@ -1217,7 +1228,7 @@ void Entity_show(Entity this)
     __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
 
     // and update the visual representation
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATIONS | __UPDATE_SPRITE_POSITION;
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
     Entity_updateVisualRepresentation(this);
 
 	Container_show(__SAFE_CAST(Container, this));
@@ -1247,7 +1258,7 @@ void Entity_hide(Entity this)
     __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
 
     // and update the visual representation
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATIONS | __UPDATE_SPRITE_POSITION;
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
     Entity_updateVisualRepresentation(this);
 
 	Container_hide(__SAFE_CAST(Container, this));
@@ -1292,7 +1303,7 @@ void Entity_resume(Entity this)
 	}
 
 	// force update sprites on next game's cycle
-	this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
+	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
 // defaults to true

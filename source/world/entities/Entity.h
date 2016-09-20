@@ -32,8 +32,10 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __UPDATE_SPRITE_TRANSFORMATIONS		0x01
-#define __UPDATE_SPRITE_POSITION			0x10
+#define __UPDATE_SPRITE_TRANSFORMATION		0x07
+#define __UPDATE_SPRITE_POSITION			0x01
+#define __UPDATE_SPRITE_SCALE       		0x02
+#define __UPDATE_SPRITE_ROTATION       		0x04
 
 #define __EVENT_ENTITY_LOADED	            "entityLoaded"
 
@@ -47,7 +49,8 @@
 		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);								            \
 		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);									        \
 		__VIRTUAL_DEC(ClassName, bool, updateSpritePosition);											\
-		__VIRTUAL_DEC(ClassName, bool, updateSpriteTransformations);									\
+		__VIRTUAL_DEC(ClassName, bool, updateSpriteScale);									            \
+		__VIRTUAL_DEC(ClassName, bool, updateSpriteRotation);									        \
 		__VIRTUAL_DEC(ClassName, void, initialize, u32);												\
 		__VIRTUAL_DEC(ClassName, void, ready, u32);														\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
@@ -62,7 +65,8 @@
 		__VIRTUAL_SET(ClassName, Entity, isVisible);													\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);													\
 		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);											\
-		__VIRTUAL_SET(ClassName, Entity, updateSpriteTransformations);									\
+		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);									        \
+		__VIRTUAL_SET(ClassName, Entity, updateSpriteRotation);									        \
 		__VIRTUAL_SET(ClassName, Entity, getPosition);													\
 		__VIRTUAL_SET(ClassName, Entity, getWidth);														\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);													\
@@ -115,7 +119,7 @@ void Entity_initialize(Entity this, u32 recursive);
 void Entity_ready(Entity this, u32 recursive);
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions);
-u32 Entity_areAllChildrenSpawned(Entity this);
+u32 Entity_areAllChildrenInstantiated(Entity this);
 u32 Entity_areAllChildrenInitialized(Entity this);
 u32 Entity_areAllChildrenTransformed(Entity this);
 u32 Entity_areAllChildrenReady(Entity this);
@@ -139,7 +143,8 @@ int Entity_getDepth(Entity this);
 Gap Entity_getGap(Entity this);
 bool Entity_isVisible(Entity this, int pad, bool recursive);
 bool Entity_updateSpritePosition(Entity this);
-bool Entity_updateSpriteTransformations(Entity this);
+bool Entity_updateSpriteScale(Entity this);
+bool Entity_updateSpriteRotation(Entity this);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
 Shape Entity_getShape(Entity this);
 void Entity_show(Entity this);

@@ -99,9 +99,16 @@ bool CollisionsContainerEntity_updateSpritePosition(CollisionsContainerEntity th
 	return false;
 }
 
-bool CollisionsContainerEntity_updateSpriteTransformations(CollisionsContainerEntity this __attribute__ ((unused)))
+bool CollisionsContainerEntity_updateSpriteRotation(CollisionsContainerEntity this __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::updateSpriteTransformations: null this");
+	ASSERT(this, "CollisionsContainerEntity::updateSpriteRotation: null this");
+
+	return false;
+}
+
+bool CollisionsContainerEntity_updateSpriteScale(CollisionsContainerEntity this __attribute__ ((unused)))
+{
+	ASSERT(this, "CollisionsContainerEntity::updateSpriteScale: null this");
 
 	return false;
 }
