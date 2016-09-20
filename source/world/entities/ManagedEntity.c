@@ -149,8 +149,10 @@ void ManagedEntity_ready(ManagedEntity this, u32 recursive)
 
     Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
-	VirtualList_clear(this->managedSprites);
-	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
+	if(!VirtualList_getSize(this->managedSprites))
+	{
+    	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
+    }
 }
 
 // transform class
@@ -160,8 +162,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
-//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
-	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
+//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
+	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 
@@ -179,7 +181,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 		this->previous2DPosition = position2D;
 
-		this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
+		this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 
 		return;
 	}
@@ -196,7 +198,7 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 
 	if(this->updateSprites)
 	{
-		if(this->updateSprites & __UPDATE_SPRITE_TRANSFORMATIONS)
+		if(this->updateSprites & __UPDATE_SPRITE_SCALE)
 		{
 			Entity_updateVisualRepresentation(__SAFE_CAST(Entity, this));
 		}

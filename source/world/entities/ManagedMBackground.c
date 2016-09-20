@@ -159,8 +159,8 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
-//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
-	if(Entity_updateSpriteTransformations(__SAFE_CAST(Entity, this)))
+//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
+	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 		this->invalidateGlobalTransformation = 0;
@@ -179,7 +179,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 
 		this->previous2DPosition = position2D;
 
-		this->updateSprites = __UPDATE_SPRITE_POSITION | __UPDATE_SPRITE_TRANSFORMATIONS;
+		this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 
 		return;
 	}
@@ -194,7 +194,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 	// apply environment transform
 	Container_applyEnvironmentToTranformation(__SAFE_CAST(Container, this), environmentTransform);
 
-	this->updateSprites = __UPDATE_SPRITE_POSITION;
+    this->updateSprites |= __UPDATE_SPRITE_POSITION;
 
 	this->invalidateGlobalTransformation = 0;
 }
@@ -205,7 +205,7 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 
 	if(this->updateSprites)
 	{
-		if(this->updateSprites & __UPDATE_SPRITE_TRANSFORMATIONS)
+		if(this->updateSprites & __UPDATE_SPRITE_SCALE)
 		{
 			Entity_updateVisualRepresentation(__SAFE_CAST(Entity, this));
 		}

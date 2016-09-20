@@ -74,11 +74,22 @@ void MBackground_destructor(MBackground this)
 {
 	ASSERT(this, "MBackground::destructor: null this");
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node; node = node->next)
+    // speed up my destruction by deleting my sprites
+	if(this->sprites)
 	{
-		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, node->data)));
+		VirtualNode node = this->sprites->head;
+
+        for(; node; node = node->next)
+        {
+            Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, node->data));
+            __DELETE(node->data);
+            MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), texture);
+        }
+
+		// delete the sprites
+		__DELETE(this->sprites);
+
+		this->sprites = NULL;
 	}
 
 	// destroy the super object

@@ -44,6 +44,7 @@ typedef struct TextureRegistry
 	Texture texture;
 	u8 cols;
 	u8 rows;
+	u8 free;
 } TextureRegistry;
 
 
@@ -104,7 +105,7 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 	{
 		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
-		if(!Texture_getTextureDefinition(textureRegistry->texture))
+		if(textureRegistry->free)
 		{
 			if(textureDefinition->cols <= textureRegistry->cols &&
 				textureDefinition->rows <= textureRegistry->rows
@@ -134,6 +135,7 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 	if(selectedTextureRegistry)
 	{
 		// free texture found, so replace it
+		selectedTextureRegistry->free = false;
 		Texture_setDefinition(selectedTextureRegistry->texture, textureDefinition);
 		Texture_setPalette(selectedTextureRegistry->texture, textureDefinition->palette);
 		Texture_rewrite(selectedTextureRegistry->texture);
@@ -142,6 +144,7 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 	{
 		// texture not found, must load it
 		selectedTextureRegistry = __NEW_BASIC(TextureRegistry);
+		selectedTextureRegistry->free = false;
 		selectedTextureRegistry->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
 		selectedTextureRegistry->cols = textureDefinition->cols;
 		selectedTextureRegistry->rows = textureDefinition->rows;
@@ -160,7 +163,6 @@ void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((un
 	ASSERT(this, "MBackgroundManager::removeTexture: null this");
 	ASSERT(texture, "MBackgroundManager::removeTexture: null texture");
 
-#ifdef __DEBUG
 	VirtualNode node = this->textureRegistries->head;
 
 	for(; node; node = node->next)
@@ -169,18 +171,12 @@ void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((un
 
 		if(texture == textureRegistry->texture)
 		{
+    		textureRegistry->free = true;
 			break;
 		}
 	}
 
 	ASSERT(node, "MBackgroundManager::removeTexture: texture not found");
-#endif
-
-	if(texture)
-	{
-	    Texture_releaseCharSet(texture);
-	    Texture_setDefinition(texture, NULL);
-	}
 }
 
 // remove texture
