@@ -450,11 +450,18 @@ void SpriteManager_render(SpriteManager this)
 	{
 		if(0 < this->texturesMaximumRowsToWrite && this->textureToWrite)
 		{
-			__VIRTUAL_CALL(Texture, write, this->textureToWrite);
+		    if(*(u32*)this->textureToWrite)
+		    {
+                __VIRTUAL_CALL(Texture, write, this->textureToWrite);
 
-			this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
-			textureWasWritten = true;
-			this->waitToWrite = this->cyclesToWaitForTextureWriting;
+                this->textureToWrite = !this->textureToWrite->written && this->textureToWrite->textureDefinition? this->textureToWrite : NULL;
+                textureWasWritten = true;
+                this->waitToWrite = this->cyclesToWaitForTextureWriting;
+            }
+            else
+            {
+                this->textureToWrite = NULL;
+            }
 		}
 		else
 		{
@@ -464,7 +471,7 @@ void SpriteManager_render(SpriteManager this)
 			{
 				Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
 
-				if(texture && !texture->written)
+				if(texture && *(u32*)texture && !texture->written && texture->textureDefinition)
 				{
 					__VIRTUAL_CALL(Texture, write, texture);
 

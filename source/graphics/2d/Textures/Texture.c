@@ -86,11 +86,18 @@ void Texture_destructor(Texture this)
 // write an animated map
 void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
 {
+	ASSERT(this, "Texture::setDefinition: null this");
+	ASSERT(textureDefinition, "Texture::setDefinition: null textureDefinition");
+
 	this->textureDefinition = textureDefinition;
+
+    Texture_releaseCharSet(this);
 }
 
 TextureDefinition* Texture_getDefinition(Texture this)
 {
+	ASSERT(this, "Texture::getDefinition: null this");
+
 	return this->textureDefinition;
 }
 
@@ -105,19 +112,23 @@ void Texture_releaseCharSet(Texture this)
 		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
 		this->charSet = NULL;
 	}
+
+	this->written = false;
 }
 
 // write into memory the chars and this
 void Texture_write(Texture this)
 {
 	ASSERT(this, "Texture::write: null this");
+	ASSERT(this->textureDefinition, "Texture::write: null textureDefinition");
+	ASSERT(this->textureDefinition->charSetDefinition, "Texture::write: null charSetDefinition");
 
 	if(!this->charSet)
 	{
 		// if the char definition is NULL, it must be a text
 		this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
 
-    	ASSERT(this->charSet, "Texture::write: null charset");
+    	NM_ASSERT(this->charSet, "Texture::write: null charset");
 
 		if(this->charSet)
 		{
@@ -312,6 +323,8 @@ u16 Texture_getId(Texture this)
 // process event
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribute__ ((unused)))
 {
+	ASSERT(this, "Texture::onCharSetRewritten: null this");
+
 	__VIRTUAL_CALL(Texture, write, this);
 
 	// propagate event

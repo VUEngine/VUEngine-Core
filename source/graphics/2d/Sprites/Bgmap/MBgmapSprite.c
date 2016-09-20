@@ -367,6 +367,12 @@ void MBgmapSprite_render(MBgmapSprite this)
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
+        if(!this->texture->written)
+        {
+            worldPointer->head = 0x0000;
+            return;
+        }
+
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 

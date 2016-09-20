@@ -85,7 +85,11 @@ void BgmapTexture_write(BgmapTexture this)
 
 	Texture_write(__SAFE_CAST(Texture, this));
 
-	NM_ASSERT(this->charSet, "BgmapTexture::write: null charSet");
+	if(!this->charSet)
+	{
+    	this->written = false;
+	    return;
+	}
 
 	if(0 == this->remainingRowsToBeWritten)
 	{

@@ -82,6 +82,11 @@ void ObjectTexture_write(ObjectTexture this)
 
 	Texture_write(__SAFE_CAST(Texture, this));
 
+	if(!this->charSet)
+	{
+	    return;
+	}
+
 	int palette = this->palette << 14;
 	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;

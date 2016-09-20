@@ -217,35 +217,6 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 	BgmapSprite_invalidateParamTable(this);
 }
 
-// calculate zoom scaling factor
-void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
-{
-	ASSERT(this, "BgmapSprite::resize: null this");
-
-	z -= _screenPosition->z;
-
-	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z >> _optical->maximumViewDistancePower));
-
-	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE): ratio;
-
-	this->drawSpec.scale.x = FIX7_9_MULT(scale.x, ratio * (this->drawSpec.scale.x < 0 ? -1 : 1));
-	this->drawSpec.scale.y = FIX7_9_MULT(scale.y, ratio * (this->drawSpec.scale.y < 0 ? -1 : 1));
-
-	ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
-	ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
-
-	if(this->texture)
-	{
-        this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-        this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
-	}
-
-	if(this->param)
-	{
-		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
-	}
-}
-
 VBVec2D BgmapSprite_getPosition(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
@@ -298,6 +269,40 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 	this->drawSpec.rotation.x = rotation->x % __TOTAL_SIN_ENTRIES;
 	this->drawSpec.rotation.y = rotation->y % __TOTAL_SIN_ENTRIES;
 	this->drawSpec.rotation.z = rotation->z % __TOTAL_SIN_ENTRIES;
+
+	if(this->param)
+	{
+		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
+	}
+}
+
+// calculate zoom scaling factor
+void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
+{
+	ASSERT(this, "BgmapSprite::resize: null this");
+
+	z -= _screenPosition->z;
+
+	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z >> _optical->maximumViewDistancePower));
+
+	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE): ratio;
+
+	this->drawSpec.scale.x = FIX7_9_MULT(scale.x, ratio * (this->drawSpec.scale.x < 0 ? -1 : 1));
+	this->drawSpec.scale.y = FIX7_9_MULT(scale.y, ratio * (this->drawSpec.scale.y < 0 ? -1 : 1));
+
+	ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
+	ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
+
+	if(this->texture)
+	{
+        this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+        this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+	}
+
+	if(this->param)
+	{
+		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
+	}
 }
 
 // calculate the parallax
@@ -305,7 +310,7 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z)
 {
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
-	this->drawSpec.position.z = z;
+	this->drawSpec.position.z = z - _screenPosition->z;
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 
@@ -328,6 +333,12 @@ void BgmapSprite_render(BgmapSprite this)
 	{
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+
+	    if(!this->texture->written)
+	    {
+			worldPointer->head = 0x0000;
+	        return;
+	    }
 
 		// get coordinates
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
