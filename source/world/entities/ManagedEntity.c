@@ -141,6 +141,8 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	position2D.parallax = 0;
 
 	this->previous2DPosition = position2D;
+
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
 void ManagedEntity_ready(ManagedEntity this, u32 recursive)

@@ -138,6 +138,8 @@ void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation
 	position2D.parallax = 0;
 
 	this->previous2DPosition = position2D;
+
+    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
 void ManagedMBackground_ready(ManagedMBackground this, u32 recursive)

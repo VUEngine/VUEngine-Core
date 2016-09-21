@@ -34,6 +34,13 @@ __CLASS_DEFINITION(GameState, State);
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
+
+static void GameState_initialTransform(GameState this);
+
+
+//---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -210,11 +217,14 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	// move the screen to its previous position
 	Screen_focus(Screen_getInstance(), false);
 
-	// transform everything before showing up
-	GameState_transform(this);
+    // force all transformations to take place again
+    GameState_initialTransform(this);
 
 	// set up visual representation
 	GameState_updateVisuals(this);
+
+	// transform everything before showing up
+//	GameState_transform(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());
@@ -283,6 +293,33 @@ void GameState_transform(GameState this)
 }
 
 // update level entities' positions
+static void GameState_initialTransform(GameState this)
+{
+	ASSERT(this, "GameState::initialTransform: null this");
+	ASSERT(this->stage, "GameState::transform: null stage");
+
+	// static to avoid call to memcpy
+	static Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
+	{
+			// local position
+			{0, 0, 0},
+			// global position
+			{0, 0, 0},
+			// local rotation
+			{0, 0, 0},
+			// global rotation
+			{0, 0, 0},
+			// local scale
+			{__1I_FIX7_9, __1I_FIX7_9},
+			// global scale
+			{__1I_FIX7_9, __1I_FIX7_9},
+	};
+
+    __VIRTUAL_CALL(Container, initialTransform, this->stage, &environmentTransform, true);
+}
+
+
+// update level entities' positions
 void GameState_updateVisuals(GameState this)
 {
 	ASSERT(this, "GameState::updateVisuals: null this");
@@ -339,6 +376,12 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// load world entities
 	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
+
+	// move the screen to its previous position
+	Screen_focus(Screen_getInstance(), false);
+
+    // force all transformations to take place again
+    GameState_initialTransform(this);
 
 	// set up visual representation
 	GameState_updateVisuals(this);
