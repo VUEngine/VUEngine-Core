@@ -227,21 +227,6 @@ bool AnimationController_animate(AnimationController this)
 
     return false;
 }
-// render frame
-/*
-bool AnimationController_update(AnimationController this, Clock clock)
-{
-	ASSERT(this, "AnimationController::update: null this");
-
-	if(this->playing && !Clock_isPaused(clock))
-	{
-		// first animate the frame
-		return AnimationController_animate(this);
-	}
-
-	return false;
-}
-*/
 
 // play animation
 void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction)

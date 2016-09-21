@@ -323,7 +323,6 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
         // check the bodies
         for(; node; node = node->next)
         {
-            //Body_update(__SAFE_CAST(Body, node->data));
             __VIRTUAL_CALL(Body, update, __SAFE_CAST(Body, node->data));
         }
     }
