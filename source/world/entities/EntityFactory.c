@@ -183,11 +183,6 @@ void EntityFactory_destructor(EntityFactory this)
     {
         PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-        if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
-
         __DELETE_BASIC(positionedEntityDescription);
     }
 
