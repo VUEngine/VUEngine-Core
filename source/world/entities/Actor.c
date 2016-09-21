@@ -417,52 +417,43 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 			Object sender = Telegram_getSender(telegram);
 			Actor otherActor = __SAFE_CAST(Actor, sender);
 
-			if(true || (sender == __SAFE_CAST(Object, this)) || __SAFE_CAST(Cuboid, sender) || __SAFE_CAST(Body, sender))
-	        {
-				switch(message)
-	            {
-					case kCollision:
+            switch(message)
+            {
+                case kCollision:
 
-						Actor_resolveCollisions(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
-						return true;
-						break;
+                    Actor_resolveCollisions(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
+                    return true;
+                    break;
 
-					case kCollisionWithYou:
+                case kCollisionWithYou:
 
-						Actor_resolveCollisionsAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
-						return true;
-						break;
+                    Actor_resolveCollisionsAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
+                    return true;
+                    break;
 
-					case kBodyStartedMoving:
+                case kBodyStartedMoving:
 
-						ASSERT(this->shape, "Actor::handleMessage: null shape");
-						CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-						Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
-						return true;
-						break;
+                    ASSERT(this->shape, "Actor::handleMessage: null shape");
+                    CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+                    Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
+                    return true;
+                    break;
 
-					case kBodyStopped:
+                case kBodyStopped:
 
-						if(!Body_isMoving(this->body))
-	                    {
-							ASSERT(this->shape, "Actor::handleMessage: null shape");
-							CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-						}
-						break;
+                    if(!Body_isMoving(this->body))
+                    {
+                        ASSERT(this->shape, "Actor::handleMessage: null shape");
+                        CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+                    }
+                    break;
 
-					case kBodyBounced:
+                case kBodyBounced:
 
-						Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
-						return true;
-						break;
-				}
-			}
-			else if(otherActor)
-	        {
-				__VIRTUAL_CALL(Actor, takeHitFrom, this, otherActor);
-
-				return true;
-			}
+                    Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
+                    return true;
+                    break;
+            }
 		}
 	}
 	return false;
@@ -638,7 +629,7 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObje
 	{
 		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
 
-		if(bodyLastDisplacement.x || bodyLastDisplacement.y || bodyLastDisplacement.z)
+		if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
 		{
 			int axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, bodyLastDisplacement, true);
 
