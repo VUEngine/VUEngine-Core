@@ -100,10 +100,14 @@ static void Stage_preloadAssets(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
 static void Stage_loadInitialEntities(Stage this);
-static u32 Stage_unloadOutOfRangeEntities(Stage this, int defer);
-static u32 Stage_loadInRangeEntities(Stage this, int defer);
+static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
+static void Stage_loadInRangeEntities(Stage this, int defer);
 
-typedef u32 (*StreamingPhase)(Stage, int);
+#ifdef __PROFILE_STREAMING
+void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y);
+#endif
+
+typedef void (*StreamingPhase)(Stage, int);
 
 static const StreamingPhase _streamingPhases[] =
 {
@@ -146,7 +150,7 @@ static void Stage_constructor(Stage this)
 	this->nextEntityId = 0;
     this->streamingPhase = 0;
     this->streamingCycleCounter = 0;
-    this->hasNotRemovedChildren = true;
+    this->hasRemovedChildren = false;
 }
 
 // class's destructor
@@ -680,19 +684,17 @@ static void Stage_loadInitialEntities(Stage this)
 }
 
 // unload non visible entities
-static u32 Stage_unloadOutOfRangeEntities(Stage this, int defer)
+static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 {
 	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
 
 	if(!this->children)
 	{
-		return false;
+		return;
 	}
 
 	// need a temporal list to remove and delete entities
 	VirtualNode node = this->children->head;
-
-    u32 value = false;
 
 	// check which actors must be unloaded
 	for(; node; node = node->next)
@@ -723,8 +725,6 @@ static u32 Stage_unloadOutOfRangeEntities(Stage this, int defer)
 			// unload it
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 
-			value = true;
-
             if(defer)
             {
                 break;
@@ -736,11 +736,9 @@ static u32 Stage_unloadOutOfRangeEntities(Stage this, int defer)
         u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
         unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime? processTime: unloadOutOfRangeEntitiesHighestTime;
 #endif
-
-    return value;
 }
 
-static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
+static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
 
@@ -777,8 +775,6 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
 
 	this->streamingHeadNode = NULL;
 
-    u32 value = false;
-
     if(advancing)
     {
         for(; node && counter < amplitude >> 1; node = node->previous, counter++);
@@ -804,7 +800,6 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
-                    value = true;
                     stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
@@ -837,7 +832,6 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
-                    value = true;
                     stageEntityDescription->id = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
                     EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
@@ -852,13 +846,33 @@ static u32 Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unuse
         u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
         loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime? processTime: loadInRangeEntitiesHighestTime;
 #endif
-
-    return value;
 }
 
 void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
+
+    u32 alreadyStreamingIn = false;
+
+    if(!this->hasRemovedChildren)
+    {
+#ifdef __PROFILE_STREAMING
+	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+#endif
+        alreadyStreamingIn = EntityFactory_prepareEntities(this->entityFactory);
+
+#ifdef __PROFILE_STREAMING
+        u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+        entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
+
+        EntityFactory_showStatus(this->entityFactory, 0, 18);
+#endif
+    }
+
+    if(alreadyStreamingIn)
+    {
+        return;
+    }
 
     int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
 
@@ -870,18 +884,8 @@ void Stage_stream(Stage this)
 #ifdef __PROFILE_STREAMING
     timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
 #endif
-    if(!_streamingPhases[this->streamingPhase](this, true) && this->hasNotRemovedChildren)
-    {
-#ifdef __PROFILE_STREAMING
-	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
-#endif
-        EntityFactory_prepareEntities(this->entityFactory);
 
-#ifdef __PROFILE_STREAMING
-        u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
-        entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
-#endif
-    }
+    _streamingPhases[this->streamingPhase](this, true);
 }
 
 void Stage_streamAll(Stage this)
@@ -904,7 +908,7 @@ void Stage_update(Stage this)
 	ASSERT(this, "Stage::update: null this");
 
     // set now to control the streaming
-    this->hasNotRemovedChildren = !this->removedChildren || !VirtualList_getSize(this->removedChildren);
+    this->hasRemovedChildren = this->removedChildren && VirtualList_getSize(this->removedChildren);
 
 	Container_update(__SAFE_CAST(Container, this));
 

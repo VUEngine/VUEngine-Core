@@ -117,7 +117,7 @@ typedef const PositionedEntity PositionedEntityROMDef;
 __CLASS_NEW_DECLARE(EntityFactory);
 
 void EntityFactory_destructor(EntityFactory this);
-void EntityFactory_prepareEntities(EntityFactory this);
+u32 EntityFactory_prepareEntities(EntityFactory this);
 void EntityFactory_prepareAllEntities(EntityFactory this);
 void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
 

@@ -22,7 +22,9 @@
 #include <EntityFactory.h>
 #include <Entity.h>
 #include <debugConfig.h>
-
+#ifdef __PROFILE_STREAMING
+#include <Printing.h>
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
@@ -434,7 +436,7 @@ u32 EntityFactory_cleanUp(EntityFactory this)
     return __ENTITY_PROCESSED;
 }
 
-void EntityFactory_prepareEntities(EntityFactory this)
+u32 EntityFactory_prepareEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::prepareEntities: null this");
 
@@ -443,9 +445,42 @@ void EntityFactory_prepareEntities(EntityFactory this)
         this->streamingPhase = 0;
     }
 
-    this->streamingPhase += __ENTITY_PENDING_PROCESSING != _streamingPhases[this->streamingPhase](this)? 1 : 0;
+    u32 result = _streamingPhases[this->streamingPhase](this);
+
+    int counter = _streamingPhasesCount;
+
+    while(__LIST_EMPTY == result)
+    {
+        if(!--counter)
+        {
+            return false;
+        }
+
+        this->streamingPhase++;
+
+        if(this->streamingPhase >= _streamingPhasesCount)
+        {
+            this->streamingPhase = 0;
+        }
+
+        result = _streamingPhases[this->streamingPhase](this);
+    }
+
+    this->streamingPhase += __ENTITY_PENDING_PROCESSING != result? 1 : 0;
 
     EntityFactory_cleanUp(this);
+
+    return __LIST_EMPTY != result;
+}
+
+int EntityFactory_hasEntitiesPending(EntityFactory this)
+{
+	ASSERT(this, "EntityFactory::hasEntitiesPending: null this");
+
+    return VirtualList_getSize(this->entitiesToInstantiate) ||
+           VirtualList_getSize(this->entitiesToInitialize) ||
+           VirtualList_getSize(this->entitiesToTransform) ||
+           VirtualList_getSize(this->entitiesToMakeReady);
 }
 
 int EntityFactory_getPhase(EntityFactory this)
@@ -478,3 +513,29 @@ void EntityFactory_prepareAllEntities(EntityFactory this)
     }
 }
 
+#ifdef __PROFILE_STREAMING
+    void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y)
+{
+    ASSERT(this, "EntityFactory::showStreamingProfiling: null this");
+    int xDisplacement = 16;
+
+    Printing_text(Printing_getInstance(), "", x, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Entities pending...", x, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Instantiation:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Initialization:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInitialize), x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Transformation:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Make ready:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
+
+    Printing_text(Printing_getInstance(), "Call listeners:            ", x, y, NULL);
+    Printing_int(Printing_getInstance(), VirtualList_getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
+}
+#endif

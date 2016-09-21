@@ -1019,7 +1019,7 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
-        suspendStreaming |= Game_updateCollisions(this);
+        Game_updateCollisions(this);
 #ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         processCollisionsHighestTime = processTime > processCollisionsHighestTime? processTime: processCollisionsHighestTime;
@@ -1477,6 +1477,20 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
 
 #ifdef __PROFILE_STREAMING
     Stage_showStreamingProfiling(Game_getStage(this), x, ++y);
+#endif
+
+#ifdef __DIMM_FOR_PROFILING
+
+	_vipRegisters[__GPLT0] = 0x50;
+	_vipRegisters[__GPLT1] = 0x50;
+	_vipRegisters[__GPLT2] = 0x54;
+	_vipRegisters[__GPLT3] = 0x54;
+	_vipRegisters[__JPLT0] = 0x54;
+	_vipRegisters[__JPLT1] = 0x54;
+	_vipRegisters[__JPLT2] = 0x54;
+	_vipRegisters[__JPLT3] = 0x54;
+
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
 #endif
 }
 #endif

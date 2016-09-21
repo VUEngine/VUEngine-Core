@@ -46,6 +46,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 static void MBackground_registerTextures(MBackground this);
+static void MBackground_releaseTextures(MBackground this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,6 +68,8 @@ void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroun
 	__CONSTRUCT_BASE(Entity, (EntityDefinition*)mBackgroundDefinition, id, name);
 
 	this->mBackgroundDefinition = mBackgroundDefinition;
+
+	MBackground_registerTextures(this);
 }
 
 // class's destructor
@@ -74,53 +77,18 @@ void MBackground_destructor(MBackground this)
 {
 	ASSERT(this, "MBackground::destructor: null this");
 
-    // speed up my destruction by deleting my sprites
-	if(this->sprites)
-	{
-		VirtualNode node = this->sprites->head;
-
-        for(; node; node = node->next)
-        {
-            Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, node->data));
-            __DELETE(node->data);
-            MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), texture);
-        }
-
-		// delete the sprites
-		__DELETE(this->sprites);
-
-		this->sprites = NULL;
-	}
+    MBackground_releaseTextures(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 
-// initialize method
-void MBackground_initialize(MBackground this, u32 recursive)
-{
-	ASSERT(this->mBackgroundDefinition->spritesDefinitions[0], "MBackground::initialize: null sprite list");
-
-	// first register with the manager so it handles the texture loading process
-	if(!this->sprites)
-	{
-	    MBackground_registerTextures(this);
-    }
-
-	Entity_initialize(__SAFE_CAST(Entity, this), recursive);
-}
-
 void MBackground_suspend(MBackground this)
 {
 	ASSERT(this, "MBackground::suspend: null this");
 
-	VirtualNode node = this->sprites->head;
-
-	for(; node; node = node->next)
-	{
-		MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), Sprite_getTexture(__SAFE_CAST(Sprite, node->data)));
-	}
+    MBackground_releaseTextures(this);
 
 	Entity_suspend(__SAFE_CAST(Entity, this));
 }
@@ -159,5 +127,26 @@ static void MBackground_registerTextures(MBackground this)
 				}
 			}
 		}
+	}
+}
+
+static void MBackground_releaseTextures(MBackground this)
+{
+    // speed up my destruction by deleting my sprites
+	if(this->sprites)
+	{
+		VirtualNode node = this->sprites->head;
+
+        for(; node; node = node->next)
+        {
+            Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, node->data));
+            __DELETE(node->data);
+            MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), texture);
+        }
+
+		// delete the sprites
+		__DELETE(this->sprites);
+
+		this->sprites = NULL;
 	}
 }

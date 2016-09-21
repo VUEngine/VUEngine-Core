@@ -66,7 +66,7 @@
         /* index for method to execute */													            \
         int streamingPhase;                                                                             \
         /* flag to control streaming */ 															    \
-        u32 hasNotRemovedChildren;                                                                      \
+        u32 hasRemovedChildren;                                                                      \
         /* the UI */ 																					\
         UI ui;																							\
         /* focus entity: needed for streaming */														\
