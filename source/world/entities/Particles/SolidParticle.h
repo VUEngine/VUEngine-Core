@@ -119,7 +119,7 @@ __CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* solidParticleD
 
 void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void SolidParticle_destructor(SolidParticle this);
-void SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
+u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
 Shape SolidParticle_getShape(SolidParticle this);
 int SolidParticle_getWidth(SolidParticle this);
 int SolidParticle_getHeight(SolidParticle this);

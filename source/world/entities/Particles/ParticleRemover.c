@@ -55,7 +55,9 @@ static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemov
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__SINGLETON(ParticleRemover);
+// always call these two macros next to each other
+__CLASS_NEW_DEFINITION(ParticleRemover)
+__CLASS_NEW_END(ParticleRemover);
 
 // class's constructor
 static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this)
@@ -80,8 +82,9 @@ void ParticleRemover_destructor(ParticleRemover this)
     __DELETE(this->particlesLists);
     this->particlesLists = NULL;
 
-	// allow a new construct
-	__SINGLETON_DESTROY;
+	// destroy the super object
+	// must always be called at the end of the destructor
+	__DESTROY_BASE;
 }
 
 void ParticleRemover_reset(ParticleRemover this)
@@ -97,7 +100,10 @@ void ParticleRemover_reset(ParticleRemover this)
 
         for(; particleNode; particleNode = particleNode->next)
         {
-            __DELETE(particleNode->data);
+            if(*(u32*)particleNode->data)
+            {
+                __DELETE(particleNode->data);
+            }
         }
 
         __DELETE(particlesList);

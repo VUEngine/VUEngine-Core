@@ -30,8 +30,8 @@
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParticleRemover_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
+#define ParticleRemover_METHODS(ClassName)																\
+		Object_METHODS(ClassName)																		\
 
 #define ParticleRemover_SET_VTABLE(ClassName)															\
 		Object_SET_VTABLE(ClassName)																	\
@@ -44,7 +44,7 @@ __CLASS(ParticleRemover);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-ParticleRemover ParticleRemover_getInstance();
+__CLASS_NEW_DECLARE(ParticleRemover);
 
 void ParticleRemover_destructor(ParticleRemover this);
 void ParticleRemover_reset(ParticleRemover this);

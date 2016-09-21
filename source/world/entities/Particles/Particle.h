@@ -31,8 +31,6 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __EVENT_PARTICLE_EXPIRED	"particleExpired"
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -41,7 +39,7 @@
 // declare the virtual methods
 #define Particle_METHODS(ClassName)																		\
 		SpatialObject_METHODS(ClassName)																\
-		__VIRTUAL_DEC(ClassName, void, update, int elapsedTime, void (* behavior)(Particle particle));	\
+		__VIRTUAL_DEC(ClassName, u32, update, int elapsedTime, void (* behavior)(Particle particle));	\
 		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation, bool updateSpritePosition);			\
 		__VIRTUAL_DEC(ClassName, void, resume);															\
 		__VIRTUAL_DEC(ClassName, void, suspend);														\
@@ -124,7 +122,7 @@ __CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, cons
 
 void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void Particle_destructor(Particle this);
-void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle particle));
+u32 Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle particle));
 void Particle_transform(Particle this);
 void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition);
 void Particle_addForce(Particle this, const Force* force, u32 movementType);

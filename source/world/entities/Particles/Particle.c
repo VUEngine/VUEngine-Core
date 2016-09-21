@@ -109,7 +109,7 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
 }
 
-void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle particle))
+u32 Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "Particle::update: null this");
 
@@ -126,9 +126,11 @@ void Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle 
 		{
 			Body_setActive(this->body, false);
 
-			Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_PARTICLE_EXPIRED);
+			return true;
 		}
 	}
+
+	return false;
 }
 
 void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition)

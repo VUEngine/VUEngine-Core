@@ -52,7 +52,7 @@ extern const Optical* _optical;
 static Particle ParticleSystem_recycleParticle(ParticleSystem this);
 static Particle ParticleSystem_spawnParticle(ParticleSystem this);
 static void ParticleSystem_processExpiredParticles(ParticleSystem this);
-static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventFirer);
+static void ParticleSystem_particleExipired(ParticleSystem this, Particle particle);
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this);
 static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed);
 static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed);
@@ -108,7 +108,7 @@ void ParticleSystem_destructor(ParticleSystem this)
 
 	ParticleSystem_processExpiredParticles(this);
 
-	ParticleRemover particleRemover = ParticleRemover_getInstance();
+	ParticleRemover particleRemover = Stage_getParticleRemover(Game_getStage(Game_getInstance()));
 
 	if(this->particles)
 	{
@@ -192,7 +192,10 @@ void ParticleSystem_update(ParticleSystem this)
 
 	    for(; node; node = node->next)
 	    {
-	        __VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior);
+	        if(__VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior))
+	        {
+    	        ParticleSystem_particleExipired(this, __SAFE_CAST(Particle, node->data));
+	        }
 	    }
 
 		if(!this->paused)
@@ -298,8 +301,6 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix19_13)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
 	__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
-
-	Object_addEventListener(__SAFE_CAST(Object, particle), __SAFE_CAST(Object, this), (EventListener)ParticleSystem_onParticleExipired, __EVENT_PARTICLE_EXPIRED);
 
 	return particle;
 }
@@ -426,13 +427,12 @@ void ParticleSystem_suspend(ParticleSystem this)
 	}
 }
 
-static void ParticleSystem_onParticleExipired(ParticleSystem this, Object eventFirer)
+static void ParticleSystem_particleExipired(ParticleSystem this, Particle particle)
 {
-	ASSERT(this, "ParticleSystem::onParticleExipired: null this");
-	ASSERT(__SAFE_CAST(Particle, eventFirer), "ParticleSystem::onParticleExipired: null this");
+	ASSERT(this, "ParticleSystem::particleExipired: null this");
 
-	VirtualList_pushBack(this->expiredParticles, eventFirer);
-	Particle_hide(__SAFE_CAST(Particle, eventFirer));
+	VirtualList_pushBack(this->expiredParticles, particle);
+	Particle_hide(particle);
 }
 
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)

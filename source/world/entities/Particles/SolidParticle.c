@@ -85,11 +85,11 @@ void SolidParticle_destructor(SolidParticle this)
 	__DESTROY_BASE;
 }
 
-void SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
+u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "SolidParticle::update: null this");
 
-	Particle_update(__SAFE_CAST(Particle, this), timeElapsed, behavior);
+	u32 expired = Particle_update(__SAFE_CAST(Particle, this), timeElapsed, behavior);
 
 	if(0 <= this->lifeSpan)
 	{
@@ -100,6 +100,8 @@ void SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)
 			CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->position);
 		}
 	}
+
+	return expired;
 }
 
 // retrieve shape
