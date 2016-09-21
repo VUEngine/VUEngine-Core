@@ -414,9 +414,6 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 		if(this->body)
 	    {
-			Object sender = Telegram_getSender(telegram);
-			Actor otherActor = __SAFE_CAST(Actor, sender);
-
             switch(message)
             {
                 case kCollision:

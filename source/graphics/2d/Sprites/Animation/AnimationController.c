@@ -231,8 +231,8 @@ bool AnimationController_animate(AnimationController this)
 // play animation
 void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction)
 {
-	ASSERT(this, "AnimationController::playAnimation: null this");
-	ASSERT(animationFunction, "AnimationController::playAnimation: null animationFunction");
+	ASSERT(this, "AnimationController::playAnimationFunction: null this");
+	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
 
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)

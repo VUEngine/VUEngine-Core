@@ -48,7 +48,6 @@
 #include <VIPManager.h>
 #include <Printing.h>
 #include <I18n.h>
-#include <ParticleRemover.h>
 #include <debugConfig.h>
 
 #ifdef __DEBUG_TOOLS
@@ -86,8 +85,6 @@ enum GameCurrentProcess
 	kGameHandlingUserInputDone,
 	kGameDispatchingDelayedMessages,
 	kGameDispatchingDelayedMessagesDone,
-	kGameDeletingParticles,
-	kGameDeletingParticlesDone,
 	kGameUpdatingStageMachine,
 	kGameUpdatingStageMachineDone,
 	kGameUpdatingPhysics,
@@ -115,7 +112,6 @@ enum GameCurrentProcess
         VIPManager vipManager;																			\
         TimerManager timerManager;																		\
         Screen screen;																					\
-        ParticleRemover particleRemover;                                                                \
         /* game's next state */																			\
         GameState nextState;																			\
         /* game's next state operation */																\
@@ -216,7 +212,6 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	this->keypadManager = KeypadManager_getInstance();
 	this->vipManager = VIPManager_getInstance();
 	this->timerManager = TimerManager_getInstance();
-    this->particleRemover = ParticleRemover_getInstance();
 
 	SoundManager_getInstance();
 	CharSetManager_getInstance();
@@ -463,7 +458,6 @@ void Game_reset(Game this)
 
 	// reset managers
     Screen_setFocusInGameEntity(this->screen, NULL);
-    ParticleRemover_reset(this->particleRemover);
 	BgmapTextureManager_reset(BgmapTextureManager_getInstance());
 	CharSetManager_reset(CharSetManager_getInstance());
 	ParamTableManager_reset(ParamTableManager_getInstance());
@@ -691,16 +685,6 @@ inline static void Game_updateLogic(Game this)
 
 	// update the game's logic
 	StateMachine_update(this->stateMachine);
-
-#ifdef __DEBUG
-	this->lastProcessName = "deleting particles";
-#endif
-
-	this->currentProcess = kGameDeletingParticles;
-
-    ParticleRemover_update(this->particleRemover);
-
-	this->currentProcess = kGameDeletingParticlesDone;
 
 #ifdef __DEBUG
 	this->lastProcessName = "logic ended";
@@ -1019,7 +1003,9 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
-        Game_updateCollisions(this);
+
+        suspendStreaming |= Game_updateCollisions(this);
+
 #ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         processCollisionsHighestTime = processTime > processCollisionsHighestTime? processTime: processCollisionsHighestTime;

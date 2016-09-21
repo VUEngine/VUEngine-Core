@@ -244,3 +244,19 @@ int ManagedEntity_passMessage(ManagedEntity this __attribute__ ((unused)), int (
 
 	return false;
 }
+
+void ManagedEntity_resume(ManagedEntity this)
+{
+	ASSERT(this, "ManagedEntity::resume: null this");
+
+    Entity_resume(__SAFE_CAST(Entity, this));
+
+    ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
+}
+
+void ManagedEntity_suspend(ManagedEntity this)
+{
+	ASSERT(this, "ManagedEntity::suspend: null this");
+
+    VirtualList_clear(this->managedSprites);
+}

@@ -257,3 +257,19 @@ int ManagedMBackground_passMessage(ManagedMBackground this __attribute__ ((unuse
 
 	return false;
 }
+
+void ManagedMBackground_resume(ManagedMBackground this)
+{
+	ASSERT(this, "ManagedMBackground::resume: null this");
+
+    MBackground_resume(__SAFE_CAST(MBackground, this));
+
+    ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+}
+
+void ManagedMBackground_suspend(ManagedMBackground this)
+{
+	ASSERT(this, "ManagedMBackground::suspend: null this");
+
+    VirtualList_clear(this->managedSprites);
+}

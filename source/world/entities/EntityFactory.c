@@ -189,7 +189,6 @@ void EntityFactory_destructor(EntityFactory this)
     __DELETE(this->spawnedEntities);
     this->spawnedEntities = NULL;
 
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;

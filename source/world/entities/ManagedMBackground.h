@@ -30,7 +30,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ManagedMBackground_METHODS(ClassName)															\
-	MBackground_METHODS(ClassName)																		\
+	    MBackground_METHODS(ClassName)																	\
 
 #define ManagedMBackground_SET_VTABLE(ClassName)														\
 		MBackground_SET_VTABLE(ClassName)																\
@@ -40,6 +40,8 @@
 		__VIRTUAL_SET(ClassName, ManagedMBackground, update);											\
 		__VIRTUAL_SET(ClassName, ManagedMBackground, passMessage);										\
 		__VIRTUAL_SET(ClassName, ManagedMBackground, ready);										    \
+		__VIRTUAL_SET(ClassName, ManagedMBackground, suspend);											\
+		__VIRTUAL_SET(ClassName, ManagedMBackground, resume);											\
 
 __CLASS(ManagedMBackground);
 
@@ -66,6 +68,8 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this);
 void ManagedMBackground_update(ManagedMBackground this);
 int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 void ManagedMBackground_ready(ManagedMBackground this, u32 recursive);
+void ManagedMBackground_suspend(ManagedMBackground this);
+void ManagedMBackground_resume(ManagedMBackground this);
 
 
 #endif

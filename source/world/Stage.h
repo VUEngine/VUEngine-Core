@@ -28,6 +28,7 @@
 #include <Texture.h>
 #include <UI.h>
 #include <ObjectSpriteContainerManager.h>
+#include <ParticleRemover.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,6 +56,8 @@
         StageDefinition* stageDefinition;																\
         /* entity factory */																            \
         EntityFactory entityFactory;                                                                    \
+        /* particle remover */																            \
+        ParticleRemover particleRemover;                                                                \
         /* the stage entities */ 																		\
         VirtualList stageEntities;																		\
         /* the pivot node for streaming */ 																\
@@ -217,6 +220,6 @@ void Stage_suspend(Stage this);
 void Stage_resume(Stage this);
 bool Stage_handlePropagatedMessage(Stage this, int message);
 StageDefinition* Stage_getStageDefinition(Stage this);
-
+ParticleRemover Stage_getParticleRemover(Stage this);
 
 #endif

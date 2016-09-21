@@ -23,7 +23,6 @@
 #include <Game.h>
 #include <Screen.h>
 #include <SpriteManager.h>
-#include <ParticleRemover.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -132,9 +131,6 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 	}
 
 	this->stage = NULL;
-
-    // make sure all my particles are deleted before I'm done
-    ParticleRemover_reset(ParticleRemover_getInstance());
 
     // stop my clocks
     GameState_stopClocks(this);

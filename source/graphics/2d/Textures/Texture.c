@@ -87,6 +87,8 @@ static void Texture_loadCharSet(Texture this)
 {
 	ASSERT(this, "Texture::getCharSet: null this");
 
+	Texture_releaseCharSet(this);
+
 	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
 	// if the char definition is NULL, it must be a text

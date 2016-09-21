@@ -581,9 +581,9 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u32 pressedKey)
 		{
 			case kFrames:
 
-				if(0 > --this->animationFunction.frames[selectedFrame])
+				if(0 < this->animationFunction.frames[selectedFrame])
 				{
-					this->animationFunction.frames[selectedFrame] = 0;
+				    this->animationFunction.frames[selectedFrame]--;
 				}
 
 				break;

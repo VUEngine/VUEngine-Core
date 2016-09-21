@@ -140,6 +140,8 @@ static void Stage_constructor(Stage this)
 	__CONSTRUCT_BASE(Container, -1, NULL);
 
     this->entityFactory = __NEW(EntityFactory);
+    this->particleRemover = __NEW(ParticleRemover);
+
 	this->stageEntities = NULL;
 	this->loadedStageEntities = NULL;
 	this->ui = NULL;
@@ -185,6 +187,8 @@ void Stage_destructor(Stage this)
 		__DELETE(this->loadedStageEntities);
 		this->loadedStageEntities = NULL;
 	}
+
+    __DELETE(this->particleRemover);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -301,7 +305,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	VIPManager_setupBrightnessRepeat(VIPManager_getInstance(), stageDefinition->rendering.colorConfig.brightnessRepeat);
 
 	// set particle removal delay
-	ParticleRemover_setRemovalDelayCycles(ParticleRemover_getInstance(), stageDefinition->streaming.particleRemovalDelayCycles);
+	ParticleRemover_setRemovalDelayCycles(this->particleRemover, stageDefinition->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
@@ -916,6 +920,8 @@ void Stage_update(Stage this)
 	{
 		Container_update(__SAFE_CAST(Container, this->ui));
 	}
+
+	ParticleRemover_update(this->particleRemover);
 }
 
 // transform state
@@ -984,6 +990,9 @@ void Stage_suspend(Stage this)
 	{
 		Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
 	}
+
+	__DELETE(this->entityFactory);
+    ParticleRemover_reset(this->particleRemover);
 }
 
 // resume after pause
@@ -1033,6 +1042,8 @@ void Stage_resume(Stage this)
 
 		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform, true);
 	}
+
+    this->entityFactory = __NEW(EntityFactory);
 }
 
 bool Stage_handlePropagatedMessage(Stage this, int message)
@@ -1086,9 +1097,16 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 // get stage definition
 StageDefinition* Stage_getStageDefinition(Stage this)
 {
-	ASSERT(this, "Stage::getDefinition: null this");
+	ASSERT(this, "Stage::getStageDefinition: null this");
 
 	return this->stageDefinition;
+}
+
+ParticleRemover Stage_getParticleRemover(Stage this)
+{
+	ASSERT(this, "Stage::getParticleRemover: null this");
+
+	return this->particleRemover;
 }
 
 #ifdef __PROFILE_STREAMING
