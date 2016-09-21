@@ -23,6 +23,7 @@
 #include <CharSetManager.h>
 #include <Optics.h>
 #include <VirtualList.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -37,6 +38,8 @@ __CLASS_DEFINITION(Texture, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer);
+static void Texture_onCharSetDeleted(Texture this, Object eventFirer);
+static void Texture_loadCharSet(Texture this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,14 +64,11 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	// save the bgmap definition's address
 	this->textureDefinition = textureDefinition;
 	this->charSet = NULL;
-	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
-	ASSERT(this->charSet, "Texture::constructor: null charSet");
-	// if the char definition is NULL, it must be a text
-	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
-
 	// set the palette
 	this->palette = textureDefinition->palette;
 	this->written = false;
+
+	Texture_loadCharSet(this);
 }
 
 // class's destructor
@@ -81,6 +81,17 @@ void Texture_destructor(Texture this)
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
+}
+
+static void Texture_loadCharSet(Texture this)
+{
+	ASSERT(this, "Texture::getCharSet: null this");
+
+	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
+	ASSERT(this->charSet, "Texture::constructor: null charSet");
+	// if the char definition is NULL, it must be a text
+	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+    Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, __EVENT_CHARSET_DELETED);
 }
 
 // write an animated map
@@ -108,8 +119,14 @@ void Texture_releaseCharSet(Texture this)
 
 	if(this->charSet)
 	{
-		Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
 		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
+
+        if(this->charSet)
+        {
+    		Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
+            Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, __EVENT_CHARSET_DELETED);
+		}
+
 		this->charSet = NULL;
 	}
 
@@ -125,15 +142,8 @@ void Texture_write(Texture this)
 
 	if(!this->charSet)
 	{
-		// if the char definition is NULL, it must be a text
-		this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
-
-    	NM_ASSERT(this->charSet, "Texture::write: null charset");
-
-		if(this->charSet)
-		{
-			Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
-		}
+	    Texture_loadCharSet(this);
+    	ASSERT(this->charSet, "Texture::write: null charset");
 	}
 
 	this->written = true;
@@ -329,6 +339,14 @@ static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribu
 
 	// propagate event
 	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_TEXTURE_REWRITTEN);
+}
+
+// process event
+static void Texture_onCharSetDeleted(Texture this, Object eventFirer)
+{
+	ASSERT(this, "Texture::onCharSetRewritten: null this");
+
+    this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet? NULL : this->charSet;
 }
 
 // write directly to texture

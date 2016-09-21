@@ -70,6 +70,8 @@ void CharSet_destructor(CharSet this)
 {
 	ASSERT(this, "CharSet::destructor: null this");
 
+	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_CHARSET_DELETED);
+
 	// make sure that I'm not destroyed again
 	this->usageCount = 0xFF;
 
