@@ -57,8 +57,6 @@ void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* trig
 	// register a shape for collision detection
 	this->shape = CollisionManager_registerShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), triggerEntityDefinition->shapeType);
 
-	Shape_setCheckForCollisions(this->shape, false);
-
 	ASSERT(this->shape, "TriggerEntity::constructor: shape not created");
 }
 

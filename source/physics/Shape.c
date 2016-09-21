@@ -57,7 +57,7 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	this->ready = false;
 
 	// set flag
-	this->checkForCollisions = true;
+	this->checkForCollisions = false;
 
 	Shape_setActive(this, false);
 }
