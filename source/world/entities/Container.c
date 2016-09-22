@@ -271,7 +271,7 @@ void Container_processRemovedChildren(Container this)
 }
 
 // update each Container's child
-void Container_update(Container this)
+void Container_update(Container this, u32 elapsedTime)
 {
 	ASSERT(this, "Container::update: null this");
 
@@ -286,7 +286,7 @@ void Container_update(Container this)
 		// update each child
 		for(; node ; node = node->next)
 	    {
-			__VIRTUAL_CALL(Container, update, node->data);
+			__VIRTUAL_CALL(Container, update, node->data, elapsedTime);
 		}
 	}
 }
