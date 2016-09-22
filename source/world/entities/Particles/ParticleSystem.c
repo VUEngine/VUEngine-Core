@@ -113,14 +113,44 @@ void ParticleSystem_destructor(ParticleSystem this)
 	if(this->particles)
 	{
 	    // the remover handles all the cleaning
-	    ParticleRemover_deleteParticles(particleRemover, this->particles);
+	    if(particleRemover)
+	    {
+    	    ParticleRemover_deleteParticles(particleRemover, this->particles);
+        }
+        else
+        {
+            VirtualNode node = this->particles->head;
+
+            for(; node; node = node->next)
+            {
+                __DELETE(node->data);
+            }
+
+            __DELETE(this->particles);
+        }
+
 		this->particles = NULL;
 	}
 
 	if(this->recyclableParticles)
 	{
 	    // the remover handles all the cleaning
-	    ParticleRemover_deleteParticles(particleRemover, this->recyclableParticles);
+	    if(particleRemover)
+	    {
+    	    ParticleRemover_deleteParticles(particleRemover, this->recyclableParticles);
+        }
+        else
+        {
+            VirtualNode node = this->recyclableParticles->head;
+
+            for(; node; node = node->next)
+            {
+                __DELETE(node->data);
+            }
+
+            __DELETE(this->recyclableParticles);
+        }
+
 		this->recyclableParticles = NULL;
 	}
 

@@ -189,6 +189,7 @@ void Stage_destructor(Stage this)
 	}
 
     __DELETE(this->particleRemover);
+    this->particleRemover = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor

@@ -112,26 +112,31 @@ void Container_destructor(Container this)
 	if(this->children)
 	{
 		// create a temporary children list
-		VirtualList childrenToDelete = __NEW(VirtualList);
-		VirtualList_copy(childrenToDelete, this->children);
-
-		// delete children list
-		__DELETE(this->children);
-		this->children = NULL;
-
-		VirtualNode node = childrenToDelete->head;
+		VirtualNode node = this->children->head;
 
 		// destroy each child
 		for(; node ; node = node->next)
 	    {
 			Container child = __SAFE_CAST(Container, node->data);
 
+#ifdef __DEBUG
+            if(child->parent != this)
+            {
+                Printing_text(Printing_getInstance(), "Me: ", 1, 15, NULL);
+                Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 5, 15, NULL);
+                Printing_text(Printing_getInstance(), "It: ", 1, 16, NULL);
+                Printing_text(Printing_getInstance(), child ? __GET_CLASS_NAME(child) : "NULL", 5, 16, NULL);
+            }
+#endif
 			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
 			child->parent = NULL;
 			__DELETE(child);
 		}
 
-		__DELETE(childrenToDelete);
+        // delete children list
+        __DELETE(this->children);
+        this->children = NULL;
+
 	}
 
 	// first remove from parent
