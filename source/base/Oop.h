@@ -118,12 +118,6 @@
                                                                                                         \
         /* since the base destructor is the second element in the virtual table */					    \
         _baseDestructor(__SAFE_CAST(Object, this));														\
-                                                                                                        \
-        /* to speed things up */										                                \
-        extern MemoryPool _memoryPool;                                                                  \
-                                                                                                        \
-        /* free the memory */																		    \
-        MemoryPool_free(_memoryPool, (void*)this);										                \
 
 // retrieve virtual method's address
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)                                           \

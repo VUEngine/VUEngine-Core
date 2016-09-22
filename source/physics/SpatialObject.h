@@ -25,7 +25,7 @@
 #include <Object.h>
 
 // events
-#define __EVENT_SPATIAL_OBJECT_DESTROYED				"objectDestroyed"
+#define __EVENT_SPATIAL_OBJECT_DELETED				"spObjDel"
 
 
 //---------------------------------------------------------------------------------------------------------

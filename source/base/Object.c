@@ -55,6 +55,14 @@ typedef struct Event
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
+
+// to speed things up
+extern MemoryPool _memoryPool;
+
+
+//---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -68,6 +76,8 @@ typedef struct Event
  */
 void Object_constructor(Object this)
 {
+	ASSERT(this, "Object::destructor: null this");
+
 	this->events = NULL;
 }
 
@@ -81,6 +91,9 @@ void Object_constructor(Object this)
  */
 void Object_destructor(Object this)
 {
+	ASSERT(this, "Object::destructor: null this");
+	ASSERT(*(u32*)this, "Object::destructor: already deleted this");
+
 	if(this->events)
 	{
 		VirtualNode node = this->events->head;
@@ -94,9 +107,9 @@ void Object_destructor(Object this)
 		this->events = NULL;
 	}
 
-	// an Object can not be instantiated, so there is no memory to free
 
-	ASSERT(this, "Object::destructor: null this");
+    // free the memory
+    MemoryPool_free(_memoryPool, (void*)this);
 }
 
 /**

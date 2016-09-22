@@ -40,9 +40,9 @@ enum ScreenFX
 	kScreenLastFX
 };
 
-#define __EVENT_EFFECT_FADE_START		"eventFadeStart"
-#define __EVENT_EFFECT_FADE_STOP		"eventFadeStop"
-#define __EVENT_EFFECT_FADE_COMPLETE	"eventFadeComplete"
+#define __EVENT_EFFECT_FADE_START		"fadeStrt"
+#define __EVENT_EFFECT_FADE_STOP		"fadeStop"
+#define __EVENT_EFFECT_FADE_COMPLETE	"fadeComp"
 
 
 //---------------------------------------------------------------------------------------------------------

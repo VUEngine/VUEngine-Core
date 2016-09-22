@@ -1082,6 +1082,12 @@ void Stage_onFocusEntityDeleted(Stage this, Object eventFirer __attribute__ ((un
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 {
 	ASSERT(this, "Stage::setFocusEntity: null this");
+
+	if(this->focusInGameEntity)
+	{
+		Object_removeEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, __EVENT_CONTAINER_DELETED);
+    }
+
 	this->focusInGameEntity = focusInGameEntity;
 
 	if(this->focusInGameEntity)

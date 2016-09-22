@@ -55,7 +55,7 @@
 
 
 #define __MAX_CONTAINER_NAME_LENGTH			16
-#define __EVENT_CONTAINER_DELETED			"containerDeleted"
+#define __EVENT_CONTAINER_DELETED			"contDele"
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
