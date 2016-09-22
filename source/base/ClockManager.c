@@ -39,6 +39,17 @@
         /* register clocks */																			\
         VirtualList clocks;																				\
 
+
+/**
+ * @class       ClockManager
+ * @extends     Object
+ *
+ * @var VirtuaList     clocks
+ * @brief       registered clocks
+ * @memberof    ClockManager
+ */
+
+
 // define the manager
 __CLASS_DEFINITION(ClockManager, Object);
 
@@ -62,7 +73,14 @@ static void ClockManager_constructor(ClockManager this);
 __SINGLETON(ClockManager);
 
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    ClockManager
+ * @private
+ *
+ * @param this  Function scope
+ */
 static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -71,7 +89,14 @@ static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager thi
     this->clocks = __NEW(VirtualList);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    ClockManager
+ * @private
+ *
+ * @param this  Function scope
+ */
 void ClockManager_destructor(ClockManager this)
 {
 	ASSERT(this, "ClockManager::destructor: null this");
@@ -91,7 +116,15 @@ void ClockManager_destructor(ClockManager this)
 	__SINGLETON_DESTROY;
 }
 
-// register a clock
+/**
+ * Register a clock
+ *
+ * @memberof    ClockManager
+ * @private
+ *
+ * @param this  Function scope
+ * @param clock Clock to register
+ */
 void ClockManager_register(ClockManager this, Clock clock)
 {
 	ASSERT(this, "ClockManager::register: null this");
@@ -99,7 +132,15 @@ void ClockManager_register(ClockManager this, Clock clock)
 	VirtualList_pushFront(this->clocks, clock);
 }
 
-// remove a clock
+/**
+ * Un-register a clock
+ *
+ * @memberof    ClockManager
+ * @private
+ *
+ * @param this  Function scope
+ * @param clock Clock to un-register
+ */
 void ClockManager_unregister(ClockManager this, Clock clock)
 {
 	ASSERT(this, "ClockManager::unregister: null this");
@@ -107,7 +148,15 @@ void ClockManager_unregister(ClockManager this, Clock clock)
 	VirtualList_removeElement(this->clocks, clock);
 }
 
-// update clocks
+/**
+ * Update clocks
+ *
+ * @memberof            ClockManager
+ * @private
+ *
+ * @param this          Function scope
+ * @param ticksElapsed  Miliseconds elapsed between calls
+ */
 void ClockManager_update(ClockManager this, u32 ticksElapsed)
 {
 	ASSERT(this, "ClockManager::update: null this");
@@ -122,7 +171,14 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
     }
 }
 
-// reset clocks
+/**
+ * Reset registered clocks
+ *
+ * @memberof            ClockManager
+ * @private
+ *
+ * @param this          Function scope
+ */
 void ClockManager_reset(ClockManager this)
 {
 	ASSERT(this, "ClockManager::reset: null this");
