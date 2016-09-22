@@ -109,7 +109,7 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
 }
 
-u32 Particle_update(Particle this, int elapsedTime, void (* behavior)(Particle particle))
+u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "Particle::update: null this");
 

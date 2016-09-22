@@ -21,6 +21,7 @@
 
 #include <ParticleRemover.h>
 #include <Particle.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -70,7 +70,7 @@ void CollisionsContainerEntity_ready(CollisionsContainerEntity this __attribute_
 	ASSERT(this, "CollisionsContainerEntity::ready: null this");
 }
 
-void CollisionsContainerEntity_update(CollisionsContainerEntity this __attribute__ ((unused)))
+void CollisionsContainerEntity_update(CollisionsContainerEntity this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::update: null this");
 }

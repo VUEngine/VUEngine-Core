@@ -136,12 +136,12 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 }
 
 // execute character's logic
-void AnimatedInGameEntity_update(AnimatedInGameEntity this)
+void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 {
 	ASSERT(this, "AnimatedInGameEntity::update: null this");
 
 	// call base
-	Container_update(__SAFE_CAST(Container, this));
+	Container_update(__SAFE_CAST(Container, this), elapsedTime);
 
 	// if direction changed
 	if(this->direction.x != this->previousDirection.x ||

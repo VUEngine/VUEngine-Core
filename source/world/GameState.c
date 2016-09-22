@@ -61,12 +61,10 @@ void GameState_constructor(GameState this)
 	this->physicalWorld = __NEW(PhysicalWorld, this->physicsClock);
 	this->collisionManager = __NEW(CollisionManager);
 
-	// by default can stream
-	this->canStream = true;
-
 	this->screenPosition.x = 0;
 	this->screenPosition.y = 0;
 	this->screenPosition.z = 0;
+	this->previousInGameTime = 0;
 }
 
 // class's destructor
@@ -114,7 +112,9 @@ void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
 	if(!Clock_isPaused(this->inGameClock))
 	{
 		// update the stage
-		__VIRTUAL_CALL(Container, update, this->stage);
+		__VIRTUAL_CALL(Container, update, this->stage, Clock_getTime(this->inGameClock) - this->previousInGameTime);
+
+		this->previousInGameTime = Clock_getTime(this->inGameClock);
 	}
 }
 
@@ -396,22 +396,6 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
-// set streaming flag
-void GameState_setCanStream(GameState this, int canStream)
-{
-	ASSERT(this, "GameState::loadStage: null this");
-
-	this->canStream = canStream;
-}
-
-// get streaming flag
-bool GameState_canStream(GameState this)
-{
-	ASSERT(this, "GameState::canStream: null this");
-
-	return this->canStream;
-}
-
 // retrieve stage
 Stage GameState_getStage(GameState this)
 {
@@ -448,6 +432,8 @@ void GameState_startClocks(GameState this)
 	Clock_start(this->inGameClock);
 	Clock_start(this->animationsClock);
 	Clock_start(this->physicsClock);
+
+	this->previousInGameTime = Clock_getTime(this->inGameClock);
 }
 
 void GameState_stopClocks(GameState this)

@@ -90,7 +90,7 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
 void AnimatedInGameEntity_ready(AnimatedInGameEntity this, u32 recursive);
 void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform);
-void AnimatedInGameEntity_update(AnimatedInGameEntity this);
+void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime);
 void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause);
 void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName);
 bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);

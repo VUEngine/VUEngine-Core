@@ -65,7 +65,7 @@ void ManagedMBackground_destructor(ManagedMBackground this);
 void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform, u32 recursive);
 void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform);
 void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this);
-void ManagedMBackground_update(ManagedMBackground this);
+void ManagedMBackground_update(ManagedMBackground this, u32 elapsedTime);
 int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 void ManagedMBackground_ready(ManagedMBackground this, u32 recursive);
 void ManagedMBackground_suspend(ManagedMBackground this);

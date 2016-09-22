@@ -246,7 +246,7 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 }
 
 // execute logic
-void ManagedMBackground_update(ManagedMBackground this __attribute__ ((unused)))
+void ManagedMBackground_update(ManagedMBackground this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
 	ASSERT(this, "ManagedMBackground::update: null this");
 }

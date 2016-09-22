@@ -211,7 +211,7 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
 Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);
 void Stage_removeChild(Stage this, Container child);
-void Stage_update(Stage this);
+void Stage_update(Stage this, u32 elapsedTime);
 void Stage_transform(Stage this, const Transformation* environmentTransform);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);

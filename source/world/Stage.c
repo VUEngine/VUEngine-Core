@@ -908,18 +908,18 @@ void Stage_streamAll(Stage this)
 
 
 // execute stage's logic
-void Stage_update(Stage this)
+void Stage_update(Stage this, u32 elapsedTime)
 {
 	ASSERT(this, "Stage::update: null this");
 
     // set now to control the streaming
     this->hasRemovedChildren = this->removedChildren && VirtualList_getSize(this->removedChildren);
 
-	Container_update(__SAFE_CAST(Container, this));
+	Container_update(__SAFE_CAST(Container, this), elapsedTime);
 
 	if(this->ui)
 	{
-		Container_update(__SAFE_CAST(Container, this->ui));
+		Container_update(__SAFE_CAST(Container, this->ui), elapsedTime);
 	}
 
 	ParticleRemover_update(this->particleRemover);

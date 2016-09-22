@@ -74,7 +74,7 @@ void InanimatedInGameEntity_destructor(InanimatedInGameEntity this)
 	__DESTROY_BASE;
 }
 
-void InanimatedInGameEntity_update(InanimatedInGameEntity this __attribute__ ((unused)))
+void InanimatedInGameEntity_update(InanimatedInGameEntity this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
 	ASSERT(this, "InanimatedInGameEntity::update: null this");
 }

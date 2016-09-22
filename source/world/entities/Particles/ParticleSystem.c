@@ -89,10 +89,6 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 	this->size.y += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
 	this->size.z += FIX19_13TOI(abs(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
 
-	// retrieve clock
-	this->clock = Game_getInGameClock(Game_getInstance());
-	this->previousTime = 0;
-
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
 	// calculate the number of sprite definitions
@@ -201,58 +197,51 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 	}
 }
 
-void ParticleSystem_update(ParticleSystem this)
+void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
 {
 	ASSERT(this, "ParticleSystem::update: null this");
 
-	Container_update(__SAFE_CAST(Container, this));
+	Container_update(__SAFE_CAST(Container, this), elapsedTime);
 
 	ParticleSystem_processExpiredParticles(this);
 
-	if(!Clock_isPaused(this->clock))
-	{
-		u32 currentTime = Clock_getTime(this->clock);
-	    u32 elapsedTime = currentTime - this->previousTime;
-	    this->previousTime = currentTime;
+    // update each particle
+    VirtualNode node = this->particles->head;
 
-	    // update each particle
-	    VirtualNode node = this->particles->head;
+    void (* behavior)(Particle particle) = this->particleSystemDefinition->particleDefinition->behavior;
 
-	    void (* behavior)(Particle particle) = this->particleSystemDefinition->particleDefinition->behavior;
+    for(; node; node = node->next)
+    {
+        if(__VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior))
+        {
+            ParticleSystem_particleExipired(this, __SAFE_CAST(Particle, node->data));
+        }
+    }
 
-	    for(; node; node = node->next)
-	    {
-	        if(__VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior))
-	        {
-    	        ParticleSystem_particleExipired(this, __SAFE_CAST(Particle, node->data));
-	        }
-	    }
+    if(!this->paused)
+    {
+        // check if it is time to spawn new particles
+        this->nextSpawnTime -= elapsedTime;
 
-		if(!this->paused)
-		{
-			// check if it is time to spawn new particles
-			this->nextSpawnTime -= elapsedTime;
+        if(0 > this->nextSpawnTime)
+        {
+            if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
+            {
+                if(this->particleSystemDefinition->recycleParticles)
+                {
+                    VirtualList_pushBack(this->particles, ParticleSystem_recycleParticle(this));
+                    this->particleCount++;
+                }
+                else
+                {
+                    VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
+                    this->particleCount++;
+                }
 
-			if(0 > this->nextSpawnTime)
-			{
-				if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
-				{
-					if(this->particleSystemDefinition->recycleParticles)
-					{
-						VirtualList_pushBack(this->particles, ParticleSystem_recycleParticle(this));
-						this->particleCount++;
-					}
-					else
-					{
-						VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
-						this->particleCount++;
-					}
-
-					this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
-				}
-			}
-		}
-	}
+                this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
+            }
+        }
+    }
 }
 
 

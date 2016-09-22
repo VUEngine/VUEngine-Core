@@ -54,14 +54,10 @@
         VirtualList recyclableParticles;																\
         /* particle list */																				\
         VirtualList expiredParticles;																	\
-        /* clock  */																					\
-        Clock clock;																					\
         /* next spawn time */																			\
         int nextSpawnTime;																				\
         /* particle count */																			\
         int particleCount;																				\
-        /* previous update time */																		\
-        u32 previousTime;																				\
         /* number of sprite definitions */																\
         s16 numberOfSpriteDefinitions;																	\
         /* pause flag */																				\
@@ -131,7 +127,7 @@ typedef const ParticleSystemDefinition ParticleSystemROMDef;
 __CLASS_NEW_DECLARE(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name);
 void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition,  s16 id, const char* const name);
 void ParticleSystem_destructor(ParticleSystem this);
-void ParticleSystem_update(ParticleSystem this);
+void ParticleSystem_update(ParticleSystem this, u32 elapsedTime);
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform);
 void ParticleSystem_updateVisualRepresentation(ParticleSystem this);
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);

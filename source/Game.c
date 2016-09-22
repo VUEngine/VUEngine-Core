@@ -657,11 +657,6 @@ static u32 Game_handleInput(Game this)
 // update game's logic subsystem
 inline static void Game_updateLogic(Game this)
 {
-	this->currentProcess = kGameDispatchingDelayedMessages;
-
-#ifdef __DEBUG
-	this->lastProcessName = "dispatch delayed messages";
-#endif
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(this))
 #endif
@@ -671,9 +666,6 @@ inline static void Game_updateLogic(Game this)
 #ifdef __ANIMATION_EDITOR
 	if(!Game_isInSpecialMode(this))
 #endif
-	// dispatch queued messages
-//    MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
-
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
 
@@ -952,7 +944,9 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME
 	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
 #endif
+
         suspendStreaming |= MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+
 #ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         dispatchDelayedMessageHighestTime = processTime > dispatchDelayedMessageHighestTime? processTime: dispatchDelayedMessageHighestTime;

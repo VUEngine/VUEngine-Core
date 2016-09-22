@@ -79,7 +79,7 @@ __CLASS_NEW_DECLARE(InanimatedInGameEntity, InanimatedInGameEntityDefinition* in
 
 void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, const char* const name);
 void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);
-void InanimatedInGameEntity_update(InanimatedInGameEntity this);
+void InanimatedInGameEntity_update(InanimatedInGameEntity this, u32 elapsedTime);
 fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this);
 fix19_13 InanimatedInGameEntity_getFriction(InanimatedInGameEntity this);
 

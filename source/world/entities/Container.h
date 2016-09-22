@@ -64,7 +64,7 @@
 // declare the virtual methods
 #define Container_METHODS(ClassName)																	\
 		SpatialObject_METHODS(ClassName)																\
-		__VIRTUAL_DEC(ClassName, void, update);															\
+		__VIRTUAL_DEC(ClassName, void, update, u32);													\
 		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*);			                    \
 		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation);										\
 		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);	                \
@@ -143,7 +143,7 @@ void Container_deleteMyself(Container this);
 void Container_addChild(Container this, Container child);
 void Container_removeChild(Container this, Container child);
 void Container_processRemovedChildren(Container this);
-void Container_update(Container this);
+void Container_update(Container this, u32 elapsedTime);
 int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...);
 Transformation Container_getEnvironmentTransform(Container this);
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform);

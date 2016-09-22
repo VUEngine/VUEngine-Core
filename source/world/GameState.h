@@ -69,6 +69,9 @@
         Clock animationsClock;																			\
         /* timer to use for physics */																	\
         Clock physicsClock;																				\
+        /* previous update time */																		\
+        u32 previousInGameTime;																			\
+
 
 __CLASS(GameState);
 
@@ -91,7 +94,6 @@ void GameState_updateVisuals(GameState this);
 int GameState_propagateMessage(GameState this, int message);
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 void GameState_setCanStream(GameState this, int canStream);
-bool GameState_canStream(GameState this);
 Stage GameState_getStage(GameState this);
 Clock GameState_getInGameClock(GameState this);
 Clock GameState_getAnimationsClock(GameState this);

@@ -241,12 +241,12 @@ void Actor_resume(Actor this)
 
 
 // execute character's logic
-void Actor_update(Actor this)
+void Actor_update(Actor this, u32 elapsedTime)
 {
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	AnimatedInGameEntity_update(__SAFE_CAST(AnimatedInGameEntity, this));
+	AnimatedInGameEntity_update(__SAFE_CAST(AnimatedInGameEntity, this), elapsedTime);
 
 	if(this->stateMachine)
 	{
