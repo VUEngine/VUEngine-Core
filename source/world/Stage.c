@@ -970,6 +970,10 @@ void Stage_suspend(Stage this)
 {
 	ASSERT(this, "Stage::suspend: null this");
 
+    // stream all pending entities to avoid having manually recover
+    // the stage entity registries
+	EntityFactory_prepareAllEntities(this->entityFactory);
+
 	Container_suspend(__SAFE_CAST(Container, this));
 
 	if(this->ui)
