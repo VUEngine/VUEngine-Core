@@ -271,5 +271,7 @@ void ManagedMBackground_suspend(ManagedMBackground this)
 {
 	ASSERT(this, "ManagedMBackground::suspend: null this");
 
+    MBackground_suspend(__SAFE_CAST(MBackground, this));
+
     VirtualList_clear(this->managedSprites);
 }

@@ -258,5 +258,7 @@ void ManagedEntity_suspend(ManagedEntity this)
 {
 	ASSERT(this, "ManagedEntity::suspend: null this");
 
+    Entity_suspend(__SAFE_CAST(Entity, this));
+
     VirtualList_clear(this->managedSprites);
 }
