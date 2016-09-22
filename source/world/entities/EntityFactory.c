@@ -467,7 +467,7 @@ u32 EntityFactory_prepareEntities(EntityFactory this)
     return __LIST_EMPTY != result;
 }
 
-int EntityFactory_hasEntitiesPending(EntityFactory this)
+u32 EntityFactory_hasEntitiesPending(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::hasEntitiesPending: null this");
 

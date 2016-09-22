@@ -120,5 +120,6 @@ void EntityFactory_destructor(EntityFactory this);
 u32 EntityFactory_prepareEntities(EntityFactory this);
 void EntityFactory_prepareAllEntities(EntityFactory this);
 void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
+u32 EntityFactory_hasEntitiesPending(EntityFactory this);
 
 #endif

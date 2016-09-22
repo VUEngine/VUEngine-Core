@@ -770,7 +770,15 @@ u32 Entity_areAllChildrenReady(Entity this)
 
     if(this->entityFactory)
     {
-        return __LIST_EMPTY == EntityFactory_makeReadyEntities(this->entityFactory);
+        u32 returnValue = __LIST_EMPTY == EntityFactory_makeReadyEntities(this->entityFactory);
+
+        if(!EntityFactory_hasEntitiesPending(this->entityFactory))
+        {
+            __DELETE(this->entityFactory);
+            this->entityFactory = NULL;
+        }
+
+        return returnValue;
     }
 
     return true;
