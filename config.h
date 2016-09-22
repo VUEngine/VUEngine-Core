@@ -155,21 +155,22 @@
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
 	__BLOCK_DEFINITION(200, 1)																			\
-	__BLOCK_DEFINITION(168, 8)																			\
+	__BLOCK_DEFINITION(168, 10)																			\
 	__BLOCK_DEFINITION(148, 8)																			\
 	__BLOCK_DEFINITION(144, 25)																			\
 	__BLOCK_DEFINITION(136, 10)																			\
-	__BLOCK_DEFINITION(128, 40)																			\
+	__BLOCK_DEFINITION(128, 45)																			\
 	__BLOCK_DEFINITION(112, 30)																			\
 	__BLOCK_DEFINITION(100, 20)																			\
-	__BLOCK_DEFINITION(88, 80)																			\
-	__BLOCK_DEFINITION(76, 10)																			\
+	__BLOCK_DEFINITION(88, 75)																			\
+	__BLOCK_DEFINITION(76, 15)																			\
 	__BLOCK_DEFINITION(68, 50)																			\
 	__BLOCK_DEFINITION(48, 20)																			\
-	__BLOCK_DEFINITION(28, 320)																			\
-	__BLOCK_DEFINITION(24, 100)																			\
-	__BLOCK_DEFINITION(20, 650)																			\
-	__BLOCK_DEFINITION(16, 300)						    												\
+	__BLOCK_DEFINITION(28, 220)																			\
+	__BLOCK_DEFINITION(24, 60)																			\
+	__BLOCK_DEFINITION(20, 850)																			\
+	__BLOCK_DEFINITION(16, 280)						    												\
+
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
