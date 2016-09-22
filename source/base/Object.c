@@ -81,8 +81,6 @@ void Object_constructor(Object this)
  */
 void Object_destructor(Object this)
 {
-	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_OBJECT_DESTROYED);
-
 	if(this->events)
 	{
 		VirtualNode node = this->events->head;
@@ -312,16 +310,16 @@ void Object_fireEvent(Object this,  char* eventName)
 		{
 			Event* event = (Event*)node->data;
 
-		    if(*(u32*)event->listener)
+		    if(!*(u32*)event->listener)
+            {
+                VirtualList_pushBack(eventsToRemove, event);
+            }
+            else
 		    {
                 if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
                 {
                     event->method(event->listener, this);
                 }
-            }
-            else
-            {
-                VirtualList_pushBack(eventsToRemove, event);
             }
 		}
 

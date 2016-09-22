@@ -61,6 +61,8 @@ void SpatialObject_destructor(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::destructor: null this");
 
+	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_SPATIAL_OBJECT_DESTROYED);
+
 	// destroy the super SpatialObject
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;

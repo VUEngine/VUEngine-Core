@@ -24,6 +24,9 @@
 
 #include <Object.h>
 
+// events
+#define __EVENT_SPATIAL_OBJECT_DESTROYED				"objectDestroyed"
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

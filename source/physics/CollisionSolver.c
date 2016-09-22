@@ -48,7 +48,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // global
 extern const VBVec3D* _screenDisplacement;
 
-static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this, Object eventFirer);
+static void CollisionSolver_onCollidingSpatialObjectDestroyed(CollisionSolver this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int moveme
 			VirtualNode node = this->lastCollidingSpatialObject[i]->head;
 			for(; node; node = node->next)
 	        {
-				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
+				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingSpatialObjectDestroyed, __EVENT_SPATIAL_OBJECT_DESTROYED);
 	        }
 
 			VirtualList_clear(this->lastCollidingSpatialObject[i]);
@@ -174,7 +174,7 @@ int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 }
 
 // process event
-static void CollisionSolver_collidingSpatialObjectDestroyed(CollisionSolver this, Object eventFirer)
+static void CollisionSolver_onCollidingSpatialObjectDestroyed(CollisionSolver this, Object eventFirer)
 {
 	ASSERT(this, "CollisionSolver::collidingSpatialObjectDestroyed: null this");
 
@@ -218,7 +218,7 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 		}
 	}
 
-	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_collidingSpatialObjectDestroyed, __EVENT_OBJECT_DESTROYED);
+	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingSpatialObjectDestroyed, __EVENT_SPATIAL_OBJECT_DESTROYED);
 }
 
 // get axis of collision

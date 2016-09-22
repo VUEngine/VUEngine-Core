@@ -31,9 +31,6 @@
 
 #define __MAX_EVENT_NAME_LENGTH	                16
 
-// events
-#define __EVENT_OBJECT_DESTROYED				"objectDestroyed"
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
