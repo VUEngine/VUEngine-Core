@@ -137,6 +137,7 @@ void ParticleSystem_suspend(ParticleSystem this);
 void ParticleSystem_resume(ParticleSystem this);
 void ParticleSystem_start(ParticleSystem this);
 void ParticleSystem_pause(ParticleSystem this);
+void ParticleSystem_spawnAllParticles(ParticleSystem this);
 
 
 #endif

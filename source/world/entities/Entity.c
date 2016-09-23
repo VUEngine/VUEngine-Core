@@ -1232,8 +1232,8 @@ void Entity_show(Entity this)
 	ASSERT(this, "Entity::show: null this");
 
     // update transformation before hiding
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-    __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
+//	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+//    __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
 
     // and update the visual representation
     this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;

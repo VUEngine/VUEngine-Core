@@ -307,6 +307,25 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
 	return &force;
 }
 
+void ParticleSystem_spawnAllParticles(ParticleSystem this)
+{
+	ASSERT(this, "ParticleSystem::spawnAllParticles: null this");
+
+	while(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
+	{
+        if(this->particleSystemDefinition->recycleParticles)
+        {
+            VirtualList_pushBack(this->particles, ParticleSystem_recycleParticle(this));
+            this->particleCount++;
+        }
+        else
+        {
+            VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
+            this->particleCount++;
+        }
+	}
+}
+
 static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::spawnParticle: null this");
@@ -318,7 +337,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 
 	int spriteDefinitionIndex = 0;
 
-	if(this->numberOfSpriteDefinitions)
+	if(1 < this->numberOfSpriteDefinitions)
 	{
     	spriteDefinitionIndex = Utilities_random(seed, this->numberOfSpriteDefinitions);
     }
