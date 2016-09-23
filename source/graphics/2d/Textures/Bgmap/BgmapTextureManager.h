@@ -40,8 +40,8 @@
 // Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
-#define BgmapTextureManager_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																					\
+#define BgmapTextureManager_METHODS(ClassName)															\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define BgmapTextureManager_SET_VTABLE(ClassName)														\

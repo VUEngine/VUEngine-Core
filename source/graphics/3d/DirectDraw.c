@@ -63,6 +63,15 @@ static void DirectDraw_constructor(DirectDraw this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn          DirectDraw_getInstance()
+ * @memberof    DirectDraw
+ * @public
+ *
+ * @return      DirectDraw instance
+ */
 __SINGLETON(DirectDraw);
 
 /**

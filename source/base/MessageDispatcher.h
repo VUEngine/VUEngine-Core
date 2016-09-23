@@ -33,8 +33,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define MessageDispatcher_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																					\
+#define MessageDispatcher_METHODS(ClassName)															\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define MessageDispatcher_SET_VTABLE(ClassName)															\
@@ -48,6 +48,7 @@ __CLASS(MessageDispatcher);
 //---------------------------------------------------------------------------------------------------------
 
 MessageDispatcher MessageDispatcher_getInstance();
+
 bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
 u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
 void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message);

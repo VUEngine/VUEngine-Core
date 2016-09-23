@@ -45,9 +45,10 @@ __CLASS(DirectDraw);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
+DirectDraw DirectDraw_getInstance();
+
 void DirectDraw_destructor(DirectDraw this);
 void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int color);
-DirectDraw DirectDraw_getInstance();
 void DirectDraw_drawPixel(DirectDraw this, u32 buffer, int x, int y, int color);
 void DirectDraw_drawBlackPixel(DirectDraw this, u32 buffer, int x, int y);
 

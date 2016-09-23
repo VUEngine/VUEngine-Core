@@ -31,8 +31,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ClockManager_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
+#define ClockManager_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define ClockManager_SET_VTABLE(ClassName)																\
