@@ -261,15 +261,13 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 
 		if(axisOfCollision)
 		{
-			const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObject);
-			int collidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1;
-			int collidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1;
-			int collidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject) >> 1;
-
 			if(__XAXIS & axisOfCollision)
 			{
 				if(collidingSpatialObjectsToAlignTo[kXAxis])
 				{
+                    const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObject);
+                    int collidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1;
+
 					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kXAxis]);
 					int selectedCollidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObjectsToAlignTo[kXAxis]) >> 1;
 
@@ -298,6 +296,9 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 			{
 				if(collidingSpatialObjectsToAlignTo[kYAxis])
 				{
+                    const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObject);
+                    int collidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1;
+
 					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kYAxis]);
 					int selectedCollidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObjectsToAlignTo[kYAxis]) >> 1;
 
@@ -326,6 +327,9 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 			{
 				if(collidingSpatialObjectsToAlignTo[kZAxis])
 				{
+                    const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObject);
+                    int collidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject) >> 1;
+
 					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kZAxis]);
 					int selectedCollidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObjectsToAlignTo[kZAxis]) >> 1;
 
