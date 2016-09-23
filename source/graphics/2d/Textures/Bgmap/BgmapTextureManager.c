@@ -305,27 +305,25 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 	if(bgmapTexture && BgmapTexture_decreaseUsageCount(bgmapTexture))
 	{
 		int i = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
-		CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, bgmapTexture));
 
-		if(charSet)
-		{
-			switch(CharSet_getAllocationType(charSet))
-			{
-				case __ANIMATED_SINGLE:
+		TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
 
-					__DELETE(bgmapTexture);
-					this->bgmapTextures[i] = NULL;
-					break;
+        switch(textureDefinition->charSetDefinition->allocationType)
+        {
+            case __ANIMATED_SINGLE:
 
-				case __ANIMATED_SHARED:
-				case __ANIMATED_SHARED_COORDINATED:
-				case __ANIMATED_MULTI:
-				case __NOT_ANIMATED:
+                __DELETE(bgmapTexture);
+                this->bgmapTextures[i] = NULL;
+                break;
 
-					Texture_releaseCharSet(__SAFE_CAST(Texture, bgmapTexture));
-					break;
-			}
-		}
+            case __ANIMATED_SHARED:
+            case __ANIMATED_SHARED_COORDINATED:
+            case __ANIMATED_MULTI:
+            case __NOT_ANIMATED:
+
+                Texture_releaseCharSet(__SAFE_CAST(Texture, bgmapTexture));
+                break;
+        }
 	}
 }
 
@@ -341,11 +339,11 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	{
 		if(this->bgmapTextures[i])
 		{
-			CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]));
+			CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]), false);
             TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i]));
 
 			if(Texture_getBgmapDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
-				(!charSet || CharSet_getAllocationType(charSet) == bgmapTextureDefinition->charSetDefinition->allocationType) &&
+				(!charSet || textureDefinition->charSetDefinition->allocationType == bgmapTextureDefinition->charSetDefinition->allocationType) &&
 				(textureDefinition->padding.cols == bgmapTextureDefinition->padding.cols && textureDefinition->padding.rows == bgmapTextureDefinition->padding.rows)
 			)
 			{

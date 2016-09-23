@@ -217,7 +217,7 @@ void ObjectSprite_render(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
-	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
+//	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
 	// if render flag is set
 	if(this->renderFlag)

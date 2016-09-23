@@ -77,7 +77,6 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 	this->direction.z = __FAR;
 
 	this->previousDirection = this->direction;
-	this->clock = Game_getAnimationsClock(Game_getInstance());
 
 	this->currentAnimationName = NULL;
 }
@@ -96,7 +95,7 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 void AnimatedInGameEntity_ready(AnimatedInGameEntity this, u32 recursive)
 {
 	ASSERT(this, "AnimatedInGameEntity::ready: null this");
-	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::initialize: null animatedInGameEntityDefinition");
+	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::ready: null animatedInGameEntityDefinition");
 
 	Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
@@ -155,7 +154,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 		InGameEntity_setGap(__SAFE_CAST(InGameEntity, this));
 	}
 
-	if(this->sprites)
+	if(this->sprites && elapsedTime)
 	{
 		AnimatedInGameEntity_animate(this);
 	}
@@ -164,17 +163,16 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 // update animations
 static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 {
-	if(!Clock_isPaused(this->clock))
-	{
-		VirtualNode node = this->sprites->head;
+	ASSERT(this, "AnimatedInGameEntity::animate: null this");
 
-		// move each child to a temporary list
-		for(; node ; node = node->next)
-		{
-			// first animate the frame
-			Sprite_animate(__SAFE_CAST(Sprite, node->data));
-		}
-	}
+    VirtualNode node = this->sprites->head;
+
+    // move each child to a temporary list
+    for(; node ; node = node->next)
+    {
+        // first animate the frame
+        Sprite_animate(__SAFE_CAST(Sprite, node->data));
+    }
 }
 
 // pause animation
@@ -252,14 +250,6 @@ void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, Ani
 	ASSERT(this, "AnimatedInGameEntity::setAnimationDescription: null this");
 
 	this->animationDescription = animationDescription;
-}
-
-// set animation clock
-void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock)
-{
-	ASSERT(this, "AnimatedInGameEntity::setClock: null this");
-
-	this->clock = clock;
 }
 
 // resume method

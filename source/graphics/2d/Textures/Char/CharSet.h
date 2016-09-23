@@ -47,9 +47,6 @@
 // char memory room to add
 #define __CHAR_ROOM							1
 
-// events
-#define __EVENT_CHARSET_REWRITTEN			"chrStRwr"
-#define __EVENT_CHARSET_DELETED			    "chrStDel"
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

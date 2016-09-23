@@ -88,7 +88,7 @@ void Container_constructor(Container this, s16 id, const char* const name)
 	this->transform.globalScale.y = __1I_FIX7_9;
 
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalTransformation = __INVALIDATE_POSITION | __INVALIDATE_ROTATION | __INVALIDATE_SCALE;
+	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 
 	this->parent = NULL;
 	this->children = NULL;
@@ -153,7 +153,7 @@ void Container_destructor(Container this)
 		__DELETE_BASIC(this->name);
 	}
 
-	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_CONTAINER_DELETED);
+	Object_fireEvent(__SAFE_CAST(Object, this), kEventContainerDeleted);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor

@@ -101,13 +101,13 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 	this->renderFlag = true;
 
 	// write according to the allocation type
-	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture)))
+	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture, true)))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 			{
-				CharSet charSet = Texture_getCharSet(this->texture);
+				CharSet charSet = Texture_getCharSet(this->texture, true);
 
 				// move charset's charset's definition to the next frame chars
 				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *

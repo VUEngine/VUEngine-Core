@@ -42,6 +42,7 @@
         __VIRTUAL_SET(ClassName, MBgmapSprite, getPosition);											\
         __VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
 
+
 #define MBgmapSprite_ATTRIBUTES																			\
         /* super's attributes */																		\
         BgmapSprite_ATTRIBUTES																			\
@@ -49,10 +50,6 @@
         VirtualList textures;																			\
         /* pinter to definition */																		\
         const MBgmapSpriteDefinition* mBgmapSpriteDefinition;											\
-        /* total size of the bgmap, used for loop/not loop */											\
-        Point size;																						\
-        /* for total size of the bgmap calculation */													\
-        Point sizeMultiplier;																			\
         /* to speed up rendering */																		\
         u32 textureXOffset;																				\
         u32 textureYOffset;																				\

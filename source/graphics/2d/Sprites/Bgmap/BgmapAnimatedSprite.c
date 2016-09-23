@@ -59,14 +59,13 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
 	// construct base object
 	__CONSTRUCT_BASE(BgmapSprite, bgmapSpriteDefinition, owner);
 
-	if(this->texture)
-	{
-		this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-		// since the offset will be moved during animation, must save it
-		this->originalTextureSource.mx = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-		this->originalTextureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-	}
+    this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+
+    // since the offset will be moved during animation, must save it
+    this->originalTextureSource.mx = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+    this->originalTextureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 }
 
 //destructor
@@ -90,16 +89,16 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");
 
-	ASSERT(Texture_getCharSet(this->texture), "BgmapAnimatedSprite::writeAnimation: null charset");
+	ASSERT(Texture_getCharSet(this->texture, true), "BgmapAnimatedSprite::writeAnimation: null charset");
 
 	// write according to the allocation type
-	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture)))
+	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture, true)))
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 			{
-				CharSet charSet = Texture_getCharSet(this->texture);
+				CharSet charSet = Texture_getCharSet(this->texture, true);
 
 				// move charset's definition to the next frame chars
 				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *

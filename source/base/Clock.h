@@ -30,10 +30,6 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __EVENT_SECOND_CHANGED	"secChang"
-#define __EVENT_MINUTE_CHANGED	"minChang"
-#define __EVENT_HOUR_CHANGED	"houChang"
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

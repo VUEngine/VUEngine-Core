@@ -191,7 +191,7 @@ bool AnimationController_animate(AnimationController this)
             // the last frame has been reached
             if(this->animationFunction->onAnimationComplete)
             {
-                Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_ANIMATION_COMPLETE);
+                Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
             }
 
             // rewind to first frame
@@ -237,7 +237,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object_removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+		Object_removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// setup animation frame
@@ -246,7 +246,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	// register event callback
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-    	Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+    	Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update
@@ -296,14 +296,14 @@ bool AnimationController_play(AnimationController this, const AnimationDescripti
 			// remove previous listeners
 			if(this->animationFunction && this->animationFunction->onAnimationComplete)
 			{
-				Object_removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+				Object_removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 			}
 
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
 
 			// register event callback
-			Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, __EVENT_ANIMATION_COMPLETE);
+			Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 
 			// force frame writing in the next update
 			this->previousFrame = 0;

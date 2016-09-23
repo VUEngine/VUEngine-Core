@@ -19,7 +19,6 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
 #include <Object.h>
 #include <VirtualList.h>
 #include <Printing.h>
@@ -46,11 +45,12 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 /**
  * An event
  */
+
 typedef struct Event
 {
 	Object listener;
 	EventListener method;
-	char name[__MAX_EVENT_NAME_LENGTH];
+	u32 code;
 } Event;
 
 
@@ -139,13 +139,13 @@ bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram _
  * @param this          Function scope
  * @param listener      Object to register event listener at
  * @param method        The method to execute on event
- * @param eventName     The name of the event to listen to
+ * @param eventCode     The code of the event to listen to
  */
-void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName)
+void Object_addEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
 	ASSERT(this, "Object::addEventListener: null this");
 
-	if(!listener || !method || !eventName)
+	if(!listener || !method)
 	{
 		return;
 	}
@@ -156,15 +156,13 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 	}
 	else
 	{
-		Object_removeEventListener(this, listener, method, eventName);
+		Object_removeEventListener(this, listener, method, eventCode);
 	}
 
 	Event* event = __NEW_BASIC(Event);
 	event->listener = listener;
 	event->method = method;
-
-	// don't rely on the user, make it safe
-	strncpy(event->name, eventName, __MAX_EVENT_NAME_LENGTH);
+	event->code = eventCode;
 
 	VirtualList_pushBack(this->events, event);
 }
@@ -178,9 +176,9 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
  * @param this          Function scope
  * @param listener      Object where event listener is registered at
  * @param method        The method attached to event listener
- * @param eventName     The name of the event
+ * @param eventCode     The code of the event
  */
-void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName)
+void Object_removeEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
 	ASSERT(this, "Object::removeEventListener: null this");
 
@@ -192,7 +190,7 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 		{
 			Event* event = (Event*)node->data;
 
-			if(listener == event->listener && method == event->method && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+			if(listener == event->listener && method == event->method && eventCode == event->code)
 			{
 				VirtualList_removeElement(this->events, event);
 
@@ -211,9 +209,9 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
  *
  * @param this          Function scope
  * @param listener      Object where event listener is registered at
- * @param eventName     The name of the event
+ * @param eventCode     The code of the event
  */
-void Object_removeEventListeners(Object this, Object listener, char* eventName)
+void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 {
 	ASSERT(this, "Object::removeEventListeners: null this");
 
@@ -227,7 +225,7 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
 		{
 			Event* event = (Event*)node->data;
 
-			if(listener == event->listener && !strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+			if(listener == event->listener && eventCode == event->code)
 			{
 				VirtualList_pushBack(eventsToRemove, event);
 			}
@@ -259,9 +257,9 @@ void Object_removeEventListeners(Object this, Object listener, char* eventName)
  * @public
  *
  * @param this          Function scope
- * @param eventName     The name of the event
+ * @param eventCode     The code of the event
  */
-void Object_removeAllEventListeners(Object this, char* eventName)
+void Object_removeAllEventListeners(Object this, u32 eventCode)
 {
 	ASSERT(this, "Object::removeEventListeners: null this");
 
@@ -275,7 +273,7 @@ void Object_removeAllEventListeners(Object this, char* eventName)
 		{
 			Event* event = (Event*)node->data;
 
-			if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+			if(eventCode == event->code)
 			{
 				VirtualList_pushBack(eventsToRemove, event);
 			}
@@ -307,9 +305,9 @@ void Object_removeAllEventListeners(Object this, char* eventName)
  * @public
  *
  * @param this          Function scope
- * @param eventName     The name of the event
+ * @param eventCode     The code     of the event
  */
-void Object_fireEvent(Object this,  char* eventName)
+void Object_fireEvent(Object this,  u32 eventCode)
 {
 	ASSERT(this, "Object::fireEvent: null this");
 
@@ -329,7 +327,7 @@ void Object_fireEvent(Object this,  char* eventName)
             }
             else
 		    {
-                if(!strncmp(event->name, eventName, __MAX_EVENT_NAME_LENGTH))
+                if(eventCode == event->code)
                 {
                     event->method(event->listener, this);
                 }

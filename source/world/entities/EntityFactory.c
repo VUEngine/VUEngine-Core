@@ -214,6 +214,8 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
     VirtualList_pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
 
+Entity processedEntity = NULL;
+
 u32 EntityFactory_instantiateEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
@@ -229,6 +231,7 @@ u32 EntityFactory_instantiateEntities(EntityFactory this)
     {
         if(positionedEntityDescription->entity)
         {
+            processedEntity = positionedEntityDescription->entity;
             if(Entity_areAllChildrenInstantiated(positionedEntityDescription->entity))
             {
                 VirtualList_pushBack(this->entitiesToInitialize, positionedEntityDescription);
@@ -246,7 +249,7 @@ u32 EntityFactory_instantiateEntities(EntityFactory this)
 
             if(positionedEntityDescription->callback)
             {
-                Object_addEventListener(__SAFE_CAST(Object, positionedEntityDescription->entity), __SAFE_CAST(Object, positionedEntityDescription->parent), positionedEntityDescription->callback, __EVENT_ENTITY_LOADED);
+                Object_addEventListener(__SAFE_CAST(Object, positionedEntityDescription->entity), __SAFE_CAST(Object, positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
             }
         }
     }
@@ -274,6 +277,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
     if(*(u32*)positionedEntityDescription->parent)
     {
         ASSERT(positionedEntityDescription->entity, "EntityFactory::initializeEntities: entity not loaded");
+            processedEntity = positionedEntityDescription->entity;
 
         if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
         {
@@ -318,6 +322,7 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 
     if(*(u32*)positionedEntityDescription->parent)
     {
+            processedEntity = positionedEntityDescription->entity;
         if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))
         {
             Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
@@ -360,6 +365,7 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 
     if(*(u32*)positionedEntityDescription->parent)
     {
+            processedEntity = positionedEntityDescription->entity;
         if(Entity_areAllChildrenReady(positionedEntityDescription->entity))
         {
             __VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
@@ -405,9 +411,9 @@ u32 EntityFactory_cleanUp(EntityFactory this)
     {
         if(positionedEntityDescription->callback)
         {
-            Object_fireEvent(__SAFE_CAST(Object, positionedEntityDescription->entity), __EVENT_ENTITY_LOADED);
+            Object_fireEvent(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
 
-            Object_removeAllEventListeners(__SAFE_CAST(Object, positionedEntityDescription->entity), __EVENT_ENTITY_LOADED);
+            Object_removeAllEventListeners(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
         }
 
         VirtualList_removeElement(this->spawnedEntities, positionedEntityDescription);
@@ -418,12 +424,6 @@ u32 EntityFactory_cleanUp(EntityFactory this)
     else
     {
         VirtualList_removeElement(this->spawnedEntities, positionedEntityDescription);
-
-        if(*(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
-
         __DELETE_BASIC(positionedEntityDescription);
     }
 
@@ -433,6 +433,8 @@ u32 EntityFactory_cleanUp(EntityFactory this)
 u32 EntityFactory_prepareEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::prepareEntities: null this");
+
+    EntityFactory_cleanUp(this);
 
     if(this->streamingPhase >= _streamingPhasesCount)
     {
@@ -461,8 +463,6 @@ u32 EntityFactory_prepareEntities(EntityFactory this)
     }
 
     this->streamingPhase += __ENTITY_PENDING_PROCESSING != result? 1 : 0;
-
-    EntityFactory_cleanUp(this);
 
     return __LIST_EMPTY != result;
 }

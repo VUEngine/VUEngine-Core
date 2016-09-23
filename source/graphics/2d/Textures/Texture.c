@@ -68,7 +68,11 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	this->palette = textureDefinition->palette;
 	this->written = false;
 
-	Texture_loadCharSet(this);
+	// I will fire events, so save some time when preloaded by already creating the event list
+	if(!this->events)
+	{
+        this->events = __NEW(VirtualList);
+    }
 }
 
 // class's destructor
@@ -92,8 +96,8 @@ static void Texture_loadCharSet(Texture this)
 	this->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), this->textureDefinition->charSetDefinition);
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
 	// if the char definition is NULL, it must be a text
-	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
-    Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, __EVENT_CHARSET_DELETED);
+	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
+    Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 }
 
 // write an animated map
@@ -125,8 +129,8 @@ void Texture_releaseCharSet(Texture this)
 
         if(this->charSet)
         {
-    		Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, __EVENT_CHARSET_REWRITTEN);
-            Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, __EVENT_CHARSET_DELETED);
+    		Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
+            Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 		}
 
 		this->charSet = NULL;
@@ -145,7 +149,6 @@ void Texture_write(Texture this)
 	if(!this->charSet)
 	{
 	    Texture_loadCharSet(this);
-    	ASSERT(this->charSet, "Texture::write: null charset");
 	}
 
 	this->written = true;
@@ -182,11 +185,9 @@ void Texture_writeHBiasMode(Texture this __attribute__ ((unused)))
 int Texture_getNumberOfChars(Texture this)
 {
 	ASSERT(this, "Texture::getNumberOfChars: null this");
-	ASSERT(this->charSet, "Texture::getNumberOfChars: null charset");
 
-	return this->charSet? CharSet_getNumberOfChars(this->charSet) : this->textureDefinition->charSetDefinition->numberOfChars;
+	return this->textureDefinition->charSetDefinition->numberOfChars;
 }
-
 
 // get texture's definition
 TextureDefinition* Texture_getTextureDefinition(Texture this)
@@ -201,10 +202,8 @@ u32 Texture_getTotalCols(Texture this)
 {
 	ASSERT(this, "Texture::getTotalCols: null this");
 
-	int allocationType = this->charSet? CharSet_getAllocationType(this->charSet) : this->textureDefinition->charSetDefinition->allocationType;
-
 	// determine the allocation type
-	switch(allocationType)
+	switch(this->textureDefinition->charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
@@ -237,10 +236,8 @@ u32 Texture_getTotalRows(Texture this)
 {
 	ASSERT(this, "Texture::getTotalRows: null this");
 
-	int allocationType = this->charSet? CharSet_getAllocationType(this->charSet) : this->textureDefinition->charSetDefinition->allocationType;
-
 	// determine the allocation type
-	switch(allocationType)
+	switch(this->textureDefinition->charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
@@ -277,9 +274,14 @@ u32 Texture_getNumberOfFrames(Texture this)
 }
 
 //get texture's charset
-CharSet Texture_getCharSet(Texture this)
+CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded)
 {
 	ASSERT(this, "Texture::getCharSet: null this");
+
+	if(!this->charSet && loadIfNeeded)
+	{
+	    Texture_loadCharSet(this);
+	}
 
 	return this->charSet;
 }
@@ -340,7 +342,7 @@ static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribu
 	__VIRTUAL_CALL(Texture, write, this);
 
 	// propagate event
-	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_TEXTURE_REWRITTEN);
+	Object_fireEvent(__SAFE_CAST(Object, this), kEventTextureRewritten);
 }
 
 // process event
@@ -356,7 +358,7 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 {
 	ASSERT(this, "Texture::putChar: null this");
 
-	if(texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
+	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
 		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
 		u32 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
@@ -369,7 +371,7 @@ void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BY
 {
 	ASSERT(this, "Texture::putPixel: null this");
 
-	if(texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
+	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
 		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
 		u32 charToReplace = this->textureDefinition->bgmapDefinition[displacement];

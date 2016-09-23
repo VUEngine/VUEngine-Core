@@ -114,7 +114,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int moveme
 			VirtualNode node = this->lastCollidingSpatialObject[i]->head;
 			for(; node; node = node->next)
 	        {
-				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingSpatialObjectDestroyed, __EVENT_SPATIAL_OBJECT_DELETED);
+				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingSpatialObjectDestroyed, kEventSpatialObjectDeleted);
 	        }
 
 			VirtualList_clear(this->lastCollidingSpatialObject[i]);
@@ -218,7 +218,7 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 		}
 	}
 
-	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingSpatialObjectDestroyed, __EVENT_SPATIAL_OBJECT_DELETED);
+	Object_addEventListener(__SAFE_CAST(Object, collidingSpatialObject), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingSpatialObjectDestroyed, kEventSpatialObjectDeleted);
 }
 
 // get axis of collision

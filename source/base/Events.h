@@ -14,20 +14,39 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBVBJAE_H_
-#define LIBVBJAE_H_
+#ifndef EVENTS_H_
+#define EVENTS_H_
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+// 											 DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-#include <Events.h>
-#include <Libgccvb.h>
-#include <MiscStructs.h>
-#include <Constants.h>
-#include <Error.h>
-#include <MemoryPool.h>
+enum Events
+{
+    // do not remove me
+    kFirstEngineEvent = 0,
 
+    // add events here
+    kEventSpatialObjectDeleted,
+    kEventContainerDeleted,
+    kEventEntityLoaded,
+
+    kEventSecondChanged,
+    kEventMinuteChanged,
+    kEventHourChanged,
+
+    kEventAnimationCompleted,
+    kEventTextureRewritten,
+    kEventCharSetRewritten,
+    kEventCharSetDeleted,
+
+    kEventEffectFadeComplete,
+    kEventEffectFadeStart,
+    kEventEffectFadeStop,
+
+    // do not remove me
+    kLastEngineEvent
+};
 
 #endif

@@ -97,7 +97,7 @@ void BgmapTexture_write(BgmapTexture this)
 	}
 
 	//determine the allocation type
-	switch(CharSet_getAllocationType(this->charSet))
+	switch(this->textureDefinition->charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 

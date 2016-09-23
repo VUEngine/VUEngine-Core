@@ -37,8 +37,6 @@
 #define __UPDATE_SPRITE_SCALE       		0x02
 #define __UPDATE_SPRITE_ROTATION       		0x04
 
-#define __EVENT_ENTITY_LOADED	            "entLoad"
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

@@ -152,7 +152,7 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialD
     if(callback != NULL && callbackScope != NULL)
     {
         this->fxFadeCallbackScope = callbackScope;
-        Object_addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, __EVENT_EFFECT_FADE_COMPLETE);
+        Object_addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, kEventEffectFadeComplete);
     }
 
     // start effect
@@ -161,7 +161,7 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialD
     MessageDispatcher_dispatchMessage(initialDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
 
     // fire effect started event
-    Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_START);
+    Object_fireEvent(__SAFE_CAST(Object, this), kEventEffectFadeStart);
 }
 
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
@@ -170,7 +170,7 @@ void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
 
     if(this->fxFadeCallbackScope)
     {
-        Object_removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, __EVENT_EFFECT_FADE_COMPLETE);
+        Object_removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, kEventEffectFadeComplete);
     }
 
     // discard pending delayed messages to stop effect
@@ -182,7 +182,7 @@ void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
     this->fxFadeCallbackScope = NULL;
 
     // fire effect stopped event
-    Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_STOP);
+    Object_fireEvent(__SAFE_CAST(Object, this), kEventEffectFadeStop);
 }
 
 void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_list args)
@@ -296,12 +296,12 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
     if(lightRedDone && mediumRedDone && darkRedDone)
     {
         // fire effect ended event
-	    Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_EFFECT_FADE_COMPLETE);
+	    Object_fireEvent(__SAFE_CAST(Object, this), kEventEffectFadeComplete);
 
         // remove callback event listener
         if(this->fxFadeCallbackScope)
         {
-            Object_removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, __EVENT_EFFECT_FADE_COMPLETE);
+            Object_removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, kEventEffectFadeComplete);
         }
     }
     else

@@ -72,8 +72,6 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
         AnimationDescription* animationDescription;														\
         /* used to know if gap must be changed */														\
         Direction previousDirection;																	\
-        /* clock to pass to the animated sprites */														\
-        Clock clock;																					\
         /* need to save for pausing */																	\
         char* currentAnimationName;																		\
 
@@ -98,7 +96,6 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 int AnimatedInGameEntity_updateSpritePosition(AnimatedInGameEntity this);
 AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this);
 void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
-void AnimatedInGameEntity_setClock(AnimatedInGameEntity this, Clock clock);
 void AnimatedInGameEntity_resume(AnimatedInGameEntity this);
 
 

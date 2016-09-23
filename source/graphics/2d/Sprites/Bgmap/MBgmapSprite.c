@@ -58,8 +58,8 @@ extern Optical* _optical;
 static void MBgmapSprite_releaseTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);
-static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this);
-static void MBgmapSprite_calculateSize(MBgmapSprite this);
+//static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this);
+//static void MBgmapSprite_calculateSize(MBgmapSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,6 +81,8 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 	this->textures = NULL;
 	MBgmapSprite_loadTextures(this);
 
+	// TODO: check if this is really needed
+/*
 	// assume looping
 	this->size.x = 0;
 	this->size.y = 0;
@@ -89,6 +91,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 	this->sizeMultiplier.y = 1;
 
 	MBgmapSprite_calculateSize(this);
+*/
 }
 
 // class's destructor
@@ -156,17 +159,12 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 
 	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: null textureDefinition");
 
-	if(textureDefinition)
-	{
-		BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
+    BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
 
-		ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
+    ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
+    ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
 
-		if(bgmapTexture && this->textures)
-		{
-			VirtualList_pushBack(this->textures, bgmapTexture);
-		}
-	}
+    VirtualList_pushBack(this->textures, bgmapTexture);
 }
 
 // set sprite's position
@@ -287,75 +285,6 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	this->renderFlag |= __UPDATE_M;
 }
 
-// calculate the size multiplier
-static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
-{
-	ASSERT(this, "MBgmapSprite::calculateSizeMultiplier: null this");
-
-	switch(this->mBgmapSpriteDefinition->scValue)
-	{
-		case __WORLD_1x1:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 1;
-			break;
-
-		case __WORLD_1x2:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 2;
-			break;
-
-		case __WORLD_1x4:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 4;
-			break;
-
-		case __WORLD_1x8:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 8;
-			break;
-
-		case __WORLD_2x1:
-
-			this->sizeMultiplier.x = 2;
-			this->sizeMultiplier.y = 1;
-			break;
-
-		case __WORLD_2x2:
-
-			this->sizeMultiplier.x = 2;
-			this->sizeMultiplier.y = 2;
-			break;
-
-		case __WORLD_2x4:
-
-			this->sizeMultiplier.x = 2;
-			this->sizeMultiplier.y = 4;
-			break;
-
-		case __WORLD_4x1:
-
-			this->sizeMultiplier.x = 4;
-			this->sizeMultiplier.y = 1;
-			break;
-
-		case __WORLD_4x2:
-
-			this->sizeMultiplier.x = 4;
-			this->sizeMultiplier.y = 2;
-			break;
-
-		case __WORLD_8x1:
-
-			this->sizeMultiplier.x = 8;
-			this->sizeMultiplier.y = 1;
-			break;
-	}
-}
-
 // render a world layer with the map's information
 void MBgmapSprite_render(MBgmapSprite this)
 {
@@ -439,7 +368,7 @@ VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
 	return this->drawSpec.position;
 }
 
-
+/*
 // calculate total sprite's size
 static void MBgmapSprite_calculateSize(MBgmapSprite this)
 {
@@ -460,3 +389,73 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 	}
 }
 
+
+// calculate the size multiplier
+static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
+{
+	ASSERT(this, "MBgmapSprite::calculateSizeMultiplier: null this");
+
+	switch(this->mBgmapSpriteDefinition->scValue)
+	{
+		case __WORLD_1x1:
+
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 1;
+			break;
+
+		case __WORLD_1x2:
+
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 2;
+			break;
+
+		case __WORLD_1x4:
+
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 4;
+			break;
+
+		case __WORLD_1x8:
+
+			this->sizeMultiplier.x = 1;
+			this->sizeMultiplier.y = 8;
+			break;
+
+		case __WORLD_2x1:
+
+			this->sizeMultiplier.x = 2;
+			this->sizeMultiplier.y = 1;
+			break;
+
+		case __WORLD_2x2:
+
+			this->sizeMultiplier.x = 2;
+			this->sizeMultiplier.y = 2;
+			break;
+
+		case __WORLD_2x4:
+
+			this->sizeMultiplier.x = 2;
+			this->sizeMultiplier.y = 4;
+			break;
+
+		case __WORLD_4x1:
+
+			this->sizeMultiplier.x = 4;
+			this->sizeMultiplier.y = 1;
+			break;
+
+		case __WORLD_4x2:
+
+			this->sizeMultiplier.x = 4;
+			this->sizeMultiplier.y = 2;
+			break;
+
+		case __WORLD_8x1:
+
+			this->sizeMultiplier.x = 8;
+			this->sizeMultiplier.y = 1;
+			break;
+	}
+}
+*/

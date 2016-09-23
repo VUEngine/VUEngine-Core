@@ -31,8 +31,6 @@
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __EVENT_TEXTURE_REWRITTEN				"textRewr"
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -117,7 +115,7 @@ TextureDefinition* Texture_getTextureDefinition(Texture this);
 u32 Texture_getTotalCols(Texture this);
 u32 Texture_getTotalRows(Texture this);
 u32 Texture_getNumberOfFrames(Texture this);
-CharSet Texture_getCharSet(Texture this);
+CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded);
 BYTE* Texture_getBgmapDefinition(Texture this);
 void Texture_setPalette(Texture this, u8 palette);
 u8 Texture_getPalette(Texture this);

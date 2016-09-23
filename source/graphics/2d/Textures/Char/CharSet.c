@@ -63,6 +63,12 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 	this->offset = offset;
 	this->segment = segment;
 	this->usageCount = 1;
+
+	// I will fire events, so save some time when preloaded by already creating the event list
+	if(!this->events)
+	{
+        this->events = __NEW(VirtualList);
+    }
 }
 
 // class's destructor
@@ -70,7 +76,7 @@ void CharSet_destructor(CharSet this)
 {
 	ASSERT(this, "CharSet::destructor: null this");
 
-	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_CHARSET_DELETED);
+	Object_fireEvent(__SAFE_CAST(Object, this), kEventCharSetDeleted);
 
 	// make sure that I'm not destroyed again
 	this->usageCount = 0xFF;
@@ -171,7 +177,7 @@ void CharSet_rewrite(CharSet this)
 	CharSet_write(this);
 
 	// propagate event
-	Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_CHARSET_REWRITTEN);
+	Object_fireEvent(__SAFE_CAST(Object, this), kEventCharSetRewritten);
 }
 
 // set charDefinitionDisplacement

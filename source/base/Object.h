@@ -29,8 +29,6 @@
 // 											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAX_EVENT_NAME_LENGTH	                8
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -69,11 +67,11 @@ typedef Object (*AllocatorPointer)();
 void Object_constructor(Object this);
 void Object_destructor(Object this);
 bool Object_handleMessage(Object this, void* telegram);
-void Object_addEventListener(Object this, Object listener, EventListener method, char* eventName);
-void Object_removeEventListener(Object this, Object listener, EventListener method, char* eventName);
-void Object_removeEventListeners(Object this, Object listener, char* eventName);
-void Object_removeAllEventListeners(Object this, char* eventName);
-void Object_fireEvent(Object this, char* eventName);
+void Object_addEventListener(Object this, Object listener, EventListener method, u32 eventCode);
+void Object_removeEventListener(Object this, Object listener, EventListener method, u32 eventCode);
+void Object_removeEventListeners(Object this, Object listener, u32 eventCode);
+void Object_removeAllEventListeners(Object this, u32 eventCode);
+void Object_fireEvent(Object this, u32 eventCode);
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
 const void* Object_getVTable(Object this);
 

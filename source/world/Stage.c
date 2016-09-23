@@ -1085,14 +1085,14 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 
 	if(this->focusInGameEntity)
 	{
-		Object_removeEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, __EVENT_CONTAINER_DELETED);
+		Object_removeEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
     }
 
 	this->focusInGameEntity = focusInGameEntity;
 
 	if(this->focusInGameEntity)
 	{
-		Object_addEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, __EVENT_CONTAINER_DELETED);
+		Object_addEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
 		VBVec3D focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
 		focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);

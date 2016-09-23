@@ -54,8 +54,8 @@
 #define __INVALIDATE_SCALE			        0xC0
 
 
-#define __MAX_CONTAINER_NAME_LENGTH			16
-#define __EVENT_CONTAINER_DELETED			"contDele"
+#define __MAX_CONTAINER_NAME_LENGTH			8
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

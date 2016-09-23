@@ -52,7 +52,7 @@
         /* super's attributes */																		\
         Object_ATTRIBUTES																			    \
         /* the EntityFactory entities to test for streaming */ 											\
-        VirtualList entitiesToInstantiate;																    \
+        VirtualList entitiesToInstantiate;																\
         /* streaming's uninitialized entities */ 														\
         VirtualList entitiesToInitialize;																\
         /* streaming's non yet transformed entities */ 													\

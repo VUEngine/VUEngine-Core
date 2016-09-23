@@ -182,7 +182,7 @@ void Clock_update(Clock this, u32 ticks)
 		{
 			this->previousSecond = currentSecond;
 
-			Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_SECOND_CHANGED);
+			Object_fireEvent(__SAFE_CAST(Object, this), kEventSecondChanged);
 
 			u32 currentMinute = Clock_getMinutes(this);
 
@@ -190,7 +190,7 @@ void Clock_update(Clock this, u32 ticks)
 			{
 				this->previousMinute = currentMinute;
 
-				Object_fireEvent(__SAFE_CAST(Object, this), __EVENT_MINUTE_CHANGED);
+				Object_fireEvent(__SAFE_CAST(Object, this), kEventMinuteChanged);
 			}
 		}
 	}
