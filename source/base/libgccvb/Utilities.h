@@ -17,11 +17,13 @@
 #ifndef UTILITIES_H_
 #define UTILITIES_H_
 
+#include <Clock.h>
 
 //---------------------------------------------------------------------------------------------------------
 // 											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
+void Utilities_setClock(Clock clock);
 long Utilities_randomSeed();
 int Utilities_random(long seed, int randnums);
 char* Utilities_itoa(u32 num, u32 base, u32 digits);

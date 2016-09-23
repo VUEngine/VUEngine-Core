@@ -218,28 +218,30 @@ void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
         }
     }
 
-    if(!this->paused)
+    if(this->paused)
     {
-        // check if it is time to spawn new particles
-        this->nextSpawnTime -= elapsedTime;
+        return;
+    }
 
-        if(0 > this->nextSpawnTime)
+    // check if it is time to spawn new particles
+    this->nextSpawnTime -= elapsedTime;
+
+    if(0 > this->nextSpawnTime)
+    {
+        if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
         {
-            if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
+            if(this->particleSystemDefinition->recycleParticles)
             {
-                if(this->particleSystemDefinition->recycleParticles)
-                {
-                    VirtualList_pushBack(this->particles, ParticleSystem_recycleParticle(this));
-                    this->particleCount++;
-                }
-                else
-                {
-                    VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
-                    this->particleCount++;
-                }
-
-                this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
+                VirtualList_pushBack(this->particles, ParticleSystem_recycleParticle(this));
+                this->particleCount++;
             }
+            else
+            {
+                VirtualList_pushBack(this->particles, ParticleSystem_spawnParticle(this));
+                this->particleCount++;
+            }
+
+            this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
         }
     }
 }
@@ -314,7 +316,12 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
 	fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 
-	int spriteDefinitionIndex = Utilities_random(seed, this->numberOfSpriteDefinitions);
+	int spriteDefinitionIndex = 0;
+
+	if(this->numberOfSpriteDefinitions)
+	{
+    	spriteDefinitionIndex = Utilities_random(seed, this->numberOfSpriteDefinitions);
+    }
 
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix19_13)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);

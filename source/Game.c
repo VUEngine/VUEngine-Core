@@ -32,6 +32,7 @@
 #include <Clock.h>
 #include <BgmapTextureManager.h>
 #include <GameState.h>
+#include <Utilities.h>
 #include <MessageDispatcher.h>
 #include <Stage.h>
 #include <ParamTableManager.h>
@@ -197,6 +198,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 
 	// construct the general clock
 	this->clock = __NEW(Clock);
+	Utilities_setClock(this->clock);
 
 	// construct the game's state machine
 	this->stateMachine = __NEW(StateMachine, this);

@@ -24,12 +24,25 @@
 #include <Clock.h>
 #include <Game.h>
 
+//---------------------------------------------------------------------------------------------------------
+// 												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
+
+Clock _gameClock = NULL;
+
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 static const char numbers[17] = "0123456789ABCDEF";
+
+
+void Utilities_setClock(Clock clock)
+{
+    _gameClock = clock;
+}
 
 int Utilities_intLength(int value)
 {
@@ -86,12 +99,12 @@ char* Utilities_itoa(u32 num, u32 base, u32 digits)
  */
 long Utilities_randomSeed()
 {
+    ASSERT(_gameClock, "Utilities::randomSeed: null _gameClock");
+
 	long random = 1;
-	int	rand, prevnum = 0,	count = 1;
-
-	Game game = Game_getInstance();
-
-	rand = Game_getTime(game);
+	int	rand = Clock_getTime(_gameClock);
+	int prevnum = 0;
+	int count = 1;
 
 	// repeat through many times to make more random and to allow the __CTA value to change multiple times
 	while(count < __RANDOM_SEED_CYCLES)
@@ -125,7 +138,7 @@ long Utilities_randomSeed()
 
 		// keep track of the last number
 		prevnum = rand;
-		rand = Game_getTime(game);
+		rand = Clock_getTime(_gameClock);
 	}
 
 	// returns the random seed
