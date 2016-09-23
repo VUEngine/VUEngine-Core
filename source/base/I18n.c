@@ -59,6 +59,15 @@ static void I18n_constructor(I18n this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn          I18n_getInstance()
+ * @memberof    I18n
+ * @public
+ *
+ * @return      I18n instance
+ */
 __SINGLETON(I18n);
 
 /**

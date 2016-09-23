@@ -23,6 +23,7 @@
 #include <Cuboid.h>
 #include <Polygon.h>
 #include <VirtualList.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,8 +41,12 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class       DirectDraw
+ * @extends     Object
+ */
+
 #define DirectDraw_ATTRIBUTES																			\
-        /* super's attributes */																		\
         Object_ATTRIBUTES																				\
 
 __CLASS_DEFINITION(DirectDraw, Object);
@@ -52,44 +57,120 @@ __CLASS_DEFINITION(DirectDraw, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void DirectDraw_constructor(DirectDraw this);
-static void DirectDraw_putPixel(DirectDraw this, u32 buffer, int x, int y, int palette);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn          DirectDraw_getInstance()
+ * @memberof    DirectDraw
+ * @public
+ *
+ * @return      DirectDraw instance
+ */
 __SINGLETON(DirectDraw);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    DirectDraw
+ * @private
+ *
+ * @param this  Function scope
+ */
 static void __attribute__ ((noinline)) DirectDraw_constructor(DirectDraw this)
 {
 	__CONSTRUCT_BASE(Object);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    DirectDraw
+ * @public
+ *
+ * @param this  Function scope
+ */
 void DirectDraw_destructor(DirectDraw this)
 {
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
 
-// draw a pixel on the screen
-static void DirectDraw_putPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, int x, int y, int palette)
+/**
+ * Draws a pixel on the screen.
+ * This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel
+ * instead.
+ *
+ * @brief           Draws a pixel on the screen
+ * @memberof        DirectDraw
+ * @public
+ *
+ * @param this      Function scope
+ * @param buffer    Buffer base address
+ * @param x         Screen x coordinate
+ * @param y         Screen y coordinate
+ * @param color     The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
+ */
+void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, int x, int y, int color)
 {
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
 
-	// calculate pixel position each column has 16 words, so 16 * 4 bytes = 64, 8 bytes are 4 pixels
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
 	pointer += ((x << 6) + (y >> 2));
 
-	// calculate the pixel to be drawn
-	*pointer |= (palette << ((y & 3) << 1));
+	// draw the pixel
+    *pointer |= (color << ((y & 3) << 1));
 }
 
-// line a draw between two given points
-void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int palette)
+/**
+ * Draws a black pixel on the screen.
+ * We have a separate function for black pixes since nulling bits requires a slightly different way than
+ * simply writing 1's. Adding an if clause instead to the putPixel method instead would be too heavy on
+ * the processor when used inside a loop due to the branching.
+ *
+ * @brief           Draws a black pixel on the screen
+ * @memberof        DirectDraw
+ * @public
+ *
+ * @param this      Function scope
+ * @param buffer    Buffer base address
+ * @param x         Screen x coordinate
+ * @param y         Screen y coordinate
+ */
+void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, int x, int y)
+{
+	// a pointer to the buffer
+	//int* pointer = (int*)buffer;
+	BYTE* pointer = (BYTE*)buffer;
+
+	// calculate pixel position
+	// each column has 16 words, so 16 * 4 bytes = 64, each byte represents 4 pixels
+	pointer += ((x << 6) + (y >> 2));
+
+	// draw the pixel
+	*pointer &= ~(0b11 << ((y & 3) << 1));
+}
+
+/**
+ * Draws a line between two given 2D points
+ *
+ * @memberof        DirectDraw
+ * @public
+ *
+ * @param this      Function scope
+ * @param fromPoint Point 1
+ * @param toPoint   Point 2
+ * @param color     The color to draw (0-3)
+ */
+void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int color)
 {
 	fromPoint.x = FIX19_13TOI(fromPoint.x);
 	fromPoint.y = FIX19_13TOI(fromPoint.y);
@@ -127,62 +208,128 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	dy <<= 1;
 	dx <<= 1;
 
-	if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
-	{
-		DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
-		DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
-	}
+    // duplicating code here since it is much lighter on the cpu
+    if(color == __COLOR_BLACK)
+    {
+        if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+        {
+            DirectDraw_drawBlackPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y);
+            DirectDraw_drawBlackPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y);
+        }
 
-	if(dx > dy)
-	{
-		int fraction = dy - (dx >> 1);
+        if(dx > dy)
+        {
+            int fraction = dy - (dx >> 1);
 
-		int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)) : 0;
+            int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)) : 0;
 
-		while(fromPoint.x != toPoint.x)
-		{
-			if(fraction >= 0)
-			{
-				fromPoint.y += stepY;
-				fraction -= dx;
-			}
+            while(fromPoint.x != toPoint.x)
+            {
+                if(fraction >= 0)
+                {
+                    fromPoint.y += stepY;
+                    fraction -= dx;
+                }
 
-			fromPoint.x += stepX;
-			fraction += dy;
+                fromPoint.x += stepX;
+                fraction += dy;
 
-			parallax += parallaxStep;
+                parallax += parallaxStep;
 
-			if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
-			{
-				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
-				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
-			}
-		}
-	}
-	else
-	{
-		int fraction = dx - (dy >> 1);
+                if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+                {
+                    DirectDraw_drawBlackPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y);
+                    DirectDraw_drawBlackPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y);
+                }
+            }
+        }
+        else
+        {
+            int fraction = dx - (dy >> 1);
 
-		int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)) : 0;
+            int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)) : 0;
 
-		while(fromPoint.y != toPoint.y)
-		{
-			if(fraction >= 0)
-			{
-				fromPoint.x += stepX;
-				fraction -= dy;
-			}
+            while(fromPoint.y != toPoint.y)
+            {
+                if(fraction >= 0)
+                {
+                    fromPoint.x += stepX;
+                    fraction -= dy;
+                }
 
-			fromPoint.y += stepY;
-			fraction += dx;
+                fromPoint.y += stepY;
+                fraction += dx;
 
-			parallax += parallaxStep;
+                parallax += parallaxStep;
 
-			if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
-			{
-				DirectDraw_putPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, palette);
-				DirectDraw_putPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, palette);
-			}
-		}
-	}
+                if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+                {
+                    DirectDraw_drawBlackPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y);
+                    DirectDraw_drawBlackPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y);
+                }
+            }
+        }
+
+    }
+    else
+    {
+        if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+        {
+            DirectDraw_drawPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, color);
+            DirectDraw_drawPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, color);
+        }
+
+        if(dx > dy)
+        {
+            int fraction = dy - (dx >> 1);
+
+            int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)) : 0;
+
+            while(fromPoint.x != toPoint.x)
+            {
+                if(fraction >= 0)
+                {
+                    fromPoint.y += stepY;
+                    fraction -= dx;
+                }
+
+                fromPoint.x += stepX;
+                fraction += dy;
+
+                parallax += parallaxStep;
+
+                if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+                {
+                    DirectDraw_drawPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, color);
+                    DirectDraw_drawPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, color);
+                }
+            }
+        }
+        else
+        {
+            int fraction = dx - (dy >> 1);
+
+            int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)) : 0;
+
+            while(fromPoint.y != toPoint.y)
+            {
+                if(fraction >= 0)
+                {
+                    fromPoint.x += stepX;
+                    fraction -= dy;
+                }
+
+                fromPoint.y += stepY;
+                fraction += dx;
+
+                parallax += parallaxStep;
+
+                if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
+                {
+                    DirectDraw_drawPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, color);
+                    DirectDraw_drawPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, color);
+                }
+            }
+        }
+    }
 }

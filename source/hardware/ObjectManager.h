@@ -50,6 +50,7 @@ __CLASS(ObjectManager);
 //---------------------------------------------------------------------------------------------------------
 
 ObjectManager ObjectManager_getInstance();
+
 void ObjectManager_destructor(ObjectManager this);
 
 

@@ -52,6 +52,7 @@ __CLASS(Game);
 //---------------------------------------------------------------------------------------------------------
 
 Game Game_getInstance();
+
 void Game_destructor(Game this);
 void Game_start(Game this, GameState state);
 void Game_changeState(Game this, GameState state);

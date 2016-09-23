@@ -40,8 +40,8 @@ Shape SpatialObject_getShape(SpatialObject this);
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SolidParticle_METHODS(ClassName)																			\
-		Particle_METHODS(ClassName)																				\
+#define SolidParticle_METHODS(ClassName)																\
+		Particle_METHODS(ClassName)																		\
 
 // define the virtual methods
 #define SolidParticle_SET_VTABLE(ClassName)																\
@@ -57,7 +57,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 
 #define SolidParticle_ATTRIBUTES																		\
         /* super's attributes */																		\
-        Particle_ATTRIBUTES																			\
+        Particle_ATTRIBUTES																				\
         /* physical body */																				\
         Shape shape;																					\
         /* shape for collision detection */																\
