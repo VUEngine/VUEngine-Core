@@ -45,7 +45,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 /**
  * An event
  */
-
 typedef struct Event
 {
 	Object listener;
