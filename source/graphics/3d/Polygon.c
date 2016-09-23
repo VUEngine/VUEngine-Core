@@ -23,6 +23,7 @@
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <VirtualList.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 
@@ -110,7 +111,7 @@ void Polygon_addVertex(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 // draw polygon to screen
 void Polygon_draw(Polygon this, int calculateParallax)
 {
-	int palette = 0x03;
+	int color = __COLOR_BRIGHT_RED;
 
 	// if I have some vertex, draw them
 	if(this->vertices && 2 < VirtualList_getSize(this->vertices))
@@ -148,7 +149,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			}
 
 			// draw the line in both buffers
-			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
+			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, color);
 		}
 
 		if(fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
@@ -170,7 +171,7 @@ void Polygon_draw(Polygon this, int calculateParallax)
 			}
 
 			// draw the line in both buffers
-			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, palette);
+			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, color);
 		}
 	}
 }
