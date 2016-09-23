@@ -43,9 +43,7 @@ __CLASS_DEFINITION(Object, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
-/**
- * An event
- */
+// an event
 typedef struct Event
 {
 	Object listener;
@@ -121,7 +119,7 @@ void Object_destructor(Object this)
  * @param this      Function scope
  * @param telegram  The received message
  *
- * @return Always returns false, this is meant to be used only in derived classes
+ * @return          Always returns false, this is meant to be used only in derived classes
  */
 bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
 {

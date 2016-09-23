@@ -33,7 +33,43 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the ParticleSystem
+/**
+ * @class                           ParticleSystem
+ * @extends                         Entity
+ *
+ * @var ParticleSystemDefinition*   particleSystemDefinition
+ * @brief                           system's definition
+ * @memberof                        ParticleSystem
+ *
+ * @var VirtualList                 particles
+ * @brief                           particle list
+ * @memberof                        ParticleSystem
+ *
+ * @var VirtualList                 recyclableParticles
+ * @brief                           particle list
+ * @memberof                        ParticleSystem
+ *
+ * @var VirtualList                 expiredParticles
+ * @brief                           particle list
+ * @memberof                        ParticleSystem
+ *
+ * @var int                         nextSpawnTime
+ * @brief                           next spawn time
+ * @memberof                        ParticleSystem
+ *
+ * @var int                         particleCount
+ * @brief                           particle count
+ * @memberof                        ParticleSystem
+ *
+ * @var s16                         numberOfSpriteDefinitions
+ * @brief                           number of sprite definitions
+ * @memberof                        ParticleSystem
+ *
+ * @var bool                        paused
+ * @brief                           pause flag
+ * @memberof                        ParticleSystem
+ */
+
 __CLASS_DEFINITION(ParticleSystem, Entity);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
@@ -66,7 +102,14 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
 __CLASS_NEW_DEFINITION(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name)
 __CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id, name);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name)
 {
 	ASSERT(this, "ParticleSystem::constructor: null this");
@@ -97,7 +140,14 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 	ASSERT(0 < this->numberOfSpriteDefinitions, "ParticleSystem::constructor: 0 sprite definitions");
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_destructor(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::destructor: null this");
@@ -163,7 +213,12 @@ void ParticleSystem_destructor(ParticleSystem this)
 	__DESTROY_BASE;
 }
 
-
+/**
+ * @memberof    ParticleSystem
+ * @private
+ *
+ * @param this  Function scope
+ */
 static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::processExpiredParticles: null this");
@@ -197,6 +252,13 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 	}
 }
 
+/**
+ * @memberof            ParticleSystem
+ * @public
+ *
+ * @param this          Function scope
+ * @param elapsedTime
+ */
 void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
 {
 	ASSERT(this, "ParticleSystem::update: null this");
@@ -246,7 +308,14 @@ void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
     }
 }
 
-
+/**
+ * @memberof    ParticleSystem
+ * @private
+ *
+ * @param this  Function scope
+ *
+ * @return      Particle
+ */
 static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::recycleParticle: null this");
@@ -275,6 +344,15 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 	return ParticleSystem_spawnParticle(this);
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @private
+ *
+ * @param this  Function scope
+ * @param seed
+ *
+ * @return      Spawn position
+ */
 static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed)
 {
 	ASSERT(this, "ParticleSystem::getParticleSpawnPosition: null this");
@@ -291,6 +369,15 @@ static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem thi
 	return &position;
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @private
+ *
+ * @param this  Function scope
+ * @param seed
+ *
+ * @return      Force
+ */
 static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed)
 {
 	ASSERT(this, "ParticleSystem::getParticleSpawnForce: null this");
@@ -307,6 +394,14 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
 	return &force;
 }
 
+/**
+ * Spawn all particles at once. This function's intended use is for recyclable particles mainly.
+ *
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_spawnAllParticles(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::spawnAllParticles: null this");
@@ -326,6 +421,14 @@ void ParticleSystem_spawnAllParticles(ParticleSystem this)
 	}
 }
 
+/**
+ * Spawn a particle
+ *
+ * @memberof    ParticleSystem
+ * @private
+ *
+ * @param this  Function scope
+ */
 static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::spawnParticle: null this");
@@ -350,6 +453,13 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	return particle;
 }
 
+/**
+ * @memberof                    ParticleSystem
+ * @public
+ *
+ * @param this                  Function scope
+ * @param environmentTransform
+ */
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "ParticleSystem::transform: null this");
@@ -361,6 +471,12 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::updateVisualRepresentation: null this");
@@ -377,6 +493,17 @@ void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 	this->updateSprites = 0;
 }
 
+/**
+ * Handles incoming messages
+ *
+ * @memberof        ParticleSystem
+ * @public
+ *
+ * @param this      Function scope
+ * @param telegram  The received message
+ *
+ * @return          Always returns false
+ */
 bool ParticleSystem_handleMessage(ParticleSystem this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "ParticleSystem::handleMessage: null this");
@@ -384,6 +511,12 @@ bool ParticleSystem_handleMessage(ParticleSystem this __attribute__ ((unused)), 
 	return false;
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_show(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::show: null this");
@@ -398,6 +531,12 @@ void ParticleSystem_show(ParticleSystem this)
 	}
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_hide(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::hide: null this");
@@ -412,6 +551,12 @@ void ParticleSystem_hide(ParticleSystem this)
 	}
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_resume(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::resume: null this");
@@ -446,6 +591,12 @@ void ParticleSystem_resume(ParticleSystem this)
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_suspend(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::suspend: null this");
@@ -472,6 +623,13 @@ void ParticleSystem_suspend(ParticleSystem this)
 	}
 }
 
+/**
+ * @memberof        ParticleSystem
+ * @private
+ *
+ * @param this      Function scope
+ * @param particle
+ */
 static void ParticleSystem_particleExipired(ParticleSystem this, Particle particle)
 {
 	ASSERT(this, "ParticleSystem::particleExipired: null this");
@@ -480,6 +638,14 @@ static void ParticleSystem_particleExipired(ParticleSystem this, Particle partic
 	Particle_hide(particle);
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @private
+ *
+ * @param this  Function scope
+ *
+ * @return      Time
+ */
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::computeNextSpawnTime: null this");
@@ -488,6 +654,12 @@ static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
 			Utilities_random(Utilities_randomSeed(), this->particleSystemDefinition->spawnDelayDelta);
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_start(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::start: null this");
@@ -497,6 +669,12 @@ void ParticleSystem_start(ParticleSystem this)
 	this->paused = false;
 }
 
+/**
+ * @memberof    ParticleSystem
+ * @public
+ *
+ * @param this  Function scope
+ */
 void ParticleSystem_pause(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::pause: null this");
