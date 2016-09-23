@@ -119,6 +119,8 @@
 
 #define __TARGET_FPS 							(50 >> __FRAME_CYCLE)
 
+#define __GAME_FRAME_DURATION                   __MILLISECONDS_IN_SECOND / __TARGET_FPS
+
 // target frames per second
 #define __OPTIMUM_FPS 							(__TARGET_FPS >> __FRAME_CYCLE)
 

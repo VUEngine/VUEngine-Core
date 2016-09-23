@@ -865,7 +865,7 @@ static void Game_update(Game this)
             gameFrameTime = TimerManager_getTicks(this->timerManager);
 #if __FRAME_CYCLE != 1
 	    }
-	    while(gameFrameTime < __MILLISECONDS_IN_SECOND / __TARGET_FPS);
+	    while(gameFrameTime < __GAME_FRAME_DURATION);
 #endif
 
         TimerManager_getAndResetTicks(this->timerManager);
