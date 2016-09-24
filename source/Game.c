@@ -73,26 +73,6 @@ enum StateOperations
 	kPopState
 };
 
-enum GameCurrentProcess
-{
-	kGameStartingUp = 0,
-	kGameUpdatingVisuals,
-	kGameUpdatingVisualsDone,
-	kGameTransforming,
-	kGameTransformingDone,
-	kGameCheckingCollisions,
-	kGameCheckingCollisionsDone,
-	kGameHandlingUserInput,
-	kGameHandlingUserInputDone,
-	kGameDispatchingDelayedMessages,
-	kGameDispatchingDelayedMessagesDone,
-	kGameUpdatingStageMachine,
-	kGameUpdatingStageMachineDone,
-	kGameUpdatingPhysics,
-	kGameUpdatingPhysicsDone,
-	kGameCheckingForNewState,
-	kGameCheckingForNewStateDone,
-};
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
@@ -124,7 +104,7 @@ enum GameCurrentProcess
         /* auto pause last checked time */																\
         u32 lastAutoPauseCheckTime;																		\
         /* current process enum */																		\
-        u32 currentProcess;																				\
+        u32 updatingVisuals;																				\
         /* elapsed time in current 50hz cycle */														\
         u32 gameFrameTotalTime;																            \
         /* low battery indicator showing flag */														\
@@ -189,7 +169,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	MemoryPool_getInstance();
 
 	// current process
-	this->currentProcess = kGameStartingUp;
+	this->updatingVisuals = false;
 
 	this->gameFrameTotalTime = 0;
 
@@ -238,11 +218,8 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 #endif
 
 	// to make debugging easier
-#ifndef __DEBUG
-	this->lastProcessName = "not available";
-#else
-	this->lastProcessName = "starting up";
-#endif
+	this->lastProcessName = "start up";
+
     this->nextStateOperation = kSwapState;
 
 	// setup engine parameters
@@ -351,8 +328,8 @@ static void Game_setNextState(Game this, GameState state)
     {
 		case kSwapState:
 
-#ifdef __DEBUG
-			this->lastProcessName = "kSwapState";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+			this->lastProcessName = "state swap";
 #endif
 
 			if(this->currentState)
@@ -368,8 +345,8 @@ static void Game_setNextState(Game this, GameState state)
 
 		case kPushState:
 
-#ifdef __DEBUG
-			this->lastProcessName = "kPushState";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+			this->lastProcessName = "state push";
 #endif
 			// setup new state
 		    StateMachine_pushState(this->stateMachine, (State)state);
@@ -377,8 +354,8 @@ static void Game_setNextState(Game this, GameState state)
 
 		case kPopState:
 
-#ifdef __DEBUG
-			this->lastProcessName = "kPopState";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+			this->lastProcessName = "state pop";
 #endif
 
 			if(this->currentState)
@@ -622,10 +599,8 @@ static u32 Game_handleInput(Game this)
 	}
 #endif
 
-	this->currentProcess = kGameHandlingUserInput;
-
-#ifdef __DEBUG
-	this->lastProcessName = "handle input";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+	this->lastProcessName = "input handling";
 #endif
 
 	// check for a new key pressed
@@ -671,130 +646,88 @@ inline static void Game_updateLogic(Game this)
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
 
-	this->currentProcess = kGameUpdatingStageMachine;
-
-#ifdef __DEBUG
-	this->lastProcessName = "updating state machine";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+	this->lastProcessName = "state machine update";
 #endif
 
 	// update the game's logic
 	StateMachine_update(this->stateMachine);
-
-#ifdef __DEBUG
-	this->lastProcessName = "logic ended";
-#endif
 }
 
 // update game's rendering subsystem
 inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 {
-#ifdef __DEBUG
-	this->lastProcessName = "update visuals";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+	this->lastProcessName = "visuals update";
 #endif
 
-	this->currentProcess = kGameUpdatingVisuals;
+	this->updatingVisuals = true;
 
 #ifdef __FORCE_VIP_SYNC
 	// disable rendering until collisions have been checked
 	VIPManager_disableInterrupt(this->vipManager);
 #endif
 
-#ifdef __DEBUG
-	this->lastProcessName = "update visuals";
-#endif
-
 	// apply transformations to visuals
 	GameState_updateVisuals(this->currentState);
 
-	this->currentProcess = kGameUpdatingVisualsDone;
+	this->updatingVisuals = false;
 
 #ifdef __FORCE_VIP_SYNC
 	// allow rendering
 	VIPManager_enableInterrupt(this->vipManager);
-#endif
-
-#ifdef __DEBUG
-	this->lastProcessName = "update visuals ended";
 #endif
 }
 
 // update game's physics subsystem
 inline static void Game_updatePhysics(Game this)
 {
-#ifdef __DEBUG
-	this->lastProcessName = "update physics";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+	this->lastProcessName = "physics processing";
 #endif
-
-	this->currentProcess = kGameUpdatingPhysics;
 
 	// simulate physics
 	GameState_updatePhysics(this->currentState);
-
-#ifdef __DEBUG
-	this->lastProcessName = "physics ended";
-#endif
 }
 
 inline static void Game_updateTransformations(Game this)
 {
-#ifdef __DEBUG
-	this->lastProcessName = "move screen";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+	this->lastProcessName = "screen focusing";
 #endif
 	// position the screen
 	Screen_focus(this->screen, true);
 
-	this->currentProcess = kGameTransforming;
-
-#ifdef __DEBUG
-	this->lastProcessName = "apply transformations";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+	this->lastProcessName = "transformation";
 #endif
 
 	// apply world transformations
 	GameState_transform(this->currentState);
-
-#ifdef __DEBUG
-	this->lastProcessName = "transformations ended";
-#endif
 }
 
 inline static u32 Game_updateCollisions(Game this)
 {
-	this->currentProcess = kGameCheckingCollisions;
-
 	// process the collisions after the transformations have taken place
-#ifdef __DEBUG
-	this->lastProcessName = "process collisions";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+	this->lastProcessName = "collisions handling";
 #endif
 
 	// process collisions
-	u32 returnValue = GameState_processCollisions(this->currentState);
-
-	this->currentProcess = kGameCheckingCollisionsDone;
-
-#ifdef __DEBUG
-	this->lastProcessName = "processing collisions ended";
-#endif
-
-    return returnValue;
+	return GameState_processCollisions(this->currentState);
 }
 
 inline static void Game_checkForNewState(Game this)
 {
 	ASSERT(this, "Game::checkForNewState: null this");
 
-	this->currentProcess = kGameCheckingForNewState;
     if(this->nextState)
 	{
-#ifdef __DEBUG
-		this->lastProcessName = "setting next state";
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+		this->lastProcessName = "next state setting up";
 #endif
 		Game_setNextState(this, this->nextState);
-#ifdef __DEBUG
-		this->lastProcessName = "setting next state done";
-#endif
 	}
-
-	this->currentProcess = kGameCheckingForNewStateDone;
 }
 
 #ifdef __PROFILE_GAME
@@ -854,26 +787,9 @@ static void Game_update(Game this)
 	    updateVisualsTotalTime += processTime;
 #endif
 
-#ifdef __CAP_FRAMERATE
-	    // cap framerate
-	    volatile u32 gameFrameTime = 0;
-
-#if __FRAME_CYCLE != 1
-	    do
-	    {
-#endif
-            gameFrameTime = TimerManager_getTicks(this->timerManager);
-#if __FRAME_CYCLE != 1
-	    }
-	    while(gameFrameTime < __GAME_FRAME_DURATION);
-#endif
-
-        TimerManager_getAndResetTicks(this->timerManager);
-#else
 	    u32 gameFrameTime = TimerManager_getAndResetTicks(this->timerManager);
-#endif
 
-        // inclease game frame total time
+        // increase game frame total time
     	this->gameFrameTotalTime += gameFrameTime;
 
         if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
@@ -891,7 +807,7 @@ static void Game_update(Game this)
 #ifdef __PRINT_FRAMERATE
             if(!Game_isInSpecialMode(this))
             {
-                FrameRate_print(frameRate, 0, 0);
+                FrameRate_print(frameRate, 48/2, (__SCREEN_HEIGHT >> 3) - 1);
             }
 #endif
 
@@ -960,6 +876,7 @@ static void Game_update(Game this)
 #endif
 	    // update game's logic
 	    Game_updateLogic(this);
+
 #ifdef __PROFILE_GAME
         processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
         updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
@@ -1370,20 +1287,8 @@ void Game_wait(Game this, u32 milliSeconds)
 bool Game_doneDRAMPrecalculations(Game this)
 {
 	ASSERT(this, "Game::doneDRAMPrecalculations: null this");
-	return this->currentProcess != kGameUpdatingVisuals;
-}
 
-const char* Game_getDRAMPrecalculationsStep(Game this)
-{
-	switch(this->currentProcess)
-	{
-		case kGameUpdatingVisuals:
-
-			return "Step: updating visuals";
-			break;
-	}
-
-	return NULL;
+	return this->updatingVisuals;
 }
 #endif
 #endif

@@ -79,7 +79,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 #ifndef	__FORCE_VIP_SYNC
 #ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 bool Game_doneDRAMPrecalculations(Game this);
-const char* Game_getDRAMPrecalculationsStep(Game this);
 #endif
 #endif
 
@@ -231,7 +230,7 @@ void VIPManager_interruptHandler(void)
 		_vipRegisters[__XPCTRL] |= __XPRST;
 		_vipRegisters[__XPCTRL] &= ~__XPEN;
 
-		//while(_vipRegisters[__XPSTTS] & __XPBSYR);
+//		while(_vipRegisters[__XPSTTS] & __XPBSYR);
 
 		// if performance was good enough in the
 		// the previous second do some defragmenting
@@ -255,8 +254,12 @@ void VIPManager_interruptHandler(void)
             }
         }
 
+#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+        Printing_text(Printing_getInstance(), "VIP idle during                           ", 0, 0, NULL);
+        Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 16, 0, NULL);
+#endif
 		// enable drawing
-		//while (_vipRegisters[__XPSTTS] & __XPBSYR);
+		while (_vipRegisters[__XPSTTS] & __XPBSYR);
 		_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 	}
 
@@ -274,7 +277,6 @@ void VIPManager_interruptHandler(void)
             Printing_text(Printing_getInstance(), "                      ", 0, y, NULL);
             Printing_text(Printing_getInstance(), "                               ", 0, y + 1, NULL);
             Printing_text(Printing_getInstance(), "VPU: out of budget", 0, y, NULL);
-            Printing_text(Printing_getInstance(), (char*)Game_getDRAMPrecalculationsStep(Game_getInstance()), 0, y + 1, NULL);
             messageDelay = __TARGET_FPS;
         }
 
@@ -482,18 +484,15 @@ void VIPManager_addPostProcessingEffect(VIPManager this, PostProcessingEffect po
 
         if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
         {
-            break;
+            return;
         }
     }
 
-    if(!node)
-    {
-        PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);
-        postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
-        postProcessingEffectRegistry->spatialObject = spatialObject;
+    PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);
+    postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
+    postProcessingEffectRegistry->spatialObject = spatialObject;
 
-        VirtualList_pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
-    }
+    VirtualList_pushBack(this->postProcessingEffects, postProcessingEffectRegistry);
 }
 
 // remove post processing effect
