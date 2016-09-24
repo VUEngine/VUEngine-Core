@@ -50,7 +50,7 @@ typedef struct PositionedEntityDescription
 	Entity entity;
 	EventListener callback;
 	s16 id;
-
+    u16 transformed;
 } PositionedEntityDescription;
 
 //---------------------------------------------------------------------------------------------------------
@@ -210,6 +210,7 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
     positionedEntityDescription->entity = NULL;
     positionedEntityDescription->callback = callback;
     positionedEntityDescription->id = id;
+    positionedEntityDescription->transformed = false;
 
     VirtualList_pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
@@ -318,12 +319,17 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 
     if(*(u32*)positionedEntityDescription->parent)
     {
-        if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))
+        if(!positionedEntityDescription->transformed)
         {
+            positionedEntityDescription->transformed = true;
+
             Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
 
             __VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, &environmentTransform, false);
+        }
 
+        if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))
+        {
             VirtualList_pushBack(this->entitiesToMakeReady, positionedEntityDescription);
             VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
 

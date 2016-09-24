@@ -61,7 +61,7 @@ u32 EntityFactory_callLoadedEntities(EntityFactory this);
 static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions);
 static void Entity_releaseSprites(Entity this);
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation);
-
+static void Entity_setupShape(Entity this);
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -780,7 +780,7 @@ u32 Entity_areAllChildrenReady(Entity this)
             __DELETE(this->entityFactory);
             this->entityFactory = NULL;
 
-            // must force size calculation now
+            // must force size calculation now that all children are loaded
             Entity_calculateSize(this);
         }
 
@@ -788,6 +788,24 @@ u32 Entity_areAllChildrenReady(Entity this)
     }
 
     return true;
+}
+
+static void Entity_setupShape(Entity this)
+{
+	ASSERT(this, "Entity::setupShape: null this");
+
+	if(this->shape)
+	{
+		// setup shape
+		__VIRTUAL_CALL(Shape, setup, this->shape);
+
+		if(__VIRTUAL_CALL(Entity, moves, this))
+	    {
+			__VIRTUAL_CALL(Shape, position, this->shape);
+		}
+
+		Shape_setActive(this->shape, true);
+	}
 }
 
 // initialize from definition
@@ -947,24 +965,13 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 	}
 
     // now can calculate the size
-    if(!this->size.x || !this->size.y || !this->size.z)
+    if(recursive && (!this->size.x || !this->size.y || !this->size.z))
     {
         // must force size calculation now
         Entity_calculateSize(this);
     }
 
-	if(this->shape)
-	{
-		// setup shape
-		__VIRTUAL_CALL(Shape, setup, this->shape);
-
-		if(__VIRTUAL_CALL(Entity, moves, this))
-	    {
-			__VIRTUAL_CALL(Shape, position, this->shape);
-		}
-
-		Shape_setActive(this->shape, true);
-	}
+    Entity_setupShape(this);
 }
 
 // transform class
@@ -1045,7 +1052,7 @@ int Entity_getWidth(Entity this)
 
 	if(!this->size.x)
 	{
-		//Entity_calculateSize(this);
+		Entity_calculateSize(this);
 	}
 
 	// must calculate based on the scale because not affine Container must be enlarged
@@ -1059,7 +1066,7 @@ int Entity_getHeight(Entity this)
 
 	if(!this->size.y)
 	{
-		//Entity_calculateSize(this);
+		Entity_calculateSize(this);
 	}
 
 	return (int)this->size.y;
@@ -1072,7 +1079,7 @@ int Entity_getDepth(Entity this)
 
 	if(!this->size.z)
 	{
-		//Entity_calculateSize(this);
+		Entity_calculateSize(this);
 	}
 
 	// must calculate based on the scale because not affine object must be enlarged

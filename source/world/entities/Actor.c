@@ -464,6 +464,79 @@ StateMachine Actor_getStateMachine(Actor this)
 	return this->stateMachine;
 }
 
+// stop movement completelty
+void Actor_stopMovement(Actor this)
+{
+	ASSERT(this, "Actor::stopMovement: null this");
+
+	if(this->body)
+	{
+		Body_stopMovement(this->body, __XAXIS);
+		Body_stopMovement(this->body, __YAXIS);
+		Body_stopMovement(this->body, __ZAXIS);
+	}
+
+	if(this->shape)
+	{
+		// unregister the shape for collision detections
+    	Shape_setActive(this->shape, false);
+        CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+    }
+}
+
+void Actor_addForce(Actor this, const Force* force)
+{
+	ASSERT(this, "Actor::Force: null this");
+	ASSERT(this->body, "Actor::Force: null body");
+
+	Acceleration acceleration =
+    {
+    	force->x,
+    	force->y,
+    	force->z
+	};
+
+	Velocity velocity = Body_getVelocity(this->body);
+
+	Force effectiveForceToApply =
+	{
+		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->x : 0,
+		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->y : 0,
+		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->z : 0
+	};
+
+	Body_addForce(this->body, &effectiveForceToApply);
+
+	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
+	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
+
+    if(this->shape)
+    {
+        // register the shape for collision detections
+        Shape_setActive(this->shape, true);
+        CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+    }
+
+}
+
+void Actor_moveUniformly(Actor this, Velocity* velocity)
+{
+	ASSERT(this, "Actor::moveUniformly: null this");
+
+    // move me with physics
+	if(this->body)
+	{
+    	Body_moveUniformly(this->body, *velocity);
+
+        if(this->shape)
+        {
+            // register the shape for collision detections
+            Shape_setActive(this->shape, true);
+            CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+        }
+    }
+}
+
 // does it moves?
 bool Actor_moves(Actor this __attribute__ ((unused)))
 {
@@ -557,19 +630,6 @@ bool Actor_updateSpriteScale(Actor this)
 	}
 
 	return Entity_updateSpriteScale(__SAFE_CAST(Entity, this));
-}
-
-// stop movement completelty
-void Actor_stopMovement(Actor this)
-{
-	ASSERT(this, "Actor::stopMovement: null this");
-
-	if(this->body)
-	{
-		Body_stopMovement(this->body, __XAXIS);
-		Body_stopMovement(this->body, __YAXIS);
-		Body_stopMovement(this->body, __ZAXIS);
-	}
 }
 
 int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
@@ -695,33 +755,6 @@ fix19_13 Actor_getFriction(Actor this)
 	ASSERT(this, "Actor::getElasticity: null this");
 
 	return this->actorDefinition->friction;
-}
-
-void Actor_addForce(Actor this, const Force* force)
-{
-	ASSERT(this, "Actor::Force: null this");
-	ASSERT(this->body, "Actor::Force: null body");
-
-	Acceleration acceleration =
-    {
-    	force->x,
-    	force->y,
-    	force->z
-	};
-
-	Velocity velocity = Body_getVelocity(this->body);
-
-	Force effectiveForceToApply =
-	{
-		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->x : 0,
-		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->y : 0,
-		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->z : 0
-	};
-
-	Body_addForce(this->body, &effectiveForceToApply);
-
-	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
-	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 }
 
 // get velocity
