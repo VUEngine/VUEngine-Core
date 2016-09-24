@@ -787,6 +787,8 @@ u32 Entity_areAllChildrenReady(Entity this)
         return returnValue;
     }
 
+    Entity_calculateSize(this);
+
     return true;
 }
 
