@@ -278,7 +278,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 
         if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
         {
-            __VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, true);
+            __VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
 
             VirtualList_pushBack(this->entitiesToTransform, positionedEntityDescription);
             VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
