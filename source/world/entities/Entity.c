@@ -151,11 +151,15 @@ static void Entity_releaseSprites(Entity this)
 	}
 }
 
-static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid)
+static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid, VBVec3D environmentPosition)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
-	VBVec3D globalPosition3D = this->transform.globalPosition;
+	VBVec3D globalPosition3D = environmentPosition;
+
+	globalPosition3D.x += this->transform.localPosition.x;
+	globalPosition3D.y += this->transform.localPosition.y;
+	globalPosition3D.z += this->transform.localPosition.z;
 
 	int left = 0;
 	int right = 0;
@@ -174,17 +178,17 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+        	ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
+//            __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
-			Texture texture = Sprite_getTexture(sprite);
-
-			if(texture)
-			{
-				halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).x)) >> 1;
-				halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).y)) >> 1;
-				halfDepth = this->size.z >> 1;
-			}
+//			halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).x)) >> 1;
+//			halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).y)) >> 1;
+            halfWidth = Sprite_getHalfWidth(sprite);
+            halfHeight = Sprite_getHalfHeight(sprite);
+            halfDepth = this->size.z >> 1;
 
 			VBVec3D spriteDisplacement = Sprite_getDisplacement(sprite);
+
 			if(left > -halfWidth + FIX19_13TOI(spriteDisplacement.x))
 			{
 				left = -halfWidth + FIX19_13TOI(spriteDisplacement.x);
@@ -218,7 +222,6 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 	}
 	else
 	{
-
 		right = this->size.x >> 1;
 		left = -right;
 		bottom = this->size.y >> 1;
@@ -267,7 +270,7 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 
 		for(; childNode; childNode = childNode->next)
 		{
-			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), rightCuboid);
+			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), rightCuboid, globalPosition3D);
 		}
 	}
 }
@@ -279,13 +282,13 @@ void Entity_calculateSize(Entity this)
 
 	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
 
-	Entity_calculateSizeFromChildren(this, &rightCuboid);
+	Entity_calculateSizeFromChildren(this, &rightCuboid, (VBVec3D){0, 0, 0});
 
 	VBVec3D centerDisplacement =
 	{
-		(ITOFIX19_13(rightCuboid.x1 + rightCuboid.x0) >> 1) - this->transform.globalPosition.x,
-		(ITOFIX19_13(rightCuboid.y1 + rightCuboid.y0) >> 1) - this->transform.globalPosition.y,
-		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) >> 1) - this->transform.globalPosition.z
+		(ITOFIX19_13(rightCuboid.x1 + rightCuboid.x0) >> 1) - this->transform.localPosition.x,
+		(ITOFIX19_13(rightCuboid.y1 + rightCuboid.y0) >> 1) - this->transform.localPosition.y,
+		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) >> 1) - this->transform.localPosition.z
 	};
 
 	if(centerDisplacement.x || centerDisplacement.y || centerDisplacement.z)
@@ -776,6 +779,9 @@ u32 Entity_areAllChildrenReady(Entity this)
         {
             __DELETE(this->entityFactory);
             this->entityFactory = NULL;
+
+            // must force size calculation now
+            Entity_calculateSize(this);
         }
 
         return returnValue;
@@ -933,19 +939,19 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 	// call base class's transform method
 	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform, recursive);
 
-	// now can calculate the size
-	if(!this->size.x || !this->size.y || !this->size.z)
-	{
-		// must force size calculation now
-		Entity_calculateSize(this);
-	}
-
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 
 	if(this->hidden)
 	{
 		Entity_hide(this);
 	}
+
+    // now can calculate the size
+    if(!this->size.x || !this->size.y || !this->size.z)
+    {
+        // must force size calculation now
+        Entity_calculateSize(this);
+    }
 
 	if(this->shape)
 	{
@@ -1039,7 +1045,7 @@ int Entity_getWidth(Entity this)
 
 	if(!this->size.x)
 	{
-		Entity_calculateSize(this);
+		//Entity_calculateSize(this);
 	}
 
 	// must calculate based on the scale because not affine Container must be enlarged
@@ -1053,7 +1059,7 @@ int Entity_getHeight(Entity this)
 
 	if(!this->size.y)
 	{
-		Entity_calculateSize(this);
+		//Entity_calculateSize(this);
 	}
 
 	return (int)this->size.y;
@@ -1066,7 +1072,7 @@ int Entity_getDepth(Entity this)
 
 	if(!this->size.z)
 	{
-		Entity_calculateSize(this);
+		//Entity_calculateSize(this);
 	}
 
 	// must calculate based on the scale because not affine object must be enlarged

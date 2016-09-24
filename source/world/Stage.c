@@ -720,7 +720,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 
 				if(stageEntityDescription->id == id)
 				{
-					stageEntityDescription->id = -1;
+//					stageEntityDescription->id = -1;
 
 					VirtualList_removeElement(this->loadedStageEntities, stageEntityDescription);
                     break;

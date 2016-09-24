@@ -214,8 +214,6 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
     VirtualList_pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
 
-Entity processedEntity = NULL;
-
 u32 EntityFactory_instantiateEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
@@ -231,7 +229,6 @@ u32 EntityFactory_instantiateEntities(EntityFactory this)
     {
         if(positionedEntityDescription->entity)
         {
-            processedEntity = positionedEntityDescription->entity;
             if(Entity_areAllChildrenInstantiated(positionedEntityDescription->entity))
             {
                 VirtualList_pushBack(this->entitiesToInitialize, positionedEntityDescription);
@@ -277,11 +274,10 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
     if(*(u32*)positionedEntityDescription->parent)
     {
         ASSERT(positionedEntityDescription->entity, "EntityFactory::initializeEntities: entity not loaded");
-            processedEntity = positionedEntityDescription->entity;
 
         if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
         {
-            __VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
+            __VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, true);
 
             VirtualList_pushBack(this->entitiesToTransform, positionedEntityDescription);
             VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
@@ -322,7 +318,6 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 
     if(*(u32*)positionedEntityDescription->parent)
     {
-            processedEntity = positionedEntityDescription->entity;
         if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))
         {
             Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
@@ -365,7 +360,6 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 
     if(*(u32*)positionedEntityDescription->parent)
     {
-            processedEntity = positionedEntityDescription->entity;
         if(Entity_areAllChildrenReady(positionedEntityDescription->entity))
         {
             __VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));

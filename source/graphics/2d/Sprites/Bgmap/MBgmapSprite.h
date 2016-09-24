@@ -41,6 +41,7 @@
         __VIRTUAL_SET(ClassName, MBgmapSprite, render);													\
         __VIRTUAL_SET(ClassName, MBgmapSprite, getPosition);											\
         __VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
+        __VIRTUAL_SET(ClassName, MBgmapSprite, resize);													\
 
 
 #define MBgmapSprite_ATTRIBUTES																			\
@@ -96,6 +97,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position);
 void MBgmapSprite_render(MBgmapSprite this);
 VBVec2D MBgmapSprite_getPosition(MBgmapSprite this);
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement);
+void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z);
 
 
 #endif

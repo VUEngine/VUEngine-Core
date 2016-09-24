@@ -270,6 +270,20 @@ void Sprite_rotate(Sprite this __attribute__ ((unused)), const Rotation* rotatio
 }
 
 
+int Sprite_getHalfWidth(Sprite this)
+{
+	ASSERT(this, "Sprite::getHalfWidth: null this");
+
+    return FIX19_13TOI(this->halfWidth);
+}
+
+int Sprite_getHalfHeight(Sprite this)
+{
+	ASSERT(this, "Sprite::getHalfHeight: null this");
+
+    return FIX19_13TOI(this->halfHeight);
+}
+
 //---------------------------------------------------------------------------------------------------------
 // 										Animation
 //---------------------------------------------------------------------------------------------------------

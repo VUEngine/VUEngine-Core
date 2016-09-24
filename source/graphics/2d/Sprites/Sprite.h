@@ -201,6 +201,8 @@ void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
 void Sprite_writeAnimation(Sprite this);
 VBVec3D Sprite_getDisplacement(Sprite this);
 void Sprite_rotate(Sprite this, const Rotation* rotation);
+int Sprite_getHalfWidth(Sprite this);
+int Sprite_getHalfHeight(Sprite this);
 
 
 //---------------------------------------------------------------------------------------------------------

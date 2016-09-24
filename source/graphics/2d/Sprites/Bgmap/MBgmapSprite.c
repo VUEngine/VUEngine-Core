@@ -58,6 +58,7 @@ extern Optical* _optical;
 static void MBgmapSprite_releaseTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);
+static void MBgmapSprite_calculateSize(MBgmapSprite this);
 //static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this);
 //static void MBgmapSprite_calculateSize(MBgmapSprite this);
 
@@ -80,6 +81,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 	ASSERT(!this->texture, "MBgmapSprite::constructor: texture already loaded");
 	this->textures = NULL;
 	MBgmapSprite_loadTextures(this);
+	MBgmapSprite_calculateSize(this);
 
 	// TODO: check if this is really needed
 /*
@@ -144,7 +146,7 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 			MBgmapSprite_loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
 		}
 
-		this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
+        this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
 		ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
 
 		this->textureXOffset = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
@@ -366,6 +368,45 @@ VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
 	ASSERT(this, "BgmapSprite::getPosition: null this");
 
 	return this->drawSpec.position;
+}
+
+void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z)
+{
+	ASSERT(this, "MBgmapSprite::resize: null this");
+
+    BgmapSprite_resize(__SAFE_CAST(BgmapSprite, this), scale, z);
+
+    MBgmapSprite_calculateSize(this);
+}
+
+static void MBgmapSprite_calculateSize(MBgmapSprite this)
+{
+	ASSERT(this, "MBgmapSprite::calculateSize: null this");
+
+    VirtualNode node = this->textures->head;
+
+    int cols = 0;
+    int rows = 0;
+
+    for(; node; node = node->next)
+    {
+        // free the texture
+        int textureCols = Texture_getCols(__SAFE_CAST(Texture, node->data));
+        int textureRows = Texture_getRows(__SAFE_CAST(Texture, node->data));
+
+        if(cols < textureCols)
+        {
+            cols = textureCols;
+        }
+
+        if(rows < textureRows)
+        {
+            rows = textureRows;
+        }
+    }
+
+    this->halfWidth = ITOFIX19_13(cols << 2);
+    this->halfHeight = ITOFIX19_13(rows << 2);
 }
 
 /*
