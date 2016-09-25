@@ -111,7 +111,7 @@ void FrameRate_print(FrameRate this, int col, int row)
 	ASSERT(this, "FrameRate::print: null this");
 
 	Printing printing = Printing_getInstance();
-	Printing_text(printing, "FPS", col, row, NULL);
+	Printing_text(printing, "FPS:", col, row, NULL);
 	Printing_int(printing, this->FPS, col + 4, row++, NULL);
 }
 

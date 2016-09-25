@@ -102,11 +102,7 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this __attribute__ (
 // render general print output layer
 void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((unused)), int textLayer)
 {
-	if(0 > textLayer || textLayer >= __TOTAL_LAYERS)
-	{
-		ASSERT(false, "Printing::render: invalid layer");
-		return;
-	}
+    ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
 	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
 	_worldAttributesBaseAddress[textLayer].mx = 0;

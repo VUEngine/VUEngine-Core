@@ -23,6 +23,7 @@
 #include <ClockManager.h>
 #include <MessageDispatcher.h>
 #include <Printing.h>
+#include <Utilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -130,32 +131,18 @@ void Clock_print(Clock this, int col, int row, const char* font)
 {
 	ASSERT(this, "Clock::print: null this");
 
-	int minutes = Clock_getMinutes(this);
-	int seconds = (Clock_getSeconds(this) - minutes * 60) % 60;
+	char output[] = "00:00";
+	char* minutes = Utilities_itoa(Clock_getMinutes(this), 10, 2);
 
-	int minutesPosition = col;
-	int secondsPosition = col + 3;
+    output[0] = minutes[0];
+    output[1] = minutes[1];
 
-	// print minutes
-	if(minutes < 10)
-	{
-		Printing_text(Printing_getInstance(), "0", minutesPosition, row, font);
-		minutesPosition++;
-	}
+    char* seconds = Utilities_itoa((Clock_getSeconds(this) - Clock_getMinutes(this) * 60) % 60, 10, 2);
 
-	Printing_int(Printing_getInstance(), minutes, minutesPosition, row, font);
+    output[3] = seconds[0];
+    output[4] = seconds[1];
 
-	// print divisor
-	Printing_text(Printing_getInstance(), ":", secondsPosition - 1, row, font);
-
-	// print seconds
-	if(seconds < 10)
-	{
-		Printing_text(Printing_getInstance(), "0", secondsPosition, row, font);
-		secondsPosition++;
-	}
-
-	Printing_int(Printing_getInstance(), seconds, secondsPosition, row, font);
+	Printing_text(Printing_getInstance(), output, col, row, font);
 }
 
 /**

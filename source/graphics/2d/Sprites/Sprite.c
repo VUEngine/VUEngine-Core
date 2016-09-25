@@ -31,6 +31,7 @@
 
 __CLASS_DEFINITION(Sprite, Object);
 
+__CLASS_FRIEND_DEFINITION(Texture);
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -292,7 +293,7 @@ void Sprite_update(Sprite this)
 {
 	ASSERT(this, "Sprite::update: null this");
 
-	if(this->animationController && Texture_isWritten(this->texture))
+	if(this->animationController && this->texture->written)
 	{
 		// first animate the frame
 		if(this->writeAnimationFrame)
