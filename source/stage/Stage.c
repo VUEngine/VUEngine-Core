@@ -738,7 +738,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 	}
 
 #ifdef __PROFILE_STREAMING
-        u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+        u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
         unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime? processTime: unloadOutOfRangeEntitiesHighestTime;
 #endif
 }
@@ -848,7 +848,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 	this->previousFocusEntityDistance = focusInGameEntityDistance;
 
 #ifdef __PROFILE_STREAMING
-        u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+        u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
         loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime? processTime: loadInRangeEntitiesHighestTime;
 #endif
 }
@@ -862,12 +862,12 @@ void Stage_stream(Stage this)
     if(!this->hasRemovedChildren)
     {
 #ifdef __PROFILE_STREAMING
-	    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
         alreadyStreamingIn = EntityFactory_prepareEntities(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING
-        u32 processTime = TimerManager_getTicks(TimerManager_getInstance()) - timeBeforeProcess;
+        u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
         entityFactoryHighestTime = processTime > entityFactoryHighestTime? processTime: entityFactoryHighestTime;
 
         EntityFactory_showStatus(this->entityFactory, 0, 18);
@@ -887,7 +887,7 @@ void Stage_stream(Stage this)
     }
 
 #ifdef __PROFILE_STREAMING
-    timeBeforeProcess = TimerManager_getTicks(TimerManager_getInstance());
+    timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
     _streamingPhases[this->streamingPhase](this, true);

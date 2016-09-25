@@ -29,20 +29,6 @@
 // 											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// use with 20us timer (range = 0 to 1300)
-#define __TIME_US(n)		(((n)/20)-1)
-
-// use with 100us timer (range = 0 to 6500, and 0 to 6.5)
-#define __TIME_MS(n)		(((n)*10)-1)
-#define __TIME_SEC(n)		(((n)*10000)-1)
-
-#define __TIMER_ENB			0x01
-#define __TIMER_ZSTAT		0x02
-#define __TIMER_ZCLR		0x04
-#define __TIMER_INT			0x08
-#define __TIMER_20US		0x10
-#define __TIMER_100US		0x00
-
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -69,8 +55,8 @@ TimerManager TimerManager_getInstance();
 
 void TimerManager_destructor(TimerManager this);
 void TimerManager_setInterrupt(TimerManager this, int value);
-u32 TimerManager_getTicks(TimerManager this);
-u32 TimerManager_getAndResetTicks(TimerManager this);
+u32 TimerManager_getMillisecondsElapsed(TimerManager this);
+u32 TimerManager_resetMilliseconds(TimerManager this);
 void TimerManager_enable(TimerManager this, int value);
 void TimerManager_setTime(TimerManager this, u16 time);
 void TimerManager_setFrequency(TimerManager this, int frequency);

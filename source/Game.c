@@ -103,8 +103,9 @@ enum StateOperations
         GameState automaticPauseState;																	\
         /* auto pause last checked time */																\
         u32 lastAutoPauseCheckTime;																		\
-        /* current process enum */																		\
-        u32 updatingVisuals;																				\
+        /* current process flags */																		\
+        u32 gameFrameDone;																			    \
+        u32 updatingVisuals;																			\
         /* elapsed time in current 50hz cycle */														\
         u32 gameFrameTotalTime;																            \
         /* low battery indicator showing flag */														\
@@ -133,7 +134,7 @@ static void Game_autoPause(Game this);
 static void Game_checkLowBattery(Game this, u16 keyPressed);
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
-#ifdef __PROFILE_GAME
+#ifdef __PROFILE_GAME_DETAILED
 static void Game_showProfiling(Game this);
 #endif
 
@@ -169,6 +170,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	MemoryPool_getInstance();
 
 	// current process
+	this->gameFrameDone = false;
 	this->updatingVisuals = false;
 
 	this->gameFrameTotalTime = 0;
@@ -328,7 +330,7 @@ static void Game_setNextState(Game this, GameState state)
     {
 		case kSwapState:
 
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 			this->lastProcessName = "state swap";
 #endif
 
@@ -345,7 +347,7 @@ static void Game_setNextState(Game this, GameState state)
 
 		case kPushState:
 
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 			this->lastProcessName = "state push";
 #endif
 			// setup new state
@@ -354,7 +356,7 @@ static void Game_setNextState(Game this, GameState state)
 
 		case kPopState:
 
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 			this->lastProcessName = "state pop";
 #endif
 
@@ -398,7 +400,7 @@ static void Game_setNextState(Game this, GameState state)
 	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 
     // reset timer's ticks
-    TimerManager_getAndResetTicks(this->timerManager);
+    TimerManager_resetMilliseconds(this->timerManager);
 }
 
 // disable interrupts
@@ -599,7 +601,7 @@ static u32 Game_handleInput(Game this)
 	}
 #endif
 
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "input handling";
 #endif
 
@@ -646,7 +648,7 @@ inline static void Game_updateLogic(Game this)
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
 
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "state machine update";
 #endif
 
@@ -657,7 +659,7 @@ inline static void Game_updateLogic(Game this)
 // update game's rendering subsystem
 inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 {
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "visuals update";
 #endif
 
@@ -682,7 +684,7 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 // update game's physics subsystem
 inline static void Game_updatePhysics(Game this)
 {
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "physics processing";
 #endif
 
@@ -692,13 +694,13 @@ inline static void Game_updatePhysics(Game this)
 
 inline static void Game_updateTransformations(Game this)
 {
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "screen focusing";
 #endif
 	// position the screen
 	Screen_focus(this->screen, true);
 
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "transformation";
 #endif
 
@@ -709,7 +711,7 @@ inline static void Game_updateTransformations(Game this)
 inline static u32 Game_updateCollisions(Game this)
 {
 	// process the collisions after the transformations have taken place
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "collisions handling";
 #endif
 
@@ -723,14 +725,14 @@ inline static void Game_checkForNewState(Game this)
 
     if(this->nextState)
 	{
-#ifdef __PROFILE_GAME_STATE_ON_VIP_IDLE
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 		this->lastProcessName = "next state setting up";
 #endif
 		Game_setNextState(this, this->nextState);
 	}
 }
 
-#ifdef __PROFILE_GAME
+#ifdef __PROFILE_GAME_DETAILED
 static u32 updateVisualsTotalTime = 0;
 static u32 updateLogicTotalTime = 0;
 static u32 updatePhysicsTotalTime = 0;
@@ -758,7 +760,7 @@ static void Game_update(Game this)
 
 	FrameRate frameRate = FrameRate_getInstance();
 
-#ifdef __PROFILE_GAME
+#ifdef __PROFILE_GAME_DETAILED
     u32 timeBeforeProcess = 0;
     u32 processTime = 0;
 #endif
@@ -769,35 +771,59 @@ static void Game_update(Game this)
 
 	while(true)
 	{
+    	this->gameFrameDone = true;
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
 		while(VIPManager_waitForGameFrame(this->vipManager));
 
+    	this->gameFrameDone = false;
+
+	    u32 gameFrameDuration = TimerManager_getMillisecondsElapsed(this->timerManager);
+
+	    TimerManager_resetMilliseconds(this->timerManager);
+
+        gameFrameDuration = gameFrameDuration < __GAME_FRAME_DURATION? __GAME_FRAME_DURATION : gameFrameDuration;
+
 #ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+        Printing_text(Printing_getInstance(), "GFT:  ms", 7, 0, NULL);
+        Printing_int(Printing_getInstance(), gameFrameDuration, 11, 0, NULL);
+#endif
+#ifdef __PROFILE_GAME_DETAILED
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 	    // the engine's game logic must be free of racing
 	    // conditions against the VIP
 	    Game_updateVisuals(this);
 
-#ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+        processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         updateVisualsHighestTime = processTime > updateVisualsHighestTime? processTime: updateVisualsHighestTime;
 	    updateVisualsTotalTime += processTime;
 #endif
 
-	    u32 gameFrameTime = TimerManager_getAndResetTicks(this->timerManager);
-
         // increase game frame total time
-    	this->gameFrameTotalTime += gameFrameTime;
+    	this->gameFrameTotalTime += gameFrameDuration;
 
         if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
         {
-#ifdef __PROFILE_GAME
-            Game_showProfiling(this);
+#ifdef __DIMM_FOR_PROFILING
+
+            _vipRegisters[__GPLT0] = 0x50;
+            _vipRegisters[__GPLT1] = 0x50;
+            _vipRegisters[__GPLT2] = 0x54;
+            _vipRegisters[__GPLT3] = 0x54;
+            _vipRegisters[__JPLT0] = 0x54;
+            _vipRegisters[__JPLT1] = 0x54;
+            _vipRegisters[__JPLT2] = 0x54;
+            _vipRegisters[__JPLT3] = 0x54;
+
+            _vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
 #endif
 
+#ifdef __PROFILE_GAME_DETAILED
+            Game_showProfiling(this);
+#endif
             this->gameFrameTotalTime = 0;
 
 #ifdef __DEBUG
@@ -807,7 +833,7 @@ static void Game_update(Game this)
 #ifdef __PRINT_FRAMERATE
             if(!Game_isInSpecialMode(this))
             {
-                FrameRate_print(frameRate, 48/2, (__SCREEN_HEIGHT >> 3) - 1);
+                FrameRate_print(frameRate, 15, 18);
             }
 #endif
 
@@ -833,7 +859,7 @@ static void Game_update(Game this)
         }
 
         // update the clocks
-        ClockManager_update(this->clockManager, gameFrameTime);
+        ClockManager_update(this->clockManager, gameFrameDuration);
 
 	    // register the frame buffer in use by the VPU's drawing process
 	    VIPManager_registerCurrentDrawingframeBufferSet(this->vipManager);
@@ -847,38 +873,42 @@ static void Game_update(Game this)
 		// needs to be changed
 		Game_checkForNewState(this);
 
-#ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#ifdef __PROFILE_GAME_DETAILED
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
         // process user's input
         u32 suspendStreaming = Game_handleInput(this);
 
-#ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+        processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         handleInputHighestTime = processTime > handleInputHighestTime? processTime: handleInputHighestTime;
 	    handleInputTotalTime += processTime;
 #endif
 
-#ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#ifdef __PROFILE_GAME_DETAILED
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
+        static u32 dispatchCycle = 0;
 
-        suspendStreaming |= MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+        if(dispatchCycle++ % 2)
+        {
+            MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+        }
 
-#ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+        processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         dispatchDelayedMessageHighestTime = processTime > dispatchDelayedMessageHighestTime? processTime: dispatchDelayedMessageHighestTime;
 	    dispatchDelayedMessageTotalTime += processTime;
 #endif
 
-#ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#ifdef __PROFILE_GAME_DETAILED
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
-	    // update game's logic
-	    Game_updateLogic(this);
+        // update game's logic
+        Game_updateLogic(this);
 
-#ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+        processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         updateLogicHighestTime = processTime > updateLogicHighestTime? processTime: updateLogicHighestTime;
 	    updateLogicTotalTime += processTime;
 #endif
@@ -890,57 +920,67 @@ static void Game_update(Game this)
 	    {
 #endif
 
-#ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#ifdef __PROFILE_GAME_DETAILED
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
-#ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+        processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         updatePhysicsHighestTime = processTime > updatePhysicsHighestTime? processTime: updatePhysicsHighestTime;
 	    updatePhysicsTotalTime += processTime;
 #endif
 
-#ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#ifdef __PROFILE_GAME_DETAILED
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 	    // apply transformations
 	    Game_updateTransformations(this);
-#ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+        processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         updateTransformationsHighestTime = processTime > updateTransformationsHighestTime? processTime: updateTransformationsHighestTime;
 	    updateTransformationsTotalTime += processTime;
 #endif
 
-#ifdef __PROFILE_GAME
-	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+#ifdef __PROFILE_GAME_DETAILED
+	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
-        suspendStreaming |= Game_updateCollisions(this);
+        Game_updateCollisions(this);
 
-#ifdef __PROFILE_GAME
-        processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+        processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         processCollisionsHighestTime = processTime > processCollisionsHighestTime? processTime: processCollisionsHighestTime;
 	    processCollisionsTotalTime += processTime;
 #endif
 
-        if(!suspendStreaming)
+        if(10 >= TimerManager_getMillisecondsElapsed(this->timerManager))
         {
-#ifdef __PROFILE_GAME
-    	    timeBeforeProcess = TimerManager_getTicks(this->timerManager);
+
+#ifdef __PROFILE_GAME_DETAILED
+    	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+#endif
+
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+            this->lastProcessName = "streaming";
 #endif
             GameState_stream(this->currentState);
 
-#ifdef __PROFILE_GAME
-            processTime = TimerManager_getTicks(this->timerManager) - timeBeforeProcess;
+#ifdef __PROFILE_GAME_DETAILED
+            processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
             streamingHighestTime = processTime > streamingHighestTime? processTime: streamingHighestTime;
             streamingTotalTime += processTime;
 #endif
         }
 
-#ifdef __PROFILE_GAME
-        u32 gameFrameTotalTime = TimerManager_getTicks(this->timerManager);
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+        this->lastProcessName = "game cycle done";
+#endif
+
+
+#ifdef __PROFILE_GAME_DETAILED
+        u32 gameFrameTotalTime = TimerManager_getMillisecondsElapsed(this->timerManager);
 
         gameFrameHighestTime = gameFrameHighestTime < gameFrameTotalTime?  gameFrameTotalTime: gameFrameHighestTime;
 #endif
@@ -1282,8 +1322,18 @@ void Game_wait(Game this, u32 milliSeconds)
     TimerManager_wait(this->timerManager, milliSeconds);
 }
 
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+bool Game_isGameFrameDone(Game this)
+{
+	ASSERT(this, "Game::isGameFrameDone: null this");
+
+	return this->gameFrameDone;
+}
+#endif
+
 #ifndef	__FORCE_VIP_SYNC
 #ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
+
 bool Game_doneDRAMPrecalculations(Game this)
 {
 	ASSERT(this, "Game::doneDRAMPrecalculations: null this");
@@ -1293,7 +1343,7 @@ bool Game_doneDRAMPrecalculations(Game this)
 #endif
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __PROFILE_GAME_DETAILED
 static void Game_showProfiling(Game this __attribute__ ((unused)))
 {
     ASSERT(this, "Game::showProfiling: this null");
@@ -1366,18 +1416,5 @@ static void Game_showProfiling(Game this __attribute__ ((unused)))
     Stage_showStreamingProfiling(Game_getStage(this), x, ++y);
 #endif
 
-#ifdef __DIMM_FOR_PROFILING
-
-	_vipRegisters[__GPLT0] = 0x50;
-	_vipRegisters[__GPLT1] = 0x50;
-	_vipRegisters[__GPLT2] = 0x54;
-	_vipRegisters[__GPLT3] = 0x54;
-	_vipRegisters[__JPLT0] = 0x54;
-	_vipRegisters[__JPLT1] = 0x54;
-	_vipRegisters[__JPLT2] = 0x54;
-	_vipRegisters[__JPLT3] = 0x54;
-
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
-#endif
 }
 #endif
