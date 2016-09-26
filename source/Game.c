@@ -775,7 +775,7 @@ static void Game_update(Game this)
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
-		while(VIPManager_waitForGameFrame(this->vipManager));
+		while(VIPManager_waitForFrameStart(this->vipManager));
 
     	this->gameFrameDone = false;
 
@@ -888,12 +888,17 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME_DETAILED
 	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
+
+#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
         static u32 dispatchCycle = 0;
 
         if(dispatchCycle++ % 2)
         {
+#endif
             suspendStreaming |= MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+#ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
         }
+#endif
 
 #ifdef __PROFILE_GAME_DETAILED
         processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;

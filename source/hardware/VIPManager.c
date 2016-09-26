@@ -63,7 +63,7 @@ typedef struct PostProcessingEffectRegistry
         /* post processing effects */																	\
         VirtualList postProcessingEffects;																\
         u32 currentDrawingFrameBufferSet;																\
-        u32 gameFrameStart;																                \
+        u32 frameStarted;																                \
 
 // define the VIPManager
 __CLASS_DEFINITION(VIPManager, Object);
@@ -105,7 +105,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 
     this->postProcessingEffects = __NEW(VirtualList);
     this->currentDrawingFrameBufferSet = 0;
-    this->gameFrameStart = false;
+    this->frameStarted = false;
 
     _vipManager = this;
 	_paramTableManager = ParamTableManager_getInstance();
@@ -157,7 +157,7 @@ void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)))
 	_vipRegisters[__INTENB]= __XPEND | __FRAMESTART;
 #endif
 
-    this->gameFrameStart = false;
+    this->frameStarted = false;
 }
 
 // disable interrupt
@@ -168,28 +168,28 @@ void VIPManager_disableInterrupt(VIPManager this __attribute__ ((unused)))
 	_vipRegisters[__INTENB]= 0;
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
-    this->gameFrameStart = false;
+    this->frameStarted = false;
 }
 
-u32 VIPManager_waitForGameFrame(VIPManager this)
+u32 VIPManager_waitForFrameStart(VIPManager this)
 {
 	ASSERT(this, "VIPManager::waitForGameFrame: null this");
 
-    u32 gameFrameStart = this->gameFrameStart;
+    u32 frameStarted = this->frameStarted;
 
-    if(gameFrameStart)
+    if(frameStarted)
     {
-        this->gameFrameStart = false;
+        this->frameStarted = false;
     }
 
-    return !gameFrameStart;
+    return !frameStarted;
 }
 
 void VIPManager_interruptHandler(void)
 {
     // save the interrupt event
 	u32 idle = _vipRegisters[__INTPND] & __XPEND;
-	u16 gameStart = _vipRegisters[__INTPND] & __FRAMESTART;
+	u16 frameStarted = _vipRegisters[__INTPND] & __FRAMESTART;
 #ifdef __ALERT_VIP_OVERTIME
 	bool overtime = _vipRegisters[__INTPND] & __TIMEERR;
 #endif
@@ -198,18 +198,18 @@ void VIPManager_interruptHandler(void)
 	_vipRegisters[__INTENB]= 0;
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
-	_vipManager->gameFrameStart = gameStart;
+	_vipManager->frameStarted = frameStarted;
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 
-    if(gameStart)
+    if(frameStarted)
     {
         static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
 
         if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
         {
             messageDelay = __TARGET_FPS;
-            Printing_text(Printing_getInstance(), "VIP gameStart during                         ", 0, 1, NULL);
+            Printing_text(Printing_getInstance(), "VIP frameStarted during                         ", 0, 1, NULL);
             Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 22, 1, NULL);
         }
 

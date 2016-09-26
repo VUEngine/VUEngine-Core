@@ -424,7 +424,6 @@ static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((un
 	Clock_print(Game_getAnimationsClock(Game_getInstance()), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "Physics clock's time: ", 1, ++y, NULL);
 	Clock_print(Game_getPhysicsClock(Game_getInstance()), 26, y, NULL);
-	FrameRate_printLastCount(FrameRate_getInstance(), 1, y + 3);
 
 	Printing_text(Printing_getInstance(), "STAGE STATUS", 20, y + 3, NULL);
 	Printing_text(Printing_getInstance(), "Entities: ", 20, ++y + 3, NULL);

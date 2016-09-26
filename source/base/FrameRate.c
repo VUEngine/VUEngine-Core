@@ -33,8 +33,6 @@
         Object_ATTRIBUTES																				\
         /*  frames per second */																		\
         u16 FPS;																						\
-        /* previous frames per second */																\
-        u16 lastFPS;																					\
 
 // define the FrameRate
 __CLASS_DEFINITION(FrameRate, Object);
@@ -59,7 +57,6 @@ static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
 	__CONSTRUCT_BASE(Object);
 
 	this->FPS = 0;
-	this->lastFPS = 0;
 }
 
 // class's destructor
@@ -76,7 +73,6 @@ void FrameRate_reset(FrameRate this)
 {
 	ASSERT(this, "FrameRate::reset: null this");
 
-	this->lastFPS = this->FPS;
 	this->FPS = 0;
 }
 
@@ -97,14 +93,6 @@ void FrameRate_increaseFPS(FrameRate this)
 	this->FPS++;
 }
 
-// test if FPS are almost at their maximum
-bool FrameRate_isFPSHigh(FrameRate this)
-{
-	ASSERT(this, "FrameRate::isFPSHigh: null this");
-
-	return __MINIMUM_GOOD_FPS <= this->lastFPS;
-}
-
 // print renderFPS
 void FrameRate_print(FrameRate this, int col, int row)
 {
@@ -113,14 +101,4 @@ void FrameRate_print(FrameRate this, int col, int row)
 	Printing printing = Printing_getInstance();
 	Printing_text(printing, "FPS:", col, row, NULL);
 	Printing_int(printing, this->FPS, col + 4, row++, NULL);
-}
-
-// print renderFPS
-void FrameRate_printLastCount(FrameRate this, int col, int row)
-{
-	ASSERT(this, "FrameRate::print: null this");
-
-	Printing printing = Printing_getInstance();
-	Printing_text(printing, "Last FPS", col, row, NULL);
-	Printing_int(printing, this->FPS, col + 9, row++, NULL);
 }

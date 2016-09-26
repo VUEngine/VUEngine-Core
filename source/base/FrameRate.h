@@ -50,9 +50,7 @@ void FrameRate_destructor(FrameRate this);
 void FrameRate_reset(FrameRate this);
 u16 FrameRate_getFPS(FrameRate this);
 void FrameRate_increaseFPS(FrameRate this);
-bool FrameRate_isFPSHigh(FrameRate this);
 void FrameRate_print(FrameRate this,int col,int row);
-void FrameRate_printLastCount(FrameRate this, int col, int row);
 
 
 #endif
