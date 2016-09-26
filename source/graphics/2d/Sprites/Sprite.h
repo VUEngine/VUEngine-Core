@@ -168,6 +168,7 @@ Scale Sprite_getScale(Sprite this);
 void Sprite_resize(Sprite this, Scale scale, fix19_13 z);
 Texture Sprite_getTexture(Sprite this);
 u16 Sprite_getMode(Sprite this);
+u32 Sprite_getWorldHead(Sprite this);
 s16 Sprite_getWorldX(Sprite this);
 s16 Sprite_getWorldY(Sprite this);
 u16 Sprite_getWorldWidth(Sprite this);

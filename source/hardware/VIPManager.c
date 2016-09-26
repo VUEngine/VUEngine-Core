@@ -180,8 +180,6 @@ u32 VIPManager_waitForGameFrame(VIPManager this)
     if(gameFrameStart)
     {
         this->gameFrameStart = false;
-
-//        _vipRegisters[__INTCLR]= __FRAMESTART;
     }
 
     return !gameFrameStart;
@@ -222,7 +220,6 @@ void VIPManager_interruptHandler(void)
         }
     }
 #endif
-
 
 #ifdef __ALERT_VIP_OVERTIME
     {

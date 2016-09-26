@@ -40,12 +40,6 @@
 // alert stack overflows
 #define __ALERT_STACK_OVERFLOW
 
-// alert VIP's overtime
-#define __ALERT_VIP_OVERTIME
-
-// alert transformation - VIP unsync warning
-#define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
-
 // tools
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
@@ -60,12 +54,28 @@
 #undef __PRINT_FRAMERATE
 
 // show game's process profiling
-// it is only useful when __TIMER_RESOLUTION is 1
 #undef __PROFILE_GAME
+
+// show detailed profiling of each of the game's main processes
+// it is more useful when __TIMER_RESOLUTION approaches 1
+#undef __PROFILE_GAME_DETAILED
+
+// to make it easier to read the profiling output
+#undef __DIMM_FOR_PROFILING
 
 // show streaming's process profiling
 #undef __PROFILE_STREAMING
 
+// print the game's current process while the VIP's frame start
+// and idle interrupts are fired, but the game frame is still pending
+// processes to complete
+#undef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+
+// alert VIP's overtime
+#define __ALERT_VIP_OVERTIME
+
+// alert transformation - VIP unsync warning
+#define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 
 //---------------------------------------------------------------------------------------------------------
 // 											OPTICS / PROJECTION
@@ -103,14 +113,14 @@
 // 											FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
 
-// cap the framerate
-#define __CAP_FRAMERATE
-
 // disable VIP's __XPEND interrupt, and thus rendering while transformation operations have not finished
 #undef __FORCE_VIP_SYNC
 
-// clock resolution
-#define __TIMER_RESOLUTION						10
+// timer resolution
+#define __TIMER_RESOLUTION						5
+
+// options are __TIMER_20US and __TIMER_100US
+#define __TIMER_FREQUENCY                       __TIMER_20US
 
 // target frames per second
 // __FRAME_CYCLE = 0 means __TARGET_FPS = 50
@@ -126,7 +136,6 @@
 
 // target frames per second
 #define __MINIMUM_GOOD_FPS 						(__TARGET_FPS - 2)
-
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -116,6 +116,7 @@ typedef struct StageDefinition
 	// streaming
 	struct Streaming
 	{
+	    int minimimSpareMilliSecondsToAllowStreaming;
 		int loadPadding;
 		int unloadPadding;
 		int streamingAmplitude;

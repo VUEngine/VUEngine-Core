@@ -149,7 +149,6 @@ AnimationController Sprite_getAnimationController(Sprite this)
 	return this->animationController;
 }
 
-
 // get render flag
 u32 Sprite_getRenderFlag(Sprite this)
 {
@@ -195,6 +194,16 @@ u16 Sprite_getMode(Sprite this)
 
 	return this->head & 0x3000;
 }
+
+// get sprites's layer's width
+u32 Sprite_getWorldHead(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldHead: null this");
+
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	return worldPointer->head;
+}
+
 
 // get sprites's layer's width
 s16 Sprite_getWorldX(Sprite this)
@@ -269,7 +278,6 @@ void Sprite_rotate(Sprite this __attribute__ ((unused)), const Rotation* rotatio
 {
 	ASSERT(this, "Sprite::rotate: null this");
 }
-
 
 int Sprite_getHalfWidth(Sprite this)
 {

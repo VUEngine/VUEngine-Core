@@ -833,7 +833,7 @@ static void Game_update(Game this)
 #ifdef __PRINT_FRAMERATE
             if(!Game_isInSpecialMode(this))
             {
-                FrameRate_print(frameRate, 15, 18);
+                FrameRate_print(frameRate, 0, 0);
             }
 #endif
 
@@ -892,7 +892,7 @@ static void Game_update(Game this)
 
         if(dispatchCycle++ % 2)
         {
-            MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+            suspendStreaming |= MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
         }
 
 #ifdef __PROFILE_GAME_DETAILED
@@ -926,6 +926,7 @@ static void Game_update(Game this)
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
+
 #ifdef __PROFILE_GAME_DETAILED
         processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         updatePhysicsHighestTime = processTime > updatePhysicsHighestTime? processTime: updatePhysicsHighestTime;
@@ -937,6 +938,7 @@ static void Game_update(Game this)
 #endif
 	    // apply transformations
 	    Game_updateTransformations(this);
+
 #ifdef __PROFILE_GAME_DETAILED
         processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
         updateTransformationsHighestTime = processTime > updateTransformationsHighestTime? processTime: updateTransformationsHighestTime;
@@ -947,7 +949,7 @@ static void Game_update(Game this)
 	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
-        Game_updateCollisions(this);
+       suspendStreaming |= Game_updateCollisions(this);
 
 #ifdef __PROFILE_GAME_DETAILED
         processTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
@@ -955,9 +957,8 @@ static void Game_update(Game this)
 	    processCollisionsTotalTime += processTime;
 #endif
 
-        if(10 >= TimerManager_getMillisecondsElapsed(this->timerManager))
+        if(!suspendStreaming)
         {
-
 #ifdef __PROFILE_GAME_DETAILED
     	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif

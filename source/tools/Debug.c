@@ -783,12 +783,15 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 	else if(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer)
 	{
 		Sprite sprite = SpriteManager_getSpriteAtLayer(SpriteManager_getInstance(), this->currentLayer);
+		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 
 		Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
 		Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), this->currentLayer, x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(sprite), x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), "Head:                         ", x, ++y, NULL);
+		Printing_hex(Printing_getInstance(), Sprite_getWorldHead(sprite), x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).x), x + 10, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).y), x + 20, y, NULL);
@@ -799,8 +802,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 15, y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 25, y, NULL);
-		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
-		Debug_lightUpGame(this);
+		//Debug_lightUpGame(this);
     }
 	else
 	{
