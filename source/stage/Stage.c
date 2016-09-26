@@ -26,6 +26,7 @@
 #include <Game.h>
 #include <EntityFactory.h>
 #include <PhysicalWorld.h>
+#include <TimerManager.h>
 #include <SoundManager.h>
 #include <Screen.h>
 #include <HardwareManager.h>
@@ -857,7 +858,7 @@ void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
 
-    if(this->stageDefinition->streaming.minimimSpareMilliSecondsToAllowStreaming > __GAME_FRAME_DURATION - TimerManager_getMillisecondsElapsed(this->timerManager))
+    if(this->stageDefinition->streaming.minimimSpareMilliSecondsToAllowStreaming > __GAME_FRAME_DURATION - TimerManager_getMillisecondsElapsed(TimerManager_getInstance()))
     {
         return;
     }
