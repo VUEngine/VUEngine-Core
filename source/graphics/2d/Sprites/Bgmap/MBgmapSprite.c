@@ -334,9 +334,9 @@ void MBgmapSprite_render(MBgmapSprite this)
 
             if(!worldPointer->w)
             {
-                worldPointer->gx = -__G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
-                worldPointer->gp = 0;
     			worldPointer->head = 0x0000;
+                this->renderFlag = false;
+                return;
             }
         }
         else
@@ -352,8 +352,9 @@ void MBgmapSprite_render(MBgmapSprite this)
 
             if(!worldPointer->h)
             {
-                worldPointer->gy = -__G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
     			worldPointer->head = 0x0000;
+                this->renderFlag = false;
+                return;
             }
         }
         else
