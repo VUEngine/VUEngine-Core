@@ -334,12 +334,15 @@ void BgmapSprite_render(BgmapSprite this)
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
+		// TODO: check if required, causes that the sprite is turned off
+		// when changing the texture definition
+/*
 	    if(!this->texture->written)
 	    {
 			worldPointer->head = 0x0000;
 	        return;
 	    }
-
+*/
 		if(this->hidden)
 		{
 			worldPointer->head = 0x0000;
