@@ -117,7 +117,7 @@
 #undef __FORCE_VIP_SYNC
 
 // timer resolution
-#define __TIMER_RESOLUTION						5
+#define __TIMER_RESOLUTION						1
 
 // options are __TIMER_20US and __TIMER_100US
 #define __TIMER_FREQUENCY                       __TIMER_20US
@@ -134,8 +134,8 @@
 // target frames per second
 #define __OPTIMUM_FPS 							(__TARGET_FPS >> __FRAME_CYCLE)
 
-// target frames per second
-#define __MINIMUM_GOOD_FPS 						(__TARGET_FPS - 2)
+// define to dispatch the delayed messages every other game frame cycle
+#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 
 
 //---------------------------------------------------------------------------------------------------------
