@@ -142,7 +142,7 @@ void TimerManager_interruptHandler(void)
     // play sounds
 	static u32 previousHundredthSecond = 0;
 	static u32 currentHundredthSecond = 0;
-	currentHundredthSecond += 2;
+	currentHundredthSecond += __TIMER_RESOLUTION;
 
     if(previousHundredthSecond < (u32)(currentHundredthSecond / 10))
     {
