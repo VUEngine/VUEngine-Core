@@ -304,6 +304,16 @@ void MBgmapSprite_render(MBgmapSprite this)
             return;
         }
 
+		if(this->hidden)
+		{
+			worldPointer->head = 0x0000;
+			return;
+		}
+		else
+		{
+            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		}
+
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
@@ -326,6 +336,7 @@ void MBgmapSprite_render(MBgmapSprite this)
             {
                 worldPointer->gx = -__G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
                 worldPointer->gp = 0;
+    			worldPointer->head = 0x0000;
             }
         }
         else
@@ -342,21 +353,13 @@ void MBgmapSprite_render(MBgmapSprite this)
             if(!worldPointer->h)
             {
                 worldPointer->gy = -__G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
+    			worldPointer->head = 0x0000;
             }
         }
         else
         {
             worldPointer->h = __SCREEN_HEIGHT;
         }
-
-		if(this->hidden)
-		{
-			worldPointer->head = 0x0000;
-		}
-		else
-		{
-            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
-		}
 
 		// make sure to not render again
 		this->renderFlag = false;

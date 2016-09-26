@@ -340,6 +340,17 @@ void BgmapSprite_render(BgmapSprite this)
 	        return;
 	    }
 
+		if(this->hidden)
+		{
+			worldPointer->head = 0x0000;
+			return;
+		}
+		else
+		{
+            // set the head
+            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		}
+
 		// get coordinates
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
@@ -376,12 +387,14 @@ void BgmapSprite_render(BgmapSprite this)
             w = 0;
             worldPointer->gx = -__G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
             worldPointer->gp = 0;
+			worldPointer->head = 0x0000;
         }
 
         if (0 > h)
         {
             h = 0;
             worldPointer->gy = -__G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1;
+			worldPointer->head = 0x0000;
         }
 
         worldPointer->w = w;
@@ -434,16 +447,6 @@ void BgmapSprite_render(BgmapSprite this)
 		else if(__WORLD_HBIAS & this->head)
 		{
 			BgmapSprite_doApplyHbiasTransformations(this);
-		}
-
-		if(this->hidden)
-		{
-			worldPointer->head = 0x0000;
-		}
-		else
-		{
-            // set the head
-            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 		}
 	}
 }
