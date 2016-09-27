@@ -135,7 +135,7 @@ static void Game_checkLowBattery(Game this, u16 keyPressed);
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
 #ifdef __PROFILE_GAME_DETAILED
-static void Game_showProfiling(Game this);
+static void Game_showProfiling(Game this, int x, int y);
 #endif
 
 #ifdef __PROFILE_STREAMING
@@ -786,8 +786,14 @@ static void Game_update(Game this)
         gameFrameDuration = gameFrameDuration < __GAME_FRAME_DURATION? __GAME_FRAME_DURATION : gameFrameDuration;
 
 #ifdef __PROFILE_GAME
-        Printing_text(Printing_getInstance(), "GFT:  ms", 7, 0, NULL);
-        Printing_int(Printing_getInstance(), gameFrameDuration, 11, 0, NULL);
+
+        if(gameFrameDuration >= __GAME_FRAME_DURATION)
+        {
+            Printing_text(Printing_getInstance(), "GFT:  ms", 7, 0, NULL);
+            Printing_int(Printing_getInstance(), gameFrameDuration, 11, 0, NULL);
+            __PRINT_IN_GAME_TIME(16, 0);
+        }
+
 #endif
 #ifdef __PROFILE_GAME_DETAILED
 	    timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
@@ -822,7 +828,7 @@ static void Game_update(Game this)
 #endif
 
 #ifdef __PROFILE_GAME_DETAILED
-            Game_showProfiling(this);
+            Game_showProfiling(this, 0, 3);
 #endif
             this->gameFrameTotalTime = 0;
 
@@ -1350,13 +1356,11 @@ bool Game_doneDRAMPrecalculations(Game this)
 #endif
 
 #ifdef __PROFILE_GAME_DETAILED
-static void Game_showProfiling(Game this __attribute__ ((unused)))
+static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y)
 {
     ASSERT(this, "Game::showProfiling: this null");
 
-    int x = 0;
     int xDisplacement = 11;
-    int y = 2;
 
     Printing_text(Printing_getInstance(), "GAME PROFILING", x, y++, NULL);
 

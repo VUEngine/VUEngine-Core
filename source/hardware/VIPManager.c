@@ -82,6 +82,10 @@ bool Game_doneDRAMPrecalculations(Game this);
 #endif
 #endif
 
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+bool Game_isGameFrameDone(Game this);
+#endif
+
 static VIPManager _vipManager;
 static ParamTableManager _paramTableManager;
 static CharSetManager _charSetManager;
