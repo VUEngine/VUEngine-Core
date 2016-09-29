@@ -21,6 +21,7 @@
 
 #include <VIPManager.h>
 #include <HardwareManager.h>
+#include <TimerManager.h>
 #include <Game.h>
 #include <FrameRate.h>
 #include <ParamTableManager.h>
@@ -63,7 +64,8 @@ typedef struct PostProcessingEffectRegistry
         /* post processing effects */																	\
         VirtualList postProcessingEffects;																\
         u32 currentDrawingFrameBufferSet;																\
-        u32 frameStarted;																                \
+        u16 gameFrameStarted;																            \
+
 
 // define the VIPManager
 __CLASS_DEFINITION(VIPManager, Object);
@@ -109,7 +111,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 
     this->postProcessingEffects = __NEW(VirtualList);
     this->currentDrawingFrameBufferSet = 0;
-    this->frameStarted = false;
+    this->gameFrameStarted = false;
 
     _vipManager = this;
 	_paramTableManager = ParamTableManager_getInstance();
@@ -128,25 +130,20 @@ void VIPManager_destructor(VIPManager this)
 	__SINGLETON_DESTROY;
 }
 
-void VIPManager_enableDrawing(VIPManager this)
+void VIPManager_enableDrawing(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::enableDrawing: null this");
 
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
-	VIPManager_enableInterrupt(this);
 }
 
-void VIPManager_disableDrawing(VIPManager this)
+void VIPManager_disableDrawing(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::disableDrawing: null this");
 
-	VIPManager_disableInterrupt(this);
-
-	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] |= __XPRST;
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
-	_vipRegisters[__XPCTRL] &= ~__FRAMESTART;
 }
 
 // enable interrupt
@@ -156,12 +153,10 @@ void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)))
 
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 #ifdef __ALERT_VIP_OVERTIME
-	_vipRegisters[__INTENB]= __XPEND | __FRAMESTART | __TIMEERR;
+	_vipRegisters[__INTENB]= __XPEND | __GAMESTART | __TIMEERR;
 #else
-	_vipRegisters[__INTENB]= __XPEND | __FRAMESTART;
+	_vipRegisters[__INTENB]= __XPEND | __GAMESTART;
 #endif
-
-    this->frameStarted = false;
 }
 
 // disable interrupt
@@ -171,168 +166,126 @@ void VIPManager_disableInterrupt(VIPManager this __attribute__ ((unused)))
 
 	_vipRegisters[__INTENB]= 0;
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
-
-    this->frameStarted = false;
 }
 
-u32 VIPManager_waitForFrameStart(VIPManager this)
+u32 __attribute__ ((noinline)) VIPManager_waitForFrameStart(VIPManager this)
 {
 	ASSERT(this, "VIPManager::waitForGameFrame: null this");
 
-    u32 frameStarted = this->frameStarted;
+    volatile u32 gameFrameStarted = this->gameFrameStarted;
 
-    if(frameStarted)
+    if(gameFrameStarted)
     {
-        this->frameStarted = false;
+        this->gameFrameStarted = false;
     }
 
-    return !frameStarted;
+    return !gameFrameStarted;
 }
 
 void VIPManager_interruptHandler(void)
 {
     // save the interrupt event
-	u32 idle = _vipRegisters[__INTPND] & __XPEND;
-	u16 frameStarted = _vipRegisters[__INTPND] & __FRAMESTART;
-#ifdef __ALERT_VIP_OVERTIME
-	bool overtime = _vipRegisters[__INTPND] & __TIMEERR;
-#endif
+    u16 interrupt = _vipRegisters[__INTPND];
 
 	// disable interrupts
-	_vipRegisters[__INTENB]= 0;
-	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
+	VIPManager_disableInterrupt(_vipManager);
 
-	_vipManager->frameStarted = frameStarted;
+    static u16 interruptTable[] =
+    {
+        __GAMESTART,
+#ifdef __ALERT_VIP_OVERTIME
+	    __TIMEERR
+#endif
+    };
+
+    int i = 0;
+    int limit = sizeof(interruptTable) / sizeof(u16);
+
+    for(; i < limit; i++)
+    {
+        switch(interrupt & interruptTable[i])
+        {
+            case __GAMESTART:
+
+                _vipManager->gameFrameStarted = true;
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+                {
+                    static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
 
-    if(frameStarted)
-    {
-        static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
+                    if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
+                    {
+                        messageDelay = __TARGET_FPS * 2;
+                        Printing_text(Printing_getInstance(), "VIP gameFrameStarted ", 0, 1, NULL);
+                        Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 21, 1, NULL);
+                    }
 
-        if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
-        {
-            messageDelay = __TARGET_FPS;
-            Printing_text(Printing_getInstance(), "VIP frameStarted during                         ", 0, 1, NULL);
-            Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 22, 1, NULL);
-        }
-
-        if(0 == --messageDelay)
-        {
-            Printing_text(Printing_getInstance(), "                                     ", 0, 1, NULL);
-            messageDelay = -1;
-        }
-    }
+                    if(0 == --messageDelay)
+                    {
+                        Printing_text(Printing_getInstance(), "                                                ", 0, 1, NULL);
+                        messageDelay = -1;
+                    }
+                }
 #endif
+                break;
 
 #ifdef __ALERT_VIP_OVERTIME
-    {
-        static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
-
-        if(overtime)
-        {
-            Printing_text(Printing_getInstance(), "VPU Overtime!   ", 0, 1, NULL);
-            messageDelay = __TARGET_FPS;
-
-            // force normal rendering
-            idle = true;
-        }
-        else if(0 == --messageDelay)
-        {
-            Printing_text(Printing_getInstance(), "                      ", 0, 1, NULL);
-            messageDelay = -1;
+	        case __TIMEERR:
+                {
+                    static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
+                    static u32 count = 0;
+                    Printing_text(Printing_getInstance(), "VPU Overtime! (   )", 0, 1, NULL);
+                    Printing_int(Printing_getInstance(), ++count, 15, 0, NULL);
+                }
+                break;
+#endif
         }
     }
+}
+
+u32 VIPManager_writeDRAM(VIPManager this)
+{
+	// wait for the VIP to go idle
+    while(_vipRegisters[__XPSTTS] & __XPBSYR);
+
+    // don't allow drawing while rendering
+    VIPManager_disableDrawing(_vipManager);
+
+#ifdef __PROFILE_GAME_DETAILED
+    u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
-#ifdef __ALERT_STACK_OVERFLOW
-	HardwareManager_checkStackStatus(HardwareManager_getInstance());
-#endif
-
-	// if the VPU is idle
-	if(idle)
-	{
-		// disable drawing
-		_vipRegisters[__XPCTRL] |= __XPRST;
-		_vipRegisters[__XPCTRL] &= ~__XPEN;
-
-		// if performance was good enough in the
-		// the previous second do some defragmenting
-		if(!ParamTableManager_processRemovedSprites(_paramTableManager))
-		{
-			CharSetManager_defragmentProgressively(_charSetManager);
-			// TODO: bgmap memory defragmentation
-		}
-
-		// write to DRAM
-		SpriteManager_render(_spriteManager);
-
-        // check if the current frame buffer set is valid
-        if(0 == _vipManager->currentDrawingFrameBufferSet || 0x8000 == _vipManager->currentDrawingFrameBufferSet)
-        {
-            VirtualNode node = _vipManager->postProcessingEffects->head;
-
-            for(; node; node = node->next)
-            {
-                ((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(_vipManager->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
-            }
-        }
-
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
-
-        static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
-
-        if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
-        {
-            messageDelay = __TARGET_FPS;
-            Printing_text(Printing_getInstance(), "VIP idle during                         ", 0, 2, NULL);
-            Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 16, 2, NULL);
-        }
-
-        if(0 == --messageDelay)
-        {
-            Printing_text(Printing_getInstance(), "                                     ", 0, 2, NULL);
-            messageDelay = -1;
-        }
-#endif
-		// enable drawing
-		while (_vipRegisters[__XPSTTS] & __XPBSYR);
-		_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
-	}
-
-#ifndef	__FORCE_VIP_SYNC
-#ifdef __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
+    // do some defragmenting
+    if(!ParamTableManager_processRemovedSprites(_paramTableManager))
     {
-#ifdef __ALERT_VIP_OVERTIME
-        int y = 2;
+        CharSetManager_defragmentProgressively(_charSetManager);
+        // TODO: bgmap memory defragmentation
+    }
+
+    // write to DRAM
+    SpriteManager_render(_spriteManager);
+
+    _vipManager->gameFrameStarted = false;
+
+    // enable drawing
+    VIPManager_enableDrawing(this);
+	VIPManager_enableInterrupt(_vipManager);
+
+    // check if the current frame buffer set is valid
+    if(0 == _vipManager->currentDrawingFrameBufferSet || 0x8000 == _vipManager->currentDrawingFrameBufferSet)
+    {
+        VirtualNode node = _vipManager->postProcessingEffects->head;
+
+        for(; node; node = node->next)
+        {
+            ((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(_vipManager->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
+        }
+    }
+
+#ifdef __PROFILE_GAME_DETAILED
+    return TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 #else
-        int y = 1;
-#endif
-        static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
-        if(!Game_doneDRAMPrecalculations(Game_getInstance()))
-        {
-            Printing_text(Printing_getInstance(), "                      ", 0, y, NULL);
-            Printing_text(Printing_getInstance(), "                               ", 0, y + 1, NULL);
-            Printing_text(Printing_getInstance(), "VPU: out of budget", 0, y, NULL);
-            messageDelay = __TARGET_FPS;
-        }
-
-        if(0 == --messageDelay)
-        {
-            Printing_text(Printing_getInstance(), "                      ", 0, y, NULL);
-            Printing_text(Printing_getInstance(), "                               ", 0, y + 1, NULL);
-            messageDelay = -1;
-        }
-    }
-#endif
-#endif
-
-	// enable interrupts
-	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
-#ifdef __ALERT_VIP_OVERTIME
-	_vipRegisters[__INTENB]= __XPEND | __FRAMESTART | __TIMEERR;
-#else
-	_vipRegisters[__INTENB]= __XPEND | __FRAMESTART;
+    return 0;
 #endif
 }
 
@@ -342,7 +295,6 @@ void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
 	ASSERT(this, "VIPManager::displayOn: null this");
 
 	_vipRegisters[__REST] = 0;
-	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 	_vipRegisters[__FRMCYC] = 0;
 }

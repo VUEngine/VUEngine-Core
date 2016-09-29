@@ -268,6 +268,7 @@ void HardwareManager_enableRendering(HardwareManager this)
 
 	// turn on display
 	VIPManager_displayOn(this->vipManager);
+	VIPManager_enableDrawing(this->vipManager);
 	VIPManager_enableInterrupt(VIPManager_getInstance());
 }
 
