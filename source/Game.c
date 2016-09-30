@@ -823,7 +823,6 @@ inline static void Game_updateTransformations(Game this)
 #endif
 }
 
-u32 flag = false;
 inline static u32 Game_updateCollisions(Game this)
 {
 #ifdef __PROFILE_GAME
@@ -837,7 +836,7 @@ inline static u32 Game_updateCollisions(Game this)
 
 	// process collisions
 #ifdef __PROFILE_GAME
-	u32 processedCollisions = flag = GameState_processCollisions(this->currentState);
+	u32 processedCollisions = GameState_processCollisions(this->currentState);
 
     processCollisionsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
     processCollisionsHighestTime = processCollisionsProcessTime > processCollisionsHighestTime? processCollisionsProcessTime: processCollisionsHighestTime;
@@ -1115,11 +1114,6 @@ static void Game_update(Game this)
                 Printing_int(Printing_getInstance(), ++tornFrames, 31, 1, NULL);
 
                 Game_showLastGameFrameProfiling(this, 24, 3);
-
-                if(flag)
-                    Printing_text(Printing_getInstance(), "COL", 20, 13 - 1, NULL);
-                else
-                    Printing_text(Printing_getInstance(), "    ", 20, 13 - 1, NULL);
             }
 
         }
