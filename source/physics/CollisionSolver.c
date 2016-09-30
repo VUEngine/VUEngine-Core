@@ -247,7 +247,12 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 
 	VirtualNode node = collidingSpatialObjects->head;
 
-	VirtualList processedCollidingSpatialObjects = __NEW(VirtualList);
+	static VirtualList processedCollidingSpatialObjects = NULL;
+
+	if(!processedCollidingSpatialObjects)
+	{
+	    processedCollidingSpatialObjects = __NEW(VirtualList);
+    }
 
 	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
 
@@ -382,7 +387,7 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 		VirtualList_removeElement(collidingSpatialObjects, node->data);
 	}
 
-	__DELETE(processedCollidingSpatialObjects);
+	VirtualList_clear(processedCollidingSpatialObjects);
 
 	return axisOfCollision;
 }
