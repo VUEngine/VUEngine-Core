@@ -260,7 +260,7 @@ u32 VIPManager_writeDRAM(VIPManager this)
 
     // write to DRAM
     SpriteManager_render(_spriteManager);
-/*
+
     // check if the current frame buffer set is valid
     if(0 == this->currentDrawingFrameBufferSet || 0x8000 == this->currentDrawingFrameBufferSet)
     {
@@ -271,7 +271,7 @@ u32 VIPManager_writeDRAM(VIPManager this)
             ((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
         }
     }
-*/
+
     // enable drawing
     VIPManager_enableDrawing(this);
 
