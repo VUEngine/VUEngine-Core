@@ -265,13 +265,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, this->owner);
 
 	VBVec3D displacementIncrement = displacement;
-/*	{
-			FIX19_13_MULT(displacement.x, __FLOAT_0_5_F),
-			FIX19_13_MULT(displacement.y, __FLOAT_0_5_F),
-			FIX19_13_MULT(displacement.z, __FLOAT_0_5_F)
-	};
-*/
-	//NM_ASSERT(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z, "Cuboid::getAxisOfCollisionWithCuboid: 0 displacementIncrement");
 
 	// get colliding entity's rightcuboid
 	RightCuboid otherRightCuboid = cuboid->positionedRightCuboid;
@@ -296,7 +289,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
     displacement.y = 0;
     displacement.z = 0;
 
-	if(displacementIncrement.x || displacementIncrement.y || displacementIncrement.z)
+	if(displacementIncrement.x | displacementIncrement.y | displacementIncrement.z)
 	{
 		axisToIgnore = 0;
 
@@ -455,8 +448,6 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		}
 		while(++passes < __MAX_NUMBER_OF_PASSES);
 	}
-
-//	ASSERT(numberOfAxis || passes < __MAX_NUMBER_OF_PASSES, "Cuboid::getAxisOfCollisionWithCuboid: max number of passes exceded");
 
 	return axisOfCollision & ~axisToIgnore;
 }
