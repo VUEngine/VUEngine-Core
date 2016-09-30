@@ -511,7 +511,11 @@ void SpriteManager_render(SpriteManager this)
         {
             Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 
-            Sprite_update(sprite);
+        	if(sprite->animationController)
+        	{
+                Sprite_update(sprite);
+            }
+
             __VIRTUAL_CALL(Sprite, render, sprite);
 
             // must make sure that no sprite has the end world
@@ -519,7 +523,10 @@ void SpriteManager_render(SpriteManager this)
             // and the previous end world is assigned to it
             _worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 
-            this->freeLayer = sprite->worldLayer && sprite->worldLayer < this->freeLayer ? sprite->worldLayer: this->freeLayer;
+            if(sprite->worldLayer && sprite->worldLayer < this->freeLayer)
+            {
+                this->freeLayer = sprite->worldLayer;
+            }
         }
     }
 

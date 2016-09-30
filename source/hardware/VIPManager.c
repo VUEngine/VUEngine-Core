@@ -166,14 +166,7 @@ u32 __attribute__ ((noinline)) VIPManager_waitForFrameStart(VIPManager this)
 {
 	ASSERT(this, "VIPManager::waitForGameFrame: null this");
 
-    volatile u32 gameFrameStarted = this->gameFrameStarted;
-
-    if(gameFrameStarted)
-    {
-        this->gameFrameStarted = false;
-    }
-
-    return !gameFrameStarted;
+    return !this->gameFrameStarted;
 }
 
 void VIPManager_interruptHandler(void)
@@ -235,8 +228,6 @@ void VIPManager_interruptHandler(void)
 #endif
         }
     }
-
-	VIPManager_enableInterrupt(_vipManager);
 }
 
 u32 VIPManager_writeDRAM(VIPManager this)
@@ -244,7 +235,11 @@ u32 VIPManager_writeDRAM(VIPManager this)
 	// wait for the VIP to go idle
     while(_vipRegisters[__XPSTTS] & __XPBSYR);
 
-    // don't allow drawing while rendering
+    // allow GCLK interrupt to kick in now
+    this->gameFrameStarted = false;
+	VIPManager_enableInterrupt(this);
+
+    // don't allow drawing while renderings
     VIPManager_disableDrawing(this);
 
 #ifdef __PROFILE_GAME
@@ -274,11 +269,6 @@ u32 VIPManager_writeDRAM(VIPManager this)
 
     // enable drawing
     VIPManager_enableDrawing(this);
-
-#ifdef	__FORCE_VIP_SYNC
-    // force game to sync to the display
-    _vipManager->gameFrameStarted = false;
-#endif
 
 #ifdef __PROFILE_GAME
     return TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
