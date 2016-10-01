@@ -164,6 +164,7 @@ static u32 handleInputTotalTime = 0;
 static u32 dispatchDelayedMessageTotalTime = 0;
 static u32 renderingTotalTime = 0;
 
+static u32 gameFrameHighestTime = 0;
 static u32 updateVisualsHighestTime = 0;
 static u32 updateLogicHighestTime = 0;
 static u32 streamingHighestTime = 0;
