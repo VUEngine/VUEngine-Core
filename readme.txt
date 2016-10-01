@@ -108,7 +108,7 @@ Features:
 		* Entity: a container with a list of sprites (a "visual object")
 		* InGameEntity: interactive entities in the levels (collision detection)
 		* AnimatedInGameEntity: an entity with animated sprites.
-		* InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
+		* InAnimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
 		* Actor: animated in game entity which coordinates a physical body with a collision shape
 		* Image: handy entity to display non interactive images
 		* ScrollBackground: infinite loop image (currently only supports looping over the x axe)
@@ -164,14 +164,14 @@ ACKNOWLEDGMENTS
 		* Documentation
 		* Engine's features and structure advisor
 
-	� RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy develpment forums
+	� RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy development forums
 	  who always are kind enough to share their knowledge.
 
 	� ElmerPCFX, for giving access to a much better compiler through his GCC 4.7 patches, and for all
 	  the tips, suggestions and knowledge about best practices and bad practices (of which the engine was
-	  previously plaged with).
+	  previously plagued with).
 
-	� Libgccvb has been refactored to accomodate better to this engine, all it's code is credited to
+	� Libgccvb has been refactored to accommodate better to this engine, all it's code is credited to
 	  it's creators and Jorge Eremiev doesn't take any credit on it.
 
 ==================

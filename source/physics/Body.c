@@ -818,7 +818,7 @@ void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller)
 	}
 }
 
-// get elasticiy
+// get elasticity
 fix19_13 Body_getElasticity(Body this)
 {
 	ASSERT(this, "Body::getElasticity: null this");
@@ -826,7 +826,7 @@ fix19_13 Body_getElasticity(Body this)
 	return this->elasticity;
 }
 
-// set elasticiy
+// set elasticity
 void Body_setElasticity(Body this, fix19_13 elasticity)
 {
 	ASSERT(this, "Body::setElasticity: null this");
@@ -892,7 +892,7 @@ static void Body_awake(Body this, int axisStartedMovement)
 	{
 		this->awake = true;
 
-		PhysicalWorld_bodyAwaked(Game_getPhysicalWorld(Game_getInstance()), this);
+		PhysicalWorld_bodyAwake(Game_getPhysicalWorld(Game_getInstance()), this);
 	}
 
 	if(!this->velocity.x && (__XAXIS & axisStartedMovement))

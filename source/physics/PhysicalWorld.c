@@ -27,11 +27,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -395,11 +390,11 @@ void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction)
 	this->friction = friction;
 }
 
-// a body has awaked
-void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body)
+// a body has awoken
+void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 {
-	ASSERT(this, "PhysicalWorld::bodyAwaked: null this");
-	ASSERT(body, "PhysicalWorld::bodyAwaked: null body");
+	ASSERT(this, "PhysicalWorld::bodyAwake: null this");
+	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
 
 	if(!VirtualList_find(this->activeBodies, body))
 	{

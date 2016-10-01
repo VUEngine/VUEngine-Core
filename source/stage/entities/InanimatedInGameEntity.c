@@ -74,7 +74,7 @@ void InanimatedInGameEntity_destructor(InanimatedInGameEntity this)
 	__DESTROY_BASE;
 }
 
-// get elasticiy
+// get elasticity
 fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this)
 {
 	ASSERT(this, "InanimatedInGameEntity::getElasticity: null this");

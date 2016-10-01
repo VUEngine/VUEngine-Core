@@ -145,7 +145,7 @@ void Actor_syncWithBody(Actor this)
 		bodyLastDisplacement = Body_getLastDisplacement(this->body);
 	}
 
-	// modify the global position accorging to the body's displacement
+	// modify the global position according to the body's displacement
 	VBVec3D globalPosition = this->transform.globalPosition;
 	globalPosition.x += bodyLastDisplacement.x;
 	globalPosition.y += bodyLastDisplacement.y;
@@ -210,7 +210,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	}
 
 	// apply environment transform
-	Container_applyEnvironmentToTranformation(__SAFE_CAST(Container, this), environmentTransform);
+	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
 
 	if(this->body)
 	{
@@ -285,7 +285,7 @@ void Actor_updateSurroundingFriction(Actor this)
 }
 
 // change direction
-void Actor_moveOpositeDirecion(Actor this, int axis)
+void Actor_moveOppositeDirection(Actor this, int axis)
 {
 	ASSERT(this, "Actor::moveOpositeDirecion: null this");
 
@@ -464,7 +464,7 @@ StateMachine Actor_getStateMachine(Actor this)
 	return this->stateMachine;
 }
 
-// stop movement completelty
+// stop movement completely
 void Actor_stopMovement(Actor this)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
@@ -650,7 +650,7 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 
 	if(axisOfCollision)
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollisingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): __1I_FIX19_13;
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollidingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): __1I_FIX19_13;
 
 		int axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
 
@@ -745,7 +745,7 @@ void Actor_takeHitFrom(Actor this, Actor other)
 	}
 }
 
-// get elasticiy
+// get elasticity
 fix19_13 Actor_getElasticity(Actor this)
 {
 	ASSERT(this, "Actor::getElasticity: null this");

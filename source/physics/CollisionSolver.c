@@ -567,14 +567,14 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 	return friction;
 }
 
-fix19_13 CollisionSolver_getCollisingSpatialObjectsTotalElasticity(CollisionSolver this, int axis)
+fix19_13 CollisionSolver_getCollidingSpatialObjectsTotalElasticity(CollisionSolver this, int axis)
 {
-	ASSERT(this, "CollisionSolver::getCollisingSpatialObjectsTotalElasticity: null this");
-	ASSERT(!((__XAXIS & axis) && (__YAXIS & axis)), "CollisionSolver::getCollisingSpatialObjectsTotalElasticity: more than one axis x, y");
-	ASSERT(!((__XAXIS & axis) && (__ZAXIS & axis)), "CollisionSolver::getCollisingSpatialObjectsTotalElasticity: more than one axis x, z");
-	ASSERT(!((__YAXIS & axis) && (__ZAXIS & axis)), "CollisionSolver::getCollisingSpatialObjectsTotalElasticity: more than one axis y, z");
+	ASSERT(this, "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: null this");
+	ASSERT(!((__XAXIS & axis) && (__YAXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, y");
+	ASSERT(!((__XAXIS & axis) && (__ZAXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, z");
+	ASSERT(!((__YAXIS & axis) && (__ZAXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis y, z");
 
-	fix19_13 totalElasticiy = 0;
+	fix19_13 totalElasticity = 0;
 	int collidingSpatialObjectListIndex = -1;
 
 	if(__XAXIS & axis)
@@ -596,8 +596,8 @@ fix19_13 CollisionSolver_getCollisingSpatialObjectsTotalElasticity(CollisionSolv
 
 	for(; 0 <= collidingSpatialObjectListIndex && node; node = node->next)
 	{
-		totalElasticiy += __VIRTUAL_CALL(SpatialObject, getElasticity, __SAFE_CAST(SpatialObject, node->data));
+		totalElasticity += __VIRTUAL_CALL(SpatialObject, getElasticity, __SAFE_CAST(SpatialObject, node->data));
 	}
 
-	return totalElasticiy;
+	return totalElasticity;
 }
