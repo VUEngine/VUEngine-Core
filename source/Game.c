@@ -1040,6 +1040,15 @@ static void Game_update(Game this)
 		// needs to be changed
 		Game_checkForNewState(this);
 
+        // process user's input
+        u32 suspendNonCriticalProcesses = Game_handleInput(this);
+
+        // dispatch delayed messages
+        if(!suspendNonCriticalProcesses)
+        {
+            suspendNonCriticalProcesses = Game_dispatchDelayedMessages(this);
+        }
+
         // update game's logic
         Game_updateLogic(this);
 
@@ -1048,8 +1057,6 @@ static void Game_update(Game this)
 	    }
 	    else
 	    {
-
-	    u32 suspendStreaming = false;
 #endif
 
 		// physics' update takes place after game's logic
@@ -1060,23 +1067,12 @@ static void Game_update(Game this)
 	    Game_updateTransformations(this);
 
         // process collisions
-        u32 suspendStreaming = Game_updateCollisions(this);
-
-        // process user's input
-        suspendStreaming |= Game_handleInput(this);
-
-#ifdef __PROFILE_GAME
-        dispatchDelayedMessageProcessTime = 0;
-#endif
-        if(!suspendStreaming)
-        {
-            suspendStreaming |= Game_dispatchDelayedMessages(this);
-        }
+        suspendNonCriticalProcesses |= Game_updateCollisions(this);
 
 #ifdef __PROFILE_GAME
         streamingProcessTime = 0;
 #endif
-        if(!suspendStreaming)
+        if(!suspendNonCriticalProcesses)
         {
             Game_stream(this);
         }
@@ -1105,7 +1101,7 @@ static void Game_update(Game this)
             Printing_text(Printing_getInstance(), "AVG:", 18, 1, NULL);
             Printing_int(Printing_getInstance(), totalGameFrameRealDuration / ++cycleCount, 22, 1, NULL);
 
-            if(gameFrameRealDuration > __GAME_FRAME_DURATION)
+            if(gameFrameRealDuration > __GAME_FRAME_DURATION/2 - 4)
             {
                 static u32 tornFrames = 0;
 
