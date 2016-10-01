@@ -86,7 +86,7 @@ int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject colli
 int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, VBVec3D displacement, bool registerObjects);
 void CollisionSolver_alignTo(CollisionSolver this, SpatialObject spatialObject, int axis, int pad);
 Force CollisionSolver_getSurroundingFriction(CollisionSolver this);
-fix19_13 CollisionSolver_getCollisingSpatialObjectsTotalElasticity(CollisionSolver this, int axis);
+fix19_13 CollisionSolver_getCollidingSpatialObjectsTotalElasticity(CollisionSolver this, int axis);
 
 
 #endif

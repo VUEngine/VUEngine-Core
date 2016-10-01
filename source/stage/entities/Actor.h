@@ -112,7 +112,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position);
 void Actor_transform(Actor this, const Transformation* environmentTransform);
 void Actor_resume(Actor this);
 void Actor_update(Actor this, u32 elapsedTime);
-void Actor_moveOpositeDirecion(Actor this, int axis);
+void Actor_moveOppositeDirection(Actor this, int axis);
 int Actor_changedDirection(Actor this, int axis);
 void Actor_changeDirectionOnAxis(Actor this, int axis);
 bool Actor_isInsideGame(Actor this);

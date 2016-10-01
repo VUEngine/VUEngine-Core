@@ -521,7 +521,7 @@ SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 // find child by name in given list
 VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName)
 {
-	ASSERT(childrenDefinitions, "Entity::calculatGlobalPositionFromDefinitionByName: null positionedEntity");
+	ASSERT(childrenDefinitions, "Entity::calculateGlobalPositionFromDefinitionByName: null positionedEntity");
 
 	if(!childrenDefinitions)
 	{
@@ -634,8 +634,8 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 id)
 // add children to instance from the definitions array, but deferredly
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions)
 {
-	ASSERT(this, "Entity::addChildrenWithoutInitilization: null this");
-	ASSERT(childrenDefinitions, "Entity::addChildrenWithoutInitilization: null childrenDefinitions");
+	ASSERT(this, "Entity::addChildEntitiesDeferred: null this");
+	ASSERT(childrenDefinitions, "Entity::addChildEntitiesDeferred: null childrenDefinitions");
 
 	if(!childrenDefinitions)
 	{
@@ -659,7 +659,7 @@ void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childr
 // load an entity and instantiate all its children deferredly
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 id)
 {
-	ASSERT(positionedEntity, "Entity::loadFromDefinitionWithoutInitilization: null positionedEntity");
+	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
     if(!positionedEntity)
     {
@@ -667,7 +667,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
     }
 
     Entity entity = Entity_instantiate(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
-	ASSERT(entity, "Entity::loadFromDefinitionWithoutInitilization: entity not loaded");
+	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
     if(positionedEntity->name)
     {
@@ -689,8 +689,8 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
 // add child entity from definition
 Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
 {
-	ASSERT(this, "Entity::addChildFromDefinition: null this");
-	ASSERT(entityDefinition, "Entity::addChildFromDefinition: null entityDefinition");
+	ASSERT(this, "Entity::addChildEntity: null this");
+	ASSERT(entityDefinition, "Entity::addChildEntity: null entityDefinition");
 
 	if(!entityDefinition)
 	{
@@ -709,7 +709,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 
     // create the hint entity and add it to the hero as a child entity
 	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
-	ASSERT(childEntity, "Entity::addChildFromDefinition: childEntity no created");
+	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
     // must initialize after adding the children
     __VIRTUAL_CALL(Entity, initialize, childEntity, true);
@@ -733,7 +733,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 
 u32 Entity_areAllChildrenInstantiated(Entity this)
 {
-	ASSERT(this, "Entity::allChildrenSpawned: null this");
+	ASSERT(this, "Entity::areAllChildrenInstantiated: null this");
 
     if(this->entityFactory)
     {
@@ -745,7 +745,7 @@ u32 Entity_areAllChildrenInstantiated(Entity this)
 
 u32 Entity_areAllChildrenInitialized(Entity this)
 {
-	ASSERT(this, "Entity::allChildrenInitialized: null this");
+	ASSERT(this, "Entity::areAllChildrenInitialized: null this");
 
     if(this->entityFactory)
     {
@@ -757,7 +757,7 @@ u32 Entity_areAllChildrenInitialized(Entity this)
 
 u32 Entity_areAllChildrenTransformed(Entity this)
 {
-	ASSERT(this, "Entity::allChildrenInitialized: null this");
+	ASSERT(this, "Entity::areAllChildrenTransformed: null this");
 
     if(this->entityFactory)
     {
@@ -769,7 +769,7 @@ u32 Entity_areAllChildrenTransformed(Entity this)
 
 u32 Entity_areAllChildrenReady(Entity this)
 {
-	ASSERT(this, "Entity::allChildrenReady: null this");
+	ASSERT(this, "Entity::areAllChildrenReady: null this");
 
     if(this->entityFactory)
     {
@@ -848,7 +848,7 @@ void Entity_ready(Entity this, u32 recursive)
 	}
 }
 
-// process extra info in intialization
+// process extra info in initialization
 void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::setExtraInfo: null this");
@@ -871,7 +871,7 @@ static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefin
         this->sprites = __NEW(VirtualList);
     }
 
-    //go through n sprites in entity's definition
+    // go through n sprites in entity's definition
     for(; spritesDefinitions[i]; i++)
     {
     	ASSERT(spritesDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");

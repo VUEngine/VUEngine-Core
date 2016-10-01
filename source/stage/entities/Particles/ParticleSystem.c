@@ -88,7 +88,7 @@ extern const Optical* _optical;
 static Particle ParticleSystem_recycleParticle(ParticleSystem this);
 static Particle ParticleSystem_spawnParticle(ParticleSystem this);
 static void ParticleSystem_processExpiredParticles(ParticleSystem this);
-static void ParticleSystem_particleExipired(ParticleSystem this, Particle particle);
+static void ParticleSystem_particleExpired(ParticleSystem this, Particle particle);
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this);
 static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed);
 static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed);
@@ -276,7 +276,7 @@ void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
     {
         if(__VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior))
         {
-            ParticleSystem_particleExipired(this, __SAFE_CAST(Particle, node->data));
+            ParticleSystem_particleExpired(this, __SAFE_CAST(Particle, node->data));
         }
     }
 
@@ -630,9 +630,9 @@ void ParticleSystem_suspend(ParticleSystem this)
  * @param this      Function scope
  * @param particle
  */
-static void ParticleSystem_particleExipired(ParticleSystem this, Particle particle)
+static void ParticleSystem_particleExpired(ParticleSystem this, Particle particle)
 {
-	ASSERT(this, "ParticleSystem::particleExipired: null this");
+	ASSERT(this, "ParticleSystem::particleExpired: null this");
 
 	VirtualList_pushBack(this->expiredParticles, particle);
 	Particle_hide(particle);

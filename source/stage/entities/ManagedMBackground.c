@@ -194,7 +194,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 	}
 
 	// apply environment transform
-	Container_applyEnvironmentToTranformation(__SAFE_CAST(Container, this), environmentTransform);
+	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
 
     this->updateSprites |= __UPDATE_SPRITE_POSITION;
 

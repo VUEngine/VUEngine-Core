@@ -63,7 +63,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
-void PhysicalWorld_bodyAwaked(PhysicalWorld this, Body body);
+void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body);
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);

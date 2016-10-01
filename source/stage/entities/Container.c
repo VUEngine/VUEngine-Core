@@ -413,7 +413,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	}
 }
 
-void Container_applyEnvironmentToTranformation(Container this, const Transformation* environmentTransform)
+void Container_applyEnvironmentToTransformation(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
 

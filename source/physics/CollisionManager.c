@@ -36,7 +36,7 @@
 #define CollisionManager_ATTRIBUTES												                        \
         /* super's attributes */													                    \
         Object_ATTRIBUTES															                    \
-        /* a list of shapes registeres */											                    \
+        /* a list of registered shapes */											                    \
         VirtualList	shapes;															                    \
         /* a list of shapes which must detect collisions */							                    \
         VirtualList	activeShapes;													                    \
@@ -260,7 +260,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
             // the result thrown by the collision algorithm
             int collisionResult = kNoCollision;
 
-            // dont' check again the current shape when processing other movable shapes
+            // don't check the current shape again when processing other movable shapes
             Shape_checked(shape, true);
 
             VirtualNode nodeForActiveShapes = this->activeShapes->head;

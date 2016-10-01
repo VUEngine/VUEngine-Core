@@ -149,7 +149,7 @@ void SpatialObject_setPosition(SpatialObject this __attribute__ ((unused)), cons
 	ASSERT(this, "SpatialObject::setPosition: null this");
 }
 
-// get elasticiy
+// get elasticity
 fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getElasticity: null this");

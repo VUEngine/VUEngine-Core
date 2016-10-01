@@ -92,7 +92,7 @@ void Cuboid_destructor(Cuboid this)
 	__DESTROY_BASE;
 }
 
-// check if two rects overlap
+// check if two rectangles overlap
 int Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");

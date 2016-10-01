@@ -52,4 +52,5 @@ void ParticleRemover_update(ParticleRemover this);
 void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles);
 void ParticleRemover_setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles);
 
+
 #endif
