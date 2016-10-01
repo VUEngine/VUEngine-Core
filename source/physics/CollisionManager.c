@@ -241,21 +241,12 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 	CollisionManager_processInactiveShapes(this);
 
-	VirtualNode node = this->movingShapes->head;
-
-	// check the shapes
-	for(; node; node = node->next)
-	{
-		// current to check shape's rectangle
-		__VIRTUAL_CALL(Shape, position, __SAFE_CAST(Shape, node->data));
-	}
-
 	this->checkingCollisions = true;
 
 	u32 returnValue = false;
 
 	// check the shapes
-	node = this->movingShapes->head;
+	VirtualNode node = this->movingShapes->head;
 
 	for(; node; node = node->next)
 	{

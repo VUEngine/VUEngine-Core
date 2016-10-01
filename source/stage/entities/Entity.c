@@ -988,6 +988,11 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 
     // call base class's transform method
     Container_transform(__SAFE_CAST(Container, this), environmentTransform);
+
+    if(this->shape && __VIRTUAL_CALL(Entity, moves, this))
+    {
+        __VIRTUAL_CALL(Shape, position, this->shape);
+    }
 }
 
 void Entity_updateVisualRepresentation(Entity this)
