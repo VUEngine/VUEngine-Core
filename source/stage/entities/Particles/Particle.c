@@ -101,6 +101,11 @@ static void Particle_addSprite(Particle this)
 	// call the appropriate allocator to support inheritance
 	this->objectSprite = __SAFE_CAST(ObjectSprite, ((Sprite (*)(const SpriteDefinition*, Object)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, __SAFE_CAST(Object, this)));
 
+	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
+	{
+		Sprite_play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+	}
+
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
 }
 
