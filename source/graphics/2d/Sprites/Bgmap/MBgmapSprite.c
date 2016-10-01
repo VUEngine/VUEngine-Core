@@ -40,6 +40,12 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class       MBgmapSprite
+ * @extends     BgmapSprite
+ * @brief       Sprite which holds a texture and a drawing specification.
+ */
+
 __CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
 
 __CLASS_FRIEND_DEFINITION(Texture);
