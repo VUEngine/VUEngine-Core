@@ -220,7 +220,6 @@ void VIPManager_interruptHandler(void)
 #ifdef __ALERT_VIP_OVERTIME
 	        case __TIMEERR:
                 {
-                    static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
                     static u32 count = 0;
                     Printing_text(Printing_getInstance(), "VPU Overtime! (   )", 0, 1, NULL);
                     Printing_int(Printing_getInstance(), ++count, 15, 0, NULL);
