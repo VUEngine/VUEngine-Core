@@ -465,7 +465,7 @@ StateMachine Actor_getStateMachine(Actor this)
 }
 
 // stop movement completely
-void Actor_stopMovement(Actor this)
+void Actor_stopMovement(Actor this, u32 stopShape)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
@@ -476,7 +476,7 @@ void Actor_stopMovement(Actor this)
 		Body_stopMovement(this->body, __ZAXIS);
 	}
 
-	if(this->shape)
+	if(stopShape && this->shape)
 	{
 		// unregister the shape for collision detections
         CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);

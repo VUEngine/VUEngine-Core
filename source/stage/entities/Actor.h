@@ -135,7 +135,7 @@ fix19_13 Actor_getElasticity(Actor this);
 fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force);
 void Actor_moveUniformly(Actor this, Velocity* velocity);
-void Actor_stopMovement(Actor this);
+void Actor_stopMovement(Actor this, u32 stopShape);
 void Actor_updateSurroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this, int movementAxis);
 Velocity Actor_getVelocity(Actor this);
