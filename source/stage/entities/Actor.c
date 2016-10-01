@@ -479,7 +479,6 @@ void Actor_stopMovement(Actor this)
 	if(this->shape)
 	{
 		// unregister the shape for collision detections
-    	Shape_setActive(this->shape, false);
         CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
     }
 }
