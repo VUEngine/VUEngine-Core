@@ -232,6 +232,8 @@ void VIPManager_interruptHandler(void)
 
 u32 VIPManager_writeDRAM(VIPManager this)
 {
+	ASSERT(this, "VIPManager::writeDRAM: null this");
+
 	// wait for the VIP to go idle
     while(_vipRegisters[__XPSTTS] & __XPBSYR);
 
