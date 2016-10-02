@@ -154,10 +154,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 		InGameEntity_setGap(__SAFE_CAST(InGameEntity, this));
 	}
 
-	if(this->sprites && elapsedTime)
-	{
-		AnimatedInGameEntity_animate(this);
-	}
+    AnimatedInGameEntity_animate(this);
 }
 
 // update animations
@@ -165,13 +162,16 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::animate: null this");
 
-    VirtualNode node = this->sprites->head;
+	if(this->sprites)
+	{
+        VirtualNode node = this->sprites->head;
 
-    // move each child to a temporary list
-    for(; node ; node = node->next)
-    {
-        // first animate the frame
-        Sprite_animate(__SAFE_CAST(Sprite, node->data));
+        // move each child to a temporary list
+        for(; node ; node = node->next)
+        {
+            // first animate the frame
+            Sprite_animate(__SAFE_CAST(Sprite, node->data));
+        }
     }
 }
 
