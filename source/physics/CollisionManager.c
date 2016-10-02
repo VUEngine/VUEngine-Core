@@ -280,8 +280,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
                     if(collisionResult)
                     {
-                        returnValue = true;
-
                         if(!collidingObjects)
                         {
                             collidingObjects = __NEW(VirtualList);
@@ -296,7 +294,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
             if(collidingObjects)
             {
                 // inform the owner about the collision
-                MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
+               returnValue |= MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
 
                 __DELETE(collidingObjects);
             }
