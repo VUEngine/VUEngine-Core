@@ -1101,7 +1101,7 @@ static void Game_update(Game this)
             Printing_text(Printing_getInstance(), "AVG:", 18, 1, NULL);
             Printing_int(Printing_getInstance(), totalGameFrameRealDuration / ++cycleCount, 22, 1, NULL);
 
-            if(gameFrameRealDuration > __GAME_FRAME_DURATION/2 - 4)
+            if(gameFrameRealDuration > __GAME_FRAME_DURATION)
             {
                 static u32 tornFrames = 0;
 
