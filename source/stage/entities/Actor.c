@@ -73,7 +73,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	this->actorDefinition = actorDefinition;
 
 	// construct the game state machine
-	this->stateMachine = __NEW(StateMachine, this);
+	this->stateMachine = NULL;
 
 	this->body = NULL;
 	this->collisionSolver = NULL;
@@ -101,7 +101,11 @@ void Actor_destructor(Actor this)
 	}
 
 	// destroy state machine
-	__DELETE(this->stateMachine);
+	if(this->stateMachine)
+	{
+    	__DELETE(this->stateMachine);
+    	this->stateMachine = NULL;
+    }
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -407,7 +411,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 {
 	ASSERT(this, "Actor::handleMessage: null this");
 
-	if(!StateMachine_handleMessage(this->stateMachine, telegram))
+	if(!this->stateMachine || !StateMachine_handleMessage(this->stateMachine, telegram))
 	{
 		// retrieve message
 		int message = Telegram_getMessage(telegram);
