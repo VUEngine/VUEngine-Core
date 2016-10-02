@@ -66,10 +66,10 @@ void Debug_showPreviousPage(Debug this);
 void Debug_showNextPage(Debug this);
 void Debug_showPreviousSubPage(Debug this);
 void Debug_showNextSubPage(Debug this);
-void Debug_diplaceLeft(Debug this);
-void Debug_diplaceRight(Debug this);
-void Debug_diplaceUp(Debug this);
-void Debug_diplaceDown(Debug this);
+void Debug_displaceLeft(Debug this);
+void Debug_displaceRight(Debug this);
+void Debug_displaceUp(Debug this);
+void Debug_displaceDown(Debug this);
 
 
 #endif

@@ -212,7 +212,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 	}
 }
 
-// is play an animation
+// is playing an animation
 bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::isPlayingAnimation: null this");

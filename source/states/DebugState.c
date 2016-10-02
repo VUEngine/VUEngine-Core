@@ -132,19 +132,19 @@ static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), 
 				}
 				else if(pressedKey & K_RL)
 				{
-					Debug_diplaceLeft(Debug_getInstance());
+					Debug_displaceLeft(Debug_getInstance());
 				}
 				else if(pressedKey & K_RR)
 				{
-					Debug_diplaceRight(Debug_getInstance());
+					Debug_displaceRight(Debug_getInstance());
 				}
 				else if(pressedKey & K_RU)
 				{
-					Debug_diplaceUp(Debug_getInstance());
+					Debug_displaceUp(Debug_getInstance());
 				}
 				else if(pressedKey & K_RD)
 				{
-					Debug_diplaceDown(Debug_getInstance());
+					Debug_displaceDown(Debug_getInstance());
 				}
 			}
 			break;

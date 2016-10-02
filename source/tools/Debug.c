@@ -381,28 +381,28 @@ static void Debug_showSubPage(Debug this, int increment)
 #define DISPLACEMENT_STEP_Y	512 - 224
 
 // displace view to the left
-void Debug_diplaceLeft(Debug this)
+void Debug_displaceLeft(Debug this)
 {
 	this->bgmapDisplacement.x = 0;
 	Debug_showDebugBgmap(this);
 }
 
 // displace view to the right
-void Debug_diplaceRight(Debug this)
+void Debug_displaceRight(Debug this)
 {
 	this->bgmapDisplacement.x = DISPLACEMENT_STEP_X;
 	Debug_showDebugBgmap(this);
 }
 
 // displace view up
-void Debug_diplaceUp(Debug this)
+void Debug_displaceUp(Debug this)
 {
 	this->bgmapDisplacement.y = 0;
 	Debug_showDebugBgmap(this);
 }
 
 // displace view down
-void Debug_diplaceDown(Debug this)
+void Debug_displaceDown(Debug this)
 {
 	this->bgmapDisplacement.y = DISPLACEMENT_STEP_Y;
 	Debug_showDebugBgmap(this);
