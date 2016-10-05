@@ -351,8 +351,8 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 
 		if(maxOutputLevel > 0)
 		{
-			int leftDistance = abs(FIX19_13TOI(this->fxPosition[fxS].x) - __LEFT_EAR_CENTER);
-			int rightDistance = abs(FIX19_13TOI(this->fxPosition[fxS].x) - __RIGHT_EAR_CENTER);
+			int leftDistance = __ABS(FIX19_13TOI(this->fxPosition[fxS].x) - __LEFT_EAR_CENTER);
+			int rightDistance = __ABS(FIX19_13TOI(this->fxPosition[fxS].x) - __RIGHT_EAR_CENTER);
 			int leftMinus = 0, rightMinus = 0;
 			int leftOutput, rightOutput;
 

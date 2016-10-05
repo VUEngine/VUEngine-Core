@@ -181,8 +181,8 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
         	ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
 //            __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
-//			halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).x)) >> 1;
-//			halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), abs(__VIRTUAL_CALL(Sprite, getScale, sprite).y)) >> 1;
+//			halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), __ABS(__VIRTUAL_CALL(Sprite, getScale, sprite).x)) >> 1;
+//			halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), __ABS(__VIRTUAL_CALL(Sprite, getScale, sprite).y)) >> 1;
             halfWidth = Sprite_getHalfWidth(sprite);
             halfHeight = Sprite_getHalfHeight(sprite);
             halfDepth = this->size.z >> 1;

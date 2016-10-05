@@ -315,5 +315,5 @@ int Utilities_random(long seed, int randnums)
 //    Utilities_initRandomSeedsByArray(init, length);
 
 //    return Utilities_generateRandomInt32() % randnums;
-	return seed & randnums? abs((int)(seed % randnums)): 0;
+	return seed & randnums? __ABS((int)(seed % randnums)): 0;
 }

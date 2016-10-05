@@ -221,7 +221,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
         {
             int fraction = dy - (dx >> 1);
 
-            int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)) : 0;
+            int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dx >> 1)) : 0;
 
             while(fromPoint.x != toPoint.x)
             {
@@ -247,7 +247,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
         {
             int fraction = dx - (dy >> 1);
 
-            int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)) : 0;
+            int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dy >> 1)) : 0;
 
             while(fromPoint.y != toPoint.y)
             {
@@ -283,7 +283,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
         {
             int fraction = dy - (dx >> 1);
 
-            int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dx >> 1)) : 0;
+            int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dx >> 1)) : 0;
 
             while(fromPoint.x != toPoint.x)
             {
@@ -309,7 +309,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
         {
             int fraction = dx - (dy >> 1);
 
-            int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / abs(dy >> 1)) : 0;
+            int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dy >> 1)) : 0;
 
             while(fromPoint.y != toPoint.y)
             {

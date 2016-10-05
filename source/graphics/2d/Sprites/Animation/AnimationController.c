@@ -219,7 +219,7 @@ bool AnimationController_animate(AnimationController this)
 		else if(0 > this->frameDelay)
 		{
 			// pick up a random delay
-			this->frameDelay = 1 + Utilities_random(Utilities_randomSeed(), abs(this->frameDelay));
+			this->frameDelay = 1 + Utilities_random(Utilities_randomSeed(), __ABS(this->frameDelay));
 		}
 
 		return true;

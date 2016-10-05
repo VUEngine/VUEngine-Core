@@ -433,7 +433,7 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 		direction.z ? 0 < direction.z? __1I_FIX19_13: ITOFIX19_13(-1): 0
 	};
 
-	if(0 == abs(direction.x) + abs(direction.y) + abs(direction.z))
+	if(0 == __ABS(direction.x) + __ABS(direction.y) + __ABS(direction.z))
 	{
 		return NULL;
 	}
@@ -469,7 +469,7 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 		displacement.y += 0 < direction.y? __1I_FIX19_13: ITOFIX19_13(-1);
 		displacement.z += 0 < direction.z? __1I_FIX19_13: ITOFIX19_13(-1);
 	}
-	while(!collidingObject && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.x) && ITOFIX19_13(__SCREEN_HEIGHT) > abs(displacement.y) && ITOFIX19_13(__SCREEN_WIDTH) > abs(displacement.z));
+	while(!collidingObject && ITOFIX19_13(__SCREEN_WIDTH) > __ABS(displacement.x) && ITOFIX19_13(__SCREEN_HEIGHT) > __ABS(displacement.y) && ITOFIX19_13(__SCREEN_WIDTH) > __ABS(displacement.z));
 
 	NM_ASSERT(collidingObject, "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
 	return collidingObject;

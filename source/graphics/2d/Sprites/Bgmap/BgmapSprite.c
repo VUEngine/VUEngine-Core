@@ -210,12 +210,12 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 	{
 		case __XAXIS:
 
-			this->drawSpec.scale.x = FIX7_9_MULT(abs(this->drawSpec.scale.x), ITOFIX7_9(direction));
+			this->drawSpec.scale.x = FIX7_9_MULT(__ABS(this->drawSpec.scale.x), ITOFIX7_9(direction));
 			break;
 
 		case __YAXIS:
 
-			this->drawSpec.scale.y = FIX7_9_MULT(abs(this->drawSpec.scale.y), ITOFIX7_9(direction));
+			this->drawSpec.scale.y = FIX7_9_MULT(__ABS(this->drawSpec.scale.y), ITOFIX7_9(direction));
 			break;
 	}
 
@@ -425,8 +425,8 @@ void BgmapSprite_render(BgmapSprite this)
             }
 
             // apply scaling and add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-            worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.x)))) + 1;
-            worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(abs(this->drawSpec.scale.y)))) + 1;
+            worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
+            worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
 
              if(0 <= this->paramTableRow)
             {
@@ -542,8 +542,8 @@ void BgmapSprite_render(BgmapSprite this)
                 this->paramTableRow = 0;
             }
 
-            worldPointer->w *= FIX7_9TOF(abs(this->drawSpec.scale.x));
-            worldPointer->h *= FIX7_9TOF(abs(this->drawSpec.scale.y));
+            worldPointer->w *= FIX7_9TOF(__ABS(this->drawSpec.scale.x));
+            worldPointer->h *= FIX7_9TOF(__ABS(this->drawSpec.scale.y));
 
              if(0 <= this->paramTableRow)
             {

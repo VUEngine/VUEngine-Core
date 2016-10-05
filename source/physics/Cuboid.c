@@ -480,24 +480,10 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D 
 	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 
 	// setup a cuboid representing the previous position
-	RightCuboid positionedRightCuboid;
-	positionedRightCuboid.x0 = this->positionedRightCuboid.x0;
-	positionedRightCuboid.y0 = this->positionedRightCuboid.y0;
-	positionedRightCuboid.z0 = this->positionedRightCuboid.z0;
-	positionedRightCuboid.x1 = this->positionedRightCuboid.x1;
-	positionedRightCuboid.y1 = this->positionedRightCuboid.y1;
-	positionedRightCuboid.z1 = this->positionedRightCuboid.z1;
+	RightCuboid positionedRightCuboid = this->positionedRightCuboid;
 
 	// get colliding entity's rightcuboid
-	RightCuboid otherRightCuboid = {
-
-		cuboid->positionedRightCuboid.x0,
-		cuboid->positionedRightCuboid.y0,
-		cuboid->positionedRightCuboid.z0,
-		cuboid->positionedRightCuboid.x1,
-		cuboid->positionedRightCuboid.y1,
-		cuboid->positionedRightCuboid.z1
-	};
+	RightCuboid otherRightCuboid = cuboid->positionedRightCuboid;
 
 	int axisOfPossibleCollision = 0;
 

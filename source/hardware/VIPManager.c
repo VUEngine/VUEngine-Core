@@ -187,7 +187,7 @@ void VIPManager_interruptHandler(void)
     };
 
     int i = 0;
-    int limit = sizeof(interruptTable) / sizeof(u16);
+    const int limit = sizeof(interruptTable) / sizeof(u16);
 
     for(; i < limit; i++)
     {
@@ -259,14 +259,11 @@ u32 VIPManager_writeDRAM(VIPManager this)
     SpriteManager_render(_spriteManager);
 
     // check if the current frame buffer set is valid
-    if(0 == this->currentDrawingFrameBufferSet || 0x8000 == this->currentDrawingFrameBufferSet)
-    {
-        VirtualNode node = this->postProcessingEffects->head;
+    VirtualNode node = this->postProcessingEffects->head;
 
-        for(; node; node = node->next)
-        {
-            ((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
-        }
+    for(; node; node = node->next)
+    {
+        ((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
     }
 
     // enable drawing

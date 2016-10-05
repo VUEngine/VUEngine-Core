@@ -602,7 +602,7 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 
 	if(appliedForce)
 	{
-		if(abs(frictionAcceleration) < abs(*acceleration))
+		if(__ABS(frictionAcceleration) < __ABS(*acceleration))
 		{
 			*acceleration += frictionAcceleration;
 		}
@@ -1018,7 +1018,7 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 
 //	*acceleration >>= 1;
 
-	return ((velocityDelta) < abs(*velocity));
+	return ((velocityDelta) < __ABS(*velocity));
 }
 
 // take a hit
