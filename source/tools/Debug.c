@@ -44,6 +44,7 @@
 #include <BgmapAnimationCoordinator.h>
 #include <ObjectAnimationCoordinator.h>
 #include <KeyPadManager.h>
+#include <SRAMManager.h>
 
 #include <Clock.h>
 #include <State.h>
@@ -104,6 +105,8 @@
         int objectSegment;																				\
         /* current char segment */																		\
         int charSegment;																				\
+        /* current page in sram inspector */															\
+        int sramPage;																					\
         /* window to look into bgmap memory */															\
         VBVec2D bgmapDisplacement;																		\
         /* update function pointer */																	\
@@ -142,10 +145,11 @@ static void Debug_showObjectStatus(Debug this, int increment, int x, int y);
 static void Debug_showSpritesStatus(Debug this, int increment, int x, int y);
 static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y);
 static void Debug_showHardwareStatus(Debug this, int increment, int x, int y);
+static void Debug_showSramStatus(Debug this, int increment, int x, int y);
 
 // sub pages
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y);
-static void Debug_textutesShowStatus(Debug this, int increment, int x, int y);
+static void Debug_texturesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_objectsShowStatus(Debug this, int increment, int x, int y);
 static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y);
 static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y);
@@ -156,6 +160,7 @@ static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, i
 static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
+static void Debug_showSramPage(Debug this, int increment, int x, int y);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -182,6 +187,7 @@ static void __attribute__ ((noinline)) Debug_constructor(Debug this)
 	this->bgmapSegment = 0;
 	this->objectSegment = 0;
 	this->charSegment = 0;
+	this->sramPage = 0;
 
 	this->update = NULL;
 
@@ -211,8 +217,15 @@ static void Debug_setupPages(Debug this)
 	VirtualList_pushBack(this->pages, &Debug_showCharMemoryStatus);
 	VirtualList_pushBack(this->pages, &Debug_showPhysicsStatus);
 	VirtualList_pushBack(this->pages, &Debug_showHardwareStatus);
+	VirtualList_pushBack(this->pages, &Debug_showSramStatus);
 
 	this->currentPage = this->pages->head;
+}
+
+// get current pages
+u8 Debug_getCurrentPageNumber(Debug this)
+{
+	return VirtualList_getNodePosition(this->pages, this->currentPage) + 1;
 }
 
 static void Debug_dimmGame(Debug this __attribute__ ((unused)))
@@ -338,7 +351,7 @@ static void Debug_printHeader(Debug this)
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
     Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
     Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getNodePosition(this->pages, this->currentPage) + 1, 17, 0, NULL);
+    Printing_int(Printing_getInstance(), Debug_getCurrentPageNumber(this), 17, 0, NULL);
     Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
 }
 
@@ -626,8 +639,8 @@ static void Debug_showTextureStatus(Debug this, int increment __attribute__ ((un
 {
 	Debug_removeSubPages(this);
 
-	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
-	VirtualList_pushBack(this->subPages, &Debug_textutesShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_texturesShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_texturesShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	this->bgmapSegment = -1;
@@ -658,7 +671,7 @@ static void Debug_showDebugBgmap(Debug this)
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].h = __SCREEN_HEIGHT;
 }
 
-static void Debug_textutesShowStatus(Debug this, int increment, int x, int y)
+static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 {
 	this->bgmapSegment += increment;
 
@@ -790,7 +803,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(sprite), x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Head:                         ", x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), Sprite_getWorldHead(sprite), x + 10, y, NULL);
+		Printing_hex(Printing_getInstance(), Sprite_getWorldHead(sprite), x + 10, y, 8, NULL);
 		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).x), x + 10, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).y), x + 20, y, NULL);
@@ -845,6 +858,89 @@ static void Debug_showHardwareStatus(Debug this, int increment __attribute__ ((u
 	Debug_removeSubPages(this);
 
 	HardwareManager_print(HardwareManager_getInstance(), 1, y);
+}
+
+static void Debug_showSramStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+{
+	Debug_removeSubPages(this);
+
+	VirtualList_pushBack(this->subPages, &Debug_showSramPage);
+	VirtualList_pushBack(this->subPages, &Debug_showSramPage);
+	this->currentSubPage = this->subPages->head;
+
+	this->sramPage = 0;
+
+	Debug_showSubPage(this, 0);
+}
+
+static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+{
+    int i, j, value;
+    char word[9];
+
+    extern u32 _sram_bss_end;
+
+    this->sramPage += increment;
+
+    if(this->sramPage < 0)
+    {
+       this->sramPage = 63;
+    }
+    else if(this->sramPage > 63)
+    {
+       this->sramPage = 0;
+    }
+
+    // get sram base address
+    u32* startAddress = (u32*)&_sram_bss_end;
+
+    // print status header
+	Printing_text(Printing_getInstance(), "SRAM STATUS", 1, y++, NULL);
+	Printing_text(Printing_getInstance(), "Total: 8.192 B   Free: ----- B   Used: ----- B", 1, ++y, NULL);
+	y+=2;
+
+	// print inspector header
+	Printing_text(Printing_getInstance(), "SRAM INSPECTOR", 1, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Page   /64", 37, y, NULL);
+	Printing_int(Printing_getInstance(), this->sramPage + 1, 42, y++, NULL);
+	Printing_text(Printing_getInstance(), "Address     00 01 02 03 04 05 06 07 Word", 1, ++y, NULL);
+	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 1, ++y, NULL);
+
+    // print values
+    for(i = 0; i < 16; i++)
+    {
+        // print address
+	    Printing_text(Printing_getInstance(), "0x00000000: ", 1, ++y, NULL);
+	    Printing_hex(Printing_getInstance(), (int)startAddress + (this->sramPage << 7) + (i << 3), 3, y, 8, NULL);
+
+        // values
+        for(j = 0; j < 8; j++)
+        {
+            // read byte from sram
+            SRAMManager_read(SRAMManager_getInstance(), (BYTE*)&value, (this->sramPage << 7) + (i << 3) + j, 1);
+            //value = startAddress[(i << 3) + j];
+
+            // print byte
+            Printing_hex(Printing_getInstance(), value, 13 + (j*3), y, 2, NULL);
+
+            // add current character to line word
+            // if outside of extended ascii range, print whitespace
+            word[j] = (value >= 32) ? (char)value : (char)32;
+            //word[j] = value ? (char)value : (char)32;
+        }
+
+        // add termination character to string
+        word[8] = (char)0;
+
+        // print word
+        Printing_text(Printing_getInstance(), word, 37, y, NULL);
+
+        // print scroll bar
+        Printing_text(Printing_getInstance(), "\x8F", 46, y, NULL);
+    }
+
+    // mark scroll bar position
+    Printing_text(Printing_getInstance(), "\x90", 46, y - 15 + ((this->sramPage) >> 2), NULL);
 }
 
 static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message)
