@@ -31,8 +31,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define OptionsSelector_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
+#define OptionsSelector_METHODS(ClassName)																\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define OptionsSelector_SET_VTABLE(ClassName)															\
@@ -69,6 +69,7 @@ void OptionsSelector_destructor(OptionsSelector this);
 void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames);
 void OptionsSelector_selectNext(OptionsSelector this);
 void OptionsSelector_selectPrevious(OptionsSelector this);
+void OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex);
 int OptionsSelector_getSelectedOption(OptionsSelector this);
 void OptionsSelector_showOptions(OptionsSelector this, int x, int y);
 

@@ -286,6 +286,31 @@ void OptionsSelector_selectPrevious(OptionsSelector this)
 	}
 }
 
+// set selected option
+void OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex)
+{
+	// check if desired option index is within bounds
+	if(optionIndex > 0 && optionIndex <= this->totalOptions)
+	{
+		if(optionIndex < this->currentOptionIndex)
+		{
+			// if desired option is smaller than current option, select previous until desired option is set
+			while(this->currentOptionIndex != optionIndex)
+			{
+				OptionsSelector_selectNext(this);
+			}
+		}
+		else if(optionIndex > this->currentOptionIndex)
+		{
+			// if desired option is larger than current option, select next until desired option is set
+			while(this->currentOptionIndex != optionIndex)
+			{
+				OptionsSelector_selectPrevious(this);
+			}
+		}
+	}
+}
+
 // retrieve selected options name
 int OptionsSelector_getSelectedOption(OptionsSelector this)
 {
