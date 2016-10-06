@@ -683,7 +683,7 @@ static u32 Game_handleInput(Game this)
     return pressedKey | releasedKey;
 }
 
-inline static u32 Game_dispatchDelayedMessages(Game this)
+inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)))
 {
 #ifdef __PROFILE_GAME
     u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
