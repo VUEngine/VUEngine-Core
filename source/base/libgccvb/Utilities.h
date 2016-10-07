@@ -30,9 +30,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 // macros for bitmask operations
-#define SET_BIT(var,bit) 	(var |= (0x01 << (bit)))
-#define CLEAR_BIT(var,bit) 	(var &= (~(0x01 << (bit))))
-#define CHECK_BIT(var,bit) 	(var & (0x01 << (bit)))
+#define SET_BIT(var,bit) 	(var |= (1 << bit))
+#define CLEAR_BIT(var,bit) 	(var &= (~(1 << bit)))
+#define TOGGLE_BIT(var,bit) (var ^= (1 << bit))
+#define CHECK_BIT(var,bit) 	(var & (1 << bit))
 
 
 //---------------------------------------------------------------------------------------------------------
