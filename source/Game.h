@@ -79,6 +79,7 @@ GameState Game_getCurrentState(Game this);
 void Game_pause(Game this, GameState pauseState);
 void Game_unpause(Game this, GameState pauseState);
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
+GameState Game_getAutomaticPauseState(Game this);
 void Game_disableKeypad(Game this);
 void Game_enableKeypad(Game this);
 void Game_addPostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);

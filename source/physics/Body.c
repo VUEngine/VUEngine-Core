@@ -705,7 +705,7 @@ void Body_printPhysics(Body this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Position", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "                             ", x, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(this->position.x ), x, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(this->position.x), x, y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(this->position.y), x+14, y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(this->position.z), x+14*2, y++, NULL);
 

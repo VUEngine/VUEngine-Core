@@ -430,7 +430,7 @@ static void Debug_removeSubPages(Debug this)
 static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	Debug_removeSubPages(this);
-	Printing_text(Printing_getInstance(), "GENERAL STATUS", 1, y++, NULL);
+	Printing_text(Printing_getInstance(), "CLOCKS STATUS", 1, y++, NULL);
 	Printing_text(Printing_getInstance(), "General clock time: ", 1, ++y, NULL);
 	Clock_print(Game_getClock(Game_getInstance()), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "In game clock's time: ", 1, ++y, NULL);
@@ -440,13 +440,25 @@ static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((un
 	Printing_text(Printing_getInstance(), "Physics clock's time: ", 1, ++y, NULL);
 	Clock_print(GameState_getPhysicsClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
 
-	Printing_text(Printing_getInstance(), "STAGE STATUS", 1, y++ + 3, NULL);
-	Printing_text(Printing_getInstance(), "Entities: ", 1, ++y + 3, NULL);
-	Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, GameState_getStage(this->gameState))), 14, y + 3, NULL);
-	Printing_text(Printing_getInstance(), "UI Entities: ", 1, ++y + 3, NULL);
-
+	Printing_text(Printing_getInstance(), "STAGE STATUS", 1, y++, NULL);
+	Printing_text(Printing_getInstance(), "Entities: ", 1, ++y, NULL);
+	Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, GameState_getStage(this->gameState))), 14, y, NULL);
+	Printing_text(Printing_getInstance(), "UI Entities: ", 1, ++y, NULL);
 	UI ui = Stage_getUI(GameState_getStage(this->gameState));
-	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 14, y + 3, NULL);
+	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 14, y, NULL);
+	y+=3;
+
+	Printing_text(Printing_getInstance(), "GAME STATUS", 1, y++, NULL);
+	Printing_text(Printing_getInstance(), "Auto Pause State:", 1, ++y, NULL);
+	GameState autoPauseState = Game_getAutomaticPauseState(Game_getInstance());
+	if(autoPauseState)
+	{
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(Game_getAutomaticPauseState(Game_getInstance())), 19, y, NULL);
+	}
+	else
+	{
+		Printing_text(Printing_getInstance(), "none", 19, y, NULL);
+	}
 }
 
 static void Debug_showMemoryStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
@@ -693,7 +705,7 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
 
-		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 8);
+		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 7);
 		Debug_dimmGame(this);
 	}
 	else if(BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) > this->bgmapSegment)
@@ -716,7 +728,7 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 		this->bgmapSegment = -1;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
-		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 8);
+		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 7);
 		Debug_dimmGame(this);
 	}
 }

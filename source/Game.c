@@ -1391,8 +1391,16 @@ void Game_unpause(Game this, GameState pauseState)
 // set auto pause state
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState)
 {
-	ASSERT(this, "Game::setAutoPause: null this");
+	ASSERT(this, "Game::setAutomaticPauseState: null this");
 	this->automaticPauseState = automaticPauseState;
+}
+
+// get auto pause state
+GameState Game_getAutomaticPauseState(Game this)
+{
+	ASSERT(this, "Game::getAutomaticPauseState: null this");
+
+	return this->automaticPauseState;
 }
 
 // show auto pause screen
