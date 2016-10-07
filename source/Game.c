@@ -311,10 +311,10 @@ void Game_start(Game this, GameState state)
 	ASSERT(this, "Game::start: null this");
 	ASSERT(state, "Game::start: initial state is NULL");
 
-	// intialize SRAM
+	// initialize SRAM
 	SRAMManager_getInstance();
 
-    // initialize VPU and turn of the brightness
+    // initialize VPU and turn off the brightness
 	HardwareManager_displayOn(HardwareManager_getInstance());
     HardwareManager_lowerBrightness(HardwareManager_getInstance());
 
@@ -683,7 +683,7 @@ static u32 Game_handleInput(Game this)
     return pressedKey | releasedKey;
 }
 
-inline static u32 Game_dispatchDelayedMessages(Game this)
+inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)))
 {
 #ifdef __PROFILE_GAME
     u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
@@ -1388,7 +1388,7 @@ void Game_unpause(Game this, GameState pauseState)
 	}
 }
 
-// set auto pause flag
+// set auto pause state
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState)
 {
 	ASSERT(this, "Game::setAutoPause: null this");
