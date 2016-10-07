@@ -232,12 +232,12 @@ static void Debug_dimmGame(Debug this __attribute__ ((unused)))
 {
 	_vipRegisters[__GPLT0] = 0x50;
 	_vipRegisters[__GPLT1] = 0x50;
-	_vipRegisters[__GPLT2] = 0x54;
-	_vipRegisters[__GPLT3] = 0x54;
-	_vipRegisters[__JPLT0] = 0x54;
-	_vipRegisters[__JPLT1] = 0x54;
-	_vipRegisters[__JPLT2] = 0x54;
-	_vipRegisters[__JPLT3] = 0x54;
+	_vipRegisters[__GPLT2] = 0x50;
+	_vipRegisters[__GPLT3] = 0x50;
+	_vipRegisters[__JPLT0] = 0x50;
+	_vipRegisters[__JPLT1] = 0x50;
+	_vipRegisters[__JPLT2] = 0x50;
+	_vipRegisters[__JPLT3] = 0x50;
 
 	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
 }
@@ -438,13 +438,13 @@ static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((un
 	Printing_text(Printing_getInstance(), "Physics clock's time: ", 1, ++y, NULL);
 	Clock_print(Game_getPhysicsClock(Game_getInstance()), 26, y, NULL);
 
-	Printing_text(Printing_getInstance(), "STAGE STATUS", 20, y + 3, NULL);
-	Printing_text(Printing_getInstance(), "Entities: ", 20, ++y + 3, NULL);
-	Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, GameState_getStage(this->gameState))), 34, y + 3, NULL);
-	Printing_text(Printing_getInstance(), "UI Entities: ", 20, ++y + 3, NULL);
+	Printing_text(Printing_getInstance(), "STAGE STATUS", 1, y++ + 3, NULL);
+	Printing_text(Printing_getInstance(), "Entities: ", 1, ++y + 3, NULL);
+	Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, GameState_getStage(this->gameState))), 14, y + 3, NULL);
+	Printing_text(Printing_getInstance(), "UI Entities: ", 1, ++y + 3, NULL);
 
 	UI ui = Stage_getUI(GameState_getStage(this->gameState));
-	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 34, y + 3, NULL);
+	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 14, y + 3, NULL);
 }
 
 static void Debug_showMemoryStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
@@ -461,7 +461,6 @@ static void Debug_showMemoryStatus(Debug this, int increment __attribute__ ((unu
 
 	Debug_showSubPage(this, 0);
 }
-
 
 static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -526,8 +525,6 @@ static void Debug_memoryStatusShowThirdPage(Debug this __attribute__ ((unused)),
 static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
-
-//	typedef int (*int (*)(Object))(Object this);
 
 	ClassSizeData classesSizeData[] =
 	{
@@ -612,26 +609,35 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 {
 	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
-	int yOffset = y + 7;
+	int i = 0, j = 0;
+	int yOffset = y + 3;
+
+	// print box
+	Printing_text(Printing_getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x04", 1, yOffset-1, NULL);
+	Printing_text(Printing_getInstance(), "\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x06", 1, yOffset+16, NULL);
+	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS >> 5; i++)
+	{
+		Printing_text(Printing_getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
+	}
 
 	// each char segment has 512 slots
 	BYTE CHAR_MEMORY_MP[ __CHAR_SEGMENT_TOTAL_CHARS];
 
-	int i = 0;
-	int j = 0;
-	for(; i <  __CHAR_SEGMENT_TOTAL_CHARS; i+= 2, j++)
+	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS; i+= 2, j++)
 	{
 		CHAR_MEMORY_MP[i] = (BYTE)(j & 0xFF);
 		CHAR_MEMORY_MP[i + 1] = (BYTE)((j & 0xFF00) >> 8);
 	}
 
 	// put the map into memory calculating the number of char for each reference
-	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS / 48; i++)
+	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS >> 5; i++)
 	{
-		Mem_add((u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6)) << 1),
-				(u8*)CHAR_MEMORY_MP,
-				__SCREEN_WIDTH >> 3,
-				(this->charSegment << 9) + i * (__SCREEN_WIDTH >> 3));
+		Mem_add(
+			(u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6) + 2) << 1),
+			(u8*)CHAR_MEMORY_MP,
+			32,
+			(this->charSegment << 9) + (i << 5)
+		);
 	}
 }
 
