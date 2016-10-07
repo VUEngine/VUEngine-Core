@@ -145,7 +145,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 
 	delayMessage->telegram = telegram;
-	delayMessage->clock = Game_getInGameClock(Game_getInstance());
+	delayMessage->clock = Game_getMessagingClock(Game_getInstance());
 	delayMessage->timeOfArrival = Clock_getTime(delayMessage->clock) + delay;
 
 	VirtualList_pushFront(this->delayedMessages, delayMessage);

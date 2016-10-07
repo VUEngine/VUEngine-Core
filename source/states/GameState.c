@@ -53,8 +53,8 @@ void GameState_constructor(GameState this)
 	this->stage = NULL;
 
 	// clocks
-	this->inGameClock = __NEW(Clock);
-	this->animationsClock = __NEW(Clock);
+	this->messagingClock = __NEW(Clock);
+	this->updateClock = __NEW(Clock);
 	this->physicsClock = __NEW(Clock);
 
 	// construct the physical world and collision manager
@@ -64,7 +64,7 @@ void GameState_constructor(GameState this)
 	this->screenPosition.x = 0;
 	this->screenPosition.y = 0;
 	this->screenPosition.z = 0;
-	this->previousInGameTime = 0;
+	this->previousUpdateTime = 0;
 }
 
 // class's destructor
@@ -72,8 +72,8 @@ void GameState_destructor(GameState this)
 {
 	ASSERT(this, "GameState::destructor: null this");
 
-	__DELETE(this->inGameClock);
-	__DELETE(this->animationsClock);
+	__DELETE(this->messagingClock);
+	__DELETE(this->updateClock);
 	__DELETE(this->physicsClock);
 
 	__DELETE(this->physicalWorld);
@@ -100,7 +100,7 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 
     GameState_pauseClocks(this);
 
-	Clock_start(this->inGameClock);
+	Clock_start(this->messagingClock);
 }
 
 // state's execute
@@ -109,12 +109,12 @@ void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
 	ASSERT(this, "GameState::execute: null this");
 	ASSERT(this->stage, "GameState::execute: null stage");
 
-	if(!Clock_isPaused(this->inGameClock))
+	if(!Clock_isPaused(this->messagingClock))
 	{
 		// update the stage
-		__VIRTUAL_CALL(Container, update, this->stage, Clock_getTime(this->inGameClock) - this->previousInGameTime);
+		__VIRTUAL_CALL(Container, update, this->stage, Clock_getTime(this->updateClock) - this->previousUpdateTime);
 
-		this->previousInGameTime = Clock_getTime(this->inGameClock);
+		this->previousUpdateTime = Clock_getTime(this->updateClock);
 	}
 }
 
@@ -141,7 +141,7 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::suspend: null this");
 
-	Clock_pause(this->inGameClock, true);
+	Clock_pause(this->messagingClock, true);
 
 #ifdef __DEBUG_TOOLS
 	if(!Game_isEnteringSpecialMode(Game_getInstance()))
@@ -242,7 +242,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 #endif
 
 	// unpause clock
-	Clock_pause(this->inGameClock, false);
+	Clock_pause(this->messagingClock, false);
 }
 
 // state's on message
@@ -404,23 +404,23 @@ Stage GameState_getStage(GameState this)
 	return this->stage;
 }
 
-Clock GameState_getInGameClock(GameState this)
+Clock GameState_getMessagingClock(GameState this)
 {
-	ASSERT(this, "GameState::getInGameClock: null this");
+	ASSERT(this, "GameState::getMessagingClock: null this");
 
-	return this->inGameClock;
+	return this->messagingClock;
 }
 
-Clock GameState_getAnimationsClock(GameState this)
+Clock GameState_getUpdateClock(GameState this)
 {
-	ASSERT(this, "GameState::getAnimationsClock: null this");
+	ASSERT(this, "GameState::getUpdateClock: null this");
 
-	return this->animationsClock;
+	return this->updateClock;
 }
 
 Clock GameState_getPhysicsClock(GameState this)
 {
-	ASSERT(this, "GameState::getAnimationsClock: null this");
+	ASSERT(this, "GameState::getPhysicsClock: null this");
 
 	return this->physicsClock;
 }
@@ -429,19 +429,19 @@ void GameState_startClocks(GameState this)
 {
 	ASSERT(this, "GameState::startClocks: null this");
 
-	Clock_start(this->inGameClock);
-	Clock_start(this->animationsClock);
+	Clock_start(this->messagingClock);
+	Clock_start(this->updateClock);
 	Clock_start(this->physicsClock);
 
-	this->previousInGameTime = Clock_getTime(this->inGameClock);
+	this->previousUpdateTime = Clock_getTime(this->messagingClock);
 }
 
 void GameState_stopClocks(GameState this)
 {
 	ASSERT(this, "GameState::stopClocks: null this");
 
-	Clock_stop(this->inGameClock);
-	Clock_stop(this->animationsClock);
+	Clock_stop(this->messagingClock);
+	Clock_stop(this->updateClock);
 	Clock_stop(this->physicsClock);
 }
 
@@ -449,8 +449,8 @@ void GameState_pauseClocks(GameState this)
 {
 	ASSERT(this, "GameState::pauseClocks: null this");
 
-	Clock_pause(this->inGameClock, true);
-	Clock_pause(this->animationsClock, true);
+	Clock_pause(this->messagingClock, true);
+	Clock_pause(this->updateClock, true);
 	Clock_pause(this->physicsClock, true);
 }
 
@@ -458,23 +458,23 @@ void GameState_resumeClocks(GameState this)
 {
 	ASSERT(this, "GameState::resumeClocks: null this");
 
-	Clock_pause(this->inGameClock, false);
-	Clock_pause(this->animationsClock, false);
+	Clock_pause(this->messagingClock, false);
+	Clock_pause(this->updateClock, false);
 	Clock_pause(this->physicsClock, false);
 }
 
-void GameState_startInGameClock(GameState this)
+void GameState_startMessagingClock(GameState this)
 {
 	ASSERT(this, "GameState::startInGameClock: null this");
 
-	Clock_start(this->inGameClock);
+	Clock_start(this->messagingClock);
 }
 
 void GameState_startAnimations(GameState this)
 {
 	ASSERT(this, "GameState::startAnimations: null this");
 
-	Clock_start(this->animationsClock);
+	Clock_start(this->updateClock);
 }
 
 void GameState_startPhysics(GameState this)
@@ -488,14 +488,14 @@ void GameState_pauseInGameClock(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pauseInGameClock: null this");
 
-	Clock_pause(this->inGameClock, pause);
+	Clock_pause(this->messagingClock, pause);
 }
 
 void GameState_pauseAnimations(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pauseAnimations: null this");
 
-	Clock_pause(this->animationsClock, pause);
+	Clock_pause(this->updateClock, pause);
 }
 
 void GameState_pausePhysics(GameState this, bool pause)

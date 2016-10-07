@@ -434,9 +434,9 @@ static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((un
 	Printing_text(Printing_getInstance(), "General clock time: ", 1, ++y, NULL);
 	Clock_print(Game_getClock(Game_getInstance()), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "In game clock's time: ", 1, ++y, NULL);
-	Clock_print(GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
+	Clock_print(GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "Animations clock's time: ", 1, ++y, NULL);
-	Clock_print(GameState_getAnimationsClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
+	Clock_print(GameState_getUpdateClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "Physics clock's time: ", 1, ++y, NULL);
 	Clock_print(GameState_getPhysicsClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
 
