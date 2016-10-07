@@ -234,11 +234,11 @@ void __attribute__ ((noinline)) Printing_int(Printing this, int value, int x, in
 	}
 }
 
-void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, int x, int y, const char* font)
+void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, int x, int y, u8 length, const char* font)
 {
 	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
-	Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value),16,8), __PRINTING_PALETTE, font);
+	Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value), 16, length), __PRINTING_PALETTE, font);
 }
 
 void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x, int y, const char* font)

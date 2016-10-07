@@ -370,7 +370,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
     if(!*(u32*)this)
     {
         Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
-        Printing_hex(Printing_getInstance(), (u32)this, 18, 15, NULL);
+        Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
         NM_ASSERT(false, "Object::getCast: deleted this");
 	}
 

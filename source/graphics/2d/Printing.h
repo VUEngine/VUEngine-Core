@@ -94,7 +94,7 @@ void Printing_render(Printing this, int textLayer);
 void Printing_loadFonts(Printing this);
 void Printing_clear(Printing this);
 void Printing_int(Printing this, int value, int x, int y, const char* font);
-void Printing_hex(Printing this, WORD value, int x, int y, const char* font);
+void Printing_hex(Printing this, WORD value, int x, int y, u8 length, const char* font);
 void Printing_float(Printing this, float value, int x, int y, const char* font);
 void Printing_text(Printing this, const char *string, int x, int y, const char* font);
 Size Printing_getTextSize(Printing this, const char* string, const char* font);

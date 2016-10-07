@@ -314,7 +314,7 @@ void ParamTableManager_print(ParamTableManager this, int x, int y)
 	Printing_int(Printing_getInstance(), this->used, x + xDisplacement, y, NULL);
 
 	Printing_text(Printing_getInstance(), "ParamBase:          ", x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), this->paramTableBase, x + xDisplacement, y, NULL);
+	Printing_hex(Printing_getInstance(), this->paramTableBase, x + xDisplacement, y, 8, NULL);
 	Printing_text(Printing_getInstance(), "ParamEnd:           ", x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), __PARAM_TABLE_END, x + xDisplacement, y, NULL);
+	Printing_hex(Printing_getInstance(), __PARAM_TABLE_END, x + xDisplacement, y, 8, NULL);
 }
