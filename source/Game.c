@@ -380,7 +380,7 @@ static void Game_setNextState(Game this, GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
+				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 
@@ -406,7 +406,7 @@ static void Game_setNextState(Game this, GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
+			    MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
 				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
 			}
 
@@ -1166,19 +1166,19 @@ Clock Game_getClock(Game this)
 }
 
 // retrieve in game clock
-Clock Game_getInGameClock(Game this)
+Clock Game_getMessagingClock(Game this)
 {
-	ASSERT(this, "Game::getInGameClock: null this");
+	ASSERT(this, "Game::getMessagingClock: null this");
 
-	return GameState_getInGameClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 // retrieve animations' clock
-Clock Game_getAnimationsClock(Game this)
+Clock Game_getUpdateClock(Game this)
 {
-	ASSERT(this, "Game::getAnimationsClock: null this");
+	ASSERT(this, "Game::getUpdateClock: null this");
 
-	return GameState_getAnimationsClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState_getUpdateClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 // retrieve in physics' clock

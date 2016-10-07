@@ -63,14 +63,14 @@
         int canStream;																					\
         /* must save to allow pause */																	\
         VBVec3D screenPosition;																			\
-        /* timer to use in game */																		\
-        Clock inGameClock;																				\
-        /* timer to use in game for animations */														\
-        Clock animationsClock;																			\
-        /* timer to use for physics */																	\
+        /* clock for messaging */																		\
+        Clock messagingClock;																			\
+        /* clock for cycle update */														            \
+        Clock updateClock;																			    \
+        /* clock for physics */																	        \
         Clock physicsClock;																				\
         /* previous update time */																		\
-        u32 previousInGameTime;																			\
+        u32 previousUpdateTime;																			\
 
 
 __CLASS(GameState);
@@ -95,14 +95,14 @@ int GameState_propagateMessage(GameState this, int message);
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 void GameState_setCanStream(GameState this, int canStream);
 Stage GameState_getStage(GameState this);
-Clock GameState_getInGameClock(GameState this);
-Clock GameState_getAnimationsClock(GameState this);
+Clock GameState_getMessagingClock(GameState this);
+Clock GameState_getUpdateClock(GameState this);
 Clock GameState_getPhysicsClock(GameState this);
 void GameState_startClocks(GameState this);
 void GameState_stopClocks(GameState this);
 void GameState_pauseClocks(GameState this);
 void GameState_resumeClocks(GameState this);
-void GameState_startInGameClock(GameState this);
+void GameState_startMessagingClock(GameState this);
 void GameState_startAnimations(GameState this);
 void GameState_startPhysics(GameState this);
 void GameState_pauseInGameClock(GameState this, bool pause);

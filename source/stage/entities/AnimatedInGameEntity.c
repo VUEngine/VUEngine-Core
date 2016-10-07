@@ -154,7 +154,10 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 		InGameEntity_setGap(__SAFE_CAST(InGameEntity, this));
 	}
 
-    AnimatedInGameEntity_animate(this);
+    if(elapsedTime)
+    {
+        AnimatedInGameEntity_animate(this);
+    }
 }
 
 // update animations

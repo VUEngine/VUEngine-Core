@@ -42,8 +42,6 @@ __CLASS(SRAMManager);
 // forward declare game's custom user's data struct
 struct UserData;
 
-extern const struct UserData* _userData;
-
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
