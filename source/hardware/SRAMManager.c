@@ -30,7 +30,7 @@
 
 #define	__SRAM_ACCESS_DELAY				200
 #define	__SRAM_DUMMY_READ_CYCLES		8
-#define	__SRAM_DUMMY_READ_LENGHT		100
+#define	__SRAM_DUMMY_READ_LENGTH		100
 
 extern u32 _sram_bss_end;
 
@@ -91,8 +91,21 @@ static void SRAMManager_initialize(SRAMManager this)
 	int i = __SRAM_DUMMY_READ_CYCLES;
 	for(; i--;)
 	{
-		u32 dummyChar[__SRAM_DUMMY_READ_LENGHT];
+		u32 dummyChar[__SRAM_DUMMY_READ_LENGTH];
 		SRAMManager_read(this, (BYTE*)&dummyChar, i, sizeof(dummyChar));
+	}
+}
+
+void SRAMManager_clear(SRAMManager this)
+{
+	ASSERT(this, "SRAMManager::clear: null this");
+
+	int i = 0;
+
+	// TODO: max value should not be hardcoded
+	for(; i < 8192; i++)
+	{
+		this->saveSpaceStartAddress[i] = 0;
 	}
 }
 
