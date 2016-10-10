@@ -607,10 +607,9 @@ static void Debug_charMemoryShowStatus(Debug this __attribute__ ((unused)), int 
 	else if(charSegments > this->charSegment)
 	{
 		Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
-		Printing_text(Printing_getInstance(), "Chars:               ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), "Chars:      -     ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW, x + 7, y, NULL);
-		Printing_text(Printing_getInstance(), "                     ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW, x + 7, y, NULL);
+		Printing_int(Printing_getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW - 1, x + 14, y, NULL);
 
 		Debug_charMemoryShowMemory(this, increment, x, y);
 		Debug_lightUpGame(this);
@@ -635,7 +634,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 	Printing_text(Printing_getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x04", 1, yOffset-1, NULL);
 	Printing_text(Printing_getInstance(), "\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x06", 1, yOffset+16, NULL);
 
-	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS >> 5; i++)
+	for(i = 0; i < 512 >> 5; i++)
 	{
 		Printing_text(Printing_getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
 	}
