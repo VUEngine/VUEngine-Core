@@ -153,7 +153,6 @@ void Stage_showStreamingProfiling(Stage this, int x, int y);
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
 u32 VIPManager_writeDRAM(VIPManager this);
 
-
 #ifdef __PROFILE_GAME
 static u32 updateVisualsTotalTime = 0;
 static u32 updateLogicTotalTime = 0;
@@ -164,7 +163,6 @@ static u32 handleInputTotalTime = 0;
 static u32 dispatchDelayedMessageTotalTime = 0;
 static u32 renderingTotalTime = 0;
 
-static u32 gameFrameHighestTime = 0;
 static u32 updateVisualsHighestTime = 0;
 static u32 updateLogicHighestTime = 0;
 static u32 streamingHighestTime = 0;
@@ -188,6 +186,12 @@ static u32 processCollisionsProcessTime = 0;
 static u32 renderingProcessTime = 0;
 
 #endif
+
+
+#ifdef __PROFILE_GAME_DETAILED
+static u32 gameFrameHighestTime = 0;
+#endif
+
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------

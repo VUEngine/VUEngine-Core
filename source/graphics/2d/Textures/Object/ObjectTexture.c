@@ -88,7 +88,7 @@ void ObjectTexture_write(ObjectTexture this)
 	}
 
 	int palette = this->palette << 14;
-	int charLocation = (CharSet_getSegment(this->charSet) << 9) + CharSet_getOffset(this->charSet);
+	int charLocation = CharSet_getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;
 	int cols = this->textureDefinition->cols;
 	BYTE* framePointer = this->textureDefinition->bgmapDefinition + this->bgmapDisplacement;

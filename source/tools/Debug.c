@@ -81,6 +81,16 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 											 CLASS' MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define DISPLACEMENT_STEP_X	                512 - 384
+#define DISPLACEMENT_STEP_Y	                512 - 224
+
+#define __CHARS_PER_SEGMENT_TO_SHOW         512
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -390,9 +400,6 @@ static void Debug_showSubPage(Debug this, int increment)
 	}
 }
 
-#define DISPLACEMENT_STEP_X	512 - 384
-#define DISPLACEMENT_STEP_Y	512 - 224
-
 // displace view to the left
 void Debug_displaceLeft(Debug this)
 {
@@ -584,9 +591,11 @@ static void Debug_charMemoryShowStatus(Debug this __attribute__ ((unused)), int 
 {
 	this->charSegment += increment;
 
+	int charSegments = __CHAR_SEGMENT_TOTAL_CHARS / __CHARS_PER_SEGMENT_TO_SHOW;
+
 	if(-1 > this->charSegment)
 	{
-		this->charSegment = __CHAR_SEGMENTS - 1;
+		this->charSegment = charSegments - 1;
 	}
 
 	if(-1 == this->charSegment)
@@ -595,17 +604,13 @@ static void Debug_charMemoryShowStatus(Debug this __attribute__ ((unused)), int 
 		CharSetManager_print(CharSetManager_getInstance(), x, y);
 		Debug_dimmGame(this);
 	}
-	else if(__CHAR_SEGMENTS > this->charSegment)
+	else if(charSegments > this->charSegment)
 	{
 		Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
-		Printing_text(Printing_getInstance(), "Segment: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), this->charSegment, x + 16, y, NULL);
-		Printing_text(Printing_getInstance(), "Total CharSets: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), CharSetManager_getTotalCharSets(CharSetManager_getInstance(), this->charSegment), x + 16, y, NULL);
-		Printing_text(Printing_getInstance(), "Used chars: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), CharSetManager_getTotalUsedChars(CharSetManager_getInstance(), this->charSegment), x + 16, y, NULL);
-		Printing_text(Printing_getInstance(), "Free chars: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), CharSetManager_getTotalFreeChars(CharSetManager_getInstance(), this->charSegment), x + 16, y, NULL);
+		Printing_text(Printing_getInstance(), "Chars:               ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW, x + 7, y, NULL);
+		Printing_text(Printing_getInstance(), "                     ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW, x + 7, y, NULL);
 
 		Debug_charMemoryShowMemory(this, increment, x, y);
 		Debug_lightUpGame(this);
@@ -629,28 +634,29 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 	// print box
 	Printing_text(Printing_getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x04", 1, yOffset-1, NULL);
 	Printing_text(Printing_getInstance(), "\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x06", 1, yOffset+16, NULL);
+
 	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS >> 5; i++)
 	{
 		Printing_text(Printing_getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
 	}
 
-	// each char segment has 512 slots
-	BYTE CHAR_MEMORY_MP[ __CHAR_SEGMENT_TOTAL_CHARS];
+	BYTE charMemoryMap[__CHAR_SEGMENT_TOTAL_CHARS];
 
-	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS; i+= 2, j++)
+	for(i = 0, j = this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW; i <  __CHARS_PER_SEGMENT_TO_SHOW; i+= 2, j++)
 	{
-		CHAR_MEMORY_MP[i] = (BYTE)(j & 0xFF);
-		CHAR_MEMORY_MP[i + 1] = (BYTE)((j & 0xFF00) >> 8);
+		charMemoryMap[i] = (BYTE)(j & 0xFF);
+		charMemoryMap[i + 1] = (BYTE)((j & 0xFF00) >> 8);
 	}
 
 	// put the map into memory calculating the number of char for each reference
-	for(i = 0; i <  __CHAR_SEGMENT_TOTAL_CHARS >> 5; i++)
+	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW >> 5; i++)
 	{
-		Mem_add(
+		Mem_add
+		(
 			(u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6) + 2) << 1),
-			(u8*)CHAR_MEMORY_MP,
+			(u8*)charMemoryMap,
 			32,
-			(this->charSegment << 9) + (i << 5)
+			(i << 5)
 		);
 	}
 }

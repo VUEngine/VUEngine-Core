@@ -26,7 +26,7 @@
 extern int abs(int);
 extern float fabsf(float);
 
-#define __ABS(number)   ((number + (number >> 31)) ^ (number >> 31))
+#define __ABS(number)   (((number) + ((number) >> 31)) ^ ((number) >> 31))
 
 // fixed point macros
 #define fix7_9					s16

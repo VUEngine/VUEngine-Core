@@ -70,9 +70,7 @@
         /* memory displacement */																		\
         u16 offset;																						\
         /* how many textures are using me */															\
-        u8 usageCount;																					\
-        /* memory segment */																			\
-        u8 segment;																						\
+        u16 usageCount;																					\
 
 __CLASS(CharSet);
 
@@ -106,7 +104,7 @@ typedef const CharSetDefinition CharSetROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, u8 segment, u16 offset);
+__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, u16 offset);
 
 void CharSet_destructor(CharSet this);
 void CharSet_increaseUsageCount(CharSet this);
@@ -117,7 +115,6 @@ void CharSet_setOffset(CharSet this, u16 offset);
 void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition);
 CharSetDefinition* CharSet_getCharSetDefinition(CharSet this);
 u32 CharSet_getNumberOfChars(CharSet this);
-u32 CharSet_getSegment(CharSet this);
 void CharSet_write(CharSet this);
 void CharSet_rewrite(CharSet this);
 void CharSet_setCharDefinitionDisplacement(CharSet this, u16 charDefinitionDisplacement);

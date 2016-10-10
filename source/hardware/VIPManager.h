@@ -114,8 +114,7 @@ extern volatile u16* _vipRegisters;
 #define __BGMAP_SPACE_BASE_ADDRESS		    0x00020000					// Base address of BGMap Memory
 #define __BGMAP_SEGMENT(b)		                    (__BGMAP_SPACE_BASE_ADDRESS + (b * 0x2000))	// Address of BGMap b (0 <= b <= 13)
 
-#define __CHAR_SPACE_BASE_ADDRESS		0x00006000
-#define __CHAR_SEGMENT(b)	(__CHAR_SPACE_BASE_ADDRESS + (b*0x8000))		// Address of CharSet b (0 <= b <= 3)
+#define __CHAR_SPACE_BASE_ADDRESS		    0x00078000
 
 #define __OBJECT_SPACE_BASE_ADDRESS		0x0003E000  // Base address of Object Attribute Memory
 

@@ -39,7 +39,7 @@ __CLASS_DEFINITION(CharSet, Object);
 
 // globals
 
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset);
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,11 +47,11 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition, u8 segment, u16 offset)
-__CLASS_NEW_END(CharSet, charSetDefinition, segment, offset);
+__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition, u16 offset)
+__CLASS_NEW_END(CharSet, charSetDefinition, offset);
 
 // class's constructor
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u8 segment, u16 offset)
+static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset)
 {
 	__CONSTRUCT_BASE(Object);
 
@@ -61,7 +61,6 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 
 	// set the offset
 	this->offset = offset;
-	this->segment = segment;
 	this->usageCount = 1;
 
 	// I will fire events, so save some time when preloaded by already creating the event list
@@ -110,7 +109,7 @@ u32 CharSet_getAllocationType(CharSet this)
 	return this->charSetDefinition->allocationType;
 }
 
-// retrieve charset's offset within char segment
+// retrieve charset's offset within char memory
 u32 CharSet_getOffset(CharSet this)
 {
 	ASSERT(this, "CharSet::getOffset: null this");
@@ -118,11 +117,11 @@ u32 CharSet_getOffset(CharSet this)
 	return this->offset;
 }
 
-// set charset's offset within the char segment
+// set charset's offset within the char memory
 void CharSet_setOffset(CharSet this, u16 offset)
 {
 	ASSERT(this, "CharSet::setOffset: null this");
-	ASSERT(offset < 512, "CharSet::setOffset: offset out of bounds");
+	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
 	this->offset = offset;
 }
@@ -151,21 +150,13 @@ u32 CharSet_getNumberOfChars(CharSet this)
 	return this->charSetDefinition->numberOfChars;
 }
 
-// get charset's segment
-u32 CharSet_getSegment(CharSet this)
-{
-	ASSERT(this, "CharSet::getSegment: null this");
-
-	return this->segment;
-}
-
 // write char on memory
 void CharSet_write(CharSet this)
 {
 	ASSERT(this, "CharSet::write: null this");
 
 	//write to char memory
-	Mem_copy((u8*)__CHAR_SEGMENT((u32)this->segment) + (((u32)this->offset) << 4), (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement), (u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4);
+	Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4), (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement), (u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4);
 }
 
 // rewrite char on memory
@@ -195,7 +186,7 @@ void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
 
 	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
 	{
-		Mem_copy((u8*)__CHAR_SEGMENT((u32)this->segment) + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
+		Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
 	}
 }
 
@@ -218,11 +209,11 @@ void CharSet_putPixel(CharSet this, u32 charToReplace, Point* charSetPixel, BYTE
 			0x00, 0x00,
 		};
 
-		Mem_copy(auxChar, (u8*)__CHAR_SEGMENT((u32)this->segment) + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
+		Mem_copy(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
 
 		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
-		Mem_copy((u8*)__CHAR_SEGMENT((u32)this->segment) + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
+		Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
 	}
 }

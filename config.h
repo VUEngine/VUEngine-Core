@@ -77,6 +77,7 @@
 // alert transformation - VIP unsync warning
 #define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 
+
 //---------------------------------------------------------------------------------------------------------
 // 											OPTICS / PROJECTION
 //---------------------------------------------------------------------------------------------------------
@@ -172,15 +173,15 @@
 	__BLOCK_DEFINITION(136, 10)																			\
 	__BLOCK_DEFINITION(128, 45)																			\
 	__BLOCK_DEFINITION(112, 30)																			\
-	__BLOCK_DEFINITION(100, 20)																			\
+	__BLOCK_DEFINITION(100, 28)																			\
 	__BLOCK_DEFINITION(88, 80)																			\
 	__BLOCK_DEFINITION(76, 10)																			\
-	__BLOCK_DEFINITION(68, 50)																			\
+	__BLOCK_DEFINITION(68, 58)																			\
 	__BLOCK_DEFINITION(32, 10)																			\
 	__BLOCK_DEFINITION(28, 200)																			\
 	__BLOCK_DEFINITION(24, 100)																			\
-	__BLOCK_DEFINITION(20, 650)																			\
-	__BLOCK_DEFINITION(16, 450)						    												\
+	__BLOCK_DEFINITION(20, 670)																			\
+	__BLOCK_DEFINITION(16, 460)						    												\
 
 
 #undef __SET_MEMORY_POOL_ARRAYS
@@ -211,12 +212,8 @@
 // 											CHAR MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
-// number of char segments
-// the fourth segment is used for text allocation, changing this value to 4 may cause text corruption
-#define __CHAR_SEGMENTS							3
-
 // number of chars per char segment
-#define __CHAR_SEGMENT_TOTAL_CHARS 				512
+#define __CHAR_SEGMENT_TOTAL_CHARS 				(2048 - 512)
 
 
 //---------------------------------------------------------------------------------------------------------
