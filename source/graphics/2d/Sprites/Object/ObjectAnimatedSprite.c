@@ -64,7 +64,7 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
 
-//destructor
+// destructor
 void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::destructor: null this");
@@ -109,11 +109,10 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 			{
 				CharSet charSet = Texture_getCharSet(this->texture, true);
 
-				// move charset's charset's definition to the next frame chars
-				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
-						(animationFrame << 4));
+				// move charset definition to the next frame chars
+				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) * (animationFrame << 4));
 
-				//write charset
+				// write charset
 				CharSet_write(charSet);
 			}
 

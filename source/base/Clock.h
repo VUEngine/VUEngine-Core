@@ -73,6 +73,7 @@ u32 Clock_getTime(Clock this);
 u32 Clock_getElapsedTime(Clock this);
 int Clock_getTimeInCurrentSecond(Clock this);
 void Clock_setTimeInSeconds(Clock this, float totalSeconds);
+void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds);
 void Clock_setTime(Clock this, int hours, int minutes, int seconds);
 void Clock_start(Clock this);
 void Clock_stop(Clock this);

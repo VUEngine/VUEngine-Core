@@ -68,7 +68,7 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 	this->frameDelay = 0;
 	this->frameDelayDelta = 1 << __FRAME_CYCLE;
 
-	// intialize animation function
+	// initialize animation function
 	this->animationFunction = NULL;
 
 	// not playing anything yet

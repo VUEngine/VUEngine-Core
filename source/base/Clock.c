@@ -302,6 +302,22 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 }
 
 /**
+ * Set clock's total elapsed time
+ *
+ * @memberof            Clock
+ * @public
+ *
+ * @param this          Function scope
+ * @param milliSeconds
+ */
+void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds)
+{
+	ASSERT(this, "Clock::setTimeInSeconds: null this");
+
+	this->milliSeconds = milliSeconds;
+}
+
+/**
  * Start the clock
  *
  * @memberof    Clock

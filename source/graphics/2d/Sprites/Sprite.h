@@ -81,7 +81,7 @@
         Object_ATTRIBUTES																				\
         /* displacement modifier to achieve better control over display */								\
         VBVec3D displacement;																			\
-        /* super's attributes */																		\
+        /* animation controller */																		\
         AnimationController animationController;														\
         /* this is our texture */																		\
         Texture texture;																				\
@@ -95,7 +95,9 @@
         u8 worldLayer;																					\
         /* h-bias max amplitude */																		\
         /* int hbiasAmplitude; */																		\
+        /*  */																							\
         bool renderFlag;																				\
+        /*  */																							\
         bool hidden;																					\
         /* update animation */																            \
         bool writeAnimationFrame;															            \
@@ -183,11 +185,7 @@ void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
 
-
-//---------------------------------------------------------------------------------------------------------
-// 										Animation
-//---------------------------------------------------------------------------------------------------------
-
+// Animation
 void Sprite_update(Sprite this);
 void Sprite_animate(Sprite this);
 void Sprite_pause(Sprite this, bool pause);
@@ -205,16 +203,11 @@ void Sprite_rotate(Sprite this, const Rotation* rotation);
 int Sprite_getHalfWidth(Sprite this);
 int Sprite_getHalfHeight(Sprite this);
 
-
-//---------------------------------------------------------------------------------------------------------
-// 										Sprites FXs
-//---------------------------------------------------------------------------------------------------------
-
 // direct draw
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);
 void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
-// Affine FX
+// affine FX
 void Sprite_applyAffineTransformations(Sprite this);
 void Sprite_applyHbiasTransformations(Sprite this);
 
