@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <CharSet.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,11 +57,8 @@ __CLASS(Printing);
 
 typedef struct FontDefinition
 {
-    // font chars definition pointer
-	BYTE* fontCharDefinition;
-
-	// number of characters in font
-	u16 characterCount;
+    // font charset definition pointer
+	CharSetDefinition* charSetDefinition;
 
 	// at which character number the font starts
 	s16 offset;
@@ -75,13 +73,6 @@ typedef struct FontDefinition
 
 typedef const FontDefinition FontROMDef;
 
-typedef struct FontData
-{
-	const struct FontDefinition * fontDefinition;
-    u16 memoryOffset;
-
-} FontData;
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												PUBLIC INTERFACE
@@ -91,7 +82,6 @@ Printing Printing_getInstance();
 
 void Printing_destructor(Printing this);
 void Printing_render(Printing this, int textLayer);
-void Printing_loadFonts(Printing this);
 void Printing_clear(Printing this);
 void Printing_int(Printing this, int value, int x, int y, const char* font);
 void Printing_hex(Printing this, WORD value, int x, int y, u8 length, const char* font);

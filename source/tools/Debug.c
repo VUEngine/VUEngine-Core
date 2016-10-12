@@ -591,7 +591,7 @@ static void Debug_charMemoryShowStatus(Debug this __attribute__ ((unused)), int 
 {
 	this->charSegment += increment;
 
-	int charSegments = __CHAR_SEGMENT_TOTAL_CHARS / __CHARS_PER_SEGMENT_TO_SHOW;
+	int charSegments = __CHAR_MEMORY_TOTAL_CHARS / __CHARS_PER_SEGMENT_TO_SHOW;
 
 	if(-1 > this->charSegment)
 	{
@@ -639,7 +639,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 		Printing_text(Printing_getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
 	}
 
-	BYTE charMemoryMap[__CHAR_SEGMENT_TOTAL_CHARS];
+	BYTE charMemoryMap[__CHAR_MEMORY_TOTAL_CHARS];
 
 	for(i = 0, j = this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW; i <  __CHARS_PER_SEGMENT_TO_SHOW; i+= 2, j++)
 	{

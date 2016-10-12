@@ -144,7 +144,7 @@ u32 InGameEntity_getInGameType(InGameEntity this)
 	return this->inGameEntityDefinition->inGameType;
 }
 
-// does it moves?
+// does it move?
 bool InGameEntity_moves(InGameEntity this __attribute__ ((unused)))
 {
 	ASSERT(this, "InGameEntity::moves: null this");

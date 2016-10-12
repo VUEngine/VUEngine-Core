@@ -423,9 +423,6 @@ static void Game_setNextState(Game this, GameState state)
     // enable hardware pad read
     //HardwareManager_enableKeypad(HardwareManager_getInstance());
 
-	// load chars into graphic memory
-	Printing_loadFonts(Printing_getInstance());
-
 	// disable rendering
 	HardwareManager_enableRendering(HardwareManager_getInstance());
 
@@ -489,9 +486,6 @@ void Game_reset(Game this)
 	SpriteManager_reset(SpriteManager_getInstance());
 	MBackgroundManager_reset(MBackgroundManager_getInstance());
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
-
-	// load chars into graphic memory
-	Printing_loadFonts(Printing_getInstance());
 
 	// TODO
 	//SoundManager_getInstance();

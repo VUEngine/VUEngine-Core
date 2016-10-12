@@ -212,15 +212,15 @@
 // 											CHAR MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
-// number of chars per char segment
-#define __CHAR_SEGMENT_TOTAL_CHARS 				(2048 - 512)
+// total number of available chars in char memory
+#define __CHAR_MEMORY_TOTAL_CHARS 				2048
 
 
 //---------------------------------------------------------------------------------------------------------
 // 											SPRITE MANAGEMENT
 //---------------------------------------------------------------------------------------------------------
 
-// total number of layers (basically the number of Worlds)
+// total number of layers (basically the number of worlds)
 #define __TOTAL_LAYERS							32
 
 
@@ -386,14 +386,6 @@
 // the automatic pause state is not pushed until there is only one state in the game's stack.
 // the following defines the time between checks whether the condition is met (in milliseconds)
 #define __AUTO_PAUSE_RECHECK_DELAY				(60 * 1000)
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												FONTS
-//---------------------------------------------------------------------------------------------------------
-
-// when this is defined, custom fonts are loaded instead of the default one
-#define __CUSTOM_FONTS
 
 
 //---------------------------------------------------------------------------------------------------------

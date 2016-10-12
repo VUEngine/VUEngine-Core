@@ -204,7 +204,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
         offset += CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
     }
 
-    if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_SEGMENT_TOTAL_CHARS)
+    if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
     {
         CharSet charSet = __NEW(CharSet, charSetDefinition, offset);
 
@@ -269,7 +269,7 @@ int CharSetManager_getTotalFreeChars(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
 
-	return __CHAR_SEGMENT_TOTAL_CHARS - CharSetManager_getTotalUsedChars(this);
+	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager_getTotalUsedChars(this);
 }
 
 int CharSetManager_getTotalCharSets(CharSetManager this)

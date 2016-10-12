@@ -551,7 +551,7 @@ void Actor_moveUniformly(Actor this, Velocity* velocity)
     }
 }
 
-// does it moves?
+// does it move?
 bool Actor_moves(Actor this __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::moves: null this");

@@ -83,22 +83,6 @@ void Printing_destructor(Printing this)
 	__SINGLETON_DESTROY;
 }
 
-// load font data to char memory
-void __attribute__ ((noinline)) Printing_loadFonts(Printing this __attribute__ ((unused)))
-{
-    int lastFontDefEndPos = __CHAR_SEGMENT_3_BASE_ADDRESS + (512 << 4);
-    u32 numCharsToAdd = 0;
-    u32 i = 0;
-
-    // load registered fonts to (end of) char memory
-    for(; __FONTS[i]; i++)
-    {
-        numCharsToAdd = (__FONTS[i]->characterCount * __FONTS[i]->fontSize.x * __FONTS[i]->fontSize.y) << 4;
-        lastFontDefEndPos -= numCharsToAdd;
-	    Mem_copy((u8*)(lastFontDefEndPos), (u8*)(__FONTS[i]->fontCharDefinition), numCharsToAdd);
-    }
-}
-
 // render general print output layer
 void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((unused)), int textLayer)
 {
@@ -124,39 +108,39 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
 }
 
 // get font definition and starting position in character memory
-static FontData Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
+FontDefinition* Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
 {
-    FontData fontData = {NULL, 2048};
+	// return default (e.g. first defined) font if font == null
+	if(font == NULL)
+	{
+		return __FONTS[0];
+	}
 
-	// iterate over registered fonts to find memory offset of font to use
+	// iterate over registered fonts to find definition of font to use
 	u32 j = 0;
     for(; __FONTS[j]; j++)
     {
-        fontData.fontDefinition = __FONTS[j];
-        fontData.memoryOffset -= (fontData.fontDefinition->characterCount * fontData.fontDefinition->fontSize.x * fontData.fontDefinition->fontSize.y);
-
-        if((font == NULL) || (0 == strcmp(fontData.fontDefinition->name, font)))
+        if(!strcmp(__FONTS[j]->name, font))
         {
-            break;
+    		return __FONTS[j];
         }
     }
 
-    return fontData;
+    return __FONTS[0];
 }
 
 // direct printing out method
 static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
 {
-    FontData fontData;
 	u32 i = 0,
 	    position = 0,
         startColumn = x;
-	u32  charOffsetX = 0,
+	u32 charOffsetX = 0,
 	    charOffsetY = 0;
 
-    fontData = Printing_getFontByName(this, font);
+    FontDefinition* fontDefinition = Printing_getFontByName(this, font);
 
-    u16* const	bgmapSpaceBaseAddress =	(u16*)__BGMAP_SPACE_BASE_ADDRESS;
+    u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
     // print text
 	while(string[i] && x < (__SCREEN_WIDTH >> 3))
@@ -171,31 +155,31 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 
 			case 9: // Horizontal Tab
 
-				x = (x / TAB_SIZE + 1) * TAB_SIZE * fontData.fontDefinition->fontSize.x;
+				x = (x / TAB_SIZE + 1) * TAB_SIZE * fontDefinition->fontSize.x;
 				break;
 
 			case 10: // Carriage Return
 
-				y += fontData.fontDefinition->fontSize.y;
+				y += fontDefinition->fontSize.y;
 				x = startColumn;
 				break;
 
 			default:
 
-                for(charOffsetX = 0; charOffsetX < fontData.fontDefinition->fontSize.x; charOffsetX++)
+                for(charOffsetX = 0; charOffsetX < fontDefinition->fontSize.x; charOffsetX++)
                 {
-                    for(charOffsetY = 0; charOffsetY < fontData.fontDefinition->fontSize.y; charOffsetY++)
+                    for(charOffsetY = 0; charOffsetY < fontDefinition->fontSize.y; charOffsetY++)
                     {
                         bgmapSpaceBaseAddress[(0x1000 * bgmap) + position + charOffsetX + (charOffsetY << 6)] =
                             (
                                 // start at correct font
-                                fontData.memoryOffset +
+                                CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinition->charSetDefinition)) +
 
                                 // top left char of letter
-                                ((u8)(string[i] - fontData.fontDefinition->offset) * fontData.fontDefinition->fontSize.x) +
+                                ((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) +
 
                                 // skip lower chars of multi-char fonts with y > 1
-                                ((((u8)(string[i] - fontData.fontDefinition->offset) * fontData.fontDefinition->fontSize.x) >> 5) * ((fontData.fontDefinition->fontSize.y - 1)) << 5) +
+                                ((((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) >> 5) * ((fontDefinition->fontSize.y - 1)) << 5) +
 
                                 // respective char of letter in multi-char fonts
                                 charOffsetX + (charOffsetY << 5)
@@ -204,10 +188,10 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
                     }
                 }
 
-                x += fontData.fontDefinition->fontSize.x;
+                x += fontDefinition->fontSize.x;
 				if(x >= 64)
 				{
-				    y += fontData.fontDefinition->fontSize.y;
+				    y += fontDefinition->fontSize.y;
 					x = startColumn;
 				}
 
@@ -266,7 +250,6 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x
 		decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
 	}
 
-
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
@@ -302,11 +285,11 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
 Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
 {
     Size size = {0, 0, 0};
-    FontData fontData;
+    FontDefinition* fontDefinition;
 	u16 i = 0, currentLineLength = 0;
 
-    fontData = Printing_getFontByName(this, font);
-    size.y =  fontData.fontDefinition->fontSize.y;
+    fontDefinition = Printing_getFontByName(this, font);
+    size.y =  fontDefinition->fontSize.y;
 
 	while(string[i])
 	{
@@ -318,21 +301,21 @@ Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* 
 
 			case 9: // Horizontal Tab
 
-				currentLineLength += (currentLineLength / TAB_SIZE + 1) * TAB_SIZE * fontData.fontDefinition->fontSize.x;
+				currentLineLength += (currentLineLength / TAB_SIZE + 1) * TAB_SIZE * fontDefinition->fontSize.x;
 				break;
 
 			case 10: // Carriage Return
 
-				size.y += fontData.fontDefinition->fontSize.y;
+				size.y += fontDefinition->fontSize.y;
 				currentLineLength = 0;
 				break;
 
 			default:
 
-                currentLineLength += fontData.fontDefinition->fontSize.x;
+                currentLineLength += fontDefinition->fontSize.x;
 				if(currentLineLength >= 64)
 				{
-                    size.y += fontData.fontDefinition->fontSize.y;
+                    size.y += fontDefinition->fontSize.y;
                     currentLineLength = 0;
 				}
 

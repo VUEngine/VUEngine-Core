@@ -81,7 +81,7 @@ void TriggerEntity_setDefinition(TriggerEntity this, TriggerEntityDefinition* tr
 	InGameEntity_setDefinition(__SAFE_CAST(InGameEntity, this), &triggerEntityDefinition->inGameEntityDefinition);
 }
 
-// does it moves?
+// does it move?
 bool TriggerEntity_moves(TriggerEntity this)
 {
 	ASSERT(this, "TriggerEntity::moves: null this");

@@ -14,52 +14,21 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CUSTOM_FONTS
-
-
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Printing.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
-
-extern BYTE VBJaEFontTiles[];
+#include <Fonts.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-FontROMDef VBJAENGINE_FONT =
+FontDefinition* const __FONTS[] =
 {
-    // font chars definition pointer
-	VBJaEFontTiles,
-
-	// number of characters in font
-	256,
-
-    // character number at which the font starts, allows you to skip the control characters for example
-	0,
-
-	// size of a single character (in chars) ({width, height})
-	{1, 1},
-
-	// font's name
-    "VBJaEngineFont",
-};
-
-FontROMDef* const __FONTS[] =
-{
-    &VBJAENGINE_FONT,
+    (FontDefinition*)&VBJAENGINE_FONT,
     NULL
 };
-
-
-#endif

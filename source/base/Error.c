@@ -100,8 +100,6 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	// make sure the brightness is ok
     HardwareManager_upBrightness(HardwareManager_getInstance());
 
-	Printing_loadFonts(Printing_getInstance());
-
 	//print error message to screen
 	if(0 < y)
 	{
