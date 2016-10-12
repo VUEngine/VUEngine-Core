@@ -155,7 +155,7 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 			}
 			else
 			{
-				charSet = CharSetManager_allocateCharSet(CharSetManager_getInstance(), charSetDefinition);
+				charSet = CharSetManager_allocateCharSet(this, charSetDefinition);
 			}
 
 			break;
@@ -172,7 +172,7 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 // release char graphic memory
 void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 {
-	ASSERT(this, "CharSetManager::free: null this");
+	ASSERT(this, "CharSetManager::releaseCharSet: null this");
 
 	if(CharSet_decreaseUsageCount(charSet))
 	{
@@ -215,7 +215,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
         return charSet;
     }
 
-	// if there isn't enough memory trown an exception
+	// if there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: char mem depleted");
 
 	return NULL;
