@@ -84,6 +84,18 @@ void MBackground_destructor(MBackground this)
 	__DESTROY_BASE;
 }
 
+// set definition
+void MBackground_setDefinition(MBackground this, MBackgroundDefinition* mBackgroundDefinition)
+{
+	ASSERT(this, "MBackground::setDefinition: null this");
+	ASSERT(mBackgroundDefinition, "MBackground::setDefinition: null definition");
+
+	// save definition
+	this->mBackgroundDefinition = mBackgroundDefinition;
+
+	Entity_setDefinition(__SAFE_CAST(Entity, this), (EntityDefinition*)mBackgroundDefinition);
+}
+
 void MBackground_suspend(MBackground this)
 {
 	ASSERT(this, "MBackground::suspend: null this");

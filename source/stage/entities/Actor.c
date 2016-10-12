@@ -67,7 +67,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedInGameEntity, (AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(AnimatedInGameEntity, &actorDefinition->animatedInGameEntityDefinition, id, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;
@@ -112,6 +112,17 @@ void Actor_destructor(Actor this)
 	__DESTROY_BASE;
 }
 
+// set definition
+void Actor_setDefinition(Actor this, ActorDefinition* actorDefinition)
+{
+	ASSERT(this, "Actor::setDefinition: null this");
+	ASSERT(actorDefinition, "Actor::setDefinition: null definition");
+
+	// save definition
+	this->actorDefinition = actorDefinition;
+
+	AnimatedInGameEntity_setDefinition(__SAFE_CAST(AnimatedInGameEntity, this), &actorDefinition->animatedInGameEntityDefinition);
+}
 
 //set class's local position
 void Actor_setLocalPosition(Actor this, const VBVec3D* position)

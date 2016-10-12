@@ -69,6 +69,18 @@ void TriggerEntity_destructor(TriggerEntity this)
 	__DESTROY_BASE;
 }
 
+// set definition
+void TriggerEntity_setDefinition(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition)
+{
+	ASSERT(this, "TriggerEntity::setDefinition: null this");
+	ASSERT(triggerEntityDefinition, "TriggerEntity::setDefinition: null definition");
+
+	// save definition
+	this->triggerEntityDefinition = triggerEntityDefinition;
+
+	InGameEntity_setDefinition(__SAFE_CAST(InGameEntity, this), &triggerEntityDefinition->inGameEntityDefinition);
+}
+
 // does it moves?
 bool TriggerEntity_moves(TriggerEntity this)
 {

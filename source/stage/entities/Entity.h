@@ -91,7 +91,7 @@
         /* shape for collision detection */																\
         Size size;																						\
         /* entity's definition */																		\
-        EntityDefinition *entityDefinition;																\
+        EntityDefinition* entityDefinition;																\
         /* entity's definition */																		\
         VBVec3D* centerDisplacement;																	\
         /* flag to update sprites' attributes */														\
@@ -108,6 +108,7 @@ __CLASS_NEW_DECLARE(Entity, EntityDefinition* entityDefinition, s16 id, const ch
 
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name);
 void Entity_destructor(Entity this);
+void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition);
 SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
 VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName);
 Entity Entity_instantiate(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo);

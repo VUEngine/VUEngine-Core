@@ -91,6 +91,18 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 	__DESTROY_BASE;
 }
 
+// set definition
+void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition)
+{
+	ASSERT(this, "AnimatedInGameEntity::setDefinition: null this");
+	ASSERT(animatedInGameEntityDefinition, "AnimatedInGameEntity::setDefinition: null definition");
+
+	// save definition
+	this->animatedInGameEntityDefinition = animatedInGameEntityDefinition;
+
+	InGameEntity_setDefinition(__SAFE_CAST(InGameEntity, this), &animatedInGameEntityDefinition->inGameEntityDefinition);
+}
+
 // ready method
 void AnimatedInGameEntity_ready(AnimatedInGameEntity this, u32 recursive)
 {

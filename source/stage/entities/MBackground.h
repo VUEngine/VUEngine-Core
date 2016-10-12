@@ -66,6 +66,7 @@ __CLASS_NEW_DECLARE(MBackground, MBackgroundDefinition* mBackgroundDefinition, s
 
 void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name);
 void MBackground_destructor(MBackground this);
+void MBackground_setDefinition(MBackground this, MBackgroundDefinition* mBackgroundDefinition);
 void MBackground_suspend(MBackground this);
 void MBackground_resume(MBackground this);
 

@@ -74,6 +74,18 @@ void InanimatedInGameEntity_destructor(InanimatedInGameEntity this)
 	__DESTROY_BASE;
 }
 
+// set definition
+void InanimatedInGameEntity_setDefinition(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition)
+{
+	ASSERT(this, "InanimatedInGameEntity::setDefinition: null this");
+	ASSERT(inanimatedInGameEntityDefinition, "InanimatedInGameEntity::setDefinition: null definition");
+
+	// save definition
+	this->inanimatedInGameEntityDefinition = inanimatedInGameEntityDefinition;
+
+	InGameEntity_setDefinition(__SAFE_CAST(InGameEntity, this), &inanimatedInGameEntityDefinition->inGameEntityDefinition);
+}
+
 // get elasticity
 fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this)
 {

@@ -129,6 +129,15 @@ void Entity_destructor(Entity this)
 	__DESTROY_BASE;
 }
 
+// set definition
+void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition)
+{
+	ASSERT(this, "Entity::setDefinition: null this");
+
+	// save definition
+	this->entityDefinition = entityDefinition;
+}
+
 // release sprites
 static void Entity_releaseSprites(Entity this)
 {

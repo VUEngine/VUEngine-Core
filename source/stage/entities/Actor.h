@@ -108,6 +108,7 @@ __CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id, const
 
 void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, const char* const name);
 void Actor_destructor(Actor this);
+void Actor_setDefinition(Actor this, ActorDefinition* actorDefinition);
 void Actor_setLocalPosition(Actor this, const VBVec3D* position);
 void Actor_transform(Actor this, const Transformation* environmentTransform);
 void Actor_resume(Actor this);

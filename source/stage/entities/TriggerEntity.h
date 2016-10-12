@@ -74,6 +74,7 @@ __CLASS_NEW_DECLARE(TriggerEntity, TriggerEntityDefinition* triggerEntityDefinit
 
 void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition, s16 id, const char* const name);
 void TriggerEntity_destructor(TriggerEntity this);
+void TriggerEntity_setDefinition(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition);
 bool TriggerEntity_moves(TriggerEntity this);
 void TriggerEntity_transform(TriggerEntity this, const Transformation* environmentTransform);
 
