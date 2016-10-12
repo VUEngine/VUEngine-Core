@@ -39,8 +39,8 @@
 
 __CLASS(SRAMManager);
 
-// forward declare game's custom user's data struct
-struct UserData;
+// forward declare game's custom save data struct
+struct SaveData;
 
 
 //---------------------------------------------------------------------------------------------------------

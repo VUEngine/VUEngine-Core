@@ -53,8 +53,8 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimatedInGameEntity_METHODS(ClassName)																	\
-		InGameEntity_METHODS(ClassName)																			\
+#define AnimatedInGameEntity_METHODS(ClassName)															\
+		InGameEntity_METHODS(ClassName)																	\
 
 #define AnimatedInGameEntity_SET_VTABLE(ClassName)														\
 		InGameEntity_SET_VTABLE(ClassName)																\
