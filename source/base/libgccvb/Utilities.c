@@ -104,10 +104,10 @@ long Utilities_randomSeed()
 	long random = 1;
 	int	rand = Clock_getTime(_gameClock);
 	int prevnum = 0;
-	int count = 1;
+	int count = 0;
 
 	// repeat through many times to make more random and to allow the __CTA value to change multiple times
-	while(count < __RANDOM_SEED_CYCLES)
+	while(count++ < __RANDOM_SEED_CYCLES)
 	{
 		rand |= (_hardwareRegisters[__TLR] | (_hardwareRegisters[__THR] << 8));
 
@@ -124,17 +124,6 @@ long Utilities_randomSeed()
 
 		// just randomly doing stuff to the number
 		random += ((rand * count) + (count % random) + (prevnum / rand));
-
-		if(rand == prevnum)
-		{
-			// if the __CTA value doesnt change then count up
-			count++;
-		}
-		else
-		{
-			// if the number does change then restart the counter
-			count = 0;
-		}
 
 		// keep track of the last number
 		prevnum = rand;
