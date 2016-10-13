@@ -24,6 +24,7 @@
 
 #include <Container.h>
 #include <InGameEntity.h>
+#include <Printing.h>
 #include <EntityFactory.h>
 #include <Texture.h>
 #include <UI.h>
@@ -172,6 +173,9 @@ typedef struct StageDefinition
 
 	struct Assets
 	{
+		// fonts for preloading
+		FontDefinition** fontDefinitions;
+
 		// char sets for preloading
 		CharSetDefinition** charSets;
 

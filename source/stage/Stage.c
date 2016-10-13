@@ -495,11 +495,23 @@ static void Stage_unloadChild(Stage this, Container child)
 	}
 }
 
-// preload textures
+// preload fonts, charsets and textures
 static void Stage_preloadAssets(Stage this)
 {
 	ASSERT(this, "Stage::preloadAssets: null this");
 
+    // fonts
+	if(this->stageDefinition->assets.fontDefinitions)
+	{
+		int i = 0;
+
+		for(; this->stageDefinition->assets.fontDefinitions[i]; i++)
+		{
+            CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->assets.fontDefinitions[i]->charSetDefinition);
+		}
+	}
+
+    // charsets
 	if(this->stageDefinition->assets.charSets)
 	{
 		int i = 0;
@@ -517,6 +529,7 @@ static void Stage_preloadAssets(Stage this)
 		}
 	}
 
+    // textures
 	if(this->stageDefinition->assets.stageTextureEntryDefinitions)
 	{
 		VirtualList managedTextures = __NEW(VirtualList);

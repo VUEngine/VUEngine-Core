@@ -30,8 +30,6 @@
 // 											  DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern CharSetDefinition VBJAENGINE_FONT_CH;
-
 extern FontDefinition VBJAENGINE_FONT;
 
 
