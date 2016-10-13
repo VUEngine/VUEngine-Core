@@ -165,26 +165,32 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 				break;
 
 			default:
+			    {
+			        CharSet fontCharSet = CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinition->charSetDefinition);
 
-                for(charOffsetX = 0; charOffsetX < fontDefinition->fontSize.x; charOffsetX++)
-                {
-                    for(charOffsetY = 0; charOffsetY < fontDefinition->fontSize.y; charOffsetY++)
-                    {
-                        bgmapSpaceBaseAddress[(0x1000 * bgmap) + position + charOffsetX + (charOffsetY << 6)] =
-                            (
-                                // start at correct font
-                                CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinition->charSetDefinition)) +
+			        if(fontCharSet)
+			        {
+                        for(charOffsetX = 0; charOffsetX < fontDefinition->fontSize.x; charOffsetX++)
+                        {
+                            for(charOffsetY = 0; charOffsetY < fontDefinition->fontSize.y; charOffsetY++)
+                            {
+                                bgmapSpaceBaseAddress[(0x1000 * bgmap) + position + charOffsetX + (charOffsetY << 6)] =
+                                    (
+                                        // start at correct font
+                                        CharSet_getOffset(fontCharSet) +
 
-                                // top left char of letter
-                                ((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) +
+                                        // top left char of letter
+                                        ((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) +
 
-                                // skip lower chars of multi-char fonts with y > 1
-                                ((((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) >> 5) * ((fontDefinition->fontSize.y - 1)) << 5) +
+                                        // skip lower chars of multi-char fonts with y > 1
+                                        ((((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) >> 5) * ((fontDefinition->fontSize.y - 1)) << 5) +
 
-                                // respective char of letter in multi-char fonts
-                                charOffsetX + (charOffsetY << 5)
-                            )
-                            | (bplt << 14);
+                                        // respective char of letter in multi-char fonts
+                                        charOffsetX + (charOffsetY << 5)
+                                    )
+                                    | (bplt << 14);
+                            }
+                        }
                     }
                 }
 
