@@ -94,6 +94,38 @@ char* Utilities_itoa(u32 num, u32 base, u32 digits)
 	return rev + i;
 }
 
+const char* Utilities_toUppercase(const char* string)
+{
+	int i = 0;
+	char* result = NULL;
+	while(string[i])
+	{
+		result[i] = (string[i] >= 'a' && string[i] <= 'z')
+			? string[i] - 32
+			: string[i];
+
+		i++;
+	}
+
+	return result;
+}
+
+const char* Utilities_toLowercase(const char* string)
+{
+	int i = 0;
+	char* result = NULL;
+	while(string[i])
+	{
+		result[i] = (string[i] >= 'A' && string[i] <= 'Z')
+			? string[i] + 32
+			: string[i];
+
+		i++;
+	}
+
+	return result;
+}
+
 /*
  * When run at startup gets a random number based on the changing __CTA
  */

@@ -44,6 +44,8 @@ void Utilities_setClock(Clock clock);
 long Utilities_randomSeed();
 int Utilities_random(long seed, int randnums);
 char* Utilities_itoa(u32 num, u32 base, u32 digits);
+const char* Utilities_toUppercase(const char* string);
+const char* Utilities_toLowercase(const char* string);
 int Utilities_equalSign(int a, int b);
 int Utilities_getDigitCount(int value);
 int Utilities_intLength(int value);
