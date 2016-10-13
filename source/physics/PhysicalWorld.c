@@ -401,6 +401,7 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 	ASSERT(this, "PhysicalWorld::bodyAwake: null this");
 	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodyAwake: non body");
+	ASSERT(__SAFE_CAST(SpatialObject, body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
 
 	if(!VirtualList_find(this->activeBodies, body))
 	{
