@@ -108,6 +108,10 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	__DELETE(this->activeBodies);
 	__DELETE(this->removedBodies);
 
+	this->bodies = NULL;
+	this->activeBodies = NULL;
+	this->removedBodies = NULL;
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
@@ -151,6 +155,7 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
     {
         Printing_text(Printing_getInstance(), __GET_CLASS_NAME(owner), 1, 15, NULL);
     }
+
 	ASSERT(body, "PhysicalWorld::unregisterBody: body not found");
 #endif
 
@@ -206,8 +211,8 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 			Body body = __SAFE_CAST(Body, node->data);
 
 			// remove from the lists
-			VirtualList_removeElement(this->bodies, (BYTE*) body);
-			VirtualList_removeElement(this->activeBodies, (BYTE*) body);
+			VirtualList_removeElement(this->bodies, body);
+			VirtualList_removeElement(this->activeBodies, body);
 
 			// delete it
 			__DELETE(body);
@@ -279,6 +284,8 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
+	PhysicalWorld_processRemovedBodies(this);
+
 	if(clock->paused)
 	{
 	    // prevent that the initial update after unpausing the clock
@@ -294,8 +301,6 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	fix19_13 elapsedTime = FIX19_13_DIV(currentTime - this->previousTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
 
 	Clock_pause(clock, false);
-
-	PhysicalWorld_processRemovedBodies(this);
 
     if(this->previousTime)
     {
@@ -395,6 +400,7 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::bodyAwake: null this");
 	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
+	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodyAwake: non body");
 
 	if(!VirtualList_find(this->activeBodies, body))
 	{
@@ -406,8 +412,8 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::bodySleep: null this");
-
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
+	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
 	VirtualList_removeElement(this->activeBodies, body);
 }
