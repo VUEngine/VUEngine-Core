@@ -108,7 +108,7 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
 }
 
 // get font definition and starting position in character memory
-FontDefinition* Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
+const FontDefinition* Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
 {
 	// return default (e.g. first defined) font if font == null
 	if(font == NULL)
@@ -138,7 +138,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 	u32 charOffsetX = 0,
 	    charOffsetY = 0;
 
-    FontDefinition* fontDefinition = Printing_getFontByName(this, font);
+    const FontDefinition* fontDefinition = Printing_getFontByName(this, font);
 
     u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
@@ -291,11 +291,10 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
 Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
 {
     Size size = {0, 0, 0};
-    FontDefinition* fontDefinition;
 	u16 i = 0, currentLineLength = 0;
 
-    fontDefinition = Printing_getFontByName(this, font);
-    size.y =  fontDefinition->fontSize.y;
+    const FontDefinition* fontDefinition = Printing_getFontByName(this, font);
+    size.y = fontDefinition->fontSize.y;
 
 	while(string[i])
 	{

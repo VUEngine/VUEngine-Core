@@ -48,7 +48,7 @@ CharSetROMDef VBJAENGINE_FONT_CH =
 FontROMDef VBJAENGINE_FONT =
 {
     // font charset definition pointer
-    (CharSetROMDef*)&VBJAENGINE_FONT_CH,
+    (CharSetDefinition*)&VBJAENGINE_FONT_CH,
 
     // character number at which the font starts, allows you to skip the control characters for example
 	0,
