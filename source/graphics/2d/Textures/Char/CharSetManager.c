@@ -116,7 +116,7 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
     {
         CharSet charSet = __SAFE_CAST(CharSet, node->data);
 
-        if(CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
+        if(charSet && CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
         {
             return charSet;
         }

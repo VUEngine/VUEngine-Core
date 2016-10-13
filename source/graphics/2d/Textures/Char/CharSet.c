@@ -88,7 +88,6 @@ void CharSet_destructor(CharSet this)
 void CharSet_increaseUsageCount(CharSet this)
 {
 	ASSERT(this, "CharSet::increaseUsageCoung: null this");
-	ASSERT(255 > (int)this->usageCount, "CharSet::increaseUsageCoung: null this");
 
 	this->usageCount++;
 }
