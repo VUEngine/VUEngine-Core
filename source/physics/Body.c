@@ -731,6 +731,11 @@ void Body_stopMovement(Body this, int axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
+	if(!Body_isMoving(this))
+	{
+	    return;
+	}
+
 	int axisOfStopping = 0;
 
 	if(__XAXIS & axis)
