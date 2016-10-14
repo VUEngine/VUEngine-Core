@@ -52,7 +52,6 @@ static void Actor_resolveCollisions(Actor this, VirtualList collidingEntities);
 static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
 
 
-
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------

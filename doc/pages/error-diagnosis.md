@@ -9,13 +9,13 @@ Asserts
 
 Use the ASSERT macro to check every pointer or variable which can be trouble some, specially, place an ASSERT checking that the "this" pointer passed to the class's methods is valid.
 
-The engine provides two kinds of ASSERT macros, which check a given statement and throw an exception with a given error message if this statement returns false. These macros should be used thoughout the code to make debugging easier. Since the engine relies on heavy pointer usage, it can happen easily to get a bad pointer and get lost.
+The engine provides two kinds of ASSERT macros, which check a given statement and throw an exception with a given error message if this statement returns false. These macros should be used throughout the code to make debugging easier. Since the engine relies on heavy pointer usage, it can happen easily to get a bad pointer and get lost.
 
 ### ASSERT
 
 Only inserted when compiling under debug. It is used at the start of most of the engine's methods to check that the "this" pointer is not NULL. Since the MemoryPool writes a 0 in the first byte of a deleted pointer, this helps to assure that any memory slot within the MemoryPool's pools has a 0 when it has been deleted.
 
-Another good usecase for this would be to check an object's class name against the expected class as shown below.
+Another good use case for this would be to check an object's class name against the expected class as shown below.
 
 	ASSERT(!strcmp(__GET_CLASS_NAME(someObject), SomeClass_getClassName()), "Wrong object class");
 
@@ -51,7 +51,7 @@ Because the engine implements class inheritance by accumulation of attributes' d
 
 	BaseClass_method(__GET_CAST(BaseClass, object), ...);
 
-When compiling for release, the macro be replaced by a simple C type cast; while for debug, the Object_getCast method will be called, returning NULL if the object does not inherit from the given BaseClass, raising an exception in the method (which must check that the "this" pointer isn't NULL).
+When compiling for release, the macro is replaced by a simple C type cast; while for debug, the Object_getCast method will be called, returning NULL if the object does not inherit from the given BaseClass, raising an exception in the method (which must check that the "this" pointer isn't NULL).
 
 
 Exceptions
@@ -61,9 +61,9 @@ When an exception is thrown in-game in debug mode, you're presented with some ou
 
 Looking for the message in both your game code as well as the engine would be the quickest thing to do but should give you only a rough idea of the problem's root in most cases.
 
-The LP (linker pointer) value shows you the exact location in memory where the crash occured and will lead you to the function that has caused it. Look for the line "@$(OBJDUMP) -S main.elf > machine.asm" in your project's makefile, uncomment it and recompile. The compiler will produce a file called "machine.asm" in the project's root folder. It contains a huge list of all functions, their ASM equivalent and memory locations. Search it for your LP value and it will lead you to the faulty function.
+The LP (linker pointer) value shows you the exact location in memory where the crash occurred and will lead you to the function that has caused it. Set DUMP_ELF to 1 in the project's config.make file and recompile. The compiler will produce a file called "machine-{TYPE}.asm" in the project's build/{TYPE} folder. It contains a huge list of all functions, their ASM equivalent and memory locations. Search it for your LP value and it will lead you to the faulty function.
 
-The SP (stack pointer) value becomes useful in the (seldom) case of a stack overflow. Since the check is performed during a timer interrupt, it is possible that an overflow occurs between interrupts. By checking the SP value against the __lastDataVariable address in the sections.txt file, you can guess that there was an overflow. As described for the machine.asm file above, activate generation of the sections.txt file in the makefile. 
+The SP (stack pointer) value becomes useful in the (seldom) case of a stack overflow. Since the check is performed during a timer interrupt, it is possible that an overflow occurs between interrupts. By checking the SP value against the __lastDataVariable address in the sections.txt file, you can guess that there was an overflow. As described for the machine.asm file above, activate generation of the sections.txt file in the makefile.
 
 
 Debug Tools
@@ -87,4 +87,4 @@ Other useful macros
 
 ### __GET_CLASS_NAME()
 
-Get the class of an object using this macro. 
+Get the class of an object using this macro.
