@@ -66,7 +66,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedInGameEntity, &actorDefinition->animatedInGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(AnimatedInGameEntity, (AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;
