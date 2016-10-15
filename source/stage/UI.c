@@ -87,9 +87,20 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	{
 		Entity entity = Entity_loadEntity(&entities[i], ID++);
 
-		__VIRTUAL_CALL(Entity, initialize, entity, true);
+		if(entity)
+		{
+			// must initialize after adding the children
+			__VIRTUAL_CALL(Entity, initialize, entity, true);
 
-		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+			// create the entity and add it to the world
+			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+
+			// apply transformations
+			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform, true);
+
+			__VIRTUAL_CALL(Entity, ready, entity, true);
+		}
 	}
 }
 
