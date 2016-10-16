@@ -44,7 +44,6 @@
 #include <BgmapAnimationCoordinator.h>
 #include <ObjectAnimationCoordinator.h>
 #include <KeyPadManager.h>
-#include <SRAMManager.h>
 
 #include <Clock.h>
 #include <State.h>
@@ -900,7 +899,8 @@ static void Debug_showSramStatus(Debug this, int increment __attribute__ ((unuse
 
 static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
-    int i, j, value;
+    u8 value;
+    int i, j;
     char word[9];
 
     extern u32 _sram_bss_end;
@@ -917,7 +917,7 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
     }
 
     // get sram base address
-    u32* startAddress = (u32*)&_sram_bss_end;
+    u16* startAddress = (u16*)&_sram_bss_end;
 
     // print status header
 	Printing_text(Printing_getInstance(), "SRAM STATUS", 1, y++, NULL);
@@ -942,8 +942,7 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
         for(j = 0; j < 8; j++)
         {
             // read byte from sram
-            SRAMManager_read(SRAMManager_getInstance(), (BYTE*)&value, (this->sramPage << 7) + (i << 3) + j, 1);
-            //value = startAddress[(i << 3) + j];
+			value = startAddress[(this->sramPage << 7) + (i << 3) + j];
 
             // print byte
             Printing_hex(Printing_getInstance(), value, 13 + (j*3), y, 2, NULL);

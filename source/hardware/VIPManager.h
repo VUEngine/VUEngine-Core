@@ -121,13 +121,13 @@ extern volatile u16* _vipRegisters;
 #define __WORLD_SPACE_BASE_ADDRESS		0x0003D800  // Base address of World Attribute Memory
 
 
-// Macro to set the brightness registers
+// macro to set the brightness registers
 #define	__SET_BRIGHT(a,b,c)       _vipRegisters[__BRTA]=(u16)(a); _vipRegisters[__BRTB]=(u16)(b); _vipRegisters[__BRTC]=(u16)(c)
 
-// Macro to set the GPLT (BGMap palette)
+// macro to set the gplt (bgmap palette)
 #define	__SET_G_PALETTE(n,pal)         _vipRegisters[__GPLT0+n]=pal
 
-// Macro to set the JPLT (OBJ palette)
+// macro to set the jplt (obj palette)
 #define	__SET_J_PALETTE(n,pal)         _vipRegisters[__JPLT0+n]=pal
 
 typedef struct WorldAttributes
