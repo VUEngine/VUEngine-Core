@@ -102,8 +102,7 @@ void SRAMManager_clear(SRAMManager this)
 
 	int i = 0;
 
-	// TODO: max value should not be hardcoded
-	for(; i < 8192; i++)
+	for(; i < __TOTAL_SAVE_RAM; i++)
 	{
 		this->saveSpaceStartAddress[i] = 0;
 	}

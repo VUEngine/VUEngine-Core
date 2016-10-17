@@ -445,6 +445,7 @@ static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((un
 	Clock_print(GameState_getUpdateClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
 	Printing_text(Printing_getInstance(), "Physics clock's time: ", 1, ++y, NULL);
 	Clock_print(GameState_getPhysicsClock(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), 26, y, NULL);
+	y+=3;
 
 	Printing_text(Printing_getInstance(), "STAGE STATUS", 1, y++, NULL);
 	Printing_text(Printing_getInstance(), "Entities: ", 1, ++y, NULL);
@@ -900,8 +901,10 @@ static void Debug_showSramStatus(Debug this, int increment __attribute__ ((unuse
 static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
     u8 value;
-    int i, j;
+    int i, j, totalPages;
     char word[9];
+
+    totalPages = __TOTAL_SAVE_RAM >> 7;
 
     extern u32 _sram_bss_end;
 
@@ -909,9 +912,9 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
 
     if(this->sramPage < 0)
     {
-       this->sramPage = 63;
+       this->sramPage = totalPages - 1;
     }
-    else if(this->sramPage > 63)
+    else if(this->sramPage >= totalPages)
     {
        this->sramPage = 0;
     }
@@ -921,13 +924,15 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
 
     // print status header
 	Printing_text(Printing_getInstance(), "SRAM STATUS", 1, y++, NULL);
-	Printing_text(Printing_getInstance(), "Total: 8.192 B   Free: ----- B   Used: ----- B", 1, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Total (kb):", 1, ++y, NULL);
+	Printing_int(Printing_getInstance(), __TOTAL_SAVE_RAM >> 10, 13, y, NULL);
 	y+=2;
 
 	// print inspector header
 	Printing_text(Printing_getInstance(), "SRAM INSPECTOR", 1, ++y, NULL);
-	Printing_text(Printing_getInstance(), "Page   /64", 37, y, NULL);
-	Printing_int(Printing_getInstance(), this->sramPage + 1, 42, y++, NULL);
+	Printing_text(Printing_getInstance(), "Page     /", 33, y, NULL);
+	Printing_int(Printing_getInstance(), totalPages, 43, y, NULL);
+	Printing_int(Printing_getInstance(), this->sramPage + 1, 38, y++, NULL);
 	Printing_text(Printing_getInstance(), "Address     00 01 02 03 04 05 06 07 Word", 1, ++y, NULL);
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 1, ++y, NULL);
 
@@ -964,7 +969,7 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
     }
 
     // mark scroll bar position
-    Printing_text(Printing_getInstance(), "\x90", 46, y - 15 + ((this->sramPage) >> 2), NULL);
+    Printing_text(Printing_getInstance(), "\x90", 46, y - 15 + (this->sramPage / (totalPages >> 4)), NULL);
 }
 
 static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message)

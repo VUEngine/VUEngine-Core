@@ -344,13 +344,13 @@ void VIPManager_clearScreen(VIPManager this __attribute__ ((unused)))
 	ASSERT(this, "VIPManager::clearScreen: null this");
 	u16* bgmapStartAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
-	//clear every bgmap segment
+	// clear every bgmap segment
     for(bgmapStartAddress = 0; bgmapStartAddress < (u16*)__PARAM_TABLE_END; bgmapStartAddress++)
 	{
         *bgmapStartAddress = 0;
     }
 
-	//clear every char segment
+	// clear every char segment
 	Mem_clear ((u16*) __CHAR_SEGMENT_0_BASE_ADDRESS, 8192);
 	Mem_clear ((u16*) __CHAR_SEGMENT_1_BASE_ADDRESS, 8192);
 	Mem_clear ((u16*) __CHAR_SEGMENT_2_BASE_ADDRESS, 8192);
