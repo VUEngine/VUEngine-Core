@@ -67,9 +67,6 @@ extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
-static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
-
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -434,7 +431,7 @@ void BgmapSprite_render(BgmapSprite this)
                 // this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
                 // apply affine transformation
-                BgmapSprite_doApplyAffineTransformations(this);
+                __VIRTUAL_CALL(BgmapSprite, doApplyAffineTransformations, this);
 
                 if(0 >= this->paramTableRow)
                 {
@@ -444,7 +441,7 @@ void BgmapSprite_render(BgmapSprite this)
         }
 		else if(__WORLD_HBIAS & this->head)
 		{
-			BgmapSprite_doApplyHbiasTransformations(this);
+            __VIRTUAL_CALL(BgmapSprite, doApplyHbiasTransformations, this);
 		}
 	}
 }
@@ -609,7 +606,7 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
 // 										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
+void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
@@ -635,7 +632,7 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 	}
 }
 
-static void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this __attribute__ ((unused)))
+void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
 }

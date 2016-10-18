@@ -47,6 +47,8 @@
 // declare the virtual methods
 #define BgmapSprite_METHODS(ClassName)																	\
     	Sprite_METHODS(ClassName)																		\
+        __VIRTUAL_DEC(ClassName, void, doApplyAffineTransformations);									\
+        __VIRTUAL_DEC(ClassName, void, doApplyHbiasTransformations);									\
 
 // declare the virtual methods which are redefined
 #define BgmapSprite_SET_VTABLE(ClassName)																\
@@ -60,6 +62,8 @@
         __VIRTUAL_SET(ClassName, BgmapSprite, setDirection);											\
         __VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);								\
         __VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasTransformations);								\
+        __VIRTUAL_SET(ClassName, BgmapSprite, doApplyAffineTransformations);							\
+        __VIRTUAL_SET(ClassName, BgmapSprite, doApplyHbiasTransformations);								\
         __VIRTUAL_SET(ClassName, BgmapSprite, resize);													\
         __VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);										\
         __VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
@@ -138,5 +142,7 @@ void BgmapSprite_putPixel(BgmapSprite this, Point* texturePixel, Point* charSetP
 void BgmapSprite_applyAffineTransformations(BgmapSprite this);
 void BgmapSprite_applyHbiasTransformations(BgmapSprite this);
 
+void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
+void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
 
 #endif
