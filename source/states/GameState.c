@@ -376,14 +376,11 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// move the screen to its previous position
 	Screen_focus(Screen_getInstance(), false);
 
-    // force all transformations to take place again
+    // transform everything
     GameState_initialTransform(this);
 
 	// set up visual representation
 	GameState_updateVisuals(this);
-
-	// transform everything
-	GameState_transform(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());

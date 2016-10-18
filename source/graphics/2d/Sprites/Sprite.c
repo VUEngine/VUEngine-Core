@@ -52,7 +52,6 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	// clear values
 	this->worldLayer = 0;
 	this->head = 0;
-	this->renderFlag = 0;
 	this->halfWidth = 0;
 	this->halfHeight = 0;
 	this->animationController = NULL;
@@ -103,25 +102,11 @@ Texture Sprite_getTexture(Sprite this)
 	return this->texture;
 }
 
-// set to true to allow render
-void Sprite_setRenderFlag(Sprite this, bool renderFlag)
-{
-	ASSERT(this, "Sprite::setRenderFlag: null this");
-
-	// do not override the whole world entry, or will be updated in the
-	// next render
-	if(__UPDATE_HEAD != this->renderFlag || !renderFlag)
-	{
-		this->renderFlag = !renderFlag ? 0 : this->renderFlag | renderFlag;
-	}
-}
-
 // show
 void Sprite_show(Sprite this)
 {
 	ASSERT(this, "Sprite::show: null this");
 
-	this->renderFlag = __UPDATE_HEAD;
 	this->hidden = false;
 }
 
@@ -130,7 +115,6 @@ void Sprite_hide(Sprite this)
 {
 	ASSERT(this, "Sprite::hide: null this");
 
-	this->renderFlag = true;
 	this->hidden = true;
 }
 
@@ -149,26 +133,12 @@ AnimationController Sprite_getAnimationController(Sprite this)
 	return this->animationController;
 }
 
-// get render flag
-u32 Sprite_getRenderFlag(Sprite this)
-{
-	ASSERT(this, "Sprite::getRenderFlag: null this");
-
-	return this->renderFlag;
-}
-
 // set map's world layer
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 {
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
-	if(this->worldLayer != worldLayer)
-	{
-		this->worldLayer = worldLayer;
-
-		// make sure everything is setup in the next render cycle
-		this->renderFlag = __UPDATE_HEAD;
-	}
+    this->worldLayer = worldLayer;
 }
 
 //get map's world layer
@@ -251,9 +221,6 @@ void Sprite_rewrite(Sprite this)
 		// write it in graphical memory
 		Texture_rewrite(this->texture);
 	}
-
-	// raise flag to render again
-	this->renderFlag = __UPDATE_HEAD;
 }
 
 // process event
@@ -263,7 +230,6 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
 
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this);
 	__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this);
-	this->renderFlag = __UPDATE_HEAD;
 }
 
 // get displacement

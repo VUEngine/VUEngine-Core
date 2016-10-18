@@ -476,10 +476,10 @@ void SpriteManager_render(SpriteManager this)
 					__VIRTUAL_CALL(Texture, write, texture);
 
 					textureWasWritten = true;
-					this->waitToWrite = this->cyclesToWaitForTextureWriting;
 
 					if(this->deferTextureWriting)
 					{
+    					this->waitToWrite = this->cyclesToWaitForTextureWriting;
 						this->textureToWrite = !texture->written? texture : NULL;
 						break;
 					}

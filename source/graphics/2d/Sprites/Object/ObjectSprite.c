@@ -172,8 +172,6 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 
 	this->position = *position;
 
-	this->renderFlag |= __UPDATE_G;
-
 	ObjectSprite_checkForContainer(this);
 }
 
@@ -191,8 +189,6 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, this->position);
 	this->position.z = position->z;
-
-	this->renderFlag |= __UPDATE_G;
 
 	ObjectSprite_checkForContainer(this);
 }
@@ -224,83 +220,75 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 //	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
-	// if render flag is set
-	if(this->renderFlag)
-	{
-		if(0 > this->objectIndex)
-		{
-			this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
-			ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
-			ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
-		}
+    if(0 > this->objectIndex)
+    {
+        this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
+        ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
+        ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
+    }
 
-		if(this->hidden)
-		{
-			if(0 <= this->objectIndex)
-			{
-				int i = 0;
-				for(; i < this->totalObjects; i++)
-				{
-					_objecAttributesBaseAddress[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-				}
-			}
+    if(this->hidden)
+    {
+        if(0 <= this->objectIndex)
+        {
+            int i = 0;
+            for(; i < this->totalObjects; i++)
+            {
+                _objecAttributesBaseAddress[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+            }
+        }
 
-			this->renderFlag = 0;
-			return;
-		}
+        return;
+    }
 
-		if(!this->texture->written)
-		{
-			ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
-		}
+    if(!this->texture->written)
+    {
+        ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
+    }
 
-		int cols = this->texture->textureDefinition->cols;
-		int rows = this->texture->textureDefinition->rows;
+    int cols = this->texture->textureDefinition->cols;
+    int rows = this->texture->textureDefinition->rows;
 
-		int xDirection = this->head & 0x2000 ? -1 : 1;
-		int yDirection = this->head & 0x1000 ? -1 : 1;
+    int xDirection = this->head & 0x2000 ? -1 : 1;
+    int yDirection = this->head & 0x1000 ? -1 : 1;
 
-		int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-		int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+    int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
+    int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
-		int i = 0;
-		u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);
-		u16 fourthWordValue = (this->head & 0x3000);
+    int i = 0;
+    u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z)) & __OBJECT_CHAR_HIDE_MASK);
+    u16 fourthWordValue = (this->head & 0x3000);
 
-		for(; i < rows; i++)
-		{
-			int j = 0;
-			for(; j < cols; j++)
-			{
-				s32 objectIndex = this->objectIndex + i * cols + j;
-				int outputX = x + (j << 3)  * xDirection;
+    for(; i < rows; i++)
+    {
+        int j = 0;
+        for(; j < cols; j++)
+        {
+            s32 objectIndex = this->objectIndex + i * cols + j;
+            int outputX = x + (j << 3)  * xDirection;
 
-				// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
-				// screen's bounds
-				if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
-				{
-					_objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-					continue;
-				}
+            // add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
+            // screen's bounds
+            if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
+            {
+                _objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+                continue;
+            }
 
-				int outputY = y + (i << 3)  * yDirection;
+            int outputY = y + (i << 3)  * yDirection;
 
-				if((unsigned)(outputY + 8) > __SCREEN_HEIGHT + 8)
-				{
-					_objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-					continue;
-				}
+            if((unsigned)(outputY + 8) > __SCREEN_HEIGHT + 8)
+            {
+                _objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+                continue;
+            }
 
-				_objecAttributesBaseAddress[(objectIndex << 2)] = outputX;
-				_objecAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
-				_objecAttributesBaseAddress[(objectIndex << 2) + 2] = outputY;
-				_objecAttributesBaseAddress[(objectIndex << 2) + 3] |= fourthWordValue;
-			}
-		}
-
-		// make sure to not render again
-		this->renderFlag = false;
-	}
+            _objecAttributesBaseAddress[(objectIndex << 2)] = outputX;
+            _objecAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
+            _objecAttributesBaseAddress[(objectIndex << 2) + 2] = outputY;
+            _objecAttributesBaseAddress[(objectIndex << 2) + 3] |= fourthWordValue;
+        }
+    }
 }
 
 
@@ -360,11 +348,6 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 				}
 			}
 		}
-		else
-		{
-			// render on next cycle
-			this->renderFlag = !this->hidden;
-		}
 	}
 }
 
@@ -380,7 +363,6 @@ void ObjectSprite_hide(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::hide: null this");
 
-	this->renderFlag = true;
 	this->hidden = true;
 }
 
@@ -400,8 +382,6 @@ void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement
 	this->position.y += displacement->y;
 	this->position.z += displacement->z;
 	this->position.parallax += displacement->parallax;
-
-	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this), __UPDATE_G);
 }
 
 

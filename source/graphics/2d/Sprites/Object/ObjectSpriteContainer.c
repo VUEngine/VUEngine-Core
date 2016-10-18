@@ -159,8 +159,6 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 
 		this->availableObjects -= numberOfObjects;
 
-		this->renderFlag = __UPDATE_HEAD;
-
 		this->node = NULL;
 		this->previousNode = NULL;
 
@@ -280,7 +278,6 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 	}
 
 	this->z = position->z;
-	this->renderFlag |= __UPDATE_G;
 }
 
 void ObjectSpriteContainer_position(ObjectSpriteContainer this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
@@ -386,13 +383,10 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
 	//if render flag is set
-	if(this->renderFlag && this->worldLayer)
+	if(this->worldLayer)
 	{
 		// make sure to not render again
 		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects? this->head | __WORLD_OVR : __WORLD_OFF;
-
-		// make sure to not render again
-		this->renderFlag = false;
 	}
 
 	// defragmentation takes priority over z sorting
@@ -425,7 +419,6 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 		__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
 	}
 
-	this->renderFlag = true;
 	this->hidden = false;
 }
 
@@ -515,8 +508,6 @@ void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBV
 			__VIRTUAL_CALL(Sprite, addDisplacement, __SAFE_CAST(Sprite, node->data), displacement);
 		}
 	}
-
-	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this), __UPDATE_G);
 }
 
 

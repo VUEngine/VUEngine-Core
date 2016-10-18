@@ -195,7 +195,6 @@ void AnimationEditor_update(AnimationEditor this)
 	{
         Sprite_animate(this->animatedSprite);
 		Sprite_update(this->animatedSprite);
-    	Sprite_setRenderFlag(this->animatedSprite, __UPDATE_HEAD);
     	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
     	__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this->animatedSprite);
 	}

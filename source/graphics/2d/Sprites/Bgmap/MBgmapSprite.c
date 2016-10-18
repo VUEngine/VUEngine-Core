@@ -241,8 +241,6 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 		__VIRTUAL_CALL(Sprite, calculateParallax, __SAFE_CAST(Sprite, this), this->drawSpec.position.z);
 	}
 
-	this->renderFlag |= __UPDATE_G | __UPDATE_M;
-
 	if(!this->worldLayer)
 	{
 		// register with sprite manager
@@ -288,9 +286,6 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 
 	this->drawSpec.position.z += displacement->z;
 	this->drawSpec.position.parallax += displacement->parallax;
-
-	this->renderFlag |= __UPDATE_G;
-	this->renderFlag |= __UPDATE_M;
 }
 
 // render a world layer with the map's information
@@ -299,7 +294,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 	ASSERT(this, "MBgmapSprite::render: null this");
 
 	// if render flag is set
-	if(this->texture && this->renderFlag && this->worldLayer)
+	if(this->texture && this->worldLayer)
 	{
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
@@ -316,7 +311,6 @@ void MBgmapSprite_render(MBgmapSprite this)
 		if(this->hidden)
 		{
 			worldPointer->head = 0x0000;
-            this->renderFlag = false;
 			return;
 		}
 		else
@@ -345,7 +339,6 @@ void MBgmapSprite_render(MBgmapSprite this)
             if(!worldPointer->w)
             {
     			worldPointer->head = 0x0000;
-                this->renderFlag = false;
                 return;
             }
         }
@@ -363,7 +356,6 @@ void MBgmapSprite_render(MBgmapSprite this)
             if(!worldPointer->h)
             {
     			worldPointer->head = 0x0000;
-                this->renderFlag = false;
                 return;
             }
         }
@@ -371,9 +363,6 @@ void MBgmapSprite_render(MBgmapSprite this)
         {
             worldPointer->h = __SCREEN_HEIGHT;
         }
-
-		// make sure to not render again
-		this->renderFlag = false;
 	}
 }
 

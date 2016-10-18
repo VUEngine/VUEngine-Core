@@ -97,9 +97,6 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 		return;
 	}
 
-	// force rendering
-	this->renderFlag = true;
-
 	// write according to the allocation type
 	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture, true)))
 	{

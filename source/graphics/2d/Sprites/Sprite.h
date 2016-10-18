@@ -96,8 +96,6 @@
         /* h-bias max amplitude */																		\
         /* int hbiasAmplitude; */																		\
         /*  */																							\
-        bool renderFlag;																				\
-        /*  */																							\
         bool hidden;																					\
         /* update animation */																            \
         bool writeAnimationFrame;															            \
@@ -176,11 +174,9 @@ s16 Sprite_getWorldY(Sprite this);
 u16 Sprite_getWorldWidth(Sprite this);
 u16 Sprite_getWorldHeight(Sprite this);
 void Sprite_rewrite(Sprite this);
-u32 Sprite_getRenderFlag(Sprite this);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 u8 Sprite_getWorldLayer(Sprite this);
 u16 Sprite_getHead(Sprite this);
-void Sprite_setRenderFlag(Sprite this, bool renderFlag);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);

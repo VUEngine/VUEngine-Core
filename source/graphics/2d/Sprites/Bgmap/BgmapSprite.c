@@ -259,8 +259,6 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 	this->drawSpec.position.x -= this->halfWidth;
 	this->drawSpec.position.y -= this->halfHeight;
 
-	this->renderFlag |= __UPDATE_G;
-
 	if(!this->worldLayer)
 	{
 		// register with sprite manager
@@ -335,7 +333,7 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
 	// if render flag is set
-	if(this->renderFlag && this->worldLayer)
+	if(this->worldLayer)
 	{
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
@@ -352,7 +350,6 @@ void BgmapSprite_render(BgmapSprite this)
 		if(this->hidden)
 		{
 			worldPointer->head = 0x0000;
-            this->renderFlag = false;
 			return;
 		}
 		else
@@ -395,22 +392,17 @@ void BgmapSprite_render(BgmapSprite this)
         if (0 > w)
         {
 			worldPointer->head = 0x0000;
-            this->renderFlag = false;
             return;
         }
 
         if (0 > h)
         {
 			worldPointer->head = 0x0000;
-            this->renderFlag = false;
             return;
         }
 
         worldPointer->w = w;
         worldPointer->h = h;
-
-        // don't render again
-        this->renderFlag = false;
 
         // set the world size according to the zoom
         if(__WORLD_AFFINE & this->head)
@@ -441,13 +433,7 @@ void BgmapSprite_render(BgmapSprite this)
                 // apply affine transformation
                 BgmapSprite_doApplyAffineTransformations(this);
 
-                if(0 < this->paramTableRow)
-                {
-                    // keep rendering in the next cycle if affine transformation
-                    // is deferred
-                    this->renderFlag = __UPDATE_SIZE;
-                }
-                else
+                if(0 >= this->paramTableRow)
                 {
                     this->paramTableRow = -1;
                 }
@@ -470,12 +456,11 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
 	// if render flag is set
-	if(this->renderFlag && this->initialized)
+	if(this->initialized)
 	{
 		if(this->hidden)
 		{
 			WORLD_HEAD(this->worldLayer, 0x0000);
-			this->renderFlag = 0;
 			return;
 		}
 
@@ -485,8 +470,6 @@ void BgmapSprite_render(BgmapSprite this)
 		// set the world screen position
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
-
-        bool clearRenderFlagValue = false;
 
         int w = Texture_getCols(this->texture)<< 3;
         int h = Texture_getRows(this->texture)<< 3;
@@ -530,7 +513,7 @@ void BgmapSprite_render(BgmapSprite this)
         // set the world size according to the zoom
         if(__WORLD_AFFINE & this->head)
         {
-            if(this->renderFlag & __UPDATE_G)
+            if(__UPDATE_G)
             {
                 if(0 > this->paramTableRow && (0 > gx || 0 > gy))
                 {
@@ -553,11 +536,7 @@ void BgmapSprite_render(BgmapSprite this)
 
                 BgmapSprite_doApplyAffineTransformations(this, lastRow);
 
-                if(0 < this->paramTableRow)
-                {
-                    clearRenderFlagValue = __UPDATE_SIZE;
-                }
-                else
+                if(0 >= this->paramTableRow)
                 {
                     this->paramTableRow = -1;
                 }
@@ -567,9 +546,6 @@ void BgmapSprite_render(BgmapSprite this)
         }
 
         worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
-
-		// make sure to not render again
-		this->renderFlag = clearRenderFlagValue;
 	}
 }
 */
@@ -582,10 +558,7 @@ void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
 	this->drawSpec.position.y += displacement->y;
 	this->drawSpec.position.z += displacement->z;
 	this->drawSpec.position.parallax += displacement->parallax;
-
-	Sprite_setRenderFlag(__SAFE_CAST(Sprite, this), __UPDATE_G);
 }
-
 
 // get map's param table address
 u32 BgmapSprite_getParam(BgmapSprite this)
@@ -610,8 +583,6 @@ void BgmapSprite_setParam(BgmapSprite this, u32 param)
 void BgmapSprite_invalidateParamTable(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::invalidateParamTable: null this");
-
-	this->renderFlag |= __UPDATE_SIZE;
 
 	BgmapSprite_applyAffineTransformations(this);
 }

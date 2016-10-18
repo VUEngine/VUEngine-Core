@@ -118,7 +118,6 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 			}
 
 			BgmapSprite_invalidateParamTable(__SAFE_CAST(BgmapSprite, this));
-			this->renderFlag |= __UPDATE_M;
 			break;
 	}
 }
