@@ -54,7 +54,7 @@ static void KeypadManager_constructor(KeypadManager this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-static unsigned int volatile* readingStatus = NULL;
+static unsigned int volatile* _readingStatus = NULL;
 
 __SINGLETON(KeypadManager);
 
@@ -69,7 +69,7 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
 	this->previousKey = 0;
 	this->enabled = false;
 
-	readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
+	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
 
 // class's destructor
@@ -133,7 +133,7 @@ void KeypadManager_read(KeypadManager this)
 	ASSERT(this, "KeypadManager::read: null this");
 
 	// wait for screen to idle
-	while(*readingStatus & __S_STAT);
+	while(*_readingStatus & __S_STAT);
 
 	// now read the key
 	this->currentKey |= (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0x0000FFFD;
