@@ -352,6 +352,7 @@ void BgmapSprite_render(BgmapSprite this)
 		if(this->hidden)
 		{
 			worldPointer->head = 0x0000;
+            this->renderFlag = false;
 			return;
 		}
 		else

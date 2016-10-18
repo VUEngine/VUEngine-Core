@@ -316,6 +316,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 		if(this->hidden)
 		{
 			worldPointer->head = 0x0000;
+            this->renderFlag = false;
 			return;
 		}
 		else
