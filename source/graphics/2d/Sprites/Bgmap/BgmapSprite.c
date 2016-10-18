@@ -153,6 +153,9 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 			// set map head
 			this->head = bgmapSpriteDefinition->display | __WORLD_HBIAS | __WORLD_OVR;
 
+			// allocate param table space
+			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
+
 			break;
 	}
 }
