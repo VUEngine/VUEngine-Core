@@ -96,13 +96,12 @@ static void SRAMManager_initialize(SRAMManager this)
 	}
 }
 
-void SRAMManager_clear(SRAMManager this)
+void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
 {
 	ASSERT(this, "SRAMManager::clear: null this");
 
-	int i = 0;
-
-	for(; i < __TOTAL_SAVE_RAM; i++)
+	int i = startOffset;
+	for(; i < endOffset; i++)
 	{
 		this->saveSpaceStartAddress[i] = 0;
 	}

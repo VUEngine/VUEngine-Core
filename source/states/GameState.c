@@ -270,18 +270,18 @@ void GameState_transform(GameState this)
 	// static to avoid call to memcpy
 	static Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 	{
-			// local position
-			{0, 0, 0},
-			// global position
-			{0, 0, 0},
-			// local rotation
-			{0, 0, 0},
-			// global rotation
-			{0, 0, 0},
-			// local scale
-			{__1I_FIX7_9, __1I_FIX7_9},
-			// global scale
-			{__1I_FIX7_9, __1I_FIX7_9},
+		// local position
+		{0, 0, 0},
+		// global position
+		{0, 0, 0},
+		// local rotation
+		{0, 0, 0},
+		// global rotation
+		{0, 0, 0},
+		// local scale
+		{__1I_FIX7_9, __1I_FIX7_9},
+		// global scale
+		{__1I_FIX7_9, __1I_FIX7_9},
 	};
 
 	// then transform loaded entities
@@ -297,18 +297,18 @@ static void GameState_initialTransform(GameState this)
 	// static to avoid call to memcpy
 	static Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 	{
-			// local position
-			{0, 0, 0},
-			// global position
-			{0, 0, 0},
-			// local rotation
-			{0, 0, 0},
-			// global rotation
-			{0, 0, 0},
-			// local scale
-			{__1I_FIX7_9, __1I_FIX7_9},
-			// global scale
-			{__1I_FIX7_9, __1I_FIX7_9},
+		// local position
+		{0, 0, 0},
+		// global position
+		{0, 0, 0},
+		// local rotation
+		{0, 0, 0},
+		// global rotation
+		{0, 0, 0},
+		// local scale
+		{__1I_FIX7_9, __1I_FIX7_9},
+		// global scale
+		{__1I_FIX7_9, __1I_FIX7_9},
 	};
 
     __VIRTUAL_CALL(Container, initialTransform, this->stage, &environmentTransform, true);
