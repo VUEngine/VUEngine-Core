@@ -244,10 +244,12 @@ void Container_processRemovedChildren(Container this)
 {
 	ASSERT(this, "Container::processRemovedChildren: null this");
 
-	if(!(this->children && this->removedChildren))
+	if(!this->removedChildren)
 	{
 	    return;
     }
+
+	ASSERT(this->children, "Container::processRemovedChildren: null children list");
 
     VirtualNode node = this->removedChildren->head;
 
