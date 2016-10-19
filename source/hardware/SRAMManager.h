@@ -50,7 +50,7 @@ struct SaveData;
 SRAMManager SRAMManager_getInstance();
 
 void SRAMManager_destructor(SRAMManager this);
-void SRAMManager_clear(SRAMManager this);
+void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset);
 void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize);
 void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize);
 
