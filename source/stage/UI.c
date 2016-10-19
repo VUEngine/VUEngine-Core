@@ -58,7 +58,7 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition)
 	ASSERT(this, "UI::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Container, -1, NULL);
+	__CONSTRUCT_BASE(Container, NULL);
 
 	// add entities in the definition
 	__VIRTUAL_CALL(UI, addEntities, this, uiDefinition->entities);
@@ -80,12 +80,12 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 	ASSERT(this, "UI::addEntities: null this");
 	ASSERT(entities, "UI::addEntities: null entities");
 
-	static int ID = 0;
+	static int internalId = 0;
 	int i = 0;
 
 	for(;entities && entities[i].entityDefinition; i++)
 	{
-		Entity entity = Entity_loadEntity(&entities[i], ID++);
+		Entity entity = Entity_loadEntity(&entities[i], internalId++);
 
 		if(entity)
 		{

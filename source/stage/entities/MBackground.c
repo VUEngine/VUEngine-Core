@@ -54,18 +54,18 @@ static void MBackground_releaseTextures(MBackground this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(MBackground, mBackgroundDefinition, id, name);
+__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(MBackground, mBackgroundDefinition, id, internalId, name);
 
 // class's constructor
-void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name)
+void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "MBackground::constructor: null this");
 	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
 	ASSERT(mBackgroundDefinition->spritesDefinitions[0], "MBackground::constructor: null sprite definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, (EntityDefinition*)mBackgroundDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, (EntityDefinition*)mBackgroundDefinition, id, internalId, name);
 
 	this->mBackgroundDefinition = mBackgroundDefinition;
 

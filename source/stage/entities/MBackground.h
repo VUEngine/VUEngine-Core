@@ -62,9 +62,9 @@ typedef const EntityDefinition MBackgroundROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name);
 
-void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, const char* const name);
+void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name);
 void MBackground_destructor(MBackground this);
 void MBackground_setDefinition(MBackground this, MBackgroundDefinition* mBackgroundDefinition);
 void MBackground_suspend(MBackground this);

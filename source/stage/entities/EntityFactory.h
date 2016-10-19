@@ -95,6 +95,9 @@ typedef const struct PositionedEntity
 	// position in the world
 	VBVec3D position;
 
+    // entity's id
+    s16 id;
+
 	// name
 	char* name;
 

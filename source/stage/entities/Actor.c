@@ -57,16 +57,16 @@ static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject colliding
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Actor, const ActorDefinition* actorDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(Actor, actorDefinition, id, name);
+__CLASS_NEW_DEFINITION(Actor, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(Actor, actorDefinition, id, internalId, name);
 
 // class's constructor
-void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, const char* const name)
+void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedInGameEntity, (AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(AnimatedInGameEntity, (AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id, internalId, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;

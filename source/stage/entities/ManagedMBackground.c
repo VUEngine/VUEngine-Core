@@ -52,16 +52,16 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedMBackground, MBackgroundDefinition* definition, int id, const char* const name)
-__CLASS_NEW_END(ManagedMBackground, definition, id, name);
+__CLASS_NEW_DEFINITION(ManagedMBackground, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(ManagedMBackground, definition, id, internalId, name);
 
 // class's constructor
-void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, int id, const char* const name)
+void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "ManagedMBackground::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(MBackground, definition, id, name);
+	__CONSTRUCT_BASE(MBackground, definition, id, internalId, name);
 
 	// the sprite must be initialized in the derived class
 	this->managedSprites = __NEW(VirtualList);

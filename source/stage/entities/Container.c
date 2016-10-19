@@ -48,19 +48,16 @@ static void Container_applyEnvironmentToScale(Container this, const Transformati
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Container, s16 id, const char* const name)
-__CLASS_NEW_END(Container, id, name);
+__CLASS_NEW_DEFINITION(Container, const char* const name)
+__CLASS_NEW_END(Container, name);
 
 // class's constructor
-void Container_constructor(Container this, s16 id, const char* const name)
+void Container_constructor(Container this, const char* const name)
 {
 	ASSERT(this, "Container::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(SpatialObject);
-
-	// set ID
-	this->id = id;
 
 	// set position
 	this->transform.localPosition.x = 0;
@@ -782,14 +779,6 @@ bool Container_handlePropagatedMessage(Container this __attribute__ ((unused)), 
 	return false;
 }
 
-// retrieve class's in game index
-s16 Container_getId(Container this)
-{
-	ASSERT(this, "Container::getId: null this");
-
-	return this->id;
-}
-
 // retrieve parent
 Container Container_getParent(Container this)
 {
@@ -904,32 +893,7 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 	return foundChild;
 }
 
-// get child by id
-Container Container_getChildById(Container this, s16 id)
-{
-	ASSERT(this, "Container::getChildById: null this");
 
-	if(this->children)
-	{
-		// first remove children
-		Container_processRemovedChildren(this);
-
-		VirtualNode node = this->children->head;
-
-		// look through all children
-		for(; node ; node = node->next)
-        {
-			Container child = __SAFE_CAST(Container, node->data);
-
-			if(child->id == id)
-			{
-				return child;
-			}
-        }
-	}
-
-	return NULL;
-}
 
 // suspend for pause
 void Container_suspend(Container this)

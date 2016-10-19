@@ -77,7 +77,7 @@ typedef struct StageEntityDescription
 {
 	PositionedEntity* positionedEntity;
 	SmallRightCuboid smallRightCuboid;
-	s16 id;
+	s16 internalId;
 	long distance;
 
 } StageEntityDescription;
@@ -138,7 +138,7 @@ static void Stage_constructor(Stage this)
 	ASSERT(this, "Stage::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Container, -1, NULL);
+	__CONSTRUCT_BASE(Container, NULL);
 
     this->entityFactory = __NEW(EntityFactory);
     this->particleRemover = __NEW(ParticleRemover);
@@ -392,7 +392,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 	return NULL;
 }
 
-bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition)
+bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition)
 {
 	ASSERT(this, "Stage::registerEntityId: null this");
 
@@ -404,7 +404,7 @@ bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefiniti
 
 		if(entityDefinition == stageEntityDescription->positionedEntity->entityDefinition)
 		{
-			stageEntityDescription->id = id;
+			stageEntityDescription->internalId = internalId;
 			return true;
 		}
 	}
@@ -435,7 +435,7 @@ void Stage_removeChild(Stage this, Container child)
 
 	Container_removeChild(__SAFE_CAST(Container, this), child);
 
-	s16 id = Container_getId(__SAFE_CAST(Container, child));
+	s16 internalId = Entity_getInternalId(__SAFE_CAST(Entity, child));
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -443,9 +443,9 @@ void Stage_removeChild(Stage this, Container child)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(stageEntityDescription->id == id)
+		if(stageEntityDescription->internalId == internalId)
 		{
-			stageEntityDescription->id = -1;
+			stageEntityDescription->internalId = -1;
 			break;
 		}
 	}
@@ -479,7 +479,7 @@ static void Stage_unloadChild(Stage this, Container child)
 	child->deleteMe = true;
 	Container_removeChild(__SAFE_CAST(Container, this), child);
 
-	s16 id = Container_getId(__SAFE_CAST(Container, child));
+	s16 internalId = Entity_getInternalId(__SAFE_CAST(Entity, child));
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -487,9 +487,9 @@ static void Stage_unloadChild(Stage this, Container child)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(stageEntityDescription->id == id)
+		if(stageEntityDescription->internalId == internalId)
 		{
-			stageEntityDescription->id = -1;
+			stageEntityDescription->internalId = -1;
 			break;
 		}
 	}
@@ -584,7 +584,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 
 	StageEntityDescription* stageEntityDescription = __NEW_BASIC(StageEntityDescription);
 
-	stageEntityDescription->id = -1;
+	stageEntityDescription->internalId = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	VBVec3D environmentPosition3D = {0, 0, 0};
@@ -681,7 +681,7 @@ static void Stage_loadInitialEntities(Stage this)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(-1 == stageEntityDescription->id)
+		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
@@ -694,7 +694,7 @@ static void Stage_loadInitialEntities(Stage this)
                     this->streamingHeadNode = node;
                 }
 
-                stageEntityDescription->id = Container_getId(__SAFE_CAST(Container, entity));
+                stageEntityDescription->internalId = Entity_getInternalId(entity);
 
                 VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 			}
@@ -724,7 +724,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 		// if the entity isn't visible inside the view field, unload it
 		if(!__VIRTUAL_CALL(Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
-			s16 id = Container_getId(__SAFE_CAST(Container, entity));
+			s16 internalId = Entity_getInternalId(entity);
 
 			VirtualNode auxNode = this->loadedStageEntities->head;
 
@@ -732,9 +732,9 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 			{
 				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)auxNode->data;
 
-				if(stageEntityDescription->id == id)
+				if(stageEntityDescription->internalId == internalId)
 				{
-//					stageEntityDescription->id = -1;
+//					stageEntityDescription->internalId = -1;
 
 					VirtualList_removeElement(this->loadedStageEntities, stageEntityDescription);
                     break;
@@ -804,7 +804,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
         {
             StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-            if(0 > stageEntityDescription->id)
+            if(0 > stageEntityDescription->internalId)
             {
                 counter++;
 
@@ -819,9 +819,9 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
-                    stageEntityDescription->id = this->nextEntityId++;
+                    stageEntityDescription->internalId = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
+                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
                 }
             }
         }
@@ -836,7 +836,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
         {
             StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-            if(0 > stageEntityDescription->id)
+            if(0 > stageEntityDescription->internalId)
             {
                 counter++;
 
@@ -851,9 +851,9 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
                 // if entity in load range
                 if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
                 {
-                    stageEntityDescription->id = this->nextEntityId++;
+                    stageEntityDescription->internalId = this->nextEntityId++;
                     VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->id);
+                    EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
                }
             }
         }

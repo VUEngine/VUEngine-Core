@@ -42,16 +42,16 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(InGameEntity, inGameEntityDefinition, id, name);
+__CLASS_NEW_DEFINITION(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(InGameEntity, inGameEntityDefinition, id, internalId, name);
 
 // class's constructor
-void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id, const char* const name)
+void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "InGameEntity::constructor: null this");
 	ASSERT(inGameEntityDefinition, "InGameEntity::constructor: null definition");
 
-	__CONSTRUCT_BASE(Entity, &inGameEntityDefinition->entityDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, &inGameEntityDefinition->entityDefinition, id, internalId, name);
 
 	this->inGameEntityDefinition = inGameEntityDefinition;
 

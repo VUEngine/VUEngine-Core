@@ -111,8 +111,6 @@
         Container parent;																				\
         /* name */																						\
         char* name;																						\
-        /* entity's id */																				\
-        s16 id;																						    \
         /* flag for parent to know to delete it */														\
         u8 deleteMe;																				    \
         /* flag to hide the entity */																	\
@@ -135,9 +133,9 @@ Shape SpatialObject_getShape(SpatialObject this);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Container, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(Container, const char* const name);
 
-void Container_constructor(Container this, s16 id, const char* const name);
+void Container_constructor(Container this, const char* const name);
 void Container_destructor(Container this);
 void Container_deleteMyself(Container this);
 void Container_addChild(Container this, Container child);
@@ -176,7 +174,6 @@ VirtualList Container_getChildren(Container this);
 void Container_setName(Container this, const char* const  name);
 char* Container_getName(Container this);
 Container Container_getChildByName(Container this, char* childName, bool recursive);
-Container Container_getChildById(Container this, s16 id);
 void Container_suspend(Container this);
 void Container_resume(Container this);
 void Container_show(Container this);

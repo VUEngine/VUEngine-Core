@@ -125,8 +125,8 @@ typedef const ParticleSystemDefinition ParticleSystemROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name);
-void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition,  s16 id, const char* const name);
+__CLASS_NEW_DECLARE(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name);
+void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
 void ParticleSystem_destructor(ParticleSystem this);
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);
 void ParticleSystem_hide(ParticleSystem this);

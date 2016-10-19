@@ -40,17 +40,17 @@ __CLASS_DEFINITION(TriggerEntity, InGameEntity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(TriggerEntity, TriggerEntityDefinition* triggerEntityDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(TriggerEntity, triggerEntityDefinition, id, name);
+__CLASS_NEW_DEFINITION(TriggerEntity, TriggerEntityDefinition* triggerEntityDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(TriggerEntity, triggerEntityDefinition, id, internalId, name);
 
 // class's constructor
-void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition, s16 id, const char* const name)
+void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "TriggerEntity::constructor: null this");
 	ASSERT(triggerEntityDefinition, "TriggerEntity::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, &triggerEntityDefinition->inGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(InGameEntity, &triggerEntityDefinition->inGameEntityDefinition, id, internalId, name);
 
 	this->triggerEntityDefinition = triggerEntityDefinition;
 

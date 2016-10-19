@@ -64,9 +64,9 @@ typedef const CollisionsContainerEntityDefinition CollisionsContainerEntityROMDe
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(CollisionsContainerEntity, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(CollisionsContainerEntity, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, s16 internalId, const char* const name);
 
-void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, const char* const name);
+void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, s16 internalId, const char* const name);
 void CollisionsContainerEntity_destructor(CollisionsContainerEntity this);
 void CollisionsContainerEntity_ready(CollisionsContainerEntity this, u32 recursive);
 void CollisionsContainerEntity_update(CollisionsContainerEntity this, u32 elapsedTime);

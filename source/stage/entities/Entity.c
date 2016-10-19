@@ -68,17 +68,21 @@ static void Entity_setupShape(Entity this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Entity, EntityDefinition* entityDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(Entity, entityDefinition, id, name);
+__CLASS_NEW_DEFINITION(Entity, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(Entity, entityDefinition, id, internalId, name);
 
 
 // class's constructor
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name)
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "Entity::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(Container, id, name);
+	__CONSTRUCT_BASE(Container, name);
+
+	// set the ids
+	this->id = id;
+	this->internalId = internalId;
 
 	// save definition
 	this->entityDefinition = entityDefinition;
@@ -127,6 +131,49 @@ void Entity_destructor(Entity this)
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
+}
+
+// retrieve instance's in game id
+s16 Entity_getInternalId(Entity this)
+{
+	ASSERT(this, "Entity::getInternalId: null this");
+
+	return this->internalId;
+}
+
+// retrieve instance's id as per its definition
+s16 Entity_getId(Entity this)
+{
+	ASSERT(this, "Entity::getId: null this");
+
+	return this->id;
+}
+
+// get child by id
+Entity Entity_getChildById(Entity this, s16 id)
+{
+	ASSERT(this, "Entity::getChildById: null this");
+
+	if(this->children)
+	{
+		// first remove children
+		Container_processRemovedChildren(__SAFE_CAST(Container, this));
+
+		VirtualNode node = this->children->head;
+
+		// look through all children
+		for(; node ; node = node->next)
+        {
+			Entity child = __SAFE_CAST(Entity, node->data);
+
+			if(Entity_getId(child) == id)
+			{
+				return child;
+			}
+        }
+	}
+
+	return NULL;
 }
 
 // set definition
@@ -570,7 +617,7 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 }
 
 // instantiate and entity using the provided allocator
-Entity Entity_instantiate(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo)
+Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -581,7 +628,7 @@ Entity Entity_instantiate(const EntityDefinition* const entityDefinition, int id
 	}
 
     // call the appropriate allocator to support inheritance
-    Entity entity = ((Entity (*)(EntityDefinition*, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, name);
+    Entity entity = ((Entity (*)(EntityDefinition*, s16, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, internalId, name);
 
     // process extra info
     if(extraInfo)
@@ -607,7 +654,7 @@ void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefini
     //go through n sprites in entity's definition
     for(; childrenDefinitions[i].entityDefinition; i++)
     {
-        Entity child = Entity_loadEntity(&childrenDefinitions[i], this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+        Entity child = Entity_loadEntity(&childrenDefinitions[i], this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
     	ASSERT(child, "Entity::loadChildren: entity not loaded");
 
         // create the entity and add it to the world
@@ -616,7 +663,7 @@ void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefini
 }
 
 // load an entity and instantiate all its children
-Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 id)
+Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 
@@ -625,7 +672,7 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 id)
 	    return NULL;
 	}
 
-    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
+    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
 
     // set spatial position
@@ -661,12 +708,12 @@ void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childr
     //go through n sprites in entity's definition
     for(; childrenDefinitions[i].entityDefinition; i++)
     {
-        EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+        EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
     }
 }
 
 // load an entity and instantiate all its children deferredly
-Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 id)
+Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
@@ -675,7 +722,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
         return NULL;
     }
 
-    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, id, positionedEntity->name, positionedEntity->extraInfo);
+    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
     if(positionedEntity->name)
@@ -696,7 +743,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
 }
 
 // add child entity from definition
-Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo)
+Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo)
 {
 	ASSERT(this, "Entity::addChildEntity: null this");
 	ASSERT(entityDefinition, "Entity::addChildEntity: null entityDefinition");
@@ -710,6 +757,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	{
 		(EntityDefinition*)entityDefinition,
 		{position->x, position->y, position->z},
+		this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)),
 		(char*)name,
 		NULL,
 		extraInfo,
@@ -717,7 +765,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	};
 
     // create the hint entity and add it to the hero as a child entity
-	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > id? id: this->id + Container_getChildCount(__SAFE_CAST(Container, this)));
+	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > internalId? internalId: positionedEntity.id);
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
     // must initialize after adding the children

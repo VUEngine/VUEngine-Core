@@ -42,17 +42,17 @@ __CLASS_DEFINITION(CollisionsContainerEntity, Entity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(CollisionsContainerEntity, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(CollisionsContainerEntity, collisionsContainerEntityDefinition, id, name);
+__CLASS_NEW_DEFINITION(CollisionsContainerEntity, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(CollisionsContainerEntity, collisionsContainerEntityDefinition, id, internalId, name);
 
 
 // class's constructor
-void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, const char* const name)
+void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "CollisionsContainerEntity::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(Entity, collisionsContainerEntityDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, collisionsContainerEntityDefinition, id, internalId, name);
 }
 
 // class's destructor

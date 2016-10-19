@@ -37,15 +37,15 @@ __CLASS_DEFINITION(Image, Entity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Image, ImageDefinition* imageDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(Image, imageDefinition, id, name);
+__CLASS_NEW_DEFINITION(Image, ImageDefinition* imageDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(Image, imageDefinition, id, internalId, name);
 
 // class's constructor
-void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 id, const char* const name)
+void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "Image::constructor: null this");
 
-	__CONSTRUCT_BASE(Entity, imageDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, imageDefinition, id, internalId, name);
 }
 
 // class's destructor

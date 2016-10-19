@@ -954,6 +954,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
         {
             (EntityDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition,
             position,
+            0,
             NULL,
             NULL,
             NULL,
@@ -999,7 +1000,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		char* entityName = Container_getName(__SAFE_CAST(Container, entity));
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Container_getId(__SAFE_CAST(Container, entity)), x + 6, y, NULL);
+		Printing_int(Printing_getInstance(), Entity_getInternalId(__SAFE_CAST(Entity, entity)), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(entity), x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Name:                                  ", x, ++y, NULL);

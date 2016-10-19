@@ -70,9 +70,9 @@ typedef const TriggerEntityDefinition TriggerEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(TriggerEntity, TriggerEntityDefinition* triggerEntityDefinition, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(TriggerEntity, TriggerEntityDefinition* triggerEntityDefinition, s16 id, s16 internalId, const char* const name);
 
-void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition, s16 id, const char* const name);
+void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition, s16 id, s16 internalId, const char* const name);
 void TriggerEntity_destructor(TriggerEntity this);
 void TriggerEntity_setDefinition(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition);
 bool TriggerEntity_moves(TriggerEntity this);

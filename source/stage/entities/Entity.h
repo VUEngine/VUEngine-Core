@@ -94,6 +94,10 @@
         EntityDefinition* entityDefinition;																\
         /* entity's definition */																		\
         VBVec3D* centerDisplacement;																	\
+        /* entity's id */																				\
+        s16 id;																					        \
+        /* entity's internal id */																		\
+        s16 internalId;																					\
         /* flag to update sprites' attributes */														\
         bool updateSprites;																				\
 
@@ -104,16 +108,19 @@
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Entity, EntityDefinition* entityDefinition, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(Entity, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name);
 
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, const char* const name);
+void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name);
 void Entity_destructor(Entity this);
+s16 Entity_getInternalId(Entity this);
+s16 Entity_getId(Entity this);
+Entity Entity_getChildById(Entity this, s16 id);
 void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition);
 SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
 VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName);
-Entity Entity_instantiate(const EntityDefinition* const entityDefinition, int id, const char* const name, void* extraInfo);
-Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 id);
-Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 id);
+Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo);
+Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
+Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 void Entity_initialize(Entity this, u32 recursive);
 void Entity_ready(Entity this, u32 recursive);
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions);
@@ -122,7 +129,7 @@ u32 Entity_areAllChildrenInstantiated(Entity this);
 u32 Entity_areAllChildrenInitialized(Entity this);
 u32 Entity_areAllChildrenTransformed(Entity this);
 u32 Entity_areAllChildrenReady(Entity this);
-Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int id, const char* name, const VBVec3D* position, void* extraInfo);
+Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);

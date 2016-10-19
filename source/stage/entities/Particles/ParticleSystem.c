@@ -99,8 +99,8 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id, name);
+__CLASS_NEW_DEFINITION(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id, internalId, name);
 
 /**
  * Class constructor
@@ -110,12 +110,12 @@ __CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id, name);
  *
  * @param this  Function scope
  */
-void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition, s16 id, const char* const name)
+void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "ParticleSystem::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(Entity, &particleSystemDefinition->entityDefinition, id, name);
+	__CONSTRUCT_BASE(Entity, &particleSystemDefinition->entityDefinition, id, internalId, name);
 
 	// save definition
 	this->particleSystemDefinition = particleSystemDefinition;

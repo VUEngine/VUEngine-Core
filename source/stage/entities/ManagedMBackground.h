@@ -58,9 +58,9 @@ __CLASS(ManagedMBackground);
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ManagedMBackground, MBackgroundDefinition* definition, int id, const char* const name);
+__CLASS_NEW_DECLARE(ManagedMBackground, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name);
 
-void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, int id, const char* const name);
+void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name);
 void ManagedMBackground_destructor(ManagedMBackground this);
 void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform, u32 recursive);
 void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform);

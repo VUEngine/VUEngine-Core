@@ -40,17 +40,17 @@ __CLASS_DEFINITION(InanimatedInGameEntity, InGameEntity);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, const char* const name)
-__CLASS_NEW_END(InanimatedInGameEntity, inanimatedInGameEntityDefinition, id, name);
+__CLASS_NEW_DEFINITION(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(InanimatedInGameEntity, inanimatedInGameEntityDefinition, id, internalId, name);
 
 // class's constructor
-void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, const char* const name)
+void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "InanimatedInGameEntity::constructor: null this");
 	ASSERT(inanimatedInGameEntityDefinition, "InanimatedInGameEntity::constructor: null definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, &inanimatedInGameEntityDefinition->inGameEntityDefinition, id, name);
+	__CONSTRUCT_BASE(InGameEntity, &inanimatedInGameEntityDefinition->inGameEntityDefinition, id, internalId, name);
 
 	// check if register for collision detection
 	if(inanimatedInGameEntityDefinition->registerShape)

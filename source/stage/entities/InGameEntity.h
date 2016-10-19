@@ -92,9 +92,9 @@ typedef const InGameEntityDefinition InGameEntityROMDef;
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id, const char* const name);
+__CLASS_NEW_DECLARE(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id, s16 internalId, const char* const name);
 
-void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id, const char* const name);
+void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id, s16 internalId, const char* const name);
 void InGameEntity_destructor(InGameEntity this);
 void InGameEntity_setDefinition(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition);
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);

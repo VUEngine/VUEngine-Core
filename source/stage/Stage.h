@@ -212,7 +212,7 @@ void Stage_destructor(Stage this);
 void Stage_setupPalettes(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
 Size Stage_getSize(Stage this);
-bool Stage_registerEntityId(Stage this, s16 id, EntityDefinition* entityDefinition);
+bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);
 void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
 Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);
 void Stage_removeChild(Stage this, Container child);
