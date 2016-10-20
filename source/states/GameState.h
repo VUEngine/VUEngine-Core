@@ -92,7 +92,7 @@ void GameState_stream(GameState this);
 void GameState_transform(GameState this);
 void GameState_updateVisuals(GameState this);
 int GameState_propagateMessage(GameState this, int message);
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition);
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition);
 void GameState_setCanStream(GameState this, int canStream);
 Stage GameState_getStage(GameState this);
 Clock GameState_getMessagingClock(GameState this);

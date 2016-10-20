@@ -338,7 +338,7 @@ void GameState_onPropagatedMessage(GameState this __attribute__ ((unused)), int 
 
 }
 // load a stage
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition)
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition)
 {
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
@@ -371,7 +371,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 
 	// load world entities
-	Stage_load(this->stage, stageDefinition, entityNamesToIgnore, overrideScreenPosition);
+	Stage_load(this->stage, stageDefinition, positionedEntitiesToIgnore, overrideScreenPosition);
 
 	// move the screen to its previous position
 	Screen_focus(Screen_getInstance(), false);

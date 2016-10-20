@@ -95,7 +95,7 @@ BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapText
 static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
-static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore);
+static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToIgnore);
 static void Stage_setObjectSpritesContainers(Stage this);
 static void Stage_preloadAssets(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
@@ -248,7 +248,7 @@ void Stage_setupPalettes(Stage this)
 
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entityNamesToIgnore, bool overrideScreenPosition)
+void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition)
 {
 	ASSERT(this, "Stage::load: null this");
 
@@ -284,7 +284,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList entity
 	Stage_preloadAssets(this);
 
 	// register all the entities in the stage's definition
-	Stage_registerEntities(this, entityNamesToIgnore);
+	Stage_registerEntities(this, positionedEntitiesToIgnore);
 
 	// load entities
 	Stage_loadInitialEntities(this);
@@ -594,7 +594,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 }
 
 // register the stage's definition entities in the streaming list
-static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
+static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToIgnore)
 {
 	ASSERT(this, "Stage::registerEntities: null this");
 
@@ -617,14 +617,13 @@ static void Stage_registerEntities(Stage this, VirtualList entityNamesToIgnore)
 
 	for(;this->stageDefinition->entities.children[i].entityDefinition; i++)
 	{
-		if(this->stageDefinition->entities.children[i].name && entityNamesToIgnore)
+		if(positionedEntitiesToIgnore)
 		{
-			VirtualNode node = entityNamesToIgnore->head;
+			VirtualNode node = positionedEntitiesToIgnore->head;
 
 			for(; node; node = node->next)
 			{
-				const char* name = (char*)node->data;
-				if(!strncmp(name, this->stageDefinition->entities.children[i].name, __MAX_CONTAINER_NAME_LENGTH))
+				if(&this->stageDefinition->entities.children[i] == (PositionedEntity*)node->data)
 				{
 					break;
 				}
