@@ -75,7 +75,7 @@
 
 #include <GameState.h>
 #include <Stage.h>
-#include <UIContainer.h>
+#include <UiContainer.h>
 #include <Mem.h>
 
 
@@ -453,7 +453,7 @@ static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((un
 	Printing_text(Printing_getInstance(), "Entities: ", 1, ++y, NULL);
 	Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, GameState_getStage(this->gameState))), 14, y, NULL);
 	Printing_text(Printing_getInstance(), "UI Entities: ", 1, ++y, NULL);
-	UI ui = Stage_getUI(GameState_getStage(this->gameState));
+	UiContainer ui = Stage_getUiContainer(GameState_getStage(this->gameState));
 	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 14, y, NULL);
 	y+=3;
 
