@@ -634,12 +634,12 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 	Printing_text(Printing_getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x04", 1, yOffset-1, NULL);
 	Printing_text(Printing_getInstance(), "\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x06", 1, yOffset+16, NULL);
 
-	for(i = 0; i < 512 >> 5; i++)
+	for(i = 0; i < __CHARS_PER_SEGMENT_TO_SHOW >> 5 && i < __SCREEN_HEIGHT / 8; i++)
 	{
 		Printing_text(Printing_getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
 	}
 
-	BYTE charMemoryMap[__CHAR_MEMORY_TOTAL_CHARS];
+	BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];
 
 	for(i = 0, j = this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW; i <  __CHARS_PER_SEGMENT_TO_SHOW; i+= 2, j++)
 	{
