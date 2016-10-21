@@ -145,7 +145,7 @@ static void Stage_constructor(Stage this)
 
 	this->stageEntities = NULL;
 	this->loadedStageEntities = NULL;
-	this->ui = NULL;
+	this->uiContainer = NULL;
 	this->stageDefinition = NULL;
 	this->focusInGameEntity = NULL;
 	this->streamingHeadNode = NULL;
@@ -163,10 +163,10 @@ void Stage_destructor(Stage this)
 
     __DELETE(this->entityFactory);
 
-	if(this->ui)
+	if(this->uiContainer)
 	{
-		__DELETE(this->ui);
-		this->ui = NULL;
+		__DELETE(this->uiContainer);
+		this->uiContainer = NULL;
 	}
 
 	if(this->stageEntities)
@@ -313,9 +313,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform, true);
 
-	if(this->ui)
+	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform, true);
+		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &environmentTransform, true);
 	}
 }
 
@@ -333,26 +333,26 @@ Size Stage_getSize(Stage this)
 static void Stage_setupUI(Stage this)
 {
 	ASSERT(this, "Stage::setupUI: null this");
-	ASSERT(!this->ui, "Stage::setupUI: UI already exists");
+	ASSERT(!this->uiContainer, "Stage::setupUI: UI already exists");
 
-	if(this->ui)
+	if(this->uiContainer)
 	{
-		__DELETE(this->ui);
-		this->ui = NULL;
+		__DELETE(this->uiContainer);
+		this->uiContainer = NULL;
 	}
 
-	if(this->stageDefinition->entities.uiDefinition.allocator)
+	if(this->stageDefinition->entities.uiContainerDefinition.allocator)
 	{
 		// call the appropriate allocator to support inheritance
-		this->ui = ((UI (*)(UIDefinition*)) this->stageDefinition->entities.uiDefinition.allocator)(&this->stageDefinition->entities.uiDefinition);
-		ASSERT(this->ui, "Stage::setupUI: null ui");
+		this->uiContainer = ((UiContainer (*)(UiContainerDefinition*)) this->stageDefinition->entities.uiContainerDefinition.allocator)(&this->stageDefinition->entities.uiContainerDefinition);
+		ASSERT(this->uiContainer, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
-		if(this->ui)
+		if(this->uiContainer)
 		{
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform, true);
+			__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &environmentTransform, true);
 		}
 	}
 }
@@ -935,9 +935,9 @@ void Stage_update(Stage this, u32 elapsedTime)
 
 	Container_update(__SAFE_CAST(Container, this), elapsedTime);
 
-	if(this->ui)
+	if(this->uiContainer)
 	{
-		Container_update(__SAFE_CAST(Container, this->ui), elapsedTime);
+		Container_update(__SAFE_CAST(Container, this->uiContainer), elapsedTime);
 	}
 
 	ParticleRemover_update(this->particleRemover);
@@ -950,7 +950,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 
 	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 
-	if(this->ui)
+	if(this->uiContainer)
 	{
 		// static to avoid call to _memcpy
 		static Transformation uiEnvironmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
@@ -972,16 +972,16 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
 
 
-		__VIRTUAL_CALL(Container, transform, this->ui, &uiEnvironmentTransform);
+		__VIRTUAL_CALL(Container, transform, this->uiContainer, &uiEnvironmentTransform);
 	}
 }
 
 // retrieve ui
-UI Stage_getUI(Stage this)
+UiContainer Stage_getUiContainer(Stage this)
 {
-	ASSERT(this, "Stage::getUI: null this");
+	ASSERT(this, "Stage::getUiContainer: null this");
 
-	return this->ui;
+	return this->uiContainer;
 }
 
 // suspend for pause
@@ -995,9 +995,9 @@ void Stage_suspend(Stage this)
 
 	Container_suspend(__SAFE_CAST(Container, this));
 
-	if(this->ui)
+	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, suspend, __SAFE_CAST(Container, this->ui));
+		__VIRTUAL_CALL(Container, suspend, __SAFE_CAST(Container, this->uiContainer));
 	}
 
 	// relinquish screen focus priority
@@ -1059,11 +1059,11 @@ void Stage_resume(Stage this)
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform, true);
 
-	if(this->ui)
+	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, resume, __SAFE_CAST(Container, this->ui));
+		__VIRTUAL_CALL(Container, resume, __SAFE_CAST(Container, this->uiContainer));
 
-		__VIRTUAL_CALL(Container, initialTransform, this->ui, &environmentTransform, true);
+		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &environmentTransform, true);
 	}
 
     this->entityFactory = __NEW(EntityFactory);
@@ -1073,10 +1073,10 @@ bool Stage_handlePropagatedMessage(Stage this, int message)
 {
 	ASSERT(this, "Stage::handlePropagatedMessage: null this");
 
-    if(this->ui)
+    if(this->uiContainer)
     {
         // propagate message to ui
-        return Container_propagateMessage(__SAFE_CAST(Container, this->ui), Container_onPropagatedMessage, message);
+        return Container_propagateMessage(__SAFE_CAST(Container, this->uiContainer), Container_onPropagatedMessage, message);
     }
 
     return false;

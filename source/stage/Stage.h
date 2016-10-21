@@ -27,7 +27,7 @@
 #include <Printing.h>
 #include <EntityFactory.h>
 #include <Texture.h>
-#include <UI.h>
+#include <UiContainer.h>
 #include <ObjectSpriteContainerManager.h>
 #include <ParticleRemover.h>
 
@@ -70,9 +70,9 @@
         /* index for method to execute */													            \
         int streamingPhase;                                                                             \
         /* flag to control streaming */ 															    \
-        u32 hasRemovedChildren;                                                                      \
-        /* the UI */ 																					\
-        UI ui;																							\
+        u32 hasRemovedChildren;                                                                         \
+        /* the ui container */ 																			\
+        UiContainer uiContainer;																		\
         /* focus entity: needed for streaming */														\
         InGameEntity focusInGameEntity;																	\
         /* focus entity: previous distance. Used for the streaming */									\
@@ -190,7 +190,7 @@ typedef struct StageDefinition
 	struct Entities
 	{
 		// ui's definition
-		UIDefinition uiDefinition;
+		UiContainerDefinition uiContainerDefinition;
 
 		// each of the stage's entities
 		PositionedEntity* children;
@@ -220,7 +220,7 @@ void Stage_update(Stage this, u32 elapsedTime);
 void Stage_transform(Stage this, const Transformation* environmentTransform);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
-UI Stage_getUI(Stage this);
+UiContainer Stage_getUiContainer(Stage this);
 void Stage_suspend(Stage this);
 void Stage_resume(Stage this);
 bool Stage_handlePropagatedMessage(Stage this, int message);
