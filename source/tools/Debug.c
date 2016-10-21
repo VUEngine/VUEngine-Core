@@ -75,7 +75,7 @@
 
 #include <GameState.h>
 #include <Stage.h>
-#include <UiContainer.h>
+#include <UI.h>
 #include <Mem.h>
 
 
@@ -120,6 +120,8 @@
         VBVec2D bgmapDisplacement;																		\
         /* update function pointer */																	\
         void (*update)(void *);																			\
+        /* temporal array to hold char data */															\
+    	BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];                                                \
 
 // define the Debug
 __CLASS_DEFINITION(Debug, Object);
@@ -451,8 +453,8 @@ static void Debug_showGeneralStatus(Debug this, int increment __attribute__ ((un
 	Printing_text(Printing_getInstance(), "Entities: ", 1, ++y, NULL);
 	Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, GameState_getStage(this->gameState))), 14, y, NULL);
 	Printing_text(Printing_getInstance(), "UI Entities: ", 1, ++y, NULL);
-	UiContainer uiContainer = Stage_getUiContainer(GameState_getStage(this->gameState));
-	Printing_int(Printing_getInstance(), uiContainer ? Container_getChildCount(__SAFE_CAST(Container, uiContainer)) : 0, 14, y, NULL);
+	UI ui = Stage_getUI(GameState_getStage(this->gameState));
+	Printing_int(Printing_getInstance(), ui ? Container_getChildCount(__SAFE_CAST(Container, ui)) : 0, 14, y, NULL);
 	y+=3;
 
 	Printing_text(Printing_getInstance(), "GAME STATUS", 1, y++, NULL);
@@ -639,12 +641,10 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 		Printing_text(Printing_getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
 	}
 
-	BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];
-
 	for(i = 0, j = this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW; i <  __CHARS_PER_SEGMENT_TO_SHOW; i+= 2, j++)
 	{
-		charMemoryMap[i] = (BYTE)(j & 0xFF);
-		charMemoryMap[i + 1] = (BYTE)((j & 0xFF00) >> 8);
+		this->charMemoryMap[i] = (BYTE)(j & 0xFF);
+		this->charMemoryMap[i + 1] = (BYTE)((j & 0xFF00) >> 8);
 	}
 
 	// put the map into memory calculating the number of char for each reference
@@ -653,7 +653,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 		Mem_add
 		(
 			(u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6) + 2) << 1),
-			(u8*)charMemoryMap,
+			(u8*)this->charMemoryMap,
 			32,
 			(i << 5)
 		);
