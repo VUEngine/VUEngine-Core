@@ -501,15 +501,7 @@ static void Stage_preloadAssets(Stage this)
 	ASSERT(this, "Stage::preloadAssets: null this");
 
     // fonts
-	if(this->stageDefinition->assets.fontDefinitions)
-	{
-		int i = 0;
-
-		for(; this->stageDefinition->assets.fontDefinitions[i]; i++)
-		{
-            CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->assets.fontDefinitions[i]->charSetDefinition);
-		}
-	}
+	Printing_loadFonts(Printing_getInstance(), this->stageDefinition->assets.fontDefinitions);
 
     // charsets
 	if(this->stageDefinition->assets.charSets)

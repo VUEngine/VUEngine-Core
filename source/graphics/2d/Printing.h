@@ -52,8 +52,14 @@ typedef struct FontSize
 #define Printing_SET_VTABLE(ClassName)																	\
 		Object_SET_VTABLE(ClassName)																	\
 
-// declare Printing class
+// declare class
 __CLASS(Printing);
+
+// declare class attributes
+#define Printing_ATTRIBUTES																				\
+		Object_ATTRIBUTES																				\
+        VirtualList fonts;																				\
+
 
 typedef struct FontDefinition
 {
@@ -74,6 +80,14 @@ typedef struct FontDefinition
 typedef const FontDefinition FontROMDef;
 
 
+typedef struct FontData
+{
+	const struct FontDefinition* fontDefinition;
+    CharSet charSet;
+
+} FontData;
+
+
 //---------------------------------------------------------------------------------------------------------
 // 												PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
@@ -82,10 +96,11 @@ Printing Printing_getInstance();
 
 void Printing_destructor(Printing this);
 void Printing_render(Printing this, int textLayer);
+void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
 void Printing_clear(Printing this);
-void Printing_int(Printing this, int value, int x, int y, const char* font);
-void Printing_hex(Printing this, WORD value, int x, int y, u8 length, const char* font);
-void Printing_float(Printing this, float value, int x, int y, const char* font);
+void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
+void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
+void Printing_float(Printing this, float value, u8 x, u8 y, const char* font);
 void Printing_text(Printing this, const char *string, int x, int y, const char* font);
 Size Printing_getTextSize(Printing this, const char* string, const char* font);
 

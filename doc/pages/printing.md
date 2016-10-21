@@ -4,8 +4,8 @@ Printing
 The Printing Layer
 ------------------
 
-Out of the VB's 32 available Worlds, the VBJaEngine reserves the highest one for text output.
-It provides methods to output different variable types to this so-called *Printing Layer*.
+Out of the Virtual Boy's 32 available Worlds, the VBJaEngine always uses the lowest available one for text 
+output. It provides methods to output different variable types to this so-called *Printing Layer*.
 
 - `Printing_text`
 - `Printing_int`

@@ -48,9 +48,15 @@ extern FontROMDef* const __FONTS[];
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Printing_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
+/**
+ * @class 			Printing
+ * @extends 		Object
+ * @brief 			Manages printing layer and offers various functions to write to it.
+ *
+ * @var VirtualList fonts
+ * @brief			A list of loaded fonts and their respective CharSets
+ * @memberof		Printing
+ */
 
 // define the Printing
 __CLASS_DEFINITION(Printing, Object);
@@ -61,32 +67,67 @@ __CLASS_DEFINITION(Printing, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void Printing_constructor(Printing this);
-static void Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font);
+static void Printing_out(Printing this, u8 x, u8 y, const char* string, const char* font);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			Printing_getInstance()
+ * @memberof	Printing
+ * @public
+ *
+ * @return		Printing instance
+ */
 __SINGLETON(Printing);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	Printing
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) Printing_constructor(Printing this)
 {
+	this->fonts = __NEW(VirtualList);
+
 	__CONSTRUCT_BASE(Object);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Printing
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Printing_destructor(Printing this)
 {
+	__DELETE(this->fonts);
+
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
 
-// render general print output layer
+/**
+ * Render general print output layer
+ *
+ * @memberof		Printing
+ * @public
+ *
+ * @param this		Function scope
+ * @param textLayer	Number of layer (World) to set as printing layer
+ */
 void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((unused)), int textLayer)
 {
-    ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
+	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
 	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
 	_worldAttributesBaseAddress[textLayer].mx = 0;
@@ -99,7 +140,57 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
 	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT;
 }
 
-// clear printing area
+/**
+ * Add fonts to internal VirtualList and preload CharSets for specified fonts
+ *
+ * @memberof				Printing
+ * @public
+ *
+ * @param this				Function scope
+ * @param fontDefinitions	Array of font definitions whose charset should pre preloaded
+ */
+void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition** fontDefinitions)
+{
+	// empty list
+	VirtualList_clear(this->fonts);
+
+	// iterate over all defined fonts and add to internal list
+	u32 i = 0, j = 0;
+	for(i = 0; __FONTS[i]; i++)
+	{
+		// instance and initialize a new fontdata instance
+        FontData* fontData = __NEW_BASIC(FontData);
+        fontData->fontDefinition = __FONTS[i];
+        fontData->charSet = NULL;
+
+		// preload charset for font if in list of fonts to preload
+		if(fontDefinitions)
+		{
+			// find defined font in list of fonts to preload
+			for(j = 0; fontDefinitions[j]; j++)
+			{
+				// preload charset and save charset reference, if font was found
+				if(__FONTS[i]->charSetDefinition == fontDefinitions[j]->charSetDefinition)
+				{
+					CharSet charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinitions[j]->charSetDefinition);
+					fontData->charSet = charSet;
+				}
+			}
+		}
+
+		// add fontdata to internal list
+		VirtualList_pushBack(this->fonts, fontData);
+	}
+}
+
+/**
+ * Clear printing area
+ *
+ * @memberof	Printing
+ * @public
+ *
+ * @param this	Function scope
+ */
 void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unused)))
 {
 	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
@@ -107,97 +198,122 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
 	VIPManager_clearBgmap(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
-// get font definition and starting position in character memory
-const FontDefinition* Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
+/**
+ * Get font definition and starting position in character memory
+ *
+ * @memberof	Printing
+ * @private
+ *
+ * @param this	Function scope
+ * @param font	Name of font to get definition for
+ *
+ * @return		FontData of desired font or default font if NULL or none could be found matching the name
+ */
+FontData* Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
 {
-	// return default (e.g. first defined) font if font == null
-	if(font == NULL)
-	{
-		return __FONTS[0];
-	}
+	// set first defined font as default
+	FontData* result = VirtualList_front(this->fonts);
 
 	// iterate over registered fonts to find definition of font to use
-	u32 j = 0;
-    for(; __FONTS[j]; j++)
-    {
-        if(!strcmp(__FONTS[j]->name, font))
-        {
-    		return __FONTS[j];
-        }
-    }
+	VirtualNode node = VirtualList_begin(this->fonts);
+	for(; node; node = VirtualNode_getNext(node))
+	{
+		FontData* fontData = VirtualNode_getData(node);
+		if(!strcmp(fontData->fontDefinition->name, font))
+		{
+			result = fontData;
+			break;
+		}
+	}
 
-    return __FONTS[0];
+	// if font's charset has not been preloaded, load it now
+	if(!result->charSet)
+	{
+	    result->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition);
+	}
+
+	return result;
 }
 
-// direct printing out method
-static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16 x, u16 y, const char* string, u16 bplt, const char* font)
+/**
+ * Direct printing out method
+ *
+ * @memberof		Printing
+ * @private
+ *
+ * @param this		Function scope
+ * @param x			Column to start printing at
+ * @param y			Row to start printing at
+ * @param string	String to print
+ * @param font		Name of font to use for printing
+ */
+static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, const char* string, const char* font)
 {
-	u32 i = 0,
-	    position = 0,
-        startColumn = x;
-	u32 charOffsetX = 0,
-	    charOffsetY = 0;
+	u32 i = 0;
+	u32 position = 0;
+	u32 startColumn = x;
+	u32 charOffsetX = 0;
+	u32 charOffsetY = 0;
+	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
-    const FontDefinition* fontDefinition = Printing_getFontByName(this, font);
+	FontData* fontData = Printing_getFontByName(this, font);
 
-    u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
+	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
-    // print text
+	// print text
 	while(string[i] && x < (__SCREEN_WIDTH >> 3))
 	{
 		position = (y << 6) + x;
 
 		switch(string[i])
 		{
-			case 13: // Line Feed
+			// line feed
+			case 13:
 
 				break;
 
-			case 9: // Horizontal Tab
+			// tab
+			case 9:
 
-				x = (x / TAB_SIZE + 1) * TAB_SIZE * fontDefinition->fontSize.x;
+				x = (x / TAB_SIZE + 1) * TAB_SIZE * fontData->fontDefinition->fontSize.x;
 				break;
 
-			case 10: // Carriage Return
+			// carriage return
+			case 10:
 
-				y += fontDefinition->fontSize.y;
+				y += fontData->fontDefinition->fontSize.y;
 				x = startColumn;
 				break;
 
 			default:
-			    {
-			        CharSet fontCharSet = CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinition->charSetDefinition);
+				{
+					for(charOffsetX = 0; charOffsetX < fontData->fontDefinition->fontSize.x; charOffsetX++)
+					{
+						for(charOffsetY = 0; charOffsetY < fontData->fontDefinition->fontSize.y; charOffsetY++)
+						{
+							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
+								(
+									// font offset
+									CharSet_getOffset(fontData->charSet) +
 
-			        if(fontCharSet)
-			        {
-                        for(charOffsetX = 0; charOffsetX < fontDefinition->fontSize.x; charOffsetX++)
-                        {
-                            for(charOffsetY = 0; charOffsetY < fontDefinition->fontSize.y; charOffsetY++)
-                            {
-                                bgmapSpaceBaseAddress[(0x1000 * bgmap) + position + charOffsetX + (charOffsetY << 6)] =
-                                    (
-                                        // start at correct font
-                                        CharSet_getOffset(fontCharSet) +
+									// top left char of letter
+									((u8)(string[i] - fontData->fontDefinition->offset) * fontData->fontDefinition->fontSize.x) +
 
-                                        // top left char of letter
-                                        ((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) +
+									// skip lower chars of multi-char fonts with y > 1
+									((((u8)(string[i] - fontData->fontDefinition->offset) * fontData->fontDefinition->fontSize.x) >> 5) * ((fontData->fontDefinition->fontSize.y - 1)) << 5) +
 
-                                        // skip lower chars of multi-char fonts with y > 1
-                                        ((((u8)(string[i] - fontDefinition->offset) * fontDefinition->fontSize.x) >> 5) * ((fontDefinition->fontSize.y - 1)) << 5) +
+									// respective char of letter in multi-char fonts
+									charOffsetX + (charOffsetY << 5)
+								)
+								| (__PRINTING_PALETTE << 14);
+						}
+					}
+				}
 
-                                        // respective char of letter in multi-char fonts
-                                        charOffsetX + (charOffsetY << 5)
-                                    )
-                                    | (bplt << 14);
-                            }
-                        }
-                    }
-                }
-
-                x += fontDefinition->fontSize.x;
+				x += fontData->fontDefinition->fontSize.x;
 				if(x >= 64)
 				{
-				    y += fontDefinition->fontSize.y;
+					y += fontData->fontDefinition->fontSize.y;
 					x = startColumn;
 				}
 
@@ -207,34 +323,65 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 bgmap, u16
 	}
 }
 
-void __attribute__ ((noinline)) Printing_int(Printing this, int value, int x, int y, const char* font)
+/**
+ * Print an Integer value
+ *
+ * @memberof	Printing
+ * @public
+ *
+ * @param this	Function scope
+ * @param value	Integer to print
+ * @param x		Column to start printing at
+ * @param y		Row to start printing at
+ * @param font	Name of font to use for printing
+ */
+void __attribute__ ((noinline)) Printing_int(Printing this, int value, u8 x, u8 y, const char* font)
 {
-	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
-
 	if(value < 0)
 	{
 		value *= -1;
 
-		Printing_out(this, printingBgmap, x++, y, "-", 0, font);
-		Printing_out(this, printingBgmap, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
+		Printing_out(this, x++, y, "-", font);
+		Printing_out(this, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), font);
 	}
 	else
 	{
-		Printing_out(this, printingBgmap, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), __PRINTING_PALETTE, font);
+		Printing_out(this, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), font);
 	}
 }
 
-void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, int x, int y, u8 length, const char* font)
+/**
+ * Print a hex value
+ *
+ * @memberof		Printing
+ * @public
+ *
+ * @param this		Function scope
+ * @param value		Hex value to print
+ * @param x			Column to start printing at
+ * @param y			Row to start printing at
+ * @param length	digits to print
+ * @param font		Name of font to use for printing
+ */
+void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font)
 {
-	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
-
-	Printing_out(this, printingBgmap, x,y, Utilities_itoa((int)(value), 16, length), __PRINTING_PALETTE, font);
+	Printing_out(this, x,y, Utilities_itoa((int)(value), 16, length), font);
 }
 
-void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x, int y, const char* font)
+/**
+ * Print a float value
+ *
+ * @memberof	Printing
+ * @public
+ *
+ * @param this	Function scope
+ * @param value	Float value to print
+ * @param x		Column to start printing at
+ * @param y		Row to start printing at
+ * @param font	Name of font to use for printing
+ */
+void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x, u8 y, const char* font)
 {
-	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
-
 	int sign = 1;
 	int i = 0;
 	int length;
@@ -247,7 +394,7 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x
 	if(value < 0)
 	{
 		sign = -1;
-		Printing_out(this, printingBgmap, x++,y,"-", 0, font);
+		Printing_out(this, x++, y, "-", font);
 
 		decimal = (int)(((__1I_FIX19_13 - (float)FIX19_13_FRAC(FTOFIX19_13(value))) / 8192.f) * 10000.f);
 	}
@@ -259,77 +406,103 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, int x
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
-	Printing_out(this, printingBgmap, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), __PRINTING_PALETTE, font);
+	Printing_out(this, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), font);
 
 	// print the dot
-	Printing_out(this, printingBgmap, x + length, y, ".", __PRINTING_PALETTE, font);
+	Printing_out(this, x + length, y, ".", font);
 
 	// print the decimal part
 	for(i = 0; size; i++)
 	{
 		if(decimal < size)
 		{
-			Printing_out(this, printingBgmap, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), __PRINTING_PALETTE, font);
+			Printing_out(this, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), font);
 		}
 		else
 		{
 			i++;
 			break;
 		}
+
 		size /= 10;
 	}
 
-	Printing_out(this, printingBgmap, x + length  + i, y, Utilities_itoa(decimal, 10, 0), __PRINTING_PALETTE, font);
+	Printing_out(this, x + length  + i, y, Utilities_itoa(decimal, 10, 0), font);
 }
 
+/**
+ * Print a string
+ *
+ * @memberof		Printing
+ * @public
+ *
+ * @param this		Function scope
+ * @param string	String to print
+ * @param x			Column to start printing at
+ * @param y			Row to start printing at
+ * @param font		Name of font to use for printing
+ */
 void __attribute__ ((noinline)) Printing_text(Printing this, const char* string, int x, int y, const char* font)
 {
-	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
-	Printing_out(this, printingBgmap, x, y, string, __PRINTING_PALETTE, font);
+	Printing_out(this, x, y, string, font);
 }
 
+/**
+ * Get the size of a (block of) text so you can for example center it on screen
+ *
+ * @memberof		Printing
+ * @public
+ *
+ * @param this		Function scope
+ * @param string	String to compute size for
+ * @param font		Name of font to use for size computation
+ */
 Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
 {
-    Size size = {0, 0, 0};
+	Size size = {0, 0, 0};
 	u16 i = 0, currentLineLength = 0;
 
-    const FontDefinition* fontDefinition = Printing_getFontByName(this, font);
-    size.y = fontDefinition->fontSize.y;
+	FontData* fontData = Printing_getFontByName(this, font);
+	size.y = fontData->fontDefinition->fontSize.y;
 
 	while(string[i])
 	{
 		switch(string[i])
 		{
-			case 13: // Line Feed
+			// line feed
+			case 13:
 
 				break;
 
-			case 9: // Horizontal Tab
+			// tab
+			case 9:
 
-				currentLineLength += (currentLineLength / TAB_SIZE + 1) * TAB_SIZE * fontDefinition->fontSize.x;
+				currentLineLength += (currentLineLength / TAB_SIZE + 1) * TAB_SIZE * fontData->fontDefinition->fontSize.x;
 				break;
 
-			case 10: // Carriage Return
+			// carriage return
+			case 10:
 
-				size.y += fontDefinition->fontSize.y;
+				size.y += fontData->fontDefinition->fontSize.y;
 				currentLineLength = 0;
 				break;
 
 			default:
 
-                currentLineLength += fontDefinition->fontSize.x;
+				currentLineLength += fontData->fontDefinition->fontSize.x;
 				if(currentLineLength >= 64)
 				{
-                    size.y += fontDefinition->fontSize.y;
-                    currentLineLength = 0;
+					size.y += fontData->fontDefinition->fontSize.y;
+					currentLineLength = 0;
 				}
 
 				break;
 		}
 
-        if(currentLineLength > size.x) {
-            size.x = currentLineLength;
-        }
+		if(currentLineLength > size.x)
+		{
+			size.x = currentLineLength;
+		}
 
 		i++;
 	}
