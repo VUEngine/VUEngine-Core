@@ -14,8 +14,8 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef UI_H_
-#define UI_H_
+#ifndef UI_CONTAINER_H_
+#define UI_CONTAINER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -31,19 +31,19 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define UI_METHODS(ClassName)																			\
+#define UiContainer_METHODS(ClassName)																	\
 		Container_METHODS(ClassName)																	\
 		__VIRTUAL_DEC(ClassName, void, addEntities, PositionedEntity* entities);						\
 
 // declare the virtual methods which are redefined
-#define UI_SET_VTABLE(ClassName)																		\
+#define UiContainer_SET_VTABLE(ClassName)																\
 		Container_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, UI, addEntities);														\
-		__VIRTUAL_SET(ClassName, UI, transform);														\
-		__VIRTUAL_SET(ClassName, UI, initialTransform);													\
+		__VIRTUAL_SET(ClassName, UiContainer, addEntities);												\
+		__VIRTUAL_SET(ClassName, UiContainer, transform);												\
+		__VIRTUAL_SET(ClassName, UiContainer, initialTransform);										\
 
-// declare a UI
-__CLASS(UI);
+// declare a UiContainer
+__CLASS(UiContainer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ __CLASS(UI);
 //---------------------------------------------------------------------------------------------------------
 
 // defines a UI for ROM memory
-typedef struct UIDefinition
+typedef struct UiContainerDefinition
 {
 	// ui's entities
 	PositionedEntity* entities;
@@ -59,19 +59,19 @@ typedef struct UIDefinition
 	// the class allocator
 	AllocatorPointer allocator;
 
-} UIDefinition;
+} UiContainerDefinition;
 
 
 //---------------------------------------------------------------------------------------------------------
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(UI, UIDefinition* uiDefinition);
+__CLASS_NEW_DECLARE(UiContainer, UiContainerDefinition* uiContainerDefinition);
 
-void UI_destructor(UI this);
-void UI_addEntities(UI this, PositionedEntity* entities);
-void UI_transform(UI this, const Transformation* environmentTransform);
-void UI_initialTransform(UI this, Transformation* environmentTransform, u32 recursive);
+void UiContainer_destructor(UiContainer this);
+void UiContainer_addEntities(UiContainer this, PositionedEntity* entities);
+void UiContainer_transform(UiContainer this, const Transformation* environmentTransform);
+void UiContainer_initialTransform(UiContainer this, Transformation* environmentTransform, u32 recursive);
 
 
 #endif

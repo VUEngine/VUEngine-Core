@@ -19,7 +19,7 @@
 // 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <UI.h>
+#include <UiContainer.h>
 #include <Optics.h>
 #include <Game.h>
 #include <Screen.h>
@@ -29,19 +29,19 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define UI_ATTRIBUTES								    		    		        			        \
+#define UiContainer_ATTRIBUTES								    		    		        			\
         /* super's attributes */						    		    			    	        	\
         Container_ATTRIBUTES								    		    			        	    \
 
-// define the UI
-__CLASS_DEFINITION(UI, Container);
+// define the UiContainer
+__CLASS_DEFINITION(UiContainer, Container);
 
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void UI_constructor(UI this, UIDefinition* uiDefinition);
+static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,25 +49,25 @@ static void UI_constructor(UI this, UIDefinition* uiDefinition);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(UI, UIDefinition* uiDefinition)
-__CLASS_NEW_END(UI, uiDefinition);
+__CLASS_NEW_DEFINITION(UiContainer, UiContainerDefinition* uiContainerDefinition)
+__CLASS_NEW_END(UiContainer, uiContainerDefinition);
 
 // class's constructor
-static void UI_constructor(UI this, UIDefinition* uiDefinition)
+static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)
 {
-	ASSERT(this, "UI::constructor: null this");
+	ASSERT(this, "UiContainer::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Container, NULL);
 
 	// add entities in the definition
-	__VIRTUAL_CALL(UI, addEntities, this, uiDefinition->entities);
+	__VIRTUAL_CALL(UiContainer, addEntities, this, uiContainerDefinition->entities);
 }
 
 // class's destructor
-void UI_destructor(UI this)
+void UiContainer_destructor(UiContainer this)
 {
-	ASSERT(this, "UI::destructor: null this");
+	ASSERT(this, "UiContainer::destructor: null this");
 
 	// destroy base
 	// must always be called at the end of the destructor
@@ -75,10 +75,10 @@ void UI_destructor(UI this)
 }
 
 // add entities
-void UI_addEntities(UI this, PositionedEntity* entities)
+void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 {
-	ASSERT(this, "UI::addEntities: null this");
-	ASSERT(entities, "UI::addEntities: null entities");
+	ASSERT(this, "UiContainer::addEntities: null this");
+	ASSERT(entities, "UiContainer::addEntities: null entities");
 
 	static int internalId = 0;
 	int i = 0;
@@ -105,12 +105,12 @@ void UI_addEntities(UI this, PositionedEntity* entities)
 }
 
 // transform
-void UI_transform(UI this, const Transformation* environmentTransform)
+void UiContainer_transform(UiContainer this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "UI::transform: null this");
+	ASSERT(this, "UiContainer::transform: null this");
 
 	Screen screen = Screen_getInstance();
-	ASSERT(screen, "UI::transform: null screen");
+	ASSERT(screen, "UiContainer::transform: null screen");
 
 	Screen_prepareForUITransform(screen);
 
@@ -120,12 +120,12 @@ void UI_transform(UI this, const Transformation* environmentTransform)
 }
 
 // transform
-void UI_initialTransform(UI this, Transformation* environmentTransform, u32 recursive)
+void UiContainer_initialTransform(UiContainer this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "UI::initialTransform: null this");
+	ASSERT(this, "UiContainer::initialTransform: null this");
 
 	Screen screen = Screen_getInstance();
-	ASSERT(screen, "UI::initialTransform: null screen");
+	ASSERT(screen, "UiContainer::initialTransform: null screen");
 
 	VBVec3D originalScreenPosition  =
 	{
