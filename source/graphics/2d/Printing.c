@@ -263,6 +263,12 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 	// print text
 	while(string[i] && x < (__SCREEN_WIDTH >> 3))
 	{
+		// do not allow printing outside of the visible area, since that would corrupt the param table
+		if(y >= 28)
+		{
+			break;
+		}
+
 		position = (y << 6) + x;
 
 		switch(string[i])
@@ -311,8 +317,9 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 				}
 
 				x += fontData->fontDefinition->fontSize.x;
-				if(x >= 64)
+				if(x >= 48)
 				{
+					// wrap around when outside of the visible area
 					y += fontData->fontDefinition->fontSize.y;
 					x = startColumn;
 				}
