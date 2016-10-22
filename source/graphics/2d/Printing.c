@@ -57,8 +57,6 @@ extern FontROMDef* const __FONTS[];
  * @brief			A list of loaded fonts and their respective CharSets
  * @memberof		Printing
  */
-
-// define the Printing
 __CLASS_DEFINITION(Printing, Object);
 
 
@@ -141,6 +139,19 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
 }
 
 /**
+ * Empties internal virtual list of registered fonts
+ *
+ * @memberof	Printing
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Printing_reset(Printing this)
+{
+	VirtualList_clear(this->fonts);
+}
+
+/**
  * Add fonts to internal VirtualList and preload CharSets for specified fonts
  *
  * @memberof				Printing
@@ -151,8 +162,8 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
  */
 void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition** fontDefinitions)
 {
-	// empty list
-	VirtualList_clear(this->fonts);
+	// empty list of registered fonts
+	Printing_reset(this);
 
 	// iterate over all defined fonts and add to internal list
 	u32 i = 0, j = 0;

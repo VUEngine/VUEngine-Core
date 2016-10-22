@@ -486,6 +486,7 @@ void Game_reset(Game this)
 	SpriteManager_reset(SpriteManager_getInstance());
 	MBackgroundManager_reset(MBackgroundManager_getInstance());
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
+	Printing_reset(Printing_getInstance());
 
 	// TODO
 	//SoundManager_getInstance();
