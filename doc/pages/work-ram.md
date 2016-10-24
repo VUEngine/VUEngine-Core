@@ -5,7 +5,7 @@ To be able to efficiently allocate memory to dynamically created objects, the VB
 
 Basically, what the engine does is to divide the available WRAM into a number of differently sized pools to fill in objects based on their amount of required memory.
 
-To optimally suit their game's needs, users can freely configure memory pools  in a number of ways:
+To optimally suit their game's needs, users can freely configure memory pools in a number of ways:
 
 1. The total number of pools: there can be as many as needed
 2. The block size of each pool

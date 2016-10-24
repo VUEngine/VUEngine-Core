@@ -341,7 +341,7 @@
 #define __BRIGHTNESS_BRIGHT_RED					128
 
 // default total duration for blocking fade in/out effects
-#define __FADE_DURATION							1000
+#define __FADE_DURATION							320
 
 // default delay between steps in asynchronous fade effect
 #define __FADE_DELAY					        16

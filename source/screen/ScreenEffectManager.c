@@ -111,19 +111,39 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeStart: null this");
 
-    // TODO: change logic of blocking fades to respect user defined brightness
-    Brightness targetBrightness = ScreenEffectManager_getDefaultBrightness(this);
+    Brightness defaultBrightness = ScreenEffectManager_getDefaultBrightness(this);
 
     switch(effect)
     {
         case kFadeIn:
 
-            TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeIn);
-            break;
+			__SET_BRIGHT(0, 0, 0);
+
+            TimerManager_repeatMethodCall(
+            	TimerManager_getInstance(),
+            	defaultBrightness.darkRed,
+            	duration,
+            	__SAFE_CAST(Object, this),
+            	(void (*)(Object, u32))&ScreenEffectManager_FXFadeIn
+			);
+           break;
 
         case kFadeOut:
 
-            TimerManager_repeatMethodCall(TimerManager_getInstance(), targetBrightness.darkRed, duration / 32, __SAFE_CAST(Object, this), (void (*)(Object, u32))&ScreenEffectManager_FXFadeOut);
+			__SET_BRIGHT(
+				defaultBrightness.darkRed,
+				defaultBrightness.mediumRed,
+				defaultBrightness.brightRed
+			);
+
+            TimerManager_repeatMethodCall(
+            	TimerManager_getInstance(),
+            	defaultBrightness.darkRed,
+            	duration,
+            	__SAFE_CAST(Object, this),
+            	(void (*)(Object, u32))&ScreenEffectManager_FXFadeOut
+			);
+
             break;
     }
 }
@@ -223,16 +243,23 @@ void ScreenEffectManager_stopEffect(ScreenEffectManager this, int effect)
 	}
 }
 
-void ScreenEffectManager_FXFadeIn(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber)
+void ScreenEffectManager_FXFadeIn(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber __attribute__ ((unused)))
 {
-    // increase brightness
-    __SET_BRIGHT(callNumber, callNumber << 1, callNumber);
+    __SET_BRIGHT(
+    	_vipRegisters[__BRTA] + 1,
+    	_vipRegisters[__BRTB] + 2,
+    	_vipRegisters[__BRTC] + 1
+	);
 }
 
-void ScreenEffectManager_FXFadeOut(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber)
+void ScreenEffectManager_FXFadeOut(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber __attribute__ ((unused)))
 {
-    // increase brightness
-    __SET_BRIGHT(32 - callNumber, (32 - callNumber) << 1, 32 -callNumber);
+    // decrease brightness
+    __SET_BRIGHT(
+    	_vipRegisters[__BRTA] - 1,
+    	_vipRegisters[__BRTB] - 2,
+    	_vipRegisters[__BRTC] - 1
+	);
 }
 
 // fade in the screen
