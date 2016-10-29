@@ -290,7 +290,7 @@ void OptionsSelector_selectPrevious(OptionsSelector this)
 void OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex)
 {
 	// check if desired option index is within bounds
-	if(optionIndex > 0 && optionIndex <= this->totalOptions)
+	if(optionIndex >= 0 && optionIndex <= this->totalOptions)
 	{
 		if(optionIndex < this->currentOptionIndex)
 		{
