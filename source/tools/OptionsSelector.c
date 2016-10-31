@@ -75,24 +75,26 @@
         VirtualNode currentPage;																		\
         /* current option */																			\
         VirtualNode currentOption;																		\
+        /* printing column */																			\
+        u8 x;																							\
+        /* printing row */																				\
+        u8 y;																							\
+        /* cols per page */																				\
+        u8 cols;																						\
+        /* rows per page */																				\
+        u8 rows;																						\
+        /* width of a column */																			\
+        u8 columnWidth;																					\
+        /* output type */																				\
+        u8 type;																						\
+        /* total options count */																		\
+        int totalOptions;																				\
         /* current page index */																		\
         int currentPageIndex;																			\
         /* current option index */																		\
         int currentOptionIndex;																			\
-        /* printing column */																			\
-        int x;																							\
-        /* printing row */																				\
-        int y;																							\
-        /* cols per page */																				\
-        int cols;																						\
-        /* rows per page */																				\
-        int rows;																						\
-        /* total options count */																		\
-        int totalOptions;																				\
         /* mark symbol */																				\
         char* mark;																						\
-        /* output type */																				\
-        int type;																						\
 
 // define the OptionsSelector
 __CLASS_DEFINITION(OptionsSelector, Object);
@@ -114,11 +116,11 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OptionsSelector, int cols, int rows, char* mark, int type)
+__CLASS_NEW_DEFINITION(OptionsSelector, u8 cols, u8 rows, char* mark, u8 type)
 __CLASS_NEW_END(OptionsSelector, cols, rows, mark, type);
 
 // class's constructor
-void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type)
+void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* mark, u8 type)
 {
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
@@ -131,11 +133,12 @@ void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char*
 	this->currentOptionIndex = 0;
 	this->x = 0;
 	this->y = 0;
-	this->cols = 0 < cols && cols <= __SCREEN_WIDTH >> 5 ? cols : 1;
-	this->rows = 0 < rows && rows <= __SCREEN_WIDTH >> 3 ? rows : __SCREEN_HEIGHT >> 3;
+	this->cols = ((0 < cols) && (cols <= __OPTIONS_SELECT_MAX_COLS)) ? cols : 1;
+	this->rows = ((0 < rows) && (rows <= __OPTIONS_SELECT_MAX_ROWS)) ? rows : __OPTIONS_SELECT_MAX_ROWS;
 	this->totalOptions = 0;
 	this->mark = mark;
 	this->type = type;
+	this->columnWidth = (__SCREEN_WIDTH >> 3) / this->cols;
 }
 
 // class's destructor
@@ -168,6 +171,24 @@ static void OptionsSelector_flushPages(OptionsSelector this)
 	}
 
 	this->pages = NULL;
+}
+
+// set column width
+void OptionsSelector_setColumnWidth(OptionsSelector this, u8 width)
+{
+    // add space for selection mark
+    width++;
+
+    if((0 < width) && (width <= (__SCREEN_WIDTH >> 3)))
+    {
+	    this->columnWidth = width;
+    }
+}
+
+// get total width
+u8 OptionsSelector_getWidth(OptionsSelector this)
+{
+    return this->columnWidth * this->cols;
 }
 
 // set options
@@ -318,14 +339,14 @@ int OptionsSelector_getSelectedOption(OptionsSelector this)
 }
 
 // show options
-void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
+void OptionsSelector_showOptions(OptionsSelector this, u8 x, u8 y)
 {
 	ASSERT(this, "OptionsSelector::showOptions: null this");
 
 	if(this->currentPage && 0 < VirtualList_getSize(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage))))
 	{
-		this->x = 0 <= x && x <= __SCREEN_WIDTH >> 3 ? x : 0;
-		this->y = 0 <= y && y <= __SCREEN_HEIGHT >> 3 ? y : 0;
+		this->x = (x < (__SCREEN_WIDTH >> 3)) ? x : 0;
+		this->y = (y < (__SCREEN_HEIGHT >> 3)) ? y : 0;
 
 		ASSERT(this->currentPage, "showOptions: currentPage");
 		VirtualNode node = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head;
@@ -334,7 +355,7 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 		for(; i + y < (__SCREEN_HEIGHT >> 3); i++)
 		{
 			int j = 0;
-			for(; ((__SCREEN_WIDTH >> 3) >= (x + j)); j++)
+			for(; ((this->columnWidth * this->cols) >= (x + j)); j++)
 			{
 				Printing_text(Printing_getInstance(), " ", x + j, y + i, NULL);
 			}
@@ -344,35 +365,32 @@ void OptionsSelector_showOptions(OptionsSelector this, int x, int y)
 
 		for(; node; node = node->next)
 		{
-			if(y <= __SCREEN_WIDTH >> 3)
-			{
-				ASSERT(node, "showOptions: push null node");
-				ASSERT(node->data, "showOptions: push null node data");
+            ASSERT(node, "showOptions: push null node");
+            ASSERT(node->data, "showOptions: push null node data");
 
-				switch(this->type)
-				{
-					case kString:
-						Printing_text(Printing_getInstance(), (char*)node->data, x + 1, y, NULL);
-						break;
+            switch(this->type)
+            {
+                case kString:
+                    Printing_text(Printing_getInstance(), (char*)node->data, x + 1, y, NULL);
+                    break;
 
-					case kInt:
-						Printing_int(Printing_getInstance(), *((int*)node->data), x + 1, y, NULL);
-						break;
+                case kInt:
+                    Printing_int(Printing_getInstance(), *((int*)node->data), x + 1, y, NULL);
+                    break;
 
-					case kFloat:
-						Printing_float(Printing_getInstance(), *((float*)node->data), x + 1, y, NULL);
-						break;
+                case kFloat:
+                    Printing_float(Printing_getInstance(), *((float*)node->data), x + 1, y, NULL);
+                    break;
 
-					case kCount:
-						Printing_int(Printing_getInstance(), counter++, x + 1, y, NULL);
-						break;
-				}
-			}
+                case kCount:
+                    Printing_int(Printing_getInstance(), counter++, x + 1, y, NULL);
+                    break;
+            }
 
-			if(++y >= this->rows + this->y || y > (__SCREEN_HEIGHT >> 3))
+			if((++y >= (this->rows + this->y)) || (y >= (__SCREEN_HEIGHT >> 3)))
 			{
 				y = this->y;
-				x += (__SCREEN_WIDTH >> 3) / this->cols;
+				x += this->columnWidth;
 			}
 		}
 
@@ -392,7 +410,7 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
 		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList_getSize(__SAFE_CAST(VirtualList, VirtualList_front(this->pages)));
 		int optionColumn = (int)(indexOption / this->rows);
 		int optionRow = indexOption - optionColumn * this->rows;
-		optionColumn = (__SCREEN_WIDTH >> 3) / this->cols * optionColumn;
+		optionColumn = this->columnWidth * optionColumn;
 		Printing_text(Printing_getInstance(), mark, this->x + optionColumn, this->y + optionRow, NULL);
 	}
 }

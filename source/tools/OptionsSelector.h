@@ -27,6 +27,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+// 												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __OPTIONS_SELECT_MAX_COLS		__SCREEN_WIDTH >> 5
+#define __OPTIONS_SELECT_MAX_ROWS		__SCREEN_HEIGHT >> 3
+
+
+//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -62,16 +70,18 @@ enum OptionTypes
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OptionsSelector, int cols, int rows, char* mark, int type);
+__CLASS_NEW_DECLARE(OptionsSelector, u8 cols, u8 rows, char* mark, u8 type);
 
-void OptionsSelector_constructor(OptionsSelector this, int cols, int rows, char* mark, int type);
+void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* mark, u8 type);
 void OptionsSelector_destructor(OptionsSelector this);
+void OptionsSelector_setColumnWidth(OptionsSelector this, u8 width);
+u8 OptionsSelector_getWidth(OptionsSelector this);
 void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames);
 void OptionsSelector_selectNext(OptionsSelector this);
 void OptionsSelector_selectPrevious(OptionsSelector this);
 void OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex);
 int OptionsSelector_getSelectedOption(OptionsSelector this);
-void OptionsSelector_showOptions(OptionsSelector this, int x, int y);
+void OptionsSelector_showOptions(OptionsSelector this, u8 x, u8 y);
 
 
 #endif
