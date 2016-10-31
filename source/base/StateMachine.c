@@ -129,13 +129,14 @@ void StateMachine_swapState(StateMachine this, State newState)
 }
 
 // push a state in the stack
-void StateMachine_pushState(StateMachine this, State newState)
+// returns the resulting stack size
+u32 StateMachine_pushState(StateMachine this, State newState)
 {
 	ASSERT(this, "StateMachine::pushState: null this");
 
 	if(!newState)
 	{
-		return;
+		return StateMachine_getStackSize(this);
 	}
 
 	// finalize current state
@@ -155,13 +156,22 @@ void StateMachine_pushState(StateMachine this, State newState)
 
 	// call enter method from new state
 	__VIRTUAL_CALL(State, enter, this->currentState, this->owner);
+
+	// return the resulting stack size
+	return StateMachine_getStackSize(this);
 }
 
 // pop a state from the stack
-void StateMachine_popState(StateMachine this)
+// returns the resulting stack size
+u32 StateMachine_popState(StateMachine this)
 {
 	ASSERT(this, "StateMachine::popState: null this");
-	ASSERT(VirtualList_getSize(this->stateStack) > 1, "StateMachine::popState: stack empty");
+
+	// return in case the stack is empty
+	if(StateMachine_getStackSize(this) == 0)
+	{
+		return 0;
+	}
 
 	// finalize current state
 	if(this->currentState)
@@ -175,12 +185,16 @@ void StateMachine_popState(StateMachine this)
 	VirtualList_popFront(this->stateStack);
 
 	// update current state
-	this->currentState = __SAFE_CAST(State, VirtualList_front(this->stateStack));
-
-	ASSERT(this->currentState, "StateMachine::popState: null currentState");
+	this->currentState = VirtualList_front(this->stateStack);
 
 	// call resume method from new state
-	__VIRTUAL_CALL(State, resume, this->currentState, this->owner);
+	if(this->currentState)
+	{
+		__VIRTUAL_CALL(State, resume, this->currentState, this->owner);
+	}
+
+	// return the resulting stack size
+	return StateMachine_getStackSize(this);
 }
 
 // return to previous state

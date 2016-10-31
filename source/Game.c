@@ -69,6 +69,7 @@
 enum StateOperations
 {
 	kSwapState = 0,
+	kCleanAndSwapState,
 	kPushState,
 	kPopState
 };
@@ -350,6 +351,17 @@ void Game_changeState(Game this, GameState state)
 	this->nextStateOperation = kSwapState;
 }
 
+// set game's state after cleaning the stack
+void Game_cleanAndChangeState(Game this, GameState state)
+{
+	ASSERT(this, "Game::changeState: null this");
+
+	// state changing must be done when no other process
+	// may be affecting the game's general state
+	this->nextState = state;
+	this->nextStateOperation = kCleanAndSwapState;
+}
+
 // add a state to the game's state machine's stack
 void Game_addState(Game this, GameState state)
 {
@@ -375,6 +387,27 @@ static void Game_setNextState(Game this, GameState state)
 
     switch(this->nextStateOperation)
     {
+    	case kCleanAndSwapState:
+
+			// clean the game's stack
+			// pop states until the stack is empty
+			while(StateMachine_getStackSize(this->stateMachine) > 0)
+			{
+				State stateMachineCurrentState = StateMachine_getCurrentState(this->stateMachine);
+				if(stateMachineCurrentState)
+				{
+					// discard delayed messages from the current state
+					MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getMessagingClock(__SAFE_CAST(GameState, stateMachineCurrentState)));
+					MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
+				}
+
+				StateMachine_popState(this->stateMachine);
+			}
+
+			// setup new state
+		    StateMachine_pushState(this->stateMachine, (State)state);
+		    break;
+
 		case kSwapState:
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT

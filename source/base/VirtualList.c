@@ -611,7 +611,7 @@ void* VirtualList_front(VirtualList this)
 {
 	ASSERT(this, "VirtualList::front: null this");
 
-	return this->head->data;
+	return this->head ? this->head->data : NULL;
 }
 
 /**
@@ -645,7 +645,7 @@ void* VirtualList_back(VirtualList this)
 {
 	ASSERT(this, "VirtualList::back: null this");
 
-	return this->tail->data;
+	return this->tail ? this->tail->data : NULL;
 }
 
 /**
