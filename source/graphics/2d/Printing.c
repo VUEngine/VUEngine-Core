@@ -220,7 +220,7 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
  *
  * @return		FontData of desired font or default font if NULL or none could be found matching the name
  */
-FontData* Printing_getFontByName(Printing this __attribute__ ((unused)), const char* font)
+FontData* Printing_getFontByName(Printing this, const char* font)
 {
 	// set first defined font as default
 	FontData* result = VirtualList_front(this->fonts);

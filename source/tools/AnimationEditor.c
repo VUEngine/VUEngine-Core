@@ -213,7 +213,7 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
 
-	this->animatedInGameEntitySelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString);
+	this->animatedInGameEntitySelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString, NULL);
 
 	VirtualList animatedInGameEntitiesNames = __NEW(VirtualList);
 
@@ -621,21 +621,21 @@ static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this
 {
 	Printing_text(Printing_getInstance(), "ACTORS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
-	OptionsSelector_showOptions(this->animatedInGameEntitySelector, 1, 4);
+	OptionsSelector_printOptions(this->animatedInGameEntitySelector, 1, 4);
 }
 
 static void AnimationEditor_printSprites(AnimationEditor this)
 {
 	Printing_text(Printing_getInstance(), "SPRITES", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
-	OptionsSelector_showOptions(this->spriteSelector, 1, 4);
+	OptionsSelector_printOptions(this->spriteSelector, 1, 4);
 }
 
 static void AnimationEditor_printActorAnimations(AnimationEditor this)
 {
 	Printing_text(Printing_getInstance(), "ACTOR'S ANIMATIONS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
-	OptionsSelector_showOptions(this->animationsSelector, 1, 4);
+	OptionsSelector_printOptions(this->animationsSelector, 1, 4);
 }
 
 static void AnimationEditor_printAnimationConfig(AnimationEditor this)
@@ -645,13 +645,13 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 
 	Printing_text(Printing_getInstance(), "Animation: ", x, y, NULL);
 	Printing_text(Printing_getInstance(), this->animationFunction.name, x + 12, y++, NULL);
-	OptionsSelector_showOptions(this->animationEditionSelector, x, ++y);
+	OptionsSelector_printOptions(this->animationEditionSelector, x, ++y);
 
 	Printing_int(Printing_getInstance(), this->animationFunction.numberOfFrames, x + 20, y++, NULL);
 	Printing_int(Printing_getInstance(), this->animationFunction.delay, x + 20, y++, NULL);
 	Printing_text(Printing_getInstance(), this->animationFunction.loop ? "true" : "false", x + 20, y++, NULL);
 
-	OptionsSelector_showOptions(this->frameEditionSelector, x, ++y + 1);
+	OptionsSelector_printOptions(this->frameEditionSelector, x, ++y + 1);
 
 	Printing_text(Printing_getInstance(), " Cancel   \x14 ", 36, 1, NULL);
 	if(!Sprite_isPlaying(this->animatedSprite))
@@ -738,7 +738,7 @@ static void AnimationEditor_createSpriteSelector(AnimationEditor this)
 		__DELETE(this->spriteSelector);
 	}
 
-	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kCount);
+	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kCount, NULL);
 
 	VirtualList spriteIndexes = __NEW(VirtualList);
 
@@ -764,7 +764,7 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 			__DELETE(this->animationsSelector);
 		}
 
-		this->animationsSelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString);
+		this->animationsSelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString, NULL);
 
 		VirtualList animationsNames = __NEW(VirtualList);
 
@@ -790,7 +790,7 @@ static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this)
 		__DELETE(this->animationEditionSelector);
 	}
 
-	this->animationEditionSelector = __NEW(OptionsSelector, 1, 4, __OPTION_MARK, kString);
+	this->animationEditionSelector = __NEW(OptionsSelector, 1, 4, __OPTION_MARK, kString, NULL);
 
 	VirtualList optionsNames = __NEW(VirtualList);
 
@@ -812,7 +812,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 		__DELETE(this->frameEditionSelector);
 	}
 
-	this->frameEditionSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kInt);
+	this->frameEditionSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kInt, NULL);
 
 	VirtualList framesIndexes = __NEW(VirtualList);
 

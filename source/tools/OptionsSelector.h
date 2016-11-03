@@ -35,7 +35,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+// 											CLASS' DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -46,7 +46,25 @@
 #define OptionsSelector_SET_VTABLE(ClassName)															\
 		Object_SET_VTABLE(ClassName)																	\
 
-// declare a OptionsSelector
+// class attributes
+#define OptionsSelector_ATTRIBUTES																		\
+		Object_ATTRIBUTES																				\
+		VirtualList pages;																				\
+		VirtualNode currentPage;																		\
+		VirtualNode currentOption;																		\
+		u8 x;																							\
+		u8 y;																							\
+		u8 cols;																						\
+		u8 rows;																						\
+		u8 columnWidth;																					\
+		u8 type;																						\
+		int totalOptions;																				\
+		int currentPageIndex;																			\
+		int currentOptionIndex;																			\
+		char* mark;																						\
+		char* font;																						\
+
+// declare the optionsselector class
 __CLASS(OptionsSelector);
 
 // for debugging
@@ -70,18 +88,20 @@ enum OptionTypes
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OptionsSelector, u8 cols, u8 rows, char* mark, u8 type);
+__CLASS_NEW_DECLARE(OptionsSelector, u8 cols, u8 rows, char* mark, u8 type, char* font);
 
-void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* mark, u8 type);
+void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* mark, u8 type, char* font);
 void OptionsSelector_destructor(OptionsSelector this);
 void OptionsSelector_setColumnWidth(OptionsSelector this, u8 width);
 u8 OptionsSelector_getWidth(OptionsSelector this);
-void OptionsSelector_setOptions(OptionsSelector this, VirtualList optionsNames);
+void OptionsSelector_setOptions(OptionsSelector this, VirtualList options);
 void OptionsSelector_selectNext(OptionsSelector this);
 void OptionsSelector_selectPrevious(OptionsSelector this);
-void OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex);
+bool OptionsSelector_selectNextColumn(OptionsSelector this);
+bool OptionsSelector_selectPreviousColumn(OptionsSelector this);
+bool OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex);
 int OptionsSelector_getSelectedOption(OptionsSelector this);
-void OptionsSelector_showOptions(OptionsSelector this, u8 x, u8 y);
+void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y);
 
 
 #endif

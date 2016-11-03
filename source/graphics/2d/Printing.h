@@ -98,6 +98,7 @@ void Printing_destructor(Printing this);
 void Printing_render(Printing this, int textLayer);
 void Printing_reset(Printing this);
 void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
+FontData* Printing_getFontByName(Printing this, const char* font);
 void Printing_clear(Printing this);
 void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
 void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);

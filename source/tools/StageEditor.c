@@ -58,41 +58,41 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+// 											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class StageEditor
- * @extends Object
- * @brief In-game stage editor for debug and productivity purposes
+ * @class               StageEditor
+ * @extends             Object
+ * @brief               In-game stage editor for debug and productivity purposes
  *
  * @var GameState       gameState
- * @brief Current game state
- * @memberof StageEditor
+ * @brief               Current game state
+ * @memberof            StageEditor
  *
  * @var VirtualNode     currentEntityNode
- * @brief Current in game entity
- * @memberof StageEditor
+ * @brief               Current in game entity
+ * @memberof            StageEditor
  *
  * @var Shape           shape
- * @brief Current entity's shape
- * @memberof StageEditor
+ * @brief               Current entity's shape
+ * @memberof            StageEditor
  *
  * @var int             mode
- * @brief Mode
- * @memberof StageEditor
+ * @brief               Mode
+ * @memberof            StageEditor
  *
  * @var OptionsSelector userObjectsSelector
- * @brief Actors selector
- * @memberof StageEditor
+ * @brief               Actors selector
+ * @memberof            StageEditor
  *
  * @var int             translationStepSize
- * @brief Translation step size
- * @memberof StageEditor
+ * @brief               Translation step size
+ * @memberof            StageEditor
  *
  * @var Sprite          userObjectSprite
- * @brief Current user's object's sprite
- * @memberof StageEditor
+ * @brief               Current user's object's sprite
+ * @memberof            StageEditor
  */
 
 #define StageEditor_ATTRIBUTES																			\
@@ -157,7 +157,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+// 												CLASS' METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(StageEditor);
@@ -165,8 +165,9 @@ __SINGLETON(StageEditor);
 /**
  * Class constructor
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
@@ -180,7 +181,7 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 	this->userObjectSprite = NULL;
 	this->mode = kFirstMode + 1;
 	this->shape = NULL;
-	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, "\x0B", kString);
+	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, "\x0B", kString, NULL);
 
 	VirtualList userObjects = __NEW(VirtualList);
 
@@ -199,8 +200,9 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 /**
  * Class destructor
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @public
+ *
  * @param this  Function scope
  */
 void StageEditor_destructor(StageEditor this)
@@ -219,8 +221,9 @@ void StageEditor_destructor(StageEditor this)
 /**
  * Update
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @public
+ *
  * @param this  Function scope
  */
 void StageEditor_update(StageEditor this)
@@ -236,8 +239,9 @@ void StageEditor_update(StageEditor this)
 /**
  * Show debug screens
  *
- * @memberof StageEditor
+ * @memberof        StageEditor
  * @public
+ *
  * @param this      Function scope
  * @param gameState Current game state
  */
@@ -257,8 +261,9 @@ void StageEditor_start(StageEditor this, GameState gameState)
 /**
  * Hide debug screens
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @public
+ *
  * @param this  Function scope
  */
 void StageEditor_stop(StageEditor this)
@@ -275,11 +280,12 @@ void StageEditor_stop(StageEditor this)
 /**
  * Handles incoming messages
  *
- * @memberof StageEditor
+ * @memberof        StageEditor
  * @public
+ *
  * @param this      Function scope
  * @param telegram  The received message
- * @return True if successful, false otherwise
+ * @return          True if successful, false otherwise
  */
 bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 {
@@ -340,8 +346,9 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 /**
  * Print header
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_printHeader(StageEditor this)
@@ -356,8 +363,9 @@ static void StageEditor_printHeader(StageEditor this)
 /**
  * Print title
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_setupMode(StageEditor this)
@@ -408,8 +416,9 @@ static void StageEditor_setupMode(StageEditor this)
 /**
  * Release shape
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_releaseShape(StageEditor this)
@@ -434,8 +443,9 @@ static void StageEditor_releaseShape(StageEditor this)
 /**
  * Get shape
  *
- * @memberof StageEditor
+ * @memberof    StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_getShape(StageEditor this)
@@ -469,8 +479,9 @@ static void StageEditor_getShape(StageEditor this)
 /**
  * Position shape
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_positionShape(StageEditor this)
@@ -495,8 +506,9 @@ static void StageEditor_positionShape(StageEditor this)
 /**
  * Highlight entity
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_highLightEntity(StageEditor this)
@@ -515,8 +527,9 @@ static void StageEditor_highLightEntity(StageEditor this)
 /**
  * Select the previous entity
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_selectPreviousEntity(StageEditor this)
@@ -549,8 +562,9 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 /**
  * Select the next entity
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_selectNextEntity(StageEditor this)
@@ -583,8 +597,9 @@ static void StageEditor_selectNextEntity(StageEditor this)
 /**
  * Move the screen
  *
- * @memberof StageEditor
+ * @memberof 			StageEditor
  * @private
+ *
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
@@ -663,6 +678,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
  *
  * @memberof StageEditor
  * @private
+ *
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
@@ -726,8 +742,9 @@ static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 /**
  * Translate an entity
  *
- * @memberof StageEditor
+ * @memberof 			StageEditor
  * @private
+ *
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
@@ -830,8 +847,9 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 /**
  * Apply a translation to an entity
  *
- * @memberof StageEditor
+ * @memberof 			StageEditor
  * @private
+ *
  * @param this          Function scope
  * @param translation   Translation vector
  */
@@ -873,8 +891,9 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 /**
  * Remove previous sprite
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_removePreviousSprite(StageEditor this)
@@ -889,8 +908,9 @@ static void StageEditor_removePreviousSprite(StageEditor this)
 /**
  * Show selected user object
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_showSelectedUserObject(StageEditor this)
@@ -918,8 +938,9 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 /**
  * Select user object
  *
- * @memberof StageEditor
+ * @memberof 			StageEditor
  * @private
+ *
  * @param this          Function scope
  * @param pressedKey    The controller button pressed by the user
  */
@@ -978,8 +999,9 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 /**
  * Print entity position
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_printEntityPosition(StageEditor this)
@@ -1021,8 +1043,9 @@ static void StageEditor_printEntityPosition(StageEditor this)
 /**
  * Apply a translation to the screen
  *
- * @memberof StageEditor
+ * @memberof 			StageEditor
  * @private
+ *
  * @param this          Function scope
  * @param translation   Translation vector
  */
@@ -1039,8 +1062,9 @@ static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D trans
 /**
  * Print the screen position
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unused)))
@@ -1063,8 +1087,9 @@ static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unu
 /**
  * Print projection values
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((unused)))
@@ -1095,8 +1120,9 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
 /**
  * Print user objects
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_printUserObjects(StageEditor this)
@@ -1106,14 +1132,15 @@ static void StageEditor_printUserObjects(StageEditor this)
 	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
 	Printing_text(Printing_getInstance(), "Accept  \x13", 38, 2, NULL);
 
-	OptionsSelector_showOptions(this->userObjectsSelector, 1, 4);
+	OptionsSelector_printOptions(this->userObjectsSelector, 1, 4);
 }
 
 /**
  * Print translation step size
  *
- * @memberof StageEditor
+ * @memberof 	StageEditor
  * @private
+ *
  * @param this  Function scope
  */
 static void StageEditor_printTranslationStepSize(StageEditor this)
