@@ -101,7 +101,7 @@ s8 AnimationController_getActualFrameIndex(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getActualAnimationController: null this");
 
-	return this->animationFunction? this->animationFunction->frames[this->actualFrame]: 0;
+	return this->animationFunction ? this->animationFunction->frames[this->actualFrame] : 0;
 }
 
 // retrieve actual frame of animation

@@ -134,7 +134,7 @@ void BgmapTexture_write(BgmapTexture this)
 // write an animated map
 static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::writeAnimated: null this");
+	ASSERT(this, "BgmapTexture::writeAnimatedSingle: null this");
 
 	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
 	int palette = this->palette << 14;

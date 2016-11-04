@@ -102,7 +102,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 
 				// move charset definition to the next frame chars
 				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
-						(AnimationController_getActualFrameIndex(this->animationController) << 4));
+						((int)AnimationController_getActualFrameIndex(this->animationController) << 4));
 
 				// write charset
 				CharSet_write(charSet);

@@ -141,7 +141,7 @@ void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefini
 	this->charSetDefinition = charSetDefinition;
 }
 
-// retrieve chargrop's number of chars
+// retrieve charset's number of chars
 u32 CharSet_getNumberOfChars(CharSet this)
 {
 	ASSERT(this, "CharSet::getNumberOfChars: null this");
@@ -149,13 +149,16 @@ u32 CharSet_getNumberOfChars(CharSet this)
 	return this->charSetDefinition->numberOfChars;
 }
 
-// write char on memory
+// write to char memory
 void CharSet_write(CharSet this)
 {
 	ASSERT(this, "CharSet::write: null this");
 
-	//write to char memory
-	Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4), (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement), (u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4);
+	Mem_copy(
+	    (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4),
+	    (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
+	    (u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4
+    );
 }
 
 // rewrite char on memory
@@ -171,7 +174,7 @@ void CharSet_rewrite(CharSet this)
 }
 
 // set charDefinitionDisplacement
-void CharSet_setCharDefinitionDisplacement(CharSet this, u16 charDefinitionDisplacement)
+void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement)
 {
 	ASSERT(this, "CharSet::setCharDefinitionDisplacement: null this");
 
