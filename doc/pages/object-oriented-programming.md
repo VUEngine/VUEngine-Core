@@ -129,21 +129,33 @@ The purpose of having OOP features is to allow generic programming through the u
 As you can see, there is only one call to the method, which depends on the type of object that is currently being processed.
 
 
-Abstract classes
-----------------
+Abstract class
+--------------
 
 To define an abstract class, simply omit the `__VIRTUAL_SET` definition.
 
 Trying to instantiate an abstract Entity will result in an exception in `__DEBUG` mode.
 
 
-Friend classes
---------------
+Friend class
+------------
 
 [TODO]
 
 
-Singletons
-----------
+Singleton
+---------
 
-[TODO]
+You can define your class as a singleton to restrict its instantiation to one object only. This is very useful for state objects as an example. 
+To make your class a singleton, call the respective macro right after the class definition:
+
+  __CLASS_DEFINITION(ExampleState, GameState);
+  __SINGLETON(ExampleState);
+
+There's two different ways to define a singleton, `__SINGLETON()`, where an instance is a global variable that is allocated in the program's bss section, and `__SINGLETON_DYNAMIC()`, where an instance is allocated in the memory pool. 
+
+In any case, a singleton's instance can get retrieved through the `[ClassName]_getInstance();` method.
+
+A singleton instance is destroyed with a call to `__SINGLETON_DESTROY` in the class' destructor. 
+In the case of a `__SINGLETON_DYNAMIC`, destroying the instance results in the next call to `getInstance()` to allocate a new instance in the memory pool. 
+In the case of a `__SINGLETON`, the only thing that trying to delete it accomplishes is that the constructor gets called again during the next call to `getInstance()`.
