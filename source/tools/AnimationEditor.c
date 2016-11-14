@@ -42,8 +42,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_ACTOR_SHOW_ROW 	6
-#define __OPTION_MARK	        "\x0B"
-#define __FRAME_OPTION_MARK	    "\x0B"
 
 #define __TRANSLATION_STEP	    8
 #define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
@@ -213,7 +211,7 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
 
-	this->animatedInGameEntitySelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString, NULL);
+	this->animatedInGameEntitySelector = __NEW(OptionsSelector, 2, 16, NULL);
 
 	VirtualList animatedInGameEntitiesNames = __NEW(VirtualList);
 
@@ -221,7 +219,11 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	for(; _userAnimatedInGameEntities[i].animatedInGameEntityDefinition; i++)
 	{
 		ASSERT(_userAnimatedInGameEntities[i].name, "AnimationEditor::start: push null name");
-		VirtualList_pushBack(animatedInGameEntitiesNames, _userAnimatedInGameEntities[i].name);
+
+        Option* option = __NEW_BASIC(Option);
+        option->value = (char*)(_userAnimatedInGameEntities[i].name);
+        option->type = kString;
+        VirtualList_pushBack(animatedInGameEntitiesNames, option);
 	}
 
 	ASSERT(animatedInGameEntitiesNames, "AnimationEditor::start: null animatedInGameEntitiesNames");
@@ -738,14 +740,18 @@ static void AnimationEditor_createSpriteSelector(AnimationEditor this)
 		__DELETE(this->spriteSelector);
 	}
 
-	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kCount, NULL);
+	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL);
 
 	VirtualList spriteIndexes = __NEW(VirtualList);
 
 	int i = 0;
 	while(_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[i])
 	{
-		VirtualList_pushBack(spriteIndexes, _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[i]);
+		Option* option = __NEW_BASIC(Option);
+		option->value = &i;
+		option->type = kInt;
+		VirtualList_pushBack(spriteIndexes, option);
+
 		i++;
 	}
 
@@ -764,14 +770,17 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 			__DELETE(this->animationsSelector);
 		}
 
-		this->animationsSelector = __NEW(OptionsSelector, 2, 16, __OPTION_MARK, kString, NULL);
+		this->animationsSelector = __NEW(OptionsSelector, 2, 16, NULL);
 
 		VirtualList animationsNames = __NEW(VirtualList);
 
 		int i = 0;
 		for(i = 0; this->animationDescription->animationFunctions[i]; i++)
 		{
-			VirtualList_pushBack(animationsNames, this->animationDescription->animationFunctions[i]->name);
+			Option* option = __NEW_BASIC(Option);
+			option->value = this->animationDescription->animationFunctions[i]->name;
+			option->type = kString;
+			VirtualList_pushBack(animationsNames, option);
 		}
 
 		OptionsSelector_setOptions(this->animationsSelector, animationsNames);
@@ -790,14 +799,30 @@ static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this)
 		__DELETE(this->animationEditionSelector);
 	}
 
-	this->animationEditionSelector = __NEW(OptionsSelector, 1, 4, __OPTION_MARK, kString, NULL);
+	this->animationEditionSelector = __NEW(OptionsSelector, 1, 4, NULL);
 
 	VirtualList optionsNames = __NEW(VirtualList);
+	Option* option = NULL;
 
-	VirtualList_pushBack(optionsNames, "Number of frames:");
-	VirtualList_pushBack(optionsNames, "Cycle delay:");
-	VirtualList_pushBack(optionsNames, "Loop:");
-	VirtualList_pushBack(optionsNames, "Frames:");
+	option = __NEW_BASIC(Option);
+	option->value = "Number of frames:";
+	option->type = kString;
+	VirtualList_pushBack(optionsNames, option);
+
+	option = __NEW_BASIC(Option);
+	option->value = "Cycle delay:";
+	option->type = kString;
+	VirtualList_pushBack(optionsNames, option);
+
+	option = __NEW_BASIC(Option);
+	option->value = "Loop:";
+	option->type = kString;
+	VirtualList_pushBack(optionsNames, option);
+
+	option = __NEW_BASIC(Option);
+	option->value = "Frames:";
+	option->type = kString;
+	VirtualList_pushBack(optionsNames, option);
 
 	OptionsSelector_setOptions(this->animationEditionSelector, optionsNames);
 	__DELETE(optionsNames);
@@ -812,14 +837,18 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 		__DELETE(this->frameEditionSelector);
 	}
 
-	this->frameEditionSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, __FRAME_OPTION_MARK, kInt, NULL);
+	this->frameEditionSelector = __NEW(OptionsSelector, 4, 16, NULL);
+	OptionsSelector_setColumnWidth(this->frameEditionSelector, 2);
 
 	VirtualList framesIndexes = __NEW(VirtualList);
 
 	int i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++)
 	{
-		VirtualList_pushBack(framesIndexes, &this->animationFunction.frames[i]);
+		Option* option = __NEW_BASIC(Option);
+		option->value = &this->animationFunction.frames[i];
+		option->type = kInt;
+		VirtualList_pushBack(framesIndexes, option);
 	}
 
 	OptionsSelector_setOptions(this->frameEditionSelector, framesIndexes);

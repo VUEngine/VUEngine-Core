@@ -181,14 +181,17 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 	this->userObjectSprite = NULL;
 	this->mode = kFirstMode + 1;
 	this->shape = NULL;
-	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, "\x0B", kString, NULL);
+	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, NULL);
 
 	VirtualList userObjects = __NEW(VirtualList);
 
 	int i = 0;
 	for(;  _userObjects[i].entityDefinition; i++)
 	{
-		VirtualList_pushBack(userObjects, _userObjects[i].name);
+        Option* option = __NEW_BASIC(Option);
+        option->value = _userObjects[i].name;
+        option->type = kString;
+        VirtualList_pushBack(userObjects, option);
 	}
 
 	OptionsSelector_setOptions(this->userObjectsSelector, userObjects);

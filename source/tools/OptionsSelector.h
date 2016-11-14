@@ -57,7 +57,6 @@
 		u8 cols;																						\
 		u8 rows;																						\
 		u8 columnWidth;																					\
-		u8 type;																						\
 		int totalOptions;																				\
 		int currentPageIndex;																			\
 		int currentOptionIndex;																			\
@@ -67,20 +66,20 @@
 // declare the optionsselector class
 __CLASS(OptionsSelector);
 
-// for debugging
 typedef struct Option
 {
-	int (*classSizeFunction)(void);
-	char* name;
+	void* value;
+    u8 type;
+	void (*callback)(Object);
+	Object callbackScope;
 
-} ClassSizeData;
+} Option;
 
 enum OptionTypes
 {
 	kString,
 	kInt,
-	kFloat,
-	kCount
+	kFloat
 };
 
 
@@ -88,11 +87,14 @@ enum OptionTypes
 // 										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(OptionsSelector, u8 cols, u8 rows, char* mark, u8 type, char* font);
+__CLASS_NEW_DECLARE(OptionsSelector, u8 cols, u8 rows, char* font);
 
-void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* mark, u8 type, char* font);
+void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* font);
 void OptionsSelector_destructor(OptionsSelector this);
+
+void OptionsSelector_doCurrentSelectionCallback(OptionsSelector this);
 void OptionsSelector_setColumnWidth(OptionsSelector this, u8 width);
+void OptionsSelector_setMarkCharacter(OptionsSelector this, char* mark);
 u8 OptionsSelector_getWidth(OptionsSelector this);
 void OptionsSelector_setOptions(OptionsSelector this, VirtualList options);
 void OptionsSelector_selectNext(OptionsSelector this);

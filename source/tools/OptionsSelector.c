@@ -72,7 +72,7 @@
  * @brief           Tool to render a menu
  *
  * @var VirtualList pages
- * @brief           List of pages, each being a VirtualLists of options
+ * @brief           List of pages, each being a VirtualLists of Options
  * @memberof        OptionsSelector
  *
  * @var VirtualNode currentPage
@@ -103,10 +103,6 @@
  * @brief           Width of a column (in chars)
  * @memberof        OptionsSelector
  *
- * @var u8          type
- * @brief           Output type
- * @memberof        OptionsSelector
- *
  * @var int         totalOptions
  * @brief           Total number of options
  * @memberof        OptionsSelector
@@ -126,8 +122,8 @@
 
 __CLASS_DEFINITION(OptionsSelector, Object);
 
-__CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(Printing);
 
 
@@ -144,8 +140,8 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OptionsSelector, u8 cols, u8 rows, char* mark, u8 type, char* font)
-__CLASS_NEW_END(OptionsSelector, cols, rows, mark, type, font);
+__CLASS_NEW_DEFINITION(OptionsSelector, u8 cols, u8 rows, char* font)
+__CLASS_NEW_END(OptionsSelector, cols, rows, font);
 
 /**
  * Class constructor
@@ -157,9 +153,8 @@ __CLASS_NEW_END(OptionsSelector, cols, rows, mark, type, font);
  * @param cols  Number of columns
  * @param rows  Number of rows
  * @param mark  Character to use for selector mark
- * @param type  Options type
  */
-void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* mark, u8 type, char* font)
+void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* font)
 {
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
@@ -175,8 +170,7 @@ void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* m
 	this->cols = ((0 < cols) && (cols <= __OPTIONS_SELECT_MAX_COLS)) ? cols : 1;
 	this->rows = ((0 < rows) && (rows <= __OPTIONS_SELECT_MAX_ROWS)) ? rows : __OPTIONS_SELECT_MAX_ROWS;
 	this->totalOptions = 0;
-	this->mark = mark;
-	this->type = type;
+	this->mark = "\x0B";
 	this->font = font;
 	this->columnWidth = (__SCREEN_WIDTH >> 3) / this->cols;
 }
@@ -226,6 +220,20 @@ static void OptionsSelector_flushPages(OptionsSelector this)
 	}
 
 	this->pages = NULL;
+}
+
+/**
+ * Set character to use as selection mark
+ *
+ * @memberof    OptionsSelector
+ * @public
+ *
+ * @param this  Function scope
+ * @param mark  Selection mark character
+ */
+void OptionsSelector_setMarkCharacter(OptionsSelector this, char* mark)
+{
+    this->mark = mark;
 }
 
 /**
@@ -304,7 +312,7 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList options)
 			int counter = 0;
 			for(; node && counter < optionsPerPage; counter++, node = node->next)
 			{
-				VirtualList_pushBack(pageOptions, (const char*)node->data);
+                VirtualList_pushBack(pageOptions, node->data);
 			}
 
 			VirtualList_pushBack(this->pages, pageOptions);
@@ -529,29 +537,25 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
 			}
 		}
 
-		int counter = 0;
-
 		for(; node; node = node->next)
 		{
 			ASSERT(node, "printOptions: push null node");
 			ASSERT(node->data, "printOptions: push null node data");
 
-			switch(this->type)
+            Option* option = VirtualNode_getData(node);
+
+			switch(option->type)
 			{
 				case kString:
-					Printing_text(Printing_getInstance(), (char*)node->data, x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing_text(Printing_getInstance(), (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 
 				case kInt:
-					Printing_int(Printing_getInstance(), *((int*)node->data), x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing_int(Printing_getInstance(), *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 
 				case kFloat:
-					Printing_float(Printing_getInstance(), *((float*)node->data), x + fontData->fontDefinition->fontSize.x, y, this->font);
-					break;
-
-				case kCount:
-					Printing_int(Printing_getInstance(), counter++, x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing_float(Printing_getInstance(), *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 			}
 
@@ -600,4 +604,24 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
 		    this->font
         );
 	}
+}
+
+/**
+ * Execute the callback of the currently selected option
+ *
+ * @memberof    OptionsSelector
+ * @public
+ *
+ * @param this  Function scope
+ */
+void OptionsSelector_doCurrentSelectionCallback(OptionsSelector this)
+{
+	ASSERT(this, "OptionsSelector::doCurrentSelectionCallback: null this");
+
+    Option* option = VirtualNode_getData(this->currentOption);
+
+    if(option->callback && option->callbackScope)
+    {
+	    option->callback(option->callbackScope);
+    }
 }
