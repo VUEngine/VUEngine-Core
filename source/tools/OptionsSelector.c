@@ -170,7 +170,7 @@ void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* f
 	this->cols = ((0 < cols) && (cols <= __OPTIONS_SELECT_MAX_COLS)) ? cols : 1;
 	this->rows = ((0 < rows) && (rows <= __OPTIONS_SELECT_MAX_ROWS)) ? rows : __OPTIONS_SELECT_MAX_ROWS;
 	this->totalOptions = 0;
-	this->mark = "\x0B";
+	this->mark = __CHAR_SELECTOR;
 	this->font = font;
 	this->columnWidth = (__SCREEN_WIDTH >> 3) / this->cols;
 }

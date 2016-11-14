@@ -39,6 +39,53 @@ typedef struct FontSize
 // max length of a font's name
 #define __MAX_FONT_NAME_LENGTH	16
 
+// default font special chars
+#define __CHAR_BATTERY				"\x01\x02"
+
+#define __CHAR_LINE_TOP_LEFT		"\x03"
+#define __CHAR_LINE_TOP_RIGHT		"\x04"
+#define __CHAR_LINE_BOTTOM_LEFT		"\x05"
+#define __CHAR_LINE_BOTTOM_RIGHT	"\x06"
+#define __CHAR_LINE_VERTICAL		"\x07"
+#define __CHAR_LINE_HORIZONTAL		"\x08"
+
+#define __CHAR_SELECTOR				"\x0B"
+#define __CHAR_SELECTOR_LEFT		"\x0C"
+
+#define __CHAR_ARROW_UP				"\x0E"
+#define __CHAR_ARROW_DOWN			"\x0F"
+#define __CHAR_ARROW_LEFT			"\x10"
+#define __CHAR_ARROW_RIGHT			"\x11"
+
+#define __CHAR_START_BUTTON			"\x15"
+#define __CHAR_SELECT_BUTTON		"\x16"
+#define __CHAR_A_BUTTON				"\x13"
+#define __CHAR_B_BUTTON				"\x14"
+#define __CHAR_L_TRIGGER			"\x17"
+#define __CHAR_R_TRIGGER			"\x18"
+#define __CHAR_D_PAD				"\x19"
+#define __CHAR_D_PAD_UP				"\x1A"
+#define __CHAR_D_PAD_DOWN			"\x1B"
+#define __CHAR_D_PAD_LEFT			"\x1C"
+#define __CHAR_D_PAD_RIGHT			"\x1D"
+#define __CHAR_L					"\x1E"
+#define __CHAR_R					"\x1F"
+
+#define __CHAR_L_D_PAD				"\x1E\x19"
+#define __CHAR_L_D_PAD_UP			"\x1E\x1A"
+#define __CHAR_L_D_PAD_DOWN			"\x1E\x1B"
+#define __CHAR_L_D_PAD_LEFT			"\x1E\x1C"
+#define __CHAR_L_D_PAD_RIGHT		"\x1E\x1D"
+#define __CHAR_R_D_PAD				"\x1F\x19"
+#define __CHAR_R_D_PAD_UP			"\x1F\x1A"
+#define __CHAR_R_D_PAD_DOWN			"\x1F\x1B"
+#define __CHAR_R_D_PAD_LEFT			"\x1F\x1C"
+#define __CHAR_R_D_PAD_RIGHT		"\x1F\x1D"
+
+#define __CHAR_DARK_RED_BOX			"\x8D"
+#define __CHAR_MEDIUM_RED_BOX		"\x8F"
+#define __CHAR_BRIGHT_RED_BOX		"\x90"
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION

@@ -965,11 +965,11 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
         Printing_text(Printing_getInstance(), word, 37, y, NULL);
 
         // print scroll bar
-        Printing_text(Printing_getInstance(), "\x8F", 46, y, NULL);
+        Printing_text(Printing_getInstance(), __CHAR_MEDIUM_RED_BOX, 46, y, NULL);
     }
 
     // mark scroll bar position
-    Printing_text(Printing_getInstance(), "\x90", 46, y - 15 + (this->sramPage / (totalPages >> 4)), NULL);
+    Printing_text(Printing_getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages >> 4)), NULL);
 }
 
 static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message)
