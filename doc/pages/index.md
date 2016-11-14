@@ -1,7 +1,10 @@
 Introduction
 ------------
 
-The VBJaEngine has been developed to fill the gap between the developer's game logic and the hardware management required to produce visual and audio results on the Nintendo Virtual Boy. The engine is a sprite based engine, which takes care of all the work necessary to display user defined sprite images on screen, allocating graphical and CPU's memory to hold the definitions of such images. 
+The VBJaEngine has been developed to fill the gap between the developer's game logic and the hardware management 
+required to produce visual and audio results on the Nintendo Virtual Boy. The engine is a sprite based engine, 
+which takes care of all the work necessary to display user defined sprite images on screen, allocating graphical 
+and CPU's memory to hold the definitions of such images. 
 
 
 Features
@@ -55,4 +58,5 @@ TODO
 
 
 > This document is a work in progress and thus contains incomplete or partially outdated information.
-> If you have any problems which this document is unable to help you resolve, please refer to the (http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0 "VBJaEngine support forum")</a>.
+> If you have any problems which this document is unable to help you resolve, please refer to the 
+> (http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0 "VBJaEngine support forum").

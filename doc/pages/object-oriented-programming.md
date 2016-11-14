@@ -115,16 +115,16 @@ The purpose of having OOP features is to allow generic programming through the u
 - Using a switch statement to determine which type of object is being pointed to by the parent class pointer, which can mean having to store extra info on each object to hold the type, and can be quite cumbersome if we extend to have more kind of Entities.
 - The other way is to use virtual calls to virtual methods, as shown below:
 
-    // update each entity's internal state
-    void Stage_update(Stage this)
-    {
-        VirtualNode node = VirtualList_begin(this->entities);
+      // update each entity's internal state
+      void Stage_update(Stage this)
+      {
+          VirtualNode node = VirtualList_begin(this->entities);
     
-        for(; node ; node = VirtualNode_getNext(node)) 
-        {
-            __VIRTUAL_CALL(void, Entity, update,(Entity)VirtualNode_getData(node));
-        }
-    } 
+          for(; node ; node = VirtualNode_getNext(node)) 
+          {
+              __VIRTUAL_CALL(void, Entity, update,(Entity)VirtualNode_getData(node));
+          }
+      } 
 
 As you can see, there is only one call to the method, which depends on the type of object that is currently being processed.
 
@@ -149,11 +149,17 @@ Singleton
 You can define your class as a singleton to restrict its instantiation to one object only. This is very useful for state objects as an example. 
 To make your class a singleton, call the respective macro right after the class definition:
 
-  __CLASS_DEFINITION(ExampleState, GameState);
-  __SINGLETON(ExampleState);
+    __CLASS_DEFINITION(ExampleState, GameState);
+    __SINGLETON(ExampleState);
 
-There's two different ways to define a singleton, `__SINGLETON()`, where an instance is a global variable that is allocated in the program's bss section, and `__SINGLETON_DYNAMIC()`, where an instance is allocated in the memory pool. 
+There's two different ways to define a singleton: 
+`__SINGLETON`, where an instance is a global variable that is allocated in the program's bss section, and
+`__SINGLETON_DYNAMIC` where an instance is allocated in the memory pool. 
+The purpose of `__SINGLETON_DYNAMIC()` is to being able to free up memory while not straining the engine. 
+That means that states which are used a lot during gameplay (for example the main character's states) are not good candidates for `__SINGLETON_DYNAMIC` because it'd mean a lot of memory allocations and deallocations.
 
+Rule of thumb: If the state is either used a lot during gameplay, or you need to keep a reference to it after the state has exited, use `__SINGLETON`, otherwise `__SINGLETON_DYNAMIC` should be the better choice.
+  
 In any case, a singleton's instance can get retrieved through the `[ClassName]_getInstance();` method.
 
 A singleton instance is destroyed with a call to `__SINGLETON_DESTROY` in the class' destructor. 
