@@ -56,17 +56,36 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
 
 #define SolidParticle_ATTRIBUTES																		\
-        /* super's attributes */																		\
         Particle_ATTRIBUTES																				\
-        /* physical body */																				\
+		/*
+		 * @var Shape 						shape
+		 * @brief							Particle's shape for collision detection
+		 * @memberof						SolidParticle
+		 */																								\
         Shape shape;																					\
-        /* shape for collision detection */																\
+		/*
+		 * @var SolidParticleDefinition*	solidParticleDefinition
+		 * @brief
+		 * @memberof						SolidParticle
+		 */																								\
         const SolidParticleDefinition* solidParticleDefinition;											\
-        /* previous position for collision handling */													\
+		/*
+		 * @var VBVec3D 					previousGlobalPosition
+		 * @brief							Particle's previous position, for collision handling
+		 * @memberof						SolidParticle
+		 */																								\
         VBVec3D previousGlobalPosition;																	\
-        /* collision solver */																			\
+		/*
+		 * @var CollisionSolver 			collisionSolver
+		 * @brief							Particle's collision solver
+		 * @memberof						SolidParticle
+		 */																								\
         CollisionSolver collisionSolver;																\
-        /* position */																					\
+		/*
+		 * @var VBVec3D 					position
+		 * @brief							Particle's position
+		 * @memberof						SolidParticle
+		 */																								\
         VBVec3D position;																				\
 
 __CLASS(SolidParticle);
@@ -76,38 +95,47 @@ __CLASS(SolidParticle);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines a SolidParticle in ROM memory
+/**
+ * Defines a SolidParticle
+ *
+ * @memberof	SolidParticle
+ */
 typedef struct SolidParticleDefinition
 {
-	// the class type
+	/// the class type
 	ParticleDefinition particleDefinition;
 
-	// shape's type
+	/// shape's type
 	int shapeType;
 
-	// object's size over the x axis
+	/// object's size over the x axis
 	u16 width;
 
-	// object's size over the y axis
+	/// object's size over the y axis
 	u16 height;
 
-	// object's size over the z axis
+	/// object's size over the z axis
 	u16 depth;
 
-	// friction for physics
+	/// friction for physics
 	fix19_13 friction;
 
-	// elasticity for physics
+	/// elasticity for physics
 	fix19_13 elasticity;
 
-	// flag to ignore collisions against other particles
+	/// flag to ignore collisions against other particles
 	bool ignoreParticles;
 
-	// flag to allow bouncing on each axis
+	/// flag to allow bouncing on each axis
 	u8 axisAllowedForBouncing;
 
 } SolidParticleDefinition;
 
+/**
+ * A SolidParticle that is stored in ROM
+ *
+ * @memberof	SolidParticle
+ */
 typedef const SolidParticleDefinition SolidParticleROMDef;
 
 
@@ -119,13 +147,14 @@ __CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* solidParticleD
 
 void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void SolidParticle_destructor(SolidParticle this);
-u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
+
+int SolidParticle_getDepth(SolidParticle this);
+int SolidParticle_getHeight(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
 int SolidParticle_getWidth(SolidParticle this);
-int SolidParticle_getHeight(SolidParticle this);
-int SolidParticle_getDepth(SolidParticle this);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position);
+u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
 
 
 #endif

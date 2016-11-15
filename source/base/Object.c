@@ -29,12 +29,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class               Object
- * @brief               Base class for all other classes in the engine.
- *
- * @var VirtualList     events
- * @brief               List of registered events.
- * @memberof            Object
+ * @class	Object
+ * @brief	Base class for all other classes in the engine.
  */
 
 // this is the base class for everything, so it derives from nothing but itself
@@ -43,12 +39,17 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
 /**
- * An event
+ * An Event
+ *
+ * @memberof 	Object
  */
 typedef struct Event
 {
+	/// Object to register event listener at
 	Object listener;
+	/// The method to execute on event
 	EventListener method;
+	/// The code of the event to listen to
 	u32 code;
 } Event;
 
@@ -68,10 +69,10 @@ extern MemoryPool _memoryPool;
 /**
  * Class constructor
  *
- * @memberof    Object
+ * @memberof	Object
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Object_constructor(Object this)
 {
@@ -83,10 +84,10 @@ void Object_constructor(Object this)
 /**
  * Class destructor
  *
- * @memberof    Object
+ * @memberof	Object
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Object_destructor(Object this)
 {
@@ -107,20 +108,20 @@ void Object_destructor(Object this)
 	}
 
 
-    // free the memory
-    MemoryPool_free(_memoryPool, (void*)this);
+	// free the memory
+	MemoryPool_free(_memoryPool, (void*)this);
 }
 
 /**
  * Handles incoming messages
  *
- * @memberof        Object
+ * @memberof		Object
  * @public
  *
- * @param this      Function scope
- * @param telegram  The received message
+ * @param this		Function scope
+ * @param telegram	The received message
  *
- * @return Always returns false, this is meant to be used only in derived classes
+ * @return			Always returns false, this is meant to be used only in derived classes
  */
 bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
 {
@@ -132,13 +133,13 @@ bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram _
 /**
  * Registers an event listener
  *
- * @memberof            Object
+ * @memberof			Object
  * @public
  *
- * @param this          Function scope
- * @param listener      Object to register event listener at
- * @param method        The method to execute on event
- * @param eventCode     The code of the event to listen to
+ * @param this			Function scope
+ * @param listener		Object to register event listener at
+ * @param method		The method to execute on event
+ * @param eventCode		The code of the event to listen to
  */
 void Object_addEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
@@ -169,13 +170,13 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 /**
  * Removes an event listener
  *
- * @memberof            Object
+ * @memberof			Object
  * @public
  *
- * @param this          Function scope
- * @param listener      Object where event listener is registered at
- * @param method        The method attached to event listener
- * @param eventCode     The code of the event
+ * @param this			Function scope
+ * @param listener		Object where event listener is registered at
+ * @param method		The method attached to event listener
+ * @param eventCode		The code of the event
  */
 void Object_removeEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
@@ -203,12 +204,12 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 /**
  * Removes event listeners without specifying a method
  *
- * @memberof            Object
+ * @memberof			Object
  * @public
  *
- * @param this          Function scope
- * @param listener      Object where event listener is registered at
- * @param eventCode     The code of the event
+ * @param this			Function scope
+ * @param listener		Object where event listener is registered at
+ * @param eventCode		The code of the event
  */
 void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 {
@@ -216,7 +217,7 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 
 	if(this->events)
 	{
-	    VirtualList eventsToRemove = __NEW(VirtualList);
+		VirtualList eventsToRemove = __NEW(VirtualList);
 
 		VirtualNode node = this->events->head;
 
@@ -234,17 +235,17 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-            VirtualList_removeElement(this->events, event);
+			VirtualList_removeElement(this->events, event);
 
-            __DELETE_BASIC(event);
+			__DELETE_BASIC(event);
 		}
 
 		__DELETE(eventsToRemove);
 
 		if(!VirtualList_getSize(this->events))
 		{
-            __DELETE(this->events);
-            this->events = NULL;
+			__DELETE(this->events);
+			this->events = NULL;
 		}
 	}
 }
@@ -252,11 +253,11 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 /**
  * Removes event listeners without specifying a method nor a listener
  *
- * @memberof            Object
+ * @memberof			Object
  * @public
  *
- * @param this          Function scope
- * @param eventCode     The code of the event
+ * @param this			Function scope
+ * @param eventCode		The code of the event
  */
 void Object_removeAllEventListeners(Object this, u32 eventCode)
 {
@@ -264,7 +265,7 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
 
 	if(this->events)
 	{
-	    VirtualList eventsToRemove = __NEW(VirtualList);
+		VirtualList eventsToRemove = __NEW(VirtualList);
 
 		VirtualNode node = this->events->head;
 
@@ -282,17 +283,17 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-            VirtualList_removeElement(this->events, event);
+			VirtualList_removeElement(this->events, event);
 
-            __DELETE_BASIC(event);
+			__DELETE_BASIC(event);
 		}
 
 		__DELETE(eventsToRemove);
 
 		if(!VirtualList_getSize(this->events))
 		{
-            __DELETE(this->events);
-            this->events = NULL;
+			__DELETE(this->events);
+			this->events = NULL;
 		}
 	}
 }
@@ -300,19 +301,19 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
 /**
  * Fires an event
  *
- * @memberof            Object
+ * @memberof			Object
  * @public
  *
- * @param this          Function scope
- * @param eventCode     The code     of the event
+ * @param this			Function scope
+ * @param eventCode		The code of the event
  */
-void Object_fireEvent(Object this,  u32 eventCode)
+void Object_fireEvent(Object this,	u32 eventCode)
 {
 	ASSERT(this, "Object::fireEvent: null this");
 
 	if(this->events)
 	{
-	    VirtualList eventsToRemove = __NEW(VirtualList);
+		VirtualList eventsToRemove = __NEW(VirtualList);
 
 		VirtualNode node = this->events->head;
 
@@ -320,26 +321,26 @@ void Object_fireEvent(Object this,  u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-		    if(!*(u32*)event->listener)
-            {
-                VirtualList_pushBack(eventsToRemove, event);
-            }
-            else
-		    {
-                if(eventCode == event->code)
-                {
-                    event->method(event->listener, this);
-                }
-            }
+			if(!*(u32*)event->listener)
+			{
+				VirtualList_pushBack(eventsToRemove, event);
+			}
+			else
+			{
+				if(eventCode == event->code)
+				{
+					event->method(event->listener, this);
+				}
+			}
 		}
 
 		for(node = eventsToRemove->head; node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 
-            VirtualList_removeElement(this->events, event);
+			VirtualList_removeElement(this->events, event);
 
-            __DELETE_BASIC(event);
+			__DELETE_BASIC(event);
 		}
 
 		__DELETE(eventsToRemove);
@@ -349,14 +350,14 @@ void Object_fireEvent(Object this,  u32 eventCode)
 /**
  * Casts an object to base class
  *
- * @memberof                            Object
+ * @memberof							Object
  * @public
  *
- * @param this                          Function scope
+ * @param this							Function scope
  * @param targetClassGetClassMethod
  * @param baseClassGetClassMethod
  *
- * @return                              Casted Object
+ * @return								Casted Object
  */
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
@@ -367,11 +368,11 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 		return NULL;
 	}
 
-    if(!*(u32*)this)
-    {
-        Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
-        Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
-        NM_ASSERT(false, "Object::getCast: deleted this");
+	if(!*(u32*)this)
+	{
+		Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
+		NM_ASSERT(false, "Object::getCast: deleted this");
 	}
 
 	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, this), "Object::getCast: null getClassName");
@@ -384,8 +385,8 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 			return this;
 		}
 
-        // make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
-        // __SAFE_CAST check
+		// make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
+		// __SAFE_CAST check
 		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this)(this);
 	}
 
@@ -405,17 +406,17 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 /**
  * Get an Object's vTable
  *
- * @memberof    Object
+ * @memberof	Object
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      vTable pointer
+ * @return		vTable pointer
  */
 const void* Object_getVTable(Object this)
 {
 	ASSERT(this, "Object::getVTable: null this");
 
-    return this->vTable;
+	return this->vTable;
 }
 

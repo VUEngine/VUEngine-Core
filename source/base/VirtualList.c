@@ -37,20 +37,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class           VirtualList
+ * @class   VirtualList
  * @brief
- *
- * @var VirtualNode head
- * @brief           A pointer to the head of the list
- * @memberof        VirtualList
- *
- * @var VirtualNode tail
- * @brief           A pointer to the tail of the list
- * @memberof        VirtualList
  */
-
 __CLASS_DEFINITION(VirtualList, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 
 

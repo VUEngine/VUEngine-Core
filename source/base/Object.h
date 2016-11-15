@@ -26,34 +26,37 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Object_METHODS(ClassName)											    						\
-	    __VIRTUAL_DEC(ClassName, bool, handleMessage, void* telegram);						            \
+#define Object_METHODS(ClassName)												 						\
+		__VIRTUAL_DEC(ClassName, bool, handleMessage, void* telegram);									\
 
 // define the virtual methods
 #define Object_SET_VTABLE(ClassName)																	\
-	    __VIRTUAL_SET(ClassName, Object, handleMessage);												\
+		__VIRTUAL_SET(ClassName, Object, handleMessage);												\
 
 // declare the class from which all classes derive
 #define Object_ATTRIBUTES																				\
-        /* pointer to the class's virtual table */														\
-        void* vTable;																				    \
-        VirtualList events;																		    	\
+		/*
+		 * @var void*		vTable
+		 * @brief			Pointer to the class's virtual table.
+		 * @memberof		Object
+		 */																								\
+		void* vTable;																					\
+		/*
+		 * @var VirtualList events
+		 * @brief			List of registered events.
+		 * @memberof		Object
+		 */																								\
+		VirtualList events;																				\
 
-// the root class for everything else
 __CLASS(Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											    TYPEDEFS
+// 												TYPEDEFS
 //---------------------------------------------------------------------------------------------------------
 
 typedef void (*EventListener)(Object, Object);
@@ -74,5 +77,6 @@ void Object_removeAllEventListeners(Object this, u32 eventCode);
 void Object_fireEvent(Object this, u32 eventCode);
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
 const void* Object_getVTable(Object this);
+
 
 #endif

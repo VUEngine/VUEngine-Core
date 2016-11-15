@@ -31,15 +31,25 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define VirtualList_METHODS(ClassName)																	\
-	Object_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																		\
 
 #define VirtualList_SET_VTABLE(ClassName)																\
-	Object_SET_VTABLE(ClassName)																		\
+		Object_SET_VTABLE(ClassName)																	\
 
 #define VirtualList_ATTRIBUTES																			\
-        Object_ATTRIBUTES																				\
-        VirtualNode head;																				\
-        VirtualNode tail;																				\
+		Object_ATTRIBUTES																				\
+		/*
+		 * @var VirtualNode head
+		 * @brief			A pointer to the head of the list
+		 * @memberof		VirtualList
+		 */																								\
+		VirtualNode head;																				\
+		/*
+		 * @var VirtualNode tail
+		 * @brief			A pointer to the tail of the list
+		 * @memberof		VirtualList
+		 */ 																							\
+		VirtualNode tail;																				\
 
 __CLASS(VirtualList);
 
@@ -51,27 +61,28 @@ __CLASS(VirtualList);
 __CLASS_NEW_DECLARE(VirtualList);
 
 void VirtualList_destructor(VirtualList this);
-void VirtualList_clear(VirtualList this);
-int VirtualList_pushFront(VirtualList this, const void* const data);
-int VirtualList_pushBack(VirtualList this, const void* const data);
-void VirtualList_popFront(VirtualList this);
-int VirtualList_getSize(VirtualList this);
-void* VirtualList_getNodeData(VirtualList this, int item);
-VirtualNode VirtualList_getNode(VirtualList this, int item);
-void* VirtualList_getObject(VirtualList this, void* const dataPointer);
-VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer);
-int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer);
-int VirtualList_getNodePosition(VirtualList this, VirtualNode node);
-bool VirtualList_removeElement(VirtualList this, const void* const dataPointer);
-void VirtualList_copy(VirtualList this, VirtualList sourceList);
-VirtualNode VirtualList_begin(VirtualList this);
-void* VirtualList_front(VirtualList this);
-VirtualNode VirtualList_end(VirtualList this);
+
 void* VirtualList_back(VirtualList this);
+VirtualNode VirtualList_begin(VirtualList this);
+void VirtualList_clear(VirtualList this);
+void VirtualList_copy(VirtualList this, VirtualList sourceList);
+VirtualNode VirtualList_end(VirtualList this);
+VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer);
+void* VirtualList_front(VirtualList this);
+int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer);
+VirtualNode VirtualList_getNode(VirtualList this, int item);
+void* VirtualList_getNodeData(VirtualList this, int item);
+int VirtualList_getNodePosition(VirtualList this, VirtualNode node);
+void* VirtualList_getObject(VirtualList this, void* const dataPointer);
+void* VirtualList_getObjectAtPosition(VirtualList this, int position);
+int VirtualList_getSize(VirtualList this);
 VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const void* const data);
 VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const void* const data);
+void VirtualList_popFront(VirtualList this);
+int VirtualList_pushBack(VirtualList this, const void* const data);
+int VirtualList_pushFront(VirtualList this, const void* const data);
+bool VirtualList_removeElement(VirtualList this, const void* const dataPointer);
 void VirtualList_swap(VirtualList this, VirtualList secondList);
-void* VirtualList_getObjectAtPosition(VirtualList this, int position);
 
 
 #endif

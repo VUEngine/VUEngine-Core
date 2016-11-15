@@ -34,8 +34,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define StageEditor_METHODS(ClassName)																				\
-		Object_METHODS(ClassName)																					\
+#define StageEditor_METHODS(ClassName)																	\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define StageEditor_SET_VTABLE(ClassName)																\
@@ -45,10 +45,16 @@
 // declare a StageEditor
 __CLASS(StageEditor);
 
-// for level editing
+/**
+ * For level editing
+ *
+ * @memberof 		StageEditor
+ */
 typedef struct UserObject
 {
+    /// Pointer to EntityDefinition
 	EntityDefinition* entityDefinition;
+	/// Name of the Entity
 	char* name;
 
 } UserObject;
@@ -61,10 +67,11 @@ typedef struct UserObject
 StageEditor StageEditor_getInstance();
 
 void StageEditor_destructor(StageEditor this);
-void StageEditor_update(StageEditor this);
+
+bool StageEditor_handleMessage(StageEditor this, Telegram telegram);
 void StageEditor_start(StageEditor this, GameState gameState);
 void StageEditor_stop(StageEditor this);
-bool StageEditor_handleMessage(StageEditor this, Telegram telegram);
+void StageEditor_update(StageEditor this);
 
 
 #endif

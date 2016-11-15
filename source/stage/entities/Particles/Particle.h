@@ -28,11 +28,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -59,17 +54,36 @@
 
 
 #define Particle_ATTRIBUTES																				\
-        /* super's attributes */																		\
         SpatialObject_ATTRIBUTES																		\
-        /* definition */																				\
+		/*
+		 * @var ParticleDefinition* particleDefinition
+		 * @brief					Particle's definition
+		 * @memberof				Particle
+		 */																								\
         const ParticleDefinition* particleDefinition;													\
-        /* definition */																				\
+		/*
+		 * @var SpriteDefinition* 	spriteDefinition
+		 * @brief					Particle's SpriteDefinition
+		 * @memberof				Particle
+		 */																								\
         const SpriteDefinition* spriteDefinition;														\
-        /* OBJ based sprite */																			\
+		/*
+		 * @var ObjectSprite 		objectSprite
+		 * @brief					OBJ based sprite
+		 * @memberof				Particle
+		 */																								\
         ObjectSprite objectSprite;																		\
-        /* physical body */																				\
+		/*
+		 * @var Body 				body
+		 * @brief					Particle's physical body
+		 * @memberof				Particle
+		 */																								\
         Body body;																						\
-        /* life span in milliseconds */																	\
+		/*
+		 * @var int 				lifeSpan
+		 * @brief					Particle's life span in milliseconds
+		 * @memberof				Particle
+		 */																								\
         int lifeSpan;																					\
 
 __CLASS(Particle);
@@ -79,38 +93,47 @@ __CLASS(Particle);
 // 											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines a Particle in ROM memory
+/**
+ * Defines a Particle
+ *
+ * @memberof	Particle
+ */
 typedef struct ParticleDefinition
 {
-	// the class allocator
+	/// the class allocator
 	AllocatorPointer allocator;
 
-	// particle's minimum life span in milliseconds
+	/// particle's minimum life span in milliseconds
 	u16 minimumLifeSpan;
 
-	// particle's life span delta in milliseconds
+	/// particle's life span delta in milliseconds
 	u16 lifeSpanDelta;
 
-	// particle's minimum mass
+	/// particle's minimum mass
 	fix19_13 minimumMass;
 
-	// particle's mass delta
+	/// particle's mass delta
 	fix19_13 massDelta;
 
-	// axis subject to gravity
+	/// axis subject to gravity
 	u8 axisSubjectToGravity;
 
-	// function pointer to control particle's behavior
+	/// function pointer to control particle's behavior
 	void (* behavior)(Particle particle);
 
-	// animation's name to play if sprite is animated
+	/// animation's name to play if sprite is animated
 	AnimationDescription* animationDescription;
 
-	// animation to play automatically
+	/// animation to play automatically
 	char* initialAnimation;
 
 } ParticleDefinition;
 
+/**
+ * A Particle that is stored in ROM
+ *
+ * @memberof	Particle
+ */
 typedef const ParticleDefinition ParticleROMDef;
 
 
@@ -122,23 +145,24 @@ __CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, cons
 
 void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void Particle_destructor(Particle this);
-u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
-void Particle_transform(Particle this);
-void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition);
+
 void Particle_addForce(Particle this, const Force* force, u32 movementType);
-void Particle_setLifeSpan(Particle this, int lifeSpan);
-void Particle_setMass(Particle this, fix19_13 mass);
-void Particle_show(Particle this);
-void Particle_hide(Particle this);
-bool Particle_moves(Particle this);
 int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration);
-u16 Particle_getHeight(Particle this);
 u16 Particle_getDepth(Particle this);
 Gap Particle_getGap(Particle this);
-void Particle_setPosition(Particle this, const VBVec3D* position);
+u16 Particle_getHeight(Particle this);
 const VBVec3D* Particle_getPosition(Particle this);
+void Particle_hide(Particle this);
+bool Particle_moves(Particle this);
 void Particle_resume(Particle this);
+void Particle_setLifeSpan(Particle this, int lifeSpan);
+void Particle_setMass(Particle this, fix19_13 mass);
+void Particle_setPosition(Particle this, const VBVec3D* position);
+void Particle_show(Particle this);
 void Particle_suspend(Particle this);
+void Particle_transform(Particle this);
+u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
+void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition);
 
 
 #endif

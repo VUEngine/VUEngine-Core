@@ -46,27 +46,37 @@
 		Object_SET_VTABLE(ClassName)																	\
 
 #define I18n_ATTRIBUTES																					\
-        Object_ATTRIBUTES																				\
-        u8 activeLanguage;																				\
+	    Object_ATTRIBUTES																				\
+		/*
+         * @var u8		activeLanguage
+         * @brief		Currently active language
+         * @memberof	I18n
+         */																								\
+		u8 activeLanguage;																				\
 
 // declare a I18n
 __CLASS(I18n);
 
 /**
- * @typedef struct  LangDefinition
- * @brief Currently active language
- * @memberof I18n
+ * A language
+ *
+ * @memberof 	I18n
  */
 typedef struct LangDefinition
 {
-	// language name
+	/// Language name
 	char name[__MAX_LANGUAGE_NAME_LENGTH];
 
-    // language strings
+	/// Language strings
 	const char** language;
 
 } LangDefinition;
 
+/**
+ * A LangDefinition that is stored in ROM
+ *
+ * @memberof 	I18n
+ */
 typedef const LangDefinition LangROMDef;
 
 
@@ -77,11 +87,12 @@ typedef const LangDefinition LangROMDef;
 I18n I18n_getInstance();
 
 void I18n_destructor(I18n this);
-const char* I18n_getText(I18n this, int string);
-void I18n_setActiveLanguage(I18n this, u8 languageId);
-LangDefinition * I18n_getLanguages(I18n this);
+
 u8 I18n_getActiveLanguage(I18n this);
 char* I18n_getActiveLanguageName(I18n this);
+LangDefinition * I18n_getLanguages(I18n this);
+const char* I18n_getText(I18n this, int string);
+void I18n_setActiveLanguage(I18n this, u8 languageId);
 
 
 #endif

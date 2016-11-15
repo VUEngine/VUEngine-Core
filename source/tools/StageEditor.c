@@ -61,64 +61,70 @@
 // 											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class               StageEditor
- * @extends             Object
- * @brief               In-game stage editor for debug and productivity purposes
- *
- * @var GameState       gameState
- * @brief               Current game state
- * @memberof            StageEditor
- *
- * @var VirtualNode     currentEntityNode
- * @brief               Current in game entity
- * @memberof            StageEditor
- *
- * @var Shape           shape
- * @brief               Current entity's shape
- * @memberof            StageEditor
- *
- * @var int             mode
- * @brief               Mode
- * @memberof            StageEditor
- *
- * @var OptionsSelector userObjectsSelector
- * @brief               Actors selector
- * @memberof            StageEditor
- *
- * @var int             translationStepSize
- * @brief               Translation step size
- * @memberof            StageEditor
- *
- * @var Sprite          userObjectSprite
- * @brief               Current user's object's sprite
- * @memberof            StageEditor
- */
-
 #define StageEditor_ATTRIBUTES																			\
-        Object_ATTRIBUTES																				\
-        GameState gameState;																			\
-        VirtualNode currentEntityNode;																	\
-        Shape shape;																					\
-        int mode;																						\
-        OptionsSelector userObjectsSelector;															\
-        int translationStepSize;																		\
-        Sprite userObjectSprite;																		\
+		Object_ATTRIBUTES																				\
+		/**
+		 * @var GameState		gameState
+		 * @brief				Current game state
+		 * @memberof			StageEditor
+		 */																								\
+		GameState gameState;																			\
+		/**
+		 * @var VirtualNode		currentEntityNode
+		 * @brief				Current in game entity
+		 * @memberof			StageEditor
+		 */																								\
+		VirtualNode currentEntityNode;																	\
+		/**
+		 * @var Shape			shape
+		 * @brief				Current entity's shape
+		 * @memberof			StageEditor
+		 */																								\
+		Shape shape;																					\
+		/**
+		 * @var int				mode
+		 * @brief				Mode
+		 * @memberof			StageEditor
+		 */																								\
+		int mode;																						\
+		/**
+		 * @var OptionsSelector userObjectsSelector
+		 * @brief				Actors selector
+		 * @memberof			StageEditor
+		 */																								\
+		OptionsSelector userObjectsSelector;															\
+		/**
+		 * @var int				translationStepSize
+		 * @brief				Translation step size
+		 * @memberof			StageEditor
+		 */																								\
+		int translationStepSize;																		\
+		/**
+		 * @var Sprite			userObjectSprite
+		 * @brief				Current user's object's sprite
+		 * @memberof			StageEditor
+		 */																								\
+		Sprite userObjectSprite;																		\
 
+
+/**
+ * @class	StageEditor
+ * @extends Object
+ * @brief	In-game stage editor for debug and productivity purposes
+ */
 __CLASS_DEFINITION(StageEditor, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
 enum Modes
 {
-    kFirstMode = 0,
-    kMoveScreen,
-    kChangeProjection,
-    kTranslateEntities,
-    kAddObjects,
+	kFirstMode = 0,
+	kMoveScreen,
+	kChangeProjection,
+	kTranslateEntities,
+	kAddObjects,
 
-    kLastMode
+	kLastMode
 };
 
 
@@ -165,10 +171,10 @@ __SINGLETON(StageEditor);
 /**
  * Class constructor
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 {
@@ -188,10 +194,10 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 	int i = 0;
 	for(;  _userObjects[i].entityDefinition; i++)
 	{
-        Option* option = __NEW_BASIC(Option);
-        option->value = _userObjects[i].name;
-        option->type = kString;
-        VirtualList_pushBack(userObjects, option);
+		Option* option = __NEW_BASIC(Option);
+		option->value = _userObjects[i].name;
+		option->type = kString;
+		VirtualList_pushBack(userObjects, option);
 	}
 
 	OptionsSelector_setOptions(this->userObjectsSelector, userObjects);
@@ -203,10 +209,10 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 /**
  * Class destructor
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void StageEditor_destructor(StageEditor this)
 {
@@ -224,10 +230,10 @@ void StageEditor_destructor(StageEditor this)
 /**
  * Update
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void StageEditor_update(StageEditor this)
 {
@@ -242,10 +248,10 @@ void StageEditor_update(StageEditor this)
 /**
  * Show debug screens
  *
- * @memberof        StageEditor
+ * @memberof		StageEditor
  * @public
  *
- * @param this      Function scope
+ * @param this		Function scope
  * @param gameState Current game state
  */
 void StageEditor_start(StageEditor this, GameState gameState)
@@ -264,10 +270,10 @@ void StageEditor_start(StageEditor this, GameState gameState)
 /**
  * Hide debug screens
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void StageEditor_stop(StageEditor this)
 {
@@ -283,12 +289,13 @@ void StageEditor_stop(StageEditor this)
 /**
  * Handles incoming messages
  *
- * @memberof        StageEditor
+ * @memberof		StageEditor
  * @public
  *
- * @param this      Function scope
- * @param telegram  The received message
- * @return          True if successful, false otherwise
+ * @param this		Function scope
+ * @param telegram	The received message
+ *
+ * @return			True if successful, false otherwise
  */
 bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 {
@@ -303,45 +310,45 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 	{
 		case kKeyPressed:
 		{
-            u32 pressedKey = *((u32*)Telegram_getExtraInfo(telegram));
+			u32 pressedKey = *((u32*)Telegram_getExtraInfo(telegram));
 
-            if(pressedKey & K_SEL)
-            {
-                this->mode++;
+			if(pressedKey & K_SEL)
+			{
+				this->mode++;
 
-                if(kLastMode <= this->mode)
-                {
-                    this->mode = kFirstMode + 1;
-                }
+				if(kLastMode <= this->mode)
+				{
+					this->mode = kFirstMode + 1;
+				}
 
-                StageEditor_setupMode(this);
-                break;
-            }
+				StageEditor_setupMode(this);
+				break;
+			}
 
-            switch(this->mode)
-            {
-                case kMoveScreen:
+			switch(this->mode)
+			{
+				case kMoveScreen:
 
-                    StageEditor_moveScreen(this, pressedKey);
-                    break;
+					StageEditor_moveScreen(this, pressedKey);
+					break;
 
-                case kChangeProjection:
+				case kChangeProjection:
 
-                    StageEditor_changeProjection(this, pressedKey);
-                    break;
+					StageEditor_changeProjection(this, pressedKey);
+					break;
 
-                case kTranslateEntities:
+				case kTranslateEntities:
 
-                    StageEditor_translateEntity(this, pressedKey);
-                    break;
+					StageEditor_translateEntity(this, pressedKey);
+					break;
 
-                case kAddObjects:
+				case kAddObjects:
 
-                    StageEditor_selectUserObject(this, pressedKey);
-                    break;
-            }
-        }
-        break;
+					StageEditor_selectUserObject(this, pressedKey);
+					break;
+			}
+		}
+		break;
 	}
 	return true;
 }
@@ -349,32 +356,32 @@ bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
 /**
  * Print header
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_printHeader(StageEditor this)
 {
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-    Printing_text(Printing_getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
-    Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
-    Printing_int(Printing_getInstance(), this->mode, 17, 0, NULL);
-    Printing_int(Printing_getInstance(), kLastMode - 1, 19, 0, NULL);
+	Printing_text(Printing_getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
+	Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
+	Printing_int(Printing_getInstance(), this->mode, 17, 0, NULL);
+	Printing_int(Printing_getInstance(), kLastMode - 1, 19, 0, NULL);
 }
 
 /**
  * Print title
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_setupMode(StageEditor this)
 {
 	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
-    StageEditor_printHeader(this);
+	StageEditor_printHeader(this);
 	StageEditor_removePreviousSprite(this);
 
 	switch(this->mode)
@@ -394,11 +401,11 @@ static void StageEditor_setupMode(StageEditor this)
 		case kTranslateEntities:
 
 			if(!this->currentEntityNode)
-	        {
+			{
 				StageEditor_selectNextEntity(this);
 			}
 			else
-	        {
+			{
 				StageEditor_getShape(this);
 				StageEditor_highLightEntity(this);
 			}
@@ -419,10 +426,10 @@ static void StageEditor_setupMode(StageEditor this)
 /**
  * Release shape
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_releaseShape(StageEditor this)
 {
@@ -431,7 +438,7 @@ static void StageEditor_releaseShape(StageEditor this)
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
 		if(this->shape && this->shape != __VIRTUAL_CALL(Entity, getShape, entity))
-	    {
+		{
 			__DELETE(this->shape);
 		}
 		else if(this->shape)
@@ -446,10 +453,10 @@ static void StageEditor_releaseShape(StageEditor this)
 /**
  * Get shape
  *
- * @memberof    StageEditor
+ * @memberof	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_getShape(StageEditor this)
 {
@@ -465,7 +472,7 @@ static void StageEditor_getShape(StageEditor this)
 	if(!this->shape)
 	{
 		switch(__VIRTUAL_CALL(SpatialObject, getShapeType, entity))
-	    {
+		{
 			case kCircle:
 
 				//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, owner));
@@ -485,7 +492,7 @@ static void StageEditor_getShape(StageEditor this)
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_positionShape(StageEditor this)
 {
@@ -512,7 +519,7 @@ static void StageEditor_positionShape(StageEditor this)
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_highLightEntity(StageEditor this)
 {
@@ -533,7 +540,7 @@ static void StageEditor_highLightEntity(StageEditor this)
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_selectPreviousEntity(StageEditor this)
 {
@@ -550,7 +557,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 		this->currentEntityNode = VirtualNode_getPrevious(this->currentEntityNode);
 
 		if(!this->currentEntityNode)
-    	{
+		{
 			this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
 		}
 	}
@@ -568,7 +575,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_selectNextEntity(StageEditor this)
 {
@@ -585,7 +592,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 		this->currentEntityNode = this->currentEntityNode->next;
 
 		if(!this->currentEntityNode)
-	    {
+		{
 			this->currentEntityNode = stageEntities ? stageEntities->head : NULL;
 		}
 	}
@@ -603,18 +610,18 @@ static void StageEditor_selectNextEntity(StageEditor this)
  * @memberof 			StageEditor
  * @private
  *
- * @param this          Function scope
- * @param pressedKey    The controller button pressed by the user
+ * @param this			Function scope
+ * @param pressedKey	The controller button pressed by the user
  */
 static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
 		VBVec3D translation =
-	    {
-            ITOFIX19_13(-__SCREEN_X_TRANSLATION_STEP),
-            0,
-            0
+		{
+			ITOFIX19_13(-__SCREEN_X_TRANSLATION_STEP),
+			0,
+			0
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -622,10 +629,10 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_LR)
 	{
 		VBVec3D translation =
-	    {
-            ITOFIX19_13(__SCREEN_X_TRANSLATION_STEP),
-            0,
-            0
+		{
+			ITOFIX19_13(__SCREEN_X_TRANSLATION_STEP),
+			0,
+			0
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -633,10 +640,10 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_LU)
 	{
 		VBVec3D translation =
-	    {
-            0,
-            ITOFIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
-            0
+		{
+			0,
+			ITOFIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
+			0
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -644,10 +651,10 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_LD)
 	{
 		VBVec3D translation =
-	    {
-            0,
-            ITOFIX19_13(__SCREEN_Y_TRANSLATION_STEP),
-            0
+		{
+			0,
+			ITOFIX19_13(__SCREEN_Y_TRANSLATION_STEP),
+			0
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -655,10 +662,10 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_RU)
 	{
 		VBVec3D translation =
-	    {
-            0,
-            0,
-            ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
+		{
+			0,
+			0,
+			ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -666,10 +673,10 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_RD)
 	{
 		VBVec3D translation =
-	    {
-            0,
-            0,
-            ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
+		{
+			0,
+			0,
+			ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -682,8 +689,8 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
  * @memberof StageEditor
  * @private
  *
- * @param this          Function scope
- * @param pressedKey    The controller button pressed by the user
+ * @param this			Function scope
+ * @param pressedKey	The controller button pressed by the user
  */
 static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 {
@@ -748,18 +755,18 @@ static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
  * @memberof 			StageEditor
  * @private
  *
- * @param this          Function scope
- * @param pressedKey    The controller button pressed by the user
+ * @param this			Function scope
+ * @param pressedKey	The controller button pressed by the user
  */
 static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
 		VBVec3D translation =
-	    {
-            ITOFIX19_13(-this->translationStepSize),
-            0,
-            0
+		{
+			ITOFIX19_13(-this->translationStepSize),
+			0,
+			0
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -767,10 +774,10 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_LR)
 	{
 		VBVec3D translation =
-	    {
-            ITOFIX19_13(this->translationStepSize),
-            0,
-            0
+		{
+			ITOFIX19_13(this->translationStepSize),
+			0,
+			0
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -778,10 +785,10 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_LU)
 	{
 		VBVec3D translation =
-	    {
-            0,
-            ITOFIX19_13(-this->translationStepSize),
-            0
+		{
+			0,
+			ITOFIX19_13(-this->translationStepSize),
+			0
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -789,10 +796,10 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_LD)
 	{
 		VBVec3D translation =
-	    {
-            0,
-            ITOFIX19_13(this->translationStepSize),
-            0
+		{
+			0,
+			ITOFIX19_13(this->translationStepSize),
+			0
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -800,7 +807,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_RR)
 	{
 		if(__MAX_TRANSLATION_STEP < ++this->translationStepSize)
-	    {
+		{
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 
@@ -809,7 +816,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_RL)
 	{
 		if(1 > --this->translationStepSize)
-    	{
+		{
 			this->translationStepSize = 1;
 		}
 
@@ -818,10 +825,10 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_RU)
 	{
 		VBVec3D translation =
-    	{
-            0,
-            0,
-            ITOFIX19_13(this->translationStepSize),
+		{
+			0,
+			0,
+			ITOFIX19_13(this->translationStepSize),
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -829,10 +836,10 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_RD)
 	{
 		VBVec3D translation =
-	    {
-            0,
-            0,
-            ITOFIX19_13(-this->translationStepSize),
+		{
+			0,
+			0,
+			ITOFIX19_13(-this->translationStepSize),
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -853,8 +860,8 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
  * @memberof 			StageEditor
  * @private
  *
- * @param this          Function scope
- * @param translation   Translation vector
+ * @param this			Function scope
+ * @param translation	Translation vector
  */
 static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D translation)
 {
@@ -897,7 +904,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_removePreviousSprite(StageEditor this)
 {
@@ -914,7 +921,7 @@ static void StageEditor_removePreviousSprite(StageEditor this)
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_showSelectedUserObject(StageEditor this)
 {
@@ -944,8 +951,8 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
  * @memberof 			StageEditor
  * @private
  *
- * @param this          Function scope
- * @param pressedKey    The controller button pressed by the user
+ * @param this			Function scope
+ * @param pressedKey	The controller button pressed by the user
  */
 static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 {
@@ -962,7 +969,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 	else if(pressedKey & K_A)
 	{
 		if(1 >= SpriteManager_getFreeLayer(SpriteManager_getInstance()))
-	    {
+		{
 			Printing_text(Printing_getInstance(), "No more WORLDs", 48 - 15, 5, NULL);
 			Printing_text(Printing_getInstance(), "available     ", 48 - 15, 6, NULL);
 			return;
@@ -975,15 +982,15 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 		position.z += ITOFIX19_13(0);
 
 		PositionedEntity DUMMY_ENTITY =
-        {
-            (EntityDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition,
-            position,
-            0,
-            NULL,
-            NULL,
-            NULL,
-            false
-        };
+		{
+			(EntityDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition,
+			position,
+			0,
+			NULL,
+			NULL,
+			NULL,
+			false
+		};
 
 		Stage_addChildEntity(GameState_getStage(this->gameState), &DUMMY_ENTITY, false);
 		SpriteManager_sortLayers(SpriteManager_getInstance());
@@ -1005,7 +1012,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_printEntityPosition(StageEditor this)
 {
@@ -1049,7 +1056,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
  * @memberof 			StageEditor
  * @private
  *
- * @param this          Function scope
+ * @param this			Function scope
  * @param translation   Translation vector
  */
 static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation)
@@ -1068,7 +1075,7 @@ static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D trans
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unused)))
 {
@@ -1093,7 +1100,7 @@ static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unu
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((unused)))
 {
@@ -1126,7 +1133,7 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_printUserObjects(StageEditor this)
 {
@@ -1144,7 +1151,7 @@ static void StageEditor_printUserObjects(StageEditor this)
  * @memberof 	StageEditor
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void StageEditor_printTranslationStepSize(StageEditor this)
 {

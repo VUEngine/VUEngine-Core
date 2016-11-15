@@ -49,18 +49,83 @@
 // class attributes
 #define OptionsSelector_ATTRIBUTES																		\
 		Object_ATTRIBUTES																				\
+        /*
+         * @var VirtualList pages
+         * @brief           List of pages, each being a VirtualLists of Options
+         * @memberof        OptionsSelector
+         */																								\
 		VirtualList pages;																				\
+        /*
+         * @var VirtualNode currentPage
+         * @brief           Current page node
+         * @memberof        OptionsSelector
+         */																								\
 		VirtualNode currentPage;																		\
+        /*
+         * @var VirtualNode currentOption
+         * @brief           Current option node
+         * @memberof        OptionsSelector
+         */																								\
 		VirtualNode currentOption;																		\
+        /*
+         * @var u8          x
+         * @brief           Printing column
+         * @memberof        OptionsSelector
+         */																								\
 		u8 x;																							\
+        /*
+         * @var u8          y
+         * @brief           Printing row
+         * @memberof        OptionsSelector
+         */																								\
 		u8 y;																							\
+        /*
+         * @var u8          cols
+         * @brief           Number of columns per page
+         * @memberof        OptionsSelector
+         */																								\
 		u8 cols;																						\
+        /*
+         * @var u8          rows
+         * @brief           Number of rows per page
+         * @memberof        OptionsSelector
+         */																								\
 		u8 rows;																						\
+        /*
+         * @var u8          columnWidth
+         * @brief           Width of a column (in chars)
+         * @memberof        OptionsSelector
+         */																								\
 		u8 columnWidth;																					\
+        /*
+         * @var int         totalOptions
+         * @brief           Total number of options
+         * @memberof        OptionsSelector
+         */																								\
 		int totalOptions;																				\
+        /*
+         * @var int         currentPageIndex
+         * @brief           Current page index
+         * @memberof        OptionsSelector
+         */																								\
 		int currentPageIndex;																			\
+        /*
+         * @var int         currentOptionIndex
+         * @brief           Current option index
+         * @memberof        OptionsSelector
+         */																								\
 		int currentOptionIndex;																			\
+        /*
+         * @var char*       mark
+         * @brief           Selection mark character
+         * @memberof        OptionsSelector
+         */																								\
 		char* mark;																						\
+        /*
+         * @var char*       font
+         * @brief           Font to use for printing the OptionsSelector
+         * @memberof        OptionsSelector
+         */																								\
 		char* font;																						\
 
 // declare the optionsselector class

@@ -41,18 +41,58 @@
 		__VIRTUAL_SET(ClassName, ParticleSystem, updateVisualRepresentation);							\
 		__VIRTUAL_SET(ClassName, ParticleSystem, resume);												\
 		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);												\
-		__VIRTUAL_SET(ClassName, ParticleSystem, hide);												    \
+		__VIRTUAL_SET(ClassName, ParticleSystem, hide);													\
 
 #define ParticleSystem_ATTRIBUTES																		\
-        Entity_ATTRIBUTES																				\
-        const ParticleSystemDefinition* particleSystemDefinition;										\
-        VirtualList particles;																			\
-        VirtualList recyclableParticles;																\
-        VirtualList expiredParticles;																	\
-        int nextSpawnTime;																				\
-        int particleCount;																				\
-        s16 numberOfSpriteDefinitions;																	\
-        bool paused;																					\
+		Entity_ATTRIBUTES																				\
+		/*
+		 * @var ParticleSystemDefinition*   particleSystemDefinition
+		 * @brief							system's definition
+		 * @memberof						ParticleSystem
+		 */																								\
+		const ParticleSystemDefinition* particleSystemDefinition;										\
+		/*
+		 * @var VirtualList				 	particles
+		 * @brief							particle list
+		 * @memberof						ParticleSystem
+		 */																								\
+		VirtualList particles;																			\
+		/*
+		 * @var VirtualList				 	recyclableParticles
+		 * @brief							particle list
+		 * @memberof						ParticleSystem
+		 */																								\
+		VirtualList recyclableParticles;																\
+		/*
+		 * @var VirtualList				 	expiredParticles
+		 * @brief							particle list
+		 * @memberof						ParticleSystem
+		 */																								\
+		VirtualList expiredParticles;																	\
+		/*
+		 * @var int						 	nextSpawnTime
+		 * @brief							next spawn time
+		 * @memberof						ParticleSystem
+		 */																								\
+		int nextSpawnTime;																				\
+		/*
+		 * @var int						 	particleCount
+		 * @brief							particle count
+		 * @memberof						ParticleSystem
+		 */																								\
+		int particleCount;																				\
+		/*
+		 * @var s16						 	numberOfSpriteDefinitions
+		 * @brief							number of sprite definitions
+		 * @memberof						ParticleSystem
+		 */																								\
+		s16 numberOfSpriteDefinitions;																	\
+		/*
+		 * @var bool						paused
+		 * @brief							pause flag
+		 * @memberof						ParticleSystem
+		 */																								\
+		bool paused;																					\
 
 __CLASS(ParticleSystem);
 
@@ -64,59 +104,58 @@ __CLASS(ParticleSystem);
 /**
  * Defines a ParticleSystem
  *
- * @memberof    ParticleSystem
+ * @memberof	ParticleSystem
  */
 typedef struct ParticleSystemDefinition
 {
-    /** it has an Entity at the beginning */
-    EntityDefinition entityDefinition;
+	/// it has an Entity at the beginning
+	EntityDefinition entityDefinition;
 
-    /** whether to delete or reuse expired particles */
+	/// whether to delete or reuse expired particles
 	u8 recycleParticles;
 
-    /** minimun generation delay in milliseconds */
+	/// minimun generation delay in milliseconds
 	u16 minimumSpawnDelay;
 
-    /** generation delay delta in milliseconds */
+	/// generation delay delta in milliseconds
 	u16 spawnDelayDelta;
 
-    /** maximum total particles */
+	/// maximum total particles
 	u8 maximumNumberOfAliveParticles;
 
-    /** array of sprites to select randomly */
+	/// array of sprites to select randomly
 	const ObjectSpriteDefinition** objectSpriteDefinitions;
 
-    /** auto start */
+	/// auto start
 	bool autoStart;
 
-    /** particle's definition */
+	/// particle's definition
 	ParticleDefinition* particleDefinition;
 
-    /** minimum random distance from the center of the system for spanw */
+	/// minimum random distance from the center of the system for spanw
 	VBVec3D minimumSpanDistance;
 
-    /** minimum relative spawn position */
+	/// minimum relative spawn position
 	VBVec3D minimumRelativeSpanPosition;
 
-    /** maximum relative spawn position */
+	/// maximum relative spawn position
 	VBVec3D maximumRelativeSpanPosition;
 
-    /** minimum force to apply (use int values in the definition to avoid overflow) */
+	/// minimum force to apply (use int values in the definition to avoid overflow)
 	VBVec3D minimumForce;
 
-    /** maximum force to apply (use int values in the definition to avoid overflow) */
+	/// maximum force to apply (use int values in the definition to avoid overflow)
 	VBVec3D maximumForce;
 
-    /** type of movement for the particles */
+	/// type of movement for the particles
 	u32 movementType;
 
 } ParticleSystemDefinition;
 
 /**
- * Defines a ParticleSystem in ROM memory
+ * A ParticleSystem that is stored in ROM
  *
- * @memberof    ParticleSystem
- * @extends     ParticleSystemDefinition
+ * @memberof	ParticleSystem
  */
 typedef const ParticleSystemDefinition ParticleSystemROMDef;
 
@@ -126,8 +165,10 @@ typedef const ParticleSystemDefinition ParticleSystemROMDef;
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name);
+
 void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
 void ParticleSystem_destructor(ParticleSystem this);
+
 bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);
 void ParticleSystem_hide(ParticleSystem this);
 void ParticleSystem_pause(ParticleSystem this);

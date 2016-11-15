@@ -110,16 +110,16 @@ static int MessageDispatcher_discharge(StateMachine receiver, Telegram telegram)
 
 bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
 {
-	//make sure the receiver is valid
+	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
 	ASSERT(receiver, "MessageDispatcher::dispatchMessage: null receiver");
 
 	if(0 >= delay)
 	{
-		//create the telegram
+		// create the telegram
 		Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
 
-		//send the telegram to the recipient
+		// send the telegram to the recipient
 		bool result = __VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
 
 		__DELETE(telegram);
@@ -139,7 +139,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
 
-	//create the telegram
+	// create the telegram
 	Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
 
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);

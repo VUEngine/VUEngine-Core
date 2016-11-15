@@ -31,7 +31,10 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Particle
+/**
+ * @class	Particle
+ * @extends SpatialObject
+ */
 __CLASS_DEFINITION(Particle, SpatialObject);
 
 
@@ -50,7 +53,17 @@ static void Particle_addSprite(Particle this);
 __CLASS_NEW_DEFINITION(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 __CLASS_NEW_END(Particle, particleDefinition, spriteDefinition, lifeSpan, mass);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof					Particle
+ * @public
+ *
+ * @param this					Function scope
+ * @param particleDefinition	Definition of the Particle
+ * @param lifeSpan
+ * @param mass
+ */
 void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 {
 	ASSERT(this, "Particle::constructor: null this");
@@ -68,7 +81,14 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	Particle_addSprite(this);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Particle_destructor(Particle this)
 {
 	ASSERT(__SAFE_CAST(Particle, this), "Particle::destructor: null this");
@@ -92,7 +112,14 @@ void Particle_destructor(Particle this)
 	__DESTROY_BASE;
 }
 
-// add sprite
+/**
+ * Add a sprite
+ *
+ * @memberof	Particle
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void Particle_addSprite(Particle this)
 {
 	ASSERT(this, "Particle::addSprite: null this");
@@ -109,6 +136,18 @@ static void Particle_addSprite(Particle this)
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
 }
 
+/**
+ * Update
+ *
+ * @memberof			Particle
+ * @public
+ *
+ * @param this			Function scope
+ * @param elapsedTime
+ * @param particle
+ *
+ * @return				Boolean that tells whether a body was set active(?)
+ */
 u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "Particle::update: null this");
@@ -135,6 +174,15 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
 	return false;
 }
 
+/**
+ * Update Visual Representation
+ *
+ * @memberof					Particle
+ * @public
+ *
+ * @param this					Function scope
+ * @param updateSpritePosition
+ */
 void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition)
 {
 	ASSERT(this, "Particle::updateVisualRepresentation: null this");
@@ -156,6 +204,16 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
     }
 }
 
+/**
+ * Add force
+ *
+ * @memberof			Particle
+ * @public
+ *
+ * @param this			Function scope
+ * @param force
+ * @param movementType
+ */
 void Particle_addForce(Particle this, const Force* force, u32 movementType)
 {
 	ASSERT(this, "Particle::addForce: null this");
@@ -193,6 +251,15 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 	}
 }
 
+/**
+ * Set lifespan
+ *
+ * @memberof		Particle
+ * @public
+ *
+ * @param this		Function scope
+ * @param lifeSpan
+ */
 void Particle_setLifeSpan(Particle this, int lifeSpan)
 {
 	ASSERT(this, "Particle::setLifeSpan: null this");
@@ -200,6 +267,15 @@ void Particle_setLifeSpan(Particle this, int lifeSpan)
 	this->lifeSpan = lifeSpan;
 }
 
+/**
+ * Set mass
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ * @param mass
+ */
 void Particle_setMass(Particle this, fix19_13 mass)
 {
 	ASSERT(this, "Particle::setMass: null this");
@@ -207,7 +283,15 @@ void Particle_setMass(Particle this, fix19_13 mass)
 	Body_setMass(this->body, mass);
 }
 
-
+/**
+ * Set position
+ *
+ * @memberof		Particle
+ * @public
+ *
+ * @param this		Function scope
+ * @param position
+ */
 void Particle_setPosition(Particle this, const VBVec3D* position)
 {
 	ASSERT(this, "Particle::setPosition: null this");
@@ -222,7 +306,16 @@ void Particle_setPosition(Particle this, const VBVec3D* position)
 	__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
 }
 
-// retrieve position
+/**
+ * Retrieve position
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Position of particle's body
+ */
 const VBVec3D* Particle_getPosition(Particle this)
 {
 	ASSERT(this, "Particle::getPosition: null this");
@@ -231,7 +324,14 @@ const VBVec3D* Particle_getPosition(Particle this)
 	return Body_getPosition(this->body);
 }
 
-// make it visible
+/**
+ * Make Particle visible
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Particle_show(Particle this)
 {
 	ASSERT(this, "Particle::show: null this");
@@ -246,7 +346,14 @@ void Particle_show(Particle this)
 	}
 }
 
-// make it invisible
+/**
+ * Make Particle invisible
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Particle_hide(Particle this)
 {
 	ASSERT(this, "Particle::hide: null this");
@@ -256,7 +363,16 @@ void Particle_hide(Particle this)
 	Body_setActive(this->body, false);
 }
 
-// does it move?
+/**
+ * Does it move?
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return      Always true
+ */
 bool Particle_moves(Particle this __attribute__ ((unused)))
 {
 	ASSERT(this, "Particle::moves: null this");
@@ -265,7 +381,17 @@ bool Particle_moves(Particle this __attribute__ ((unused)))
 	return true;
 }
 
-// defaults to true
+/**
+ * Can move over axis?
+ *
+ * @memberof			Particle
+ * @public
+ *
+ * @param this			Function scope
+ * @param acceleration
+ *
+ * @return      		Boolean that tells whether the Particle's body can move over axis (defaults to true)
+ */
 int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
 {
 	ASSERT(this, "Particle::canMoveOverAxis: null this");
@@ -273,6 +399,14 @@ int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __a
 	return (int)Body_getAxisSubjectToGravity(this->body);
 }
 
+/**
+ * Resume
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this  Function scope
+ */
 void Particle_resume(Particle this)
 {
 	ASSERT(this, "Particle::resume: null this");
@@ -282,6 +416,14 @@ void Particle_resume(Particle this)
 	NM_ASSERT(this->objectSprite, "Particle::resume: null objectSprite");
 }
 
+/**
+ * Pause
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this  Function scope
+ */
 void Particle_suspend(Particle this)
 {
 	ASSERT(this, "Particle::suspend: null this");

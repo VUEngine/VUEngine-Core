@@ -29,18 +29,31 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ParticleRemover_ATTRIBUTES																		\
-        /* it is derived from */																		\
         Object_ATTRIBUTES																				\
-        /* particle list */																				\
+		/**
+		 * @var VirtualList particlesLists
+		 * @brief			List of Particles
+		 * @memberof		ParticleRemover
+		 */																								\
         VirtualList particlesLists;																		\
-        /* remove delay */																				\
+		/**
+		 * @var int 		removalDelayCycles
+		 * @brief			Removal delay
+		 * @memberof		ParticleRemover
+		 */																								\
         int removalDelayCycles;																			\
-        /* remove delay */																				\
+		/**
+		 * @var int 		leftRemoveDelayCycles
+		 * @brief			Removal delay
+		 * @memberof		ParticleRemover
+		 */																								\
         int leftRemoveDelayCycles;																		\
 
-// define the ParticleRemover
+/**
+ * @class	ParticleRemover
+ * @extends Object
+ */
 __CLASS_DEFINITION(ParticleRemover, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -60,7 +73,14 @@ static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemov
 __CLASS_NEW_DEFINITION(ParticleRemover)
 __CLASS_NEW_END(ParticleRemover);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	ParticleRemover
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::constructor: null this");
@@ -73,7 +93,14 @@ static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemov
 	this->leftRemoveDelayCycles = this->removalDelayCycles;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	ParticleRemover
+ * @public
+ *
+ * @param this	Function scope
+ */
 void ParticleRemover_destructor(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::destructor: null this");
@@ -87,7 +114,14 @@ void ParticleRemover_destructor(ParticleRemover this)
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
-
+/**
+ * Reset
+ *
+ * @memberof	ParticleRemover
+ * @public
+ *
+ * @param this	Function scope
+ */
 void ParticleRemover_reset(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::reset: null this");
@@ -115,6 +149,14 @@ void ParticleRemover_reset(ParticleRemover this)
     this->leftRemoveDelayCycles = this->removalDelayCycles;
 }
 
+/**
+ * Update
+ *
+ * @memberof	ParticleRemover
+ * @public
+ *
+ * @param this	Function scope
+ */
 void ParticleRemover_update(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::update: null this");
@@ -146,6 +188,15 @@ void ParticleRemover_update(ParticleRemover this)
     }
 }
 
+/**
+ * Delete given particles
+ *
+ * @memberof		ParticleRemover
+ * @public
+ *
+ * @param this		Function scope
+ * @param particles	List of Particles to delete
+ */
 void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles)
 {
 	ASSERT(this, "ParticleRemover::registerParticles: null this");
@@ -166,6 +217,15 @@ void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles
 	}
 }
 
+/**
+ * Set removal delay cycles
+ *
+ * @memberof					ParticleRemover
+ * @public
+ *
+ * @param this					Function scope
+ * @param removalDelayCycles	New value
+ */
 void ParticleRemover_setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles)
 {
 	ASSERT(this, "ParticleRemover::registerParticle: null this");

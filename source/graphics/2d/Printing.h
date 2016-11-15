@@ -105,32 +105,53 @@ __CLASS(Printing);
 // declare class attributes
 #define Printing_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
-        VirtualList fonts;																				\
+		/*
+		 * @var VirtualList fonts
+		 * @brief			A list of loaded fonts and their respective CharSets
+		 * @memberof		Printing
+		 */																								\
+		VirtualList fonts;																				\
 
-
+/**
+ * A font
+ *
+ * @memberof 	Printing
+ */
 typedef struct FontDefinition
 {
-    // font charset definition pointer
+	/// font charset definition pointer
 	CharSetDefinition* charSetDefinition;
 
-	// at which character number the font starts
+	/// at which character number the font starts
 	s16 offset;
 
-	// size of a single character (in chars) ({width, height})
+	/// size of a single character (in chars) ({width, height})
 	FontSize fontSize;
 
-	// font's name
+	/// font's name
 	char name[__MAX_FONT_NAME_LENGTH];
 
 } FontDefinition;
 
+/**
+ * A FontDefinition that is stored in ROM
+ *
+ * @memberof 	Printing
+ */
 typedef const FontDefinition FontROMDef;
 
-
+/**
+ * A FontDefinition plus a reference to its charset
+ *
+ * @memberof 	Printing
+ */
 typedef struct FontData
 {
+	/// Font definition
 	const struct FontDefinition* fontDefinition;
-    CharSet charSet;
+
+	/// A pointer to the font's charset in char memory
+	CharSet charSet;
 
 } FontData;
 
@@ -142,16 +163,17 @@ typedef struct FontData
 Printing Printing_getInstance();
 
 void Printing_destructor(Printing this);
+
+void Printing_clear(Printing this);
+void Printing_float(Printing this, float value, u8 x, u8 y, const char* font);
+FontData* Printing_getFontByName(Printing this, const char* font);
+Size Printing_getTextSize(Printing this, const char* string, const char* font);
+void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
+void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
+void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
 void Printing_render(Printing this, int textLayer);
 void Printing_reset(Printing this);
-void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
-FontData* Printing_getFontByName(Printing this, const char* font);
-void Printing_clear(Printing this);
-void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
-void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
-void Printing_float(Printing this, float value, u8 x, u8 y, const char* font);
 void Printing_text(Printing this, const char *string, int x, int y, const char* font);
-Size Printing_getTextSize(Printing this, const char* string, const char* font);
 
 
 #endif

@@ -27,7 +27,10 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the ParticleBody
+/**
+ * @class	ParticleBody
+ * @extends Body
+ */
 __CLASS_DEFINITION(ParticleBody, Body);
 
 
@@ -50,7 +53,16 @@ int Body_updateMovement(Body this, fix19_13 gravity, fix19_13* position, fix19_1
 __CLASS_NEW_DEFINITION(ParticleBody, SpatialObject owner, fix19_13 mass)
 __CLASS_NEW_END(ParticleBody, owner, mass);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	ParticleBody
+ * @public
+ *
+ * @param this	Function scope
+ * @param owner
+ * @param mass
+ */
 void ParticleBody_constructor(ParticleBody this, SpatialObject owner, fix19_13 mass)
 {
 	ASSERT(this, "ParticleBody::constructor: null this");
@@ -58,7 +70,14 @@ void ParticleBody_constructor(ParticleBody this, SpatialObject owner, fix19_13 m
 	__CONSTRUCT_BASE(Body, owner, mass);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	ParticleBody
+ * @public
+ *
+ * @param this	Function scope
+ */
 void ParticleBody_destructor(ParticleBody this)
 {
 	ASSERT(this, "ParticleBody::destructor: null this");
@@ -68,10 +87,17 @@ void ParticleBody_destructor(ParticleBody this)
 	__DESTROY_BASE;
 }
 
-// update movement
+/**
+ * Update movement
+ *
+ * @memberof	ParticleBody
+ * @public
+ *
+ * @param this	Function scope
+ */
 void ParticleBody_update(ParticleBody this)
 {
-	ASSERT(this, "Body::update: null this");
+	ASSERT(this, "ParticleBody::update: null this");
 
 	if(this->active && this->awake)
 	{
@@ -98,6 +124,16 @@ void ParticleBody_update(ParticleBody this)
 	}
 }
 
+/**
+ * Calculate friction force
+ *
+ * @memberof	ParticleBody
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Always returns no Force (0, 0, 0)
+ */
 Force ParticleBody_calculateFrictionForce(ParticleBody this __attribute__ ((unused)))
 {
 	ASSERT(this, "ParticleBody::calculateFrictionForce: null this");

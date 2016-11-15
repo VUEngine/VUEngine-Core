@@ -36,20 +36,8 @@ static void VirtualNode_destructor(VirtualNode this);
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class           VirtualNode
+ * @class   VirtualNode
  * @brief
- *
- * @var VirtualNode next
- * @brief           pointer to next node
- * @memberof        VirtualNode
-
- * @var VirtualNode previous
- * @brief           pointer to previous node
- * @memberof        VirtualNode
-
- * @var void*       data
- * @brief           pointer to the data
- * @memberof        VirtualNode
  */
 
 __CLASS_DEFINITION(VirtualNode, Object);

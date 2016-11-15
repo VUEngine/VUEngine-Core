@@ -47,10 +47,11 @@ __CLASS(ParticleRemover);
 __CLASS_NEW_DECLARE(ParticleRemover);
 
 void ParticleRemover_destructor(ParticleRemover this);
-void ParticleRemover_reset(ParticleRemover this);
-void ParticleRemover_update(ParticleRemover this);
+
 void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles);
+void ParticleRemover_reset(ParticleRemover this);
 void ParticleRemover_setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles);
+void ParticleRemover_update(ParticleRemover this);
 
 
 #endif

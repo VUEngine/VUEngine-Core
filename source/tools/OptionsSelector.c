@@ -67,61 +67,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class           OptionsSelector
- * @extends         Object
- * @brief           Tool to render a menu
- *
- * @var VirtualList pages
- * @brief           List of pages, each being a VirtualLists of Options
- * @memberof        OptionsSelector
- *
- * @var VirtualNode currentPage
- * @brief           Current page node
- * @memberof        OptionsSelector
- *
- * @var VirtualNode currentOption
- * @brief           Current option node
- * @memberof        OptionsSelector
- *
- * @var u8          x
- * @brief           Printing column
- * @memberof        OptionsSelector
- *
- * @var u8          y
- * @brief           Printing row
- * @memberof        OptionsSelector
- *
- * @var u8          cols
- * @brief           Number of columns per page
- * @memberof        OptionsSelector
- *
- * @var u8          rows
- * @brief           Number of rows per page
- * @memberof        OptionsSelector
- *
- * @var u8          columnWidth
- * @brief           Width of a column (in chars)
- * @memberof        OptionsSelector
- *
- * @var int         totalOptions
- * @brief           Total number of options
- * @memberof        OptionsSelector
- *
- * @var int         currentPageIndex
- * @brief           Current page index
- * @memberof        OptionsSelector
- *
- * @var int         currentOptionIndex
- * @brief           Current option index
- * @memberof        OptionsSelector
- *
- * @var char*       mark
- * @brief           Selection mark character
- * @memberof        OptionsSelector
+ * @class   OptionsSelector
+ * @extends Object
+ * @brief   Tool to render a menu
  */
-
 __CLASS_DEFINITION(OptionsSelector, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualList);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(Printing);

@@ -48,10 +48,11 @@ __CLASS(ClockManager);
 ClockManager ClockManager_getInstance();
 
 void ClockManager_destructor(ClockManager this);
+
 void ClockManager_register(ClockManager this, Clock clock);
+void ClockManager_reset(ClockManager this);
 void ClockManager_unregister(ClockManager this, Clock clock);
 void ClockManager_update(ClockManager this, u32 ticksElapsed);
-void ClockManager_reset(ClockManager this);
 
 
 #endif

@@ -29,9 +29,11 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the SolidParticle
+/**
+ * @class	ParticleSystem
+ * @extends Particle
+ */
 __CLASS_DEFINITION(SolidParticle, Particle);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -44,7 +46,18 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 __CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 __CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSpan, mass);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof						SolidParticle
+ * @public
+ *
+ * @param this						Function scope
+ * @param solidParticleDefinition	Definition of the SolidParticle
+ * @param spriteDefinition
+ * @param lifeSpan
+ * @param mass
+ */
 void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 {
 	ASSERT(this, "SolidParticle::constructor: null this");
@@ -64,7 +77,14 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SolidParticle_destructor(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::destructor: null this");
@@ -85,6 +105,18 @@ void SolidParticle_destructor(SolidParticle this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Update
+ *
+ * @memberof			SolidParticle
+ * @public
+ *
+ * @param this			Function scope
+ * @param timeElapsed
+ * @param particle
+ *
+ * @return				Boolean
+ */
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "SolidParticle::update: null this");
@@ -104,7 +136,16 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 	return expired;
 }
 
-// retrieve shape
+/**
+ * Retrieve shape
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Particle's shape
+ */
 Shape SolidParticle_getShape(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getShape: null this");
@@ -112,7 +153,16 @@ Shape SolidParticle_getShape(SolidParticle this)
 	return this->shape;
 }
 
-// get width
+/**
+ * Get width
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Width
+ */
 int SolidParticle_getWidth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getWidth: null this");
@@ -120,7 +170,16 @@ int SolidParticle_getWidth(SolidParticle this)
 	return this->solidParticleDefinition->width;
 }
 
-// get height
+/**
+ * Get height
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Height
+ */
 int SolidParticle_getHeight(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getHeight: null this");
@@ -128,7 +187,16 @@ int SolidParticle_getHeight(SolidParticle this)
 	return this->solidParticleDefinition->height;
 }
 
-// get depth
+/**
+ * Get depth
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Depth
+ */
 int SolidParticle_getDepth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getDepth: null this");
@@ -137,7 +205,14 @@ int SolidParticle_getDepth(SolidParticle this)
 	return this->solidParticleDefinition->depth;
 }
 
-// retrieve friction of colliding objects
+/**
+ * Retrieve friction of colliding objects
+ *
+ * @memberof	SolidParticle
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::updateSurroundingFriction: null this");
@@ -156,7 +231,15 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 	Body_setFriction(this->body, totalFriction);
 }
 
-// start bouncing after collision with another inGameEntity
+/**
+ * Start bouncing after collision with another inGameEntity
+ *
+ * @memberof				SolidParticle
+ * @private
+ *
+ * @param this				Function scope
+ * @param axisOfCollision
+ */
 static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollision)
 {
 	ASSERT(this, "SolidParticle::bounce: null this");
@@ -178,7 +261,15 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 	}
 }
 
-// resolve collision against other entities
+/**
+ * Resolve collisions against other entities
+ *
+ * @memberof						SolidParticle
+ * @private
+ *
+ * @param this						Function scope
+ * @param collidingSpatialObjects
+ */
 static void SolidParticle_resolveCollision(SolidParticle this, VirtualList collidingSpatialObjects)
 {
 	ASSERT(this, "SolidParticle::resolveCollision: null this");
@@ -220,7 +311,17 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 	}
 }
 
-// process a telegram
+/**
+ * Handles incoming messages
+ *
+ * @memberof		SolidParticle
+ * @private
+ *
+ * @param this		Function scope
+ * @param telegram
+ *
+ * @return			True if successfully processed, false otherwise
+ */
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 {
 	ASSERT(this, "SolidParticle::handleMessage: null this");
@@ -257,6 +358,15 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 	return false;
 }
 
+/**
+ * Set position
+ *
+ * @memberof		SolidParticle
+ * @public
+ *
+ * @param this		Function scope
+ * @param position	Position to move particle to
+ */
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 {
 	ASSERT(this, "SolidParticle::position: null this");
