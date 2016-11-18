@@ -106,7 +106,6 @@
 		 */																								\
 		Sprite userObjectSprite;																		\
 
-
 /**
  * @class	StageEditor
  * @extends Object

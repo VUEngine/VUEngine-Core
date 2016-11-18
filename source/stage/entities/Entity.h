@@ -28,6 +28,7 @@
 #include <ObjectSprite.h>
 #include <Telegram.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -80,28 +81,63 @@
 		__VIRTUAL_SET(ClassName, Entity, hide);											                \
 
 #define Entity_ATTRIBUTES																				\
-        /* it is derived from */																		\
         Container_ATTRIBUTES																			\
-        /* entity factory */																            \
+        /**
+		 * @var EntityFactory       entityFactory
+		 * @brief                   Entity factory
+		 * @memberof		        Entity
+		 */ 																							\
         EntityFactory entityFactory;                                                                    \
-        /* sprites' list */																				\
+        /**
+		 * @var VirtualList         sprites
+		 * @brief                   Sprites list
+		 * @memberof		        Entity
+		 */ 																							\
         VirtualList sprites;																			\
-        /* shape for collision detection */																\
+        /**
+		 * @var Shape               shape
+		 * @brief                   Shape for collision detection
+		 * @memberof		        Entity
+		 */ 																							\
         Shape shape;																					\
-        /* shape for collision detection */																\
+        /**
+		 * @var Size                size
+		 * @brief                   Size
+		 * @memberof		        Entity
+		 */ 																							\
         Size size;																						\
-        /* entity's definition */																		\
+        /**
+		 * @var EntityDefinition*   entityDefinition
+		 * @brief                   Entity's definition
+		 * @memberof		        Entity
+		 */ 																							\
         EntityDefinition* entityDefinition;																\
-        /* entity's definition */																		\
+        /**
+		 * @var VBVec3D*            centerDisplacement
+		 * @brief                   Center displacement
+		 * @memberof		        Entity
+		 */ 																							\
         VBVec3D* centerDisplacement;																	\
-        /* entity's id */																				\
+        /**
+		 * @var s16                 id
+		 * @brief                   Entity's id, set by the user
+		 * @memberof		        Entity
+		 */ 																							\
         s16 id;																					        \
-        /* entity's internal id */																		\
+        /**
+		 * @var s16                 internalId
+		 * @brief                   Entity's internal id, set by the engine
+		 * @memberof		        Entity
+		 */ 																							\
         s16 internalId;																					\
-        /* flag to update sprites' attributes */														\
+        /**
+		 * @var bool                updateSprites
+		 * @brief                   Flag to update sprites' attributes
+		 * @memberof		        Entity
+		 */ 																							\
         bool updateSprites;																				\
 
-	__CLASS(Entity);
+__CLASS(Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -112,52 +148,54 @@ __CLASS_NEW_DECLARE(Entity, EntityDefinition* entityDefinition, s16 id, s16 inte
 
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name);
 void Entity_destructor(Entity this);
-s16 Entity_getInternalId(Entity this);
-s16 Entity_getId(Entity this);
-Entity Entity_getChildById(Entity this, s16 id);
-void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition);
-SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
-VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName);
-Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo);
-Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
-Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
-void Entity_initialize(Entity this, u32 recursive);
-void Entity_ready(Entity this, u32 recursive);
+
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions);
+void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
+Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo);
 u32 Entity_areAllChildrenInstantiated(Entity this);
 u32 Entity_areAllChildrenInitialized(Entity this);
 u32 Entity_areAllChildrenTransformed(Entity this);
 u32 Entity_areAllChildrenReady(Entity this);
-Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo);
-void Entity_setExtraInfo(Entity this, void* extraInfo);
-void Entity_setAnimation(Entity this, void (*animation)(Entity this));
-void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
-void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive);
-void Entity_transform(Entity this, const Transformation* environmentTransform);
-void Entity_updateVisualRepresentation(Entity this);
-void Entity_setLocalPosition(Entity this, const VBVec3D* position);
-EntityDefinition* Entity_getEntityDefinition(Entity this);
-const VBVec3D* Entity_getPosition(Entity this);
-int Entity_getMapParallax(Entity this);
-void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
-VirtualList Entity_getSprites(Entity this);
-bool Entity_handleMessage(Entity this, Telegram telegram);
-int Entity_getWidth(Entity this);
-int Entity_getHeight(Entity this);
-int Entity_getDepth(Entity this);
-Gap Entity_getGap(Entity this);
-bool Entity_isVisible(Entity this, int pad, bool recursive);
-bool Entity_updateSpritePosition(Entity this);
-bool Entity_updateSpriteScale(Entity this);
-bool Entity_updateSpriteRotation(Entity this);
-void Entity_setSpritesDirection(Entity this, int axis, int direction);
-Shape Entity_getShape(Entity this);
-void Entity_show(Entity this);
-void Entity_hide(Entity this);
-void Entity_suspend(Entity this);
-void Entity_resume(Entity this);
+VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName);
 int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
 u32 Entity_getAxisForFlipping(Entity this);
+Entity Entity_getChildById(Entity this, s16 id);
+int Entity_getDepth(Entity this);
+EntityDefinition* Entity_getEntityDefinition(Entity this);
+Gap Entity_getGap(Entity this);
+int Entity_getHeight(Entity this);
+int Entity_getMapParallax(Entity this);
+s16 Entity_getId(Entity this);
+s16 Entity_getInternalId(Entity this);
+const VBVec3D* Entity_getPosition(Entity this);
+Shape Entity_getShape(Entity this);
+VirtualList Entity_getSprites(Entity this);
+SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
+int Entity_getWidth(Entity this);
+bool Entity_handleMessage(Entity this, Telegram telegram);
+void Entity_hide(Entity this);
+void Entity_initialize(Entity this, u32 recursive);
+void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive);
+Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo);
+bool Entity_isVisible(Entity this, int pad, bool recursive);
+Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
+Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
+void Entity_ready(Entity this, u32 recursive);
+void Entity_resume(Entity this);
+void Entity_setAnimation(Entity this, void (*animation)(Entity this));
+void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
+void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition);
+void Entity_setExtraInfo(Entity this, void* extraInfo);
+void Entity_setLocalPosition(Entity this, const VBVec3D* position);
+void Entity_setSpritesDirection(Entity this, int axis, int direction);
+void Entity_show(Entity this);
+void Entity_suspend(Entity this);
+void Entity_transform(Entity this, const Transformation* environmentTransform);
+bool Entity_updateSpritePosition(Entity this);
+bool Entity_updateSpriteRotation(Entity this);
+bool Entity_updateSpriteScale(Entity this);
+void Entity_updateVisualRepresentation(Entity this);
+
 
 #endif

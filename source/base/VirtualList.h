@@ -38,13 +38,13 @@
 
 #define VirtualList_ATTRIBUTES																			\
 		Object_ATTRIBUTES																				\
-		/*
+		/**
 		 * @var VirtualNode head
 		 * @brief			A pointer to the head of the list
 		 * @memberof		VirtualList
 		 */																								\
 		VirtualNode head;																				\
-		/*
+		/**
 		 * @var VirtualNode tail
 		 * @brief			A pointer to the tail of the list
 		 * @memberof		VirtualList

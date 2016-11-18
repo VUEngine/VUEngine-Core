@@ -39,13 +39,13 @@
 
 // declare the class from which all classes derive
 #define Object_ATTRIBUTES																				\
-		/*
+		/**
 		 * @var void*		vTable
 		 * @brief			Pointer to the class's virtual table.
 		 * @memberof		Object
 		 */																								\
 		void* vTable;																					\
-		/*
+		/**
 		 * @var VirtualList events
 		 * @brief			List of registered events.
 		 * @memberof		Object

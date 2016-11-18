@@ -37,19 +37,19 @@
 
 #define VirtualNode_ATTRIBUTES																			\
 	    Object_ATTRIBUTES																				\
-	    /*
+	    /**
          * @var VirtualNode next
          * @brief           pointer to next node
          * @memberof        VirtualNode
 		 */																								\
 	    VirtualNode next;																				\
-	    /*
+	    /**
          * @var VirtualNode previous
          * @brief           pointer to previous node
          * @memberof        VirtualNode
 		 */																								\
 	    VirtualNode previous;																			\
-	    /*
+	    /**
          * @var void*       data
          * @brief           pointer to the data
          * @memberof        VirtualNode

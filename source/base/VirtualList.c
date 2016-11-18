@@ -38,6 +38,7 @@
 
 /**
  * @class   VirtualList
+ * @extends Object
  * @brief
  */
 __CLASS_DEFINITION(VirtualList, Object);

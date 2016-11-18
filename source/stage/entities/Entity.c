@@ -36,9 +36,12 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Entity
+/**
+ * @class	Entity
+ * @extends	Container
+ * @brief
+ */
 __CLASS_DEFINITION(Entity, Container);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -71,8 +74,18 @@ static void Entity_setupShape(Entity this);
 __CLASS_NEW_DEFINITION(Entity, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
 __CLASS_NEW_END(Entity, entityDefinition, id, internalId, name);
 
-
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof				Entity
+ * @public
+ *
+ * @param this				Function scope
+ * @param entityDefinition
+ * @param id
+ * @param internalId
+ * @param name
+ */
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "Entity::constructor: null this");
@@ -102,13 +115,19 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	this->updateSprites = 0;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_destructor(Entity this)
 {
 	ASSERT(this, "Entity::destructor: null this");
 
-	// better to do it here than forget in other classes
-	// unregister the shape for collision detection
+	// better to do it here than forget in other classes unregister the shape for collision detection
 	if(this->shape)
 	{
 		CollisionManager_unregisterShape(Game_getCollisionManager(Game_getInstance()), this->shape);
@@ -123,7 +142,7 @@ void Entity_destructor(Entity this)
 
 	if(this->entityFactory)
 	{
-	    __DELETE(this->entityFactory);
+		__DELETE(this->entityFactory);
 	}
 
 	Entity_releaseSprites(this);
@@ -133,7 +152,16 @@ void Entity_destructor(Entity this)
 	__DESTROY_BASE;
 }
 
-// retrieve instance's in game id
+/**
+ * Retrieve instance's in game id
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Internal ID
+ */
 s16 Entity_getInternalId(Entity this)
 {
 	ASSERT(this, "Entity::getInternalId: null this");
@@ -141,7 +169,16 @@ s16 Entity_getInternalId(Entity this)
 	return this->internalId;
 }
 
-// retrieve instance's id as per its definition
+/**
+ * Retrieve instance's id as per its definition
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		ID
+ */
 s16 Entity_getId(Entity this)
 {
 	ASSERT(this, "Entity::getId: null this");
@@ -149,7 +186,17 @@ s16 Entity_getId(Entity this)
 	return this->id;
 }
 
-// get child by id
+/**
+ * Get child by id
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ * @param id
+ *
+ * @return		Child Entity
+ */
 Entity Entity_getChildById(Entity this, s16 id)
 {
 	ASSERT(this, "Entity::getChildById: null this");
@@ -163,20 +210,28 @@ Entity Entity_getChildById(Entity this, s16 id)
 
 		// look through all children
 		for(; node ; node = node->next)
-        {
+		{
 			Entity child = __SAFE_CAST(Entity, node->data);
 
 			if(Entity_getId(child) == id)
 			{
 				return child;
 			}
-        }
+		}
 	}
 
 	return NULL;
 }
 
-// set definition
+/**
+ * Set definition
+ *
+ * @memberof				Entity
+ * @public
+ *
+ * @param this				Function scope
+ * @param entityDefinition
+ */
 void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition)
 {
 	ASSERT(this, "Entity::setDefinition: null this");
@@ -185,7 +240,14 @@ void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition)
 	this->entityDefinition = entityDefinition;
 }
 
-// release sprites
+/**
+ * Release sprites
+ *
+ * @memberof	Entity
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void Entity_releaseSprites(Entity this)
 {
 	ASSERT(this, "Entity::releaseSprites: null this");
@@ -196,7 +258,7 @@ static void Entity_releaseSprites(Entity this)
 
 		// move each child to a temporary list
 		for(; node ; node = node->next)
-	    {
+		{
 			__DELETE(node->data);
 		}
 
@@ -207,6 +269,16 @@ static void Entity_releaseSprites(Entity this)
 	}
 }
 
+/**
+ * Calculate size from children
+ *
+ * @memberof					Entity
+ * @private
+ *
+ * @param this					Function scope
+ * @param rightCuboid
+ * @param environmentPosition
+ */
 static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid, VBVec3D environmentPosition)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
@@ -234,14 +306,14 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
-        	ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
-//            __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+			ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
+//			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
 //			halfWidth = Optics_calculateRealSize(((int)Texture_getCols(texture)) << 3, Sprite_getMode(sprite), __ABS(__VIRTUAL_CALL(Sprite, getScale, sprite).x)) >> 1;
 //			halfHeight = Optics_calculateRealSize(((int)Texture_getRows(texture)) << 3, Sprite_getMode(sprite), __ABS(__VIRTUAL_CALL(Sprite, getScale, sprite).y)) >> 1;
-            halfWidth = Sprite_getHalfWidth(sprite);
-            halfHeight = Sprite_getHalfHeight(sprite);
-            halfDepth = this->size.z >> 1;
+			halfWidth = Sprite_getHalfWidth(sprite);
+			halfHeight = Sprite_getHalfHeight(sprite);
+			halfDepth = this->size.z >> 1;
 
 			VBVec3D spriteDisplacement = Sprite_getDisplacement(sprite);
 
@@ -331,7 +403,14 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 	}
 }
 
-// calculate my size based on me and my children
+/**
+ * Calculate my size based on me and my children
+ *
+ * @memberof	Entity
+ * @private
+ *
+ * @param this	Function scope
+ */
 void Entity_calculateSize(Entity this)
 {
 	ASSERT(this, "Entity::calculateSize: null this");
@@ -363,6 +442,16 @@ void Entity_calculateSize(Entity this)
 	this->size.z = rightCuboid.z1 - rightCuboid.z0;
 }
 
+/**
+ * Get size from definition
+ *
+ * @memberof					Entity
+ * @private
+ *
+ * @param positionedEntity
+ * @param environmentPosition
+ * @param rightCuboid
+ */
 static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightCuboid* rightCuboid)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
@@ -488,7 +577,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	{
 		// TODO: there should be a class which handles these special cases
 		if(__TYPE(InGameEntity) == __ALLOCATOR_TYPE(positionedEntity->entityDefinition->allocator) ||
-		    __TYPE(InanimatedInGameEntity) == __ALLOCATOR_TYPE(positionedEntity->entityDefinition->allocator)
+			__TYPE(InanimatedInGameEntity) == __ALLOCATOR_TYPE(positionedEntity->entityDefinition->allocator)
 		)
 		{
 			halfWidth = ((InGameEntityDefinition*)positionedEntity->entityDefinition)->width >> 1;
@@ -557,7 +646,17 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	}
 }
 
-// calculate total size from definition
+/**
+ * Calculate total size from definition
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param positionedEntity
+ * @param environmentPosition
+ *
+ * @return						SmallRightCuboid
+ */
 SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition)
 {
 	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
@@ -574,14 +673,25 @@ SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 	return rightCuboid;
 }
 
-// find child by name in given list
+/**
+ * Find child by name in given list
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param childrenDefinitions
+ * @param environmentPosition
+ * @param childName
+ *
+ * @return						Entity's global position
+ */
 VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName)
 {
 	ASSERT(childrenDefinitions, "Entity::calculateGlobalPositionFromDefinitionByName: null positionedEntity");
 
 	if(!childrenDefinitions)
 	{
-	    return NULL;
+		return NULL;
 	}
 
 	static VBVec3D position;
@@ -613,10 +723,23 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 		}
 	}
 
-    return NULL;
+	return NULL;
 }
 
-// instantiate and entity using the provided allocator
+/**
+ * Instantiate an Entity using the provided allocator
+ *
+ * @memberof				Entity
+ * @public
+ *
+ * @param entityDefinition
+ * @param id
+ * @param internalId
+ * @param name
+ * @param extraInfo
+ *
+ * @return					Entity instance
+ */
 Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
@@ -624,70 +747,96 @@ Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id
 
 	if(!entityDefinition || !entityDefinition->allocator)
 	{
-	    return NULL;
+		return NULL;
 	}
 
-    // call the appropriate allocator to support inheritance
-    Entity entity = ((Entity (*)(EntityDefinition*, s16, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, internalId, name);
+	// call the appropriate allocator to support inheritance
+	Entity entity = ((Entity (*)(EntityDefinition*, s16, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, internalId, name);
 
-    // process extra info
-    if(extraInfo)
-    {
-        __VIRTUAL_CALL(Entity, setExtraInfo, entity, extraInfo);
-    }
+	// process extra info
+	if(extraInfo)
+	{
+		__VIRTUAL_CALL(Entity, setExtraInfo, entity, extraInfo);
+	}
 
-    return entity;
+	return entity;
 }
 
-// add children to the instance from the definitions array
+/**
+ * Add children to the instance from the definitions array
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param this					Function scope
+ * @param childrenDefinitions
+ */
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions)
 {
 	ASSERT(this, "Entity::loadChildren: null this");
 
 	if(!childrenDefinitions)
 	{
-	    return;
+		return;
 	}
 
-    int i = 0;
+	int i = 0;
 
-    //go through n sprites in entity's definition
-    for(; childrenDefinitions[i].entityDefinition; i++)
-    {
-        Entity child = Entity_loadEntity(&childrenDefinitions[i], this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
-    	ASSERT(child, "Entity::loadChildren: entity not loaded");
+	// go through n sprites in entity's definition
+	for(; childrenDefinitions[i].entityDefinition; i++)
+	{
+		Entity child = Entity_loadEntity(&childrenDefinitions[i], this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
+		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
-        // create the entity and add it to the world
-        Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
+		// create the entity and add it to the world
+		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
 	}
 }
 
-// load an entity and instantiate all its children
+/**
+ * Load an entity and instantiate all its children
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param positionedEntity
+ * @param internalId
+ *
+ * @return						Entity
+ */
 Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 
 	if(!positionedEntity)
 	{
-	    return NULL;
+		return NULL;
 	}
 
-    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
 
-    // set spatial position
-    __VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
+	// set spatial position
+	__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
 
-    // add children if defined
-    if(positionedEntity->childrenDefinitions)
-    {
-        Entity_addChildEntities(entity, positionedEntity->childrenDefinitions);
-    }
+	// add children if defined
+	if(positionedEntity->childrenDefinitions)
+	{
+		Entity_addChildEntities(entity, positionedEntity->childrenDefinitions);
+	}
 
-    return entity;
+	return entity;
 }
 
-// add children to instance from the definitions array, but deferredly
+/**
+ * Add children to instance from the definitions array, but deferred
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param this					Function scope
+ * @param childrenDefinitions
+ */
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions)
 {
 	ASSERT(this, "Entity::addChildEntitiesDeferred: null this");
@@ -695,54 +844,78 @@ void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childr
 
 	if(!childrenDefinitions)
 	{
-	    return;
+		return;
 	}
 
 	if(!this->entityFactory)
 	{
-	    this->entityFactory = __NEW(EntityFactory);
+		this->entityFactory = __NEW(EntityFactory);
 	}
 
-    int i = 0;
+	int i = 0;
 
-    //go through n sprites in entity's definition
-    for(; childrenDefinitions[i].entityDefinition; i++)
-    {
-        EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
-    }
+	// go through n sprites in entity's definition
+	for(; childrenDefinitions[i].entityDefinition; i++)
+	{
+		EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
+	}
 }
 
-// load an entity and instantiate all its children deferredly
+/**
+ * Load an entity and instantiate all its children, deferred
+ *
+ * @memberof				Entity
+ * @public
+ *
+ * @param positionedEntity
+ * @param internalId
+ *
+ * @return					Entity
+ */
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
-    if(!positionedEntity)
-    {
-        return NULL;
-    }
+	if(!positionedEntity)
+	{
+		return NULL;
+	}
 
-    Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
-    if(positionedEntity->name)
-    {
-        Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
-    }
+	if(positionedEntity->name)
+	{
+		Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
+	}
 
-    // set spatial position
-    __VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
+	// set spatial position
+	__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
 
-    // add children if defined
-    if(positionedEntity->childrenDefinitions)
-    {
-        Entity_addChildEntitiesDeferred(entity, positionedEntity->childrenDefinitions);
-    }
+	// add children if defined
+	if(positionedEntity->childrenDefinitions)
+	{
+		Entity_addChildEntitiesDeferred(entity, positionedEntity->childrenDefinitions);
+	}
 
-    return entity;
+	return entity;
 }
 
-// add child entity from definition
+/**
+ * Add child entity from definition
+ *
+ * @memberof				Entity
+ * @public
+ *
+ * @param this				Function scope
+ * @param entityDefinition
+ * @param internalId
+ * @param name
+ * @param position
+ * @param extraInfo
+ *
+ * @return					Entity
+ */
 Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo)
 {
 	ASSERT(this, "Entity::addChildEntity: null this");
@@ -750,7 +923,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 
 	if(!entityDefinition)
 	{
-	    return NULL;
+		return NULL;
 	}
 
 	PositionedEntity positionedEntity =
@@ -764,91 +937,139 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 		false
 	};
 
-    // create the hint entity and add it to the hero as a child entity
+	// create the hint entity and add it to the hero as a child entity
 	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > internalId? internalId: positionedEntity.id);
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
-    // must initialize after adding the children
-    __VIRTUAL_CALL(Entity, initialize, childEntity, true);
+	// must initialize after adding the children
+	__VIRTUAL_CALL(Entity, initialize, childEntity, true);
 
-    // if already initialized
-    if(this->size.x && this->size.y && this->size.z)
-    {
-        Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+	// if already initialized
+	if(this->size.x && this->size.y && this->size.z)
+	{
+		Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
-         // apply transformations
-        __VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform, true);
-    }
+		 // apply transformations
+		__VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform, true);
+	}
 
-    // create the entity and add it to the world
-    Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
+	// create the entity and add it to the world
+	Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
 
-    __VIRTUAL_CALL(Entity, ready, childEntity, true);
+	__VIRTUAL_CALL(Entity, ready, childEntity, true);
 
 	return childEntity;
 }
 
+/**
+ * Are all children instantiated?
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean whether all children are instantiated
+ */
 u32 Entity_areAllChildrenInstantiated(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenInstantiated: null this");
 
-    if(this->entityFactory)
-    {
-        return __LIST_EMPTY == EntityFactory_instantiateEntities(this->entityFactory);
-    }
+	if(this->entityFactory)
+	{
+		return __LIST_EMPTY == EntityFactory_instantiateEntities(this->entityFactory);
+	}
 
-    return true;
+	return true;
 }
 
+/**
+ * Are all children initialized?
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean whether all children are initialized
+ */
 u32 Entity_areAllChildrenInitialized(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenInitialized: null this");
 
-    if(this->entityFactory)
-    {
-        return __LIST_EMPTY == EntityFactory_initializeEntities(this->entityFactory);
-    }
+	if(this->entityFactory)
+	{
+		return __LIST_EMPTY == EntityFactory_initializeEntities(this->entityFactory);
+	}
 
-    return true;
+	return true;
 }
 
+/**
+ * Are all children transformed?
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean whether all children are transformed
+ */
 u32 Entity_areAllChildrenTransformed(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenTransformed: null this");
 
-    if(this->entityFactory)
-    {
-        return __LIST_EMPTY == EntityFactory_transformEntities(this->entityFactory);
-    }
+	if(this->entityFactory)
+	{
+		return __LIST_EMPTY == EntityFactory_transformEntities(this->entityFactory);
+	}
 
-    return true;
+	return true;
 }
 
+/**
+ * Are all children ready?
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean whether all children are ready
+ */
 u32 Entity_areAllChildrenReady(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenReady: null this");
 
-    if(this->entityFactory)
-    {
-        u32 returnValue = __LIST_EMPTY == EntityFactory_makeReadyEntities(this->entityFactory);
+	if(this->entityFactory)
+	{
+		u32 returnValue = __LIST_EMPTY == EntityFactory_makeReadyEntities(this->entityFactory);
 
-        if(!EntityFactory_hasEntitiesPending(this->entityFactory))
-        {
-            __DELETE(this->entityFactory);
-            this->entityFactory = NULL;
+		if(!EntityFactory_hasEntitiesPending(this->entityFactory))
+		{
+			__DELETE(this->entityFactory);
+			this->entityFactory = NULL;
 
-            // must force size calculation now that all children are loaded
-            Entity_calculateSize(this);
-        }
+			// must force size calculation now that all children are loaded
+			Entity_calculateSize(this);
+		}
 
-        return returnValue;
-    }
+		return returnValue;
+	}
 
-    Entity_calculateSize(this);
+	Entity_calculateSize(this);
 
-    return true;
+	return true;
 }
 
+/**
+ * Setup shape
+ *
+ * @memberof	Entity
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void Entity_setupShape(Entity this)
 {
 	ASSERT(this, "Entity::setupShape: null this");
@@ -859,7 +1080,7 @@ static void Entity_setupShape(Entity this)
 		__VIRTUAL_CALL(Shape, setup, this->shape);
 
 		if(__VIRTUAL_CALL(Entity, moves, this))
-	    {
+		{
 			__VIRTUAL_CALL(Shape, position, this->shape);
 		}
 
@@ -867,7 +1088,15 @@ static void Entity_setupShape(Entity this)
 	}
 }
 
-// initialize from definition
+/**
+ * Initialize from definition
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param recursive
+ */
 void Entity_initialize(Entity this, u32 recursive)
 {
 	ASSERT(this, "Entity::initialize: null this");
@@ -888,7 +1117,15 @@ void Entity_initialize(Entity this, u32 recursive)
 	}
 }
 
-// entity is initialized
+/**
+ * Entity is initialized
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param recursive
+ */
 void Entity_ready(Entity this, u32 recursive)
 {
 	ASSERT(this, "Entity::initialize: null this");
@@ -905,42 +1142,66 @@ void Entity_ready(Entity this, u32 recursive)
 	}
 }
 
-// process extra info in initialization
+/**
+ * Process extra info in initialization
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param extraInfo
+ */
 void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::setExtraInfo: null this");
 }
 
-// add sprite
+/**
+ * Add sprites
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param this					Function scope
+ * @param spritesDefinitions
+ */
 static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions)
 {
 	ASSERT(this, "Entity::addSprites: null this");
 
-    if(!spritesDefinitions)
-    {
-        return;
-    }
+	if(!spritesDefinitions)
+	{
+		return;
+	}
 
-    int i = 0;
+	int i = 0;
 
-    if(!this->sprites)
-    {
-        this->sprites = __NEW(VirtualList);
-    }
+	if(!this->sprites)
+	{
+		this->sprites = __NEW(VirtualList);
+	}
 
-    // go through n sprites in entity's definition
-    for(; spritesDefinitions[i]; i++)
-    {
-    	ASSERT(spritesDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");
+	// go through n sprites in entity's definition
+	for(; spritesDefinitions[i]; i++)
+	{
+		ASSERT(spritesDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");
 
-        Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spritesDefinitions[i]->allocator)((SpriteDefinition*)spritesDefinitions[i], __SAFE_CAST(Object, this));
-        ASSERT(sprite, "Entity::addSprite: sprite not created");
+		Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spritesDefinitions[i]->allocator)((SpriteDefinition*)spritesDefinitions[i], __SAFE_CAST(Object, this));
+		ASSERT(sprite, "Entity::addSprite: sprite not created");
 
-        VirtualList_pushBack(this->sprites, (void*)sprite);
-    }
+		VirtualList_pushBack(this->sprites, (void*)sprite);
+	}
 }
 
-// add sprite
+/**
+ * Add sprite
+ *
+ * @memberof				Entity
+ * @public
+ *
+ * @param this				Function scope
+ * @param spriteDefinition
+ */
 void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 {
 	ASSERT(this, "Entity::addSprite: null this");
@@ -950,65 +1211,83 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
 
 	if(!spriteDefinition || !spriteDefinition->allocator)
 	{
-	    return;
-    }
+		return;
+	}
 
 	Sprite sprite = NULL;
 
-    // call the appropriate allocator to support inheritance
-    sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
-    ASSERT(sprite, "Entity::addSprite: sprite not created");
+	// call the appropriate allocator to support inheritance
+	sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
+	ASSERT(sprite, "Entity::addSprite: sprite not created");
 
-    if(!this->sprites)
-    {
-        this->sprites = __NEW(VirtualList);
-    }
+	if(!this->sprites)
+	{
+		this->sprites = __NEW(VirtualList);
+	}
 
-    VirtualList_pushBack(this->sprites, (void*)sprite);
+	VirtualList_pushBack(this->sprites, (void*)sprite);
 }
 
-// update sprites
+/**
+ * Update sprites
+ *
+ * @memberof				Entity
+ * @private
+ *
+ * @param this				Function scope
+ * @param updatePosition
+ * @param updateRotation
+ */
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
 {
 	ASSERT(this, "Entity::transform: null this");
 
 	if(!this->sprites)
 	{
-	    return;
-    }
+		return;
+	}
 
-    updatePosition |= updateRotation;
+	updatePosition |= updateRotation;
 
-    VirtualNode node = this->sprites->head;
+	VirtualNode node = this->sprites->head;
 
-    // move each child to a temporary list
-    for(; node ; node = node->next)
-    {
-        Sprite sprite = __SAFE_CAST(Sprite, node->data);
+	// move each child to a temporary list
+	for(; node ; node = node->next)
+	{
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-        if(updatePosition)
-        {
-            // update sprite's 2D position
-            __VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
-        }
+		if(updatePosition)
+		{
+			// update sprite's 2D position
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+		}
 
-        if(updateRotation)
-        {
-            __VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
-        }
+		if(updateRotation)
+		{
+			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+		}
 
-        if(updateScale)
-        {
-            // calculate the scale
-            __VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+		if(updateScale)
+		{
+			// calculate the scale
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
-            // calculate sprite's parallax
-            __VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
-        }
-    }
+			// calculate sprite's parallax
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+		}
+	}
 }
 
-// initial transformation
+/**
+ * Initial transformation
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ * @param recursive
+ */
 void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
@@ -1023,35 +1302,51 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 		Entity_hide(this);
 	}
 
-    // now can calculate the size
-    if(recursive && (!this->size.x || !this->size.y || !this->size.z))
-    {
-        // must force size calculation now
-        Entity_calculateSize(this);
-    }
+	// now can calculate the size
+	if(recursive && (!this->size.x || !this->size.y || !this->size.z))
+	{
+		// must force size calculation now
+		Entity_calculateSize(this);
+	}
 
-    Entity_setupShape(this);
+	Entity_setupShape(this);
 }
 
-// transform class
+/**
+ * Transform class
+ *
+ * @memberof					Entity
+ * @public
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ */
 void Entity_transform(Entity this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Entity::transform: null this");
 
-    this->updateSprites = 0;
-    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this) ? __UPDATE_SPRITE_POSITION : 0;
-    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteRotation, this) ? __UPDATE_SPRITE_ROTATION : 0;
-    this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteScale, this) ? __UPDATE_SPRITE_SCALE : 0;
+	this->updateSprites = 0;
+	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this) ? __UPDATE_SPRITE_POSITION : 0;
+	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteRotation, this) ? __UPDATE_SPRITE_ROTATION : 0;
+	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteScale, this) ? __UPDATE_SPRITE_SCALE : 0;
 
-    // call base class's transform method
-    Container_transform(__SAFE_CAST(Container, this), environmentTransform);
+	// call base class's transform method
+	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 
-    if(this->shape && __VIRTUAL_CALL(Entity, moves, this))
-    {
-        __VIRTUAL_CALL(Shape, position, this->shape);
-    }
+	if(this->shape && __VIRTUAL_CALL(Entity, moves, this))
+	{
+		__VIRTUAL_CALL(Shape, position, this->shape);
+	}
 }
 
+/**
+ * Update visual representation
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_updateVisualRepresentation(Entity this)
 {
 	ASSERT(this, "Entity::updateVisualRepresentation: null this");
@@ -1070,6 +1365,15 @@ void Entity_updateVisualRepresentation(Entity this)
 */
 }
 
+/**
+ * Set local position
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param position
+ */
 void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 {
 	ASSERT(this, "Entity::setLocalPosition: null this");
@@ -1077,7 +1381,16 @@ void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
 }
 
-// retrieve EntityDefinition
+/**
+ * Retrieve EntityDefinition
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		EntityDefinition
+ */
 EntityDefinition* Entity_getEntityDefinition(Entity this)
 {
 	ASSERT(this, "Entity::getEntityDefinition: null this");
@@ -1085,7 +1398,16 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
 	return this->entityDefinition;
 }
 
-// retrieve position
+/**
+ * Retrieve position
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Global position
+ */
 const VBVec3D* Entity_getPosition(Entity this)
 {
 	ASSERT(this, "Entity::getPosition: null this");
@@ -1093,7 +1415,16 @@ const VBVec3D* Entity_getPosition(Entity this)
 	return &this->transform.globalPosition;
 }
 
-// retrieve sprite
+/**
+ * Retrieve sprites
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		VirtualList of Entity's sprites
+ */
 VirtualList Entity_getSprites(Entity this)
 {
 	ASSERT(this, "Entity::getSprites: null this");
@@ -1101,7 +1432,17 @@ VirtualList Entity_getSprites(Entity this)
 	return this->sprites;
 }
 
-// process a telegram
+/**
+ * Handles incoming messages
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param telegram
+ *
+ * @return			True if successfully processed, false otherwise
+ */
 bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::handleMessage: null this");
@@ -1109,7 +1450,16 @@ bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegra
 	return false;
 }
 
-// get width
+/**
+ * Get width
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Entity's width
+ */
 int Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
@@ -1119,11 +1469,20 @@ int Entity_getWidth(Entity this)
 		Entity_calculateSize(this);
 	}
 
-	// must calculate based on the scale because not affine Container must be enlarged
+	// must calculate based on the scale because not affine container must be enlarged
 	return (int)this->size.x;
 }
 
-// get height
+/**
+ * Get height
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Entity's height
+ */
 int Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
@@ -1136,7 +1495,16 @@ int Entity_getHeight(Entity this)
 	return (int)this->size.y;
 }
 
-// get depth
+/**
+ * Get depth
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Entity's depth
+ */
 int Entity_getDepth(Entity this)
 {
 	ASSERT(this, "Entity::getDepth: null this");
@@ -1150,7 +1518,16 @@ int Entity_getDepth(Entity this)
 	return (int)this->size.z;
 }
 
-// retrieve gap
+/**
+ * Retrieve gap
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Gap
+ */
 Gap Entity_getGap(Entity this __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::getGap: null this");
@@ -1159,7 +1536,18 @@ Gap Entity_getGap(Entity this __attribute__ ((unused)))
 	return gap;
 }
 
-// whether it is visible
+/**
+ * Whether it is visible
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param pad
+ * @param recursive
+ *
+ * @return			Boolean if visible
+ */
 bool Entity_isVisible(Entity this, int pad, bool recursive)
 {
 	ASSERT(this, "Entity::isVisible: null this");
@@ -1253,15 +1641,34 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	return false;
 }
 
-// check if necessary to update sprite's position
+/**
+ * Check if necessary to update sprite's position
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean if necessary
+ */
 bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 
-	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
+	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) ||
+		(__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
 }
 
-// check if necessary to update sprite's rotation
+/**
+ * Check if necessary to update sprite's rotation
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean if necessary
+ */
 bool Entity_updateSpriteRotation(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteRotation: null this");
@@ -1269,7 +1676,16 @@ bool Entity_updateSpriteRotation(Entity this)
 	return this->invalidateGlobalTransformation & __INVALIDATE_ROTATION;
 }
 
-// check if necessary to update sprite's scale
+/**
+ * Check if necessary to update sprite's scale
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean if necessary
+ */
 bool Entity_updateSpriteScale(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteScale: null this");
@@ -1277,7 +1693,16 @@ bool Entity_updateSpriteScale(Entity this)
 	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & (__ZAXIS | __INVALIDATE_SCALE)));
 }
 
-// set the direction
+/**
+ * Set the direction
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param axis
+ * @param direction
+ */
 void Entity_setSpritesDirection(Entity this, int axis, int direction)
 {
 	ASSERT(this, "Entity::setSpritesDirection: null this");
@@ -1289,13 +1714,22 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
 		VirtualNode node = this->sprites->head;
 
 		for(; node ; node = node->next)
-	    {
+		{
 			__VIRTUAL_CALL(Sprite, setDirection, __SAFE_CAST(Sprite, node->data), axis, direction);
 		}
 	}
 }
 
-// retrieve shape
+/**
+ * Retrieve shape
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Entity's Shape
+ */
 Shape Entity_getShape(Entity this)
 {
 	ASSERT(this, "Entity::getShape: null this");
@@ -1303,18 +1737,25 @@ Shape Entity_getShape(Entity this)
 	return this->shape;
 }
 
-// make it visible
+/**
+ * Make it visible
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_show(Entity this)
 {
 	ASSERT(this, "Entity::show: null this");
 
-    // update transformation before hiding
+	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-    __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, transform, this, &environmentTransform);
 
-    // and update the visual representation
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
-    Entity_updateVisualRepresentation(this);
+	// and update the visual representation
+	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	Entity_updateVisualRepresentation(this);
 
 	Container_show(__SAFE_CAST(Container, this));
 
@@ -1324,7 +1765,7 @@ void Entity_show(Entity this)
 
 		// move each child to a temporary list
 		for(; node ; node = node->next)
-	    {
+		{
 			__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
 		}
 	}
@@ -1333,18 +1774,25 @@ void Entity_show(Entity this)
 	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
 }
 
-// make it invisible
+/**
+ * Make it invisible
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_hide(Entity this)
 {
 	ASSERT(this, "Entity::hide: null this");
 
-    // update transformation before hiding
+	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-    __VIRTUAL_CALL(Container, transform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, transform, this, &environmentTransform);
 
-    // and update the visual representation
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
-    Entity_updateVisualRepresentation(this);
+	// and update the visual representation
+	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	Entity_updateVisualRepresentation(this);
 
 	Container_hide(__SAFE_CAST(Container, this));
 
@@ -1354,13 +1802,20 @@ void Entity_hide(Entity this)
 
 		// move each child to a temporary list
 		for(; node ; node = node->next)
-	    {
+		{
 			__VIRTUAL_CALL(Sprite, hide, __SAFE_CAST(Sprite, node->data));
 		}
 	}
 }
 
-// suspend for pause
+/**
+ * Suspend for pause
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_suspend(Entity this)
 {
 	ASSERT(this, "Entity::suspend: null this");
@@ -1369,7 +1824,14 @@ void Entity_suspend(Entity this)
 	Entity_releaseSprites(this);
 }
 
-// resume after pause
+/**
+ * Resume after pause
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_resume(Entity this)
 {
 	ASSERT(this, "Entity::resume: null this");
@@ -1391,12 +1853,32 @@ void Entity_resume(Entity this)
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
-// defaults to true
+/**
+ * Defaults to true
+ *
+ * @memberof			Entity
+ * @public
+ *
+ * @param this			Function scope
+ * @param acceleration
+ *
+ * @return				Defaults to true
+ */
 int Entity_canMoveOverAxis(Entity this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
 {
 	return __XAXIS | __YAXIS | __ZAXIS;
 }
 
+/**
+ * Get axis for flipping
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Defaults to true
+ */
 u32 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
 {
 	return __XAXIS | __YAXIS;

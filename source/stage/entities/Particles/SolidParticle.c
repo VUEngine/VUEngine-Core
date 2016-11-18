@@ -315,7 +315,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
  * Handles incoming messages
  *
  * @memberof		SolidParticle
- * @private
+ * @public
  *
  * @param this		Function scope
  * @param telegram

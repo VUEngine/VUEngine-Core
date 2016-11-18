@@ -47,7 +47,7 @@
 
 #define I18n_ATTRIBUTES																					\
 	    Object_ATTRIBUTES																				\
-		/*
+		/**
          * @var u8		activeLanguage
          * @brief		Currently active language
          * @memberof	I18n

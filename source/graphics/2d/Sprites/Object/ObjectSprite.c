@@ -41,9 +41,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class       ObjectSprite
- * @extends     Sprite
- * @brief       Sprite which holds a texture and a drawing specification.
+ * @class   ObjectSprite
+ * @extends Sprite
+ * @brief   Sprite which holds a texture and a drawing specification.
  */
 
 __CLASS_DEFINITION(ObjectSprite, Sprite);

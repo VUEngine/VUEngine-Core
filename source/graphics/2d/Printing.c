@@ -49,9 +49,9 @@ extern FontROMDef* const __FONTS[];
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class 			Printing
- * @extends 		Object
- * @brief 			Manages printing layer and offers various functions to write to it.
+ * @class 	Printing
+ * @extends Object
+ * @brief 	Manages printing layer and offers various functions to write to it.
  */
 __CLASS_DEFINITION(Printing, Object);
 

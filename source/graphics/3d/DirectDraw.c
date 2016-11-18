@@ -42,8 +42,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class       DirectDraw
- * @extends     Object
+ * @class   DirectDraw
+ * @extends Object
  */
 
 #define DirectDraw_ATTRIBUTES																			\
