@@ -36,9 +36,9 @@ extern LangROMDef* __LANGUAGES[];
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class       I18n
- * @extends     Object
- * @brief       Handles internationalization of text output and thus allows multiple selectable languages.
+ * @class   I18n
+ * @extends Object
+ * @brief   Handles internationalization of text output and thus allows multiple selectable languages.
  */
 __CLASS_DEFINITION(I18n, Object);
 

@@ -458,7 +458,7 @@ u32 EntityFactory_prepareEntities(EntityFactory this)
         result = _streamingPhases[this->streamingPhase](this);
     }
 
-    this->streamingPhase += __ENTITY_PENDING_PROCESSING != result? 1 : 0;
+    this->streamingPhase += __ENTITY_PENDING_PROCESSING != result ? 1 : 0;
 
     return __LIST_EMPTY != result;
 }
@@ -475,7 +475,7 @@ u32 EntityFactory_hasEntitiesPending(EntityFactory this)
 
 int EntityFactory_getPhase(EntityFactory this)
 {
-    return this->streamingPhase >= _streamingPhasesCount? 0: this->streamingPhase;
+    return this->streamingPhase >= _streamingPhasesCount ? 0 : this->streamingPhase;
 }
 
 void EntityFactory_prepareAllEntities(EntityFactory this)

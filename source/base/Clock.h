@@ -47,9 +47,29 @@
 
 #define Clock_ATTRIBUTES																				\
         Object_ATTRIBUTES																				\
+        /**
+         * @var u32     milliSeconds
+         * @brief       time elapsed
+         * @memberof    Clock
+		 */																								\
         u32 milliSeconds;																				\
+        /**
+         * @var u32     previousSecond
+         * @brief       register
+         * @memberof    Clock
+		 */																								\
         u32 previousSecond;																				\
+        /**
+         * @var u32     previousMinute
+         * @brief       register
+         * @memberof    Clock
+		 */																								\
         u32 previousMinute;																				\
+        /**
+         * @var bool    paused
+         * @brief       flag to pause the clock
+         * @memberof    Clock
+		 */																								\
         bool paused;																					\
 
 // declare a Clock
@@ -63,22 +83,23 @@ __CLASS(Clock);
 __CLASS_NEW_DECLARE(Clock);
 
 void Clock_destructor(Clock this);
-void Clock_print(Clock this, int col, int row, const char* font);
-void Clock_update(Clock this, u32 ticks);
-void Clock_reset(Clock this);
-u32 Clock_getMilliSeconds(Clock this);
-u32 Clock_getSeconds(Clock this);
-u32 Clock_getMinutes(Clock this);
-u32 Clock_getTime(Clock this);
+
 u32 Clock_getElapsedTime(Clock this);
+u32 Clock_getMilliSeconds(Clock this);
+u32 Clock_getMinutes(Clock this);
+u32 Clock_getSeconds(Clock this);
+u32 Clock_getTime(Clock this);
 int Clock_getTimeInCurrentSecond(Clock this);
-void Clock_setTimeInSeconds(Clock this, float totalSeconds);
-void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds);
+bool Clock_isPaused(Clock this);
+void Clock_pause(Clock this, bool paused);
+void Clock_print(Clock this, int col, int row, const char* font);
+void Clock_reset(Clock this);
 void Clock_setTime(Clock this, int hours, int minutes, int seconds);
+void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds);
+void Clock_setTimeInSeconds(Clock this, float totalSeconds);
 void Clock_start(Clock this);
 void Clock_stop(Clock this);
-void Clock_pause(Clock this, bool paused);
-bool Clock_isPaused(Clock this);
+void Clock_update(Clock this, u32 ticks);
 
 
 #endif

@@ -31,7 +31,7 @@
 // 											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// it is necessary for the object to be aligned to 2's multiples
+// it is necessary for the object to be aligned to multiples of 2
 #define __MEMORY_USED_BLOCK_FLAG	0xFFFFFFFF
 #define __MEMORY_FREE_BLOCK_FLAG	0x00000000
 

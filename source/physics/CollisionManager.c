@@ -176,7 +176,7 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 
 	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL(SpatialObject, getShape, owner));
 
-	return node? __SAFE_CAST(Shape, node->data): NULL;
+	return node ? __SAFE_CAST(Shape, node->data) : NULL;
 }
 
 // process removed shapes
@@ -428,9 +428,9 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 
 	VBVec3D displacement =
     {
-    	direction.x ? 0 < direction.x? __1I_FIX19_13: ITOFIX19_13(-1): 0,
-		direction.y ? 0 < direction.y? __1I_FIX19_13: ITOFIX19_13(-1): 0,
-		direction.z ? 0 < direction.z? __1I_FIX19_13: ITOFIX19_13(-1): 0
+    	direction.x ? 0 < direction.x ? __1I_FIX19_13 : ITOFIX19_13(-1) : 0,
+		direction.y ? 0 < direction.y ? __1I_FIX19_13 : ITOFIX19_13(-1) : 0,
+		direction.z ? 0 < direction.z ? __1I_FIX19_13 : ITOFIX19_13(-1) : 0
 	};
 
 	if(0 == __ABS(direction.x) + __ABS(direction.y) + __ABS(direction.z))

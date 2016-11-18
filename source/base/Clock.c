@@ -31,26 +31,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class       Clock
- * @extends     Object
- *
- * @var u32     milliSeconds
- * @brief       time elapsed
- * @memberof    Clock
- *
- * @var u32     previousSecond
- * @brief       register
- * @memberof    Clock
- *
- * @var u32     previousMinute
- * @brief       register
- * @memberof    Clock
- *
- * @var bool    paused
- * @brief       flag to pause the clock
- * @memberof    Clock
+ * @class   Clock
+ * @extends Object
  */
-
 __CLASS_DEFINITION(Clock, Object);
 
 

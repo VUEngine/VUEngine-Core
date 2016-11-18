@@ -149,9 +149,9 @@ int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 
 	VBVec3D displacement =
     {
-    	acceleration->x ? 0 < acceleration->x? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance): ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance): 0,
-		acceleration->y ? 0 < acceleration->y? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance): ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance): 0,
-		acceleration->z ? 0 < acceleration->z? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance): ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance): 0
+    	acceleration->x ? 0 < acceleration->x ? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance) : ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
+		acceleration->y ? 0 < acceleration->y ? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance) : ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
+		acceleration->z ? 0 < acceleration->z ? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance) : ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0
 	};
 
 	int i = 0;

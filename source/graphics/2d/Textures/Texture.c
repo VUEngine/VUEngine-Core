@@ -217,7 +217,7 @@ u32 Texture_getTotalCols(Texture this)
 			{
 				// return the total number of chars
 				int totalCols = this->textureDefinition->numberOfFrames * this->textureDefinition->cols;
-				return 64 >= totalCols? totalCols: 64;
+				return 64 >= totalCols ? totalCols : 64;
 			}
 			break;
 
@@ -350,7 +350,7 @@ static void Texture_onCharSetDeleted(Texture this, Object eventFirer)
 {
 	ASSERT(this, "Texture::onCharSetRewritten: null this");
 
-    this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet? NULL : this->charSet;
+    this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet ? NULL : this->charSet;
 }
 
 // write directly to texture

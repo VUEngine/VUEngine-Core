@@ -332,7 +332,7 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::sort: null this");
 
-	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node): this->objectSprites->tail;
+	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node) : this->objectSprites->tail;
 
 	for(; this->node; this->node = VirtualNode_getPrevious(this->node))
 	{
@@ -386,7 +386,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->worldLayer)
 	{
 		// make sure to not render again
-		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects? this->head | __WORLD_OVR : __WORLD_OFF;
+		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
 	}
 
 	// defragmentation takes priority over z sorting

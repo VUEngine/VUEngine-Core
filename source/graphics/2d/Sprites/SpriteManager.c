@@ -638,7 +638,7 @@ void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 textures
 {
 	ASSERT(this, "SpriteManager::setMaximumTextureRowsToWrite: null this");
 
-	this->texturesMaximumRowsToWrite = 2 > (s8)texturesMaximumRowsToWrite? 2 : texturesMaximumRowsToWrite;
+	this->texturesMaximumRowsToWrite = 2 > (s8)texturesMaximumRowsToWrite ? 2 : texturesMaximumRowsToWrite;
 }
 
 void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffineTransformations)
@@ -652,7 +652,7 @@ int SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::getMaximumAffineRowsPerCall: null this");
 
-	return this->deferAffineTransformations? this->maximumAffineRowsToComputePerCall : -1;
+	return this->deferAffineTransformations ? this->maximumAffineRowsToComputePerCall : -1;
 }
 
 void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall)

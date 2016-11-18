@@ -708,7 +708,7 @@ static u32 Game_handleInput(Game this)
 
 #ifdef __PROFILE_GAME
     handleInputProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-    handleInputHighestTime = handleInputProcessTime > handleInputHighestTime? handleInputProcessTime: handleInputHighestTime;
+    handleInputHighestTime = handleInputProcessTime > handleInputHighestTime ? handleInputProcessTime : handleInputHighestTime;
     handleInputTotalTime += handleInputProcessTime;
 #endif
 
@@ -736,7 +736,7 @@ inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)
         u32 dispatchedMessages = MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
 
         dispatchDelayedMessageProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-        dispatchDelayedMessageHighestTime = dispatchDelayedMessageProcessTime > dispatchDelayedMessageHighestTime? dispatchDelayedMessageProcessTime: dispatchDelayedMessageHighestTime;
+        dispatchDelayedMessageHighestTime = dispatchDelayedMessageProcessTime > dispatchDelayedMessageHighestTime ? dispatchDelayedMessageProcessTime : dispatchDelayedMessageHighestTime;
         dispatchDelayedMessageTotalTime += dispatchDelayedMessageProcessTime;
 
         return dispatchedMessages;
@@ -779,7 +779,7 @@ inline static void Game_updateLogic(Game this)
 
 #ifdef __PROFILE_GAME
     updateLogicProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-    updateLogicHighestTime = updateLogicProcessTime > updateLogicHighestTime? updateLogicProcessTime: updateLogicHighestTime;
+    updateLogicHighestTime = updateLogicProcessTime > updateLogicHighestTime ? updateLogicProcessTime : updateLogicHighestTime;
     updateLogicTotalTime += updateLogicProcessTime;
 #endif
 }
@@ -804,7 +804,7 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 
 #ifdef __PROFILE_GAME
     updateVisualsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-    updateVisualsHighestTime = updateVisualsProcessTime > updateVisualsHighestTime? updateVisualsProcessTime: updateVisualsHighestTime;
+    updateVisualsHighestTime = updateVisualsProcessTime > updateVisualsHighestTime ? updateVisualsProcessTime : updateVisualsHighestTime;
     updateVisualsTotalTime += updateVisualsProcessTime;
 #endif
 }
@@ -825,7 +825,7 @@ inline static void Game_updatePhysics(Game this)
 
 #ifdef __PROFILE_GAME
     updatePhysicsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-    updatePhysicsHighestTime = updatePhysicsProcessTime > updatePhysicsHighestTime? updatePhysicsProcessTime: updatePhysicsHighestTime;
+    updatePhysicsHighestTime = updatePhysicsProcessTime > updatePhysicsHighestTime ? updatePhysicsProcessTime : updatePhysicsHighestTime;
     updatePhysicsTotalTime += updatePhysicsProcessTime;
 #endif
 }
@@ -851,7 +851,7 @@ inline static void Game_updateTransformations(Game this)
 
 #ifdef __PROFILE_GAME
     updateTransformationsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-    updateTransformationsHighestTime = updateTransformationsProcessTime > updateTransformationsHighestTime? updateTransformationsProcessTime: updateTransformationsHighestTime;
+    updateTransformationsHighestTime = updateTransformationsProcessTime > updateTransformationsHighestTime ? updateTransformationsProcessTime : updateTransformationsHighestTime;
     updateTransformationsTotalTime += updateTransformationsProcessTime;
 #endif
 }
@@ -872,7 +872,7 @@ inline static u32 Game_updateCollisions(Game this)
 	u32 processedCollisions = GameState_processCollisions(this->currentState);
 
     processCollisionsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-    processCollisionsHighestTime = processCollisionsProcessTime > processCollisionsHighestTime? processCollisionsProcessTime: processCollisionsHighestTime;
+    processCollisionsHighestTime = processCollisionsProcessTime > processCollisionsHighestTime ? processCollisionsProcessTime : processCollisionsHighestTime;
     processCollisionsTotalTime += processCollisionsProcessTime;
 
     return processedCollisions;
@@ -895,7 +895,7 @@ inline static void Game_stream(Game this)
 
 #ifdef __PROFILE_GAME
     streamingProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-    streamingHighestTime = streamingProcessTime > streamingHighestTime? streamingProcessTime: streamingHighestTime;
+    streamingHighestTime = streamingProcessTime > streamingHighestTime ? streamingProcessTime :  streamingHighestTime;
     streamingTotalTime += streamingProcessTime;
 #endif
 }
@@ -909,7 +909,7 @@ inline static void Game_render(Game this)
 
 #ifdef __PROFILE_GAME
     renderingProcessTime = VIPManager_writeDRAM(this->vipManager);
-    renderingHighestTime = renderingProcessTime > renderingHighestTime? renderingProcessTime: renderingHighestTime;
+    renderingHighestTime = renderingProcessTime > renderingHighestTime ? renderingProcessTime : renderingHighestTime;
     renderingTotalTime += renderingProcessTime;
 #else
     VIPManager_writeDRAM(this->vipManager);
@@ -949,8 +949,8 @@ inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration)
 
     this->gameFrameTotalTime += gameFrameDuration;
 
-    // increase the FPS counter
-    FrameRate_increaseFPS(frameRate);
+    // increase the fps counter
+    FrameRate_increaseFps(frameRate);
 
     if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
     {
@@ -1012,7 +1012,7 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME_DETAILED
         u32 gameFrameTotalTime = TimerManager_getMillisecondsElapsed(this->timerManager);
 
-        gameFrameHighestTime = gameFrameHighestTime < gameFrameTotalTime?  gameFrameTotalTime: gameFrameHighestTime;
+        gameFrameHighestTime = gameFrameHighestTime < gameFrameTotalTime ?  gameFrameTotalTime : gameFrameHighestTime;
 #endif
 
 		// update each subsystem

@@ -29,12 +29,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define FrameRate_ATTRIBUTES																			\
-        /* super's attributes */																		\
         Object_ATTRIBUTES																				\
-        /*  frames per second */																		\
-        u16 FPS;																						\
+        /**
+         * @var u16     fps
+         * @brief       Frames per second
+         * @memberof    FrameRate
+		 */																								\
+        u16 fps;																						\
 
-// define the FrameRate
+/**
+ * @class   FrameRate
+ * @extends Object
+ */
 __CLASS_DEFINITION(FrameRate, Object);
 
 
@@ -49,17 +55,40 @@ static void FrameRate_constructor(FrameRate this);
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn          FrameRate_getInstance()
+ * @memberof    FrameRate
+ * @public
+ *
+ * @return      FrameRate instance
+ */
 __SINGLETON(FrameRate);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    FrameRate
+ * @private
+ *
+ * @param this  Function scope
+ */
 static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
 {
 	__CONSTRUCT_BASE(Object);
 
-	this->FPS = 0;
+	this->fps = 0;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    FrameRate
+ * @public
+ *
+ * @param this  Function scope
+ */
 void FrameRate_destructor(FrameRate this)
 {
 	ASSERT(this, "FrameRate::destructor: null this");
@@ -68,37 +97,66 @@ void FrameRate_destructor(FrameRate this)
 	__SINGLETON_DESTROY;
 }
 
-// reset internal values
+/**
+ * Reset internal values
+ *
+ * @memberof    FrameRate
+ * @public
+ *
+ * @param this  Function scope
+ */
 void FrameRate_reset(FrameRate this)
 {
 	ASSERT(this, "FrameRate::reset: null this");
 
-	this->FPS = 0;
+	this->fps = 0;
 }
 
-// retrieve FPS
-u16 FrameRate_getFPS(FrameRate this)
+/**
+ * Retrieve FPS
+ *
+ * @memberof    FrameRate
+ * @public
+ *
+ * @param this  Function scope
+ */
+u16 FrameRate_getFps(FrameRate this)
 {
-	ASSERT(this, "FrameRate::getFPS: null this");
+	ASSERT(this, "FrameRate::getFps: null this");
 
-	return this->FPS;
+	return this->fps;
 }
 
-
-// increase the  FPS count
-void FrameRate_increaseFPS(FrameRate this)
+/**
+ * Increase the FPS count
+ *
+ * @memberof    FrameRate
+ * @public
+ *
+ * @param this  Function scope
+ */
+void FrameRate_increaseFps(FrameRate this)
 {
-	ASSERT(this, "FrameRate::increaseFPS: null this");
+	ASSERT(this, "FrameRate::increaseFps: null this");
 
-	this->FPS++;
+	this->fps++;
 }
 
-// print renderFPS
+/**
+ * Print FPS
+ *
+ * @memberof    FrameRate
+ * @public
+ *
+ * @param this  Function scope
+ * @param col   Column to start printing at
+ * @param row   Row to start printing at
+ */
 void FrameRate_print(FrameRate this, int col, int row)
 {
 	ASSERT(this, "FrameRate::print: null this");
 
 	Printing printing = Printing_getInstance();
 	Printing_text(printing, "FPS:", col, row, NULL);
-	Printing_int(printing, this->FPS, col + 4, row++, NULL);
+	Printing_int(printing, this->fps, col + 4, row++, NULL);
 }

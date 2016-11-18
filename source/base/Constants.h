@@ -57,7 +57,7 @@
 enum MessagesTypes
 {
 	// general purpose messages
-	kHighFPS = 0,
+	kHighFps = 0,
 	kAutoPause,
 	kLowBatteryIndicator,
 	kEntityRemoved,

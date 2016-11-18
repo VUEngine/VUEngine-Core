@@ -47,10 +47,11 @@ __CLASS(FrameRate);
 FrameRate FrameRate_getInstance();
 
 void FrameRate_destructor(FrameRate this);
+
+u16 FrameRate_getFps(FrameRate this);
+void FrameRate_increaseFps(FrameRate this);
+void FrameRate_print(FrameRate this, int col, int row);
 void FrameRate_reset(FrameRate this);
-u16 FrameRate_getFPS(FrameRate this);
-void FrameRate_increaseFPS(FrameRate this);
-void FrameRate_print(FrameRate this,int col,int row);
 
 
 #endif

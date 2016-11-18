@@ -91,7 +91,7 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 	this->particleSystemDefinition = particleSystemDefinition;
 
 	this->particles = __NEW(VirtualList);
-	this->recyclableParticles = this->particleSystemDefinition->recycleParticles? __NEW(VirtualList) : NULL;
+	this->recyclableParticles = this->particleSystemDefinition->recycleParticles ? __NEW(VirtualList) : NULL;
 	this->expiredParticles = __NEW(VirtualList);
 
 	this->particleCount = 0;
@@ -438,7 +438,7 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 
 	ParticleSystem_processExpiredParticles(this);
 
-	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this)? __UPDATE_SPRITE_POSITION : 0;
+	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this) ? __UPDATE_SPRITE_POSITION : 0;
 }
 
 /**
@@ -453,7 +453,7 @@ void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 
 	VirtualNode node = this->particles->head;
 
-	bool updateSprites = this->updateSprites? true : false;
+	bool updateSprites = this->updateSprites ? true : false;
 
 	for(; node; node = node->next)
 	{

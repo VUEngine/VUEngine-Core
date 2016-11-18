@@ -620,7 +620,7 @@ const VBVec3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
-	return this->body? Body_getPosition(this->body) : Entity_getPosition(__SAFE_CAST(Entity, this));
+	return this->body ? Body_getPosition(this->body) : Entity_getPosition(__SAFE_CAST(Entity, this));
 }
 
 // check if necessary to update sprite's position
@@ -664,7 +664,7 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 
 	if(axisOfCollision)
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver? CollisionSolver_getCollidingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision): __1I_FIX19_13;
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
 
 		int axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
 
@@ -780,7 +780,7 @@ Velocity Actor_getVelocity(Actor this)
 {
 	ASSERT(this, "Actor::getVelocity: null this");
 
-	return this->body? Body_getVelocity(this->body) : SpatialObject_getVelocity(__SAFE_CAST(SpatialObject, this));
+	return this->body ? Body_getVelocity(this->body) : SpatialObject_getVelocity(__SAFE_CAST(SpatialObject, this));
 }
 
 void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), VirtualList collidingSpatialObjects __attribute__ ((unused)))

@@ -529,9 +529,9 @@ Force Body_calculateFrictionForce(Body this)
 
 	fix19_13 weight = this->mass;
 
-//		fix19_13 weight = (__XAXIS & this->axisSubjectToGravity) && gravity->x? FIX19_13_MULT(gravity->x, this->mass): this->mass;
-//		fix19_13 weight = (__YAXIS & this->axisSubjectToGravity) && gravity->y? FIX19_13_MULT(gravity->y, this->mass): this->mass;
-//		fix19_13 weight = (__ZAXIS & this->axisSubjectToGravity) && gravity->z? FIX19_13_MULT(gravity->z, this->mass): this->mass;
+//		fix19_13 weight = (__XAXIS & this->axisSubjectToGravity) && gravity->x ? FIX19_13_MULT(gravity->x, this->mass) : this->mass;
+//		fix19_13 weight = (__YAXIS & this->axisSubjectToGravity) && gravity->y ? FIX19_13_MULT(gravity->y, this->mass) : this->mass;
+//		fix19_13 weight = (__ZAXIS & this->axisSubjectToGravity) && gravity->z ? FIX19_13_MULT(gravity->z, this->mass) : this->mass;
 /*
     if(this->appliedForce.x)
     {
@@ -598,7 +598,7 @@ static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gr
 		*acceleration += FIX19_13_MULT(gravity, elapsedTime);
 	}
 
-	fix19_13 frictionAcceleration = this->mass? FIX19_13_DIV(frictionForce, this->mass): frictionForce;
+	fix19_13 frictionAcceleration = this->mass ? FIX19_13_DIV(frictionForce, this->mass) : frictionForce;
 
 	if(appliedForce)
 	{

@@ -44,10 +44,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Error_ATTRIBUTES																				\
-        /* super's attributes */																		\
         Object_ATTRIBUTES																				\
 
-// define the Error
+/**
+ * @class   Error
+ * @extends Object
+ */
 __CLASS_DEFINITION(Error, Object);
 
 
@@ -64,28 +66,59 @@ bool Game_isConstructed();
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
+/**
+ * Get instance
+ *
+ * @fn          Error_getInstance()
+ * @memberof    Error
+ * @public
+ *
+ * @return      Error instance
+ */
 __SINGLETON(Error);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof    Error
+ * @private
+ *
+ * @param this  Function scope
+ */
 static void __attribute__ ((noinline)) Error_constructor(Error this)
 {
 	__CONSTRUCT_BASE(Object);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof    Error
+ * @public
+ *
+ * @param this  Function scope
+ */
 void Error_destructor(Error this)
 {
 	__SINGLETON_DESTROY;
 }
 
-// setup the error message and lock program here
+/**
+ * Setup the error message and lock program here
+ *
+ * @memberof        Error
+ * @public
+ *
+ * @param this      Function scope
+ * @param message
+ * @param detail
+ */
 int Error_triggerException(Error this __attribute__ ((unused)), char* message, char* detail)
 {
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
-    // disable VIP interrutps
+    // disable vip interrupts
     VIPManager_disableInterrupt(VIPManager_getInstance());
 
 	// disable timers
@@ -123,7 +156,7 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 		int stringMaxLenght = (__SCREEN_WIDTH >> 3) - 2;
 		int rowsAvailable  = (__SCREEN_HEIGHT >> 3) - y;
 		int stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
-		int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght? 1: 0);
+		int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght ? 1 : 0);
 		int line = 0;
 
 		for(; line < lines; line++, message += stringMaxLenght)
