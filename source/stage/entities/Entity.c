@@ -1236,6 +1236,7 @@ void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition)
  *
  * @param this				Function scope
  * @param updatePosition
+ * @param updateScale
  * @param updateRotation
  */
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)

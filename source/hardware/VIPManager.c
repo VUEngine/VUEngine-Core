@@ -507,7 +507,7 @@ void VIPManager_removePostProcessingEffects(VIPManager this)
 }
 
 // register the frame buffer in use by the VIP's drawing process
-void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this)
+void VIPManager_registerCurrentDrawingFrameBufferSet(VIPManager this)
 {
 	ASSERT(this, "VIPManager::registerCurrentDrawingframeBufferSet: null this");
 

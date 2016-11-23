@@ -1061,7 +1061,7 @@ static void Game_update(Game this)
         ClockManager_update(this->clockManager, gameFrameDuration);
 
 	    // register the frame buffer in use by the VPU's drawing process
-	    VIPManager_registerCurrentDrawingframeBufferSet(this->vipManager);
+	    VIPManager_registerCurrentDrawingFrameBufferSet(this->vipManager);
 
 		// update each subsystem
 #if __FRAME_CYCLE == 1

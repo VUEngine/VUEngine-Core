@@ -102,7 +102,7 @@ __CLASS_NEW_END(OptionsSelector, cols, rows, font);
  * @param this  Function scope
  * @param cols  Number of columns
  * @param rows  Number of rows
- * @param mark  Character to use for selector mark
+ * @param font  Font to use for printing selector
  */
 void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* font)
 {
@@ -444,7 +444,6 @@ bool OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex)
  * @public
  *
  * @param this          Function scope
- * @param optionIndex   Index of desired option
  *
  * @return              Index of selected option
  */

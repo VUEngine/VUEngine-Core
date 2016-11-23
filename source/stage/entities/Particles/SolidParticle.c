@@ -30,7 +30,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class	ParticleSystem
+ * @class	SolidParticle
  * @extends Particle
  */
 __CLASS_DEFINITION(SolidParticle, Particle);
@@ -113,7 +113,7 @@ void SolidParticle_destructor(SolidParticle this)
  *
  * @param this			Function scope
  * @param timeElapsed
- * @param particle
+ * @param behavior
  *
  * @return				Boolean
  */

@@ -61,6 +61,7 @@ __CLASS_NEW_END(Particle, particleDefinition, spriteDefinition, lifeSpan, mass);
  *
  * @param this					Function scope
  * @param particleDefinition	Definition of the Particle
+ * @param spriteDefinition
  * @param lifeSpan
  * @param mass
  */
@@ -144,7 +145,7 @@ static void Particle_addSprite(Particle this)
  *
  * @param this			Function scope
  * @param elapsedTime
- * @param particle
+ * @param behavior
  *
  * @return				Boolean that tells whether a body was set active(?)
  */

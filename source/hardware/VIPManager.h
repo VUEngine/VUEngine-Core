@@ -33,102 +33,102 @@
 
 /* Defines for __INTPND\__INTENB\__INTCLR */
 #define	__TIMEERR		0x8000
-#define	__XPEND		    0x4000
-#define	__SBHIT		    0x2000
+#define	__XPEND			0x4000
+#define	__SBHIT			0x2000
 #define	__FRAMESTART	0x0010
-#define	__GAMESTART	    0x0008
+#define	__GAMESTART		0x0008
 #define	__RFBEND		0x0004
 #define	__LFBEND		0x0002
 #define	__SCANERR		0x0001
 
 /* Defines for __DPSTTS\__DPCTRL */
-#define	__LOCK		    0x0400	// VPU SELECT __CTA
-#define	__SYNCE		    0x0200	// L,R_SYNC TO VPU
-#define	__RE		    0x0100	// MEMORY REFLASH CYCLE ON
-#define	__FCLK		    0x0080
-#define	__SCANRDY	    0x0040
-#define	__DISP		    0x0002	// DISPLAY ON
-#define	__DPRST		    0x0001	// RESET VPU COUNTER AND WAIT __FCLK
+#define	__LOCK			0x0400	// VPU SELECT __CTA
+#define	__SYNCE			0x0200	// L,R_SYNC TO VPU
+#define	__RE			0x0100	// MEMORY REFLASH CYCLE ON
+#define	__FCLK			0x0080
+#define	__SCANRDY		0x0040
+#define	__DISP			0x0002	// DISPLAY ON
+#define	__DPRST			0x0001	// RESET VPU COUNTER AND WAIT __FCLK
 
 /* Defines for __XPSTTS\__XPCTRL */
-#define	__SBOUT		    0x8000	// In FrameBuffer drawing included
-#define	__OVERTIME	    0x0010	// Processing
+#define	__SBOUT			0x8000	// In FrameBuffer drawing included
+#define	__OVERTIME		0x0010	// Processing
 #define	__XPBSYR		0x000C	// In the midst of drawing processing reset
 #define	__XPBSY1		0x0008	// In the midst of FrameBuffer1 picture editing
 #define	__XPBSY0		0x0004	// In the midst of FrameBuffer0 picture editing
-#define	__XPEN		    0x0002	// Start of drawing
-#define	__XPRST		    0x0001	// Forcing idling
+#define	__XPEN			0x0002	// Start of drawing
+#define	__XPRST			0x0001	// Forcing idling
 
 
 /****** VIP Registers ******/
 extern volatile u16* _vipRegisters;
 
 /****** VIP Register Mnemonics ******/
-#define	__INTPND	0x00
-#define	__INTENB	0x01
-#define	__INTCLR	0x02
+#define	__INTPND			0x00
+#define	__INTENB			0x01
+#define	__INTCLR			0x02
 
-#define	__DPSTTS	0x10
-#define	__DPCTRL	0x11
-#define	__BRTA		0x12
-#define	__BRTB		0x13
-#define	__BRTC		0x14
-#define	__REST		0x15
+#define	__DPSTTS			0x10
+#define	__DPCTRL			0x11
+#define	__BRTA				0x12
+#define	__BRTB				0x13
+#define	__BRTC				0x14
+#define	__REST				0x15
 
-#define	__FRMCYC	0x17
-#define	__CTA		0x18
+#define	__FRMCYC			0x17
+#define	__CTA				0x18
 
-#define	__XPSTTS	0x20
-#define	__XPCTRL	0x21
-#define	__VER		0x22
+#define	__XPSTTS			0x20
+#define	__XPCTRL			0x21
+#define	__VER				0x22
 
-#define	__SPT0		0x24
-#define	__SPT1		0x25
-#define	__SPT2		0x26
-#define	__SPT3		0x27
+#define	__SPT0				0x24
+#define	__SPT1				0x25
+#define	__SPT2				0x26
+#define	__SPT3				0x27
 
-#define	__GPLT0		0x30
-#define	__GPLT1		0x31
-#define	__GPLT2		0x32
-#define	__GPLT3		0x33
+#define	__GPLT0				0x30
+#define	__GPLT1				0x31
+#define	__GPLT2				0x32
+#define	__GPLT3				0x33
 
-#define	__JPLT0		0x34
-#define	__JPLT1		0x35
-#define	__JPLT2		0x36
-#define	__JPLT3		0x37
+#define	__JPLT0				0x34
+#define	__JPLT1				0x35
+#define	__JPLT2				0x36
+#define	__JPLT3				0x37
 
 #define	__BACKGROUND_COLOR	0x38
 
 // Display RAM
 /*@null@*/
-#define __LEFT_FRAME_BUFFER_0               0x00000000				// Left Frame Buffer 0
-#define __LEFT_FRAME_BUFFER_1               0x00008000				// Left Frame Buffer 1
-#define __RIGHT_FRAME_BUFFER_0              0x00010000				// Right Frame Buffer 0
-#define __RIGHT_FRAME_BUFFER_1              0x00018000				// Right Frame Buffer 1
+#define __LEFT_FRAME_BUFFER_0			0x00000000 // Left Frame Buffer 0
+#define __LEFT_FRAME_BUFFER_1			0x00008000 // Left Frame Buffer 1
+#define __RIGHT_FRAME_BUFFER_0			0x00010000 // Right Frame Buffer 0
+#define __RIGHT_FRAME_BUFFER_1			0x00018000 // Right Frame Buffer 1
 
-#define __CHAR_SEGMENT_0_BASE_ADDRESS       0x00006000					// Characters 0-511
-#define __CHAR_SEGMENT_1_BASE_ADDRESS		0x0000E000					// Characters 512-1023
-#define __CHAR_SEGMENT_2_BASE_ADDRESS		0x00016000					// Characters 1024-1535
-#define __CHAR_SEGMENT_3_BASE_ADDRESS		0x0001E000					// Characters 1536-2047
+#define __CHAR_SEGMENT_0_BASE_ADDRESS	0x00006000 // Characters 0-511
+#define __CHAR_SEGMENT_1_BASE_ADDRESS	0x0000E000 // Characters 512-1023
+#define __CHAR_SEGMENT_2_BASE_ADDRESS	0x00016000 // Characters 1024-1535
+#define __CHAR_SEGMENT_3_BASE_ADDRESS	0x0001E000 // Characters 1536-2047
 
-#define __BGMAP_SPACE_BASE_ADDRESS		    0x00020000					// Base address of BGMap Memory
-#define __BGMAP_SEGMENT(b)		                    (__BGMAP_SPACE_BASE_ADDRESS + (b * 0x2000))	// Address of BGMap b (0 <= b <= 13)
+#define __BGMAP_SPACE_BASE_ADDRESS		0x00020000 // Base address of BGMap Memory
+#define __BGMAP_SEGMENT(b)				(__BGMAP_SPACE_BASE_ADDRESS + (b * 0x2000))	// Address of BGMap b (0 <= b <= 13)
 
-#define __CHAR_SPACE_BASE_ADDRESS		    0x00078000
+#define __CHAR_SPACE_BASE_ADDRESS		0x00078000
 
-#define __OBJECT_SPACE_BASE_ADDRESS		0x0003E000  // Base address of Object Attribute Memory
+#define __OBJECT_SPACE_BASE_ADDRESS		0x0003E000 // Base address of Object Attribute Memory
 
-#define __WORLD_SPACE_BASE_ADDRESS		0x0003D800  // Base address of World Attribute Memory
+#define __WORLD_SPACE_BASE_ADDRESS		0x0003D800 // Base address of World Attribute Memory
 
 
 // macro to set the brightness registers
-#define	__SET_BRIGHT(a,b,c)       _vipRegisters[__BRTA]=(u16)(a); _vipRegisters[__BRTB]=(u16)(b); _vipRegisters[__BRTC]=(u16)(c)
+#define	__SET_BRIGHT(a,b,c)				_vipRegisters[__BRTA]=(u16)(a); _vipRegisters[__BRTB]=(u16)(b); _vipRegisters[__BRTC]=(u16)(c)
 
 // macro to set the gplt (bgmap palette)
-#define	__SET_G_PALETTE(n,pal)         _vipRegisters[__GPLT0+n]=pal
+#define	__SET_G_PALETTE(n,pal)		 	_vipRegisters[__GPLT0+n]=pal
 
 // macro to set the jplt (obj palette)
-#define	__SET_J_PALETTE(n,pal)         _vipRegisters[__JPLT0+n]=pal
+#define	__SET_J_PALETTE(n,pal)		 	_vipRegisters[__JPLT0+n]=pal
 
 typedef struct WorldAttributes
 {
@@ -148,10 +148,10 @@ typedef struct WorldAttributes
 } WorldAttributes;
 
 // pointers to access the VRAM base address
-static WorldAttributes* const _worldAttributesBaseAddress   =   (WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
-static u16* const	_columnTableBaseAddressLeft             =   (u16*)0x0003DC00; // base address of Column Table (Left Eye)
-static u16* const	_columnTableBaseAddressRight            =   (u16*)0x0003DE00; // base address of Column Table (Right Eye)
-static u16* const	_objecAttributesBaseAddress             =   (u16*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objecAttributesBaseAddress
+static WorldAttributes* const _worldAttributesBaseAddress	=	(WorldAttributes*)__WORLD_SPACE_BASE_ADDRESS;
+static u16* const	_columnTableBaseAddressLeft			 =	(u16*)0x0003DC00; // base address of Column Table (Left Eye)
+static u16* const	_columnTableBaseAddressRight			=	(u16*)0x0003DE00; // base address of Column Table (Right Eye)
+static u16* const	_objecAttributesBaseAddress			 =	(u16*)__OBJECT_SPACE_BASE_ADDRESS;					// Pointer to _objecAttributesBaseAddress
 
 // "vbSetWorld" header flags
 // (OR these together to build a World Header)
@@ -216,14 +216,14 @@ typedef const BrightnessRepeatDefinition BrightnessRepeatROMDef;
 
 typedef struct ColorConfig
 {
-    // background color
+	// background color
 	u8 backgroundColor;
 
-    // brightness config
-    Brightness brightness;
+	// brightness config
+	Brightness brightness;
 
-    // brightness repeat values
-    BrightnessRepeatDefinition* brightnessRepeat;
+	// brightness repeat values
+	BrightnessRepeatDefinition* brightnessRepeat;
 
 } ColorConfig;
 
@@ -248,6 +248,7 @@ typedef struct PaletteConfig
 } PaletteConfig;
 
 typedef void (*PostProcessingEffect) (u32, SpatialObject);
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
@@ -293,7 +294,7 @@ void VIPManager_setBackgroundColor(VIPManager this, u8 color);
 void VIPManager_addPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 void VIPManager_removePostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 void VIPManager_removePostProcessingEffects(VIPManager this);
-void VIPManager_registerCurrentDrawingframeBufferSet(VIPManager this);
+void VIPManager_registerCurrentDrawingFrameBufferSet(VIPManager this);
 
 
 #endif
