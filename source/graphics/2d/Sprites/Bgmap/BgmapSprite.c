@@ -305,7 +305,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 	if(this->param)
 	{
-		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
+		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 	}
 }
 
@@ -338,8 +338,7 @@ void BgmapSprite_render(BgmapSprite this)
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
-		// TODO: check if required, causes that the sprite is turned off
-		// when changing the texture definition
+		// TODO: check if required, causes that the sprite is turned off when changing the texture definition
 /*
 	    if(!this->texture->written)
 	    {
@@ -363,31 +362,31 @@ void BgmapSprite_render(BgmapSprite this)
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
         // get sprite's size
-        int width = Texture_getCols(this->texture)<< 3;
-        int height = Texture_getRows(this->texture)<< 3;
+        int width = Texture_getCols(this->texture) << 3;
+        int height = Texture_getRows(this->texture) << 3;
         int w = width;
         int h = height;
 
         // cap coordinates to screen space
-        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
-        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
+        worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
+        worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
         worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 
         // clip texture's source to screen space
-        int mxDisplacement = 0 > gx? -gx : 0;
-        int myDisplacement = 0 > gy? -gy : 0;
+        int mxDisplacement = 0 > gx ? -gx : 0;
+        int myDisplacement = 0 > gy ? -gy : 0;
 
         worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
         worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
         worldPointer->mp = this->drawSpec.textureSource.mp;
 
         // clip sprite's size to screen space
-        // reduce by 1 since 0 means 1 in the VB
+        // reduce by 1 since 0 means 1 in the vb
         w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
         h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
 
-        w = w + worldPointer->gx >= __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx : w;
-        h = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy : h;
+        w = w + worldPointer->gx >= __SCREEN_WIDTH ? __SCREEN_WIDTH - worldPointer->gx : w;
+        h = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy : h;
 
         if (0 > w)
         {
@@ -427,7 +426,7 @@ void BgmapSprite_render(BgmapSprite this)
                 // provide a little bit of performance gain by only calculation transform equations
                 // for the visible rows, but causes that some sprites not be rendered completely when the
                 // screen moves vertically
-                // int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
+                // int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
                 // this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
                 // apply affine transformation
@@ -474,11 +473,11 @@ void BgmapSprite_render(BgmapSprite this)
         int w = Texture_getCols(this->texture)<< 3;
         int h = Texture_getRows(this->texture)<< 3;
 
-        int mxDisplacement = 0 > gx? -gx : 0;
-        int myDisplacement = 0 > gy? -gy : 0;
+        int mxDisplacement = 0 > gx ? -gx : 0;
+        int myDisplacement = 0 > gy ? -gy : 0;
 
-        worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : 0 > gx? 0: gx;
-        worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : 0 > gy? 0: gy;
+        worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
+        worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
         worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 
         worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
@@ -532,7 +531,7 @@ void BgmapSprite_render(BgmapSprite this)
              if(0 <= this->paramTableRow)
             {
                 h = Texture_getRows(this->texture)<< 3;
-                int lastRow = h + worldPointer->gy >= __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: h;
+                int lastRow = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: h;
 
                 BgmapSprite_doApplyAffineTransformations(this, lastRow);
 

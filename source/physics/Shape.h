@@ -55,7 +55,7 @@
         u8 checked;																				        \
         /* flag to know if setup is needed */															\
         u8 ready;																				        \
-        /* flag to check agains other shapes */															\
+        /* flag to check against other shapes */														\
         u8 checkForCollisions;																	        \
 
 __CLASS(Shape);
