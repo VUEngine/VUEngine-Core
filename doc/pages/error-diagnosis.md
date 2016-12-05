@@ -38,10 +38,10 @@ Initialize everything
 One of the most difficult, and common source of hard to diagnose bugs are uninitialized variables; random crashes or completely strange behavior often are caused by not properly initialized variables. To aid the detection of such mistakes, in the config.h file, define the __MEMORY_POOL_CLEAN_UP macro, this will force the engine to put every memory pool's free block to 0 when the game changes its state, so, if the problem solves by defining such macro, the cause is, most likely, a variable not initialized.
 
 
-MemoryPool's size
+MemoryPool size
 -----------------
 
-Another source of strange behavior and crashes occurs when the stack is overflown. Try to reduce the memory pool's size by a few KB in order to dismiss this stack's overflow as the source of the issue.
+Whenever crashes appear more or less randomly with alternating exceptions, the cause if most likely a stack overflow. Try to reduce the memory pool size to leave a bit more room for the stack. Since the safe minimum for the stack is about 2KB, your memory pool configuration should not exceed 62KB. 
 
 
 Cast everything
