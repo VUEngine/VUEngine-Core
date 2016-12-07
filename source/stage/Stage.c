@@ -862,7 +862,7 @@ void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
 
-    if(this->stageDefinition->streaming.minimimSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
+    if(this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
     {
         return;
     }
