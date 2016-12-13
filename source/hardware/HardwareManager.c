@@ -258,7 +258,7 @@ void HardwareManager_disableRendering(HardwareManager this)
 	ASSERT(this, "HardwareManager::disableRendering: null this");
 
 	// disable interrupt
-	VIPManager_disableInterrupt(this->vipManager);
+	VIPManager_disableInterrupts(this->vipManager);
 }
 
 // enable VPU interrupts
@@ -269,7 +269,7 @@ void HardwareManager_enableRendering(HardwareManager this)
 	// turn on display
 	VIPManager_displayOn(this->vipManager);
 	VIPManager_enableDrawing(this->vipManager);
-	VIPManager_enableInterrupt(VIPManager_getInstance());
+	VIPManager_enableInterrupt(VIPManager_getInstance(), __GAMESTART);
 }
 
 // make sure the brightness is ok

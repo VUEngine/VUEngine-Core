@@ -119,7 +119,7 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
     // disable vip interrupts
-    VIPManager_disableInterrupt(VIPManager_getInstance());
+    VIPManager_disableInterrupts(VIPManager_getInstance());
 
 	// disable timers
 	TimerManager_enable(TimerManager_getInstance(), false);

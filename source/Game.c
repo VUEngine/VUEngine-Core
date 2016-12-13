@@ -1019,6 +1019,7 @@ static void Game_update(Game this)
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
 		while(VIPManager_waitForFrameStart(this->vipManager));
+		VIPManager_resetGameFrameStarted(this->vipManager);
 
     	this->gameFrameDone = false;
 
@@ -1109,7 +1110,7 @@ static void Game_update(Game this)
             Game_stream(this);
         }
 
-        Game_render(this);
+//        Game_render(this);
 
 #ifdef __PROFILE_GAME
         {

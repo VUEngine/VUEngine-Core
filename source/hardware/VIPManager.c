@@ -87,6 +87,7 @@ static VIPManager _vipManager;
 static ParamTableManager _paramTableManager;
 static CharSetManager _charSetManager;
 static SpriteManager _spriteManager;
+u32 VIPManager_writeDRAM(VIPManager this);
 
 static void VIPManager_constructor(VIPManager this);
 
@@ -142,20 +143,20 @@ void VIPManager_disableDrawing(VIPManager this __attribute__ ((unused)))
 }
 
 // enable interrupt
-void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)))
+void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)), u16 interruptCode)
 {
 	ASSERT(this, "VIPManager::enableInterrupt: null this");
 
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 #ifdef __ALERT_VIP_OVERTIME
-	_vipRegisters[__INTENB]= __GAMESTART | __TIMEERR;
+	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
 #else
-	_vipRegisters[__INTENB]= __GAMESTART;
+	_vipRegisters[__INTENB]= interruptCode;
 #endif
 }
 
 // disable interrupt
-void VIPManager_disableInterrupt(VIPManager this __attribute__ ((unused)))
+void VIPManager_disableInterrupts(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::disableInterrupt: null this");
 
@@ -176,11 +177,12 @@ void VIPManager_interruptHandler(void)
     u16 interrupt = _vipRegisters[__INTPND];
 
 	// disable interrupts
-	VIPManager_disableInterrupt(_vipManager);
+	VIPManager_disableInterrupts(_vipManager);
 
     static u16 interruptTable[] =
     {
         __GAMESTART,
+        __XPEND,
 #ifdef __ALERT_VIP_OVERTIME
 	    __TIMEERR
 #endif
@@ -196,6 +198,7 @@ void VIPManager_interruptHandler(void)
             case __GAMESTART:
 
                 _vipManager->gameFrameStarted = true;
+                VIPManager_enableInterrupt(_vipManager, __XPEND);
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
                 {
@@ -215,31 +218,53 @@ void VIPManager_interruptHandler(void)
                     }
                 }
 #endif
+
                 break;
+
+			case __XPEND:
+
+				VIPManager_writeDRAM(_vipManager);
+                VIPManager_enableInterrupt(_vipManager, __GAMESTART);
+				break;
 
 #ifdef __ALERT_VIP_OVERTIME
 	        case __TIMEERR:
-                {
-                    static u32 count = 0;
-                    Printing_text(Printing_getInstance(), "VPU Overtime! (   )", 0, 1, NULL);
-                    Printing_int(Printing_getInstance(), ++count, 15, 0, NULL);
-                }
+
+				{
+					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
+
+					if(0 >= messageDelay)
+					{
+						messageDelay = __TARGET_FPS * 2;
+	                    static u32 count = 0;
+						Printing_text(Printing_getInstance(), "VPU Overtime! (   )", 0, 2, NULL);
+						Printing_int(Printing_getInstance(), ++count, 15, 2, NULL);
+					}
+
+					if(0 == --messageDelay)
+					{
+						Printing_text(Printing_getInstance(), "                   ", 0, 2, NULL);
+						messageDelay = -1;
+					}
+				}
+
+//                VIPManager_enableInterrupt(_vipManager, __GAMESTART);
                 break;
 #endif
         }
     }
 }
 
+void VIPManager_resetGameFrameStarted(VIPManager this)
+{
+	ASSERT(this, "VIPManager::resetGameFrameStarted: null this");
+
+	this->gameFrameStarted = false;
+}
+
 u32 VIPManager_writeDRAM(VIPManager this)
 {
 	ASSERT(this, "VIPManager::writeDRAM: null this");
-
-	// wait for the VIP to go idle
-    while(_vipRegisters[__XPSTTS] & __XPBSYR);
-
-    // allow GCLK interrupt to kick in now
-    this->gameFrameStarted = false;
-	VIPManager_enableInterrupt(this);
 
     // don't allow drawing while renderings
     VIPManager_disableDrawing(this);
@@ -296,7 +321,7 @@ void VIPManager_displayOff(VIPManager this)
 	_vipRegisters[__DPCTRL] = 0;
 	_vipRegisters[__FRMCYC] = 1;
 
-	VIPManager_disableInterrupt(this);
+	VIPManager_disableInterrupts(this);
 }
 
 // setup palettes
