@@ -348,7 +348,7 @@ void BgmapSprite_render(BgmapSprite this)
 */
 		if(this->hidden)
 		{
-			worldPointer->head = 0x0000;
+			worldPointer->head = __WORLD_OFF;
 			return;
 		}
 		else
@@ -390,13 +390,13 @@ void BgmapSprite_render(BgmapSprite this)
 
         if (0 > w)
         {
-			worldPointer->head = 0x0000;
+			worldPointer->head = __WORLD_OFF;
             return;
         }
 
         if (0 > h)
         {
-			worldPointer->head = 0x0000;
+			worldPointer->head = __WORLD_OFF;
             return;
         }
 

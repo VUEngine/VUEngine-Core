@@ -310,7 +310,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 */
 		if(this->hidden)
 		{
-			worldPointer->head = 0x0000;
+			worldPointer->head = __WORLD_OFF;
 			return;
 		}
 		else
@@ -338,7 +338,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 
             if(!worldPointer->w)
             {
-    			worldPointer->head = 0x0000;
+    			worldPointer->head = __WORLD_OFF;
                 return;
             }
         }
@@ -355,7 +355,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 
             if(!worldPointer->h)
             {
-    			worldPointer->head = 0x0000;
+    			worldPointer->head = __WORLD_OFF;
                 return;
             }
         }
