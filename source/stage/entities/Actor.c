@@ -485,9 +485,7 @@ void Actor_stopMovement(Actor this, u32 stopShape)
 
 	if(this->body)
 	{
-		Body_stopMovement(this->body, __XAXIS);
-		Body_stopMovement(this->body, __YAXIS);
-		Body_stopMovement(this->body, __ZAXIS);
+		Body_stopMovement(this->body, __XAXIS | __YAXIS | __ZAXIS);
 	}
 
 	if(stopShape && this->shape)
